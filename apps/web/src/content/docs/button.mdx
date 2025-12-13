@@ -1,0 +1,60 @@
+---
+title: Button
+description: Accessible button component built with React Aria
+---
+
+# Button
+
+The Button component provides an accessible, keyboard-navigable button with multiple variants and sizes.
+
+## Import
+
+```tsx
+import { Button } from '@coral/ui/button';
+```
+
+## Usage
+
+```tsx
+<Button>Click me</Button>
+```
+
+## Variants
+
+### Primary
+
+```tsx
+<Button variant="primary">Primary Button</Button>
+```
+
+### Secondary
+
+```tsx
+<Button variant="secondary">Secondary Button</Button>
+```
+
+### Outline
+
+```tsx
+<Button variant="outline">Outline Button</Button>
+```
+
+### Ghost
+
+```tsx
+<Button variant="ghost">Ghost Button</Button>
+```
+
+## Sizes
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+```
+
+## Props
+
+- `variant`: `'primary' | 'secondary' | 'outline' | 'ghost'` (default: `'primary'`)
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`)
+- All props from React Aria's `Button` component

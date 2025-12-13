@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/layout.astro';
+---
+
+<Layout title="Coral Design System">
+  <main class="container mx-auto px-4 py-16">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-5xl font-bold mb-4 text-fg-text-default-high-contrast">
+        Coral Design System
+      </h1>
+      <p class="text-xl text-fg-text-default-muted mb-8">
+        A modern, accessible component library built with React Aria and
+        Tailwind CSS.
+      </p>
+
+      <div class="space-y-4">
+        <h2 class="text-2xl font-semibold text-red-800">Get Started</h2>
+        <nav class="space-y-2">
+          <a
+            href="/docs/button"
+            class="block text-color-fg-text-primary-default hover:text-color-fg-text-primary-subtle hover:underline"
+          >
+            Button Component
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+</Layout>

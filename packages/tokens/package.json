@@ -1,0 +1,29 @@
+{
+  "name": "@coral/tokens",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "./dist/tailwind-theme.css",
+  "exports": {
+    ".": {
+      "import": "./dist/tailwind-theme.css"
+    },
+    "./tokens": "./src/design.tokens.json",
+    "./css": "./dist/tokens.css",
+    "./tailwind": "./dist/tailwind-theme.css"
+  },
+  "files": [
+    "dist",
+    "src/design.tokens.json"
+  ],
+  "scripts": {
+    "build": "terrazzo build && node postbuild.js",
+    "dev": "terrazzo build --watch",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@terrazzo/cli": "^0.10.4",
+    "@terrazzo/plugin-css": "^0.10.4",
+    "@terrazzo/plugin-tailwind": "^0.3.3"
+  }
+}

@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+
+/* Import Coral design tokens */
+@import '@coral/tokens/tailwind';
