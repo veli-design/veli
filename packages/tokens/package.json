@@ -1,7 +1,7 @@
 {
   "name": "@coral/tokens",
   "version": "0.0.1",
-  "private": false,
+  "private": true,
   "type": "module",
   "main": "./dist/tailwind-theme.css",
   "exports": {
@@ -25,5 +25,9 @@
     "@terrazzo/cli": "^0.10.4",
     "@terrazzo/plugin-css": "^0.10.4",
     "@terrazzo/plugin-tailwind": "^0.3.3"
+  },
+  "publishConfig": {
+    "@tradenetcorp:registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   }
 }
