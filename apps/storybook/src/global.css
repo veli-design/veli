@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+@import '@tradenetcorp/coral-tokens/tailwind';
+
+@source "../../../packages/ui";

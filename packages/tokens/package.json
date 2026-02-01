@@ -18,7 +18,6 @@
   ],
   "scripts": {
     "build": "terrazzo build && node postbuild.js",
-    "dev": "terrazzo build --watch",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {

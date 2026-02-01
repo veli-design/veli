@@ -13,7 +13,13 @@ The Button component provides an accessible, keyboard-navigable button with mult
 import { Button } from '@tradenetcorp/coral-ui/button';
 ```
 
+import { Button } from '@tradenetcorp/coral-ui/button';
+
 ## Usage
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <Button client:visible>Click me</Button>
+</div>
 
 ```tsx
 <Button>Click me</Button>
@@ -23,11 +29,19 @@ import { Button } from '@tradenetcorp/coral-ui/button';
 
 ### Primary
 
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <Button variant="primary" client:visible>Primary Button</Button>
+</div>
+
 ```tsx
 <Button variant="primary">Primary Button</Button>
 ```
 
 ### Secondary
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <Button variant="secondary" client:visible>Secondary Button</Button>
+</div>
 
 ```tsx
 <Button variant="secondary">Secondary Button</Button>
@@ -35,17 +49,31 @@ import { Button } from '@tradenetcorp/coral-ui/button';
 
 ### Outline
 
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <Button variant="outline" client:visible>Outline Button</Button>
+</div>
+
 ```tsx
 <Button variant="outline">Outline Button</Button>
 ```
 
 ### Ghost
 
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <Button variant="ghost" client:visible>Ghost Button</Button>
+</div>
+
 ```tsx
 <Button variant="ghost">Ghost Button</Button>
 ```
 
 ## Sizes
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 items-center">
+  <Button size="sm" client:visible>Small</Button>
+  <Button size="md" client:visible>Medium</Button>
+  <Button size="lg" client:visible>Large</Button>
+</div>
 
 ```tsx
 <Button size="sm">Small</Button>

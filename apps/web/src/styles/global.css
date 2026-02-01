@@ -2,3 +2,4 @@
 
 /* Import Coral design tokens */
 @import '@tradenetcorp/coral-tokens/tailwind';
+@source "../../../../packages/ui";
