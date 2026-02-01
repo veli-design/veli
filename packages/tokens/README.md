@@ -1,4 +1,4 @@
-# @coral/tokens
+# @tradenetcorp/coral-tokens
 
 Design tokens package for the Coral Design System, built with Terrazo and DTCG specification.
 
@@ -7,10 +7,10 @@ Design tokens package for the Coral Design System, built with Terrazo and DTCG s
 \`\`\`
 packages/tokens/
 ├── src/
-│   └── design.tokens.json   # Source of truth (DTCG tokens from Figma)
-├── dist/                     # Generated outputs (built automatically)
-│   ├── tokens.css           # CSS variables
-│   └── tailwind-theme.css   # Tailwind v4 theme with dark mode support
+│ └── design.tokens.json # Source of truth (DTCG tokens from Figma)
+├── dist/ # Generated outputs (built automatically)
+│ ├── tokens.css # CSS variables
+│ └── tailwind-theme.css # Tailwind v4 theme with dark mode support
 ├── terrazzo.config.js
 └── package.json
 \`\`\`
@@ -20,15 +20,17 @@ packages/tokens/
 ### In a Tailwind v4 Project
 
 \`\`\`bash
-npm install @coral/tokens
+npm install @tradenetcorp/coral-tokens
+
 # or
-pnpm add @coral/tokens
+
+pnpm add @tradenetcorp/coral-tokens
 \`\`\`
 
 Import the Tailwind theme in your CSS:
 
 \`\`\`css
-@import "@coral/tokens/tailwind";
+@import "@tradenetcorp/coral-tokens/tailwind";
 
 @tailwind base;
 @tailwind components;
@@ -36,6 +38,7 @@ Import the Tailwind theme in your CSS:
 \`\`\`
 
 This automatically includes:
+
 - ✅ All color tokens (gray, blue, green, orange, red, bg, fg)
 - ✅ Typography tokens (font families, type scale)
 - ✅ Dark mode support via \`dark:\` variant
@@ -44,13 +47,13 @@ Or use specific exports:
 
 \`\`\`javascript
 // Import the Tailwind theme CSS
-import '@coral/tokens/tailwind';
+import '@tradenetcorp/coral-tokens/tailwind';
 
 // Import CSS variables
-import '@coral/tokens/css';
+import '@tradenetcorp/coral-tokens/css';
 
 // Access raw DTCG tokens
-import tokens from '@coral/tokens/tokens';
+import tokens from '@tradenetcorp/coral-tokens/tokens';
 \`\`\`
 
 ### Available Tokens
@@ -58,11 +61,13 @@ import tokens from '@coral/tokens/tokens';
 Your design tokens include:
 
 **Colors:**
+
 - Base colors: \`gray\`, \`blue\`, \`green\`, \`orange\`, \`red\` (100-1200 scale + alpha variants)
 - Semantic colors: \`bg\` (surface, button, status, input, primary, secondary, danger, success)
 - Text/Icon colors: \`fg\` (text, icons, border with multiple contrast levels)
 
 **Typography:**
+
 - Font families: \`San-serif\` (Inter), \`Monospace\` (IBM Plex Mono), \`Dhivehi\` (MV Typewriter)
 - Type scale: Display, Heading, Body, etc.
 
@@ -72,10 +77,13 @@ All tokens include Light and Dark mode values, automatically handled via \`dark:
 ## Development
 
 \`\`\`bash
+
 # Build tokens
+
 pnpm build
 
 # Watch mode (rebuilds on changes)
+
 pnpm dev
 \`\`\`
 
@@ -89,7 +97,7 @@ Generated files in \`dist/\` are automatically built on publish via the \`prepub
 
 The \`terrazzo.config.js\` maps your DTCG tokens to Tailwind v4 theme CSS. The current configuration:
 
-- Maps all \`colors.*\` tokens to Tailwind color variables
-- Maps \`typography.font-stack.*\` to font families
-- Maps \`typography.type-scale.*\` to font sizes
+- Maps all \`colors.\*\` tokens to Tailwind color variables
+- Maps \`typography.font-stack.\*\` to font families
+- Maps \`typography.type-scale.\*\` to font sizes
 - Generates dark mode variants from your token's \`Dark\` mode values

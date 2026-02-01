@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@coral/ui/button';
+import { Button } from '@tradenetcorp/coral-ui/button';
 
 const meta = {
   title: 'Components/Button',
