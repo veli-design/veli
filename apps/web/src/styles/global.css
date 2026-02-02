@@ -1,5 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
 /* Import Coral design tokens */
 @import '@tradenetcorp/coral-tokens/tailwind';
+
+@theme {
+    --font-sans: var(--fontFamily-sans-), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html {
+    @apply antialiased;
+}
+
 @source "../../../../packages/ui";

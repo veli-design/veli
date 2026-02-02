@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@tradenetcorp/coral-ui/button';
+import { Plus, ArrowRight, Trash, DownloadSimple } from 'phosphor-react';
 
 const meta = {
   title: 'Components/Button',
@@ -11,56 +12,147 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost'],
+      options: ['primary', 'secondary', 'danger'],
+    },
+    style: {
+      control: 'select',
+      options: ['fill', 'transparent', 'ghost'],
     },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
     },
+    isLoading: {
+      control: 'boolean',
+    },
+    isDisabled: {
+      control: 'boolean',
+    },
+  },
+  args: {
+    children: 'Button',
+    variant: 'primary',
+    style: 'fill',
+    size: 'md',
   },
 } satisfies Meta<typeof Button>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * The default button style used for most actions.
+ */
 export const Primary: Story = {
   args: {
-    children: 'Button',
-    variant: 'primary',
+    children: 'Primary Button',
   },
 };
 
-export const Secondary: Story = {
-  args: {
-    children: 'Button',
-    variant: 'secondary',
+/**
+ * A comprehensive view of all button variants and styles.
+ * Useful for auditing visual consistency across the design system.
+ */
+export const AllVariants: Story = {
+  render: () => (
+    <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
+      <div />
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">Fill</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">Transparent</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">Ghost</div>
+
+      <div className="text-sm font-medium">Primary</div>
+      <Button variant="primary" style="fill">Button</Button>
+      <Button variant="primary" style="transparent">Button</Button>
+      <Button variant="primary" style="ghost">Button</Button>
+
+      <div className="text-sm font-medium">Secondary</div>
+      <Button variant="secondary" style="fill">Button</Button>
+      <Button variant="secondary" style="transparent">Button</Button>
+      <Button variant="secondary" style="ghost">Button</Button>
+
+      <div className="text-sm font-medium">Danger</div>
+      <Button variant="danger" style="fill">Button</Button>
+      <Button variant="danger" style="transparent">Button</Button>
+      <Button variant="danger" style="ghost">Button</Button>
+    </div>
+  ),
+};
+
+/**
+ * Demonstrates common icon placement patterns with correct Figma sizing:
+ * XL: 24px, LG: 20px, MD/SM: 16px, XS: 12px.
+ */
+export const WithIcons: Story = {
+  render: (args) => {
+    const iconSizeMap = {
+      xl: 24,
+      lg: 20,
+      md: 16,
+      sm: 16,
+      xs: 12,
+    } as const;
+
+    const size = iconSizeMap[args.size as keyof typeof iconSizeMap] || 16;
+
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-4">
+          <Button {...args}>
+            <Plus size={size} weight="bold" />
+            Leading Icon
+          </Button>
+          <Button {...args}>
+            Trailing Icon
+            <ArrowRight size={size} weight="bold" />
+          </Button>
+          <Button {...args}>
+            <DownloadSimple size={size} weight="bold" />
+            Both Icons
+            <ArrowRight size={size} weight="bold" />
+          </Button>
+        </div>
+        <div className="text-xs text-gray-400 italic">
+          Icon size for current {args.size} scale: {size}px
+        </div>
+      </div>
+    );
   },
 };
 
-export const Outline: Story = {
+/**
+ * All supported sizes shown side-by-side with correctly sized icons.
+ */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center gap-4 flex-wrap">
+        <Button {...args} size="xl"><Plus size={24} weight="bold" /> XL Button</Button>
+        <Button {...args} size="lg"><Plus size={20} weight="bold" /> LG Button</Button>
+        <Button {...args} size="md"><Plus size={16} weight="bold" /> MD Button</Button>
+        <Button {...args} size="sm"><Plus size={16} weight="bold" /> SM Button</Button>
+        <Button {...args} size="xs"><Plus size={12} weight="bold" /> XS Button</Button>
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Displays a loading spinner while preserving the button's dimensions.
+ */
+export const Loading: Story = {
   args: {
-    children: 'Button',
-    variant: 'outline',
+    isLoading: true,
+    children: 'Saving changes...',
   },
 };
 
-export const Ghost: Story = {
+/**
+ * Standard disabled state. Prevents all user interaction.
+ */
+export const Disabled: Story = {
   args: {
-    children: 'Button',
-    variant: 'ghost',
-  },
-};
-
-export const Small: Story = {
-  args: {
-    children: 'Button',
-    size: 'sm',
-  },
-};
-
-export const Large: Story = {
-  args: {
-    children: 'Button',
-    size: 'lg',
+    isDisabled: true,
+    children: 'Disabled Action',
   },
 };
