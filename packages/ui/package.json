@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./button": "./src/button.tsx",
-    "./link": "./src/link.tsx"
+    "./link": "./src/link.tsx",
+    "./switch": "./src/switch.tsx"
   },
   "scripts": {
     "build": "tsc",

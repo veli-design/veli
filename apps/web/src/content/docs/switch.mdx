@@ -1,0 +1,73 @@
+---
+title: Switch
+description: A switch allows a user to turn a setting on or off.
+---
+
+import { Switch } from '@tradenetcorp/coral-ui/switch';
+
+The `Switch` component is a toggleable input that allows users to choose between two mutually exclusive states (on and off).
+
+## Import
+
+```tsx
+import { Switch } from '@tradenetcorp/coral-ui/switch';
+```
+
+## Usage
+
+```tsx
+<Switch>Notifications</Switch>
+```
+
+### Sizes
+
+The switch comes in three sizes: `sm`, `md`, and `lg`.
+
+<div className="flex flex-col gap-4 not-prose">
+  <Switch size="sm">Small</Switch>
+  <Switch size="md">Medium</Switch>
+  <Switch size="lg">Large</Switch>
+</div>
+
+```tsx
+<Switch size="sm">Small</Switch>
+<Switch size="md">Medium</Switch>
+<Switch size="lg">Large</Switch>
+```
+
+### Controlled
+
+You can control the state of the switch using the `isSelected` and `onChange` props.
+
+```tsx
+const [selected, setSelected] = useState(false);
+
+<Switch isSelected={selected} onChange={setSelected}>
+  {selected ? 'On' : 'Off'}
+</Switch>
+```
+
+### Disabled
+
+The switch can be disabled using the `isDisabled` prop.
+
+<div className="flex gap-4 not-prose">
+  <Switch isDisabled>Disabled Off</Switch>
+  <Switch isDisabled defaultSelected>Disabled On</Switch>
+</div>
+
+```tsx
+<Switch isDisabled>Disabled Off</Switch>
+<Switch isDisabled defaultSelected>Disabled On</Switch>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | The size of the switch. |
+| `isSelected` | `boolean` | - | Whether the switch is selected (controlled). |
+| `defaultSelected` | `boolean` | - | Whether the switch is selected by default (uncontrolled). |
+| `isDisabled` | `boolean` | - | Whether the switch is disabled. |
+| `onChange` | `(isSelected: boolean) => void` | - | Callback triggered when the selection state changes. |
+| `children` | `ReactNode` | - | The label for the switch. |

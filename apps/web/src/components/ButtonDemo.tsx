@@ -8,11 +8,15 @@ export function ButtonDemo() {
         <div className="flex gap-3 flex-wrap">
           <Button variant="primary">Primary</Button>
           <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
+          <Button variant="secondary" style="transparent">
+            Outline
+          </Button>
+          <Button variant="primary" style="ghost">
+            Ghost
+          </Button>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Sizes</h3>
         <div className="flex gap-3 items-center flex-wrap">
@@ -21,7 +25,7 @@ export function ButtonDemo() {
           <Button size="lg">Large</Button>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">States</h3>
         <div className="flex gap-3 flex-wrap">
