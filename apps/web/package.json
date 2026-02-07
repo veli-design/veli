@@ -23,6 +23,7 @@
     "@astrojs/mdx": "^4.3.12",
     "@tailwindcss/vite": "^4.1.17",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.61.1"
   }
 }

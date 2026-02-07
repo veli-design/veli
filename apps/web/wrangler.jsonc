@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "coral-web",
+  "compatibility_date": "2026-01-20",
+  "assets": {
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "env": {
+    "production": {
+      "workers_dev": false,
+      "preview_urls": false
+    }
+    
+  }
+}
