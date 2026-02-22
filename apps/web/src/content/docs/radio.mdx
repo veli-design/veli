@@ -1,0 +1,102 @@
+---
+title: Radio
+description: Accessible radio input with semantic token states and explicit geometry.
+---
+
+import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
+
+# Radio
+
+The Radio component supports two sizes and the full state set from the design system: default, hover, pressed, focus, and disabled.
+
+## Import
+
+```tsx
+import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
+```
+
+## Usage
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <RadioGroup client:visible aria-label="Example radio group" defaultValue="a">
+    <Radio value="a">Option A</Radio>
+    <Radio value="b">Option B</Radio>
+    <Radio value="c">Option C</Radio>
+  </RadioGroup>
+</div>
+
+```tsx
+<RadioGroup defaultValue="a">
+  <Radio value="a">Option A</Radio>
+  <Radio value="b">Option B</Radio>
+  <Radio value="c">Option C</Radio>
+</RadioGroup>
+```
+
+## Sizes
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <div className="flex flex-col gap-[16px]">
+    <RadioGroup client:visible aria-label="Small radios" defaultValue="sm-on">
+      <Radio value="sm-off" size="sm">
+        Small Off
+      </Radio>
+      <Radio value="sm-on" size="sm">
+        Small On
+      </Radio>
+    </RadioGroup>
+
+    <RadioGroup client:visible aria-label="Medium radios" defaultValue="md-on">
+      <Radio value="md-off" size="md">
+        Medium Off
+      </Radio>
+      <Radio value="md-on" size="md">
+        Medium On
+      </Radio>
+    </RadioGroup>
+  </div>
+</div>
+
+```tsx
+<Radio size="sm" value="one">
+  Small
+</Radio>
+<Radio size="md" value="two">
+  Medium
+</Radio>
+```
+
+## Disabled
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <RadioGroup client:visible aria-label="Disabled radios" defaultValue="on-disabled">
+    <Radio value="off-disabled" isDisabled>
+      Disabled Off
+    </Radio>
+    <Radio value="on-disabled" isDisabled>
+      Disabled On
+    </Radio>
+  </RadioGroup>
+</div>
+
+## Props
+
+### `Radio`
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `'sm' \| 'md'` | `'sm'` | Visual size of the radio control. |
+| `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
+| `value` | `string` | - | Value used by the parent `RadioGroup` for selection. |
+| `children` | `ReactNode` | - | Label content. |
+
+### `RadioGroup`
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `defaultValue` | `string` | - | Uncontrolled initial selected value. |
+| `value` | `string` | - | Controlled selected value. |
+| `onChange` | `(value: string) => void` | - | Callback when selection changes. |
+| `isDisabled` | `boolean` | `false` | Disables all radios in the group. |
+
+*Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `className` and `style` overrides.*
