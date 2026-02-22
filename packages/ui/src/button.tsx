@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-full font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+  'inline-flex items-center justify-center rounded-full border-2 border-transparent font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:border-gray-300 focus-visible:ring-2 focus-visible:ring-fg-border-focus focus-visible:ring-offset-0 disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -20,11 +20,12 @@ const buttonVariants = cva(
         ghost: 'bg-transparent',
       },
       size: {
-        xs: 'h-7 px-2.5 gap-1 text-[12px]',
-        sm: 'h-9 px-3 gap-1 text-[14px]',
-        md: 'h-11 px-4 gap-1.5 text-[16px]',
-        lg: 'h-13 px-5 gap-2 text-[18px]',
-        xl: 'h-15 px-6 gap-2 text-[20px]',
+        // Includes visual compensation for Figma's internal "Label" horizontal inset.
+        xs: 'h-7 px-[8px] gap-0.5 text-[12px] leading-[16px] tracking-[0.01em]',
+        sm: 'h-9 px-2.5 gap-0.5 text-[14px] leading-[20px]',
+        md: 'h-11 px-3.5 gap-0.5 text-[16px] leading-[24px]',
+        lg: 'h-13 px-[16px] gap-0.5 text-[18px] leading-[26px]',
+        xl: 'h-15 px-[18px] gap-0.5 text-[20px] leading-[28px]',
       },
     },
     compoundVariants: [
@@ -33,57 +34,57 @@ const buttonVariants = cva(
         variant: 'primary',
         style: 'fill',
         className:
-          'bg-bg-button-primary-default hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-primary-default text-white hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'primary',
         style: 'transparent',
         className:
-          'bg-bg-button-primary-subtle-default text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-hover active:bg-bg-button-primary-subtle-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-primary-subtle-default text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-hover active:bg-bg-button-primary-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'primary',
         style: 'ghost',
         className:
-          'text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-default active:bg-bg-button-primary-subtle-hover focus-visible:ring-fg-border-focus',
+          'bg-transparent text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-default active:bg-bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
       },
       // Secondary
       {
         variant: 'secondary',
         style: 'fill',
         className:
-          'bg-bg-button-secondary-default hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-secondary-default text-white hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'secondary',
         style: 'transparent',
         className:
-          'bg-bg-button-secondary-subtle-default text-fg-text-default-default hover:bg-bg-button-secondary-subtle-hover active:bg-bg-button-secondary-subtle-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-secondary-subtle-default text-fg-text-default-default hover:bg-bg-button-secondary-subtle-hover active:bg-bg-button-secondary-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'secondary',
         style: 'ghost',
         className:
-          'text-fg-text-default-default hover:bg-bg-button-secondary-subtle-default active:bg-bg-button-secondary-subtle-hover focus-visible:ring-fg-border-focus',
+          'bg-transparent text-fg-text-default-default hover:bg-bg-button-secondary-subtle-default active:bg-bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
       },
       // Danger
       {
         variant: 'danger',
         style: 'fill',
         className:
-          'bg-bg-button-danger-default hover:bg-bg-button-danger-hover active:bg-bg-button-danger-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-danger-default text-white hover:bg-bg-button-danger-hover active:bg-bg-button-danger-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'danger',
         style: 'transparent',
         className:
-          'bg-bg-button-danger-subtle-default text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-hover active:bg-bg-button-danger-subtle-pressed focus-visible:ring-fg-border-focus',
+          'bg-bg-button-danger-subtle-default text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-hover active:bg-bg-button-danger-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
       },
       {
         variant: 'danger',
         style: 'ghost',
         className:
-          'text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-default active:bg-bg-button-danger-subtle-hover focus-visible:ring-fg-border-focus',
+          'bg-transparent text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-default active:bg-bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
       },
     ],
     defaultVariants: {

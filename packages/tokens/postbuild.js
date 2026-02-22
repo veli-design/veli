@@ -12,7 +12,15 @@ let content = readFileSync(filePath, 'utf-8');
 // Remove the @import "tailwindcss"; line since consuming apps will import it
 content = content.replace('@import "tailwindcss";\n\n', '');
 
+// Normalize token reference prefixes so Tailwind utility vars resolve correctly.
+// Terrazzo emits aliases like `var(--colors-*)` inside `--color-*` definitions,
+// but Tailwind utilities reference `--color-*` variables.
+content = content.replace(/var\(--colors-/g, 'var(--color-');
+content = content.replace(/var\(--base-sizes-/g, 'var(--spacing-');
+
 // Write back
 writeFileSync(filePath, content, 'utf-8');
 
-console.log('✓ Removed @import "tailwindcss" from tailwind-theme.css');
+console.log(
+  '✓ Normalized tailwind-theme.css (@import removed, refs rewritten to --color/--spacing)'
+);

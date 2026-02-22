@@ -15,11 +15,11 @@ const linkVariants = cva(
                 inverted: 'text-white',
             },
             size: {
-                xs: 'text-[12px] gap-1',
-                sm: 'text-[14px] gap-1',
-                md: 'text-[16px] gap-1.5',
-                lg: 'text-[18px] gap-2',
-                xl: 'text-[20px] gap-2',
+                xs: 'text-[12px] leading-[16px] gap-[8px]',
+                sm: 'text-[14px] leading-[20px] gap-[8px]',
+                md: 'text-[16px] leading-[24px] gap-[8px]',
+                lg: 'text-[18px] leading-[26px] gap-[8px]',
+                xl: 'text-[20px] leading-[28px] gap-[8px]',
             },
             underline: {
                 none: 'no-underline',
@@ -83,7 +83,7 @@ const linkVariants = cva(
         defaultVariants: {
             variant: 'primary',
             size: 'md',
-            underline: 'hover',
+            underline: 'none',
         },
     }
 );

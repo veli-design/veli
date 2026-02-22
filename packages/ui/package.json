@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./button": "./src/button.tsx",
+    "./checkbox": "./src/checkbox.tsx",
     "./link": "./src/link.tsx",
     "./switch": "./src/switch.tsx"
   },
