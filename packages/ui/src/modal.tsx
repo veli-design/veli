@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Button as AriaButton,
   Dialog,
   type DialogProps as AriaDialogProps,
   Heading,
@@ -10,6 +9,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { Button } from './button';
 
 const overlayVariants = cva(
   'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-[2px] transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0'
@@ -88,11 +88,13 @@ export function Modal({
                     </Heading>
                   ) : null}
                   {showCloseButton ? (
-                    <AriaButton
+                    <Button
                       onPress={close}
-                      className="ml-auto inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-fg-icons-default-muted transition-colors hover:bg-bg-button-secondary-subtle-default hover:text-fg-icons-default-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-border-focus focus-visible:ring-offset-2"
+                      variant="secondary"
+                      style="ghost"
+                      size="xs"
+                      aria-label={closeButtonLabel}
                     >
-                      <span className="sr-only">{closeButtonLabel}</span>
                       <svg
                         aria-hidden="true"
                         className="h-5 w-5"
@@ -107,7 +109,7 @@ export function Modal({
                           strokeLinecap="round"
                         />
                       </svg>
-                    </AriaButton>
+                    </Button>
                   ) : null}
                 </div>
               )}
