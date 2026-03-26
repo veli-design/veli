@@ -33,8 +33,9 @@ const buttonVariants = cva(
         variant: "primary",
         style: "fill",
         className:
-          "bg-[radial-gradient(101.12%_444.01%_at_50.19%_54.08%,_rgb(from_var(--color-bg-button-primary-default)_r_g_b_/_1)_0%,_rgb(from_var(--color-bg-button-primary-default)_r_g_b_/_0.85)_30.6%,_rgba(216,232,255,0)_100%)] " +
-          "backdrop-blur-[4px] shadow-[inset_0px_4px_7.5px_1px_rgba(255,255,255,0.4)] focus-visible:ring-fg-border-focus",
+          "isolate overflow-hidden " +
+          "bg-[radial-gradient(101.12%_444.01%_at_50.19%_54.08%,_rgb(from_var(--color-bg-button-primary-default)_r_g_b_/_0.96)_0%,_rgb(from_var(--color-bg-button-primary-default)_r_g_b_/_0.72)_22.6%,_rgba(216,232,255,0)_100%)] " +
+          "[backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)] shadow-[inset_0px_4px_7.5px_-2px_rgba(255,255,255,0.4)] focus-visible:ring-fg-border-focus",
       },
       {
         variant: "primary",
