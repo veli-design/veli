@@ -6,6 +6,7 @@
   "exports": {
     "./button": "./src/button.tsx",
     "./link": "./src/link.tsx",
+    "./modal": "./src/modal.tsx",
     "./switch": "./src/switch.tsx"
   },
   "scripts": {
