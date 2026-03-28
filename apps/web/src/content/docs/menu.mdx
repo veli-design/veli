@@ -1,0 +1,98 @@
+---
+title: Menu
+description: Accessible menu primitives built with React Aria and styled with Coral design tokens.
+---
+
+import { MenuExample } from '../../components/MenuExample';
+
+# Menu
+
+The Menu component set provides accessible, keyboard-navigable action menus with Coral token styling.
+
+## Import
+
+```tsx
+import { Button } from '@tradenetcorp/coral-ui/button';
+import {
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSection,
+  MenuSeparator,
+  MenuTrigger,
+} from '@tradenetcorp/coral-ui/menu';
+```
+
+## Basic Usage
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <MenuExample demo="basic" client:visible />
+</div>
+
+```tsx
+<MenuTrigger>
+  <Button variant="secondary" style="transparent" size="sm">
+    Actions
+  </Button>
+  <MenuPopover>
+    <Menu>
+      <MenuItem>Edit</MenuItem>
+      <MenuItem>Export</MenuItem>
+      <MenuSeparator />
+      <MenuItem tone="danger">Delete</MenuItem>
+    </Menu>
+  </MenuPopover>
+</MenuTrigger>
+```
+
+## Sizes
+
+Use smaller items for dense toolbars and larger items for touch-heavy contexts.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <MenuExample demo="sizes" client:visible />
+</div>
+
+## Sections and Grouping
+
+Use `MenuSection` and `MenuSeparator` to organize larger action sets.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <MenuExample demo="sections" client:visible />
+</div>
+
+## Rich Item Layout
+
+`MenuItem` supports descriptions, icon slots, and keyboard shortcuts for more complex workflows.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <MenuExample demo="rich" client:visible />
+</div>
+
+## Accessibility Notes
+
+- Built on `react-aria-components`, including proper roles and keyboard interaction.
+- Menus support arrow key navigation, Escape to close, and automatic focus management.
+- Trigger and items remain fully screen-reader compatible.
+
+## API
+
+### `MenuPopover`
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Sets menu panel width. |
+| `offset` | `number` | `8` | Distance between trigger and popover. |
+
+### `MenuItem`
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Item height and text scale. |
+| `tone` | `'default' \| 'danger'` | `'default'` | Semantic styling for standard or destructive actions. |
+| `startIcon` | `ReactNode` | - | Optional leading icon. |
+| `endIcon` | `ReactNode` | - | Optional trailing icon. |
+| `description` | `ReactNode` | - | Secondary supporting text under the label. |
+| `shortcut` | `ReactNode` | - | Optional keyboard hint (e.g. `Cmd+K`). |
+
+`Menu`, `MenuTrigger`, `MenuSection`, and `MenuSeparator` support the underlying `react-aria-components` props.

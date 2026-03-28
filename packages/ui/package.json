@@ -6,7 +6,8 @@
   "exports": {
     "./button": "./src/button.tsx",
     "./link": "./src/link.tsx",
-    "./switch": "./src/switch.tsx"
+    "./switch": "./src/switch.tsx",
+    "./menu": "./src/menu.tsx"
   },
   "scripts": {
     "build": "tsc",
