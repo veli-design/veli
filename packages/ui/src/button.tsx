@@ -95,11 +95,143 @@ const buttonVariants = cva(
   }
 );
 
+const seaglassButtonVariants = cva(
+  "relative isolate overflow-hidden transition-[background-color,background-image,box-shadow,color,border-color] duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-[#edeff4] focus-visible:ring-[#80a4ff]",
+  {
+    variants: {
+      variant: {
+        primary: '',
+        secondary: '',
+        danger: '',
+      },
+      style: {
+        fill: '',
+        transparent: '',
+        ghost: '',
+      },
+    },
+    compoundVariants: [
+      // Fill
+      {
+        variant: 'primary',
+        style: 'fill',
+        className:
+          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(603.45%_210.2%_at_50%_50%,rgba(0,102,255,0.96)_8%,rgba(255,255,255,0)_100%)] hover:before:bg-[radial-gradient(130.06%_116.78%_at_50%_50%,rgba(0,102,255,0.96)_5.91%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,102,255,0.96)_0%,rgba(0,102,255,0.96)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_50%_50%,rgba(0,102,255,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,102,255,0.96)_0%,rgba(0,102,255,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.3)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      {
+        variant: 'secondary',
+        style: 'fill',
+        className:
+          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(603.45%_210.2%_at_50%_50%,rgba(0,14,48,0.96)_8%,rgba(255,255,255,0)_100%)] hover:before:bg-[radial-gradient(130.06%_116.78%_at_50%_50%,rgba(0,14,48,0.96)_5.91%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,14,48,0.96)_0%,rgba(0,14,48,0.96)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_50%_50%,rgba(0,14,48,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,14,48,0.96)_0%,rgba(0,14,48,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.3)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      {
+        variant: 'danger',
+        style: 'fill',
+        className:
+          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(603.45%_210.2%_at_50%_50%,rgba(192,24,0,0.96)_8%,rgba(255,255,255,0)_100%)] hover:before:bg-[radial-gradient(130.06%_116.78%_at_50%_50%,rgba(192,24,0,0.96)_5.91%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(192,24,0,0.96)_0%,rgba(192,24,0,0.96)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_50%_50%,rgba(192,24,0,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(192,24,0,0.96)_0%,rgba(192,24,0,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.3)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      // Transparent
+      {
+        variant: 'primary',
+        style: 'transparent',
+        className:
+          'text-fg-text-primary-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(0,102,255,0.28)_0%,rgba(0,102,255,0)_100%)] before:opacity-80 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-100 active:before:opacity-70 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      {
+        variant: 'secondary',
+        style: 'transparent',
+        className:
+          'text-fg-text-default-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-94 active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      {
+        variant: 'danger',
+        style: 'transparent',
+        className:
+          'text-fg-text-danger-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-76 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-90 active:before:opacity-64 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.23)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+      },
+      // Ghost
+      {
+        variant: 'primary',
+        style: 'ghost',
+        className:
+          'bg-transparent text-fg-text-primary-muted before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(0,102,255,0.24)_0%,rgba(0,102,255,0)_100%)] before:opacity-0 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-95 active:before:opacity-84 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+      },
+      {
+        variant: 'secondary',
+        style: 'ghost',
+        className:
+          'bg-transparent text-fg-text-default-default before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-88 active:before:opacity-74 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+      },
+      {
+        variant: 'danger',
+        style: 'ghost',
+        className:
+          'bg-transparent text-fg-text-danger-muted before:bg-[radial-gradient(55%_140%_at_50%_50%,rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-0 hover:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] hover:before:opacity-86 active:before:opacity-72 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+      },
+    ],
+    defaultVariants: {
+      variant: 'primary',
+      style: 'fill',
+    },
+  }
+);
+
+const loadingOnlyMinWidthVariants = cva('', {
+  variants: {
+    size: {
+      xs: 'min-w-[84px]',
+      sm: 'min-w-[105px]',
+      md: 'min-w-[118px]',
+      lg: 'min-w-[135px]',
+      xl: 'min-w-[148px]',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
+
+const loadingIndicatorVariants = cva('', {
+  variants: {
+    size: {
+      xs: 'h-3 w-3',
+      sm: 'h-4 w-4',
+      md: 'h-4 w-4',
+      lg: 'h-5 w-5',
+      xl: 'h-[22px] w-[22px]',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
+
+const buttonContentVariants = cva('relative z-[1] inline-flex items-center justify-center', {
+  variants: {
+    size: {
+      xs: 'gap-0.5',
+      sm: 'gap-0.5',
+      md: 'gap-0.5',
+      lg: 'gap-0.5',
+      xl: 'gap-0.5',
+    },
+    hasChildren: {
+      true: '',
+      false: 'gap-0',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+    hasChildren: true,
+  },
+});
+
 export interface ButtonProps
   extends Omit<AriaButtonProps, 'style' | 'className' | 'children'>,
   VariantProps<typeof buttonVariants> {
   children?: React.ReactNode;
   isLoading?: boolean;
+  treatment?: 'basic' | 'seaglass';
 }
 
 export function Button({
@@ -108,19 +240,29 @@ export function Button({
   size,
   children,
   isLoading,
+  treatment = 'basic',
   isDisabled,
   ...props
 }: ButtonProps) {
+  const isLoadingOnly = Boolean(isLoading && !children);
+  const className = twMerge(
+    buttonVariants({ variant, style, size }),
+    treatment === 'seaglass' ? seaglassButtonVariants({ variant, style }) : undefined,
+    isLoadingOnly ? loadingOnlyMinWidthVariants({ size }) : undefined
+  );
+
   return (
     <AriaButton
       {...props}
       isDisabled={isDisabled || isLoading}
-      className={buttonVariants({ variant, style, size })}
+      className={className}
     >
       {isLoading ? (
-        <span className="flex items-center gap-2">
+        <span className={buttonContentVariants({ size, hasChildren: Boolean(children) })}>
           <svg
-            className="h-4 w-4 animate-spin text-current"
+            aria-hidden="true"
+            className={twMerge(loadingIndicatorVariants({ size }), 'animate-spin text-current')}
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -141,6 +283,8 @@ export function Button({
           </svg>
           {children}
         </span>
+      ) : children ? (
+        <span className={buttonContentVariants({ size })}>{children}</span>
       ) : (
         children
       )}

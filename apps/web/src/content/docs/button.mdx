@@ -114,6 +114,31 @@ When `isLoading` is true, the button is disabled and displays a spinner while ma
 <Button isLoading>Processing...</Button>
 ```
 
+## Enhanced Styling
+
+Use `treatment="seaglass"` to opt into the stylized treatment without changing the base button behavior.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 items-center flex-wrap">
+  <Button variant="primary" style="fill" size="xl" treatment="seaglass" client:visible>
+    <Plus size={24} weight="bold" />
+    Label
+    <ArrowRight size={24} weight="bold" />
+  </Button>
+  <Button variant="secondary" style="transparent" size="xl" treatment="seaglass" client:visible>
+    <Plus size={24} weight="bold" />
+    Label
+    <ArrowRight size={24} weight="bold" />
+  </Button>
+</div>
+
+```tsx
+<Button variant="primary" style="fill" size="xl" treatment="seaglass">
+  <Plus size={24} />
+  Label
+  <ArrowRight size={24} />
+</Button>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -121,6 +146,7 @@ When `isLoading` is true, the button is disabled and displays a spinner while ma
 | `variant` | `'primary' \| 'secondary' \| 'danger'` | `'primary'` | The visual category of the button. |
 | `style` | `'fill' \| 'transparent' \| 'ghost'` | `'fill'` | The internal fill/border style. |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The vertical scale of the button. |
+| `treatment` | `'basic' \| 'seaglass'` | `'basic'` | Selects the visual rendering family without changing the semantic variant/style API. |
 | `isLoading` | `boolean` | `false` | Shows a loading spinner and disables interaction. |
 | `isDisabled` | `boolean` | `false` | Standard disabled state. |
 
