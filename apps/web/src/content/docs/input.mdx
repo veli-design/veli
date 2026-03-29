@@ -1,0 +1,106 @@
+---
+title: Input
+description: Accessible text input built with React Aria TextField primitives and Coral token styling.
+---
+
+import { Input } from '@tradenetcorp/coral-ui/input';
+import {
+  ArrowRight,
+  CalendarBlank,
+  CaretDown,
+  Info,
+  MagnifyingGlass,
+  WarningCircle,
+} from 'phosphor-react';
+
+# Input
+
+The Input component wraps React Aria's `TextField` and `Input` primitives in a Figma-aligned shell with support for labels, helper text, validation messaging, and accessory slots.
+
+## Import
+
+```tsx
+import { Input } from '@tradenetcorp/coral-ui/input';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <div className="w-[320px]">
+    <Input label="Email" placeholder="name@example.com" description="Helper text" client:visible />
+  </div>
+</div>
+
+```tsx
+<Input
+  label="Email"
+  placeholder="name@example.com"
+  description="Helper text"
+/>
+```
+
+## Figma Exploration
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <div className="w-[320px]">
+    <Input
+      client:visible
+      label="Label"
+      labelSupplementary="(Optional)"
+      isRequired
+      labelIcon={<Info size={12} />}
+      action="Action"
+      placeholder="Placeholder"
+      description="Helper text"
+      startAddon={<MagnifyingGlass size={16} />}
+      startContent={<CalendarBlank size={16} />}
+      endContent={
+        <span className="flex items-center gap-[4px]">
+          <WarningCircle size={16} />
+          <CaretDown size={16} />
+        </span>
+      }
+      endAddon={<ArrowRight size={16} />}
+    />
+  </div>
+</div>
+
+## Validation
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <div className="grid gap-[16px] md:grid-cols-2">
+    <Input
+      client:visible
+      label="Required"
+      placeholder="Enter value"
+      isRequired
+      description="Helper text"
+    />
+    <Input
+      client:visible
+      label="Invalid"
+      placeholder="Enter value"
+      isInvalid
+      errorMessage="This field needs attention."
+      endContent={<WarningCircle size={16} />}
+    />
+  </div>
+</div>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `label` | `ReactNode` | - | Visible label content rendered with React Aria's `Label`. |
+| `labelSupplementary` | `ReactNode` | - | Inline helper copy beside the label, for cases like `(Optional)`. |
+| `labelIcon` | `ReactNode` | - | Small icon placed after the label content. |
+| `action` | `ReactNode` | - | Right-aligned header content, suitable for an inline action. |
+| `description` | `ReactNode` | - | Helper text shown beneath the field when not invalid. |
+| `errorMessage` | `ReactNode` | - | Validation content shown beneath the field when `isInvalid` is true. |
+| `startAddon` | `ReactNode` | - | Leading content rendered inside the inset 24px accessory container. |
+| `startContent` | `ReactNode` | - | Leading inline content rendered directly inside the field shell. |
+| `endContent` | `ReactNode` | - | Trailing inline content rendered directly inside the field shell. |
+| `endAddon` | `ReactNode` | - | Trailing content rendered inside the inset 24px accessory container. |
+| `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
+
+All other `react-aria-components` `TextField` props are supported, excluding `className`, `style`, and direct child composition overrides.
