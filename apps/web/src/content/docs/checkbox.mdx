@@ -3,6 +3,12 @@ title: Checkbox
 description: Accessible checkbox component with square and round styles.
 ---
 
+import {
+  CheckboxDisabledDemo,
+  CheckboxStylesDemo,
+  CheckboxUsageDemo,
+} from '../../components/DocsExamples';
+
 # Checkbox
 
 The Checkbox component supports checked, unchecked, and indeterminate states with both square and round styles.
@@ -13,20 +19,10 @@ The Checkbox component supports checked, unchecked, and indeterminate states wit
 import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 ```
 
-import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
-
 ## Usage
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <div className="flex flex-col gap-[12px]">
-    <Checkbox client:visible>Default</Checkbox>
-    <Checkbox client:visible defaultSelected>
-      Checked
-    </Checkbox>
-    <Checkbox client:visible isIndeterminate>
-      Indeterminate
-    </Checkbox>
-  </div>
+  <CheckboxUsageDemo client:visible />
 </div>
 
 ```tsx
@@ -38,14 +34,7 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 ## Styles
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <div className="flex flex-col gap-[12px]">
-    <Checkbox client:visible shape="square">
-      Square
-    </Checkbox>
-    <Checkbox client:visible shape="round">
-      Round
-    </Checkbox>
-  </div>
+  <CheckboxStylesDemo client:visible />
 </div>
 
 ```tsx
@@ -56,17 +45,7 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 ## Disabled
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <div className="flex flex-col gap-[12px]">
-    <Checkbox client:visible isDisabled>
-      Off
-    </Checkbox>
-    <Checkbox client:visible defaultSelected isDisabled>
-      On
-    </Checkbox>
-    <Checkbox client:visible isIndeterminate isDisabled>
-      Indeterminate
-    </Checkbox>
-  </div>
+  <CheckboxDisabledDemo client:visible />
 </div>
 
 ## Props

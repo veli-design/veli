@@ -3,15 +3,11 @@ title: Input
 description: Accessible text input built with React Aria TextField primitives and Coral token styling.
 ---
 
-import { Input } from '@tradenetcorp/coral-ui/input';
 import {
-  ArrowRight,
-  CalendarBlank,
-  CaretDown,
-  Info,
-  MagnifyingGlass,
-  WarningCircle,
-} from 'phosphor-react';
+  InputExplorationDemo,
+  InputUsageDemo,
+  InputValidationDemo,
+} from '../../components/DocsExamples';
 
 # Input
 
@@ -26,9 +22,7 @@ import { Input } from '@tradenetcorp/coral-ui/input';
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <div className="w-[320px]">
-    <Input label="Email" placeholder="name@example.com" description="Helper text" client:visible />
-  </div>
+  <InputUsageDemo client:visible />
 </div>
 
 ```tsx
@@ -42,49 +36,13 @@ import { Input } from '@tradenetcorp/coral-ui/input';
 ## Figma Exploration
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <div className="w-[320px]">
-    <Input
-      client:visible
-      label="Label"
-      labelSupplementary="(Optional)"
-      isRequired
-      labelIcon={<Info size={12} />}
-      action="Action"
-      placeholder="Placeholder"
-      description="Helper text"
-      startAddon={<MagnifyingGlass size={16} />}
-      startContent={<CalendarBlank size={16} />}
-      endContent={
-        <span className="flex items-center gap-[4px]">
-          <WarningCircle size={16} />
-          <CaretDown size={16} />
-        </span>
-      }
-      endAddon={<ArrowRight size={16} />}
-    />
-  </div>
+  <InputExplorationDemo client:visible />
 </div>
 
 ## Validation
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <div className="grid gap-[16px] md:grid-cols-2">
-    <Input
-      client:visible
-      label="Required"
-      placeholder="Enter value"
-      isRequired
-      description="Helper text"
-    />
-    <Input
-      client:visible
-      label="Invalid"
-      placeholder="Enter value"
-      isInvalid
-      errorMessage="This field needs attention."
-      endContent={<WarningCircle size={16} />}
-    />
-  </div>
+  <InputValidationDemo client:visible />
 </div>
 
 ## Props
