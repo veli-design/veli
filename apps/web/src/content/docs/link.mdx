@@ -14,13 +14,17 @@ import { Link } from '@tradenetcorp/coral-ui/link';
 import { ArrowRight, Link as LinkIcon } from 'phosphor-react';
 ```
 
-import { Link } from '@tradenetcorp/coral-ui/link';
-import { ArrowRight, Link as LinkIcon, Plus, DownloadSimple } from 'phosphor-react';
+import {
+  LinkIconsDemo,
+  LinkSizesDemo,
+  LinkUsageDemo,
+  LinkVariantsDemo,
+} from '../../components/DocsExamples';
 
 ## Usage
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <Link href="#" client:visible>Link Label</Link>
+  <LinkUsageDemo client:visible />
 </div>
 
 ```tsx
@@ -32,27 +36,7 @@ import { ArrowRight, Link as LinkIcon, Plus, DownloadSimple } from 'phosphor-rea
 The link supports three variants and various underlining options.
 
 <div className="preview p-6 border rounded-lg bg-surface-100 mb-4 overflow-x-auto">
-  <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-    <div />
-    <div className="text-xs font-bold uppercase text-gray-400 text-center">Plain</div>
-    <div className="text-xs font-bold uppercase text-gray-400 text-center">Hover Underline</div>
-    <div className="text-xs font-bold uppercase text-gray-400 text-center">Always Underline</div>
-
-    <div className="text-sm font-medium">Primary</div>
-    <div className="flex justify-center"><Link variant="primary" underline="none" client:visible>Link</Link></div>
-    <div className="flex justify-center"><Link variant="primary" underline="hover" client:visible>Link</Link></div>
-    <div className="flex justify-center"><Link variant="primary" underline="always" client:visible>Link</Link></div>
-
-    <div className="text-sm font-medium">Secondary</div>
-    <div className="flex justify-center"><Link variant="secondary" underline="none" client:visible>Link</Link></div>
-    <div className="flex justify-center"><Link variant="secondary" underline="hover" client:visible>Link</Link></div>
-    <div className="flex justify-center"><Link variant="secondary" underline="always" client:visible>Link</Link></div>
-
-    <div className="text-sm font-medium p-2 rounded">Inverted</div>
-    <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="none" client:visible>Link</Link></div>
-    <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="hover" client:visible>Link</Link></div>
-    <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="always" client:visible>Link</Link></div>
-  </div>
+  <LinkVariantsDemo client:visible />
 </div>
 
 ## Icons
@@ -64,22 +48,7 @@ To maintain design consistency, icons should follow these size guidelines:
 - **XS Links**: 12px
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-8 flex-wrap items-center">
-  <Link size="xl" client:visible>
-    <Plus size={24} weight="bold" />
-    XL Link
-  </Link>
-  <Link size="lg" variant="secondary" client:visible>
-    <DownloadSimple size={20} weight="bold" />
-    LG Link
-  </Link>
-  <Link size="md" client:visible>
-    MD Link
-    <ArrowRight size={16} weight="bold" />
-  </Link>
-  <Link size="xs" client:visible>
-    <ArrowRight size={12} weight="bold" />
-    XS Link
-  </Link>
+  <LinkIconsDemo client:visible />
 </div>
 
 ```tsx
@@ -95,11 +64,7 @@ To maintain design consistency, icons should follow these size guidelines:
 Font sizes range from 12px (XS) to 20px (XL) to match the button scale.
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-6 items-center flex-wrap">
-  <Link size="xs" client:visible>Extra Small</Link>
-  <Link size="sm" client:visible>Small</Link>
-  <Link size="md" client:visible>Medium</Link>
-  <Link size="lg" client:visible>Large</Link>
-  <Link size="xl" client:visible>Extra Large</Link>
+  <LinkSizesDemo client:visible />
 </div>
 
 ## Props

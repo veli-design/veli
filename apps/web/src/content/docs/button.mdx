@@ -14,13 +14,19 @@ import { Button } from '@tradenetcorp/coral-ui/button';
 import { Plus, ArrowRight } from 'phosphor-react';
 ```
 
-import { Button } from '@tradenetcorp/coral-ui/button';
-import { Plus, ArrowRight, Trash, DownloadSimple } from 'phosphor-react';
+import {
+  ButtonIconsDemo,
+  ButtonLoadingDemo,
+  ButtonSeaglassDemo,
+  ButtonSizesDemo,
+  ButtonUsageDemo,
+  ButtonVariantsDemo,
+} from '../../components/DocsExamples';
 
 ## Usage
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <Button client:visible>Click me</Button>
+  <ButtonUsageDemo client:visible />
 </div>
 
 ```tsx
@@ -32,27 +38,7 @@ import { Plus, ArrowRight, Trash, DownloadSimple } from 'phosphor-react';
 The button supports three variants and three styles, creating a flexible visual language.
 
 <div className="preview p-6 border rounded-lg bg-surface-100 mb-4 overflow-x-auto">
-  <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-    <div />
-    <div className="text-xs font-bold uppercase text-gray-400">Fill</div>
-    <div className="text-xs font-bold uppercase text-gray-400">Transparent</div>
-    <div className="text-xs font-bold uppercase text-gray-400">Ghost</div>
-
-    <div className="text-sm font-medium">Primary</div>
-    <Button variant="primary" style="fill" client:visible>Button</Button>
-    <Button variant="primary" style="transparent" client:visible>Button</Button>
-    <Button variant="primary" style="ghost" client:visible>Button</Button>
-
-    <div className="text-sm font-medium">Secondary</div>
-    <Button variant="secondary" style="fill" client:visible>Button</Button>
-    <Button variant="secondary" style="transparent" client:visible>Button</Button>
-    <Button variant="secondary" style="ghost" client:visible>Button</Button>
-
-    <div className="text-sm font-medium">Danger</div>
-    <Button variant="danger" style="fill" client:visible>Button</Button>
-    <Button variant="danger" style="transparent" client:visible>Button</Button>
-    <Button variant="danger" style="ghost" client:visible>Button</Button>
-  </div>
+  <ButtonVariantsDemo client:visible />
 </div>
 
 ## Icons
@@ -64,22 +50,7 @@ To maintain design consistency, icons should follow these size guidelines:
 - **XS Buttons**: 12px
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 flex-wrap items-center">
-  <Button size="xl" client:visible>
-    <Plus size={24} weight="bold" />
-    XL Button
-  </Button>
-  <Button size="lg" variant="secondary" style="transparent" client:visible>
-    <DownloadSimple size={20} weight="bold" />
-    LG Button
-  </Button>
-  <Button size="md" variant="danger" style="ghost" client:visible>
-    <Trash size={16} weight="bold" />
-    MD Button
-  </Button>
-  <Button size="xs" client:visible>
-    <ArrowRight size={12} weight="bold" />
-    XS Button
-  </Button>
+  <ButtonIconsDemo client:visible />
 </div>
 
 ```tsx
@@ -95,11 +66,7 @@ To maintain design consistency, icons should follow these size guidelines:
 Heights range from 28px (XS) to 60px (XL) to accommodate various context requirements.
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 items-center flex-wrap">
-  <Button size="xs" client:visible>Extra Small</Button>
-  <Button size="sm" client:visible>Small</Button>
-  <Button size="md" client:visible>Medium</Button>
-  <Button size="lg" client:visible>Large</Button>
-  <Button size="xl" client:visible>Extra Large</Button>
+  <ButtonSizesDemo client:visible />
 </div>
 
 ## Loading State
@@ -107,11 +74,27 @@ Heights range from 28px (XS) to 60px (XL) to accommodate various context require
 When `isLoading` is true, the button is disabled and displays a spinner while maintaining its dimensions.
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 items-center">
-  <Button isLoading client:visible>Processing...</Button>
+  <ButtonLoadingDemo client:visible />
 </div>
 
 ```tsx
 <Button isLoading>Processing...</Button>
+```
+
+## Enhanced Styling
+
+Use `treatment="seaglass"` to opt into the stylized treatment without changing the base button behavior.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 items-center flex-wrap">
+  <ButtonSeaglassDemo client:visible />
+</div>
+
+```tsx
+<Button variant="primary" style="fill" size="xl" treatment="seaglass">
+  <Plus size={24} />
+  Label
+  <ArrowRight size={24} />
+</Button>
 ```
 
 ## Props
@@ -121,6 +104,7 @@ When `isLoading` is true, the button is disabled and displays a spinner while ma
 | `variant` | `'primary' \| 'secondary' \| 'danger'` | `'primary'` | The visual category of the button. |
 | `style` | `'fill' \| 'transparent' \| 'ghost'` | `'fill'` | The internal fill/border style. |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The vertical scale of the button. |
+| `treatment` | `'basic' \| 'seaglass'` | `'basic'` | Selects the visual rendering family without changing the semantic variant/style API. |
 | `isLoading` | `boolean` | `false` | Shows a loading spinner and disables interaction. |
 | `isDisabled` | `boolean` | `false` | Standard disabled state. |
 

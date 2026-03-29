@@ -1,0 +1,59 @@
+---
+title: Checkbox
+description: Accessible checkbox component with square and round styles.
+---
+
+import {
+  CheckboxDisabledDemo,
+  CheckboxStylesDemo,
+  CheckboxUsageDemo,
+} from '../../components/DocsExamples';
+
+# Checkbox
+
+The Checkbox component supports checked, unchecked, and indeterminate states with both square and round styles.
+
+## Import
+
+```tsx
+import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
+```
+
+## Usage
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <CheckboxUsageDemo client:visible />
+</div>
+
+```tsx
+<Checkbox>Default</Checkbox>
+<Checkbox defaultSelected>Checked</Checkbox>
+<Checkbox isIndeterminate>Indeterminate</Checkbox>
+```
+
+## Styles
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <CheckboxStylesDemo client:visible />
+</div>
+
+```tsx
+<Checkbox shape="square">Square</Checkbox>
+<Checkbox shape="round">Round</Checkbox>
+```
+
+## Disabled
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
+  <CheckboxDisabledDemo client:visible />
+</div>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `shape` | `'square' \| 'round'` | `'square'` | Visual style of the control. |
+| `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state. |
+| `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
+
+*Note: All other `react-aria-components` Checkbox props are supported, excluding `className` and `style` overrides.*

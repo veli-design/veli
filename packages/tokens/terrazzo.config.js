@@ -16,14 +16,14 @@ export default defineConfig({
       theme: {
         // Map your DTCG tokens to Tailwind theme
         // Using glob patterns to match your actual token structure
-        color: ['color.*'], // matches color.gray.*, color.blue.*, etc.
+        color: ['colors.*'], // matches colors.gray.*, colors.blue.*, etc.
         fontFamily: {
           sans: 'typography.font-stack.San-serif',
           mono: 'typography.font-stack.Monospace',
         },
         fontSize: ['typography.type-scale.*'],
+        spacing: ['base-sizes.*'],
         // Uncomment and add other mappings as needed:
-        // spacing: ['Base Size.*'],
         // borderRadius: ['borderRadius.*'],
         // boxShadow: ['shadow.*'],
       },
