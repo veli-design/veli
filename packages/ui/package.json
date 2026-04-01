@@ -6,6 +6,7 @@
   "exports": {
     "./button": "./src/button.tsx",
     "./checkbox": "./src/checkbox.tsx",
+    "./combobox": "./src/combobox.tsx",
     "./input": "./src/input.tsx",
     "./link": "./src/link.tsx",
     "./menu": "./src/menu.tsx",
