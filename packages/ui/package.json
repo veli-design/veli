@@ -11,7 +11,8 @@
     "./menu": "./src/menu.tsx",
     "./modal": "./src/modal.tsx",
     "./radio": "./src/radio.tsx",
-    "./switch": "./src/switch.tsx"
+    "./switch": "./src/switch.tsx",
+    "./tabs": "./src/tabs.tsx"
   },
   "scripts": {
     "build": "tsc",
