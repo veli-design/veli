@@ -227,11 +227,12 @@ const buttonContentVariants = cva('relative z-[1] inline-flex items-center justi
 });
 
 export interface ButtonProps
-  extends Omit<AriaButtonProps, 'style' | 'className' | 'children'>,
+  extends Omit<AriaButtonProps, 'style' | 'children'>,
   VariantProps<typeof buttonVariants> {
   children?: React.ReactNode;
   isLoading?: boolean;
   treatment?: 'basic' | 'seaglass';
+  className?: string;
 }
 
 export function Button({
@@ -242,20 +243,22 @@ export function Button({
   isLoading,
   treatment = 'basic',
   isDisabled,
+  className,
   ...props
 }: ButtonProps) {
   const isLoadingOnly = Boolean(isLoading && !children);
-  const className = twMerge(
+  const resolvedClassName = twMerge(
     buttonVariants({ variant, style, size }),
     treatment === 'seaglass' ? seaglassButtonVariants({ variant, style }) : undefined,
-    isLoadingOnly ? loadingOnlyMinWidthVariants({ size }) : undefined
+    isLoadingOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
+    className
   );
 
   return (
     <AriaButton
       {...props}
       isDisabled={isDisabled || isLoading}
-      className={className}
+      className={resolvedClassName}
     >
       {isLoading ? (
         <span className={buttonContentVariants({ size, hasChildren: Boolean(children) })}>

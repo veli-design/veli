@@ -5,7 +5,10 @@
   "type": "module",
   "exports": {
     "./button": "./src/button.tsx",
+    "./calendar": "./src/calendar.tsx",
     "./checkbox": "./src/checkbox.tsx",
+    "./date-field": "./src/date-field.tsx",
+    "./date-picker": "./src/date-picker.tsx",
     "./input": "./src/input.tsx",
     "./link": "./src/link.tsx",
     "./menu": "./src/menu.tsx",
@@ -24,6 +27,7 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "phosphor-react": "^1.4.1",
     "react-aria-components": "^1.4.0",
     "tailwind-merge": "^2.5.5"
   },
