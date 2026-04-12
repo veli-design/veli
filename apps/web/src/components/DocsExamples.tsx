@@ -3,6 +3,7 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 import { Input } from '@tradenetcorp/coral-ui/input';
 import { Link } from '@tradenetcorp/coral-ui/link';
 import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
+import { Select, SelectItem, SelectSection } from '@tradenetcorp/coral-ui/select';
 import {
   ArrowRight,
   CalendarBlank,
@@ -179,6 +180,73 @@ export function InputValidationDemo() {
         errorMessage="This field needs attention."
         endContent={<WarningCircle size={16} />}
       />
+    </div>
+  );
+}
+
+export function SelectUsageDemo() {
+  return (
+    <div className="w-[320px]">
+      <Select label="Country" placeholder="Choose a country" description="Helper text">
+        <SelectItem id="my">Malaysia</SelectItem>
+        <SelectItem id="sg">Singapore</SelectItem>
+        <SelectItem id="th">Thailand</SelectItem>
+      </Select>
+    </div>
+  );
+}
+
+export function SelectExplorationDemo() {
+  return (
+    <div className="w-[320px]">
+      <Select
+        label="Market"
+        labelSupplementary="(Optional)"
+        labelIcon={<Info size={12} />}
+        action="Action"
+        placeholder="Choose a market"
+        description="Helper text"
+        startContent={<MagnifyingGlass size={16} />}
+        endContent={<WarningCircle size={16} />}
+      >
+        <SelectSection title="ASEAN">
+          <SelectItem id="my" description="Bursa-linked products">
+            Malaysia
+          </SelectItem>
+          <SelectItem id="sg" description="SGX-linked products">
+            Singapore
+          </SelectItem>
+        </SelectSection>
+        <SelectSection title="North Asia">
+          <SelectItem id="jp">Japan</SelectItem>
+          <SelectItem id="hk">Hong Kong</SelectItem>
+        </SelectSection>
+      </Select>
+    </div>
+  );
+}
+
+export function SelectValidationDemo() {
+  return (
+    <div className="grid gap-[16px] md:grid-cols-2">
+      <Select
+        label="Required"
+        placeholder="Select an option"
+        isRequired
+        description="Helper text"
+      >
+        <SelectItem id="cash">Cash</SelectItem>
+        <SelectItem id="margin">Margin</SelectItem>
+      </Select>
+      <Select
+        label="Invalid"
+        placeholder="Select an option"
+        isInvalid
+        errorMessage="Please choose a valid option."
+      >
+        <SelectItem id="active">Active</SelectItem>
+        <SelectItem id="inactive">Inactive</SelectItem>
+      </Select>
     </div>
   );
 }
