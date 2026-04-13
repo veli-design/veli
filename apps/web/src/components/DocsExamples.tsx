@@ -5,6 +5,7 @@ import {
   ComboBoxItem,
   ComboBoxSection,
 } from '@tradenetcorp/coral-ui/combobox';
+import { Divider } from '@tradenetcorp/coral-ui/divider';
 import { Input } from '@tradenetcorp/coral-ui/input';
 import { Link } from '@tradenetcorp/coral-ui/link';
 import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
@@ -184,6 +185,64 @@ export function InputValidationDemo() {
         errorMessage="This field needs attention."
         endContent={<WarningCircle size={16} />}
       />
+    </div>
+  );
+}
+
+export function DividerUsageDemo() {
+  return (
+    <div className="w-[320px] rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="space-y-[12px]">
+        <div>
+          <h3 className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Applicant details
+          </h3>
+          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+            Review the information before continuing.
+          </p>
+        </div>
+        <Divider />
+        <div className="space-y-[8px] text-[14px] leading-[20px] text-fg-text-default-default">
+          <p>Name: Aishath Mariyam</p>
+          <p>Island: Male&apos;</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function DividerVariantsDemo() {
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Horizontal divider
+          </p>
+          <div className="space-y-[10px] text-[14px] leading-[20px] text-fg-text-default-default">
+            <p>Passport number</p>
+            <Divider />
+            <p>National ID number</p>
+            <Divider className="bg-fg-border-default-strong" />
+            <p>Driving license number</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Vertical divider
+          </p>
+          <div className="flex items-center gap-[12px] text-[14px] leading-[20px] text-fg-text-default-default">
+            <span>Overview</span>
+            <Divider orientation="vertical" />
+            <span>Documents</span>
+            <Divider orientation="vertical" className="bg-fg-border-default-strong" />
+            <span>History</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
