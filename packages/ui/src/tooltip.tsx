@@ -2,6 +2,7 @@ import React from "react";
 import {
   Tooltip as AriaTooltip,
   TooltipProps as AriaTooltipProps,
+  TooltipTrigger as AriaTooltipTrigger,
   OverlayArrow,
   composeRenderProps,
 } from "react-aria-components";
@@ -40,6 +41,13 @@ export interface TooltipProps
   extends Omit<AriaTooltipProps, "children">,
     Omit<VariantProps<typeof tooltipVariants>, "isEntering" | "isExiting"> {
   children: React.ReactNode;
+}
+
+export interface TooltipTriggerProps
+  extends React.ComponentProps<typeof AriaTooltipTrigger> {}
+
+export function TooltipTrigger(props: TooltipTriggerProps) {
+  return <AriaTooltipTrigger {...props} />;
 }
 
 export function Tooltip({ children, className, ...props }: TooltipProps) {

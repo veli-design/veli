@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { TooltipTrigger } from "react-aria-components";
 import { Button } from "@tradenetcorp/coral-ui/button";
-import { Tooltip } from "@tradenetcorp/coral-ui/tooltip";
+import { Tooltip, TooltipTrigger } from "@tradenetcorp/coral-ui/tooltip";
 
 type TooltipStoryArgs = ComponentProps<typeof Tooltip> & {
   /** Hover delay before the tooltip opens; passed to `TooltipTrigger`. */
@@ -18,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Brief contextual hint anchored to a control, built with `react-aria-components` and Coral styling. Wrap a trigger and this `Tooltip` in `TooltipTrigger` so hover and keyboard focus show the overlay with correct timing and accessibility.",
+          "Brief contextual hint anchored to a control, styled with Coral tokens and exposed through the Coral UI API. Wrap a trigger and this `Tooltip` in `TooltipTrigger` so hover and keyboard focus show the overlay with correct timing and accessibility.",
       },
     },
   },
