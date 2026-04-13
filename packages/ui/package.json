@@ -9,12 +9,14 @@
     "./checkbox": "./src/checkbox.tsx",
     "./date-field": "./src/date-field.tsx",
     "./date-picker": "./src/date-picker.tsx",
+    "./combobox": "./src/combobox.tsx",
     "./input": "./src/input.tsx",
     "./link": "./src/link.tsx",
     "./menu": "./src/menu.tsx",
     "./modal": "./src/modal.tsx",
     "./radio": "./src/radio.tsx",
-    "./switch": "./src/switch.tsx"
+    "./switch": "./src/switch.tsx",
+    "./tabs": "./src/tabs.tsx"
   },
   "scripts": {
     "build": "tsc",
