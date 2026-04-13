@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./breadcrumbs": "./src/breadcrumbs.tsx",
     "./button": "./src/button.tsx",
     "./checkbox": "./src/checkbox.tsx",
     "./combobox": "./src/combobox.tsx",

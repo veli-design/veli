@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Button } from '@tradenetcorp/coral-ui/button';
+import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/coral-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 import {
   ComboBox,
@@ -12,6 +14,7 @@ import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
 import {
   ArrowRight,
   CalendarBlank,
+  CaretLeft,
   CaretDown,
   DownloadSimple,
   Info,
@@ -23,6 +26,100 @@ import {
 
 export function ButtonUsageDemo() {
   return <Button>Click me</Button>;
+}
+
+type BreadcrumbTrailItem = {
+  id: string;
+  label: string;
+  href?: string;
+};
+
+const BREADCRUMB_TRAIL: BreadcrumbTrailItem[] = [
+  { id: 'home', label: 'Home', href: '#' },
+  { id: 'services', label: 'Services', href: '#' },
+  { id: 'permits', label: 'Permits', href: '#' },
+  { id: 'fishing', label: 'Fishing permit' },
+];
+
+export function BreadcrumbsUsageDemo() {
+  return (
+    <Breadcrumbs aria-label="Breadcrumb">
+      <Breadcrumb href="#">Home</Breadcrumb>
+      <Breadcrumb href="#">Services</Breadcrumb>
+      <Breadcrumb href="#">Permits</Breadcrumb>
+      <Breadcrumb>Fishing permit</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsVariantsDemo() {
+  const [currentIndex, setCurrentIndex] = useState(BREADCRUMB_TRAIL.length - 1);
+  const items = BREADCRUMB_TRAIL.slice(0, currentIndex + 1);
+
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Static breadcrumb trail
+          </p>
+          <Breadcrumbs aria-label="Site navigation breadcrumb">
+            <Breadcrumb href="#">Home</Breadcrumb>
+            <Breadcrumb href="#">Departments</Breadcrumb>
+            <Breadcrumb href="#" isDisabled>
+              Fisheries
+            </Breadcrumb>
+            <Breadcrumb>Licensing</Breadcrumb>
+          </Breadcrumbs>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Back link treatment
+          </p>
+          <Breadcrumbs aria-label="Back breadcrumb">
+            <Breadcrumb href="#" tone="accent">
+              <CaretLeft aria-hidden size={16} weight="bold" />
+              <span>Previous Page</span>
+            </Breadcrumb>
+            <Breadcrumb href="#">Menu One</Breadcrumb>
+            <Breadcrumb>...</Breadcrumb>
+            <Breadcrumb href="#">Menu Five</Breadcrumb>
+            <Breadcrumb>Menu Active</Breadcrumb>
+          </Breadcrumbs>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px] lg:col-span-2">
+        <div className="space-y-[12px]">
+          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            Data-driven breadcrumb trail
+          </p>
+          <Breadcrumbs
+            aria-label="Application breadcrumb"
+            items={items}
+            onAction={(key) => {
+              const nextIndex = BREADCRUMB_TRAIL.findIndex((item) => item.id === key);
+              if (nextIndex >= 0) {
+                setCurrentIndex(nextIndex);
+              }
+            }}
+          >
+            {(item) => (
+              <Breadcrumb href={item.href}>
+                {item.label}
+              </Breadcrumb>
+            )}
+          </Breadcrumbs>
+          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+            Activate an earlier crumb to collapse the trail to that level.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function ButtonVariantsDemo() {
