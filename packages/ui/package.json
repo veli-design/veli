@@ -15,6 +15,7 @@
     "./modal": "./src/modal.tsx",
     "./radio": "./src/radio.tsx",
     "./switch": "./src/switch.tsx",
+    "./tags": "./src/tags.tsx",
     "./tabs": "./src/tabs.tsx"
   },
   "scripts": {
