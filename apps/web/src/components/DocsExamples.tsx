@@ -55,7 +55,7 @@ const REMOVABLE_TAG_SEED: TagDemoItem[] = [
   { id: 'licences', label: 'Licences' },
 ];
 
-function removeTagItems(items: TagDemoItem[], keys: Iterable<React.Key>) {
+function removeTagItems(items: TagDemoItem[], keys: Iterable<string | number>) {
   const removedKeys = new Set(keys);
   return items.filter((item) => !removedKeys.has(item.id));
 }
@@ -181,10 +181,12 @@ export function TagsVariantsDemo() {
           <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
             Removable tags
           </p>
-          <TagGroup
+          <TagGroup<TagDemoItem>
             label="Saved topics"
             items={removableItems}
-            onRemove={(keys) => setRemovableItems((current) => removeTagItems(current, keys))}
+            onRemove={(keys) =>
+              setRemovableItems((current: TagDemoItem[]) => removeTagItems(current, keys))
+            }
             renderEmptyState={() => (
               <div className="rounded-[12px] border border-dashed border-fg-border-default-subtle px-[12px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle">
                 All saved topics have been removed.

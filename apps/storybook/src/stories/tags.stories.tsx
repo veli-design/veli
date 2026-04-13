@@ -28,7 +28,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function removeItems(items: TagItem[], keys: Iterable<React.Key>) {
+function removeItems(items: TagItem[], keys: Iterable<string | number>) {
   const removedKeys = new Set(keys);
   return items.filter((item) => !removedKeys.has(item.id));
 }
@@ -76,11 +76,11 @@ export const Variations: Story = {
             <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
               Removable tags
             </p>
-            <TagGroup
+            <TagGroup<TagItem>
               label="Saved topics"
               items={removableItems}
               onRemove={(keys) =>
-                setRemovableItems((current) => removeItems(current, keys))
+                setRemovableItems((current: TagItem[]) => removeItems(current, keys))
               }
               renderEmptyState={() => (
                 <div className="rounded-[12px] border border-dashed border-fg-border-default-subtle px-[12px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle">
