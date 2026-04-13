@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dialog, DialogTrigger } from "react-aria-components";
 import { Button } from "@tradenetcorp/coral-ui/button";
-import { Popover } from "@tradenetcorp/coral-ui/popover";
+import {
+  Popover,
+  PopoverDialog,
+  PopoverTrigger,
+} from "@tradenetcorp/coral-ui/popover";
 
 const meta = {
   title: "Components/Popover",
@@ -11,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Floating panel anchored to a trigger, built with `react-aria-components` and Coral styling. Use with `DialogTrigger` and `Dialog` for focus management and accessibility.",
+          "Floating panel anchored to a trigger, styled with Coral tokens and exposed through the Coral UI API. Use with `PopoverTrigger` and `PopoverDialog` for focus management and accessibility.",
       },
     },
   },
@@ -59,17 +62,17 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-surface-bg p-8">
-      <DialogTrigger>
+      <PopoverTrigger>
         <Button variant="secondary">Open popover</Button>
         <Popover {...args}>
-          <Dialog className="max-w-xs p-4 outline-none">
+          <PopoverDialog className="max-w-xs p-4 outline-none">
             <p className="text-sm">
               This popover uses Coral surface styles and enter/exit animations.
               Adjust placement and arrow in the controls.
             </p>
-          </Dialog>
+          </PopoverDialog>
         </Popover>
-      </DialogTrigger>
+      </PopoverTrigger>
     </div>
   ),
 };
@@ -77,10 +80,10 @@ export const Playground: Story = {
 export const WithArrow: Story = {
   render: () => (
     <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-surface-bg p-8">
-      <DialogTrigger>
+      <PopoverTrigger>
         <Button>Filter</Button>
         <Popover showArrow placement="top">
-          <Dialog className="w-72 p-4 outline-none">
+          <PopoverDialog className="w-72 p-4 outline-none">
             <p className="mb-3 text-sm font-medium text-fg-text-default-default">
               Quick filters
             </p>
@@ -88,9 +91,9 @@ export const WithArrow: Story = {
               The arrow offset matches the panel; placement flips the arrow
               orientation.
             </p>
-          </Dialog>
+          </PopoverDialog>
         </Popover>
-      </DialogTrigger>
+      </PopoverTrigger>
     </div>
   ),
 };
@@ -103,16 +106,16 @@ export const Placements: Story = {
       <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-surface-bg p-8">
         <div className="grid grid-cols-2 gap-16 sm:grid-cols-4">
           {placements.map((placement) => (
-            <DialogTrigger key={placement}>
+            <PopoverTrigger key={placement}>
               <Button variant="secondary" size="sm">
                 {placement}
               </Button>
               <Popover placement={placement} showArrow>
-                <Dialog className="w-48 p-3 text-center text-sm outline-none">
+                <PopoverDialog className="w-48 p-3 text-center text-sm outline-none">
                   Placement: <strong>{placement}</strong>
-                </Dialog>
+                </PopoverDialog>
               </Popover>
-            </DialogTrigger>
+            </PopoverTrigger>
           ))}
         </div>
       </div>

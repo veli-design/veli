@@ -1,4 +1,6 @@
 import {
+  Dialog as AriaDialog,
+  DialogTrigger as AriaDialogTrigger,
   OverlayArrow,
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
@@ -41,6 +43,20 @@ export interface PopoverProps
     Omit<VariantProps<typeof popoverVariants>, "isEntering" | "isExiting"> {
   showArrow?: boolean;
   children: React.ReactNode;
+}
+
+export interface PopoverTriggerProps
+  extends React.ComponentProps<typeof AriaDialogTrigger> {}
+
+export function PopoverTrigger(props: PopoverTriggerProps) {
+  return <AriaDialogTrigger {...props} />;
+}
+
+export interface PopoverDialogProps
+  extends React.ComponentProps<typeof AriaDialog> {}
+
+export function PopoverDialog(props: PopoverDialogProps) {
+  return <AriaDialog {...props} />;
 }
 
 export function Popover({
