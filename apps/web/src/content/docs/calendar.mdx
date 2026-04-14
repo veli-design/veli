@@ -1,0 +1,92 @@
+---
+title: Calendar
+description: Standalone calendar surface for selecting dates.
+---
+
+import {
+  CalendarControlledDemo,
+  CalendarUsageDemo,
+  CalendarVariantsDemo,
+} from '../../components/DateExamples';
+
+# Calendar
+
+`Calendar` is the standalone visual date selector. It is useful for embedded scheduling UIs and is also the popover calendar used by `DatePicker`.
+
+## Import
+
+```tsx
+import { Calendar } from '@tradenetcorp/coral-ui/calendar';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CalendarUsageDemo client:visible />
+</div>
+
+```tsx
+<Calendar aria-label="Appointment calendar" />
+```
+
+## Variants
+
+### Default
+
+- Use when you need a simple embedded calendar with standard single-date selection.
+- Best for dashboards, inline filters, and basic scheduling surfaces.
+
+### Controlled
+
+- Use when the selected date is owned by React state.
+- Best when the calendar must stay synced with form state, URL state, or another UI panel.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CalendarControlledDemo client:visible />
+</div>
+
+### Constraints and unavailable dates
+
+- Use when only certain dates should be selectable.
+- Best for bookings, appointments, public service scheduling, and blackout-date workflows.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CalendarVariantsDemo client:visible />
+</div>
+
+## Key Props
+
+### Selection
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `value` | `DateValue \| null` | Controlled selected date. |
+| `defaultValue` | `DateValue` | Uncontrolled initial selected date. |
+| `onChange` | `(value) => void` | Called when the selected date changes. |
+| `focusedValue` | `DateValue` | Controlled focused date for custom navigation flows. |
+| `defaultFocusedValue` | `DateValue` | Initial focused date when no value is selected. |
+| `onFocusChange` | `(value) => void` | Called when keyboard focus moves within the calendar. |
+
+### Display and Navigation
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `firstDayOfWeek` | `'sun' \| 'mon' \| ...` | Overrides the locale’s first weekday. |
+| `weekdayStyle` | `'narrow' \| 'short' \| 'long'` | Controls how weekday headers are rendered. |
+
+### Constraints and Availability
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `minValue` | `DateValue` | Lowest selectable date. |
+| `maxValue` | `DateValue` | Highest selectable date. |
+| `isDisabled` | `boolean` | Disables the whole calendar. |
+| `isDateUnavailable` | `(date) => boolean` | Marks dates as unavailable but still focusable. |
+
+### Accessibility
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `aria-label` | `string` | Required when there is no visible label. |
+
+All remaining supported React Aria `Calendar` props can still be passed through this wrapper.

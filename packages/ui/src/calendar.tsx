@@ -1,0 +1,211 @@
+import * as React from "react";
+import {
+  Calendar as AriaCalendar,
+  CalendarGridHeader as AriaCalendarGridHeader,
+  CalendarCell,
+  CalendarGrid,
+  CalendarGridBody,
+  CalendarHeaderCell,
+  Heading,
+  Text,
+  useLocale,
+  type CalendarCellRenderProps,
+  type CalendarGridProps,
+  type CalendarProps as AriaCalendarProps,
+  type DateValue,
+} from "react-aria-components";
+import { cva } from "class-variance-authority";
+import { twMerge } from "tailwind-merge";
+import { Button } from "./button";
+
+const calendarRootVariants = cva(
+  "flex w-[calc(10*var(--spacing)*7)] max-w-full flex-col rounded-2xl border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised p-4 font-sans text-fg-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)] [container-type:inline-size]",
+);
+
+const cellVariants = cva(
+  "flex aspect-square w-[calc((100cqw/7)-6px)] cursor-pointer items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
+  {
+    variants: {
+      isSelected: {
+        false:
+          "text-fg-text-default-default hover:bg-bg-button-secondary-subtle-default active:bg-bg-button-secondary-subtle-hover data-[outside-month]:text-fg-text-default-inactive data-[outside-visible-range]:invisible",
+        true: "bg-bg-button-primary-default text-white hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed data-[invalid]:bg-bg-button-danger-default forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
+      },
+      isDisabled: {
+        true: "cursor-not-allowed text-fg-text-disabled-disabled forced-colors:text-[GrayText]",
+        false: "",
+      },
+      isUnavailable: {
+        true: "text-red-900 line-through decoration-2 decoration-red-900",
+        false: "",
+      },
+      isFocusVisible: {
+        true: "ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-overlay-raised",
+        false: "",
+      },
+      isToday: {
+        true: "ring-1 ring-inset ring-fg-border-default-subtle",
+        false: "",
+      },
+    },
+    compoundVariants: [
+      {
+        isSelected: true,
+        isToday: true,
+        className: "ring-fg-border-focus",
+      },
+      {
+        isSelected: false,
+        isDisabled: false,
+        isToday: true,
+        className: "text-fg-text-default-high-contrast",
+      },
+    ],
+    defaultVariants: {
+      isSelected: false,
+      isDisabled: false,
+      isUnavailable: false,
+      isFocusVisible: false,
+      isToday: false,
+    },
+  },
+);
+
+export interface CalendarProps<T extends DateValue> extends Omit<
+  AriaCalendarProps<T>,
+  "children"
+> {
+  errorMessage?: string;
+  className?: string;
+  gridClassName?: string;
+  weekdayStyle?: CalendarGridProps["weekdayStyle"];
+}
+
+export function Calendar<T extends DateValue>({
+  errorMessage,
+  className,
+  gridClassName,
+  weekdayStyle = "short",
+  ...props
+}: CalendarProps<T>) {
+  return (
+    <AriaCalendar
+      {...props}
+      className={twMerge(calendarRootVariants(), className)}
+    >
+      <CalendarHeader />
+      <CalendarGrid
+        weekdayStyle={weekdayStyle}
+        className={twMerge("border-spacing-0", gridClassName)}
+      >
+        <CalendarGridHeader />
+        <CalendarGridBody>
+          {(date) => (
+            <CalendarCell
+              date={date}
+              className={(state) => getCalendarCellClassName(state)}
+            />
+          )}
+        </CalendarGridBody>
+      </CalendarGrid>
+      {errorMessage ? (
+        <Text
+          slot="errorMessage"
+          className="pt-3 text-sm text-fg-text-danger-muted"
+        >
+          {errorMessage}
+        </Text>
+      ) : null}
+    </AriaCalendar>
+  );
+}
+
+export function CalendarHeader() {
+  const { direction } = useLocale();
+
+  return (
+    <header className="border-box flex items-center gap-1 px-1 pb-5">
+      <Button
+        slot="previous"
+        variant="secondary"
+        style="ghost"
+        size="xs"
+        aria-label="Previous month"
+      >
+        {direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+      </Button>
+      <Heading className="mx-2 my-0 flex-1 text-center font-sans text-base font-semibold text-fg-text-default-high-contrast [font-variation-settings:normal]" />
+      <Button
+        slot="next"
+        variant="secondary"
+        style="ghost"
+        size="xs"
+        aria-label="Next month"
+      >
+        {direction === "rtl" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+      </Button>
+    </header>
+  );
+}
+
+export function CalendarGridHeader() {
+  return (
+    <AriaCalendarGridHeader>
+      {(day) => (
+        <CalendarHeaderCell className="pb-1 text-xs font-semibold text-fg-text-default-muted">
+          {day}
+        </CalendarHeaderCell>
+      )}
+    </AriaCalendarGridHeader>
+  );
+}
+
+function getCalendarCellClassName(state: CalendarCellRenderProps) {
+  return cellVariants({
+    isSelected: state.isSelected,
+    isDisabled: state.isDisabled,
+    isUnavailable: state.isUnavailable,
+    isFocusVisible: state.isFocusVisible,
+    isToday: state.isToday,
+  });
+}
+
+function ChevronLeftIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-[18px] w-[18px]"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.5 5L7.5 10L12.5 15"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-[18px] w-[18px]"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.5 5L12.5 10L7.5 15"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

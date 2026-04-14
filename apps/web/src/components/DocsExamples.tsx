@@ -1,5 +1,10 @@
 import { Button } from '@tradenetcorp/coral-ui/button';
 import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
+import {
+  ComboBox,
+  ComboBoxItem,
+  ComboBoxSection,
+} from '@tradenetcorp/coral-ui/combobox';
 import { Input } from '@tradenetcorp/coral-ui/input';
 import { Link } from '@tradenetcorp/coral-ui/link';
 import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
@@ -180,6 +185,81 @@ export function InputValidationDemo() {
         errorMessage="This field needs attention."
         endContent={<WarningCircle size={16} />}
       />
+    </div>
+  );
+}
+
+const COUNTRY_OPTIONS = [
+  { id: 'mv', name: 'Maldives' },
+  { id: 'lk', name: 'Sri Lanka' },
+  { id: 'sg', name: 'Singapore' },
+  { id: 'my', name: 'Malaysia' },
+  { id: 'ae', name: 'United Arab Emirates' },
+];
+
+export function ComboBoxUsageDemo() {
+  return (
+    <div className="w-[320px]">
+      <ComboBox
+        label="Country"
+        description="Start typing to filter options."
+        defaultItems={COUNTRY_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+      </ComboBox>
+    </div>
+  );
+}
+
+export function ComboBoxExplorationDemo() {
+  return (
+    <div className="w-[320px]">
+      <ComboBox
+        label="Location"
+        labelSupplementary="(Optional)"
+        action="Browse"
+        labelIcon={<Info size={12} />}
+        description="Choose a service location or enter a custom value."
+        placeholder="Search location"
+        allowsCustomValue
+        startAddon={<MagnifyingGlass size={16} />}
+        startContent={<CalendarBlank size={16} />}
+        endContent={<WarningCircle size={16} />}
+      >
+        <ComboBoxSection title="Popular">
+          <ComboBoxItem id="male">Male'</ComboBoxItem>
+          <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
+          <ComboBoxItem id="addu">Addu City</ComboBoxItem>
+        </ComboBoxSection>
+        <ComboBoxSection title="Regional">
+          <ComboBoxItem id="fuvahmulah">Fuvahmulah City</ComboBoxItem>
+          <ComboBoxItem id="kulhudhuffushi">Kulhudhuffushi City</ComboBoxItem>
+        </ComboBoxSection>
+      </ComboBox>
+    </div>
+  );
+}
+
+export function ComboBoxValidationDemo() {
+  return (
+    <div className="grid gap-[16px] md:grid-cols-2">
+      <ComboBox
+        label="Default"
+        description="Helper text"
+        placeholder="Choose a country"
+        defaultItems={COUNTRY_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+      </ComboBox>
+      <ComboBox
+        label="Invalid"
+        isInvalid
+        errorMessage="Select a supported option."
+        placeholder="Choose a country"
+        defaultItems={COUNTRY_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+      </ComboBox>
     </div>
   );
 }
