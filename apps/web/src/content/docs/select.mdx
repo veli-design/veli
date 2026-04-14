@@ -1,0 +1,64 @@
+---
+title: Select
+description: Accessible select built with React Aria Select primitives and Coral token styling.
+---
+
+import {
+  SelectExplorationDemo,
+  SelectUsageDemo,
+  SelectValidationDemo,
+} from '../../components/DocsExamples';
+
+# Select
+
+The Select component wraps React Aria's `Select`, `Button`, `Popover`, and `ListBox` primitives in a CDS-styled field shell with labels, helper text, validation messaging, and structured option content.
+
+## Import
+
+```tsx
+import { Select, SelectItem, SelectSection } from '@tradenetcorp/coral-ui/select';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SelectUsageDemo client:visible />
+</div>
+
+```tsx
+<Select label="Country" placeholder="Choose a country" description="Helper text">
+  <SelectItem id="my">Malaysia</SelectItem>
+  <SelectItem id="sg">Singapore</SelectItem>
+  <SelectItem id="th">Thailand</SelectItem>
+</Select>
+```
+
+## Figma Exploration
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SelectExplorationDemo client:visible />
+</div>
+
+## Validation
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SelectValidationDemo client:visible />
+</div>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `label` | `ReactNode` | - | Visible label content rendered with React Aria's `Label`. |
+| `labelSupplementary` | `ReactNode` | - | Inline helper copy beside the label, for cases like `(Optional)`. |
+| `labelIcon` | `ReactNode` | - | Small icon placed after the label content. |
+| `action` | `ReactNode` | - | Right-aligned header content, suitable for an inline action. |
+| `description` | `ReactNode` | - | Helper text shown beneath the field when not invalid. |
+| `errorMessage` | `ReactNode` | - | Validation content shown beneath the field when `isInvalid` is true. |
+| `startContent` | `ReactNode` | - | Leading inline content rendered inside the trigger shell. |
+| `endContent` | `ReactNode` | - | Trailing inline content rendered before the indicator. |
+| `indicator` | `ReactNode` | Default chevron | Custom trailing indicator content. |
+| `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `placeholder` | `string` | React Aria default | Placeholder text shown when no option is selected. |
+
+All other `react-aria-components` `Select` props are supported, excluding direct `className`, `style`, and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
