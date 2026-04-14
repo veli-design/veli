@@ -11,6 +11,7 @@
     "./link": "./src/link.tsx",
     "./menu": "./src/menu.tsx",
     "./modal": "./src/modal.tsx",
+    "./popover": "./src/popover.tsx",
     "./radio": "./src/radio.tsx",
     "./switch": "./src/switch.tsx",
     "./tabs": "./src/tabs.tsx",
