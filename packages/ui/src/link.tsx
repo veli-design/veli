@@ -4,7 +4,6 @@ import {
     LinkProps as AriaLinkProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { twMerge } from 'tailwind-merge';
 
 const linkVariants = cva(
     'inline-flex items-center justify-center gap-[8px] font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
@@ -103,19 +102,14 @@ export function Link({
             className={(state) => {
                 const isDisabled = forcedDisabled ?? state.isDisabled;
 
-                return twMerge(
-                    linkVariants({
-                        variant,
-                        underline,
-                        isHovered: isDisabled ? false : forcedHover ?? state.isHovered,
-                        isPressed: isDisabled ? false : forcedPressed ?? state.isPressed,
-                        isDisabled,
-                        isFocusVisible: forcedFocus ?? state.isFocusVisible,
-                    }),
-                    isDisabled
-                        ? 'pointer-events-none text-fg-text-disabled-disabled [&_svg]:text-fg-icons-disabled-disabled'
-                        : undefined
-                );
+                return linkVariants({
+                    variant,
+                    underline,
+                    isHovered: isDisabled ? false : forcedHover ?? state.isHovered,
+                    isPressed: isDisabled ? false : forcedPressed ?? state.isPressed,
+                    isDisabled,
+                    isFocusVisible: forcedFocus ?? state.isFocusVisible,
+                });
             }}
         >
             {children}

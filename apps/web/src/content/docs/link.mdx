@@ -11,7 +11,7 @@ The Link component provides an accessible, keyboard-navigable link with multiple
 
 ```tsx
 import { Link } from '@tradenetcorp/coral-ui/link';
-import { ArrowRight, Link as LinkIcon } from 'phosphor-react';
+import { Plus } from 'phosphor-react';
 ```
 
 import {
@@ -50,7 +50,7 @@ To maintain design consistency, icons should be sized to match the surrounding t
 ```tsx
 // Example of inherited typography with matching icons
 <span className="text-[20px] leading-[28px]">
-  <Link><Plus size={24} />XL Link</Link>
+  <Link><Plus size={20} />Large Link</Link>
 </span>
 
 <span className="text-[16px] leading-[24px]">
@@ -71,7 +71,7 @@ Links inherit font size and line height from their parent context.
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `variant` | `'primary' \| 'secondary' \| 'inverted'` | `'primary'` | The visual category of the link. |
-| `underline` | `'none' \| 'hover' \| 'always'` | `'hover'` | Underline behavior. |
+| `underline` | `'none' \| 'hover' \| 'always'` | `'none'` | Underline behavior. |
 | `isDisabled` | `boolean` | `false` | Standard disabled state. |
 
 *Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides.*

@@ -1,32 +1,32 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Link } from "@tradenetcorp/coral-ui/link";
-import { ArrowRight, Plus, DownloadSimple } from "phosphor-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Link } from '@tradenetcorp/coral-ui/link';
+import { ArrowRight, Plus, DownloadSimple } from 'phosphor-react';
 
 const meta = {
-  title: "Components/Link",
+  title: 'Components/Link',
   component: Link,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     variant: {
-      control: "select",
-      options: ["primary", "secondary", "inverted"],
+      control: 'select',
+      options: ['primary', 'secondary', 'inverted'],
     },
     underline: {
-      control: "select",
-      options: ["none", "hover", "always"],
+      control: 'select',
+      options: ['none', 'hover', 'always'],
     },
     isDisabled: {
-      control: "boolean",
+      control: 'boolean',
     },
   },
   args: {
-    children: "Link Label",
-    variant: "primary",
-    underline: "hover",
-    href: "#",
+    children: 'Link Label',
+    variant: 'primary',
+    underline: 'hover',
+    href: '#',
   },
 } satisfies Meta<typeof Link>;
 
@@ -38,7 +38,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    children: "Primary Link",
+    children: 'Primary Link',
   },
 };
 

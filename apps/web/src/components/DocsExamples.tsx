@@ -645,13 +645,13 @@ export function LinkIconsDemo() {
     <div className="flex gap-8 flex-wrap items-center">
       <span className="text-[20px] leading-[28px]">
         <Link>
-          <Plus size={24} weight="bold" />
-          XL Link
+          <Plus size={20} weight="bold" />
+          Large Link
         </Link>
       </span>
       <span className="text-[18px] leading-[26px]">
         <Link variant="secondary">
-          <DownloadSimple size={20} weight="bold" />
+          <DownloadSimple size={18} weight="bold" />
           LG Link
         </Link>
       </span>
