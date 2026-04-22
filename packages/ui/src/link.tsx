@@ -4,22 +4,16 @@ import {
     LinkProps as AriaLinkProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
 
 const linkVariants = cva(
-    'inline-flex items-center justify-center font-sans font-medium antialiased transition-colors focus-visible:outline-none disabled:pointer-events-none',
+    'inline-flex items-center justify-center gap-[8px] font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
     {
         variants: {
             variant: {
                 primary: 'text-fg-text-links-default',
                 secondary: 'text-fg-text-default-default',
                 inverted: 'text-white',
-            },
-            size: {
-                xs: 'text-[12px] leading-[16px] gap-[8px]',
-                sm: 'text-[14px] leading-[20px] gap-[8px]',
-                md: 'text-[16px] leading-[24px] gap-[8px]',
-                lg: 'text-[18px] leading-[26px] gap-[8px]',
-                xl: 'text-[20px] leading-[28px] gap-[8px]',
             },
             underline: {
                 none: 'no-underline',
@@ -33,7 +27,7 @@ const linkVariants = cva(
                 true: '',
             },
             isDisabled: {
-                true: 'text-fg-text-disabled-disabled pointer-events-none',
+                true: 'pointer-events-none text-fg-text-disabled-disabled [&_svg]:text-fg-icons-disabled-disabled',
             },
             isFocusVisible: {
                 true: 'ring-fg-border-focus ring-offset-2 ring-2 rounded-sm',
@@ -74,15 +68,9 @@ const linkVariants = cva(
                 isHovered: true,
                 className: 'text-white/80',
             },
-            {
-                variant: 'inverted',
-                isDisabled: true,
-                className: 'opacity-50 text-white',
-            },
         ],
         defaultVariants: {
             variant: 'primary',
-            size: 'md',
             underline: 'none',
         },
     }
@@ -100,7 +88,6 @@ export interface LinkProps
  */
 export function Link({
     variant,
-    size,
     underline,
     isHovered: forcedHover,
     isPressed: forcedPressed,
@@ -113,17 +100,23 @@ export function Link({
         <AriaLink
             {...props}
             isDisabled={forcedDisabled ?? undefined}
-            className={(state) =>
-                linkVariants({
-                    variant,
-                    size,
-                    underline,
-                    isHovered: forcedHover ?? state.isHovered,
-                    isPressed: forcedPressed ?? state.isPressed,
-                    isDisabled: forcedDisabled ?? state.isDisabled,
-                    isFocusVisible: forcedFocus ?? state.isFocusVisible,
-                })
-            }
+            className={(state) => {
+                const isDisabled = forcedDisabled ?? state.isDisabled;
+
+                return twMerge(
+                    linkVariants({
+                        variant,
+                        underline,
+                        isHovered: isDisabled ? false : forcedHover ?? state.isHovered,
+                        isPressed: isDisabled ? false : forcedPressed ?? state.isPressed,
+                        isDisabled,
+                        isFocusVisible: forcedFocus ?? state.isFocusVisible,
+                    }),
+                    isDisabled
+                        ? 'pointer-events-none text-fg-text-disabled-disabled [&_svg]:text-fg-icons-disabled-disabled'
+                        : undefined
+                );
+            }}
         >
             {children}
         </AriaLink>
