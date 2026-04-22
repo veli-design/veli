@@ -5,7 +5,7 @@ description: Accessible link component built with React Aria, following CDS stan
 
 # Link
 
-The Link component provides an accessible, keyboard-navigable link with multiple variants and sizes.
+The Link component provides an accessible, keyboard-navigable link with multiple variants that inherit typography from the surrounding context.
 
 ## Import
 
@@ -41,27 +41,26 @@ The link supports three variants and various underlining options.
 
 ## Icons
 
-To maintain design consistency, icons should follow these size guidelines:
-- **XL Links**: 24px
-- **LG Links**: 20px
-- **MD/SM Links**: 16px
-- **XS Links**: 12px
+To maintain design consistency, icons should be sized to match the surrounding typography.
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-8 flex-wrap items-center">
   <LinkIconsDemo client:visible />
 </div>
 
 ```tsx
-// Example of correctly sized icons
-<Link size="xl"><Plus size={24} /></Link>
-<Link size="lg"><Plus size={20} /></Link>
-<Link size="md"><Plus size={16} /></Link>
-<Link size="xs"><Plus size={12} /></Link>
+// Example of inherited typography with matching icons
+<span className="text-[20px] leading-[28px]">
+  <Link><Plus size={24} />XL Link</Link>
+</span>
+
+<span className="text-[16px] leading-[24px]">
+  <Link><Plus size={16} />MD Link</Link>
+</span>
 ```
 
-## Sizes
+## Typography Inheritance
 
-Font sizes range from 12px (XS) to 20px (XL) to match the button scale.
+Links inherit font size and line height from their parent context.
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-6 items-center flex-wrap">
   <LinkSizesDemo client:visible />
@@ -72,7 +71,6 @@ Font sizes range from 12px (XS) to 20px (XL) to match the button scale.
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `variant` | `'primary' \| 'secondary' \| 'inverted'` | `'primary'` | The visual category of the link. |
-| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The scale of the link text and icons. |
 | `underline` | `'none' \| 'hover' \| 'always'` | `'hover'` | Underline behavior. |
 | `isDisabled` | `boolean` | `false` | Standard disabled state. |
 
