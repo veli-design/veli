@@ -6,7 +6,7 @@ import {
 import { cva } from 'class-variance-authority';
 
 const checkboxRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased text-fg-text-default-default disabled:cursor-not-allowed'
+  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased disabled:cursor-not-allowed'
 );
 
 const checkboxControlVariants = cva(
@@ -70,7 +70,7 @@ const checkboxControlVariants = cva(
         isIndeterminate: false,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-container-bg border-inputs-checkbox-indicator-disabled-border',
       },
       // Checked / indeterminate active
       {
@@ -122,13 +122,13 @@ const checkboxControlVariants = cva(
         isSelected: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-border border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
       },
       {
         isIndeterminate: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-border border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
       },
     ],
     defaultVariants: {
@@ -147,7 +147,7 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-inputs-checkbox-indicator-disabled-bg',
+        true: 'text-white',
         false: 'text-white',
       },
     },
@@ -161,7 +161,17 @@ export interface CheckboxProps
 
 export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps) {
   return (
-    <AriaCheckbox {...props} isIndeterminate={isIndeterminate} className={checkboxRootVariants()}>
+    <AriaCheckbox
+      {...props}
+      isIndeterminate={isIndeterminate}
+      className={(state) =>
+        checkboxRootVariants({
+          className: state.isDisabled
+            ? 'text-fg-text-disabled-disabled'
+            : 'text-fg-text-default-default',
+        })
+      }
+    >
       {(state) => {
         const checkedOrIndeterminate = state.isSelected || state.isIndeterminate;
         return (
