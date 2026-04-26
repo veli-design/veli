@@ -10,13 +10,9 @@ const checkboxRootVariants = cva(
 );
 
 const checkboxControlVariants = cva(
-  'relative inline-flex size-[16px] shrink-0 items-center justify-center border-2 transition-colors focus-visible:outline-none',
+  'relative inline-flex size-[16px] shrink-0 items-center justify-center rounded-[3px] border-2 transition-colors focus-visible:outline-none',
   {
     variants: {
-      shape: {
-        square: 'rounded-[3px]',
-        round: 'rounded-full',
-      },
       isSelected: {
         true: '',
         false: '',
@@ -136,7 +132,6 @@ const checkboxControlVariants = cva(
       },
     ],
     defaultVariants: {
-      shape: 'square',
       isSelected: false,
       isIndeterminate: false,
       isHovered: false,
@@ -162,15 +157,9 @@ const indicatorVariants = cva(
 export interface CheckboxProps
   extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'> {
   children?: React.ReactNode;
-  shape?: 'square' | 'round';
 }
 
-export function Checkbox({
-  children,
-  shape = 'square',
-  isIndeterminate,
-  ...props
-}: CheckboxProps) {
+export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps) {
   return (
     <AriaCheckbox {...props} isIndeterminate={isIndeterminate} className={checkboxRootVariants()}>
       {(state) => {
@@ -179,7 +168,6 @@ export function Checkbox({
           <>
             <span
               className={checkboxControlVariants({
-                shape,
                 isSelected: state.isSelected,
                 isIndeterminate: state.isIndeterminate,
                 isHovered: state.isHovered,
