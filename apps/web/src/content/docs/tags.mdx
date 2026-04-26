@@ -1,0 +1,78 @@
+---
+title: Tags
+description: Accessible tag groups built with React Aria TagGroup and Coral design tokens.
+---
+
+import {
+  TagsUsageDemo,
+  TagsVariantsDemo,
+} from '../../components/DocsExamples';
+
+# Tags
+
+`TagGroup` and `Tag` are used for compact labels, filters, categories, saved topics, and linked metadata. This Coral wrapper follows the React Aria tags pattern and supports the key interactive variants developers usually need: static tags, selectable tags, removable tags, link tags, and disabled tags.
+
+## Import
+
+```tsx
+import { Tag, TagGroup } from '@tradenetcorp/coral-ui/tags';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsUsageDemo client:visible />
+</div>
+
+```tsx
+<TagGroup label="Categories">
+  <Tag id="news">News</Tag>
+  <Tag id="travel">Travel</Tag>
+  <Tag id="gaming">Gaming</Tag>
+  <Tag id="shopping">Shopping</Tag>
+</TagGroup>
+```
+
+## Variations
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsVariantsDemo client:visible />
+</div>
+
+### Variant Notes
+
+- `Selectable tags`: use `selectionMode="single"` or `selectionMode="multiple"` when tags act like filters or choices.
+- `Removable tags`: use `onRemove` when people should be able to dismiss or clear tags from a collection.
+- `Link tags`: use `href` when a tag should navigate to related content instead of toggling selection.
+- `Disabled tags`: use `disabledKeys` on the group or `isDisabled` on individual tags to show unavailable items.
+
+## Key Props
+
+### `TagGroup`
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `label` | `ReactNode` | Adds a visible label above the tag list. |
+| `selectionMode` | `'none' \| 'single' \| 'multiple'` | Controls whether tags are selectable and how many can be selected. |
+| `selectedKeys` | `'all' \| Iterable<Key>` | Controls the current selection from external state. |
+| `defaultSelectedKeys` | `'all' \| Iterable<Key>` | Sets the initial selection for uncontrolled usage. |
+| `onSelectionChange` | `(keys) => void` | Called when the selected tags change. |
+| `onRemove` | `(keys) => void` | Called when one or more removable tags are dismissed. |
+| `description` | `ReactNode` | Adds supporting helper text below the tag list. |
+| `errorMessage` | `ReactNode` | Adds validation or error text below the tag list. |
+| `disabledKeys` | `Iterable<Key>` | Disables specific tags in a collection. |
+
+### `Tag`
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `Key` | Identifies the tag for selection, removal, and collection rendering. |
+| `href` | `string` | Turns the tag into a link-style action instead of a selectable tag. |
+| `target` | `string` | Sets the browsing context for link tags. |
+| `rel` | `string` | Adds relationship metadata for external link tags. |
+| `isDisabled` | `boolean` | Disables a specific tag. |
+| `textValue` | `string` | Required when the tag content is not plain text, so assistive tech gets a text alternative. |
+| `removeButtonLabel` | `string \| ((tagText) => string)` | Overrides the accessible label used by the built-in remove button. |
+| `className` | `string` | Adds local styling overrides to a single tag. |
+
+All remaining supported React Aria `TagGroup` and `Tag` props can still be passed through these wrappers.

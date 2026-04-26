@@ -243,12 +243,13 @@ const buttonContentVariants = cva('relative z-[1] inline-flex items-center justi
 });
 
 export interface ButtonProps
-  extends Omit<AriaButtonProps, 'style' | 'className' | 'children'>,
+  extends Omit<AriaButtonProps, 'style' | 'children'>,
   VariantProps<typeof buttonVariants> {
   children?: React.ReactNode;
   iconOnly?: boolean;
   isLoading?: boolean;
   treatment?: 'basic' | 'seaglass';
+  className?: string;
 }
 
 type ButtonVariant = NonNullable<ButtonProps['variant']>;
@@ -267,6 +268,7 @@ export function Button({
   isLoading,
   treatment = 'basic',
   isDisabled,
+  className,
   onMouseEnter,
   onMouseMove,
   onMouseLeave,
@@ -333,13 +335,14 @@ export function Button({
     onBlur?.(event);
   };
 
-  const className = twMerge(
-    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
-    treatment === 'seaglass'
-      ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
-      : undefined,
-    isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined
-  );
+const resolvedClassName = twMerge(
+  buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
+  treatment === 'seaglass'
+    ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
+    : undefined,
+  isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
+  className
+);
   const spotlightStyle: SpotlightStyle = {
     '--button-spotlight-x': spotlightPosition.x,
     '--button-spotlight-y': spotlightPosition.y,
@@ -373,13 +376,13 @@ export function Button({
     <AriaButton
       {...props}
       isDisabled={isDisabled || isLoading}
-      className={className}
       style={spotlightStyle}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      className={resolvedClassName}
     >
       {isLoading ? (
         children ? (
