@@ -43,7 +43,7 @@ const trackVariants = cva(
         true: "cursor-not-allowed",
       },
       isFocusVisible: {
-        true: "ring-4 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised",
+        true: "ring-2  ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised",
       },
     },
     compoundVariants: [
