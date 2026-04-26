@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@tradenetcorp/coral-ui/button";
+import { Button, type ButtonProps } from "@tradenetcorp/coral-ui/button";
 import { Plus, ArrowRight, Trash, DownloadSimple } from "phosphor-react";
 
 const iconSizeMap = {
@@ -22,9 +22,28 @@ function ButtonLabel({ size = "md" }: { size?: keyof typeof iconSizeMap }) {
   );
 }
 
+function renderPreviewButton(args: ButtonProps) {
+  const size = args.size ?? "md";
+  const iconSize = iconSizeMap[size];
+  const content = args.iconOnly ? (
+    <Plus size={iconSize} weight="bold" />
+  ) : (
+    args.children
+  );
+  const derivedAriaLabel =
+    args["aria-label"] ?? (typeof args.children === "string" ? args.children : "Button");
+
+  return (
+    <Button {...args} aria-label={args.iconOnly ? derivedAriaLabel : args["aria-label"]}>
+      {content}
+    </Button>
+  );
+}
+
 const meta = {
   title: "Components/Button",
   component: Button,
+  render: renderPreviewButton,
   parameters: {
     layout: "centered",
   },
@@ -45,6 +64,9 @@ const meta = {
     isLoading: {
       control: "boolean",
     },
+    iconOnly: {
+      control: "boolean",
+    },
     treatment: {
       control: "select",
       options: ["basic", "seaglass"],
@@ -58,6 +80,7 @@ const meta = {
     variant: "primary",
     style: "fill",
     size: "md",
+    iconOnly: false,
     treatment: "basic",
   },
 } satisfies Meta<typeof Button>;
@@ -367,6 +390,51 @@ export const WithIcons: Story = {
       </div>
     );
   },
+};
+
+/**
+ * Icon-only buttons keep the existing variant, style, size, and treatment system,
+ * while switching to a square footprint. Provide an accessible label.
+ */
+export const IconOnly: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-4 flex-wrap">
+      <Button {...args} size="xl" iconOnly aria-label="Add item">
+        <Plus size={24} weight="bold" />
+      </Button>
+      <Button
+        {...args}
+        variant="secondary"
+        style="transparent"
+        size="lg"
+        iconOnly
+        aria-label="Download file"
+      >
+        <DownloadSimple size={20} weight="bold" />
+      </Button>
+      <Button
+        {...args}
+        variant="danger"
+        style="ghost"
+        size="md"
+        iconOnly
+        aria-label="Delete item"
+      >
+        <Trash size={16} weight="bold" />
+      </Button>
+      <Button
+        {...args}
+        variant="primary"
+        style="fill"
+        size="sm"
+        iconOnly
+        isLoading
+        aria-label="Saving"
+      >
+        <Plus size={16} weight="bold" />
+      </Button>
+    </div>
+  ),
 };
 
 /**

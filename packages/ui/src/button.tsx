@@ -28,6 +28,10 @@ const buttonVariants = cva(
         lg: 'h-13 px-[16px] gap-0.5 text-[18px] leading-[26px]',
         xl: 'h-15 px-[18px] gap-0.5 text-[20px] leading-[28px]',
       },
+      iconOnly: {
+        true: 'shrink-0 px-0',
+        false: '',
+      },
     },
     compoundVariants: [
       // Primary
@@ -87,11 +91,17 @@ const buttonVariants = cva(
         className:
           'bg-transparent text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-default active:bg-bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
       },
+      { size: 'xs', iconOnly: true, className: 'w-7' },
+      { size: 'sm', iconOnly: true, className: 'w-9' },
+      { size: 'md', iconOnly: true, className: 'w-11' },
+      { size: 'lg', iconOnly: true, className: 'w-13' },
+      { size: 'xl', iconOnly: true, className: 'w-15' },
     ],
     defaultVariants: {
       variant: 'primary',
       style: 'fill',
       size: 'md',
+      iconOnly: false,
     },
   }
 );
@@ -220,10 +230,15 @@ const buttonContentVariants = cva('relative z-[1] inline-flex items-center justi
       true: '',
       false: 'gap-0',
     },
+    iconOnly: {
+      true: 'gap-0',
+      false: '',
+    },
   },
   defaultVariants: {
     size: 'md',
     hasChildren: true,
+    iconOnly: false,
   },
 });
 
@@ -231,6 +246,7 @@ export interface ButtonProps
   extends Omit<AriaButtonProps, 'style' | 'className' | 'children'>,
   VariantProps<typeof buttonVariants> {
   children?: React.ReactNode;
+  iconOnly?: boolean;
   isLoading?: boolean;
   treatment?: 'basic' | 'seaglass';
 }
@@ -247,6 +263,7 @@ export function Button({
   style,
   size,
   children,
+  iconOnly,
   isLoading,
   treatment = 'basic',
   isDisabled,
@@ -258,6 +275,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isLoadingOnly = Boolean(isLoading && !children);
+  const isIconOnly = Boolean(iconOnly);
   const resolvedVariant = variant ?? 'primary';
   const resolvedStyle: ButtonStyle = style ?? 'fill';
   const showSpotlight = treatment === 'seaglass' && !isDisabled && !isLoading;
@@ -316,11 +334,11 @@ export function Button({
   };
 
   const className = twMerge(
-    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size }),
+    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
     treatment === 'seaglass'
       ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
       : undefined,
-    isLoadingOnly ? loadingOnlyMinWidthVariants({ size }) : undefined
+    isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined
   );
   const spotlightStyle: SpotlightStyle = {
     '--button-spotlight-x': spotlightPosition.x,
@@ -366,7 +384,12 @@ export function Button({
       {isLoading ? (
         children ? (
           <>
-            <span className={twMerge(buttonContentVariants({ size }), 'opacity-0')}>
+            <span
+              className={twMerge(
+                buttonContentVariants({ size, iconOnly: isIconOnly }),
+                'opacity-0'
+              )}
+            >
               {children}
             </span>
             <span
@@ -377,12 +400,20 @@ export function Button({
             </span>
           </>
         ) : (
-          <span className={buttonContentVariants({ size, hasChildren: false })}>
+          <span
+            className={buttonContentVariants({
+              size,
+              hasChildren: false,
+              iconOnly: isIconOnly,
+            })}
+          >
             {loadingIndicator}
           </span>
         )
       ) : children ? (
-        <span className={buttonContentVariants({ size })}>{children}</span>
+        <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>
+          {children}
+        </span>
       ) : (
         children
       )}

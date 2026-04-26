@@ -15,6 +15,7 @@ import { Plus, ArrowRight } from 'phosphor-react';
 ```
 
 import {
+  ButtonIconOnlyDemo,
   ButtonIconsDemo,
   ButtonLoadingDemo,
   ButtonSeaglassDemo,
@@ -61,6 +62,22 @@ To maintain design consistency, icons should follow these size guidelines:
 <Button size="xs"><Plus size={12} /></Button>
 ```
 
+## Icon-Only
+
+Use `iconOnly` when the button should render as a square icon action while keeping the same variant, style, size, and treatment behavior as the standard button.
+
+Always provide an accessible label with `aria-label` when there is no visible text.
+
+<div className="preview p-4 border rounded-lg bg-surface-100 mb-4 flex gap-4 flex-wrap items-center">
+  <ButtonIconOnlyDemo client:visible />
+</div>
+
+```tsx
+<Button size="md" iconOnly aria-label="Delete item">
+  <Trash size={16} />
+</Button>
+```
+
 ## Sizes
 
 Heights range from 28px (XS) to 60px (XL) to accommodate various context requirements.
@@ -104,6 +121,7 @@ Use `treatment="seaglass"` to opt into the stylized treatment without changing t
 | `variant` | `'primary' \| 'secondary' \| 'danger'` | `'primary'` | The visual category of the button. |
 | `style` | `'fill' \| 'transparent' \| 'ghost'` | `'fill'` | The internal fill/border style. |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The vertical scale of the button. |
+| `iconOnly` | `boolean` | `false` | Renders the button as a square icon action while preserving the current size, variant, style, and treatment system. |
 | `treatment` | `'basic' \| 'seaglass'` | `'basic'` | Selects the visual rendering family without changing the semantic variant/style API. |
 | `isLoading` | `boolean` | `false` | Shows a loading spinner and disables interaction. |
 | `isDisabled` | `boolean` | `false` | Standard disabled state. |

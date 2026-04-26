@@ -73,6 +73,25 @@ export function ButtonIconsDemo() {
   );
 }
 
+export function ButtonIconOnlyDemo() {
+  return (
+    <div className="flex gap-4 flex-wrap items-center">
+      <Button size="xl" iconOnly aria-label="Add item">
+        <Plus size={24} weight="bold" />
+      </Button>
+      <Button size="lg" variant="secondary" style="transparent" iconOnly aria-label="Download file">
+        <DownloadSimple size={20} weight="bold" />
+      </Button>
+      <Button size="md" variant="danger" style="ghost" iconOnly aria-label="Delete item">
+        <Trash size={16} weight="bold" />
+      </Button>
+      <Button size="sm" iconOnly isLoading aria-label="Saving">
+        <Plus size={16} weight="bold" />
+      </Button>
+    </div>
+  );
+}
+
 export function ButtonSizesDemo() {
   return (
     <div className="flex gap-4 items-center flex-wrap">
