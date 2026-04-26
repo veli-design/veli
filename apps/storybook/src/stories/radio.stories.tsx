@@ -17,22 +17,37 @@ const meta: Meta<typeof Radio> = {
       control: 'boolean',
     },
   },
+  args: {
+    size: 'sm',
+    isDisabled: false,
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => (
+  render: (args) => (
     <RadioGroup aria-label="Default radio group" defaultValue="option-1">
-      <Radio value="option-1">Option 1</Radio>
-      <Radio value="option-2">Option 2</Radio>
-      <Radio value="option-3">Option 3</Radio>
+      <Radio {...args} value="option-1">
+        Option 1
+      </Radio>
+      <Radio {...args} value="option-2">
+        Option 2
+      </Radio>
+      <Radio {...args} value="option-3">
+        Option 3
+      </Radio>
     </RadioGroup>
   ),
 };
 
 export const Sizes: Story = {
+  parameters: {
+    controls: {
+      exclude: ['size', 'isDisabled'],
+    },
+  },
   render: () => (
     <div className="flex flex-col gap-[20px]">
       <RadioGroup aria-label="Small radio size" defaultValue="sm-on">
@@ -57,6 +72,11 @@ export const Sizes: Story = {
 };
 
 export const StatesAudit: Story = {
+  parameters: {
+    controls: {
+      exclude: ['size', 'isDisabled'],
+    },
+  },
   render: () => (
     <div className="grid grid-cols-3 gap-[20px] items-start">
       <div />
