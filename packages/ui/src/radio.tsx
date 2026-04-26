@@ -162,6 +162,11 @@ const indicatorVariants = cva(
         className: "bg-transparent",
       },
       {
+        isSelected: false,
+        isDisabled: true,
+        className: "bg-transparent",
+      },
+      {
         isSelected: true,
         isHovered: false,
         isDisabled: false,
@@ -174,6 +179,7 @@ const indicatorVariants = cva(
         className: "bg-inputs-radio-indicator-selected-bg-hover",
       },
       {
+        isSelected: true,
         isDisabled: true,
         className: "bg-inputs-radio-indicator-disabled-bg",
       },
