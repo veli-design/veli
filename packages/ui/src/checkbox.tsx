@@ -192,18 +192,19 @@ export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps)
                     <svg
                       aria-hidden="true"
                       width="10"
-                      height="2"
-                      viewBox="0 0 10 2"
+                      height="4"
+                      viewBox="0 0 10 4"
                       fill="none"
                     >
-                      <path d="M0 0H10" stroke="currentColor" strokeWidth="2" />
+                      <path d="M0 2H10" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   ) : (
                     <svg
                       aria-hidden="true"
-                      width={state.isPressed ? '8' : '10'}
-                      height={state.isPressed ? '5' : '6'}
-                      viewBox="0 0 10 6"
+                      width={state.isPressed ? '9' : '11.2'}
+                      height={state.isPressed ? '6' : '8.2'}
+                      viewBox="-1 -1 11.5 8.8"
+                      className={state.isPressed ? 'translate-x-[-0.2px] translate-y-[0.1px]' : 'translate-x-[-0.4px] translate-y-[0.1px]'}
                       fill="none"
                     >
                       <path
