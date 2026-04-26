@@ -34,7 +34,7 @@ const checkboxControlVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-1 ring-offset-bg-surface-surface-raised',
+        true: 'ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised',
         false: '',
       },
     },
