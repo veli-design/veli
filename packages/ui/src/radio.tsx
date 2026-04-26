@@ -72,7 +72,7 @@ const controlVariants = cva(
         isSelected: false,
         isDisabled: false,
         isPressed: true,
-        className: 'border-inputs-radio-container-off-border',
+        className: '[border-color:var(--color-bg-primary-hover)]',
       },
       {
         isSelected: true,
@@ -92,7 +92,7 @@ const controlVariants = cva(
         isSelected: true,
         isDisabled: false,
         isPressed: true,
-        className: 'border-inputs-radio-container-selected-border',
+        className: '[border-color:var(--color-bg-primary-hover)]',
       },
       {
         isDisabled: true,
