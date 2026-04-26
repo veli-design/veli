@@ -159,7 +159,7 @@ const indicatorVariants = cva(
       {
         isSelected: false,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-off-bg',
+        className: 'bg-transparent',
       },
       {
         isSelected: true,
