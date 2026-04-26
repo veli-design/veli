@@ -63,7 +63,7 @@ const checkboxControlVariants = cva(
         isDisabled: false,
         isPressed: true,
         className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border-hover',
+          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-checked-bg',
       },
       {
         isSelected: false,
