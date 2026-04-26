@@ -22,19 +22,32 @@ function ButtonLabel({ size = "md" }: { size?: keyof typeof iconSizeMap }) {
   );
 }
 
-function renderPreviewButton(args: ButtonProps) {
-  const size = args.size ?? "md";
+type PreviewArgs = ButtonProps & {
+  leadingIcon?: boolean;
+  trailingIcon?: boolean;
+};
+
+function renderPreviewButton(args: PreviewArgs) {
+  const { leadingIcon, trailingIcon, children, ...buttonProps } = args;
+  const size = buttonProps.size ?? "md";
   const iconSize = iconSizeMap[size];
-  const content = args.iconOnly ? (
+  const content = buttonProps.iconOnly ? (
     <Plus size={iconSize} weight="bold" />
   ) : (
-    args.children
+    <>
+      {leadingIcon ? <Plus size={iconSize} weight="bold" /> : null}
+      {children}
+      {trailingIcon ? <ArrowRight size={iconSize} weight="bold" /> : null}
+    </>
   );
   const derivedAriaLabel =
-    args["aria-label"] ?? (typeof args.children === "string" ? args.children : "Button");
+    buttonProps["aria-label"] ?? (typeof children === "string" ? children : "Button");
 
   return (
-    <Button {...args} aria-label={args.iconOnly ? derivedAriaLabel : args["aria-label"]}>
+    <Button
+      {...buttonProps}
+      aria-label={buttonProps.iconOnly ? derivedAriaLabel : buttonProps["aria-label"]}
+    >
       {content}
     </Button>
   );
@@ -67,6 +80,12 @@ const meta = {
     iconOnly: {
       control: "boolean",
     },
+    leadingIcon: {
+      control: "boolean",
+    },
+    trailingIcon: {
+      control: "boolean",
+    },
     treatment: {
       control: "select",
       options: ["basic", "seaglass"],
@@ -81,9 +100,11 @@ const meta = {
     style: "fill",
     size: "md",
     iconOnly: false,
+    leadingIcon: false,
+    trailingIcon: false,
     treatment: "basic",
   },
-} satisfies Meta<typeof Button>;
+} satisfies Meta<PreviewArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
