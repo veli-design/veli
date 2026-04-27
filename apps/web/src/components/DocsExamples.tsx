@@ -351,11 +351,12 @@ export function CheckboxUsageDemo() {
   );
 }
 
-export function CheckboxStylesDemo() {
+export function CheckboxStatesDemo() {
   return (
     <div className="flex flex-col gap-[12px]">
-      <Checkbox shape="square">Square</Checkbox>
-      <Checkbox shape="round">Round</Checkbox>
+      <Checkbox>Off</Checkbox>
+      <Checkbox defaultSelected>On</Checkbox>
+      <Checkbox isIndeterminate>Indeterminate</Checkbox>
     </div>
   );
 }
