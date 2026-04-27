@@ -1,56 +1,56 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Radio as AriaRadio,
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps,
   RadioProps as AriaRadioProps,
-} from 'react-aria-components';
-import { cva, type VariantProps } from 'class-variance-authority';
+} from "react-aria-components";
+import { cva, type VariantProps } from "class-variance-authority";
 
-const radioGroupVariants = cva('inline-flex flex-col gap-[12px]');
+const radioGroupVariants = cva("inline-flex flex-col gap-[12px]");
 
 const radioRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans font-medium antialiased transition-colors disabled:cursor-not-allowed',
+  "group inline-flex items-center gap-[8px] font-sans font-medium antialiased transition-colors disabled:cursor-not-allowed",
   {
     variants: {
       size: {
-        sm: 'text-[14px] leading-[20px]',
-        md: 'text-[16px] leading-[24px]',
+        sm: "text-[14px] leading-[20px]",
+        md: "text-[16px] leading-[24px]",
       },
     },
     defaultVariants: {
-      size: 'sm',
+      size: "sm",
     },
-  }
+  },
 );
 
 const controlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-inputs-radio-container-bg transition-colors focus-visible:outline-none',
+  "relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-inputs-radio-container-bg transition-colors focus-visible:outline-none",
   {
     variants: {
       size: {
-        sm: 'h-[16px] w-[16px]',
-        md: 'h-[24px] w-[24px]',
+        sm: "h-[16px] w-[16px]",
+        md: "h-[24px] w-[24px]",
       },
       isSelected: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isHovered: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isPressed: {
-        true: 'border-[3px]',
-        false: 'border-2',
+        true: "border-[3px]",
+        false: "border-2",
       },
       isDisabled: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-1 ring-offset-bg-surface-surface-raised',
-        false: '',
+        true: "ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised",
+        false: "",
       },
     },
     compoundVariants: [
@@ -59,148 +59,158 @@ const controlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className: 'border-inputs-radio-container-off-border',
+        className: "border-inputs-radio-container-off-border",
       },
       {
         isSelected: false,
         isDisabled: false,
         isHovered: true,
         isPressed: false,
-        className: 'border-inputs-radio-container-off-border-hover',
+        className: "border-inputs-radio-container-off-border-hover",
       },
       {
         isSelected: false,
         isDisabled: false,
         isPressed: true,
-        className: 'border-inputs-radio-container-off-border',
+        className: "[border-color:var(--color-bg-primary-hover)]",
       },
       {
         isSelected: true,
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className: 'border-inputs-radio-container-selected-border',
+        className: "border-inputs-radio-container-selected-border",
       },
       {
         isSelected: true,
         isDisabled: false,
         isHovered: true,
         isPressed: false,
-        className: 'border-inputs-radio-container-selected-border-hover',
+        className: "border-inputs-radio-container-selected-border-hover",
       },
       {
         isSelected: true,
         isDisabled: false,
         isPressed: true,
-        className: 'border-inputs-radio-container-selected-border',
+        className: "[border-color:var(--color-bg-primary-hover)]",
       },
       {
         isDisabled: true,
-        className: 'border-inputs-radio-indicator-disabled-border',
+        className: "border-inputs-radio-indicator-disabled-border",
       },
     ],
     defaultVariants: {
-      size: 'sm',
+      size: "sm",
       isSelected: false,
       isHovered: false,
       isPressed: false,
       isDisabled: false,
       isFocusVisible: false,
     },
-  }
+  },
 );
 
 const indicatorVariants = cva(
-  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors',
+  "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors",
   {
     variants: {
       size: {
-        sm: '',
-        md: '',
+        sm: "",
+        md: "",
       },
       isPressed: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isSelected: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isHovered: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
       isDisabled: {
-        true: '',
-        false: '',
+        true: "",
+        false: "",
       },
     },
     compoundVariants: [
       {
-        size: 'sm',
+        size: "sm",
         isPressed: false,
-        className: 'h-[8px] w-[8px]',
+        className: "h-[8px] w-[8px]",
       },
       {
-        size: 'sm',
+        size: "sm",
         isPressed: true,
-        className: 'h-[6px] w-[6px]',
+        className: "h-[6px] w-[6px]",
       },
       {
-        size: 'md',
+        size: "md",
         isPressed: false,
-        className: 'h-[14px] w-[14px]',
+        className: "h-[14px] w-[14px]",
       },
       {
-        size: 'md',
+        size: "md",
         isPressed: true,
-        className: 'h-[12px] w-[12px]',
+        className: "h-[12px] w-[12px]",
       },
       {
         isSelected: false,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-off-bg',
+        className: "bg-transparent",
+      },
+      {
+        isSelected: false,
+        isDisabled: true,
+        className: "bg-transparent",
       },
       {
         isSelected: true,
         isHovered: false,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-selected-bg',
+        className: "bg-inputs-radio-indicator-selected-bg",
       },
       {
         isSelected: true,
         isHovered: true,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-selected-bg-hover',
+        className: "bg-inputs-radio-indicator-selected-bg-hover",
       },
       {
+        isSelected: true,
         isDisabled: true,
-        className: 'bg-inputs-radio-indicator-disabled-bg',
+        className: "bg-inputs-radio-indicator-disabled-bg",
       },
     ],
     defaultVariants: {
-      size: 'sm',
+      size: "sm",
       isPressed: false,
       isSelected: false,
       isHovered: false,
       isDisabled: false,
     },
-  }
+  },
 );
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style'> {}
+export interface RadioGroupProps extends Omit<
+  AriaRadioGroupProps,
+  "className" | "style"
+> {}
 
 export function RadioGroup(props: RadioGroupProps) {
   return <AriaRadioGroup {...props} className={radioGroupVariants()} />;
 }
 
 export interface RadioProps
-  extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>,
+  extends
+    Omit<AriaRadioProps, "className" | "style" | "children">,
     VariantProps<typeof radioRootVariants> {
   children?: React.ReactNode;
 }
 
-export function Radio({ size = 'sm', children, ...props }: RadioProps) {
+export function Radio({ size = "sm", children, ...props }: RadioProps) {
   return (
     <AriaRadio
       {...props}
@@ -208,8 +218,8 @@ export function Radio({ size = 'sm', children, ...props }: RadioProps) {
         radioRootVariants({
           size,
           className: state.isDisabled
-            ? 'text-fg-text-disabled-disabled'
-            : 'text-fg-text-default-default',
+            ? "text-fg-text-disabled-disabled"
+            : "text-fg-text-default-default",
         })
       }
     >
