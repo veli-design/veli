@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/coral-ui/breadcrumbs';
+import {
+  Breadcrumb,
+  BreadcrumbOverflow,
+  Breadcrumbs,
+} from '@tradenetcorp/coral-ui/breadcrumbs';
 import { CaretLeft } from 'phosphor-react';
 
 type BreadcrumbTrailItem = {
@@ -9,11 +13,27 @@ type BreadcrumbTrailItem = {
   href?: string;
 };
 
+type BreadcrumbsPlaygroundArgs = {
+  treatment: 'standard' | 'backlink';
+  showOverflow: boolean;
+  disableSecondCrumb: boolean;
+  homeLabel: string;
+  secondLabel: string;
+  thirdLabel: string;
+  currentLabel: string;
+};
+
 const breadcrumbTrail: BreadcrumbTrailItem[] = [
   { id: 'home', label: 'Home', href: '#' },
   { id: 'services', label: 'Services', href: '#' },
   { id: 'permits', label: 'Permits', href: '#' },
   { id: 'fishing', label: 'Fishing permit' },
+];
+
+const hiddenBacklinkItems = [
+  { id: 'menu-two', label: 'Menu Two', href: '#' },
+  { id: 'menu-three', label: 'Menu Three', href: '#' },
+  { id: 'menu-four', label: 'Menu Four', href: '#' },
 ];
 
 const meta = {
@@ -27,6 +47,67 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+type PlaygroundStory = StoryObj<BreadcrumbsPlaygroundArgs>;
+
+export const Playground: PlaygroundStory = {
+  args: {
+    treatment: 'standard',
+    showOverflow: true,
+    disableSecondCrumb: false,
+    homeLabel: 'Home',
+    secondLabel: 'Services',
+    thirdLabel: 'Permits',
+    currentLabel: 'Fishing permit',
+  },
+  argTypes: {
+    treatment: {
+      control: 'select',
+      options: ['standard', 'backlink'],
+    },
+    showOverflow: {
+      control: 'boolean',
+    },
+    disableSecondCrumb: {
+      control: 'boolean',
+    },
+    homeLabel: {
+      control: 'text',
+    },
+    secondLabel: {
+      control: 'text',
+    },
+    thirdLabel: {
+      control: 'text',
+    },
+    currentLabel: {
+      control: 'text',
+    },
+  },
+  render: (args) => (
+    <div className="w-[560px] rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <Breadcrumbs aria-label="Breadcrumb playground">
+        {args.treatment === 'backlink' ? (
+          <Breadcrumb href="#" tone="accent">
+            <CaretLeft aria-hidden size={16} weight="bold" />
+            <span>Previous Page</span>
+          </Breadcrumb>
+        ) : (
+          <Breadcrumb href="#">{args.homeLabel}</Breadcrumb>
+        )}
+        <Breadcrumb href="#" isDisabled={args.disableSecondCrumb}>
+          {args.secondLabel}
+        </Breadcrumb>
+        {args.showOverflow ? (
+          <BreadcrumbOverflow items={hiddenBacklinkItems} />
+        ) : (
+          <Breadcrumb href="#">{args.thirdLabel}</Breadcrumb>
+        )}
+        <Breadcrumb href="#">Menu Five</Breadcrumb>
+        <Breadcrumb>{args.currentLabel}</Breadcrumb>
+      </Breadcrumbs>
+    </div>
+  ),
+};
 
 export const Default: Story = {
   render: () => (
@@ -69,7 +150,7 @@ export const Variations: Story = {
               <span>Previous Page</span>
             </Breadcrumb>
             <Breadcrumb href="#">Menu One</Breadcrumb>
-            <Breadcrumb>...</Breadcrumb>
+            <BreadcrumbOverflow items={hiddenBacklinkItems} />
             <Breadcrumb href="#">Menu Five</Breadcrumb>
             <Breadcrumb>Menu Active</Breadcrumb>
           </Breadcrumbs>
