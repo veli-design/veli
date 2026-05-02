@@ -22,6 +22,39 @@ function ButtonLabel({ size = "md" }: { size?: keyof typeof iconSizeMap }) {
   );
 }
 
+const seaglassColorExamples = [
+  {
+    name: "Primary blue",
+    buttonClassName: "bg-[#0066FF] hover:bg-[#0066FF] active:bg-[#0052CC]",
+    swatchClassName: "bg-[#0066FF]",
+  },
+  {
+    name: "Blue 800",
+    buttonClassName: "bg-[#1B54DF] hover:bg-[#1B54DF] active:bg-[#123EAE]",
+    swatchClassName: "bg-[#1B54DF]",
+  },
+  {
+    name: "Green 800",
+    buttonClassName: "bg-[#156F3F] hover:bg-[#156F3F] active:bg-[#0F5130]",
+    swatchClassName: "bg-[#156F3F]",
+  },
+  {
+    name: "Orange 800",
+    buttonClassName: "bg-[#915000] hover:bg-[#915000] active:bg-[#6A3A00]",
+    swatchClassName: "bg-[#915000]",
+  },
+  {
+    name: "Red 800",
+    buttonClassName: "bg-[#C01800] hover:bg-[#C01800] active:bg-[#921200]",
+    swatchClassName: "bg-[#C01800]",
+  },
+  {
+    name: "Gray 1100",
+    buttonClassName: "bg-[#20252B] hover:bg-[#20252B] active:bg-[#14181D]",
+    swatchClassName: "bg-[#20252B]",
+  },
+] as const;
+
 type PreviewArgs = ButtonProps & {
   leadingIcon?: boolean;
   trailingIcon?: boolean;
@@ -375,6 +408,89 @@ export const ExperimentalEnhanced: Story = {
             <ButtonLabel size="xl" />
           </Button>
         </div>
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Seaglass fill with the same color-agnostic white radial overlay applied to
+ * solid colors from the Figma Foundation Colors page.
+ */
+export const SeaglassColorExamples: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  render: () => (
+    <div className="flex max-w-4xl flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+          Figma Foundation Colors
+        </span>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {seaglassColorExamples.map((color) => (
+          <div
+            key={color.name}
+            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-5"
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <div
+                aria-hidden="true"
+                className={`h-8 w-8 shrink-0 rounded-full ${color.swatchClassName}`}
+              />
+              <div className="truncate text-sm font-medium text-gray-900">
+                {color.name}
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              style="fill"
+              size="xl"
+              treatment="seaglass"
+              className={`min-w-[180px] ${color.buttonClassName}`}
+            >
+              Start
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Width changes should preserve the seaglass side bloom without washing out the center.
+ */
+export const SeaglassResponsiveWidths: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  render: () => (
+    <div className="flex max-w-5xl flex-col gap-5">
+      <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+        Responsive Widths
+      </span>
+      <div className="flex flex-col items-start gap-4">
+        {[
+          { label: "140px", className: "w-[140px]" },
+          { label: "180px", className: "w-[180px]" },
+          { label: "260px", className: "w-[260px]" },
+          { label: "360px", className: "w-[360px]" },
+          { label: "480px", className: "w-[480px]" },
+        ].map((example) => (
+          <Button
+            key={example.label}
+            variant="primary"
+            style="fill"
+            size="xl"
+            treatment="seaglass"
+            className={`justify-center ${example.className}`}
+          >
+            {example.label}
+          </Button>
+        ))}
       </div>
     </div>
   ),

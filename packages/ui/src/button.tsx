@@ -106,8 +106,11 @@ const buttonVariants = cva(
   }
 );
 
+const seaglassFillOverlay =
+  'text-white [background-image:radial-gradient(ellipse_var(--button-seaglass-radius-x)_var(--button-seaglass-radius-y)_at_50%_50%,rgba(255,255,255,0)_8.17%,rgba(255,255,255,0.08)_13.91%,rgba(255,255,255,0.16)_19.65%,rgba(255,255,255,0.32)_31.13%,rgba(255,255,255,0.48)_42.61%,rgba(255,255,255,0.64)_54.09%,rgba(255,255,255,0.86)_77.04%,rgba(255,255,255,1)_100%)] before:bg-[radial-gradient(circle_var(--button-spotlight-size)_at_var(--button-spotlight-position),rgba(255,255,255,0.56)_0%,rgba(255,255,255,0.3)_34%,rgba(255,255,255,0.12)_58%,rgba(255,255,255,0)_84%)] before:opacity-0 before:transition-opacity before:duration-150 hover:before:opacity-25 focus-visible:before:opacity-25 active:before:opacity-0 after:bg-[radial-gradient(ellipse_var(--button-seaglass-radius-x)_var(--button-seaglass-radius-y)_at_50%_50%,rgba(255,255,255,0)_6%,rgba(255,255,255,0.08)_14%,rgba(255,255,255,0.18)_28%,rgba(255,255,255,0.32)_46%,rgba(255,255,255,0.48)_68%,rgba(255,255,255,0.64)_100%)] after:opacity-0 after:transition-opacity after:duration-[200ms] after:ease-[cubic-bezier(0.2,1.4,0.4,1)] active:after:opacity-100 active:after:duration-[80ms] active:after:ease-out disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:opacity-0';
+
 const seaglassButtonVariants = cva(
-  "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color] duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-[#80a4ff]",
+  "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color,transform] duration-[200ms] ease-[cubic-bezier(0.2,1.4,0.4,1)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-[#80a4ff]",
   {
     variants: {
       variant: {
@@ -127,19 +130,23 @@ const seaglassButtonVariants = cva(
         variant: 'primary',
         style: 'fill',
         className:
-          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(210.2%_603.45%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.96)_8%,rgba(16,112,255,0.9375)_13.75%,rgba(32,121,255,0.875)_19.5%,rgba(64,140,255,0.75)_31%,rgba(128,179,255,0.5)_54%,rgba(255,255,255,0)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,102,255,0.96)_0%,rgba(0,102,255,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_2px_4px_rgba(255,255,255,0.34)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          `${seaglassFillOverlay} bg-[#0066FF] hover:bg-[#0066FF] active:bg-[#0052CC]`,
       },
       {
         variant: 'secondary',
         style: 'fill',
         className:
-          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(210.2%_603.45%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.96)_8%,rgba(16,29,61,0.9375)_13.75%,rgba(32,44,74,0.875)_19.5%,rgba(64,74,100,0.75)_31%,rgba(96,104,126,0.625)_42.5%,rgba(128,135,152,0.5)_54%,rgba(191,195,203,0.25)_77%,rgba(255,255,255,0)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(0,14,48,0.96)_0%,rgba(0,14,48,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_2px_4px_rgba(255,255,255,0.34)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          `${seaglassFillOverlay} bg-bg-button-secondary-default hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed`,
       },
       {
         variant: 'danger',
         style: 'fill',
         className:
-          'text-white bg-transparent before:backdrop-blur-[2px] before:bg-[radial-gradient(210.2%_603.45%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.96)_8%,rgba(208,39,16,0.9375)_13.75%,rgba(223,54,32,0.875)_19.5%,rgba(255,84,64,0.75)_31%,rgba(255,143,128,0.5)_54%,rgba(255,255,255,0)_100%)] active:before:bg-[radial-gradient(152.27%_62.83%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.96)_8%,rgba(255,255,255,0.96)_100%),linear-gradient(90deg,rgba(192,24,0,0.96)_0%,rgba(192,24,0,0.96)_100%)] after:shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_2px_4px_rgba(255,255,255,0.34)] active:after:shadow-[inset_0_4px_4px_rgba(255,255,255,0.25)] disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          `${seaglassFillOverlay} bg-bg-button-danger-default hover:bg-bg-button-danger-hover active:bg-bg-button-danger-pressed`,
+      },
+      {
+        style: 'fill',
+        className: 'active:scale-[1.02] active:-translate-y-[1px] active:duration-[80ms] active:ease-out',
       },
       // Transparent
       {
@@ -255,9 +262,39 @@ export interface ButtonProps
 type ButtonVariant = NonNullable<ButtonProps['variant']>;
 type ButtonStyle = NonNullable<ButtonProps['style']>;
 type SpotlightStyle = React.CSSProperties & {
+  '--button-seaglass-radius-x': string;
+  '--button-seaglass-radius-y': string;
   '--button-spotlight-x': string;
   '--button-spotlight-y': string;
+  '--button-spotlight-position': string;
+  '--button-spotlight-size': string;
 };
+
+type SeaglassMetrics = {
+  radiusX: string;
+  radiusY: string;
+  spotlightSize: string;
+};
+
+const defaultSeaglassMetrics: SeaglassMetrics = {
+  radiusX: '380px',
+  radiusY: '340px',
+  spotlightSize: '82px',
+};
+
+function getSeaglassMetrics(width: number, height: number): SeaglassMetrics {
+  const normalizedWidth = Math.min(Math.max((width - 120) / 300, 0), 1);
+  const radiusMultiplier = 2.1 - normalizedWidth * 0.55;
+  const radiusX = Math.round(Math.max(width * radiusMultiplier, 220));
+  const radiusY = Math.round(Math.max(height * 6, 280));
+  const spotlightSize = Math.round(Math.min(Math.max(width * 0.24, 72), 96));
+
+  return {
+    radiusX: `${radiusX}px`,
+    radiusY: `${radiusY}px`,
+    spotlightSize: `${spotlightSize}px`,
+  };
+}
 
 export function Button({
   variant,
@@ -281,7 +318,37 @@ export function Button({
   const resolvedVariant = variant ?? 'primary';
   const resolvedStyle: ButtonStyle = style ?? 'fill';
   const showSpotlight = treatment === 'seaglass' && !isDisabled && !isLoading;
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [seaglassMetrics, setSeaglassMetrics] = React.useState(defaultSeaglassMetrics);
   const [spotlightPosition, setSpotlightPosition] = React.useState({ x: '50%', y: '50%' });
+
+  React.useEffect(() => {
+    if (treatment !== 'seaglass' || !buttonRef.current) {
+      return undefined;
+    }
+
+    const updateMetrics = () => {
+      if (!buttonRef.current) {
+        return;
+      }
+
+      const rect = buttonRef.current.getBoundingClientRect();
+      setSeaglassMetrics(getSeaglassMetrics(rect.width, rect.height));
+    };
+
+    updateMetrics();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+
+    const resizeObserver = new ResizeObserver(updateMetrics);
+    resizeObserver.observe(buttonRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [treatment]);
 
   const handleMouseMove: NonNullable<ButtonProps['onMouseMove']> = (event) => {
     if (showSpotlight) {
@@ -335,17 +402,21 @@ export function Button({
     onBlur?.(event);
   };
 
-const resolvedClassName = twMerge(
-  buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
-  treatment === 'seaglass'
-    ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
-    : undefined,
-  isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
-  className
-);
+  const resolvedClassName = twMerge(
+    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
+    treatment === 'seaglass'
+      ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
+      : undefined,
+    isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
+    className
+  );
   const spotlightStyle: SpotlightStyle = {
+    '--button-seaglass-radius-x': seaglassMetrics.radiusX,
+    '--button-seaglass-radius-y': seaglassMetrics.radiusY,
     '--button-spotlight-x': spotlightPosition.x,
     '--button-spotlight-y': spotlightPosition.y,
+    '--button-spotlight-position': `${spotlightPosition.x} ${spotlightPosition.y}`,
+    '--button-spotlight-size': seaglassMetrics.spotlightSize,
   };
   const loadingIndicator = (
     <svg
@@ -375,6 +446,7 @@ const resolvedClassName = twMerge(
   return (
     <AriaButton
       {...props}
+      ref={buttonRef}
       isDisabled={isDisabled || isLoading}
       style={spotlightStyle}
       onMouseMove={handleMouseMove}
