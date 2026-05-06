@@ -15,11 +15,11 @@ export default defineConfig({
       filename: 'tailwind-theme.css', // Must be .css for Tailwind v4!
       theme: {
         color: ['color.*'],
-        fontFamily: {
-          sans: 'font.sans',
-          mono: 'font.mono',
-        },
+        font: ['font.*'],
         text: ['text.*'],
+        leading: ['leading.*'],
+        tracking: ['tracking.*'],
+        'font-weight': ['font-weight.*'],
       },
       // Dark mode support - your tokens have Light/Dark modes!
       modeVariants: [{ variant: 'dark', mode: 'Dark' }],
