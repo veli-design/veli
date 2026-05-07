@@ -133,7 +133,7 @@ export function BreadcrumbsVariantsDemo() {
               </Breadcrumb>
             )}
           </Breadcrumbs>
-          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+          <p className="type-caption-12-regular text-fg-text-default-muted">
             Activate an earlier crumb to collapse the trail to that level.
           </p>
         </div>
@@ -432,7 +432,7 @@ export function DividerUsageDemo() {
           <h3 className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
             Applicant details
           </h3>
-          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+          <p className="type-caption-12-regular text-fg-text-default-muted">
             Review the information before continuing.
           </p>
         </div>

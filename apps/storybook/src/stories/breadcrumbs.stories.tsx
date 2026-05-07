@@ -198,7 +198,7 @@ export const DataDrivenCollection: Story = {
             </Breadcrumb>
           )}
         </Breadcrumbs>
-        <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+        <p className="type-caption-12-regular text-fg-text-default-muted">
           Select an earlier crumb to jump back in the hierarchy and collapse the trail.
         </p>
       </div>

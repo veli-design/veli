@@ -22,7 +22,7 @@ const buttonVariants = cva(
       },
       size: {
         // Includes visual compensation for Figma's internal "Label" horizontal inset.
-        xs: 'h-7 px-[8px] gap-0.5 text-[12px] leading-[16px] tracking-[0.01em]',
+        xs: 'h-7 px-[8px] gap-0.5 type-caption-12-regular',
         sm: 'h-9 px-2.5 gap-0.5 text-[14px] leading-[20px]',
         md: 'h-11 px-3.5 gap-0.5 text-[16px] leading-[24px]',
         lg: 'h-13 px-[16px] gap-0.5 text-[18px] leading-[26px]',

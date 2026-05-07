@@ -32,7 +32,7 @@ const headerLabelVariants = cva('text-[14px] leading-[20px]', {
   },
 });
 
-const headerMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const headerMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',
@@ -138,7 +138,7 @@ const indicatorVariants = cva(
   }
 );
 
-const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',

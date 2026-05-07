@@ -33,7 +33,7 @@ const tagListVariants = cva(
   'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-fg-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-surface-bg'
 );
 
-const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',

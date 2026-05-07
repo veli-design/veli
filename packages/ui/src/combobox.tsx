@@ -32,7 +32,7 @@ const headerLabelVariants = cva('text-[14px] leading-[20px]', {
   },
 });
 
-const headerMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const headerMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',
@@ -164,14 +164,14 @@ const itemVariants = cva(
 );
 
 const sectionHeaderVariants = cva(
-  'px-[8px] py-[6px] text-[12px] font-medium leading-[16px] tracking-[0.01em] text-fg-text-default-muted'
+  'px-[8px] py-[6px] type-caption-12-medium text-fg-text-default-muted'
 );
 
 const emptyStateVariants = cva(
   'px-[8px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle'
 );
 
-const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',
