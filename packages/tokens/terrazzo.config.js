@@ -3,7 +3,7 @@ import css from '@terrazzo/plugin-css';
 import tailwind from '@terrazzo/plugin-tailwind';
 
 export default defineConfig({
-  tokens: './src/design.tokens.json',
+  tokens: './.cache/design.tokens.normalized.json',
   outDir: './dist',
 
   plugins: [

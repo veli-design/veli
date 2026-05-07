@@ -23,7 +23,7 @@ export const fieldLabelVariants = cva('text-[14px] leading-[20px]', {
   },
 });
 
-export const fieldMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+export const fieldMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',
@@ -121,7 +121,7 @@ const dateSegmentVariants = cva(
         minute: '',
         second: '',
         dayPeriod: 'uppercase',
-        timeZoneName: 'text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-subtle',
+        timeZoneName: 'type-caption-12-regular text-fg-text-default-subtle',
       },
     },
     defaultVariants: {
@@ -134,7 +134,7 @@ const dateSegmentVariants = cva(
   }
 );
 
-export const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+export const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
       subtle: 'text-fg-text-default-subtle',
