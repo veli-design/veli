@@ -30,7 +30,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+    <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <Breadcrumbs aria-label="Breadcrumb">
         <Breadcrumb href="#">Home</Breadcrumb>
         <Breadcrumb href="#">Services</Breadcrumb>
@@ -44,9 +44,9 @@ export const Default: Story = {
 export const Variations: Story = {
   render: () => (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Standard trail
           </p>
           <Breadcrumbs aria-label="Permit breadcrumb">
@@ -58,9 +58,9 @@ export const Variations: Story = {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Back link treatment
           </p>
           <Breadcrumbs aria-label="Back breadcrumb">
@@ -76,9 +76,9 @@ export const Variations: Story = {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px] lg:col-span-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Disabled crumb
           </p>
           <Breadcrumbs aria-label="Disabled breadcrumb">
@@ -100,7 +100,7 @@ export const DataDrivenCollection: Story = {
     const items = breadcrumbTrail.slice(0, currentIndex + 1);
 
     return (
-      <div className="w-[420px] space-y-[12px] rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="w-[420px] space-y-[12px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <Breadcrumbs
           aria-label="Application breadcrumb"
           items={items}
@@ -117,7 +117,7 @@ export const DataDrivenCollection: Story = {
             </Breadcrumb>
           )}
         </Breadcrumbs>
-        <p className="type-caption-12-regular text-fg-text-default-muted">
+        <p className="type-caption-12-regular text-text-default-muted">
           Select an earlier crumb to jump back in the hierarchy and collapse the trail.
         </p>
       </div>

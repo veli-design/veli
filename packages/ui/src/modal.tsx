@@ -16,7 +16,7 @@ const overlayVariants = cva(
 );
 
 const modalVariants = cva(
-  'relative w-full max-h-[min(90dvh,720px)] overflow-auto rounded-[20px] border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised text-fg-text-default-default shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)] outline-none transition duration-200 ease-out data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
+  'relative w-full max-h-[min(90dvh,720px)] overflow-auto rounded-[20px] border border-border-default-subtle bg-bg-surface-overlay-raised text-text-default-default shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)] outline-none transition duration-200 ease-out data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
   {
     variants: {
       size: {
@@ -82,7 +82,7 @@ export function Modal({
                   {title ? (
                     <Heading
                       slot="title"
-                      className="flex-1 min-w-0 text-[24px] leading-[32px] font-bold text-fg-text-default-high-contrast"
+                      className="flex-1 min-w-0 type-title-2-bold text-text-default-high-contrast"
                     >
                       {title}
                     </Heading>
@@ -115,7 +115,7 @@ export function Modal({
               )}
               <div
                 className={twMerge(
-                  'px-[24px] pb-[24px] text-[16px] leading-[24px] text-fg-text-default-default',
+                  'px-[24px] pb-[24px] type-body-md-regular text-text-default-default',
                   title || showCloseButton ? 'pt-[16px]' : 'pt-[24px]',
                   size === 'full' && 'min-h-0 flex-1 overflow-auto',
                   contentClassName
@@ -124,7 +124,7 @@ export function Modal({
                 {children}
               </div>
               {footer ? (
-                <div className="flex flex-col-reverse gap-[12px] border-t border-fg-border-default-subtle px-[24px] py-[16px] sm:flex-row sm:justify-end">
+                <div className="flex flex-col-reverse gap-[12px] border-t border-border-default-subtle px-[24px] py-[16px] sm:flex-row sm:justify-end">
                   {footer}
                 </div>
               ) : null}

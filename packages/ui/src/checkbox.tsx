@@ -6,7 +6,7 @@ import {
 import { cva } from 'class-variance-authority';
 
 const checkboxRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased text-fg-text-default-default disabled:cursor-not-allowed'
+  'group inline-flex items-center gap-[8px] type-body-sm-medium antialiased text-text-default-default disabled:cursor-not-allowed'
 );
 
 const checkboxControlVariants = cva(
@@ -38,7 +38,7 @@ const checkboxControlVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-1 ring-offset-bg-surface-surface-raised',
+        true: 'ring-2 ring-border-focus ring-offset-1 ring-offset-bg-surface-raised',
         false: '',
       },
     },

@@ -48,7 +48,7 @@ export function SegmentedTabs({
       <AriaTabList
         aria-label={listAriaLabel}
         className={twMerge(
-          "flex w-full rounded-full border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[4px] lg:w-fit",
+          "flex w-full rounded-full border border-border-default-subtle bg-bg-surface-raised p-[4px] lg:w-fit",
           isCentered && "mx-auto",
           tabListClassName,
         )}
@@ -60,11 +60,11 @@ export function SegmentedTabs({
             isDisabled={item.isDisabled}
             className={(state) =>
               twMerge(
-                "inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] text-[18px] leading-[28px] font-semibold whitespace-nowrap antialiased transition-colors duration-300 outline-none md:px-[40px] md:py-[20px] md:text-[20px] data-[disabled]:pointer-events-none data-[disabled]:text-fg-text-disabled-disabled",
+                "inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] text-[18px] leading-[28px] font-semibold whitespace-nowrap antialiased transition-colors duration-300 outline-none md:px-[40px] md:py-[20px] md:text-[20px] data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled",
                 state.isSelected
-                  ? "bg-bg-button-primary-default text-white"
-                  : "bg-transparent text-fg-text-default-muted data-[hovered]:text-fg-text-default-default data-[pressed]:bg-bg-button-secondary-subtle-hover",
-                state.isFocusVisible && "ring-2 ring-fg-border-focus ring-offset-2",
+                  ? "bg-button-primary-default text-white"
+                  : "bg-transparent text-text-default-muted data-[hovered]:text-text-default-default data-[pressed]:bg-button-secondary-subtle-hover",
+                state.isFocusVisible && "ring-2 ring-border-focus ring-offset-2",
                 tabClassName,
               )
             }
@@ -79,7 +79,7 @@ export function SegmentedTabs({
           key={item.id}
           id={item.id}
           className={twMerge(
-            "pt-[16px] text-[16px] leading-[24px] text-fg-text-default-default",
+            "pt-[16px] type-body-md-regular text-text-default-default",
             panelClassName,
           )}
         >

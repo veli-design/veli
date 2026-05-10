@@ -25,7 +25,7 @@ function overlayArrowSvgClass(placement: string | null) {
 }
 
 const popoverVariants = cva(
-  "bg-bg-surface-surface-raised shadow-[0_12px_32px_rgba(15,23,42,0.16)] rounded-xl bg-clip-padding border border-fg-border-default-subtle backdrop-blur-[4px] outline-0",
+  "bg-bg-surface-raised shadow-[0_12px_32px_rgba(15,23,42,0.16)] rounded-xl bg-clip-padding border border-border-default-subtle backdrop-blur-[4px] outline-0",
   {
     variants: {
       isEntering: {
@@ -90,7 +90,7 @@ export function Popover({
             width={12}
             height={12}
             viewBox="0 0 12 12"
-            className="block fill-[var(--color-bg-surface-surface-raised)] stroke-[var(--color-fg-border-default-subtle)] stroke-1 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]"
+            className="block fill-[var(--color-bg-surface-raised)] stroke-[var(--color-border-default-subtle)] stroke-1 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]"
           >
             <path d="M0 0 L6 6 L12 0" />
           </svg>

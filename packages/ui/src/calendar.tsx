@@ -19,7 +19,7 @@ import { twMerge } from "tailwind-merge";
 import { Button } from "./button";
 
 const calendarRootVariants = cva(
-  "flex w-[calc(10*var(--spacing)*7)] max-w-full flex-col rounded-2xl border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised p-4 font-sans text-fg-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)] [container-type:inline-size]",
+  "flex w-[calc(10*var(--spacing)*7)] max-w-full flex-col rounded-2xl border border-border-default-subtle bg-bg-surface-overlay-raised p-4 font-sans text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)] [container-type:inline-size]",
 );
 
 const cellVariants = cva(
@@ -28,11 +28,11 @@ const cellVariants = cva(
     variants: {
       isSelected: {
         false:
-          "text-fg-text-default-default hover:bg-bg-button-secondary-subtle-default active:bg-bg-button-secondary-subtle-hover data-[outside-month]:text-fg-text-default-inactive data-[outside-visible-range]:invisible",
-        true: "bg-bg-button-primary-default text-white hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed data-[invalid]:bg-bg-button-danger-default forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
+          "text-text-default-default hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible",
+        true: "bg-button-primary-default text-white hover:bg-button-primary-hover active:bg-button-primary-pressed data-[invalid]:bg-button-danger-default forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
       },
       isDisabled: {
-        true: "cursor-not-allowed text-fg-text-disabled-disabled forced-colors:text-[GrayText]",
+        true: "cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]",
         false: "",
       },
       isUnavailable: {
@@ -40,11 +40,11 @@ const cellVariants = cva(
         false: "",
       },
       isFocusVisible: {
-        true: "ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-overlay-raised",
+        true: "ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-overlay-raised",
         false: "",
       },
       isToday: {
-        true: "ring-1 ring-inset ring-fg-border-default-subtle",
+        true: "ring-1 ring-inset ring-border-default-subtle",
         false: "",
       },
     },
@@ -52,13 +52,13 @@ const cellVariants = cva(
       {
         isSelected: true,
         isToday: true,
-        className: "ring-fg-border-focus",
+        className: "ring-border-focus",
       },
       {
         isSelected: false,
         isDisabled: false,
         isToday: true,
-        className: "text-fg-text-default-high-contrast",
+        className: "text-text-default-high-contrast",
       },
     ],
     defaultVariants: {
@@ -111,7 +111,7 @@ export function Calendar<T extends DateValue>({
       {errorMessage ? (
         <Text
           slot="errorMessage"
-          className="pt-3 text-sm text-fg-text-danger-muted"
+          className="pt-3 text-sm text-text-danger-muted"
         >
           {errorMessage}
         </Text>
@@ -134,7 +134,7 @@ export function CalendarHeader() {
       >
         {direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       </Button>
-      <Heading className="mx-2 my-0 flex-1 text-center font-sans text-base font-semibold text-fg-text-default-high-contrast [font-variation-settings:normal]" />
+      <Heading className="mx-2 my-0 flex-1 text-center font-sans text-base font-semibold text-text-default-high-contrast [font-variation-settings:normal]" />
       <Button
         slot="next"
         variant="secondary"
@@ -152,7 +152,7 @@ export function CalendarGridHeader() {
   return (
     <AriaCalendarGridHeader>
       {(day) => (
-        <CalendarHeaderCell className="pb-1 text-xs font-semibold text-fg-text-default-muted">
+        <CalendarHeaderCell className="pb-1 text-xs font-semibold text-text-default-muted">
           {day}
         </CalendarHeaderCell>
       )}

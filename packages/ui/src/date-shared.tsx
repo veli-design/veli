@@ -11,11 +11,11 @@ export const fieldRootVariants = cva('flex w-full flex-col gap-1.5 font-sans ant
 
 export const fieldLabelRowVariants = cva('flex items-center justify-between gap-3');
 
-export const fieldLabelVariants = cva('text-[14px] leading-[20px]', {
+export const fieldLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-default',
     },
   },
   defaultVariants: {
@@ -26,11 +26,11 @@ export const fieldLabelVariants = cva('text-[14px] leading-[20px]', {
 export const fieldMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
+      true: 'text-text-disabled-disabled',
       false: '',
     },
   },
@@ -38,7 +38,7 @@ export const fieldMetaVariants = cva('type-caption-12-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-fg-text-disabled-disabled',
+      className: 'text-text-disabled-disabled',
     },
   ],
   defaultVariants: {
@@ -48,7 +48,7 @@ export const fieldMetaVariants = cva('type-caption-12-regular', {
 });
 
 export const fieldShellVariants = cva(
-  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-fg-border-focus focus-within:ring-offset-0',
+  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-border-focus focus-within:ring-offset-0',
   {
     variants: {
       isDisabled: {
@@ -88,23 +88,23 @@ export const fieldShellVariants = cva(
 export const dateInputVariants = cva('flex min-w-0 flex-1 flex-wrap items-center gap-0');
 
 const dateSegmentVariants = cva(
-  'rounded px-[1px] py-1 text-[14px] leading-[20px] tabular-nums outline-none transition-colors data-[type=literal]:px-0',
+  'rounded px-[1px] py-1 type-body-sm-regular tabular-nums outline-none transition-colors data-[type=literal]:px-0',
   {
     variants: {
       isPlaceholder: {
-        true: 'text-fg-text-default-inactive',
-        false: 'text-fg-text-default-default',
+        true: 'text-text-default-inactive',
+        false: 'text-text-default-default',
       },
       isDisabled: {
-        true: 'text-fg-text-disabled-disabled',
+        true: 'text-text-disabled-disabled',
         false: '',
       },
       isFocused: {
-        true: 'bg-bg-button-primary-default text-white',
+        true: 'bg-button-primary-default text-white',
         false: '',
       },
       isInvalid: {
-        true: 'text-fg-text-danger-muted data-[type=literal]:text-fg-text-danger-muted',
+        true: 'text-text-danger-muted data-[type=literal]:text-text-danger-muted',
         false: '',
       },
       isReadOnly: {
@@ -112,7 +112,7 @@ const dateSegmentVariants = cva(
         false: '',
       },
       type: {
-        literal: 'px-0 text-fg-text-default-subtle',
+        literal: 'px-0 text-text-default-subtle',
         day: '',
         month: '',
         year: '',
@@ -121,7 +121,7 @@ const dateSegmentVariants = cva(
         minute: '',
         second: '',
         dayPeriod: 'uppercase',
-        timeZoneName: 'type-caption-12-regular text-fg-text-default-subtle',
+        timeZoneName: 'type-caption-12-regular text-text-default-subtle',
       },
     },
     defaultVariants: {
@@ -137,8 +137,8 @@ const dateSegmentVariants = cva(
 export const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
   },
   defaultVariants: {

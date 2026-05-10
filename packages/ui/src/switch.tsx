@@ -39,7 +39,7 @@ const trackVariants = cva(
         true: 'cursor-not-allowed',
       },
       isFocusVisible: {
-        true: 'ring-4 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised',
+        true: 'ring-4 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
       },
     },
     compoundVariants: [
@@ -173,12 +173,12 @@ const handleVariants = cva(
       {
         isDisabled: true,
         isSelected: false,
-        className: 'bg-inputs-switch-handle-disabled-bg-2',
+        className: 'bg-inputs-switch-handle-disabled-bg',
       },
       {
         isDisabled: true,
         isSelected: true,
-        className: 'bg-inputs-switch-handle-disabled-bg-2',
+        className: 'bg-inputs-switch-handle-disabled-bg',
       },
     ],
     defaultVariants: {
@@ -203,8 +203,8 @@ export function Switch({ size, children, ...props }: SwitchProps) {
         switchVariants({
           size,
           className: isDisabled
-            ? 'text-fg-text-disabled-disabled'
-            : 'text-fg-text-default-default',
+            ? 'text-text-disabled-disabled'
+            : 'text-text-default-default',
         })
       }
     >

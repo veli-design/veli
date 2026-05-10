@@ -10,16 +10,16 @@ const linkVariants = cva(
     {
         variants: {
             variant: {
-                primary: 'text-fg-text-links-default',
-                secondary: 'text-fg-text-default-default',
+                primary: 'text-text-links-default',
+                secondary: 'text-text-default-default',
                 inverted: 'text-white',
             },
             size: {
-                xs: 'text-[12px] leading-[16px] gap-[8px]',
-                sm: 'text-[14px] leading-[20px] gap-[8px]',
-                md: 'text-[16px] leading-[24px] gap-[8px]',
-                lg: 'text-[18px] leading-[26px] gap-[8px]',
-                xl: 'text-[20px] leading-[28px] gap-[8px]',
+                xs: 'type-caption-12-medium gap-[8px]',
+                sm: 'type-body-sm-medium gap-[8px]',
+                md: 'type-body-md-medium gap-[8px]',
+                lg: 'type-body-lg-medium gap-[8px]',
+                xl: 'type-subtitle-medium gap-[8px]',
             },
             underline: {
                 none: 'no-underline',
@@ -33,10 +33,10 @@ const linkVariants = cva(
                 true: '',
             },
             isDisabled: {
-                true: 'text-fg-text-disabled-disabled pointer-events-none',
+                true: 'text-text-disabled-disabled pointer-events-none',
             },
             isFocusVisible: {
-                true: 'ring-fg-border-focus ring-offset-2 ring-2 rounded-sm',
+                true: 'ring-border-focus ring-offset-2 ring-2 rounded-sm',
             },
         },
         compoundVariants: [
@@ -50,23 +50,23 @@ const linkVariants = cva(
             {
                 variant: 'primary',
                 isHovered: true,
-                className: 'text-fg-text-links-hover',
+                className: 'text-text-links-hover',
             },
             {
                 variant: 'primary',
                 isPressed: true,
-                className: 'text-fg-text-links-hover',
+                className: 'text-text-links-hover',
             },
             // Secondary States
             {
                 variant: 'secondary',
                 isHovered: true,
-                className: 'text-fg-text-default-muted',
+                className: 'text-text-default-muted',
             },
             {
                 variant: 'secondary',
                 isPressed: true,
-                className: 'text-fg-text-default-muted',
+                className: 'text-text-default-muted',
             },
             // Inverted States
             {

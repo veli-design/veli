@@ -24,7 +24,7 @@ function overlayArrowSvgClass(placement: string | null) {
 }
 
 const tooltipVariants = cva(
-  "group rounded-lg border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised px-3 py-1.5 box-border font-sans text-xs text-fg-text-default-default shadow-[0_8px_24px_rgba(15,23,42,0.16)] backdrop-blur-[4px] will-change-transform",
+  "group rounded-lg border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-1.5 box-border font-sans text-xs text-text-default-default shadow-[0_8px_24px_rgba(15,23,42,0.16)] backdrop-blur-[4px] will-change-transform",
   {
     variants: {
       isEntering: {
@@ -74,7 +74,7 @@ export function Tooltip({ children, className, ...props }: TooltipProps) {
           width={8}
           height={8}
           viewBox="0 0 8 8"
-          className="block fill-[var(--color-bg-surface-surface-overlay-raised)] stroke-[var(--color-fg-border-default-subtle)] forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]"
+          className="block fill-[var(--color-bg-surface-overlay-raised)] stroke-[var(--color-border-default-subtle)] forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]"
         >
           <path d="M0 0 L4 4 L8 0" />
         </svg>

@@ -20,7 +20,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const menuPopoverVariants = cva(
-  'min-w-56 rounded-2xl border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised p-1 text-fg-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] backdrop-blur-[4px] outline-none',
+  'min-w-56 rounded-2xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] backdrop-blur-[4px] outline-none',
   {
     variants: {
       size: {
@@ -38,7 +38,7 @@ const menuPopoverVariants = cva(
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-xl px-3 text-left font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-fg-text-disabled-disabled data-[focused]:bg-bg-button-primary-subtle-default data-[pressed]:bg-bg-button-primary-subtle-hover data-[open]:bg-bg-button-primary-subtle-default',
+  'group flex w-full cursor-default items-center gap-2 rounded-xl px-3 text-left font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[pressed]:bg-button-primary-subtle-hover data-[open]:bg-button-primary-subtle-default',
   {
     variants: {
       size: {
@@ -47,9 +47,9 @@ const menuItemVariants = cva(
         lg: 'min-h-12 py-2.5 text-[18px]',
       },
       tone: {
-        default: 'text-fg-text-default-default',
+        default: 'text-text-default-default',
         danger:
-          'text-fg-text-danger-muted data-[focused]:bg-bg-button-danger-subtle-default data-[pressed]:bg-bg-button-danger-subtle-hover data-[open]:bg-bg-button-danger-subtle-default',
+          'text-text-danger-muted data-[focused]:bg-button-danger-subtle-default data-[pressed]:bg-button-danger-subtle-hover data-[open]:bg-button-danger-subtle-default',
       },
     },
     defaultVariants: {
@@ -120,7 +120,7 @@ export function MenuSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(menuSectionVariants(), className)}>
       {title ? (
-        <Header className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-fg-text-default-muted">
+        <Header className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-text-default-muted">
           {title}
         </Header>
       ) : null}
@@ -137,7 +137,7 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
   return (
     <AriaSeparator
       {...props}
-      className={twMerge('my-1 border-t border-fg-border-default-subtle', className)}
+      className={twMerge('my-1 border-t border-border-default-subtle', className)}
     />
   );
 }
@@ -188,23 +188,23 @@ export function MenuItem({
       {hasStructuredLayout ? (
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {startIcon ? (
-            <span className="shrink-0 text-fg-text-default-muted">{startIcon}</span>
+            <span className="shrink-0 text-text-default-muted">{startIcon}</span>
           ) : null}
           <div className="min-w-0 flex-1">
             {children ? <div className="truncate">{children}</div> : null}
             {description ? (
-              <div className="truncate text-[12px] text-fg-text-default-muted">
+              <div className="truncate text-[12px] text-text-default-muted">
                 {description}
               </div>
             ) : null}
           </div>
           {shortcut ? (
-            <kbd className="shrink-0 rounded-md bg-bg-button-primary-subtle-default px-1.5 py-0.5 text-[11px] font-medium text-fg-text-primary-muted">
+            <kbd className="shrink-0 rounded-md bg-button-primary-subtle-default px-1.5 py-0.5 text-[11px] font-medium text-text-primary-muted">
               {shortcut}
             </kbd>
           ) : null}
           {endIcon ? (
-            <span className="shrink-0 text-fg-text-default-muted">{endIcon}</span>
+            <span className="shrink-0 text-text-default-muted">{endIcon}</span>
           ) : null}
         </div>
       ) : (

@@ -61,6 +61,20 @@ tailwindTheme = tailwindTheme.replace(/(--tracking-caption:\s*)1%;/g, (_match, p
 // Quote multi-word font family names so var(--font-mono) remains valid when
 // consumed by Tailwind's font-family utilities.
 tailwindTheme = tailwindTheme.replace(/(--font-(?:mono|dhivehi):\s*)([^";\n]+ [^;\n]+);/g, '$1"$2";');
+tailwindTheme = tailwindTheme.replace(/--color-([a-z0-9-]+)-DEFAULT:/g, '--color-$1-default:');
+
+// Terrazzo emits dark mode token values as a bare @variant block containing
+// custom property declarations. Tailwind does not turn declaration-only
+// @variant blocks into scoped CSS, so wrap the values in the theme layer and
+// register the dark variant used by consumers.
+tailwindTheme = tailwindTheme.replace(/\n@variant dark \{\n([\s\S]*?)\n\}\s*$/u, (_match, declarations) => {
+  const darkDeclarations = declarations
+    .split('\n')
+    .map((line) => (line ? `    ${line.trimStart()}` : line))
+    .join('\n');
+
+  return `\n@custom-variant dark (&:where(.dark, .dark *));\n\n@layer theme {\n  .dark {\n${darkDeclarations}\n  }\n}`;
+});
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
