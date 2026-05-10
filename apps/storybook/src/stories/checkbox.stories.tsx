@@ -9,10 +9,6 @@ const meta: Meta<typeof Checkbox> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    shape: {
-      control: 'select',
-      options: ['square', 'round'],
-    },
     isIndeterminate: {
       control: 'boolean',
     },
@@ -22,7 +18,6 @@ const meta: Meta<typeof Checkbox> = {
   },
   args: {
     children: 'Checkbox label',
-    shape: 'square',
   },
 };
 
@@ -31,26 +26,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const Shapes: Story = {
+export const States: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-8">
-        <Checkbox shape="square">Square Off</Checkbox>
-        <Checkbox shape="square" defaultSelected>
-          Square On
-        </Checkbox>
-        <Checkbox shape="square" isIndeterminate>
-          Square Indeterminate
-        </Checkbox>
-      </div>
-      <div className="flex items-center gap-8">
-        <Checkbox shape="round">Round Off</Checkbox>
-        <Checkbox shape="round" defaultSelected>
-          Round On
-        </Checkbox>
-        <Checkbox shape="round" isIndeterminate>
-          Round Indeterminate
-        </Checkbox>
+        <Checkbox>Off</Checkbox>
+        <Checkbox defaultSelected>On</Checkbox>
+        <Checkbox isIndeterminate>Indeterminate</Checkbox>
       </div>
     </div>
   ),
@@ -64,25 +46,15 @@ export const StatesAudit: Story = {
       <div className="text-[12px] font-bold uppercase text-gray-400">On</div>
       <div className="text-[12px] font-bold uppercase text-gray-400">Indeterminate</div>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">Square</div>
-      <Checkbox shape="square" />
-      <Checkbox shape="square" defaultSelected />
-      <Checkbox shape="square" isIndeterminate />
+      <div className="text-[12px] font-bold uppercase text-gray-400">Default</div>
+      <Checkbox />
+      <Checkbox defaultSelected />
+      <Checkbox isIndeterminate />
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">Square Disabled</div>
-      <Checkbox shape="square" isDisabled />
-      <Checkbox shape="square" defaultSelected isDisabled />
-      <Checkbox shape="square" isIndeterminate isDisabled />
-
-      <div className="text-[12px] font-bold uppercase text-gray-400">Round</div>
-      <Checkbox shape="round" />
-      <Checkbox shape="round" defaultSelected />
-      <Checkbox shape="round" isIndeterminate />
-
-      <div className="text-[12px] font-bold uppercase text-gray-400">Round Disabled</div>
-      <Checkbox shape="round" isDisabled />
-      <Checkbox shape="round" defaultSelected isDisabled />
-      <Checkbox shape="round" isIndeterminate isDisabled />
+      <div className="text-[12px] font-bold uppercase text-gray-400">Disabled</div>
+      <Checkbox isDisabled />
+      <Checkbox defaultSelected isDisabled />
+      <Checkbox isIndeterminate isDisabled />
     </div>
   ),
 };

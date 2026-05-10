@@ -289,6 +289,25 @@ export function ButtonIconsDemo() {
   );
 }
 
+export function ButtonIconOnlyDemo() {
+  return (
+    <div className="flex gap-4 flex-wrap items-center">
+      <Button size="xl" iconOnly aria-label="Add item">
+        <Plus size={24} weight="bold" />
+      </Button>
+      <Button size="lg" variant="secondary" style="transparent" iconOnly aria-label="Download file">
+        <DownloadSimple size={20} weight="bold" />
+      </Button>
+      <Button size="md" variant="danger" style="ghost" iconOnly aria-label="Delete item">
+        <Trash size={16} weight="bold" />
+      </Button>
+      <Button size="sm" iconOnly isLoading aria-label="Saving">
+        <Plus size={16} weight="bold" />
+      </Button>
+    </div>
+  );
+}
+
 export function ButtonSizesDemo() {
   return (
     <div className="flex gap-4 items-center flex-wrap">
@@ -332,11 +351,12 @@ export function CheckboxUsageDemo() {
   );
 }
 
-export function CheckboxStylesDemo() {
+export function CheckboxStatesDemo() {
   return (
     <div className="flex flex-col gap-[12px]">
-      <Checkbox shape="square">Square</Checkbox>
-      <Checkbox shape="round">Round</Checkbox>
+      <Checkbox>Off</Checkbox>
+      <Checkbox defaultSelected>On</Checkbox>
+      <Checkbox isIndeterminate>Indeterminate</Checkbox>
     </div>
   );
 }
@@ -643,22 +663,30 @@ export function LinkVariantsDemo() {
 export function LinkIconsDemo() {
   return (
     <div className="flex gap-8 flex-wrap items-center">
-      <Link size="xl">
-        <Plus size={24} weight="bold" />
-        XL Link
-      </Link>
-      <Link size="lg" variant="secondary">
-        <DownloadSimple size={20} weight="bold" />
-        LG Link
-      </Link>
-      <Link size="md">
-        MD Link
-        <ArrowRight size={16} weight="bold" />
-      </Link>
-      <Link size="xs">
-        <ArrowRight size={12} weight="bold" />
-        XS Link
-      </Link>
+      <span className="text-[20px] leading-[28px]">
+        <Link>
+          <Plus size={20} weight="bold" />
+          Large Link
+        </Link>
+      </span>
+      <span className="text-[18px] leading-[26px]">
+        <Link variant="secondary">
+          <DownloadSimple size={18} weight="bold" />
+          LG Link
+        </Link>
+      </span>
+      <span className="text-[16px] leading-[24px]">
+        <Link>
+          MD Link
+          <ArrowRight size={16} weight="bold" />
+        </Link>
+      </span>
+      <span className="text-[12px] leading-[16px]">
+        <Link>
+          <ArrowRight size={12} weight="bold" />
+          XS Link
+        </Link>
+      </span>
     </div>
   );
 }
@@ -666,11 +694,21 @@ export function LinkIconsDemo() {
 export function LinkSizesDemo() {
   return (
     <div className="flex gap-6 items-center flex-wrap">
-      <Link size="xs">Extra Small</Link>
-      <Link size="sm">Small</Link>
-      <Link size="md">Medium</Link>
-      <Link size="lg">Large</Link>
-      <Link size="xl">Extra Large</Link>
+      <span className="text-[12px] leading-[16px]">
+        <Link>Extra Small</Link>
+      </span>
+      <span className="text-[14px] leading-[20px]">
+        <Link>Small</Link>
+      </span>
+      <span className="text-[16px] leading-[24px]">
+        <Link>Medium</Link>
+      </span>
+      <span className="text-[18px] leading-[26px]">
+        <Link>Large</Link>
+      </span>
+      <span className="text-[20px] leading-[28px]">
+        <Link>Extra Large</Link>
+      </span>
     </div>
   );
 }

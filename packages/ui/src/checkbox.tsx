@@ -6,17 +6,13 @@ import {
 import { cva } from 'class-variance-authority';
 
 const checkboxRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased text-fg-text-default-default disabled:cursor-not-allowed'
+  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased disabled:cursor-not-allowed'
 );
 
 const checkboxControlVariants = cva(
-  'relative inline-flex size-[16px] shrink-0 items-center justify-center border-2 transition-colors focus-visible:outline-none',
+  'relative inline-flex size-[16px] shrink-0 items-center justify-center rounded-[3px] border-2 transition-colors focus-visible:outline-none',
   {
     variants: {
-      shape: {
-        square: 'rounded-[3px]',
-        round: 'rounded-full',
-      },
       isSelected: {
         true: '',
         false: '',
@@ -38,7 +34,7 @@ const checkboxControlVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-1 ring-offset-bg-surface-surface-raised',
+        true: 'ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised',
         false: '',
       },
     },
@@ -67,14 +63,14 @@ const checkboxControlVariants = cva(
         isDisabled: false,
         isPressed: true,
         className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border-hover',
+          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-checked-bg',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-container-bg border-inputs-checkbox-indicator-disabled-border',
       },
       // Checked / indeterminate active
       {
@@ -126,17 +122,16 @@ const checkboxControlVariants = cva(
         isSelected: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-border border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
       },
       {
         isIndeterminate: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-border border-inputs-checkbox-container-border',
+          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
       },
     ],
     defaultVariants: {
-      shape: 'square',
       isSelected: false,
       isIndeterminate: false,
       isHovered: false,
@@ -152,7 +147,7 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-inputs-checkbox-indicator-disabled-bg',
+        true: 'text-white',
         false: 'text-white',
       },
     },
@@ -162,24 +157,27 @@ const indicatorVariants = cva(
 export interface CheckboxProps
   extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'> {
   children?: React.ReactNode;
-  shape?: 'square' | 'round';
 }
 
-export function Checkbox({
-  children,
-  shape = 'square',
-  isIndeterminate,
-  ...props
-}: CheckboxProps) {
+export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps) {
   return (
-    <AriaCheckbox {...props} isIndeterminate={isIndeterminate} className={checkboxRootVariants()}>
+    <AriaCheckbox
+      {...props}
+      isIndeterminate={isIndeterminate}
+      className={(state) =>
+        checkboxRootVariants({
+          className: state.isDisabled
+            ? 'text-fg-text-disabled-disabled'
+            : 'text-fg-text-default-default',
+        })
+      }
+    >
       {(state) => {
         const checkedOrIndeterminate = state.isSelected || state.isIndeterminate;
         return (
           <>
             <span
               className={checkboxControlVariants({
-                shape,
                 isSelected: state.isSelected,
                 isIndeterminate: state.isIndeterminate,
                 isHovered: state.isHovered,
@@ -194,26 +192,25 @@ export function Checkbox({
                     <svg
                       aria-hidden="true"
                       width="10"
-                      height="2"
-                      viewBox="0 0 10 2"
+                      height="4"
+                      viewBox="0 0 10 4"
                       fill="none"
                     >
-                      <path d="M1 1H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M0 2H10" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   ) : (
                     <svg
                       aria-hidden="true"
-                      width={state.isPressed ? '8' : '10'}
-                      height={state.isPressed ? '5' : '6'}
-                      viewBox="0 0 10 8"
+                      width={state.isPressed ? '9' : '11.2'}
+                      height={state.isPressed ? '6' : '8.2'}
+                      viewBox="-1 -1 11.5 8.8"
+                      className={state.isPressed ? 'translate-x-[-0.2px] translate-y-[0.1px]' : 'translate-x-[-0.4px] translate-y-[0.1px]'}
                       fill="none"
                     >
                       <path
-                        d="M1 4L3.5 6.5L9 1"
+                        d="M0 2.5L3.5 6L9.5 0"
                         stroke="currentColor"
                         strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
                       />
                     </svg>
                   )}

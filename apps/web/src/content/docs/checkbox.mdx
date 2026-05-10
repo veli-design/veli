@@ -1,17 +1,17 @@
 ---
 title: Checkbox
-description: Accessible checkbox component with square and round styles.
+description: Accessible checkbox component with square geometry and semantic state styling.
 ---
 
 import {
   CheckboxDisabledDemo,
-  CheckboxStylesDemo,
+  CheckboxStatesDemo,
   CheckboxUsageDemo,
 } from '../../components/DocsExamples';
 
 # Checkbox
 
-The Checkbox component supports checked, unchecked, and indeterminate states with both square and round styles.
+The Checkbox component supports checked, unchecked, and indeterminate states with a single square control style.
 
 ## Import
 
@@ -31,15 +31,16 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 <Checkbox isIndeterminate>Indeterminate</Checkbox>
 ```
 
-## Styles
+## States
 
 <div className="preview p-4 border rounded-lg bg-surface-100 mb-4">
-  <CheckboxStylesDemo client:visible />
+  <CheckboxStatesDemo client:visible />
 </div>
 
 ```tsx
-<Checkbox shape="square">Square</Checkbox>
-<Checkbox shape="round">Round</Checkbox>
+<Checkbox>Off</Checkbox>
+<Checkbox defaultSelected>On</Checkbox>
+<Checkbox isIndeterminate>Indeterminate</Checkbox>
 ```
 
 ## Disabled
@@ -52,7 +53,6 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `shape` | `'square' \| 'round'` | `'square'` | Visual style of the control. |
 | `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state. |
 | `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
 
