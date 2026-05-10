@@ -80,7 +80,7 @@ export const Playground: Story = {
   render: (args) => {
     const { delay, children, ...tooltipProps } = args;
     return (
-      <div className="flex min-h-[280px] items-center justify-center bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[280px] items-center justify-center bg-bg-surface-base p-8">
         <TooltipTrigger delay={delay}>
           <Button variant="secondary">Hover or focus me</Button>
           <Tooltip {...tooltipProps}>{children}</Tooltip>
@@ -93,7 +93,7 @@ export const Playground: Story = {
 export const IconButtons: Story = {
   name: "Icon buttons",
   render: () => (
-    <div className="flex min-h-[280px] items-center justify-center gap-4 bg-bg-surface-surface-bg p-8">
+    <div className="flex min-h-[280px] items-center justify-center gap-4 bg-bg-surface-base p-8">
       <TooltipTrigger>
         <Button aria-label="Copy to clipboard" variant="secondary" size="sm">
           ⧉
@@ -115,7 +115,7 @@ export const Placements: Story = {
     const placements = ["top", "bottom", "left", "right"] as const;
 
     return (
-      <div className="flex min-h-[380px] items-center justify-center bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[380px] items-center justify-center bg-bg-surface-base p-8">
         <div className="grid grid-cols-2 gap-12 sm:grid-cols-4">
           {placements.map((placement) => (
             <TooltipTrigger key={placement}>

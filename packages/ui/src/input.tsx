@@ -11,11 +11,11 @@ import { cva } from 'class-variance-authority';
 
 const inputRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
-const headerLabelVariants = cva('text-[14px] leading-[20px]', {
+const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-default',
     },
   },
   defaultVariants: {
@@ -26,11 +26,11 @@ const headerLabelVariants = cva('text-[14px] leading-[20px]', {
 const headerMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
+      true: 'text-text-disabled-disabled',
       false: '',
     },
   },
@@ -38,7 +38,7 @@ const headerMetaVariants = cva('type-caption-12-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-fg-text-disabled-disabled',
+      className: 'text-text-disabled-disabled',
     },
   ],
   defaultVariants: {
@@ -47,11 +47,11 @@ const headerMetaVariants = cva('type-caption-12-regular', {
   },
 });
 
-const actionVariants = cva('shrink-0 text-[14px] font-medium leading-[20px]', {
+const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-links-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-links-default',
     },
   },
   defaultVariants: {
@@ -60,7 +60,7 @@ const actionVariants = cva('shrink-0 text-[14px] font-medium leading-[20px]', {
 });
 
 const fieldShellVariants = cva(
-  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-fg-border-focus focus-within:ring-offset-0',
+  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-border-focus focus-within:ring-offset-0',
   {
     variants: {
       isDisabled: {
@@ -100,8 +100,8 @@ const fieldShellVariants = cva(
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-subtle',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-subtle',
     },
   },
   defaultVariants: {
@@ -114,8 +114,8 @@ const insetSlotVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-fg-text-disabled-disabled',
-        false: 'text-fg-text-default-subtle',
+        true: 'text-text-disabled-disabled',
+        false: 'text-text-default-subtle',
       },
     },
     defaultVariants: {
@@ -125,14 +125,14 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'min-w-0 flex-1 border-0 bg-transparent p-0 text-[14px] leading-[20px] text-fg-text-default-default outline-none placeholder:text-fg-text-default-inactive disabled:text-fg-text-disabled-disabled'
+  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled'
 );
 
 const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
   },
   defaultVariants: {

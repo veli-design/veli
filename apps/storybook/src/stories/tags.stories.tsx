@@ -35,7 +35,7 @@ function removeItems(items: TagItem[], keys: Iterable<string | number>) {
 
 export const Default: Story = {
   render: () => (
-    <div className="w-[420px] rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+    <div className="w-[420px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <TagGroup label="Categories" aria-label="Categories">
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
@@ -52,9 +52,9 @@ export const Variations: Story = {
 
     return (
       <div className="grid gap-[24px] lg:grid-cols-2">
-        <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            <p className="type-body-sm-medium text-text-default-high-contrast">
               Selectable tags
             </p>
             <TagGroup
@@ -71,9 +71,9 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            <p className="type-body-sm-medium text-text-default-high-contrast">
               Removable tags
             </p>
             <TagGroup<TagItem>
@@ -83,7 +83,7 @@ export const Variations: Story = {
                 setRemovableItems((current: TagItem[]) => removeItems(current, keys))
               }
               renderEmptyState={() => (
-                <div className="rounded-[12px] border border-dashed border-fg-border-default-subtle px-[12px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle">
+                <div className="rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle">
                   All saved topics have been removed.
                 </div>
               )}
@@ -93,9 +93,9 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            <p className="type-body-sm-medium text-text-default-high-contrast">
               Link tags
             </p>
             <TagGroup label="Related guidance">
@@ -127,9 +127,9 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+            <p className="type-body-sm-medium text-text-default-high-contrast">
               Disabled tags
             </p>
             <TagGroup

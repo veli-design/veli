@@ -50,13 +50,13 @@ export const AllVariants: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
       <div />
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
         Plain
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
         Hover Underline
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
         Always Underline
       </div>
 
@@ -124,13 +124,13 @@ export const StatesAudit: Story = {
   render: () => (
     <div className="flex items-center gap-16">
       <div className="flex flex-col items-center gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
           Default
         </span>
         <Link href="#">Default Link</Link>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
           Hover
         </span>
         <Link href="#" isHovered={true}>
@@ -138,7 +138,7 @@ export const StatesAudit: Story = {
         </Link>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
           Pressed
         </span>
         <Link href="#" isPressed={true}>
@@ -146,7 +146,7 @@ export const StatesAudit: Story = {
         </Link>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
           Disabled
         </span>
         <Link href="#" isDisabled={true}>
@@ -154,7 +154,7 @@ export const StatesAudit: Story = {
         </Link>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
           Disabled Icon
         </span>
         <Link href="#" isDisabled={true}>
@@ -197,13 +197,13 @@ export const WithIcons: Story = {
 export const InheritedTypography: Story = {
   render: (args) => (
     <div className="flex flex-col gap-4">
-      <p className="text-[12px] leading-[16px]">
+      <p className="type-caption-12-regular">
         Small text with an <Link {...args}>inherited link</Link>
       </p>
-      <p className="text-[16px] leading-[24px]">
+      <p className="type-body-md-regular">
         Body text with an <Link {...args}>inherited link</Link>
       </p>
-      <p className="text-[20px] leading-[28px]">
+      <p className="type-subtitle-regular">
         Large text with an <Link {...args}>inherited link</Link>
       </p>
     </div>

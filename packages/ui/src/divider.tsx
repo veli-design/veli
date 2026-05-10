@@ -5,7 +5,7 @@ import {
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
-const dividerVariants = cva('shrink-0 bg-fg-border-default-subtle', {
+const dividerVariants = cva('shrink-0 bg-border-default-subtle', {
   variants: {
     orientation: {
       horizontal: 'h-px w-full',

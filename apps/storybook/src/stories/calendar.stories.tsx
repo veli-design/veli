@@ -98,7 +98,7 @@ export const ControlledByExternalState: Story = {
             Set to Today
           </Button>
         </div>
-        <div className="rounded-xl border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised px-3 py-2 text-sm text-fg-text-default-default">
+        <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
           Selected date:{" "}
           <span className="font-semibold">{value.toString()}</span>
         </div>

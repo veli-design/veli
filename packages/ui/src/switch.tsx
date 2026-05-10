@@ -6,13 +6,13 @@ import {
 import { cva, type VariantProps } from "class-variance-authority";
 
 const switchVariants = cva(
-  "group inline-flex items-center gap-[8px] font-sans text-sm font-medium antialiased transition-colors focus-visible:outline-none disabled:cursor-not-allowed",
+  "group inline-flex items-center gap-[8px] font-sans antialiased transition-colors focus-visible:outline-none disabled:cursor-not-allowed",
   {
     variants: {
       size: {
-        sm: "text-[14px]",
-        md: "text-[16px]",
-        lg: "text-[18px]",
+        sm: "type-body-sm-medium",
+        md: "type-body-md-medium",
+        lg: "type-body-lg-medium",
       },
     },
     defaultVariants: {
@@ -43,7 +43,7 @@ const trackVariants = cva(
         true: "cursor-not-allowed",
       },
       isFocusVisible: {
-        true: "ring-2  ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised",
+        true: "ring-2  ring-border-focus ring-offset-2 ring-offset-bg-surface-raised",
       },
     },
     compoundVariants: [
@@ -199,12 +199,12 @@ const handleVariants = cva(
       {
         isDisabled: true,
         isSelected: false,
-        className: "bg-[#00245029]", // TODO: replace with design token when available
+        className: "bg-inputs-switch-handle-disabled-bg",
       },
       {
         isDisabled: true,
         isSelected: true,
-        className: "bg-[#00245029]", // TODO: replace with design token when available
+        className: "bg-inputs-switch-handle-disabled-bg",
       },
     ],
     defaultVariants: {
@@ -229,8 +229,8 @@ export function Switch({ size, children, ...props }: SwitchProps) {
         switchVariants({
           size,
           className: isDisabled
-            ? "text-fg-text-disabled-disabled"
-            : "text-fg-text-default-default",
+            ? "text-text-disabled-disabled"
+            : "text-text-default-default",
         })
       }
     >

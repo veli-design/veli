@@ -6,7 +6,7 @@ import {
 import { cva } from 'class-variance-authority';
 
 const checkboxRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans text-[14px] leading-[20px] font-medium antialiased disabled:cursor-not-allowed'
+  'group inline-flex items-center gap-[8px] font-sans type-body-sm-medium antialiased disabled:cursor-not-allowed'
 );
 
 const checkboxControlVariants = cva(
@@ -34,7 +34,7 @@ const checkboxControlVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
         false: '',
       },
     },
@@ -147,8 +147,8 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-white',
-        false: 'text-white',
+        true: 'text-text-default-inverted',
+        false: 'text-text-default-inverted',
       },
     },
   }
@@ -167,8 +167,8 @@ export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps)
       className={(state) =>
         checkboxRootVariants({
           className: state.isDisabled
-            ? 'text-fg-text-disabled-disabled'
-            : 'text-fg-text-default-default',
+            ? 'text-text-disabled-disabled'
+            : 'text-text-default-default',
         })
       }
     >

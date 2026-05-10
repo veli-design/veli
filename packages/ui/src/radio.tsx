@@ -14,8 +14,8 @@ const radioRootVariants = cva(
   {
     variants: {
       size: {
-        sm: "text-[14px] leading-[20px]",
-        md: "text-[16px] leading-[24px]",
+        sm: "type-body-sm-medium",
+        md: "type-body-md-medium",
       },
     },
     defaultVariants: {
@@ -49,7 +49,7 @@ const controlVariants = cva(
         false: "",
       },
       isFocusVisible: {
-        true: "ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-raised",
+        true: "ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised",
         false: "",
       },
     },
@@ -218,8 +218,8 @@ export function Radio({ size = "sm", children, ...props }: RadioProps) {
         radioRootVariants({
           size,
           className: state.isDisabled
-            ? "text-fg-text-disabled-disabled"
-            : "text-fg-text-default-default",
+            ? "text-text-disabled-disabled"
+            : "text-text-default-default",
         })
       }
     >
