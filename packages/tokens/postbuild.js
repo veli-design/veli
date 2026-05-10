@@ -61,6 +61,19 @@ tailwindTheme = tailwindTheme.replace(/(--tracking-caption:\s*)1%;/g, (_match, p
 // Quote multi-word font family names so var(--font-mono) remains valid when
 // consumed by Tailwind's font-family utilities.
 tailwindTheme = tailwindTheme.replace(/(--font-(?:mono|dhivehi):\s*)([^";\n]+ [^;\n]+);/g, '$1"$2";');
+tailwindTheme = tailwindTheme.replace(/--color-([a-z0-9-]+)-DEFAULT:/g, '--color-$1-default:');
+tailwindTheme = tailwindTheme.replace(/@variant dark\s*\{\n([\s\S]*?)\n\}/, (_match, declarations) => {
+  const body = declarations
+    .split('\n')
+    .map((line) => (line.trim() ? `    ${line.trim()}` : ''))
+    .join('\n');
+
+  return `@layer theme {
+  :where(.dark, .dark *) {
+${body}
+  }
+}`;
+});
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);

@@ -51,7 +51,7 @@ export const Playground: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
         <Button onPress={() => setIsOpen(true)}>Open Modal</Button>
 
         <Modal
@@ -83,7 +83,7 @@ export const Sizes: Story = {
     const sizes = ['sm', 'md', 'lg', 'xl', 'full'] as const;
 
     return (
-      <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-bg-surface-base p-8">
         {sizes.map((size) => (
           <Button key={size} variant="secondary" onPress={() => setOpenSize(size)}>
             Open {size.toUpperCase()}
@@ -114,7 +114,7 @@ export const NonDismissable: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
         <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete project
         </Button>

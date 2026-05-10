@@ -27,7 +27,7 @@ import {
 const datePickerWidthClassName = "w-[calc(10*var(--spacing)*7)] max-w-full";
 
 const popoverSurfaceClassName =
-  "rounded-xl border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none";
+  "rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none";
 
 const fieldButtonClassName = "h-9 w-9 min-w-0 shrink-0 self-center rounded-md border-0 px-0";
 

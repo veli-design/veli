@@ -4,10 +4,6 @@
 /* Import Coral design tokens */
 @import '@tradenetcorp/coral-tokens/tailwind';
 
-@theme {
-    --font-sans: var(--fontFamily-sans-), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-
 html {
     @apply antialiased;
 }

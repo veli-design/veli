@@ -152,7 +152,7 @@ export const Default: Story = {
             </Menu>
           </MenuPopover>
         </MenuTrigger>
-        <p className="text-xs text-fg-text-default-muted">
+        <p className="text-xs text-text-default-muted">
           Last action: <span className="font-medium">{lastAction}</span>
         </p>
       </div>
