@@ -100,7 +100,7 @@ const dateSegmentVariants = cva(
         false: '',
       },
       isFocused: {
-        true: 'bg-button-primary-default text-white',
+        true: 'bg-button-primary-default text-text-default-inverted',
         false: '',
       },
       isInvalid: {

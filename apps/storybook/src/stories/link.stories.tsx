@@ -69,10 +69,10 @@ export const AllVariants: Story = {
             <div className="flex justify-center"><Link variant="secondary" underline="hover">Link</Link></div>
             <div className="flex justify-center"><Link variant="secondary" underline="always">Link</Link></div>
 
-            <div className="text-sm font-medium bg-slate-100 p-2 rounded">Inverted</div>
-            <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="none">Link</Link></div>
-            <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="hover">Link</Link></div>
-            <div className="flex justify-center bg-slate-900 p-2 rounded"><Link variant="inverted" underline="always">Link</Link></div>
+            <div className="text-sm font-medium bg-bg-surface-base p-2 rounded">Inverted</div>
+            <div className="flex justify-center bg-bg-secondary-default p-2 rounded"><Link variant="inverted" underline="none">Link</Link></div>
+            <div className="flex justify-center bg-bg-secondary-default p-2 rounded"><Link variant="inverted" underline="hover">Link</Link></div>
+            <div className="flex justify-center bg-bg-secondary-default p-2 rounded"><Link variant="inverted" underline="always">Link</Link></div>
         </div>
     ),
 };

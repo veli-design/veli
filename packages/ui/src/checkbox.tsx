@@ -153,7 +153,7 @@ const indicatorVariants = cva(
     variants: {
       isDisabled: {
         true: 'text-inputs-checkbox-indicator-disabled-bg',
-        false: 'text-white',
+        false: 'text-text-default-inverted',
       },
     },
   }

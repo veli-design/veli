@@ -24,7 +24,7 @@ function overlayArrowSvgClass(placement: string | null) {
 }
 
 const tooltipVariants = cva(
-  "group rounded-lg border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-1.5 box-border font-sans text-xs text-text-default-default shadow-[0_8px_24px_rgba(15,23,42,0.16)] backdrop-blur-[4px] will-change-transform",
+  "group rounded-lg border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-1.5 box-border type-caption-12-regular text-text-default-default shadow-[0_8px_24px_rgba(15,23,42,0.16)] backdrop-blur-[4px] will-change-transform",
   {
     variants: {
       isEntering: {

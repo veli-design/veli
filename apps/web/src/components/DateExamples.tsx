@@ -53,7 +53,9 @@ export function CalendarControlledDemo() {
           setFocusedValue(nextValue);
         }}
       />
-      <p className="text-xs text-slate-500">Selected date: {value.toString()}</p>
+      <p className="type-caption-12-regular text-text-default-muted">
+        Selected date: {value.toString()}
+      </p>
     </div>
   );
 }
@@ -63,7 +65,7 @@ export function CalendarVariantsDemo() {
     <div className="grid gap-4 xl:grid-cols-2">
       <div className="space-y-3">
         <CalendarControlledDemo />
-        <p className="text-xs text-slate-500">
+        <p className="type-caption-12-regular text-text-default-muted">
           Controlled selection with the current chosen date kept in view.
         </p>
       </div>
@@ -74,7 +76,7 @@ export function CalendarVariantsDemo() {
           maxValue={now.add({ months: 2 })}
           isDateUnavailable={appointmentUnavailable}
         />
-        <p className="text-xs text-slate-500">
+        <p className="type-caption-12-regular text-text-default-muted">
           Weekends and blackout ranges are unavailable.
         </p>
       </div>

@@ -98,7 +98,7 @@ export const ControlledByExternalState: Story = {
             Set to Today
           </Button>
         </div>
-        <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
+        <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 type-body-sm-regular text-text-default-default">
           Selected date:{" "}
           <span className="font-semibold">{value.toString()}</span>
         </div>
@@ -127,10 +127,10 @@ export const ConstraintsAndUnavailableDates: Story = {
         />
       </div>
       <div>
-        <p className="max-w-md text-xs text-slate-500">
+        <p className="max-w-md type-caption-12-regular text-text-default-muted">
           Greyed out: Disabled date
         </p>
-        <p className="max-w-md text-xs text-slate-500">
+        <p className="max-w-md type-caption-12-regular text-text-default-muted">
           Struck through: Unavailable date
         </p>
       </div>

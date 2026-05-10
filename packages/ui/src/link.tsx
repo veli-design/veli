@@ -12,7 +12,7 @@ const linkVariants = cva(
             variant: {
                 primary: 'text-text-links-default',
                 secondary: 'text-text-default-default',
-                inverted: 'text-white',
+                inverted: 'text-text-default-inverted',
             },
             size: {
                 xs: 'type-caption-12-medium gap-[8px]',
@@ -72,12 +72,12 @@ const linkVariants = cva(
             {
                 variant: 'inverted',
                 isHovered: true,
-                className: 'text-white/80',
+                className: 'text-text-default-inverted/80',
             },
             {
                 variant: 'inverted',
                 isDisabled: true,
-                className: 'opacity-50 text-white',
+                className: 'opacity-50 text-text-default-inverted',
             },
         ],
         defaultVariants: {

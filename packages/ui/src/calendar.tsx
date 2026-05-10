@@ -23,20 +23,20 @@ const calendarRootVariants = cva(
 );
 
 const cellVariants = cva(
-  "flex aspect-square w-[calc((100cqw/7)-6px)] cursor-pointer items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
+  "flex aspect-square w-[calc((100cqw/7)-6px)] cursor-pointer items-center justify-center rounded-full type-body-sm-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
   {
     variants: {
       isSelected: {
         false:
           "text-text-default-default hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible",
-        true: "bg-button-primary-default text-white hover:bg-button-primary-hover active:bg-button-primary-pressed data-[invalid]:bg-button-danger-default forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
+        true: "bg-button-primary-default text-text-default-inverted hover:bg-button-primary-hover active:bg-button-primary-pressed data-[invalid]:bg-button-danger-default forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
       },
       isDisabled: {
         true: "cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]",
         false: "",
       },
       isUnavailable: {
-        true: "text-red-900 line-through decoration-2 decoration-red-900",
+        true: "text-text-danger-muted line-through decoration-2 decoration-text-danger-muted",
         false: "",
       },
       isFocusVisible: {
@@ -111,7 +111,7 @@ export function Calendar<T extends DateValue>({
       {errorMessage ? (
         <Text
           slot="errorMessage"
-          className="pt-3 text-sm text-text-danger-muted"
+          className="pt-3 type-body-sm-regular text-text-danger-muted"
         >
           {errorMessage}
         </Text>
@@ -134,7 +134,7 @@ export function CalendarHeader() {
       >
         {direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       </Button>
-      <Heading className="mx-2 my-0 flex-1 text-center font-sans text-base font-semibold text-text-default-high-contrast [font-variation-settings:normal]" />
+      <Heading className="mx-2 my-0 flex-1 text-center type-body-md-semibold text-text-default-high-contrast [font-variation-settings:normal]" />
       <Button
         slot="next"
         variant="secondary"
@@ -152,7 +152,7 @@ export function CalendarGridHeader() {
   return (
     <AriaCalendarGridHeader>
       {(day) => (
-        <CalendarHeaderCell className="pb-1 text-xs font-semibold text-text-default-muted">
+        <CalendarHeaderCell className="pb-1 type-caption-12-semibold text-text-default-muted">
           {day}
         </CalendarHeaderCell>
       )}
