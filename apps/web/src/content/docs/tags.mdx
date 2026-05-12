@@ -46,6 +46,8 @@ import { Tag, TagGroup } from '@tradenetcorp/coral-ui/tags';
 - `Link tags`: use `href` when a tag should navigate to related content instead of toggling selection.
 - `Disabled tags`: use `disabledKeys` on the group or `isDisabled` on individual tags to show unavailable items.
 
+Plain text and nested text content are used for tag text and remove button labels automatically. For icon-only, render-function, or otherwise non-text tags, provide `textValue` or `removeButtonLabel`.
+
 ## Key Props
 
 ### `TagGroup`
@@ -71,8 +73,8 @@ import { Tag, TagGroup } from '@tradenetcorp/coral-ui/tags';
 | `target` | `string` | Sets the browsing context for link tags. |
 | `rel` | `string` | Adds relationship metadata for external link tags. |
 | `isDisabled` | `boolean` | Disables a specific tag. |
-| `textValue` | `string` | Required when the tag content is not plain text, so assistive tech gets a text alternative. |
-| `removeButtonLabel` | `string \| ((tagText) => string)` | Overrides the accessible label used by the built-in remove button. |
+| `textValue` | `string` | Text alternative for complex content. Nested visible text is derived automatically when possible. |
+| `removeButtonLabel` | `string \| ((tagText) => string)` | Overrides the accessible label used by the built-in remove button, useful for icon-only or render-function tags. |
 | `className` | `string` | Adds local styling overrides to a single tag. |
 
 All remaining supported React Aria `TagGroup` and `Tag` props can still be passed through these wrappers.

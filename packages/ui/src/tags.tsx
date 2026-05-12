@@ -14,6 +14,11 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import {
+  getTextFromReactNode,
+  normalizeAccessibleText,
+  warnDev,
+} from './a11y';
 
 const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -224,36 +229,60 @@ function getTagText(
   children: TagProps['children'],
   textValue: string | undefined
 ) {
-  if (textValue) {
-    return textValue;
+  const normalizedTextValue = normalizeAccessibleText(textValue);
+
+  if (normalizedTextValue) {
+    return normalizedTextValue;
   }
 
-  if (typeof children === 'string' || typeof children === 'number') {
-    return String(children);
+  if (typeof children === 'function') {
+    return undefined;
   }
 
-  return undefined;
+  return getTextFromReactNode(children);
+}
+
+function getPrimitiveTagIdText(id: TagProps['id']) {
+  return typeof id === 'string' || typeof id === 'number'
+    ? normalizeAccessibleText(String(id))
+    : undefined;
 }
 
 export function Tag({
   children,
   className,
   href,
+  id,
   removeButtonLabel,
   textValue,
   ...props
 }: TagProps) {
   const tagText = getTagText(children, textValue);
-  const resolvedRemoveButtonLabel =
+  const fallbackTagText = tagText ?? getPrimitiveTagIdText(id);
+  const customRemoveButtonLabel =
     typeof removeButtonLabel === 'function'
       ? removeButtonLabel(tagText)
-      : removeButtonLabel ?? (tagText ? `Remove ${tagText}` : 'Remove tag');
+      : removeButtonLabel;
+  const normalizedCustomRemoveButtonLabel = normalizeAccessibleText(
+    customRemoveButtonLabel
+  );
+  const resolvedRemoveButtonLabel =
+    normalizedCustomRemoveButtonLabel ??
+    (fallbackTagText ? `Remove ${fallbackTagText}` : 'Remove tag');
+  const usesGenericRemoveButtonLabel =
+    !normalizedCustomRemoveButtonLabel && !fallbackTagText;
+
+  warnDev(
+    customRemoveButtonLabel == null || Boolean(normalizedCustomRemoveButtonLabel),
+    'Coral UI: Tag removeButtonLabel must resolve to a non-empty string.'
+  );
 
   return (
     <AriaTag
       {...props}
+      id={id}
       href={href}
-      textValue={textValue}
+      textValue={tagText}
       className={(state) =>
         twMerge(
           tagVariants({
@@ -268,6 +297,12 @@ export function Tag({
     >
       {(state) => {
         const content = typeof children === 'function' ? children(state) : children;
+        if (state.allowsRemoving) {
+          warnDev(
+            !usesGenericRemoveButtonLabel,
+            'Coral UI: removable Tag with complex content needs textValue or removeButtonLabel for a useful remove button label.'
+          );
+        }
 
         return (
           <>

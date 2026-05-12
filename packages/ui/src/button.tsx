@@ -5,6 +5,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
   'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0 disabled:pointer-events-none',
@@ -242,15 +243,31 @@ const buttonContentVariants = cva('relative z-[1] inline-flex items-center justi
   },
 });
 
-export interface ButtonProps
+type AccessibleButtonName =
+  | { 'aria-label': string; 'aria-labelledby'?: string }
+  | { 'aria-label'?: string; 'aria-labelledby': string };
+
+interface ButtonSharedProps
   extends Omit<AriaButtonProps, 'style' | 'children'>,
-  VariantProps<typeof buttonVariants> {
-  children?: React.ReactNode;
-  iconOnly?: boolean;
+    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
+  'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
   treatment?: 'basic' | 'seaglass';
   className?: string;
 }
+
+type IconOnlyButtonProps = ButtonSharedProps &
+  AccessibleButtonName & {
+    children?: React.ReactNode;
+    iconOnly: true;
+  };
+
+type StandardButtonProps = ButtonSharedProps & {
+  children?: React.ReactNode;
+  iconOnly?: false | undefined;
+};
+
+export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
 
 type ButtonVariant = NonNullable<ButtonProps['variant']>;
 type ButtonStyle = NonNullable<ButtonProps['style']>;
@@ -274,14 +291,25 @@ export function Button({
   onMouseLeave,
   onFocus,
   onBlur,
+  'aria-busy': ariaBusy,
   ...props
 }: ButtonProps) {
   const isLoadingOnly = Boolean(isLoading && !children);
   const isIconOnly = Boolean(iconOnly);
+  const hasButtonAccessibleName = hasAccessibleName(props);
   const resolvedVariant = variant ?? 'primary';
   const resolvedStyle: ButtonStyle = style ?? 'fill';
   const showSpotlight = treatment === 'seaglass' && !isDisabled && !isLoading;
   const [spotlightPosition, setSpotlightPosition] = React.useState({ x: '50%', y: '50%' });
+
+  invariantDev(
+    !isIconOnly || hasButtonAccessibleName,
+    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.'
+  );
+  invariantDev(
+    !isLoadingOnly || hasButtonAccessibleName,
+    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.'
+  );
 
   const handleMouseMove: NonNullable<ButtonProps['onMouseMove']> = (event) => {
     if (showSpotlight) {
@@ -335,14 +363,14 @@ export function Button({
     onBlur?.(event);
   };
 
-const resolvedClassName = twMerge(
-  buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
-  treatment === 'seaglass'
-    ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
-    : undefined,
-  isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
-  className
-);
+  const resolvedClassName = twMerge(
+    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
+    treatment === 'seaglass'
+      ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
+      : undefined,
+    isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
+    className
+  );
   const spotlightStyle: SpotlightStyle = {
     '--button-spotlight-x': spotlightPosition.x,
     '--button-spotlight-y': spotlightPosition.y,
@@ -375,6 +403,8 @@ const resolvedClassName = twMerge(
   return (
     <AriaButton
       {...props}
+      aria-busy={isLoading ? true : ariaBusy}
+      aria-label={isLoadingOnly && !hasButtonAccessibleName ? 'Loading' : props['aria-label']}
       isDisabled={isDisabled || isLoading}
       style={spotlightStyle}
       onMouseMove={handleMouseMove}

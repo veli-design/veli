@@ -88,7 +88,17 @@ export const Variations: Story = {
                 </div>
               )}
             >
-              {(item) => <Tag id={item.id}>{item.label}</Tag>}
+              {(item) => (
+                <Tag id={item.id}>
+                  <span className="inline-flex min-w-0 items-center gap-[6px]">
+                    <span
+                      aria-hidden="true"
+                      className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary-default"
+                    />
+                    <span className="min-w-0 truncate">{item.label}</span>
+                  </span>
+                </Tag>
+              )}
             </TagGroup>
           </div>
         </div>

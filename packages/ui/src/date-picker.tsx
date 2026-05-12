@@ -44,6 +44,7 @@ export interface DatePickerProps<T extends DateValue> extends Omit<
   inputClassName?: string;
   popoverClassName?: string;
   calendarClassName?: string;
+  calendarButtonLabel?: string;
 }
 
 export function DatePicker<T extends DateValue>({
@@ -56,6 +57,7 @@ export function DatePicker<T extends DateValue>({
   inputClassName,
   popoverClassName,
   calendarClassName,
+  calendarButtonLabel = "Open calendar",
   ...props
 }: DatePickerProps<T>) {
   const showRequired = showRequiredIndicator && Boolean(props.isRequired);
@@ -110,6 +112,8 @@ export function DatePicker<T extends DateValue>({
               variant="secondary"
               style="ghost"
               size="xs"
+              iconOnly
+              aria-label={calendarButtonLabel}
               className={fieldButtonClassName}
             >
               <CalendarBlank aria-hidden className="h-5 w-5 shrink-0" weight="regular" />

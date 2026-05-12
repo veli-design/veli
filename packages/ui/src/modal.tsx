@@ -9,6 +9,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { invariantDev, normalizeAccessibleText } from './a11y';
 import { Button } from './button';
 
 const overlayVariants = cva(
@@ -33,7 +34,7 @@ const modalVariants = cva(
   }
 );
 
-export interface ModalProps
+interface ModalSharedProps
   extends Omit<AriaModalOverlayProps, 'children' | 'className'>,
     VariantProps<typeof modalVariants> {
   title?: React.ReactNode;
@@ -47,6 +48,20 @@ export interface ModalProps
   showCloseButton?: boolean;
   closeButtonLabel?: string;
 }
+
+type ModalWithTitle = ModalSharedProps & {
+  title: React.ReactNode;
+};
+
+type ModalWithAriaLabel = ModalSharedProps & {
+  'aria-label': NonNullable<AriaDialogProps['aria-label']>;
+};
+
+type ModalWithAriaLabelledby = ModalSharedProps & {
+  'aria-labelledby': NonNullable<AriaDialogProps['aria-labelledby']>;
+};
+
+export type ModalProps = ModalWithTitle | ModalWithAriaLabel | ModalWithAriaLabelledby;
 
 export function Modal({
   title,
@@ -63,6 +78,29 @@ export function Modal({
   'aria-labelledby': ariaLabelledby,
   ...overlayProps
 }: ModalProps) {
+  const normalizedAriaLabel = normalizeAccessibleText(ariaLabel);
+  const normalizedAriaLabelledby = normalizeAccessibleText(ariaLabelledby);
+  const titleIsEmptyString = typeof title === 'string' && !normalizeAccessibleText(title);
+  const hasTitle = title != null && title !== false && !titleIsEmptyString;
+  const hasDialogName = hasTitle || normalizedAriaLabel || normalizedAriaLabelledby;
+
+  invariantDev(
+    !titleIsEmptyString,
+    'Coral UI: Modal title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.'
+  );
+  invariantDev(
+    ariaLabel == null || Boolean(normalizedAriaLabel),
+    'Coral UI: Modal aria-label must be a non-empty string.'
+  );
+  invariantDev(
+    ariaLabelledby == null || Boolean(normalizedAriaLabelledby),
+    'Coral UI: Modal aria-labelledby must be a non-empty id reference.'
+  );
+  invariantDev(
+    hasDialogName,
+    'Coral UI: Modal requires title, aria-label, or aria-labelledby so the dialog has an accessible name.'
+  );
+
   return (
     <ModalOverlay
       {...overlayProps}
@@ -71,15 +109,15 @@ export function Modal({
     >
       <AriaModal className={twMerge(modalVariants({ size }), className)}>
         <Dialog
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledby}
+          aria-label={normalizedAriaLabel}
+          aria-labelledby={normalizedAriaLabelledby}
           className={twMerge('flex flex-col outline-none', size === 'full' && 'h-full min-h-0')}
         >
           {({ close }) => (
             <>
-              {(title || showCloseButton) && (
+              {(hasTitle || showCloseButton) && (
                 <div className="flex items-start justify-between gap-[16px] px-[24px] pt-[24px]">
-                  {title ? (
+                  {hasTitle ? (
                     <Heading
                       slot="title"
                       className="flex-1 min-w-0 type-title-2-bold text-text-default-high-contrast"
@@ -93,6 +131,7 @@ export function Modal({
                       variant="secondary"
                       style="ghost"
                       size="xs"
+                      iconOnly
                       aria-label={closeButtonLabel}
                     >
                       <svg
@@ -116,7 +155,7 @@ export function Modal({
               <div
                 className={twMerge(
                   'px-[24px] pb-[24px] type-body-md-regular text-text-default-default',
-                  title || showCloseButton ? 'pt-[16px]' : 'pt-[24px]',
+                  hasTitle || showCloseButton ? 'pt-[16px]' : 'pt-[24px]',
                   size === 'full' && 'min-h-0 flex-1 overflow-auto',
                   contentClassName
                 )}

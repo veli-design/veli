@@ -17,6 +17,11 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import {
+  getTextFromReactNode,
+  normalizeAccessibleText,
+  warnDev,
+} from './a11y';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -207,9 +212,34 @@ export interface ComboBoxItemProps<T extends object = object>
 
 export function ComboBoxItem<T extends object = object>({
   className,
+  children,
+  textValue,
+  'aria-label': ariaLabel,
   ...props
 }: ComboBoxItemProps<T>) {
-  return <ListBoxItem {...props} className={twMerge(itemVariants(), className)} />;
+  const derivedTextValue =
+    typeof children === 'function' ? undefined : getTextFromReactNode(children);
+  const resolvedTextValue =
+    normalizeAccessibleText(textValue) ??
+    normalizeAccessibleText(ariaLabel) ??
+    derivedTextValue;
+  const resolvedAriaLabel = normalizeAccessibleText(ariaLabel);
+
+  warnDev(
+    Boolean(resolvedTextValue),
+    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.'
+  );
+
+  return (
+    <ListBoxItem
+      {...props}
+      aria-label={resolvedAriaLabel}
+      textValue={resolvedTextValue}
+      className={twMerge(itemVariants(), className)}
+    >
+      {children}
+    </ListBoxItem>
+  );
 }
 
 export interface ComboBoxSectionProps<T extends object>

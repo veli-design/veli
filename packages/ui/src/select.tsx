@@ -17,6 +17,11 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import {
+  getTextFromReactNode,
+  normalizeAccessibleText,
+  warnDev,
+} from './a11y';
 
 const selectRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -377,11 +382,26 @@ export function SelectItem<T extends object = object>({
   description,
   startContent,
   endContent,
+  textValue,
+  'aria-label': ariaLabel,
   ...props
 }: SelectItemProps<T>) {
+  const resolvedTextValue =
+    normalizeAccessibleText(textValue) ??
+    normalizeAccessibleText(ariaLabel) ??
+    getTextFromReactNode(children);
+  const resolvedAriaLabel = normalizeAccessibleText(ariaLabel);
+
+  warnDev(
+    Boolean(resolvedTextValue),
+    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.'
+  );
+
   return (
     <AriaListBoxItem
       {...props}
+      aria-label={resolvedAriaLabel}
+      textValue={resolvedTextValue}
       className={({ isSelected, isFocused, isDisabled }) =>
         twMerge(selectItemVariants({ isSelected, isFocused, isDisabled }), className)
       }

@@ -66,11 +66,11 @@ The modal supports five size variants to fit different content density and workf
 </div>
 
 ```tsx
-<Modal size="sm" />
-<Modal size="md" />
-<Modal size="lg" />
-<Modal size="xl" />
-<Modal size="full" />
+<Modal size="sm" title="Small modal"><p>Body content.</p></Modal>
+<Modal size="md" title="Medium modal"><p>Body content.</p></Modal>
+<Modal size="lg" title="Large modal"><p>Body content.</p></Modal>
+<Modal size="xl" title="Extra large modal"><p>Body content.</p></Modal>
+<Modal size="full" title="Full-screen modal"><p>Body content.</p></Modal>
 ```
 
 ## Dismiss Behavior
@@ -83,22 +83,27 @@ For high-risk actions, you can disable outside-click and `Escape` dismissal.
 
 ```tsx
 // Standard (dismissable)
-<Modal isDismissable />
+<Modal isDismissable title="Edit profile"><p>Body content.</p></Modal>
 
 // Locked modal for destructive actions
 <Modal
+  title="Confirm destructive action"
   isDismissable={false}
   isKeyboardDismissDisabled
   showCloseButton={false}
-/>
+>
+  <p>This action needs an explicit choice.</p>
+</Modal>
 ```
 
 ## Composition
 
 `Modal` is slot-based and library-friendly:
-- `title`: heading area
+- `title`: heading area and default dialog label
 - `children`: body content
 - `footer`: actions section
+
+Every modal needs one dialog name: use `title`, `aria-label`, or `aria-labelledby`. In development, unlabeled dialogs fail fast instead of rendering silently.
 
 ```tsx
 <Modal
@@ -119,7 +124,9 @@ For high-risk actions, you can disable outside-click and `Escape` dismissal.
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'md'` | Width/height scale of the modal surface. |
-| `title` | `ReactNode` | - | Optional modal heading. |
+| `title` | `ReactNode` | - | Modal heading and dialog label. Required unless `aria-label` or `aria-labelledby` is provided. |
+| `aria-label` | `string` | - | Accessible dialog name for titleless compositions. |
+| `aria-labelledby` | `string` | - | ID reference for an external dialog label. |
 | `footer` | `ReactNode` | - | Optional footer action area. |
 | `showCloseButton` | `boolean` | `true` | Shows/hides top-right close button. |
 | `closeButtonLabel` | `string` | `'Close dialog'` | Accessible label for close button. |
