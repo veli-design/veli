@@ -42,16 +42,16 @@ export const StatesAudit: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-[20px] items-start">
       <div />
-      <div className="text-[12px] font-bold uppercase text-gray-400">Off</div>
-      <div className="text-[12px] font-bold uppercase text-gray-400">On</div>
-      <div className="text-[12px] font-bold uppercase text-gray-400">Indeterminate</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">Off</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">On</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">Indeterminate</div>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">Default</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">Default</div>
       <Checkbox />
       <Checkbox defaultSelected />
       <Checkbox isIndeterminate />
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">Disabled</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">Disabled</div>
       <Checkbox isDisabled />
       <Checkbox defaultSelected isDisabled />
       <Checkbox isIndeterminate isDisabled />

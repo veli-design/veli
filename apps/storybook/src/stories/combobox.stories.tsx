@@ -91,7 +91,7 @@ export const Default: Story = {
         >
           {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
         </ComboBox>
-        <p className="text-xs text-fg-text-default-muted">
+        <p className="text-xs text-text-default-muted">
           Selected key: <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
         </p>
       </div>

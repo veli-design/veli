@@ -17,7 +17,7 @@
     "src/design.tokens.json"
   ],
   "scripts": {
-    "build": "terrazzo build && node postbuild.js",
+    "build": "node prebuild.js && terrazzo build && node postbuild.js",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {

@@ -61,7 +61,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   render: (args) => (
-    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-surface-bg p-8">
+    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
       <PopoverTrigger>
         <Button variant="secondary">Open popover</Button>
         <Popover {...args}>
@@ -79,15 +79,15 @@ export const Playground: Story = {
 
 export const WithArrow: Story = {
   render: () => (
-    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-surface-bg p-8">
+    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
       <PopoverTrigger>
         <Button>Filter</Button>
         <Popover showArrow placement="top">
           <PopoverDialog className="w-72 p-4 outline-none">
-            <p className="mb-3 text-sm font-medium text-fg-text-default-default">
+            <p className="mb-3 text-sm font-medium text-text-default-default">
               Quick filters
             </p>
-            <p className="text-sm text-fg-text-default-muted">
+            <p className="text-sm text-text-default-muted">
               The arrow offset matches the panel; placement flips the arrow
               orientation.
             </p>
@@ -103,7 +103,7 @@ export const Placements: Story = {
     const placements = ["top", "bottom", "left", "right"] as const;
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-surface-bg p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
         <div className="grid grid-cols-2 gap-16 sm:grid-cols-4">
           {placements.map((placement) => (
             <PopoverTrigger key={placement}>

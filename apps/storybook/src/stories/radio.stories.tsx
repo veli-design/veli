@@ -80,10 +80,10 @@ export const StatesAudit: Story = {
   render: () => (
     <div className="grid grid-cols-3 gap-[20px] items-start">
       <div />
-      <div className="text-[12px] font-bold uppercase text-gray-400">Off</div>
-      <div className="text-[12px] font-bold uppercase text-gray-400">On</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">Off</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">On</div>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">SM</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">SM</div>
       <RadioGroup aria-label="Small off state">
         <Radio value="sm-off" size="sm" />
       </RadioGroup>
@@ -91,7 +91,7 @@ export const StatesAudit: Story = {
         <Radio value="sm-on" size="sm" />
       </RadioGroup>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">SM Disabled</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">SM Disabled</div>
       <RadioGroup aria-label="Small disabled off state">
         <Radio value="sm-off-disabled" size="sm" isDisabled />
       </RadioGroup>
@@ -99,7 +99,7 @@ export const StatesAudit: Story = {
         <Radio value="sm-on-disabled" size="sm" isDisabled />
       </RadioGroup>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">MD</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">MD</div>
       <RadioGroup aria-label="Medium off state">
         <Radio value="md-off" size="md" />
       </RadioGroup>
@@ -107,7 +107,7 @@ export const StatesAudit: Story = {
         <Radio value="md-on" size="md" />
       </RadioGroup>
 
-      <div className="text-[12px] font-bold uppercase text-gray-400">MD Disabled</div>
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">MD Disabled</div>
       <RadioGroup aria-label="Medium disabled off state">
         <Radio value="md-off-disabled" size="md" isDisabled />
       </RadioGroup>

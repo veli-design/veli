@@ -1491,13 +1491,13 @@ export const AllVariants: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
       <div />
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
         Fill
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
         Transparent
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
         Ghost
       </div>
 
@@ -1546,23 +1546,23 @@ export const ExperimentalEnhanced: Story = {
     <div className="flex flex-col gap-12">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
             Figma XL Matrix
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-text-default-subtle">
             Primary and secondary mirror the stylized Figma set at XL. Danger
             extends the same treatment for system consistency.
           </span>
         </div>
         <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
           <div />
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Fill
           </div>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Transparent
           </div>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400">
+          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Ghost
           </div>
 
@@ -1632,12 +1632,12 @@ export const ExperimentalEnhanced: Story = {
       </div>
 
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
           State Coverage
         </span>
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Primary Default
             </span>
             <Button
@@ -1650,7 +1650,7 @@ export const ExperimentalEnhanced: Story = {
             </Button>
           </div>
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Primary Loading
             </span>
             <Button
@@ -1663,7 +1663,7 @@ export const ExperimentalEnhanced: Story = {
             />
           </div>
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Primary Disabled
             </span>
             <Button
@@ -1677,7 +1677,7 @@ export const ExperimentalEnhanced: Story = {
             </Button>
           </div>
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Secondary Default
             </span>
             <Button
@@ -1690,7 +1690,7 @@ export const ExperimentalEnhanced: Story = {
             </Button>
           </div>
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Secondary Loading
             </span>
             <Button
@@ -1703,7 +1703,7 @@ export const ExperimentalEnhanced: Story = {
             />
           </div>
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Secondary Disabled
             </span>
             <Button
@@ -1720,7 +1720,7 @@ export const ExperimentalEnhanced: Story = {
       </div>
 
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
           Size Adaptation
         </span>
         <div className="flex items-end gap-4 flex-wrap">
@@ -1860,7 +1860,7 @@ export const WithIcons: Story = {
             <ArrowRight size={size} weight="bold" />
           </Button>
         </div>
-        <div className="text-xs text-gray-400 italic">
+        <div className="text-xs text-text-default-muted italic">
           Icon size for current {args.size} scale: {size}px
         </div>
       </div>

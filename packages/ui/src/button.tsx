@@ -7,7 +7,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:border-gray-300 focus-visible:ring-2 focus-visible:ring-fg-border-focus focus-visible:ring-offset-0 disabled:pointer-events-none',
+  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0 disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -16,17 +16,17 @@ const buttonVariants = cva(
         danger: '',
       },
       style: {
-        fill: 'text-white',
+        fill: 'text-text-default-inverted',
         transparent: '',
         ghost: 'bg-transparent',
       },
       size: {
         // Includes visual compensation for Figma's internal "Label" horizontal inset.
-        xs: 'h-7 px-[8px] gap-0.5 text-[12px] leading-[16px] tracking-[0.01em]',
-        sm: 'h-9 px-2.5 gap-0.5 text-[14px] leading-[20px]',
-        md: 'h-11 px-3.5 gap-0.5 text-[16px] leading-[24px]',
-        lg: 'h-13 px-[16px] gap-0.5 text-[18px] leading-[26px]',
-        xl: 'h-15 px-[18px] gap-0.5 text-[20px] leading-[28px]',
+        xs: 'h-7 px-[8px] gap-0.5 type-caption-12-medium',
+        sm: 'h-9 px-2.5 gap-0.5 type-body-sm-medium',
+        md: 'h-11 px-3.5 gap-0.5 type-body-md-medium',
+        lg: 'h-13 px-[16px] gap-0.5 type-body-lg-medium',
+        xl: 'h-15 px-[18px] gap-0.5 type-subtitle-medium',
       },
       iconOnly: {
         true: 'shrink-0 px-0',
@@ -39,57 +39,57 @@ const buttonVariants = cva(
         variant: 'primary',
         style: 'fill',
         className:
-          'bg-bg-button-primary-default text-white hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-primary-default text-text-primary-inverted hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'primary',
         style: 'transparent',
         className:
-          'bg-bg-button-primary-subtle-default text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-hover active:bg-bg-button-primary-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-primary-subtle-default text-text-primary-muted hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'primary',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-primary-muted hover:bg-bg-button-primary-subtle-default active:bg-bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
+          'bg-transparent text-text-primary-muted hover:bg-button-primary-subtle-default active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       // Secondary
       {
         variant: 'secondary',
         style: 'fill',
         className:
-          'bg-bg-button-secondary-default text-white hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'secondary',
         style: 'transparent',
         className:
-          'bg-bg-button-secondary-subtle-default text-fg-text-default-default hover:bg-bg-button-secondary-subtle-hover active:bg-bg-button-secondary-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-secondary-subtle-default text-text-default-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'secondary',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-default-default hover:bg-bg-button-secondary-subtle-default active:bg-bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
+          'bg-transparent text-text-default-default hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       // Danger
       {
         variant: 'danger',
         style: 'fill',
         className:
-          'bg-bg-button-danger-default text-white hover:bg-bg-button-danger-hover active:bg-bg-button-danger-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'danger',
         style: 'transparent',
         className:
-          'bg-bg-button-danger-subtle-default text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-hover active:bg-bg-button-danger-subtle-pressed disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled',
+          'bg-button-danger-subtle-default text-text-danger-muted hover:bg-button-danger-subtle-hover active:bg-button-danger-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'danger',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-danger-muted hover:bg-bg-button-danger-subtle-default active:bg-bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-fg-text-disabled-disabled',
+          'bg-transparent text-text-danger-muted hover:bg-button-danger-subtle-default active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       { size: 'xs', iconOnly: true, className: 'w-7' },
       { size: 'sm', iconOnly: true, className: 'w-9' },
@@ -107,10 +107,10 @@ const buttonVariants = cva(
 );
 
 const seaglassFillOverlay =
-  'text-white shadow-[0_1px_2px_rgba(0,14,48,0.14)] hover:shadow-[0_2px_6px_rgba(0,14,48,0.16)] active:shadow-[0_1px_1px_rgba(0,14,48,0.12)] [background-image:radial-gradient(ellipse_var(--button-seaglass-overlay-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-overlay-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-fill-alpha-1,0))_var(--button-seaglass-fill-stop-1,8%),rgba(255,255,255,var(--button-seaglass-fill-alpha-2,0.0625))_var(--button-seaglass-fill-stop-2,13.75%),rgba(255,255,255,var(--button-seaglass-fill-alpha-3,0.125))_var(--button-seaglass-fill-stop-3,19.5%),rgba(255,255,255,var(--button-seaglass-fill-alpha-4,0.25))_var(--button-seaglass-fill-stop-4,31%),rgba(255,255,255,var(--button-seaglass-fill-alpha-5,0.5))_var(--button-seaglass-fill-stop-5,54%),rgba(255,255,255,var(--button-seaglass-fill-alpha-6,0))_var(--button-seaglass-fill-stop-6,100%))] before:transition-shadow before:duration-[180ms] before:ease-out before:shadow-[inset_0_1px_2px_rgba(255,255,255,0.26),inset_0_-1px_2px_rgba(0,14,48,0.08)] hover:before:shadow-[inset_0_2px_4px_rgba(255,255,255,0.36),inset_0_-1px_2px_rgba(0,14,48,0.07)] active:before:shadow-[inset_0_3px_5px_rgba(0,14,48,0.12),inset_0_1px_1px_rgba(255,255,255,0.18)] after:bg-[radial-gradient(ellipse_var(--button-seaglass-active-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-active-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-active-alpha-1,0))_var(--button-seaglass-active-stop-1,6%),rgba(255,255,255,var(--button-seaglass-active-alpha-2,0.08))_var(--button-seaglass-active-stop-2,14%),rgba(255,255,255,var(--button-seaglass-active-alpha-3,0.18))_var(--button-seaglass-active-stop-3,28%),rgba(255,255,255,var(--button-seaglass-active-alpha-4,0.32))_var(--button-seaglass-active-stop-4,46%),rgba(255,255,255,var(--button-seaglass-active-alpha-5,0.48))_var(--button-seaglass-active-stop-5,68%),rgba(255,255,255,var(--button-seaglass-active-alpha-6,0.64))_var(--button-seaglass-active-stop-6,100%))] after:opacity-0 after:transition-opacity after:duration-[var(--button-seaglass-after-duration,200ms)] after:ease-[cubic-bezier(0.2,1.4,0.4,1)] active:after:opacity-[var(--button-seaglass-active-overlay-opacity,1)] active:after:duration-[var(--button-seaglass-active-duration,80ms)] active:after:ease-out disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-fg-text-disabled-disabled disabled:shadow-none disabled:before:opacity-0 disabled:before:shadow-none disabled:after:opacity-0';
+  'shadow-[0_1px_2px_rgba(0,14,48,0.14)] hover:shadow-[0_2px_6px_rgba(0,14,48,0.16)] active:shadow-[0_1px_1px_rgba(0,14,48,0.12)] [background-image:radial-gradient(ellipse_var(--button-seaglass-overlay-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-overlay-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-fill-alpha-1,0))_var(--button-seaglass-fill-stop-1,8%),rgba(255,255,255,var(--button-seaglass-fill-alpha-2,0.0625))_var(--button-seaglass-fill-stop-2,13.75%),rgba(255,255,255,var(--button-seaglass-fill-alpha-3,0.125))_var(--button-seaglass-fill-stop-3,19.5%),rgba(255,255,255,var(--button-seaglass-fill-alpha-4,0.25))_var(--button-seaglass-fill-stop-4,31%),rgba(255,255,255,var(--button-seaglass-fill-alpha-5,0.5))_var(--button-seaglass-fill-stop-5,54%),rgba(255,255,255,var(--button-seaglass-fill-alpha-6,0))_var(--button-seaglass-fill-stop-6,100%))] before:transition-shadow before:duration-[180ms] before:ease-out before:shadow-[inset_0_1px_2px_rgba(255,255,255,0.26),inset_0_-1px_2px_rgba(0,14,48,0.08)] hover:before:shadow-[inset_0_2px_4px_rgba(255,255,255,0.36),inset_0_-1px_2px_rgba(0,14,48,0.07)] active:before:shadow-[inset_0_3px_5px_rgba(0,14,48,0.12),inset_0_1px_1px_rgba(255,255,255,0.18)] after:bg-[radial-gradient(ellipse_var(--button-seaglass-active-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-active-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-active-alpha-1,0))_var(--button-seaglass-active-stop-1,6%),rgba(255,255,255,var(--button-seaglass-active-alpha-2,0.08))_var(--button-seaglass-active-stop-2,14%),rgba(255,255,255,var(--button-seaglass-active-alpha-3,0.18))_var(--button-seaglass-active-stop-3,28%),rgba(255,255,255,var(--button-seaglass-active-alpha-4,0.32))_var(--button-seaglass-active-stop-4,46%),rgba(255,255,255,var(--button-seaglass-active-alpha-5,0.48))_var(--button-seaglass-active-stop-5,68%),rgba(255,255,255,var(--button-seaglass-active-alpha-6,0.64))_var(--button-seaglass-active-stop-6,100%))] after:opacity-0 after:transition-opacity after:duration-[var(--button-seaglass-after-duration,200ms)] after:ease-[cubic-bezier(0.2,1.4,0.4,1)] active:after:opacity-[var(--button-seaglass-active-overlay-opacity,1)] active:after:duration-[var(--button-seaglass-active-duration,80ms)] active:after:ease-out disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-text-disabled-disabled disabled:shadow-none disabled:before:opacity-0 disabled:before:shadow-none disabled:after:opacity-0';
 
 const seaglassButtonVariants = cva(
-  "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color,transform] duration-[200ms] ease-[cubic-bezier(0.2,1.4,0.4,1)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-[#80a4ff]",
+  "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color,transform] duration-[200ms] ease-[cubic-bezier(0.2,1.4,0.4,1)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-border-focus",
   {
     variants: {
       variant: {
@@ -130,19 +130,19 @@ const seaglassButtonVariants = cva(
         variant: 'primary',
         style: 'fill',
         className:
-          `${seaglassFillOverlay} bg-[#0066FF] hover:bg-[#0066FF] active:bg-[#0052CC]`,
+          `${seaglassFillOverlay} bg-[#0066FF] text-text-primary-inverted hover:bg-[#0066FF] active:bg-[#0052CC]`,
       },
       {
         variant: 'secondary',
         style: 'fill',
         className:
-          `${seaglassFillOverlay} bg-bg-button-secondary-default hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed`,
+          `${seaglassFillOverlay} bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed`,
       },
       {
         variant: 'danger',
         style: 'fill',
         className:
-          `${seaglassFillOverlay} bg-bg-button-danger-default hover:bg-bg-button-danger-hover active:bg-bg-button-danger-pressed`,
+          `${seaglassFillOverlay} bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
       },
       {
         style: 'fill',
@@ -153,38 +153,38 @@ const seaglassButtonVariants = cva(
         variant: 'primary',
         style: 'transparent',
         className:
-          'text-fg-text-primary-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.28)_0%,rgba(0,102,255,0)_100%)] before:opacity-80 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-70 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          'text-text-primary-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.28)_0%,rgba(0,102,255,0)_100%)] before:opacity-80 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-70 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       {
         variant: 'secondary',
         style: 'transparent',
         className:
-          'text-fg-text-default-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          'text-text-default-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       {
         variant: 'danger',
         style: 'transparent',
         className:
-          'text-fg-text-danger-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-76 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-64 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.23)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.32)] disabled:bg-bg-button-disabled-disabled disabled:text-fg-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          'text-text-danger-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-76 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-64 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.23)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.32)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       // Ghost
       {
         variant: 'primary',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-primary-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.24)_0%,rgba(0,102,255,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-84 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+          'bg-transparent text-text-primary-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.24)_0%,rgba(0,102,255,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-84 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
       {
         variant: 'secondary',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-default-default before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+          'bg-transparent text-text-default-default before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
       {
         variant: 'danger',
         style: 'ghost',
         className:
-          'bg-transparent text-fg-text-danger-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-72 disabled:bg-transparent disabled:text-fg-text-disabled-disabled disabled:before:opacity-0',
+          'bg-transparent text-text-danger-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-72 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
     ],
     defaultVariants: {

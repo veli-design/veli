@@ -17,21 +17,21 @@ const breadcrumbsRootVariants = cva(
 );
 
 const breadcrumbItemVariants = cva(
-  'inline-flex items-center text-[14px] leading-[20px] after:mx-[6px] after:font-medium after:text-fg-text-default-inactive after:content-["/"] data-[current]:after:hidden first:[&>a]:text-fg-text-links-default first:[&>a]:hover:text-fg-text-links-hover first:[&>a]:active:text-fg-text-links-hover'
+  'inline-flex items-center type-body-sm-regular after:mx-[6px] after:font-medium after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden first:[&>a]:text-text-links-default first:[&>a]:hover:text-text-links-hover first:[&>a]:active:text-text-links-hover'
 );
 
 const breadcrumbLinkVariants = cva(
-  'inline-flex min-h-[24px] items-center gap-[6px] rounded-[2px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-surface-bg',
+  'inline-flex min-h-[24px] items-center gap-[6px] rounded-[2px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
   {
     variants: {
       tone: {
         accent:
-          'text-fg-text-links-default hover:text-fg-text-links-hover active:text-fg-text-links-hover',
+          'text-text-links-default hover:text-text-links-hover active:text-text-links-hover',
         muted:
-          'text-fg-text-default-inactive hover:text-fg-text-default-subtle active:text-fg-text-default-subtle',
+          'text-text-default-inactive hover:text-text-default-subtle active:text-text-default-subtle',
       },
       isDisabled: {
-        true: 'cursor-default text-fg-text-disabled-disabled',
+        true: 'cursor-default text-text-disabled-disabled',
         false: '',
       },
     },
@@ -45,11 +45,11 @@ const breadcrumbLinkVariants = cva(
 const breadcrumbTextVariants = cva('inline-flex min-h-[24px] items-center gap-[6px] font-medium', {
   variants: {
     tone: {
-      accent: 'text-fg-text-links-default',
-      muted: 'text-fg-text-default-inactive',
+      accent: 'text-text-links-default',
+      muted: 'text-text-default-inactive',
     },
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
+      true: 'text-text-disabled-disabled',
       false: '',
     },
   },
@@ -60,23 +60,23 @@ const breadcrumbTextVariants = cva('inline-flex min-h-[24px] items-center gap-[6
 });
 
 const breadcrumbCurrentVariants = cva(
-  'inline-flex min-h-[24px] items-center gap-[6px] font-medium text-fg-text-default-subtle'
+  'inline-flex min-h-[24px] items-center gap-[6px] font-medium text-text-default-subtle'
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
-  'inline-flex min-h-[24px] min-w-[24px] items-center justify-center rounded-[2px] px-[4px] font-medium text-fg-text-default-inactive transition-colors outline-none',
+  'inline-flex min-h-[24px] min-w-[24px] items-center justify-center rounded-[2px] px-[4px] font-medium text-text-default-inactive transition-colors outline-none',
   {
     variants: {
       isHovered: {
-        true: 'text-fg-text-default-subtle',
+        true: 'text-text-default-subtle',
         false: '',
       },
       isPressed: {
-        true: 'text-fg-text-default-subtle',
+        true: 'text-text-default-subtle',
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-2 ring-offset-bg-surface-surface-bg',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
         false: '',
       },
     },

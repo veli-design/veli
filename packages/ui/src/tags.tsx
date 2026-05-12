@@ -17,11 +17,11 @@ import { twMerge } from 'tailwind-merge';
 
 const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
-const labelVariants = cva('text-[14px] leading-[20px]', {
+const labelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-default',
     },
   },
   defaultVariants: {
@@ -30,14 +30,14 @@ const labelVariants = cva('text-[14px] leading-[20px]', {
 });
 
 const tagListVariants = cva(
-  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-fg-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-surface-bg'
+  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base'
 );
 
-const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
   },
   defaultVariants: {
@@ -46,23 +46,23 @@ const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
 });
 
 const emptyStateVariants = cva(
-  'rounded-[12px] border border-dashed border-fg-border-default-subtle px-[12px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle'
+  'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle'
 );
 
 const tagVariants = cva(
-  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] text-[14px] leading-[20px] font-medium antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-fg-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-surface-bg',
+  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] type-body-sm-medium antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       isSelected: {
-        true: 'bg-bg-button-primary-subtle-default text-fg-text-primary-muted',
-        false: 'bg-bg-button-secondary-subtle-default text-fg-text-default-default',
+        true: 'bg-button-primary-subtle-default text-text-primary-muted',
+        false: 'bg-button-secondary-subtle-default text-text-default-default',
       },
       isDisabled: {
-        true: 'bg-bg-button-disabled-disabled text-fg-text-disabled-disabled',
+        true: 'bg-button-disabled-disabled text-text-disabled-disabled',
         false: '',
       },
       isLink: {
-        true: 'cursor-pointer text-fg-text-links-default',
+        true: 'cursor-pointer text-text-links-default',
         false: 'cursor-default',
       },
       allowsRemoving: {
@@ -76,21 +76,21 @@ const tagVariants = cva(
         isDisabled: false,
         isLink: false,
         className:
-          'hover:bg-bg-button-secondary-subtle-hover active:bg-bg-button-secondary-subtle-pressed',
+          'hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
       },
       {
         isSelected: true,
         isDisabled: false,
         isLink: false,
         className:
-          'hover:bg-bg-button-primary-subtle-hover active:bg-bg-button-primary-subtle-pressed',
+          'hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed',
       },
       {
         isSelected: false,
         isDisabled: false,
         isLink: true,
         className:
-          'bg-bg-button-primary-subtle-default hover:bg-bg-button-primary-subtle-hover hover:text-fg-text-links-hover active:bg-bg-button-primary-subtle-pressed active:text-fg-text-links-hover',
+          'bg-button-primary-subtle-default hover:bg-button-primary-subtle-hover hover:text-text-links-hover active:bg-button-primary-subtle-pressed active:text-text-links-hover',
       },
       {
         isDisabled: true,
@@ -112,11 +112,11 @@ const tagTextVariants = cva('min-w-0 truncate');
 const selectionIconVariants = cva('flex h-[14px] w-[14px] shrink-0 items-center justify-center');
 
 const removeButtonVariants = cva(
-  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-fg-border-focus focus-visible:ring-offset-0',
+  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-fg-text-disabled-disabled',
+        true: 'cursor-not-allowed text-text-disabled-disabled',
         false:
           'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
       },

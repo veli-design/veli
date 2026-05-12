@@ -10,9 +10,9 @@ const linkVariants = cva(
     {
         variants: {
             variant: {
-                primary: 'text-fg-text-links-default',
-                secondary: 'text-fg-text-default-default',
-                inverted: 'text-white',
+                primary: 'text-text-links-default',
+                secondary: 'text-text-default-default',
+                inverted: 'text-text-default-inverted',
             },
             underline: {
                 none: 'no-underline',
@@ -26,10 +26,10 @@ const linkVariants = cva(
                 true: '',
             },
             isDisabled: {
-                true: 'pointer-events-none text-fg-text-disabled-disabled [&_svg]:text-fg-icons-disabled-disabled',
+                true: 'pointer-events-none text-text-disabled-disabled [&_svg]:text-icon-disabled-disabled',
             },
             isFocusVisible: {
-                true: 'ring-fg-border-focus ring-offset-2 ring-2 rounded-sm',
+                true: 'ring-border-focus ring-offset-2 ring-2 rounded-sm',
             },
         },
         compoundVariants: [
@@ -43,29 +43,29 @@ const linkVariants = cva(
             {
                 variant: 'primary',
                 isHovered: true,
-                className: 'text-fg-text-links-hover',
+                className: 'text-text-links-hover',
             },
             {
                 variant: 'primary',
                 isPressed: true,
-                className: 'text-fg-text-links-hover',
+                className: 'text-text-links-hover',
             },
             // Secondary States
             {
                 variant: 'secondary',
                 isHovered: true,
-                className: 'text-fg-text-default-muted',
+                className: 'text-text-default-muted',
             },
             {
                 variant: 'secondary',
                 isPressed: true,
-                className: 'text-fg-text-default-muted',
+                className: 'text-text-default-muted',
             },
             // Inverted States
             {
                 variant: 'inverted',
                 isHovered: true,
-                className: 'text-white/80',
+                className: 'text-text-default-inverted/80',
             },
         ],
         defaultVariants: {

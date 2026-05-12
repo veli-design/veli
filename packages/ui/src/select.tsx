@@ -20,11 +20,11 @@ import { twMerge } from 'tailwind-merge';
 
 const selectRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
-const headerLabelVariants = cva('text-[14px] leading-[20px]', {
+const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-default',
     },
   },
   defaultVariants: {
@@ -32,14 +32,14 @@ const headerLabelVariants = cva('text-[14px] leading-[20px]', {
   },
 });
 
-const headerMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const headerMetaVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
+      true: 'text-text-disabled-disabled',
       false: '',
     },
   },
@@ -47,7 +47,7 @@ const headerMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-fg-text-disabled-disabled',
+      className: 'text-text-disabled-disabled',
     },
   ],
   defaultVariants: {
@@ -56,11 +56,11 @@ const headerMetaVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
   },
 });
 
-const actionVariants = cva('shrink-0 text-[14px] font-medium leading-[20px]', {
+const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-links-default',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-links-default',
     },
   },
   defaultVariants: {
@@ -82,11 +82,11 @@ const fieldButtonVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-fg-border-focus ring-offset-0',
+        true: 'ring-2 ring-border-focus ring-offset-0',
         false: '',
       },
       isOpen: {
-        true: 'bg-bg-surface-surface-raised',
+        true: 'bg-bg-surface-raised',
         false: '',
       },
     },
@@ -109,8 +109,8 @@ const fieldButtonVariants = cva(
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-fg-text-disabled-disabled',
-      false: 'text-fg-text-default-subtle',
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-default-subtle',
     },
   },
   defaultVariants: {
@@ -123,8 +123,8 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-fg-text-disabled-disabled',
-        false: 'text-fg-text-default-subtle',
+        true: 'text-text-disabled-disabled',
+        false: 'text-text-default-subtle',
       },
       isOpen: {
         true: 'rotate-180',
@@ -138,11 +138,11 @@ const indicatorVariants = cva(
   }
 );
 
-const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
+const messageVariants = cva('type-caption-12-regular', {
   variants: {
     tone: {
-      subtle: 'text-fg-text-default-subtle',
-      danger: 'text-fg-text-danger-muted',
+      subtle: 'text-text-default-subtle',
+      danger: 'text-text-danger-muted',
     },
   },
   defaultVariants: {
@@ -151,25 +151,25 @@ const messageVariants = cva('text-[12px] leading-[16px] tracking-[0.01em]', {
 });
 
 const popoverVariants = cva(
-  'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-fg-border-default-subtle bg-bg-surface-surface-overlay-raised p-[4px] text-fg-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none'
+  'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none'
 );
 
 const listBoxVariants = cva('max-h-[280px] overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-[36px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[8px] text-left text-[14px] leading-[20px] outline-none transition-colors',
+  'group flex min-h-[36px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[8px] text-left type-body-sm-regular outline-none transition-colors',
   {
     variants: {
       isSelected: {
-        true: 'bg-bg-button-primary-subtle-default text-fg-text-default-default',
-        false: 'text-fg-text-default-default',
+        true: 'bg-button-primary-subtle-default text-text-default-default',
+        false: 'text-text-default-default',
       },
       isFocused: {
-        true: 'bg-bg-button-primary-subtle-hover',
+        true: 'bg-button-primary-subtle-hover',
         false: '',
       },
       isDisabled: {
-        true: 'pointer-events-none text-fg-text-disabled-disabled',
+        true: 'pointer-events-none text-text-disabled-disabled',
         false: '',
       },
     },
@@ -299,12 +299,12 @@ export function Select<T extends object>({
             <SelectValue
               className={({ isPlaceholder }) =>
                 twMerge(
-                  'min-w-0 flex-1 truncate text-[14px] leading-[20px]',
+                  'min-w-0 flex-1 truncate type-body-sm-regular',
                   isPlaceholder
-                    ? 'text-fg-text-default-inactive'
+                    ? 'text-text-default-inactive'
                     : isDisabled
-                      ? 'text-fg-text-disabled-disabled'
-                      : 'text-fg-text-default-default'
+                      ? 'text-text-disabled-disabled'
+                      : 'text-text-default-default'
                 )
               }
             />
@@ -353,7 +353,7 @@ export function SelectSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(selectSectionVariants(), className)}>
       {title ? (
-        <Header className="px-[8px] py-[4px] text-[12px] font-semibold uppercase tracking-[0.08em] text-fg-text-default-muted">
+        <Header className="px-[8px] py-[4px] text-[12px] font-semibold uppercase tracking-[0.08em] text-text-default-muted">
           {title}
         </Header>
       ) : null}
@@ -389,19 +389,19 @@ export function SelectItem<T extends object = object>({
       {({ isSelected }) => (
         <div className="flex min-w-0 flex-1 items-center gap-[8px]">
           {startContent ? (
-            <span className="shrink-0 text-fg-text-default-subtle">{startContent}</span>
+            <span className="shrink-0 text-text-default-subtle">{startContent}</span>
           ) : null}
           <div className="min-w-0 flex-1">
             {children ? <div className="truncate">{children}</div> : null}
             {description ? (
-              <div className="truncate text-[12px] leading-[16px] text-fg-text-default-subtle">
+              <div className="truncate type-caption-12-regular text-text-default-subtle">
                 {description}
               </div>
             ) : null}
           </div>
           {endContent ? <span className="shrink-0">{endContent}</span> : null}
           {isSelected ? (
-            <span className="shrink-0 text-fg-text-primary-muted">
+            <span className="shrink-0 text-text-primary-muted">
               <CheckIcon />
             </span>
           ) : null}

@@ -78,9 +78,9 @@ export function BreadcrumbsVariantsDemo() {
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Static breadcrumb trail
           </p>
           <Breadcrumbs aria-label="Site navigation breadcrumb">
@@ -94,9 +94,9 @@ export function BreadcrumbsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Back link treatment
           </p>
           <Breadcrumbs aria-label="Back breadcrumb">
@@ -112,9 +112,9 @@ export function BreadcrumbsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px] lg:col-span-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Data-driven breadcrumb trail
           </p>
           <Breadcrumbs
@@ -133,7 +133,7 @@ export function BreadcrumbsVariantsDemo() {
               </Breadcrumb>
             )}
           </Breadcrumbs>
-          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+          <p className="type-caption-12-regular text-text-default-muted">
             Activate an earlier crumb to collapse the trail to that level.
           </p>
         </div>
@@ -158,9 +158,9 @@ export function TagsVariantsDemo() {
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Selectable tags
           </p>
           <TagGroup
@@ -177,9 +177,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Removable tags
           </p>
           <TagGroup<TagDemoItem>
@@ -189,7 +189,7 @@ export function TagsVariantsDemo() {
               setRemovableItems((current: TagDemoItem[]) => removeTagItems(current, keys))
             }
             renderEmptyState={() => (
-              <div className="rounded-[12px] border border-dashed border-fg-border-default-subtle px-[12px] py-[10px] text-[14px] leading-[20px] text-fg-text-default-subtle">
+              <div className="rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle">
                 All saved topics have been removed.
               </div>
             )}
@@ -199,9 +199,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Link tags
           </p>
           <TagGroup label="Related guidance">
@@ -218,9 +218,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Disabled tags
           </p>
           <TagGroup
@@ -244,9 +244,9 @@ export function ButtonVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
       <div />
-      <div className="text-xs font-bold uppercase text-gray-400">Fill</div>
-      <div className="text-xs font-bold uppercase text-gray-400">Transparent</div>
-      <div className="text-xs font-bold uppercase text-gray-400">Ghost</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted">Fill</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted">Transparent</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted">Ghost</div>
 
       <div className="text-sm font-medium">Primary</div>
       <Button variant="primary" style="fill">Button</Button>
@@ -426,18 +426,18 @@ export function InputValidationDemo() {
 
 export function DividerUsageDemo() {
   return (
-    <div className="w-[320px] rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+    <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <div className="space-y-[12px]">
         <div>
-          <h3 className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <h3 className="type-body-sm-medium text-text-default-high-contrast">
             Applicant details
           </h3>
-          <p className="text-[12px] leading-[16px] tracking-[0.01em] text-fg-text-default-muted">
+          <p className="type-caption-12-regular text-text-default-muted">
             Review the information before continuing.
           </p>
         </div>
         <Divider />
-        <div className="space-y-[8px] text-[14px] leading-[20px] text-fg-text-default-default">
+        <div className="space-y-[8px] type-body-sm-regular text-text-default-default">
           <p>Name: Aishath Mariyam</p>
           <p>Island: Male&apos;</p>
         </div>
@@ -449,31 +449,31 @@ export function DividerUsageDemo() {
 export function DividerVariantsDemo() {
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Horizontal divider
           </p>
-          <div className="space-y-[10px] text-[14px] leading-[20px] text-fg-text-default-default">
+          <div className="space-y-[10px] type-body-sm-regular text-text-default-default">
             <p>Passport number</p>
             <Divider />
             <p>National ID number</p>
-            <Divider className="bg-fg-border-default-strong" />
+            <Divider className="bg-border-default-high-contrast" />
             <p>Driving license number</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-fg-border-default-subtle bg-bg-surface-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="text-[14px] font-medium leading-[20px] text-fg-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-high-contrast">
             Vertical divider
           </p>
-          <div className="flex items-center gap-[12px] text-[14px] leading-[20px] text-fg-text-default-default">
+          <div className="flex items-center gap-[12px] type-body-sm-regular text-text-default-default">
             <span>Overview</span>
             <Divider orientation="vertical" />
             <span>Documents</span>
-            <Divider orientation="vertical" className="bg-fg-border-default-strong" />
+            <Divider orientation="vertical" className="bg-border-default-high-contrast" />
             <span>History</span>
           </div>
         </div>
@@ -632,9 +632,9 @@ export function LinkVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
       <div />
-      <div className="text-xs font-bold uppercase text-gray-400 text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-gray-400 text-center">Hover Underline</div>
-      <div className="text-xs font-bold uppercase text-gray-400 text-center">Always Underline</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Plain</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Hover Underline</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Always Underline</div>
 
       <div className="text-sm font-medium">Primary</div>
       <div className="flex justify-center"><Link variant="primary" underline="none">Link</Link></div>
@@ -663,25 +663,25 @@ export function LinkVariantsDemo() {
 export function LinkIconsDemo() {
   return (
     <div className="flex gap-8 flex-wrap items-center">
-      <span className="text-[20px] leading-[28px]">
+      <span className="type-subtitle-regular">
         <Link>
           <Plus size={20} weight="bold" />
           Large Link
         </Link>
       </span>
-      <span className="text-[18px] leading-[26px]">
+      <span className="type-body-lg-regular">
         <Link variant="secondary">
           <DownloadSimple size={18} weight="bold" />
           LG Link
         </Link>
       </span>
-      <span className="text-[16px] leading-[24px]">
+      <span className="type-body-md-regular">
         <Link>
           MD Link
           <ArrowRight size={16} weight="bold" />
         </Link>
       </span>
-      <span className="text-[12px] leading-[16px]">
+      <span className="type-caption-12-regular">
         <Link>
           <ArrowRight size={12} weight="bold" />
           XS Link
@@ -694,19 +694,19 @@ export function LinkIconsDemo() {
 export function LinkSizesDemo() {
   return (
     <div className="flex gap-6 items-center flex-wrap">
-      <span className="text-[12px] leading-[16px]">
+      <span className="type-caption-12-regular">
         <Link>Extra Small</Link>
       </span>
-      <span className="text-[14px] leading-[20px]">
+      <span className="type-body-sm-regular">
         <Link>Small</Link>
       </span>
-      <span className="text-[16px] leading-[24px]">
+      <span className="type-body-md-regular">
         <Link>Medium</Link>
       </span>
-      <span className="text-[18px] leading-[26px]">
+      <span className="type-body-lg-regular">
         <Link>Large</Link>
       </span>
-      <span className="text-[20px] leading-[28px]">
+      <span className="type-subtitle-regular">
         <Link>Extra Large</Link>
       </span>
     </div>
