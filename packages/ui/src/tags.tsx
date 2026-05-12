@@ -17,6 +17,8 @@ import { twMerge } from 'tailwind-merge';
 
 const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
+const TagGroupDisabledContext = React.createContext(false);
+
 const labelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
@@ -167,6 +169,7 @@ export interface TagGroupProps<T extends object>
   label?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
+  isDisabled?: boolean;
   items?: Iterable<T>;
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   renderEmptyState?: (props: TagListRenderProps) => React.ReactNode;
@@ -188,35 +191,58 @@ export function TagGroup<T extends object>({
   items,
   children,
   renderEmptyState,
+  isDisabled = false,
   className,
   listClassName,
   ...props
 }: TagGroupProps<T>) {
+  const setRootRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) {
+        return;
+      }
+
+      if (isDisabled) {
+        node.setAttribute('aria-disabled', 'true');
+      } else {
+        node.removeAttribute('aria-disabled');
+      }
+    },
+    [isDisabled]
+  );
+
   return (
-    <AriaTagGroup {...props} className={twMerge(tagGroupRootVariants(), className)}>
-      {label ? <Label className={labelVariants({ isDisabled: false })}>{label}</Label> : null}
-      <AriaTagList
-        items={items}
-        renderEmptyState={
-          renderEmptyState
-            ? renderEmptyState
-            : () => <div className={emptyStateVariants()}>No tags available.</div>
-        }
-        className={twMerge(tagListVariants(), listClassName)}
+    <TagGroupDisabledContext.Provider value={isDisabled}>
+      <AriaTagGroup
+        {...props}
+        ref={setRootRef}
+        data-disabled={isDisabled || undefined}
+        className={twMerge(tagGroupRootVariants(), className)}
       >
-        {children as AriaTagListProps<T>['children']}
-      </AriaTagList>
-      {description ? (
-        <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
-          {description}
-        </Text>
-      ) : null}
-      {errorMessage ? (
-        <Text slot="errorMessage" className={messageVariants({ tone: 'danger' })}>
-          {errorMessage}
-        </Text>
-      ) : null}
-    </AriaTagGroup>
+        {label ? <Label className={labelVariants({ isDisabled })}>{label}</Label> : null}
+        <AriaTagList
+          items={items}
+          renderEmptyState={
+            renderEmptyState
+              ? renderEmptyState
+              : () => <div className={emptyStateVariants()}>No tags available.</div>
+          }
+          className={twMerge(tagListVariants(), listClassName)}
+        >
+          {children as AriaTagListProps<T>['children']}
+        </AriaTagList>
+        {description ? (
+          <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
+            {description}
+          </Text>
+        ) : null}
+        {errorMessage ? (
+          <Text slot="errorMessage" className={messageVariants({ tone: 'danger' })}>
+            {errorMessage}
+          </Text>
+        ) : null}
+      </AriaTagGroup>
+    </TagGroupDisabledContext.Provider>
   );
 }
 
@@ -239,10 +265,13 @@ export function Tag({
   children,
   className,
   href,
+  isDisabled,
   removeButtonLabel,
   textValue,
   ...props
 }: TagProps) {
+  const isGroupDisabled = React.useContext(TagGroupDisabledContext);
+  const isTagDisabled = isGroupDisabled || isDisabled;
   const tagText = getTagText(children, textValue);
   const resolvedRemoveButtonLabel =
     typeof removeButtonLabel === 'function'
@@ -253,6 +282,7 @@ export function Tag({
     <AriaTag
       {...props}
       href={href}
+      isDisabled={isTagDisabled}
       textValue={textValue}
       className={(state) =>
         twMerge(

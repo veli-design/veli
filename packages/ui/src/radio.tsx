@@ -10,16 +10,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 const radioGroupVariants = cva("inline-flex flex-col gap-[12px]");
 
 const radioRootVariants = cva(
-  "group inline-flex items-center gap-[8px] font-sans font-medium antialiased transition-colors disabled:cursor-not-allowed",
+  "group inline-flex items-center gap-[8px] font-sans font-medium antialiased transition-colors",
   {
     variants: {
       size: {
         sm: "type-body-sm-medium",
         md: "type-body-md-medium",
       },
+      isDisabled: {
+        true: "cursor-not-allowed text-text-disabled-disabled",
+        false: "cursor-pointer text-text-default-default",
+      },
     },
     defaultVariants: {
       size: "sm",
+      isDisabled: false,
     },
   },
 );
@@ -206,7 +211,7 @@ export function RadioGroup(props: RadioGroupProps) {
 export interface RadioProps
   extends
     Omit<AriaRadioProps, "className" | "style" | "children">,
-    VariantProps<typeof radioRootVariants> {
+    Omit<VariantProps<typeof radioRootVariants>, "isDisabled"> {
   children?: React.ReactNode;
 }
 
@@ -217,37 +222,40 @@ export function Radio({ size = "sm", children, ...props }: RadioProps) {
       className={(state) =>
         radioRootVariants({
           size,
-          className: state.isDisabled
-            ? "text-text-disabled-disabled"
-            : "text-text-default-default",
+          isDisabled: state.isDisabled,
         })
       }
     >
-      {(state) => (
-        <>
-          <span
-            className={controlVariants({
-              size,
-              isSelected: state.isSelected,
-              isHovered: state.isHovered,
-              isPressed: state.isPressed,
-              isDisabled: state.isDisabled,
-              isFocusVisible: state.isFocusVisible,
-            })}
-          >
+      {(state) => {
+        const isHovered = state.isDisabled ? false : state.isHovered;
+        const isPressed = state.isDisabled ? false : state.isPressed;
+
+        return (
+          <>
             <span
-              className={indicatorVariants({
+              className={controlVariants({
                 size,
-                isPressed: state.isPressed,
                 isSelected: state.isSelected,
-                isHovered: state.isHovered,
+                isHovered,
+                isPressed,
                 isDisabled: state.isDisabled,
+                isFocusVisible: state.isFocusVisible,
               })}
-            />
-          </span>
-          {children ? <span>{children}</span> : null}
-        </>
-      )}
+            >
+              <span
+                className={indicatorVariants({
+                  size,
+                  isPressed,
+                  isSelected: state.isSelected,
+                  isHovered,
+                  isDisabled: state.isDisabled,
+                })}
+              />
+            </span>
+            {children ? <span>{children}</span> : null}
+          </>
+        );
+      }}
     </AriaRadio>
   );
 }
