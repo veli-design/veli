@@ -200,6 +200,15 @@ export const ValidationStates: Story = {
         {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
       </ComboBox>
       <ComboBox
+        label="Invalid without message"
+        placeholder="Choose a location"
+        isInvalid
+        description="This helper text is hidden while invalid."
+        defaultItems={DEFAULT_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
+      </ComboBox>
+      <ComboBox
         label="Disabled"
         placeholder="Unavailable"
         isDisabled

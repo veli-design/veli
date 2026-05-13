@@ -96,6 +96,12 @@ export const ValidationStates: Story = {
         endContent={<WarningCircle size={16} />}
       />
       <Input
+        label="Invalid without message"
+        placeholder="Enter value"
+        isInvalid
+        description="This helper text is hidden while invalid."
+      />
+      <Input
         label="Disabled"
         placeholder="Disabled value"
         isDisabled

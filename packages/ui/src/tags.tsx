@@ -7,7 +7,6 @@ import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagList as AriaTagList,
-  Text,
   type TagGroupProps as AriaTagGroupProps,
   type TagListProps as AriaTagListProps,
   type TagListRenderProps,
@@ -16,6 +15,7 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { StaticFieldMessage } from './field-shared';
 
 const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -36,18 +36,6 @@ const labelVariants = cva('type-body-sm-regular', {
 const tagListVariants = cva(
   'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base'
 );
-
-const messageVariants = cva('type-caption-12-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
-    },
-  },
-  defaultVariants: {
-    tone: 'subtle',
-  },
-});
 
 const emptyStateVariants = cva(
   'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle'
@@ -233,16 +221,7 @@ export function TagGroup<T extends object>({
         >
           {children as AriaTagListProps<T>['children']}
         </AriaTagList>
-        {description ? (
-          <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
-            {description}
-          </Text>
-        ) : null}
-        {errorMessage ? (
-          <Text slot="errorMessage" className={messageVariants({ tone: 'danger' })}>
-            {errorMessage}
-          </Text>
-        ) : null}
+        <StaticFieldMessage description={description} errorMessage={errorMessage} />
       </AriaTagGroup>
     </TagGroupDisabledContext.Provider>
   );
