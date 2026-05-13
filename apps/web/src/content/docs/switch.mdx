@@ -71,3 +71,6 @@ The switch can be disabled using the `isDisabled` prop.
 | `isDisabled` | `boolean` | - | Whether the switch is disabled. |
 | `onChange` | `(isSelected: boolean) => void` | - | Callback triggered when the selection state changes. |
 | `children` | `ReactNode` | - | The label for the switch. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
+
+`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The switch track and handle internals remain private to preserve focus, contrast, disabled, and selected states.

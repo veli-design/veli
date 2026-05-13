@@ -64,6 +64,7 @@ import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
 | `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
 | `value` | `string` | - | Value used by the parent `RadioGroup` for selection. |
 | `children` | `ReactNode` | - | Label content. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost radio element. |
 
 ### `RadioGroup`
 
@@ -73,5 +74,8 @@ import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
 | `value` | `string` | - | Controlled selected value. |
 | `onChange` | `(value: string) => void` | - | Callback when selection changes. |
 | `isDisabled` | `boolean` | `false` | Disables all radios in the group. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost radio group element. |
 
-*Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `className` and `style` overrides.*
+*Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `style` overrides.*
+
+`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The radio control and indicator internals remain private to preserve focus, contrast, disabled, and selected states.

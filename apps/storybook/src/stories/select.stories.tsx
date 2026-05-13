@@ -43,6 +43,21 @@ export const Default: Story = {
   ),
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <Select className="w-full" label="Grid column" placeholder="Choose an option">
+        <SelectItem id="a">Option A</SelectItem>
+        <SelectItem id="b">Option B</SelectItem>
+      </Select>
+      <Select className="max-w-[240px]" label="Constrained" placeholder="Choose an option">
+        <SelectItem id="a">Option A</SelectItem>
+        <SelectItem id="b">Option B</SelectItem>
+      </Select>
+    </div>
+  ),
+};
+
 export const FigmaExploration: Story = {
   render: () => (
     <div className="w-[320px]">

@@ -99,6 +99,29 @@ export const Default: Story = {
   },
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <ComboBox
+        className="w-full"
+        label="Grid column"
+        placeholder="Search location"
+        defaultItems={DEFAULT_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
+      </ComboBox>
+      <ComboBox
+        className="max-w-[240px]"
+        label="Constrained"
+        placeholder="Search location"
+        defaultItems={DEFAULT_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
+      </ComboBox>
+    </div>
+  ),
+};
+
 export const FigmaExploration: Story = {
   render: () => (
     <div className="w-[320px]">
