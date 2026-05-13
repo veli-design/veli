@@ -6,7 +6,7 @@ import {
 import { cva, type VariantProps } from "class-variance-authority";
 
 const switchVariants = cva(
-  "group inline-flex items-center gap-[8px] font-sans antialiased transition-colors focus-visible:outline-none disabled:cursor-not-allowed",
+  "group inline-flex items-center gap-[8px] font-sans antialiased transition-colors focus-visible:outline-none",
   {
     variants: {
       size: {
@@ -14,9 +14,14 @@ const switchVariants = cva(
         md: "type-body-md-medium",
         lg: "type-body-lg-medium",
       },
+      isDisabled: {
+        true: "cursor-not-allowed text-text-disabled-disabled",
+        false: "cursor-pointer text-text-default-default",
+      },
     },
     defaultVariants: {
       size: "md",
+      isDisabled: false,
     },
   },
 );
@@ -217,7 +222,7 @@ const handleVariants = cva(
 export interface SwitchProps
   extends
     Omit<AriaSwitchProps, "className" | "style" | "children">,
-    VariantProps<typeof switchVariants> {
+    Omit<VariantProps<typeof switchVariants>, "isDisabled"> {
   children?: React.ReactNode;
 }
 
@@ -228,9 +233,7 @@ export function Switch({ size, children, ...props }: SwitchProps) {
       className={({ isDisabled }) =>
         switchVariants({
           size,
-          className: isDisabled
-            ? "text-text-disabled-disabled"
-            : "text-text-default-default",
+          isDisabled,
         })
       }
     >
