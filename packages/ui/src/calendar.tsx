@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   Calendar as AriaCalendar,
@@ -23,20 +25,20 @@ const calendarRootVariants = cva(
 );
 
 const cellVariants = cva(
-  "flex aspect-square w-[calc((100cqw/7)-6px)] cursor-pointer items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
+  "flex aspect-square w-[calc((100cqw/7)-6px)] items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
   {
     variants: {
       isSelected: {
         false:
-          "text-text-default-default hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible",
-        true: "bg-button-primary-default text-text-primary-inverted hover:bg-button-primary-hover active:bg-button-primary-pressed data-[invalid]:bg-button-danger-default data-[invalid]:text-text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
+          "text-text-default-default data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible",
+        true: "bg-button-primary-default text-text-primary-inverted data-[invalid]:bg-button-danger-default data-[invalid]:text-text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
       },
       isDisabled: {
         true: "cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]",
         false: "",
       },
       isUnavailable: {
-        true: "text-red-900 line-through decoration-2 decoration-red-900",
+        true: "cursor-not-allowed",
         false: "",
       },
       isFocusVisible: {
@@ -53,6 +55,25 @@ const cellVariants = cva(
         isSelected: true,
         isToday: true,
         className: "ring-border-focus",
+      },
+      {
+        isSelected: false,
+        isDisabled: false,
+        isUnavailable: false,
+        className:
+          "cursor-pointer hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover",
+      },
+      {
+        isSelected: true,
+        isDisabled: false,
+        isUnavailable: false,
+        className:
+          "cursor-pointer hover:bg-button-primary-hover active:bg-button-primary-pressed",
+      },
+      {
+        isDisabled: false,
+        isUnavailable: true,
+        className: "text-red-900 line-through decoration-2 decoration-red-900",
       },
       {
         isSelected: false,

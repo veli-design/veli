@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import {
   Button as AriaButton,
@@ -222,6 +224,7 @@ export interface ComboBoxSectionProps<T extends object>
 export function ComboBoxSection<T extends object>({
   title,
   className,
+  children,
   ...props
 }: ComboBoxSectionProps<T>) {
   return (
@@ -230,7 +233,7 @@ export function ComboBoxSection<T extends object>({
       className={twMerge('py-[2px] first:pt-0 last:pb-0', className)}
     >
       {title ? <Header className={sectionHeaderVariants()}>{title}</Header> : null}
-      {props.children}
+      {children}
     </ListBoxSection>
   );
 }

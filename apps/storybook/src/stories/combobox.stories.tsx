@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import {
   ComboBox,
   ComboBoxItem,
@@ -120,6 +121,56 @@ export const RootClassName: Story = {
       </ComboBox>
     </div>
   ),
+};
+
+export const GroupedSections: Story = {
+  render: () => {
+    const [selectedKey, setSelectedKey] = useState<React.Key | null>(null);
+
+    return (
+      <div className="flex w-[320px] flex-col gap-3">
+        <ComboBox
+          label="Location"
+          placeholder="Search location"
+          description="Choose from popular and regional locations."
+          selectedKey={selectedKey}
+          onSelectionChange={setSelectedKey}
+          startAddon={<MagnifyingGlass size={16} />}
+        >
+          <ComboBoxSection title="Popular">
+            <ComboBoxItem id="male">Male'</ComboBoxItem>
+            <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
+            <ComboBoxItem id="addu">Addu City</ComboBoxItem>
+          </ComboBoxSection>
+          <ComboBoxSection title="Regional">
+            <ComboBoxItem id="fuvahmulah">Fuvahmulah City</ComboBoxItem>
+            <ComboBoxItem id="kulhudhuffushi">Kulhudhuffushi City</ComboBoxItem>
+          </ComboBoxSection>
+        </ComboBox>
+        <p className="text-xs text-text-default-muted">
+          Selected key: <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
+        </p>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const combobox = canvas.getByRole('combobox', { name: 'Location' });
+    const trigger = canvas.getByRole('button', { name: 'Show suggestions Location' });
+
+    await userEvent.click(trigger);
+
+    await expect(page.getByText('Popular')).toBeVisible();
+    await expect(page.getByText('Regional')).toBeVisible();
+    await expect(page.getByRole('option', { name: "Male'" })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Fuvahmulah City' })).toBeVisible();
+
+    await userEvent.click(page.getByRole('option', { name: 'Fuvahmulah City' }));
+
+    await expect(combobox).toHaveValue('Fuvahmulah City');
+    await expect(canvas.getByText('fuvahmulah')).toBeVisible();
+  },
 };
 
 export const FigmaExploration: Story = {

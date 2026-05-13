@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import {
   Checkbox as AriaCheckbox,
@@ -7,7 +9,18 @@ import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const checkboxRootVariants = cva(
-  'group inline-flex items-center gap-[8px] font-sans type-body-sm-medium antialiased disabled:cursor-not-allowed'
+  'group inline-flex items-center gap-[8px] font-sans type-body-sm-medium antialiased',
+  {
+    variants: {
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'cursor-pointer text-text-default-default',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
+    },
+  }
 );
 
 const checkboxControlVariants = cva(
@@ -148,7 +161,7 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-text-default-inverted',
+        true: 'text-icon-default-subtle',
         false: 'text-text-default-inverted',
       },
     },
@@ -169,9 +182,7 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
       className={(state) =>
         twMerge(
           checkboxRootVariants({
-            className: state.isDisabled
-              ? 'text-text-disabled-disabled'
-              : 'text-text-default-default',
+            isDisabled: state.isDisabled,
           }),
           className
         )
@@ -179,14 +190,17 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
     >
       {(state) => {
         const checkedOrIndeterminate = state.isSelected || state.isIndeterminate;
+        const isHovered = state.isDisabled ? false : state.isHovered;
+        const isPressed = state.isDisabled ? false : state.isPressed;
+
         return (
           <>
             <span
               className={checkboxControlVariants({
                 isSelected: state.isSelected,
                 isIndeterminate: state.isIndeterminate,
-                isHovered: state.isHovered,
-                isPressed: state.isPressed,
+                isHovered,
+                isPressed,
                 isDisabled: state.isDisabled,
                 isFocusVisible: state.isFocusVisible,
               })}
@@ -206,10 +220,10 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
                   ) : (
                     <svg
                       aria-hidden="true"
-                      width={state.isPressed ? '9' : '11.2'}
-                      height={state.isPressed ? '6' : '8.2'}
+                      width={isPressed ? '9' : '11.2'}
+                      height={isPressed ? '6' : '8.2'}
                       viewBox="-1 -1 11.5 8.8"
-                      className={state.isPressed ? 'translate-x-[-0.2px] translate-y-[0.1px]' : 'translate-x-[-0.4px] translate-y-[0.1px]'}
+                      className={isPressed ? 'translate-x-[-0.2px] translate-y-[0.1px]' : 'translate-x-[-0.4px] translate-y-[0.1px]'}
                       fill="none"
                     >
                       <path
