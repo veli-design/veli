@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Separator as AriaSeparator,
   type SeparatorProps as AriaSeparatorProps,
