@@ -44,7 +44,8 @@ import { Tag, TagGroup } from '@tradenetcorp/coral-ui/tags';
 - `Selectable tags`: use `selectionMode="single"` or `selectionMode="multiple"` when tags act like filters or choices.
 - `Removable tags`: use `onRemove` when people should be able to dismiss or clear tags from a collection.
 - `Link tags`: use `href` when a tag should navigate to related content instead of toggling selection.
-- `Disabled tags`: use `disabledKeys` on the group or `isDisabled` on individual tags to show unavailable items.
+- `Disabled keys`: use `disabledKeys` on the group or `isDisabled` on individual tags to show unavailable items.
+- `Disabled group`: use `isDisabled` on `TagGroup` when the entire collection is unavailable.
 
 Plain text and nested text content are used for tag text and remove button labels automatically. For icon-only, render-function, or otherwise non-text tags, provide `textValue` or `removeButtonLabel`.
 
@@ -62,6 +63,7 @@ Plain text and nested text content are used for tag text and remove button label
 | `onRemove` | `(keys) => void` | Called when one or more removable tags are dismissed. |
 | `description` | `ReactNode` | Adds supporting helper text below the tag list. |
 | `errorMessage` | `ReactNode` | Adds validation or error text below the tag list. |
+| `isDisabled` | `boolean` | Disables the full group and styles the visible label as disabled. |
 | `disabledKeys` | `Iterable<Key>` | Disables specific tags in a collection. |
 
 ### `Tag`

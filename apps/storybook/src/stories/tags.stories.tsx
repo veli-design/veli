@@ -140,7 +140,7 @@ export const Variations: Story = {
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
             <p className="type-body-sm-medium text-text-default-high-contrast">
-              Disabled tags
+              Disabled keys
             </p>
             <TagGroup
               label="Amenities"
@@ -152,6 +152,25 @@ export const Variations: Story = {
               <Tag id="parking">Parking</Tag>
               <Tag id="breakfast">Breakfast</Tag>
               <Tag id="wifi">Wi-Fi</Tag>
+            </TagGroup>
+          </div>
+        </div>
+
+        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+          <div className="space-y-[12px]">
+            <p className="type-body-sm-medium text-text-default-high-contrast">
+              Disabled group
+            </p>
+            <TagGroup
+              label="Restricted services"
+              selectionMode="multiple"
+              defaultSelectedKeys={["documents"]}
+              isDisabled
+            >
+              <Tag id="documents">Documents</Tag>
+              <Tag id="appointments">Appointments</Tag>
+              <Tag id="payments">Payments</Tag>
+              <Tag id="support">Support</Tag>
             </TagGroup>
           </div>
         </div>
