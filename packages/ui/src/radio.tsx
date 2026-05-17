@@ -8,6 +8,7 @@ import {
   RadioProps as AriaRadioProps,
 } from "react-aria-components";
 import { cva, type VariantProps } from "class-variance-authority";
+import { twMerge } from "tailwind-merge";
 
 const radioGroupVariants = cva("inline-flex flex-col gap-[12px]");
 
@@ -204,10 +205,12 @@ const indicatorVariants = cva(
 export interface RadioGroupProps extends Omit<
   AriaRadioGroupProps,
   "className" | "style"
-> {}
+> {
+  className?: string;
+}
 
-export function RadioGroup(props: RadioGroupProps) {
-  return <AriaRadioGroup {...props} className={radioGroupVariants()} />;
+export function RadioGroup({ className, ...props }: RadioGroupProps) {
+  return <AriaRadioGroup {...props} className={twMerge(radioGroupVariants(), className)} />;
 }
 
 export interface RadioProps
@@ -215,17 +218,21 @@ export interface RadioProps
     Omit<AriaRadioProps, "className" | "style" | "children">,
     Omit<VariantProps<typeof radioRootVariants>, "isDisabled"> {
   children?: React.ReactNode;
+  className?: string;
 }
 
-export function Radio({ size = "sm", children, ...props }: RadioProps) {
+export function Radio({ size = "sm", children, className, ...props }: RadioProps) {
   return (
     <AriaRadio
       {...props}
       className={(state) =>
-        radioRootVariants({
-          size,
-          isDisabled: state.isDisabled,
-        })
+        twMerge(
+          radioRootVariants({
+            size,
+            isDisabled: state.isDisabled,
+          }),
+          className,
+        )
       }
     >
       {(state) => {

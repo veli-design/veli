@@ -55,5 +55,8 @@ import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
 | :--- | :--- | :--- | :--- |
 | `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state. |
 | `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
 
-*Note: All other `react-aria-components` Checkbox props are supported, excluding `className` and `style` overrides.*
+*Note: All other `react-aria-components` Checkbox props are supported, excluding `style` overrides.*
+
+`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The checkbox control and indicator internals remain private to preserve focus, contrast, disabled, checked, and indeterminate states.

@@ -60,5 +60,8 @@ import { Input } from '@tradenetcorp/coral-ui/input';
 | `endContent` | `ReactNode` | - | Trailing inline content rendered directly inside the field shell. |
 | `endAddon` | `ReactNode` | - | Trailing content rendered inside the inset 24px accessory container. |
 | `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
 
-All other `react-aria-components` `TextField` props are supported, excluding `className`, `style`, and direct child composition overrides.
+All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition overrides.
+
+`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Use it to identify repeated layout needs during internal adoption; repeated patterns should become explicit props before public release.

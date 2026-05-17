@@ -50,6 +50,10 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/coral-ui/combobox';
   <ComboBoxValidationDemo client:visible />
 </div>
 
+## Option Text
+
+`ComboBoxItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so filtering, selected values, and screen-reader output remain reliable.
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -66,5 +70,8 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/coral-ui/combobox';
 | `menuTriggerIcon` | `ReactNode` | chevron | Replaces the default dropdown indicator icon. |
 | `emptyState` | `ReactNode` | `"No matches found."` | Empty-state content rendered when filtering produces no results. |
 | `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
 
-All other `react-aria-components` `ComboBox` props are supported, excluding `className`, `style`, and direct child composition overrides on the root wrapper.
+All other `react-aria-components` `ComboBox` props are supported, excluding `style` and direct child composition overrides on the root wrapper.
+
+`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.

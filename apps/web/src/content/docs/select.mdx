@@ -45,6 +45,10 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/coral-ui/select
   <SelectValidationDemo client:visible />
 </div>
 
+## Option Text
+
+`SelectItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so typeahead, selected value text, and screen-reader output remain reliable.
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -60,5 +64,8 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/coral-ui/select
 | `indicator` | `ReactNode` | Default chevron | Custom trailing indicator content. |
 | `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
 | `placeholder` | `string` | React Aria default | Placeholder text shown when no option is selected. |
+| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
 
-All other `react-aria-components` `Select` props are supported, excluding direct `className`, `style`, and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
+All other `react-aria-components` `Select` props are supported, excluding direct `style` and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
+
+`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.

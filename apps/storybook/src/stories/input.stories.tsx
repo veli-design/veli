@@ -54,6 +54,25 @@ export const Default: Story = {
   ),
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <Input
+        className="w-full"
+        label="Grid column"
+        placeholder="Uses the root width"
+        description="Helper text"
+      />
+      <Input
+        className="max-w-[240px]"
+        label="Constrained"
+        placeholder="Max width"
+        description="Helper text"
+      />
+    </div>
+  ),
+};
+
 export const FigmaExploration: Story = {
   render: () => (
     <div className="w-[320px]">

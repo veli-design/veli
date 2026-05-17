@@ -100,6 +100,29 @@ export const Default: Story = {
   },
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <ComboBox
+        className="w-full"
+        label="Grid column"
+        placeholder="Search location"
+        defaultItems={DEFAULT_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
+      </ComboBox>
+      <ComboBox
+        className="max-w-[240px]"
+        label="Constrained"
+        placeholder="Search location"
+        defaultItems={DEFAULT_OPTIONS}
+      >
+        {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
+      </ComboBox>
+    </div>
+  ),
+};
+
 export const GroupedSections: Story = {
   render: () => {
     const [selectedKey, setSelectedKey] = useState<React.Key | null>(null);
@@ -166,7 +189,14 @@ export const FigmaExploration: Story = {
         endContent={<WarningCircle size={16} />}
       >
         <ComboBoxSection title="Popular">
-          <ComboBoxItem id="male">Male'</ComboBoxItem>
+          <ComboBoxItem id="male">
+            <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+                MLE
+              </span>
+              <span>Male'</span>
+            </span>
+          </ComboBoxItem>
           <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
           <ComboBoxItem id="addu">Addu City</ComboBoxItem>
         </ComboBoxSection>

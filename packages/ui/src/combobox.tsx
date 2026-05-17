@@ -18,6 +18,11 @@ import {
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { FieldMessage } from './field-shared';
+import {
+  getTextFromReactNode,
+  normalizeAccessibleText,
+  warnDev,
+} from './a11y';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -196,9 +201,34 @@ export interface ComboBoxItemProps<T extends object = object>
 
 export function ComboBoxItem<T extends object = object>({
   className,
+  children,
+  textValue,
+  'aria-label': ariaLabel,
   ...props
 }: ComboBoxItemProps<T>) {
-  return <ListBoxItem {...props} className={twMerge(itemVariants(), className)} />;
+  const derivedTextValue =
+    typeof children === 'function' ? undefined : getTextFromReactNode(children);
+  const resolvedTextValue =
+    normalizeAccessibleText(textValue) ??
+    normalizeAccessibleText(ariaLabel) ??
+    derivedTextValue;
+  const resolvedAriaLabel = normalizeAccessibleText(ariaLabel);
+
+  warnDev(
+    Boolean(resolvedTextValue),
+    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.'
+  );
+
+  return (
+    <ListBoxItem
+      {...props}
+      aria-label={resolvedAriaLabel}
+      textValue={resolvedTextValue}
+      className={twMerge(itemVariants(), className)}
+    >
+      {children}
+    </ListBoxItem>
+  );
 }
 
 export interface ComboBoxSectionProps<T extends object>
@@ -245,6 +275,7 @@ export interface ComboBoxProps<T extends object>
   menuTriggerIcon?: React.ReactNode;
   emptyState?: React.ReactNode;
   inputRef?: React.Ref<HTMLInputElement>;
+  className?: string;
 }
 
 function ComboBoxInner<T extends object>(
@@ -264,6 +295,7 @@ function ComboBoxInner<T extends object>(
     menuTriggerIcon,
     emptyState = 'No matches found.',
     inputRef,
+    className,
     ...props
   }: ComboBoxProps<T>,
   forwardedRef: React.ForwardedRef<HTMLInputElement>
@@ -271,7 +303,7 @@ function ComboBoxInner<T extends object>(
   const resolvedInputRef = inputRef ?? forwardedRef;
 
   return (
-    <AriaComboBox {...props} className={comboboxRootVariants()}>
+    <AriaComboBox {...props} className={twMerge(comboboxRootVariants(), className)}>
       {({ isDisabled, isInvalid, isOpen, isRequired }) => (
         <>
           {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (

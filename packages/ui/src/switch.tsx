@@ -6,6 +6,7 @@ import {
   SwitchProps as AriaSwitchProps,
 } from "react-aria-components";
 import { cva, type VariantProps } from "class-variance-authority";
+import { twMerge } from "tailwind-merge";
 
 const switchVariants = cva(
   "group inline-flex items-center gap-[8px] font-sans antialiased transition-colors focus-visible:outline-none",
@@ -226,17 +227,21 @@ export interface SwitchProps
     Omit<AriaSwitchProps, "className" | "style" | "children">,
     Omit<VariantProps<typeof switchVariants>, "isDisabled"> {
   children?: React.ReactNode;
+  className?: string;
 }
 
-export function Switch({ size, children, ...props }: SwitchProps) {
+export function Switch({ size, children, className, ...props }: SwitchProps) {
   return (
     <AriaSwitch
       {...props}
       className={({ isDisabled }) =>
-        switchVariants({
-          size,
-          isDisabled,
-        })
+        twMerge(
+          switchVariants({
+            size,
+            isDisabled,
+          }),
+          className,
+        )
       }
     >
       {(state) => (
