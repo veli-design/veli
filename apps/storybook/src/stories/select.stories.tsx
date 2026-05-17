@@ -59,7 +59,12 @@ export const FigmaExploration: Story = {
       >
         <SelectSection title="Popular">
           <SelectItem id="cash" description="Immediate settlement">
-            Cash
+            <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+                C
+              </span>
+              <span>Cash</span>
+            </span>
           </SelectItem>
           <SelectItem id="margin" description="Includes financing">
             Margin

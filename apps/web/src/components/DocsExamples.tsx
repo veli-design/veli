@@ -194,7 +194,17 @@ export function TagsVariantsDemo() {
               </div>
             )}
           >
-            {(item) => <Tag id={item.id}>{item.label}</Tag>}
+            {(item) => (
+              <Tag id={item.id}>
+                <span className="inline-flex min-w-0 items-center gap-[6px]">
+                  <span
+                    aria-hidden="true"
+                    className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary-default"
+                  />
+                  <span className="min-w-0 truncate">{item.label}</span>
+                </span>
+              </Tag>
+            )}
           </TagGroup>
         </div>
       </div>
@@ -539,7 +549,14 @@ export function ComboBoxExplorationDemo() {
         endContent={<WarningCircle size={16} />}
       >
         <ComboBoxSection title="Popular">
-          <ComboBoxItem id="male">Male'</ComboBoxItem>
+          <ComboBoxItem id="male">
+            <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+                MLE
+              </span>
+              <span>Male'</span>
+            </span>
+          </ComboBoxItem>
           <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
           <ComboBoxItem id="addu">Addu City</ComboBoxItem>
         </ComboBoxSection>
@@ -603,7 +620,12 @@ export function SelectExplorationDemo() {
       >
         <SelectSection title="ASEAN">
           <SelectItem id="my" description="Bursa-linked products">
-            Malaysia
+            <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+                MY
+              </span>
+              <span>Malaysia</span>
+            </span>
           </SelectItem>
           <SelectItem id="sg" description="SGX-linked products">
             Singapore
