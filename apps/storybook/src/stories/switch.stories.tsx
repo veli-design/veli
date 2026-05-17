@@ -63,6 +63,15 @@ export const Sizes: Story = {
     ),
 };
 
+export const RootClassName: Story = {
+    render: () => (
+        <div className="grid gap-[12px]">
+            <Switch className="ml-[24px]">Indented item</Switch>
+            <Switch className="justify-self-start" defaultSelected>Grid item</Switch>
+        </div>
+    ),
+};
+
 /**
  * Demonstrates the interactive and non-interactive states of the Switch component.
  */

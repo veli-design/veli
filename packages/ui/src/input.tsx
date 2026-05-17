@@ -10,6 +10,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
 
 const inputRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -155,6 +156,7 @@ export interface InputProps
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   endAddon?: React.ReactNode;
+  className?: string;
   autoCapitalize?: React.InputHTMLAttributes<HTMLInputElement>['autoCapitalize'];
   autoComplete?: React.InputHTMLAttributes<HTMLInputElement>['autoComplete'];
   autoCorrect?: React.InputHTMLAttributes<HTMLInputElement>['autoCorrect'];
@@ -180,6 +182,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     startContent,
     endContent,
     endAddon,
+    className,
     autoCapitalize,
     autoComplete,
     autoCorrect,
@@ -196,7 +199,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   ref
 ) {
   return (
-    <AriaTextField {...props} className={inputRootVariants()}>
+    <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
         <>
           {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (

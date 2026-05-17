@@ -71,6 +71,26 @@ export const Sizes: Story = {
   ),
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <RadioGroup
+      aria-label="Radio layout className example"
+      className="grid grid-cols-3 gap-[16px]"
+      defaultValue="a"
+    >
+      <Radio className="justify-center" value="a">
+        Option A
+      </Radio>
+      <Radio className="justify-center" value="b">
+        Option B
+      </Radio>
+      <Radio className="justify-center" value="c">
+        Option C
+      </Radio>
+    </RadioGroup>
+  ),
+};
+
 export const StatesAudit: Story = {
   parameters: {
     controls: {

@@ -246,6 +246,7 @@ export interface SelectProps<T extends object>
   endContent?: React.ReactNode;
   indicator?: React.ReactNode;
   placeholder?: string;
+  className?: string;
   items?: Iterable<T>;
   children?: React.ReactNode | ((item: T) => React.ReactNode);
 }
@@ -262,12 +263,13 @@ export function Select<T extends object>({
   endContent,
   indicator,
   placeholder,
+  className,
   items,
   children,
   ...props
 }: SelectProps<T>) {
   return (
-    <AriaSelect {...props} placeholder={placeholder} className={selectRootVariants()}>
+    <AriaSelect {...props} placeholder={placeholder} className={twMerge(selectRootVariants(), className)}>
       {({ isDisabled, isInvalid, isOpen, isFocusVisible, isRequired }) => (
         <>
           {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (

@@ -38,6 +38,15 @@ export const States: Story = {
   ),
 };
 
+export const RootClassName: Story = {
+  render: () => (
+    <div className="grid gap-[12px]">
+      <Checkbox className="ml-[24px]">Indented item</Checkbox>
+      <Checkbox className="justify-self-start">Grid item</Checkbox>
+    </div>
+  ),
+};
+
 export const StatesAudit: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-[20px] items-start">

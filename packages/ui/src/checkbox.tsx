@@ -6,6 +6,7 @@ import {
   CheckboxProps as AriaCheckboxProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
 
 const checkboxRootVariants = cva(
   'group inline-flex items-center gap-[8px] font-sans type-body-sm-medium antialiased',
@@ -170,17 +171,21 @@ const indicatorVariants = cva(
 export interface CheckboxProps
   extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'> {
   children?: React.ReactNode;
+  className?: string;
 }
 
-export function Checkbox({ children, isIndeterminate, ...props }: CheckboxProps) {
+export function Checkbox({ children, isIndeterminate, className, ...props }: CheckboxProps) {
   return (
     <AriaCheckbox
       {...props}
       isIndeterminate={isIndeterminate}
       className={(state) =>
-        checkboxRootVariants({
-          isDisabled: state.isDisabled,
-        })
+        twMerge(
+          checkboxRootVariants({
+            isDisabled: state.isDisabled,
+          }),
+          className
+        )
       }
     >
       {(state) => {

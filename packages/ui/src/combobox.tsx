@@ -288,6 +288,7 @@ export interface ComboBoxProps<T extends object>
   menuTriggerIcon?: React.ReactNode;
   emptyState?: React.ReactNode;
   inputRef?: React.Ref<HTMLInputElement>;
+  className?: string;
 }
 
 function ComboBoxInner<T extends object>(
@@ -307,6 +308,7 @@ function ComboBoxInner<T extends object>(
     menuTriggerIcon,
     emptyState = 'No matches found.',
     inputRef,
+    className,
     ...props
   }: ComboBoxProps<T>,
   forwardedRef: React.ForwardedRef<HTMLInputElement>
@@ -314,7 +316,7 @@ function ComboBoxInner<T extends object>(
   const resolvedInputRef = inputRef ?? forwardedRef;
 
   return (
-    <AriaComboBox {...props} className={comboboxRootVariants()}>
+    <AriaComboBox {...props} className={twMerge(comboboxRootVariants(), className)}>
       {({ isDisabled, isInvalid, isOpen, isRequired }) => (
         <>
           {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (
