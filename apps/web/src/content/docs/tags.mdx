@@ -3,10 +3,7 @@ title: Tags
 description: Accessible tag groups built with React Aria TagGroup and Coral design tokens.
 ---
 
-import {
-  TagsUsageDemo,
-  TagsVariantsDemo,
-} from '../../components/DocsExamples';
+import { TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
 
 # Tags
 
@@ -53,30 +50,30 @@ Plain text and nested text content are used for tag text and remove button label
 
 ### `TagGroup`
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `label` | `ReactNode` | Adds a visible label above the tag list. |
-| `selectionMode` | `'none' \| 'single' \| 'multiple'` | Controls whether tags are selectable and how many can be selected. |
-| `selectedKeys` | `'all' \| Iterable<Key>` | Controls the current selection from external state. |
-| `defaultSelectedKeys` | `'all' \| Iterable<Key>` | Sets the initial selection for uncontrolled usage. |
-| `onSelectionChange` | `(keys) => void` | Called when the selected tags change. |
-| `onRemove` | `(keys) => void` | Called when one or more removable tags are dismissed. |
-| `description` | `ReactNode` | Adds supporting helper text below the tag list. |
-| `errorMessage` | `ReactNode` | Adds validation or error text below the tag list. |
-| `isDisabled` | `boolean` | Disables the full group and styles the visible label as disabled. |
-| `disabledKeys` | `Iterable<Key>` | Disables specific tags in a collection. |
+| Prop                  | Type                               | Description                                                        |
+| :-------------------- | :--------------------------------- | :----------------------------------------------------------------- |
+| `label`               | `ReactNode`                        | Adds a visible label above the tag list.                           |
+| `selectionMode`       | `'none' \| 'single' \| 'multiple'` | Controls whether tags are selectable and how many can be selected. |
+| `selectedKeys`        | `'all' \| Iterable<Key>`           | Controls the current selection from external state.                |
+| `defaultSelectedKeys` | `'all' \| Iterable<Key>`           | Sets the initial selection for uncontrolled usage.                 |
+| `onSelectionChange`   | `(keys) => void`                   | Called when the selected tags change.                              |
+| `onRemove`            | `(keys) => void`                   | Called when one or more removable tags are dismissed.              |
+| `description`         | `ReactNode`                        | Adds supporting helper text below the tag list.                    |
+| `errorMessage`        | `ReactNode`                        | Adds validation or error text below the tag list.                  |
+| `isDisabled`          | `boolean`                          | Disables the full group and styles the visible label as disabled.  |
+| `disabledKeys`        | `Iterable<Key>`                    | Disables specific tags in a collection.                            |
 
 ### `Tag`
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `id` | `Key` | Identifies the tag for selection, removal, and collection rendering. |
-| `href` | `string` | Turns the tag into a link-style action instead of a selectable tag. |
-| `target` | `string` | Sets the browsing context for link tags. |
-| `rel` | `string` | Adds relationship metadata for external link tags. |
-| `isDisabled` | `boolean` | Disables a specific tag. |
-| `textValue` | `string` | Text alternative for complex content. Nested visible text is derived automatically when possible. |
+| Prop                | Type                              | Description                                                                                                      |
+| :------------------ | :-------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `id`                | `Key`                             | Identifies the tag for selection, removal, and collection rendering.                                             |
+| `href`              | `string`                          | Turns the tag into a link-style action instead of a selectable tag.                                              |
+| `target`            | `string`                          | Sets the browsing context for link tags.                                                                         |
+| `rel`               | `string`                          | Adds relationship metadata for external link tags.                                                               |
+| `isDisabled`        | `boolean`                         | Disables a specific tag.                                                                                         |
+| `textValue`         | `string`                          | Text alternative for complex content. Nested visible text is derived automatically when possible.                |
 | `removeButtonLabel` | `string \| ((tagText) => string)` | Overrides the accessible label used by the built-in remove button, useful for icon-only or render-function tags. |
-| `className` | `string` | Adds local styling overrides to a single tag. |
+| `className`         | `string`                          | Adds local styling overrides to a single tag.                                                                    |
 
 All remaining supported React Aria `TagGroup` and `Tag` props can still be passed through these wrappers.

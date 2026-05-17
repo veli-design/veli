@@ -97,11 +97,7 @@ export const FigmaExploration: Story = {
 export const ValidationStates: Story = {
   render: () => (
     <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-      <Select
-        label="Default"
-        placeholder="Choose a value"
-        description="Helper text"
-      >
+      <Select label="Default" placeholder="Choose a value" description="Helper text">
         <SelectItem id="a">Option A</SelectItem>
         <SelectItem id="b">Option B</SelectItem>
       </Select>
@@ -118,11 +114,7 @@ export const ValidationStates: Story = {
         <SelectItem id="a">Option A</SelectItem>
         <SelectItem id="b">Option B</SelectItem>
       </Select>
-      <Select
-        label="Selected"
-        defaultSelectedKey="b"
-        description="Preselected value"
-      >
+      <Select label="Selected" defaultSelectedKey="b" description="Preselected value">
         <SelectItem id="a">Option A</SelectItem>
         <SelectItem id="b">Option B</SelectItem>
       </Select>

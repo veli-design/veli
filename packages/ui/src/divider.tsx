@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Separator as AriaSeparator,
@@ -19,16 +19,11 @@ const dividerVariants = cva('shrink-0 bg-border-default-subtle', {
   },
 });
 
-export interface DividerProps
-  extends Omit<AriaSeparatorProps, 'className' | 'style'> {
+export interface DividerProps extends Omit<AriaSeparatorProps, 'className' | 'style'> {
   className?: string;
 }
 
-export function Divider({
-  className,
-  orientation = 'horizontal',
-  ...props
-}: DividerProps) {
+export function Divider({ className, orientation = 'horizontal', ...props }: DividerProps) {
   return (
     <AriaSeparator
       {...props}

@@ -44,7 +44,7 @@ const [selected, setSelected] = useState(false);
 
 <Switch isSelected={selected} onChange={setSelected}>
   {selected ? 'On' : 'Off'}
-</Switch>
+</Switch>;
 ```
 
 ### Disabled
@@ -53,7 +53,9 @@ The switch can be disabled using the `isDisabled` prop.
 
 <div className="flex gap-4 not-prose">
   <Switch isDisabled>Disabled Off</Switch>
-  <Switch isDisabled defaultSelected>Disabled On</Switch>
+  <Switch isDisabled defaultSelected>
+    Disabled On
+  </Switch>
 </div>
 
 ```tsx
@@ -63,14 +65,14 @@ The switch can be disabled using the `isDisabled` prop.
 
 ## Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | The size of the switch. |
-| `isSelected` | `boolean` | - | Whether the switch is selected (controlled). |
-| `defaultSelected` | `boolean` | - | Whether the switch is selected by default (uncontrolled). |
-| `isDisabled` | `boolean` | - | Whether the switch is disabled. |
-| `onChange` | `(isSelected: boolean) => void` | - | Callback triggered when the selection state changes. |
-| `children` | `ReactNode` | - | The label for the switch. |
-| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
+| Prop              | Type                            | Default | Description                                                        |
+| :---------------- | :------------------------------ | :------ | :----------------------------------------------------------------- |
+| `size`            | `'sm' \| 'md' \| 'lg'`          | `'md'`  | The size of the switch.                                            |
+| `isSelected`      | `boolean`                       | -       | Whether the switch is selected (controlled).                       |
+| `defaultSelected` | `boolean`                       | -       | Whether the switch is selected by default (uncontrolled).          |
+| `isDisabled`      | `boolean`                       | -       | Whether the switch is disabled.                                    |
+| `onChange`        | `(isSelected: boolean) => void` | -       | Callback triggered when the selection state changes.               |
+| `children`        | `ReactNode`                     | -       | The label for the switch.                                          |
+| `className`       | `string`                        | -       | Layout-only class override merged onto the outermost root element. |
 
 `className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The switch track and handle internals remain private to preserve focus, contrast, disabled, and selected states.

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -19,11 +19,7 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import {
-  getTextFromReactNode,
-  normalizeAccessibleText,
-  warnDev,
-} from './a11y';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -110,7 +106,7 @@ const fieldShellVariants = cva(
       isInvalid: false,
       isOpen: false,
     },
-  }
+  },
 );
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
@@ -137,11 +133,11 @@ const insetSlotVariants = cva(
     defaultVariants: {
       isDisabled: false,
     },
-  }
+  },
 );
 
 const inputElementVariants = cva(
-  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled'
+  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
 );
 
 const triggerButtonVariants = cva(
@@ -157,26 +153,24 @@ const triggerButtonVariants = cva(
     defaultVariants: {
       isDisabled: false,
     },
-  }
+  },
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-[10px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none'
+  'box-border overflow-hidden rounded-[10px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'flex min-h-[32px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[6px] text-left type-body-sm-regular outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-primary-muted'
+  'flex min-h-[32px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[6px] text-left type-body-sm-regular outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-primary-muted',
 );
 
 const sectionHeaderVariants = cva(
-  'px-[8px] py-[6px] type-caption-12-medium text-text-default-muted'
+  'px-[8px] py-[6px] type-caption-12-medium text-text-default-muted',
 );
 
-const emptyStateVariants = cva(
-  'px-[8px] py-[10px] type-body-sm-regular text-text-default-subtle'
-);
+const emptyStateVariants = cva('px-[8px] py-[10px] type-body-sm-regular text-text-default-subtle');
 
 const messageVariants = cva('type-caption-12-regular', {
   variants: {
@@ -207,8 +201,10 @@ function DefaultChevron({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-export interface ComboBoxItemProps<T extends object = object>
-  extends Omit<AriaListBoxItemProps<T>, 'className'> {
+export interface ComboBoxItemProps<T extends object = object> extends Omit<
+  AriaListBoxItemProps<T>,
+  'className'
+> {
   className?: string;
 }
 
@@ -222,14 +218,12 @@ export function ComboBoxItem<T extends object = object>({
   const derivedTextValue =
     typeof children === 'function' ? undefined : getTextFromReactNode(children);
   const resolvedTextValue =
-    normalizeAccessibleText(textValue) ??
-    normalizeAccessibleText(ariaLabel) ??
-    derivedTextValue;
+    normalizeAccessibleText(textValue) ?? normalizeAccessibleText(ariaLabel) ?? derivedTextValue;
   const resolvedAriaLabel = normalizeAccessibleText(ariaLabel);
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.'
+    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (
@@ -244,8 +238,10 @@ export function ComboBoxItem<T extends object = object>({
   );
 }
 
-export interface ComboBoxSectionProps<T extends object>
-  extends Omit<AriaListBoxSectionProps<T>, 'className' | 'children'> {
+export interface ComboBoxSectionProps<T extends object> extends Omit<
+  AriaListBoxSectionProps<T>,
+  'className' | 'children'
+> {
   title?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
@@ -258,21 +254,17 @@ export function ComboBoxSection<T extends object>({
   ...props
 }: ComboBoxSectionProps<T>) {
   return (
-    <ListBoxSection
-      {...props}
-      className={twMerge('py-[2px] first:pt-0 last:pb-0', className)}
-    >
+    <ListBoxSection {...props} className={twMerge('py-[2px] first:pt-0 last:pb-0', className)}>
       {title ? <Header className={sectionHeaderVariants()}>{title}</Header> : null}
       {children}
     </ListBoxSection>
   );
 }
 
-export interface ComboBoxProps<T extends object>
-  extends Omit<
-    AriaComboBoxProps<T>,
-    'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
-  > {
+export interface ComboBoxProps<T extends object> extends Omit<
+  AriaComboBoxProps<T>,
+  'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
+> {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
@@ -311,7 +303,7 @@ function ComboBoxInner<T extends object>(
     className,
     ...props
   }: ComboBoxProps<T>,
-  forwardedRef: React.ForwardedRef<HTMLInputElement>
+  forwardedRef: React.ForwardedRef<HTMLInputElement>,
 ) {
   const resolvedInputRef = inputRef ?? forwardedRef;
 
@@ -319,7 +311,11 @@ function ComboBoxInner<T extends object>(
     <AriaComboBox {...props} className={twMerge(comboboxRootVariants(), className)}>
       {({ isDisabled, isInvalid, isOpen, isRequired }) => (
         <>
-          {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (
+          {label ||
+          labelSupplementary ||
+          labelIcon ||
+          action ||
+          (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-[8px]">
               <div className="flex min-w-0 flex-1 items-center gap-[4px]">
                 {label ? (
@@ -385,9 +381,7 @@ function ComboBoxInner<T extends object>(
           </AriaPopover>
 
           {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>
-              {errorMessage}
-            </FieldError>
+            <FieldError className={messageVariants({ tone: 'danger' })}>{errorMessage}</FieldError>
           ) : description ? (
             <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
               {description}
@@ -400,5 +394,5 @@ function ComboBoxInner<T extends object>(
 }
 
 export const ComboBox = React.forwardRef(ComboBoxInner) as <T extends object>(
-  props: ComboBoxProps<T> & React.RefAttributes<HTMLInputElement>
+  props: ComboBoxProps<T> & React.RefAttributes<HTMLInputElement>,
 ) => React.ReactElement | null;

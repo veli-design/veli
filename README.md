@@ -45,6 +45,27 @@ pnpm --filter @tradenetcorp/coral-storybook dev
 pnpm build
 ```
 
+### Code Quality
+
+```bash
+# Format the repository
+pnpm format
+
+# Check formatting without writing changes
+pnpm format:check
+
+# Run ESLint
+pnpm lint
+
+# Run the same quality gates used before pushing
+pnpm check
+```
+
+Husky installs Git hooks during `pnpm install`. Commits run `lint-staged` so staged
+files are formatted and lint-fixed before they land. Pushes run `pnpm check` to
+verify formatting, linting, and builds across the monorepo. Contributors can bypass
+local hooks with `--no-verify`, but CI runs the same checks and blocks invalid PRs.
+
 ## Packages
 
 ### @tradenetcorp/coral-ui

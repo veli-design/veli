@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -16,11 +16,7 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import {
-  getTextFromReactNode,
-  normalizeAccessibleText,
-  warnDev,
-} from './a11y';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
 const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -39,7 +35,7 @@ const labelVariants = cva('type-body-sm-regular', {
 });
 
 const tagListVariants = cva(
-  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base'
+  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
 );
 
 const messageVariants = cva('type-caption-12-regular', {
@@ -55,7 +51,7 @@ const messageVariants = cva('type-caption-12-regular', {
 });
 
 const emptyStateVariants = cva(
-  'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle'
+  'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle',
 );
 
 const tagVariants = cva(
@@ -91,8 +87,7 @@ const tagVariants = cva(
         isSelected: true,
         isDisabled: false,
         isLink: false,
-        className:
-          'hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed',
+        className: 'hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed',
       },
       {
         isSelected: false,
@@ -113,7 +108,7 @@ const tagVariants = cva(
       isLink: false,
       allowsRemoving: false,
     },
-  }
+  },
 );
 
 const tagTextVariants = cva('min-w-0 truncate');
@@ -126,14 +121,13 @@ const removeButtonVariants = cva(
     variants: {
       isDisabled: {
         true: 'cursor-not-allowed text-text-disabled-disabled',
-        false:
-          'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
+        false: 'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
       },
     },
     defaultVariants: {
       isDisabled: false,
     },
-  }
+  },
 );
 
 function CheckIcon() {
@@ -171,8 +165,10 @@ function CloseIcon() {
   );
 }
 
-export interface TagGroupProps<T extends object>
-  extends Omit<AriaTagGroupProps, 'children' | 'className' | 'style'> {
+export interface TagGroupProps<T extends object> extends Omit<
+  AriaTagGroupProps,
+  'children' | 'className' | 'style'
+> {
   label?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
@@ -184,8 +180,7 @@ export interface TagGroupProps<T extends object>
   listClassName?: string;
 }
 
-export interface TagProps
-  extends Omit<AriaTagProps, 'children' | 'className' | 'style'> {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'className' | 'style'> {
   children?: React.ReactNode | ((state: TagRenderProps) => React.ReactNode);
   className?: string;
   removeButtonLabel?: string | ((tagText: string | undefined) => string);
@@ -215,7 +210,7 @@ export function TagGroup<T extends object>({
         node.removeAttribute('aria-disabled');
       }
     },
-    [isDisabled]
+    [isDisabled],
   );
 
   return (
@@ -253,10 +248,7 @@ export function TagGroup<T extends object>({
   );
 }
 
-function getTagText(
-  children: TagProps['children'],
-  textValue: string | undefined
-) {
+function getTagText(children: TagProps['children'], textValue: string | undefined) {
   const normalizedTextValue = normalizeAccessibleText(textValue);
 
   if (normalizedTextValue) {
@@ -291,21 +283,16 @@ export function Tag({
   const tagText = getTagText(children, textValue);
   const fallbackTagText = tagText ?? getPrimitiveTagIdText(id);
   const customRemoveButtonLabel =
-    typeof removeButtonLabel === 'function'
-      ? removeButtonLabel(tagText)
-      : removeButtonLabel;
-  const normalizedCustomRemoveButtonLabel = normalizeAccessibleText(
-    customRemoveButtonLabel
-  );
+    typeof removeButtonLabel === 'function' ? removeButtonLabel(tagText) : removeButtonLabel;
+  const normalizedCustomRemoveButtonLabel = normalizeAccessibleText(customRemoveButtonLabel);
   const resolvedRemoveButtonLabel =
     normalizedCustomRemoveButtonLabel ??
     (fallbackTagText ? `Remove ${fallbackTagText}` : 'Remove tag');
-  const usesGenericRemoveButtonLabel =
-    !normalizedCustomRemoveButtonLabel && !fallbackTagText;
+  const usesGenericRemoveButtonLabel = !normalizedCustomRemoveButtonLabel && !fallbackTagText;
 
   warnDev(
     customRemoveButtonLabel == null || Boolean(normalizedCustomRemoveButtonLabel),
-    'Coral UI: Tag removeButtonLabel must resolve to a non-empty string.'
+    'Coral UI: Tag removeButtonLabel must resolve to a non-empty string.',
   );
 
   return (
@@ -323,7 +310,7 @@ export function Tag({
             isLink: href != null,
             allowsRemoving: state.allowsRemoving,
           }),
-          className
+          className,
         )
       }
     >
@@ -332,7 +319,7 @@ export function Tag({
         if (state.allowsRemoving) {
           warnDev(
             !usesGenericRemoveButtonLabel,
-            'Coral UI: removable Tag with complex content needs textValue or removeButtonLabel for a useful remove button label.'
+            'Coral UI: removable Tag with complex content needs textValue or removeButtonLabel for a useful remove button label.',
           );
         }
 

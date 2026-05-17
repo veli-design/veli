@@ -47,10 +47,7 @@ export const Default: Story = {
 export const DateAndTime: Story = {
   render: () => (
     <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-      <DatePicker
-        label="Date only"
-        defaultValue={parseDate('2026-04-18')}
-      />
+      <DatePicker label="Date only" defaultValue={parseDate('2026-04-18')} />
       <DatePicker
         label="Date and minute"
         granularity="minute"
@@ -69,12 +66,7 @@ export const DateAndTime: Story = {
 export const ConstraintsAndValidation: Story = {
   render: () => (
     <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-      <DatePicker
-        label="Required"
-        isRequired
-        minValue={now}
-        description="Future dates only."
-      />
+      <DatePicker label="Required" isRequired minValue={now} description="Future dates only." />
       <DatePicker
         label="Min and max"
         minValue={now}
@@ -101,16 +93,8 @@ export const ConstraintsAndValidation: Story = {
 export const DisabledAndReadOnly: Story = {
   render: () => (
     <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-      <DatePicker
-        label="Disabled"
-        isDisabled
-        defaultValue={parseDate('2026-04-18')}
-      />
-      <DatePicker
-        label="Read only"
-        isReadOnly
-        defaultValue={parseDate('2026-04-18')}
-      />
+      <DatePicker label="Disabled" isDisabled defaultValue={parseDate('2026-04-18')} />
+      <DatePicker label="Read only" isReadOnly defaultValue={parseDate('2026-04-18')} />
     </div>
   ),
 };

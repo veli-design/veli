@@ -25,10 +25,7 @@ const appointmentUnavailable = (date: DateValue) =>
 export function DateFieldUsageDemo() {
   return (
     <div className="w-[320px]">
-      <DateField
-        label="Appointment date"
-        description="Type a date segment by segment."
-      />
+      <DateField label="Appointment date" description="Type a date segment by segment." />
     </div>
   );
 }
@@ -74,9 +71,7 @@ export function CalendarVariantsDemo() {
           maxValue={now.add({ months: 2 })}
           isDateUnavailable={appointmentUnavailable}
         />
-        <p className="text-xs text-slate-500">
-          Weekends and blackout ranges are unavailable.
-        </p>
+        <p className="text-xs text-slate-500">Weekends and blackout ranges are unavailable.</p>
       </div>
     </div>
   );
@@ -96,10 +91,7 @@ export function DatePickerUsageDemo() {
 export function DatePickerVariantsDemo() {
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <DatePicker
-        label="Date only"
-        defaultValue={parseDate('2026-04-18')}
-      />
+      <DatePicker label="Date only" defaultValue={parseDate('2026-04-18')} />
       <DatePicker
         label="Date and minute"
         granularity="minute"

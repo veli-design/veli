@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -15,11 +15,11 @@ import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 
 const breadcrumbsRootVariants = cva(
-  'm-0 flex flex-wrap items-center list-none p-0 font-sans antialiased'
+  'm-0 flex flex-wrap items-center list-none p-0 font-sans antialiased',
 );
 
 const breadcrumbItemVariants = cva(
-  'inline-flex items-center type-body-sm-regular after:mx-[6px] after:font-medium after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden first:[&>a]:text-text-links-default first:[&>a]:hover:text-text-links-hover first:[&>a]:active:text-text-links-hover'
+  'inline-flex items-center type-body-sm-regular after:mx-[6px] after:font-medium after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden first:[&>a]:text-text-links-default first:[&>a]:hover:text-text-links-hover first:[&>a]:active:text-text-links-hover',
 );
 
 const breadcrumbLinkVariants = cva(
@@ -27,8 +27,7 @@ const breadcrumbLinkVariants = cva(
   {
     variants: {
       tone: {
-        accent:
-          'text-text-links-default hover:text-text-links-hover active:text-text-links-hover',
+        accent: 'text-text-links-default hover:text-text-links-hover active:text-text-links-hover',
         muted:
           'text-text-default-inactive hover:text-text-default-subtle active:text-text-default-subtle',
       },
@@ -41,7 +40,7 @@ const breadcrumbLinkVariants = cva(
       tone: 'muted',
       isDisabled: false,
     },
-  }
+  },
 );
 
 const breadcrumbTextVariants = cva('inline-flex min-h-[24px] items-center gap-[6px] font-medium', {
@@ -62,7 +61,7 @@ const breadcrumbTextVariants = cva('inline-flex min-h-[24px] items-center gap-[6
 });
 
 const breadcrumbCurrentVariants = cva(
-  'inline-flex min-h-[24px] items-center gap-[6px] font-medium text-text-default-subtle'
+  'inline-flex min-h-[24px] items-center gap-[6px] font-medium text-text-default-subtle',
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
@@ -87,20 +86,22 @@ const breadcrumbOverflowTriggerVariants = cva(
       isPressed: false,
       isFocusVisible: false,
     },
-  }
+  },
 );
 
-export interface BreadcrumbsProps<T extends object>
-  extends Omit<AriaBreadcrumbsProps<T>, 'className' | 'style'> {
+export interface BreadcrumbsProps<T extends object> extends Omit<
+  AriaBreadcrumbsProps<T>,
+  'className' | 'style'
+> {
   className?: string;
 }
 
-type BreadcrumbChild =
-  | React.ReactNode
-  | ((state: BreadcrumbRenderProps) => React.ReactNode);
+type BreadcrumbChild = React.ReactNode | ((state: BreadcrumbRenderProps) => React.ReactNode);
 
-export interface BreadcrumbProps
-  extends Omit<AriaBreadcrumbProps, 'children' | 'className' | 'style'> {
+export interface BreadcrumbProps extends Omit<
+  AriaBreadcrumbProps,
+  'children' | 'className' | 'style'
+> {
   children?: BreadcrumbChild;
   className?: string;
   linkClassName?: string;
@@ -111,7 +112,7 @@ export interface BreadcrumbProps
   rel?: string;
   download?: boolean | string;
   onPress?: (
-    e: Parameters<NonNullable<React.ComponentProps<typeof AriaLink>['onPress']>>[0]
+    e: Parameters<NonNullable<React.ComponentProps<typeof AriaLink>['onPress']>>[0],
   ) => void;
 }
 
@@ -124,8 +125,10 @@ export type BreadcrumbOverflowItem = {
   isDisabled?: boolean;
 };
 
-export interface BreadcrumbOverflowProps
-  extends Omit<AriaBreadcrumbProps, 'children' | 'className' | 'style'> {
+export interface BreadcrumbOverflowProps extends Omit<
+  AriaBreadcrumbProps,
+  'children' | 'className' | 'style'
+> {
   items: readonly BreadcrumbOverflowItem[];
   label?: string;
   menuLabel?: string;
@@ -135,16 +138,8 @@ export interface BreadcrumbOverflowProps
   onAction?: (key: string | number) => void;
 }
 
-export function Breadcrumbs<T extends object>({
-  className,
-  ...props
-}: BreadcrumbsProps<T>) {
-  return (
-    <AriaBreadcrumbs
-      {...props}
-      className={twMerge(breadcrumbsRootVariants(), className)}
-    />
-  );
+export function Breadcrumbs<T extends object>({ className, ...props }: BreadcrumbsProps<T>) {
+  return <AriaBreadcrumbs {...props} className={twMerge(breadcrumbsRootVariants(), className)} />;
 }
 
 export function BreadcrumbOverflow({
@@ -158,10 +153,7 @@ export function BreadcrumbOverflow({
   ...props
 }: BreadcrumbOverflowProps) {
   return (
-    <AriaBreadcrumb
-      {...props}
-      className={twMerge(breadcrumbItemVariants(), className)}
-    >
+    <AriaBreadcrumb {...props} className={twMerge(breadcrumbItemVariants(), className)}>
       <MenuTrigger>
         <AriaButton
           aria-label={label}
@@ -172,7 +164,7 @@ export function BreadcrumbOverflow({
                 isPressed: state.isPressed,
                 isFocusVisible: state.isFocusVisible,
               }),
-              triggerClassName
+              triggerClassName,
             )
           }
         >
@@ -214,13 +206,9 @@ export function Breadcrumb({
   ...props
 }: BreadcrumbProps) {
   return (
-    <AriaBreadcrumb
-      {...props}
-      className={twMerge(breadcrumbItemVariants(), className)}
-    >
+    <AriaBreadcrumb {...props} className={twMerge(breadcrumbItemVariants(), className)}>
       {(state) => {
-        const content =
-          typeof children === 'function' ? children(state) : children;
+        const content = typeof children === 'function' ? children(state) : children;
         const shouldRenderLink =
           !state.isCurrent && !isDisabled && (href != null || onPress != null);
 
@@ -247,7 +235,7 @@ export function Breadcrumb({
                     tone,
                     isDisabled: linkState.isDisabled,
                   }),
-                  linkClassName
+                  linkClassName,
                 )
               }
             >
@@ -257,12 +245,7 @@ export function Breadcrumb({
         }
 
         return (
-          <span
-            className={twMerge(
-              breadcrumbTextVariants({ tone, isDisabled }),
-              linkClassName
-            )}
-          >
+          <span className={twMerge(breadcrumbTextVariants({ tone, isDisabled }), linkClassName)}>
             {content}
           </span>
         );

@@ -34,7 +34,7 @@ export function normalizeAccessibleText(value: string | null | undefined) {
 export function hasAccessibleName(props: AccessibleNameProps) {
   return Boolean(
     normalizeAccessibleText(props['aria-label']) ||
-      normalizeAccessibleText(props['aria-labelledby'])
+    normalizeAccessibleText(props['aria-labelledby']),
   );
 }
 
@@ -110,9 +110,5 @@ function collectTextFromReactNode(node: React.ReactNode): string[] {
 }
 
 function isIterable(value: unknown): value is Iterable<React.ReactNode> {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    Symbol.iterator in value
-  );
+  return typeof value === 'object' && value !== null && Symbol.iterator in value;
 }

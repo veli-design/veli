@@ -26,11 +26,7 @@ import { Input } from '@tradenetcorp/coral-ui/input';
 </div>
 
 ```tsx
-<Input
-  label="Email"
-  placeholder="name@example.com"
-  description="Helper text"
-/>
+<Input label="Email" placeholder="name@example.com" description="Helper text" />
 ```
 
 ## Figma Exploration
@@ -47,20 +43,20 @@ import { Input } from '@tradenetcorp/coral-ui/input';
 
 ## Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `label` | `ReactNode` | - | Visible label content rendered with React Aria's `Label`. |
-| `labelSupplementary` | `ReactNode` | - | Inline helper copy beside the label, for cases like `(Optional)`. |
-| `labelIcon` | `ReactNode` | - | Small icon placed after the label content. |
-| `action` | `ReactNode` | - | Right-aligned header content, suitable for an inline action. |
-| `description` | `ReactNode` | - | Helper text shown beneath the field when not invalid. |
-| `errorMessage` | `ReactNode` | - | Validation content shown beneath the field when `isInvalid` is true. |
-| `startAddon` | `ReactNode` | - | Leading content rendered inside the inset 24px accessory container. |
-| `startContent` | `ReactNode` | - | Leading inline content rendered directly inside the field shell. |
-| `endContent` | `ReactNode` | - | Trailing inline content rendered directly inside the field shell. |
-| `endAddon` | `ReactNode` | - | Trailing content rendered inside the inset 24px accessory container. |
-| `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
-| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
+| Prop                    | Type        | Default | Description                                                                  |
+| :---------------------- | :---------- | :------ | :--------------------------------------------------------------------------- |
+| `label`                 | `ReactNode` | -       | Visible label content rendered with React Aria's `Label`.                    |
+| `labelSupplementary`    | `ReactNode` | -       | Inline helper copy beside the label, for cases like `(Optional)`.            |
+| `labelIcon`             | `ReactNode` | -       | Small icon placed after the label content.                                   |
+| `action`                | `ReactNode` | -       | Right-aligned header content, suitable for an inline action.                 |
+| `description`           | `ReactNode` | -       | Helper text shown beneath the field when not invalid.                        |
+| `errorMessage`          | `ReactNode` | -       | Validation content shown beneath the field when `isInvalid` is true.         |
+| `startAddon`            | `ReactNode` | -       | Leading content rendered inside the inset 24px accessory container.          |
+| `startContent`          | `ReactNode` | -       | Leading inline content rendered directly inside the field shell.             |
+| `endContent`            | `ReactNode` | -       | Trailing inline content rendered directly inside the field shell.            |
+| `endAddon`              | `ReactNode` | -       | Trailing content rendered inside the inset 24px accessory container.         |
+| `showRequiredIndicator` | `boolean`   | `true`  | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `className`             | `string`    | -       | Layout-only class override merged onto the outermost root element.           |
 
 All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition overrides.
 

@@ -51,20 +51,20 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/coral-ui/select
 
 ## Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `label` | `ReactNode` | - | Visible label content rendered with React Aria's `Label`. |
-| `labelSupplementary` | `ReactNode` | - | Inline helper copy beside the label, for cases like `(Optional)`. |
-| `labelIcon` | `ReactNode` | - | Small icon placed after the label content. |
-| `action` | `ReactNode` | - | Right-aligned header content, suitable for an inline action. |
-| `description` | `ReactNode` | - | Helper text shown beneath the field when not invalid. |
-| `errorMessage` | `ReactNode` | - | Validation content shown beneath the field when `isInvalid` is true. |
-| `startContent` | `ReactNode` | - | Leading inline content rendered inside the trigger shell. |
-| `endContent` | `ReactNode` | - | Trailing inline content rendered before the indicator. |
-| `indicator` | `ReactNode` | Default chevron | Custom trailing indicator content. |
-| `showRequiredIndicator` | `boolean` | `true` | Controls whether the required asterisk is rendered when `isRequired` is set. |
-| `placeholder` | `string` | React Aria default | Placeholder text shown when no option is selected. |
-| `className` | `string` | - | Layout-only class override merged onto the outermost root element. |
+| Prop                    | Type        | Default            | Description                                                                  |
+| :---------------------- | :---------- | :----------------- | :--------------------------------------------------------------------------- |
+| `label`                 | `ReactNode` | -                  | Visible label content rendered with React Aria's `Label`.                    |
+| `labelSupplementary`    | `ReactNode` | -                  | Inline helper copy beside the label, for cases like `(Optional)`.            |
+| `labelIcon`             | `ReactNode` | -                  | Small icon placed after the label content.                                   |
+| `action`                | `ReactNode` | -                  | Right-aligned header content, suitable for an inline action.                 |
+| `description`           | `ReactNode` | -                  | Helper text shown beneath the field when not invalid.                        |
+| `errorMessage`          | `ReactNode` | -                  | Validation content shown beneath the field when `isInvalid` is true.         |
+| `startContent`          | `ReactNode` | -                  | Leading inline content rendered inside the trigger shell.                    |
+| `endContent`            | `ReactNode` | -                  | Trailing inline content rendered before the indicator.                       |
+| `indicator`             | `ReactNode` | Default chevron    | Custom trailing indicator content.                                           |
+| `showRequiredIndicator` | `boolean`   | `true`             | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `placeholder`           | `string`    | React Aria default | Placeholder text shown when no option is selected.                           |
+| `className`             | `string`    | -                  | Layout-only class override merged onto the outermost root element.           |
 
 All other `react-aria-components` `Select` props are supported, excluding direct `style` and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
 

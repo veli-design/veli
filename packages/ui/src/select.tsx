@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -19,11 +19,7 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import {
-  getTextFromReactNode,
-  normalizeAccessibleText,
-  warnDev,
-} from './a11y';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
 const selectRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
@@ -110,7 +106,7 @@ const fieldButtonVariants = cva(
       isFocusVisible: false,
       isOpen: false,
     },
-  }
+  },
 );
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
@@ -142,7 +138,7 @@ const indicatorVariants = cva(
       isDisabled: false,
       isOpen: false,
     },
-  }
+  },
 );
 
 const messageVariants = cva('type-caption-12-regular', {
@@ -158,7 +154,7 @@ const messageVariants = cva('type-caption-12-regular', {
 });
 
 const popoverVariants = cva(
-  'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none'
+  'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
 );
 
 const listBoxVariants = cva('max-h-[280px] overflow-auto outline-none');
@@ -185,7 +181,7 @@ const selectItemVariants = cva(
       isFocused: false,
       isDisabled: false,
     },
-  }
+  },
 );
 
 const selectSectionVariants = cva('py-[4px] first:pt-0 last:pb-0');
@@ -230,11 +226,10 @@ function CheckIcon() {
   );
 }
 
-export interface SelectProps<T extends object>
-  extends Omit<
-    AriaSelectProps<T>,
-    'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
-  > {
+export interface SelectProps<T extends object> extends Omit<
+  AriaSelectProps<T>,
+  'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
+> {
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
@@ -269,10 +264,18 @@ export function Select<T extends object>({
   ...props
 }: SelectProps<T>) {
   return (
-    <AriaSelect {...props} placeholder={placeholder} className={twMerge(selectRootVariants(), className)}>
+    <AriaSelect
+      {...props}
+      placeholder={placeholder}
+      className={twMerge(selectRootVariants(), className)}
+    >
       {({ isDisabled, isInvalid, isOpen, isFocusVisible, isRequired }) => (
         <>
-          {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (
+          {label ||
+          labelSupplementary ||
+          labelIcon ||
+          action ||
+          (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-[8px]">
               <div className="flex min-w-0 flex-1 items-center gap-[4px]">
                 {label ? (
@@ -313,7 +316,7 @@ export function Select<T extends object>({
                     ? 'text-text-default-inactive'
                     : isDisabled
                       ? 'text-text-disabled-disabled'
-                      : 'text-text-default-default'
+                      : 'text-text-default-default',
                 )
               }
             />
@@ -332,9 +335,7 @@ export function Select<T extends object>({
           </AriaPopover>
 
           {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>
-              {errorMessage}
-            </FieldError>
+            <FieldError className={messageVariants({ tone: 'danger' })}>{errorMessage}</FieldError>
           ) : description ? (
             <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
               {description}
@@ -346,8 +347,10 @@ export function Select<T extends object>({
   );
 }
 
-export interface SelectSectionProps<T extends object>
-  extends Omit<AriaSectionProps<T>, 'className' | 'children'> {
+export interface SelectSectionProps<T extends object> extends Omit<
+  AriaSectionProps<T>,
+  'className' | 'children'
+> {
   title?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
@@ -371,8 +374,10 @@ export function SelectSection<T extends object>({
   );
 }
 
-export interface SelectItemProps<T extends object = object>
-  extends Omit<AriaListBoxItemProps<T>, 'className' | 'children'> {
+export interface SelectItemProps<T extends object = object> extends Omit<
+  AriaListBoxItemProps<T>,
+  'className' | 'children'
+> {
   className?: string;
   children?: React.ReactNode;
   description?: React.ReactNode;
@@ -398,7 +403,7 @@ export function SelectItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.'
+    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (

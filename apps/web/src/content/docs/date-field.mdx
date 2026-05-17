@@ -22,46 +22,43 @@ import { DateField } from '@tradenetcorp/coral-ui/date-field';
 </div>
 
 ```tsx
-<DateField
-  label="Appointment date"
-  description="Type a date segment by segment."
-/>
+<DateField label="Appointment date" description="Type a date segment by segment." />
 ```
 
 ## Key Props
 
 ### Common
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `label` | `ReactNode` | Visible field label. |
-| `description` | `ReactNode` | Helper text shown below the field. |
-| `errorMessage` | `ReactNode` | Validation text shown when the field is invalid. |
-| `isRequired` | `boolean` | Marks the field as required. |
-| `isDisabled` | `boolean` | Disables editing and focus. |
-| `isReadOnly` | `boolean` | Prevents editing while keeping the value readable. |
-| `value` | `DateValue \| null` | Controlled value. |
-| `defaultValue` | `DateValue` | Uncontrolled initial value. |
-| `onChange` | `(value) => void` | Called when the value changes. |
-| `name` | `string` | Submits the value in forms as an ISO string. |
-| `placeholderValue` | `DateValue` | Sets the placeholder shape and default calendar/time zone context. |
+| Prop               | Type                | Description                                                        |
+| :----------------- | :------------------ | :----------------------------------------------------------------- |
+| `label`            | `ReactNode`         | Visible field label.                                               |
+| `description`      | `ReactNode`         | Helper text shown below the field.                                 |
+| `errorMessage`     | `ReactNode`         | Validation text shown when the field is invalid.                   |
+| `isRequired`       | `boolean`           | Marks the field as required.                                       |
+| `isDisabled`       | `boolean`           | Disables editing and focus.                                        |
+| `isReadOnly`       | `boolean`           | Prevents editing while keeping the value readable.                 |
+| `value`            | `DateValue \| null` | Controlled value.                                                  |
+| `defaultValue`     | `DateValue`         | Uncontrolled initial value.                                        |
+| `onChange`         | `(value) => void`   | Called when the value changes.                                     |
+| `name`             | `string`            | Submits the value in forms as an ISO string.                       |
+| `placeholderValue` | `DateValue`         | Sets the placeholder shape and default calendar/time zone context. |
 
 ### Formatting
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `granularity` | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest segment that is editable and displayed. |
-| `hourCycle` | `12 \| 24` | Forces 12-hour or 24-hour time display when time segments are shown. |
-| `hideTimeZone` | `boolean` | Hides the time zone segment for zoned date values. |
-| `shouldForceLeadingZeros` | `boolean` | Keeps segment values zero-padded where applicable. |
+| Prop                      | Type                                      | Description                                                          |
+| :------------------------ | :---------------------------------------- | :------------------------------------------------------------------- |
+| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest segment that is editable and displayed.                     |
+| `hourCycle`               | `12 \| 24`                                | Forces 12-hour or 24-hour time display when time segments are shown. |
+| `hideTimeZone`            | `boolean`                                 | Hides the time zone segment for zoned date values.                   |
+| `shouldForceLeadingZeros` | `boolean`                                 | Keeps segment values zero-padded where applicable.                   |
 
 ### Validation and Availability
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `minValue` | `DateValue` | Lowest allowed date/time. |
-| `maxValue` | `DateValue` | Highest allowed date/time. |
-| `isInvalid` | `boolean` | Forces invalid styling and error presentation. |
-| `validate` | `(value) => ValidationError \| true \| null` | Adds custom client-side validation logic. |
+| Prop        | Type                                         | Description                                    |
+| :---------- | :------------------------------------------- | :--------------------------------------------- |
+| `minValue`  | `DateValue`                                  | Lowest allowed date/time.                      |
+| `maxValue`  | `DateValue`                                  | Highest allowed date/time.                     |
+| `isInvalid` | `boolean`                                    | Forces invalid styling and error presentation. |
+| `validate`  | `(value) => ValidationError \| true \| null` | Adds custom client-side validation logic.      |
 
 All remaining supported React Aria `DateField` props can still be passed through this wrapper.

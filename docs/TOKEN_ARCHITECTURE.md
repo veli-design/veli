@@ -66,18 +66,18 @@ Important Figma model details:
 
 Current canonical Figma variable collections:
 
-| Collection | Purpose |
-| --- | --- |
-| `font` | Tailwind-aligned font family namespace: `sans`, `mono`, `dhivehi`. |
-| `font-weight` | CSS numeric font weights: `regular`, `medium`, `semibold`, `bold`. |
-| `text` | Tailwind-aligned type ramp with `font-size` and paired `line-height` values from `xs` through `9xl`. |
-| `leading` | Standalone line-height utilities, including relative semantic values and a curated fixed subset. |
-| `tracking` | Standalone letter-spacing utilities, including Tailwind-style tracking values and `caption`. |
+| Collection    | Purpose                                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| `font`        | Tailwind-aligned font family namespace: `sans`, `mono`, `dhivehi`.                                   |
+| `font-weight` | CSS numeric font weights: `regular`, `medium`, `semibold`, `bold`.                                   |
+| `text`        | Tailwind-aligned type ramp with `font-size` and paired `line-height` values from `xs` through `9xl`. |
+| `leading`     | Standalone line-height utilities, including relative semantic values and a curated fixed subset.     |
+| `tracking`    | Standalone letter-spacing utilities, including Tailwind-style tracking values and `caption`.         |
 
 Current legacy Figma collection:
 
-| Collection | Status |
-| --- | --- |
+| Collection   | Status                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `typography` | Deprecated. Kept temporarily for migration context and older references. Do not treat as canonical for new output. |
 
 Current semantic Figma text styles:
@@ -117,7 +117,7 @@ Tailwind v4 theme variables are CSS custom properties under native namespaces.
 ```css
 @theme {
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --text-base: 16px;
   --text-base--line-height: 24px;
@@ -160,47 +160,47 @@ Example generated utility:
 Coral keeps its established type scale values while mapping the primitive ramp onto Tailwind-compatible names.
 
 | Tailwind-compatible name | Coral font size | Coral line-height | CDS semantic label |
-| --- | ---: | ---: | --- |
-| `xs` | `12px` | `16px` | Caption |
-| `sm` | `14px` | `20px` | Body/sm |
-| `base` | `16px` | `24px` | Body/md |
-| `lg` | `18px` | `26px` | Body/lg |
-| `xl` | `20px` | `28px` | Subtitle |
-| `2xl` | `24px` | `32px` | Title 2 |
-| `3xl` | `28px` | `38px` | Title 1 |
-| `4xl` | `32px` | `44px` | Heading 4 |
-| `5xl` | `36px` | `48px` | Heading 3 |
-| `6xl` | `40px` | `52px` | Heading 2 |
-| `7xl` | `48px` | `68px` | Heading 1 |
-| `8xl` | `56px` | `76px` | Display 2 |
-| `9xl` | `64px` | `84px` | Display 1 |
+| ------------------------ | --------------: | ----------------: | ------------------ |
+| `xs`                     |          `12px` |            `16px` | Caption            |
+| `sm`                     |          `14px` |            `20px` | Body/sm            |
+| `base`                   |          `16px` |            `24px` | Body/md            |
+| `lg`                     |          `18px` |            `26px` | Body/lg            |
+| `xl`                     |          `20px` |            `28px` | Subtitle           |
+| `2xl`                    |          `24px` |            `32px` | Title 2            |
+| `3xl`                    |          `28px` |            `38px` | Title 1            |
+| `4xl`                    |          `32px` |            `44px` | Heading 4          |
+| `5xl`                    |          `36px` |            `48px` | Heading 3          |
+| `6xl`                    |          `40px` |            `52px` | Heading 2          |
+| `7xl`                    |          `48px` |            `68px` | Heading 1          |
+| `8xl`                    |          `56px` |            `76px` | Display 2          |
+| `9xl`                    |          `64px` |            `84px` | Display 1          |
 
 Standalone leading values:
 
-| Token | Tailwind output | Figma value |
-| --- | ---: | ---: |
-| `leading/none` | `1` | `100%` |
-| `leading/tight` | `1.25` | `125%` |
-| `leading/snug` | `1.375` | `137.5%` |
-| `leading/normal` | `1.5` | `150%` |
-| `leading/relaxed` | `1.625` | `162.5%` |
-| `leading/loose` | `2` | `200%` |
-| `leading/4` | `16px` | `16px` |
-| `leading/6` | `24px` | `24px` |
-| `leading/8` | `32px` | `32px` |
-| `leading/10` | `40px` | `40px` |
+| Token             | Tailwind output | Figma value |
+| ----------------- | --------------: | ----------: |
+| `leading/none`    |             `1` |      `100%` |
+| `leading/tight`   |          `1.25` |      `125%` |
+| `leading/snug`    |         `1.375` |    `137.5%` |
+| `leading/normal`  |           `1.5` |      `150%` |
+| `leading/relaxed` |         `1.625` |    `162.5%` |
+| `leading/loose`   |             `2` |      `200%` |
+| `leading/4`       |          `16px` |      `16px` |
+| `leading/6`       |          `24px` |      `24px` |
+| `leading/8`       |          `32px` |      `32px` |
+| `leading/10`      |          `40px` |      `40px` |
 
 Standalone tracking values:
 
-| Token | Tailwind output | Figma presentation at 16px |
-| --- | ---: | ---: |
-| `tracking/tighter` | `-0.05em` | `-0.8px` |
-| `tracking/tight` | `-0.025em` | `-0.4px` |
-| `tracking/normal` | `0em` | `0px` |
-| `tracking/wide` | `0.025em` | `0.4px` |
-| `tracking/wider` | `0.05em` | `0.8px` |
-| `tracking/widest` | `0.1em` | `1.6px` |
-| `tracking/caption` | `0.01em` | `1%` |
+| Token              | Tailwind output | Figma presentation at 16px |
+| ------------------ | --------------: | -------------------------: |
+| `tracking/tighter` |       `-0.05em` |                   `-0.8px` |
+| `tracking/tight`   |      `-0.025em` |                   `-0.4px` |
+| `tracking/normal`  |           `0em` |                      `0px` |
+| `tracking/wide`    |       `0.025em` |                    `0.4px` |
+| `tracking/wider`   |        `0.05em` |                    `0.8px` |
+| `tracking/widest`  |         `0.1em` |                    `1.6px` |
+| `tracking/caption` |        `0.01em` |                       `1%` |
 
 Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own font size. There is no base-16 discrepancy for `0.01em`; it is not fixed to 16px. For 12px caption text, both resolve to `0.12px`.
 
@@ -304,9 +304,7 @@ Why this matters:
 Use primitive Tailwind utilities when styling needs are intentionally local:
 
 ```tsx
-<p className="text-base leading-normal tracking-normal">
-  Body copy
-</p>
+<p className="text-base leading-normal tracking-normal">Body copy</p>
 ```
 
 Use Coral semantic utilities when matching a Figma text style:
