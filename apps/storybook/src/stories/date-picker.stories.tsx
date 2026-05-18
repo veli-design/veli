@@ -83,7 +83,14 @@ export const ConstraintsAndValidation: Story = {
       <DatePicker
         label="Invalid"
         isInvalid
+        description="This helper text is hidden while invalid."
         errorMessage="Pick an appointment date within the allowed window."
+        defaultValue={parseDate('2026-04-01')}
+      />
+      <DatePicker
+        label="Invalid without message"
+        isInvalid
+        description="This helper text is hidden while invalid."
         defaultValue={parseDate('2026-04-01')}
       />
     </div>

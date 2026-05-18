@@ -2,14 +2,13 @@
 
 import * as React from 'react';
 import {
-  FieldError,
   Input as AriaInput,
   Label,
-  Text,
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
+import { FieldMessage } from './field-shared';
 import { twMerge } from 'tailwind-merge';
 
 const inputRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
@@ -130,18 +129,6 @@ const insetSlotVariants = cva(
 const inputElementVariants = cva(
   'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
 );
-
-const messageVariants = cva('type-caption-12-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
-    },
-  },
-  defaultVariants: {
-    tone: 'subtle',
-  },
-});
 
 export interface InputProps extends Omit<
   AriaTextFieldProps,
@@ -264,13 +251,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
             {endAddon ? <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div> : null}
           </div>
 
-          {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>{errorMessage}</FieldError>
-          ) : description ? (
-            <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
-              {description}
-            </Text>
-          ) : null}
+          <FieldMessage
+            isInvalid={isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
         </>
       )}
     </AriaTextField>

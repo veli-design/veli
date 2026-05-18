@@ -110,6 +110,15 @@ export const ValidationStates: Story = {
         <SelectItem id="a">Option A</SelectItem>
         <SelectItem id="b">Option B</SelectItem>
       </Select>
+      <Select
+        label="Invalid without message"
+        placeholder="Choose a value"
+        isInvalid
+        description="This helper text is hidden while invalid."
+      >
+        <SelectItem id="a">Option A</SelectItem>
+        <SelectItem id="b">Option B</SelectItem>
+      </Select>
       <Select label="Disabled" placeholder="Unavailable" isDisabled>
         <SelectItem id="a">Option A</SelectItem>
         <SelectItem id="b">Option B</SelectItem>

@@ -129,18 +129,6 @@ const dateSegmentVariants = cva(
   },
 );
 
-export const messageVariants = cva('type-caption-12-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
-    },
-  },
-  defaultVariants: {
-    tone: 'subtle',
-  },
-});
-
 export function DateSegments({ className }: { className?: string }) {
   return (
     <DateInput className={twMerge(dateInputVariants(), className)}>

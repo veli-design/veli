@@ -4,7 +4,6 @@ import * as React from 'react';
 import {
   Button as AriaButton,
   ComboBox as AriaComboBox,
-  FieldError,
   Header,
   Input as AriaInput,
   Label,
@@ -12,13 +11,13 @@ import {
   ListBoxItem,
   ListBoxSection,
   Popover as AriaPopover,
-  Text,
   type ComboBoxProps as AriaComboBoxProps,
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { FieldMessage } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
@@ -171,18 +170,6 @@ const sectionHeaderVariants = cva(
 );
 
 const emptyStateVariants = cva('px-[8px] py-[10px] type-body-sm-regular text-text-default-subtle');
-
-const messageVariants = cva('type-caption-12-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
-    },
-  },
-  defaultVariants: {
-    tone: 'subtle',
-  },
-});
 
 function DefaultChevron({ isOpen }: { isOpen: boolean }) {
   return (
@@ -380,13 +367,11 @@ function ComboBoxInner<T extends object>(
             </ListBox>
           </AriaPopover>
 
-          {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>{errorMessage}</FieldError>
-          ) : description ? (
-            <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
-              {description}
-            </Text>
-          ) : null}
+          <FieldMessage
+            isInvalid={isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
         </>
       )}
     </AriaComboBox>

@@ -3,9 +3,7 @@
 import * as React from 'react';
 import {
   DateField as AriaDateField,
-  FieldError,
   Label,
-  Text,
   type DateFieldProps as AriaDateFieldProps,
   type DateValue,
 } from 'react-aria-components';
@@ -17,8 +15,8 @@ import {
   fieldMetaVariants,
   fieldRootVariants,
   fieldShellVariants,
-  messageVariants,
 } from './date-shared';
+import { FieldMessage } from './field-shared';
 
 export interface DateFieldProps<T extends DateValue> extends Omit<
   AriaDateFieldProps<T>,
@@ -43,50 +41,50 @@ export function DateField<T extends DateValue>({
   inputClassName,
   ...props
 }: DateFieldProps<T>) {
-  const showRequired = showRequiredIndicator && Boolean(props.isRequired);
-
   return (
     <AriaDateField {...props} className={twMerge(fieldRootVariants(), className)}>
-      {({ isDisabled, isInvalid, isReadOnly }) => (
-        <>
-          {label || labelSupplementary || showRequired ? (
-            <div className={fieldLabelRowVariants()}>
-              <div className="flex min-w-0 items-center gap-1.5">
-                {label ? (
-                  <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label>
-                ) : null}
-                {labelSupplementary ? (
-                  <span className={fieldMetaVariants({ isDisabled })}>{labelSupplementary}</span>
-                ) : null}
-                {showRequired ? (
-                  <span className={fieldMetaVariants({ tone: 'danger', isDisabled })}>*</span>
-                ) : null}
+      {({ isDisabled, isInvalid, isReadOnly, state }) => {
+        const showRequired = showRequiredIndicator && state.isRequired;
+
+        return (
+          <>
+            {label || labelSupplementary || showRequired ? (
+              <div className={fieldLabelRowVariants()}>
+                <div className="flex min-w-0 items-center gap-1.5">
+                  {label ? (
+                    <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label>
+                  ) : null}
+                  {labelSupplementary ? (
+                    <span className={fieldMetaVariants({ isDisabled })}>{labelSupplementary}</span>
+                  ) : null}
+                  {showRequired ? (
+                    <span className={fieldMetaVariants({ tone: 'danger', isDisabled })}>*</span>
+                  ) : null}
+                </div>
               </div>
+            ) : null}
+
+            <div
+              className={twMerge(
+                fieldShellVariants({
+                  isDisabled,
+                  isInvalid,
+                  isReadOnly,
+                }),
+                inputClassName,
+              )}
+            >
+              <DateSegments />
             </div>
-          ) : null}
 
-          <div
-            className={twMerge(
-              fieldShellVariants({
-                isDisabled,
-                isInvalid,
-                isReadOnly,
-              }),
-              inputClassName,
-            )}
-          >
-            <DateSegments />
-          </div>
-
-          {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>{errorMessage}</FieldError>
-          ) : description ? (
-            <Text slot="description" className={messageVariants()}>
-              {description}
-            </Text>
-          ) : null}
-        </>
-      )}
+            <FieldMessage
+              isInvalid={isInvalid}
+              description={description}
+              errorMessage={errorMessage}
+            />
+          </>
+        );
+      }}
     </AriaDateField>
   );
 }

@@ -50,18 +50,18 @@ Plain text and nested text content are used for tag text and remove button label
 
 ### `TagGroup`
 
-| Prop                  | Type                               | Description                                                        |
-| :-------------------- | :--------------------------------- | :----------------------------------------------------------------- |
-| `label`               | `ReactNode`                        | Adds a visible label above the tag list.                           |
-| `selectionMode`       | `'none' \| 'single' \| 'multiple'` | Controls whether tags are selectable and how many can be selected. |
-| `selectedKeys`        | `'all' \| Iterable<Key>`           | Controls the current selection from external state.                |
-| `defaultSelectedKeys` | `'all' \| Iterable<Key>`           | Sets the initial selection for uncontrolled usage.                 |
-| `onSelectionChange`   | `(keys) => void`                   | Called when the selected tags change.                              |
-| `onRemove`            | `(keys) => void`                   | Called when one or more removable tags are dismissed.              |
-| `description`         | `ReactNode`                        | Adds supporting helper text below the tag list.                    |
-| `errorMessage`        | `ReactNode`                        | Adds validation or error text below the tag list.                  |
-| `isDisabled`          | `boolean`                          | Disables the full group and styles the visible label as disabled.  |
-| `disabledKeys`        | `Iterable<Key>`                    | Disables specific tags in a collection.                            |
+| Prop                  | Type                               | Description                                                                      |
+| :-------------------- | :--------------------------------- | :------------------------------------------------------------------------------- |
+| `label`               | `ReactNode`                        | Adds a visible label above the tag list.                                         |
+| `selectionMode`       | `'none' \| 'single' \| 'multiple'` | Controls whether tags are selectable and how many can be selected.               |
+| `selectedKeys`        | `'all' \| Iterable<Key>`           | Controls the current selection from external state.                              |
+| `defaultSelectedKeys` | `'all' \| Iterable<Key>`           | Sets the initial selection for uncontrolled usage.                               |
+| `onSelectionChange`   | `(keys) => void`                   | Called when the selected tags change.                                            |
+| `onRemove`            | `(keys) => void`                   | Called when one or more removable tags are dismissed.                            |
+| `description`         | `ReactNode`                        | Adds helper text below the tag list when no error is shown.                      |
+| `errorMessage`        | `ReactNode`                        | Adds validation text below the tag list and replaces `description` when present. |
+| `isDisabled`          | `boolean`                          | Disables the full group and styles the visible label as disabled.                |
+| `disabledKeys`        | `Iterable<Key>`                    | Disables specific tags in a collection.                                          |
 
 ### `Tag`
 
