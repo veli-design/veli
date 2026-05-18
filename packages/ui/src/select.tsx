@@ -3,7 +3,6 @@
 import * as React from 'react';
 import {
   Button as AriaButton,
-  FieldError,
   Header,
   Label,
   ListBox,
@@ -12,13 +11,13 @@ import {
   Section as AriaSection,
   Select as AriaSelect,
   SelectValue,
-  Text,
   type ListBoxItemProps as AriaListBoxItemProps,
   type SectionProps as AriaSectionProps,
   type SelectProps as AriaSelectProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { FieldMessage } from './field-shared';
 import {
   getTextFromReactNode,
   normalizeAccessibleText,
@@ -144,18 +143,6 @@ const indicatorVariants = cva(
     },
   }
 );
-
-const messageVariants = cva('type-caption-12-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
-    },
-  },
-  defaultVariants: {
-    tone: 'subtle',
-  },
-});
 
 const popoverVariants = cva(
   'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none'
@@ -331,15 +318,11 @@ export function Select<T extends object>({
             </ListBox>
           </AriaPopover>
 
-          {isInvalid ? (
-            <FieldError className={messageVariants({ tone: 'danger' })}>
-              {errorMessage}
-            </FieldError>
-          ) : description ? (
-            <Text slot="description" className={messageVariants({ tone: 'subtle' })}>
-              {description}
-            </Text>
-          ) : null}
+          <FieldMessage
+            isInvalid={isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
         </>
       )}
     </AriaSelect>

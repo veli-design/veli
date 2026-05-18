@@ -178,3 +178,21 @@ export const Variations: Story = {
     );
   },
 };
+
+export const Validation: Story = {
+  render: () => (
+    <div className="w-[420px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <TagGroup
+        label="Required departments"
+        selectionMode="multiple"
+        description="Choose at least one department."
+        errorMessage="Select at least one department."
+      >
+        <Tag id="tourism">Tourism</Tag>
+        <Tag id="fisheries">Fisheries</Tag>
+        <Tag id="transport">Transport</Tag>
+        <Tag id="education">Education</Tag>
+      </TagGroup>
+    </div>
+  ),
+};

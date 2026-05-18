@@ -5,11 +5,9 @@ import { CalendarBlank } from "phosphor-react";
 import {
   DatePicker as AriaDatePicker,
   Dialog,
-  FieldError,
   Group,
   Label,
   Popover,
-  Text,
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
 } from "react-aria-components";
@@ -23,8 +21,8 @@ import {
   fieldMetaVariants,
   fieldRootVariants,
   fieldShellVariants,
-  messageVariants,
 } from "./date-shared";
+import { FieldMessage } from "./field-shared";
 
 const datePickerWidthClassName = "w-[calc(10*var(--spacing)*7)] max-w-full";
 
@@ -122,14 +120,11 @@ export function DatePicker<T extends DateValue>({
             </Button>
           </Group>
 
-          {description ? (
-            <Text slot="description" className={messageVariants()}>
-              {description}
-            </Text>
-          ) : null}
-          <FieldError className={messageVariants({ tone: "danger" })}>
-            {errorMessage}
-          </FieldError>
+          <FieldMessage
+            isInvalid={isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
 
           <Popover
             offset={8}

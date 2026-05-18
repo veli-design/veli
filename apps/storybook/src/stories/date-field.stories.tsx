@@ -41,6 +41,12 @@ export const ValidationStates: Story = {
         defaultValue={parseDate('2026-04-01')}
       />
       <DateField
+        label="Invalid without message"
+        isInvalid
+        description="This helper text is hidden while invalid."
+        defaultValue={parseDate('2026-04-01')}
+      />
+      <DateField
         label="Disabled"
         defaultValue={parseDate('2026-04-18')}
         isDisabled
