@@ -1,7 +1,6 @@
 {
   "name": "@tradenetcorp/coral-tokens",
   "version": "0.0.1",
-  "private": true,
   "type": "module",
   "main": "./dist/tailwind-theme.css",
   "exports": {

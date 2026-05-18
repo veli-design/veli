@@ -195,9 +195,6 @@ importers:
       phosphor-react:
         specifier: ^1.4.1
         version: 1.4.1(react@18.3.1)
-      react-aria-components:
-        specifier: ^1.4.0
-        version: 1.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0
@@ -211,6 +208,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      react-aria-components:
+        specifier: ^1.4.0
+        version: 1.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
