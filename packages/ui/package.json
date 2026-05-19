@@ -17,6 +17,7 @@
     "./menu": "./src/menu.tsx",
     "./modal": "./src/modal.tsx",
     "./popover": "./src/popover.tsx",
+    "./provider": "./src/provider.tsx",
     "./radio": "./src/radio.tsx",
     "./select": "./src/select.tsx",
     "./switch": "./src/switch.tsx",
