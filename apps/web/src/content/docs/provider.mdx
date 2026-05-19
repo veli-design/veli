@@ -49,7 +49,7 @@ import {
 
 ## Direction Contract
 
-The provider applies `lang`, `dir`, `data-coral-language`, and `data-coral-direction` to its wrapper element. Coral components that need language or direction awareness should read the provider contract instead of deriving direction from a browser locale fallback.
+The provider applies `lang` and `dir` to its wrapper element. Coral components that need language or direction awareness should read those attributes from the provider contract instead of deriving direction from a browser locale fallback.
 
 React Aria still receives the mapped locale for i18n behavior. Direction-sensitive Coral component behavior is handled separately by the component implementation.
 

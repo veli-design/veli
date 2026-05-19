@@ -56,8 +56,6 @@ export function CoralProvider({
         <div
           lang={config.lang}
           dir={config.direction}
-          data-coral-language={config.language}
-          data-coral-direction={config.direction}
         >
           {children}
         </div>
