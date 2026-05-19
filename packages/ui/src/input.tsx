@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -96,7 +96,7 @@ const fieldShellVariants = cva(
       isInvalid: false,
       isReadOnly: false,
     },
-  }
+  },
 );
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
@@ -123,15 +123,17 @@ const insetSlotVariants = cva(
     defaultVariants: {
       isDisabled: false,
     },
-  }
+  },
 );
 
 const inputElementVariants = cva(
-  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled'
+  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
 );
 
-export interface InputProps
-  extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'> {
+export interface InputProps extends Omit<
+  AriaTextFieldProps,
+  'children' | 'className' | 'style' | 'spellCheck'
+> {
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
@@ -183,13 +185,17 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     type = 'text',
     ...props
   },
-  ref
+  ref,
 ) {
   return (
     <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
         <>
-          {label || labelSupplementary || labelIcon || action || (showRequiredIndicator && isRequired) ? (
+          {label ||
+          labelSupplementary ||
+          labelIcon ||
+          action ||
+          (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-[8px]">
               <div className="flex min-w-0 flex-1 items-center gap-[4px]">
                 {label ? (

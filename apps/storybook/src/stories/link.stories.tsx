@@ -94,9 +94,7 @@ export const AllVariants: Story = {
         </Link>
       </div>
 
-      <div className="text-sm font-medium bg-slate-100 p-2 rounded">
-        Inverted
-      </div>
+      <div className="text-sm font-medium bg-slate-100 p-2 rounded">Inverted</div>
       <div className="flex justify-center bg-slate-900 p-2 rounded">
         <Link variant="inverted" underline="none">
           Link

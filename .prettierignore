@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+.npm
+
+# Build outputs and caches
+dist
+.next
+.astro
+.turbo
+.cache
+out
+storybook-static
+coverage
+
+# Environment
+.env
+.env*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode
+.idea

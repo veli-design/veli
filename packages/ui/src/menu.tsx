@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -34,7 +34,7 @@ const menuPopoverVariants = cva(
     defaultVariants: {
       size: 'md',
     },
-  }
+  },
 );
 
 const menuVariants = cva('outline-none');
@@ -58,7 +58,7 @@ const menuItemVariants = cva(
       size: 'md',
       tone: 'default',
     },
-  }
+  },
 );
 
 const menuSectionVariants = cva('py-1 first:pt-0 last:pb-0');
@@ -76,17 +76,11 @@ export function MenuSubmenuTrigger(props: MenuSubmenuTriggerProps) {
 }
 
 export interface MenuPopoverProps
-  extends Omit<AriaPopoverProps, 'className'>,
-    VariantProps<typeof menuPopoverVariants> {
+  extends Omit<AriaPopoverProps, 'className'>, VariantProps<typeof menuPopoverVariants> {
   className?: string;
 }
 
-export function MenuPopover({
-  size,
-  className,
-  offset = 8,
-  ...props
-}: MenuPopoverProps) {
+export function MenuPopover({ size, className, offset = 8, ...props }: MenuPopoverProps) {
   return (
     <AriaPopover
       {...props}
@@ -97,8 +91,7 @@ export function MenuPopover({
 }
 
 export interface MenuProps<T extends object>
-  extends Omit<AriaMenuProps<T>, 'className'>,
-    VariantProps<typeof menuVariants> {
+  extends Omit<AriaMenuProps<T>, 'className'>, VariantProps<typeof menuVariants> {
   className?: string;
 }
 
@@ -106,8 +99,10 @@ export function Menu<T extends object>({ className, ...props }: MenuProps<T>) {
   return <AriaMenu {...props} className={twMerge(menuVariants(), className)} />;
 }
 
-export interface MenuSectionProps<T extends object>
-  extends Omit<AriaSectionProps<T>, 'className' | 'children'> {
+export interface MenuSectionProps<T extends object> extends Omit<
+  AriaSectionProps<T>,
+  'className' | 'children'
+> {
   title?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
@@ -145,8 +140,7 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
 }
 
 export interface MenuItemProps
-  extends Omit<AriaMenuItemProps, 'className'>,
-    VariantProps<typeof menuItemVariants> {
+  extends Omit<AriaMenuItemProps, 'className'>, VariantProps<typeof menuItemVariants> {
   className?: string;
   description?: React.ReactNode;
   startIcon?: React.ReactNode;
@@ -173,25 +167,17 @@ export function MenuItem({
 
   if (typeof children === 'function') {
     return (
-      <AriaMenuItem
-        {...props}
-        className={twMerge(menuItemVariants({ size, tone }), className)}
-      >
+      <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, tone }), className)}>
         {children}
       </AriaMenuItem>
     );
   }
 
   return (
-    <AriaMenuItem
-      {...props}
-      className={twMerge(menuItemVariants({ size, tone }), className)}
-    >
+    <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, tone }), className)}>
       {hasStructuredLayout ? (
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          {startIcon ? (
-            <span className="shrink-0 text-text-default-muted">{startIcon}</span>
-          ) : null}
+          {startIcon ? <span className="shrink-0 text-text-default-muted">{startIcon}</span> : null}
           <div className="min-w-0 flex-1">
             {children ? <div className="truncate">{children}</div> : null}
             {description ? (
@@ -205,9 +191,7 @@ export function MenuItem({
               {shortcut}
             </kbd>
           ) : null}
-          {endIcon ? (
-            <span className="shrink-0 text-text-default-muted">{endIcon}</span>
-          ) : null}
+          {endIcon ? <span className="shrink-0 text-text-default-muted">{endIcon}</span> : null}
         </div>
       ) : (
         children

@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps } from "react";
-import { Button } from "@tradenetcorp/coral-ui/button";
-import { Tooltip, TooltipTrigger } from "@tradenetcorp/coral-ui/tooltip";
+import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentProps } from 'react';
+import { Button } from '@tradenetcorp/coral-ui/button';
+import { Tooltip, TooltipTrigger } from '@tradenetcorp/coral-ui/tooltip';
 
 type TooltipStoryArgs = ComponentProps<typeof Tooltip> & {
   /** Hover delay before the tooltip opens; passed to `TooltipTrigger`. */
@@ -9,67 +9,66 @@ type TooltipStoryArgs = ComponentProps<typeof Tooltip> & {
 };
 
 const meta = {
-  title: "Components/Tooltip",
+  title: 'Components/Tooltip',
   component: Tooltip,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   parameters: {
-    layout: "centered",
+    layout: 'centered',
     docs: {
       description: {
         component:
-          "Brief contextual hint anchored to a control, styled with Coral tokens and exposed through the Coral UI API. Wrap a trigger and this `Tooltip` in `TooltipTrigger` so hover and keyboard focus show the overlay with correct timing and accessibility.",
+          'Brief contextual hint anchored to a control, styled with Coral tokens and exposed through the Coral UI API. Wrap a trigger and this `Tooltip` in `TooltipTrigger` so hover and keyboard focus show the overlay with correct timing and accessibility.',
       },
     },
   },
   argTypes: {
     placement: {
-      control: "select",
+      control: 'select',
       options: [
-        "bottom",
-        "bottom left",
-        "bottom right",
-        "bottom start",
-        "bottom end",
-        "top",
-        "top left",
-        "top right",
-        "top start",
-        "top end",
-        "left",
-        "left top",
-        "left bottom",
-        "start",
-        "start top",
-        "start bottom",
-        "right",
-        "right top",
-        "right bottom",
-        "end",
-        "end top",
-        "end bottom",
+        'bottom',
+        'bottom left',
+        'bottom right',
+        'bottom start',
+        'bottom end',
+        'top',
+        'top left',
+        'top right',
+        'top start',
+        'top end',
+        'left',
+        'left top',
+        'left bottom',
+        'start',
+        'start top',
+        'start bottom',
+        'right',
+        'right top',
+        'right bottom',
+        'end',
+        'end top',
+        'end bottom',
       ],
     },
     shouldFlip: {
-      control: "boolean",
+      control: 'boolean',
       description:
-        "Whether the element should flip its orientation (e.g. top to bottom or left to right) when there is insufficient room for it to render completely.",
+        'Whether the element should flip its orientation (e.g. top to bottom or left to right) when there is insufficient room for it to render completely.',
     },
     delay: {
-      control: { type: "number", min: 0, max: 3000, step: 50 },
+      control: { type: 'number', min: 0, max: 3000, step: 50 },
       description:
-        "Milliseconds to wait before showing the tooltip on hover (`TooltipTrigger`). Focus via keyboard typically opens without this delay.",
+        'Milliseconds to wait before showing the tooltip on hover (`TooltipTrigger`). Focus via keyboard typically opens without this delay.',
     },
     children: {
-      control: "text",
-      description:
-        "Tooltip label (the component always uses a fixed 10px offset from the anchor).",
+      control: 'text',
+      description: 'Tooltip label (the component always uses a fixed 10px offset from the anchor).',
     },
   },
   args: {
-    placement: "top",
+    placement: 'top',
     shouldFlip: true,
     delay: 500,
-    children: "Short help text for this action.",
+    children: 'Short help text for this action.',
   },
 } satisfies Meta<TooltipStoryArgs>;
 
@@ -91,7 +90,7 @@ export const Playground: Story = {
 };
 
 export const IconButtons: Story = {
-  name: "Icon buttons",
+  name: 'Icon buttons',
   render: () => (
     <div className="flex min-h-[280px] items-center justify-center gap-4 bg-bg-surface-base p-8">
       <TooltipTrigger>
@@ -112,7 +111,7 @@ export const IconButtons: Story = {
 
 export const Placements: Story = {
   render: () => {
-    const placements = ["top", "bottom", "left", "right"] as const;
+    const placements = ['top', 'bottom', 'left', 'right'] as const;
 
     return (
       <div className="flex min-h-[380px] items-center justify-center bg-bg-surface-base p-8">

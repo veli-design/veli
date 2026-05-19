@@ -1,6 +1,6 @@
-import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
-import { Tag, TagGroup } from "@tradenetcorp/coral-ui/tags";
+import { useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Tag, TagGroup } from '@tradenetcorp/coral-ui/tags';
 
 type TagItem = {
   id: string;
@@ -10,19 +10,19 @@ type TagItem = {
 };
 
 const removableSeed: TagItem[] = [
-  { id: "permits", label: "Permits" },
-  { id: "forms", label: "Forms" },
-  { id: "notices", label: "Notices" },
-  { id: "licences", label: "Licences" },
+  { id: 'permits', label: 'Permits' },
+  { id: 'forms', label: 'Forms' },
+  { id: 'notices', label: 'Notices' },
+  { id: 'licences', label: 'Licences' },
 ];
 
 const meta = {
-  title: "Components/Tags",
+  title: 'Components/Tags',
   component: TagGroup,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof TagGroup>;
 
 export default meta;
@@ -54,13 +54,11 @@ export const Variations: Story = {
       <div className="grid gap-[24px] lg:grid-cols-2">
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">
-              Selectable tags
-            </p>
+            <p className="type-body-sm-medium text-text-default-high-contrast">Selectable tags</p>
             <TagGroup
               label="Departments"
               selectionMode="multiple"
-              defaultSelectedKeys={["tourism", "fisheries"]}
+              defaultSelectedKeys={['tourism', 'fisheries']}
               description="Use selection when tags act as filters."
             >
               <Tag id="tourism">Tourism</Tag>
@@ -73,9 +71,7 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">
-              Removable tags
-            </p>
+            <p className="type-body-sm-medium text-text-default-high-contrast">Removable tags</p>
             <TagGroup<TagItem>
               label="Saved topics"
               items={removableItems}
@@ -105,32 +101,15 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">
-              Link tags
-            </p>
+            <p className="type-body-sm-medium text-text-default-high-contrast">Link tags</p>
             <TagGroup label="Related guidance">
-              <Tag
-                id="passport"
-                href="https://one.gov.mv/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Tag id="passport" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
                 Passport services
               </Tag>
-              <Tag
-                id="licensing"
-                href="https://one.gov.mv/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Tag id="licensing" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
                 Licensing portal
               </Tag>
-              <Tag
-                id="payments"
-                href="https://one.gov.mv/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Tag id="payments" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
                 Online payments
               </Tag>
             </TagGroup>
@@ -139,14 +118,12 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">
-              Disabled keys
-            </p>
+            <p className="type-body-sm-medium text-text-default-high-contrast">Disabled keys</p>
             <TagGroup
               label="Amenities"
               selectionMode="multiple"
-              defaultSelectedKeys={["laundry"]}
-              disabledKeys={["parking"]}
+              defaultSelectedKeys={['laundry']}
+              disabledKeys={['parking']}
             >
               <Tag id="laundry">Laundry</Tag>
               <Tag id="parking">Parking</Tag>
@@ -158,13 +135,11 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">
-              Disabled group
-            </p>
+            <p className="type-body-sm-medium text-text-default-high-contrast">Disabled group</p>
             <TagGroup
               label="Restricted services"
               selectionMode="multiple"
-              defaultSelectedKeys={["documents"]}
+              defaultSelectedKeys={['documents']}
               isDisabled
             >
               <Tag id="documents">Documents</Tag>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -20,7 +20,7 @@ const checkboxRootVariants = cva(
     defaultVariants: {
       isDisabled: false,
     },
-  }
+  },
 );
 
 const checkboxControlVariants = cva(
@@ -60,24 +60,21 @@ const checkboxControlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border',
+        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: false,
         isHovered: true,
-        className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border-hover',
+        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border-hover',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: false,
         isPressed: true,
-        className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-checked-bg',
+        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-checked-bg',
       },
       {
         isSelected: false,
@@ -153,7 +150,7 @@ const checkboxControlVariants = cva(
       isDisabled: false,
       isFocusVisible: false,
     },
-  }
+  },
 );
 
 const indicatorVariants = cva(
@@ -165,11 +162,10 @@ const indicatorVariants = cva(
         false: 'text-text-default-inverted',
       },
     },
-  }
+  },
 );
 
-export interface CheckboxProps
-  extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'> {
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'> {
   children?: React.ReactNode;
   className?: string;
 }
@@ -184,7 +180,7 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
           checkboxRootVariants({
             isDisabled: state.isDisabled,
           }),
-          className
+          className,
         )
       }
     >
@@ -208,13 +204,7 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
               {checkedOrIndeterminate ? (
                 <span className={indicatorVariants({ isDisabled: state.isDisabled })}>
                   {state.isIndeterminate ? (
-                    <svg
-                      aria-hidden="true"
-                      width="10"
-                      height="4"
-                      viewBox="0 0 10 4"
-                      fill="none"
-                    >
+                    <svg aria-hidden="true" width="10" height="4" viewBox="0 0 10 4" fill="none">
                       <path d="M0 2H10" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   ) : (
@@ -223,14 +213,14 @@ export function Checkbox({ children, isIndeterminate, className, ...props }: Che
                       width={isPressed ? '9' : '11.2'}
                       height={isPressed ? '6' : '8.2'}
                       viewBox="-1 -1 11.5 8.8"
-                      className={isPressed ? 'translate-x-[-0.2px] translate-y-[0.1px]' : 'translate-x-[-0.4px] translate-y-[0.1px]'}
+                      className={
+                        isPressed
+                          ? 'translate-x-[-0.2px] translate-y-[0.1px]'
+                          : 'translate-x-[-0.4px] translate-y-[0.1px]'
+                      }
                       fill="none"
                     >
-                      <path
-                        d="M0 2.5L3.5 6L9.5 0"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
+                      <path d="M0 2.5L3.5 6L9.5 0" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   )}
                 </span>

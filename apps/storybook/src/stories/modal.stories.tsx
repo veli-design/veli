@@ -68,8 +68,8 @@ export const Playground: Story = {
           }
         >
           <p>
-            Your changes have been saved successfully. You can continue editing or close this
-            window to return to the dashboard.
+            Your changes have been saved successfully. You can continue editing or close this window
+            to return to the dashboard.
           </p>
         </Modal>
       </div>

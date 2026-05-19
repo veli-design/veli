@@ -1,10 +1,7 @@
-"use client";
+'use client';
 
 import * as React from 'react';
-import {
-  Button as AriaButton,
-  ButtonProps as AriaButtonProps,
-} from 'react-aria-components';
+import { Button as AriaButton, ButtonProps as AriaButtonProps } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
@@ -106,7 +103,7 @@ const buttonVariants = cva(
       size: 'md',
       iconOnly: false,
     },
-  }
+  },
 );
 
 const seaglassFillOverlay =
@@ -132,24 +129,22 @@ const seaglassButtonVariants = cva(
       {
         variant: 'primary',
         style: 'fill',
-        className:
-          `${seaglassFillOverlay} bg-[#0066FF] text-text-primary-inverted hover:bg-[#0066FF] active:bg-[#0052CC]`,
+        className: `${seaglassFillOverlay} bg-[#0066FF] text-text-primary-inverted hover:bg-[#0066FF] active:bg-[#0052CC]`,
       },
       {
         variant: 'secondary',
         style: 'fill',
-        className:
-          `${seaglassFillOverlay} bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed`,
+        className: `${seaglassFillOverlay} bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed`,
       },
       {
         variant: 'danger',
         style: 'fill',
-        className:
-          `${seaglassFillOverlay} bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
+        className: `${seaglassFillOverlay} bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
       },
       {
         style: 'fill',
-        className: 'active:translate-y-px active:scale-[0.985] active:duration-[120ms] active:ease-out',
+        className:
+          'active:translate-y-px active:scale-[0.985] active:duration-[120ms] active:ease-out',
       },
       // Transparent
       {
@@ -194,7 +189,7 @@ const seaglassButtonVariants = cva(
       variant: 'primary',
       style: 'fill',
     },
-  }
+  },
 );
 
 const loadingOnlyMinWidthVariants = cva('', {
@@ -257,7 +252,8 @@ type AccessibleButtonName =
   | { 'aria-label'?: string; 'aria-labelledby': string };
 
 interface ButtonSharedProps
-  extends Omit<AriaButtonProps, 'style' | 'children'>,
+  extends
+    Omit<AriaButtonProps, 'style' | 'children'>,
     Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
@@ -278,7 +274,6 @@ type StandardButtonProps = ButtonSharedProps & {
 
 export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
 
-type ButtonVariant = NonNullable<ButtonProps['variant']>;
 type ButtonStyle = NonNullable<ButtonProps['style']>;
 type SpotlightStyle = React.CSSProperties & {
   '--button-seaglass-radius-x': string;
@@ -373,11 +368,11 @@ export function Button({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.'
+    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !isLoadingOnly || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.'
+    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const writeSpotlightPosition = React.useCallback((x: string, y: string) => {
@@ -436,7 +431,7 @@ export function Button({
         writeSpotlightPosition(position.x, position.y);
       });
     },
-    [writeSpotlightPosition]
+    [writeSpotlightPosition],
   );
 
   const animateSpotlightToCenter = React.useCallback(() => {
@@ -496,7 +491,7 @@ export function Button({
       currentSpotlightPositionRef.current = nextPosition;
       setSpotlightPosition(`${nextPosition.x}px`, `${nextPosition.y}px`);
     },
-    [cancelSpotlightCenterAnimation, setSpotlightPosition, showSpotlight]
+    [cancelSpotlightCenterAnimation, setSpotlightPosition, showSpotlight],
   );
 
   React.useEffect(() => {
@@ -633,7 +628,7 @@ export function Button({
       ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
       : undefined,
     isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
-    className
+    className,
   );
   const spotlightStyle: SpotlightStyle = {
     '--button-seaglass-radius-x': seaglassMetrics.radiusX,
@@ -652,14 +647,7 @@ export function Button({
       fill="none"
       viewBox="0 0 24 24"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-75"
         fill="currentColor"
@@ -692,7 +680,7 @@ export function Button({
             <span
               className={twMerge(
                 buttonContentVariants({ size, iconOnly: isIconOnly }),
-                'opacity-0'
+                'opacity-0',
               )}
             >
               {children}
@@ -716,9 +704,7 @@ export function Button({
           </span>
         )
       ) : children ? (
-        <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>
-          {children}
-        </span>
+        <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>{children}</span>
       ) : (
         children
       )}

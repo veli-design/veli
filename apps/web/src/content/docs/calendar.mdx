@@ -58,35 +58,35 @@ import { Calendar } from '@tradenetcorp/coral-ui/calendar';
 
 ### Selection
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `value` | `DateValue \| null` | Controlled selected date. |
-| `defaultValue` | `DateValue` | Uncontrolled initial selected date. |
-| `onChange` | `(value) => void` | Called when the selected date changes. |
-| `focusedValue` | `DateValue` | Controlled focused date for custom navigation flows. |
-| `defaultFocusedValue` | `DateValue` | Initial focused date when no value is selected. |
-| `onFocusChange` | `(value) => void` | Called when keyboard focus moves within the calendar. |
+| Prop                  | Type                | Description                                           |
+| :-------------------- | :------------------ | :---------------------------------------------------- |
+| `value`               | `DateValue \| null` | Controlled selected date.                             |
+| `defaultValue`        | `DateValue`         | Uncontrolled initial selected date.                   |
+| `onChange`            | `(value) => void`   | Called when the selected date changes.                |
+| `focusedValue`        | `DateValue`         | Controlled focused date for custom navigation flows.  |
+| `defaultFocusedValue` | `DateValue`         | Initial focused date when no value is selected.       |
+| `onFocusChange`       | `(value) => void`   | Called when keyboard focus moves within the calendar. |
 
 ### Display and Navigation
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `firstDayOfWeek` | `'sun' \| 'mon' \| ...` | Overrides the locale’s first weekday. |
-| `weekdayStyle` | `'narrow' \| 'short' \| 'long'` | Controls how weekday headers are rendered. |
+| Prop             | Type                            | Description                                |
+| :--------------- | :------------------------------ | :----------------------------------------- |
+| `firstDayOfWeek` | `'sun' \| 'mon' \| ...`         | Overrides the locale’s first weekday.      |
+| `weekdayStyle`   | `'narrow' \| 'short' \| 'long'` | Controls how weekday headers are rendered. |
 
 ### Constraints and Availability
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `minValue` | `DateValue` | Lowest selectable date. |
-| `maxValue` | `DateValue` | Highest selectable date. |
-| `isDisabled` | `boolean` | Disables the whole calendar. |
+| Prop                | Type                | Description                                     |
+| :------------------ | :------------------ | :---------------------------------------------- |
+| `minValue`          | `DateValue`         | Lowest selectable date.                         |
+| `maxValue`          | `DateValue`         | Highest selectable date.                        |
+| `isDisabled`        | `boolean`           | Disables the whole calendar.                    |
 | `isDateUnavailable` | `(date) => boolean` | Marks dates as unavailable but still focusable. |
 
 ### Accessibility
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
+| Prop         | Type     | Description                              |
+| :----------- | :------- | :--------------------------------------- |
 | `aria-label` | `string` | Required when there is no visible label. |
 
 All remaining supported React Aria `Calendar` props can still be passed through this wrapper.

@@ -21,7 +21,10 @@ tailwindTheme = tailwindTheme.replace('@theme {\n', '@theme {\n  --spacing: 4px;
 // --text-sm-font-size. Tailwind v4 expects --text-sm and the paired
 // --text-sm--line-height variable.
 tailwindTheme = tailwindTheme.replace(/--text-([a-z0-9]+(?:xl)?)-font-size:/g, '--text-$1:');
-tailwindTheme = tailwindTheme.replace(/--text-([a-z0-9]+(?:xl)?)-line-height:/g, '--text-$1--line-height:');
+tailwindTheme = tailwindTheme.replace(
+  /--text-([a-z0-9]+(?:xl)?)-line-height:/g,
+  '--text-$1--line-height:',
+);
 
 const tailwindLeadingByName = {
   none: '1',
@@ -46,34 +49,49 @@ const tailwindTrackingByFigmaPx = {
 // Figma stores semantic leading as percentage-style numbers and fixed leading
 // as px values. Tailwind expects the semantic named scale to be unitless while
 // numeric leading values stay spacing-derived px values.
-tailwindTheme = tailwindTheme.replace(/(--leading-([^:]+):\s*)(-?\d+(?:\.\d+)?)(?:px|%)?;/g, (match, property, name, value) => {
-  if (tailwindLeadingByName[name]) {
-    return `${property}${tailwindLeadingByName[name]};`;
-  }
-  return `${property}${value}px;`;
-});
+tailwindTheme = tailwindTheme.replace(
+  /(--leading-([^:]+):\s*)(-?\d+(?:\.\d+)?)(?:px|%)?;/g,
+  (match, property, name, value) => {
+    if (tailwindLeadingByName[name]) {
+      return `${property}${tailwindLeadingByName[name]};`;
+    }
+    return `${property}${value}px;`;
+  },
+);
 tailwindTheme = tailwindTheme.replace(/(--font-weight-[^:]+:\s*)(-?\d+(?:\.\d+)?)px;/g, '$1$2;');
-tailwindTheme = tailwindTheme.replace(/(--tracking-[^:]+:\s*)(-?\d+(?:\.\d+)?)(?:px)?;/g, (match, property, value) => {
-  return `${property}${tailwindTrackingByFigmaPx[value] ?? `${value}em`};`;
-});
-tailwindTheme = tailwindTheme.replace(/(--tracking-caption:\s*)1%;/g, (_match, property) => `${property}0.01em;`);
+tailwindTheme = tailwindTheme.replace(
+  /(--tracking-[^:]+:\s*)(-?\d+(?:\.\d+)?)(?:px)?;/g,
+  (match, property, value) => {
+    return `${property}${tailwindTrackingByFigmaPx[value] ?? `${value}em`};`;
+  },
+);
+tailwindTheme = tailwindTheme.replace(
+  /(--tracking-caption:\s*)1%;/g,
+  (_match, property) => `${property}0.01em;`,
+);
 
 // Quote multi-word font family names so var(--font-mono) remains valid when
 // consumed by Tailwind's font-family utilities.
-tailwindTheme = tailwindTheme.replace(/(--font-(?:mono|dhivehi):\s*)([^";\n]+ [^;\n]+);/g, '$1"$2";');
+tailwindTheme = tailwindTheme.replace(
+  /(--font-(?:mono|dhivehi):\s*)([^";\n]+ [^;\n]+);/g,
+  '$1"$2";',
+);
 tailwindTheme = tailwindTheme.replace(/--color-([a-z0-9-]+)-DEFAULT:/g, '--color-$1-default:');
-tailwindTheme = tailwindTheme.replace(/@variant dark\s*\{\n([\s\S]*?)\n\}/, (_match, declarations) => {
-  const body = declarations
-    .split('\n')
-    .map((line) => (line.trim() ? `    ${line.trim()}` : ''))
-    .join('\n');
+tailwindTheme = tailwindTheme.replace(
+  /@variant dark\s*\{\n([\s\S]*?)\n\}/,
+  (_match, declarations) => {
+    const body = declarations
+      .split('\n')
+      .map((line) => (line.trim() ? `    ${line.trim()}` : ''))
+      .join('\n');
 
-  return `@layer theme {
+    return `@layer theme {
   :where(.dark, .dark *) {
 ${body}
   }
 }`;
-});
+  },
+);
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
@@ -161,7 +179,12 @@ const fontWeightByValue = {
 };
 
 function trackingName(letterSpacing) {
-  if (letterSpacing === '0%' || letterSpacing === '0px' || letterSpacing === 0 || letterSpacing === '0') {
+  if (
+    letterSpacing === '0%' ||
+    letterSpacing === '0px' ||
+    letterSpacing === 0 ||
+    letterSpacing === '0'
+  ) {
     return 'normal';
   }
   if (letterSpacing === '1%' || letterSpacing === '0.01em') {
@@ -206,7 +229,10 @@ function generateTypeUtilities(tokens) {
 tailwindTheme = `${tailwindTheme.trimEnd()}${generateTypeUtilities(sourceTokens)}`;
 
 tokensCss = tokensCss.replace(/(--font-weight-[^:]+:\s*)(-?\d+(?:\.\d+)?)px;/g, '$1$2;');
-tokensCss = tokensCss.replace(/(--tracking-caption:\s*)(?:0\.16px|1px|1%);/g, (_match, property) => `${property}0.01em;`);
+tokensCss = tokensCss.replace(
+  /(--tracking-caption:\s*)(?:0\.16px|1px|1%);/g,
+  (_match, property) => `${property}0.01em;`,
+);
 
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');

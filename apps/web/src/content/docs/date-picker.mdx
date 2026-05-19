@@ -3,10 +3,7 @@ title: DatePicker
 description: Composed date field plus calendar popover built with React Aria.
 ---
 
-import {
-  DatePickerUsageDemo,
-  DatePickerVariantsDemo,
-} from '../../components/DateExamples';
+import { DatePickerUsageDemo, DatePickerVariantsDemo } from '../../components/DateExamples';
 
 # DatePicker
 
@@ -25,10 +22,7 @@ import { DatePicker } from '@tradenetcorp/coral-ui/date-picker';
 </div>
 
 ```tsx
-<DatePicker
-  label="Appointment date"
-  description="Choose a date from the field or the calendar."
-/>
+<DatePicker label="Appointment date" description="Choose a date from the field or the calendar." />
 ```
 
 ## Variants
@@ -41,44 +35,44 @@ import { DatePicker } from '@tradenetcorp/coral-ui/date-picker';
 
 ### Common
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `label` | `ReactNode` | Visible label for the field. |
-| `description` | `ReactNode` | Helper text shown below the picker when not invalid. |
-| `errorMessage` | `ReactNode` | Validation content shown below the picker when invalid. |
-| `isRequired` | `boolean` | Marks the picker as required. |
-| `isDisabled` | `boolean` | Disables both field editing and calendar trigger. |
-| `isReadOnly` | `boolean` | Prevents edits but keeps the value visible. |
-| `value` | `DateValue \| null` | Controlled selected value. |
-| `defaultValue` | `DateValue` | Uncontrolled initial value. |
-| `onChange` | `(value) => void` | Called when the selected value changes. |
-| `name` | `string` | Submits the value in forms as an ISO string. |
-| `calendarButtonLabel` | `string` | Accessible name for the calendar trigger. Defaults to `"Open calendar"`. |
+| Prop                  | Type                | Description                                                              |
+| :-------------------- | :------------------ | :----------------------------------------------------------------------- |
+| `label`               | `ReactNode`         | Visible label for the field.                                             |
+| `description`         | `ReactNode`         | Helper text shown below the picker when not invalid.                     |
+| `errorMessage`        | `ReactNode`         | Validation content shown below the picker when invalid.                  |
+| `isRequired`          | `boolean`           | Marks the picker as required.                                            |
+| `isDisabled`          | `boolean`           | Disables both field editing and calendar trigger.                        |
+| `isReadOnly`          | `boolean`           | Prevents edits but keeps the value visible.                              |
+| `value`               | `DateValue \| null` | Controlled selected value.                                               |
+| `defaultValue`        | `DateValue`         | Uncontrolled initial value.                                              |
+| `onChange`            | `(value) => void`   | Called when the selected value changes.                                  |
+| `name`                | `string`            | Submits the value in forms as an ISO string.                             |
+| `calendarButtonLabel` | `string`            | Accessible name for the calendar trigger. Defaults to `"Open calendar"`. |
 
 ### Formatting
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `granularity` | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest displayed and editable segment. |
-| `hourCycle` | `12 \| 24` | Forces 12-hour or 24-hour time display. |
-| `hideTimeZone` | `boolean` | Hides time zone text when using zoned values. |
-| `shouldForceLeadingZeros` | `boolean` | Keeps numeric segments zero-padded. |
-| `placeholderValue` | `DateValue` | Sets placeholder shape and default calendar context. |
+| Prop                      | Type                                      | Description                                          |
+| :------------------------ | :---------------------------------------- | :--------------------------------------------------- |
+| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest displayed and editable segment.             |
+| `hourCycle`               | `12 \| 24`                                | Forces 12-hour or 24-hour time display.              |
+| `hideTimeZone`            | `boolean`                                 | Hides time zone text when using zoned values.        |
+| `shouldForceLeadingZeros` | `boolean`                                 | Keeps numeric segments zero-padded.                  |
+| `placeholderValue`        | `DateValue`                               | Sets placeholder shape and default calendar context. |
 
 ### Calendar Behavior
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `shouldCloseOnSelect` | `boolean` | Controls whether the popover closes immediately after selection. |
-| `minValue` | `DateValue` | Lowest selectable value. |
-| `maxValue` | `DateValue` | Highest selectable value. |
-| `isDateUnavailable` | `(date) => boolean` | Marks dates as unavailable in the calendar. |
+| Prop                  | Type                | Description                                                      |
+| :-------------------- | :------------------ | :--------------------------------------------------------------- |
+| `shouldCloseOnSelect` | `boolean`           | Controls whether the popover closes immediately after selection. |
+| `minValue`            | `DateValue`         | Lowest selectable value.                                         |
+| `maxValue`            | `DateValue`         | Highest selectable value.                                        |
+| `isDateUnavailable`   | `(date) => boolean` | Marks dates as unavailable in the calendar.                      |
 
 ### Validation
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `isInvalid` | `boolean` | Forces invalid styling and error presentation. |
-| `validate` | `(value) => ValidationError \| true \| null` | Adds custom validation logic. |
+| Prop        | Type                                         | Description                                    |
+| :---------- | :------------------------------------------- | :--------------------------------------------- |
+| `isInvalid` | `boolean`                                    | Forces invalid styling and error presentation. |
+| `validate`  | `(value) => ValidationError \| true \| null` | Adds custom validation logic.                  |
 
 All remaining supported React Aria `DatePicker` props can still be passed through this wrapper.

@@ -3,11 +3,7 @@ title: Radio
 description: Accessible radio input with semantic token states and explicit geometry.
 ---
 
-import {
-  RadioDisabledDemo,
-  RadioSizesDemo,
-  RadioUsageDemo,
-} from '../../components/DocsExamples';
+import { RadioDisabledDemo, RadioSizesDemo, RadioUsageDemo } from '../../components/DocsExamples';
 
 # Radio
 
@@ -58,24 +54,24 @@ import { Radio, RadioGroup } from '@tradenetcorp/coral-ui/radio';
 
 ### `Radio`
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `size` | `'sm' \| 'md'` | `'sm'` | Visual size of the radio control. |
-| `isDisabled` | `boolean` | `false` | Disables interaction and applies disabled styling. |
-| `value` | `string` | - | Value used by the parent `RadioGroup` for selection. |
-| `children` | `ReactNode` | - | Label content. |
-| `className` | `string` | - | Layout-only class override merged onto the outermost radio element. |
+| Prop         | Type           | Default | Description                                                         |
+| :----------- | :------------- | :------ | :------------------------------------------------------------------ |
+| `size`       | `'sm' \| 'md'` | `'sm'`  | Visual size of the radio control.                                   |
+| `isDisabled` | `boolean`      | `false` | Disables interaction and applies disabled styling.                  |
+| `value`      | `string`       | -       | Value used by the parent `RadioGroup` for selection.                |
+| `children`   | `ReactNode`    | -       | Label content.                                                      |
+| `className`  | `string`       | -       | Layout-only class override merged onto the outermost radio element. |
 
 ### `RadioGroup`
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `defaultValue` | `string` | - | Uncontrolled initial selected value. |
-| `value` | `string` | - | Controlled selected value. |
-| `onChange` | `(value: string) => void` | - | Callback when selection changes. |
-| `isDisabled` | `boolean` | `false` | Disables all radios in the group. |
-| `className` | `string` | - | Layout-only class override merged onto the outermost radio group element. |
+| Prop           | Type                      | Default | Description                                                               |
+| :------------- | :------------------------ | :------ | :------------------------------------------------------------------------ |
+| `defaultValue` | `string`                  | -       | Uncontrolled initial selected value.                                      |
+| `value`        | `string`                  | -       | Controlled selected value.                                                |
+| `onChange`     | `(value: string) => void` | -       | Callback when selection changes.                                          |
+| `isDisabled`   | `boolean`                 | `false` | Disables all radios in the group.                                         |
+| `className`    | `string`                  | -       | Layout-only class override merged onto the outermost radio group element. |
 
-*Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `style` overrides.*
+_Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `style` overrides._
 
 `className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The radio control and indicator internals remain private to preserve focus, contrast, disabled, and selected states.

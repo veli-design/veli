@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { Button } from '@tradenetcorp/coral-ui/button';
 import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/coral-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/coral-ui/checkbox';
-import {
-  ComboBox,
-  ComboBoxItem,
-  ComboBoxSection,
-} from '@tradenetcorp/coral-ui/combobox';
+import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/coral-ui/combobox';
 import { Divider } from '@tradenetcorp/coral-ui/divider';
 import { Input } from '@tradenetcorp/coral-ui/input';
 import { Link } from '@tradenetcorp/coral-ui/link';
@@ -96,9 +92,7 @@ export function BreadcrumbsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Back link treatment
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Back link treatment</p>
           <Breadcrumbs aria-label="Back breadcrumb">
             <Breadcrumb href="#" tone="accent">
               <CaretLeft aria-hidden size={16} weight="bold" />
@@ -127,11 +121,7 @@ export function BreadcrumbsVariantsDemo() {
               }
             }}
           >
-            {(item) => (
-              <Breadcrumb href={item.href}>
-                {item.label}
-              </Breadcrumb>
-            )}
+            {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
           </Breadcrumbs>
           <p className="type-caption-12-regular text-text-default-muted">
             Activate an earlier crumb to collapse the trail to that level.
@@ -160,9 +150,7 @@ export function TagsVariantsDemo() {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Selectable tags
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Selectable tags</p>
           <TagGroup
             label="Departments"
             selectionMode="multiple"
@@ -179,9 +167,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Removable tags
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Removable tags</p>
           <TagGroup<TagDemoItem>
             label="Saved topics"
             items={removableItems}
@@ -211,9 +197,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Link tags
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Link tags</p>
           <TagGroup label="Related guidance">
             <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Passport services
@@ -230,9 +214,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Disabled keys
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Disabled keys</p>
           <TagGroup
             label="Amenities"
             selectionMode="multiple"
@@ -249,9 +231,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Disabled group
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Disabled group</p>
           <TagGroup
             label="Restricted services"
             selectionMode="multiple"
@@ -278,19 +258,37 @@ export function ButtonVariantsDemo() {
       <div className="text-xs font-bold uppercase text-text-default-muted">Ghost</div>
 
       <div className="text-sm font-medium">Primary</div>
-      <Button variant="primary" style="fill">Button</Button>
-      <Button variant="primary" style="transparent">Button</Button>
-      <Button variant="primary" style="ghost">Button</Button>
+      <Button variant="primary" style="fill">
+        Button
+      </Button>
+      <Button variant="primary" style="transparent">
+        Button
+      </Button>
+      <Button variant="primary" style="ghost">
+        Button
+      </Button>
 
       <div className="text-sm font-medium">Secondary</div>
-      <Button variant="secondary" style="fill">Button</Button>
-      <Button variant="secondary" style="transparent">Button</Button>
-      <Button variant="secondary" style="ghost">Button</Button>
+      <Button variant="secondary" style="fill">
+        Button
+      </Button>
+      <Button variant="secondary" style="transparent">
+        Button
+      </Button>
+      <Button variant="secondary" style="ghost">
+        Button
+      </Button>
 
       <div className="text-sm font-medium">Danger</div>
-      <Button variant="danger" style="fill">Button</Button>
-      <Button variant="danger" style="transparent">Button</Button>
-      <Button variant="danger" style="ghost">Button</Button>
+      <Button variant="danger" style="fill">
+        Button
+      </Button>
+      <Button variant="danger" style="transparent">
+        Button
+      </Button>
+      <Button variant="danger" style="ghost">
+        Button
+      </Button>
     </div>
   );
 }
@@ -394,8 +392,12 @@ export function CheckboxDisabledDemo() {
   return (
     <div className="flex flex-col gap-[12px]">
       <Checkbox isDisabled>Off</Checkbox>
-      <Checkbox defaultSelected isDisabled>On</Checkbox>
-      <Checkbox isIndeterminate isDisabled>Indeterminate</Checkbox>
+      <Checkbox defaultSelected isDisabled>
+        On
+      </Checkbox>
+      <Checkbox isIndeterminate isDisabled>
+        Indeterminate
+      </Checkbox>
     </div>
   );
 }
@@ -436,12 +438,7 @@ export function InputExplorationDemo() {
 export function InputValidationDemo() {
   return (
     <div className="grid gap-[16px] md:grid-cols-2">
-      <Input
-        label="Required"
-        placeholder="Enter value"
-        isRequired
-        description="Helper text"
-      />
+      <Input label="Required" placeholder="Enter value" isRequired description="Helper text" />
       <Input
         label="Invalid"
         placeholder="Enter value"
@@ -458,9 +455,7 @@ export function DividerUsageDemo() {
     <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <div className="space-y-[12px]">
         <div>
-          <h3 className="type-body-sm-medium text-text-default-high-contrast">
-            Applicant details
-          </h3>
+          <h3 className="type-body-sm-medium text-text-default-high-contrast">Applicant details</h3>
           <p className="type-caption-12-regular text-text-default-muted">
             Review the information before continuing.
           </p>
@@ -480,9 +475,7 @@ export function DividerVariantsDemo() {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Horizontal divider
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Horizontal divider</p>
           <div className="space-y-[10px] type-body-sm-regular text-text-default-default">
             <p>Passport number</p>
             <Divider />
@@ -495,9 +488,7 @@ export function DividerVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Vertical divider
-          </p>
+          <p className="type-body-sm-medium text-text-default-high-contrast">Vertical divider</p>
           <div className="flex items-center gap-[12px] type-body-sm-regular text-text-default-default">
             <span>Overview</span>
             <Divider orientation="vertical" />
@@ -643,12 +634,7 @@ export function SelectExplorationDemo() {
 export function SelectValidationDemo() {
   return (
     <div className="grid gap-[16px] md:grid-cols-2">
-      <Select
-        label="Required"
-        placeholder="Select an option"
-        isRequired
-        description="Helper text"
-      >
+      <Select label="Required" placeholder="Select an option" isRequired description="Helper text">
         <SelectItem id="cash">Cash</SelectItem>
         <SelectItem id="margin">Margin</SelectItem>
       </Select>
@@ -674,28 +660,62 @@ export function LinkVariantsDemo() {
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
       <div />
       <div className="text-xs font-bold uppercase text-text-default-muted text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Hover Underline</div>
-      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Always Underline</div>
+      <div className="text-xs font-bold uppercase text-text-default-muted text-center">
+        Hover Underline
+      </div>
+      <div className="text-xs font-bold uppercase text-text-default-muted text-center">
+        Always Underline
+      </div>
 
       <div className="text-sm font-medium">Primary</div>
-      <div className="flex justify-center"><Link variant="primary" underline="none">Link</Link></div>
-      <div className="flex justify-center"><Link variant="primary" underline="hover">Link</Link></div>
-      <div className="flex justify-center"><Link variant="primary" underline="always">Link</Link></div>
+      <div className="flex justify-center">
+        <Link variant="primary" underline="none">
+          Link
+        </Link>
+      </div>
+      <div className="flex justify-center">
+        <Link variant="primary" underline="hover">
+          Link
+        </Link>
+      </div>
+      <div className="flex justify-center">
+        <Link variant="primary" underline="always">
+          Link
+        </Link>
+      </div>
 
       <div className="text-sm font-medium">Secondary</div>
-      <div className="flex justify-center"><Link variant="secondary" underline="none">Link</Link></div>
-      <div className="flex justify-center"><Link variant="secondary" underline="hover">Link</Link></div>
-      <div className="flex justify-center"><Link variant="secondary" underline="always">Link</Link></div>
+      <div className="flex justify-center">
+        <Link variant="secondary" underline="none">
+          Link
+        </Link>
+      </div>
+      <div className="flex justify-center">
+        <Link variant="secondary" underline="hover">
+          Link
+        </Link>
+      </div>
+      <div className="flex justify-center">
+        <Link variant="secondary" underline="always">
+          Link
+        </Link>
+      </div>
 
       <div className="text-sm font-medium p-2 rounded">Inverted</div>
       <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="none">Link</Link>
+        <Link variant="inverted" underline="none">
+          Link
+        </Link>
       </div>
       <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="hover">Link</Link>
+        <Link variant="inverted" underline="hover">
+          Link
+        </Link>
       </div>
       <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="always">Link</Link>
+        <Link variant="inverted" underline="always">
+          Link
+        </Link>
       </div>
     </div>
   );
@@ -768,13 +788,21 @@ export function RadioSizesDemo() {
   return (
     <div className="flex flex-col gap-[16px]">
       <RadioGroup aria-label="Small radios" defaultValue="sm-on">
-        <Radio value="sm-off" size="sm">Small Off</Radio>
-        <Radio value="sm-on" size="sm">Small On</Radio>
+        <Radio value="sm-off" size="sm">
+          Small Off
+        </Radio>
+        <Radio value="sm-on" size="sm">
+          Small On
+        </Radio>
       </RadioGroup>
 
       <RadioGroup aria-label="Medium radios" defaultValue="md-on">
-        <Radio value="md-off" size="md">Medium Off</Radio>
-        <Radio value="md-on" size="md">Medium On</Radio>
+        <Radio value="md-off" size="md">
+          Medium Off
+        </Radio>
+        <Radio value="md-on" size="md">
+          Medium On
+        </Radio>
       </RadioGroup>
     </div>
   );
@@ -783,8 +811,12 @@ export function RadioSizesDemo() {
 export function RadioDisabledDemo() {
   return (
     <RadioGroup aria-label="Disabled radios" defaultValue="on-disabled">
-      <Radio value="off-disabled" isDisabled>Disabled Off</Radio>
-      <Radio value="on-disabled" isDisabled>Disabled On</Radio>
+      <Radio value="off-disabled" isDisabled>
+        Disabled Off
+      </Radio>
+      <Radio value="on-disabled" isDisabled>
+        Disabled On
+      </Radio>
     </RadioGroup>
   );
 }

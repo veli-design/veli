@@ -24,8 +24,8 @@ export function ModalBasicDemo() {
         }
       >
         <p>
-          This is a controlled modal. Focus is trapped while open and restored to the trigger
-          when closed.
+          This is a controlled modal. Focus is trapped while open and restored to the trigger when
+          closed.
         </p>
       </Modal>
     </div>
@@ -58,8 +58,8 @@ export function ModalSizesDemo() {
         footer={<Button onPress={() => setActiveSize(null)}>Close</Button>}
       >
         <p>
-          Resize behavior is token-based and keeps spacing and typography consistent across all
-          size variants.
+          Resize behavior is token-based and keeps spacing and typography consistent across all size
+          variants.
         </p>
       </Modal>
     </div>

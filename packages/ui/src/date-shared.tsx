@@ -1,9 +1,4 @@
-import * as React from 'react';
-import {
-  DateInput,
-  DateSegment,
-  type DateSegmentRenderProps,
-} from 'react-aria-components';
+import { DateInput, DateSegment, type DateSegmentRenderProps } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
@@ -82,7 +77,7 @@ export const fieldShellVariants = cva(
       isInvalid: false,
       isReadOnly: false,
     },
-  }
+  },
 );
 
 export const dateInputVariants = cva('flex min-w-0 flex-1 flex-wrap items-center gap-0');
@@ -131,17 +126,14 @@ const dateSegmentVariants = cva(
       isInvalid: false,
       isReadOnly: false,
     },
-  }
+  },
 );
 
 export function DateSegments({ className }: { className?: string }) {
   return (
     <DateInput className={twMerge(dateInputVariants(), className)}>
       {(segment) => (
-        <DateSegment
-          segment={segment}
-          className={(state) => getDateSegmentClassName(state)}
-        />
+        <DateSegment segment={segment} className={(state) => getDateSegmentClassName(state)} />
       )}
     </DateInput>
   );

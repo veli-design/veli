@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -15,7 +15,7 @@ import { invariantDev, normalizeAccessibleText } from './a11y';
 import { Button } from './button';
 
 const overlayVariants = cva(
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-[2px] transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0'
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-[2px] transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0',
 );
 
 const modalVariants = cva(
@@ -33,11 +33,12 @@ const modalVariants = cva(
     defaultVariants: {
       size: 'md',
     },
-  }
+  },
 );
 
 interface ModalSharedProps
-  extends Omit<AriaModalOverlayProps, 'children' | 'className'>,
+  extends
+    Omit<AriaModalOverlayProps, 'children' | 'className'>,
     VariantProps<typeof modalVariants> {
   title?: React.ReactNode;
   'aria-label'?: AriaDialogProps['aria-label'];
@@ -88,19 +89,19 @@ export function Modal({
 
   invariantDev(
     !titleIsEmptyString,
-    'Coral UI: Modal title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.'
+    'Coral UI: Modal title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.',
   );
   invariantDev(
     ariaLabel == null || Boolean(normalizedAriaLabel),
-    'Coral UI: Modal aria-label must be a non-empty string.'
+    'Coral UI: Modal aria-label must be a non-empty string.',
   );
   invariantDev(
     ariaLabelledby == null || Boolean(normalizedAriaLabelledby),
-    'Coral UI: Modal aria-labelledby must be a non-empty id reference.'
+    'Coral UI: Modal aria-labelledby must be a non-empty id reference.',
   );
   invariantDev(
     hasDialogName,
-    'Coral UI: Modal requires title, aria-label, or aria-labelledby so the dialog has an accessible name.'
+    'Coral UI: Modal requires title, aria-label, or aria-labelledby so the dialog has an accessible name.',
   );
 
   return (
@@ -159,7 +160,7 @@ export function Modal({
                   'px-[24px] pb-[24px] type-body-md-regular text-text-default-default',
                   hasTitle || showCloseButton ? 'pt-[16px]' : 'pt-[24px]',
                   size === 'full' && 'min-h-0 flex-1 overflow-auto',
-                  contentClassName
+                  contentClassName,
                 )}
               >
                 {children}
