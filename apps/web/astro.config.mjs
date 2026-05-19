@@ -8,9 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   integrations: [mdx(), react()],
   vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
   output: 'static',
 });

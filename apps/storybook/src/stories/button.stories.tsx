@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Button, type ButtonProps } from "@tradenetcorp/coral-ui/button";
-import { Plus, ArrowRight, Trash, DownloadSimple } from "phosphor-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import * as React from 'react';
+import { Button, type ButtonProps } from '@tradenetcorp/coral-ui/button';
+import { Plus, ArrowRight, Trash, DownloadSimple } from 'phosphor-react';
 
 const iconSizeMap = {
   xl: 24,
@@ -11,7 +11,7 @@ const iconSizeMap = {
   xs: 12,
 } as const;
 
-function ButtonLabel({ size = "md" }: { size?: keyof typeof iconSizeMap }) {
+function ButtonLabel({ size = 'md' }: { size?: keyof typeof iconSizeMap }) {
   const iconSize = iconSizeMap[size];
 
   return (
@@ -25,34 +25,34 @@ function ButtonLabel({ size = "md" }: { size?: keyof typeof iconSizeMap }) {
 
 const seaglassColorExamples = [
   {
-    name: "Primary blue",
-    buttonClassName: "bg-[#0066FF] hover:bg-[#0066FF] active:bg-[#0052CC]",
-    swatchClassName: "bg-[#0066FF]",
+    name: 'Primary blue',
+    buttonClassName: 'bg-[#0066FF] hover:bg-[#0066FF] active:bg-[#0052CC]',
+    swatchClassName: 'bg-[#0066FF]',
   },
   {
-    name: "Blue 800",
-    buttonClassName: "bg-[#1B54DF] hover:bg-[#1B54DF] active:bg-[#123EAE]",
-    swatchClassName: "bg-[#1B54DF]",
+    name: 'Blue 800',
+    buttonClassName: 'bg-[#1B54DF] hover:bg-[#1B54DF] active:bg-[#123EAE]',
+    swatchClassName: 'bg-[#1B54DF]',
   },
   {
-    name: "Green 800",
-    buttonClassName: "bg-[#156F3F] hover:bg-[#156F3F] active:bg-[#0F5130]",
-    swatchClassName: "bg-[#156F3F]",
+    name: 'Green 800',
+    buttonClassName: 'bg-[#156F3F] hover:bg-[#156F3F] active:bg-[#0F5130]',
+    swatchClassName: 'bg-[#156F3F]',
   },
   {
-    name: "Orange 800",
-    buttonClassName: "bg-[#915000] hover:bg-[#915000] active:bg-[#6A3A00]",
-    swatchClassName: "bg-[#915000]",
+    name: 'Orange 800',
+    buttonClassName: 'bg-[#915000] hover:bg-[#915000] active:bg-[#6A3A00]',
+    swatchClassName: 'bg-[#915000]',
   },
   {
-    name: "Red 800",
-    buttonClassName: "bg-[#C01800] hover:bg-[#C01800] active:bg-[#921200]",
-    swatchClassName: "bg-[#C01800]",
+    name: 'Red 800',
+    buttonClassName: 'bg-[#C01800] hover:bg-[#C01800] active:bg-[#921200]',
+    swatchClassName: 'bg-[#C01800]',
   },
   {
-    name: "Gray 1100",
-    buttonClassName: "bg-[#20252B] hover:bg-[#20252B] active:bg-[#14181D]",
-    swatchClassName: "bg-[#20252B]",
+    name: 'Gray 1100',
+    buttonClassName: 'bg-[#20252B] hover:bg-[#20252B] active:bg-[#14181D]',
+    swatchClassName: 'bg-[#20252B]',
   },
 ] as const;
 
@@ -130,83 +130,83 @@ type SeaglassStopConfig = {
   stopKey: SeaglassWorkbenchKey;
 };
 
-type SeaglassWorkbenchLayer = "hover" | "press";
+type SeaglassWorkbenchLayer = 'hover' | 'press';
 
 const seaglassPreviewDefaults: SeaglassPreviewValues = {
-  label: "Start",
-  baseColor: "#0066FF",
-  hoverColor: "#0066FF",
-  activeColor: "#0052CC",
-  textColor: "#FFFFFF",
-  canvasColor: "#F8FAFC",
+  label: 'Start',
+  baseColor: '#0066FF',
+  hoverColor: '#0066FF',
+  activeColor: '#0052CC',
+  textColor: '#FFFFFF',
+  canvasColor: '#F8FAFC',
   buttonWidth: 180,
   showSamples: true,
 };
 
 const seaglassPreviewPresets = [
   {
-    name: "Primary blue",
-    baseColor: "#0066FF",
-    hoverColor: "#0066FF",
-    activeColor: "#0052CC",
-    textColor: "#FFFFFF",
+    name: 'Primary blue',
+    baseColor: '#0066FF',
+    hoverColor: '#0066FF',
+    activeColor: '#0052CC',
+    textColor: '#FFFFFF',
   },
   {
-    name: "Blue 800",
-    baseColor: "#1B54DF",
-    hoverColor: "#1B54DF",
-    activeColor: "#123EAE",
-    textColor: "#FFFFFF",
+    name: 'Blue 800',
+    baseColor: '#1B54DF',
+    hoverColor: '#1B54DF',
+    activeColor: '#123EAE',
+    textColor: '#FFFFFF',
   },
   {
-    name: "Green 800",
-    baseColor: "#156F3F",
-    hoverColor: "#156F3F",
-    activeColor: "#0F5130",
-    textColor: "#FFFFFF",
+    name: 'Green 800',
+    baseColor: '#156F3F',
+    hoverColor: '#156F3F',
+    activeColor: '#0F5130',
+    textColor: '#FFFFFF',
   },
   {
-    name: "Orange 800",
-    baseColor: "#915000",
-    hoverColor: "#915000",
-    activeColor: "#6A3A00",
-    textColor: "#FFFFFF",
+    name: 'Orange 800',
+    baseColor: '#915000',
+    hoverColor: '#915000',
+    activeColor: '#6A3A00',
+    textColor: '#FFFFFF',
   },
   {
-    name: "Red 800",
-    baseColor: "#C01800",
-    hoverColor: "#C01800",
-    activeColor: "#921200",
-    textColor: "#FFFFFF",
+    name: 'Red 800',
+    baseColor: '#C01800',
+    hoverColor: '#C01800',
+    activeColor: '#921200',
+    textColor: '#FFFFFF',
   },
   {
-    name: "Gray 1100",
-    baseColor: "#20252B",
-    hoverColor: "#20252B",
-    activeColor: "#14181D",
-    textColor: "#FFFFFF",
+    name: 'Gray 1100',
+    baseColor: '#20252B',
+    hoverColor: '#20252B',
+    activeColor: '#14181D',
+    textColor: '#FFFFFF',
   },
 ] as const;
 
 const baseOverlayStops = [
-  { alphaKey: "fillAlpha1", stopKey: "fillStop1" },
-  { alphaKey: "fillAlpha2", stopKey: "fillStop2" },
-  { alphaKey: "fillAlpha3", stopKey: "fillStop3" },
-  { alphaKey: "fillAlpha4", stopKey: "fillStop4" },
-  { alphaKey: "fillAlpha5", stopKey: "fillStop5" },
-  { alphaKey: "fillAlpha6", stopKey: "fillStop6" },
+  { alphaKey: 'fillAlpha1', stopKey: 'fillStop1' },
+  { alphaKey: 'fillAlpha2', stopKey: 'fillStop2' },
+  { alphaKey: 'fillAlpha3', stopKey: 'fillStop3' },
+  { alphaKey: 'fillAlpha4', stopKey: 'fillStop4' },
+  { alphaKey: 'fillAlpha5', stopKey: 'fillStop5' },
+  { alphaKey: 'fillAlpha6', stopKey: 'fillStop6' },
 ] as const satisfies ReadonlyArray<{
   alphaKey: SeaglassWorkbenchKey;
   stopKey: SeaglassWorkbenchKey;
 }>;
 
 const activeOverlayStops = [
-  { alphaKey: "activeAlpha1", stopKey: "activeStop1" },
-  { alphaKey: "activeAlpha2", stopKey: "activeStop2" },
-  { alphaKey: "activeAlpha3", stopKey: "activeStop3" },
-  { alphaKey: "activeAlpha4", stopKey: "activeStop4" },
-  { alphaKey: "activeAlpha5", stopKey: "activeStop5" },
-  { alphaKey: "activeAlpha6", stopKey: "activeStop6" },
+  { alphaKey: 'activeAlpha1', stopKey: 'activeStop1' },
+  { alphaKey: 'activeAlpha2', stopKey: 'activeStop2' },
+  { alphaKey: 'activeAlpha3', stopKey: 'activeStop3' },
+  { alphaKey: 'activeAlpha4', stopKey: 'activeStop4' },
+  { alphaKey: 'activeAlpha5', stopKey: 'activeStop5' },
+  { alphaKey: 'activeAlpha6', stopKey: 'activeStop6' },
 ] as const satisfies ReadonlyArray<{
   alphaKey: SeaglassWorkbenchKey;
   stopKey: SeaglassWorkbenchKey;
@@ -216,27 +216,27 @@ const minimumGradientStops = 2;
 
 const timingControls = [
   {
-    label: "Active opacity",
-    valueKey: "activeOverlayOpacity",
+    label: 'Active opacity',
+    valueKey: 'activeOverlayOpacity',
     min: 0,
     max: 1,
     step: 0.01,
   },
   {
-    label: "Idle fade",
-    valueKey: "afterDuration",
+    label: 'Idle fade',
+    valueKey: 'afterDuration',
     min: 0,
     max: 800,
     step: 10,
-    suffix: "ms",
+    suffix: 'ms',
   },
   {
-    label: "Press fade",
-    valueKey: "activeDuration",
+    label: 'Press fade',
+    valueKey: 'activeDuration',
     min: 0,
     max: 400,
     step: 10,
-    suffix: "ms",
+    suffix: 'ms',
   },
 ] as const satisfies ReadonlyArray<{
   label: string;
@@ -249,14 +249,14 @@ const timingControls = [
 
 function formatWorkbenchValue(value: number, step: number) {
   const stepText = String(step);
-  const decimalPrecision = stepText.includes(".") ? stepText.split(".")[1]?.length ?? 0 : 0;
+  const decimalPrecision = stepText.includes('.') ? (stepText.split('.')[1]?.length ?? 0) : 0;
   const precision = Math.min(Math.max(decimalPrecision, 0), 4);
 
   return Number(value.toFixed(precision));
 }
 
 function safeColorValue(value: string) {
-  return /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
+  return /^#[0-9a-fA-F]{6}$/.test(value) ? value : '#000000';
 }
 
 function clampWorkbenchValue(value: number, min: number, max: number, step: number) {
@@ -265,26 +265,26 @@ function clampWorkbenchValue(value: number, min: number, max: number, step: numb
 
 function seaglassStopsToGradient(
   stops: ReadonlyArray<SeaglassStopConfig>,
-  values: SeaglassWorkbenchValues
+  values: SeaglassWorkbenchValues,
 ) {
   const sortedStops = [...stops].sort((a, b) => values[a.stopKey] - values[b.stopKey]);
 
   return `linear-gradient(90deg, ${sortedStops
     .map((stop) => `rgba(255,255,255,${values[stop.alphaKey]}) ${values[stop.stopKey]}%`)
-    .join(", ")})`;
+    .join(', ')})`;
 }
 
 function seaglassStopsToRadialGradient(
   stops: ReadonlyArray<SeaglassStopConfig>,
   values: SeaglassWorkbenchValues,
   radiusXKey: SeaglassWorkbenchKey,
-  radiusYKey: SeaglassWorkbenchKey
+  radiusYKey: SeaglassWorkbenchKey,
 ) {
   const sortedStops = [...stops].sort((a, b) => values[a.stopKey] - values[b.stopKey]);
 
   return `radial-gradient(ellipse ${values[radiusXKey]}px ${values[radiusYKey]}px at 50% 50%, ${sortedStops
     .map((stop) => `rgba(255,255,255,${values[stop.alphaKey]}) ${values[stop.stopKey]}%`)
-    .join(", ")})`;
+    .join(', ')})`;
 }
 
 function alphaToPercentValue(alpha: number) {
@@ -307,7 +307,7 @@ function stopValue(
   stops: ReadonlyArray<SeaglassStopConfig>,
   values: SeaglassWorkbenchValues,
   stopCount: number,
-  index: number
+  index: number,
 ) {
   const visibleStopCount = Math.min(Math.max(minimumGradientStops, stopCount), stops.length);
   const sourceStop = stops[Math.min(index, visibleStopCount - 1)];
@@ -322,7 +322,7 @@ function collapseDeletedStop(
   values: SeaglassWorkbenchValues,
   stops: ReadonlyArray<SeaglassStopConfig>,
   stopCount: number,
-  deletedIndex: number
+  deletedIndex: number,
 ): SeaglassWorkbenchValues {
   if (stopCount <= minimumGradientStops) {
     return values;
@@ -349,7 +349,7 @@ function insertGradientStop(
   values: SeaglassWorkbenchValues,
   stops: ReadonlyArray<SeaglassStopConfig>,
   stopCount: number,
-  insertIndex: number
+  insertIndex: number,
 ): SeaglassWorkbenchValues {
   if (stopCount >= stops.length) {
     return values;
@@ -374,13 +374,13 @@ function insertGradientStop(
     (previousAlpha + nextAlpha) / 2,
     0,
     1,
-    0.0001
+    0.0001,
   );
   nextValues[stops[clampedInsertIndex].stopKey] = clampWorkbenchValue(
     (previousPosition + nextPosition) / 2,
     0,
     100,
-    0.1
+    0.1,
   );
 
   return nextValues;
@@ -392,7 +392,7 @@ function SeaglassDirectNumberField({
   min,
   max,
   step,
-  suffix = "",
+  suffix = '',
   description,
   onChange,
 }: {
@@ -478,12 +478,12 @@ function SeaglassDirectNumberField({
             }}
             onFocus={() => setIsEditing(true)}
             onKeyDown={(event) => {
-              if (event.key === "Enter") {
+              if (event.key === 'Enter') {
                 event.preventDefault();
                 commitDraft();
               }
 
-              if (event.key === "Escape") {
+              if (event.key === 'Escape') {
                 event.preventDefault();
                 setDraftValue(draftValueFromNumber(value, step));
                 setIsEditing(false);
@@ -492,9 +492,7 @@ function SeaglassDirectNumberField({
             }}
           />
           {suffix ? (
-            <span className="pr-2 text-[10px] font-semibold text-gray-700">
-              {suffix}
-            </span>
+            <span className="pr-2 text-[10px] font-semibold text-gray-700">{suffix}</span>
           ) : null}
         </div>
       </div>
@@ -604,7 +602,7 @@ function SeaglassStopEditor({
     stops,
     values,
     radiusXControl.valueKey,
-    radiusYControl.valueKey
+    radiusYControl.valueKey,
   );
   const canAddStop = stops.length < maxStopCount;
   const canDeleteStop = stops.length > minimumGradientStops;
@@ -654,14 +652,14 @@ function SeaglassStopEditor({
     };
 
     const stopDragging = () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", stopDragging);
-      window.removeEventListener("pointercancel", stopDragging);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', stopDragging);
+      window.removeEventListener('pointercancel', stopDragging);
     };
 
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointercancel", stopDragging);
-    window.addEventListener("pointerup", stopDragging, { once: true });
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointercancel', stopDragging);
+    window.addEventListener('pointerup', stopDragging, { once: true });
   };
 
   const addStopAfterSelection = () => {
@@ -687,16 +685,16 @@ function SeaglassStopEditor({
   const handleStopKeyDown = (
     index: number,
     stop: SeaglassStopConfig,
-    event: React.KeyboardEvent<HTMLButtonElement>
+    event: React.KeyboardEvent<HTMLButtonElement>,
   ) => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
       return;
     }
 
     event.preventDefault();
     setSelectedIndex(index);
 
-    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
     const keyboardStep = event.shiftKey ? 5 : 1;
     updateStopPosition(stop, values[stop.stopKey] + direction * keyboardStep);
   };
@@ -795,18 +793,15 @@ function SeaglassStopEditor({
                 <button
                   aria-label={`Select stop ${index + 1}`}
                   className={[
-                    "absolute top-1/2 h-6 w-4 -translate-x-1/2 -translate-y-1/2 rounded-[4px] border shadow-sm transition",
+                    'absolute top-1/2 h-6 w-4 -translate-x-1/2 -translate-y-1/2 rounded-[4px] border shadow-sm transition',
                     isSelected
-                      ? "border-blue-600 ring-4 ring-blue-100"
-                      : "border-white hover:border-blue-300",
-                  ].join(" ")}
+                      ? 'border-blue-600 ring-4 ring-blue-100'
+                      : 'border-white hover:border-blue-300',
+                  ].join(' ')}
                   key={stop.alphaKey}
                   style={{
                     left: `${values[stop.stopKey]}%`,
-                    backgroundColor: `rgba(255,255,255,${Math.max(
-                      values[stop.alphaKey],
-                      0.12
-                    )})`,
+                    backgroundColor: `rgba(255,255,255,${Math.max(values[stop.alphaKey], 0.12)})`,
                   }}
                   type="button"
                   onPointerDown={(event) => {
@@ -827,11 +822,11 @@ function SeaglassStopEditor({
               return (
                 <button
                   className={[
-                    "grid grid-cols-[24px_minmax(0,1fr)_72px_72px] items-center gap-3 rounded-md border px-3 py-2 text-left text-xs",
+                    'grid grid-cols-[24px_minmax(0,1fr)_72px_72px] items-center gap-3 rounded-md border px-3 py-2 text-left text-xs',
                     isSelected
-                      ? "border-blue-500 bg-blue-50 text-blue-900"
-                      : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
-                  ].join(" ")}
+                      ? 'border-blue-500 bg-blue-50 text-blue-900'
+                      : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50',
+                  ].join(' ')}
                   key={stop.alphaKey}
                   type="button"
                   onClick={() => setSelectedIndex(index)}
@@ -920,7 +915,7 @@ function SeaglassExportPanel({
           type="button"
           onClick={onCopy}
         >
-          {copied ? "Copied" : "Copy JSON"}
+          {copied ? 'Copied' : 'Copy JSON'}
         </button>
       </div>
       <textarea
@@ -935,16 +930,16 @@ function SeaglassExportPanel({
 function seaglassWorkbenchStyle(
   values: SeaglassWorkbenchValues,
   baseStopCount: number,
-  activeStopCount: number
+  activeStopCount: number,
 ): SeaglassWorkbenchStyle {
   const style: SeaglassWorkbenchStyle = {
-    "--button-seaglass-overlay-radius-x": `${values.radiusX}px`,
-    "--button-seaglass-overlay-radius-y": `${values.radiusY}px`,
-    "--button-seaglass-active-radius-x": `${values.activeRadiusX}px`,
-    "--button-seaglass-active-radius-y": `${values.activeRadiusY}px`,
-    "--button-seaglass-active-overlay-opacity": values.activeOverlayOpacity,
-    "--button-seaglass-after-duration": `${values.afterDuration}ms`,
-    "--button-seaglass-active-duration": `${values.activeDuration}ms`,
+    '--button-seaglass-overlay-radius-x': `${values.radiusX}px`,
+    '--button-seaglass-overlay-radius-y': `${values.radiusY}px`,
+    '--button-seaglass-active-radius-x': `${values.activeRadiusX}px`,
+    '--button-seaglass-active-radius-y': `${values.activeRadiusY}px`,
+    '--button-seaglass-active-overlay-opacity': values.activeOverlayOpacity,
+    '--button-seaglass-after-duration': `${values.afterDuration}ms`,
+    '--button-seaglass-active-duration': `${values.activeDuration}ms`,
   };
 
   baseOverlayStops.forEach((stop, index) => {
@@ -966,7 +961,7 @@ function createSeaglassWorkbenchExport(
   values: SeaglassWorkbenchValues,
   preview: SeaglassPreviewValues,
   baseStopCount: number,
-  activeStopCount: number
+  activeStopCount: number,
 ): SeaglassWorkbenchExport {
   const cssVariables = seaglassWorkbenchStyle(values, baseStopCount, activeStopCount);
 
@@ -1002,25 +997,25 @@ function SeaglassGradientWorkbench() {
   const [preview, setPreview] = React.useState(seaglassPreviewDefaults);
   const [baseStopCount, setBaseStopCount] = React.useState<number>(baseOverlayStops.length);
   const [activeStopCount, setActiveStopCount] = React.useState<number>(activeOverlayStops.length);
-  const [selectedLayer, setSelectedLayer] = React.useState<SeaglassWorkbenchLayer>("hover");
+  const [selectedLayer, setSelectedLayer] = React.useState<SeaglassWorkbenchLayer>('hover');
   const [copied, setCopied] = React.useState(false);
   const previewStyle = seaglassWorkbenchStyle(values, baseStopCount, activeStopCount);
   const exportPayload = React.useMemo(
     () => createSeaglassWorkbenchExport(values, preview, baseStopCount, activeStopCount),
-    [activeStopCount, baseStopCount, values, preview]
+    [activeStopCount, baseStopCount, values, preview],
   );
   const exportJson = React.useMemo(() => JSON.stringify(exportPayload, null, 2), [exportPayload]);
   const visibleBaseOverlayStops = React.useMemo(
     () => visibleStops(baseOverlayStops, baseStopCount),
-    [baseStopCount]
+    [baseStopCount],
   );
   const visibleActiveOverlayStops = React.useMemo(
     () => visibleStops(activeOverlayStops, activeStopCount),
-    [activeStopCount]
+    [activeStopCount],
   );
 
   const updateWorkbenchValues: React.Dispatch<React.SetStateAction<SeaglassWorkbenchValues>> = (
-    nextValues
+    nextValues,
   ) => {
     setValues(nextValues);
     setCopied(false);
@@ -1028,7 +1023,7 @@ function SeaglassGradientWorkbench() {
 
   const updatePreview = <Key extends keyof SeaglassPreviewValues>(
     key: Key,
-    value: SeaglassPreviewValues[Key]
+    value: SeaglassPreviewValues[Key],
   ) => {
     setPreview((current) => ({ ...current, [key]: value }));
     setCopied(false);
@@ -1049,7 +1044,7 @@ function SeaglassGradientWorkbench() {
     setPreview(seaglassPreviewDefaults);
     setBaseStopCount(baseOverlayStops.length);
     setActiveStopCount(activeOverlayStops.length);
-    setSelectedLayer("hover");
+    setSelectedLayer('hover');
     setCopied(false);
   };
 
@@ -1066,7 +1061,7 @@ function SeaglassGradientWorkbench() {
     }
 
     updateWorkbenchValues((current) =>
-      insertGradientStop(current, baseOverlayStops, baseStopCount, index)
+      insertGradientStop(current, baseOverlayStops, baseStopCount, index),
     );
     setBaseStopCount((current) => Math.min(baseOverlayStops.length, current + 1));
   };
@@ -1077,7 +1072,7 @@ function SeaglassGradientWorkbench() {
     }
 
     updateWorkbenchValues((current) =>
-      collapseDeletedStop(current, baseOverlayStops, baseStopCount, index)
+      collapseDeletedStop(current, baseOverlayStops, baseStopCount, index),
     );
     setBaseStopCount((current) => Math.max(minimumGradientStops, current - 1));
   };
@@ -1088,7 +1083,7 @@ function SeaglassGradientWorkbench() {
     }
 
     updateWorkbenchValues((current) =>
-      insertGradientStop(current, activeOverlayStops, activeStopCount, index)
+      insertGradientStop(current, activeOverlayStops, activeStopCount, index),
     );
     setActiveStopCount((current) => Math.min(activeOverlayStops.length, current + 1));
   };
@@ -1099,7 +1094,7 @@ function SeaglassGradientWorkbench() {
     }
 
     updateWorkbenchValues((current) =>
-      collapseDeletedStop(current, activeOverlayStops, activeStopCount, index)
+      collapseDeletedStop(current, activeOverlayStops, activeStopCount, index),
     );
     setActiveStopCount((current) => Math.max(minimumGradientStops, current - 1));
   };
@@ -1109,11 +1104,11 @@ function SeaglassGradientWorkbench() {
     setCopied(true);
   };
 
-  const previewClassName = "seaglass-workbench-preview-button";
+  const previewClassName = 'seaglass-workbench-preview-button';
   const selectedLayerCopy =
-    selectedLayer === "hover"
-      ? "The hover overlay is always present on seaglass fill buttons and follows the pointer."
-      : "The press overlay fades in while pressed. Keep it quiet so the click feels inset, not flashy.";
+    selectedLayer === 'hover'
+      ? 'The hover overlay is always present on seaglass fill buttons and follows the pointer.'
+      : 'The press overlay fades in while pressed. Keep it quiet so the click feels inset, not flashy.';
 
   return (
     <div className="min-h-screen bg-gray-50 p-2 text-gray-950">
@@ -1200,7 +1195,7 @@ function SeaglassGradientWorkbench() {
                 <input
                   className="rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   value={preview.label}
-                  onChange={(event) => updatePreview("label", event.target.value)}
+                  onChange={(event) => updatePreview('label', event.target.value)}
                 />
               </label>
               <SeaglassDirectNumberField
@@ -1210,7 +1205,7 @@ function SeaglassGradientWorkbench() {
                 max={420}
                 step={1}
                 suffix="px"
-                onChange={(value) => updatePreview("buttonWidth", value)}
+                onChange={(value) => updatePreview('buttonWidth', value)}
               />
             </div>
 
@@ -1218,22 +1213,22 @@ function SeaglassGradientWorkbench() {
               <SeaglassColorField
                 label="Base color"
                 value={preview.baseColor}
-                onChange={(value) => updatePreview("baseColor", value)}
+                onChange={(value) => updatePreview('baseColor', value)}
               />
               <SeaglassColorField
                 label="Hover color"
                 value={preview.hoverColor}
-                onChange={(value) => updatePreview("hoverColor", value)}
+                onChange={(value) => updatePreview('hoverColor', value)}
               />
               <SeaglassColorField
                 label="Active color"
                 value={preview.activeColor}
-                onChange={(value) => updatePreview("activeColor", value)}
+                onChange={(value) => updatePreview('activeColor', value)}
               />
               <SeaglassColorField
                 label="Canvas"
                 value={preview.canvasColor}
-                onChange={(value) => updatePreview("canvasColor", value)}
+                onChange={(value) => updatePreview('canvasColor', value)}
               />
             </div>
 
@@ -1260,7 +1255,7 @@ function SeaglassGradientWorkbench() {
                 checked={preview.showSamples}
                 className="h-4 w-4 accent-blue-600"
                 type="checkbox"
-                onChange={(event) => updatePreview("showSamples", event.target.checked)}
+                onChange={(event) => updatePreview('showSamples', event.target.checked)}
               />
               Show color sample buttons
             </label>
@@ -1274,8 +1269,8 @@ function SeaglassGradientWorkbench() {
           >
             <div className="grid grid-cols-2 rounded-lg border border-gray-200 bg-gray-100 p-1">
               {[
-                { label: "Hover overlay", value: "hover" as const },
-                { label: "Press overlay", value: "press" as const },
+                { label: 'Hover overlay', value: 'hover' as const },
+                { label: 'Press overlay', value: 'press' as const },
               ].map((layer) => {
                 const isSelected = selectedLayer === layer.value;
 
@@ -1283,11 +1278,11 @@ function SeaglassGradientWorkbench() {
                   <button
                     aria-pressed={isSelected}
                     className={[
-                      "rounded-md px-3 py-2 text-xs font-semibold transition",
+                      'rounded-md px-3 py-2 text-xs font-semibold transition',
                       isSelected
-                        ? "bg-white text-gray-950 shadow-sm"
-                        : "text-gray-700 hover:text-gray-800",
-                    ].join(" ")}
+                        ? 'bg-white text-gray-950 shadow-sm'
+                        : 'text-gray-700 hover:text-gray-800',
+                    ].join(' ')}
                     key={layer.value}
                     type="button"
                     onClick={() => setSelectedLayer(layer.value)}
@@ -1300,13 +1295,13 @@ function SeaglassGradientWorkbench() {
             <p className="mt-3 text-xs text-gray-700">{selectedLayerCopy}</p>
           </SeaglassWorkbenchPanel>
 
-          {selectedLayer === "hover" ? (
+          {selectedLayer === 'hover' ? (
             <SeaglassStopEditor
               title="Hover radial gradient"
               description="Edit the transparent white overlay that follows the cursor."
               radiusControls={[
-                { label: "Width", valueKey: "radiusX" },
-                { label: "Height", valueKey: "radiusY" },
+                { label: 'Width', valueKey: 'radiusX' },
+                { label: 'Height', valueKey: 'radiusY' },
               ]}
               maxStopCount={baseOverlayStops.length}
               onAddStop={addBaseStop}
@@ -1328,29 +1323,31 @@ function SeaglassGradientWorkbench() {
                       key={control.valueKey}
                       label={control.label}
                       value={
-                        control.valueKey === "activeOverlayOpacity"
+                        control.valueKey === 'activeOverlayOpacity'
                           ? alphaToPercentValue(values[control.valueKey])
                           : values[control.valueKey]
                       }
                       min={control.min}
-                      max={control.valueKey === "activeOverlayOpacity" ? 100 : control.max}
-                      step={control.valueKey === "activeOverlayOpacity" ? 0.25 : control.step}
+                      max={control.valueKey === 'activeOverlayOpacity' ? 100 : control.max}
+                      step={control.valueKey === 'activeOverlayOpacity' ? 0.25 : control.step}
                       suffix={
-                        control.valueKey === "activeOverlayOpacity"
-                          ? "%"
-                          : "suffix" in control
+                        control.valueKey === 'activeOverlayOpacity'
+                          ? '%'
+                          : 'suffix' in control
                             ? control.suffix
                             : undefined
                       }
                       description={
-                        control.valueKey === "activeOverlayOpacity"
-                          ? "Strength of the press layer."
+                        control.valueKey === 'activeOverlayOpacity'
+                          ? 'Strength of the press layer.'
                           : undefined
                       }
                       onChange={(value) =>
                         updateWorkbenchNumber(
                           control.valueKey,
-                          control.valueKey === "activeOverlayOpacity" ? percentToAlphaValue(value) : value
+                          control.valueKey === 'activeOverlayOpacity'
+                            ? percentToAlphaValue(value)
+                            : value,
                         )
                       }
                     />
@@ -1362,8 +1359,8 @@ function SeaglassGradientWorkbench() {
                 title="Press radial gradient"
                 description="Edit the transparent white overlay that fades in on press."
                 radiusControls={[
-                  { label: "Width", valueKey: "activeRadiusX" },
-                  { label: "Height", valueKey: "activeRadiusY" },
+                  { label: 'Width', valueKey: 'activeRadiusX' },
+                  { label: 'Height', valueKey: 'activeRadiusY' },
                 ]}
                 maxStopCount={activeOverlayStops.length}
                 onAddStop={addActiveStop}
@@ -1376,11 +1373,7 @@ function SeaglassGradientWorkbench() {
             </>
           )}
 
-          <SeaglassExportPanel
-            copied={copied}
-            exportJson={exportJson}
-            onCopy={copyExport}
-          />
+          <SeaglassExportPanel copied={copied} exportJson={exportJson} onCopy={copyExport} />
         </div>
       </div>
     </div>
@@ -1394,7 +1387,7 @@ type PreviewArgs = ButtonProps & {
 
 function renderPreviewButton(args: PreviewArgs) {
   const { leadingIcon, trailingIcon, children, ...buttonProps } = args;
-  const size = buttonProps.size ?? "md";
+  const size = buttonProps.size ?? 'md';
   const iconSize = iconSizeMap[size];
   const content = buttonProps.iconOnly ? (
     <Plus size={iconSize} weight="bold" />
@@ -1406,12 +1399,12 @@ function renderPreviewButton(args: PreviewArgs) {
     </>
   );
   const derivedAriaLabel =
-    buttonProps["aria-label"] ?? (typeof children === "string" ? children : "Button");
+    buttonProps['aria-label'] ?? (typeof children === 'string' ? children : 'Button');
 
   return (
     <Button
       {...buttonProps}
-      aria-label={buttonProps.iconOnly ? derivedAriaLabel : buttonProps["aria-label"]}
+      aria-label={buttonProps.iconOnly ? derivedAriaLabel : buttonProps['aria-label']}
     >
       {content}
     </Button>
@@ -1419,55 +1412,55 @@ function renderPreviewButton(args: PreviewArgs) {
 }
 
 const meta = {
-  title: "Components/Button",
+  title: 'Components/Button',
   component: Button,
   render: renderPreviewButton,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     variant: {
-      control: "select",
-      options: ["primary", "secondary", "danger"],
+      control: 'select',
+      options: ['primary', 'secondary', 'danger'],
     },
     style: {
-      control: "select",
-      options: ["fill", "transparent", "ghost"],
+      control: 'select',
+      options: ['fill', 'transparent', 'ghost'],
     },
     size: {
-      control: "select",
-      options: ["xs", "sm", "md", "lg", "xl"],
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
     },
     isLoading: {
-      control: "boolean",
+      control: 'boolean',
     },
     iconOnly: {
-      control: "boolean",
+      control: 'boolean',
     },
     leadingIcon: {
-      control: "boolean",
+      control: 'boolean',
     },
     trailingIcon: {
-      control: "boolean",
+      control: 'boolean',
     },
     treatment: {
-      control: "select",
-      options: ["basic", "seaglass"],
+      control: 'select',
+      options: ['basic', 'seaglass'],
     },
     isDisabled: {
-      control: "boolean",
+      control: 'boolean',
     },
   },
   args: {
-    children: "Button",
-    variant: "primary",
-    style: "fill",
-    size: "md",
+    children: 'Button',
+    variant: 'primary',
+    style: 'fill',
+    size: 'md',
     iconOnly: false,
     leadingIcon: false,
     trailingIcon: false,
-    treatment: "basic",
+    treatment: 'basic',
   },
 } satisfies Meta<PreviewArgs>;
 
@@ -1479,7 +1472,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Primary: Story = {
   args: {
-    children: "Primary Button",
+    children: 'Primary Button',
   },
 };
 
@@ -1491,9 +1484,7 @@ export const AllVariants: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
       <div />
-      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-        Fill
-      </div>
+      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">Fill</div>
       <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
         Transparent
       </div>
@@ -1550,8 +1541,8 @@ export const ExperimentalEnhanced: Story = {
             Figma XL Matrix
           </span>
           <span className="text-sm text-text-default-subtle">
-            Primary and secondary mirror the stylized Figma set at XL. Danger
-            extends the same treatment for system consistency.
+            Primary and secondary mirror the stylized Figma set at XL. Danger extends the same
+            treatment for system consistency.
           </span>
         </div>
         <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
@@ -1570,46 +1561,21 @@ export const ExperimentalEnhanced: Story = {
           <Button variant="primary" style="fill" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
-          <Button
-            variant="primary"
-            style="transparent"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="primary" style="transparent" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
-          <Button
-            variant="primary"
-            style="ghost"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="primary" style="ghost" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
 
           <div className="text-sm font-medium">Secondary</div>
-          <Button
-            variant="secondary"
-            style="fill"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
-          <Button
-            variant="secondary"
-            style="transparent"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
-          <Button
-            variant="secondary"
-            style="ghost"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="secondary" style="ghost" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
 
@@ -1617,12 +1583,7 @@ export const ExperimentalEnhanced: Story = {
           <Button variant="danger" style="fill" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
-          <Button
-            variant="danger"
-            style="transparent"
-            size="xl"
-            treatment="seaglass"
-          >
+          <Button variant="danger" style="transparent" size="xl" treatment="seaglass">
             <ButtonLabel size="xl" />
           </Button>
           <Button variant="danger" style="ghost" size="xl" treatment="seaglass">
@@ -1640,12 +1601,7 @@ export const ExperimentalEnhanced: Story = {
             <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Primary Default
             </span>
-            <Button
-              variant="primary"
-              style="fill"
-              size="xl"
-              treatment="seaglass"
-            >
+            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1666,13 +1622,7 @@ export const ExperimentalEnhanced: Story = {
             <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Primary Disabled
             </span>
-            <Button
-              variant="primary"
-              style="fill"
-              size="xl"
-              isDisabled
-              treatment="seaglass"
-            >
+            <Button variant="primary" style="fill" size="xl" isDisabled treatment="seaglass">
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1680,12 +1630,7 @@ export const ExperimentalEnhanced: Story = {
             <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Secondary Default
             </span>
-            <Button
-              variant="secondary"
-              style="fill"
-              size="xl"
-              treatment="seaglass"
-            >
+            <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1706,13 +1651,7 @@ export const ExperimentalEnhanced: Story = {
             <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
               Secondary Disabled
             </span>
-            <Button
-              variant="secondary"
-              style="fill"
-              size="xl"
-              isDisabled
-              treatment="seaglass"
-            >
+            <Button variant="secondary" style="fill" size="xl" isDisabled treatment="seaglass">
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1751,7 +1690,7 @@ export const ExperimentalEnhanced: Story = {
  */
 export const SeaglassColorExamples: Story = {
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
   render: () => (
     <div className="flex max-w-4xl flex-col gap-6">
@@ -1772,9 +1711,7 @@ export const SeaglassColorExamples: Story = {
                 aria-hidden="true"
                 className={`h-8 w-8 shrink-0 rounded-full ${color.swatchClassName}`}
               />
-              <div className="truncate text-sm font-medium text-gray-900">
-                {color.name}
-              </div>
+              <div className="truncate text-sm font-medium text-gray-900">{color.name}</div>
             </div>
             <Button
               variant="primary"
@@ -1797,7 +1734,7 @@ export const SeaglassColorExamples: Story = {
  */
 export const SeaglassResponsiveWidths: Story = {
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
   render: () => (
     <div className="flex max-w-5xl flex-col gap-5">
@@ -1806,11 +1743,11 @@ export const SeaglassResponsiveWidths: Story = {
       </span>
       <div className="flex flex-col items-start gap-4">
         {[
-          { label: "140px", className: "w-[140px]" },
-          { label: "180px", className: "w-[180px]" },
-          { label: "260px", className: "w-[260px]" },
-          { label: "360px", className: "w-[360px]" },
-          { label: "480px", className: "w-[480px]" },
+          { label: '140px', className: 'w-[140px]' },
+          { label: '180px', className: 'w-[180px]' },
+          { label: '260px', className: 'w-[260px]' },
+          { label: '360px', className: 'w-[360px]' },
+          { label: '480px', className: 'w-[480px]' },
         ].map((example) => (
           <Button
             key={example.label}
@@ -1830,7 +1767,7 @@ export const SeaglassResponsiveWidths: Story = {
 
 export const InternalSeaglassGradientWorkbench: Story = {
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
   render: () => <SeaglassGradientWorkbench />,
 };
@@ -1888,14 +1825,7 @@ export const IconOnly: Story = {
       >
         <DownloadSimple size={20} weight="bold" />
       </Button>
-      <Button
-        {...args}
-        variant="danger"
-        style="ghost"
-        size="md"
-        iconOnly
-        aria-label="Delete item"
-      >
+      <Button {...args} variant="danger" style="ghost" size="md" iconOnly aria-label="Delete item">
         <Trash size={16} weight="bold" />
       </Button>
       <Button
@@ -1946,7 +1876,7 @@ export const Sizes: Story = {
 export const Loading: Story = {
   args: {
     isLoading: true,
-    children: "Saving changes...",
+    children: 'Saving changes...',
   },
 };
 
@@ -1956,6 +1886,6 @@ export const Loading: Story = {
 export const Disabled: Story = {
   args: {
     isDisabled: true,
-    children: "Disabled Action",
+    children: 'Disabled Action',
   },
 };

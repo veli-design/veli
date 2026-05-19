@@ -1,13 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CaretRight,
-  DotsThree,
-  DownloadSimple,
-  Gear,
-  PencilSimple,
-  Trash,
-} from 'phosphor-react';
+import { CaretRight, DotsThree, DownloadSimple, Gear, PencilSimple, Trash } from 'phosphor-react';
 import { Button } from '@tradenetcorp/coral-ui/button';
 import {
   Menu,

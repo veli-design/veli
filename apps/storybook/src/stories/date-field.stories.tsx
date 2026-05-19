@@ -29,11 +29,7 @@ export const Default: Story = {
 export const ValidationStates: Story = {
   render: () => (
     <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-      <DateField
-        label="Required"
-        isRequired
-        description="This field must be completed."
-      />
+      <DateField label="Required" isRequired description="This field must be completed." />
       <DateField
         label="Invalid"
         isInvalid
@@ -46,16 +42,8 @@ export const ValidationStates: Story = {
         description="This helper text is hidden while invalid."
         defaultValue={parseDate('2026-04-01')}
       />
-      <DateField
-        label="Disabled"
-        defaultValue={parseDate('2026-04-18')}
-        isDisabled
-      />
-      <DateField
-        label="Read only"
-        defaultValue={parseDate('2026-04-18')}
-        isReadOnly
-      />
+      <DateField label="Disabled" defaultValue={parseDate('2026-04-18')} isDisabled />
+      <DateField label="Read only" defaultValue={parseDate('2026-04-18')} isReadOnly />
     </div>
   ),
 };

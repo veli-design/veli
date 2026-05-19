@@ -40,11 +40,7 @@ export interface FieldMessageProps {
   errorMessage?: React.ReactNode;
 }
 
-export function FieldMessage({
-  isInvalid,
-  description,
-  errorMessage,
-}: FieldMessageProps) {
+export function FieldMessage({ isInvalid, description, errorMessage }: FieldMessageProps) {
   if (isInvalid) {
     return (
       <FieldError className={messageVariants({ tone: 'danger' })}>
@@ -71,10 +67,7 @@ export interface StaticFieldMessageProps {
   errorMessage?: React.ReactNode;
 }
 
-export function StaticFieldMessage({
-  description,
-  errorMessage,
-}: StaticFieldMessageProps) {
+export function StaticFieldMessage({ description, errorMessage }: StaticFieldMessageProps) {
   const renderedError = getRenderableMessage(errorMessage);
 
   if (renderedError !== undefined) {

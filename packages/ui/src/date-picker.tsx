@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { CalendarBlank } from "phosphor-react";
+import * as React from 'react';
+import { CalendarBlank } from 'phosphor-react';
 import {
   DatePicker as AriaDatePicker,
   Dialog,
@@ -10,10 +10,10 @@ import {
   Popover,
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
-} from "react-aria-components";
-import { twMerge } from "tailwind-merge";
-import { Button } from "./button";
-import { Calendar } from "./calendar";
+} from 'react-aria-components';
+import { twMerge } from 'tailwind-merge';
+import { Button } from './button';
+import { Calendar } from './calendar';
 import {
   DateSegments,
   fieldLabelRowVariants,
@@ -21,19 +21,19 @@ import {
   fieldMetaVariants,
   fieldRootVariants,
   fieldShellVariants,
-} from "./date-shared";
-import { FieldMessage } from "./field-shared";
+} from './date-shared';
+import { FieldMessage } from './field-shared';
 
-const datePickerWidthClassName = "w-[calc(10*var(--spacing)*7)] max-w-full";
+const datePickerWidthClassName = 'w-[calc(10*var(--spacing)*7)] max-w-full';
 
 const popoverSurfaceClassName =
-  "rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none";
+  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none';
 
-const fieldButtonClassName = "h-9 w-9 min-w-0 shrink-0 self-center rounded-md border-0 px-0";
+const fieldButtonClassName = 'h-9 w-9 min-w-0 shrink-0 self-center rounded-md border-0 px-0';
 
 export interface DatePickerProps<T extends DateValue> extends Omit<
   AriaDatePickerProps<T>,
-  "children" | "className" | "style"
+  'children' | 'className' | 'style'
 > {
   label?: React.ReactNode;
   description?: React.ReactNode;
@@ -57,7 +57,7 @@ export function DatePicker<T extends DateValue>({
   inputClassName,
   popoverClassName,
   calendarClassName,
-  calendarButtonLabel = "Open calendar",
+  calendarButtonLabel = 'Open calendar',
   ...props
 }: DatePickerProps<T>) {
   const showRequired = showRequiredIndicator && Boolean(props.isRequired);
@@ -65,7 +65,7 @@ export function DatePicker<T extends DateValue>({
   return (
     <AriaDatePicker
       {...props}
-      className={twMerge(fieldRootVariants(), datePickerWidthClassName, "gap-1", className)}
+      className={twMerge(fieldRootVariants(), datePickerWidthClassName, 'gap-1', className)}
     >
       {({ isDisabled, isInvalid, isReadOnly }) => (
         <>
@@ -73,19 +73,15 @@ export function DatePicker<T extends DateValue>({
             <div className={fieldLabelRowVariants()}>
               <div className="flex min-w-0 items-center gap-1.5">
                 {label ? (
-                  <Label className={fieldLabelVariants({ isDisabled })}>
-                    {label}
-                  </Label>
+                  <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label>
                 ) : null}
                 {labelSupplementary ? (
-                  <span className={fieldMetaVariants({ isDisabled })}>
-                    {labelSupplementary}
-                  </span>
+                  <span className={fieldMetaVariants({ isDisabled })}>{labelSupplementary}</span>
                 ) : null}
                 {showRequired ? (
                   <span
                     className={fieldMetaVariants({
-                      tone: "danger",
+                      tone: 'danger',
                       isDisabled,
                     })}
                   >
@@ -126,17 +122,9 @@ export function DatePicker<T extends DateValue>({
             errorMessage={errorMessage}
           />
 
-          <Popover
-            offset={8}
-            className={twMerge(popoverSurfaceClassName, popoverClassName)}
-          >
+          <Popover offset={8} className={twMerge(popoverSurfaceClassName, popoverClassName)}>
             <Dialog className="outline-none">
-              <Calendar
-                className={twMerge(
-                  "border-none p-0 shadow-none",
-                  calendarClassName,
-                )}
-              />
+              <Calendar className={twMerge('border-none p-0 shadow-none', calendarClassName)} />
             </Dialog>
           </Popover>
         </>

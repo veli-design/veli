@@ -5,7 +5,7 @@
 @import '@tradenetcorp/coral-tokens/tailwind';
 
 html {
-    @apply antialiased;
+  @apply antialiased;
 }
 
 @source "../../../../packages/ui";

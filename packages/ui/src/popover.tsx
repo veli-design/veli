@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog as AriaDialog,
@@ -7,67 +7,61 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
-} from "react-aria-components";
-import React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
+} from 'react-aria-components';
+import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
 
 /** Rotate the triangle SVG for each overlay axis. */
 function overlayArrowSvgClass(placement: string | null) {
   switch (placement) {
-    case "bottom":
-      return "[&>svg]:rotate-180";
-    case "left":
-      return "[&>svg]:-rotate-90";
-    case "right":
-      return "[&>svg]:rotate-90";
+    case 'bottom':
+      return '[&>svg]:rotate-180';
+    case 'left':
+      return '[&>svg]:-rotate-90';
+    case 'right':
+      return '[&>svg]:rotate-90';
     default:
-      return "";
+      return '';
   }
 }
 
 const popoverVariants = cva(
-  "bg-bg-surface-raised shadow-[0_12px_32px_rgba(15,23,42,0.16)] rounded-xl bg-clip-padding border border-border-default-subtle backdrop-blur-[4px] outline-0",
+  'bg-bg-surface-raised shadow-[0_12px_32px_rgba(15,23,42,0.16)] rounded-xl bg-clip-padding border border-border-default-subtle backdrop-blur-[4px] outline-0',
   {
     variants: {
       isEntering: {
-        true: "animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 ease-out duration-200",
+        true: 'animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 ease-out duration-200',
       },
       isExiting: {
-        true: "animate-out fade-out placement-bottom:slide-out-to-top-1 placement-top:slide-out-to-bottom-1 placement-left:slide-out-to-right-1 placement-right:slide-out-to-left-1 ease-in duration-150",
+        true: 'animate-out fade-out placement-bottom:slide-out-to-top-1 placement-top:slide-out-to-bottom-1 placement-left:slide-out-to-right-1 placement-right:slide-out-to-left-1 ease-in duration-150',
       },
     },
   },
 );
 
 export interface PopoverProps
-  extends Omit<AriaPopoverProps, "children">,
-    Omit<VariantProps<typeof popoverVariants>, "isEntering" | "isExiting"> {
+  extends
+    Omit<AriaPopoverProps, 'children'>,
+    Omit<VariantProps<typeof popoverVariants>, 'isEntering' | 'isExiting'> {
   showArrow?: boolean;
   children: React.ReactNode;
 }
 
-export interface PopoverTriggerProps
-  extends React.ComponentProps<typeof AriaDialogTrigger> {}
+export interface PopoverTriggerProps extends React.ComponentProps<typeof AriaDialogTrigger> {}
 
 export function PopoverTrigger(props: PopoverTriggerProps) {
   return <AriaDialogTrigger {...props} />;
 }
 
-export interface PopoverDialogProps
-  extends React.ComponentProps<typeof AriaDialog> {}
+export interface PopoverDialogProps extends React.ComponentProps<typeof AriaDialog> {}
 
 export function PopoverDialog(props: PopoverDialogProps) {
   return <AriaDialog {...props} />;
 }
 
-export function Popover({
-  children,
-  showArrow,
-  className,
-  ...props
-}: PopoverProps) {
-  let offset = showArrow ? 12 : 8;
+export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
+  const offset = showArrow ? 12 : 8;
   return (
     <AriaPopover
       offset={offset}

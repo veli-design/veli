@@ -1,49 +1,116 @@
 {
   "name": "@tradenetcorp/coral-ui",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.2",
   "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "tailwind.css"
+  ],
   "exports": {
-    "./breadcrumbs": "./src/breadcrumbs.tsx",
-    "./button": "./src/button.tsx",
-    "./calendar": "./src/calendar.tsx",
-    "./checkbox": "./src/checkbox.tsx",
-    "./combobox": "./src/combobox.tsx",
-    "./divider": "./src/divider.tsx",
-    "./date-field": "./src/date-field.tsx",
-    "./date-picker": "./src/date-picker.tsx",
-    "./input": "./src/input.tsx",
-    "./link": "./src/link.tsx",
-    "./menu": "./src/menu.tsx",
-    "./modal": "./src/modal.tsx",
-    "./popover": "./src/popover.tsx",
-    "./provider": "./src/provider.tsx",
-    "./radio": "./src/radio.tsx",
-    "./select": "./src/select.tsx",
-    "./switch": "./src/switch.tsx",
-    "./tags": "./src/tags.tsx",
-    "./tabs": "./src/tabs.tsx",
-    "./tooltip": "./src/tooltip.tsx"
+    "./tailwind": "./tailwind.css",
+    "./breadcrumbs": {
+      "types": "./dist/breadcrumbs.d.ts",
+      "import": "./dist/breadcrumbs.js"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "import": "./dist/button.js"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "import": "./dist/calendar.js"
+    },
+    "./checkbox": {
+      "types": "./dist/checkbox.d.ts",
+      "import": "./dist/checkbox.js"
+    },
+    "./combobox": {
+      "types": "./dist/combobox.d.ts",
+      "import": "./dist/combobox.js"
+    },
+    "./divider": {
+      "types": "./dist/divider.d.ts",
+      "import": "./dist/divider.js"
+    },
+    "./date-field": {
+      "types": "./dist/date-field.d.ts",
+      "import": "./dist/date-field.js"
+    },
+    "./date-picker": {
+      "types": "./dist/date-picker.d.ts",
+      "import": "./dist/date-picker.js"
+    },
+    "./input": {
+      "types": "./dist/input.d.ts",
+      "import": "./dist/input.js"
+    },
+    "./link": {
+      "types": "./dist/link.d.ts",
+      "import": "./dist/link.js"
+    },
+    "./menu": {
+      "types": "./dist/menu.d.ts",
+      "import": "./dist/menu.js"
+    },
+    "./modal": {
+      "types": "./dist/modal.d.ts",
+      "import": "./dist/modal.js"
+    },
+    "./popover": {
+      "types": "./dist/popover.d.ts",
+      "import": "./dist/popover.js"
+    },
+    "./provider": {
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
+    },
+    "./radio": {
+      "types": "./dist/radio.d.ts",
+      "import": "./dist/radio.js"
+    },
+    "./select": {
+      "types": "./dist/select.d.ts",
+      "import": "./dist/select.js"
+    },
+    "./switch": {
+      "types": "./dist/switch.d.ts",
+      "import": "./dist/switch.js"
+    },
+    "./tags": {
+      "types": "./dist/tags.d.ts",
+      "import": "./dist/tags.js"
+    },
+    "./tabs": {
+      "types": "./dist/tabs.d.ts",
+      "import": "./dist/tabs.js"
+    },
+    "./tooltip": {
+      "types": "./dist/tooltip.d.ts",
+      "import": "./dist/tooltip.js"
+    }
   },
   "scripts": {
-    "build": "tsc",
-    "lint": "tsc --noEmit"
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
     "react": "^18.3.0",
+    "react-aria-components": "^1.4.0",
     "react-dom": "^18.3.0"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "phosphor-react": "^1.4.1",
-    "react-aria-components": "^1.4.0",
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "react": "^18.3.1",
+    "react-aria-components": "^1.4.0",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2"
   },

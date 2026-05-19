@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import {
@@ -18,8 +18,10 @@ import {
 } from './date-shared';
 import { FieldMessage } from './field-shared';
 
-export interface DateFieldProps<T extends DateValue>
-  extends Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style'> {
+export interface DateFieldProps<T extends DateValue> extends Omit<
+  AriaDateFieldProps<T>,
+  'children' | 'className' | 'style'
+> {
   label?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
@@ -49,7 +51,9 @@ export function DateField<T extends DateValue>({
             {label || labelSupplementary || showRequired ? (
               <div className={fieldLabelRowVariants()}>
                 <div className="flex min-w-0 items-center gap-1.5">
-                  {label ? <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label> : null}
+                  {label ? (
+                    <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label>
+                  ) : null}
                   {labelSupplementary ? (
                     <span className={fieldMetaVariants({ isDisabled })}>{labelSupplementary}</span>
                   ) : null}
@@ -67,7 +71,7 @@ export function DateField<T extends DateValue>({
                   isInvalid,
                   isReadOnly,
                 }),
-                inputClassName
+                inputClassName,
               )}
             >
               <DateSegments />

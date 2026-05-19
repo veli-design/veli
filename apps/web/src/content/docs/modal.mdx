@@ -3,7 +3,11 @@ title: Modal
 description: Accessible modal dialog component built with React Aria and Coral design tokens.
 ---
 
-import { ModalBasicDemo, ModalDismissDemo, ModalSizesDemo } from '../../components/ModalDocExamples';
+import {
+  ModalBasicDemo,
+  ModalDismissDemo,
+  ModalSizesDemo,
+} from '../../components/ModalDocExamples';
 
 # Modal
 
@@ -55,6 +59,7 @@ function Example() {
 ## Sizes
 
 The modal supports five size variants to fit different content density and workflow needs:
+
 - `sm`
 - `md`
 - `lg`
@@ -99,6 +104,7 @@ For high-risk actions, you can disable outside-click and `Escape` dismissal.
 ## Composition
 
 `Modal` is slot-based and library-friendly:
+
 - `title`: heading area and default dialog label
 - `children`: body content
 - `footer`: actions section
@@ -110,7 +116,9 @@ Every modal needs one dialog name: use `title`, `aria-label`, or `aria-labelledb
   title="Edit profile"
   footer={
     <>
-      <Button variant="secondary" style="transparent">Cancel</Button>
+      <Button variant="secondary" style="transparent">
+        Cancel
+      </Button>
       <Button>Save changes</Button>
     </>
   }
@@ -121,22 +129,22 @@ Every modal needs one dialog name: use `title`, `aria-label`, or `aria-labelledb
 
 ## Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'md'` | Width/height scale of the modal surface. |
-| `title` | `ReactNode` | - | Modal heading and dialog label. Required unless `aria-label` or `aria-labelledby` is provided. |
-| `aria-label` | `string` | - | Accessible dialog name for titleless compositions. |
-| `aria-labelledby` | `string` | - | ID reference for an external dialog label. |
-| `footer` | `ReactNode` | - | Optional footer action area. |
-| `showCloseButton` | `boolean` | `true` | Shows/hides top-right close button. |
-| `closeButtonLabel` | `string` | `'Close dialog'` | Accessible label for close button. |
-| `isDismissable` | `boolean` | `true` | Allows click-outside dismissal. |
-| `isKeyboardDismissDisabled` | `boolean` | `false` | Disables `Escape` to close. |
-| `isOpen` | `boolean` | - | Controlled open state. |
-| `defaultOpen` | `boolean` | - | Uncontrolled initial open state. |
-| `onOpenChange` | `(isOpen: boolean) => void` | - | Open state change callback. |
-| `className` | `string` | - | Class overrides for modal surface. |
-| `contentClassName` | `string` | - | Class overrides for content area. |
-| `overlayClassName` | `string` | - | Class overrides for backdrop container. |
+| Prop                        | Type                                     | Default          | Description                                                                                    |
+| :-------------------------- | :--------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------- |
+| `size`                      | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'md'`           | Width/height scale of the modal surface.                                                       |
+| `title`                     | `ReactNode`                              | -                | Modal heading and dialog label. Required unless `aria-label` or `aria-labelledby` is provided. |
+| `aria-label`                | `string`                                 | -                | Accessible dialog name for titleless compositions.                                             |
+| `aria-labelledby`           | `string`                                 | -                | ID reference for an external dialog label.                                                     |
+| `footer`                    | `ReactNode`                              | -                | Optional footer action area.                                                                   |
+| `showCloseButton`           | `boolean`                                | `true`           | Shows/hides top-right close button.                                                            |
+| `closeButtonLabel`          | `string`                                 | `'Close dialog'` | Accessible label for close button.                                                             |
+| `isDismissable`             | `boolean`                                | `true`           | Allows click-outside dismissal.                                                                |
+| `isKeyboardDismissDisabled` | `boolean`                                | `false`          | Disables `Escape` to close.                                                                    |
+| `isOpen`                    | `boolean`                                | -                | Controlled open state.                                                                         |
+| `defaultOpen`               | `boolean`                                | -                | Uncontrolled initial open state.                                                               |
+| `onOpenChange`              | `(isOpen: boolean) => void`              | -                | Open state change callback.                                                                    |
+| `className`                 | `string`                                 | -                | Class overrides for modal surface.                                                             |
+| `contentClassName`          | `string`                                 | -                | Class overrides for content area.                                                              |
+| `overlayClassName`          | `string`                                 | -                | Class overrides for backdrop container.                                                        |
 
-*Note: The component also supports remaining `react-aria-components` `ModalOverlay` props (except replacing `children` with this API).*
+_Note: The component also supports remaining `react-aria-components` `ModalOverlay` props (except replacing `children` with this API)._

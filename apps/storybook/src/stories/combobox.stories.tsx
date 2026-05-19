@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import {
-  ComboBox,
-  ComboBoxItem,
-  ComboBoxSection,
-} from '@tradenetcorp/coral-ui/combobox';
+import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/coral-ui/combobox';
 import { CalendarBlank, Info, MagnifyingGlass, WarningCircle } from 'phosphor-react';
 
 type Option = {
@@ -93,7 +89,8 @@ export const Default: Story = {
           {(item) => <ComboBoxItem>{item.label}</ComboBoxItem>}
         </ComboBox>
         <p className="text-xs text-text-default-muted">
-          Selected key: <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
+          Selected key:{' '}
+          <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
         </p>
       </div>
     );
@@ -148,7 +145,8 @@ export const GroupedSections: Story = {
           </ComboBoxSection>
         </ComboBox>
         <p className="text-xs text-text-default-muted">
-          Selected key: <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
+          Selected key:{' '}
+          <span className="font-medium">{selectedKey ? String(selectedKey) : 'None'}</span>
         </p>
       </div>
     );

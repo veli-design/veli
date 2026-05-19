@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import * as React from "react";
 import {
   Calendar as AriaCalendar,
   CalendarGridHeader as AriaCalendarGridHeader,
@@ -15,71 +14,70 @@ import {
   type CalendarGridProps,
   type CalendarProps as AriaCalendarProps,
   type DateValue,
-} from "react-aria-components";
-import { cva } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
-import { Button } from "./button";
+} from 'react-aria-components';
+import { cva } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
+import { Button } from './button';
 
 const calendarRootVariants = cva(
-  "flex w-[calc(10*var(--spacing)*7)] max-w-full flex-col rounded-2xl border border-border-default-subtle bg-bg-surface-overlay-raised p-4 font-sans text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)] [container-type:inline-size]",
+  'flex w-[calc(10*var(--spacing)*7)] max-w-full flex-col rounded-2xl border border-border-default-subtle bg-bg-surface-overlay-raised p-4 font-sans text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)] [container-type:inline-size]',
 );
 
 const cellVariants = cva(
-  "flex aspect-square w-[calc((100cqw/7)-6px)] items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]",
+  'flex aspect-square w-[calc((100cqw/7)-6px)] items-center justify-center rounded-full text-sm font-medium forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
   {
     variants: {
       isSelected: {
         false:
-          "text-text-default-default data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible",
-        true: "bg-button-primary-default text-text-primary-inverted data-[invalid]:bg-button-danger-default data-[invalid]:text-text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]",
+          'text-text-default-default data-[outside-month]:text-text-default-inactive data-[outside-visible-range]:invisible',
+        true: 'bg-button-primary-default text-text-primary-inverted data-[invalid]:bg-button-danger-default data-[invalid]:text-text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
       },
       isDisabled: {
-        true: "cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]",
-        false: "",
+        true: 'cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]',
+        false: '',
       },
       isUnavailable: {
-        true: "cursor-not-allowed",
-        false: "",
+        true: 'cursor-not-allowed',
+        false: '',
       },
       isFocusVisible: {
-        true: "ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-overlay-raised",
-        false: "",
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-overlay-raised',
+        false: '',
       },
       isToday: {
-        true: "ring-1 ring-inset ring-border-default-subtle",
-        false: "",
+        true: 'ring-1 ring-inset ring-border-default-subtle',
+        false: '',
       },
     },
     compoundVariants: [
       {
         isSelected: true,
         isToday: true,
-        className: "ring-border-focus",
+        className: 'ring-border-focus',
       },
       {
         isSelected: false,
         isDisabled: false,
         isUnavailable: false,
         className:
-          "cursor-pointer hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover",
+          'cursor-pointer hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover',
       },
       {
         isSelected: true,
         isDisabled: false,
         isUnavailable: false,
-        className:
-          "cursor-pointer hover:bg-button-primary-hover active:bg-button-primary-pressed",
+        className: 'cursor-pointer hover:bg-button-primary-hover active:bg-button-primary-pressed',
       },
       {
         isDisabled: false,
         isUnavailable: true,
-        className: "text-red-900 line-through decoration-2 decoration-red-900",
+        className: 'text-red-900 line-through decoration-2 decoration-red-900',
       },
       {
         isSelected: false,
         isDisabled: false,
         isToday: true,
-        className: "text-text-default-high-contrast",
+        className: 'text-text-default-high-contrast',
       },
     ],
     defaultVariants: {
@@ -92,48 +90,36 @@ const cellVariants = cva(
   },
 );
 
-export interface CalendarProps<T extends DateValue> extends Omit<
-  AriaCalendarProps<T>,
-  "children"
-> {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'children'> {
   errorMessage?: string;
   className?: string;
   gridClassName?: string;
-  weekdayStyle?: CalendarGridProps["weekdayStyle"];
+  weekdayStyle?: CalendarGridProps['weekdayStyle'];
 }
 
 export function Calendar<T extends DateValue>({
   errorMessage,
   className,
   gridClassName,
-  weekdayStyle = "short",
+  weekdayStyle = 'short',
   ...props
 }: CalendarProps<T>) {
   return (
-    <AriaCalendar
-      {...props}
-      className={twMerge(calendarRootVariants(), className)}
-    >
+    <AriaCalendar {...props} className={twMerge(calendarRootVariants(), className)}>
       <CalendarHeader />
       <CalendarGrid
         weekdayStyle={weekdayStyle}
-        className={twMerge("border-spacing-0", gridClassName)}
+        className={twMerge('border-spacing-0', gridClassName)}
       >
         <CalendarGridHeader />
         <CalendarGridBody>
           {(date) => (
-            <CalendarCell
-              date={date}
-              className={(state) => getCalendarCellClassName(state)}
-            />
+            <CalendarCell date={date} className={(state) => getCalendarCellClassName(state)} />
           )}
         </CalendarGridBody>
       </CalendarGrid>
       {errorMessage ? (
-        <Text
-          slot="errorMessage"
-          className="pt-3 text-sm text-text-danger-muted"
-        >
+        <Text slot="errorMessage" className="pt-3 text-sm text-text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -153,17 +139,11 @@ export function CalendarHeader() {
         size="xs"
         aria-label="Previous month"
       >
-        {direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        {direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       </Button>
       <Heading className="mx-2 my-0 flex-1 text-center font-sans text-base font-semibold text-text-default-high-contrast [font-variation-settings:normal]" />
-      <Button
-        slot="next"
-        variant="secondary"
-        style="ghost"
-        size="xs"
-        aria-label="Next month"
-      >
-        {direction === "rtl" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+      <Button slot="next" variant="secondary" style="ghost" size="xs" aria-label="Next month">
+        {direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
       </Button>
     </header>
   );
