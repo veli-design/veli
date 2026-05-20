@@ -1,12 +1,8 @@
-import {
-  CoralProvider,
-  getCoralLanguageConfig,
-  useCoralLanguage,
-} from "./provider";
+import { CoralProvider, getCoralLanguageConfig, useCoralLanguage } from './provider';
 
 export function ProviderTypeExpectations() {
   const currentLanguage = useCoralLanguage();
-  const direction: "ltr" | "rtl" = currentLanguage.direction;
+  const direction: 'ltr' | 'rtl' = currentLanguage.direction;
 
   return (
     <>
@@ -31,21 +27,21 @@ export function ProviderTypeExpectations() {
 }
 
 const defaultConfig = getCoralLanguageConfig();
-const defaultLanguage: "en" = defaultConfig.language;
-const defaultDirection: "ltr" = defaultConfig.direction;
+const defaultLanguage: 'en' = defaultConfig.language;
+const defaultDirection: 'ltr' = defaultConfig.direction;
 
-const englishConfig = getCoralLanguageConfig("en");
-const englishLocale: "en-US" = englishConfig.locale;
-const englishLang: "en" = englishConfig.lang;
-const englishDirection: "ltr" = englishConfig.direction;
+const englishConfig = getCoralLanguageConfig('en');
+const englishLocale: 'en-US' = englishConfig.locale;
+const englishLang: 'en' = englishConfig.lang;
+const englishDirection: 'ltr' = englishConfig.direction;
 
-const dhivehiConfig = getCoralLanguageConfig("dv");
-const dhivehiLocale: "dv-MV" = dhivehiConfig.locale;
-const dhivehiLang: "dv" = dhivehiConfig.lang;
-const dhivehiDirection: "rtl" = dhivehiConfig.direction;
+const dhivehiConfig = getCoralLanguageConfig('dv');
+const dhivehiLocale: 'dv-MV' = dhivehiConfig.locale;
+const dhivehiLang: 'dv' = dhivehiConfig.lang;
+const dhivehiDirection: 'rtl' = dhivehiConfig.direction;
 
 // @ts-expect-error Unsupported languages should not resolve config.
-getCoralLanguageConfig("ar");
+getCoralLanguageConfig('ar');
 
 void defaultLanguage;
 void defaultDirection;

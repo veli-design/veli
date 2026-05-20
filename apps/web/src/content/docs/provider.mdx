@@ -29,20 +29,17 @@ import { CoralProvider } from '@tradenetcorp/coral-ui/provider';
 
 ## Supported Modes
 
-| `language` | Content language | Locale | Direction |
-| :--- | :--- | :--- | :--- |
-| `en` | English | `en-US` | `ltr` |
-| `dv` | Dhivehi | `dv-MV` | `rtl` |
+| `language` | Content language | Locale  | Direction |
+| :--------- | :--------------- | :------ | :-------- |
+| `en`       | English          | `en-US` | `ltr`     |
+| `dv`       | Dhivehi          | `dv-MV` | `rtl`     |
 
 Consumers should not pass `locale` and `dir` separately. Coral owns that mapping so unsupported combinations cannot be created by accident.
 
 ## Helpers
 
 ```tsx
-import {
-  getCoralLanguageConfig,
-  useCoralLanguage,
-} from '@tradenetcorp/coral-ui/provider';
+import { getCoralLanguageConfig, useCoralLanguage } from '@tradenetcorp/coral-ui/provider';
 ```
 
 `useCoralLanguage` returns the active Coral language config inside a provider subtree. `getCoralLanguageConfig` returns the same mapping without reading React context.
@@ -59,7 +56,7 @@ English and Dhivehi typography styles are distinct in design. `CoralProvider` de
 
 ## Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `language` | `'en' \| 'dv'` | `'en'` | Selects Coral's supported language and direction mode. |
-| `children` | `ReactNode` | - | Application or component subtree that should inherit the language contract. |
+| Prop       | Type           | Default | Description                                                                 |
+| :--------- | :------------- | :------ | :-------------------------------------------------------------------------- |
+| `language` | `'en' \| 'dv'` | `'en'`  | Selects Coral's supported language and direction mode.                      |
+| `children` | `ReactNode`    | -       | Application or component subtree that should inherit the language contract. |

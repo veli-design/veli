@@ -1,8 +1,5 @@
 import type { Decorator, Preview } from '@storybook/react';
-import {
-  CoralProvider,
-  type CoralLanguage,
-} from '@tradenetcorp/coral-ui/provider';
+import { CoralProvider, type CoralLanguage } from '@tradenetcorp/coral-ui/provider';
 import '../src/global.css';
 
 const defaultLanguage: CoralLanguage = 'en';
