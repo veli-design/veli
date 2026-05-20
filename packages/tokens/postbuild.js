@@ -234,6 +234,42 @@ tokensCss = tokensCss.replace(
   (_match, property) => `${property}0.01em;`,
 );
 
+function assertOklchColorOutput(filename, css) {
+  const colorDeclarations = css
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^--color-[^:]+:/.test(line));
+
+  const invalidNames = colorDeclarations.filter((line) => /^--color-[^:]*\s[^:]*:/.test(line));
+  const invalidReferences = css.match(/var\(--color-[^)]*\s[^)]*\)/g) ?? [];
+  const invalidValues = colorDeclarations.filter((line) => /(?:color\(srgb|#[0-9a-f]{3,8}\b)/i.test(line));
+
+  if (invalidNames.length || invalidReferences.length) {
+    throw new Error(
+      `${filename} contains color token names with whitespace:\n${[...invalidNames, ...invalidReferences]
+        .slice(0, 20)
+        .map((line) => `- ${line}`)
+        .join('\n')}${
+        invalidNames.length + invalidReferences.length > 20
+          ? `\n- ...and ${invalidNames.length + invalidReferences.length - 20} more`
+          : ''
+      }`,
+    );
+  }
+
+  if (invalidValues.length) {
+    throw new Error(
+      `${filename} contains non-OKLCH color token output:\n${invalidValues
+        .slice(0, 20)
+        .map((line) => `- ${line}`)
+        .join('\n')}${invalidValues.length > 20 ? `\n- ...and ${invalidValues.length - 20} more` : ''}`,
+    );
+  }
+}
+
+assertOklchColorOutput('tailwind-theme.css', tailwindTheme);
+assertOklchColorOutput('tokens.css', tokensCss);
+
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');
 
