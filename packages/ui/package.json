@@ -61,6 +61,10 @@
       "types": "./dist/popover.d.ts",
       "import": "./dist/popover.js"
     },
+    "./provider": {
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
+    },
     "./radio": {
       "types": "./dist/radio.d.ts",
       "import": "./dist/radio.js"
