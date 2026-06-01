@@ -1,0 +1,3 @@
+/* Tailwind v4: register this package's built files for class detection.
+   In the app: @import "@tradenetcorp/veli-ui/tailwind"; */
+@source "./dist";

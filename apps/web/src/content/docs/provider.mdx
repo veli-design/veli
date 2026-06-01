@@ -1,0 +1,62 @@
+---
+title: VeliProvider
+description: Supported language and direction contract for Veli components.
+---
+
+# VeliProvider
+
+`VeliProvider` is the integration point for Veli's supported language and direction modes. Consumers choose a supported language, and Veli maps that to locale, DOM language, and DOM direction.
+
+## Import
+
+```tsx
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+```
+
+## Usage
+
+```tsx
+<VeliProvider language="en">
+  <App />
+</VeliProvider>
+```
+
+```tsx
+<VeliProvider language="dv">
+  <App />
+</VeliProvider>
+```
+
+## Supported Modes
+
+| `language` | Content language | Locale  | Direction |
+| :--------- | :--------------- | :------ | :-------- |
+| `en`       | English          | `en-US` | `ltr`     |
+| `dv`       | Dhivehi          | `dv-MV` | `rtl`     |
+
+Consumers should not pass `locale` and `dir` separately. Veli owns that mapping so unsupported combinations cannot be created by accident.
+
+## Helpers
+
+```tsx
+import { getVeliLanguageConfig, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+```
+
+`useVeliLanguage` returns the active Veli language config inside a provider subtree. `getVeliLanguageConfig` returns the same mapping without reading React context.
+
+## Direction Contract
+
+The provider applies `lang` and `dir` to its wrapper element. Veli components that need language or direction awareness should read those attributes from the provider contract instead of deriving direction from a browser locale fallback.
+
+React Aria still receives the mapped locale for i18n behavior. Direction-sensitive Veli component behavior is handled separately by the component implementation.
+
+## Typography
+
+English and Dhivehi typography styles are distinct in design. `VeliProvider` defines the language contract, but it does not generate or override typography tokens. Dhivehi typography should use the exact exported design token values when those token styles are available.
+
+## Props
+
+| Prop       | Type           | Default | Description                                                                 |
+| :--------- | :------------- | :------ | :-------------------------------------------------------------------------- |
+| `language` | `'en' \| 'dv'` | `'en'`  | Selects Veli's supported language and direction mode.                       |
+| `children` | `ReactNode`    | -       | Application or component subtree that should inherit the language contract. |

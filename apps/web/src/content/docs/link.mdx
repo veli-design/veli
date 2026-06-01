@@ -1,0 +1,77 @@
+---
+title: Link
+description: Accessible link component built with React Aria, following CDS standards.
+---
+
+# Link
+
+The Link component provides an accessible, keyboard-navigable link with multiple variants that inherit typography from the surrounding context.
+
+## Import
+
+```tsx
+import { Link } from '@tradenetcorp/veli-ui/link';
+import { Plus } from 'phosphor-react';
+```
+
+import {
+  LinkIconsDemo,
+  LinkSizesDemo,
+  LinkUsageDemo,
+  LinkVariantsDemo,
+} from '../../components/DocsExamples';
+
+## Usage
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+  <LinkUsageDemo client:visible />
+</div>
+
+```tsx
+<Link href="#">Link Label</Link>
+```
+
+## Variants Matrix
+
+The link supports three variants and various underlining options.
+
+<div className="preview p-6 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 overflow-x-auto">
+  <LinkVariantsDemo client:visible />
+</div>
+
+## Icons
+
+To maintain design consistency, icons should be sized to match the surrounding typography.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-8 flex-wrap items-center">
+  <LinkIconsDemo client:visible />
+</div>
+
+```tsx
+// Example of inherited typography with matching icons
+<span className="type-subtitle-regular">
+  <Link><Plus size={20} />Large Link</Link>
+</span>
+
+<span className="type-body-md-regular">
+  <Link><Plus size={16} />MD Link</Link>
+</span>
+```
+
+## Typography Inheritance
+
+Links inherit font size and line height from their parent context.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-6 items-center flex-wrap">
+  <LinkSizesDemo client:visible />
+</div>
+
+## Props
+
+| Prop         | Type                                     | Default     | Description                      |
+| :----------- | :--------------------------------------- | :---------- | :------------------------------- |
+| `variant`    | `'primary' \| 'secondary' \| 'inverted'` | `'primary'` | The visual category of the link. |
+| `underline`  | `'none' \| 'hover' \| 'always'`          | `'none'`    | Underline behavior.              |
+| `isDisabled` | `boolean`                                | `false`     | Standard disabled state.         |
+
+_Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides._

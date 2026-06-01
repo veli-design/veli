@@ -1,0 +1,131 @@
+---
+title: Button
+description: Accessible button component built with React Aria, aligned with Figma CDS Foundation.
+---
+
+# Button
+
+The Button component provides an accessible, keyboard-navigable button with multiple variants, styles, and sizes.
+
+## Import
+
+```tsx
+import { Button } from '@tradenetcorp/veli-ui/button';
+import { Plus, ArrowRight } from 'phosphor-react';
+```
+
+import {
+  ButtonIconOnlyDemo,
+  ButtonIconsDemo,
+  ButtonLoadingDemo,
+  ButtonSeaglassDemo,
+  ButtonSizesDemo,
+  ButtonUsageDemo,
+  ButtonVariantsDemo,
+} from '../../components/DocsExamples';
+
+## Usage
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+  <ButtonUsageDemo client:visible />
+</div>
+
+```tsx
+<Button>Click me</Button>
+```
+
+## Variants Matrix
+
+The button supports three variants and three styles, creating a flexible visual language.
+
+<div className="preview p-6 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 overflow-x-auto">
+  <ButtonVariantsDemo client:visible />
+</div>
+
+## Icons
+
+To maintain design consistency, icons should follow these size guidelines:
+
+- **XL Buttons**: 24px
+- **LG Buttons**: 20px
+- **MD/SM Buttons**: 16px
+- **XS Buttons**: 12px
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
+  <ButtonIconsDemo client:visible />
+</div>
+
+```tsx
+// Example of correctly sized icons
+<Button size="xl"><Plus size={24} /> Add item</Button>
+<Button size="lg"><Plus size={20} /> Add item</Button>
+<Button size="md"><Plus size={16} /> Add item</Button>
+<Button size="xs"><Plus size={12} /> Add item</Button>
+```
+
+## Icon-Only
+
+Use `iconOnly` when the button should render as a square icon action while keeping the same variant, style, size, and treatment behavior as the standard button.
+
+Always provide an accessible label with `aria-label` or `aria-labelledby` when there is no visible text. In development, `iconOnly` buttons without a label fail fast.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
+  <ButtonIconOnlyDemo client:visible />
+</div>
+
+```tsx
+<Button size="md" iconOnly aria-label="Delete item">
+  <Trash size={16} />
+</Button>
+```
+
+## Sizes
+
+Heights range from 28px (XS) to 60px (XL) to accommodate various context requirements.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
+  <ButtonSizesDemo client:visible />
+</div>
+
+## Loading State
+
+When `isLoading` is true, the button is disabled, marked busy, and displays a spinner while maintaining its dimensions. If a loading button has no visible children, provide `aria-label` or `aria-labelledby` so it is not announced as an unnamed control.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center">
+  <ButtonLoadingDemo client:visible />
+</div>
+
+```tsx
+<Button isLoading>Processing...</Button>
+<Button isLoading aria-label="Saving" />
+```
+
+## Enhanced Styling
+
+Use `treatment="seaglass"` to opt into the stylized treatment without changing the base button behavior.
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
+  <ButtonSeaglassDemo client:visible />
+</div>
+
+```tsx
+<Button variant="primary" style="fill" size="xl" treatment="seaglass">
+  <Plus size={24} />
+  Label
+  <ArrowRight size={24} />
+</Button>
+```
+
+## Props
+
+| Prop         | Type                                   | Default     | Description                                                                                                          |
+| :----------- | :------------------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------- |
+| `variant`    | `'primary' \| 'secondary' \| 'danger'` | `'primary'` | The visual category of the button.                                                                                   |
+| `style`      | `'fill' \| 'transparent' \| 'ghost'`   | `'fill'`    | The internal fill/border style.                                                                                      |
+| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'`      | The vertical scale of the button.                                                                                    |
+| `iconOnly`   | `boolean`                              | `false`     | Renders the button as a square icon action. Requires `aria-label` or `aria-labelledby`.                              |
+| `treatment`  | `'basic' \| 'seaglass'`                | `'basic'`   | Selects the visual rendering family without changing the semantic variant/style API.                                 |
+| `isLoading`  | `boolean`                              | `false`     | Shows a loading spinner, disables interaction, and sets `aria-busy`. Spinner-only usage requires an accessible name. |
+| `isDisabled` | `boolean`                              | `false`     | Standard disabled state.                                                                                             |
+
+_Note: All other `react-aria-components` Button props are supported, excluding `className` and `style` overrides._

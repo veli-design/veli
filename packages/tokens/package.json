@@ -1,0 +1,31 @@
+{
+  "name": "@tradenetcorp/veli-tokens",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/tailwind-theme.css",
+  "exports": {
+    ".": {
+      "import": "./dist/tailwind-theme.css"
+    },
+    "./tokens": "./src/design.tokens.json",
+    "./css": "./dist/tokens.css",
+    "./tailwind": "./dist/tailwind-theme.css"
+  },
+  "files": [
+    "dist",
+    "src/design.tokens.json"
+  ],
+  "scripts": {
+    "build": "node prebuild.js && terrazzo build && node postbuild.js",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@terrazzo/cli": "^0.10.4",
+    "@terrazzo/plugin-css": "^0.10.4",
+    "@terrazzo/plugin-tailwind": "^0.3.3"
+  },
+  "publishConfig": {
+    "@tradenetcorp:registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}

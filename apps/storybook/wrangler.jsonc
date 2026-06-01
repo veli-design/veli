@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "veli-storybook",
+  "compatibility_date": "2026-01-20",
+  "assets": {
+    "directory": "./storybook-static",
+  },
+  "observability": {
+    "enabled": false,
+  },
+  "env": {
+    "production": {
+      "workers_dev": false,
+      "preview_urls": false,
+    },
+  },
+}

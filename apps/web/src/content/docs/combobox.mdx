@@ -1,0 +1,77 @@
+---
+title: ComboBox
+description: Accessible searchable select input built with React Aria ComboBox primitives and Veli token styling.
+---
+
+import {
+  ComboBoxExplorationDemo,
+  ComboBoxUsageDemo,
+  ComboBoxValidationDemo,
+} from '../../components/DocsExamples';
+
+# ComboBox
+
+The ComboBox component combines Veli's input shell styling with React Aria's accessible filtering, selection, and popover behaviors.
+
+## Import
+
+```tsx
+import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxUsageDemo client:visible />
+</div>
+
+```tsx
+<ComboBox
+  label="Country"
+  description="Start typing to filter options."
+  defaultItems={[
+    { id: 'mv', name: 'Maldives' },
+    { id: 'lk', name: 'Sri Lanka' },
+  ]}
+>
+  {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+</ComboBox>
+```
+
+## Structural Styling
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxExplorationDemo client:visible />
+</div>
+
+## Validation
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxValidationDemo client:visible />
+</div>
+
+## Option Text
+
+`ComboBoxItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so filtering, selected values, and screen-reader output remain reliable.
+
+## Props
+
+| Prop                    | Type        | Default               | Description                                                                                  |
+| :---------------------- | :---------- | :-------------------- | :------------------------------------------------------------------------------------------- |
+| `label`                 | `ReactNode` | -                     | Visible label content rendered with React Aria's `Label`.                                    |
+| `labelSupplementary`    | `ReactNode` | -                     | Inline helper copy beside the label, for cases like `(Optional)`.                            |
+| `labelIcon`             | `ReactNode` | -                     | Small icon placed after the label content.                                                   |
+| `action`                | `ReactNode` | -                     | Right-aligned header content, suitable for an inline action.                                 |
+| `description`           | `ReactNode` | -                     | Helper text shown beneath the field when not invalid.                                        |
+| `errorMessage`          | `ReactNode` | -                     | Validation content shown beneath the field when `isInvalid` is true.                         |
+| `startAddon`            | `ReactNode` | -                     | Leading content rendered inside the inset 24px accessory container.                          |
+| `startContent`          | `ReactNode` | -                     | Leading inline content rendered directly inside the field shell.                             |
+| `endContent`            | `ReactNode` | -                     | Trailing inline content rendered directly inside the field shell, before the trigger button. |
+| `menuTriggerIcon`       | `ReactNode` | chevron               | Replaces the default dropdown indicator icon.                                                |
+| `emptyState`            | `ReactNode` | `"No matches found."` | Empty-state content rendered when filtering produces no results.                             |
+| `showRequiredIndicator` | `boolean`   | `true`                | Controls whether the required asterisk is rendered when `isRequired` is set.                 |
+| `className`             | `string`    | -                     | Layout-only class override merged onto the outermost root element.                           |
+
+All other `react-aria-components` `ComboBox` props are supported, excluding `style` and direct child composition overrides on the root wrapper.
+
+`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.

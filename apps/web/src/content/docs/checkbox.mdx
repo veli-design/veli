@@ -1,0 +1,62 @@
+---
+title: Checkbox
+description: Accessible checkbox component with square geometry and semantic state styling.
+---
+
+import {
+  CheckboxDisabledDemo,
+  CheckboxStatesDemo,
+  CheckboxUsageDemo,
+} from '../../components/DocsExamples';
+
+# Checkbox
+
+The Checkbox component supports checked, unchecked, and indeterminate states with a single square control style.
+
+## Import
+
+```tsx
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+```
+
+## Usage
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+  <CheckboxUsageDemo client:visible />
+</div>
+
+```tsx
+<Checkbox>Default</Checkbox>
+<Checkbox defaultSelected>Checked</Checkbox>
+<Checkbox isIndeterminate>Indeterminate</Checkbox>
+```
+
+## States
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+  <CheckboxStatesDemo client:visible />
+</div>
+
+```tsx
+<Checkbox>Off</Checkbox>
+<Checkbox defaultSelected>On</Checkbox>
+<Checkbox isIndeterminate>Indeterminate</Checkbox>
+```
+
+## Disabled
+
+<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+  <CheckboxDisabledDemo client:visible />
+</div>
+
+## Props
+
+| Prop              | Type      | Default | Description                                                        |
+| :---------------- | :-------- | :------ | :----------------------------------------------------------------- |
+| `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state.                                   |
+| `isDisabled`      | `boolean` | `false` | Disables interaction and applies disabled styling.                 |
+| `className`       | `string`  | -       | Layout-only class override merged onto the outermost root element. |
+
+_Note: All other `react-aria-components` Checkbox props are supported, excluding `style` overrides._
+
+`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The checkbox control and indicator internals remain private to preserve focus, contrast, disabled, checked, and indeterminate states.
