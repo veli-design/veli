@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   Button as AriaButton,
   ComboBox as AriaComboBox,
+  Group,
   Header,
   Input as AriaInput,
   Label,
@@ -15,12 +16,23 @@ import {
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { FieldMessage } from './field-shared';
+import {
+  defaultFieldUnderlineDisabled,
+  defaultFieldUnderlineError,
+  defaultFieldUnderlineErrorFocusPressed,
+  defaultFieldUnderlineErrorPressed,
+  defaultFieldUnderlineFocusPressed,
+  defaultFieldUnderlinePressed,
+  defaultFieldUnderlineRest,
+  defaultFieldUnderlineShell,
+  FieldMessage,
+} from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
-const comboboxRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
+const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
 const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
@@ -34,7 +46,7 @@ const headerLabelVariants = cva('type-body-sm-regular', {
   },
 });
 
-const headerMetaVariants = cva('type-caption-12-regular', {
+const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
       subtle: 'text-text-default-subtle',
@@ -71,36 +83,115 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-border-focus focus-within:ring-offset-0',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-base has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-base',
   {
     variants: {
+      variant: {
+        default: '',
+        outline:
+          'border hover:border-[1.5px] focus-within:border-2 focus-within:hover:border-2 has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent',
+      },
+      size: {
+        sm: 'h-9 py-2 px-3',
+        md: 'h-11 py-3 px-4',
+        lg: 'h-13 py-3.5 px-4',
+      },
       isDisabled: {
-        true: 'cursor-not-allowed bg-gray-alpha-200 shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
-        false:
-          'bg-bg-input-on-white shadow-[inset_0_-1px_0_0_rgba(4,32,66,0.2)] hover:shadow-[inset_0_-1px_0_0_rgba(14,21,29,0.22)]',
+        true: 'cursor-not-allowed',
+        false: 'cursor-text',
       },
       isInvalid: {
-        true: 'shadow-[inset_0_-1px_0_0_rgba(192,24,0,1)]',
+        true: '',
         false: '',
       },
       isOpen: {
-        true: 'ring-2 ring-border-focus ring-offset-0',
+        true: '',
         false: '',
       },
     },
     compoundVariants: [
       {
-        isDisabled: true,
-        isInvalid: true,
-        className: 'shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-inputs-text-input-on-white hover:bg-bg-surface-base focus-within:bg-bg-primary-subtle-default focus-within:hover:bg-bg-primary-subtle-default`,
       },
       {
+        variant: 'default',
+        isDisabled: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+      },
+      {
+        variant: 'default',
+        isInvalid: true,
+        isDisabled: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
+        isDisabled: true,
+        isInvalid: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        className:
+          'border-inputs-text-input-stroke-default bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-hover hover:bg-bg-surface-base focus-within:border-inputs-text-input-stroke-pressed focus-within:bg-bg-primary-subtle-default focus-within:hover:border-inputs-text-input-stroke-pressed focus-within:hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:bg-inputs-text-input-on-white has-[input[data-focus-visible]]:hover:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:hover:bg-inputs-text-input-on-white',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        className: 'border-inputs-text-input-stroke-disabled bg-gray-alpha-200',
+      },
+      {
+        variant: 'outline',
+        isInvalid: true,
+        isDisabled: false,
+        className:
+          'border-inputs-text-input-stroke-error bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-error hover:bg-bg-surface-base',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        isInvalid: true,
+        className: 'border-inputs-text-input-stroke-disabled',
+      },
+      {
+        variant: 'default',
+        isOpen: true,
+        isDisabled: false,
+        isInvalid: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-bg-primary-subtle-default hover:bg-bg-primary-subtle-default`,
+      },
+      {
+        variant: 'outline',
+        isOpen: true,
+        isDisabled: false,
+        isInvalid: false,
+        className:
+          'border-2 border-inputs-text-input-stroke-pressed bg-bg-primary-subtle-default hover:border-2 hover:border-inputs-text-input-stroke-pressed hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[input[data-focus-visible]]:bg-inputs-text-input-on-white has-[input[data-focus-visible]]:hover:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:hover:bg-inputs-text-input-on-white',
+      },
+      {
+        variant: 'default',
         isOpen: true,
         isInvalid: true,
-        className: 'ring-border-focus shadow-[inset_0_-1px_0_0_rgba(192,24,0,1)]',
+        isDisabled: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed}`,
+      },
+      {
+        variant: 'outline',
+        isOpen: true,
+        isInvalid: true,
+        isDisabled: false,
+        className:
+          'border-2 border-inputs-text-input-stroke-error hover:border-2 hover:border-inputs-text-input-stroke-error has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
       },
     ],
     defaultVariants: {
+      variant: 'default',
+      size: 'md',
       isDisabled: false,
       isInvalid: false,
       isOpen: false,
@@ -108,7 +199,7 @@ const fieldShellVariants = cva(
   },
 );
 
-const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
+const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
       true: 'text-text-disabled-disabled',
@@ -120,27 +211,39 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   },
 });
 
-const insetSlotVariants = cva(
-  'flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-[2px] bg-gray-alpha-200',
+const inputElementVariants = cva(
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
   {
     variants: {
-      isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: 'text-text-default-subtle',
+      size: {
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
     },
     defaultVariants: {
-      isDisabled: false,
+      size: 'md',
     },
   },
 );
 
-const inputElementVariants = cva(
-  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
-);
+function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
+  if (isDisabled) return;
+
+  const input = event.currentTarget.querySelector('input');
+  if (!input) return;
+
+  const target = event.target as HTMLElement;
+  if (target === input || target.closest('input, textarea, button, a, select, [role="button"]')) {
+    return;
+  }
+
+  event.preventDefault();
+  input.focus();
+}
 
 const triggerButtonVariants = cva(
-  'flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-[4px] border-0 bg-transparent outline-none transition-colors',
+  'relative z-[1] flex shrink-0 items-center justify-center rounded-sm border-0 bg-transparent outline-none transition-colors',
   {
     variants: {
       isDisabled: {
@@ -156,37 +259,20 @@ const triggerButtonVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-[10px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
+  'box-border overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'flex min-h-[32px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[6px] text-left type-body-sm-regular outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-primary-muted',
+  'flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-left type-body-sm-regular text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong',
 );
 
 const sectionHeaderVariants = cva(
-  'px-[8px] py-[6px] type-caption-12-medium text-text-default-muted',
+  'px-2 py-1.5 type-caption-12-medium text-text-default-muted',
 );
 
-const emptyStateVariants = cva('px-[8px] py-[10px] type-body-sm-regular text-text-default-subtle');
-
-function DefaultChevron({ isOpen }: { isOpen: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 16 16"
-      className={twMerge('h-5 w-5 transition-transform', isOpen ? 'rotate-180' : undefined)}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 6.5L8 10l4-3.5" />
-    </svg>
-  );
-}
+const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-text-default-subtle');
 
 export interface ComboBoxItemProps<T extends object = object> extends Omit<
   AriaListBoxItemProps<T>,
@@ -210,7 +296,7 @@ export function ComboBoxItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Veli UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
+    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (
@@ -241,17 +327,20 @@ export function ComboBoxSection<T extends object>({
   ...props
 }: ComboBoxSectionProps<T>) {
   return (
-    <ListBoxSection {...props} className={twMerge('py-[2px] first:pt-0 last:pb-0', className)}>
+    <ListBoxSection {...props} className={twMerge('py-0.5 first:pt-0 last:pb-0', className)}>
       {title ? <Header className={sectionHeaderVariants()}>{title}</Header> : null}
       {children}
     </ListBoxSection>
   );
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<
-  AriaComboBoxProps<T>,
-  'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
-> {
+export interface ComboBoxProps<T extends object>
+  extends
+    Omit<
+      AriaComboBoxProps<T>,
+      'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
+    >,
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'> {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
@@ -288,14 +377,35 @@ function ComboBoxInner<T extends object>(
     emptyState = 'No matches found.',
     inputRef,
     className,
+    variant = 'default',
+    size = 'md',
+    menuTrigger = 'focus',
     ...props
   }: ComboBoxProps<T>,
   forwardedRef: React.ForwardedRef<HTMLInputElement>,
 ) {
   const resolvedInputRef = inputRef ?? forwardedRef;
+  const shellRef = React.useRef<HTMLDivElement>(null);
+  const [triggerWidth, setTriggerWidth] = React.useState<number>();
+
+  React.useLayoutEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const updateWidth = () => setTriggerWidth(shell.offsetWidth);
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(shell);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <AriaComboBox {...props} className={twMerge(comboboxRootVariants(), className)}>
+    <AriaComboBox
+      {...props}
+      menuTrigger={menuTrigger}
+      className={twMerge(comboboxRootVariants(), className)}
+    >
       {({ isDisabled, isInvalid, isOpen, isRequired }) => (
         <>
           {label ||
@@ -303,8 +413,8 @@ function ComboBoxInner<T extends object>(
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
-            <div className="flex w-full items-center gap-[8px]">
-              <div className="flex min-w-0 flex-1 items-center gap-[4px]">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex min-w-0 flex-1 items-center gap-1">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
                 ) : null}
@@ -324,15 +434,19 @@ function ComboBoxInner<T extends object>(
             </div>
           ) : null}
 
-          <div
+          <Group
+            ref={shellRef}
             className={fieldShellVariants({
+              variant,
+              size,
               isDisabled,
               isInvalid,
               isOpen,
             })}
+            onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
           >
             {startAddon ? (
-              <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
+              <div className={inlineSlotVariants({ isDisabled })}>{startAddon}</div>
             ) : null}
             {startContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
@@ -340,23 +454,32 @@ function ComboBoxInner<T extends object>(
             <AriaInput
               ref={resolvedInputRef}
               placeholder={placeholder}
-              className={inputElementVariants()}
+              className={inputElementVariants({ size })}
             />
             {endContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
             ) : null}
             <AriaButton className={triggerButtonVariants({ isDisabled })}>
-              {menuTriggerIcon ?? <DefaultChevron isOpen={isOpen} />}
+              {menuTriggerIcon ?? (
+                <CaretDown
+                  aria-hidden
+                  size={20}
+                  weight="regular"
+                  className={twMerge('transition-transform text-icon-default-default', isOpen && 'rotate-180')}
+                />
+              )}
             </AriaButton>
-          </div>
+          </Group>
 
           <AriaPopover
-            offset={12}
+            offset={4}
             placement="bottom start"
-            style={{
-              width: 'var(--trigger-width)',
-              minWidth: 'var(--trigger-width)',
-            }}
+            triggerRef={shellRef}
+            style={
+              triggerWidth != null
+                ? { width: triggerWidth, minWidth: triggerWidth }
+                : undefined
+            }
             className={popoverVariants()}
           >
             <ListBox
