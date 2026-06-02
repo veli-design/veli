@@ -11,14 +11,17 @@ const meta: Meta<typeof Radio> = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['sm', 'md'],
+      options: ['md', 'lg'],
     },
     isDisabled: {
       control: 'boolean',
     },
+    isInvalid: {
+      control: 'boolean',
+    },
   },
   args: {
-    size: 'sm',
+    size: 'md',
     isDisabled: false,
   },
 };
@@ -50,15 +53,6 @@ export const Sizes: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-[20px]">
-      <RadioGroup aria-label="Small radio size" defaultValue="sm-on">
-        <Radio value="sm-off" size="sm">
-          Small Off
-        </Radio>
-        <Radio value="sm-on" size="sm">
-          Small On
-        </Radio>
-      </RadioGroup>
-
       <RadioGroup aria-label="Medium radio size" defaultValue="md-on">
         <Radio value="md-off" size="md">
           Medium Off
@@ -67,8 +61,60 @@ export const Sizes: Story = {
           Medium On
         </Radio>
       </RadioGroup>
+
+      <RadioGroup aria-label="Large radio size" defaultValue="lg-on">
+        <Radio value="lg-off" size="lg">
+          Large Off
+        </Radio>
+        <Radio value="lg-on" size="lg">
+          Large On
+        </Radio>
+      </RadioGroup>
     </div>
   ),
+};
+
+export const DescriptionAndError: Story = {
+  render: () => (
+    <RadioGroup
+      aria-label="Radio description and error examples"
+      className="gap-8"
+      defaultValue="selected"
+    >
+      <Radio value="description" description="Description text">
+        Label text
+      </Radio>
+      <Radio value="error" isInvalid errorMessage="Error text">
+        Label text
+      </Radio>
+      <Radio value="selected" isInvalid description="Description text" errorMessage="Error text">
+        Label text
+      </Radio>
+      <Radio
+        value="lg"
+        size="lg"
+        isInvalid
+        description="Description text"
+        errorMessage="Error text"
+      >
+        Label text
+      </Radio>
+    </RadioGroup>
+  ),
+};
+
+export const Invalid: Story = {
+  render: (args) => (
+    <RadioGroup aria-label="Invalid radio example" defaultValue="terms">
+      <Radio {...args} value="terms">
+        Accept terms and conditions
+      </Radio>
+    </RadioGroup>
+  ),
+  args: {
+    isInvalid: true,
+    errorMessage: 'You must accept the terms to continue',
+  },
 };
 
 export const RootClassName: Story = {
@@ -103,22 +149,6 @@ export const StatesAudit: Story = {
       <div className="text-[12px] font-bold uppercase text-text-default-muted">Off</div>
       <div className="text-[12px] font-bold uppercase text-text-default-muted">On</div>
 
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">SM</div>
-      <RadioGroup aria-label="Small off state">
-        <Radio value="sm-off" size="sm" />
-      </RadioGroup>
-      <RadioGroup aria-label="Small on state" defaultValue="sm-on">
-        <Radio value="sm-on" size="sm" />
-      </RadioGroup>
-
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">SM Disabled</div>
-      <RadioGroup aria-label="Small disabled off state">
-        <Radio value="sm-off-disabled" size="sm" isDisabled />
-      </RadioGroup>
-      <RadioGroup aria-label="Small disabled on state" defaultValue="sm-on-disabled">
-        <Radio value="sm-on-disabled" size="sm" isDisabled />
-      </RadioGroup>
-
       <div className="text-[12px] font-bold uppercase text-text-default-muted">MD</div>
       <RadioGroup aria-label="Medium off state">
         <Radio value="md-off" size="md" />
@@ -133,6 +163,22 @@ export const StatesAudit: Story = {
       </RadioGroup>
       <RadioGroup aria-label="Medium disabled on state" defaultValue="md-on-disabled">
         <Radio value="md-on-disabled" size="md" isDisabled />
+      </RadioGroup>
+
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">LG</div>
+      <RadioGroup aria-label="Large off state">
+        <Radio value="lg-off" size="lg" />
+      </RadioGroup>
+      <RadioGroup aria-label="Large on state" defaultValue="lg-on">
+        <Radio value="lg-on" size="lg" />
+      </RadioGroup>
+
+      <div className="text-[12px] font-bold uppercase text-text-default-muted">LG Disabled</div>
+      <RadioGroup aria-label="Large disabled off state">
+        <Radio value="lg-off-disabled" size="lg" isDisabled />
+      </RadioGroup>
+      <RadioGroup aria-label="Large disabled on state" defaultValue="lg-on-disabled">
+        <Radio value="lg-on-disabled" size="lg" isDisabled />
       </RadioGroup>
     </div>
   ),
