@@ -9,10 +9,17 @@ const meta: Meta<typeof Checkbox> = {
   },
   tags: ['autodocs'],
   argTypes: {
+    size: {
+      control: 'select',
+      options: ['md', 'lg'],
+    },
     isIndeterminate: {
       control: 'boolean',
     },
     isDisabled: {
+      control: 'boolean',
+    },
+    isInvalid: {
       control: 'boolean',
     },
   },
@@ -36,6 +43,75 @@ export const States: Story = {
       </div>
     </div>
   ),
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Medium (md)
+        </span>
+        <div className="flex items-center gap-8">
+          <Checkbox size="md">Off</Checkbox>
+          <Checkbox size="md" defaultSelected>
+            On
+          </Checkbox>
+          <Checkbox size="md" isIndeterminate>
+            Indeterminate
+          </Checkbox>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Large (lg)
+        </span>
+        <div className="flex items-center gap-8">
+          <Checkbox size="lg">Off</Checkbox>
+          <Checkbox size="lg" defaultSelected>
+            On
+          </Checkbox>
+          <Checkbox size="lg" isIndeterminate>
+            Indeterminate
+          </Checkbox>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const DescriptionAndError: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <Checkbox description="Description text">Label text</Checkbox>
+      <Checkbox isInvalid errorMessage="Error text">
+        Label text
+      </Checkbox>
+      <Checkbox
+        isInvalid
+        description="Description text"
+        errorMessage="Error text"
+      >
+        Label text
+      </Checkbox>
+      <Checkbox
+        size="lg"
+        isInvalid
+        description="Description text"
+        errorMessage="Error text"
+      >
+        Label text
+      </Checkbox>
+    </div>
+  ),
+};
+
+export const Invalid: Story = {
+  args: {
+    children: 'Accept terms and conditions',
+    isInvalid: true,
+    errorMessage: 'You must accept the terms to continue',
+  },
 };
 
 export const RootClassName: Story = {
