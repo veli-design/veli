@@ -2,7 +2,42 @@ import * as React from 'react';
 import { FieldError, Text } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 
-export const messageVariants = cva('type-caption-12-regular', {
+/**
+ * Flat bottom underline on ::after (avoids inset shadow corner curl on rounded shells).
+ * 2px bar × scaleY(0.75) ≈ 1.5px at rest; scaleY(1) = 2px when active/focused.
+ * Transform is set via a single shorthand (no transition) to avoid hover flicker.
+ */
+const underlineRestTransform = 'after:[transform:translateZ(0)_scaleY(0.75)]';
+const underlineActiveTransform = 'after:[transform:translateZ(0)_scaleY(1)]';
+const underlineHoverRestTransform = 'hover:after:[transform:translateZ(0)_scaleY(0.75)]';
+const underlineFocusActiveTransform =
+  'focus-within:after:[transform:translateZ(0)_scaleY(1)] focus-within:hover:after:[transform:translateZ(0)_scaleY(1)]';
+
+export const defaultFieldUnderlineShell =
+  `overflow-hidden after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:z-0 after:h-[2px] after:w-full after:origin-bottom after:content-[''] ${underlineRestTransform}`;
+
+export const defaultFieldUnderlineRest =
+  `after:bg-inputs-text-input-stroke-default hover:after:bg-inputs-text-input-stroke-hover ${underlineHoverRestTransform}`;
+
+export const defaultFieldUnderlinePressed =
+  `after:bg-inputs-text-input-stroke-pressed hover:after:bg-inputs-text-input-stroke-pressed ${underlineActiveTransform}`;
+
+export const defaultFieldUnderlineFocusPressed =
+  `focus-within:after:bg-inputs-text-input-stroke-pressed focus-within:hover:after:bg-inputs-text-input-stroke-pressed ${underlineFocusActiveTransform}`;
+
+export const defaultFieldUnderlineDisabled =
+  `after:bg-inputs-text-input-stroke-disabled ${underlineRestTransform}`;
+
+export const defaultFieldUnderlineError =
+  `after:bg-inputs-text-input-stroke-error hover:after:bg-inputs-text-input-stroke-error ${underlineHoverRestTransform}`;
+
+export const defaultFieldUnderlineErrorPressed =
+  `after:bg-inputs-text-input-stroke-error hover:after:bg-inputs-text-input-stroke-error ${underlineActiveTransform}`;
+
+export const defaultFieldUnderlineErrorFocusPressed =
+  `focus-within:after:bg-inputs-text-input-stroke-error focus-within:hover:after:bg-inputs-text-input-stroke-error ${underlineFocusActiveTransform}`;
+
+export const messageVariants = cva('type-caption-regular', {
   variants: {
     tone: {
       subtle: 'text-text-default-subtle',
@@ -42,11 +77,17 @@ export interface FieldMessageProps {
 
 export function FieldMessage({ isInvalid, description, errorMessage }: FieldMessageProps) {
   if (isInvalid) {
-    return (
-      <FieldError className={messageVariants({ tone: 'danger' })}>
-        {getRenderableMessage(errorMessage)}
-      </FieldError>
-    );
+    const renderedError = getRenderableMessage(errorMessage);
+
+    if (renderedError !== undefined) {
+      return (
+        <Text slot="errorMessage" className={messageVariants({ tone: 'danger' })}>
+          {renderedError}
+        </Text>
+      );
+    }
+
+    return <FieldError className={messageVariants({ tone: 'danger' })} />;
   }
 
   const renderedDescription = getRenderableMessage(description);
