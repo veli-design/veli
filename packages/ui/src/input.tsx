@@ -2,16 +2,26 @@
 
 import * as React from 'react';
 import {
+  Group,
   Input as AriaInput,
   Label,
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
-import { cva } from 'class-variance-authority';
-import { FieldMessage } from './field-shared';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Info } from 'phosphor-react';
+import {
+  defaultFieldUnderlineDisabled,
+  defaultFieldUnderlineError,
+  defaultFieldUnderlineErrorFocusPressed,
+  defaultFieldUnderlineFocusPressed,
+  defaultFieldUnderlineRest,
+  defaultFieldUnderlineShell,
+  FieldMessage,
+} from './field-shared';
 import { twMerge } from 'tailwind-merge';
 
-const inputRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
+const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
 const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
@@ -25,7 +35,7 @@ const headerLabelVariants = cva('type-body-sm-regular', {
   },
 });
 
-const headerMetaVariants = cva('type-caption-12-regular', {
+const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
       subtle: 'text-text-default-subtle',
@@ -62,36 +72,114 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] transition-[background-color,box-shadow] focus-within:ring-2 focus-within:ring-border-focus focus-within:ring-offset-0',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-base',
   {
     variants: {
+      variant: {
+        default: '',
+        outline:
+          'border hover:border-[1.5px] focus-within:border-2 focus-within:hover:border-2 has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+      },
+      size: {
+        sm: 'h-9 py-2 px-3',
+        md: 'h-11 py-3 px-4',
+        lg: 'h-13 py-3.5 px-4',
+      },
       isDisabled: {
-        true: 'cursor-not-allowed bg-gray-alpha-200 shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
-        false:
-          'bg-bg-input-on-white shadow-[inset_0_-1px_0_0_rgba(4,32,66,0.2)] hover:shadow-[inset_0_-1px_0_0_rgba(14,21,29,0.22)]',
+        true: 'cursor-not-allowed',
+        false: 'cursor-text',
       },
       isInvalid: {
-        true: 'shadow-[inset_0_-1px_0_0_rgba(192,24,0,1)]',
+        true: '',
         false: '',
       },
       isReadOnly: {
-        true: 'bg-gray-alpha-100',
+        true: '',
         false: '',
       },
     },
     compoundVariants: [
       {
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-inputs-text-input-on-white hover:bg-bg-surface-base focus-within:bg-bg-primary-subtle-default focus-within:hover:bg-bg-primary-subtle-default`,
+      },
+      {
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-gray-alpha-100 focus-within:bg-bg-primary-subtle-default focus-within:hover:bg-bg-primary-subtle-default`,
+      },
+      {
+        variant: 'default',
+        isDisabled: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+      },
+      {
+        variant: 'default',
+        isInvalid: true,
+        isDisabled: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
+        isDisabled: true,
+        isInvalid: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+      },
+      {
+        variant: 'default',
         isDisabled: true,
         isReadOnly: true,
         className: 'bg-gray-alpha-200',
       },
       {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: false,
+        className:
+          'border-inputs-text-input-stroke-default bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-hover hover:bg-bg-surface-base focus-within:border-inputs-text-input-stroke-pressed focus-within:bg-bg-primary-subtle-default focus-within:hover:border-inputs-text-input-stroke-pressed focus-within:hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:bg-inputs-text-input-on-white has-[input[data-focus-visible]]:hover:bg-inputs-text-input-on-white',
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: true,
+        className:
+          'border-inputs-text-input-stroke-default bg-gray-alpha-100 hover:border-inputs-text-input-stroke-hover focus-within:border-inputs-text-input-stroke-pressed focus-within:bg-bg-primary-subtle-default focus-within:hover:border-inputs-text-input-stroke-pressed focus-within:hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:bg-gray-alpha-100 has-[input[data-focus-visible]]:hover:bg-gray-alpha-100',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        className: 'border-inputs-text-input-stroke-disabled bg-gray-alpha-200',
+      },
+      {
+        variant: 'outline',
+        isInvalid: true,
+        isDisabled: false,
+        className:
+          'border-inputs-text-input-stroke-error bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-error hover:bg-bg-surface-base',
+      },
+      {
+        variant: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
+        className: 'border-inputs-text-input-stroke-disabled',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        isReadOnly: true,
+        className: 'bg-gray-alpha-200',
       },
     ],
     defaultVariants: {
+      variant: 'default',
+      size: 'md',
       isDisabled: false,
       isInvalid: false,
       isReadOnly: false,
@@ -99,7 +187,7 @@ const fieldShellVariants = cva(
   },
 );
 
-const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
+const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
       true: 'text-text-disabled-disabled',
@@ -111,8 +199,20 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   },
 });
 
+const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
+  variants: {
+    isDisabled: {
+      true: 'text-text-disabled-disabled',
+      false: 'text-text-danger-muted',
+    },
+  },
+  defaultVariants: {
+    isDisabled: false,
+  },
+});
+
 const insetSlotVariants = cva(
-  'flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-[2px] bg-gray-alpha-200',
+  'relative z-[1] flex shrink-0 items-center justify-center rounded-xs',
   {
     variants: {
       isDisabled: {
@@ -127,13 +227,40 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'min-w-0 flex-1 border-0 bg-transparent p-0 type-body-sm-regular text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  {
+    variants: {
+      size: {
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  },
 );
 
-export interface InputProps extends Omit<
-  AriaTextFieldProps,
-  'children' | 'className' | 'style' | 'spellCheck'
-> {
+function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
+  if (isDisabled) return;
+
+  const input = event.currentTarget.querySelector('input');
+  if (!input) return;
+
+  const target = event.target as HTMLElement;
+  if (target === input || target.closest('input, textarea, button, a, select, [role="button"]')) {
+    return;
+  }
+
+  event.preventDefault();
+  input.focus();
+}
+
+export interface InputProps
+  extends
+    Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'>,
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'> {
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
@@ -172,6 +299,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     endContent,
     endAddon,
     className,
+    variant = 'default',
+    size = 'md',
     autoCapitalize,
     autoComplete,
     autoCorrect,
@@ -196,8 +325,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
-            <div className="flex w-full items-center gap-[8px]">
-              <div className="flex min-w-0 flex-1 items-center gap-[4px]">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex min-w-0 flex-1 items-center gap-1">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
                 ) : null}
@@ -217,12 +346,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
             </div>
           ) : null}
 
-          <div
+          <Group
             className={fieldShellVariants({
+              variant,
+              size,
               isDisabled,
               isInvalid,
               isReadOnly,
             })}
+            onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
           >
             {startAddon ? (
               <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
@@ -243,13 +375,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
               placeholder={placeholder}
               spellCheck={spellCheck}
               type={type}
-              className={inputElementVariants()}
+              className={inputElementVariants({ size })}
             />
             {endContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
             ) : null}
+            {isInvalid ? (
+              <div className={errorIconVariants({ isDisabled })} aria-hidden>
+                <Info size={size === 'lg' ? 20 : 16} weight="fill" />
+              </div>
+            ) : null}
             {endAddon ? <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div> : null}
-          </div>
+          </Group>
 
           <FieldMessage
             isInvalid={isInvalid}
