@@ -2,6 +2,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Link } from '@tradenetcorp/veli-ui/link';
 import { ArrowRight, Plus, DownloadSimple } from 'phosphor-react';
 
+const linkSizeExamples = [
+  { className: 'type-caption-12-regular', label: 'Extra Small', size: 'sm' },
+  { className: 'type-body-sm-regular', label: 'Small', size: 'sm' },
+  { className: 'type-body-md-regular', label: 'Medium', size: 'md' },
+  { className: 'type-body-lg-regular', label: 'Large', size: 'lg' },
+  { className: 'type-subtitle-regular', label: 'Extra Large', size: 'lg' },
+] as const;
+
 const meta = {
   title: 'Components/Link',
   component: Link,
@@ -12,7 +20,11 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'inverted'],
+      options: ['default', 'secondary', 'inverted'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
     },
     underline: {
       control: 'select',
@@ -24,7 +36,8 @@ const meta = {
   },
   args: {
     children: 'Link Label',
-    variant: 'primary',
+    variant: 'default',
+    size: 'md',
     underline: 'hover',
     href: '#',
   },
@@ -36,9 +49,9 @@ type Story = StoryObj<typeof meta>;
 /**
  * The default link style, typically used for navigation and inline references.
  */
-export const Primary: Story = {
+export const Default: Story = {
   args: {
-    children: 'Primary Link',
+    children: 'Default Link',
   },
 };
 
@@ -60,19 +73,19 @@ export const AllVariants: Story = {
         Always Underline
       </div>
 
-      <div className="text-sm font-medium">Primary</div>
+      <div className="text-sm font-medium">Default</div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="none">
+        <Link variant="default" underline="none">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="hover">
+        <Link variant="default" underline="hover">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="always">
+        <Link variant="default" underline="always">
           Link
         </Link>
       </div>
@@ -157,7 +170,7 @@ export const StatesAudit: Story = {
         </span>
         <Link href="#" isDisabled={true}>
           Disabled
-          <ArrowRight size={16} weight="bold" />
+          <ArrowRight weight="bold" />
         </Link>
       </div>
     </div>
@@ -165,24 +178,24 @@ export const StatesAudit: Story = {
 };
 
 /**
- * Demonstrates common icon placement patterns while the link inherits typography.
+ * Demonstrates common icon placement patterns. Icons inherit their size from the link's `size` prop.
  */
 export const WithIcons: Story = {
   render: (args) => (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-16">
         <Link {...args}>
-          <Plus size={16} weight="bold" />
+          <Plus weight="bold" />
           Leading Icon
         </Link>
         <Link {...args}>
           Trailing Icon
-          <ArrowRight size={16} weight="bold" />
+          <ArrowRight weight="bold" />
         </Link>
         <Link {...args}>
-          <DownloadSimple size={16} weight="bold" />
+          <DownloadSimple weight="bold" />
           Both Icons
-          <ArrowRight size={16} weight="bold" />
+          <ArrowRight weight="bold" />
         </Link>
       </div>
     </div>
@@ -190,19 +203,83 @@ export const WithIcons: Story = {
 };
 
 /**
+ * The `size` prop sets default icon dimensions via `[&_svg]` classes.
+ * Typography still inherits from the surrounding context.
+ */
+export const ComponentSizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-6 type-body-md-regular">
+      {(
+        [
+          { size: 'sm', label: 'Small', iconSize: 16 },
+          { size: 'md', label: 'Medium', iconSize: 16 },
+          { size: 'lg', label: 'Large', iconSize: 20 },
+        ] as const
+      ).map(({ size, label, iconSize }) => (
+        <div key={size} className="flex items-center gap-6">
+          <span className="w-20 text-text-default-muted">{label}</span>
+          <Link {...args} size={size}>
+            <Plus weight="bold" />
+            {label} Link
+            <ArrowRight weight="bold" />
+          </Link>
+          <span className="text-xs text-text-default-muted italic">{iconSize}px icons</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/**
  * Links inherit typography from their surrounding context.
+ * Icon sizes should match the parent typography scale.
+ */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-6">
+      {linkSizeExamples.map(({ className, label, size }) => (
+        <div key={label} className="flex items-center gap-6">
+          <span className={`${className} w-28 text-text-default-muted`}>{label}</span>
+          <span className={className}>
+            <Link {...args} size={size}>
+              <Plus weight="bold" />
+              {label} Link
+              <ArrowRight weight="bold" />
+            </Link>
+          </span>
+          <span className="text-xs text-text-default-muted italic">{size} icons</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/**
+ * Links inherit typography when embedded inline within body copy.
  */
 export const InheritedTypography: Story = {
   render: (args) => (
     <div className="flex flex-col gap-4">
       <p className="type-caption-12-regular">
-        Small text with an <Link {...args}>inherited link</Link>
+        Small text with an{' '}
+        <Link {...args} size="sm">
+          <Plus weight="bold" />
+          inherited link
+        </Link>
       </p>
       <p className="type-body-md-regular">
-        Body text with an <Link {...args}>inherited link</Link>
+        Body text with an{' '}
+        <Link {...args} size="md">
+          inherited link
+          <ArrowRight weight="bold" />
+        </Link>
       </p>
       <p className="type-subtitle-regular">
-        Large text with an <Link {...args}>inherited link</Link>
+        Large text with an{' '}
+        <Link {...args} size="lg">
+          <Plus weight="bold" />
+          inherited link
+        </Link>
       </p>
     </div>
   ),
