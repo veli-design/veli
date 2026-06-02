@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans font-medium antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0 disabled:pointer-events-none',
+  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -22,11 +22,11 @@ const buttonVariants = cva(
       },
       size: {
         // Includes visual compensation for Figma's internal "Label" horizontal inset.
-        xs: 'h-7 px-[8px] gap-0.5 type-caption-12-medium',
-        sm: 'h-9 px-2.5 gap-0.5 type-body-sm-medium',
-        md: 'h-11 px-3.5 gap-0.5 type-body-md-medium',
-        lg: 'h-13 px-[16px] gap-0.5 type-body-lg-medium',
-        xl: 'h-15 px-[18px] gap-0.5 type-subtitle-medium',
+        xs: 'h-7 px-2 gap-2',
+        sm: 'h-9 px-2.5 gap-2',
+        md: 'h-11 px-3.5 gap-2',
+        lg: 'h-13 px-4 gap-2',
+        xl: 'h-15 px-4.5 gap-2',
       },
       iconOnly: {
         true: 'shrink-0 px-0',
@@ -195,11 +195,11 @@ const seaglassButtonVariants = cva(
 const loadingOnlyMinWidthVariants = cva('', {
   variants: {
     size: {
-      xs: 'min-w-[84px]',
-      sm: 'min-w-[105px]',
-      md: 'min-w-[118px]',
-      lg: 'min-w-[135px]',
-      xl: 'min-w-[148px]',
+      xs: 'min-w-21',
+      sm: 'min-w-26.25',
+      md: 'min-w-29.5',
+      lg: 'min-w-33.75',
+      xl: 'min-w-37',
     },
   },
   defaultVariants: {
@@ -210,11 +210,11 @@ const loadingOnlyMinWidthVariants = cva('', {
 const loadingIndicatorVariants = cva('', {
   variants: {
     size: {
-      xs: 'h-3 w-3',
-      sm: 'h-[18px] w-[18px]',
-      md: 'h-5 w-5',
-      lg: 'h-5 w-5',
-      xl: 'h-[22px] w-[22px]',
+      xs: 'size-3',
+      sm: 'size-4.5',
+      md: 'size-5',
+      lg: 'size-5',
+      xl: 'size-5.5',
     },
   },
   defaultVariants: {
@@ -222,30 +222,33 @@ const loadingIndicatorVariants = cva('', {
   },
 });
 
-const buttonContentVariants = cva('relative z-[1] inline-flex items-center justify-center', {
-  variants: {
-    size: {
-      xs: 'gap-0.5',
-      sm: 'gap-0.5',
-      md: 'gap-0.5',
-      lg: 'gap-0.5',
-      xl: 'gap-0.5',
+const buttonContentVariants = cva(
+  'relative z-[1] inline-flex items-center justify-center font-sans antialiased',
+  {
+    variants: {
+      size: {
+        xs: 'gap-2 type-caption-medium',
+        sm: 'gap-2 type-body-sm-medium',
+        md: 'gap-2 type-body-md-medium',
+        lg: 'gap-2 type-body-lg-medium',
+        xl: 'gap-2 type-subtitle-medium',
+      },
+      hasChildren: {
+        true: '',
+        false: 'gap-0',
+      },
+      iconOnly: {
+        true: 'gap-0',
+        false: '',
+      },
     },
-    hasChildren: {
-      true: '',
-      false: 'gap-0',
-    },
-    iconOnly: {
-      true: 'gap-0',
-      false: '',
+    defaultVariants: {
+      size: 'md',
+      hasChildren: true,
+      iconOnly: false,
     },
   },
-  defaultVariants: {
-    size: 'md',
-    hasChildren: true,
-    iconOnly: false,
-  },
-});
+);
 
 type AccessibleButtonName =
   | { 'aria-label': string; 'aria-labelledby'?: string }
@@ -368,11 +371,11 @@ export function Button({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !isLoadingOnly || hasButtonAccessibleName,
-    'Veli UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
+    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const writeSpotlightPosition = React.useCallback((x: string, y: string) => {
