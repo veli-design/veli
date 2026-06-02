@@ -15,12 +15,21 @@ import {
   type SectionProps as AriaSectionProps,
   type SelectProps as AriaSelectProps,
 } from 'react-aria-components';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { FieldMessage } from './field-shared';
+import {
+  defaultFieldUnderlineDisabled,
+  defaultFieldUnderlineError,
+  defaultFieldUnderlineErrorPressed,
+  defaultFieldUnderlinePressed,
+  defaultFieldUnderlineRest,
+  defaultFieldUnderlineShell,
+  FieldMessage,
+} from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
-const selectRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
+const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
 const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
@@ -34,7 +43,7 @@ const headerLabelVariants = cva('type-body-sm-regular', {
   },
 });
 
-const headerMetaVariants = cva('type-caption-12-regular', {
+const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
       subtle: 'text-text-default-subtle',
@@ -71,35 +80,156 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'flex min-h-[36px] w-full items-center gap-[4px] rounded-[6px] px-[6px] py-[6px] text-left transition-[background-color,box-shadow] outline-none',
+  'relative flex w-full items-center gap-1 rounded-md text-left outline-none transition-[background-color,border-color]',
   {
     variants: {
+      variant: {
+        default: '',
+        outline: 'border hover:border-[1.5px]',
+      },
+      size: {
+        sm: 'h-9 py-2 px-3',
+        md: 'h-11 py-3 px-4',
+        lg: 'h-13 py-3.5 px-4',
+      },
       isDisabled: {
-        true: 'cursor-not-allowed bg-gray-alpha-200 shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
-        false:
-          'bg-bg-input-on-white shadow-[inset_0_-1px_0_0_rgba(4,32,66,0.2)] hover:shadow-[inset_0_-1px_0_0_rgba(14,21,29,0.22)]',
+        true: 'cursor-not-allowed',
+        false: 'cursor-pointer',
       },
       isInvalid: {
-        true: 'shadow-[inset_0_-1px_0_0_rgba(192,24,0,1)]',
+        true: '',
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-border-focus ring-offset-0',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
         false: '',
       },
       isOpen: {
-        true: 'bg-bg-surface-raised',
+        true: '',
         false: '',
       },
     },
     compoundVariants: [
       {
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: false,
+        isOpen: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-inputs-text-input-on-white hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-bg-primary-subtle-default hover:bg-bg-primary-subtle-default`,
+      },
+      {
+        variant: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isOpen: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-bg-primary-subtle-default hover:bg-bg-primary-subtle-default`,
+      },
+      {
+        variant: 'default',
+        isDisabled: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+      },
+      {
+        variant: 'default',
+        isInvalid: true,
+        isDisabled: false,
+        isFocusVisible: false,
+        isOpen: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
+        isInvalid: true,
+        isDisabled: false,
+        isFocusVisible: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
+        isInvalid: true,
+        isDisabled: false,
+        isOpen: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-bg-surface-base`,
+      },
+      {
+        variant: 'default',
         isDisabled: true,
         isInvalid: true,
-        className: 'shadow-[inset_0_-1px_0_0_rgba(0,36,80,0.04)]',
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: false,
+        isOpen: false,
+        className:
+          'border-inputs-text-input-stroke-default bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-hover hover:bg-bg-surface-base',
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: true,
+        isOpen: false,
+        className: 'border-transparent hover:border-transparent',
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: true,
+        isOpen: true,
+        className: 'border-transparent hover:border-transparent',
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: false,
+        isOpen: true,
+        className:
+          'border-2 border-inputs-text-input-stroke-pressed bg-bg-primary-subtle-default hover:border-2 hover:border-inputs-text-input-stroke-pressed hover:bg-bg-primary-subtle-default',
+      },
+      {
+        variant: 'outline',
+        isDisabled: false,
+        isInvalid: true,
+        isFocusVisible: false,
+        isOpen: true,
+        className:
+          'border-2 border-inputs-text-input-stroke-error hover:border-2 hover:border-inputs-text-input-stroke-error',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        className: 'border-inputs-text-input-stroke-disabled bg-gray-alpha-200',
+      },
+      {
+        variant: 'outline',
+        isInvalid: true,
+        isDisabled: false,
+        className:
+          'border-inputs-text-input-stroke-error bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-error hover:bg-bg-surface-base',
+      },
+      {
+        variant: 'outline',
+        isDisabled: true,
+        isInvalid: true,
+        className: 'border-inputs-text-input-stroke-disabled',
       },
     ],
     defaultVariants: {
+      variant: 'default',
+      size: 'md',
       isDisabled: false,
       isInvalid: false,
       isFocusVisible: false,
@@ -107,6 +237,19 @@ const fieldButtonVariants = cva(
     },
   },
 );
+
+const selectValueVariants = cva('min-w-0 flex-1 truncate', {
+  variants: {
+    size: {
+      sm: 'type-body-sm-regular',
+      md: 'type-body-sm-regular',
+      lg: 'type-body-md-regular',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
@@ -121,7 +264,7 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const indicatorVariants = cva(
-  'flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-[2px] transition-transform',
+  'flex  shrink-0 items-center justify-center rounded-xs transition-transform',
   {
     variants: {
       isDisabled: {
@@ -141,18 +284,18 @@ const indicatorVariants = cva(
 );
 
 const popoverVariants = cva(
-  'min-w-[var(--trigger-width)] overflow-hidden rounded-[12px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[4px] text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
+  'min-w-[var(--trigger-width)] overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
 );
 
-const listBoxVariants = cva('max-h-[280px] overflow-auto outline-none');
+const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-[36px] w-full cursor-default items-center gap-[8px] rounded-[8px] px-[8px] py-[8px] text-left type-body-sm-regular outline-none transition-colors',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-left type-body-sm-regular outline-none transition-colors',
   {
     variants: {
       isSelected: {
-        true: 'bg-button-primary-subtle-default text-text-default-default',
-        false: 'text-text-default-default',
+        true: 'bg-button-primary-subtle-default text-text-default-strong',
+        false: 'text-text-default-strong',
       },
       isFocused: {
         true: 'bg-button-primary-subtle-hover',
@@ -171,34 +314,14 @@ const selectItemVariants = cva(
   },
 );
 
-const selectSectionVariants = cva('py-[4px] first:pt-0 last:pb-0');
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 16 16"
-      className="h-[16px] w-[16px]"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4 6.5L8 10L12 6.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+const selectSectionVariants = cva('py-1 first:pt-0 last:pb-0');
 
 function CheckIcon() {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-[16px] w-[16px]"
+      className="size-4"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -213,10 +336,13 @@ function CheckIcon() {
   );
 }
 
-export interface SelectProps<T extends object> extends Omit<
-  AriaSelectProps<T>,
-  'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
-> {
+export interface SelectProps<T extends object>
+  extends
+    Omit<
+      AriaSelectProps<T>,
+      'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
+    >,
+    Omit<VariantProps<typeof fieldButtonVariants>, 'isDisabled' | 'isInvalid' | 'isFocusVisible' | 'isOpen'> {
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
@@ -246,6 +372,8 @@ export function Select<T extends object>({
   indicator,
   placeholder,
   className,
+  variant = 'default',
+  size = 'md',
   items,
   children,
   ...props
@@ -263,8 +391,8 @@ export function Select<T extends object>({
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
-            <div className="flex w-full items-center gap-[8px]">
-              <div className="flex min-w-0 flex-1 items-center gap-[4px]">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex min-w-0 flex-1 items-center gap-1">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
                 ) : null}
@@ -286,6 +414,8 @@ export function Select<T extends object>({
 
           <AriaButton
             className={fieldButtonVariants({
+              variant,
+              size,
               isDisabled,
               isInvalid,
               isOpen,
@@ -298,12 +428,12 @@ export function Select<T extends object>({
             <SelectValue
               className={({ isPlaceholder }) =>
                 twMerge(
-                  'min-w-0 flex-1 truncate type-body-sm-regular',
+                  selectValueVariants({ size }),
                   isPlaceholder
                     ? 'text-text-default-inactive'
                     : isDisabled
                       ? 'text-text-disabled-disabled'
-                      : 'text-text-default-default',
+                      : 'text-text-default-strong',
                 )
               }
             />
@@ -311,7 +441,9 @@ export function Select<T extends object>({
               <span className={inlineSlotVariants({ isDisabled })}>{endContent}</span>
             ) : null}
             <span className={indicatorVariants({ isDisabled, isOpen })}>
-              {indicator ?? <ChevronDownIcon />}
+              {indicator ?? (
+                <CaretDown aria-hidden size={20} weight="regular" className="text-icon-default-default" />
+              )}
             </span>
           </AriaButton>
 
@@ -350,7 +482,7 @@ export function SelectSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(selectSectionVariants(), className)}>
       {title ? (
-        <Header className="px-[8px] py-[4px] text-[12px] font-semibold uppercase tracking-[0.08em] text-text-default-muted">
+        <Header className="px-2 py-1 text-xs font-semibold uppercase tracking-wide text-text-default-muted">
           {title}
         </Header>
       ) : null}
@@ -388,7 +520,7 @@ export function SelectItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Veli UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
+    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (
@@ -401,7 +533,7 @@ export function SelectItem<T extends object = object>({
       }
     >
       {({ isSelected }) => (
-        <div className="flex min-w-0 flex-1 items-center gap-[8px]">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           {startContent ? (
             <span className="shrink-0 text-text-default-subtle">{startContent}</span>
           ) : null}

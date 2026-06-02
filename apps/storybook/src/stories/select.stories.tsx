@@ -10,6 +10,14 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'outline'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
     isDisabled: {
       control: 'boolean',
     },
@@ -31,14 +39,130 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const sizeStoryOptions = (
+  <>
+    <SelectItem id="malaysia">Malaysia</SelectItem>
+    <SelectItem id="singapore">Singapore</SelectItem>
+    <SelectItem id="thailand">Thailand</SelectItem>
+  </>
+);
+
 export const Default: Story = {
   render: (args) => (
     <div className="w-[320px]">
-      <Select {...args}>
-        <SelectItem id="malaysia">Malaysia</SelectItem>
-        <SelectItem id="singapore">Singapore</SelectItem>
-        <SelectItem id="thailand">Thailand</SelectItem>
-      </Select>
+      <Select {...args}>{sizeStoryOptions}</Select>
+    </div>
+  ),
+};
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+  },
+  render: (args) => (
+    <div className="w-[320px]">
+      <Select {...args}>{sizeStoryOptions}</Select>
+    </div>
+  ),
+};
+
+/**
+ * Showcases all size variants of the Select component.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Default
+        </span>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <Select
+            size="sm"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <Select
+            size="md"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <Select
+            size="lg"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+      </div>
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Outline
+        </span>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <Select
+            size="sm"
+            variant="outline"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <Select
+            size="md"
+            variant="outline"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <Select
+            size="lg"
+            variant="outline"
+            label="Label"
+            placeholder="Choose an option"
+            description="Helper text"
+          >
+            {sizeStoryOptions}
+          </Select>
+        </div>
+      </div>
     </div>
   ),
 };
@@ -97,36 +221,88 @@ export const FigmaExploration: Story = {
 export const ValidationStates: Story = {
   render: () => (
     <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-      <Select label="Default" placeholder="Choose a value" description="Helper text">
-        <SelectItem id="a">Option A</SelectItem>
-        <SelectItem id="b">Option B</SelectItem>
-      </Select>
-      <Select
-        label="Invalid"
-        placeholder="Choose a value"
-        isInvalid
-        errorMessage="This field needs attention."
-      >
-        <SelectItem id="a">Option A</SelectItem>
-        <SelectItem id="b">Option B</SelectItem>
-      </Select>
-      <Select
-        label="Invalid without message"
-        placeholder="Choose a value"
-        isInvalid
-        description="This helper text is hidden while invalid."
-      >
-        <SelectItem id="a">Option A</SelectItem>
-        <SelectItem id="b">Option B</SelectItem>
-      </Select>
-      <Select label="Disabled" placeholder="Unavailable" isDisabled>
-        <SelectItem id="a">Option A</SelectItem>
-        <SelectItem id="b">Option B</SelectItem>
-      </Select>
-      <Select label="Selected" defaultSelectedKey="b" description="Preselected value">
-        <SelectItem id="a">Option A</SelectItem>
-        <SelectItem id="b">Option B</SelectItem>
-      </Select>
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Default
+        </span>
+        <Select label="Default" placeholder="Choose a value" description="Helper text">
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select
+          label="Invalid"
+          placeholder="Choose a value"
+          isInvalid
+          errorMessage="This field needs attention."
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select
+          label="Invalid without message"
+          placeholder="Choose a value"
+          isInvalid
+          description="This helper text is hidden while invalid."
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select label="Disabled" placeholder="Unavailable" isDisabled>
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select label="Selected" defaultSelectedKey="b" description="Preselected value">
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+      </div>
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Outline
+        </span>
+        <Select
+          variant="outline"
+          label="Default"
+          placeholder="Choose a value"
+          description="Helper text"
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select
+          variant="outline"
+          label="Invalid"
+          placeholder="Choose a value"
+          isInvalid
+          errorMessage="This field needs attention."
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select
+          variant="outline"
+          label="Invalid without message"
+          placeholder="Choose a value"
+          isInvalid
+          description="This helper text is hidden while invalid."
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select variant="outline" label="Disabled" placeholder="Unavailable" isDisabled>
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+        <Select
+          variant="outline"
+          label="Selected"
+          defaultSelectedKey="b"
+          description="Preselected value"
+        >
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+        </Select>
+      </div>
     </div>
   ),
 };
