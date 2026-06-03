@@ -78,7 +78,7 @@ const radioErrorVariants = cva('text-text-danger-muted', {
 });
 
 const controlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-inputs-radio-container-bg transition-colors focus-visible:outline-none',
+  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-radio-container-bg transition-colors focus-visible:outline-none',
   {
     variants: {
       size: {
@@ -132,14 +132,14 @@ const controlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className: 'border-inputs-radio-container-off-border',
+        className: 'border-radio-container-off-border',
       },
       {
         isSelected: false,
         isDisabled: false,
         isHovered: true,
         isPressed: false,
-        className: 'border-inputs-radio-container-off-border-hover',
+        className: 'border-radio-container-off-border-hover',
       },
       {
         isSelected: false,
@@ -152,14 +152,14 @@ const controlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className: 'border-inputs-radio-container-selected-border',
+        className: 'border-radio-container-selected-border',
       },
       {
         isSelected: true,
         isDisabled: false,
         isHovered: true,
         isPressed: false,
-        className: 'border-inputs-radio-container-selected-border-hover',
+        className: 'border-radio-container-selected-border-hover',
       },
       {
         isSelected: true,
@@ -169,7 +169,7 @@ const controlVariants = cva(
       },
       {
         isDisabled: true,
-        className: 'border-inputs-radio-indicator-disabled-border',
+        className: 'border-radio-indicator-disabled-border',
       },
     ],
     defaultVariants: {
@@ -243,18 +243,18 @@ const indicatorVariants = cva(
         isSelected: true,
         isHovered: false,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-selected-bg',
+        className: 'bg-radio-indicator-selected-bg',
       },
       {
         isSelected: true,
         isHovered: true,
         isDisabled: false,
-        className: 'bg-inputs-radio-indicator-selected-bg-hover',
+        className: 'bg-radio-indicator-selected-bg-hover',
       },
       {
         isSelected: true,
         isDisabled: true,
-        className: 'bg-inputs-radio-indicator-disabled-bg',
+        className: 'bg-radio-indicator-disabled-bg',
       },
     ],
     defaultVariants: {
