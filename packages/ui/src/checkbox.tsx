@@ -145,28 +145,28 @@ const checkboxControlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border',
+        className: 'bg-checkbox-container-bg border-checkbox-container-border',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: false,
         isHovered: true,
-        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-border-hover',
+        className: 'bg-checkbox-container-bg border-checkbox-container-border-hover',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: false,
         isPressed: true,
-        className: 'bg-inputs-checkbox-container-bg border-inputs-checkbox-container-checked-bg',
+        className: 'bg-checkbox-container-bg border-checkbox-container-checked-bg',
       },
       {
         isSelected: false,
         isIndeterminate: false,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-container-bg border-inputs-checkbox-indicator-disabled-border',
+          'bg-checkbox-container-bg border-checkbox-indicator-disabled-border',
       },
       // Checked / indeterminate active
       {
@@ -175,7 +175,7 @@ const checkboxControlVariants = cva(
         isHovered: false,
         isPressed: false,
         className:
-          'bg-inputs-checkbox-container-checked-bg border-inputs-checkbox-container-checked-bg',
+          'bg-checkbox-container-checked-bg border-checkbox-container-checked-bg',
       },
       {
         isIndeterminate: true,
@@ -183,48 +183,48 @@ const checkboxControlVariants = cva(
         isHovered: false,
         isPressed: false,
         className:
-          'bg-inputs-checkbox-container-indeterminate-bg border-inputs-checkbox-container-indeterminate-bg',
+          'bg-checkbox-container-indeterminate-bg border-checkbox-container-indeterminate-bg',
       },
       {
         isSelected: true,
         isDisabled: false,
         isHovered: true,
         className:
-          'bg-inputs-checkbox-container-bg-hover border-inputs-checkbox-container-bg-hover',
+          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isIndeterminate: true,
         isDisabled: false,
         isHovered: true,
         className:
-          'bg-inputs-checkbox-container-bg-hover border-inputs-checkbox-container-bg-hover',
+          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isSelected: true,
         isDisabled: false,
         isPressed: true,
         className:
-          'bg-inputs-checkbox-container-bg-hover border-inputs-checkbox-container-bg-hover',
+          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isIndeterminate: true,
         isDisabled: false,
         isPressed: true,
         className:
-          'bg-inputs-checkbox-container-bg-hover border-inputs-checkbox-container-bg-hover',
+          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       // Disabled selected / indeterminate
       {
         isSelected: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
+          'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
       },
       {
         isIndeterminate: true,
         isDisabled: true,
         className:
-          'bg-inputs-checkbox-indicator-disabled-bg border-inputs-checkbox-indicator-disabled-bg',
+          'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
       },
     ],
     defaultVariants: {
@@ -240,13 +240,9 @@ const checkboxControlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'pointer-events-none absolute inset-0 flex items-center justify-center transition-transform duration-150 ease-out',
+  'pointer-events-none absolute inset-0 flex items-center justify-center text-text-default-inverted transition-transform duration-150 ease-out',
   {
     variants: {
-      isDisabled: {
-        true: 'text-icon-default-subtle',
-        false: 'text-text-default-inverted',
-      },
       isPressed: {
         true: '',
         false: '',
@@ -264,7 +260,6 @@ const indicatorVariants = cva(
       },
     ],
     defaultVariants: {
-      isDisabled: false,
       isPressed: false,
       isIndeterminate: false,
     },
@@ -335,7 +330,6 @@ export function Checkbox({
                 {checkedOrIndeterminate ? (
                   <span
                     className={indicatorVariants({
-                      isDisabled: state.isDisabled,
                       isPressed,
                       isIndeterminate: state.isIndeterminate,
                     })}
