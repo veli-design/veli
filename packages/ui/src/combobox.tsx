@@ -114,7 +114,7 @@ const fieldShellVariants = cva(
         variant: 'default',
         isDisabled: false,
         isInvalid: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-inputs-text-input-on-white hover:bg-bg-surface-base focus-within:bg-bg-primary-subtle-default focus-within:hover:bg-bg-primary-subtle-default`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         variant: 'default',
@@ -125,7 +125,7 @@ const fieldShellVariants = cva(
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-bg-surface-base`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
@@ -138,32 +138,32 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         className:
-          'border-inputs-text-input-stroke-default bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-hover hover:bg-bg-surface-base focus-within:border-inputs-text-input-stroke-pressed focus-within:bg-bg-primary-subtle-default focus-within:hover:border-inputs-text-input-stroke-pressed focus-within:hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:bg-inputs-text-input-on-white has-[input[data-focus-visible]]:hover:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:hover:bg-inputs-text-input-on-white',
+          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:bg-text-input-bg-default has-[input[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
       },
       {
         variant: 'outline',
         isDisabled: true,
-        className: 'border-inputs-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
       },
       {
         variant: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-inputs-text-input-stroke-error bg-inputs-text-input-on-white hover:border-inputs-text-input-stroke-error hover:bg-bg-surface-base',
+          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         variant: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border-inputs-text-input-stroke-disabled',
+        className: 'border-text-input-stroke-disabled',
       },
       {
         variant: 'default',
         isOpen: true,
         isDisabled: false,
         isInvalid: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-bg-primary-subtle-default hover:bg-bg-primary-subtle-default`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed`,
       },
       {
         variant: 'outline',
@@ -171,7 +171,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         className:
-          'border-2 border-inputs-text-input-stroke-pressed bg-bg-primary-subtle-default hover:border-2 hover:border-inputs-text-input-stroke-pressed hover:bg-bg-primary-subtle-default has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[input[data-focus-visible]]:bg-inputs-text-input-on-white has-[input[data-focus-visible]]:hover:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-inputs-text-input-on-white has-[button[data-focus-visible]]:hover:bg-inputs-text-input-on-white',
+          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[input[data-focus-visible]]:bg-text-input-bg-default has-[input[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
       },
       {
         variant: 'default',
@@ -186,7 +186,7 @@ const fieldShellVariants = cva(
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-2 border-inputs-text-input-stroke-error hover:border-2 hover:border-inputs-text-input-stroke-error has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
+          'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
       },
     ],
     defaultVariants: {
