@@ -17,25 +17,25 @@ export const defaultFieldUnderlineShell =
   `overflow-hidden after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:z-0 after:h-[2px] after:w-full after:origin-bottom after:content-[''] ${underlineRestTransform}`;
 
 export const defaultFieldUnderlineRest =
-  `after:bg-inputs-text-input-stroke-default hover:after:bg-inputs-text-input-stroke-hover ${underlineHoverRestTransform}`;
+  `after:bg-text-input-stroke-default hover:after:bg-text-input-stroke-hover ${underlineHoverRestTransform}`;
 
 export const defaultFieldUnderlinePressed =
-  `after:bg-inputs-text-input-stroke-pressed hover:after:bg-inputs-text-input-stroke-pressed ${underlineActiveTransform}`;
+  `after:bg-text-input-stroke-pressed hover:after:bg-text-input-stroke-pressed ${underlineActiveTransform}`;
 
 export const defaultFieldUnderlineFocusPressed =
-  `focus-within:after:bg-inputs-text-input-stroke-pressed focus-within:hover:after:bg-inputs-text-input-stroke-pressed ${underlineFocusActiveTransform}`;
+  `focus-within:after:bg-text-input-stroke-pressed focus-within:hover:after:bg-text-input-stroke-pressed ${underlineFocusActiveTransform}`;
 
 export const defaultFieldUnderlineDisabled =
-  `after:bg-inputs-text-input-stroke-disabled ${underlineRestTransform}`;
+  `after:bg-text-input-stroke-disabled ${underlineRestTransform}`;
 
 export const defaultFieldUnderlineError =
-  `after:bg-inputs-text-input-stroke-error hover:after:bg-inputs-text-input-stroke-error ${underlineHoverRestTransform}`;
+  `after:bg-text-input-stroke-error hover:after:bg-text-input-stroke-error ${underlineHoverRestTransform}`;
 
 export const defaultFieldUnderlineErrorPressed =
-  `after:bg-inputs-text-input-stroke-error hover:after:bg-inputs-text-input-stroke-error ${underlineActiveTransform}`;
+  `after:bg-text-input-stroke-error hover:after:bg-text-input-stroke-error ${underlineActiveTransform}`;
 
 export const defaultFieldUnderlineErrorFocusPressed =
-  `focus-within:after:bg-inputs-text-input-stroke-error focus-within:hover:after:bg-inputs-text-input-stroke-error ${underlineFocusActiveTransform}`;
+  `focus-within:after:bg-text-input-stroke-error focus-within:hover:after:bg-text-input-stroke-error ${underlineFocusActiveTransform}`;
 
 export const messageVariants = cva('type-caption-regular', {
   variants: {
