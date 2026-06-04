@@ -36,11 +36,11 @@ import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 </div>
 
 ```tsx
-<Radio size="sm" value="one">
-  Small
-</Radio>
-<Radio size="md" value="two">
+<Radio size="md" value="one">
   Medium
+</Radio>
+<Radio size="lg" value="two">
+  Large
 </Radio>
 ```
 
@@ -56,7 +56,7 @@ import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 
 | Prop         | Type           | Default | Description                                                         |
 | :----------- | :------------- | :------ | :------------------------------------------------------------------ |
-| `size`       | `'sm' \| 'md'` | `'sm'`  | Visual size of the radio control.                                   |
+| `size`       | `'md' \| 'lg'` | `'md'`  | Visual size of the radio control.                                   |
 | `isDisabled` | `boolean`      | `false` | Disables interaction and applies disabled styling.                  |
 | `value`      | `string`       | -       | Value used by the parent `RadioGroup` for selection.                |
 | `children`   | `ReactNode`    | -       | Label content.                                                      |

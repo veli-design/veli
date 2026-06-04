@@ -787,21 +787,21 @@ export function RadioUsageDemo() {
 export function RadioSizesDemo() {
   return (
     <div className="flex flex-col gap-[16px]">
-      <RadioGroup aria-label="Small radios" defaultValue="sm-on">
-        <Radio value="sm-off" size="sm">
-          Small Off
-        </Radio>
-        <Radio value="sm-on" size="sm">
-          Small On
-        </Radio>
-      </RadioGroup>
-
       <RadioGroup aria-label="Medium radios" defaultValue="md-on">
         <Radio value="md-off" size="md">
           Medium Off
         </Radio>
         <Radio value="md-on" size="md">
           Medium On
+        </Radio>
+      </RadioGroup>
+
+      <RadioGroup aria-label="Large radios" defaultValue="lg-on">
+        <Radio value="lg-off" size="lg">
+          Large Off
+        </Radio>
+        <Radio value="lg-on" size="lg">
+          Large On
         </Radio>
       </RadioGroup>
     </div>
