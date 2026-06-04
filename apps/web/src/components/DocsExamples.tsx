@@ -667,19 +667,19 @@ export function LinkVariantsDemo() {
         Always Underline
       </div>
 
-      <div className="text-sm font-medium">Primary</div>
+      <div className="text-sm font-medium">Default</div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="none">
+        <Link variant="default" underline="none">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="hover">
+        <Link variant="default" underline="hover">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="primary" underline="always">
+        <Link variant="default" underline="always">
           Link
         </Link>
       </div>
