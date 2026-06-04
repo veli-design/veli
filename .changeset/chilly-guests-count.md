@@ -1,5 +1,5 @@
 ---
-"@tradenetcorp/veli-ui": minor
+"@tradenetcorp/veli-ui": patch
 "@tradenetcorp/veli-tokens": patch
 ---
 
