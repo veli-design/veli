@@ -123,7 +123,7 @@ export const Variations: Story = {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Standard trail</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Standard trail</p>
           <Breadcrumbs aria-label="Permit breadcrumb">
             <Breadcrumb href="#">Home</Breadcrumb>
             <Breadcrumb href="#">Applications</Breadcrumb>
@@ -135,7 +135,7 @@ export const Variations: Story = {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Back link treatment</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Back link treatment</p>
           <Breadcrumbs aria-label="Back breadcrumb">
             <Breadcrumb href="#" tone="accent">
               <CaretLeft aria-hidden size={16} weight="bold" />
@@ -151,7 +151,7 @@ export const Variations: Story = {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Disabled crumb</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Disabled crumb</p>
           <Breadcrumbs aria-label="Disabled breadcrumb">
             <Breadcrumb href="#">Home</Breadcrumb>
             <Breadcrumb href="#" isDisabled>

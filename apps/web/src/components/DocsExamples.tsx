@@ -76,9 +76,7 @@ export function BreadcrumbsVariantsDemo() {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
-            Static breadcrumb trail
-          </p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Static breadcrumb trail</p>
           <Breadcrumbs aria-label="Site navigation breadcrumb">
             <Breadcrumb href="#">Home</Breadcrumb>
             <Breadcrumb href="#">Departments</Breadcrumb>
@@ -92,7 +90,7 @@ export function BreadcrumbsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Back link treatment</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Back link treatment</p>
           <Breadcrumbs aria-label="Back breadcrumb">
             <Breadcrumb href="#" tone="accent">
               <CaretLeft aria-hidden size={16} weight="bold" />
@@ -108,7 +106,7 @@ export function BreadcrumbsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">
+          <p className="type-body-sm-medium text-text-default-emphasis">
             Data-driven breadcrumb trail
           </p>
           <Breadcrumbs
@@ -150,7 +148,7 @@ export function TagsVariantsDemo() {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Selectable tags</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
           <TagGroup
             label="Departments"
             selectionMode="multiple"
@@ -167,7 +165,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Removable tags</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
           <TagGroup<TagDemoItem>
             label="Saved topics"
             items={removableItems}
@@ -197,7 +195,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Link tags</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
           <TagGroup label="Related guidance">
             <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Passport services
@@ -214,7 +212,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Disabled keys</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
           <TagGroup
             label="Amenities"
             selectionMode="multiple"
@@ -231,7 +229,7 @@ export function TagsVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Disabled group</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
           <TagGroup
             label="Restricted services"
             selectionMode="multiple"
@@ -455,7 +453,7 @@ export function DividerUsageDemo() {
     <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <div className="space-y-[12px]">
         <div>
-          <h3 className="type-body-sm-medium text-text-default-high-contrast">Applicant details</h3>
+          <h3 className="type-body-sm-medium text-text-default-emphasis">Applicant details</h3>
           <p className="type-caption-12-regular text-text-default-muted">
             Review the information before continuing.
           </p>
@@ -475,12 +473,12 @@ export function DividerVariantsDemo() {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Horizontal divider</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Horizontal divider</p>
           <div className="space-y-[10px] type-body-sm-regular text-text-default-default">
             <p>Passport number</p>
             <Divider />
             <p>National ID number</p>
-            <Divider className="bg-border-default-high-contrast" />
+            <Divider className="bg-border-default-emphasis" />
             <p>Driving license number</p>
           </div>
         </div>
@@ -488,12 +486,12 @@ export function DividerVariantsDemo() {
 
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Vertical divider</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Vertical divider</p>
           <div className="flex items-center gap-[12px] type-body-sm-regular text-text-default-default">
             <span>Overview</span>
             <Divider orientation="vertical" />
             <span>Documents</span>
-            <Divider orientation="vertical" className="bg-border-default-high-contrast" />
+            <Divider orientation="vertical" className="bg-border-default-emphasis" />
             <span>History</span>
           </div>
         </div>

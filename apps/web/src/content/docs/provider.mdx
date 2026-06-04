@@ -1,11 +1,11 @@
 ---
 title: VeliProvider
-description: Supported language and direction contract for Veli components.
+description: Supported language, direction, and color scheme contract for Veli components.
 ---
 
 # VeliProvider
 
-`VeliProvider` is the integration point for Veli's supported language and direction modes. Consumers choose a supported language, and Veli maps that to locale, DOM language, and DOM direction.
+`VeliProvider` is the integration point for Veli's supported language, direction, and color scheme modes. Consumers choose a supported language, and Veli maps that to locale, DOM language, DOM direction, and theme attributes.
 
 ## Import
 
@@ -27,7 +27,13 @@ import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 </VeliProvider>
 ```
 
-## Supported Modes
+```tsx
+<VeliProvider colorScheme="system">
+  <App />
+</VeliProvider>
+```
+
+## Supported Language Modes
 
 | `language` | Content language | Locale  | Direction |
 | :--------- | :--------------- | :------ | :-------- |
@@ -36,13 +42,223 @@ import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
 Consumers should not pass `locale` and `dir` separately. Veli owns that mapping so unsupported combinations cannot be created by accident.
 
+## Supported Color Schemes
+
+| `colorScheme` | Behavior                                                        |
+| :------------ | :-------------------------------------------------------------- |
+| `system`      | Resolves to the user's `prefers-color-scheme` media preference. |
+| `light`       | Forces light mode for the provider subtree.                     |
+| `dark`        | Forces dark mode for the provider subtree.                      |
+
+The provider applies `data-theme`, `data-color-scheme`, the `.dark` class when resolved dark, and the CSS `color-scheme` utility to its wrapper element. App shells that render portaled UI should also keep `document.documentElement` in sync with the same `.dark` class so overlays inherit the active token mode.
+
+## Framework Theme Runtimes
+
+Veli is compatible with framework-level theme runtimes that toggle `.dark` on the document root. In Next.js apps, especially shadcn/ui-style apps, prefer `next-themes` as the app-level theme manager and configure it with `attribute="class"` so Veli token CSS can respond to `<html class="dark">`.
+
+`VeliProvider colorScheme` is optional in that setup. Use it when Veli components need context awareness, but do not let it compete with the app shell for document-level theme state.
+
+## Integration Examples
+
+All examples should import Veli's Tailwind theme CSS after Tailwind so semantic utilities can resolve to Veli tokens:
+
+```css
+@import 'tailwindcss';
+@import '@tradenetcorp/veli-tokens/tailwind';
+@import '@tradenetcorp/veli-ui/tailwind';
+```
+
+### Next.js with next-themes
+
+Use `next-themes` as the document-level theme runtime and configure it to write a class to `<html>`.
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from '@/components/theme-provider';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+`VeliProvider` can wrap the application for language and component context. It does not need to own document-level theme switching when `next-themes` already owns `<html class="dark">`.
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+
+function toVeliColorScheme(theme: string | undefined): VeliColorScheme {
+  return theme === 'light' || theme === 'dark' ? theme : 'system';
+}
+
+export function VeliThemeBridge({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+
+  return <VeliProvider colorScheme={toVeliColorScheme(theme)}>{children}</VeliProvider>;
+}
+```
+
+### Astro
+
+Astro apps should set the root `.dark` class before first paint, then keep it in sync when the user changes modes. Put the inline script in the shared layout `<head>`.
+
+```astro
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en" data-color-scheme="system">
+  <head>
+    <script is:inline>
+      (() => {
+        const storageKey = 'veli-color-scheme';
+        const root = document.documentElement;
+        const stored = window.localStorage.getItem(storageKey);
+        const colorScheme =
+          stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+        const isDark =
+          colorScheme === 'dark' ||
+          (colorScheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const resolvedColorScheme = isDark ? 'dark' : 'light';
+
+        root.classList.toggle('dark', isDark);
+        root.dataset.theme = resolvedColorScheme;
+        root.dataset.colorScheme = colorScheme;
+        root.style.colorScheme = resolvedColorScheme;
+      })();
+    </script>
+  </head>
+  <body class="bg-bg-surface-base text-text-default-default">
+    <slot />
+  </body>
+</html>
+```
+
+Toggle controls should update the same root contract and persist the requested mode:
+
+```html
+<button type="button" data-theme-choice="system">System</button>
+<button type="button" data-theme-choice="light">Light</button>
+<button type="button" data-theme-choice="dark">Dark</button>
+
+<script>
+  const storageKey = 'veli-color-scheme';
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function applyColorScheme(colorScheme) {
+    const isDark = colorScheme === 'dark' || (colorScheme === 'system' && media.matches);
+    const resolvedColorScheme = isDark ? 'dark' : 'light';
+
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.dataset.theme = resolvedColorScheme;
+    document.documentElement.dataset.colorScheme = colorScheme;
+    document.documentElement.style.colorScheme = resolvedColorScheme;
+    window.localStorage.setItem(storageKey, colorScheme);
+  }
+
+  for (const button of document.querySelectorAll('[data-theme-choice]')) {
+    button.addEventListener('click', () => {
+      applyColorScheme(button.dataset.themeChoice);
+    });
+  }
+  media.addEventListener('change', () => {
+    if (document.documentElement.dataset.colorScheme === 'system') {
+      applyColorScheme('system');
+    }
+  });
+</script>
+```
+
+### Vite, React Router, and TanStack Router
+
+Client-rendered React apps can use a small app-shell theme provider. The important part is that the app shell writes `.dark` to `document.documentElement`; Veli components will inherit token values from that class.
+
+```tsx
+import * as React from 'react';
+import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+
+const storageKey = 'veli-color-scheme';
+
+function resolveColorScheme(colorScheme: VeliColorScheme) {
+  return colorScheme === 'system'
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
+    : colorScheme;
+}
+
+export function AppThemeProvider({ children }: { children: React.ReactNode }) {
+  const [colorScheme, setColorScheme] = React.useState<VeliColorScheme>(() => {
+    const stored = window.localStorage.getItem(storageKey);
+    return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+  });
+
+  React.useEffect(() => {
+    const applyColorScheme = () => {
+      const resolvedColorScheme = resolveColorScheme(colorScheme);
+      document.documentElement.classList.toggle('dark', resolvedColorScheme === 'dark');
+      document.documentElement.dataset.theme = resolvedColorScheme;
+      document.documentElement.dataset.colorScheme = colorScheme;
+      document.documentElement.style.colorScheme = resolvedColorScheme;
+    };
+
+    window.localStorage.setItem(storageKey, colorScheme);
+    applyColorScheme();
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    media.addEventListener('change', applyColorScheme);
+
+    return () => {
+      media.removeEventListener('change', applyColorScheme);
+    };
+  }, [colorScheme]);
+
+  return (
+    <VeliProvider colorScheme={colorScheme}>
+      <button type="button" onClick={() => setColorScheme('system')}>
+        System
+      </button>
+      <button type="button" onClick={() => setColorScheme('light')}>
+        Light
+      </button>
+      <button type="button" onClick={() => setColorScheme('dark')}>
+        Dark
+      </button>
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
 ## Helpers
 
 ```tsx
-import { getVeliLanguageConfig, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import {
+  getVeliLanguageConfig,
+  useVeliColorScheme,
+  useVeliLanguage,
+} from '@tradenetcorp/veli-ui/provider';
 ```
 
 `useVeliLanguage` returns the active Veli language config inside a provider subtree. `getVeliLanguageConfig` returns the same mapping without reading React context.
+
+`useVeliColorScheme` returns both the requested `colorScheme` and the resolved `light` or `dark` mode for the current provider subtree.
 
 ## Direction Contract
 
@@ -56,7 +272,9 @@ English and Dhivehi typography styles are distinct in design. `VeliProvider` def
 
 ## Props
 
-| Prop       | Type           | Default | Description                                                                 |
-| :--------- | :------------- | :------ | :-------------------------------------------------------------------------- |
-| `language` | `'en' \| 'dv'` | `'en'`  | Selects Veli's supported language and direction mode.                       |
-| `children` | `ReactNode`    | -       | Application or component subtree that should inherit the language contract. |
+| Prop          | Type                            | Default    | Description                                                                 |
+| :------------ | :------------------------------ | :--------- | :-------------------------------------------------------------------------- |
+| `language`    | `'en' \| 'dv'`                  | `'en'`     | Selects Veli's supported language and direction mode.                       |
+| `colorScheme` | `'system' \| 'light' \| 'dark'` | `'system'` | Selects Veli's requested color scheme mode.                                 |
+| `className`   | `string`                        | -          | Adds classes to the provider wrapper.                                       |
+| `children`    | `ReactNode`                     | -          | Application or component subtree that should inherit the provider contract. |

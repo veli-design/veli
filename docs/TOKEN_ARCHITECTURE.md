@@ -25,6 +25,10 @@ Consuming apps import the Tailwind theme CSS from `@tradenetcorp/veli-tokens/tai
 
 Veli is Tailwind-aligned, not Tailwind-default-valued. We use Tailwind v4's native variable namespaces and utility model, while preserving Veli's government design system values and semantic design intent.
 
+Dark mode is class-driven. Token CSS emits light variables by default and dark overrides under `:where(.dark, .dark *)`, and consuming apps should apply `.dark` to the document root or the relevant provider boundary. Veli supports `system`, `light`, and `dark` color scheme intents; `system` resolves from `prefers-color-scheme`.
+
+Frameworks should own their own app-shell theme runtime. In Next.js, prefer `next-themes` with `attribute="class"` so Veli's Tailwind theme CSS responds to `<html class="dark">`. For React Router, TanStack Router, TanStack Start, Astro, and Vite-based apps, any runtime is compatible as long as it applies the same `.dark` contract before or during first paint.
+
 ## Current State
 
 The typography alignment work was implemented on 2026-05-07.
@@ -271,6 +275,7 @@ Current prebuild responsibilities:
 Current postbuild responsibilities:
 
 - Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
+- Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
 - Adds `--spacing: 4px;` inside `@theme`.
 - Converts grouped text variables to Tailwind's paired font-size and line-height syntax.
 - Converts font weight artifacts such as `600px` to numeric CSS values.

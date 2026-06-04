@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { I18nProvider } from 'react-aria-components';
+import { twMerge } from 'tailwind-merge';
 
 const veliLanguageConfigs = {
   en: {
@@ -21,13 +22,24 @@ const veliLanguageConfigs = {
 export type VeliLanguage = keyof typeof veliLanguageConfigs;
 export type VeliLanguageConfig = (typeof veliLanguageConfigs)[VeliLanguage];
 export type VeliDirection = VeliLanguageConfig['direction'];
+export type VeliColorScheme = 'light' | 'dark' | 'system';
+export type VeliResolvedColorScheme = Exclude<VeliColorScheme, 'system'>;
 
 export interface VeliProviderProps {
   language?: VeliLanguage;
+  colorScheme?: VeliColorScheme;
   children: React.ReactNode;
+  className?: string;
 }
 
 const VeliLanguageContext = React.createContext<VeliLanguageConfig>(veliLanguageConfigs.en);
+const VeliColorSchemeContext = React.createContext<{
+  colorScheme: VeliColorScheme;
+  resolvedColorScheme: VeliResolvedColorScheme;
+}>({
+  colorScheme: 'system',
+  resolvedColorScheme: 'light',
+});
 
 export function getVeliLanguageConfig(): typeof veliLanguageConfigs.en;
 export function getVeliLanguageConfig<TLanguage extends VeliLanguage>(
@@ -41,16 +53,62 @@ export function useVeliLanguage() {
   return React.useContext(VeliLanguageContext);
 }
 
-export function VeliProvider({ language = 'en', children }: VeliProviderProps) {
+export function useVeliColorScheme() {
+  return React.useContext(VeliColorSchemeContext);
+}
+
+export function VeliProvider({
+  language = 'en',
+  colorScheme = 'system',
+  children,
+  className,
+}: VeliProviderProps) {
   const config = getVeliLanguageConfig(language);
+  const resolvedColorScheme = useResolvedColorScheme(colorScheme);
+  const isDark = resolvedColorScheme === 'dark';
+  const colorSchemeContext = React.useMemo(
+    () => ({ colorScheme, resolvedColorScheme }),
+    [colorScheme, resolvedColorScheme],
+  );
 
   return (
     <VeliLanguageContext.Provider value={config}>
-      <I18nProvider locale={config.locale}>
-        <div lang={config.lang} dir={config.direction}>
-          {children}
-        </div>
-      </I18nProvider>
+      <VeliColorSchemeContext.Provider value={colorSchemeContext}>
+        <I18nProvider locale={config.locale}>
+          <div
+            lang={config.lang}
+            dir={config.direction}
+            data-theme={resolvedColorScheme}
+            data-color-scheme={colorScheme}
+            className={twMerge('scheme-light dark:scheme-dark', isDark && 'dark', className)}
+          >
+            {children}
+          </div>
+        </I18nProvider>
+      </VeliColorSchemeContext.Provider>
     </VeliLanguageContext.Provider>
   );
+}
+
+function useResolvedColorScheme(colorScheme: VeliColorScheme): VeliResolvedColorScheme {
+  const [systemColorScheme, setSystemColorScheme] =
+    React.useState<VeliResolvedColorScheme>('light');
+
+  React.useEffect(() => {
+    if (colorScheme !== 'system' || typeof window === 'undefined') return;
+
+    const query = window.matchMedia('(prefers-color-scheme: dark)');
+    const updateSystemColorScheme = () => {
+      setSystemColorScheme(query.matches ? 'dark' : 'light');
+    };
+
+    updateSystemColorScheme();
+    query.addEventListener('change', updateSystemColorScheme);
+
+    return () => {
+      query.removeEventListener('change', updateSystemColorScheme);
+    };
+  }, [colorScheme]);
+
+  return colorScheme === 'system' ? systemColorScheme : colorScheme;
 }

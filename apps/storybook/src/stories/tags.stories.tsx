@@ -54,7 +54,7 @@ export const Variations: Story = {
       <div className="grid gap-[24px] lg:grid-cols-2">
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">Selectable tags</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
             <TagGroup
               label="Departments"
               selectionMode="multiple"
@@ -71,7 +71,7 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">Removable tags</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
             <TagGroup<TagItem>
               label="Saved topics"
               items={removableItems}
@@ -101,7 +101,7 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">Link tags</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
             <TagGroup label="Related guidance">
               <Tag id="passport" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
                 Passport services
@@ -118,7 +118,7 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">Disabled keys</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
             <TagGroup
               label="Amenities"
               selectionMode="multiple"
@@ -135,7 +135,7 @@ export const Variations: Story = {
 
         <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-high-contrast">Disabled group</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
             <TagGroup
               label="Restricted services"
               selectionMode="multiple"

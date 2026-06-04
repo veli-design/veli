@@ -26,7 +26,7 @@ export const Default: Story = {
   render: (args) => (
     <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
       <div className="space-y-[12px]">
-        <p className="type-body-sm-medium text-text-default-high-contrast">Permit information</p>
+        <p className="type-body-sm-medium text-text-default-emphasis">Permit information</p>
         <Divider {...args} />
         <p className="type-body-sm-regular text-text-default-default">
           Use horizontal dividers to separate related content blocks without introducing extra
@@ -42,7 +42,7 @@ export const Orientations: Story = {
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Horizontal</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Horizontal</p>
           <div className="space-y-[10px] type-body-sm-regular text-text-default-default">
             <p>Section one</p>
             <Divider />
@@ -53,7 +53,7 @@ export const Orientations: Story = {
 
       <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-high-contrast">Vertical</p>
+          <p className="type-body-sm-medium text-text-default-emphasis">Vertical</p>
           <div className="flex items-center justify-between text-text-default-default">
             <span>Summary</span>
             <Divider orientation="vertical" />
