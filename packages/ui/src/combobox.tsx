@@ -268,9 +268,7 @@ const itemVariants = cva(
   'flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-left type-body-sm-regular text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong',
 );
 
-const sectionHeaderVariants = cva(
-  'px-2 py-1.5 type-caption-12-medium text-text-default-muted',
-);
+const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-12-medium text-text-default-muted');
 
 const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-text-default-subtle');
 
@@ -465,7 +463,10 @@ function ComboBoxInner<T extends object>(
                   aria-hidden
                   size={20}
                   weight="regular"
-                  className={twMerge('transition-transform text-icon-default-default', isOpen && 'rotate-180')}
+                  className={twMerge(
+                    'transition-transform text-icon-default-default',
+                    isOpen && 'rotate-180',
+                  )}
                 />
               )}
             </AriaButton>
@@ -476,9 +477,7 @@ function ComboBoxInner<T extends object>(
             placement="bottom start"
             triggerRef={shellRef}
             style={
-              triggerWidth != null
-                ? { width: triggerWidth, minWidth: triggerWidth }
-                : undefined
+              triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
             }
             className={popoverVariants()}
           >
