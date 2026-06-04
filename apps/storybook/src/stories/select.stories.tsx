@@ -80,12 +80,7 @@ export const Sizes: Story = {
           <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Small (sm)
           </span>
-          <Select
-            size="sm"
-            label="Label"
-            placeholder="Choose an option"
-            description="Helper text"
-          >
+          <Select size="sm" label="Label" placeholder="Choose an option" description="Helper text">
             {sizeStoryOptions}
           </Select>
         </div>
@@ -93,12 +88,7 @@ export const Sizes: Story = {
           <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Medium (md)
           </span>
-          <Select
-            size="md"
-            label="Label"
-            placeholder="Choose an option"
-            description="Helper text"
-          >
+          <Select size="md" label="Label" placeholder="Choose an option" description="Helper text">
             {sizeStoryOptions}
           </Select>
         </div>
@@ -106,12 +96,7 @@ export const Sizes: Story = {
           <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Large (lg)
           </span>
-          <Select
-            size="lg"
-            label="Label"
-            placeholder="Choose an option"
-            description="Helper text"
-          >
+          <Select size="lg" label="Label" placeholder="Choose an option" description="Helper text">
             {sizeStoryOptions}
           </Select>
         </div>

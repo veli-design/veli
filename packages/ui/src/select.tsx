@@ -342,7 +342,10 @@ export interface SelectProps<T extends object>
       AriaSelectProps<T>,
       'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
     >,
-    Omit<VariantProps<typeof fieldButtonVariants>, 'isDisabled' | 'isInvalid' | 'isFocusVisible' | 'isOpen'> {
+    Omit<
+      VariantProps<typeof fieldButtonVariants>,
+      'isDisabled' | 'isInvalid' | 'isFocusVisible' | 'isOpen'
+    > {
   label?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
@@ -442,7 +445,12 @@ export function Select<T extends object>({
             ) : null}
             <span className={indicatorVariants({ isDisabled, isOpen })}>
               {indicator ?? (
-                <CaretDown aria-hidden size={20} weight="regular" className="text-icon-default-default" />
+                <CaretDown
+                  aria-hidden
+                  size={20}
+                  weight="regular"
+                  className="text-icon-default-default"
+                />
               )}
             </span>
           </AriaButton>
