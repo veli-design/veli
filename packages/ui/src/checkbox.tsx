@@ -165,8 +165,7 @@ const checkboxControlVariants = cva(
         isSelected: false,
         isIndeterminate: false,
         isDisabled: true,
-        className:
-          'bg-checkbox-container-bg border-checkbox-indicator-disabled-border',
+        className: 'bg-checkbox-container-bg border-checkbox-indicator-disabled-border',
       },
       // Checked / indeterminate active
       {
@@ -174,8 +173,7 @@ const checkboxControlVariants = cva(
         isDisabled: false,
         isHovered: false,
         isPressed: false,
-        className:
-          'bg-checkbox-container-checked-bg border-checkbox-container-checked-bg',
+        className: 'bg-checkbox-container-checked-bg border-checkbox-container-checked-bg',
       },
       {
         isIndeterminate: true,
@@ -189,42 +187,36 @@ const checkboxControlVariants = cva(
         isSelected: true,
         isDisabled: false,
         isHovered: true,
-        className:
-          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
+        className: 'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isIndeterminate: true,
         isDisabled: false,
         isHovered: true,
-        className:
-          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
+        className: 'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isSelected: true,
         isDisabled: false,
         isPressed: true,
-        className:
-          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
+        className: 'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       {
         isIndeterminate: true,
         isDisabled: false,
         isPressed: true,
-        className:
-          'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
+        className: 'bg-checkbox-container-bg-hover border-checkbox-container-bg-hover',
       },
       // Disabled selected / indeterminate
       {
         isSelected: true,
         isDisabled: true,
-        className:
-          'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
+        className: 'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
       },
       {
         isIndeterminate: true,
         isDisabled: true,
-        className:
-          'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
+        className: 'bg-checkbox-indicator-disabled-bg border-checkbox-indicator-disabled-bg',
       },
     ],
     defaultVariants: {

@@ -87,19 +87,10 @@ export const DescriptionAndError: Story = {
       <Checkbox isInvalid errorMessage="Error text">
         Label text
       </Checkbox>
-      <Checkbox
-        isInvalid
-        description="Description text"
-        errorMessage="Error text"
-      >
+      <Checkbox isInvalid description="Description text" errorMessage="Error text">
         Label text
       </Checkbox>
-      <Checkbox
-        size="lg"
-        isInvalid
-        description="Description text"
-        errorMessage="Error text"
-      >
+      <Checkbox size="lg" isInvalid description="Description text" errorMessage="Error text">
         Label text
       </Checkbox>
     </div>
