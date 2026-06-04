@@ -10,6 +10,10 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   tags: ['autodocs'],
   argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'subtle'],
+    },
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
@@ -33,42 +37,123 @@ export const Default: Story = {
 };
 
 /**
- * Showcases all size variants of the Switch component.
+ * Default (outlined off) vs subtle (filled off) visual variants.
  */
-export const Sizes: Story = {
+export const Variants: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Small (sm)
+          Default
         </span>
         <div className="flex items-center gap-4">
-          <Switch size="sm">Off</Switch>
-          <Switch size="sm" defaultSelected>
+          <Switch variant="default">Off</Switch>
+          <Switch variant="default" defaultSelected>
             On
           </Switch>
         </div>
       </div>
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Medium (md)
+          Subtle
         </span>
         <div className="flex items-center gap-4">
-          <Switch size="md">Off</Switch>
-          <Switch size="md" defaultSelected>
+          <Switch variant="subtle">Off</Switch>
+          <Switch variant="subtle" defaultSelected>
             On
           </Switch>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+    </div>
+  ),
+};
+
+/**
+ * Showcases all size variants of the Switch component.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div className="flex flex-col gap-8">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Large (lg)
+          Default
         </span>
-        <div className="flex items-center gap-4">
-          <Switch size="lg">Off</Switch>
-          <Switch size="lg" defaultSelected>
-            On
-          </Switch>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch size="sm">Off</Switch>
+            <Switch size="sm" defaultSelected>
+              On
+            </Switch>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch size="md">Off</Switch>
+            <Switch size="md" defaultSelected>
+              On
+            </Switch>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch size="lg">Off</Switch>
+            <Switch size="lg" defaultSelected>
+              On
+            </Switch>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Subtle
+        </span>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch variant="subtle" size="sm">
+              Off
+            </Switch>
+            <Switch variant="subtle" size="sm" defaultSelected>
+              On
+            </Switch>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch variant="subtle" size="md">
+              Off
+            </Switch>
+            <Switch variant="subtle" size="md" defaultSelected>
+              On
+            </Switch>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch variant="subtle" size="lg">
+              Off
+            </Switch>
+            <Switch variant="subtle" size="lg" defaultSelected>
+              On
+            </Switch>
+          </div>
         </div>
       </div>
     </div>
@@ -92,43 +177,53 @@ export const RootClassName: Story = {
 export const StatesAudit: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Interaction States (Off)
-        </span>
-        <div className="flex items-center gap-12">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">Default</span>
-            <Switch>Switch</Switch>
+      {(['default', 'subtle'] as const).map((variant) => (
+        <div key={variant} className="flex flex-col gap-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            {variant}
+          </span>
+          <div className="flex flex-col gap-4">
+            <span className="text-[10px] uppercase font-bold text-text-default-muted">Off</span>
+            <div className="flex items-center gap-12">
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase font-bold text-text-default-muted">
+                  Active
+                </span>
+                <Switch variant={variant}>Switch</Switch>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase font-bold text-text-default-muted">
+                  Disabled
+                </span>
+                <Switch variant={variant} isDisabled>
+                  Switch
+                </Switch>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">
-              Disabled
-            </span>
-            <Switch isDisabled>Switch</Switch>
+          <div className="flex flex-col gap-4">
+            <span className="text-[10px] uppercase font-bold text-text-default-muted">On</span>
+            <div className="flex items-center gap-12">
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase font-bold text-text-default-muted">
+                  Active
+                </span>
+                <Switch variant={variant} defaultSelected>
+                  Switch
+                </Switch>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase font-bold text-text-default-muted">
+                  Disabled
+                </span>
+                <Switch variant={variant} defaultSelected isDisabled>
+                  Switch
+                </Switch>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Interaction States (On)
-        </span>
-        <div className="flex items-center gap-12">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">Default</span>
-            <Switch defaultSelected>Switch</Switch>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">
-              Disabled
-            </span>
-            <Switch defaultSelected isDisabled>
-              Switch
-            </Switch>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   ),
 };
