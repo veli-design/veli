@@ -76,6 +76,44 @@ tailwindTheme = tailwindTheme.replace(
   /(--font-(?:mono|dhivehi):\s*)([^";\n]+ [^;\n]+);/g,
   '$1"$2";',
 );
+
+const dhivehiFontFamilyVariables = {
+  'MV A Waheed': '--font-dhivehi-waheed',
+  'MV Faseyha': '--font-dhivehi-faseyha',
+  'MV Aaamu FK': '--font-dhivehi-aaamu',
+};
+
+function quoteFontFamily(value) {
+  if (value.startsWith('var(')) return value;
+  if (
+    /^(?:serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-sans-serif|ui-serif|ui-monospace)$/.test(
+      value,
+    )
+  ) {
+    return value;
+  }
+  return /[\s"'(),]/.test(value) ? `"${value.replaceAll('"', '\\"')}"` : value;
+}
+
+function dhivehiFontStack(family) {
+  return [family, 'var(--font-dhivehi)', 'sans-serif'].map(quoteFontFamily).join(', ');
+}
+
+function addDhivehiFontVariables(css) {
+  if (css.includes('--font-dhivehi-waheed:')) return css;
+
+  const match = css.match(/\n(\s*)--font-dhivehi:\s*[^;]+;/);
+  if (!match) return css;
+
+  const indent = match[1];
+  const declarations = Object.entries(dhivehiFontFamilyVariables)
+    .map(([family, variable]) => `${indent}${variable}: ${dhivehiFontStack(family)};`)
+    .join('\n');
+
+  return css.replace(/(\n\s*--font-dhivehi:\s*[^;]+;)/, `$1\n${declarations}`);
+}
+
+tailwindTheme = addDhivehiFontVariables(tailwindTheme);
 tailwindTheme = tailwindTheme.replace(/--color-([a-z0-9-]+)-DEFAULT:/g, '--color-$1-default:');
 tailwindTheme = tailwindTheme.replace(
   /@variant dark\s*\{\n([\s\S]*?)\n\}/,
@@ -146,7 +184,7 @@ function canonicalTypePath(path) {
 function collectTypographyTokens(group, path = [], out = []) {
   if (!isPlainObject(group)) return out;
   if (group.$type === 'typography' && isPlainObject(group.$value)) {
-    out.push({ path, value: group.$value });
+    out.push({ path, value: group.$value, description: group.$description ?? '' });
     return out;
   }
   for (const [key, value] of Object.entries(group)) {
@@ -191,26 +229,86 @@ function trackingName(letterSpacing) {
     return 'caption';
   }
   const numeric = Number.parseFloat(String(letterSpacing));
+  if (String(letterSpacing).trim().endsWith('%') && numeric > 0 && numeric <= 2) {
+    return 'caption';
+  }
   if (Number.isFinite(numeric) && Math.abs(numeric - 0.12) < 0.01) {
     return 'caption';
   }
   return 'normal';
 }
 
-function generateTypeUtilities(tokens) {
-  const typographyTokens = [
+function lookupTokenValue(tokens, aliasPath) {
+  const token = aliasPath.split('.').reduce((current, segment) => {
+    if (!isPlainObject(current)) return undefined;
+    return current[segment];
+  }, tokens);
+
+  return isPlainObject(token) && '$value' in token ? token.$value : undefined;
+}
+
+function resolveTokenValue(tokens, value) {
+  if (typeof value !== 'string') return value;
+
+  const alias = value.trim().match(/^\{([^}]+)\}$/)?.[1];
+  if (!alias) return value;
+
+  const resolved = lookupTokenValue(tokens, alias);
+  return resolved === undefined ? value : resolveTokenValue(tokens, resolved);
+}
+
+function normalizeTypographyValue(tokens, value) {
+  return {
+    ...value,
+    fontFamily: resolveTokenValue(tokens, value.fontFamily),
+    fontSize: resolveTokenValue(tokens, value.fontSize),
+    fontWeight: resolveTokenValue(tokens, value.fontWeight),
+    letterSpacing: resolveTokenValue(tokens, value.letterSpacing),
+    lineHeight: resolveTokenValue(tokens, value.lineHeight),
+  };
+}
+
+function classNameFromDescription(description) {
+  return String(description).match(/\bTailwind:\s*(type-[a-z0-9-]+)/i)?.[1];
+}
+
+function classNameForTypeToken(token) {
+  return (
+    classNameFromDescription(token.description) ?? `type-${canonicalTypePath(token.path).join('-')}`
+  );
+}
+
+function stripTypographyRoot(path) {
+  return path[0] === 'Type' || path[0] === 'Dhivehi' ? path.slice(1) : path;
+}
+
+function typographyLookupKey(path) {
+  return stripTypographyRoot(path).map(slugify).join('/');
+}
+
+function englishTypographyTokens(tokens) {
+  return [
     ...collectTypographyTokens(tokens.Type),
-    ...collectTypographyTokens(tokens['Typography-styles']),
+    ...collectTypographyTokens(tokens['Typography-styles']?.Type, ['Type']),
   ];
+}
+
+function dhivehiTypographyTokens(tokens) {
+  return collectTypographyTokens(tokens['Typography-styles']?.Dhivehi, ['Dhivehi']);
+}
+
+function generateTypeUtilities(tokens) {
+  const typographyTokens = englishTypographyTokens(tokens);
   const seen = new Set();
   const utilities = [];
 
   for (const token of typographyTokens) {
-    const className = `type-${canonicalTypePath(token.path).join('-')}`;
+    const className = classNameForTypeToken(token);
     if (seen.has(className)) continue;
 
-    const textStep = textStepByFontSize[token.value.fontSize];
-    const weightName = fontWeightByValue[token.value.fontWeight];
+    const value = normalizeTypographyValue(tokens, token.value);
+    const textStep = textStepByFontSize[value.fontSize];
+    const weightName = fontWeightByValue[value.fontWeight];
     if (!textStep || !weightName) continue;
 
     seen.add(className);
@@ -219,20 +317,120 @@ function generateTypeUtilities(tokens) {
   font-size: var(--text-${textStep});
   line-height: var(--text-${textStep}--line-height);
   font-weight: var(--font-weight-${weightName});
-  letter-spacing: var(--tracking-${trackingName(token.value.letterSpacing)});
+  letter-spacing: var(--tracking-${trackingName(value.letterSpacing)});
 }`);
   }
 
   return utilities.length ? `\n\n${utilities.join('\n\n')}\n` : '';
 }
 
-tailwindTheme = `${tailwindTheme.trimEnd()}${generateTypeUtilities(sourceTokens)}`;
+function dhivehiTargetPathForEnglishToken(token) {
+  const path = stripTypographyRoot(token.path);
+  const [category] = path;
+  const weight = slugify(path.at(-1));
+
+  if (category === 'Display') {
+    const displaySize = slugify(path[1]);
+    const level = displaySize === 'lg' ? '1' : displaySize === 'md' ? '2' : path[1];
+    return ['Display', level, weight === 'bold' ? 'Bold' : 'Medium'];
+  }
+
+  if (category === 'Heading') {
+    return ['Heading', path[1], 'Medium'];
+  }
+
+  if (category === 'Title') {
+    return ['Title', path[1], 'Medium'];
+  }
+
+  if (category === 'Subtitle') {
+    return ['Subtitle', 'Medium'];
+  }
+
+  if (category === 'Body') {
+    return ['Body', path[1], weight === 'regular' ? 'Regular' : 'Medium'];
+  }
+
+  if (category === 'Caption' || category === 'Caption 12') {
+    return ['Caption', weight === 'regular' ? 'Regular' : 'Medium'];
+  }
+
+  return undefined;
+}
+
+function cssNumber(value) {
+  const number = Number.parseFloat(String(value));
+  return Number.isFinite(number) ? Number(number.toFixed(4)).toString() : String(value);
+}
+
+function cssLineHeight(value) {
+  const stringValue = String(value).trim();
+  if (stringValue.endsWith('%')) {
+    return cssNumber(Number.parseFloat(stringValue) / 100);
+  }
+  return stringValue;
+}
+
+function cssLetterSpacing(value) {
+  const stringValue = String(value).trim();
+  if (stringValue === '0' || stringValue === '0px' || stringValue === '0%') return '0em';
+  if (stringValue.endsWith('%')) {
+    return `${cssNumber(Number.parseFloat(stringValue) / 100)}em`;
+  }
+  return stringValue;
+}
+
+function cssFontFamily(value) {
+  const variable = dhivehiFontFamilyVariables[value];
+  return variable ? `var(${variable})` : quoteFontFamily(String(value));
+}
+
+function cssTypographyDeclarations(tokens, value) {
+  const normalizedValue = normalizeTypographyValue(tokens, value);
+
+  return `  font-family: ${cssFontFamily(normalizedValue.fontFamily)};
+  font-size: ${normalizedValue.fontSize};
+  line-height: ${cssLineHeight(normalizedValue.lineHeight)};
+  font-weight: ${normalizedValue.fontWeight};
+  letter-spacing: ${cssLetterSpacing(normalizedValue.letterSpacing)};`;
+}
+
+function generateDhivehiTypeOverrides(tokens) {
+  const dhivehiTokensByPath = new Map(
+    dhivehiTypographyTokens(tokens).map((token) => [typographyLookupKey(token.path), token]),
+  );
+  const seen = new Set();
+  const overrides = [];
+
+  for (const englishToken of englishTypographyTokens(tokens)) {
+    const className = classNameForTypeToken(englishToken);
+    if (seen.has(className)) continue;
+
+    const dhivehiTargetPath = dhivehiTargetPathForEnglishToken(englishToken);
+    if (!dhivehiTargetPath) continue;
+
+    const dhivehiToken = dhivehiTokensByPath.get(typographyLookupKey(dhivehiTargetPath));
+    if (!dhivehiToken) continue;
+
+    seen.add(className);
+    overrides.push(`.${className}:lang(dv) {
+${cssTypographyDeclarations(tokens, dhivehiToken.value)}
+}`);
+  }
+
+  return overrides.length
+    ? `\n\n@layer utilities {\n${overrides.map((block) => block.replace(/^/gm, '  ')).join('\n\n')}\n}\n`
+    : '';
+}
+
+tailwindTheme = `${tailwindTheme.trimEnd()}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
 
 tokensCss = tokensCss.replace(/(--font-weight-[^:]+:\s*)(-?\d+(?:\.\d+)?)px;/g, '$1$2;');
 tokensCss = tokensCss.replace(
   /(--tracking-caption:\s*)(?:0\.16px|1px|1%);/g,
   (_match, property) => `${property}0.01em;`,
 );
+tokensCss = addDhivehiFontVariables(tokensCss);
 
 function assertOklchColorOutput(filename, css) {
   const colorDeclarations = css
@@ -277,7 +475,35 @@ function assertOklchColorOutput(filename, css) {
 assertOklchColorOutput('tailwind-theme.css', tailwindTheme);
 assertOklchColorOutput('tokens.css', tokensCss);
 
+function assertTypographyOutput(css) {
+  const requiredSnippets = [
+    '@utility type-caption-medium',
+    '.type-subtitle-medium:lang(dv)',
+    'font-family: var(--font-dhivehi-waheed);',
+    'font-size: 24px;',
+    'line-height: 1.35;',
+    'letter-spacing: 0.01em;',
+  ];
+  const missingSnippets = requiredSnippets.filter((snippet) => !css.includes(snippet));
+
+  if (missingSnippets.length) {
+    throw new Error(
+      `tailwind-theme.css is missing expected typography output:\n${missingSnippets
+        .map((snippet) => `- ${snippet}`)
+        .join('\n')}`,
+    );
+  }
+
+  if (css.includes('@utility type-dhivehi-')) {
+    throw new Error(
+      'tailwind-theme.css should emit Dhivehi as :lang(dv) overrides, not type-dhivehi-* utilities.',
+    );
+  }
+}
+
+assertTypographyOutput(tailwindTheme);
+
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');
 
-console.log('✓ Normalized token CSS and generated Veli type utilities');
+console.log('✓ Normalized token CSS and generated Veli type utilities with Dhivehi overrides');

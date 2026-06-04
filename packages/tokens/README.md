@@ -68,8 +68,9 @@ Your design tokens include:
 
 **Typography:**
 
-- Font families: \`San-serif\` (Inter), \`Monospace\` (IBM Plex Mono), \`Dhivehi\` (MV Typewriter)
+- Font families: \`Sans-serif\` (Inter), \`Monospace\` (IBM Plex Mono), \`Dhivehi\` (MV Typewriter plus generated Dhivehi family stacks)
 - Type scale: Display, Heading, Body, etc.
+- Semantic \`type-\*\` utilities with \`:lang(dv)\` overrides for exported Dhivehi typography styles
 
 **Dark Mode:**
 All tokens include Light and Dark mode values, automatically handled via \`dark:\` variant.
