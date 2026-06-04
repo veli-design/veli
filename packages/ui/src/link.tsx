@@ -5,13 +5,18 @@ import { Link as AriaLink, LinkProps as AriaLinkProps } from 'react-aria-compone
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const linkVariants = cva(
-  'inline-flex items-center justify-center gap-[8px] font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        primary: 'text-text-links-default',
+        default: 'text-text-links-default',
         secondary: 'text-text-default-default',
         inverted: 'text-text-default-inverted',
+      },
+      size: {
+        sm: '[&_svg]:size-4',
+        md: '[&_svg]:size-4',
+        lg: '[&_svg]:size-5',
       },
       underline: {
         none: 'no-underline',
@@ -38,14 +43,14 @@ const linkVariants = cva(
         isHovered: true,
         className: 'underline',
       },
-      // Primary States
+      // Default States
       {
-        variant: 'primary',
+        variant: 'default',
         isHovered: true,
         className: 'text-text-links-hover',
       },
       {
-        variant: 'primary',
+        variant: 'default',
         isPressed: true,
         className: 'text-text-links-hover',
       },
@@ -68,7 +73,8 @@ const linkVariants = cva(
       },
     ],
     defaultVariants: {
-      variant: 'primary',
+      variant: 'default',
+      size: 'md',
       underline: 'none',
     },
   },
@@ -82,11 +88,12 @@ export interface LinkProps
 }
 
 /**
- * A link component that follows the Veli Design System standards.
+ * A link component that follows the Coral Design System standards.
  * Built on top of react-aria-components for maximum accessibility.
  */
 export function Link({
   variant,
+  size,
   underline,
   isHovered: forcedHover,
   isPressed: forcedPressed,
@@ -104,6 +111,7 @@ export function Link({
 
         return linkVariants({
           variant,
+          size,
           underline,
           isHovered: isDisabled ? false : (forcedHover ?? state.isHovered),
           isPressed: isDisabled ? false : (forcedPressed ?? state.isPressed),
