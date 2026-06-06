@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { Switch } from '@tradenetcorp/veli-ui/switch';
 
 /**
@@ -167,6 +168,33 @@ export const RootClassName: Story = {
       <Switch className="justify-self-start" defaultSelected>
         Grid item
       </Switch>
+    </div>
+  ),
+};
+
+export const Directional: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-8">
+      <div className="flex flex-col gap-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          LTR
+        </span>
+        <div className="flex items-center gap-4">
+          <Switch>Off</Switch>
+          <Switch defaultSelected>On</Switch>
+        </div>
+      </div>
+      <VeliProvider language="dv">
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            RTL
+          </span>
+          <div className="flex items-center gap-4">
+            <Switch>Off</Switch>
+            <Switch defaultSelected>On</Switch>
+          </div>
+        </div>
+      </VeliProvider>
     </div>
   ),
 };
