@@ -40,7 +40,7 @@ const menuPopoverVariants = cva(
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-xl px-3 text-left font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[pressed]:bg-button-primary-subtle-hover data-[open]:bg-button-primary-subtle-default',
+  'group flex w-full cursor-default items-center gap-2 rounded-xl px-3 text-start font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[pressed]:bg-button-primary-subtle-hover data-[open]:bg-button-primary-subtle-default',
   {
     variants: {
       size: {
@@ -117,7 +117,7 @@ export function MenuSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(menuSectionVariants(), className)}>
       {title ? (
-        <Header className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-text-default-muted">
+        <Header className="px-3 py-1 text-start text-xs font-semibold uppercase tracking-wide text-text-default-muted">
           {title}
         </Header>
       ) : null}
