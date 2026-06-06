@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-tokens
 
+## 0.1.0
+
+### Minor Changes
+
+- bf44de1: Add generated Dhivehi typography overrides for `type-*` utilities so token consumers can switch English and Dhivehi text styles through the inherited `lang` value.
+
 ## 0.0.3
 
 ### Patch Changes
