@@ -151,7 +151,7 @@ const trackVariants = cva(
 );
 
 const handleVariants = cva(
-  'absolute top-1/2 -translate-y-1/2 rounded-full transition-[left,width,height,background-color] duration-200 ease-in-out',
+  'absolute top-1/2 -translate-y-1/2 rounded-full transition-[inset-inline-start,width,height,background-color] duration-200 ease-in-out',
   {
     variants: {
       variant: {
@@ -164,7 +164,7 @@ const handleVariants = cva(
         lg: '',
       },
       isSelected: {
-        false: 'left-0.5',
+        false: '[inset-inline-start:calc(0.5*var(--spacing))]',
         true: '',
       },
       isDisabled: {
@@ -181,7 +181,7 @@ const handleVariants = cva(
       {
         size: 'sm',
         isSelected: true,
-        className: 'size-3 left-[calc(100%-3*var(--spacing)-1px)]',
+        className: 'size-3 [inset-inline-start:calc(100%-3*var(--spacing)-1px)]',
       },
       {
         size: 'md',
@@ -191,7 +191,7 @@ const handleVariants = cva(
       {
         size: 'md',
         isSelected: true,
-        className: 'size-4 left-[calc(100%-4*var(--spacing)-1px)]',
+        className: 'size-4 [inset-inline-start:calc(100%-4*var(--spacing)-1px)]',
       },
       {
         size: 'lg',
@@ -201,7 +201,7 @@ const handleVariants = cva(
       {
         size: 'lg',
         isSelected: true,
-        className: 'size-5 left-[calc(100%-5*var(--spacing)-1px)]',
+        className: 'size-5 [inset-inline-start:calc(100%-5*var(--spacing)-1px)]',
       },
       {
         variant: 'default',
@@ -252,9 +252,9 @@ const checkIconVariants = cva(
   {
     variants: {
       size: {
-        sm: 'left-[calc(0.5*var(--spacing)+(100%-3*var(--spacing)-0.5*var(--spacing)-1px-2.5*var(--spacing))/2)]',
-        md: 'left-[calc(0.5*var(--spacing)+(100%-4*var(--spacing)-0.5*var(--spacing)-1px-3*var(--spacing))/2)]',
-        lg: 'left-[calc(0.5*var(--spacing)+(100%-5*var(--spacing)-0.5*var(--spacing)-1px-3.5*var(--spacing))/2)]',
+        sm: '[inset-inline-start:calc(0.5*var(--spacing)+(100%-3*var(--spacing)-0.5*var(--spacing)-1px-2.5*var(--spacing))/2)]',
+        md: '[inset-inline-start:calc(0.5*var(--spacing)+(100%-4*var(--spacing)-0.5*var(--spacing)-1px-3*var(--spacing))/2)]',
+        lg: '[inset-inline-start:calc(0.5*var(--spacing)+(100%-5*var(--spacing)-0.5*var(--spacing)-1px-3.5*var(--spacing))/2)]',
       },
       isDisabled: {
         true: 'text-switch-handle-disabled-bg',
