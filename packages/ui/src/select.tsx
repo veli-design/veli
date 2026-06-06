@@ -80,7 +80,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-left outline-none transition-[background-color,border-color]',
+  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color]',
   {
     variants: {
       variant: {
@@ -284,13 +284,13 @@ const indicatorVariants = cva(
 );
 
 const popoverVariants = cva(
-  'min-w-[var(--trigger-width)] overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
+  'box-border overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none',
 );
 
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-left type-body-sm-regular outline-none transition-colors',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors',
   {
     variants: {
       isSelected: {
@@ -381,6 +381,21 @@ export function Select<T extends object>({
   children,
   ...props
 }: SelectProps<T>) {
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const [triggerWidth, setTriggerWidth] = React.useState<number>();
+
+  React.useLayoutEffect(() => {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+
+    const updateWidth = () => setTriggerWidth(trigger.offsetWidth);
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <AriaSelect
       {...props}
@@ -416,6 +431,7 @@ export function Select<T extends object>({
           ) : null}
 
           <AriaButton
+            ref={triggerRef}
             className={fieldButtonVariants({
               variant,
               size,
@@ -455,7 +471,15 @@ export function Select<T extends object>({
             </span>
           </AriaButton>
 
-          <AriaPopover offset={4} className={popoverVariants()}>
+          <AriaPopover
+            offset={4}
+            placement="bottom start"
+            triggerRef={triggerRef}
+            style={
+              triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
+            }
+            className={popoverVariants()}
+          >
             <ListBox items={items} className={listBoxVariants()}>
               {children as React.ReactNode}
             </ListBox>

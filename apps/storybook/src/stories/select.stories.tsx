@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Info, MagnifyingGlass, WarningCircle } from 'phosphor-react';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
 
 const meta = {
@@ -200,6 +201,20 @@ export const FigmaExploration: Story = {
         </SelectSection>
       </Select>
     </div>
+  ),
+};
+
+export const Directional: Story = {
+  render: () => (
+    <VeliProvider language="dv">
+      <div className="w-[320px]">
+        <Select label="Label" placeholder="Choose an option" description="Helper text">
+          <SelectItem id="a">Option A</SelectItem>
+          <SelectItem id="b">Option B</SelectItem>
+          <SelectItem id="c">Option C</SelectItem>
+        </Select>
+      </div>
+    </VeliProvider>
   ),
 };
 
