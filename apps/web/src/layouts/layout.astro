@@ -9,15 +9,134 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-color-scheme="system">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const storageKey = 'veli-color-scheme';
+        const root = document.documentElement;
+
+        try {
+          const stored = window.localStorage.getItem(storageKey);
+          const colorScheme =
+            stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+          const isDark =
+            colorScheme === 'dark' ||
+            (colorScheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          const resolvedColorScheme = isDark ? 'dark' : 'light';
+
+          root.classList.toggle('dark', isDark);
+          root.dataset.theme = resolvedColorScheme;
+          root.dataset.colorScheme = colorScheme;
+          root.style.colorScheme = resolvedColorScheme;
+        } catch {
+          root.dataset.theme = 'light';
+          root.dataset.colorScheme = 'system';
+          root.style.colorScheme = 'light';
+        }
+      })();
+    </script>
   </head>
   <body class="min-h-screen bg-bg-surface-base text-text-default-default">
+    <div class="fixed right-4 top-4 z-50">
+      <div
+        class="inline-flex rounded-[6px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[2px] shadow-[0_8px_24px_var(--color-effects-shadow-depth-100)]"
+        aria-label="Color scheme"
+        role="group"
+      >
+        <button class="theme-option" type="button" data-theme-choice="system">System</button>
+        <button class="theme-option" type="button" data-theme-choice="light">Light</button>
+        <button class="theme-option" type="button" data-theme-choice="dark">Dark</button>
+      </div>
+    </div>
     <slot />
+    <script is:inline>
+      (() => {
+        const storageKey = 'veli-color-scheme';
+        const choices = ['system', 'light', 'dark'];
+        const root = document.documentElement;
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const buttons = Array.from(document.querySelectorAll('[data-theme-choice]'));
+
+        function getStoredColorScheme() {
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            return choices.includes(stored) ? stored : 'system';
+          } catch {
+            return 'system';
+          }
+        }
+
+        function applyColorScheme(colorScheme) {
+          const isDark = colorScheme === 'dark' || (colorScheme === 'system' && media.matches);
+          const resolvedColorScheme = isDark ? 'dark' : 'light';
+
+          root.classList.toggle('dark', isDark);
+          root.dataset.theme = resolvedColorScheme;
+          root.dataset.colorScheme = colorScheme;
+          root.style.colorScheme = resolvedColorScheme;
+
+          for (const button of buttons) {
+            const isActive = button.dataset.themeChoice === colorScheme;
+            button.setAttribute('aria-pressed', String(isActive));
+          }
+        }
+
+        for (const button of buttons) {
+          button.addEventListener('click', () => {
+            const colorScheme = button.dataset.themeChoice;
+            if (!choices.includes(colorScheme)) return;
+
+            try {
+              window.localStorage.setItem(storageKey, colorScheme);
+            } catch {
+              // The visual state can still update if storage is unavailable.
+            }
+
+            applyColorScheme(colorScheme);
+          });
+        }
+
+        media.addEventListener('change', () => {
+          if (getStoredColorScheme() === 'system') {
+            applyColorScheme('system');
+          }
+        });
+
+        applyColorScheme(getStoredColorScheme());
+      })();
+    </script>
   </body>
 </html>
+
+<style>
+  .theme-option {
+    min-width: 60px;
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--color-text-default-subtle);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .theme-option:hover {
+    color: var(--color-text-default-default);
+    background: var(--color-button-secondary-subtle-default);
+  }
+
+  .theme-option[aria-pressed='true'] {
+    color: var(--color-text-default-emphasis);
+    background: var(--color-bg-surface-raised);
+    box-shadow: 0 1px 2px var(--color-effects-shadow-depth-50);
+  }
+</style>

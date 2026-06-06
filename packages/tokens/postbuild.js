@@ -16,6 +16,18 @@ const sourceTokens = JSON.parse(readFileSync(sourceTokensPath, 'utf-8'));
 // Remove the @import "tailwindcss"; line since consuming apps will import it
 tailwindTheme = tailwindTheme.replace('@import "tailwindcss";\n\n', '');
 tailwindTheme = tailwindTheme.replace('@theme {\n', '@theme {\n  --spacing: 4px;\n');
+tailwindTheme = tailwindTheme.replace(
+  /^@theme \{/,
+  `@custom-variant dark (&:where(.dark, .dark *));\n\n@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :where(.dark, .dark *) {
+    color-scheme: dark;
+  }
+}\n\n@theme {`,
+);
 
 // Terrazzo maps grouped DTCG tokens literally, e.g. text.sm.font-size becomes
 // --text-sm-font-size. Tailwind v4 expects --text-sm and the paired
