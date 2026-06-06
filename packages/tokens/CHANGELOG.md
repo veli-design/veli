@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-tokens
 
+## 0.0.3
+
+### Patch Changes
+
+- c615546: Add dark mode support through the Veli provider theme contract and generated token CSS.
+
 ## 0.0.2
 
 ### Patch Changes
