@@ -36,6 +36,7 @@ The typography alignment work was implemented on 2026-05-07.
 - Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, and `tracking`.
 - Semantic Figma text styles are canonical for designer usage: `Type/Heading/1/Semibold`, `Type/Body/md/Regular`, `Type/Caption/12/Regular`, etc.
 - Generated semantic utilities bridge Figma and code: `type-heading-1-semibold`, `type-body-md-regular`, `type-caption-12-regular`, etc.
+- Dhivehi text styles are emitted as `:lang(dv)` overrides for the same `type-*` utilities, so consumers switch typography by changing the inherited `lang` value through `VeliProvider`.
 - `text-*` remains Tailwind's primitive font-size namespace.
 - `type-*` is Veli's composite typography utility namespace.
 - The old Figma `typography` collection is legacy. It may remain for one migration cycle, but it is excluded from canonical typography output.
@@ -50,6 +51,7 @@ Build verification completed after a fresh Figma DTCG export:
 - `--font-weight-semibold` emits `600`, not `600px`.
 - `--tracking-caption` emits `0.01em`.
 - 52 `@utility type-*` classes are generated from exported Figma typography composites.
+- 52 Dhivehi `:lang(dv)` typography overrides are generated from exported `Typography-styles/Dhivehi` composites.
 
 Known non-blocking warning:
 
@@ -342,6 +344,7 @@ For designers:
 For developers:
 
 - Replace repeated arbitrary typography combinations with generated `type-*` utilities when they correspond to a Figma text style.
+- Keep using the same `type-*` utility names in English and Dhivehi surfaces; `lang="dv"` switches those utilities to the exported Dhivehi composite values.
 - Keep using primitive utilities such as `text-base`, `leading-tight`, and `tracking-wide` when the design intentionally calls for a local override.
 - Do not use the deprecated `typography` token namespace for new code.
 
@@ -364,9 +367,10 @@ Exporter/build improvements:
   - `--font-weight-semibold: 600`.
   - `--tracking-caption: 0.01em`.
   - representative `@utility type-*` classes exist.
+  - representative `:lang(dv)` Dhivehi typography overrides exist.
 
 System questions:
 
-- Decide whether Dhivehi typography should have a separate type style namespace, mode, or documented font strategy.
+- Decide whether Dhivehi fonts should eventually be bundled with licensed `@font-face` assets instead of referenced by family name only.
 - Decide whether typography CSS output should eventually convert px values to rem values.
 - Decide how long to publish legacy typography tokens for downstream compatibility.
