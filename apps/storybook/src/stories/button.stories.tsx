@@ -53,11 +53,31 @@ const localizedButtonTextValues = Object.values(buttonText).flatMap((text) =>
   Object.values(text),
 ) as readonly string[];
 
+const buttonTextKeys = Object.keys(buttonText.en) as Array<keyof typeof buttonText.en>;
+
 const useButtonText = () => {
   const { direction } = useVeliLanguage();
 
   return direction === 'rtl' ? buttonText.dv : buttonText.en;
 };
+
+function getLocalizedButtonText(value: string, language: keyof typeof buttonText) {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue.length === 0) {
+    return buttonText[language].argsChildren;
+  }
+
+  const localizedKey = buttonTextKeys.find(
+    (key) => buttonText.en[key] === value || buttonText.dv[key] === value,
+  );
+
+  if (!localizedKey) {
+    return value;
+  }
+
+  return buttonText[language][localizedKey];
+}
 
 function resolveButtonText(children: React.ReactNode, fallback: string) {
   if (typeof children !== 'string') {
@@ -1502,16 +1522,13 @@ const meta = {
       const language = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
       const children = typeof args.children === 'string' ? args.children : '';
-      const localizedChildren =
-        language === 'dv' ? buttonText.dv.argsChildren : buttonText.en.argsChildren;
-      const previousLocalizedChildren =
-        language === 'dv' ? buttonText.en.argsChildren : buttonText.dv.argsChildren;
+      const localizedChildren = getLocalizedButtonText(children, language);
 
       React.useEffect(() => {
-        if (children.trim() === '' || children === previousLocalizedChildren) {
+        if (children !== localizedChildren) {
           updateArgs?.({ children: localizedChildren });
         }
-      }, [children, language, localizedChildren, previousLocalizedChildren, updateArgs]);
+      }, [children, localizedChildren, updateArgs]);
 
       return <Story />;
     },
