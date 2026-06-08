@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from 'storybook/internal/preview-api';
 import type { ComponentProps } from 'react';
 import { Link } from '@tradenetcorp/veli-ui/link';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -96,6 +98,25 @@ const linkSizeExamples = (text: LinkText) =>
 const meta = {
   title: 'Components/Link',
   component: Link,
+  decorators: [
+    (Story, context) => {
+      const language = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const children = typeof args.children === 'string' ? args.children : '';
+      const localizedChildren =
+        language === 'dv' ? linkText.dv.argsChildren : linkText.en.argsChildren;
+      const previousLocalizedChildren =
+        language === 'dv' ? linkText.en.argsChildren : linkText.dv.argsChildren;
+
+      useEffect(() => {
+        if (children.trim() === '' || children === previousLocalizedChildren) {
+          updateArgs?.({ children: localizedChildren });
+        }
+      }, [children, language, localizedChildren, previousLocalizedChildren, updateArgs]);
+
+      return <Story />;
+    },
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -121,6 +142,7 @@ const meta = {
     },
   },
   args: {
+    children: linkText.en.argsChildren,
     variant: 'default',
     size: 'md',
     underline: 'hover',
@@ -138,7 +160,19 @@ const resolveLinkChildren = (
   if (typeof args.children === 'string') {
     const childText = args.children.trim();
 
-    return childText.length > 0 ? childText : fallback;
+    if (childText.length === 0) {
+      return fallback;
+    }
+
+    if (childText === linkText.en.argsChildren && childText !== fallback) {
+      return fallback;
+    }
+
+    if (childText === linkText.dv.argsChildren && childText !== fallback) {
+      return fallback;
+    }
+
+    return childText;
   }
 
   return fallback;
