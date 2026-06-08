@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-tokens
 
+## 0.1.1
+
+### Patch Changes
+
+- 6e70d28: Rename `text.default.default` to `text.default.DEFAULT` and `popover.bg` to `popover.bg-solid` for Tailwind alignment, and add `modal.bg-solid` surface token.
+
 ## 0.1.0
 
 ### Minor Changes
