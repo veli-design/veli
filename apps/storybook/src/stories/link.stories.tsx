@@ -20,7 +20,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'secondary', 'inverted'],
+      options: ['default', 'secondary'],
     },
     size: {
       control: 'select',
@@ -103,23 +103,6 @@ export const AllVariants: Story = {
       </div>
       <div className="flex justify-center">
         <Link variant="secondary" underline="always">
-          Link
-        </Link>
-      </div>
-
-      <div className="text-sm font-medium bg-slate-100 p-2 rounded">Inverted</div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="always">
           Link
         </Link>
       </div>
