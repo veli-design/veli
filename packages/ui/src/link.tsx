@@ -12,7 +12,6 @@ const linkVariants = cva(
       variant: {
         default: '',
         secondary: '',
-        inverted: '',
       },
       size: {
         sm: '[&_svg]:size-4',
@@ -76,17 +75,6 @@ const linkVariants = cva(
         variant: 'secondary',
         isPressed: true,
         className: 'text-text-default-muted',
-      },
-      // Inverted States
-      {
-        variant: 'inverted',
-        isDisabled: false,
-        className: 'text-text-default-inverted',
-      },
-      {
-        variant: 'inverted',
-        isHovered: true,
-        className: 'text-text-default-inverted/80',
       },
     ],
     defaultVariants: {
