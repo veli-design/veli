@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
 import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
-import { Plus, ArrowRight, Trash, DownloadSimple } from 'phosphor-react';
+import { Plus, Trash, DownloadSimple } from 'phosphor-react';
+import { DirectionalArrow } from '../utils/directional-arrow';
 
 const iconSizeMap = {
   xl: 24,
@@ -18,7 +19,7 @@ function ButtonLabel({ size = 'md' }: { size?: keyof typeof iconSizeMap }) {
     <>
       <Plus size={iconSize} weight="bold" />
       <span>Label</span>
-      <ArrowRight size={iconSize} weight="bold" />
+      <DirectionalArrow size={iconSize} weight="bold" />
     </>
   );
 }
@@ -1395,7 +1396,7 @@ function renderPreviewButton(args: PreviewArgs) {
     <>
       {leadingIcon ? <Plus size={iconSize} weight="bold" /> : null}
       {children}
-      {trailingIcon ? <ArrowRight size={iconSize} weight="bold" /> : null}
+      {trailingIcon ? <DirectionalArrow size={iconSize} weight="bold" /> : null}
     </>
   );
   const derivedAriaLabel =
@@ -1789,12 +1790,12 @@ export const WithIcons: Story = {
           </Button>
           <Button {...args}>
             Trailing Icon
-            <ArrowRight size={size} weight="bold" />
+            <DirectionalArrow size={size} weight="bold" />
           </Button>
           <Button {...args}>
             <DownloadSimple size={size} weight="bold" />
             Both Icons
-            <ArrowRight size={size} weight="bold" />
+            <DirectionalArrow size={size} weight="bold" />
           </Button>
         </div>
         <div className="text-xs text-text-default-muted italic">
