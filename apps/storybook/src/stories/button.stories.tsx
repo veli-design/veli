@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
+import { useArgs } from 'storybook/internal/preview-api';
 import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Plus, Trash, DownloadSimple } from 'phosphor-react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 
@@ -12,13 +14,77 @@ const iconSizeMap = {
   xs: 12,
 } as const;
 
+const buttonText = {
+  en: {
+    argsChildren: 'Button',
+    primaryButton: 'Primary Button',
+    label: 'Label',
+    start: 'Start',
+    leadingIcon: 'Leading Icon',
+    trailingIcon: 'Trailing Icon',
+    bothIcons: 'Both Icons',
+    extraLargeButton: 'XL Button',
+    largeButton: 'LG Button',
+    mediumButton: 'MD Button',
+    smallButton: 'SM Button',
+    extraSmallButton: 'XS Button',
+    savingChanges: 'Saving changes...',
+    disabledAction: 'Disabled Action',
+  },
+  dv: {
+    argsChildren: 'ބަޓަން',
+    primaryButton: 'މައިގަނޑު ބަޓަން',
+    label: 'ލޭބަލް',
+    start: 'ފަށާ',
+    leadingIcon: 'ކުރީގައި އައިކަން',
+    trailingIcon: 'ފަހަތުގައި އައިކަން',
+    bothIcons: 'ދެކޮޅުގައި އައިކަން',
+    extraLargeButton: 'ވަރަށް ބޮޑު ބަޓަން',
+    largeButton: 'ބޮޑު ބަޓަން',
+    mediumButton: 'މެދު ބަޓަން',
+    smallButton: 'ކުޑަ ބަޓަން',
+    extraSmallButton: 'ވަރަށް ކުޑަ ބަޓަން',
+    savingChanges: '...ބަދަލުތައް ސޭވްކުރަނީ',
+    disabledAction: 'ބޭނުންނުކުރެވޭ އެކްޝަން',
+  },
+} as const;
+
+const localizedButtonTextValues = Object.values(buttonText).flatMap((text) =>
+  Object.values(text),
+) as readonly string[];
+
+const useButtonText = () => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? buttonText.dv : buttonText.en;
+};
+
+function resolveButtonText(children: React.ReactNode, fallback: string) {
+  if (typeof children !== 'string') {
+    return children ?? fallback;
+  }
+
+  const childText = children.trim();
+
+  if (childText.length === 0) {
+    return fallback;
+  }
+
+  if (localizedButtonTextValues.includes(childText) && childText !== fallback) {
+    return fallback;
+  }
+
+  return children;
+}
+
 function ButtonLabel({ size = 'md' }: { size?: keyof typeof iconSizeMap }) {
   const iconSize = iconSizeMap[size];
+  const text = useButtonText();
 
   return (
     <>
       <Plus size={iconSize} weight="bold" />
-      <span>Label</span>
+      <span>{text.label}</span>
       <DirectionalArrow size={iconSize} weight="bold" />
     </>
   );
@@ -994,8 +1060,12 @@ function createSeaglassWorkbenchExport(
 }
 
 function SeaglassGradientWorkbench() {
+  const text = useButtonText();
   const [values, setValues] = React.useState(seaglassWorkbenchDefaults);
-  const [preview, setPreview] = React.useState(seaglassPreviewDefaults);
+  const [preview, setPreview] = React.useState(() => ({
+    ...seaglassPreviewDefaults,
+    label: text.start,
+  }));
   const [baseStopCount, setBaseStopCount] = React.useState<number>(baseOverlayStops.length);
   const [activeStopCount, setActiveStopCount] = React.useState<number>(activeOverlayStops.length);
   const [selectedLayer, setSelectedLayer] = React.useState<SeaglassWorkbenchLayer>('hover');
@@ -1014,6 +1084,14 @@ function SeaglassGradientWorkbench() {
     () => visibleStops(activeOverlayStops, activeStopCount),
     [activeStopCount],
   );
+
+  React.useEffect(() => {
+    setPreview((current) =>
+      current.label === buttonText.en.start || current.label === buttonText.dv.start
+        ? { ...current, label: text.start }
+        : current,
+    );
+  }, [text.start]);
 
   const updateWorkbenchValues: React.Dispatch<React.SetStateAction<SeaglassWorkbenchValues>> = (
     nextValues,
@@ -1042,7 +1120,7 @@ function SeaglassGradientWorkbench() {
 
   const resetAll = () => {
     setValues(seaglassWorkbenchDefaults);
-    setPreview(seaglassPreviewDefaults);
+    setPreview({ ...seaglassPreviewDefaults, label: text.start });
     setBaseStopCount(baseOverlayStops.length);
     setActiveStopCount(activeOverlayStops.length);
     setSelectedLayer('hover');
@@ -1386,21 +1464,24 @@ type PreviewArgs = ButtonProps & {
   trailingIcon?: boolean;
 };
 
-function renderPreviewButton(args: PreviewArgs) {
+function renderPreviewButton(args: PreviewArgs, fallback?: string) {
   const { leadingIcon, trailingIcon, children, ...buttonProps } = args;
+  const text = useButtonText();
   const size = buttonProps.size ?? 'md';
   const iconSize = iconSizeMap[size];
+  const buttonChildren = resolveButtonText(children, fallback ?? text.argsChildren);
   const content = buttonProps.iconOnly ? (
     <Plus size={iconSize} weight="bold" />
   ) : (
     <>
       {leadingIcon ? <Plus size={iconSize} weight="bold" /> : null}
-      {children}
+      {buttonChildren}
       {trailingIcon ? <DirectionalArrow size={iconSize} weight="bold" /> : null}
     </>
   );
   const derivedAriaLabel =
-    buttonProps['aria-label'] ?? (typeof children === 'string' ? children : 'Button');
+    buttonProps['aria-label'] ??
+    (typeof buttonChildren === 'string' ? buttonChildren : text.argsChildren);
 
   return (
     <Button
@@ -1416,6 +1497,25 @@ const meta = {
   title: 'Components/Button',
   component: Button,
   render: renderPreviewButton,
+  decorators: [
+    (Story, context) => {
+      const language = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const children = typeof args.children === 'string' ? args.children : '';
+      const localizedChildren =
+        language === 'dv' ? buttonText.dv.argsChildren : buttonText.en.argsChildren;
+      const previousLocalizedChildren =
+        language === 'dv' ? buttonText.en.argsChildren : buttonText.dv.argsChildren;
+
+      React.useEffect(() => {
+        if (children.trim() === '' || children === previousLocalizedChildren) {
+          updateArgs?.({ children: localizedChildren });
+        }
+      }, [children, language, localizedChildren, previousLocalizedChildren, updateArgs]);
+
+      return <Story />;
+    },
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -1454,7 +1554,7 @@ const meta = {
     },
   },
   args: {
-    children: 'Button',
+    children: buttonText.en.argsChildren,
     variant: 'primary',
     style: 'fill',
     size: 'md',
@@ -1472,8 +1572,13 @@ type Story = StoryObj<typeof meta>;
  * The default button style used for most actions.
  */
 export const Primary: Story = {
+  render: (args) => {
+    const text = useButtonText();
+
+    return renderPreviewButton(args, text.primaryButton);
+  },
   args: {
-    children: 'Primary Button',
+    children: buttonText.en.primaryButton,
   },
 };
 
@@ -1482,295 +1587,57 @@ export const Primary: Story = {
  * Useful for auditing visual consistency across the design system.
  */
 export const AllVariants: Story = {
-  render: () => (
-    <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
-      <div />
-      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">Fill</div>
-      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-        Transparent
-      </div>
-      <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-        Ghost
-      </div>
+  render: () => {
+    const text = useButtonText();
 
-      <div className="text-sm font-medium">Primary</div>
-      <Button variant="primary" style="fill">
-        Button
-      </Button>
-      <Button variant="primary" style="transparent">
-        Button
-      </Button>
-      <Button variant="primary" style="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <Button variant="secondary" style="fill">
-        Button
-      </Button>
-      <Button variant="secondary" style="transparent">
-        Button
-      </Button>
-      <Button variant="secondary" style="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Danger</div>
-      <Button variant="danger" style="fill">
-        Button
-      </Button>
-      <Button variant="danger" style="transparent">
-        Button
-      </Button>
-      <Button variant="danger" style="ghost">
-        Button
-      </Button>
-    </div>
-  ),
-};
-
-/**
- * The seaglass treatment mapped onto the existing variant/style matrix.
- * Primary and secondary follow the dedicated Figma button set, while danger is a system-consistent extension behind the same treatment API.
- */
-export const ExperimentalEnhanced: Story = {
-  render: () => (
-    <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
-            Figma XL Matrix
-          </span>
-          <span className="text-sm text-text-default-subtle">
-            Primary and secondary mirror the stylized Figma set at XL. Danger extends the same
-            treatment for system consistency.
-          </span>
+    return (
+      <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
+        <div />
+        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Fill
         </div>
-        <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
-          <div />
-          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            Fill
-          </div>
-          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            Transparent
-          </div>
-          <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            Ghost
-          </div>
-
-          <div className="text-sm font-medium">Primary</div>
-          <Button variant="primary" style="fill" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="primary" style="transparent" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="primary" style="ghost" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-
-          <div className="text-sm font-medium">Secondary</div>
-          <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="secondary" style="ghost" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-
-          <div className="text-sm font-medium">Danger</div>
-          <Button variant="danger" style="fill" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="danger" style="transparent" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-          <Button variant="danger" style="ghost" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
+        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Transparent
         </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
-          State Coverage
-        </span>
-        <div className="grid grid-cols-3 gap-8">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Primary Default
-            </span>
-            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
-              <ButtonLabel size="xl" />
-            </Button>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Primary Loading
-            </span>
-            <Button
-              variant="primary"
-              style="fill"
-              size="xl"
-              isLoading
-              treatment="seaglass"
-              aria-label="Primary loading button"
-            />
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Primary Disabled
-            </span>
-            <Button variant="primary" style="fill" size="xl" isDisabled treatment="seaglass">
-              <ButtonLabel size="xl" />
-            </Button>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Secondary Default
-            </span>
-            <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
-              <ButtonLabel size="xl" />
-            </Button>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Secondary Loading
-            </span>
-            <Button
-              variant="secondary"
-              style="fill"
-              size="xl"
-              isLoading
-              treatment="seaglass"
-              aria-label="Secondary loading button"
-            />
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Secondary Disabled
-            </span>
-            <Button variant="secondary" style="fill" size="xl" isDisabled treatment="seaglass">
-              <ButtonLabel size="xl" />
-            </Button>
-          </div>
+        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Ghost
         </div>
-      </div>
 
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
-          Size Adaptation
-        </span>
-        <div className="flex items-end gap-4 flex-wrap">
-          <Button variant="primary" style="fill" size="xs" treatment="seaglass">
-            <ButtonLabel size="xs" />
-          </Button>
-          <Button variant="primary" style="fill" size="sm" treatment="seaglass">
-            <ButtonLabel size="sm" />
-          </Button>
-          <Button variant="primary" style="fill" size="md" treatment="seaglass">
-            <ButtonLabel size="md" />
-          </Button>
-          <Button variant="primary" style="fill" size="lg" treatment="seaglass">
-            <ButtonLabel size="lg" />
-          </Button>
-          <Button variant="primary" style="fill" size="xl" treatment="seaglass">
-            <ButtonLabel size="xl" />
-          </Button>
-        </div>
-      </div>
-    </div>
-  ),
-};
+        <div className="text-sm font-medium">Primary</div>
+        <Button variant="primary" style="fill">
+          {text.argsChildren}
+        </Button>
+        <Button variant="primary" style="transparent">
+          {text.argsChildren}
+        </Button>
+        <Button variant="primary" style="ghost">
+          {text.argsChildren}
+        </Button>
 
-/**
- * Seaglass fill with the same color-agnostic white radial overlay applied to
- * solid colors from the Figma Foundation Colors page.
- */
-export const SeaglassColorExamples: Story = {
-  parameters: {
-    layout: 'padded',
+        <div className="text-sm font-medium">Secondary</div>
+        <Button variant="secondary" style="fill">
+          {text.argsChildren}
+        </Button>
+        <Button variant="secondary" style="transparent">
+          {text.argsChildren}
+        </Button>
+        <Button variant="secondary" style="ghost">
+          {text.argsChildren}
+        </Button>
+
+        <div className="text-sm font-medium">Danger</div>
+        <Button variant="danger" style="fill">
+          {text.argsChildren}
+        </Button>
+        <Button variant="danger" style="transparent">
+          {text.argsChildren}
+        </Button>
+        <Button variant="danger" style="ghost">
+          {text.argsChildren}
+        </Button>
+      </div>
+    );
   },
-  render: () => (
-    <div className="flex max-w-4xl flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
-          Figma Foundation Colors
-        </span>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        {seaglassColorExamples.map((color) => (
-          <div
-            key={color.name}
-            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-5"
-          >
-            <div className="flex min-w-0 items-center gap-3">
-              <div
-                aria-hidden="true"
-                className={`h-8 w-8 shrink-0 rounded-full ${color.swatchClassName}`}
-              />
-              <div className="truncate text-sm font-medium text-gray-900">{color.name}</div>
-            </div>
-            <Button
-              variant="primary"
-              style="fill"
-              size="xl"
-              treatment="seaglass"
-              className={`min-w-[180px] ${color.buttonClassName}`}
-            >
-              Start
-            </Button>
-          </div>
-        ))}
-      </div>
-    </div>
-  ),
-};
-
-/**
- * Width changes should preserve the seaglass side bloom without washing out the center.
- */
-export const SeaglassResponsiveWidths: Story = {
-  parameters: {
-    layout: 'padded',
-  },
-  render: () => (
-    <div className="flex max-w-5xl flex-col gap-5">
-      <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
-        Responsive Widths
-      </span>
-      <div className="flex flex-col items-start gap-4">
-        {[
-          { label: '140px', className: 'w-[140px]' },
-          { label: '180px', className: 'w-[180px]' },
-          { label: '260px', className: 'w-[260px]' },
-          { label: '360px', className: 'w-[360px]' },
-          { label: '480px', className: 'w-[480px]' },
-        ].map((example) => (
-          <Button
-            key={example.label}
-            variant="primary"
-            style="fill"
-            size="xl"
-            treatment="seaglass"
-            className={`justify-center ${example.className}`}
-          >
-            {example.label}
-          </Button>
-        ))}
-      </div>
-    </div>
-  ),
-};
-
-export const InternalSeaglassGradientWorkbench: Story = {
-  parameters: {
-    layout: 'padded',
-  },
-  render: () => <SeaglassGradientWorkbench />,
 };
 
 /**
@@ -1779,6 +1646,7 @@ export const InternalSeaglassGradientWorkbench: Story = {
  */
 export const WithIcons: Story = {
   render: (args) => {
+    const text = useButtonText();
     const size = iconSizeMap[args.size as keyof typeof iconSizeMap] || 16;
 
     return (
@@ -1786,15 +1654,15 @@ export const WithIcons: Story = {
         <div className="flex items-center gap-4">
           <Button {...args}>
             <Plus size={size} weight="bold" />
-            Leading Icon
+            {text.leadingIcon}
           </Button>
           <Button {...args}>
-            Trailing Icon
+            {text.trailingIcon}
             <DirectionalArrow size={size} weight="bold" />
           </Button>
           <Button {...args}>
             <DownloadSimple size={size} weight="bold" />
-            Both Icons
+            {text.bothIcons}
             <DirectionalArrow size={size} weight="bold" />
           </Button>
         </div>
@@ -1848,36 +1716,45 @@ export const IconOnly: Story = {
  * All supported sizes shown side-by-side with correctly sized icons.
  */
 export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-col gap-8">
-      <div className="flex items-center gap-4 flex-wrap">
-        <Button {...args} size="xl">
-          <Plus size={24} weight="bold" /> XL Button
-        </Button>
-        <Button {...args} size="lg">
-          <Plus size={20} weight="bold" /> LG Button
-        </Button>
-        <Button {...args} size="md">
-          <Plus size={16} weight="bold" /> MD Button
-        </Button>
-        <Button {...args} size="sm">
-          <Plus size={16} weight="bold" /> SM Button
-        </Button>
-        <Button {...args} size="xs">
-          <Plus size={12} weight="bold" /> XS Button
-        </Button>
+  render: (args) => {
+    const text = useButtonText();
+
+    return (
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center gap-4 flex-wrap">
+          <Button {...args} size="xl">
+            <Plus size={24} weight="bold" /> {text.extraLargeButton}
+          </Button>
+          <Button {...args} size="lg">
+            <Plus size={20} weight="bold" /> {text.largeButton}
+          </Button>
+          <Button {...args} size="md">
+            <Plus size={16} weight="bold" /> {text.mediumButton}
+          </Button>
+          <Button {...args} size="sm">
+            <Plus size={16} weight="bold" /> {text.smallButton}
+          </Button>
+          <Button {...args} size="xs">
+            <Plus size={12} weight="bold" /> {text.extraSmallButton}
+          </Button>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 /**
  * Displays a loading spinner while preserving the button's dimensions.
  */
 export const Loading: Story = {
+  render: (args) => {
+    const text = useButtonText();
+
+    return renderPreviewButton(args, text.savingChanges);
+  },
   args: {
     isLoading: true,
-    children: 'Saving changes...',
+    children: buttonText.en.savingChanges,
   },
 };
 
@@ -1885,8 +1762,263 @@ export const Loading: Story = {
  * Standard disabled state. Prevents all user interaction.
  */
 export const Disabled: Story = {
+  render: (args) => {
+    const text = useButtonText();
+
+    return renderPreviewButton(args, text.disabledAction);
+  },
   args: {
     isDisabled: true,
-    children: 'Disabled Action',
+    children: buttonText.en.disabledAction,
   },
+};
+
+/**
+ * The seaglass treatment mapped onto the existing variant/style matrix.
+ * Primary and secondary follow the dedicated Figma button set, while danger is a system-consistent extension behind the same treatment API.
+ */
+export const ExperimentalEnhanced: Story = {
+  render: () => {
+    return (
+      <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+              Figma XL Matrix
+            </span>
+            <span className="text-sm text-text-default-subtle">
+              Primary and secondary mirror the stylized Figma set at XL. Danger extends the same
+              treatment for system consistency.
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
+            <div />
+            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              Fill
+            </div>
+            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              Transparent
+            </div>
+            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              Ghost
+            </div>
+
+            <div className="text-sm font-medium">Primary</div>
+            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="primary" style="transparent" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="primary" style="ghost" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+
+            <div className="text-sm font-medium">Secondary</div>
+            <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="secondary" style="ghost" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+
+            <div className="text-sm font-medium">Danger</div>
+            <Button variant="danger" style="fill" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="danger" style="transparent" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+            <Button variant="danger" style="ghost" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+            State Coverage
+          </span>
+          <div className="grid grid-cols-3 gap-8">
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Primary Default
+              </span>
+              <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+                <ButtonLabel size="xl" />
+              </Button>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Primary Loading
+              </span>
+              <Button
+                variant="primary"
+                style="fill"
+                size="xl"
+                isLoading
+                treatment="seaglass"
+                aria-label="Primary loading button"
+              />
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Primary Disabled
+              </span>
+              <Button variant="primary" style="fill" size="xl" isDisabled treatment="seaglass">
+                <ButtonLabel size="xl" />
+              </Button>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Secondary Default
+              </span>
+              <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
+                <ButtonLabel size="xl" />
+              </Button>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Secondary Loading
+              </span>
+              <Button
+                variant="secondary"
+                style="fill"
+                size="xl"
+                isLoading
+                treatment="seaglass"
+                aria-label="Secondary loading button"
+              />
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+                Secondary Disabled
+              </span>
+              <Button variant="secondary" style="fill" size="xl" isDisabled treatment="seaglass">
+                <ButtonLabel size="xl" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+            Size Adaptation
+          </span>
+          <div className="flex items-end gap-4 flex-wrap">
+            <Button variant="primary" style="fill" size="xs" treatment="seaglass">
+              <ButtonLabel size="xs" />
+            </Button>
+            <Button variant="primary" style="fill" size="sm" treatment="seaglass">
+              <ButtonLabel size="sm" />
+            </Button>
+            <Button variant="primary" style="fill" size="md" treatment="seaglass">
+              <ButtonLabel size="md" />
+            </Button>
+            <Button variant="primary" style="fill" size="lg" treatment="seaglass">
+              <ButtonLabel size="lg" />
+            </Button>
+            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+              <ButtonLabel size="xl" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
+ * Seaglass fill with the same color-agnostic white radial overlay applied to
+ * solid colors from the Figma Foundation Colors page.
+ */
+export const SeaglassColorExamples: Story = {
+  parameters: {
+    layout: 'padded',
+  },
+  render: () => {
+    const text = useButtonText();
+
+    return (
+      <div className="flex max-w-4xl flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+            Figma Foundation Colors
+          </span>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {seaglassColorExamples.map((color) => (
+            <div
+              key={color.name}
+              className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-5"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  aria-hidden="true"
+                  className={`h-8 w-8 shrink-0 rounded-full ${color.swatchClassName}`}
+                />
+                <div className="truncate text-sm font-medium text-gray-900">{color.name}</div>
+              </div>
+              <Button
+                variant="primary"
+                style="fill"
+                size="xl"
+                treatment="seaglass"
+                className={`min-w-[180px] ${color.buttonClassName}`}
+              >
+                {text.start}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
+ * Width changes should preserve the seaglass side bloom without washing out the center.
+ */
+export const SeaglassResponsiveWidths: Story = {
+  parameters: {
+    layout: 'padded',
+  },
+  render: () => (
+    <div className="flex max-w-5xl flex-col gap-5">
+      <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+        Responsive Widths
+      </span>
+      <div className="flex flex-col items-start gap-4">
+        {[
+          { label: '140px', className: 'w-[140px]' },
+          { label: '180px', className: 'w-[180px]' },
+          { label: '260px', className: 'w-[260px]' },
+          { label: '360px', className: 'w-[360px]' },
+          { label: '480px', className: 'w-[480px]' },
+        ].map((example) => (
+          <Button
+            key={example.label}
+            variant="primary"
+            style="fill"
+            size="xl"
+            treatment="seaglass"
+            className={`justify-center ${example.className}`}
+          >
+            {example.label}
+          </Button>
+        ))}
+      </div>
+    </div>
+  ),
+};
+
+export const InternalSeaglassGradientWorkbench: Story = {
+  parameters: {
+    layout: 'padded',
+  },
+  render: () => <SeaglassGradientWorkbench />,
 };
