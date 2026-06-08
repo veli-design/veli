@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Link } from '@tradenetcorp/veli-ui/link';
-import { ArrowRight, Plus, DownloadSimple } from 'phosphor-react';
+import { Plus, DownloadSimple } from 'phosphor-react';
+import { DirectionalArrow } from '../utils/directional-arrow';
 
 const linkSizeExamples = [
   { className: 'type-caption-12-regular', label: 'Extra Small', size: 'sm' },
@@ -153,7 +154,7 @@ export const StatesAudit: Story = {
         </span>
         <Link href="#" isDisabled={true}>
           Disabled
-          <ArrowRight weight="bold" />
+          <DirectionalArrow weight="bold" />
         </Link>
       </div>
     </div>
@@ -173,12 +174,12 @@ export const WithIcons: Story = {
         </Link>
         <Link {...args}>
           Trailing Icon
-          <ArrowRight weight="bold" />
+          <DirectionalArrow weight="bold" />
         </Link>
         <Link {...args}>
           <DownloadSimple weight="bold" />
           Both Icons
-          <ArrowRight weight="bold" />
+          <DirectionalArrow weight="bold" />
         </Link>
       </div>
     </div>
@@ -204,7 +205,7 @@ export const ComponentSizes: Story = {
           <Link {...args} size={size}>
             <Plus weight="bold" />
             {label} Link
-            <ArrowRight weight="bold" />
+            <DirectionalArrow weight="bold" />
           </Link>
           <span className="text-xs text-text-default-muted italic">{iconSize}px icons</span>
         </div>
@@ -227,7 +228,7 @@ export const Sizes: Story = {
             <Link {...args} size={size}>
               <Plus weight="bold" />
               {label} Link
-              <ArrowRight weight="bold" />
+              <DirectionalArrow weight="bold" />
             </Link>
           </span>
           <span className="text-xs text-text-default-muted italic">{size} icons</span>
@@ -254,7 +255,7 @@ export const InheritedTypography: Story = {
         Body text with an{' '}
         <Link {...args} size="md">
           inherited link
-          <ArrowRight weight="bold" />
+          <DirectionalArrow weight="bold" />
         </Link>
       </p>
       <p className="type-subtitle-regular">
