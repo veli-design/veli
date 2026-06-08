@@ -1915,7 +1915,7 @@
             }
           }
         },
-        "default": {
+        "DEFAULT": {
           "$type": "color",
           "$value": "{color.cool gray.900}",
           "$description": "",
@@ -6637,7 +6637,7 @@
       }
     },
     "popover": {
-      "bg": {
+      "bg-solid": {
         "$type": "color",
         "$value": "{color.white}",
         "$description": "",
@@ -6713,6 +6713,19 @@
           "mode": {
             "Dark": "{color.cool gray.alpha.300}",
             "Light": "{color.cool gray.alpha.100}"
+          }
+        }
+      }
+    },
+    "modal": {
+      "bg-solid": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.200}",
+            "Light": "{color.white}"
           }
         }
       }
@@ -9377,7 +9390,7 @@
         "text",
         "tracking"
       ],
-      "createdAt": "2026-06-03T08:54:47.022Z"
+      "createdAt": "2026-06-08T18:29:24.764Z"
     }
   }
 }
