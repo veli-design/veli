@@ -698,23 +698,6 @@ export function LinkVariantsDemo() {
           Link
         </Link>
       </div>
-
-      <div className="text-sm font-medium p-2 rounded">Inverted</div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center bg-slate-900 p-2 rounded">
-        <Link variant="inverted" underline="always">
-          Link
-        </Link>
-      </div>
     </div>
   );
 }

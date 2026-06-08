@@ -3,15 +3,15 @@
 import * as React from 'react';
 import { Link as AriaLink, LinkProps as AriaLinkProps } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { twMerge } from 'tailwind-merge';
 
 const linkVariants = cva(
   'inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'text-text-links-default',
-        secondary: 'text-text-default-default',
-        inverted: 'text-text-default-inverted',
+        default: '',
+        secondary: '',
       },
       size: {
         sm: '[&_svg]:size-4',
@@ -30,6 +30,7 @@ const linkVariants = cva(
         true: '',
       },
       isDisabled: {
+        false: '',
         true: 'pointer-events-none text-text-disabled-disabled [&_svg]:text-icon-disabled-disabled',
       },
       isFocusVisible: {
@@ -46,6 +47,11 @@ const linkVariants = cva(
       // Default States
       {
         variant: 'default',
+        isDisabled: false,
+        className: 'text-text-links-default',
+      },
+      {
+        variant: 'default',
         isHovered: true,
         className: 'text-text-links-hover',
       },
@@ -57,6 +63,11 @@ const linkVariants = cva(
       // Secondary States
       {
         variant: 'secondary',
+        isDisabled: false,
+        className: 'text-text-default-default',
+      },
+      {
+        variant: 'secondary',
         isHovered: true,
         className: 'text-text-default-muted',
       },
@@ -64,12 +75,6 @@ const linkVariants = cva(
         variant: 'secondary',
         isPressed: true,
         className: 'text-text-default-muted',
-      },
-      // Inverted States
-      {
-        variant: 'inverted',
-        isHovered: true,
-        className: 'text-text-default-inverted/80',
       },
     ],
     defaultVariants: {
@@ -109,15 +114,17 @@ export function Link({
       className={(state) => {
         const isDisabled = forcedDisabled ?? state.isDisabled;
 
-        return linkVariants({
-          variant,
-          size,
-          underline,
-          isHovered: isDisabled ? false : (forcedHover ?? state.isHovered),
-          isPressed: isDisabled ? false : (forcedPressed ?? state.isPressed),
-          isDisabled,
-          isFocusVisible: forcedFocus ?? state.isFocusVisible,
-        });
+        return twMerge(
+          linkVariants({
+            variant,
+            size,
+            underline,
+            isHovered: isDisabled ? false : (forcedHover ?? state.isHovered),
+            isPressed: isDisabled ? false : (forcedPressed ?? state.isPressed),
+            isDisabled,
+            isFocusVisible: forcedFocus ?? state.isFocusVisible,
+          }),
+        );
       }}
     >
       {children}

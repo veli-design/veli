@@ -33,7 +33,7 @@ import {
 
 ## Variants Matrix
 
-The link supports three variants and various underlining options.
+The link supports two variants and various underlining options.
 
 <div className="preview p-6 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 overflow-x-auto">
   <LinkVariantsDemo client:visible />
@@ -68,10 +68,10 @@ Links inherit font size and line height from their parent context.
 
 ## Props
 
-| Prop         | Type                                     | Default     | Description                      |
-| :----------- | :--------------------------------------- | :---------- | :------------------------------- |
-| `variant`    | `'primary' \| 'secondary' \| 'inverted'` | `'primary'` | The visual category of the link. |
-| `underline`  | `'none' \| 'hover' \| 'always'`          | `'none'`    | Underline behavior.              |
-| `isDisabled` | `boolean`                                | `false`     | Standard disabled state.         |
+| Prop         | Type                            | Default     | Description                      |
+| :----------- | :------------------------------ | :---------- | :------------------------------- |
+| `variant`    | `'default' \| 'secondary'`      | `'default'` | The visual category of the link. |
+| `underline`  | `'none' \| 'hover' \| 'always'` | `'none'`    | Underline behavior.              |
+| `isDisabled` | `boolean`                       | `false`     | Standard disabled state.         |
 
 _Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides._
