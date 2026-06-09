@@ -7,7 +7,7 @@ import { Plus, Trash, DownloadSimple } from 'phosphor-react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 
 const iconSizeMap = {
-  xl: 24,
+  xl: 20,
   lg: 20,
   md: 16,
   sm: 16,
@@ -1659,7 +1659,7 @@ export const AllVariants: Story = {
 
 /**
  * Demonstrates common icon placement patterns with correct Figma sizing:
- * XL: 24px, LG: 20px, MD/SM: 16px, XS: 12px.
+ * XL/LG: 20px, MD/SM: 16px, XS: 12px.
  */
 export const WithIcons: Story = {
   render: (args) => {
@@ -1740,7 +1740,7 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-4 flex-wrap">
           <Button {...args} size="xl">
-            <Plus size={24} weight="bold" /> {text.extraLargeButton}
+            <Plus size={20} weight="bold" /> {text.extraLargeButton}
           </Button>
           <Button {...args} size="lg">
             <Plus size={20} weight="bold" /> {text.largeButton}
