@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@internationalized/date': ^3.12.2
+
 importers:
   .:
     devDependencies:
@@ -56,8 +59,8 @@ importers:
   apps/storybook:
     dependencies:
       '@internationalized/date':
-        specifier: ^3.10.0
-        version: 3.10.0
+        specifier: ^3.12.2
+        version: 3.12.2
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -126,8 +129,8 @@ importers:
         specifier: ^4.4.2
         version: 4.4.2(@types/node@24.10.1)(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.94.2)(terser@5.44.1)(yaml@2.9.0)
       '@internationalized/date':
-        specifier: ^3.10.0
-        version: 3.10.0
+        specifier: ^3.12.2
+        version: 3.12.2
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -1510,12 +1513,6 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
-
-  '@internationalized/date@3.10.0':
-    resolution:
-      {
-        integrity: sha512-oxDR/NTEJ1k+UFVQElaNIk65E/Z83HK1z1WI3lQyhTtnNg4R5oVXaPzK3jcpKG8UHKDVuDQHzn+wsxSz8RP3aw==,
-      }
 
   '@internationalized/date@3.12.2':
     resolution:
@@ -9227,10 +9224,6 @@ snapshots:
       iconv-lite: 0.7.2
     optionalDependencies:
       '@types/node': 24.10.1
-
-  '@internationalized/date@3.10.0':
-    dependencies:
-      '@swc/helpers': 0.5.17
 
   '@internationalized/date@3.12.2':
     dependencies:
