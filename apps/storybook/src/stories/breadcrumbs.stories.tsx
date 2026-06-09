@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
-import { CaretLeft } from 'phosphor-react';
 
 type BreadcrumbTrailItem = {
   id: string;
@@ -10,9 +9,10 @@ type BreadcrumbTrailItem = {
 };
 
 type BreadcrumbsPlaygroundArgs = {
-  treatment: 'standard' | 'backlink';
+  showBackLink: boolean;
   showOverflow: boolean;
   disableSecondCrumb: boolean;
+  backLinkLabel: string;
   homeLabel: string;
   secondLabel: string;
   thirdLabel: string;
@@ -47,24 +47,27 @@ type PlaygroundStory = StoryObj<BreadcrumbsPlaygroundArgs>;
 
 export const Playground: PlaygroundStory = {
   args: {
-    treatment: 'standard',
+    showBackLink: false,
     showOverflow: true,
     disableSecondCrumb: false,
+    backLinkLabel: 'Back',
     homeLabel: 'Home',
     secondLabel: 'Services',
     thirdLabel: 'Permits',
     currentLabel: 'Fishing permit',
   },
   argTypes: {
-    treatment: {
-      control: 'select',
-      options: ['standard', 'backlink'],
+    showBackLink: {
+      control: 'boolean',
     },
     showOverflow: {
       control: 'boolean',
     },
     disableSecondCrumb: {
       control: 'boolean',
+    },
+    backLinkLabel: {
+      control: 'text',
     },
     homeLabel: {
       control: 'text',
@@ -81,15 +84,13 @@ export const Playground: PlaygroundStory = {
   },
   render: (args) => (
     <div className="w-[560px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-      <Breadcrumbs aria-label="Breadcrumb playground">
-        {args.treatment === 'backlink' ? (
-          <Breadcrumb href="#" tone="accent">
-            <CaretLeft aria-hidden size={16} weight="bold" />
-            <span>Previous Page</span>
-          </Breadcrumb>
-        ) : (
-          <Breadcrumb href="#">{args.homeLabel}</Breadcrumb>
-        )}
+      <Breadcrumbs
+        aria-label="Breadcrumb playground"
+        showBackLink={args.showBackLink}
+        backLinkHref="#"
+        backLinkLabel={args.backLinkLabel}
+      >
+        {!args.showBackLink ? <Breadcrumb href="#">{args.homeLabel}</Breadcrumb> : null}
         <Breadcrumb href="#" isDisabled={args.disableSecondCrumb}>
           {args.secondLabel}
         </Breadcrumb>
@@ -136,11 +137,7 @@ export const Variations: Story = {
       <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
           <p className="type-body-sm-medium text-text-default-emphasis">Back link treatment</p>
-          <Breadcrumbs aria-label="Back breadcrumb">
-            <Breadcrumb href="#" tone="accent">
-              <CaretLeft aria-hidden size={16} weight="bold" />
-              <span>Previous Page</span>
-            </Breadcrumb>
+          <Breadcrumbs aria-label="Back breadcrumb" showBackLink backLinkHref="#">
             <Breadcrumb href="#">Menu One</Breadcrumb>
             <BreadcrumbOverflow items={hiddenBacklinkItems} />
             <Breadcrumb href="#">Menu Five</Breadcrumb>
