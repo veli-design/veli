@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import {
+  Button as AriaButton,
   Group,
   Input as AriaInput,
   Label,
@@ -19,6 +20,8 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
 } from './field-shared';
+import { useVeliLanguage } from './provider';
+import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
@@ -58,6 +61,21 @@ const headerMetaVariants = cva('type-caption-regular', {
     isDisabled: false,
   },
 });
+
+const infoTooltipTriggerVariants = cva(
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
+  {
+    variants: {
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
+    },
+  },
+);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -242,6 +260,11 @@ const inputElementVariants = cva(
   },
 );
 
+const infoTooltipDefaultAriaLabels = {
+  en: 'More information',
+  dv: 'އިތުރު މަޢުލޫމާތު',
+} as const;
+
 function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
   if (isDisabled) return;
 
@@ -262,6 +285,8 @@ export interface InputProps
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'>,
     Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'> {
   label?: React.ReactNode;
+  infoTooltip?: React.ReactNode;
+  infoTooltipAriaLabel?: string;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
@@ -288,6 +313,8 @@ export interface InputProps
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
+    infoTooltip,
+    infoTooltipAriaLabel,
     labelSupplementary,
     labelIcon,
     action,
@@ -316,19 +343,43 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   },
   ref,
 ) {
+  const languageConfig = useVeliLanguage();
+  const resolvedInfoTooltipAriaLabel =
+    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
+
   return (
     <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
         <>
           {label ||
+          infoTooltip ||
           labelSupplementary ||
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-1">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
+                ) : null}
+                {infoTooltip ? (
+                  <TooltipTrigger>
+                    <AriaButton
+                      type="button"
+                      aria-label={resolvedInfoTooltipAriaLabel}
+                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      isDisabled={isDisabled}
+                    >
+                      <Info size={16} aria-hidden />
+                    </AriaButton>
+                    <Tooltip
+                      placement="top"
+                      lang={languageConfig.lang}
+                      dir={languageConfig.direction}
+                    >
+                      {infoTooltip}
+                    </Tooltip>
+                  </TooltipTrigger>
                 ) : null}
                 {labelSupplementary ? (
                   <span className={headerMetaVariants({ tone: 'subtle', isDisabled })}>

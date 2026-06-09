@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Input } from '@tradenetcorp/veli-ui/input';
@@ -7,7 +7,6 @@ import {
   ArrowRight,
   CalendarBlank,
   CaretDown,
-  Info,
   MagnifyingGlass,
   WarningCircle,
 } from 'phosphor-react';
@@ -15,6 +14,7 @@ import {
 const dhivehiFormText = {
   core: {
     label: 'ލޭބަލް',
+    optional: 'އިޚްތިޔާރީ',
     placeholder: 'ޕްލޭސްހޯލްޑަރ',
     helperText: 'އެހީތެރިވެދޭ ލިޔުން',
     default: 'އާދައިގެ',
@@ -30,6 +30,8 @@ const dhivehiFormText = {
     enterValue: 'ވެލިއުއެއް ލިޔުއްވާ',
     disabledValue: 'ބޭނުންނުކުރެވޭ ވެލިއު',
     helperTextHidden: 'ސައްޙަނޫން ހާލަތެއްގައި މި އެހީތެރިވެދޭ ލިޔުން ނުފެންނާނެއެވެ.',
+    infoTip: 'މި ފީލްޑަށް ބޭނުންވާ މަޢުލޫމާތު ބަލާ ލިޔުއްވާ.',
+    infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
     usesRootWidth: 'ރޫޓް ވިޑްތު ބޭނުންކުރޭ',
     maxWidth: 'އެންމެ ފުޅާމިން',
   },
@@ -38,6 +40,7 @@ const dhivehiFormText = {
 const enFormText = {
   core: {
     label: 'Label',
+    optional: 'Optional',
     placeholder: 'Placeholder',
     helperText: 'Helper text',
     default: 'Default',
@@ -53,6 +56,8 @@ const enFormText = {
     enterValue: 'Enter value',
     disabledValue: 'Disabled value',
     helperTextHidden: 'This helper text is hidden while invalid.',
+    infoTip: 'Use this field for the requested supporting information.',
+    infoTipLabel: 'More information',
     usesRootWidth: 'Uses the root width',
     maxWidth: 'Max width',
   },
@@ -82,6 +87,18 @@ const inputArgText = {
     en: enFormText.core.label,
     dv: dhivehiFormText.core.label,
   },
+  labelSupplementary: {
+    en: enFormText.core.optional,
+    dv: dhivehiFormText.core.optional,
+  },
+  infoTooltip: {
+    en: enFormText.input.infoTip,
+    dv: dhivehiFormText.input.infoTip,
+  },
+  infoTooltipAriaLabel: {
+    en: enFormText.input.infoTipLabel,
+    dv: dhivehiFormText.input.infoTipLabel,
+  },
   placeholder: {
     en: enFormText.core.placeholder,
     dv: dhivehiFormText.core.placeholder,
@@ -93,6 +110,10 @@ const inputArgText = {
 } as const;
 
 type InputArgTextKey = keyof typeof inputArgText;
+type InputStoryArgs = ComponentProps<typeof Input> & {
+  showOptional: boolean;
+  showInfoTooltip: boolean;
+};
 
 const inputArgTextKeys = Object.keys(inputArgText) as InputArgTextKey[];
 
@@ -121,11 +142,25 @@ const meta = {
     (Story, context) => {
       const language: InputLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const { description, label, placeholder } = args;
+      const {
+        description,
+        infoTooltip,
+        infoTooltipAriaLabel,
+        label,
+        labelSupplementary,
+        placeholder,
+      } = args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<InputArgTextKey, string>> = {};
-        const currentArgs = { description, label, placeholder };
+        const currentArgs = {
+          description,
+          infoTooltip,
+          infoTooltipAriaLabel,
+          label,
+          labelSupplementary,
+          placeholder,
+        };
 
         inputArgTextKeys.forEach((key) => {
           const localizedValue = getLocalizedInputArgText(key, currentArgs[key], language);
@@ -138,7 +173,16 @@ const meta = {
         if (Object.keys(nextArgs).length > 0) {
           updateArgs?.(nextArgs);
         }
-      }, [description, label, placeholder, language, updateArgs]);
+      }, [
+        description,
+        infoTooltip,
+        infoTooltipAriaLabel,
+        label,
+        labelSupplementary,
+        placeholder,
+        language,
+        updateArgs,
+      ]);
 
       return <Story />;
     },
@@ -150,6 +194,21 @@ const meta = {
   argTypes: {
     label: {
       control: 'text',
+    },
+    labelSupplementary: {
+      control: 'text',
+    },
+    infoTooltip: {
+      control: 'text',
+    },
+    infoTooltipAriaLabel: {
+      control: 'text',
+    },
+    showOptional: {
+      control: 'boolean',
+    },
+    showInfoTooltip: {
+      control: 'boolean',
     },
     placeholder: {
       control: 'text',
@@ -184,12 +243,17 @@ const meta = {
   },
   args: {
     label: enFormText.core.label,
+    labelSupplementary: enFormText.core.optional,
+    infoTooltip: enFormText.input.infoTip,
+    infoTooltipAriaLabel: enFormText.input.infoTipLabel,
+    showOptional: true,
+    showInfoTooltip: true,
     placeholder: enFormText.core.placeholder,
     description: enFormText.core.helperText,
     type: 'text',
     showRequiredIndicator: true,
   },
-} satisfies Meta<typeof Input>;
+} satisfies Meta<InputStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -197,12 +261,28 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useInputLanguage();
+    const { showInfoTooltip, showOptional, ...inputArgs } = args;
 
     return (
       <div className="w-[320px]">
         <Input
-          {...args}
+          {...inputArgs}
           label={getLocalizedInputArgText('label', args.label, language)}
+          labelSupplementary={
+            showOptional
+              ? getLocalizedInputArgText('labelSupplementary', args.labelSupplementary, language)
+              : undefined
+          }
+          infoTooltip={
+            showInfoTooltip
+              ? getLocalizedInputArgText('infoTooltip', args.infoTooltip, language)
+              : undefined
+          }
+          infoTooltipAriaLabel={getLocalizedInputArgText(
+            'infoTooltipAriaLabel',
+            args.infoTooltipAriaLabel,
+            language,
+          )}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
         />
@@ -217,12 +297,28 @@ export const Outline: Story = {
   },
   render: (args) => {
     const language = useInputLanguage();
+    const { showInfoTooltip, showOptional, ...inputArgs } = args;
 
     return (
       <div className="w-[320px]">
         <Input
-          {...args}
+          {...inputArgs}
           label={getLocalizedInputArgText('label', args.label, language)}
+          labelSupplementary={
+            showOptional
+              ? getLocalizedInputArgText('labelSupplementary', args.labelSupplementary, language)
+              : undefined
+          }
+          infoTooltip={
+            showInfoTooltip
+              ? getLocalizedInputArgText('infoTooltip', args.infoTooltip, language)
+              : undefined
+          }
+          infoTooltipAriaLabel={getLocalizedInputArgText(
+            'infoTooltipAriaLabel',
+            args.infoTooltipAriaLabel,
+            language,
+          )}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
         />
@@ -355,9 +451,10 @@ export const FigmaExploration: Story = {
       <div className="w-[320px]">
         <Input
           label={text.core.label}
-          labelSupplementary="(Optional)"
+          labelSupplementary={text.core.optional}
+          infoTooltip={text.input.infoTip}
+          infoTooltipAriaLabel={text.input.infoTipLabel}
           isRequired
-          labelIcon={<Info size={12} />}
           action="Action"
           placeholder={text.core.placeholder}
           description={text.core.helperText}
