@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
+  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
   {
     variants: {
       variant: {
