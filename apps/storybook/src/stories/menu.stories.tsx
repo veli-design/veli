@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { Selection } from 'react-aria-components';
 import { CaretRight, DotsThree, DownloadSimple, Gear, PencilSimple, Trash } from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import {
@@ -17,13 +18,13 @@ type MenuPlaygroundItem = {
   label: string;
   description?: string;
   shortcut?: string;
-  tone?: 'default' | 'danger';
+  sentiment?: 'default' | 'danger';
+  selected?: boolean;
   disabled?: boolean;
 };
 
 type MenuPlaygroundArgs = {
   triggerLabel: string;
-  panelSize: 'sm' | 'md' | 'lg';
   itemSize: 'sm' | 'md' | 'lg';
   showDescriptions: boolean;
   showShortcuts: boolean;
@@ -36,6 +37,7 @@ const DEFAULT_PLAYGROUND_ITEMS: MenuPlaygroundItem[] = [
     label: 'Edit Details',
     description: 'Update labels, metadata, and visibility.',
     shortcut: 'E',
+    selected: true,
   },
   {
     id: 'export',
@@ -48,7 +50,7 @@ const DEFAULT_PLAYGROUND_ITEMS: MenuPlaygroundItem[] = [
     label: 'Delete',
     description: 'This action is permanent.',
     shortcut: 'Del',
-    tone: 'danger',
+    sentiment: 'danger',
   },
 ];
 
@@ -79,7 +81,7 @@ export const Basic: Story = {
           <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
           <MenuItem startIcon={<DownloadSimple size={16} />}>Export</MenuItem>
           <MenuSeparator />
-          <MenuItem tone="danger" startIcon={<Trash size={16} />}>
+          <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
             Delete
           </MenuItem>
         </Menu>
@@ -95,7 +97,6 @@ export const Basic: Story = {
 export const Default: Story = {
   args: {
     triggerLabel: 'Menu',
-    panelSize: 'md',
     itemSize: 'md',
     showDescriptions: true,
     showShortcuts: true,
@@ -103,7 +104,6 @@ export const Default: Story = {
   },
   argTypes: {
     triggerLabel: { control: 'text' },
-    panelSize: { control: 'select', options: ['sm', 'md', 'lg'] },
     itemSize: { control: 'select', options: ['sm', 'md', 'lg'] },
     showDescriptions: { control: 'boolean' },
     showShortcuts: { control: 'boolean' },
@@ -120,6 +120,10 @@ export const Default: Story = {
       return args.items;
     }, [args.items]);
 
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(
+      () => new Set(safeItems.filter((item) => item.selected).map((item) => item.id)),
+    );
+
     return (
       <div className="flex flex-col items-start gap-3">
         <MenuTrigger>
@@ -127,14 +131,19 @@ export const Default: Story = {
             {args.triggerLabel}
             <DotsThree size={16} weight="bold" />
           </Button>
-          <MenuPopover size={args.panelSize}>
-            <Menu onAction={(key) => setLastAction(String(key))}>
+          <MenuPopover>
+            <Menu
+              selectionMode="single"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
+              onAction={(key) => setLastAction(String(key))}
+            >
               {safeItems.map((item) => (
                 <MenuItem
                   key={item.id}
                   id={item.id}
                   size={args.itemSize}
-                  tone={item.tone ?? 'default'}
+                  sentiment={item.sentiment ?? 'default'}
                   description={args.showDescriptions ? item.description : undefined}
                   shortcut={args.showShortcuts ? item.shortcut : undefined}
                   isDisabled={item.disabled}
@@ -147,6 +156,12 @@ export const Default: Story = {
         </MenuTrigger>
         <p className="text-xs text-text-default-muted">
           Last action: <span className="font-medium">{lastAction}</span>
+        </p>
+        <p className="text-xs text-text-default-muted">
+          Selected:{' '}
+          <span className="font-medium">
+            {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ') || 'none'}
+          </span>
         </p>
       </div>
     );
@@ -171,7 +186,7 @@ export const Sections: Story = {
           <MenuSeparator />
           <MenuSection title="Settings">
             <MenuItem startIcon={<Gear size={16} />}>Preferences</MenuItem>
-            <MenuItem tone="danger" startIcon={<Trash size={16} />}>
+            <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
               Remove File
             </MenuItem>
           </MenuSection>
@@ -198,7 +213,7 @@ export const WithSubitems: Story = {
             <MenuItem id="export" endIcon={<CaretRight size={14} />}>
               Export As
             </MenuItem>
-            <MenuPopover size="sm">
+            <MenuPopover>
               <Menu>
                 <MenuItem id="pdf">PDF</MenuItem>
                 <MenuItem id="docx">DOCX</MenuItem>
@@ -207,7 +222,7 @@ export const WithSubitems: Story = {
                   <MenuItem id="image" endIcon={<CaretRight size={14} />}>
                     Image
                   </MenuItem>
-                  <MenuPopover size="sm">
+                  <MenuPopover>
                     <Menu>
                       <MenuItem id="png">PNG</MenuItem>
                       <MenuItem id="svg">SVG</MenuItem>
@@ -219,7 +234,7 @@ export const WithSubitems: Story = {
           </MenuSubmenuTrigger>
 
           <MenuSeparator />
-          <MenuItem id="delete" tone="danger" startIcon={<Trash size={16} />}>
+          <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
             Delete
           </MenuItem>
         </Menu>
@@ -229,7 +244,131 @@ export const WithSubitems: Story = {
 };
 
 /**
+ * Default and danger sentiments for neutral and destructive menu actions.
+ */
+export const Sentiment: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button variant="secondary" style="transparent" size="sm">
+        Actions
+      </Button>
+      <MenuPopover>
+        <Menu>
+          <MenuItem id="rename" startIcon={<PencilSimple size={16} />}>
+            Rename
+          </MenuItem>
+          <MenuItem id="download" startIcon={<DownloadSimple size={16} />}>
+            Download
+          </MenuItem>
+          <MenuSeparator />
+          <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
+            Delete
+          </MenuItem>
+        </Menu>
+      </MenuPopover>
+    </MenuTrigger>
+  ),
+};
+
+/**
+ * Selection via React Aria `selectionMode` and `selectedKeys`.
+ * Single select closes on pick by default; multiple select and `closeOnSelect={false}` keep the menu open.
+ */
+export const Checked: Story = {
+  render: () => {
+    const [singleSelected, setSingleSelected] = useState<Selection>(new Set(['name']));
+    const [multipleSelected, setMultipleSelected] = useState<Selection>(
+      new Set(['files', 'folders']),
+    );
+    const [persistentSelected, setPersistentSelected] = useState<Selection>(new Set(['list']));
+
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="flex flex-col items-start gap-2">
+          <p className="text-xs font-medium text-text-default-default">Single (closes on select)</p>
+          <MenuTrigger>
+            <Button variant="secondary" style="transparent" size="sm">
+              Sort By
+            </Button>
+            <MenuPopover>
+              <Menu
+                selectionMode="single"
+                selectedKeys={singleSelected}
+                onSelectionChange={setSingleSelected}
+              >
+                <MenuItem id="name">Name</MenuItem>
+                <MenuItem id="date">Date modified</MenuItem>
+                <MenuItem id="size">Size</MenuItem>
+              </Menu>
+            </MenuPopover>
+          </MenuTrigger>
+          <p className="text-xs text-text-default-muted">
+            Selected: <span className="font-medium">{[...singleSelected].join(', ')}</span>
+          </p>
+        </div>
+
+        <div className="flex flex-col items-start gap-2">
+          <p className="text-xs font-medium text-text-default-default">Multiple (stays open)</p>
+          <MenuTrigger>
+            <Button variant="secondary" style="transparent" size="sm">
+              View
+            </Button>
+            <MenuPopover>
+              <Menu
+                selectionMode="multiple"
+                selectedKeys={multipleSelected}
+                onSelectionChange={setMultipleSelected}
+              >
+                <MenuItem id="files">Show files</MenuItem>
+                <MenuItem id="folders">Show folders</MenuItem>
+                <MenuItem id="hidden">Show hidden items</MenuItem>
+              </Menu>
+            </MenuPopover>
+          </MenuTrigger>
+          <p className="text-xs text-text-default-muted">
+            Selected:{' '}
+            <span className="font-medium">{[...multipleSelected].join(', ') || 'none'}</span>
+          </p>
+        </div>
+
+        <div className="flex flex-col items-start gap-2">
+          <p className="text-xs font-medium text-text-default-default">
+            Single + closeOnSelect={false}
+          </p>
+          <MenuTrigger>
+            <Button variant="secondary" style="transparent" size="sm">
+              Layout
+            </Button>
+            <MenuPopover>
+              <Menu
+                selectionMode="single"
+                selectedKeys={persistentSelected}
+                onSelectionChange={setPersistentSelected}
+              >
+                <MenuItem id="list" closeOnSelect={false}>
+                  List
+                </MenuItem>
+                <MenuItem id="grid" closeOnSelect={false}>
+                  Grid
+                </MenuItem>
+                <MenuItem id="board" closeOnSelect={false}>
+                  Board
+                </MenuItem>
+              </Menu>
+            </MenuPopover>
+          </MenuTrigger>
+          <p className="text-xs text-text-default-muted">
+            Selected: <span className="font-medium">{[...persistentSelected].join(', ')}</span>
+          </p>
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
  * Item sizes can be tuned to fit dense toolbars or spacious touch targets.
+ * Section headers and dividers scale with each size variant.
  */
 export const Sizes: Story = {
   render: () => (
@@ -238,11 +377,16 @@ export const Sizes: Story = {
         <Button variant="secondary" style="transparent" size="sm">
           Small
         </Button>
-        <MenuPopover size="sm">
+        <MenuPopover>
           <Menu>
-            <MenuItem size="sm">Profile</MenuItem>
-            <MenuItem size="sm">Billing</MenuItem>
-            <MenuItem size="sm">Sign out</MenuItem>
+            <MenuSection title="Account" size="sm">
+              <MenuItem size="sm">Profile</MenuItem>
+              <MenuItem size="sm">Billing</MenuItem>
+            </MenuSection>
+            <MenuSeparator />
+            <MenuSection title="Session" size="sm">
+              <MenuItem size="sm">Sign out</MenuItem>
+            </MenuSection>
           </Menu>
         </MenuPopover>
       </MenuTrigger>
@@ -251,11 +395,16 @@ export const Sizes: Story = {
         <Button variant="secondary" style="transparent" size="sm">
           Medium
         </Button>
-        <MenuPopover size="md">
+        <MenuPopover>
           <Menu>
-            <MenuItem size="md">Profile</MenuItem>
-            <MenuItem size="md">Billing</MenuItem>
-            <MenuItem size="md">Sign out</MenuItem>
+            <MenuSection title="Account" size="md">
+              <MenuItem size="md">Profile</MenuItem>
+              <MenuItem size="md">Billing</MenuItem>
+            </MenuSection>
+            <MenuSeparator />
+            <MenuSection title="Session" size="md">
+              <MenuItem size="md">Sign out</MenuItem>
+            </MenuSection>
           </Menu>
         </MenuPopover>
       </MenuTrigger>
@@ -264,11 +413,16 @@ export const Sizes: Story = {
         <Button variant="secondary" style="transparent" size="sm">
           Large
         </Button>
-        <MenuPopover size="lg">
+        <MenuPopover>
           <Menu>
-            <MenuItem size="lg">Profile</MenuItem>
-            <MenuItem size="lg">Billing</MenuItem>
-            <MenuItem size="lg">Sign out</MenuItem>
+            <MenuSection title="Account" size="lg">
+              <MenuItem size="lg">Profile</MenuItem>
+              <MenuItem size="lg">Billing</MenuItem>
+            </MenuSection>
+            <MenuSeparator />
+            <MenuSection title="Session" size="lg">
+              <MenuItem size="lg">Sign out</MenuItem>
+            </MenuSection>
           </Menu>
         </MenuPopover>
       </MenuTrigger>
@@ -278,40 +432,57 @@ export const Sizes: Story = {
 
 /**
  * Rich item content for enterprise workflows: icon + description + shortcut.
+ * Pass `className` (e.g. `max-w-xs`) to cap popover width when content is long.
  */
 export const RichItems: Story = {
   render: () => (
-    <MenuTrigger>
-      <Button variant="secondary" style="transparent" size="sm">
-        Quick Actions
-      </Button>
-      <MenuPopover>
-        <Menu>
-          <MenuItem
-            startIcon={<PencilSimple size={16} />}
-            description="Update labels, metadata, and visibility."
-            shortcut="E"
-          >
-            Edit Details
-          </MenuItem>
-          <MenuItem
-            startIcon={<DownloadSimple size={16} />}
-            description="Create a local copy for offline work."
-            shortcut="D"
-          >
-            Download Copy
-          </MenuItem>
-          <MenuSeparator />
-          <MenuItem
-            tone="danger"
-            startIcon={<Trash size={16} />}
-            description="This action is permanent."
-            shortcut="Del"
-          >
-            Delete Record
-          </MenuItem>
-        </Menu>
-      </MenuPopover>
-    </MenuTrigger>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {(['sm', 'md', 'lg'] as const).map((size) => (
+        <MenuTrigger key={size}>
+          <Button variant="secondary" style="transparent" size="sm">
+            {size === 'sm' ? 'Small' : size === 'md' ? 'Medium' : 'Large'}
+          </Button>
+          <MenuPopover className="max-w-xs">
+            <Menu>
+              <MenuItem
+                size={size}
+                startIcon={<PencilSimple size={16} />}
+                description="Update labels, metadata, and visibility."
+                shortcut="E"
+              >
+                Edit Details
+              </MenuItem>
+              <MenuItem
+                size={size}
+                startIcon={<DownloadSimple size={16} />}
+                description="Create a local copy for offline work."
+                shortcut="D"
+              >
+                Download Copy
+              </MenuItem>
+              <MenuItem
+                size={size}
+                isDisabled
+                startIcon={<Gear size={16} />}
+                description="Requires admin permissions."
+                shortcut="S"
+              >
+                Share Externally
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem
+                size={size}
+                sentiment="danger"
+                startIcon={<Trash size={16} />}
+                description="This action is permanent."
+                shortcut="Del"
+              >
+                Delete Record
+              </MenuItem>
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+      ))}
+    </div>
   ),
 };
