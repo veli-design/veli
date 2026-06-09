@@ -23,7 +23,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const menuPopoverClassName =
-  'min-w-56 w-max rounded-xl border border-border-default-subtle bg-menu-bg p-1 text-text-default-default shadow-md backdrop-blur-[4px] outline-none';
+  'min-w-56 w-max rounded-xl border border-border-default-subtle bg-menu-bg p-1 text-text-default-default shadow-md backdrop-blur-xs outline-none';
 
 const menuVariants = cva('outline-none');
 
@@ -66,7 +66,7 @@ const menuSectionTitleVariants = cva('px-3 text-start text-text-default-emphasis
 
 const menuItemRowVariants = cva('flex min-w-0 flex-1 items-start gap-2');
 
-const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-[6px]');
+const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-1.5');
 
 const menuItemLabelRowVariants = cva('flex min-w-0 items-center gap-2');
 
