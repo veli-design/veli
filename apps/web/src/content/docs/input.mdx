@@ -43,21 +43,25 @@ import { Input } from '@tradenetcorp/veli-ui/input';
 
 ## Props
 
-| Prop                    | Type        | Default | Description                                                                  |
-| :---------------------- | :---------- | :------ | :--------------------------------------------------------------------------- |
-| `label`                 | `ReactNode` | -       | Visible label content rendered with React Aria's `Label`.                    |
-| `labelSupplementary`    | `ReactNode` | -       | Inline helper copy beside the label, for cases like `(Optional)`.            |
-| `labelIcon`             | `ReactNode` | -       | Small icon placed after the label content.                                   |
-| `action`                | `ReactNode` | -       | Right-aligned header content, suitable for an inline action.                 |
-| `description`           | `ReactNode` | -       | Helper text shown beneath the field when not invalid.                        |
-| `errorMessage`          | `ReactNode` | -       | Validation content shown beneath the field when `isInvalid` is true.         |
-| `startAddon`            | `ReactNode` | -       | Leading content rendered inside the inset 24px accessory container.          |
-| `startContent`          | `ReactNode` | -       | Leading inline content rendered directly inside the field shell.             |
-| `endContent`            | `ReactNode` | -       | Trailing inline content rendered directly inside the field shell.            |
-| `endAddon`              | `ReactNode` | -       | Trailing content rendered inside the inset 24px accessory container.         |
-| `showRequiredIndicator` | `boolean`   | `true`  | Controls whether the required asterisk is rendered when `isRequired` is set. |
-| `className`             | `string`    | -       | Layout-only class override merged onto the outermost root element.           |
+| Prop                    | Type        | Default          | Description                                                                  |
+| :---------------------- | :---------- | :--------------- | :--------------------------------------------------------------------------- |
+| `label`                 | `ReactNode` | -                | Visible label content rendered with React Aria's `Label`.                    |
+| `labelSupplementary`    | `ReactNode` | -                | Inline helper copy beside the label, for cases like `Optional`.              |
+| `infoTooltip`           | `ReactNode` | -                | Optional tooltip content displayed from a small info icon in the header.     |
+| `infoTooltipAriaLabel`  | `string`    | Localized string | Accessible label for the tooltip trigger button.                             |
+| `labelIcon`             | `ReactNode` | -                | Small icon placed after the label content.                                   |
+| `action`                | `ReactNode` | -                | Right-aligned header content, suitable for an inline action.                 |
+| `description`           | `ReactNode` | -                | Helper text shown beneath the field when not invalid.                        |
+| `errorMessage`          | `ReactNode` | -                | Validation content shown beneath the field when `isInvalid` is true.         |
+| `startAddon`            | `ReactNode` | -                | Leading content rendered inside the inset 24px accessory container.          |
+| `startContent`          | `ReactNode` | -                | Leading inline content rendered directly inside the field shell.             |
+| `endContent`            | `ReactNode` | -                | Trailing inline content rendered directly inside the field shell.            |
+| `endAddon`              | `ReactNode` | -                | Trailing content rendered inside the inset 24px accessory container.         |
+| `showRequiredIndicator` | `boolean`   | `true`           | Controls whether the required asterisk is rendered when `isRequired` is set. |
+| `className`             | `string`    | -                | Layout-only class override merged onto the outermost root element.           |
 
 All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition overrides.
 
 `className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Use it to identify repeated layout needs during internal adoption; repeated patterns should become explicit props before public release.
+
+For Dhivehi (`lang="dv"`) fields, the input text uses the `MV_Faseyha` font and size, height, line-height, and padding tuning so glyphs stay visually centered and inside the field container.
