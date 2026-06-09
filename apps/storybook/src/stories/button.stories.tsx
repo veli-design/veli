@@ -1503,11 +1503,16 @@ function renderPreviewButton(args: PreviewArgs, fallback?: string) {
     buttonProps['aria-label'] ??
     (typeof buttonChildren === 'string' ? buttonChildren : text.argsChildren);
 
+  if (buttonProps.iconOnly) {
+    return (
+      <Button {...buttonProps} aria-label={derivedAriaLabel}>
+        {content}
+      </Button>
+    );
+  }
+
   return (
-    <Button
-      {...buttonProps}
-      aria-label={buttonProps.iconOnly ? derivedAriaLabel : buttonProps['aria-label']}
-    >
+    <Button {...buttonProps} aria-label={buttonProps['aria-label']}>
       {content}
     </Button>
   );
@@ -1516,7 +1521,7 @@ function renderPreviewButton(args: PreviewArgs, fallback?: string) {
 const meta = {
   title: 'Components/Button',
   component: Button,
-  render: renderPreviewButton,
+  render: (args: PreviewArgs) => renderPreviewButton(args),
   decorators: [
     (Story, context) => {
       const language = context.globals.language === 'dv' ? 'dv' : 'en';
@@ -1583,13 +1588,13 @@ const meta = {
 } satisfies Meta<PreviewArgs>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<PreviewArgs>;
 
 /**
  * The default button style used for most actions.
  */
 export const Primary: Story = {
-  render: (args) => {
+  render: (args: PreviewArgs) => {
     const text = useButtonText();
 
     return renderPreviewButton(args, text.primaryButton);
@@ -1662,7 +1667,7 @@ export const AllVariants: Story = {
  * XL/LG: 20px, MD/SM: 16px, XS: 12px.
  */
 export const WithIcons: Story = {
-  render: (args) => {
+  render: (args: PreviewArgs) => {
     const text = useButtonText();
     const size = iconSizeMap[args.size as keyof typeof iconSizeMap] || 16;
 
@@ -1696,7 +1701,7 @@ export const WithIcons: Story = {
  * while switching to a square footprint. Provide an accessible label.
  */
 export const IconOnly: Story = {
-  render: (args) => (
+  render: (args: PreviewArgs) => (
     <div className="flex items-center gap-4 flex-wrap">
       <Button {...args} size="xl" iconOnly aria-label="Add item">
         <Plus size={24} weight="bold" />
@@ -1733,7 +1738,7 @@ export const IconOnly: Story = {
  * All supported sizes shown side-by-side with correctly sized icons.
  */
 export const Sizes: Story = {
-  render: (args) => {
+  render: (args: PreviewArgs) => {
     const text = useButtonText();
 
     return (
@@ -1764,7 +1769,7 @@ export const Sizes: Story = {
  * Displays a loading spinner while preserving the button's dimensions.
  */
 export const Loading: Story = {
-  render: (args) => {
+  render: (args: PreviewArgs) => {
     const text = useButtonText();
 
     return renderPreviewButton(args, text.savingChanges);
@@ -1779,7 +1784,7 @@ export const Loading: Story = {
  * Standard disabled state. Prevents all user interaction.
  */
 export const Disabled: Story = {
-  render: (args) => {
+  render: (args: PreviewArgs) => {
     const text = useButtonText();
 
     return renderPreviewButton(args, text.disabledAction);
