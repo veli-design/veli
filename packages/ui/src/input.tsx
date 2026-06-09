@@ -227,13 +227,13 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
       },
     },
     defaultVariants: {
