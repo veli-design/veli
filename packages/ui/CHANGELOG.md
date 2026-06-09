@@ -1,5 +1,12 @@
 # @tradenetcorp/veli-ui
 
+## 0.1.1
+
+### Patch Changes
+
+- c7b1e4a: Add Divider `variant` (`subtle`, `muted`, `strong`, `emphasis`) and `text` props for centered labels between React Aria separators, using border color tokens for reliable variant styling.
+- c388cb9: Remove the unsupported `inverted` Link variant and fix disabled Link styling so disabled text and icons use the correct disabled color tokens.
+
 ## 0.1.0
 
 ### Minor Changes
