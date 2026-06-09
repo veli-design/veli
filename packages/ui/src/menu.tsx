@@ -37,7 +37,7 @@ const menuItemVariants = cva(
         lg: 'py-3.5 type-body-md-regular',
       },
       sentiment: {
-        default: 'text-text-default-default',
+        default: 'text-text-default-strong',
         danger:
           'text-text-danger-muted data-[disabled]:text-text-disabled-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
       },
@@ -67,6 +67,8 @@ const menuSectionTitleVariants = cva('px-3 text-start text-text-default-emphasis
 const menuItemRowVariants = cva('flex min-w-0 flex-1 items-start gap-2');
 
 const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-[6px]');
+
+const menuItemLabelRowVariants = cva('flex min-w-0 items-center gap-2');
 
 const menuShortcutVariants = cva(
   'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-text-default-default group-data-[disabled]:text-text-disabled-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-default-default group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
@@ -242,14 +244,18 @@ function MenuItemContent({
         </span>
       ) : null}
       <div className={menuItemTextVariants()}>
-        {children ? <div className="truncate">{children}</div> : null}
+        {children || shortcut ? (
+          <div className={menuItemLabelRowVariants()}>
+            {children ? <div className="min-w-0 flex-1 truncate">{children}</div> : null}
+            {shortcut ? <Keyboard className={menuShortcutVariants()}>{shortcut}</Keyboard> : null}
+          </div>
+        ) : null}
         {description ? (
           <div className="truncate type-caption-12-regular text-text-default-muted group-data-[disabled]:text-text-disabled-disabled">
             {description}
           </div>
         ) : null}
       </div>
-      {shortcut ? <Keyboard className={menuShortcutVariants()}>{shortcut}</Keyboard> : null}
       {endIcon ? (
         <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
           {endIcon}
