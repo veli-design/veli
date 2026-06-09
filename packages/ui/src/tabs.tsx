@@ -292,7 +292,7 @@ export function TabsOverflow({
           <span>{triggerLabel}</span>
           <CaretDown aria-hidden="true" size={16} />
         </AriaButton>
-        <MenuPopover size="sm" className={popoverClassName}>
+        <MenuPopover className={popoverClassName}>
           <Menu
             aria-label={menuLabel}
             selectedKeys={selectedKey != null ? [selectedKey] : []}
