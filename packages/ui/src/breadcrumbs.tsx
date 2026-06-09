@@ -170,7 +170,7 @@ export function BreadcrumbOverflow({
         >
           <span aria-hidden="true">…</span>
         </AriaButton>
-        <MenuPopover size="sm" className={popoverClassName}>
+        <MenuPopover className={popoverClassName}>
           <Menu aria-label={menuLabel} onAction={onAction}>
             {items.map((item) => (
               <MenuItem
