@@ -10,6 +10,7 @@ import {
   Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   Separator as AriaSeparator,
+  Keyboard,
   type MenuItemProps as AriaMenuItemProps,
   type MenuProps as AriaMenuProps,
   type MenuTriggerProps as AriaMenuTriggerProps,
@@ -21,47 +22,112 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
-const menuPopoverVariants = cva(
-  'min-w-56 rounded-2xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)] backdrop-blur-[4px] outline-none',
-  {
-    variants: {
-      size: {
-        sm: 'w-56',
-        md: 'w-64',
-        lg: 'w-72',
-      },
-    },
-    defaultVariants: {
-      size: 'md',
-    },
-  },
-);
+const menuPopoverClassName =
+  'min-w-56 w-max rounded-xl border border-border-default-subtle bg-menu-bg p-1 text-text-default-default shadow-md backdrop-blur-[4px] outline-none';
 
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-xl px-3 text-start font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[pressed]:bg-button-primary-subtle-hover data-[open]:bg-button-primary-subtle-default',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[disabled]:[&_svg]:text-icon-disabled-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
-        sm: 'min-h-8 py-1.5 type-body-sm-regular',
-        md: 'min-h-10 py-2 type-body-md-regular',
-        lg: 'min-h-12 py-2.5 type-body-lg-regular',
+        sm: 'py-2 type-body-sm-regular',
+        md: 'py-3 type-body-sm-regular',
+        lg: 'py-3.5 type-body-md-regular',
       },
-      tone: {
+      sentiment: {
         default: 'text-text-default-default',
         danger:
-          'text-text-danger-muted data-[focused]:bg-button-danger-subtle-default data-[pressed]:bg-button-danger-subtle-hover data-[open]:bg-button-danger-subtle-default',
+          'text-text-danger-muted data-[disabled]:text-text-disabled-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
       },
     },
     defaultVariants: {
       size: 'md',
-      tone: 'default',
+      sentiment: 'default',
     },
   },
 );
 
 const menuSectionVariants = cva('py-1 first:pt-0 last:pb-0');
+
+const menuSectionTitleVariants = cva('px-3 text-start text-text-default-emphasis', {
+  variants: {
+    size: {
+      sm: 'py-1.5 type-body-sm-medium',
+      md: 'py-2 type-body-sm-medium',
+      lg: 'py-3 type-body-md-medium',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
+
+const menuItemRowVariants = cva('flex min-w-0 flex-1 items-start gap-2');
+
+const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-[6px]');
+
+const menuShortcutVariants = cva(
+  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-text-default-default group-data-[disabled]:text-text-disabled-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-default-default group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
+);
+
+const menuItemCheckIconVariants = cva(
+  'mt-0.5 inline-flex shrink-0 items-center justify-center [&_svg]:shrink-0 group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
+  {
+    variants: {
+      size: {
+        sm: '[&_svg]:size-4',
+        md: '[&_svg]:size-4',
+        lg: '[&_svg]:size-5',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  },
+);
+
+const menuItemIconVariants = cva(
+  'mt-0.5 inline-flex shrink-0 items-center justify-center [&_svg]:shrink-0',
+  {
+    variants: {
+      size: {
+        sm: '[&_svg]:size-4',
+        md: '[&_svg]:size-4',
+        lg: '[&_svg]:size-5',
+      },
+      sentiment: {
+        default: 'text-text-default-muted group-data-[disabled]:text-icon-disabled-disabled',
+        danger: 'text-text-danger-muted group-data-[disabled]:text-icon-disabled-disabled',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+      sentiment: 'default',
+    },
+  },
+);
+
+function MenuItemCheckIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="text-icon-primary-default"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.5 8.25L6.5 11.25L12.5 5.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export interface MenuTriggerProps extends AriaMenuTriggerProps {}
 
@@ -75,18 +141,13 @@ export function MenuSubmenuTrigger(props: MenuSubmenuTriggerProps) {
   return <AriaSubmenuTrigger {...props} />;
 }
 
-export interface MenuPopoverProps
-  extends Omit<AriaPopoverProps, 'className'>, VariantProps<typeof menuPopoverVariants> {
+export interface MenuPopoverProps extends Omit<AriaPopoverProps, 'className'> {
   className?: string;
 }
 
-export function MenuPopover({ size, className, offset = 8, ...props }: MenuPopoverProps) {
+export function MenuPopover({ className, offset = 8, ...props }: MenuPopoverProps) {
   return (
-    <AriaPopover
-      {...props}
-      offset={offset}
-      className={twMerge(menuPopoverVariants({ size }), className)}
-    />
+    <AriaPopover {...props} offset={offset} className={twMerge(menuPopoverClassName, className)} />
   );
 }
 
@@ -99,10 +160,10 @@ export function Menu<T extends object>({ className, ...props }: MenuProps<T>) {
   return <AriaMenu {...props} className={twMerge(menuVariants(), className)} />;
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<
-  AriaSectionProps<T>,
-  'className' | 'children'
-> {
+export interface MenuSectionProps<T extends object>
+  extends
+    Omit<AriaSectionProps<T>, 'className' | 'children'>,
+    VariantProps<typeof menuSectionTitleVariants> {
   title?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
@@ -110,17 +171,14 @@ export interface MenuSectionProps<T extends object> extends Omit<
 
 export function MenuSection<T extends object>({
   title,
+  size,
   className,
   children,
   ...props
 }: MenuSectionProps<T>) {
   return (
     <AriaSection {...props} className={twMerge(menuSectionVariants(), className)}>
-      {title ? (
-        <Header className="px-3 py-1 text-start text-xs font-semibold uppercase tracking-wide text-text-default-muted">
-          {title}
-        </Header>
-      ) : null}
+      {title ? <Header className={menuSectionTitleVariants({ size })}>{title}</Header> : null}
       {children}
     </AriaSection>
   );
@@ -134,8 +192,70 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
   return (
     <AriaSeparator
       {...props}
-      className={twMerge('my-1 border-t border-border-default-subtle', className)}
+      className={twMerge('mx-3 my-1 border-t border-border-default-subtle', className)}
     />
+  );
+}
+
+interface MenuItemContentProps {
+  isSelected: boolean;
+  size?: 'sm' | 'md' | 'lg' | null;
+  sentiment?: 'default' | 'danger' | null;
+  description?: React.ReactNode;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  shortcut?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function MenuItemContent({
+  isSelected,
+  size,
+  sentiment,
+  description,
+  startIcon,
+  endIcon,
+  shortcut,
+  children,
+}: MenuItemContentProps) {
+  const hasStructuredLayout =
+    isSelected ||
+    description !== undefined ||
+    startIcon !== undefined ||
+    endIcon !== undefined ||
+    shortcut !== undefined;
+
+  if (!hasStructuredLayout) {
+    return children;
+  }
+
+  return (
+    <div className={menuItemRowVariants()}>
+      {isSelected ? (
+        <span className={menuItemCheckIconVariants({ size })}>
+          <MenuItemCheckIcon />
+        </span>
+      ) : null}
+      {startIcon ? (
+        <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
+          {startIcon}
+        </span>
+      ) : null}
+      <div className={menuItemTextVariants()}>
+        {children ? <div className="truncate">{children}</div> : null}
+        {description ? (
+          <div className="truncate type-caption-12-regular text-text-default-muted group-data-[disabled]:text-text-disabled-disabled">
+            {description}
+          </div>
+        ) : null}
+      </div>
+      {shortcut ? <Keyboard className={menuShortcutVariants()}>{shortcut}</Keyboard> : null}
+      {endIcon ? (
+        <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
+          {endIcon}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
@@ -146,12 +266,14 @@ export interface MenuItemProps
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   shortcut?: React.ReactNode;
+  /** Whether the menu closes when this item is selected. Defaults to React Aria behavior per `selectionMode`. */
+  closeOnSelect?: boolean;
 }
 
 export function MenuItem({
   className,
   size,
-  tone,
+  sentiment,
   description,
   startIcon,
   endIcon,
@@ -159,43 +281,38 @@ export function MenuItem({
   children,
   ...props
 }: MenuItemProps) {
-  const hasStructuredLayout =
-    description !== undefined ||
-    startIcon !== undefined ||
-    endIcon !== undefined ||
-    shortcut !== undefined;
-
-  if (typeof children === 'function') {
-    return (
-      <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, tone }), className)}>
-        {children}
-      </AriaMenuItem>
-    );
-  }
-
   return (
-    <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, tone }), className)}>
-      {hasStructuredLayout ? (
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {startIcon ? <span className="shrink-0 text-text-default-muted">{startIcon}</span> : null}
-          <div className="min-w-0 flex-1">
-            {children ? <div className="truncate">{children}</div> : null}
-            {description ? (
-              <div className="truncate type-caption-12-regular text-text-default-muted">
-                {description}
-              </div>
-            ) : null}
-          </div>
-          {shortcut ? (
-            <kbd className="shrink-0 rounded-md bg-button-primary-subtle-default px-1.5 py-0.5 text-[11px] font-medium text-text-primary-muted">
-              {shortcut}
-            </kbd>
-          ) : null}
-          {endIcon ? <span className="shrink-0 text-text-default-muted">{endIcon}</span> : null}
-        </div>
-      ) : (
-        children
-      )}
+    <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, sentiment }), className)}>
+      {(renderProps) => {
+        const { isSelected } = renderProps;
+
+        if (typeof children === 'function') {
+          return isSelected ? (
+            <div className={menuItemRowVariants()}>
+              <span className={menuItemCheckIconVariants({ size })}>
+                <MenuItemCheckIcon />
+              </span>
+              <div className={menuItemTextVariants()}>{children(renderProps)}</div>
+            </div>
+          ) : (
+            children(renderProps)
+          );
+        }
+
+        return (
+          <MenuItemContent
+            isSelected={isSelected}
+            size={size}
+            sentiment={sentiment}
+            description={description}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            shortcut={shortcut}
+          >
+            {children}
+          </MenuItemContent>
+        );
+      }}
     </AriaMenuItem>
   );
 }
