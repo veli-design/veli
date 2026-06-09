@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
+  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -26,7 +26,7 @@ const buttonVariants = cva(
         sm: 'h-9 px-2.5 gap-2',
         md: 'h-11 px-3.5 gap-2',
         lg: 'h-13 px-4 gap-2',
-        xl: 'h-15 px-4.5 gap-2',
+        xl: 'h-15 px-5 gap-2',
       },
       iconOnly: {
         true: 'shrink-0 px-0',
@@ -39,7 +39,7 @@ const buttonVariants = cva(
         variant: 'primary',
         style: 'fill',
         className:
-          'bg-button-primary-default text-text-primary-inverted hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
+          'bg-button-primary-default text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'primary',
@@ -51,7 +51,7 @@ const buttonVariants = cva(
         variant: 'primary',
         style: 'ghost',
         className:
-          'bg-transparent text-text-primary-muted hover:bg-button-primary-subtle-default active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
+          'bg-transparent text-text-primary-default hover:bg-button-primary-subtle-default active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       // Secondary
       {
@@ -77,7 +77,7 @@ const buttonVariants = cva(
         variant: 'danger',
         style: 'fill',
         className:
-          'bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
+          'bg-button-danger-default text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
         variant: 'danger',
@@ -129,7 +129,7 @@ const seaglassButtonVariants = cva(
       {
         variant: 'primary',
         style: 'fill',
-        className: `${seaglassFillOverlay} bg-[#0066FF] text-text-primary-inverted hover:bg-[#0066FF] active:bg-[#0052CC]`,
+        className: `${seaglassFillOverlay} bg-[#0066FF] text-white hover:bg-[#0066FF] active:bg-[#0052CC]`,
       },
       {
         variant: 'secondary',

@@ -295,7 +295,7 @@ export function ButtonIconsDemo() {
   return (
     <div className="flex gap-4 flex-wrap items-center">
       <Button size="xl">
-        <Plus size={24} weight="bold" />
+        <Plus size={20} weight="bold" />
         XL Button
       </Button>
       <Button size="lg" variant="secondary" style="transparent">
@@ -353,14 +353,14 @@ export function ButtonSeaglassDemo() {
   return (
     <div className="flex gap-4 items-center flex-wrap">
       <Button variant="primary" style="fill" size="xl" treatment="seaglass">
-        <Plus size={24} weight="bold" />
+        <Plus size={20} weight="bold" />
         Label
-        <ArrowRight size={24} weight="bold" />
+        <ArrowRight size={20} weight="bold" />
       </Button>
       <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
-        <Plus size={24} weight="bold" />
+        <Plus size={20} weight="bold" />
         Label
-        <ArrowRight size={24} weight="bold" />
+        <ArrowRight size={20} weight="bold" />
       </Button>
     </div>
   );

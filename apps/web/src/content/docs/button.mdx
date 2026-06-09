@@ -46,7 +46,7 @@ The button supports three variants and three styles, creating a flexible visual 
 
 To maintain design consistency, icons should follow these size guidelines:
 
-- **XL Buttons**: 24px
+- **XL Buttons**: 20px
 - **LG Buttons**: 20px
 - **MD/SM Buttons**: 16px
 - **XS Buttons**: 12px
@@ -57,7 +57,7 @@ To maintain design consistency, icons should follow these size guidelines:
 
 ```tsx
 // Example of correctly sized icons
-<Button size="xl"><Plus size={24} /> Add item</Button>
+<Button size="xl"><Plus size={20} /> Add item</Button>
 <Button size="lg"><Plus size={20} /> Add item</Button>
 <Button size="md"><Plus size={16} /> Add item</Button>
 <Button size="xs"><Plus size={12} /> Add item</Button>
@@ -110,9 +110,9 @@ Use `treatment="seaglass"` to opt into the stylized treatment without changing t
 
 ```tsx
 <Button variant="primary" style="fill" size="xl" treatment="seaglass">
-  <Plus size={24} />
+  <Plus size={20} />
   Label
-  <ArrowRight size={24} />
+  <ArrowRight size={20} />
 </Button>
 ```
 
