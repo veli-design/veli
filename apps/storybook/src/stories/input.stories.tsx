@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from 'storybook/internal/preview-api';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import {
@@ -61,19 +63,52 @@ const localizedInputText = {
   dv: dhivehiFormText,
 } as const;
 
-const useInputText = () => {
+type InputLanguage = keyof typeof localizedInputText;
+
+const useInputLanguage = (): InputLanguage => {
   const { direction } = useVeliLanguage();
 
-  return direction === 'rtl' ? localizedInputText.dv : localizedInputText.en;
+  return direction === 'rtl' ? 'dv' : 'en';
 };
 
-const getLocalizedValue = (value: string | undefined, enValue: string, dvValue: string) => {
-  if (!value) {
-    return value;
+const useInputText = () => {
+  const language = useInputLanguage();
+
+  return localizedInputText[language];
+};
+
+const inputArgText = {
+  label: {
+    en: enFormText.core.label,
+    dv: dhivehiFormText.core.label,
+  },
+  placeholder: {
+    en: enFormText.core.placeholder,
+    dv: dhivehiFormText.core.placeholder,
+  },
+  description: {
+    en: enFormText.core.helperText,
+    dv: dhivehiFormText.core.helperText,
+  },
+} as const;
+
+type InputArgTextKey = keyof typeof inputArgText;
+
+const inputArgTextKeys = Object.keys(inputArgText) as InputArgTextKey[];
+
+const getLocalizedInputArgText = (
+  key: InputArgTextKey,
+  value: unknown,
+  language: InputLanguage,
+) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return inputArgText[key][language];
   }
 
-  if (value === enValue) {
-    return dvValue;
+  const localizedValues: readonly string[] = Object.values(inputArgText[key]);
+
+  if (localizedValues.includes(value)) {
+    return inputArgText[key][language];
   }
 
   return value;
@@ -82,11 +117,46 @@ const getLocalizedValue = (value: string | undefined, enValue: string, dvValue: 
 const meta = {
   title: 'Components/Input',
   component: Input,
+  decorators: [
+    (Story, context) => {
+      const language: InputLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const { description, label, placeholder } = args;
+
+      useEffect(() => {
+        const nextArgs: Partial<Record<InputArgTextKey, string>> = {};
+        const currentArgs = { description, label, placeholder };
+
+        inputArgTextKeys.forEach((key) => {
+          const localizedValue = getLocalizedInputArgText(key, currentArgs[key], language);
+
+          if (currentArgs[key] !== localizedValue) {
+            nextArgs[key] = localizedValue;
+          }
+        });
+
+        if (Object.keys(nextArgs).length > 0) {
+          updateArgs?.(nextArgs);
+        }
+      }, [description, label, placeholder, language, updateArgs]);
+
+      return <Story />;
+    },
+  ],
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {
+    label: {
+      control: 'text',
+    },
+    placeholder: {
+      control: 'text',
+    },
+    description: {
+      control: 'text',
+    },
     variant: {
       control: 'select',
       options: ['default', 'outline'],
@@ -126,23 +196,15 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const text = useInputText();
+    const language = useInputLanguage();
 
     return (
       <div className="w-[320px]">
         <Input
           {...args}
-          label={getLocalizedValue(args.label, enFormText.core.label, text.core.label)}
-          placeholder={getLocalizedValue(
-            args.placeholder,
-            enFormText.core.placeholder,
-            text.core.placeholder,
-          )}
-          description={getLocalizedValue(
-            args.description,
-            enFormText.core.helperText,
-            text.core.helperText,
-          )}
+          label={getLocalizedInputArgText('label', args.label, language)}
+          placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
+          description={getLocalizedInputArgText('description', args.description, language)}
         />
       </div>
     );
@@ -154,23 +216,15 @@ export const Outline: Story = {
     variant: 'outline',
   },
   render: (args) => {
-    const text = useInputText();
+    const language = useInputLanguage();
 
     return (
       <div className="w-[320px]">
         <Input
           {...args}
-          label={getLocalizedValue(args.label, enFormText.core.label, text.core.label)}
-          placeholder={getLocalizedValue(
-            args.placeholder,
-            enFormText.core.placeholder,
-            text.core.placeholder,
-          )}
-          description={getLocalizedValue(
-            args.description,
-            enFormText.core.helperText,
-            text.core.helperText,
-          )}
+          label={getLocalizedInputArgText('label', args.label, language)}
+          placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
+          description={getLocalizedInputArgText('description', args.description, language)}
         />
       </div>
     );
