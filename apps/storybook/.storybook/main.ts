@@ -16,6 +16,10 @@ const config: StorybookConfig = {
     return {
       ...config,
       plugins: [...(config.plugins || []), tailwindcss()],
+      resolve: {
+        ...config.resolve,
+        conditions: ['veli-source', ...(config.resolve?.conditions || [])],
+      },
     };
   },
 };

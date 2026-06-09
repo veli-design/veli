@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "customConditions": ["veli-source"],
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

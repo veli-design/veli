@@ -9,6 +9,9 @@ export default defineConfig({
   integrations: [mdx(), react()],
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      conditions: ['veli-source'],
+    },
   },
   output: 'static',
 });
