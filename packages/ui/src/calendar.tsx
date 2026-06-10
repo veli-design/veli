@@ -52,7 +52,7 @@ const calendarHeaderIconButtonClassName =
   'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-default-strong';
 
 const calendarPickerPopoverClassName =
-  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none';
+  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-lg outline-none';
 
 const calendarPickerListBoxClassName = 'max-h-60 overflow-auto outline-none';
 
@@ -127,11 +127,11 @@ function CalendarPickerSelect({
 }
 
 const calendarRootVariants = cva(
-  'flex max-w-full flex-col rounded-xl border border-border-default-subtle bg-calendar-bg p-1 font-sans text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.12)]',
+  'flex max-w-full flex-col rounded-xl border border-border-default-subtle bg-calendar-bg p-1 font-sans text-text-default-default shadow-md',
 );
 
 const cellVariants = cva(
-  'flex size-11 items-center justify-center text-sm font-normal forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
+  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
   {
     variants: {
       cellRadius: {
@@ -173,7 +173,8 @@ const cellVariants = cva(
       {
         isDisabled: false,
         isUnavailable: true,
-        className: 'text-red-900 line-through decoration-2 decoration-red-900',
+        className:
+          'text-text-danger-default line-through decoration-2 decoration-text-danger-default',
       },
     ],
     defaultVariants: {
@@ -210,7 +211,7 @@ export function Calendar<T extends DateValue>({
       <CalendarDateGrid gridClassName={gridClassName} weekdayStyle={weekdayStyle} />
       {showTodayButton ? <CalendarTodayButton label={todayButtonLabel} /> : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 text-sm text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-body-sm-regular text-text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -245,7 +246,7 @@ export function RangeCalendar<T extends DateValue>({
       <CalendarRangeGrid gridClassName={gridClassName} weekdayStyle={weekdayStyle} />
       {showTodayButton ? <CalendarTodayButton label={todayButtonLabel} /> : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 text-sm text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-body-sm-regular text-text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -395,7 +396,7 @@ export function CalendarHeader() {
   const { direction } = useLocale();
 
   return (
-    <header className="flex items-center gap-[2px] px-0.5 py-0.5">
+    <header className="flex items-center gap-0.5 px-0.5 py-0.5">
       <div className={twMerge(calendarHeaderControlClassName, 'min-w-0 flex-1 gap-0.5 px-1 py-1')}>
         <Button
           slot="previous"
@@ -470,7 +471,7 @@ function CalendarDayLabel({
       <span
         aria-hidden="true"
         className={twMerge(
-          'absolute start-1/2 top-full mt-[2px] size-1 -translate-x-1/2 shrink-0 rounded-full',
+          'absolute start-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
           todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
         )}
       />
@@ -486,7 +487,7 @@ function getRangeCalendarCellClassName(state: CalendarCellRenderProps) {
   const isSingleDayRange = state.isSelectionStart && state.isSelectionEnd;
 
   return twMerge(
-    'flex h-11 w-full items-center justify-center text-sm font-normal forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
+    'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
     'bg-calendar-day-range text-text-default-emphasis data-[outside-month]:text-text-default-subtle data-[outside-visible-range]:invisible',
     isSingleDayRange && 'rounded-full',
     state.isSelectionStart && !state.isSelectionEnd && 'rounded-s-full',
