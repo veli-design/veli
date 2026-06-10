@@ -55,7 +55,7 @@ const defaultLanguage: 'en' = defaultConfig.language;
 const defaultDirection: 'ltr' = defaultConfig.direction;
 
 const englishConfig = getVeliLanguageConfig('en');
-const englishLocale: 'en-US' = englishConfig.locale;
+const englishLocale: 'en-GB' = englishConfig.locale;
 const englishLang: 'en' = englishConfig.lang;
 const englishDirection: 'ltr' = englishConfig.direction;
 

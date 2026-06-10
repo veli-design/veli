@@ -3,48 +3,49 @@
 import * as React from 'react';
 import { CalendarBlank } from 'phosphor-react';
 import {
+  Button as AriaButton,
   DatePicker as AriaDatePicker,
   Dialog,
-  Group,
   Label,
   Popover,
+  useLocale,
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
 } from 'react-aria-components';
+import { type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
 import { Calendar } from './calendar';
+import { formatDatePickerValue } from './date-shared';
 import {
-  DateSegments,
-  fieldLabelRowVariants,
-  fieldLabelVariants,
-  fieldMetaVariants,
+  FieldMessage,
+  fieldHeaderLabelVariants,
+  fieldHeaderMetaVariants,
   fieldRootVariants,
-  fieldShellVariants,
-} from './date-shared';
-import { FieldMessage } from './field-shared';
-
-const datePickerWidthClassName = 'w-[calc(10*var(--spacing)*7)] max-w-full';
+  fieldTriggerButtonVariants,
+  fieldTriggerIndicatorVariants,
+  fieldTriggerValueVariants,
+} from './field-shared';
 
 const popoverSurfaceClassName =
   'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none';
 
-const fieldButtonClassName = 'h-9 w-9 min-w-0 shrink-0 self-center rounded-md border-0 px-0';
-
-export interface DatePickerProps<T extends DateValue> extends Omit<
-  AriaDatePickerProps<T>,
-  'children' | 'className' | 'style'
-> {
+export interface DatePickerProps<T extends DateValue>
+  extends
+    Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style'>,
+    Omit<
+      VariantProps<typeof fieldTriggerButtonVariants>,
+      'isDisabled' | 'isInvalid' | 'isFocusVisible' | 'isOpen'
+    > {
   label?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   labelSupplementary?: React.ReactNode;
   showRequiredIndicator?: boolean;
+  placeholder?: string;
   className?: string;
   inputClassName?: string;
   popoverClassName?: string;
   calendarClassName?: string;
-  calendarButtonLabel?: string;
 }
 
 export function DatePicker<T extends DateValue>({
@@ -53,82 +54,112 @@ export function DatePicker<T extends DateValue>({
   errorMessage,
   labelSupplementary,
   showRequiredIndicator = true,
+  placeholder = 'Select date',
   className,
   inputClassName,
   popoverClassName,
   calendarClassName,
-  calendarButtonLabel = 'Open calendar',
+  variant = 'default',
+  size = 'md',
+  granularity = 'day',
+  hourCycle,
   ...props
 }: DatePickerProps<T>) {
+  const { locale } = useLocale();
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const showRequired = showRequiredIndicator && Boolean(props.isRequired);
 
   return (
     <AriaDatePicker
       {...props}
-      className={twMerge(fieldRootVariants(), datePickerWidthClassName, 'gap-1', className)}
+      granularity={granularity}
+      hourCycle={hourCycle}
+      className={twMerge(fieldRootVariants(), className)}
     >
-      {({ isDisabled, isInvalid, isReadOnly }) => (
-        <>
-          {label || labelSupplementary || showRequired ? (
-            <div className={fieldLabelRowVariants()}>
-              <div className="flex min-w-0 items-center gap-1.5">
-                {label ? (
-                  <Label className={fieldLabelVariants({ isDisabled })}>{label}</Label>
-                ) : null}
-                {labelSupplementary ? (
-                  <span className={fieldMetaVariants({ isDisabled })}>{labelSupplementary}</span>
-                ) : null}
-                {showRequired ? (
-                  <span
-                    className={fieldMetaVariants({
-                      tone: 'danger',
-                      isDisabled,
-                    })}
-                  >
-                    *
-                  </span>
-                ) : null}
+      {({ isDisabled, isInvalid, isReadOnly, isOpen, isFocusVisible, state }) => {
+        const displayValue = state.value
+          ? formatDatePickerValue(state.value, locale, { granularity, hourCycle })
+          : null;
+
+        return (
+          <>
+            {label || labelSupplementary || showRequired ? (
+              <div className="flex w-full items-center gap-2">
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  {label ? (
+                    <Label className={fieldHeaderLabelVariants({ isDisabled })}>{label}</Label>
+                  ) : null}
+                  {labelSupplementary ? (
+                    <span className={fieldHeaderMetaVariants({ tone: 'subtle', isDisabled })}>
+                      {labelSupplementary}
+                    </span>
+                  ) : null}
+                  {showRequired ? (
+                    <span className={fieldHeaderMetaVariants({ tone: 'danger', isDisabled })}>
+                      *
+                    </span>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          <Group
-            className={twMerge(
-              fieldShellVariants({
-                isDisabled,
-                isInvalid,
-                isReadOnly,
-              }),
-              inputClassName,
-            )}
-          >
-            <DateSegments className="min-w-0 flex-1 flex-nowrap" />
-            <Button
+            <AriaButton
+              ref={triggerRef}
               slot="button"
-              variant="secondary"
-              style="ghost"
-              size="xs"
-              iconOnly
-              aria-label={calendarButtonLabel}
-              className={fieldButtonClassName}
+              className={twMerge(
+                fieldTriggerButtonVariants({
+                  variant,
+                  size,
+                  isDisabled,
+                  isInvalid,
+                  isOpen,
+                  isFocusVisible,
+                }),
+                isReadOnly && !isDisabled && 'bg-gray-alpha-100',
+                inputClassName,
+              )}
             >
-              <CalendarBlank aria-hidden className="h-5 w-5 shrink-0" weight="regular" />
-            </Button>
-          </Group>
+              <span
+                className={twMerge(
+                  fieldTriggerValueVariants({ size }),
+                  !displayValue
+                    ? 'text-text-default-inactive'
+                    : isDisabled
+                      ? 'text-text-disabled-disabled'
+                      : 'text-text-default-strong',
+                )}
+              >
+                {displayValue ?? placeholder}
+              </span>
+              <span className={fieldTriggerIndicatorVariants({ isDisabled, isOpen: false })}>
+                <CalendarBlank
+                  aria-hidden
+                  size={20}
+                  weight="regular"
+                  className="text-icon-default-default"
+                />
+              </span>
+            </AriaButton>
 
-          <FieldMessage
-            isInvalid={isInvalid}
-            description={description}
-            errorMessage={errorMessage}
-          />
+            <FieldMessage
+              isInvalid={isInvalid}
+              description={description}
+              errorMessage={errorMessage}
+            />
 
-          <Popover offset={8} className={twMerge(popoverSurfaceClassName, popoverClassName)}>
-            <Dialog className="outline-none">
-              <Calendar className={twMerge('border-none p-0 shadow-none', calendarClassName)} />
-            </Dialog>
-          </Popover>
-        </>
-      )}
+            <Popover
+              offset={4}
+              placement="bottom start"
+              triggerRef={triggerRef}
+              className={twMerge(popoverSurfaceClassName, popoverClassName)}
+            >
+              <Dialog className="outline-none">
+                <Calendar className={twMerge('border-none p-0 shadow-none', calendarClassName)} />
+              </Dialog>
+            </Popover>
+          </>
+        );
+      }}
     </AriaDatePicker>
   );
 }

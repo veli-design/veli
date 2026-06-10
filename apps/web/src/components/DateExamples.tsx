@@ -19,7 +19,7 @@ const disabledRanges = [
 ] as const;
 
 const appointmentUnavailable = (date: DateValue) =>
-  isWeekend(date, 'en-US') ||
+  isWeekend(date, 'en-GB') ||
   disabledRanges.some(([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0);
 
 export function DateFieldUsageDemo() {
