@@ -22,13 +22,13 @@ import { hasRenderableMessage } from './field-shared';
 import { useVeliLanguage } from './provider';
 
 const overlayVariants = cva(
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0',
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
 );
 
 const modalVariants = cva(
   [
-    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-text-default-default outline-none transition duration-200 ease-out',
-    'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
+    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-text-default-default outline-none transition duration-normal ease-spring',
+    'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
     'shadow-sm',
   ],
   {

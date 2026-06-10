@@ -435,7 +435,50 @@ ${cssTypographyDeclarations(tokens, dhivehiToken.value)}
     : '';
 }
 
-tailwindTheme = `${tailwindTheme.trimEnd()}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
+const motionPrimitiveUtilities = `
+
+@utility duration-instant {
+  transition-duration: var(--duration-instant);
+}
+
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+
+@utility duration-normal {
+  transition-duration: var(--duration-normal);
+}
+
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
+@utility duration-slower {
+  transition-duration: var(--duration-slower);
+}
+
+@utility duration-slowest {
+  transition-duration: var(--duration-slowest);
+}
+
+@utility delay-none {
+  transition-delay: var(--delay-none);
+}
+
+@utility delay-fast {
+  transition-delay: var(--delay-fast);
+}
+
+@utility delay-normal {
+  transition-delay: var(--delay-normal);
+}
+
+@utility delay-slow {
+  transition-delay: var(--delay-slow);
+}
+`;
+
+tailwindTheme = `${tailwindTheme.trimEnd()}${motionPrimitiveUtilities}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
 
 tokensCss = tokensCss.replace(/(--font-weight-[^:]+:\s*)(-?\d+(?:\.\d+)?)px;/g, '$1$2;');
 tokensCss = tokensCss.replace(
@@ -515,6 +558,45 @@ function assertTypographyOutput(css) {
 
 assertTypographyOutput(tailwindTheme);
 
+function assertMotionPrimitiveOutput(css) {
+  const requiredSnippets = [
+    '--ease-out: cubic-bezier(0, 0, 0.2, 1);',
+    '--ease-in: cubic-bezier(0.4, 0, 1, 1);',
+    '--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);',
+    '--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);',
+    '--ease-linear: linear;',
+    '--duration-instant: 0ms;',
+    '--duration-fast: 80ms;',
+    '--duration-normal: 200ms;',
+    '--duration-slow: 350ms;',
+    '--duration-slower: 500ms;',
+    '--duration-slowest: 1200ms;',
+    '--delay-none: 0ms;',
+    '--delay-fast: 40ms;',
+    '--delay-normal: 80ms;',
+    '--delay-slow: 120ms;',
+    '@utility duration-fast',
+    '@utility delay-slow',
+  ];
+  const missingSnippets = requiredSnippets.filter((snippet) => !css.includes(snippet));
+
+  if (missingSnippets.length) {
+    throw new Error(
+      `tailwind-theme.css is missing expected motion primitive output:\n${missingSnippets
+        .map((snippet) => `- ${snippet}`)
+        .join('\n')}`,
+    );
+  }
+
+  if (css.includes('--animate-') || css.includes('@keyframes veli-')) {
+    throw new Error(
+      'tailwind-theme.css must not emit composite animation tokens while motion aliases are unsettled.',
+    );
+  }
+}
+
+assertMotionPrimitiveOutput(tailwindTheme);
+
 const SHADOW_SCALES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
 
 function assertShadowOutput(themeCss, rawTokensCss) {
@@ -539,4 +621,6 @@ assertShadowOutput(tailwindTheme, tokensCss);
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');
 
-console.log('✓ Normalized token CSS and generated Veli type utilities with Dhivehi overrides');
+console.log(
+  '✓ Normalized token CSS and generated Veli motion primitive/type utilities with Dhivehi overrides',
+);

@@ -16,6 +16,9 @@ export default defineConfig({
       theme: {
         color: ['color.*'],
         shadow: ['shadow.*'],
+        ease: ['ease.*'],
+        duration: ['duration.*'],
+        delay: ['delay.*'],
         font: ['font.*'],
         text: ['text.*'],
         leading: ['leading.*'],
