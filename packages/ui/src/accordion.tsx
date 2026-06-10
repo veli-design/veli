@@ -206,19 +206,9 @@ function AccordionSkeletonItem({
       })}
     >
       {alignment === 'right' ? (
-        <CaretRight
-          aria-hidden
-          size={16}
-          weight="regular"
-          className={accordionChevronIconVariants({ isDisabled: false })}
-        />
+        <CaretRight aria-hidden size={16} weight="regular" className="text-icon-default-inactive" />
       ) : (
-        <CaretDown
-          aria-hidden
-          size={16}
-          weight="regular"
-          className={accordionChevronIconVariants({ isDisabled: false })}
-        />
+        <CaretDown aria-hidden size={16} weight="regular" className="text-icon-default-inactive" />
       )}
     </span>
   );
