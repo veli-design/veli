@@ -41,6 +41,7 @@ type CalendarPickerSelectProps = {
   value: number | string;
   onChange: (key: number | string | null) => void;
   items: CalendarPickerItem[];
+  popoverClassName?: string;
 };
 
 const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar-bg-month-year';
@@ -53,6 +54,8 @@ const calendarHeaderIconButtonClassName =
 
 const calendarPickerPopoverClassName =
   'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-lg outline-none';
+
+const calendarYearPickerPopoverClassName = 'w-[90px]';
 
 const calendarPickerListBoxClassName = 'max-h-60 overflow-auto outline-none';
 
@@ -86,6 +89,7 @@ function CalendarPickerSelect({
   value,
   onChange,
   items,
+  popoverClassName,
 }: CalendarPickerSelectProps) {
   const selectedLabel = items.find((item) => item.id === value)?.formatted ?? '';
 
@@ -107,7 +111,11 @@ function CalendarPickerSelect({
       >
         <CaretDown aria-hidden weight="regular" className="size-4 shrink-0" />
       </Button>
-      <Popover offset={4} placement="bottom end" className={calendarPickerPopoverClassName}>
+      <Popover
+        offset={4}
+        placement="bottom end"
+        className={twMerge(calendarPickerPopoverClassName, popoverClassName)}
+      >
         <ListBox items={items} className={calendarPickerListBoxClassName}>
           {(item: CalendarPickerItem) => (
             <ListBoxItem
@@ -423,7 +431,14 @@ export function CalendarHeader() {
         </Button>
       </div>
       <div className={twMerge(calendarHeaderControlClassName, 'shrink-0 gap-0.5 px-1 py-1')}>
-        <CalendarYearPicker>{(props) => <CalendarPickerSelect {...props} />}</CalendarYearPicker>
+        <CalendarYearPicker>
+          {(props) => (
+            <CalendarPickerSelect
+              {...props}
+              popoverClassName={calendarYearPickerPopoverClassName}
+            />
+          )}
+        </CalendarYearPicker>
       </div>
     </header>
   );
