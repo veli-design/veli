@@ -48,6 +48,25 @@ const tabBaseClassName =
 const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
+const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
+
+function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {
+  return (
+    <span className={tabLabelGridClassName}>
+      <span aria-hidden="true" className="invisible type-body-sm-medium">
+        {children}
+      </span>
+      <span
+        className={
+          isSelected ? 'type-body-sm-medium text-text-default-strong' : 'type-body-sm-regular'
+        }
+      >
+        {children}
+      </span>
+    </span>
+  );
+}
+
 const tabsOverflowTriggerAttribute = 'data-tabs-overflow-trigger';
 
 type TabIndicatorPosition = {
@@ -221,9 +240,7 @@ function getTabClassName(
       'pointer-events-none cursor-not-allowed text-text-disabled-disabled [&_svg]:text-icon-disabled-disabled',
     options?.isHovered && 'bg-tabs-hover',
     options?.isPressed && 'bg-tabs-pressed',
-    isSelected
-      ? 'type-body-sm-medium text-text-default-strong [&_svg]:text-icon-default-strong'
-      : 'type-body-sm-regular',
+    isSelected && '[&_svg]:text-icon-default-strong',
     options?.isFocusVisible && 'ring-2 ring-border-focus ring-offset-2',
     options?.tabClassName,
   );
@@ -289,7 +306,7 @@ export function TabsOverflow({
           {isSelected && selectedOverflowItem.leading ? (
             <span className="shrink-0">{selectedOverflowItem.leading}</span>
           ) : null}
-          <span>{triggerLabel}</span>
+          <TabLabel isSelected={isSelected}>{triggerLabel}</TabLabel>
           <CaretDown aria-hidden="true" size={16} />
         </AriaButton>
         <MenuPopover className={popoverClassName}>
@@ -307,6 +324,7 @@ export function TabsOverflow({
                 id={item.id}
                 isDisabled={item.isDisabled}
                 size="sm"
+                className="cursor-pointer"
                 startIcon={item.leading}
                 endIcon={item.trailing}
               >
@@ -353,12 +371,16 @@ function TabItem({
         })
       }
     >
-      {item.leading ? <span className="shrink-0">{item.leading}</span> : null}
-      <span>{item.label}</span>
-      {item.trailing ? <span className="shrink-0">{item.trailing}</span> : null}
-      {showSelectionIndicator ? (
-        <SelectionIndicator className={tabSelectionIndicatorClassName} />
-      ) : null}
+      {(state) => (
+        <>
+          {item.leading ? <span className="shrink-0">{item.leading}</span> : null}
+          <TabLabel isSelected={state.isSelected}>{item.label}</TabLabel>
+          {item.trailing ? <span className="shrink-0">{item.trailing}</span> : null}
+          {showSelectionIndicator ? (
+            <SelectionIndicator className={tabSelectionIndicatorClassName} />
+          ) : null}
+        </>
+      )}
     </AriaTab>
   );
 }
