@@ -6,7 +6,9 @@
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "customConditions": ["veli-source"],
+    "paths": {
+      "@tradenetcorp/veli-ui/*": ["../../packages/ui/src/*"]
+    },
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

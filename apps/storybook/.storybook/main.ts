@@ -1,4 +1,9 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { StorybookConfig } from '@storybook/react-vite';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(dirname, '../../..');
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -18,7 +23,13 @@ const config: StorybookConfig = {
       plugins: [...(config.plugins || []), tailwindcss()],
       resolve: {
         ...config.resolve,
-        conditions: ['veli-source', ...(config.resolve?.conditions || [])],
+        alias: [
+          ...(Array.isArray(config.resolve?.alias) ? config.resolve.alias : []),
+          {
+            find: /^@tradenetcorp\/veli-ui\/(?!tailwind$)(.+)$/,
+            replacement: path.resolve(repoRoot, 'packages/ui/src/$1'),
+          },
+        ],
       },
     };
   },

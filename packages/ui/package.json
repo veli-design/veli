@@ -4,109 +4,88 @@
   "type": "module",
   "sideEffects": false,
   "files": [
-    "src",
     "dist",
     "tailwind.css"
   ],
   "exports": {
     "./tailwind": "./tailwind.css",
     "./breadcrumbs": {
-      "veli-source": "./src/breadcrumbs.tsx",
       "types": "./dist/breadcrumbs.d.ts",
       "import": "./dist/breadcrumbs.js"
     },
     "./button": {
-      "veli-source": "./src/button.tsx",
       "types": "./dist/button.d.ts",
       "import": "./dist/button.js"
     },
     "./calendar": {
-      "veli-source": "./src/calendar.tsx",
       "types": "./dist/calendar.d.ts",
       "import": "./dist/calendar.js"
     },
     "./checkbox": {
-      "veli-source": "./src/checkbox.tsx",
       "types": "./dist/checkbox.d.ts",
       "import": "./dist/checkbox.js"
     },
     "./combobox": {
-      "veli-source": "./src/combobox.tsx",
       "types": "./dist/combobox.d.ts",
       "import": "./dist/combobox.js"
     },
     "./divider": {
-      "veli-source": "./src/divider.tsx",
       "types": "./dist/divider.d.ts",
       "import": "./dist/divider.js"
     },
     "./date-field": {
-      "veli-source": "./src/date-field.tsx",
       "types": "./dist/date-field.d.ts",
       "import": "./dist/date-field.js"
     },
     "./date-picker": {
-      "veli-source": "./src/date-picker.tsx",
       "types": "./dist/date-picker.d.ts",
       "import": "./dist/date-picker.js"
     },
     "./input": {
-      "veli-source": "./src/input.tsx",
       "types": "./dist/input.d.ts",
       "import": "./dist/input.js"
     },
     "./link": {
-      "veli-source": "./src/link.tsx",
       "types": "./dist/link.d.ts",
       "import": "./dist/link.js"
     },
     "./menu": {
-      "veli-source": "./src/menu.tsx",
       "types": "./dist/menu.d.ts",
       "import": "./dist/menu.js"
     },
     "./modal": {
-      "veli-source": "./src/modal.tsx",
       "types": "./dist/modal.d.ts",
       "import": "./dist/modal.js"
     },
     "./popover": {
-      "veli-source": "./src/popover.tsx",
       "types": "./dist/popover.d.ts",
       "import": "./dist/popover.js"
     },
     "./provider": {
-      "veli-source": "./src/provider.tsx",
       "types": "./dist/provider.d.ts",
       "import": "./dist/provider.js"
     },
     "./radio": {
-      "veli-source": "./src/radio.tsx",
       "types": "./dist/radio.d.ts",
       "import": "./dist/radio.js"
     },
     "./select": {
-      "veli-source": "./src/select.tsx",
       "types": "./dist/select.d.ts",
       "import": "./dist/select.js"
     },
     "./switch": {
-      "veli-source": "./src/switch.tsx",
       "types": "./dist/switch.d.ts",
       "import": "./dist/switch.js"
     },
     "./tags": {
-      "veli-source": "./src/tags.tsx",
       "types": "./dist/tags.d.ts",
       "import": "./dist/tags.js"
     },
     "./tabs": {
-      "veli-source": "./src/tabs.tsx",
       "types": "./dist/tabs.d.ts",
       "import": "./dist/tabs.js"
     },
     "./tooltip": {
-      "veli-source": "./src/tooltip.tsx",
       "types": "./dist/tooltip.d.ts",
       "import": "./dist/tooltip.js"
     }
