@@ -36,6 +36,7 @@ const dhivehiFormText = {
     infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
     usesRootWidth: 'ރޫޓް ވިޑްތު ބޭނުންކުރޭ',
     maxWidth: 'އެންމެ ފުޅާމިން',
+    action: 'އެކްޝަން',
   },
 } as const;
 
@@ -64,6 +65,7 @@ const enFormText = {
     infoTipLabel: 'More information',
     usesRootWidth: 'Uses the root width',
     maxWidth: 'Max width',
+    action: 'Action',
   },
 } as const;
 
@@ -111,15 +113,64 @@ const inputArgText = {
     en: enFormText.core.helperText,
     dv: dhivehiFormText.core.helperText,
   },
+  errorMessage: {
+    en: enFormText.input.errorMessage,
+    dv: dhivehiFormText.input.errorMessage,
+  },
 } as const;
 
+const inputIconOptions = [
+  'none',
+  'search',
+  'calendar',
+  'caretDown',
+  'arrowRight',
+  'warning',
+] as const;
+
+type InputIconOption = (typeof inputIconOptions)[number];
 type InputArgTextKey = keyof typeof inputArgText;
 type InputStoryArgs = ComponentProps<typeof Input> & {
   showOptional: boolean;
   showInfoTooltip: boolean;
+  showAction: boolean;
+  showLabelIcon: boolean;
+  startAddonIcon: InputIconOption;
+  startContentIcon: InputIconOption;
+  endContentIcon: InputIconOption;
+  endAddonIcon: InputIconOption;
 };
 
 const inputArgTextKeys = Object.keys(inputArgText) as InputArgTextKey[];
+
+const hiddenNativeInputArgTypes = {
+  autoCapitalize: { control: false, table: { disable: true } },
+  autoComplete: { control: false, table: { disable: true } },
+  autoCorrect: { control: false, table: { disable: true } },
+  enterKeyHint: { control: false, table: { disable: true } },
+  inputMode: { control: false, table: { disable: true } },
+  maxLength: { control: false, table: { disable: true } },
+  minLength: { control: false, table: { disable: true } },
+  pattern: { control: false, table: { disable: true } },
+  spellCheck: { control: false, table: { disable: true } },
+} as const;
+
+const renderInputIcon = (icon: InputIconOption) => {
+  switch (icon) {
+    case 'search':
+      return <MagnifyingGlass size={16} />;
+    case 'calendar':
+      return <CalendarBlank size={16} />;
+    case 'caretDown':
+      return <CaretDown size={16} />;
+    case 'arrowRight':
+      return <ArrowRight size={16} />;
+    case 'warning':
+      return <WarningCircle size={16} />;
+    case 'none':
+      return undefined;
+  }
+};
 
 const getLocalizedInputArgText = (
   key: InputArgTextKey,
@@ -153,6 +204,7 @@ const meta = {
         label,
         labelSupplementary,
         placeholder,
+        errorMessage,
       } = args;
 
       useEffect(() => {
@@ -164,6 +216,7 @@ const meta = {
           label,
           labelSupplementary,
           placeholder,
+          errorMessage,
         };
 
         inputArgTextKeys.forEach((key) => {
@@ -184,6 +237,7 @@ const meta = {
         label,
         labelSupplementary,
         placeholder,
+        errorMessage,
         language,
         updateArgs,
       ]);
@@ -214,10 +268,22 @@ const meta = {
     showInfoTooltip: {
       control: 'boolean',
     },
+    showLabelIcon: {
+      control: 'boolean',
+    },
+    showAction: {
+      control: 'boolean',
+    },
     placeholder: {
       control: 'text',
     },
+    defaultValue: {
+      control: 'text',
+    },
     description: {
+      control: 'text',
+    },
+    errorMessage: {
       control: 'text',
     },
     variant: {
@@ -235,6 +301,9 @@ const meta = {
     isDisabled: {
       control: 'boolean',
     },
+    isInvalid: {
+      control: 'boolean',
+    },
     isReadOnly: {
       control: 'boolean',
     },
@@ -244,6 +313,41 @@ const meta = {
     showRequiredIndicator: {
       control: 'boolean',
     },
+    startAddonIcon: {
+      control: 'select',
+      options: inputIconOptions,
+    },
+    startContentIcon: {
+      control: 'select',
+      options: inputIconOptions,
+    },
+    endContentIcon: {
+      control: 'select',
+      options: inputIconOptions,
+    },
+    endAddonIcon: {
+      control: 'select',
+      options: inputIconOptions,
+    },
+    action: {
+      control: false,
+    },
+    labelIcon: {
+      control: false,
+    },
+    startAddon: {
+      control: false,
+    },
+    startContent: {
+      control: false,
+    },
+    endContent: {
+      control: false,
+    },
+    endAddon: {
+      control: false,
+    },
+    ...hiddenNativeInputArgTypes,
   },
   args: {
     label: enFormText.core.label,
@@ -252,10 +356,21 @@ const meta = {
     infoTooltipAriaLabel: enFormText.input.infoTipLabel,
     showOptional: true,
     showInfoTooltip: true,
+    showLabelIcon: false,
+    showAction: false,
     placeholder: enFormText.core.placeholder,
     description: enFormText.core.helperText,
+    errorMessage: enFormText.input.errorMessage,
     type: 'text',
+    isInvalid: false,
+    isDisabled: false,
+    isReadOnly: false,
+    isRequired: false,
     showRequiredIndicator: true,
+    startAddonIcon: 'none',
+    startContentIcon: 'none',
+    endContentIcon: 'none',
+    endAddonIcon: 'none',
   },
 } satisfies Meta<InputStoryArgs>;
 
@@ -265,7 +380,17 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useInputLanguage();
-    const { showInfoTooltip, showOptional, ...inputArgs } = args;
+    const {
+      endAddonIcon,
+      endContentIcon,
+      showAction,
+      showInfoTooltip,
+      showLabelIcon,
+      showOptional,
+      startAddonIcon,
+      startContentIcon,
+      ...inputArgs
+    } = args;
 
     return (
       <div className="w-[320px]">
@@ -287,8 +412,15 @@ export const Default: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
+          labelIcon={showLabelIcon ? <WarningCircle size={16} /> : undefined}
+          action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
+          errorMessage={getLocalizedInputArgText('errorMessage', args.errorMessage, language)}
+          startAddon={renderInputIcon(startAddonIcon)}
+          startContent={renderInputIcon(startContentIcon)}
+          endContent={renderInputIcon(endContentIcon)}
+          endAddon={renderInputIcon(endAddonIcon)}
         />
       </div>
     );
@@ -301,7 +433,17 @@ export const Outline: Story = {
   },
   render: (args) => {
     const language = useInputLanguage();
-    const { showInfoTooltip, showOptional, ...inputArgs } = args;
+    const {
+      endAddonIcon,
+      endContentIcon,
+      showAction,
+      showInfoTooltip,
+      showLabelIcon,
+      showOptional,
+      startAddonIcon,
+      startContentIcon,
+      ...inputArgs
+    } = args;
 
     return (
       <div className="w-[320px]">
@@ -323,8 +465,15 @@ export const Outline: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
+          labelIcon={showLabelIcon ? <WarningCircle size={16} /> : undefined}
+          action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
+          errorMessage={getLocalizedInputArgText('errorMessage', args.errorMessage, language)}
+          startAddon={renderInputIcon(startAddonIcon)}
+          startContent={renderInputIcon(startContentIcon)}
+          endContent={renderInputIcon(endContentIcon)}
+          endAddon={renderInputIcon(endAddonIcon)}
         />
       </div>
     );
