@@ -1,7 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { Selection } from 'react-aria-components';
-import { CaretRight, DotsThree, DownloadSimple, Gear, PencilSimple, Trash } from 'phosphor-react';
+import { useArgs } from 'storybook/internal/preview-api';
+import {
+  CaretLeft,
+  CaretRight,
+  DotsThree,
+  DownloadSimple,
+  Gear,
+  PencilSimple,
+  Trash,
+} from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import {
   Menu,
@@ -12,6 +20,7 @@ import {
   MenuSubmenuTrigger,
   MenuTrigger,
 } from '@tradenetcorp/veli-ui/menu';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 type MenuPlaygroundItem = {
   id: string;
@@ -31,32 +40,369 @@ type MenuPlaygroundArgs = {
   items: MenuPlaygroundItem[];
 };
 
-const DEFAULT_PLAYGROUND_ITEMS: MenuPlaygroundItem[] = [
+type MenuKey = string | number;
+type MenuSelection = 'all' | Set<MenuKey>;
+
+const menuText = {
+  en: {
+    actions: 'Actions',
+    menu: 'Menu',
+    edit: 'Edit',
+    export: 'Export',
+    delete: 'Delete',
+    editDetails: 'Edit Details',
+    updateLabels: 'Update labels, metadata, and visibility.',
+    createLocalCopy: 'Create a local copy for offline work.',
+    permanentAction: 'This action is permanent.',
+    lastAction: 'Last action',
+    noneYet: 'None yet',
+    selected: 'Selected',
+    all: 'all',
+    none: 'none',
+    openMenu: 'Open Menu',
+    file: 'File',
+    rename: 'Rename',
+    download: 'Download',
+    settings: 'Settings',
+    preferences: 'Preferences',
+    removeFile: 'Remove File',
+    openNestedMenu: 'Open Nested Menu',
+    open: 'Open',
+    exportAs: 'Export As',
+    image: 'Image',
+    pdf: 'PDF',
+    docx: 'DOCX',
+    png: 'PNG',
+    svg: 'SVG',
+    singleClosesOnSelect: 'Single (closes on select)',
+    multipleStaysOpen: 'Multiple (stays open)',
+    singleCloseOnSelectFalse: 'Single + closeOnSelect={false}',
+    sortBy: 'Sort By',
+    name: 'Name',
+    dateModified: 'Date modified',
+    size: 'Size',
+    view: 'View',
+    showFiles: 'Show files',
+    showFolders: 'Show folders',
+    showHiddenItems: 'Show hidden items',
+    layout: 'Layout',
+    list: 'List',
+    grid: 'Grid',
+    board: 'Board',
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large',
+    account: 'Account',
+    profile: 'Profile',
+    billing: 'Billing',
+    session: 'Session',
+    signOut: 'Sign out',
+    downloadCopy: 'Download Copy',
+    requiresAdmin: 'Requires admin permissions.',
+    shareExternally: 'Share Externally',
+    deleteRecord: 'Delete Record',
+  },
+  dv: {
+    actions: 'އެކްޝަންތައް',
+    menu: 'މެނޫ',
+    edit: 'އެޑިޓް',
+    export: 'އެކްސްޕޯޓް',
+    delete: 'ފުހެލާ',
+    editDetails: 'ތަފްސީލު އެޑިޓްކުރޭ',
+    updateLabels: 'ލޭބަލް، މެޓަޑޭޓާ، އަދި ފެންނަގޮތް އަޕްޑޭޓްކުރޭ.',
+    createLocalCopy: 'އޮފްލައިން މަސައްކަތަށް ލޯކަލް ކޮޕީއެއް ހަދާ.',
+    permanentAction: 'މި އެކްޝަން ދާއިމީއެވެ.',
+    lastAction: 'ފަހުގެ އެކްޝަން',
+    noneYet: 'އަދި ނެތް',
+    selected: 'ޚިޔާރުކުރެވިފައި',
+    all: 'ހުރިހާ',
+    none: 'ނެތް',
+    openMenu: 'މެނޫ ހުޅުވާ',
+    file: 'ފައިލް',
+    rename: 'ނަން ބަދަލުކުރޭ',
+    download: 'ޑައުންލޯޑް',
+    settings: 'ސެޓިންގްސް',
+    preferences: 'ޕްރެފަރެންސް',
+    removeFile: 'ފައިލް ފުހެލާ',
+    openNestedMenu: 'ނެސްޓެޑް މެނޫ ހުޅުވާ',
+    open: 'ހުޅުވާ',
+    exportAs: 'ގޮތަކަށް އެކްސްޕޯޓްކުރޭ',
+    image: 'އިމޭޖް',
+    pdf: 'PDF',
+    docx: 'DOCX',
+    png: 'PNG',
+    svg: 'SVG',
+    singleClosesOnSelect: 'ސިންގަލް (ޚިޔާރުކުރާއިރު ބަންދުވޭ)',
+    multipleStaysOpen: 'މަލްޓިޕަލް (ހުޅުވިފައި ހުރޭ)',
+    singleCloseOnSelectFalse: 'ސިންގަލް + closeOnSelect={false}',
+    sortBy: 'ސޯޓްކުރާ ގޮތް',
+    name: 'ނަން',
+    dateModified: 'ބަދަލުކުރި ތާރީޚް',
+    size: 'ސައިޒް',
+    view: 'ވިއު',
+    showFiles: 'ފައިލްތައް ދައްކާ',
+    showFolders: 'ފޯލްޑަރތައް ދައްކާ',
+    showHiddenItems: 'ފޮރުވިފައިވާ އައިޓަމްތައް ދައްކާ',
+    layout: 'ލޭއައުޓް',
+    list: 'ލިސްޓް',
+    grid: 'ގްރިޑް',
+    board: 'ބޯޑް',
+    small: 'ކުޑަ',
+    medium: 'މެޑިއަމް',
+    large: 'ބޮޑު',
+    account: 'އެކައުންޓް',
+    profile: 'ޕްރޮފައިލް',
+    billing: 'ބިލިންގް',
+    session: 'ސެޝަން',
+    signOut: 'ސައިން އައުޓް',
+    downloadCopy: 'ކޮޕީ ޑައުންލޯޑްކުރޭ',
+    requiresAdmin: 'އެޑްމިން ހުއްދަ ބޭނުންވެއެވެ.',
+    shareExternally: 'ބޭރަށް ޝެއަރކުރޭ',
+    deleteRecord: 'ރެކޯޑް ފުހެލާ',
+  },
+} as const;
+
+type MenuLanguage = keyof typeof menuText;
+type MenuText = (typeof menuText)[MenuLanguage];
+
+const menuArgText = {
+  triggerLabel: {
+    en: menuText.en.menu,
+    dv: menuText.dv.menu,
+  },
+} as const;
+
+type MenuArgTextKey = keyof typeof menuArgText;
+
+const menuArgTextKeys = Object.keys(menuArgText) as MenuArgTextKey[];
+
+const defaultPlaygroundItemConfigs = [
   {
     id: 'edit',
-    label: 'Edit Details',
-    description: 'Update labels, metadata, and visibility.',
     shortcut: 'E',
     selected: true,
   },
   {
     id: 'export',
-    label: 'Export',
-    description: 'Create a local copy for offline work.',
     shortcut: 'D',
   },
   {
     id: 'delete',
-    label: 'Delete',
-    description: 'This action is permanent.',
     shortcut: 'Del',
     sentiment: 'danger',
   },
-];
+] as const satisfies readonly Omit<MenuPlaygroundItem, 'label' | 'description'>[];
+
+const playgroundItemText = {
+  edit: {
+    label: {
+      en: menuText.en.editDetails,
+      dv: menuText.dv.editDetails,
+    },
+    description: {
+      en: menuText.en.updateLabels,
+      dv: menuText.dv.updateLabels,
+    },
+  },
+  export: {
+    label: {
+      en: menuText.en.export,
+      dv: menuText.dv.export,
+    },
+    description: {
+      en: menuText.en.createLocalCopy,
+      dv: menuText.dv.createLocalCopy,
+    },
+  },
+  delete: {
+    label: {
+      en: menuText.en.delete,
+      dv: menuText.dv.delete,
+    },
+    description: {
+      en: menuText.en.permanentAction,
+      dv: menuText.dv.permanentAction,
+    },
+  },
+} as const;
+
+type PlaygroundItemId = keyof typeof playgroundItemText;
+
+const isPlaygroundItemId = (value: string): value is PlaygroundItemId =>
+  value in playgroundItemText;
+
+const useMenuLanguage = (): MenuLanguage => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? 'dv' : 'en';
+};
+
+const useMenuText = () => {
+  const language = useMenuLanguage();
+
+  return menuText[language];
+};
+
+const getLocalizedMenuArgText = (key: MenuArgTextKey, value: unknown, language: MenuLanguage) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return menuArgText[key][language];
+  }
+
+  const localizedValues: readonly string[] = Object.values(menuArgText[key]);
+
+  if (localizedValues.includes(value)) {
+    return menuArgText[key][language];
+  }
+
+  return value;
+};
+
+const getLocalizedPlaygroundItemText = (
+  id: string,
+  field: 'label' | 'description',
+  value: unknown,
+  language: MenuLanguage,
+) => {
+  if (!isPlaygroundItemId(id)) {
+    return value;
+  }
+
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return field === 'label' ? playgroundItemText[id][field][language] : value;
+  }
+
+  const localizedValues: readonly string[] = Object.values(playgroundItemText[id][field]);
+
+  if (localizedValues.includes(value)) {
+    return playgroundItemText[id][field][language];
+  }
+
+  return value;
+};
+
+const createDefaultPlaygroundItems = (language: MenuLanguage): MenuPlaygroundItem[] =>
+  defaultPlaygroundItemConfigs.map((item) => {
+    const id = item.id;
+
+    return {
+      ...item,
+      label: playgroundItemText[id].label[language],
+      description: playgroundItemText[id].description[language],
+    };
+  });
+
+const getLocalizedPlaygroundItems = (
+  items: unknown,
+  language: MenuLanguage,
+): MenuPlaygroundItem[] | undefined => {
+  if (!Array.isArray(items)) {
+    return undefined;
+  }
+
+  return items.map((item) => {
+    if (!item || typeof item !== 'object' || !('id' in item) || typeof item.id !== 'string') {
+      return item as MenuPlaygroundItem;
+    }
+
+    const label = getLocalizedPlaygroundItemText(item.id, 'label', item.label, language);
+    const description = getLocalizedPlaygroundItemText(
+      item.id,
+      'description',
+      item.description,
+      language,
+    );
+
+    return {
+      ...item,
+      label,
+      description,
+    } as MenuPlaygroundItem;
+  });
+};
+
+const formatSelection = (
+  selection: MenuSelection,
+  labels: Record<string, string>,
+  text: Pick<MenuText, 'all' | 'none'>,
+) => {
+  if (selection === 'all') {
+    return text.all;
+  }
+
+  const selectedLabels = [...selection].map((key) => labels[String(key)] ?? String(key));
+
+  return selectedLabels.join(', ') || text.none;
+};
+
+const formatPlaygroundSelection = (
+  selection: MenuSelection,
+  items: MenuPlaygroundItem[],
+  text: Pick<MenuText, 'all' | 'none'>,
+) => {
+  const labels = Object.fromEntries(items.map((item) => [item.id, item.label]));
+
+  return formatSelection(selection, labels, text);
+};
+
+function SubmenuCaret() {
+  const { direction } = useVeliLanguage();
+  const CaretIcon = direction === 'rtl' ? CaretLeft : CaretRight;
+
+  return <CaretIcon size={14} />;
+}
 
 const meta: Meta = {
   title: 'Components/Menu',
   component: Menu,
+  decorators: [
+    (Story, context) => {
+      const language: MenuLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const { items, triggerLabel } = args;
+
+      useEffect(() => {
+        const nextArgs: Partial<MenuPlaygroundArgs> = {};
+
+        menuArgTextKeys.forEach((key) => {
+          const currentValue = args[key];
+
+          if (currentValue === undefined) {
+            return;
+          }
+
+          const localizedValue = getLocalizedMenuArgText(key, currentValue, language);
+
+          if (currentValue !== localizedValue) {
+            nextArgs[key] = localizedValue;
+          }
+        });
+
+        if (items !== undefined) {
+          const localizedItems = getLocalizedPlaygroundItems(items, language);
+
+          if (localizedItems && localizedItems !== items) {
+            const hasChanges = localizedItems.some((item, index) => {
+              const currentItem = Array.isArray(items) ? items[index] : undefined;
+
+              return (
+                currentItem?.label !== item.label || currentItem?.description !== item.description
+              );
+            });
+
+            if (hasChanges) {
+              nextArgs.items = localizedItems;
+            }
+          }
+        }
+
+        if (Object.keys(nextArgs).length > 0) {
+          updateArgs?.(nextArgs);
+        }
+      }, [args, items, language, triggerLabel, updateArgs]);
+
+      return <Story />;
+    },
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -70,24 +416,28 @@ type Story = StoryObj<typeof meta>;
  * Default action menu with a Veli-themed popover and tokenized item states.
  */
 export const Basic: Story = {
-  render: () => (
-    <MenuTrigger>
-      <Button variant="secondary" style="transparent" size="sm">
-        Actions
-        <DotsThree size={16} weight="bold" />
-      </Button>
-      <MenuPopover>
-        <Menu>
-          <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
-          <MenuItem startIcon={<DownloadSimple size={16} />}>Export</MenuItem>
-          <MenuSeparator />
-          <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
-            Delete
-          </MenuItem>
-        </Menu>
-      </MenuPopover>
-    </MenuTrigger>
-  ),
+  render: () => {
+    const text = useMenuText();
+
+    return (
+      <MenuTrigger>
+        <Button variant="secondary" style="transparent" size="sm">
+          {text.actions}
+          <DotsThree size={16} weight="bold" />
+        </Button>
+        <MenuPopover>
+          <Menu>
+            <MenuItem startIcon={<PencilSimple size={16} />}>{text.edit}</MenuItem>
+            <MenuItem startIcon={<DownloadSimple size={16} />}>{text.export}</MenuItem>
+            <MenuSeparator />
+            <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
+              {text.delete}
+            </MenuItem>
+          </Menu>
+        </MenuPopover>
+      </MenuTrigger>
+    );
+  },
 };
 
 /**
@@ -96,11 +446,11 @@ export const Basic: Story = {
  */
 export const Default: Story = {
   args: {
-    triggerLabel: 'Menu',
+    triggerLabel: menuText.en.menu,
     itemSize: 'md',
     showDescriptions: true,
     showShortcuts: true,
-    items: DEFAULT_PLAYGROUND_ITEMS,
+    items: createDefaultPlaygroundItems('en'),
   },
   argTypes: {
     triggerLabel: { control: 'text' },
@@ -111,24 +461,34 @@ export const Default: Story = {
   },
   render: (rawArgs) => {
     const args = rawArgs as MenuPlaygroundArgs;
-    const [lastAction, setLastAction] = useState<string>('None yet');
+    const language = useMenuLanguage();
+    const text = menuText[language];
+    const [lastAction, setLastAction] = useState<string | null>(null);
+
+    const defaultItems = useMemo(() => createDefaultPlaygroundItems(language), [language]);
 
     const safeItems = useMemo(() => {
       if (!Array.isArray(args.items) || args.items.length === 0) {
-        return DEFAULT_PLAYGROUND_ITEMS;
+        return defaultItems;
       }
-      return args.items;
-    }, [args.items]);
 
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(
+      return getLocalizedPlaygroundItems(args.items, language) ?? defaultItems;
+    }, [args.items, defaultItems, language]);
+
+    const [selectedKeys, setSelectedKeys] = useState<MenuSelection>(
       () => new Set(safeItems.filter((item) => item.selected).map((item) => item.id)),
+    );
+
+    const itemLabels = useMemo(
+      () => Object.fromEntries(safeItems.map((item) => [item.id, item.label])),
+      [safeItems],
     );
 
     return (
       <div className="flex flex-col items-start gap-3">
         <MenuTrigger>
           <Button variant="secondary" style="transparent" size="sm">
-            {args.triggerLabel}
+            {getLocalizedMenuArgText('triggerLabel', args.triggerLabel, language)}
             <DotsThree size={16} weight="bold" />
           </Button>
           <MenuPopover>
@@ -154,13 +514,16 @@ export const Default: Story = {
             </Menu>
           </MenuPopover>
         </MenuTrigger>
-        <p className="text-xs text-text-default-muted">
-          Last action: <span className="font-medium">{lastAction}</span>
+        <p className="type-caption-regular text-text-default-muted">
+          {text.lastAction}:{' '}
+          <span className="type-caption-medium">
+            {lastAction ? (itemLabels[lastAction] ?? lastAction) : text.noneYet}
+          </span>
         </p>
-        <p className="text-xs text-text-default-muted">
-          Selected:{' '}
-          <span className="font-medium">
-            {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ') || 'none'}
+        <p className="type-caption-regular text-text-default-muted">
+          {text.selected}:{' '}
+          <span className="type-caption-medium">
+            {formatPlaygroundSelection(selectedKeys, safeItems, text)}
           </span>
         </p>
       </div>
@@ -172,102 +535,114 @@ export const Default: Story = {
  * Demonstrates grouped content with section headers and visual separators.
  */
 export const Sections: Story = {
-  render: () => (
-    <MenuTrigger>
-      <Button variant="secondary" style="transparent" size="sm">
-        Open Menu
-      </Button>
-      <MenuPopover>
-        <Menu>
-          <MenuSection title="File">
-            <MenuItem startIcon={<PencilSimple size={16} />}>Rename</MenuItem>
-            <MenuItem startIcon={<DownloadSimple size={16} />}>Download</MenuItem>
-          </MenuSection>
-          <MenuSeparator />
-          <MenuSection title="Settings">
-            <MenuItem startIcon={<Gear size={16} />}>Preferences</MenuItem>
-            <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
-              Remove File
-            </MenuItem>
-          </MenuSection>
-        </Menu>
-      </MenuPopover>
-    </MenuTrigger>
-  ),
+  render: () => {
+    const text = useMenuText();
+
+    return (
+      <MenuTrigger>
+        <Button variant="secondary" style="transparent" size="sm">
+          {text.openMenu}
+        </Button>
+        <MenuPopover>
+          <Menu>
+            <MenuSection title={text.file}>
+              <MenuItem startIcon={<PencilSimple size={16} />}>{text.rename}</MenuItem>
+              <MenuItem startIcon={<DownloadSimple size={16} />}>{text.download}</MenuItem>
+            </MenuSection>
+            <MenuSeparator />
+            <MenuSection title={text.settings}>
+              <MenuItem startIcon={<Gear size={16} />}>{text.preferences}</MenuItem>
+              <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
+                {text.removeFile}
+              </MenuItem>
+            </MenuSection>
+          </Menu>
+        </MenuPopover>
+      </MenuTrigger>
+    );
+  },
 };
 
 /**
  * Nested subitems variation for multi-level actions.
  */
 export const WithSubitems: Story = {
-  render: () => (
-    <MenuTrigger>
-      <Button variant="secondary" style="transparent" size="sm">
-        Open Nested Menu
-      </Button>
-      <MenuPopover>
-        <Menu>
-          <MenuItem id="open">Open</MenuItem>
+  render: () => {
+    const text = useMenuText();
 
-          <MenuSubmenuTrigger>
-            <MenuItem id="export" endIcon={<CaretRight size={14} />}>
-              Export As
+    return (
+      <MenuTrigger>
+        <Button variant="secondary" style="transparent" size="sm">
+          {text.openNestedMenu}
+        </Button>
+        <MenuPopover>
+          <Menu>
+            <MenuItem id="open">{text.open}</MenuItem>
+
+            <MenuSubmenuTrigger>
+              <MenuItem id="export" endIcon={<SubmenuCaret />}>
+                {text.exportAs}
+              </MenuItem>
+              <MenuPopover>
+                <Menu>
+                  <MenuItem id="pdf">{text.pdf}</MenuItem>
+                  <MenuItem id="docx">{text.docx}</MenuItem>
+
+                  <MenuSubmenuTrigger>
+                    <MenuItem id="image" endIcon={<SubmenuCaret />}>
+                      {text.image}
+                    </MenuItem>
+                    <MenuPopover>
+                      <Menu>
+                        <MenuItem id="png">{text.png}</MenuItem>
+                        <MenuItem id="svg">{text.svg}</MenuItem>
+                      </Menu>
+                    </MenuPopover>
+                  </MenuSubmenuTrigger>
+                </Menu>
+              </MenuPopover>
+            </MenuSubmenuTrigger>
+
+            <MenuSeparator />
+            <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
+              {text.delete}
             </MenuItem>
-            <MenuPopover>
-              <Menu>
-                <MenuItem id="pdf">PDF</MenuItem>
-                <MenuItem id="docx">DOCX</MenuItem>
-
-                <MenuSubmenuTrigger>
-                  <MenuItem id="image" endIcon={<CaretRight size={14} />}>
-                    Image
-                  </MenuItem>
-                  <MenuPopover>
-                    <Menu>
-                      <MenuItem id="png">PNG</MenuItem>
-                      <MenuItem id="svg">SVG</MenuItem>
-                    </Menu>
-                  </MenuPopover>
-                </MenuSubmenuTrigger>
-              </Menu>
-            </MenuPopover>
-          </MenuSubmenuTrigger>
-
-          <MenuSeparator />
-          <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
-            Delete
-          </MenuItem>
-        </Menu>
-      </MenuPopover>
-    </MenuTrigger>
-  ),
+          </Menu>
+        </MenuPopover>
+      </MenuTrigger>
+    );
+  },
 };
 
 /**
  * Default and danger sentiments for neutral and destructive menu actions.
  */
 export const Sentiment: Story = {
-  render: () => (
-    <MenuTrigger>
-      <Button variant="secondary" style="transparent" size="sm">
-        Actions
-      </Button>
-      <MenuPopover>
-        <Menu>
-          <MenuItem id="rename" startIcon={<PencilSimple size={16} />}>
-            Rename
-          </MenuItem>
-          <MenuItem id="download" startIcon={<DownloadSimple size={16} />}>
-            Download
-          </MenuItem>
-          <MenuSeparator />
-          <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
-            Delete
-          </MenuItem>
-        </Menu>
-      </MenuPopover>
-    </MenuTrigger>
-  ),
+  render: () => {
+    const text = useMenuText();
+
+    return (
+      <MenuTrigger>
+        <Button variant="secondary" style="transparent" size="sm">
+          {text.actions}
+        </Button>
+        <MenuPopover>
+          <Menu>
+            <MenuItem id="rename" startIcon={<PencilSimple size={16} />}>
+              {text.rename}
+            </MenuItem>
+            <MenuItem id="download" startIcon={<DownloadSimple size={16} />}>
+              {text.download}
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
+              {text.delete}
+            </MenuItem>
+          </Menu>
+        </MenuPopover>
+      </MenuTrigger>
+    );
+  },
 };
 
 /**
@@ -276,19 +651,37 @@ export const Sentiment: Story = {
  */
 export const Checked: Story = {
   render: () => {
-    const [singleSelected, setSingleSelected] = useState<Selection>(new Set(['name']));
-    const [multipleSelected, setMultipleSelected] = useState<Selection>(
+    const text = useMenuText();
+    const [singleSelected, setSingleSelected] = useState<MenuSelection>(new Set(['name']));
+    const [multipleSelected, setMultipleSelected] = useState<MenuSelection>(
       new Set(['files', 'folders']),
     );
-    const [persistentSelected, setPersistentSelected] = useState<Selection>(new Set(['list']));
+    const [persistentSelected, setPersistentSelected] = useState<MenuSelection>(new Set(['list']));
+    const sortLabels = {
+      name: text.name,
+      date: text.dateModified,
+      size: text.size,
+    };
+    const viewLabels = {
+      files: text.showFiles,
+      folders: text.showFolders,
+      hidden: text.showHiddenItems,
+    };
+    const layoutLabels = {
+      list: text.list,
+      grid: text.grid,
+      board: text.board,
+    };
 
     return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div className="flex flex-col items-start gap-2">
-          <p className="text-xs font-medium text-text-default-default">Single (closes on select)</p>
+      <div className="grid w-[min(48rem,calc(100vw-2rem))] grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="flex min-w-0 flex-col items-start gap-2">
+          <p className="type-caption-medium text-text-default-default">
+            {text.singleClosesOnSelect}
+          </p>
           <MenuTrigger>
             <Button variant="secondary" style="transparent" size="sm">
-              Sort By
+              {text.sortBy}
             </Button>
             <MenuPopover>
               <Menu
@@ -296,22 +689,25 @@ export const Checked: Story = {
                 selectedKeys={singleSelected}
                 onSelectionChange={setSingleSelected}
               >
-                <MenuItem id="name">Name</MenuItem>
-                <MenuItem id="date">Date modified</MenuItem>
-                <MenuItem id="size">Size</MenuItem>
+                <MenuItem id="name">{text.name}</MenuItem>
+                <MenuItem id="date">{text.dateModified}</MenuItem>
+                <MenuItem id="size">{text.size}</MenuItem>
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="text-xs text-text-default-muted">
-            Selected: <span className="font-medium">{[...singleSelected].join(', ')}</span>
+          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+            {text.selected}:{' '}
+            <span className="type-caption-medium">
+              {formatSelection(singleSelected, sortLabels, text)}
+            </span>
           </p>
         </div>
 
-        <div className="flex flex-col items-start gap-2">
-          <p className="text-xs font-medium text-text-default-default">Multiple (stays open)</p>
+        <div className="flex min-w-0 flex-col items-start gap-2">
+          <p className="type-caption-medium text-text-default-default">{text.multipleStaysOpen}</p>
           <MenuTrigger>
             <Button variant="secondary" style="transparent" size="sm">
-              View
+              {text.view}
             </Button>
             <MenuPopover>
               <Menu
@@ -319,25 +715,27 @@ export const Checked: Story = {
                 selectedKeys={multipleSelected}
                 onSelectionChange={setMultipleSelected}
               >
-                <MenuItem id="files">Show files</MenuItem>
-                <MenuItem id="folders">Show folders</MenuItem>
-                <MenuItem id="hidden">Show hidden items</MenuItem>
+                <MenuItem id="files">{text.showFiles}</MenuItem>
+                <MenuItem id="folders">{text.showFolders}</MenuItem>
+                <MenuItem id="hidden">{text.showHiddenItems}</MenuItem>
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="text-xs text-text-default-muted">
-            Selected:{' '}
-            <span className="font-medium">{[...multipleSelected].join(', ') || 'none'}</span>
+          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+            {text.selected}:{' '}
+            <span className="type-caption-medium">
+              {formatSelection(multipleSelected, viewLabels, text)}
+            </span>
           </p>
         </div>
 
-        <div className="flex flex-col items-start gap-2">
-          <p className="text-xs font-medium text-text-default-default">
-            Single + closeOnSelect={false}
+        <div className="flex min-w-0 flex-col items-start gap-2">
+          <p className="type-caption-medium text-text-default-default">
+            {text.singleCloseOnSelectFalse}
           </p>
           <MenuTrigger>
             <Button variant="secondary" style="transparent" size="sm">
-              Layout
+              {text.layout}
             </Button>
             <MenuPopover>
               <Menu
@@ -346,19 +744,22 @@ export const Checked: Story = {
                 onSelectionChange={setPersistentSelected}
               >
                 <MenuItem id="list" closeOnSelect={false}>
-                  List
+                  {text.list}
                 </MenuItem>
                 <MenuItem id="grid" closeOnSelect={false}>
-                  Grid
+                  {text.grid}
                 </MenuItem>
                 <MenuItem id="board" closeOnSelect={false}>
-                  Board
+                  {text.board}
                 </MenuItem>
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="text-xs text-text-default-muted">
-            Selected: <span className="font-medium">{[...persistentSelected].join(', ')}</span>
+          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+            {text.selected}:{' '}
+            <span className="type-caption-medium">
+              {formatSelection(persistentSelected, layoutLabels, text)}
+            </span>
           </p>
         </div>
       </div>
@@ -371,63 +772,67 @@ export const Checked: Story = {
  * Section headers and dividers scale with each size variant.
  */
 export const Sizes: Story = {
-  render: () => (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
-          Small
-        </Button>
-        <MenuPopover>
-          <Menu>
-            <MenuSection title="Account" size="sm">
-              <MenuItem size="sm">Profile</MenuItem>
-              <MenuItem size="sm">Billing</MenuItem>
-            </MenuSection>
-            <MenuSeparator />
-            <MenuSection title="Session" size="sm">
-              <MenuItem size="sm">Sign out</MenuItem>
-            </MenuSection>
-          </Menu>
-        </MenuPopover>
-      </MenuTrigger>
+  render: () => {
+    const text = useMenuText();
 
-      <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
-          Medium
-        </Button>
-        <MenuPopover>
-          <Menu>
-            <MenuSection title="Account" size="md">
-              <MenuItem size="md">Profile</MenuItem>
-              <MenuItem size="md">Billing</MenuItem>
-            </MenuSection>
-            <MenuSeparator />
-            <MenuSection title="Session" size="md">
-              <MenuItem size="md">Sign out</MenuItem>
-            </MenuSection>
-          </Menu>
-        </MenuPopover>
-      </MenuTrigger>
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <MenuTrigger>
+          <Button variant="secondary" style="transparent" size="sm">
+            {text.small}
+          </Button>
+          <MenuPopover>
+            <Menu>
+              <MenuSection title={text.account} size="sm">
+                <MenuItem size="sm">{text.profile}</MenuItem>
+                <MenuItem size="sm">{text.billing}</MenuItem>
+              </MenuSection>
+              <MenuSeparator />
+              <MenuSection title={text.session} size="sm">
+                <MenuItem size="sm">{text.signOut}</MenuItem>
+              </MenuSection>
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
 
-      <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
-          Large
-        </Button>
-        <MenuPopover>
-          <Menu>
-            <MenuSection title="Account" size="lg">
-              <MenuItem size="lg">Profile</MenuItem>
-              <MenuItem size="lg">Billing</MenuItem>
-            </MenuSection>
-            <MenuSeparator />
-            <MenuSection title="Session" size="lg">
-              <MenuItem size="lg">Sign out</MenuItem>
-            </MenuSection>
-          </Menu>
-        </MenuPopover>
-      </MenuTrigger>
-    </div>
-  ),
+        <MenuTrigger>
+          <Button variant="secondary" style="transparent" size="sm">
+            {text.medium}
+          </Button>
+          <MenuPopover>
+            <Menu>
+              <MenuSection title={text.account} size="md">
+                <MenuItem size="md">{text.profile}</MenuItem>
+                <MenuItem size="md">{text.billing}</MenuItem>
+              </MenuSection>
+              <MenuSeparator />
+              <MenuSection title={text.session} size="md">
+                <MenuItem size="md">{text.signOut}</MenuItem>
+              </MenuSection>
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+
+        <MenuTrigger>
+          <Button variant="secondary" style="transparent" size="sm">
+            {text.large}
+          </Button>
+          <MenuPopover>
+            <Menu>
+              <MenuSection title={text.account} size="lg">
+                <MenuItem size="lg">{text.profile}</MenuItem>
+                <MenuItem size="lg">{text.billing}</MenuItem>
+              </MenuSection>
+              <MenuSeparator />
+              <MenuSection title={text.session} size="lg">
+                <MenuItem size="lg">{text.signOut}</MenuItem>
+              </MenuSection>
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+      </div>
+    );
+  },
 };
 
 /**
@@ -435,54 +840,63 @@ export const Sizes: Story = {
  * Pass `className` (e.g. `max-w-xs`) to cap popover width when content is long.
  */
 export const RichItems: Story = {
-  render: () => (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {(['sm', 'md', 'lg'] as const).map((size) => (
-        <MenuTrigger key={size}>
-          <Button variant="secondary" style="transparent" size="sm">
-            {size === 'sm' ? 'Small' : size === 'md' ? 'Medium' : 'Large'}
-          </Button>
-          <MenuPopover className="max-w-xs">
-            <Menu>
-              <MenuItem
-                size={size}
-                startIcon={<PencilSimple size={16} />}
-                description="Update labels, metadata, and visibility."
-                shortcut="E"
-              >
-                Edit Details
-              </MenuItem>
-              <MenuItem
-                size={size}
-                startIcon={<DownloadSimple size={16} />}
-                description="Create a local copy for offline work."
-                shortcut="D"
-              >
-                Download Copy
-              </MenuItem>
-              <MenuItem
-                size={size}
-                isDisabled
-                startIcon={<Gear size={16} />}
-                description="Requires admin permissions."
-                shortcut="S"
-              >
-                Share Externally
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem
-                size={size}
-                sentiment="danger"
-                startIcon={<Trash size={16} />}
-                description="This action is permanent."
-                shortcut="Del"
-              >
-                Delete Record
-              </MenuItem>
-            </Menu>
-          </MenuPopover>
-        </MenuTrigger>
-      ))}
-    </div>
-  ),
+  render: () => {
+    const text = useMenuText();
+    const sizeLabels = {
+      sm: text.small,
+      md: text.medium,
+      lg: text.large,
+    };
+
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {(['sm', 'md', 'lg'] as const).map((size) => (
+          <MenuTrigger key={size}>
+            <Button variant="secondary" style="transparent" size="sm">
+              {sizeLabels[size]}
+            </Button>
+            <MenuPopover className="max-w-xs">
+              <Menu>
+                <MenuItem
+                  size={size}
+                  startIcon={<PencilSimple size={16} />}
+                  description={text.updateLabels}
+                  shortcut="E"
+                >
+                  {text.editDetails}
+                </MenuItem>
+                <MenuItem
+                  size={size}
+                  startIcon={<DownloadSimple size={16} />}
+                  description={text.createLocalCopy}
+                  shortcut="D"
+                >
+                  {text.downloadCopy}
+                </MenuItem>
+                <MenuItem
+                  size={size}
+                  isDisabled
+                  startIcon={<Gear size={16} />}
+                  description={text.requiresAdmin}
+                  shortcut="S"
+                >
+                  {text.shareExternally}
+                </MenuItem>
+                <MenuSeparator />
+                <MenuItem
+                  size={size}
+                  sentiment="danger"
+                  startIcon={<Trash size={16} />}
+                  description={text.permanentAction}
+                  shortcut="Del"
+                >
+                  {text.deleteRecord}
+                </MenuItem>
+              </Menu>
+            </MenuPopover>
+          </MenuTrigger>
+        ))}
+      </div>
+    );
+  },
 };
