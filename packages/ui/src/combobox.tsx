@@ -17,7 +17,7 @@ import {
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CaretDown } from 'phosphor-react';
+import { CaretDown, Info } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import {
   defaultFieldUnderlineDisabled,
@@ -32,6 +32,7 @@ import {
 } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 import { useVeliLanguage } from './provider';
+import { Tooltip, TooltipTrigger } from './tooltip';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -70,6 +71,21 @@ const headerMetaVariants = cva('type-caption-regular', {
     isDisabled: false,
   },
 });
+
+const infoTooltipTriggerVariants = cva(
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  {
+    variants: {
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
+    },
+  },
+);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -283,6 +299,11 @@ const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-medium text-text-def
 
 const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-text-default-subtle');
 
+const infoTooltipDefaultAriaLabels = {
+  en: 'More information',
+  dv: 'އިތުރު މަޢުލޫމާތު',
+} as const;
+
 function CheckIcon() {
   return (
     <svg
@@ -401,6 +422,8 @@ export interface ComboBoxProps<T extends object>
     Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'> {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
+  infoTooltip?: React.ReactNode;
+  infoTooltipAriaLabel?: string;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
@@ -421,6 +444,8 @@ function ComboBoxInner<T extends object>(
   {
     children,
     label,
+    infoTooltip,
+    infoTooltipAriaLabel,
     labelSupplementary,
     labelIcon,
     action,
@@ -446,6 +471,8 @@ function ComboBoxInner<T extends object>(
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
   const languageConfig = useVeliLanguage();
+  const resolvedInfoTooltipAriaLabel =
+    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
 
   React.useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -468,14 +495,34 @@ function ComboBoxInner<T extends object>(
       {({ isDisabled, isInvalid, isOpen, isRequired }) => (
         <>
           {label ||
+          infoTooltip ||
           labelSupplementary ||
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-1">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
+                ) : null}
+                {infoTooltip ? (
+                  <TooltipTrigger>
+                    <AriaButton
+                      type="button"
+                      aria-label={resolvedInfoTooltipAriaLabel}
+                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      isDisabled={isDisabled}
+                    >
+                      <Info size={16} aria-hidden />
+                    </AriaButton>
+                    <Tooltip
+                      placement="top"
+                      lang={languageConfig.lang}
+                      dir={languageConfig.direction}
+                    >
+                      {infoTooltip}
+                    </Tooltip>
+                  </TooltipTrigger>
                 ) : null}
                 {labelSupplementary ? (
                   <span className={headerMetaVariants({ tone: 'subtle', isDisabled })}>
