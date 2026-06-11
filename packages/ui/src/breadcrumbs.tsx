@@ -11,16 +11,16 @@ import {
   type BreadcrumbsProps as AriaBreadcrumbsProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { CaretLeft } from 'phosphor-react';
+import { CaretLeft, CaretRight } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
+import { useVeliLanguage } from './provider';
 
 const breadcrumbsRootVariants = cva(
-  'm-0 flex flex-wrap items-center gap-1.5 list-none p-0 font-sans antialiased',
+  'm-0 flex flex-wrap items-center gap-1.5 list-none p-0 antialiased',
 );
 
-const breadcrumbItemContentClassName =
-  'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5 font-medium';
+const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5';
 
 const breadcrumbInteractiveTextClassName =
   'text-text-default-muted hover:text-text-default-default active:text-text-default-default focus-visible:text-text-default-default';
@@ -29,16 +29,17 @@ const breadcrumbBackLinkLinkClassName =
   'bg-transparent text-text-links-default hover:bg-transparent hover:text-text-links-hover active:bg-transparent active:text-text-links-hover focus-visible:bg-transparent focus-visible:text-text-links-hover [&_svg]:text-icon-links-default hover:[&_svg]:text-icon-links-hover active:[&_svg]:text-icon-links-hover focus-visible:[&_svg]:text-icon-links-hover';
 
 const breadcrumbBackLinkItemClassName = 'after:hidden';
+const breadcrumbBackLinkDividerItemClassName = 'self-stretch after:hidden';
 
 const breadcrumbBackLinkDividerClassName =
   'box-border h-2 w-0 shrink-0 border-0 border-l border-border-default-strong';
 
 const breadcrumbItemVariants = cva(
-  'inline-flex items-center gap-1.5 type-body-sm-regular after:font-medium after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden',
+  'inline-flex items-center gap-1.5 type-body-sm-regular after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden',
 );
 
 const breadcrumbLinkVariants = cva(
-  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTextClassName} rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
+  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTextClassName} rounded-md type-body-sm-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
   {
     variants: {
       tone: {
@@ -57,27 +58,32 @@ const breadcrumbLinkVariants = cva(
   },
 );
 
-const breadcrumbTextVariants = cva(`${breadcrumbItemContentClassName} text-text-default-muted`, {
-  variants: {
-    tone: {
-      accent: '',
-      muted: '',
+const breadcrumbTextVariants = cva(
+  `${breadcrumbItemContentClassName} type-body-sm-medium text-text-default-muted`,
+  {
+    variants: {
+      tone: {
+        accent: '',
+        muted: '',
+      },
+      isDisabled: {
+        true: 'text-text-disabled-disabled',
+        false: '',
+      },
     },
-    isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: '',
+    defaultVariants: {
+      tone: 'muted',
+      isDisabled: false,
     },
   },
-  defaultVariants: {
-    tone: 'muted',
-    isDisabled: false,
-  },
-});
+);
 
-const breadcrumbCurrentVariants = cva(`${breadcrumbItemContentClassName} text-text-default-strong`);
+const breadcrumbCurrentVariants = cva(
+  `${breadcrumbItemContentClassName} type-body-sm-medium text-text-default-strong`,
+);
 
 const breadcrumbOverflowTriggerVariants = cva(
-  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md text-text-default-muted transition-colors outline-none`,
+  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-text-default-muted transition-colors outline-none`,
   {
     variants: {
       isHovered: {
@@ -176,7 +182,9 @@ export interface BreadcrumbOverflowProps extends Omit<
 
 function BreadcrumbBackLinkDivider() {
   return (
-    <AriaBreadcrumb className={twMerge(breadcrumbItemVariants(), 'after:hidden')}>
+    <AriaBreadcrumb
+      className={twMerge(breadcrumbItemVariants(), breadcrumbBackLinkDividerItemClassName)}
+    >
       <span aria-hidden="true" className={breadcrumbBackLinkDividerClassName} />
     </AriaBreadcrumb>
   );
@@ -192,27 +200,54 @@ export function BreadcrumbBackLink({
   onPress,
   ...props
 }: BreadcrumbBackLinkProps) {
+  const { direction } = useVeliLanguage();
+  const CaretIcon = direction === 'rtl' ? CaretRight : CaretLeft;
   const content = children ?? (
     <>
-      <CaretLeft aria-hidden size={16} weight="bold" />
+      <CaretIcon aria-hidden size={16} weight="bold" />
       <span>{label}</span>
     </>
+  );
+  const shouldRenderButton = href == null && onPress != null;
+
+  const backLinkControl = shouldRenderButton ? (
+    <AriaBreadcrumb
+      {...props}
+      className={twMerge(breadcrumbItemVariants(), breadcrumbBackLinkItemClassName)}
+    >
+      <AriaButton
+        isDisabled={isDisabled}
+        onPress={onPress}
+        className={(state) =>
+          twMerge(
+            breadcrumbLinkVariants({
+              isDisabled: state.isDisabled,
+            }),
+            breadcrumbBackLinkLinkClassName,
+          )
+        }
+      >
+        {content}
+      </AriaButton>
+    </AriaBreadcrumb>
+  ) : (
+    <Breadcrumb
+      {...props}
+      className={breadcrumbBackLinkItemClassName}
+      href={href}
+      isDisabled={isDisabled}
+      target={target}
+      rel={rel}
+      onPress={onPress}
+      linkClassName={breadcrumbBackLinkLinkClassName}
+    >
+      {content}
+    </Breadcrumb>
   );
 
   return (
     <>
-      <Breadcrumb
-        {...props}
-        className={breadcrumbBackLinkItemClassName}
-        href={href}
-        isDisabled={isDisabled}
-        target={target}
-        rel={rel}
-        onPress={onPress}
-        linkClassName={breadcrumbBackLinkLinkClassName}
-      >
-        {content}
-      </Breadcrumb>
+      {backLinkControl}
       <BreadcrumbBackLinkDivider />
     </>
   );
@@ -269,6 +304,8 @@ export function BreadcrumbOverflow({
   onAction,
   ...props
 }: BreadcrumbOverflowProps) {
+  const { direction, lang } = useVeliLanguage();
+
   return (
     <AriaBreadcrumb {...props} className={twMerge(breadcrumbItemVariants(), className)}>
       <MenuTrigger>
@@ -288,7 +325,7 @@ export function BreadcrumbOverflow({
           <span aria-hidden="true">…</span>
         </AriaButton>
         <MenuPopover className={popoverClassName}>
-          <Menu aria-label={menuLabel} onAction={onAction}>
+          <Menu aria-label={menuLabel} dir={direction} lang={lang} onAction={onAction}>
             {items.map((item) => (
               <MenuItem
                 key={item.id}
