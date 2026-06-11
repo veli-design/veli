@@ -600,6 +600,8 @@ export function SelectExplorationDemo() {
       <Select
         label="Market"
         labelSupplementary="(Optional)"
+        infoTooltip="Use this select to choose the requested market."
+        infoTooltipAriaLabel="More information"
         labelIcon={<Info size={12} />}
         action="Action"
         placeholder="Choose a market"

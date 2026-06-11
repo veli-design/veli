@@ -16,7 +16,7 @@ import {
   type SelectProps as AriaSelectProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CaretDown } from 'phosphor-react';
+import { CaretDown, Info } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import {
   defaultFieldUnderlineDisabled,
@@ -28,6 +28,8 @@ import {
   FieldMessage,
 } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
+import { useVeliLanguage } from './provider';
+import { Tooltip, TooltipTrigger } from './tooltip';
 
 const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -66,6 +68,21 @@ const headerMetaVariants = cva('type-caption-regular', {
     isDisabled: false,
   },
 });
+
+const infoTooltipTriggerVariants = cva(
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  {
+    variants: {
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
+    },
+  },
+);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -143,21 +160,21 @@ const fieldButtonVariants = cva(
         isDisabled: false,
         isFocusVisible: false,
         isOpen: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
         isFocusVisible: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
         isOpen: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
@@ -206,7 +223,7 @@ const fieldButtonVariants = cva(
         isFocusVisible: false,
         isOpen: true,
         className:
-          'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error',
+          'border-2 border-text-input-stroke-error bg-text-input-bg-default hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         variant: 'outline',
@@ -238,18 +255,28 @@ const fieldButtonVariants = cva(
   },
 );
 
-const selectValueVariants = cva('min-w-0 flex-1 truncate', {
+const selectValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
   variants: {
     size: {
-      sm: 'type-body-sm-regular',
-      md: 'type-body-sm-regular',
-      lg: 'type-body-md-regular',
+      sm: '-my-2 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
+      md: '-my-3 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
+      lg: '-my-3.5 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
     },
   },
   defaultVariants: {
     size: 'md',
   },
 });
+
+const selectItemLabelVariants = cva(
+  'truncate type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5',
+);
+
+const selectItemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
+
+const selectItemSelectionIndicatorVariants = cva(
+  'shrink-0 text-text-primary-muted [&:lang(dv)]:-translate-y-1',
+);
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
@@ -290,7 +317,7 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
   {
     variants: {
       isSelected: {
@@ -315,6 +342,11 @@ const selectItemVariants = cva(
 );
 
 const selectSectionVariants = cva('py-1 first:pt-0 last:pb-0');
+
+const infoTooltipDefaultAriaLabels = {
+  en: 'More information',
+  dv: 'އިތުރު މަޢުލޫމާތު',
+} as const;
 
 function CheckIcon() {
   return (
@@ -347,6 +379,8 @@ export interface SelectProps<T extends object>
       'isDisabled' | 'isInvalid' | 'isFocusVisible' | 'isOpen'
     > {
   label?: React.ReactNode;
+  infoTooltip?: React.ReactNode;
+  infoTooltipAriaLabel?: string;
   labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
@@ -364,6 +398,8 @@ export interface SelectProps<T extends object>
 
 export function Select<T extends object>({
   label,
+  infoTooltip,
+  infoTooltipAriaLabel,
   labelSupplementary,
   labelIcon,
   action,
@@ -383,6 +419,9 @@ export function Select<T extends object>({
 }: SelectProps<T>) {
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
+  const languageConfig = useVeliLanguage();
+  const resolvedInfoTooltipAriaLabel =
+    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
 
   React.useLayoutEffect(() => {
     const trigger = triggerRef.current;
@@ -405,14 +444,34 @@ export function Select<T extends object>({
       {({ isDisabled, isInvalid, isOpen, isFocusVisible, isRequired }) => (
         <>
           {label ||
+          infoTooltip ||
           labelSupplementary ||
           labelIcon ||
           action ||
           (showRequiredIndicator && isRequired) ? (
             <div className="flex w-full items-center gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-1">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 {label ? (
                   <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
+                ) : null}
+                {infoTooltip ? (
+                  <TooltipTrigger>
+                    <AriaButton
+                      type="button"
+                      aria-label={resolvedInfoTooltipAriaLabel}
+                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      isDisabled={isDisabled}
+                    >
+                      <Info size={16} aria-hidden />
+                    </AriaButton>
+                    <Tooltip
+                      placement="top"
+                      lang={languageConfig.lang}
+                      dir={languageConfig.direction}
+                    >
+                      {infoTooltip}
+                    </Tooltip>
+                  </TooltipTrigger>
                 ) : null}
                 {labelSupplementary ? (
                   <span className={headerMetaVariants({ tone: 'subtle', isDisabled })}>
@@ -475,6 +534,8 @@ export function Select<T extends object>({
             offset={4}
             placement="bottom start"
             triggerRef={triggerRef}
+            lang={languageConfig.lang}
+            dir={languageConfig.direction}
             style={
               triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
             }
@@ -514,7 +575,7 @@ export function SelectSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(selectSectionVariants(), className)}>
       {title ? (
-        <Header className="px-2 py-1 text-xs font-semibold uppercase tracking-wide text-text-default-muted">
+        <Header className="px-2 py-1 type-caption-semibold uppercase text-text-default-muted">
           {title}
         </Header>
       ) : null}
@@ -570,16 +631,14 @@ export function SelectItem<T extends object = object>({
             <span className="shrink-0 text-text-default-subtle">{startContent}</span>
           ) : null}
           <div className="min-w-0 flex-1">
-            {children ? <div className="truncate">{children}</div> : null}
+            {children ? <div className={selectItemLabelVariants()}>{children}</div> : null}
             {description ? (
-              <div className="truncate type-caption-12-regular text-text-default-subtle">
-                {description}
-              </div>
+              <div className={selectItemDescriptionVariants()}>{description}</div>
             ) : null}
           </div>
           {endContent ? <span className="shrink-0">{endContent}</span> : null}
           {isSelected ? (
-            <span className="shrink-0 text-text-primary-muted">
+            <span className={selectItemSelectionIndicatorVariants()}>
               <CheckIcon />
             </span>
           ) : null}

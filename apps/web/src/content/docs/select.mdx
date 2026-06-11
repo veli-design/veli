@@ -54,7 +54,9 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select'
 | Prop                    | Type        | Default            | Description                                                                  |
 | :---------------------- | :---------- | :----------------- | :--------------------------------------------------------------------------- |
 | `label`                 | `ReactNode` | -                  | Visible label content rendered with React Aria's `Label`.                    |
-| `labelSupplementary`    | `ReactNode` | -                  | Inline helper copy beside the label, for cases like `(Optional)`.            |
+| `labelSupplementary`    | `ReactNode` | -                  | Inline helper copy beside the label, for cases like `Optional`.              |
+| `infoTooltip`           | `ReactNode` | -                  | Optional tooltip content displayed from a small info icon in the header.     |
+| `infoTooltipAriaLabel`  | `string`    | Localized string   | Accessible label for the tooltip trigger button.                             |
 | `labelIcon`             | `ReactNode` | -                  | Small icon placed after the label content.                                   |
 | `action`                | `ReactNode` | -                  | Right-aligned header content, suitable for an inline action.                 |
 | `description`           | `ReactNode` | -                  | Helper text shown beneath the field when not invalid.                        |
@@ -69,3 +71,5 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select'
 All other `react-aria-components` `Select` props are supported, excluding direct `style` and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
 
 `className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.
+
+For Dhivehi (`lang="dv"`) selects, the trigger, dropdown, option text, and section labels inherit the active language and direction so generated typography tokens use the Dhivehi font in both the field and popover. Select also applies internal Dhivehi field metrics to the trigger value and option labels, so consumers should not override font family or vertical padding manually.
