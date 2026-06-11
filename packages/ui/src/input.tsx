@@ -157,7 +157,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${defaultFieldUnderlineShell} after:bg-text-input-stroke-default bg-gray-alpha-100`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         variant: 'default',
@@ -195,7 +195,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: 'bg-gray-alpha-100',
+        className: 'bg-text-input-bg-hover',
       },
       {
         variant: 'outline',
@@ -280,9 +280,14 @@ const inputElementVariants = cva(
         md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
       },
+      isReadOnly: {
+        true: 'text-text-default-strong',
+        false: '',
+      },
     },
     defaultVariants: {
       size: 'md',
+      isReadOnly: false,
     },
   },
 );
@@ -480,7 +485,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
               placeholder={placeholder}
               spellCheck={spellCheck}
               type={type}
-              className={inputElementVariants({ size })}
+              className={inputElementVariants({ size, isReadOnly })}
             />
             {endContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
