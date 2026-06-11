@@ -288,7 +288,7 @@ const meta = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'outline'],
+      options: ['default', 'outline', 'skeleton'],
     },
     size: {
       control: 'select',
@@ -571,6 +571,16 @@ export const Sizes: Story = {
       </div>
     );
   },
+};
+
+export const Skeleton: Story = {
+  render: () => (
+    <div className="flex w-[320px] flex-col gap-8">
+      <Input variant="skeleton" size="sm" label="Label" description="Helper text" />
+      <Input variant="skeleton" size="md" label="Label" description="Helper text" />
+      <Input variant="skeleton" size="lg" label="Label" description="Helper text" />
+    </div>
+  ),
 };
 
 export const RootClassName: Story = {
