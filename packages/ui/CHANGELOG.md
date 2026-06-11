@@ -1,5 +1,25 @@
 # @tradenetcorp/veli-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- 6bef072: Add `infoTooltip`, `infoTooltipAriaLabel`, and the `skeleton` Input variant, refine Dhivehi (`:lang(dv)`) input typography so field content remains inside the box across sizes, and align Input color tokens and validation/readonly states with the design system.
+- ad3757e: Replace `SegmentedTabs` with underlined `Tabs` navigation: bottom border, animated selection indicator, optional `leading`/`trailing` slots, and `overflowItems` with a "More" dropdown (`TabsOverflow`). Move the previous pill/segmented pattern to `@tradenetcorp/veli-ui/page-tab` as `PageTab`.
+
+  **Breaking:** `SegmentedTabs`, `SegmentedTabsItem`, and `SegmentedTabsProps` are removed from `@tradenetcorp/veli-ui/tabs`. Use `Tabs`/`TabsItem`/`TabsProps` for underlined tabs, or `PageTab` from `@tradenetcorp/veli-ui/page-tab` to keep the segmented style. `isCentered` is removed from `Tabs` (still available on `PageTab`).
+
+### Patch Changes
+
+- 8cd3dc9: Add Accordion component built on React Aria `DisclosureGroup`, exported from `@tradenetcorp/veli-ui/accordion`. Support compound composition (`AccordionItem`, `AccordionHeader`, `AccordionPanel`) and a data-driven `items` prop, with `size` (`md`, `lg`), `alignment` (`left`, `right`), and `flushed` variants, skeleton loading via `isSkeleton`, and dedicated accordion design tokens for hover, pressed, and focus states.
+- b0e47af: Align Breadcrumbs with Figma: refresh item, link, current-page, and overflow styling with dedicated breadcrumb design tokens and updated spacing. Add `BreadcrumbBackLink` and `Breadcrumbs` back-link props (`showBackLink`, `backLinkLabel`, `backLinkHref`, and related link attributes) for the caret back treatment with a trailing divider, replacing manual accent-tone first crumbs.
+- 753bf50: Align Calendar and DatePicker with Figma: refresh calendar styling with dedicated calendar design tokens, add month/year header controls with a year picker dropdown, optional Today button (`showTodayButton`, `todayButtonLabel`), today-dot indicator, and a new `RangeCalendar` export with range-selection styling. Rework DatePicker to use a field trigger button that displays a formatted value (`placeholder`, `variant`, `size`, `granularity`, `hourCycle`) instead of inline date segments; remove `calendarButtonLabel`. Add shared field trigger/header utilities and `formatDatePickerValue` for consistent date display.
+- 0a47ba3: Align Menu with Figma: refresh popover, item, section, and separator styling with dedicated menu design tokens. Rename `MenuItem` `tone` to `sentiment`, remove the `MenuPopover` `size` prop in favor of content-driven width, add selection check indicators via React Aria `selectionMode`/`selectedKeys`, expose `closeOnSelect` on `MenuItem`, and add `size` variants to section titles. Update item layout for icons, descriptions, and keyboard shortcuts using the React Aria `Keyboard` component.
+- 1223e0c: Align Button icon sizing and spacing with Figma, remove reserved border width, and fix primary/danger fill plus primary ghost text colors for dark mode consistency.
+- 8ec8946: Polish ComboBox RTL and Dhivehi support with localized tooltip header props, Dhivehi field metrics, corrected validation states, portalled dropdown direction, and visible selected-option indicators.
+- 11a26ea: Add Select info tooltip support and improve Dhivehi RTL behavior so trigger, dropdown, option, section, helper, and error text use the active language typography and corrected vertical field metrics in Storybook and popovers.
+- 56b8b9e: Align Tooltip with Figma: add `size` (`sm`/`lg`) and `tone` (`primary`/`secondary`) variants, style surfaces with dedicated tooltip tokens, and show placement-aware caret arrows on large tooltips only. Small tooltips drop the arrow and use a tighter anchor offset.
+
 ## 0.1.1
 
 ### Patch Changes
