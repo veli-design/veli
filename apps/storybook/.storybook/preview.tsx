@@ -23,11 +23,7 @@ const withVeliProvider: Decorator = (Story, context) => {
 
   return (
     <StorybookThemeRoot colorScheme={theme}>
-      <VeliProvider
-        language={language}
-        colorScheme={theme}
-        className="min-h-screen bg-bg-surface-base text-text-default-default"
-      >
+      <VeliProvider language={language} colorScheme={theme} className="text-text-default-default">
         <Story />
       </VeliProvider>
     </StorybookThemeRoot>

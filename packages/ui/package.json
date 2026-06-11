@@ -9,6 +9,10 @@
   ],
   "exports": {
     "./tailwind": "./tailwind.css",
+    "./accordion": {
+      "types": "./dist/accordion.d.ts",
+      "import": "./dist/accordion.js"
+    },
     "./breadcrumbs": {
       "types": "./dist/breadcrumbs.d.ts",
       "import": "./dist/breadcrumbs.js"
@@ -80,6 +84,10 @@
     "./tags": {
       "types": "./dist/tags.d.ts",
       "import": "./dist/tags.js"
+    },
+    "./page-tab": {
+      "types": "./dist/page-tab.d.ts",
+      "import": "./dist/page-tab.js"
     },
     "./tabs": {
       "types": "./dist/tabs.d.ts",
