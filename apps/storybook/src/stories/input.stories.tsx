@@ -29,7 +29,9 @@ const dhivehiFormText = {
   input: {
     enterValue: 'ވެލިއުއެއް ލިޔުއްވާ',
     disabledValue: 'ބޭނުންނުކުރެވޭ ވެލިއު',
+    lockedValue: 'ލޮކްޑް ވެލިއު',
     helperTextHidden: 'ސައްޙަނޫން ހާލަތެއްގައި މި އެހީތެރިވެދޭ ލިޔުން ނުފެންނާނެއެވެ.',
+    errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
     infoTip: 'މި ފީލްޑަށް ބޭނުންވާ މަޢުލޫމާތު ބަލާ ލިޔުއްވާ.',
     infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
     usesRootWidth: 'ރޫޓް ވިޑްތު ބޭނުންކުރޭ',
@@ -55,7 +57,9 @@ const enFormText = {
   input: {
     enterValue: 'Enter value',
     disabledValue: 'Disabled value',
+    lockedValue: 'Locked value',
     helperTextHidden: 'This helper text is hidden while invalid.',
+    errorMessage: 'This field needs attention.',
     infoTip: 'Use this field for the requested supporting information.',
     infoTipLabel: 'More information',
     usesRootWidth: 'Uses the root width',
@@ -487,13 +491,12 @@ export const ValidationStates: Story = {
             label={text.core.default}
             placeholder={text.input.enterValue}
             description={text.core.helperText}
-            startContent={<MagnifyingGlass size={16} />}
           />
           <Input
             label={text.core.invalid}
             placeholder={text.input.enterValue}
             isInvalid
-            errorMessage="This field needs attention."
+            errorMessage={text.input.errorMessage}
           />
           <Input
             label={text.core.invalidWithoutMessage}
@@ -505,12 +508,11 @@ export const ValidationStates: Story = {
             label={text.core.disabled}
             placeholder={text.input.disabledValue}
             isDisabled
-            startAddon={<MagnifyingGlass size={16} />}
             endAddon={<ArrowRight size={16} />}
           />
           <Input
             label={text.core.readOnly}
-            defaultValue="Locked value"
+            defaultValue={text.input.lockedValue}
             isReadOnly
             endContent={<CaretDown size={16} />}
           />
@@ -524,14 +526,13 @@ export const ValidationStates: Story = {
             label={text.core.default}
             placeholder={text.input.enterValue}
             description={text.core.helperText}
-            startContent={<MagnifyingGlass size={16} />}
           />
           <Input
             variant="outline"
             label={text.core.invalid}
             placeholder={text.input.enterValue}
             isInvalid
-            errorMessage="This field needs attention."
+            errorMessage={text.input.errorMessage}
           />
           <Input
             variant="outline"
@@ -545,13 +546,12 @@ export const ValidationStates: Story = {
             label={text.core.disabled}
             placeholder={text.input.disabledValue}
             isDisabled
-            startAddon={<MagnifyingGlass size={16} />}
             endAddon={<ArrowRight size={16} />}
           />
           <Input
             variant="outline"
             label={text.core.readOnly}
-            defaultValue="Locked value"
+            defaultValue={text.input.lockedValue}
             isReadOnly
             endContent={<CaretDown size={16} />}
           />

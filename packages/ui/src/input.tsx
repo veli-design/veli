@@ -26,7 +26,7 @@ import { twMerge } from 'tailwind-merge';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const headerLabelVariants = cva('type-body-sm-regular', {
+const headerLabelVariants = cva('type-body-sm-medium', {
   variants: {
     isDisabled: {
       true: 'text-text-disabled-disabled',
@@ -63,7 +63,7 @@ const headerMetaVariants = cva('type-caption-regular', {
 });
 
 const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -90,13 +90,12 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-base',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       variant: {
         default: '',
-        outline:
-          'border hover:border-[1.5px] focus-within:border-2 focus-within:hover:border-2 has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+        outline: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -129,7 +128,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-gray-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} after:bg-text-input-stroke-default bg-gray-alpha-100`,
       },
       {
         variant: 'default',
@@ -140,7 +139,7 @@ const fieldShellVariants = cva(
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
@@ -160,33 +159,32 @@ const fieldShellVariants = cva(
         isInvalid: false,
         isReadOnly: false,
         className:
-          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:bg-text-input-bg-default has-[input[data-focus-visible]]:hover:bg-text-input-bg-default',
+          'border border-text-input-stroke-default bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
       },
       {
         variant: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className:
-          'border-text-input-stroke-default bg-gray-alpha-100 hover:border-text-input-stroke-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:bg-gray-alpha-100 has-[input[data-focus-visible]]:hover:bg-gray-alpha-100',
+        className: 'bg-gray-alpha-100',
       },
       {
         variant: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border border-text-input-stroke-disabled bg-gray-alpha-200',
       },
       {
         variant: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border border-text-input-stroke-error bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg-default',
       },
       {
         variant: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border-text-input-stroke-disabled',
+        className: 'border border-text-input-stroke-disabled',
       },
       {
         variant: 'outline',
@@ -245,7 +243,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
