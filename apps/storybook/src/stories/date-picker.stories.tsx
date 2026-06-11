@@ -17,7 +17,7 @@ const disabledRanges = [
 ] as const;
 
 const appointmentUnavailable = (date: DateValue) =>
-  isWeekend(date, 'en-US') ||
+  isWeekend(date, 'en-GB') ||
   disabledRanges.some(([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0);
 
 const meta = {
@@ -27,9 +27,41 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'outline'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+    isDisabled: {
+      control: 'boolean',
+    },
+    isReadOnly: {
+      control: 'boolean',
+    },
+    isRequired: {
+      control: 'boolean',
+    },
+    isInvalid: {
+      control: 'boolean',
+    },
+    showRequiredIndicator: {
+      control: 'boolean',
+    },
+    placeholder: {
+      control: 'text',
+    },
+  },
   args: {
     label: 'Appointment date',
-    description: 'Choose a date from the field or the calendar popover.',
+    description: 'Choose a date from the calendar popover.',
+    placeholder: 'Select date',
+    variant: 'default',
+    size: 'md',
+    showRequiredIndicator: true,
   },
 } satisfies Meta<typeof DatePicker>;
 
@@ -40,6 +72,115 @@ export const Default: Story = {
   render: (args) => (
     <div className="w-[320px]">
       <DatePicker {...args} />
+    </div>
+  ),
+};
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+  },
+  render: (args) => (
+    <div className="w-[320px]">
+      <DatePicker {...args} />
+    </div>
+  ),
+};
+
+export const PlaceholderAndSelected: Story = {
+  render: () => (
+    <div className="grid w-[320px] gap-4">
+      <DatePicker label="No date selected" placeholder="Select date" />
+      <DatePicker label="Date selected" defaultValue={parseDate('2025-04-05')} />
+    </div>
+  ),
+};
+
+/**
+ * Showcases all size and variant combinations of the DatePicker component.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Default
+        </span>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <DatePicker
+            size="sm"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <DatePicker
+            size="md"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <DatePicker
+            size="lg"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-8">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          Outline
+        </span>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Small (sm)
+          </span>
+          <DatePicker
+            size="sm"
+            variant="outline"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Medium (md)
+          </span>
+          <DatePicker
+            size="md"
+            variant="outline"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            Large (lg)
+          </span>
+          <DatePicker
+            size="lg"
+            variant="outline"
+            label="Appointment date"
+            defaultValue={parseDate('2026-04-18')}
+            description="Helper text"
+          />
+        </div>
+      </div>
     </div>
   ),
 };

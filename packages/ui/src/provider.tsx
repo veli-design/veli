@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 const veliLanguageConfigs = {
   en: {
     language: 'en',
-    locale: 'en-US',
+    locale: 'en-GB',
     lang: 'en',
     direction: 'ltr',
   },
