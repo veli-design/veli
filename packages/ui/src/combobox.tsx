@@ -31,6 +31,7 @@ import {
   FieldMessage,
 } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
+import { useVeliLanguage } from './provider';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -83,7 +84,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-base has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-base',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       variant: {
@@ -125,7 +126,7 @@ const fieldShellVariants = cva(
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
@@ -186,7 +187,7 @@ const fieldShellVariants = cva(
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
+          'border-2 border-text-input-stroke-error bg-text-input-bg-default hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
       },
     ],
     defaultVariants: {
@@ -212,13 +213,13 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
       },
     },
     defaultVariants: {
@@ -265,23 +266,60 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-left type-body-sm-regular text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong',
+  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
 );
 
-const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-12-medium text-text-default-muted');
+const itemLabelVariants = cva(
+  'truncate type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5',
+);
+
+const itemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
+
+const itemSelectionIndicatorVariants = cva(
+  'shrink-0 text-text-primary-muted [&:lang(dv)]:-translate-y-1',
+);
+
+const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-medium text-text-default-muted');
 
 const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-text-default-subtle');
 
+function CheckIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="size-4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.5 8.25L6.5 11.25L12.5 5.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export interface ComboBoxItemProps<T extends object = object> extends Omit<
   AriaListBoxItemProps<T>,
-  'className'
+  'className' | 'children'
 > {
   className?: string;
+  children?: AriaListBoxItemProps<T>['children'];
+  description?: React.ReactNode;
+  startContent?: React.ReactNode;
+  endContent?: React.ReactNode;
 }
 
 export function ComboBoxItem<T extends object = object>({
   className,
   children,
+  description,
+  startContent,
+  endContent,
   textValue,
   'aria-label': ariaLabel,
   ...props
@@ -304,7 +342,29 @@ export function ComboBoxItem<T extends object = object>({
       textValue={resolvedTextValue}
       className={twMerge(itemVariants(), className)}
     >
-      {children}
+      {(renderProps) => {
+        const renderedChildren = typeof children === 'function' ? children(renderProps) : children;
+
+        return (
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            {startContent ? (
+              <span className="shrink-0 text-text-default-subtle">{startContent}</span>
+            ) : null}
+            <div className="min-w-0 flex-1">
+              {renderedChildren ? (
+                <div className={itemLabelVariants()}>{renderedChildren}</div>
+              ) : null}
+              {description ? <div className={itemDescriptionVariants()}>{description}</div> : null}
+            </div>
+            {endContent ? <span className="shrink-0">{endContent}</span> : null}
+            {renderProps.isSelected ? (
+              <span className={itemSelectionIndicatorVariants()}>
+                <CheckIcon />
+              </span>
+            ) : null}
+          </div>
+        );
+      }}
     </ListBoxItem>
   );
 }
@@ -385,6 +445,7 @@ function ComboBoxInner<T extends object>(
   const resolvedInputRef = inputRef ?? forwardedRef;
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
+  const languageConfig = useVeliLanguage();
 
   React.useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -476,6 +537,8 @@ function ComboBoxInner<T extends object>(
             offset={4}
             placement="bottom start"
             triggerRef={shellRef}
+            lang={languageConfig.lang}
+            dir={languageConfig.direction}
             style={
               triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
             }
