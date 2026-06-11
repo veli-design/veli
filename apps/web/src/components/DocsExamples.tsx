@@ -528,8 +528,9 @@ export function ComboBoxExplorationDemo() {
       <ComboBox
         label="Location"
         labelSupplementary="(Optional)"
+        infoTooltip="Use this combobox to search and choose a matching option."
+        infoTooltipAriaLabel="More information"
         action="Browse"
-        labelIcon={<Info size={12} />}
         description="Choose a service location or enter a custom value."
         placeholder="Search location"
         allowsCustomValue
@@ -540,7 +541,7 @@ export function ComboBoxExplorationDemo() {
         <ComboBoxSection title="Popular">
           <ComboBoxItem id="male">
             <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+              <span aria-hidden="true" className="type-caption-medium text-text-default-subtle">
                 MLE
               </span>
               <span>Male'</span>

@@ -60,6 +60,8 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 | :---------------------- | :---------- | :-------------------- | :------------------------------------------------------------------------------------------- |
 | `label`                 | `ReactNode` | -                     | Visible label content rendered with React Aria's `Label`.                                    |
 | `labelSupplementary`    | `ReactNode` | -                     | Inline helper copy beside the label, for cases like `(Optional)`.                            |
+| `infoTooltip`           | `ReactNode` | -                     | Optional tooltip content displayed from a small info icon in the header.                     |
+| `infoTooltipAriaLabel`  | `string`    | Localized string      | Accessible label for the tooltip trigger button.                                             |
 | `labelIcon`             | `ReactNode` | -                     | Small icon placed after the label content.                                                   |
 | `action`                | `ReactNode` | -                     | Right-aligned header content, suitable for an inline action.                                 |
 | `description`           | `ReactNode` | -                     | Helper text shown beneath the field when not invalid.                                        |
@@ -75,3 +77,5 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 All other `react-aria-components` `ComboBox` props are supported, excluding `style` and direct child composition overrides on the root wrapper.
 
 `className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.
+
+For Dhivehi (`lang="dv"`) comboboxes, the field text, placeholder, dropdown, options, and section labels inherit the active language and direction. ComboBox also applies internal Dhivehi field metrics to keep the typed value and placeholder visually centered across sizes.
