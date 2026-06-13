@@ -122,7 +122,7 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: {
+    intent: {
       control: 'select',
       options: ['default', 'secondary'],
     },
@@ -143,7 +143,7 @@ const meta = {
   },
   args: {
     children: linkText.en.argsChildren,
-    variant: 'default',
+    intent: 'default',
     size: 'md',
     underline: 'hover',
     href: '#',
@@ -214,34 +214,34 @@ export const AllVariants: Story = {
 
         <div className="text-sm font-medium">{text.defaultHeader}</div>
         <div className="flex justify-center">
-          <Link variant="default" underline="none">
+          <Link intent="default" underline="none">
             {linkTextValue}
           </Link>
         </div>
         <div className="flex justify-center">
-          <Link variant="default" underline="hover">
+          <Link intent="default" underline="hover">
             {linkTextValue}
           </Link>
         </div>
         <div className="flex justify-center">
-          <Link variant="default" underline="always">
+          <Link intent="default" underline="always">
             {linkTextValue}
           </Link>
         </div>
 
         <div className="text-sm font-medium">{text.secondaryHeader}</div>
         <div className="flex justify-center">
-          <Link variant="secondary" underline="none">
+          <Link intent="secondary" underline="none">
             {linkTextValue}
           </Link>
         </div>
         <div className="flex justify-center">
-          <Link variant="secondary" underline="hover">
+          <Link intent="secondary" underline="hover">
             {linkTextValue}
           </Link>
         </div>
         <div className="flex justify-center">
-          <Link variant="secondary" underline="always">
+          <Link intent="secondary" underline="always">
             {linkTextValue}
           </Link>
         </div>

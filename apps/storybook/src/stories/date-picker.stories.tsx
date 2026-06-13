@@ -28,7 +28,7 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: {
+    appearance: {
       control: 'select',
       options: ['default', 'outline'],
     },
@@ -59,7 +59,7 @@ const meta = {
     label: 'Appointment date',
     description: 'Choose a date from the calendar popover.',
     placeholder: 'Select date',
-    variant: 'default',
+    appearance: 'default',
     size: 'md',
     showRequiredIndicator: true,
   },
@@ -78,7 +78,7 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: (args) => (
     <div className="w-[320px]">
@@ -97,7 +97,7 @@ export const PlaceholderAndSelected: Story = {
 };
 
 /**
- * Showcases all size and variant combinations of the DatePicker component.
+ * Showcases all size and appearance combinations of the DatePicker component.
  */
 export const Sizes: Story = {
   render: () => (
@@ -150,7 +150,7 @@ export const Sizes: Story = {
           </span>
           <DatePicker
             size="sm"
-            variant="outline"
+            appearance="outline"
             label="Appointment date"
             defaultValue={parseDate('2026-04-18')}
             description="Helper text"
@@ -162,7 +162,7 @@ export const Sizes: Story = {
           </span>
           <DatePicker
             size="md"
-            variant="outline"
+            appearance="outline"
             label="Appointment date"
             defaultValue={parseDate('2026-04-18')}
             description="Helper text"
@@ -174,7 +174,7 @@ export const Sizes: Story = {
           </span>
           <DatePicker
             size="lg"
-            variant="outline"
+            appearance="outline"
             label="Appointment date"
             defaultValue={parseDate('2026-04-18')}
             description="Helper text"

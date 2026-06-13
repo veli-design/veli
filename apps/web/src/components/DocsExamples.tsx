@@ -256,35 +256,35 @@ export function ButtonVariantsDemo() {
       <div className="text-xs font-bold uppercase text-text-default-muted">Ghost</div>
 
       <div className="text-sm font-medium">Primary</div>
-      <Button variant="primary" style="fill">
+      <Button intent="primary" appearance="fill">
         Button
       </Button>
-      <Button variant="primary" style="transparent">
+      <Button intent="primary" appearance="transparent">
         Button
       </Button>
-      <Button variant="primary" style="ghost">
+      <Button intent="primary" appearance="ghost">
         Button
       </Button>
 
       <div className="text-sm font-medium">Secondary</div>
-      <Button variant="secondary" style="fill">
+      <Button intent="secondary" appearance="fill">
         Button
       </Button>
-      <Button variant="secondary" style="transparent">
+      <Button intent="secondary" appearance="transparent">
         Button
       </Button>
-      <Button variant="secondary" style="ghost">
+      <Button intent="secondary" appearance="ghost">
         Button
       </Button>
 
       <div className="text-sm font-medium">Danger</div>
-      <Button variant="danger" style="fill">
+      <Button intent="danger" appearance="fill">
         Button
       </Button>
-      <Button variant="danger" style="transparent">
+      <Button intent="danger" appearance="transparent">
         Button
       </Button>
-      <Button variant="danger" style="ghost">
+      <Button intent="danger" appearance="ghost">
         Button
       </Button>
     </div>
@@ -298,11 +298,11 @@ export function ButtonIconsDemo() {
         <Plus size={20} weight="bold" />
         XL Button
       </Button>
-      <Button size="lg" variant="secondary" style="transparent">
+      <Button size="lg" intent="secondary" appearance="transparent">
         <DownloadSimple size={20} weight="bold" />
         LG Button
       </Button>
-      <Button size="md" variant="danger" style="ghost">
+      <Button size="md" intent="danger" appearance="ghost">
         <Trash size={16} weight="bold" />
         MD Button
       </Button>
@@ -320,10 +320,16 @@ export function ButtonIconOnlyDemo() {
       <Button size="xl" iconOnly aria-label="Add item">
         <Plus size={24} weight="bold" />
       </Button>
-      <Button size="lg" variant="secondary" style="transparent" iconOnly aria-label="Download file">
+      <Button
+        size="lg"
+        intent="secondary"
+        appearance="transparent"
+        iconOnly
+        aria-label="Download file"
+      >
         <DownloadSimple size={20} weight="bold" />
       </Button>
-      <Button size="md" variant="danger" style="ghost" iconOnly aria-label="Delete item">
+      <Button size="md" intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
         <Trash size={16} weight="bold" />
       </Button>
       <Button size="sm" iconOnly isLoading aria-label="Saving">
@@ -352,12 +358,12 @@ export function ButtonLoadingDemo() {
 export function ButtonSeaglassDemo() {
   return (
     <div className="flex gap-4 items-center flex-wrap">
-      <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+      <Button intent="primary" appearance="fill" size="xl" seaglass>
         <Plus size={20} weight="bold" />
         Label
         <ArrowRight size={20} weight="bold" />
       </Button>
-      <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
+      <Button intent="secondary" appearance="transparent" size="xl" seaglass>
         <Plus size={20} weight="bold" />
         Label
         <ArrowRight size={20} weight="bold" />
@@ -670,34 +676,34 @@ export function LinkVariantsDemo() {
 
       <div className="text-sm font-medium">Default</div>
       <div className="flex justify-center">
-        <Link variant="default" underline="none">
+        <Link intent="default" underline="none">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="default" underline="hover">
+        <Link intent="default" underline="hover">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="default" underline="always">
+        <Link intent="default" underline="always">
           Link
         </Link>
       </div>
 
       <div className="text-sm font-medium">Secondary</div>
       <div className="flex justify-center">
-        <Link variant="secondary" underline="none">
+        <Link intent="secondary" underline="none">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="secondary" underline="hover">
+        <Link intent="secondary" underline="hover">
           Link
         </Link>
       </div>
       <div className="flex justify-center">
-        <Link variant="secondary" underline="always">
+        <Link intent="secondary" underline="always">
           Link
         </Link>
       </div>
@@ -715,7 +721,7 @@ export function LinkIconsDemo() {
         </Link>
       </span>
       <span className="type-body-lg-regular">
-        <Link variant="secondary">
+        <Link intent="secondary">
           <DownloadSimple size={18} weight="bold" />
           LG Link
         </Link>

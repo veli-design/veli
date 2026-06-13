@@ -10,12 +10,12 @@ const buttonVariants = cva(
   'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors focus-visible:outline-none focus-visible:border-border-default-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
   {
     variants: {
-      variant: {
+      intent: {
         primary: '',
         secondary: '',
         danger: '',
       },
-      style: {
+      appearance: {
         fill: 'text-text-default-inverted',
         transparent: '',
         ghost: 'bg-transparent',
@@ -36,58 +36,58 @@ const buttonVariants = cva(
     compoundVariants: [
       // Primary
       {
-        variant: 'primary',
-        style: 'fill',
+        intent: 'primary',
+        appearance: 'fill',
         className:
           'bg-button-primary-default text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'primary',
-        style: 'transparent',
+        intent: 'primary',
+        appearance: 'transparent',
         className:
           'bg-button-primary-subtle-default text-text-primary-muted hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'primary',
-        style: 'ghost',
+        intent: 'primary',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-primary-default hover:bg-button-primary-subtle-default active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       // Secondary
       {
-        variant: 'secondary',
-        style: 'fill',
+        intent: 'secondary',
+        appearance: 'fill',
         className:
           'bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'secondary',
-        style: 'transparent',
+        intent: 'secondary',
+        appearance: 'transparent',
         className:
           'bg-button-secondary-subtle-default text-text-default-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'secondary',
-        style: 'ghost',
+        intent: 'secondary',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-default-default hover:bg-button-secondary-subtle-default active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
       // Danger
       {
-        variant: 'danger',
-        style: 'fill',
+        intent: 'danger',
+        appearance: 'fill',
         className:
           'bg-button-danger-default text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'danger',
-        style: 'transparent',
+        intent: 'danger',
+        appearance: 'transparent',
         className:
           'bg-button-danger-subtle-default text-text-danger-muted hover:bg-button-danger-subtle-hover active:bg-button-danger-subtle-pressed disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled',
       },
       {
-        variant: 'danger',
-        style: 'ghost',
+        intent: 'danger',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-danger-muted hover:bg-button-danger-subtle-default active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-text-disabled-disabled',
       },
@@ -98,8 +98,8 @@ const buttonVariants = cva(
       { size: 'xl', iconOnly: true, className: 'w-15' },
     ],
     defaultVariants: {
-      variant: 'primary',
-      style: 'fill',
+      intent: 'primary',
+      appearance: 'fill',
       size: 'md',
       iconOnly: false,
     },
@@ -113,12 +113,12 @@ const seaglassButtonVariants = cva(
   "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color,transform] duration-[200ms] ease-[cubic-bezier(0.2,1.4,0.4,1)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-border-focus",
   {
     variants: {
-      variant: {
+      intent: {
         primary: '',
         secondary: '',
         danger: '',
       },
-      style: {
+      appearance: {
         fill: '',
         transparent: '',
         ghost: '',
@@ -127,67 +127,67 @@ const seaglassButtonVariants = cva(
     compoundVariants: [
       // Fill
       {
-        variant: 'primary',
-        style: 'fill',
+        intent: 'primary',
+        appearance: 'fill',
         className: `${seaglassFillOverlay} bg-[#0066FF] text-white hover:bg-[#0066FF] active:bg-[#0052CC]`,
       },
       {
-        variant: 'secondary',
-        style: 'fill',
+        intent: 'secondary',
+        appearance: 'fill',
         className: `${seaglassFillOverlay} bg-button-secondary-default text-text-default-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed`,
       },
       {
-        variant: 'danger',
-        style: 'fill',
+        intent: 'danger',
+        appearance: 'fill',
         className: `${seaglassFillOverlay} bg-button-danger-default text-text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
       },
       {
-        style: 'fill',
+        appearance: 'fill',
         className:
           'active:translate-y-px active:scale-[0.985] active:duration-[120ms] active:ease-out',
       },
       // Transparent
       {
-        variant: 'primary',
-        style: 'transparent',
+        intent: 'primary',
+        appearance: 'transparent',
         className:
           'text-text-primary-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.28)_0%,rgba(0,102,255,0)_100%)] before:opacity-80 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-70 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       {
-        variant: 'secondary',
-        style: 'transparent',
+        intent: 'secondary',
+        appearance: 'transparent',
         className:
           'text-text-default-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       {
-        variant: 'danger',
-        style: 'transparent',
+        intent: 'danger',
+        appearance: 'transparent',
         className:
           'text-text-danger-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-76 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-64 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.23)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.32)] disabled:bg-button-disabled-disabled disabled:text-text-disabled-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       // Ghost
       {
-        variant: 'primary',
-        style: 'ghost',
+        intent: 'primary',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-primary-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.24)_0%,rgba(0,102,255,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-84 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
       {
-        variant: 'secondary',
-        style: 'ghost',
+        intent: 'secondary',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-default-default before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
       {
-        variant: 'danger',
-        style: 'ghost',
+        intent: 'danger',
+        appearance: 'ghost',
         className:
           'bg-transparent text-text-danger-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-72 disabled:bg-transparent disabled:text-text-disabled-disabled disabled:before:opacity-0',
       },
     ],
     defaultVariants: {
-      variant: 'primary',
-      style: 'fill',
+      intent: 'primary',
+      appearance: 'fill',
     },
   },
 );
@@ -260,7 +260,7 @@ interface ButtonSharedProps
     Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
-  treatment?: 'basic' | 'seaglass';
+  seaglass?: boolean;
   className?: string;
 }
 
@@ -277,7 +277,7 @@ type StandardButtonProps = ButtonSharedProps & {
 
 export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
 
-type ButtonStyle = NonNullable<ButtonProps['style']>;
+type ButtonAppearance = NonNullable<ButtonProps['appearance']>;
 type SpotlightStyle = React.CSSProperties & {
   '--button-seaglass-radius-x': string;
   '--button-seaglass-radius-y': string;
@@ -335,13 +335,13 @@ function getSeaglassMetrics(width: number, height: number): SeaglassMetrics {
 }
 
 export function Button({
-  variant,
-  style,
+  intent,
+  appearance,
   size,
   children,
   iconOnly,
   isLoading,
-  treatment = 'basic',
+  seaglass = false,
   isDisabled,
   className,
   onMouseEnter,
@@ -358,9 +358,9 @@ export function Button({
   const isLoadingOnly = Boolean(isLoading && !children);
   const isIconOnly = Boolean(iconOnly);
   const hasButtonAccessibleName = hasAccessibleName(props);
-  const resolvedVariant = variant ?? 'primary';
-  const resolvedStyle: ButtonStyle = style ?? 'fill';
-  const showSpotlight = treatment === 'seaglass' && !isDisabled && !isLoading;
+  const resolvedIntent = intent ?? 'primary';
+  const resolvedAppearance: ButtonAppearance = appearance ?? 'fill';
+  const showSpotlight = seaglass && !isDisabled && !isLoading;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const spotlightFrameRef = React.useRef<number | null>(null);
   const spotlightAnimationFrameRef = React.useRef<number | null>(null);
@@ -498,7 +498,7 @@ export function Button({
   );
 
   React.useEffect(() => {
-    if (treatment !== 'seaglass' || !buttonRef.current) {
+    if (!seaglass || !buttonRef.current) {
       return undefined;
     }
 
@@ -523,7 +523,7 @@ export function Button({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [treatment]);
+  }, [seaglass]);
 
   React.useEffect(() => {
     if (showSpotlight) {
@@ -626,9 +626,14 @@ export function Button({
   };
 
   const resolvedClassName = twMerge(
-    buttonVariants({ variant: resolvedVariant, style: resolvedStyle, size, iconOnly: isIconOnly }),
-    treatment === 'seaglass'
-      ? seaglassButtonVariants({ variant: resolvedVariant, style: resolvedStyle })
+    buttonVariants({
+      intent: resolvedIntent,
+      appearance: resolvedAppearance,
+      size,
+      iconOnly: isIconOnly,
+    }),
+    seaglass
+      ? seaglassButtonVariants({ intent: resolvedIntent, appearance: resolvedAppearance })
       : undefined,
     isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
     className,

@@ -10,7 +10,7 @@ import { twMerge } from 'tailwind-merge';
 
 const dividerColorVariants = cva('', {
   variants: {
-    variant: {
+    appearance: {
       subtle: 'border-border-default-subtle',
       muted: 'border-border-default-muted',
       strong: 'border-border-default-strong',
@@ -18,13 +18,13 @@ const dividerColorVariants = cva('', {
     },
   },
   defaultVariants: {
-    variant: 'subtle',
+    appearance: 'subtle',
   },
 });
 
 const dividerLineVariants = cva('min-w-0 flex-1 border-0 border-t', {
   variants: {
-    variant: {
+    appearance: {
       subtle: 'border-border-default-subtle',
       muted: 'border-border-default-muted',
       strong: 'border-border-default-strong',
@@ -32,7 +32,7 @@ const dividerLineVariants = cva('min-w-0 flex-1 border-0 border-t', {
     },
   },
   defaultVariants: {
-    variant: 'subtle',
+    appearance: 'subtle',
   },
 });
 
@@ -59,7 +59,7 @@ export interface DividerProps
 export function Divider({
   className,
   orientation = 'horizontal',
-  variant = 'subtle',
+  appearance = 'subtle',
   text,
   ...props
 }: DividerProps) {
@@ -73,14 +73,14 @@ export function Divider({
           orientation="horizontal"
           elementType="div"
           aria-hidden
-          className={dividerLineVariants({ variant })}
+          className={dividerLineVariants({ appearance })}
         />
         <span className="shrink-0 px-2.5 type-body-sm-regular text-text-default-muted">{text}</span>
         <AriaSeparator
           orientation="horizontal"
           elementType="div"
           aria-hidden
-          className={dividerLineVariants({ variant })}
+          className={dividerLineVariants({ appearance })}
         />
       </div>
     );
@@ -93,7 +93,7 @@ export function Divider({
       elementType={orientation === 'horizontal' ? 'div' : undefined}
       className={twMerge(
         dividerVariants({ orientation }),
-        dividerColorVariants({ variant }),
+        dividerColorVariants({ appearance }),
         className,
       )}
     />

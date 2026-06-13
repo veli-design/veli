@@ -121,7 +121,7 @@ const fieldShellVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         outline: '',
         skeleton: '',
@@ -146,44 +146,44 @@ const fieldShellVariants = cva(
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isInvalid: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
         className: 'bg-gray-alpha-200',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
@@ -191,39 +191,39 @@ const fieldShellVariants = cva(
           'border border-text-input-stroke-default bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         className: 'border border-text-input-stroke-disabled bg-gray-alpha-200',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
           'border border-text-input-stroke-error bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg-default',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
         className: 'border border-text-input-stroke-disabled',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
         className: 'bg-gray-alpha-200',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,
@@ -358,7 +358,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     endContent,
     endAddon,
     className,
-    variant = 'default',
+    appearance = 'default',
     size = 'md',
     autoCapitalize,
     autoComplete,
@@ -388,7 +388,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   );
   const hasSkeletonFooter = Boolean(description || errorMessage);
 
-  if (variant === 'skeleton') {
+  if (appearance === 'skeleton') {
     return (
       <div className={twMerge(inputSkeletonRootVariants(), className)} aria-hidden="true">
         {hasSkeletonHeader ? (
@@ -458,7 +458,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
           <Group
             className={fieldShellVariants({
-              variant,
+              appearance,
               size,
               isDisabled,
               isInvalid,

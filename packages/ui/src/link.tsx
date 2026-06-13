@@ -9,7 +9,7 @@ const linkVariants = cva(
   'inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
-      variant: {
+      intent: {
         default: '',
         secondary: '',
       },
@@ -46,39 +46,39 @@ const linkVariants = cva(
       },
       // Default States
       {
-        variant: 'default',
+        intent: 'default',
         isDisabled: false,
         className: 'text-text-links-default',
       },
       {
-        variant: 'default',
+        intent: 'default',
         isHovered: true,
         className: 'text-text-links-hover',
       },
       {
-        variant: 'default',
+        intent: 'default',
         isPressed: true,
         className: 'text-text-links-hover',
       },
       // Secondary States
       {
-        variant: 'secondary',
+        intent: 'secondary',
         isDisabled: false,
         className: 'text-text-default-default',
       },
       {
-        variant: 'secondary',
+        intent: 'secondary',
         isHovered: true,
         className: 'text-text-default-muted',
       },
       {
-        variant: 'secondary',
+        intent: 'secondary',
         isPressed: true,
         className: 'text-text-default-muted',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      intent: 'default',
       size: 'md',
       underline: 'none',
     },
@@ -97,7 +97,7 @@ export interface LinkProps
  * Built on top of react-aria-components for maximum accessibility.
  */
 export function Link({
-  variant,
+  intent,
   size,
   underline,
   isHovered: forcedHover,
@@ -116,7 +116,7 @@ export function Link({
 
         return twMerge(
           linkVariants({
-            variant,
+            intent,
             size,
             underline,
             isHovered: isDisabled ? false : (forcedHover ?? state.isHovered),

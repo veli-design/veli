@@ -59,7 +59,7 @@ export function DatePicker<T extends DateValue>({
   inputClassName,
   popoverClassName,
   calendarClassName,
-  variant = 'default',
+  appearance = 'default',
   size = 'md',
   granularity = 'day',
   hourCycle,
@@ -108,7 +108,7 @@ export function DatePicker<T extends DateValue>({
               slot="button"
               className={twMerge(
                 fieldTriggerButtonVariants({
-                  variant,
+                  appearance,
                   size,
                   isDisabled,
                   isInvalid,

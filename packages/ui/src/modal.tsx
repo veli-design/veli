@@ -131,8 +131,8 @@ export function Modal({
                   {showCloseButton ? (
                     <Button
                       onPress={close}
-                      variant="secondary"
-                      style="ghost"
+                      intent="secondary"
+                      appearance="ghost"
                       size="xs"
                       iconOnly
                       aria-label={closeButtonLabel}

@@ -102,8 +102,8 @@ function CalendarPickerSelect({
     >
       <span className={calendarHeaderMonthLabelClassName}>{selectedLabel}</span>
       <Button
-        variant="secondary"
-        style="ghost"
+        intent="secondary"
+        appearance="ghost"
         size="sm"
         iconOnly
         aria-label={ariaLabel}
@@ -370,8 +370,8 @@ function CalendarTodayButton({ label }: { label: string }) {
     <div className="border-t border-border-default-subtle px-0.5 pt-1">
       <Button
         slot={null}
-        variant="primary"
-        style="ghost"
+        intent="primary"
+        appearance="ghost"
         size="sm"
         className="w-full"
         isDisabled={isTodayButtonDisabled}
@@ -408,8 +408,8 @@ export function CalendarHeader() {
       <div className={twMerge(calendarHeaderControlClassName, 'min-w-0 flex-1 gap-0.5 px-1 py-1')}>
         <Button
           slot="previous"
-          variant="secondary"
-          style="ghost"
+          intent="secondary"
+          appearance="ghost"
           size="sm"
           iconOnly
           aria-label="Previous month"
@@ -420,8 +420,8 @@ export function CalendarHeader() {
         <CalendarMonthLabel className={calendarHeaderMonthLabelClassName} />
         <Button
           slot="next"
-          variant="secondary"
-          style="ghost"
+          intent="secondary"
+          appearance="ghost"
           size="sm"
           iconOnly
           aria-label="Next month"

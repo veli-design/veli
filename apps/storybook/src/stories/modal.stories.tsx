@@ -60,7 +60,7 @@ export const Playground: Story = {
           onOpenChange={setIsOpen}
           footer={
             <>
-              <Button variant="secondary" style="transparent" onPress={() => setIsOpen(false)}>
+              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
                 Cancel
               </Button>
               <Button onPress={() => setIsOpen(false)}>Save changes</Button>
@@ -85,7 +85,7 @@ export const Sizes: Story = {
     return (
       <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-bg-surface-base p-8">
         {sizes.map((size) => (
-          <Button key={size} variant="secondary" onPress={() => setOpenSize(size)}>
+          <Button key={size} intent="secondary" onPress={() => setOpenSize(size)}>
             Open {size.toUpperCase()}
           </Button>
         ))}
@@ -115,7 +115,7 @@ export const NonDismissable: Story = {
 
     return (
       <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
-        <Button variant="danger" onPress={() => setIsOpen(true)}>
+        <Button intent="danger" onPress={() => setIsOpen(true)}>
           Delete project
         </Button>
 
@@ -128,10 +128,10 @@ export const NonDismissable: Story = {
           showCloseButton={false}
           footer={
             <>
-              <Button variant="secondary" style="transparent" onPress={() => setIsOpen(false)}>
+              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
                 Cancel
               </Button>
-              <Button variant="danger" onPress={() => setIsOpen(false)}>
+              <Button intent="danger" onPress={() => setIsOpen(false)}>
                 Delete
               </Button>
             </>

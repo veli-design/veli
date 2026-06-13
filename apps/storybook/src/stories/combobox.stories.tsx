@@ -325,7 +325,7 @@ const meta = {
     errorMessage: {
       control: 'text',
     },
-    variant: {
+    appearance: {
       control: 'select',
       options: ['default', 'outline'],
     },
@@ -428,7 +428,7 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: (args) => {
     const language = useComboBoxLanguage();
@@ -543,7 +543,7 @@ export const Sizes: Story = {
             </span>
             <ComboBox
               size="sm"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.placeholder}
               description={text.helperText}
@@ -558,7 +558,7 @@ export const Sizes: Story = {
             </span>
             <ComboBox
               size="md"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.placeholder}
               description={text.helperText}
@@ -573,7 +573,7 @@ export const Sizes: Story = {
             </span>
             <ComboBox
               size="lg"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.placeholder}
               description={text.helperText}
@@ -783,7 +783,7 @@ export const ValidationStates: Story = {
             Outline
           </span>
           <ComboBox
-            variant="outline"
+            appearance="outline"
             label={text.default}
             placeholder={text.chooseLocation}
             description={text.helperText}
@@ -792,7 +792,7 @@ export const ValidationStates: Story = {
             {renderComboBoxItems}
           </ComboBox>
           <ComboBox
-            variant="outline"
+            appearance="outline"
             label={text.invalid}
             placeholder={text.chooseLocation}
             isInvalid
@@ -802,7 +802,7 @@ export const ValidationStates: Story = {
             {renderComboBoxItems}
           </ComboBox>
           <ComboBox
-            variant="outline"
+            appearance="outline"
             label={text.invalidWithoutMessage}
             placeholder={text.chooseLocation}
             isInvalid
@@ -812,7 +812,7 @@ export const ValidationStates: Story = {
             {renderComboBoxItems}
           </ComboBox>
           <ComboBox
-            variant="outline"
+            appearance="outline"
             label={text.disabled}
             placeholder={text.chooseLocation}
             isDisabled
@@ -821,7 +821,7 @@ export const ValidationStates: Story = {
             {renderComboBoxItems}
           </ComboBox>
           <ComboBox
-            variant="outline"
+            appearance="outline"
             label={text.customValue}
             placeholder={text.placeholder}
             allowsCustomValue
