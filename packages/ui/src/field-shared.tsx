@@ -83,7 +83,7 @@ export const fieldTriggerButtonVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color]',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         outline: 'border hover:border-[1.5px]',
       },
@@ -111,7 +111,7 @@ export const fieldTriggerButtonVariants = cva(
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: false,
@@ -119,26 +119,26 @@ export const fieldTriggerButtonVariants = cva(
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isOpen: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isFocusVisible: false,
@@ -146,27 +146,27 @@ export const fieldTriggerButtonVariants = cva(
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isFocusVisible: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isOpen: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isInvalid: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: false,
@@ -175,7 +175,7 @@ export const fieldTriggerButtonVariants = cva(
           'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: true,
@@ -183,7 +183,7 @@ export const fieldTriggerButtonVariants = cva(
         className: 'border-transparent hover:border-transparent',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: true,
@@ -191,7 +191,7 @@ export const fieldTriggerButtonVariants = cva(
         className: 'border-transparent hover:border-transparent',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: false,
@@ -200,7 +200,7 @@ export const fieldTriggerButtonVariants = cva(
           'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: true,
         isFocusVisible: false,
@@ -209,26 +209,26 @@ export const fieldTriggerButtonVariants = cva(
           'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
           'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
         className: 'border-text-input-stroke-disabled',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,

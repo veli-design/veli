@@ -6,12 +6,12 @@ export function ButtonDemo() {
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Variants</h3>
         <div className="flex gap-3 flex-wrap">
-          <Button variant="primary">Primary</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="secondary" style="transparent">
+          <Button intent="primary">Primary</Button>
+          <Button intent="secondary">Secondary</Button>
+          <Button intent="secondary" appearance="transparent">
             Outline
           </Button>
-          <Button variant="primary" style="ghost">
+          <Button intent="primary" appearance="ghost">
             Ghost
           </Button>
         </div>

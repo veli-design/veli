@@ -286,7 +286,7 @@ const meta = {
     errorMessage: {
       control: 'text',
     },
-    variant: {
+    appearance: {
       control: 'select',
       options: ['default', 'outline', 'skeleton'],
     },
@@ -429,7 +429,7 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: (args) => {
     const language = useInputLanguage();
@@ -537,7 +537,7 @@ export const Sizes: Story = {
             </span>
             <Input
               size="sm"
-              variant="outline"
+              appearance="outline"
               label={text.core.label}
               placeholder={text.core.placeholder}
               description={text.core.helperText}
@@ -549,7 +549,7 @@ export const Sizes: Story = {
             </span>
             <Input
               size="md"
-              variant="outline"
+              appearance="outline"
               label={text.core.label}
               placeholder={text.core.placeholder}
               description={text.core.helperText}
@@ -561,7 +561,7 @@ export const Sizes: Story = {
             </span>
             <Input
               size="lg"
-              variant="outline"
+              appearance="outline"
               label={text.core.label}
               placeholder={text.core.placeholder}
               description={text.core.helperText}
@@ -576,9 +576,9 @@ export const Sizes: Story = {
 export const Skeleton: Story = {
   render: () => (
     <div className="flex w-[320px] flex-col gap-8">
-      <Input variant="skeleton" size="sm" label="Label" description="Helper text" />
-      <Input variant="skeleton" size="md" label="Label" description="Helper text" />
-      <Input variant="skeleton" size="lg" label="Label" description="Helper text" />
+      <Input appearance="skeleton" size="sm" label="Label" description="Helper text" />
+      <Input appearance="skeleton" size="md" label="Label" description="Helper text" />
+      <Input appearance="skeleton" size="lg" label="Label" description="Helper text" />
     </div>
   ),
 };
@@ -681,34 +681,34 @@ export const ValidationStates: Story = {
             Outline
           </span>
           <Input
-            variant="outline"
+            appearance="outline"
             label={text.core.default}
             placeholder={text.input.enterValue}
             description={text.core.helperText}
           />
           <Input
-            variant="outline"
+            appearance="outline"
             label={text.core.invalid}
             placeholder={text.input.enterValue}
             isInvalid
             errorMessage={text.input.errorMessage}
           />
           <Input
-            variant="outline"
+            appearance="outline"
             label={text.core.invalidWithoutMessage}
             placeholder={text.input.enterValue}
             isInvalid
             description={text.input.helperTextHidden}
           />
           <Input
-            variant="outline"
+            appearance="outline"
             label={text.core.disabled}
             placeholder={text.input.disabledValue}
             isDisabled
             endAddon={<ArrowRight size={16} />}
           />
           <Input
-            variant="outline"
+            appearance="outline"
             label={text.core.readOnly}
             defaultValue={text.input.lockedValue}
             isReadOnly

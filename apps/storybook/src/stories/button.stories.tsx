@@ -1250,19 +1250,19 @@ function SeaglassGradientWorkbench() {
           >
             <div className="flex flex-wrap items-center gap-4" style={previewStyle}>
               <Button
-                variant="primary"
-                style="fill"
+                intent="primary"
+                appearance="fill"
                 size="xl"
-                treatment="seaglass"
+                seaglass
                 className={`${previewClassName} justify-center`}
               >
                 {preview.label}
               </Button>
               <Button
-                variant="primary"
-                style="fill"
+                intent="primary"
+                appearance="fill"
                 size="md"
-                treatment="seaglass"
+                seaglass
                 className={`${previewClassName} justify-center`}
               >
                 {preview.label}
@@ -1274,10 +1274,10 @@ function SeaglassGradientWorkbench() {
                 {seaglassColorExamples.map((color) => (
                   <Button
                     key={color.name}
-                    variant="primary"
-                    style="fill"
+                    intent="primary"
+                    appearance="fill"
                     size="lg"
-                    treatment="seaglass"
+                    seaglass
                     className={`min-w-[150px] ${color.buttonClassName}`}
                   >
                     {color.name}
@@ -1543,11 +1543,11 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: {
+    intent: {
       control: 'select',
       options: ['primary', 'secondary', 'danger'],
     },
-    style: {
+    appearance: {
       control: 'select',
       options: ['fill', 'transparent', 'ghost'],
     },
@@ -1567,9 +1567,8 @@ const meta = {
     trailingIcon: {
       control: 'boolean',
     },
-    treatment: {
-      control: 'select',
-      options: ['basic', 'seaglass'],
+    seaglass: {
+      control: 'boolean',
     },
     isDisabled: {
       control: 'boolean',
@@ -1577,13 +1576,13 @@ const meta = {
   },
   args: {
     children: buttonText.en.argsChildren,
-    variant: 'primary',
-    style: 'fill',
+    intent: 'primary',
+    appearance: 'fill',
     size: 'md',
     iconOnly: false,
     leadingIcon: false,
     trailingIcon: false,
-    treatment: 'basic',
+    seaglass: false,
   },
 } satisfies Meta<PreviewArgs>;
 
@@ -1626,35 +1625,35 @@ export const AllVariants: Story = {
         </div>
 
         <div className="text-sm font-medium">Primary</div>
-        <Button variant="primary" style="fill">
+        <Button intent="primary" appearance="fill">
           {text.argsChildren}
         </Button>
-        <Button variant="primary" style="transparent">
+        <Button intent="primary" appearance="transparent">
           {text.argsChildren}
         </Button>
-        <Button variant="primary" style="ghost">
+        <Button intent="primary" appearance="ghost">
           {text.argsChildren}
         </Button>
 
         <div className="text-sm font-medium">Secondary</div>
-        <Button variant="secondary" style="fill">
+        <Button intent="secondary" appearance="fill">
           {text.argsChildren}
         </Button>
-        <Button variant="secondary" style="transparent">
+        <Button intent="secondary" appearance="transparent">
           {text.argsChildren}
         </Button>
-        <Button variant="secondary" style="ghost">
+        <Button intent="secondary" appearance="ghost">
           {text.argsChildren}
         </Button>
 
         <div className="text-sm font-medium">Danger</div>
-        <Button variant="danger" style="fill">
+        <Button intent="danger" appearance="fill">
           {text.argsChildren}
         </Button>
-        <Button variant="danger" style="transparent">
+        <Button intent="danger" appearance="transparent">
           {text.argsChildren}
         </Button>
-        <Button variant="danger" style="ghost">
+        <Button intent="danger" appearance="ghost">
           {text.argsChildren}
         </Button>
       </div>
@@ -1697,7 +1696,7 @@ export const WithIcons: Story = {
 };
 
 /**
- * Icon-only buttons keep the existing variant, style, size, and treatment system,
+ * Icon-only buttons keep the existing intent, appearance, size, and seaglass system,
  * while switching to a square footprint. Provide an accessible label.
  */
 export const IconOnly: Story = {
@@ -1708,21 +1707,28 @@ export const IconOnly: Story = {
       </Button>
       <Button
         {...args}
-        variant="secondary"
-        style="transparent"
+        intent="secondary"
+        appearance="transparent"
         size="lg"
         iconOnly
         aria-label="Download file"
       >
         <DownloadSimple size={20} weight="bold" />
       </Button>
-      <Button {...args} variant="danger" style="ghost" size="md" iconOnly aria-label="Delete item">
+      <Button
+        {...args}
+        intent="danger"
+        appearance="ghost"
+        size="md"
+        iconOnly
+        aria-label="Delete item"
+      >
         <Trash size={16} weight="bold" />
       </Button>
       <Button
         {...args}
-        variant="primary"
-        style="fill"
+        intent="primary"
+        appearance="fill"
         size="sm"
         iconOnly
         isLoading
@@ -1796,8 +1802,8 @@ export const Disabled: Story = {
 };
 
 /**
- * The seaglass treatment mapped onto the existing variant/style matrix.
- * Primary and secondary follow the dedicated Figma button set, while danger is a system-consistent extension behind the same treatment API.
+ * The seaglass treatment mapped onto the existing intent/appearance matrix.
+ * Primary and secondary follow the dedicated Figma button set, while danger is a system-consistent extension behind the same seaglass API.
  */
 export const ExperimentalEnhanced: Story = {
   render: () => {
@@ -1810,7 +1816,7 @@ export const ExperimentalEnhanced: Story = {
             </span>
             <span className="text-sm text-text-default-subtle">
               Primary and secondary mirror the stylized Figma set at XL. Danger extends the same
-              treatment for system consistency.
+              seaglass treatment for system consistency.
             </span>
           </div>
           <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
@@ -1826,35 +1832,35 @@ export const ExperimentalEnhanced: Story = {
             </div>
 
             <div className="text-sm font-medium">Primary</div>
-            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="primary" style="transparent" size="xl" treatment="seaglass">
+            <Button intent="primary" appearance="transparent" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="primary" style="ghost" size="xl" treatment="seaglass">
+            <Button intent="primary" appearance="ghost" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
 
             <div className="text-sm font-medium">Secondary</div>
-            <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
+            <Button intent="secondary" appearance="fill" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="secondary" style="transparent" size="xl" treatment="seaglass">
+            <Button intent="secondary" appearance="transparent" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="secondary" style="ghost" size="xl" treatment="seaglass">
+            <Button intent="secondary" appearance="ghost" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
 
             <div className="text-sm font-medium">Danger</div>
-            <Button variant="danger" style="fill" size="xl" treatment="seaglass">
+            <Button intent="danger" appearance="fill" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="danger" style="transparent" size="xl" treatment="seaglass">
+            <Button intent="danger" appearance="transparent" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
-            <Button variant="danger" style="ghost" size="xl" treatment="seaglass">
+            <Button intent="danger" appearance="ghost" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1869,7 +1875,7 @@ export const ExperimentalEnhanced: Story = {
               <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
                 Primary Default
               </span>
-              <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+              <Button intent="primary" appearance="fill" size="xl" seaglass>
                 <ButtonLabel size="xl" />
               </Button>
             </div>
@@ -1878,11 +1884,11 @@ export const ExperimentalEnhanced: Story = {
                 Primary Loading
               </span>
               <Button
-                variant="primary"
-                style="fill"
+                intent="primary"
+                appearance="fill"
                 size="xl"
                 isLoading
-                treatment="seaglass"
+                seaglass
                 aria-label="Primary loading button"
               />
             </div>
@@ -1890,7 +1896,7 @@ export const ExperimentalEnhanced: Story = {
               <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
                 Primary Disabled
               </span>
-              <Button variant="primary" style="fill" size="xl" isDisabled treatment="seaglass">
+              <Button intent="primary" appearance="fill" size="xl" isDisabled seaglass>
                 <ButtonLabel size="xl" />
               </Button>
             </div>
@@ -1898,7 +1904,7 @@ export const ExperimentalEnhanced: Story = {
               <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
                 Secondary Default
               </span>
-              <Button variant="secondary" style="fill" size="xl" treatment="seaglass">
+              <Button intent="secondary" appearance="fill" size="xl" seaglass>
                 <ButtonLabel size="xl" />
               </Button>
             </div>
@@ -1907,11 +1913,11 @@ export const ExperimentalEnhanced: Story = {
                 Secondary Loading
               </span>
               <Button
-                variant="secondary"
-                style="fill"
+                intent="secondary"
+                appearance="fill"
                 size="xl"
                 isLoading
-                treatment="seaglass"
+                seaglass
                 aria-label="Secondary loading button"
               />
             </div>
@@ -1919,7 +1925,7 @@ export const ExperimentalEnhanced: Story = {
               <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
                 Secondary Disabled
               </span>
-              <Button variant="secondary" style="fill" size="xl" isDisabled treatment="seaglass">
+              <Button intent="secondary" appearance="fill" size="xl" isDisabled seaglass>
                 <ButtonLabel size="xl" />
               </Button>
             </div>
@@ -1931,19 +1937,19 @@ export const ExperimentalEnhanced: Story = {
             Size Adaptation
           </span>
           <div className="flex items-end gap-4 flex-wrap">
-            <Button variant="primary" style="fill" size="xs" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="xs" seaglass>
               <ButtonLabel size="xs" />
             </Button>
-            <Button variant="primary" style="fill" size="sm" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="sm" seaglass>
               <ButtonLabel size="sm" />
             </Button>
-            <Button variant="primary" style="fill" size="md" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="md" seaglass>
               <ButtonLabel size="md" />
             </Button>
-            <Button variant="primary" style="fill" size="lg" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="lg" seaglass>
               <ButtonLabel size="lg" />
             </Button>
-            <Button variant="primary" style="fill" size="xl" treatment="seaglass">
+            <Button intent="primary" appearance="fill" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
           </div>
@@ -1986,10 +1992,10 @@ export const SeaglassColorExamples: Story = {
                 <div className="truncate text-sm font-medium text-gray-900">{color.name}</div>
               </div>
               <Button
-                variant="primary"
-                style="fill"
+                intent="primary"
+                appearance="fill"
                 size="xl"
-                treatment="seaglass"
+                seaglass
                 className={`min-w-[180px] ${color.buttonClassName}`}
               >
                 {text.start}
@@ -2024,10 +2030,10 @@ export const SeaglassResponsiveWidths: Story = {
         ].map((example) => (
           <Button
             key={example.label}
-            variant="primary"
-            style="fill"
+            intent="primary"
+            appearance="fill"
             size="xl"
-            treatment="seaglass"
+            seaglass
             className={`justify-center ${example.className}`}
           >
             {example.label}

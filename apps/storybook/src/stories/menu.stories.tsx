@@ -27,7 +27,7 @@ type MenuPlaygroundItem = {
   label: string;
   description?: string;
   shortcut?: string;
-  sentiment?: 'default' | 'danger';
+  intent?: 'default' | 'danger';
   selected?: boolean;
   disabled?: boolean;
 };
@@ -189,7 +189,7 @@ const defaultPlaygroundItemConfigs = [
   {
     id: 'delete',
     shortcut: 'Del',
-    sentiment: 'danger',
+    intent: 'danger',
   },
 ] as const satisfies readonly Omit<MenuPlaygroundItem, 'label' | 'description'>[];
 
@@ -421,7 +421,7 @@ export const Basic: Story = {
 
     return (
       <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
+        <Button intent="secondary" appearance="transparent" size="sm">
           {text.actions}
           <DotsThree size={16} weight="bold" />
         </Button>
@@ -430,7 +430,7 @@ export const Basic: Story = {
             <MenuItem startIcon={<PencilSimple size={16} />}>{text.edit}</MenuItem>
             <MenuItem startIcon={<DownloadSimple size={16} />}>{text.export}</MenuItem>
             <MenuSeparator />
-            <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
+            <MenuItem intent="danger" startIcon={<Trash size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -487,7 +487,7 @@ export const Default: Story = {
     return (
       <div className="flex flex-col items-start gap-3">
         <MenuTrigger>
-          <Button variant="secondary" style="transparent" size="sm">
+          <Button intent="secondary" appearance="transparent" size="sm">
             {getLocalizedMenuArgText('triggerLabel', args.triggerLabel, language)}
             <DotsThree size={16} weight="bold" />
           </Button>
@@ -503,7 +503,7 @@ export const Default: Story = {
                   key={item.id}
                   id={item.id}
                   size={args.itemSize}
-                  sentiment={item.sentiment ?? 'default'}
+                  intent={item.intent ?? 'default'}
                   description={args.showDescriptions ? item.description : undefined}
                   shortcut={args.showShortcuts ? item.shortcut : undefined}
                   isDisabled={item.disabled}
@@ -540,7 +540,7 @@ export const Sections: Story = {
 
     return (
       <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
+        <Button intent="secondary" appearance="transparent" size="sm">
           {text.openMenu}
         </Button>
         <MenuPopover>
@@ -552,7 +552,7 @@ export const Sections: Story = {
             <MenuSeparator />
             <MenuSection title={text.settings}>
               <MenuItem startIcon={<Gear size={16} />}>{text.preferences}</MenuItem>
-              <MenuItem sentiment="danger" startIcon={<Trash size={16} />}>
+              <MenuItem intent="danger" startIcon={<Trash size={16} />}>
                 {text.removeFile}
               </MenuItem>
             </MenuSection>
@@ -572,7 +572,7 @@ export const WithSubitems: Story = {
 
     return (
       <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
+        <Button intent="secondary" appearance="transparent" size="sm">
           {text.openNestedMenu}
         </Button>
         <MenuPopover>
@@ -604,7 +604,7 @@ export const WithSubitems: Story = {
             </MenuSubmenuTrigger>
 
             <MenuSeparator />
-            <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
+            <MenuItem id="delete" intent="danger" startIcon={<Trash size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -623,7 +623,7 @@ export const Sentiment: Story = {
 
     return (
       <MenuTrigger>
-        <Button variant="secondary" style="transparent" size="sm">
+        <Button intent="secondary" appearance="transparent" size="sm">
           {text.actions}
         </Button>
         <MenuPopover>
@@ -635,7 +635,7 @@ export const Sentiment: Story = {
               {text.download}
             </MenuItem>
             <MenuSeparator />
-            <MenuItem id="delete" sentiment="danger" startIcon={<Trash size={16} />}>
+            <MenuItem id="delete" intent="danger" startIcon={<Trash size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -680,7 +680,7 @@ export const Checked: Story = {
             {text.singleClosesOnSelect}
           </p>
           <MenuTrigger>
-            <Button variant="secondary" style="transparent" size="sm">
+            <Button intent="secondary" appearance="transparent" size="sm">
               {text.sortBy}
             </Button>
             <MenuPopover>
@@ -706,7 +706,7 @@ export const Checked: Story = {
         <div className="flex min-w-0 flex-col items-start gap-2">
           <p className="type-caption-medium text-text-default-default">{text.multipleStaysOpen}</p>
           <MenuTrigger>
-            <Button variant="secondary" style="transparent" size="sm">
+            <Button intent="secondary" appearance="transparent" size="sm">
               {text.view}
             </Button>
             <MenuPopover>
@@ -734,7 +734,7 @@ export const Checked: Story = {
             {text.singleCloseOnSelectFalse}
           </p>
           <MenuTrigger>
-            <Button variant="secondary" style="transparent" size="sm">
+            <Button intent="secondary" appearance="transparent" size="sm">
               {text.layout}
             </Button>
             <MenuPopover>
@@ -778,7 +778,7 @@ export const Sizes: Story = {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <MenuTrigger>
-          <Button variant="secondary" style="transparent" size="sm">
+          <Button intent="secondary" appearance="transparent" size="sm">
             {text.small}
           </Button>
           <MenuPopover>
@@ -796,7 +796,7 @@ export const Sizes: Story = {
         </MenuTrigger>
 
         <MenuTrigger>
-          <Button variant="secondary" style="transparent" size="sm">
+          <Button intent="secondary" appearance="transparent" size="sm">
             {text.medium}
           </Button>
           <MenuPopover>
@@ -814,7 +814,7 @@ export const Sizes: Story = {
         </MenuTrigger>
 
         <MenuTrigger>
-          <Button variant="secondary" style="transparent" size="sm">
+          <Button intent="secondary" appearance="transparent" size="sm">
             {text.large}
           </Button>
           <MenuPopover>
@@ -852,7 +852,7 @@ export const RichItems: Story = {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {(['sm', 'md', 'lg'] as const).map((size) => (
           <MenuTrigger key={size}>
-            <Button variant="secondary" style="transparent" size="sm">
+            <Button intent="secondary" appearance="transparent" size="sm">
               {sizeLabels[size]}
             </Button>
             <MenuPopover className="max-w-xs">
@@ -885,7 +885,7 @@ export const RichItems: Story = {
                 <MenuSeparator />
                 <MenuItem
                   size={size}
-                  sentiment="danger"
+                  intent="danger"
                   startIcon={<Trash size={16} />}
                   description={text.permanentAction}
                   shortcut="Del"

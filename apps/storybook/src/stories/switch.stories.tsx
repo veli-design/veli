@@ -11,7 +11,7 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   tags: ['autodocs'],
   argTypes: {
-    variant: {
+    appearance: {
       control: 'select',
       options: ['default', 'subtle'],
     },
@@ -48,8 +48,8 @@ export const Variants: Story = {
           Default
         </span>
         <div className="flex items-center gap-4">
-          <Switch variant="default">Off</Switch>
-          <Switch variant="default" defaultSelected>
+          <Switch appearance="default">Off</Switch>
+          <Switch appearance="default" defaultSelected>
             On
           </Switch>
         </div>
@@ -59,8 +59,8 @@ export const Variants: Story = {
           Subtle
         </span>
         <div className="flex items-center gap-4">
-          <Switch variant="subtle">Off</Switch>
-          <Switch variant="subtle" defaultSelected>
+          <Switch appearance="subtle">Off</Switch>
+          <Switch appearance="subtle" defaultSelected>
             On
           </Switch>
         </div>
@@ -122,10 +122,10 @@ export const Sizes: Story = {
             Small (sm)
           </span>
           <div className="flex items-center gap-4">
-            <Switch variant="subtle" size="sm">
+            <Switch appearance="subtle" size="sm">
               Off
             </Switch>
-            <Switch variant="subtle" size="sm" defaultSelected>
+            <Switch appearance="subtle" size="sm" defaultSelected>
               On
             </Switch>
           </div>
@@ -135,10 +135,10 @@ export const Sizes: Story = {
             Medium (md)
           </span>
           <div className="flex items-center gap-4">
-            <Switch variant="subtle" size="md">
+            <Switch appearance="subtle" size="md">
               Off
             </Switch>
-            <Switch variant="subtle" size="md" defaultSelected>
+            <Switch appearance="subtle" size="md" defaultSelected>
               On
             </Switch>
           </div>
@@ -148,10 +148,10 @@ export const Sizes: Story = {
             Large (lg)
           </span>
           <div className="flex items-center gap-4">
-            <Switch variant="subtle" size="lg">
+            <Switch appearance="subtle" size="lg">
               Off
             </Switch>
-            <Switch variant="subtle" size="lg" defaultSelected>
+            <Switch appearance="subtle" size="lg" defaultSelected>
               On
             </Switch>
           </div>
@@ -205,10 +205,10 @@ export const Directional: Story = {
 export const StatesAudit: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
-      {(['default', 'subtle'] as const).map((variant) => (
-        <div key={variant} className="flex flex-col gap-6">
+      {(['default', 'subtle'] as const).map((appearance) => (
+        <div key={appearance} className="flex flex-col gap-6">
           <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            {variant}
+            {appearance}
           </span>
           <div className="flex flex-col gap-4">
             <span className="text-[10px] uppercase font-bold text-text-default-muted">Off</span>
@@ -217,13 +217,13 @@ export const StatesAudit: Story = {
                 <span className="text-[10px] uppercase font-bold text-text-default-muted">
                   Active
                 </span>
-                <Switch variant={variant}>Switch</Switch>
+                <Switch appearance={appearance}>Switch</Switch>
               </div>
               <div className="flex flex-col items-center gap-3">
                 <span className="text-[10px] uppercase font-bold text-text-default-muted">
                   Disabled
                 </span>
-                <Switch variant={variant} isDisabled>
+                <Switch appearance={appearance} isDisabled>
                   Switch
                 </Switch>
               </div>
@@ -236,7 +236,7 @@ export const StatesAudit: Story = {
                 <span className="text-[10px] uppercase font-bold text-text-default-muted">
                   Active
                 </span>
-                <Switch variant={variant} defaultSelected>
+                <Switch appearance={appearance} defaultSelected>
                   Switch
                 </Switch>
               </div>
@@ -244,7 +244,7 @@ export const StatesAudit: Story = {
                 <span className="text-[10px] uppercase font-bold text-text-default-muted">
                   Disabled
                 </span>
-                <Switch variant={variant} defaultSelected isDisabled>
+                <Switch appearance={appearance} defaultSelected isDisabled>
                   Switch
                 </Switch>
               </div>

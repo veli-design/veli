@@ -59,7 +59,7 @@ export const Playground: Story = {
   render: (args) => (
     <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
       <PopoverTrigger>
-        <Button variant="secondary">Open popover</Button>
+        <Button intent="secondary">Open popover</Button>
         <Popover {...args}>
           <PopoverDialog className="max-w-xs p-4 outline-none">
             <p className="text-sm">
@@ -100,7 +100,7 @@ export const Placements: Story = {
         <div className="grid grid-cols-2 gap-16 sm:grid-cols-4">
           {placements.map((placement) => (
             <PopoverTrigger key={placement}>
-              <Button variant="secondary" size="sm">
+              <Button intent="secondary" size="sm">
                 {placement}
               </Button>
               <Popover placement={placement} showArrow>

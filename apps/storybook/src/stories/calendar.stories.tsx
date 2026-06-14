@@ -191,8 +191,8 @@ export const ControlledByExternalState: Story = {
         <div className="flex flex-wrap gap-2">
           <Button
             size="sm"
-            variant="secondary"
-            style="transparent"
+            intent="secondary"
+            appearance="transparent"
             onPress={() => {
               const nextValue = parseDate('2026-04-30');
               setValue(nextValue);
@@ -203,8 +203,8 @@ export const ControlledByExternalState: Story = {
           </Button>
           <Button
             size="sm"
-            variant="secondary"
-            style="transparent"
+            intent="secondary"
+            appearance="transparent"
             onPress={() => {
               const nextValue = today(getLocalTimeZone());
               setValue(nextValue);

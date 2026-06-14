@@ -38,7 +38,7 @@ const menuItemVariants = cva(
         md: 'py-3 type-body-sm-regular',
         lg: 'py-3.5 type-body-md-regular',
       },
-      sentiment: {
+      intent: {
         default: 'text-text-default-strong',
         danger:
           'text-text-danger-muted data-[disabled]:text-text-disabled-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
@@ -46,7 +46,7 @@ const menuItemVariants = cva(
     },
     defaultVariants: {
       size: 'md',
-      sentiment: 'default',
+      intent: 'default',
     },
   },
 );
@@ -118,14 +118,14 @@ const menuItemIconVariants = cva(
         md: '[&_svg]:size-4',
         lg: '[&_svg]:size-5',
       },
-      sentiment: {
+      intent: {
         default: 'text-text-default-muted group-data-[disabled]:text-icon-disabled-disabled',
         danger: 'text-text-danger-muted group-data-[disabled]:text-icon-disabled-disabled',
       },
     },
     defaultVariants: {
       size: 'md',
-      sentiment: 'default',
+      intent: 'default',
     },
   },
 );
@@ -229,7 +229,7 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
 interface MenuItemContentProps {
   isSelected: boolean;
   size?: 'sm' | 'md' | 'lg' | null;
-  sentiment?: 'default' | 'danger' | null;
+  intent?: 'default' | 'danger' | null;
   description?: React.ReactNode;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
@@ -240,7 +240,7 @@ interface MenuItemContentProps {
 function MenuItemContent({
   isSelected,
   size,
-  sentiment,
+  intent,
   description,
   startIcon,
   endIcon,
@@ -266,7 +266,7 @@ function MenuItemContent({
         </span>
       ) : null}
       {startIcon ? (
-        <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
+        <span className={menuItemIconVariants({ size, intent: intent ?? 'default' })}>
           {startIcon}
         </span>
       ) : null}
@@ -280,7 +280,7 @@ function MenuItemContent({
         {description ? <div className={menuItemDescriptionVariants()}>{description}</div> : null}
       </div>
       {endIcon ? (
-        <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
+        <span className={menuItemIconVariants({ size, intent: intent ?? 'default' })}>
           {endIcon}
         </span>
       ) : null}
@@ -302,7 +302,7 @@ export interface MenuItemProps
 export function MenuItem({
   className,
   size,
-  sentiment,
+  intent,
   description,
   startIcon,
   endIcon,
@@ -311,7 +311,7 @@ export function MenuItem({
   ...props
 }: MenuItemProps) {
   return (
-    <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, sentiment }), className)}>
+    <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, intent }), className)}>
       {(renderProps) => {
         const { isSelected } = renderProps;
 
@@ -332,7 +332,7 @@ export function MenuItem({
           <MenuItemContent
             isSelected={isSelected}
             size={size}
-            sentiment={sentiment}
+            intent={intent}
             description={description}
             startIcon={startIcon}
             endIcon={endIcon}

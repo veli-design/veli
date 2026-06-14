@@ -36,7 +36,7 @@ const trackVariants = cva(
   'relative inline-flex shrink-0 items-center justify-start rounded-full border-1 transition-all duration-200 outline-none select-none',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         subtle: '',
       },
@@ -63,87 +63,87 @@ const trackVariants = cva(
     compoundVariants: [
       // Default — off
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: false,
         isDisabled: false,
         className: 'border-switch-track-off-border bg-transparent',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: false,
         isDisabled: false,
         isHovered: true,
         className: 'border-switch-track-off-border-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: false,
         isDisabled: true,
         className: 'border-switch-track-off-bg-disabled bg-transparent',
       },
       // Default — on
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: true,
         isDisabled: false,
         className: 'border-transparent bg-switch-track-on-bg',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: true,
         isDisabled: false,
         isHovered: true,
         className: 'bg-switch-track-on-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: true,
         isDisabled: true,
         className: 'border-transparent bg-switch-track-off-bg-disabled',
       },
       // Subtle — off
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: false,
         isDisabled: false,
         className: 'border-transparent bg-switch-track-off-bg',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: false,
         isDisabled: false,
         isHovered: true,
         className: 'bg-switch-track-off-bg-hover',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: false,
         isDisabled: true,
         className: 'border-transparent bg-switch-track-off-bg-disabled',
       },
       // Subtle — on (same as default on)
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: true,
         isDisabled: false,
         className: 'border-transparent bg-switch-track-on-bg',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: true,
         isDisabled: false,
         isHovered: true,
         className: 'bg-switch-track-on-bg-hover',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: true,
         isDisabled: true,
         className: 'border-transparent bg-switch-track-off-bg-disabled',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isSelected: false,
     },
@@ -154,7 +154,7 @@ const handleVariants = cva(
   'absolute top-1/2 -translate-y-1/2 rounded-full transition-[inset-inline-start,width,height,background-color] duration-200 ease-in-out',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         subtle: '',
       },
@@ -204,13 +204,13 @@ const handleVariants = cva(
         className: 'size-5 [inset-inline-start:calc(100%-5*var(--spacing)-1px)]',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: false,
         isDisabled: false,
         className: 'bg-switch-handle-off-bg',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isSelected: false,
         isDisabled: false,
         className: 'bg-switch-handle-on-bg',
@@ -221,25 +221,25 @@ const handleVariants = cva(
         className: 'bg-switch-handle-on-bg',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: false,
         isDisabled: true,
         className: 'bg-switch-handle-disabled-bg',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isSelected: true,
         isDisabled: true,
         className: 'bg-switch-handle-on-bg',
       },
       {
-        variant: 'subtle',
+        appearance: 'subtle',
         isDisabled: true,
         className: 'bg-switch-handle-on-bg',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isSelected: false,
       isDisabled: false,
@@ -272,13 +272,13 @@ export interface SwitchProps
   extends
     Omit<AriaSwitchProps, 'className' | 'style' | 'children'>,
     Omit<VariantProps<typeof switchVariants>, 'isDisabled'>,
-    Pick<VariantProps<typeof trackVariants>, 'variant'> {
+    Pick<VariantProps<typeof trackVariants>, 'appearance'> {
   children?: React.ReactNode;
   className?: string;
 }
 
-export function Switch({ size, variant, children, className, ...props }: SwitchProps) {
-  const resolvedVariant = variant ?? 'default';
+export function Switch({ size, appearance, children, className, ...props }: SwitchProps) {
+  const resolvedAppearance = appearance ?? 'default';
 
   return (
     <AriaSwitch
@@ -296,13 +296,13 @@ export function Switch({ size, variant, children, className, ...props }: SwitchP
       {(state) => {
         const resolvedSize = size ?? 'md';
         const checkIcon = switchCheckIconSizes[resolvedSize];
-        const showCheckmark = resolvedVariant === 'default' && state.isSelected;
+        const showCheckmark = resolvedAppearance === 'default' && state.isSelected;
 
         return (
           <>
             <div
               className={trackVariants({
-                variant: resolvedVariant,
+                appearance: resolvedAppearance,
                 size,
                 isSelected: state.isSelected,
                 isHovered: state.isDisabled ? false : state.isHovered,
@@ -330,7 +330,7 @@ export function Switch({ size, variant, children, className, ...props }: SwitchP
               ) : null}
               <span
                 className={handleVariants({
-                  variant: resolvedVariant,
+                  appearance: resolvedAppearance,
                   size,
                   isSelected: state.isSelected,
                   isDisabled: state.isDisabled,

@@ -15,7 +15,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     orientation: 'horizontal',
-    variant: 'subtle',
+    appearance: 'subtle',
     text: 'Or continue with',
   },
   argTypes: {
@@ -23,7 +23,7 @@ const meta = {
       control: 'select',
       options: ['horizontal', 'vertical'],
     },
-    variant: {
+    appearance: {
       control: 'select',
       options: dividerVariants,
     },
@@ -65,7 +65,7 @@ export const Default: Story = {
 export const WithText: Story = {
   args: {
     text: 'Or continue with',
-    variant: 'subtle',
+    appearance: 'subtle',
   },
   render: (args) => (
     <div className={storyPanelClassName}>
@@ -77,8 +77,8 @@ export const WithText: Story = {
 export const TextVariants: Story = {
   render: () => (
     <div className={`${storyPanelClassName} space-y-4`}>
-      {dividerVariants.map((variant) => (
-        <Divider key={variant} variant={variant} text="text" />
+      {dividerVariants.map((appearance) => (
+        <Divider key={appearance} appearance={appearance} text="text" />
       ))}
     </div>
   ),
@@ -87,10 +87,10 @@ export const TextVariants: Story = {
 export const LineVariants: Story = {
   render: () => (
     <div className={`${storyPanelClassName} space-y-4`}>
-      {dividerVariants.map((variant) => (
-        <div key={variant} className="space-y-2">
-          <p className="type-caption-12-medium text-text-default-muted capitalize">{variant}</p>
-          <Divider variant={variant} />
+      {dividerVariants.map((appearance) => (
+        <div key={appearance} className="space-y-2">
+          <p className="type-caption-12-medium text-text-default-muted capitalize">{appearance}</p>
+          <Divider appearance={appearance} />
         </div>
       ))}
     </div>
@@ -107,7 +107,7 @@ export const Orientations: Story = {
             <p>Section one</p>
             <Divider />
             <p>Section two</p>
-            <Divider variant="emphasis" text="Or" />
+            <Divider appearance="emphasis" text="Or" />
             <p>Section three</p>
           </div>
         </div>
@@ -120,7 +120,7 @@ export const Orientations: Story = {
             <span>Summary</span>
             <Divider orientation="vertical" />
             <span>Documents</span>
-            <Divider orientation="vertical" variant="emphasis" />
+            <Divider orientation="vertical" appearance="emphasis" />
             <span>Status</span>
           </div>
         </div>

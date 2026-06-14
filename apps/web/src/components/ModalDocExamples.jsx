@@ -16,7 +16,7 @@ export function ModalBasicDemo() {
         title="Edit profile"
         footer={
           <>
-            <Button variant="secondary" style="transparent" onPress={() => setIsOpen(false)}>
+            <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button onPress={() => setIsOpen(false)}>Save changes</Button>
@@ -41,8 +41,8 @@ export function ModalSizesDemo() {
         {SIZES.map((size) => (
           <Button
             key={size}
-            variant="secondary"
-            style="transparent"
+            intent="secondary"
+            appearance="transparent"
             onPress={() => setActiveSize(size)}
           >
             Open {size.toUpperCase()}
@@ -73,7 +73,7 @@ export function ModalDismissDemo() {
   return (
     <div className="flex flex-wrap gap-3">
       <Button onPress={() => setMode('dismissable')}>Open Dismissable Modal</Button>
-      <Button variant="danger" onPress={() => setMode('locked')}>
+      <Button intent="danger" onPress={() => setMode('locked')}>
         Open Locked Modal
       </Button>
 
@@ -86,10 +86,10 @@ export function ModalDismissDemo() {
         showCloseButton={!isLocked}
         footer={
           <>
-            <Button variant="secondary" style="transparent" onPress={() => setMode(null)}>
+            <Button intent="secondary" appearance="transparent" onPress={() => setMode(null)}>
               Cancel
             </Button>
-            <Button variant={isLocked ? 'danger' : 'primary'} onPress={() => setMode(null)}>
+            <Button intent={isLocked ? 'danger' : 'primary'} onPress={() => setMode(null)}>
               Confirm
             </Button>
           </>

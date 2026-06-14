@@ -144,7 +144,7 @@ export const Flushed: Story = {
 
     return (
       <div className="flex w-full max-w-[640px] flex-col gap-4">
-        <Button size="sm" variant="secondary" onPress={() => setFlushed((value) => !value)}>
+        <Button size="sm" intent="secondary" onPress={() => setFlushed((value) => !value)}>
           {flushed ? 'Turn flushed off' : 'Turn flushed on'}
         </Button>
         <div className={storyPanelClassName}>

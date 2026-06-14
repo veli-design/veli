@@ -231,7 +231,7 @@ export const Playground: Story = {
     return (
       <div className="flex min-h-[280px] items-center justify-center bg-bg-surface-base p-8">
         <TooltipTrigger delay={delay}>
-          <Button variant="secondary">{text.triggerHoverFocus}</Button>
+          <Button intent="secondary">{text.triggerHoverFocus}</Button>
           <Tooltip {...tooltipProps}>
             {getLocalizedTooltipArgText('children', children, language)}
           </Tooltip>
@@ -249,13 +249,13 @@ export const IconButtons: Story = {
     return (
       <div className="flex min-h-[280px] items-center justify-center gap-4 bg-bg-surface-base p-8">
         <TooltipTrigger delay={0}>
-          <Button aria-label={text.copyAriaLabel} variant="secondary" size="sm" iconOnly={true}>
+          <Button aria-label={text.copyAriaLabel} intent="secondary" size="sm" iconOnly={true}>
             <Copy size={16} weight="bold" />
           </Button>
           <Tooltip>{text.copy}</Tooltip>
         </TooltipTrigger>
         <TooltipTrigger delay={0}>
-          <Button aria-label={text.deleteAriaLabel} variant="secondary" size="sm" iconOnly={true}>
+          <Button aria-label={text.deleteAriaLabel} intent="secondary" size="sm" iconOnly={true}>
             <Trash size={16} weight="bold" />
           </Button>
           <Tooltip>{text.delete}</Tooltip>
@@ -283,7 +283,7 @@ export const Placements: Story = {
               <div className="flex flex-col gap-3">
                 {group.placements.map((placement) => (
                   <TooltipTrigger key={placement} delay={0}>
-                    <Button variant="secondary" size="sm" className="w-full justify-center">
+                    <Button intent="secondary" size="sm" className="w-full justify-center">
                       {placement}
                     </Button>
                     <Tooltip placement={placement} size="lg" tone="primary" shouldFlip={false}>
@@ -314,7 +314,7 @@ export const Variants: Story = {
             {text.variants.small}
           </span>
           <TooltipTrigger delay={0}>
-            <Button variant="secondary">{text.triggerHover}</Button>
+            <Button intent="secondary">{text.triggerHover}</Button>
             <Tooltip size="sm">{text.copyAriaLabel}</Tooltip>
           </TooltipTrigger>
         </div>
@@ -323,7 +323,7 @@ export const Variants: Story = {
             {text.variants.largePrimary}
           </span>
           <TooltipTrigger delay={0}>
-            <Button variant="secondary">{text.triggerHover}</Button>
+            <Button intent="secondary">{text.triggerHover}</Button>
             <Tooltip size="lg" tone="primary">
               {text.largeTooltip}
             </Tooltip>
@@ -334,7 +334,7 @@ export const Variants: Story = {
             {text.variants.largeSecondary}
           </span>
           <TooltipTrigger delay={0}>
-            <Button variant="secondary">{text.triggerHover}</Button>
+            <Button intent="secondary">{text.triggerHover}</Button>
             <Tooltip size="lg" tone="secondary">
               {text.largeTooltip}
             </Tooltip>

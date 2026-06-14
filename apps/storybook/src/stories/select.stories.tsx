@@ -262,7 +262,7 @@ const meta = {
     errorMessage: {
       control: 'text',
     },
-    variant: {
+    appearance: {
       control: 'select',
       options: ['default', 'outline'],
     },
@@ -341,7 +341,7 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: (args) => {
     const language = useSelectLanguage();
@@ -441,7 +441,7 @@ export const Sizes: Story = {
             </span>
             <Select
               size="sm"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.chooseAnOption}
               description={text.helperText}
@@ -455,7 +455,7 @@ export const Sizes: Story = {
             </span>
             <Select
               size="md"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.chooseAnOption}
               description={text.helperText}
@@ -469,7 +469,7 @@ export const Sizes: Story = {
             </span>
             <Select
               size="lg"
-              variant="outline"
+              appearance="outline"
               label={text.label}
               placeholder={text.chooseAnOption}
               description={text.helperText}
@@ -591,7 +591,7 @@ export const ValidationStates: Story = {
             Outline
           </span>
           <Select
-            variant="outline"
+            appearance="outline"
             label={text.default}
             placeholder={text.chooseAnOption}
             description={text.helperText}
@@ -599,7 +599,7 @@ export const ValidationStates: Story = {
             {renderGenericOptions(text)}
           </Select>
           <Select
-            variant="outline"
+            appearance="outline"
             label={text.invalid}
             placeholder={text.chooseAnOption}
             isInvalid
@@ -608,7 +608,7 @@ export const ValidationStates: Story = {
             {renderGenericOptions(text)}
           </Select>
           <Select
-            variant="outline"
+            appearance="outline"
             label={text.invalidWithoutMessage}
             placeholder={text.chooseAnOption}
             isInvalid
@@ -617,7 +617,7 @@ export const ValidationStates: Story = {
             {renderGenericOptions(text)}
           </Select>
           <Select
-            variant="outline"
+            appearance="outline"
             label={text.disabled}
             placeholder={text.chooseAnOption}
             isDisabled
@@ -625,7 +625,7 @@ export const ValidationStates: Story = {
             {renderGenericOptions(text)}
           </Select>
           <Select
-            variant="outline"
+            appearance="outline"
             label={text.selected}
             defaultSelectedKey="b"
             description={text.selectedValue}

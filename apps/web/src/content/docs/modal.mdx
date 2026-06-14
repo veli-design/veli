@@ -42,7 +42,7 @@ function Example() {
         title="Edit profile"
         footer={
           <>
-            <Button variant="secondary" style="transparent" onPress={() => setIsOpen(false)}>
+            <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button onPress={() => setIsOpen(false)}>Save changes</Button>
@@ -116,7 +116,7 @@ Every modal needs one dialog name: use `title`, `aria-label`, or `aria-labelledb
   title="Edit profile"
   footer={
     <>
-      <Button variant="secondary" style="transparent">
+      <Button intent="secondary" appearance="transparent">
         Cancel
       </Button>
       <Button>Save changes</Button>

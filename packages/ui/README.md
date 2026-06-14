@@ -44,7 +44,7 @@ import { Plus } from 'phosphor-react';
 
 export function CreateAction() {
   return (
-    <Button variant="primary" style="fill" size="md" onPress={() => {}}>
+    <Button intent="primary" appearance="fill" size="md" onPress={() => {}}>
       <Plus size={16} weight="bold" />
       <span>Create</span>
     </Button>
