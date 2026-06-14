@@ -22,13 +22,15 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
+import { useVeliLanguage } from './provider';
+
 const menuPopoverClassName =
   'min-w-56 w-max rounded-xl border border-border-default-subtle bg-menu-bg p-1 text-text-default-default shadow-md backdrop-blur-xs outline-none';
 
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start font-sans antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[disabled]:[&_svg]:text-icon-disabled-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[disabled]:[&_svg]:text-icon-disabled-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
@@ -69,6 +71,23 @@ const menuItemRowVariants = cva('flex min-w-0 flex-1 items-start gap-2');
 const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-1.5');
 
 const menuItemLabelRowVariants = cva('flex min-w-0 items-center gap-2');
+
+const menuItemLabelVariants = cva('min-w-0 flex-1 truncate', {
+  variants: {
+    size: {
+      sm: 'type-body-sm-regular',
+      md: 'type-body-sm-regular',
+      lg: 'type-body-md-regular',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
+
+const menuItemDescriptionVariants = cva(
+  'truncate type-caption-regular text-text-default-muted group-data-[disabled]:text-text-disabled-disabled',
+);
 
 const menuShortcutVariants = cva(
   'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-text-default-default group-data-[disabled]:text-text-disabled-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-default-default group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
@@ -148,8 +167,16 @@ export interface MenuPopoverProps extends Omit<AriaPopoverProps, 'className'> {
 }
 
 export function MenuPopover({ className, offset = 8, ...props }: MenuPopoverProps) {
+  const languageConfig = useVeliLanguage();
+
   return (
-    <AriaPopover {...props} offset={offset} className={twMerge(menuPopoverClassName, className)} />
+    <AriaPopover
+      {...props}
+      offset={offset}
+      lang={languageConfig.lang}
+      dir={languageConfig.direction}
+      className={twMerge(menuPopoverClassName, className)}
+    />
   );
 }
 
@@ -246,15 +273,11 @@ function MenuItemContent({
       <div className={menuItemTextVariants()}>
         {children || shortcut ? (
           <div className={menuItemLabelRowVariants()}>
-            {children ? <div className="min-w-0 flex-1 truncate">{children}</div> : null}
+            {children ? <div className={menuItemLabelVariants({ size })}>{children}</div> : null}
             {shortcut ? <Keyboard className={menuShortcutVariants()}>{shortcut}</Keyboard> : null}
           </div>
         ) : null}
-        {description ? (
-          <div className="truncate type-caption-12-regular text-text-default-muted group-data-[disabled]:text-text-disabled-disabled">
-            {description}
-          </div>
-        ) : null}
+        {description ? <div className={menuItemDescriptionVariants()}>{description}</div> : null}
       </div>
       {endIcon ? (
         <span className={menuItemIconVariants({ size, sentiment: sentiment ?? 'default' })}>
