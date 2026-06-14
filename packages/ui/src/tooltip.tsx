@@ -10,6 +10,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { useVeliLanguage } from './provider';
 
 /** Minimum inset of the arrow from the tooltip edge (keeps it off rounded corners). */
 const TOOLTIP_ARROW_BOUNDARY_OFFSET = 20;
@@ -153,14 +154,19 @@ export function Tooltip({
   size,
   tone,
   arrowBoundaryOffset,
+  lang,
+  dir,
   ...props
 }: TooltipProps) {
   const resolvedSize = size ?? 'sm';
   const showArrow = resolvedSize === 'lg';
+  const languageConfig = useVeliLanguage();
 
   return (
     <AriaTooltip
       {...props}
+      lang={lang ?? languageConfig.lang}
+      dir={dir ?? languageConfig.direction}
       offset={showArrow ? 12 : 8}
       arrowBoundaryOffset={
         showArrow ? (arrowBoundaryOffset ?? TOOLTIP_ARROW_BOUNDARY_OFFSET) : undefined
