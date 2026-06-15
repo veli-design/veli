@@ -9,7 +9,13 @@ import {
 import { Button } from '@tradenetcorp/veli-ui/button';
 
 const storyPanelClassName =
-  'w-full max-w-[640px] rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+  'w-[calc(100vw-2rem)] max-w-[640px] rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+
+const storyGridClassName =
+  'grid w-[calc(100vw-2rem)] max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2';
+
+const storyGridPanelClassName =
+  'w-full rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
 
 const accordionItems = [
   {
@@ -86,12 +92,12 @@ export const Compound: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="grid w-full max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2">
+    <div className={storyGridClassName}>
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
           Medium (md)
         </span>
-        <div className={storyPanelClassName}>
+        <div className={storyGridPanelClassName}>
           <Accordion size="md" defaultExpandedKeys={['overview']} items={[...accordionItems]} />
         </div>
       </div>
@@ -99,7 +105,7 @@ export const Sizes: Story = {
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
           Large (lg)
         </span>
-        <div className={storyPanelClassName}>
+        <div className={storyGridPanelClassName}>
           <Accordion size="lg" defaultExpandedKeys={['overview']} items={[...accordionItems]} />
         </div>
       </div>
@@ -109,12 +115,12 @@ export const Sizes: Story = {
 
 export const Alignment: Story = {
   render: () => (
-    <div className="grid w-full max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2">
+    <div className={storyGridClassName}>
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
           Left
         </span>
-        <div className={storyPanelClassName}>
+        <div className={storyGridPanelClassName}>
           <Accordion
             alignment="left"
             defaultExpandedKeys={['overview']}
@@ -126,7 +132,7 @@ export const Alignment: Story = {
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
           Right
         </span>
-        <div className={storyPanelClassName}>
+        <div className={storyGridPanelClassName}>
           <Accordion
             alignment="right"
             defaultExpandedKeys={['overview']}
@@ -143,7 +149,7 @@ export const Flushed: Story = {
     const [flushed, setFlushed] = useState(false);
 
     return (
-      <div className="flex w-full max-w-[640px] flex-col gap-4">
+      <div className="flex w-[calc(100vw-2rem)] max-w-[640px] flex-col gap-4">
         <Button size="sm" intent="secondary" onPress={() => setFlushed((value) => !value)}>
           {flushed ? 'Turn flushed off' : 'Turn flushed on'}
         </Button>
@@ -161,21 +167,21 @@ export const Flushed: Story = {
 
 export const Skeleton: Story = {
   render: () => (
-    <div className="grid w-full max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2">
+    <div className={storyGridClassName}>
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Left
+          Medium (md)
         </span>
-        <div className={storyPanelClassName}>
-          <Accordion isSkeleton alignment="left" />
+        <div className={storyGridPanelClassName}>
+          <Accordion isSkeleton size="md" alignment="left" />
         </div>
       </div>
       <div className="flex flex-col gap-4">
         <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Right
+          Large (lg)
         </span>
-        <div className={storyPanelClassName}>
-          <Accordion isSkeleton alignment="right" />
+        <div className={storyGridPanelClassName}>
+          <Accordion isSkeleton size="lg" alignment="right" />
         </div>
       </div>
     </div>
