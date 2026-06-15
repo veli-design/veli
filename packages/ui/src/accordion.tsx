@@ -122,7 +122,17 @@ const accordionPanelIndentVariants = cva('', {
   },
 });
 
-const accordionSkeletonBarVariants = cva('h-2.5 bg-bg-skeleton animate-pulse');
+const accordionSkeletonBarVariants = cva('bg-bg-skeleton animate-pulse', {
+  variants: {
+    size: {
+      md: 'h-2.5',
+      lg: 'h-3',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
 const skeletonLabelWidths = ['max-w-2/5', 'max-w-1/3', 'max-w-1/2'] as const;
 
@@ -137,7 +147,7 @@ export interface AccordionProps
   extends
     Omit<AriaDisclosureGroupProps, 'children' | 'className'>,
     VariantProps<typeof accordionTriggerVariants> {
-  items?: readonly [AccordionItemData, AccordionItemData, ...AccordionItemData[]];
+  items?: readonly AccordionItemData[];
   children?: React.ReactNode;
   className?: string;
   itemClassName?: string;
@@ -191,7 +201,7 @@ function AccordionSkeletonItem({
     <span
       aria-hidden
       className={twMerge(
-        accordionSkeletonBarVariants(),
+        accordionSkeletonBarVariants({ size }),
         'flex-1',
         labelWidth,
         alignment === 'right' && 'text-start',
@@ -254,9 +264,9 @@ function AccordionSkeletonItem({
             aria-hidden
           >
             <div className="flex flex-col gap-2">
-              <span className={twMerge(accordionSkeletonBarVariants(), 'w-full')} />
-              <span className={twMerge(accordionSkeletonBarVariants(), 'w-11/12')} />
-              <span className={twMerge(accordionSkeletonBarVariants(), 'w-3/4')} />
+              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-full')} />
+              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-11/12')} />
+              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-3/4')} />
             </div>
           </div>
         </div>
@@ -411,7 +421,7 @@ export function Accordion({
               role="status"
               aria-busy="true"
               aria-label="Loading accordion"
-              className={twMerge(accordionVariants(), 'min-w-105', className)}
+              className={twMerge(accordionVariants(), className)}
             >
               {Array.from({ length: skeletonItemCount }, (_, index) => (
                 <AccordionSkeletonItem
