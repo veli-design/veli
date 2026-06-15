@@ -1,6 +1,82 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Gear, House, SquaresFour, User } from 'phosphor-react';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Tabs } from '@tradenetcorp/veli-ui/tabs';
+
+const tabsText = {
+  en: {
+    labels: {
+      more: 'More',
+      overview: 'Overview',
+      services: 'Services',
+      pricing: 'Pricing',
+      home: 'Home',
+      dashboard: 'Dashboard',
+      settings: 'Settings',
+      profile: 'Profile',
+      billing: 'Billing',
+      integrations: 'Integrations',
+      auditLog: 'Audit log',
+      members: 'Members',
+    },
+    panels: {
+      overview: 'Overview section content.',
+      services: 'Services section content.',
+      pricing: 'Pricing section content.',
+      home: 'Home section content.',
+      dashboard: 'Dashboard section content.',
+      settings: 'Settings section content.',
+      profile: 'Profile section content.',
+      billing: 'Billing section content.',
+      integrations: 'Integrations section content.',
+      auditLog: 'Audit log section content.',
+      members: 'Members section content.',
+    },
+  },
+  dv: {
+    labels: {
+      more: 'އިތުރު',
+      overview: 'ޚުލާޞާ',
+      services: 'ޚިދުމަތްތައް',
+      pricing: 'އަގުތައް',
+      home: 'ހޯމް',
+      dashboard: 'ޑޭޝްބޯޑް',
+      settings: 'ސެޓިންގްސް',
+      profile: 'ޕްރޮފައިލް',
+      billing: 'ބިލިންގ',
+      integrations: 'އިންޓަގްރޭޝަންސް',
+      auditLog: 'އޮޑިޓް ލޮގް',
+      members: 'މެމްބަރުން',
+    },
+    panels: {
+      overview: 'ޚުލާޞާ ސެކްޝަންގެ ކޮންޓެންޓް.',
+      services: 'ޚިދުމަތްތައް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      pricing: 'އަގުތައް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      home: 'ހޯމް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      dashboard: 'ޑޭޝްބޯޑް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      settings: 'ސެޓިންގްސް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      profile: 'ޕްރޮފައިލް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      billing: 'ބިލިންގ ސެކްޝަންގެ ކޮންޓެންޓް.',
+      integrations: 'އިންޓަގްރޭޝަންސް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      auditLog: 'އޮޑިޓް ލޮގް ސެކްޝަންގެ ކޮންޓެންޓް.',
+      members: 'މެމްބަރުން ސެކްޝަންގެ ކޮންޓެންޓް.',
+    },
+  },
+} as const;
+
+type TabsLanguage = keyof typeof tabsText;
+
+const useTabsLanguage = (): TabsLanguage => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? 'dv' : 'en';
+};
+
+const useTabsText = () => {
+  const language = useTabsLanguage();
+
+  return tabsText[language];
+};
 
 const meta = {
   title: 'Components/Tabs',
@@ -21,9 +97,6 @@ const meta = {
         component:
           'Underlined tab navigation built with `react-aria-components`. Supports optional `leading` and `trailing` slots on each item for icons or other content.',
       },
-      story: {
-        inline: false,
-      },
     },
   },
   tags: ['autodocs'],
@@ -36,107 +109,123 @@ type Story = StoryObj<typeof meta>;
  * Default underlined tab navigation.
  */
 export const Default: Story = {
-  render: () => (
-    <Tabs
-      listAriaLabel="Services tabs"
-      items={[
-        {
-          id: 'overview',
-          label: 'Overview',
-          panel: 'Overview section content.',
-        },
-        {
-          id: 'services',
-          label: 'Services',
-          panel: 'Services section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Services tabs"
+        items={[
+          {
+            id: 'overview',
+            label: text.labels.overview,
+            panel: text.panels.overview,
+          },
+          {
+            id: 'services',
+            label: text.labels.services,
+            panel: text.panels.services,
+          },
+        ]}
+      />
+    );
+  },
 };
 
 /**
  * Underlined tabs with multiple items.
  */
 export const ThreeItems: Story = {
-  render: () => (
-    <Tabs
-      listAriaLabel="Information tabs"
-      items={[
-        {
-          id: 'overview',
-          label: 'Overview',
-          panel: 'Overview section content.',
-        },
-        {
-          id: 'services',
-          label: 'Services',
-          panel: 'Services section content.',
-        },
-        {
-          id: 'pricing',
-          label: 'Pricing',
-          panel: 'Pricing section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Information tabs"
+        items={[
+          {
+            id: 'overview',
+            label: text.labels.overview,
+            panel: text.panels.overview,
+          },
+          {
+            id: 'services',
+            label: text.labels.services,
+            panel: text.panels.services,
+          },
+          {
+            id: 'pricing',
+            label: text.labels.pricing,
+            panel: text.panels.pricing,
+          },
+        ]}
+      />
+    );
+  },
 };
 
 /**
  * Tabs with a leading icon slot before the label.
  */
 export const WithLeadingSlot: Story = {
-  render: () => (
-    <Tabs
-      listAriaLabel="Navigation tabs"
-      items={[
-        {
-          id: 'home',
-          label: 'Home',
-          leading: <House size={16} />,
-          panel: 'Home section content.',
-        },
-        {
-          id: 'dashboard',
-          label: 'Dashboard',
-          leading: <SquaresFour size={16} />,
-          panel: 'Dashboard section content.',
-        },
-        {
-          id: 'settings',
-          label: 'Settings',
-          leading: <Gear size={16} />,
-          panel: 'Settings section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Navigation tabs"
+        items={[
+          {
+            id: 'home',
+            label: text.labels.home,
+            leading: <House size={16} />,
+            panel: text.panels.home,
+          },
+          {
+            id: 'dashboard',
+            label: text.labels.dashboard,
+            leading: <SquaresFour size={16} />,
+            panel: text.panels.dashboard,
+          },
+          {
+            id: 'settings',
+            label: text.labels.settings,
+            leading: <Gear size={16} />,
+            panel: text.panels.settings,
+          },
+        ]}
+      />
+    );
+  },
 };
 
 /**
  * Tabs with a trailing icon slot after the label.
  */
 export const WithTrailingSlot: Story = {
-  render: () => (
-    <Tabs
-      listAriaLabel="Account tabs"
-      items={[
-        {
-          id: 'profile',
-          label: 'Profile',
-          trailing: <User size={16} />,
-          panel: 'Profile section content.',
-        },
-        {
-          id: 'settings',
-          label: 'Settings',
-          trailing: <Gear size={16} />,
-          panel: 'Settings section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Account tabs"
+        items={[
+          {
+            id: 'profile',
+            label: text.labels.profile,
+            trailing: <User size={16} />,
+            panel: text.panels.profile,
+          },
+          {
+            id: 'settings',
+            label: text.labels.settings,
+            trailing: <Gear size={16} />,
+            panel: text.panels.settings,
+          },
+        ]}
+      />
+    );
+  },
 };
 
 /**
@@ -157,76 +246,84 @@ export const WithOverflow: Story = {
       </div>
     ),
   ],
-  render: () => (
-    <Tabs
-      listAriaLabel="Workspace tabs"
-      items={[
-        {
-          id: 'overview',
-          label: 'Overview',
-          panel: 'Overview section content.',
-        },
-        {
-          id: 'services',
-          label: 'Services',
-          panel: 'Services section content.',
-        },
-        {
-          id: 'pricing',
-          label: 'Pricing',
-          panel: 'Pricing section content.',
-        },
-      ]}
-      overflowItems={[
-        {
-          id: 'billing',
-          label: 'Billing',
-          panel: 'Billing section content.',
-        },
-        {
-          id: 'integrations',
-          label: 'Integrations',
-          panel: 'Integrations section content.',
-        },
-        {
-          id: 'audit-log',
-          label: 'Audit log',
-          panel: 'Audit log section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Workspace tabs"
+        items={[
+          {
+            id: 'overview',
+            label: text.labels.overview,
+            panel: text.panels.overview,
+          },
+          {
+            id: 'services',
+            label: text.labels.services,
+            panel: text.panels.services,
+          },
+          {
+            id: 'pricing',
+            label: text.labels.pricing,
+            panel: text.panels.pricing,
+          },
+        ]}
+        overflowItems={[
+          {
+            id: 'billing',
+            label: text.labels.billing,
+            panel: text.panels.billing,
+          },
+          {
+            id: 'integrations',
+            label: text.labels.integrations,
+            panel: text.panels.integrations,
+          },
+          {
+            id: 'audit-log',
+            label: text.labels.auditLog,
+            panel: text.panels.auditLog,
+          },
+        ]}
+      />
+    );
+  },
 };
 
 /**
  * Tabs with both leading and trailing slots.
  */
 export const WithLeadingAndTrailingSlots: Story = {
-  render: () => (
-    <Tabs
-      listAriaLabel="Workspace tabs"
-      items={[
-        {
-          id: 'overview',
-          label: 'Overview',
-          leading: <House size={16} />,
-          trailing: <SquaresFour size={16} />,
-          panel: 'Overview section content.',
-        },
-        {
-          id: 'members',
-          label: 'Members',
-          leading: <User size={16} />,
-          trailing: <Gear size={16} />,
-          panel: 'Members section content.',
-        },
-        {
-          id: 'settings',
-          label: 'Settings',
-          leading: <Gear size={16} />,
-          panel: 'Settings section content.',
-        },
-      ]}
-    />
-  ),
+  render: () => {
+    const text = useTabsText();
+
+    return (
+      <Tabs
+        listAriaLabel="Workspace tabs"
+        items={[
+          {
+            id: 'overview',
+            label: text.labels.overview,
+            leading: <House size={16} />,
+            trailing: <SquaresFour size={16} />,
+            panel: text.panels.overview,
+          },
+          {
+            id: 'members',
+            label: text.labels.members,
+            leading: <User size={16} />,
+            trailing: <Gear size={16} />,
+            panel: text.panels.members,
+          },
+          {
+            id: 'settings',
+            label: text.labels.settings,
+            leading: <Gear size={16} />,
+            panel: text.panels.settings,
+          },
+        ]}
+      />
+    );
+  },
 };
