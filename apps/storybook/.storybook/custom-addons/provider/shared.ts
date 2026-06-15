@@ -1,6 +1,6 @@
 export type VeliProviderLanguage = 'en' | 'dv';
 export type VeliProviderTheme = 'system' | 'light' | 'dark';
-export type VeliProviderSurface = 'base' | 'raised';
+export type VeliProviderSurface = 'base' | 'raised' | 'clear';
 
 export type VeliProviderSwitcherValues = {
   language: VeliProviderLanguage;
@@ -34,10 +34,11 @@ export const themeOptions: Array<{ label: string; value: VeliProviderTheme }> = 
 export const surfaceOptions: Array<{
   label: string;
   value: VeliProviderSurface;
-  background: string;
+  background?: string;
 }> = [
   { label: 'Veli surface', value: 'base', background: 'var(--color-bg-surface-base)' },
   { label: 'Veli raised', value: 'raised', background: 'var(--color-bg-surface-raised)' },
+  { label: 'Clear background', value: 'clear' },
 ];
 
 export function isProviderLanguage(value: unknown): value is VeliProviderLanguage {
@@ -49,7 +50,7 @@ export function isProviderTheme(value: unknown): value is VeliProviderTheme {
 }
 
 export function isProviderSurface(value: unknown): value is VeliProviderSurface {
-  return value === 'base' || value === 'raised';
+  return value === 'base' || value === 'raised' || value === 'clear';
 }
 
 export function normalizeProviderSwitcherValues(values: {

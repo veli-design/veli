@@ -94,9 +94,7 @@ function StorybookThemeRoot({
   children: React.ReactNode;
 }) {
   const resolvedColorScheme = useResolvedStorybookColorScheme(colorScheme);
-  const surfaceBackground =
-    surfaceOptions.find((option) => option.value === surface)?.background ??
-    surfaceOptions[0].background;
+  const surfaceBackground = surfaceOptions.find((option) => option.value === surface)?.background;
   const surfaceSelector = viewMode === 'docs' ? `#anchor--${storyId} .docs-story` : '.sb-show-main';
   const surfaceStyleId = viewMode === 'docs' ? `veli-surface-docs-${storyId}` : 'veli-surface';
 
@@ -106,14 +104,18 @@ function StorybookThemeRoot({
     root.dataset.theme = resolvedColorScheme;
     root.dataset.colorScheme = colorScheme;
     root.style.colorScheme = resolvedColorScheme;
-    setStyle(
-      surfaceStyleId,
-      `
-        ${surfaceSelector} {
-          background: ${surfaceBackground} !important;
-        }
-      `,
-    );
+    if (surfaceBackground) {
+      setStyle(
+        surfaceStyleId,
+        `
+          ${surfaceSelector} {
+            background: ${surfaceBackground} !important;
+          }
+        `,
+      );
+    } else {
+      removeStyle(surfaceStyleId);
+    }
 
     return () => {
       root.classList.remove('dark');
