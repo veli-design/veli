@@ -114,7 +114,11 @@ const meta = {
         }
       }, [children, language, localizedChildren, previousLocalizedChildren, updateArgs]);
 
-      return <Story />;
+      return (
+        <div className="type-body-md-regular">
+          <Story />
+        </div>
+      );
     },
   ],
   parameters: {
