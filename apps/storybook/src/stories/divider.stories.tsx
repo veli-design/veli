@@ -1,14 +1,120 @@
+import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from 'storybook/internal/preview-api';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const dividerVariants = ['subtle', 'muted', 'strong', 'emphasis'] as const;
 
 const storyPanelClassName =
   'w-80 rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
 
+const dividerText = {
+  en: {
+    orContinueWith: 'Or continue with',
+    text: 'text',
+    or: 'Or',
+    permitInformation: 'Permit information',
+    dividerDescription:
+      'Use horizontal dividers to separate related content blocks without introducing extra hierarchy.',
+    sections: {
+      one: 'Section one',
+      two: 'Section two',
+      three: 'Section three',
+    },
+    tabs: {
+      summary: 'Summary',
+      documents: 'Documents',
+      status: 'Status',
+    },
+  },
+  dv: {
+    orContinueWith: 'ނުވަތަ ކުރިއަށްދާނީ',
+    text: 'ލިޔުން',
+    or: 'ނުވަތަ',
+    permitInformation: 'ހުއްދައިގެ މަޢުލޫމާތު',
+    dividerDescription:
+      'އިތުރު ހައިރާކީއެއް ނުގެނެސް ގުޅުންހުރި ބައިތައް ވަކިކުރުމަށް ހޮރިޒޮންޓަލް ޑިވައިޑަރ ބޭނުންކުރައްވާ.',
+    sections: {
+      one: 'ސެކްޝަން އެކެއް',
+      two: 'ސެކްޝަން ދޭއް',
+      three: 'ސެކްޝަން ތިނެއް',
+    },
+    tabs: {
+      summary: 'ޚުލާޞާ',
+      documents: 'ލިޔެކިޔުންތައް',
+      status: 'ސްޓޭޓަސް',
+    },
+  },
+} as const;
+
+type DividerLanguage = keyof typeof dividerText;
+
+const dividerArgText = {
+  orContinueWith: {
+    en: dividerText.en.orContinueWith,
+    dv: dividerText.dv.orContinueWith,
+  },
+  text: {
+    en: dividerText.en.text,
+    dv: dividerText.dv.text,
+  },
+  or: {
+    en: dividerText.en.or,
+    dv: dividerText.dv.or,
+  },
+} as const;
+
+type DividerArgTextKey = keyof typeof dividerArgText;
+
+const dividerArgTextKeys = Object.keys(dividerArgText) as DividerArgTextKey[];
+
+const useDividerLanguage = (): DividerLanguage => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? 'dv' : 'en';
+};
+
+const useDividerText = () => {
+  const language = useDividerLanguage();
+
+  return dividerText[language];
+};
+
+const getLocalizedDividerArgText = (value: unknown, language: DividerLanguage) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return value;
+  }
+
+  const matchingKey = dividerArgTextKeys.find((key) => {
+    const localizedValues: readonly string[] = Object.values(dividerArgText[key]);
+
+    return localizedValues.includes(value);
+  });
+
+  return matchingKey ? dividerArgText[matchingKey][language] : value;
+};
+
 const meta = {
   title: 'Components/Divider',
   component: Divider,
+  decorators: [
+    (Story, context) => {
+      const language: DividerLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const { text } = args;
+
+      useEffect(() => {
+        const localizedText = getLocalizedDividerArgText(text, language);
+
+        if (text !== localizedText) {
+          updateArgs?.({ text: localizedText });
+        }
+      }, [language, text, updateArgs]);
+
+      return <Story />;
+    },
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -16,7 +122,7 @@ const meta = {
   args: {
     orientation: 'horizontal',
     appearance: 'subtle',
-    text: 'Or continue with',
+    text: dividerText.en.orContinueWith,
   },
   argTypes: {
     orientation: {
@@ -29,6 +135,7 @@ const meta = {
     },
     text: {
       control: 'text',
+      if: { arg: 'orientation', eq: 'horizontal' },
     },
   },
 } satisfies Meta<typeof Divider>;
@@ -48,23 +155,26 @@ export const Default: Story = {
   args: {
     text: undefined,
   },
-  render: (args) => (
-    <div className={storyPanelClassName}>
-      <div className="space-y-3">
-        <p className="type-body-sm-medium text-text-default-emphasis">Permit information</p>
-        <Divider {...args} />
-        <p className="type-body-sm-regular text-text-default-default">
-          Use horizontal dividers to separate related content blocks without introducing extra
-          hierarchy.
-        </p>
+  render: (args) => {
+    const text = useDividerText();
+
+    return (
+      <div className={storyPanelClassName}>
+        <div className="space-y-3">
+          <p className="type-body-sm-medium text-text-default-emphasis">{text.permitInformation}</p>
+          <Divider {...args} />
+          <p className="type-body-sm-regular text-text-default-default">
+            {text.dividerDescription}
+          </p>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const WithText: Story = {
   args: {
-    text: 'Or continue with',
+    text: dividerText.en.orContinueWith,
     appearance: 'subtle',
   },
   render: (args) => (
@@ -75,13 +185,17 @@ export const WithText: Story = {
 };
 
 export const TextVariants: Story = {
-  render: () => (
-    <div className={`${storyPanelClassName} space-y-4`}>
-      {dividerVariants.map((appearance) => (
-        <Divider key={appearance} appearance={appearance} text="text" />
-      ))}
-    </div>
-  ),
+  render: () => {
+    const text = useDividerText();
+
+    return (
+      <div className={`${storyPanelClassName} space-y-4`}>
+        {dividerVariants.map((appearance) => (
+          <Divider key={appearance} appearance={appearance} text={text.text} />
+        ))}
+      </div>
+    );
+  },
 };
 
 export const LineVariants: Story = {
@@ -98,33 +212,37 @@ export const LineVariants: Story = {
 };
 
 export const Orientations: Story = {
-  render: () => (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div className={storyPanelClassName}>
-        <div className="space-y-3">
-          <p className="type-body-sm-medium text-text-default-emphasis">Horizontal</p>
-          <div className="space-y-2.5 type-body-sm-regular text-text-default-default">
-            <p>Section one</p>
-            <Divider />
-            <p>Section two</p>
-            <Divider appearance="emphasis" text="Or" />
-            <p>Section three</p>
-          </div>
-        </div>
-      </div>
+  render: () => {
+    const text = useDividerText();
 
-      <div className={storyPanelClassName}>
-        <div className="space-y-3">
-          <p className="type-body-sm-medium text-text-default-emphasis">Vertical</p>
-          <div className="flex items-center justify-between text-text-default-default">
-            <span>Summary</span>
-            <Divider orientation="vertical" />
-            <span>Documents</span>
-            <Divider orientation="vertical" appearance="emphasis" />
-            <span>Status</span>
+    return (
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className={storyPanelClassName}>
+          <div className="space-y-3">
+            <p className="type-body-sm-medium text-text-default-emphasis">Horizontal</p>
+            <div className="space-y-2.5 type-body-sm-regular text-text-default-default">
+              <p>{text.sections.one}</p>
+              <Divider />
+              <p>{text.sections.two}</p>
+              <Divider appearance="emphasis" text={text.or} />
+              <p>{text.sections.three}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className={storyPanelClassName}>
+          <div className="space-y-3">
+            <p className="type-body-sm-medium text-text-default-emphasis">Vertical</p>
+            <div className="flex items-center justify-between text-text-default-default">
+              <span>{text.tabs.summary}</span>
+              <Divider orientation="vertical" />
+              <span>{text.tabs.documents}</span>
+              <Divider orientation="vertical" appearance="emphasis" />
+              <span>{text.tabs.status}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
