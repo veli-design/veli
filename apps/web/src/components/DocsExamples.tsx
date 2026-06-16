@@ -6,6 +6,7 @@ import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/c
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Link } from '@tradenetcorp/veli-ui/link';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
@@ -51,6 +52,37 @@ const REMOVABLE_TAG_SEED: TagDemoItem[] = [
   { id: 'notices', label: 'Notices' },
   { id: 'licences', label: 'Licences' },
 ];
+
+const radioDocsText = {
+  en: {
+    optionA: 'Option A',
+    optionB: 'Option B',
+    optionC: 'Option C',
+    mediumOff: 'Medium Off',
+    mediumOn: 'Medium On',
+    largeOff: 'Large Off',
+    largeOn: 'Large On',
+    disabledOff: 'Disabled Off',
+    disabledOn: 'Disabled On',
+  },
+  dv: {
+    optionA: 'އޮޕްޝަން އޭ',
+    optionB: 'އޮޕްޝަން ބީ',
+    optionC: 'އޮޕްޝަން ސީ',
+    mediumOff: 'މެދު އޮފް',
+    mediumOn: 'މެދު އޮން',
+    largeOff: 'ބޮޑު އޮފް',
+    largeOn: 'ބޮޑު އޮން',
+    disabledOff: 'ބޭނުންނުކުރެވޭ އޮފް',
+    disabledOn: 'ބޭނުންނުކުރެވޭ އޮން',
+  },
+} as const;
+
+const useRadioDocsText = () => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? radioDocsText.dv : radioDocsText.en;
+};
 
 function removeTagItems(items: TagDemoItem[], keys: Iterable<string | number>) {
   const removedKeys = new Set(keys);
@@ -765,33 +797,37 @@ export function LinkSizesDemo() {
 }
 
 export function RadioUsageDemo() {
+  const text = useRadioDocsText();
+
   return (
     <RadioGroup aria-label="Example radio group" defaultValue="a">
-      <Radio value="a">Option A</Radio>
-      <Radio value="b">Option B</Radio>
-      <Radio value="c">Option C</Radio>
+      <Radio value="a">{text.optionA}</Radio>
+      <Radio value="b">{text.optionB}</Radio>
+      <Radio value="c">{text.optionC}</Radio>
     </RadioGroup>
   );
 }
 
 export function RadioSizesDemo() {
+  const text = useRadioDocsText();
+
   return (
     <div className="flex flex-col gap-[16px]">
       <RadioGroup aria-label="Medium radios" defaultValue="md-on">
         <Radio value="md-off" size="md">
-          Medium Off
+          {text.mediumOff}
         </Radio>
         <Radio value="md-on" size="md">
-          Medium On
+          {text.mediumOn}
         </Radio>
       </RadioGroup>
 
       <RadioGroup aria-label="Large radios" defaultValue="lg-on">
         <Radio value="lg-off" size="lg">
-          Large Off
+          {text.largeOff}
         </Radio>
         <Radio value="lg-on" size="lg">
-          Large On
+          {text.largeOn}
         </Radio>
       </RadioGroup>
     </div>
@@ -799,13 +835,15 @@ export function RadioSizesDemo() {
 }
 
 export function RadioDisabledDemo() {
+  const text = useRadioDocsText();
+
   return (
     <RadioGroup aria-label="Disabled radios" defaultValue="on-disabled">
       <Radio value="off-disabled" isDisabled>
-        Disabled Off
+        {text.disabledOff}
       </Radio>
       <Radio value="on-disabled" isDisabled>
-        Disabled On
+        {text.disabledOn}
       </Radio>
     </RadioGroup>
   );
