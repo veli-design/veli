@@ -1,5 +1,19 @@
 # @tradenetcorp/veli-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- 2aa802b: Rename public component styling axes to align with the design-system model.
+
+  Button now uses `intent` for `primary`, `secondary`, and `danger`, `appearance` for `fill`, `transparent`, and `ghost`, and `seaglass` as a boolean prop. Input, Select, ComboBox, DatePicker, Switch, and Divider now use `appearance` instead of `variant`. Link and MenuItem now use `intent` instead of `variant` and `sentiment`, respectively.
+
+### Patch Changes
+
+- a249b3f: Polish Breadcrumb RTL and Dhivehi rendering with tokenized typography, directional back controls, and localized Storybook examples.
+- e6540ab: Apply token-backed Dhivehi typography to Menu items, descriptions, shortcuts, and section headers in RTL contexts.
+- f58d542: Preserve language and direction on Tooltip overlays so portalled Dhivehi tooltips use the correct RTL behavior and Dhivehi typography tokens.
+
 ## 0.2.0
 
 ### Minor Changes
