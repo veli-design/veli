@@ -36,20 +36,20 @@ function Example() {
     <>
       <Button onPress={() => setIsOpen(true)}>Open modal</Button>
 
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        title="Edit profile"
-        footer={
-          <>
-            <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onPress={() => setIsOpen(false)}>Save changes</Button>
-          </>
-        }
-      >
-        <p>Update your profile details and save when done.</p>
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Modal.Header>
+          <Modal.Title>Edit profile</Modal.Title>
+          <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Content>
+          <p>Update your profile details and save when done.</p>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button onPress={() => setIsOpen(false)}>Save changes</Button>
+        </Modal.Footer>
       </Modal>
     </>
   );
@@ -58,29 +58,33 @@ function Example() {
 
 ## Sizes
 
-The modal supports five size variants to fit different content density and workflow needs:
+The modal supports six size variants aligned with the Veli design system:
 
-- `sm`
-- `md`
-- `lg`
-- `xl`
-- `full`
+- `xs` — 440px confirmation dialogs without a description divider
+- `sm` — 440px
+- `md` — 576px (default)
+- `lg` — 776px
+- `xl` — 1024px
+- `full` — 1200px
+
+Modals grow with their content and are capped at `90dvh` when content overflows.
 
 <div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
   <ModalSizesDemo client:visible />
 </div>
 
 ```tsx
-<Modal size="sm" title="Small modal"><p>Body content.</p></Modal>
-<Modal size="md" title="Medium modal"><p>Body content.</p></Modal>
-<Modal size="lg" title="Large modal"><p>Body content.</p></Modal>
-<Modal size="xl" title="Extra large modal"><p>Body content.</p></Modal>
-<Modal size="full" title="Full-screen modal"><p>Body content.</p></Modal>
+<Modal size="xs">...</Modal>
+<Modal size="sm">...</Modal>
+<Modal size="md">...</Modal>
+<Modal size="lg">...</Modal>
+<Modal size="xl">...</Modal>
+<Modal size="full">...</Modal>
 ```
 
 ## Dismiss Behavior
 
-For high-risk actions, you can disable outside-click and `Escape` dismissal.
+For high-risk actions, you can disable outside-click and `Escape` dismissal. Omit `Modal.CloseButton` when the user must choose an explicit action.
 
 <div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
   <ModalDismissDemo client:visible />
@@ -88,63 +92,110 @@ For high-risk actions, you can disable outside-click and `Escape` dismissal.
 
 ```tsx
 // Standard (dismissable)
-<Modal isDismissable title="Edit profile"><p>Body content.</p></Modal>
+<Modal isDismissable>
+  <Modal.Header>
+    <Modal.Title>Edit profile</Modal.Title>
+    <Modal.CloseButton />
+  </Modal.Header>
+  <Modal.Content><p>Body content.</p></Modal.Content>
+</Modal>
 
 // Locked modal for destructive actions
-<Modal
-  title="Confirm destructive action"
-  isDismissable={false}
-  isKeyboardDismissDisabled
-  showCloseButton={false}
->
-  <p>This action needs an explicit choice.</p>
+<Modal isDismissable={false} isKeyboardDismissDisabled>
+  <Modal.Header>
+    <Modal.Title>Confirm destructive action</Modal.Title>
+  </Modal.Header>
+  <Modal.Content><p>This action needs an explicit choice.</p></Modal.Content>
 </Modal>
 ```
 
-## Composition
+## With Trigger
 
-`Modal` is slot-based and library-friendly:
-
-- `title`: heading area and default dialog label
-- `children`: body content
-- `footer`: actions section
-
-Every modal needs one dialog name: use `title`, `aria-label`, or `aria-labelledby`. In development, unlabeled dialogs fail fast instead of rendering silently.
+Use `Modal.Trigger` when you want React Aria to manage open state and restore focus to the trigger on close. Footer actions can dismiss the dialog with `slot="close"` on `Button`.
 
 ```tsx
-<Modal
-  title="Edit profile"
-  footer={
-    <>
-      <Button intent="secondary" appearance="transparent">
+<Modal.Trigger>
+  <Button>Open modal</Button>
+  <Modal>
+    <Modal.Header>
+      <Modal.Title>Edit profile</Modal.Title>
+      <Modal.CloseButton />
+    </Modal.Header>
+    <Modal.Content>
+      <p>Update your profile details and save when done.</p>
+    </Modal.Content>
+    <Modal.Footer>
+      <Button slot="close" intent="secondary" appearance="transparent">
         Cancel
       </Button>
-      <Button>Save changes</Button>
-    </>
-  }
->
-  <p>Body content goes here.</p>
+      <Button slot="close">Save changes</Button>
+    </Modal.Footer>
+  </Modal>
+</Modal.Trigger>
+```
+
+For flows that need external state (routing, async guards, multiple triggers), use controlled `isOpen` / `onOpenChange` instead.
+
+## Composition
+
+`Modal` uses a compound component API:
+
+- `Modal.Trigger` — wraps trigger and modal; manages open state and focus return
+- `Modal.Header` — top row with title, description, and optional close button
+- `Modal.Title` — dialog heading and accessible name
+- `Modal.Description` — optional subtitle below the title
+- `Modal.CloseButton` — top-right dismiss control (opt-in)
+- `Modal.Content` — main body area
+- `Modal.Footer` — action buttons
+
+Every modal needs one dialog name: use `Modal.Title`, `aria-label`, or `aria-labelledby`. In development, unlabeled dialogs fail fast instead of rendering silently.
+
+```tsx
+<Modal>
+  <Modal.Header>
+    <Modal.Title>Edit profile</Modal.Title>
+    <Modal.Description>Update your details and save when done.</Modal.Description>
+    <Modal.CloseButton />
+  </Modal.Header>
+  <Modal.Content>
+    <p>Body content goes here.</p>
+  </Modal.Content>
+  <Modal.Footer>
+    <Button intent="secondary" appearance="transparent">
+      Cancel
+    </Button>
+    <Button>Save changes</Button>
+  </Modal.Footer>
 </Modal>
 ```
 
 ## Props
 
-| Prop                        | Type                                     | Default          | Description                                                                                    |
-| :-------------------------- | :--------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------- |
-| `size`                      | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'md'`           | Width/height scale of the modal surface.                                                       |
-| `title`                     | `ReactNode`                              | -                | Modal heading and dialog label. Required unless `aria-label` or `aria-labelledby` is provided. |
-| `aria-label`                | `string`                                 | -                | Accessible dialog name for titleless compositions.                                             |
-| `aria-labelledby`           | `string`                                 | -                | ID reference for an external dialog label.                                                     |
-| `footer`                    | `ReactNode`                              | -                | Optional footer action area.                                                                   |
-| `showCloseButton`           | `boolean`                                | `true`           | Shows/hides top-right close button.                                                            |
-| `closeButtonLabel`          | `string`                                 | `'Close dialog'` | Accessible label for close button.                                                             |
-| `isDismissable`             | `boolean`                                | `true`           | Allows click-outside dismissal.                                                                |
-| `isKeyboardDismissDisabled` | `boolean`                                | `false`          | Disables `Escape` to close.                                                                    |
-| `isOpen`                    | `boolean`                                | -                | Controlled open state.                                                                         |
-| `defaultOpen`               | `boolean`                                | -                | Uncontrolled initial open state.                                                               |
-| `onOpenChange`              | `(isOpen: boolean) => void`              | -                | Open state change callback.                                                                    |
-| `className`                 | `string`                                 | -                | Class overrides for modal surface.                                                             |
-| `contentClassName`          | `string`                                 | -                | Class overrides for content area.                                                              |
-| `overlayClassName`          | `string`                                 | -                | Class overrides for backdrop container.                                                        |
+### Modal
 
-_Note: The component also supports remaining `react-aria-components` `ModalOverlay` props (except replacing `children` with this API)._
+| Prop                        | Type                                             | Default | Description                                        |
+| :-------------------------- | :----------------------------------------------- | :------ | :------------------------------------------------- |
+| `size`                      | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'md'`  | Width/height scale of the modal surface.           |
+| `aria-label`                | `string`                                         | -       | Accessible dialog name for titleless compositions. |
+| `aria-labelledby`           | `string`                                         | -       | ID reference for an external dialog label.         |
+| `isDismissable`             | `boolean`                                        | `true`  | Allows click-outside dismissal.                    |
+| `isKeyboardDismissDisabled` | `boolean`                                        | `false` | Disables `Escape` to close.                        |
+| `isOpen`                    | `boolean`                                        | -       | Controlled open state.                             |
+| `defaultOpen`               | `boolean`                                        | -       | Uncontrolled initial open state.                   |
+| `onOpenChange`              | `(isOpen: boolean) => void`                      | -       | Open state change callback.                        |
+| `className`                 | `string`                                         | -       | Class overrides for modal surface.                 |
+| `overlayClassName`          | `string`                                         | -       | Class overrides for backdrop container.            |
+
+### Modal.CloseButton
+
+| Prop         | Type     | Default          | Description                        |
+| :----------- | :------- | :--------------- | :--------------------------------- |
+| `aria-label` | `string` | `'Close dialog'` | Accessible label for close button. |
+
+### Modal.Content
+
+| Prop        | Type     | Default | Description                    |
+| :---------- | :------- | :------ | :----------------------------- |
+| `className` | `string` | -       | Class overrides for body area. |
+
+_Note: The `Modal` component also supports remaining `react-aria-components` `ModalOverlay` props (except `children`, which uses the composition API above)._

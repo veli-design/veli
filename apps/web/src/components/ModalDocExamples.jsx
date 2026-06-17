@@ -10,23 +10,23 @@ export function ModalBasicDemo() {
   return (
     <div className="flex min-h-[220px] items-center justify-center">
       <Button onPress={() => setIsOpen(true)}>Open Modal</Button>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        title="Edit profile"
-        footer={
-          <>
-            <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onPress={() => setIsOpen(false)}>Save changes</Button>
-          </>
-        }
-      >
-        <p>
-          This is a controlled modal. Focus is trapped while open and restored to the trigger when
-          closed.
-        </p>
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Modal.Header>
+          <Modal.Title>Edit profile</Modal.Title>
+          <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Content>
+          <p>
+            This is a controlled modal. Focus is trapped while open and restored to the trigger when
+            closed.
+          </p>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button onPress={() => setIsOpen(false)}>Save changes</Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
@@ -54,13 +54,20 @@ export function ModalSizesDemo() {
         size={activeSize ?? 'md'}
         isOpen={activeSize !== null}
         onOpenChange={(isOpen) => setActiveSize(isOpen ? activeSize : null)}
-        title={`${(activeSize ?? 'md').toUpperCase()} modal`}
-        footer={<Button onPress={() => setActiveSize(null)}>Close</Button>}
       >
-        <p>
-          Resize behavior is token-based and keeps spacing and typography consistent across all size
-          variants.
-        </p>
+        <Modal.Header>
+          <Modal.Title>{(activeSize ?? 'md').toUpperCase()} modal</Modal.Title>
+          <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Content>
+          <p>
+            Resize behavior is token-based and keeps spacing and typography consistent across all
+            size variants.
+          </p>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button onPress={() => setActiveSize(null)}>Close</Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
@@ -80,26 +87,28 @@ export function ModalDismissDemo() {
       <Modal
         isOpen={mode !== null}
         onOpenChange={(isOpen) => setMode(isOpen ? mode : null)}
-        title={isLocked ? 'Confirm destructive action' : 'Dismissable modal'}
         isDismissable={!isLocked}
         isKeyboardDismissDisabled={isLocked}
-        showCloseButton={!isLocked}
-        footer={
-          <>
-            <Button intent="secondary" appearance="transparent" onPress={() => setMode(null)}>
-              Cancel
-            </Button>
-            <Button intent={isLocked ? 'danger' : 'primary'} onPress={() => setMode(null)}>
-              Confirm
-            </Button>
-          </>
-        }
       >
-        <p>
-          {isLocked
-            ? 'Outside click and Escape are disabled for critical flows.'
-            : 'You can close this modal with outside click, Escape, or the close button.'}
-        </p>
+        <Modal.Header>
+          <Modal.Title>{isLocked ? 'Confirm destructive action' : 'Dismissable modal'}</Modal.Title>
+          {!isLocked ? <Modal.CloseButton /> : null}
+        </Modal.Header>
+        <Modal.Content>
+          <p>
+            {isLocked
+              ? 'Outside click and Escape are disabled for critical flows.'
+              : 'You can close this modal with outside click, Escape, or the close button.'}
+          </p>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button intent="secondary" appearance="transparent" onPress={() => setMode(null)}>
+            Cancel
+          </Button>
+          <Button intent={isLocked ? 'danger' : 'primary'} onPress={() => setMode(null)}>
+            Confirm
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

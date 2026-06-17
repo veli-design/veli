@@ -16,19 +16,23 @@ export function AccessibilityTypeExpectations() {
         <span aria-hidden="true" />
       </Button>
 
-      <Modal isOpen title="Edit profile">
-        <p>Profile form</p>
+      <Modal isOpen>
+        <Modal.Header>
+          <Modal.Title>Edit profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Content>
+          <p>Profile form</p>
+        </Modal.Content>
       </Modal>
       <Modal isOpen aria-label="Edit profile">
-        <p>Profile form</p>
+        <Modal.Content>
+          <p>Profile form</p>
+        </Modal.Content>
       </Modal>
       <Modal isOpen aria-labelledby="edit-profile-title">
-        <p>Profile form</p>
-      </Modal>
-
-      {/* @ts-expect-error modals require title, aria-label, or aria-labelledby */}
-      <Modal isOpen>
-        <p>Profile form</p>
+        <Modal.Content>
+          <p>Profile form</p>
+        </Modal.Content>
       </Modal>
     </>
   );
