@@ -30,17 +30,30 @@ import { cva } from 'class-variance-authority';
 import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
+import {
+  getCalendarTodayLabel,
+  getDhivehiMonthName,
+  getDhivehiWeekdayLabel,
+} from './calendar-localization';
+import { useVeliLanguage } from './provider';
 
 type CalendarPickerItem = {
   id: number;
   formatted: string;
 };
 
+type CalendarWeekdayStyle = NonNullable<CalendarGridProps['weekdayStyle']>;
+type CalendarDirection = 'ltr' | 'rtl';
+
 type CalendarPickerSelectProps = {
   'aria-label': string;
   value: number | string;
   onChange: (key: number | string | null) => void;
   items: CalendarPickerItem[];
+  lang?: string;
+  dir?: 'ltr' | 'rtl';
+  labelClassName?: string;
+  itemClassName?: string;
   popoverClassName?: string;
 };
 
@@ -48,6 +61,21 @@ const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar
 
 const calendarHeaderMonthLabelClassName =
   'min-w-0 flex-1 px-1 text-center type-body-sm-medium text-text-default-strong whitespace-nowrap';
+
+const calendarNumericTextClassName =
+  'tabular-nums [&:lang(dv)]:!font-sans [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal';
+
+const calendarNumericRegularTextClassName = twMerge(
+  calendarNumericTextClassName,
+  '[&:lang(dv)]:!font-normal',
+);
+
+const calendarHeaderYearLabelClassName = twMerge(
+  calendarNumericTextClassName,
+  '[&:lang(dv)]:!font-medium',
+);
+
+const calendarYearPickerItemClassName = calendarNumericRegularTextClassName;
 
 const calendarHeaderIconButtonClassName =
   'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-default-strong';
@@ -89,6 +117,10 @@ function CalendarPickerSelect({
   value,
   onChange,
   items,
+  lang,
+  dir,
+  labelClassName,
+  itemClassName,
   popoverClassName,
 }: CalendarPickerSelectProps) {
   const selectedLabel = items.find((item) => item.id === value)?.formatted ?? '';
@@ -100,7 +132,9 @@ function CalendarPickerSelect({
       onSelectionChange={onChange}
       className="flex items-center gap-0.5"
     >
-      <span className={calendarHeaderMonthLabelClassName}>{selectedLabel}</span>
+      <span className={twMerge(calendarHeaderMonthLabelClassName, labelClassName)}>
+        {selectedLabel}
+      </span>
       <Button
         intent="secondary"
         appearance="ghost"
@@ -114,6 +148,8 @@ function CalendarPickerSelect({
       <Popover
         offset={4}
         placement="bottom end"
+        lang={lang}
+        dir={dir}
         className={twMerge(calendarPickerPopoverClassName, popoverClassName)}
       >
         <ListBox items={items} className={calendarPickerListBoxClassName}>
@@ -122,7 +158,10 @@ function CalendarPickerSelect({
               id={item.id}
               textValue={item.formatted}
               className={({ isSelected, isFocused, isDisabled }) =>
-                calendarPickerItemVariants({ isSelected, isFocused, isDisabled })
+                twMerge(
+                  calendarPickerItemVariants({ isSelected, isFocused, isDisabled }),
+                  itemClassName,
+                )
               }
             >
               {item.formatted}
@@ -137,6 +176,31 @@ function CalendarPickerSelect({
 const calendarRootVariants = cva(
   'flex max-w-full flex-col rounded-xl border border-border-default-subtle bg-calendar-bg p-1 font-sans text-text-default-default shadow-md',
 );
+
+const calendarGridClassName = 'w-[19.25rem] table-fixed border-spacing-0';
+
+const calendarHeaderCellClassName =
+  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-text-default-default';
+
+const calendarWeekdayLabelClassName = 'block truncate no-underline';
+
+const calendarLongWeekdayLabelClassName = '[&:lang(dv)]:text-[12px] [&:lang(dv)]:leading-5';
+
+const calendarDayLabelClassName = twMerge(
+  'inline-flex h-5 min-w-5 items-center justify-center leading-5',
+  calendarNumericRegularTextClassName,
+);
+
+function getDefaultCalendarWeekdayStyle(direction: CalendarDirection): CalendarWeekdayStyle {
+  return direction === 'rtl' ? 'long' : 'narrow';
+}
+
+function getCalendarWeekdayLabelClassName(weekdayStyle: CalendarWeekdayStyle) {
+  return twMerge(
+    calendarWeekdayLabelClassName,
+    weekdayStyle === 'long' && calendarLongWeekdayLabelClassName,
+  );
+}
 
 const cellVariants = cva(
   'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
@@ -208,18 +272,31 @@ export function Calendar<T extends DateValue>({
   errorMessage,
   className,
   gridClassName,
-  weekdayStyle = 'short',
+  weekdayStyle,
   showTodayButton = false,
-  todayButtonLabel = 'Today',
+  todayButtonLabel,
   ...props
 }: CalendarProps<T>) {
+  const languageConfig = useVeliLanguage();
+  const resolvedWeekdayStyle =
+    weekdayStyle ?? getDefaultCalendarWeekdayStyle(languageConfig.direction);
+
   return (
-    <AriaCalendar {...props} className={twMerge(calendarRootVariants(), className)}>
+    <AriaCalendar
+      {...props}
+      lang={languageConfig.lang}
+      dir={languageConfig.direction}
+      className={twMerge(calendarRootVariants(), className)}
+    >
       <CalendarHeader />
-      <CalendarDateGrid gridClassName={gridClassName} weekdayStyle={weekdayStyle} />
-      {showTodayButton ? <CalendarTodayButton label={todayButtonLabel} /> : null}
+      <CalendarDateGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
+      {showTodayButton ? (
+        <CalendarTodayButton
+          label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
+        />
+      ) : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-body-sm-regular text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-caption-regular text-text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -243,18 +320,31 @@ export function RangeCalendar<T extends DateValue>({
   errorMessage,
   className,
   gridClassName,
-  weekdayStyle = 'short',
+  weekdayStyle,
   showTodayButton = false,
-  todayButtonLabel = 'Today',
+  todayButtonLabel,
   ...props
 }: RangeCalendarProps<T>) {
+  const languageConfig = useVeliLanguage();
+  const resolvedWeekdayStyle =
+    weekdayStyle ?? getDefaultCalendarWeekdayStyle(languageConfig.direction);
+
   return (
-    <AriaRangeCalendar {...props} className={twMerge(calendarRootVariants(), className)}>
+    <AriaRangeCalendar
+      {...props}
+      lang={languageConfig.lang}
+      dir={languageConfig.direction}
+      className={twMerge(calendarRootVariants(), className)}
+    >
       <CalendarHeader />
-      <CalendarRangeGrid gridClassName={gridClassName} weekdayStyle={weekdayStyle} />
-      {showTodayButton ? <CalendarTodayButton label={todayButtonLabel} /> : null}
+      <CalendarRangeGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
+      {showTodayButton ? (
+        <CalendarTodayButton
+          label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
+        />
+      ) : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-body-sm-regular text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-caption-regular text-text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -264,17 +354,21 @@ export function RangeCalendar<T extends DateValue>({
 
 function CalendarDateGrid({
   gridClassName,
-  weekdayStyle = 'short',
+  weekdayStyle,
 }: {
   gridClassName?: string;
-  weekdayStyle?: CalendarGridProps['weekdayStyle'];
+  weekdayStyle: CalendarWeekdayStyle;
 }) {
+  const { language } = useVeliLanguage();
+  const reactAriaWeekdayStyle =
+    language === 'dv' && weekdayStyle === 'narrow' ? 'short' : weekdayStyle;
+
   return (
     <CalendarGrid
-      weekdayStyle={weekdayStyle}
-      className={twMerge('border-spacing-0', gridClassName)}
+      weekdayStyle={reactAriaWeekdayStyle}
+      className={twMerge(calendarGridClassName, gridClassName)}
     >
-      <CalendarGridHeader />
+      <CalendarGridHeader weekdayStyle={weekdayStyle} />
       <CalendarGridBody>
         {(date) => (
           <CalendarCell date={date} className={(state) => getCalendarCellClassName(state)}>
@@ -288,17 +382,21 @@ function CalendarDateGrid({
 
 function CalendarRangeGrid({
   gridClassName,
-  weekdayStyle = 'short',
+  weekdayStyle,
 }: {
   gridClassName?: string;
-  weekdayStyle?: CalendarGridProps['weekdayStyle'];
+  weekdayStyle: CalendarWeekdayStyle;
 }) {
+  const { language } = useVeliLanguage();
+  const reactAriaWeekdayStyle =
+    language === 'dv' && weekdayStyle === 'narrow' ? 'short' : weekdayStyle;
+
   return (
     <CalendarGrid
-      weekdayStyle={weekdayStyle}
-      className={twMerge('border-spacing-0 [&_td]:p-0', gridClassName)}
+      weekdayStyle={reactAriaWeekdayStyle}
+      className={twMerge(calendarGridClassName, '[&_td]:p-0', gridClassName)}
     >
-      <CalendarGridHeader />
+      <CalendarGridHeader weekdayStyle={weekdayStyle} />
       <CalendarGridBody>
         {(date) => (
           <CalendarCell date={date} className={(state) => getRangeCalendarCellClassName(state)}>
@@ -324,22 +422,27 @@ function CalendarRangeGrid({
 
 function CalendarMonthLabel({ className }: { className?: string }) {
   const { locale } = useLocale();
+  const { language } = useVeliLanguage();
   const calendarState = useContext(CalendarStateContext);
   const rangeCalendarState = useContext(RangeCalendarStateContext);
   const state = calendarState ?? rangeCalendarState;
-
+  const startDate = state?.visibleRange.start;
+  const timeZone = state?.timeZone;
   const label = useMemo(() => {
-    if (!state) {
+    if (!startDate || !timeZone) {
       return '';
     }
 
-    const startDate = state.visibleRange.start;
+    if (language === 'dv') {
+      return getDhivehiMonthName(startDate.month);
+    }
+
     return new Intl.DateTimeFormat(locale, {
       month: 'long',
       calendar: startDate.calendar.identifier,
-      timeZone: state.timeZone,
-    }).format(startDate.toDate(state.timeZone));
-  }, [locale, state]);
+      timeZone,
+    }).format(startDate.toDate(timeZone));
+  }, [language, locale, startDate, timeZone]);
 
   if (!state) {
     return null;
@@ -401,7 +504,7 @@ function CalendarTodayButton({ label }: { label: string }) {
 }
 
 export function CalendarHeader() {
-  const { direction } = useLocale();
+  const { direction, lang } = useVeliLanguage();
 
   return (
     <header className="flex items-center gap-0.5 px-0.5 py-0.5">
@@ -435,6 +538,10 @@ export function CalendarHeader() {
           {(props) => (
             <CalendarPickerSelect
               {...props}
+              lang={lang}
+              dir={direction}
+              labelClassName={calendarHeaderYearLabelClassName}
+              itemClassName={calendarYearPickerItemClassName}
               popoverClassName={calendarYearPickerPopoverClassName}
             />
           )}
@@ -444,14 +551,30 @@ export function CalendarHeader() {
   );
 }
 
-export function CalendarGridHeader() {
+export function CalendarGridHeader({ weekdayStyle }: { weekdayStyle?: CalendarWeekdayStyle }) {
+  const { direction, language } = useVeliLanguage();
+  const resolvedWeekdayStyle = weekdayStyle ?? getDefaultCalendarWeekdayStyle(direction);
+
   return (
     <AriaCalendarGridHeader>
-      {(day) => (
-        <CalendarHeaderCell className="py-2 type-caption-regular text-text-default-default">
-          {day}
-        </CalendarHeaderCell>
-      )}
+      {(day) => {
+        const weekdayLabel =
+          language === 'dv' ? getDhivehiWeekdayLabel(day, resolvedWeekdayStyle) : day;
+        const weekdayFullLabel =
+          language === 'dv' ? getDhivehiWeekdayLabel(day, 'long') : undefined;
+
+        return (
+          <CalendarHeaderCell className={calendarHeaderCellClassName}>
+            <abbr
+              aria-label={weekdayFullLabel}
+              title={weekdayFullLabel}
+              className={getCalendarWeekdayLabelClassName(resolvedWeekdayStyle)}
+            >
+              {weekdayLabel}
+            </abbr>
+          </CalendarHeaderCell>
+        );
+      }}
     </AriaCalendarGridHeader>
   );
 }
@@ -476,20 +599,18 @@ function CalendarDayLabel({
   state: CalendarCellRenderProps;
   todayDotInverted: boolean;
 }) {
-  if (!state.isToday) {
-    return state.formattedDate;
-  }
-
   return (
-    <span className="relative inline-block">
+    <span className={twMerge(calendarDayLabelClassName, state.isToday && 'relative')}>
       {state.formattedDate}
-      <span
-        aria-hidden="true"
-        className={twMerge(
-          'absolute start-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
-          todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
-        )}
-      />
+      {state.isToday ? (
+        <span
+          aria-hidden="true"
+          className={twMerge(
+            'absolute left-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
+            todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
+          )}
+        />
+      ) : null}
     </span>
   );
 }
