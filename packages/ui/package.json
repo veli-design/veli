@@ -53,6 +53,10 @@
       "types": "./dist/input.d.ts",
       "import": "./dist/input.js"
     },
+    "./kbd": {
+      "types": "./dist/kbd.d.ts",
+      "import": "./dist/kbd.js"
+    },
     "./link": {
       "types": "./dist/link.d.ts",
       "import": "./dist/link.js"
