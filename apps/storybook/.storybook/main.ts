@@ -4,12 +4,14 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(dirname, '../../..');
+const localAddon = (relativePath: string) => path.resolve(dirname, relativePath);
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
+    localAddon('./custom-addons/provider/preset.ts'),
     '@storybook/addon-interactions',
   ],
   framework: {
