@@ -25,6 +25,7 @@ import {
   fieldTriggerIndicatorVariants,
   fieldTriggerValueVariants,
 } from './field-shared';
+import { useVeliLanguage } from './provider';
 
 const popoverSurfaceClassName =
   'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none';
@@ -66,6 +67,7 @@ export function DatePicker<T extends DateValue>({
   ...props
 }: DatePickerProps<T>) {
   const { locale } = useLocale();
+  const languageConfig = useVeliLanguage();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const showRequired = showRequiredIndicator && Boolean(props.isRequired);
 
@@ -151,6 +153,8 @@ export function DatePicker<T extends DateValue>({
               offset={4}
               placement="bottom start"
               triggerRef={triggerRef}
+              lang={languageConfig.lang}
+              dir={languageConfig.direction}
               className={twMerge(popoverSurfaceClassName, popoverClassName)}
             >
               <Dialog className="outline-none">
