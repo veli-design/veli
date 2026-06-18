@@ -105,6 +105,10 @@
       "types": "./dist/tabs.d.ts",
       "import": "./dist/tabs.js"
     },
+    "./textarea": {
+      "types": "./dist/textarea.d.ts",
+      "import": "./dist/textarea.js"
+    },
     "./tooltip": {
       "types": "./dist/tooltip.d.ts",
       "import": "./dist/tooltip.js"
