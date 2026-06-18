@@ -3,8 +3,12 @@
 import * as React from 'react';
 import {
   Dialog,
+  DialogTrigger as AriaDialogTrigger,
   type DialogProps as AriaDialogProps,
   Heading,
+  type HeadingProps,
+  Text,
+  type TextProps,
   Modal as AriaModal,
   ModalOverlay,
   type ModalOverlayProps as AriaModalOverlayProps,
@@ -12,22 +16,32 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { invariantDev, normalizeAccessibleText } from './a11y';
-import { Button } from './button';
+import { Button, type ButtonProps } from './button';
+import { Divider } from './divider';
+import { hasRenderableMessage } from './field-shared';
+
+const modalShadowClass =
+  'shadow-[0px_0px_2px_var(--color-effects-shadow-frame),0px_4px_6px_var(--color-effects-shadow-depth-50)]';
 
 const overlayVariants = cva(
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-[2px] transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0',
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0',
 );
 
 const modalVariants = cva(
-  'relative w-full max-h-[min(90dvh,720px)] overflow-auto rounded-[20px] border border-border-default-subtle bg-bg-surface-overlay-raised text-text-default-default shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)] outline-none transition duration-200 ease-out data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
+  [
+    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-text-default-default outline-none transition duration-200 ease-out',
+    'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
+    modalShadowClass,
+  ],
   {
     variants: {
       size: {
-        sm: 'max-w-md',
-        md: 'max-w-xl',
-        lg: 'max-w-3xl',
-        xl: 'max-w-5xl',
-        full: 'max-w-[min(96vw,1200px)] h-[min(90dvh,900px)] overflow-hidden',
+        xs: 'max-w-[440px]',
+        sm: 'max-w-[440px]',
+        md: 'max-w-[576px]',
+        lg: 'max-w-[776px]',
+        xl: 'max-w-[1024px]',
+        full: 'max-w-[1200px]',
       },
     },
     defaultVariants: {
@@ -36,61 +50,158 @@ const modalVariants = cva(
   },
 );
 
-interface ModalSharedProps
+type ModalLayoutPart = 'header' | 'description' | 'title';
+
+interface ModalLayoutState {
+  hasHeader: boolean;
+  hasDescription: boolean;
+  hasTitle: boolean;
+}
+
+interface ModalLayoutContextValue extends ModalLayoutState {
+  register: (part: ModalLayoutPart) => () => void;
+}
+
+const ModalCloseContext = React.createContext<(() => void) | null>(null);
+const ModalLayoutContext = React.createContext<ModalLayoutContextValue | null>(null);
+
+function useModalClose() {
+  const close = React.useContext(ModalCloseContext);
+  if (close == null) {
+    invariantDev(false, 'Veli UI: Modal.CloseButton must be used within a Modal.');
+    throw new Error('Veli UI: Modal.CloseButton must be used within a Modal.');
+  }
+  return close;
+}
+
+function useModalLayout() {
+  const context = React.useContext(ModalLayoutContext);
+  if (context == null) {
+    invariantDev(false, 'Veli UI: Modal subcomponents must be used within a Modal.');
+    throw new Error('Veli UI: Modal subcomponents must be used within a Modal.');
+  }
+  return context;
+}
+
+function isElementOfType<P>(
+  child: React.ReactNode,
+  component: React.ComponentType<P>,
+): child is React.ReactElement<P> {
+  return React.isValidElement(child) && child.type === component;
+}
+
+function splitHeaderChildren(children: React.ReactNode) {
+  const closeButton: React.ReactNode[] = [];
+  const titles: React.ReactNode[] = [];
+  const descriptions: React.ReactNode[] = [];
+
+  React.Children.forEach(children, (child) => {
+    if (isElementOfType(child, ModalCloseButton)) {
+      closeButton.push(child);
+      return;
+    }
+
+    if (isElementOfType(child, ModalDescription)) {
+      descriptions.push(child);
+      return;
+    }
+
+    titles.push(child);
+  });
+
+  return { titles, descriptions, closeButton };
+}
+
+function ModalSectionDivider() {
+  return (
+    <div className="flex h-4 w-full items-end">
+      <Divider className="w-full" />
+    </div>
+  );
+}
+
+export interface ModalProps
   extends
     Omit<AriaModalOverlayProps, 'children' | 'className'>,
     VariantProps<typeof modalVariants> {
-  title?: React.ReactNode;
+  children: React.ReactNode;
   'aria-label'?: AriaDialogProps['aria-label'];
   'aria-labelledby'?: AriaDialogProps['aria-labelledby'];
-  children: React.ReactNode;
-  footer?: React.ReactNode;
   className?: string;
-  contentClassName?: string;
   overlayClassName?: string;
-  showCloseButton?: boolean;
-  closeButtonLabel?: string;
 }
 
-type ModalWithTitle = ModalSharedProps & {
-  title: React.ReactNode;
-};
-
-type ModalWithAriaLabel = ModalSharedProps & {
-  'aria-label': NonNullable<AriaDialogProps['aria-label']>;
-};
-
-type ModalWithAriaLabelledby = ModalSharedProps & {
-  'aria-labelledby': NonNullable<AriaDialogProps['aria-labelledby']>;
-};
-
-export type ModalProps = ModalWithTitle | ModalWithAriaLabel | ModalWithAriaLabelledby;
-
 export function Modal({
-  title,
   children,
-  footer,
-  size,
+  size = 'md',
   className,
-  contentClassName,
   overlayClassName,
-  showCloseButton = true,
-  closeButtonLabel = 'Close dialog',
   isDismissable = true,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
+  isOpen: isOpenProp,
+  defaultOpen,
+  onOpenChange,
   ...overlayProps
 }: ModalProps) {
   const normalizedAriaLabel = normalizeAccessibleText(ariaLabel);
   const normalizedAriaLabelledby = normalizeAccessibleText(ariaLabelledby);
-  const titleIsEmptyString = typeof title === 'string' && !normalizeAccessibleText(title);
-  const hasTitle = title != null && title !== false && !titleIsEmptyString;
-  const hasDialogName = hasTitle || normalizedAriaLabel || normalizedAriaLabelledby;
+  const isControlled = isOpenProp !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen ?? false);
+  const isModalOpen = isControlled ? isOpenProp : uncontrolledOpen;
+  const layoutStateRef = React.useRef<ModalLayoutState>({
+    hasHeader: false,
+    hasDescription: false,
+    hasTitle: false,
+  });
+  const [layoutState, setLayoutState] = React.useState<ModalLayoutState>({
+    hasHeader: false,
+    hasDescription: false,
+    hasTitle: false,
+  });
 
-  invariantDev(
-    !titleIsEmptyString,
-    'Veli UI: Modal title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.',
+  const register = React.useCallback((part: ModalLayoutPart) => {
+    const next = {
+      ...layoutStateRef.current,
+      hasHeader: part === 'header' ? true : layoutStateRef.current.hasHeader,
+      hasDescription: part === 'description' ? true : layoutStateRef.current.hasDescription,
+      hasTitle: part === 'title' ? true : layoutStateRef.current.hasTitle,
+    };
+    layoutStateRef.current = next;
+    setLayoutState(next);
+
+    return () => {
+      const cleared = {
+        ...layoutStateRef.current,
+        hasHeader: part === 'header' ? false : layoutStateRef.current.hasHeader,
+        hasDescription: part === 'description' ? false : layoutStateRef.current.hasDescription,
+        hasTitle: part === 'title' ? false : layoutStateRef.current.hasTitle,
+      };
+      layoutStateRef.current = cleared;
+      setLayoutState(cleared);
+    };
+  }, []);
+
+  const handleOpenChange = React.useCallback(
+    (open: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(open);
+      }
+      onOpenChange?.(open);
+    },
+    [isControlled, onOpenChange],
   );
+
+  const layoutContext = React.useMemo<ModalLayoutContextValue>(
+    () => ({
+      ...layoutState,
+      register,
+    }),
+    [layoutState, register],
+  );
+
+  const resolvedSize = size ?? 'md';
+
   invariantDev(
     ariaLabel == null || Boolean(normalizedAriaLabel),
     'Veli UI: Modal aria-label must be a non-empty string.',
@@ -99,81 +210,220 @@ export function Modal({
     ariaLabelledby == null || Boolean(normalizedAriaLabelledby),
     'Veli UI: Modal aria-labelledby must be a non-empty id reference.',
   );
-  invariantDev(
-    hasDialogName,
-    'Veli UI: Modal requires title, aria-label, or aria-labelledby so the dialog has an accessible name.',
-  );
+
+  React.useLayoutEffect(() => {
+    if (!isModalOpen) {
+      return;
+    }
+
+    const hasDialogName =
+      layoutStateRef.current.hasTitle ||
+      Boolean(normalizedAriaLabel) ||
+      Boolean(normalizedAriaLabelledby);
+
+    invariantDev(
+      hasDialogName,
+      'Veli UI: Modal requires Modal.Title, aria-label, or aria-labelledby so the dialog has an accessible name.',
+    );
+  }, [isModalOpen, layoutState.hasTitle, normalizedAriaLabel, normalizedAriaLabelledby]);
 
   return (
     <ModalOverlay
       {...overlayProps}
+      {...(isControlled ? { isOpen: isOpenProp } : {})}
+      {...(defaultOpen !== undefined && !isControlled ? { defaultOpen } : {})}
+      onOpenChange={handleOpenChange}
       isDismissable={isDismissable}
       className={twMerge(overlayVariants(), overlayClassName)}
     >
-      <AriaModal className={twMerge(modalVariants({ size }), className)}>
+      <AriaModal className={twMerge(modalVariants({ size: resolvedSize }), className)}>
         <Dialog
           aria-label={normalizedAriaLabel}
           aria-labelledby={normalizedAriaLabelledby}
-          className={twMerge('flex flex-col outline-none', size === 'full' && 'h-full min-h-0')}
+          className="flex flex-col px-6 py-4 outline-none"
         >
           {({ close }) => (
-            <>
-              {(hasTitle || showCloseButton) && (
-                <div className="flex items-start justify-between gap-[16px] px-[24px] pt-[24px]">
-                  {hasTitle ? (
-                    <Heading
-                      slot="title"
-                      className="flex-1 min-w-0 type-title-2-bold text-text-default-high-contrast"
-                    >
-                      {title}
-                    </Heading>
-                  ) : null}
-                  {showCloseButton ? (
-                    <Button
-                      onPress={close}
-                      intent="secondary"
-                      appearance="ghost"
-                      size="xs"
-                      iconOnly
-                      aria-label={closeButtonLabel}
-                    >
-                      <svg
-                        aria-hidden="true"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M5 5L15 15M15 5L5 15"
-                          stroke="currentColor"
-                          strokeWidth="1.75"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </Button>
-                  ) : null}
-                </div>
-              )}
-              <div
-                className={twMerge(
-                  'px-[24px] pb-[24px] type-body-md-regular text-text-default-default',
-                  hasTitle || showCloseButton ? 'pt-[16px]' : 'pt-[24px]',
-                  size === 'full' && 'min-h-0 flex-1 overflow-auto',
-                  contentClassName,
-                )}
-              >
+            <ModalCloseContext.Provider value={close}>
+              <ModalLayoutContext.Provider value={layoutContext}>
                 {children}
-              </div>
-              {footer ? (
-                <div className="flex flex-col-reverse gap-[12px] border-t border-border-default-subtle px-[24px] py-[16px] sm:flex-row sm:justify-end">
-                  {footer}
-                </div>
-              ) : null}
-            </>
+              </ModalLayoutContext.Provider>
+            </ModalCloseContext.Provider>
           )}
         </Dialog>
       </AriaModal>
     </ModalOverlay>
   );
 }
+
+export interface ModalHeaderProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ModalHeader({ children, className }: ModalHeaderProps) {
+  const { register } = useModalLayout();
+  const { titles, descriptions, closeButton } = splitHeaderChildren(children);
+  const hasDescription = descriptions.length > 0;
+
+  React.useLayoutEffect(() => register('header'), [register]);
+
+  return (
+    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
+      <div className="flex items-end justify-between gap-2">
+        {titles.length > 0 ? (
+          <div className="flex min-w-0 flex-1 flex-col justify-center pt-2">{titles}</div>
+        ) : null}
+        {closeButton}
+      </div>
+      {descriptions}
+      {hasDescription ? <ModalSectionDivider /> : null}
+    </div>
+  );
+}
+
+export interface ModalTitleProps extends Omit<HeadingProps, 'className' | 'children'> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ModalTitle({ children, className, ...props }: ModalTitleProps) {
+  const { register } = useModalLayout();
+  const titleIsEmptyString = typeof children === 'string' && !normalizeAccessibleText(children);
+
+  invariantDev(
+    !titleIsEmptyString,
+    'Veli UI: Modal.Title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.',
+  );
+
+  React.useLayoutEffect(() => register('title'), [register]);
+
+  return (
+    <Heading
+      {...props}
+      slot="title"
+      className={twMerge('type-subtitle-medium text-text-default-strong', className)}
+    >
+      {children}
+    </Heading>
+  );
+}
+
+export interface ModalDescriptionProps extends Omit<TextProps, 'className' | 'children'> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ModalDescription({ children, className, ...props }: ModalDescriptionProps) {
+  const { register } = useModalLayout();
+
+  const descriptionIsEmptyString =
+    typeof children === 'string' && !normalizeAccessibleText(children);
+
+  invariantDev(
+    !descriptionIsEmptyString,
+    'Veli UI: Modal.Description must not be an empty string.',
+  );
+
+  React.useLayoutEffect(() => register('description'), [register]);
+
+  if (!hasRenderableMessage(children)) {
+    return null;
+  }
+
+  return (
+    <Text
+      {...props}
+      slot="description"
+      className={twMerge('type-body-md-regular text-text-default-strong', className)}
+    >
+      {children}
+    </Text>
+  );
+}
+
+export type ModalCloseButtonProps = Omit<
+  Extract<ButtonProps, { iconOnly?: true }>,
+  'onPress' | 'children'
+> & {
+  'aria-label'?: string;
+};
+
+export function ModalCloseButton({
+  'aria-label': ariaLabel = 'Close dialog',
+  intent = 'secondary',
+  appearance = 'ghost',
+  size = 'xs',
+  ...props
+}: ModalCloseButtonProps) {
+  const close = useModalClose();
+
+  return (
+    <Button
+      {...props}
+      onPress={close}
+      intent={intent}
+      appearance={appearance}
+      size={size}
+      iconOnly
+      aria-label={ariaLabel}
+    >
+      <svg
+        aria-hidden="true"
+        className="size-4"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 5L15 15M15 5L5 15"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+        />
+      </svg>
+    </Button>
+  );
+}
+
+export interface ModalContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ModalContent({ children, className }: ModalContentProps) {
+  return (
+    <div className={twMerge('type-body-md-regular py-4 text-text-default-default', className)}>
+      {children}
+    </div>
+  );
+}
+
+export interface ModalFooterProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ModalFooter({ children, className }: ModalFooterProps) {
+  return (
+    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
+      <ModalSectionDivider />
+      <div className="flex w-full items-center justify-between gap-2 [&>:only-child]:ms-auto [&>:only-child]:flex [&>:only-child]:flex-1 [&>:only-child]:justify-end">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export interface ModalTriggerProps extends React.ComponentProps<typeof AriaDialogTrigger> {}
+
+export function ModalTrigger(props: ModalTriggerProps) {
+  return <AriaDialogTrigger {...props} />;
+}
+
+Modal.Header = ModalHeader;
+Modal.Title = ModalTitle;
+Modal.Description = ModalDescription;
+Modal.CloseButton = ModalCloseButton;
+Modal.Content = ModalContent;
+Modal.Footer = ModalFooter;
+Modal.Trigger = ModalTrigger;
