@@ -14,6 +14,7 @@ import {
 import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
+import { useVeliLanguage } from './provider';
 
 export type TabsItem = {
   id: string | number;
@@ -49,18 +50,16 @@ const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
+const tabLabelRegularClassName = 'inline-block type-body-sm-regular [&:lang(dv)]:translate-y-0.5';
+const tabLabelSelectedClassName = 'inline-block type-body-sm-medium text-text-default-strong';
 
 function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {
   return (
     <span className={tabLabelGridClassName}>
-      <span aria-hidden="true" className="invisible type-body-sm-medium">
+      <span aria-hidden="true" className="invisible inline-block type-body-sm-medium">
         {children}
       </span>
-      <span
-        className={
-          isSelected ? 'type-body-sm-medium text-text-default-strong' : 'type-body-sm-regular'
-        }
-      >
+      <span className={isSelected ? tabLabelSelectedClassName : tabLabelRegularClassName}>
         {children}
       </span>
     </span>
@@ -129,10 +128,6 @@ function useTabBarIndicatorPosition({
   }, [measure, version]);
 
   React.useEffect(() => {
-    if (measure()) {
-      return;
-    }
-
     let frame = 0;
     let attempts = 0;
 
@@ -145,7 +140,9 @@ function useTabBarIndicatorPosition({
       frame = requestAnimationFrame(retry);
     };
 
-    frame = requestAnimationFrame(retry);
+    if (!measure()) {
+      frame = requestAnimationFrame(retry);
+    }
 
     const container = containerRef.current;
     if (!container) {
@@ -262,15 +259,17 @@ export function TabsOverflow({
   items,
   selectedKey: selectedKeyProp,
   onSelectTab,
-  label = 'More',
+  label,
   menuLabel = 'More tabs',
   className,
   triggerClassName,
   popoverClassName,
   triggerRef,
 }: TabsOverflowProps) {
+  const { direction, lang } = useVeliLanguage();
   const state = React.useContext(TabListStateContext);
   const selectedKey = selectedKeyProp ?? state?.selectedKey ?? null;
+  const defaultLabel = direction === 'rtl' ? 'އިތުރު' : 'More';
   const selectTab =
     onSelectTab ??
     (state
@@ -286,7 +285,7 @@ export function TabsOverflow({
 
   const selectedOverflowItem = items.find((item) => item.id === selectedKey);
   const isSelected = selectedOverflowItem != null;
-  const triggerLabel = isSelected ? selectedOverflowItem.label : label;
+  const triggerLabel = isSelected ? selectedOverflowItem.label : (label ?? defaultLabel);
 
   return (
     <div className={twMerge('relative shrink-0', className)}>
@@ -312,6 +311,8 @@ export function TabsOverflow({
         <MenuPopover className={popoverClassName}>
           <Menu
             aria-label={menuLabel}
+            dir={direction}
+            lang={lang}
             selectedKeys={selectedKey != null ? [selectedKey] : []}
             selectionMode="single"
             onAction={(key) => {
