@@ -1,5 +1,32 @@
 # @tradenetcorp/veli-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- 7b2d663: Add Badge component exported from `@tradenetcorp/veli-ui/badge` with status label and counter modes aligned to the Veli Figma spec.
+
+  Badge supports `appearance` (`outline`, `subtle`, `emphasis`), `intent` (status and accent tokens), and `size` (`xs` status dot, `sm`, `md`). Status mode renders an optional `leadingIcon` with a truncated label. Counter mode (`counter` or `count`) uses a pill shape with centered tabular numbers and optional `max` formatting (default `99+`).
+
+- 960af6a: Add `Kbd` and `KbdGroup` components for keyboard shortcut display, aligned with the Veli Design System Shortcuts spec. Export from `@tradenetcorp/veli-ui/kbd` with `default` and `inverted` variants, fixed-height key caps for icons and text, and Storybook documentation.
+- 43e8b1b: Add a `Search` component with default and pill outline appearances, size variants, skeleton loading, and localized placeholder text. Export it from `@tradenetcorp/veli-ui/search`.
+- 3ff678e: Add a `TextArea` component with default and outline variants, size variants, character counter with progress ring, custom vertical resize handle, skeleton loading, and localized labels. Export it from `@tradenetcorp/veli-ui/textarea`.
+- 002467a: Add a `PasswordInput` component with visibility toggle, password requirement validation, match feedback, success styling, and animated requirement indicators. Export it from `@tradenetcorp/veli-ui/password-input`.
+
+### Patch Changes
+
+- 7adef9b: Improve DatePicker RTL support by forwarding language direction to the popover and aligning trigger typography for Dhivehi field text.
+- c49c434: Refactor Modal into a compound component API and align styles with the Veli Figma spec.
+
+  Modal now composes through `Modal.Trigger`, `Modal.Header`, `Modal.Title`, `Modal.Description`, `Modal.CloseButton`, `Modal.Content`, and `Modal.Footer` instead of `title`, `description`, `footer`, `showCloseButton`, `closeButtonLabel`, and `contentClassName` props. Size tokens now match design widths (`xs` 440px, `sm` 440px, `md` 576px, `lg` 776px, `xl` 1024px, `full` 1200px), use `Shadow/sm` and `modal/bg-solid` tokens, and update header/footer spacing with section dividers. The close button is opt-in via `Modal.CloseButton`.
+
+- 7baece9: Normalize Accordion responsive skeleton behavior, size-aware skeleton bars, and item array typing.
+- 1a3d2db: Localize Calendar and DatePicker month, weekday, and Today labels for Dhivehi RTL contexts, and default Calendar weekday headers to narrow in LTR and long in RTL.
+- b0f1bc3: Polish Checkbox Dhivehi RTL label alignment and localize Storybook label, description, and validation text.
+- 1c54dc3: Polish PageTab Dhivehi rendering with tokenized typography and localized Storybook controls.
+- 4b432a0: Polish Tabs RTL and Dhivehi rendering with direction-aware overflow menus, localized Storybook examples, and corrected overflow indicator measurement.
+- ecc8dfb: Align Radio pressed states with semantic radio tokens and polish Dhivehi label alignment.
+
 ## 0.3.0
 
 ### Minor Changes
