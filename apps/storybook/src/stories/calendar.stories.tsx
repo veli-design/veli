@@ -9,6 +9,7 @@ import {
 } from '@internationalized/date';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Calendar, RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const now = today(getLocalTimeZone());
 const disabledRanges = [
@@ -20,6 +21,10 @@ const disabledRanges = [
 const appointmentUnavailable = (date: DateValue) =>
   isWeekend(date, 'en-GB') ||
   disabledRanges.some(([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0);
+
+const dhivehiDateText = {
+  pickDateWithinAllowedWindow: 'ހުއްދަކުރެވިފައިވާ މުއްދަތުގެ ތެރެއިން ތާރީޚެއް ޚިޔާރުކުރައްވާ.',
+};
 
 const meta = {
   title: 'Components/Calendar',
@@ -51,7 +56,6 @@ const meta = {
   },
   args: {
     'aria-label': 'Appointment calendar',
-    weekdayStyle: 'short',
   },
 } satisfies Meta<typeof Calendar>;
 
@@ -248,21 +252,29 @@ export const ConstraintsAndUnavailableDates: Story = {
 };
 
 export const ValidationStates: Story = {
-  render: () => (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Calendar
-        aria-label="Invalid calendar"
-        isInvalid
-        defaultValue={parseDate('2026-04-01')}
-        errorMessage="Pick a date within the allowed window."
-      />
-      <Calendar
-        aria-label="Invalid calendar without message"
-        isInvalid
-        defaultValue={parseDate('2026-04-01')}
-      />
-    </div>
-  ),
+  render: () => {
+    const { direction } = useVeliLanguage();
+    const errorMessage =
+      direction === 'rtl'
+        ? dhivehiDateText.pickDateWithinAllowedWindow
+        : 'Pick a date within the allowed window.';
+
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Calendar
+          aria-label="Invalid calendar"
+          isInvalid
+          defaultValue={parseDate('2026-04-01')}
+          errorMessage={errorMessage}
+        />
+        <Calendar
+          aria-label="Invalid calendar without message"
+          isInvalid
+          defaultValue={parseDate('2026-04-01')}
+        />
+      </div>
+    );
+  },
 };
 
 export const DisabledAndReadOnly: Story = {

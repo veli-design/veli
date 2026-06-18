@@ -5,6 +5,7 @@ import {
   type DateValue,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
+import { getDhivehiMonthName } from './calendar-localization';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -215,6 +216,10 @@ export const fieldShellVariants = cva(
 export type DatePickerGranularity = 'day' | 'hour' | 'minute' | 'second';
 
 function formatDatePickerMonth(value: DateValue, locale: string) {
+  if (locale.startsWith('dv')) {
+    return getDhivehiMonthName(value.month);
+  }
+
   return new Intl.DateTimeFormat(locale, { month: 'short' }).format(
     new Date(2020, value.month - 1, value.day),
   );
