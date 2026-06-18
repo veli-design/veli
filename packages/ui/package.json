@@ -81,6 +81,10 @@
       "types": "./dist/radio.d.ts",
       "import": "./dist/radio.js"
     },
+    "./search": {
+      "types": "./dist/search.d.ts",
+      "import": "./dist/search.js"
+    },
     "./select": {
       "types": "./dist/select.d.ts",
       "import": "./dist/select.js"
