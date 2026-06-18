@@ -42,11 +42,18 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
       md: 'h-5',
       lg: 'h-6',
     },
+    hasFieldMessages: {
+      true: '[&:lang(dv)]:mt-1',
+      false: '',
+    },
   },
   defaultVariants: {
     size: 'md',
+    hasFieldMessages: false,
   },
 });
+
+const radioLabelVariants = cva('min-w-0 [&:lang(dv)]:translate-y-1');
 
 const radioDescriptionVariants = cva('type-body-sm-regular text-text-default-muted', {
   variants: {
@@ -145,7 +152,7 @@ const controlVariants = cva(
         isSelected: false,
         isDisabled: false,
         isPressed: true,
-        className: '[border-color:var(--color-bg-primary-hover)]',
+        className: 'border-radio-container-off-border-hover',
       },
       {
         isSelected: true,
@@ -165,7 +172,7 @@ const controlVariants = cva(
         isSelected: true,
         isDisabled: false,
         isPressed: true,
-        className: '[border-color:var(--color-bg-primary-hover)]',
+        className: 'border-radio-container-selected-border-hover',
       },
       {
         isDisabled: true,
@@ -253,6 +260,12 @@ const indicatorVariants = cva(
       },
       {
         isSelected: true,
+        isPressed: true,
+        isDisabled: false,
+        className: 'bg-radio-indicator-selected-bg-hover',
+      },
+      {
+        isSelected: true,
         isDisabled: true,
         className: 'bg-radio-indicator-disabled-bg',
       },
@@ -320,7 +333,12 @@ export function Radio({
 
         return (
           <>
-            <span className={radioControlSlotVariants({ size: resolvedSize })}>
+            <span
+              className={radioControlSlotVariants({
+                size: resolvedSize,
+                hasFieldMessages,
+              })}
+            >
               <span
                 className={controlVariants({
                   size: resolvedSize,
@@ -344,7 +362,7 @@ export function Radio({
             </span>
             {hasFieldMessages ? (
               <span className="flex min-w-0 flex-col gap-1">
-                {children ? <span>{children}</span> : null}
+                {children ? <span className={radioLabelVariants()}>{children}</span> : null}
                 {hasDescription ? (
                   <Text
                     slot="description"
@@ -365,9 +383,9 @@ export function Radio({
                   </Text>
                 ) : null}
               </span>
-            ) : (
-              children
-            )}
+            ) : children ? (
+              <span className={radioLabelVariants()}>{children}</span>
+            ) : null}
           </>
         );
       }}
