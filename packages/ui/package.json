@@ -73,6 +73,10 @@
       "types": "./dist/popover.d.ts",
       "import": "./dist/popover.js"
     },
+    "./password-input": {
+      "types": "./dist/password-input.d.ts",
+      "import": "./dist/password-input.js"
+    },
     "./provider": {
       "types": "./dist/provider.d.ts",
       "import": "./dist/provider.js"
