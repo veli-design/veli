@@ -96,6 +96,10 @@ const textareaArgText = {
     en: enFormText.textarea.errorMessage,
     dv: dhivehiFormText.textarea.errorMessage,
   },
+  defaultValue: {
+    en: enFormText.textarea.filledValue,
+    dv: dhivehiFormText.textarea.filledValue,
+  },
 } as const;
 
 type TextAreaArgTextKey = keyof typeof textareaArgText;
@@ -151,6 +155,7 @@ const meta = {
         labelSupplementary,
         placeholder,
         errorMessage,
+        defaultValue,
       } = args;
 
       useEffect(() => {
@@ -163,6 +168,7 @@ const meta = {
           labelSupplementary,
           placeholder,
           errorMessage,
+          defaultValue,
         };
 
         textareaArgTextKeys.forEach((key) => {
@@ -184,6 +190,7 @@ const meta = {
         labelSupplementary,
         placeholder,
         errorMessage,
+        defaultValue,
         language,
         updateArgs,
       ]);
@@ -278,7 +285,7 @@ const meta = {
     description: enFormText.core.helperText,
     errorMessage: enFormText.textarea.errorMessage,
     maxLength: 100,
-    defaultValue: 'Entered text that demonstrates the character counter progress.',
+    defaultValue: enFormText.textarea.filledValue,
     isInvalid: false,
     isDisabled: false,
     isReadOnly: false,
@@ -297,7 +304,7 @@ export const Default: Story = {
     const { showInfoTooltip, showOptional, ...textareaArgs } = args;
 
     return (
-      <div className="w-[320px]">
+      <div key={language} className="w-[320px]">
         <TextArea
           {...textareaArgs}
           label={getLocalizedTextAreaArgText('label', args.label, language)}
@@ -317,6 +324,7 @@ export const Default: Story = {
             language,
           )}
           placeholder={getLocalizedTextAreaArgText('placeholder', args.placeholder, language)}
+          defaultValue={getLocalizedTextAreaArgText('defaultValue', args.defaultValue, language)}
           description={getLocalizedTextAreaArgText('description', args.description, language)}
           errorMessage={getLocalizedTextAreaArgText('errorMessage', args.errorMessage, language)}
         />
@@ -337,7 +345,7 @@ export const Resizable: Story = {
     docs: {
       description: {
         story:
-          'Drag the bottom-right grip to resize vertically. The native browser handle is hidden; only the design-system grip is shown.',
+          'Drag the corner grip to resize vertically. The native browser handle is hidden; only the design-system grip is shown.',
       },
     },
   },
@@ -346,7 +354,7 @@ export const Resizable: Story = {
     const { showInfoTooltip, showOptional, ...textareaArgs } = args;
 
     return (
-      <div className="w-[320px]">
+      <div key={language} className="w-[320px]">
         <TextArea
           {...textareaArgs}
           label={getLocalizedTextAreaArgText('label', args.label, language)}
@@ -377,10 +385,11 @@ export const Resizable: Story = {
 
 export const Sizes: Story = {
   render: () => {
+    const language = useTextAreaLanguage();
     const text = useTextAreaText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
           <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
             Default
@@ -431,10 +440,11 @@ export const Sizes: Story = {
 
 export const States: Story = {
   render: () => {
+    const language = useTextAreaLanguage();
     const text = useTextAreaText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-4">
           <TextArea
             label={text.core.label}
