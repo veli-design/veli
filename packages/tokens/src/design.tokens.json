@@ -6636,19 +6636,6 @@
         }
       }
     },
-    "popover": {
-      "bg-solid": {
-        "$type": "color",
-        "$value": "{color.white}",
-        "$description": "",
-        "$extensions": {
-          "mode": {
-            "Dark": "{color.cool gray.300}",
-            "Light": "{color.white}"
-          }
-        }
-      }
-    },
     "calendar": {
       "bg": {
         "$type": "color",
@@ -6849,6 +6836,85 @@
           "mode": {
             "Dark": "{color.cool gray.500}",
             "Light": "{color.cool gray.400}"
+          }
+        }
+      }
+    },
+    "popover": {
+      "bg-tertiary": {
+        "$type": "color",
+        "$value": "#ffffff",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.400}",
+            "Light": "#ffffff"
+          }
+        }
+      },
+      "bg-primary": {
+        "$type": "color",
+        "$value": "{color.blue.900}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.blue.600}",
+            "Light": "{color.blue.900}"
+          }
+        }
+      },
+      "bg-secondary": {
+        "$type": "color",
+        "$value": "{color.cool gray.1100}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.1200}",
+            "Light": "{color.cool gray.1100}"
+          }
+        }
+      },
+      "fg-on-primary": {
+        "$type": "color",
+        "$value": "{color.cool gray.100}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.1200}",
+            "Light": "{color.cool gray.100}"
+          }
+        }
+      },
+      "border-on-primary": {
+        "$type": "color",
+        "$value": "{color.blue.alpha.400}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.blue.alpha.500}",
+            "Light": "{color.blue.alpha.400}"
+          }
+        }
+      },
+      "border-on-secondary": {
+        "$type": "color",
+        "$value": "{color.cool gray.900}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.1000}",
+            "Light": "{color.cool gray.900}"
+          }
+        }
+      },
+      "fg-on-secondary": {
+        "$type": "color",
+        "$value": "{color.cool gray.100}",
+        "$description": "",
+        "$extensions": {
+          "mode": {
+            "Dark": "{color.cool gray.300}",
+            "Light": "{color.cool gray.100}"
           }
         }
       }
@@ -9513,7 +9579,7 @@
         "text",
         "tracking"
       ],
-      "createdAt": "2026-06-08T18:29:24.764Z"
+      "createdAt": "2026-06-20T10:18:14.793Z"
     }
   }
 }
