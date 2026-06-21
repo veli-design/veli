@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import {
+  Button as AriaButton,
   Group,
   Input as AriaInput,
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info, MagnifyingGlass } from 'phosphor-react';
+import { Info, MagnifyingGlass, X } from 'phosphor-react';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -42,7 +43,7 @@ const skeletonFieldVariants = cva('w-full shrink-0 bg-bg-skeleton', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-2 transition-[background-color,border-color] has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       variant: {
@@ -180,8 +181,29 @@ const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify
   },
 });
 
+const clearButtonVariants = cva(
+  'relative z-[1] inline-flex shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  {
+    variants: {
+      size: {
+        sm: 'size-4',
+        md: 'size-4',
+        lg: 'size-5',
+      },
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'cursor-pointer text-icon-default-muted hover:text-text-default-default',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+      isDisabled: false,
+    },
+  },
+);
+
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -204,6 +226,11 @@ const inputElementVariants = cva(
 const searchPlaceholderDefaults = {
   en: 'Search',
   dv: 'ހޯދާ',
+} as const;
+
+const searchClearButtonAriaLabels = {
+  en: 'Clear search',
+  dv: 'ހޯދުން ފޮހެލާ',
 } as const;
 
 function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
@@ -264,6 +291,9 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
     pattern,
     placeholder,
     spellCheck,
+    onChange,
+    value,
+    defaultValue,
     ...props
   },
   ref,
@@ -271,6 +301,41 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
   const languageConfig = useVeliLanguage();
   const resolvedPlaceholder = placeholder ?? searchPlaceholderDefaults[languageConfig.language];
   const iconSize = getSearchIconSize(size);
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(String(defaultValue ?? ''));
+  const searchValue = value === undefined ? uncontrolledValue : String(value);
+
+  const setInputRef = React.useCallback(
+    (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+
+      if (typeof ref === 'function') {
+        ref(node);
+        return;
+      }
+
+      if (ref) {
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
+
+  const handleChange = React.useCallback(
+    (nextValue: string) => {
+      if (value === undefined) {
+        setUncontrolledValue(nextValue);
+      }
+
+      onChange?.(nextValue);
+    },
+    [onChange, value],
+  );
+
+  const clearSearch = React.useCallback(() => {
+    handleChange('');
+    inputRef.current?.focus();
+  }, [handleChange]);
 
   if (variant === 'skeleton') {
     return (
@@ -281,51 +346,70 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
   }
 
   return (
-    <AriaTextField {...props} className={twMerge(searchRootVariants(), className)}>
-      {({ isDisabled, isInvalid, isReadOnly }) => (
-        <>
-          <Group
-            className={fieldShellVariants({
-              variant,
-              size,
-              isDisabled,
-              isInvalid,
-              isReadOnly,
-            })}
-            onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
-          >
-            <div className={leadingIconVariants({ isDisabled })} aria-hidden>
-              <MagnifyingGlass size={iconSize} />
-            </div>
-            <AriaInput
-              ref={ref}
-              autoCapitalize={autoCapitalize}
-              autoComplete={autoComplete}
-              autoCorrect={autoCorrect}
-              enterKeyHint={enterKeyHint}
-              inputMode={inputMode}
-              maxLength={maxLength}
-              minLength={minLength}
-              pattern={pattern}
-              placeholder={resolvedPlaceholder}
-              spellCheck={spellCheck}
-              type="search"
-              className={inputElementVariants({ size, isReadOnly })}
-            />
-            {isInvalid ? (
-              <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                <Info size={iconSize} weight="fill" />
-              </div>
-            ) : null}
-          </Group>
+    <AriaTextField
+      {...props}
+      value={searchValue}
+      onChange={handleChange}
+      className={twMerge(searchRootVariants(), className)}
+    >
+      {({ isDisabled, isInvalid, isReadOnly }) => {
+        const showClearButton = searchValue.length > 0 && !isDisabled && !isReadOnly;
 
-          <FieldMessage
-            isInvalid={isInvalid}
-            description={description}
-            errorMessage={errorMessage}
-          />
-        </>
-      )}
+        return (
+          <>
+            <Group
+              className={fieldShellVariants({
+                variant,
+                size,
+                isDisabled,
+                isInvalid,
+                isReadOnly,
+              })}
+              onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
+            >
+              <div className={leadingIconVariants({ isDisabled })} aria-hidden>
+                <MagnifyingGlass size={iconSize} />
+              </div>
+              <AriaInput
+                ref={setInputRef}
+                autoCapitalize={autoCapitalize}
+                autoComplete={autoComplete}
+                autoCorrect={autoCorrect}
+                enterKeyHint={enterKeyHint}
+                inputMode={inputMode}
+                maxLength={maxLength}
+                minLength={minLength}
+                pattern={pattern}
+                placeholder={resolvedPlaceholder}
+                spellCheck={spellCheck}
+                type="search"
+                className={inputElementVariants({ size, isReadOnly })}
+              />
+              {showClearButton ? (
+                <AriaButton
+                  type="button"
+                  aria-label={searchClearButtonAriaLabels[languageConfig.language]}
+                  className={clearButtonVariants({ size, isDisabled })}
+                  onPress={clearSearch}
+                >
+                  <X size={iconSize} aria-hidden />
+                </AriaButton>
+              ) : null}
+              {isInvalid ? (
+                <div className={errorIconVariants({ isDisabled })} aria-hidden>
+                  <Info size={iconSize} weight="fill" />
+                </div>
+              ) : null}
+            </Group>
+
+            <FieldMessage
+              isInvalid={isInvalid}
+              description={description}
+              errorMessage={errorMessage}
+            />
+          </>
+        );
+      }}
     </AriaTextField>
   );
 });
