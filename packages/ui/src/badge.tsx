@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const badgeVariants = cva(
-  'inline-flex max-w-full items-center border font-sans antialiased whitespace-nowrap align-middle',
+  'inline-flex max-w-full items-center border font-sans antialiased whitespace-nowrap align-middle [&_svg]:shrink-0',
   {
     variants: {
       counter: {
@@ -22,22 +22,26 @@ const badgeVariants = cva(
       {
         counter: false,
         size: 'sm',
-        className: 'h-5 gap-1 rounded-md px-1 type-caption-medium [&_svg]:size-3',
+        className:
+          'h-5 gap-1 rounded-md px-1 type-caption-medium [&_svg]:size-3 [&:lang(dv)]:!text-[13px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal',
       },
       {
         counter: false,
         size: 'md',
-        className: 'h-7 gap-1 rounded-md px-2 type-body-sm-medium [&_svg]:size-4',
+        className:
+          'h-7 gap-1 rounded-md px-2 type-body-sm-medium [&_svg]:size-4 [&:lang(dv)]:!text-[15px] [&:lang(dv)]:!leading-7 [&:lang(dv)]:!tracking-normal',
       },
       {
         counter: true,
         size: 'sm',
-        className: 'h-5 min-w-5 justify-center rounded-full px-1 type-caption-medium',
+        className:
+          'h-5 min-w-5 justify-center rounded-full px-1 type-caption-medium [&:lang(dv)]:!text-[13px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal',
       },
       {
         counter: true,
         size: 'md',
-        className: 'h-7 min-w-7 justify-center rounded-full px-2 type-body-sm-medium',
+        className:
+          'h-7 min-w-7 justify-center rounded-full px-2 type-body-sm-medium [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-7 [&:lang(dv)]:!tracking-normal',
       },
     ],
     defaultVariants: {
@@ -46,6 +50,18 @@ const badgeVariants = cva(
     },
   },
 );
+
+const badgeLabelVariants = cva('min-w-0', {
+  variants: {
+    counter: {
+      true: 'tabular-nums text-center [font-variant-numeric:tabular-nums] [&:lang(dv)]:!font-sans',
+      false: 'block truncate px-0.5 text-center leading-[inherit] [&:lang(dv)]:translate-y-px',
+    },
+  },
+  defaultVariants: {
+    counter: false,
+  },
+});
 
 export type BadgeAppearance = 'emphasis' | 'outline' | 'subtle';
 export type BadgeIntent =
@@ -171,14 +187,15 @@ export function Badge({
       )}
     >
       {!isDot && !isCounter && leadingIcon ? (
-        <span aria-hidden="true" className="inline-flex shrink-0 items-center">
+        <span
+          aria-hidden="true"
+          className="inline-flex shrink-0 items-center justify-center leading-none"
+        >
           {leadingIcon}
         </span>
       ) : null}
       {showLabel ? (
-        <span className={twMerge(isCounter ? 'tabular-nums' : 'min-w-0 truncate px-0.5')}>
-          {label}
-        </span>
+        <span className={badgeLabelVariants({ counter: isCounter })}>{label}</span>
       ) : null}
     </span>
   );
