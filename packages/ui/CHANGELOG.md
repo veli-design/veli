@@ -1,5 +1,19 @@
 # @tradenetcorp/veli-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- bfb44b3: Add an `Avatar` component with image, initials, icon, and agency icon variants across all Figma appearances and sizes, including initials fallback when an image fails to load. Export it from `@tradenetcorp/veli-ui/avatar` and add avatar color tokens to the design system.
+
+### Patch Changes
+
+- 96b1473: Improve Badge RTL and Dhivehi rendering with stable label, icon, and counter alignment.
+- 455a88c: Improve Modal Dhivehi RTL support by applying provider language and direction to the portalled dialog and aligning footer actions to the logical end.
+- 32c2484: Polish TextArea RTL support with Dhivehi textarea alignment, counter alignment, and a direction-aware resize grip.
+- e21677c: Align `Popover` with the Figma component set: add primary, secondary, and tertiary intents, large fill-only arrow, enter/exit animations, and optional `PopoverHeader`, `PopoverContent`, and `PopoverFooter` helpers. Replace legacy popover surface styling with dedicated popover design tokens and expand Storybook coverage with a Figma variant matrix and real-world examples.
+- 9583cd3: Fix Search clear control alignment and clearing behavior in RTL layouts.
+
 ## 0.4.0
 
 ### Minor Changes
