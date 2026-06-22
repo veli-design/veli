@@ -19,6 +19,7 @@ import { invariantDev, normalizeAccessibleText } from './a11y';
 import { Button, type ButtonProps } from './button';
 import { Divider } from './divider';
 import { hasRenderableMessage } from './field-shared';
+import { useVeliLanguage } from './provider';
 
 const modalShadowClass =
   'shadow-[0px_0px_2px_var(--color-effects-shadow-frame),0px_4px_6px_var(--color-effects-shadow-depth-50)]';
@@ -144,6 +145,7 @@ export function Modal({
   onOpenChange,
   ...overlayProps
 }: ModalProps) {
+  const languageConfig = useVeliLanguage();
   const normalizedAriaLabel = normalizeAccessibleText(ariaLabel);
   const normalizedAriaLabelledby = normalizeAccessibleText(ariaLabelledby);
   const isControlled = isOpenProp !== undefined;
@@ -234,12 +236,20 @@ export function Modal({
       {...(defaultOpen !== undefined && !isControlled ? { defaultOpen } : {})}
       onOpenChange={handleOpenChange}
       isDismissable={isDismissable}
+      lang={languageConfig.lang}
+      dir={languageConfig.direction}
       className={twMerge(overlayVariants(), overlayClassName)}
     >
-      <AriaModal className={twMerge(modalVariants({ size: resolvedSize }), className)}>
+      <AriaModal
+        lang={languageConfig.lang}
+        dir={languageConfig.direction}
+        className={twMerge(modalVariants({ size: resolvedSize }), className)}
+      >
         <Dialog
           aria-label={normalizedAriaLabel}
           aria-labelledby={normalizedAriaLabelledby}
+          lang={languageConfig.lang}
+          dir={languageConfig.direction}
           className="flex flex-col px-6 py-4 outline-none"
         >
           {({ close }) => (
@@ -342,20 +352,23 @@ export function ModalDescription({ children, className, ...props }: ModalDescrip
 }
 
 export type ModalCloseButtonProps = Omit<
-  Extract<ButtonProps, { iconOnly?: true }>,
-  'onPress' | 'children'
+  Extract<ButtonProps, { iconOnly: true }>,
+  'aria-label' | 'children' | 'iconOnly' | 'onPress'
 > & {
   'aria-label'?: string;
 };
 
 export function ModalCloseButton({
-  'aria-label': ariaLabel = 'Close dialog',
+  'aria-label': ariaLabel,
   intent = 'secondary',
   appearance = 'ghost',
   size = 'xs',
   ...props
 }: ModalCloseButtonProps) {
   const close = useModalClose();
+  const languageConfig = useVeliLanguage();
+  const resolvedAriaLabel =
+    ariaLabel ?? (languageConfig.language === 'dv' ? 'ލައްޕާ' : 'Close dialog');
 
   return (
     <Button
@@ -365,7 +378,7 @@ export function ModalCloseButton({
       appearance={appearance}
       size={size}
       iconOnly
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
     >
       <svg
         aria-hidden="true"
@@ -407,9 +420,7 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
     <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
       <ModalSectionDivider />
-      <div className="flex w-full items-center justify-between gap-2 [&>:only-child]:ms-auto [&>:only-child]:flex [&>:only-child]:flex-1 [&>:only-child]:justify-end">
-        {children}
-      </div>
+      <div className="flex w-full items-center justify-end gap-2">{children}</div>
     </div>
   );
 }
