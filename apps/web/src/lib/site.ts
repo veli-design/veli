@@ -1,0 +1,171 @@
+export type ComponentItem = {
+  title: string;
+  slug: string;
+  description: string;
+};
+
+export type ComponentGroup = {
+  title: string;
+  items: ComponentItem[];
+};
+
+export const externalResources = [
+  {
+    label: 'Figma',
+    href: 'https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Design-System',
+    icon: 'figma',
+  },
+  { label: 'GitHub', href: 'https://github.com/tradenetcorp/veli', icon: 'github' },
+  {
+    label: 'npm',
+    href: 'https://www.npmjs.com/package/@tradenetcorp/veli-ui',
+    icon: 'package',
+  },
+] as const;
+
+export const foundations = [
+  {
+    title: 'Principles',
+    href: '/foundations/#principles',
+    description: 'The operating beliefs behind Veli: clarity, access, trust, and continuity.',
+    status: 'Starter',
+  },
+  {
+    title: 'Color',
+    href: '/foundations/#color',
+    description:
+      'Semantic light and dark palettes grounded in cool gray, blue, success, warning, and danger scales.',
+    status: 'Available',
+  },
+  {
+    title: 'Typography',
+    href: '/foundations/#typography',
+    description:
+      'Inter for Latin UI and Dhivehi font stacks for government services that need local language support.',
+    status: 'Available',
+  },
+  {
+    title: 'Spacing',
+    href: '/foundations/#spacing',
+    description: 'A 4px baseline for predictable component rhythm and page composition.',
+    status: 'Available',
+  },
+  {
+    title: 'Motion',
+    href: '/foundations/#motion',
+    description:
+      'Subtle motion for orientation and feedback, always paired with reduced-motion behavior.',
+    status: 'Starter',
+  },
+  {
+    title: 'Accessibility',
+    href: '/foundations/#accessibility',
+    description:
+      'Keyboard, contrast, focus, semantics, and multilingual reading direction as baseline requirements.',
+    status: 'Starter',
+  },
+  {
+    title: 'Language & direction',
+    href: '/foundations/#language-direction',
+    description:
+      'Provider support for English, Dhivehi, LTR, RTL, and system color-scheme behavior.',
+    status: 'Available',
+  },
+] as const;
+
+export const componentGroups: ComponentGroup[] = [
+  {
+    title: 'Actions & navigation',
+    items: [
+      {
+        title: 'Button',
+        slug: 'button',
+        description: 'Primary, secondary, danger, icon-only, and loading actions.',
+      },
+      {
+        title: 'Link',
+        slug: 'link',
+        description: 'Accessible links with icon and typography inheritance guidance.',
+      },
+      {
+        title: 'Breadcrumbs',
+        slug: 'breadcrumbs',
+        description: 'Hierarchical navigation for deep service surfaces.',
+      },
+    ],
+  },
+  {
+    title: 'Forms',
+    items: [
+      {
+        title: 'Input',
+        slug: 'input',
+        description: 'Text fields with description, validation, and token styling.',
+      },
+      {
+        title: 'Select',
+        slug: 'select',
+        description: 'Accessible select menus for structured choices.',
+      },
+      {
+        title: 'ComboBox',
+        slug: 'combobox',
+        description: 'Searchable selection with grouped options.',
+      },
+      {
+        title: 'Checkbox',
+        slug: 'checkbox',
+        description: 'Boolean and indeterminate selection states.',
+      },
+      {
+        title: 'Radio',
+        slug: 'radio',
+        description: 'Single-choice groups with semantic geometry.',
+      },
+      {
+        title: 'Switch',
+        slug: 'switch',
+        description: 'Binary settings with clear selected and disabled states.',
+      },
+    ],
+  },
+  {
+    title: 'Date & time',
+    items: [
+      { title: 'Calendar', slug: 'calendar', description: 'Standalone date selection surface.' },
+      { title: 'DateField', slug: 'date-field', description: 'Segment-based date entry.' },
+      {
+        title: 'DatePicker',
+        slug: 'date-picker',
+        description: 'Date field plus calendar popover composition.',
+      },
+    ],
+  },
+  {
+    title: 'Structure & feedback',
+    items: [
+      {
+        title: 'Divider',
+        slug: 'divider',
+        description: 'Content separation for page and component layouts.',
+      },
+      {
+        title: 'Modal',
+        slug: 'modal',
+        description: 'Dialog surfaces with dismissal and sizing guidance.',
+      },
+      { title: 'Tags', slug: 'tags', description: 'Tag groups for compact categorization.' },
+      {
+        title: 'VeliProvider',
+        slug: 'provider',
+        description: 'Language, direction, and color-scheme runtime contract.',
+      },
+    ],
+  },
+] as const;
+
+export const allComponents = componentGroups.flatMap((group) => group.items);
+
+export function getComponentMeta(slug: string) {
+  return allComponents.find((item) => item.slug === slug);
+}
