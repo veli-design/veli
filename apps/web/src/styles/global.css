@@ -80,11 +80,38 @@ button {
 
 .home-hero__background {
   position: absolute;
-  inset: -2%;
-  width: 104%;
-  height: 104%;
+  inset: 0;
+  overflow: hidden;
+}
+
+.shader-bg__canvas,
+.shader-bg__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+/* The canvas fades in over the fallback image once the renderer starts; if it
+   never starts (no JS / no WebGL) the image simply stays. */
+.shader-bg__canvas {
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.shader-bg__fallback {
+  opacity: 1;
+  transition: opacity 600ms ease;
   animation: home-background-breathe 18s ease-in-out infinite alternate;
+}
+
+.shader-bg[data-shader-active] .shader-bg__canvas {
+  opacity: 1;
+}
+
+.shader-bg[data-shader-active] .shader-bg__fallback {
+  opacity: 0;
 }
 
 .home-hero__content {
@@ -637,7 +664,7 @@ button {
     scroll-behavior: auto;
   }
 
-  .home-hero__background {
+  .shader-bg__fallback {
     animation: none;
   }
 }

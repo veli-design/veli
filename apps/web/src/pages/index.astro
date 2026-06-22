@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/layout.astro';
+import ShaderBackground from '../components/ShaderBackground.astro';
 ---
 
 <Layout
@@ -8,11 +9,10 @@ import Layout from '../layouts/layout.astro';
   pageClass="home-page"
 >
   <main id="main" class="home-hero">
-    <img
+    <ShaderBackground
       class="home-hero__background"
-      src="/images/veli-home-background.png"
-      alt=""
-      aria-hidden="true"
+      shader="veli-aurora"
+      fallbackSrc="/images/veli-home-background.png"
     />
     <div class="home-hero__content">
       <div class="home-wordmark" aria-label="Veli">
