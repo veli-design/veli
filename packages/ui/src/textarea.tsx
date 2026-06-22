@@ -20,7 +20,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
 } from './field-shared';
-import { useVeliLanguage } from './provider';
+import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 
@@ -103,17 +103,20 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   },
 });
 
-const characterCounterVariants = cva('shrink-0 type-body-sm-regular text-text-default-subtle', {
-  variants: {
-    isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: '',
+const characterCounterVariants = cva(
+  'inline-flex h-3.5 shrink-0 items-center font-sans text-[14px] leading-none tabular-nums text-text-default-subtle',
+  {
+    variants: {
+      isDisabled: {
+        true: 'text-text-disabled-disabled',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
     },
   },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
+);
 
 const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-bg-skeleton', {
   variants: {
@@ -263,13 +266,13 @@ const fieldShellVariants = cva(
 );
 
 const textareaElementVariants = cva(
-  'relative z-0 h-full min-h-0 min-w-0 flex-1 resize-none border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
       },
     },
     defaultVariants: {
@@ -422,11 +425,13 @@ function getInitialCharacterCount(
   return typeof initial === 'string' ? initial.length : 0;
 }
 
-function TextAreaResizeIndicator() {
+function TextAreaResizeIndicator({ direction }: { direction: VeliDirection }) {
   return (
     <svg aria-hidden className="size-4" viewBox="0 0 16 16" fill="none">
-      <path d="M14 10L10 14" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" />
-      <path d="M14 6L6 14" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" />
+      <g transform={direction === 'rtl' ? 'translate(16 0) scale(-1 1)' : undefined}>
+        <path d="M14 10L10 14" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" />
+        <path d="M14 6L6 14" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" />
+      </g>
     </svg>
   );
 }
@@ -646,7 +651,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
                 </div>
                 {shouldShowCharacterCounter && maxLength != null ? (
                   <div className="flex shrink-0 items-center gap-1.5">
-                    <span className={characterCounterVariants({ isDisabled })}>
+                    <span className={characterCounterVariants({ isDisabled })} dir="ltr">
                       {characterCount}/{maxLength}
                     </span>
                     <CharacterCounterRing max={maxLength} value={characterCount} />
@@ -657,7 +662,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
 
             <Group
               ref={shellRef}
-              style={shellStyle}
+              style={{ minHeight: resolvedMinHeight, ...shellStyle }}
               className={fieldShellVariants({
                 variant,
                 size,
@@ -690,7 +695,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
                   className={resizeIndicatorVariants({ isDisabled })}
                   {...resizeHandleProps}
                 >
-                  <TextAreaResizeIndicator />
+                  <TextAreaResizeIndicator direction={languageConfig.direction} />
                 </button>
               ) : null}
             </Group>
