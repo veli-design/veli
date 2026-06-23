@@ -82,6 +82,12 @@ type PopoverStoryArgs = Pick<ComponentProps<typeof Popover>, 'intent' | 'showArr
 
 const englishPopoverText = {
   closePopover: 'Close popover',
+  dashboard: 'Dashboard',
+  reports: 'Reports',
+  settings: 'Settings',
+  teamRequests: 'Team requests',
+  apiRateLimit: 'API rate limit',
+  requestsResetInfo: 'Requests reset every hour based on your plan.',
   playground: {
     trigger: 'Open popover',
     title: 'Header Title',
@@ -116,6 +122,12 @@ const englishPopoverText = {
 
 const dhivehiPopoverText = {
   closePopover: 'ޕޮޕްއޯވަރ ބަންދުކުރައްވާ',
+  dashboard: 'ޑޭޝްބޯޑް',
+  reports: 'ރިޕޯޓުތައް',
+  settings: 'ސެޓިންގްސް',
+  teamRequests: 'ޓީމުގެ ރިކުއެސްޓްތައް',
+  apiRateLimit: 'އޭޕީއައި ރޭޓް ލިމިޓް',
+  requestsResetInfo: 'ޕްލޭނަށް ބިނާކޮށް ކޮންމެ ގަޑިއިރަކު ރިކުއެސްޓްތައް ރީސެޓްވާނެއެވެ.',
   playground: {
     trigger: 'ޕޮޕްއޯވަރ ހުޅުވާ',
     title: 'ހެޑަރ ޓައިޓަލް',
@@ -379,10 +391,10 @@ export const OnboardingTip: Story = {
       <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
         <div className="flex items-center gap-2 rounded-xl border border-border-default-subtle bg-bg-surface-raised p-2 shadow-sm">
           <Button intent="secondary" appearance="ghost" size="sm">
-            Dashboard
+            {text.dashboard}
           </Button>
           <Button intent="secondary" appearance="ghost" size="sm">
-            Reports
+            {text.reports}
           </Button>
           <PopoverTrigger>
             <Button intent="primary" size="sm">
@@ -412,7 +424,7 @@ export const OnboardingTip: Story = {
             </Popover>
           </PopoverTrigger>
           <Button intent="secondary" appearance="ghost" size="sm">
-            Settings
+            {text.settings}
           </Button>
         </div>
       </div>
@@ -439,7 +451,7 @@ function FilterPanelExample() {
   return (
     <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
       <div className="flex w-full max-w-md items-center justify-between rounded-xl gap-3 border border-border-default-subtle bg-bg-surface-raised px-4 py-3">
-        <p className="type-body-sm-medium text-text-default-strong">Team requests</p>
+        <p className="type-body-sm-medium text-text-default-strong">{text.teamRequests}</p>
         <PopoverTrigger>
           <Button intent="secondary" size="sm" aria-label={text.filterPanel.triggerAriaLabel}>
             <Funnel size={16} aria-hidden />
@@ -509,9 +521,9 @@ export const ContextualHelp: Story = {
         <div className="w-full max-w-sm rounded-xl border border-border-default-subtle bg-bg-surface-raised p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1">
-              <p className="type-body-sm-medium text-text-default-strong">API rate limit</p>
+              <p className="type-body-sm-medium text-text-default-strong">{text.apiRateLimit}</p>
               <p className="type-caption-regular text-text-default-muted">
-                Requests reset every hour based on your plan.
+                {text.requestsResetInfo}
               </p>
             </div>
             <PopoverTrigger>
