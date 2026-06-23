@@ -5,6 +5,7 @@ import { Funnel, Info, Sparkle, User } from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import {
   Popover,
   PopoverContent,
@@ -79,6 +80,105 @@ function footerButtonIntent(intent: PopoverIntent): ComponentProps<typeof Button
 
 type PopoverStoryArgs = Pick<ComponentProps<typeof Popover>, 'intent' | 'showArrow' | 'placement'>;
 
+const englishPopoverText = {
+  closePopover: 'Close popover',
+  dashboard: 'Dashboard',
+  reports: 'Reports',
+  settings: 'Settings',
+  teamRequests: 'Team requests',
+  apiRateLimit: 'API rate limit',
+  requestsResetInfo: 'Requests reset every hour based on your plan.',
+  playground: {
+    trigger: 'Open popover',
+    title: 'Header Title',
+    body: 'This popover uses Veli popover tokens and enter/exit animations. Adjust intent, placement, and arrow in the controls.',
+    label: 'Label',
+    previous: 'Previous',
+    next: 'Next',
+  },
+  onboardingTip: {
+    trigger: 'Analytics',
+    title: 'Analytics is here',
+    body: 'Track trends, compare periods, and export insights — all from the new Analytics tab.',
+    confirm: 'Got it',
+  },
+  filterPanel: {
+    triggerAriaLabel: 'Open filters',
+    trigger: 'Filters',
+    title: 'Filters',
+    activeOnly: 'Active only',
+    assignedToMe: 'Assigned to me',
+    overdue: 'Overdue',
+    clear: 'Clear',
+    apply: 'Apply',
+  },
+  contextualHelp: {
+    triggerAriaLabel: 'Learn more about rate limits',
+    title: 'Rate limits',
+    body: 'Free plans include 1,000 requests per hour. Upgrade to Pro for 10,000 requests and burst capacity for traffic spikes.',
+    viewPlans: 'View plans',
+  },
+} as const;
+
+const dhivehiPopoverText = {
+  closePopover: 'ޕޮޕްއޯވަރ ބަންދުކުރައްވާ',
+  dashboard: 'ޑޭޝްބޯޑް',
+  reports: 'ރިޕޯޓުތައް',
+  settings: 'ސެޓިންގްސް',
+  teamRequests: 'ޓީމުގެ ރިކުއެސްޓްތައް',
+  apiRateLimit: 'އޭޕީއައި ރޭޓް ލިމިޓް',
+  requestsResetInfo: 'ޕްލޭނަށް ބިނާކޮށް ކޮންމެ ގަޑިއިރަކު ރިކުއެސްޓްތައް ރީސެޓްވާނެއެވެ.',
+  playground: {
+    trigger: 'ޕޮޕްއޯވަރ ހުޅުވާ',
+    title: 'ހެޑަރ ޓައިޓަލް',
+    body: 'މި ޕޮޕްއޯވަރ ބޭނުންކުރަނީ ވެލި ޕޮޕްއޯވަރ ޓޯކަންތަކާއި އެންޓަރ/އެގްޒިޓް އެނިމޭޝަންސްއެވެ. ކޮންޓްރޯލްސް އިން އިންޓެންޓް، ޕްލޭސްމަންޓް އަދި އެރޯ ބަދަލުކުރައްވާ.',
+    label: 'ލޭބަލް',
+    previous: 'ފަހަތަށް',
+    next: 'ކުރިއަށް',
+  },
+  onboardingTip: {
+    trigger: 'އެނަލިޓިކްސް',
+    title: 'އެނަލިޓިކްސް މިހާރު ލިބޭނެ',
+    body: 'ޓްރެންޑްސް ޓްރެކްކޮށް، މުއްދަތުތައް އަޅާކިޔާ، އަދި އިންސައިޓްސް އެކްސްޕޯޓް ކުރައްވާ — މި ހުރިހާ ކަމެއް އައު އެނަލިޓިކްސް ޓެބުން ކުރެވޭނެއެވެ.',
+    confirm: 'އެނގިއްޖެ',
+  },
+  filterPanel: {
+    triggerAriaLabel: 'ފިލްޓަރުތައް ހުޅުވާ',
+    trigger: 'ފިލްޓަރސް',
+    title: 'ފިލްޓަރސް',
+    activeOnly: 'ހަމައެކަނި އެކްޓިވް',
+    assignedToMe: 'އަޅުގަނޑާ ހަވާލުކުރެވިފައިވާ',
+    overdue: 'މުއްދަތު ހަމަވެފައިވާ',
+    clear: 'ކްލިއަރ',
+    apply: 'އެޕްލައި',
+  },
+  contextualHelp: {
+    triggerAriaLabel: 'ރޭޓް ލިމިޓްތަކާ ބެހޭގޮތުން އިތުރަށް ހޯދާ',
+    title: 'ރޭޓް ލިމިޓްތައް',
+    body: 'ހިލޭ ޕްލޭންތަކުގައި ގަޑިއިރަކު 1,000 ރިކުއެސްޓް ހިމެނެއެވެ. 10,000 ރިކުއެސްޓާއި ޓްރެފިކް ސްޕައިކްތަކަށް ބަރސްޓް ކެޕޭސިޓީ ހޯދުމަށް ޕްރޯއަށް އަޕްގްރޭޑް ކުރައްވާ.',
+    viewPlans: 'ޕްލޭންތައް ބައްލަވާލައްވާ',
+  },
+} as const;
+
+const localizedPopoverText = {
+  en: englishPopoverText,
+  dv: dhivehiPopoverText,
+} as const;
+
+type PopoverLanguage = keyof typeof localizedPopoverText;
+
+const usePopoverLanguage = (): PopoverLanguage => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? 'dv' : 'en';
+};
+
+const usePopoverText = () => {
+  const language = usePopoverLanguage();
+
+  return localizedPopoverText[language];
+};
+
 function FigmaPopover({
   intent,
   placement,
@@ -89,6 +189,7 @@ function FigmaPopover({
   showArrow?: boolean;
 }) {
   const actionIntent = footerButtonIntent(intent);
+  const text = usePopoverText();
 
   return (
     <Popover
@@ -102,17 +203,18 @@ function FigmaPopover({
         {({ close }) => (
           <>
             <PopoverHeader
-              title="Header Title"
+              title={text.playground.title}
               icon={<User size={16} aria-hidden />}
               onClose={close}
+              closeButtonLabel={text.closePopover}
             />
             <PopoverContent className="min-h-[120px]">{null}</PopoverContent>
-            <PopoverFooter label="Label">
+            <PopoverFooter label={text.playground.label}>
               <Button intent={actionIntent} size="xs">
-                Previous
+                {text.playground.previous}
               </Button>
               <Button intent={actionIntent} size="xs">
-                Next
+                {text.playground.next}
               </Button>
             </PopoverFooter>
           </>
@@ -134,6 +236,8 @@ function PopoverVariantCell({
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const text = usePopoverText();
+
   return (
     <div className="flex flex-col items-center gap-3">
       <span className="text-center text-[10px] font-medium uppercase tracking-wide text-text-default-muted">
@@ -141,8 +245,8 @@ function PopoverVariantCell({
       </span>
       <div className="flex min-h-[300px] w-full min-w-[300px] items-center justify-center">
         <PopoverTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
-          <Button intent="secondary" size="xs" aria-label={`${intent} popover — ${label}`}>
-            Open
+          <Button intent="secondary" size="xs">
+            {text.playground.trigger}
           </Button>
           <FigmaPopover intent={intent} placement={placement} showArrow={showArrow} />
         </PopoverTrigger>
@@ -230,28 +334,31 @@ export const Playground: Story = {
   render: (args) => {
     const { intent: storyIntent, ...popoverArgs } = args as PopoverStoryArgs;
     const intent: PopoverIntent = storyIntent ?? 'tertiary';
+    const text = usePopoverText();
 
     return (
       <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
         <PopoverTrigger>
-          <Button intent="secondary">Open popover</Button>
+          <Button intent="secondary">{text.playground.trigger}</Button>
           <Popover {...popoverArgs} intent={intent} className="w-[274px]">
             <PopoverDialog>
               {({ close }) => (
                 <>
-                  <PopoverHeader title="Header Title" icon={<User aria-hidden />} onClose={close} />
+                  <PopoverHeader
+                    title={text.playground.title}
+                    icon={<User aria-hidden />}
+                    onClose={close}
+                    closeButtonLabel={text.closePopover}
+                  />
                   <PopoverContent>
-                    <p className="type-body-sm-regular">
-                      This popover uses Veli popover tokens and enter/exit animations. Adjust
-                      intent, placement, and arrow in the controls.
-                    </p>
+                    <p className="type-body-sm-regular">{text.playground.body}</p>
                   </PopoverContent>
-                  <PopoverFooter label="Label">
+                  <PopoverFooter label={text.playground.label}>
                     <Button intent={footerButtonIntent(intent)} size="xs">
-                      Previous
+                      {text.playground.previous}
                     </Button>
                     <Button intent={footerButtonIntent(intent)} size="xs">
-                      Next
+                      {text.playground.next}
                     </Button>
                   </PopoverFooter>
                 </>
@@ -277,56 +384,58 @@ export const Variants: Story = {
 
 export const OnboardingTip: Story = {
   name: 'Onboarding tip',
-  render: () => (
-    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
-      <div className="flex items-center gap-2 rounded-xl border border-border-default-subtle bg-bg-surface-raised p-2 shadow-sm">
-        <Button intent="secondary" appearance="ghost" size="sm">
-          Dashboard
-        </Button>
-        <Button intent="secondary" appearance="ghost" size="sm">
-          Reports
-        </Button>
-        <PopoverTrigger>
-          <Button intent="primary" size="sm">
-            Analytics
+  render: () => {
+    const text = usePopoverText();
+
+    return (
+      <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
+        <div className="flex items-center gap-2 rounded-xl border border-border-default-subtle bg-bg-surface-raised p-2 shadow-sm">
+          <Button intent="secondary" appearance="ghost" size="sm">
+            {text.dashboard}
           </Button>
-          <Popover intent="primary" placement="bottom" className="w-[280px]">
-            <PopoverDialog>
-              {({ close }) => (
-                <>
-                  <PopoverHeader
-                    title="Analytics is here"
-                    icon={<Sparkle size={16} aria-hidden />}
-                    onClose={close}
-                  />
-                  <PopoverContent>
-                    <p className="type-body-sm-regular">
-                      Track trends, compare periods, and export insights — all from the new
-                      Analytics tab.
-                    </p>
-                  </PopoverContent>
-                  <PopoverFooter>
-                    <Button intent="secondary" size="xs" onPress={close}>
-                      Got it
-                    </Button>
-                  </PopoverFooter>
-                </>
-              )}
-            </PopoverDialog>
-          </Popover>
-        </PopoverTrigger>
-        <Button intent="secondary" appearance="ghost" size="sm">
-          Settings
-        </Button>
+          <Button intent="secondary" appearance="ghost" size="sm">
+            {text.reports}
+          </Button>
+          <PopoverTrigger>
+            <Button intent="primary" size="sm">
+              {text.onboardingTip.trigger}
+            </Button>
+            <Popover intent="primary" placement="bottom" className="w-[280px]">
+              <PopoverDialog>
+                {({ close }) => (
+                  <>
+                    <PopoverHeader
+                      title={text.onboardingTip.title}
+                      icon={<Sparkle size={16} aria-hidden />}
+                      onClose={close}
+                      closeButtonLabel={text.closePopover}
+                    />
+                    <PopoverContent>
+                      <p className="type-body-sm-regular">{text.onboardingTip.body}</p>
+                    </PopoverContent>
+                    <PopoverFooter>
+                      <Button intent="secondary" size="xs" onPress={close}>
+                        {text.onboardingTip.confirm}
+                      </Button>
+                    </PopoverFooter>
+                  </>
+                )}
+              </PopoverDialog>
+            </Popover>
+          </PopoverTrigger>
+          <Button intent="secondary" appearance="ghost" size="sm">
+            {text.settings}
+          </Button>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 const FILTER_OPTIONS = [
-  { id: 'active', label: 'Active only' },
-  { id: 'assigned', label: 'Assigned to me' },
-  { id: 'overdue', label: 'Overdue' },
+  { id: 'active', textKey: 'activeOnly' },
+  { id: 'assigned', textKey: 'assignedToMe' },
+  { id: 'overdue', textKey: 'overdue' },
 ] as const;
 
 function FilterPanelExample() {
@@ -337,15 +446,16 @@ function FilterPanelExample() {
   });
 
   const activeCount = Object.values(filters).filter(Boolean).length;
+  const text = usePopoverText();
 
   return (
     <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
       <div className="flex w-full max-w-md items-center justify-between rounded-xl gap-3 border border-border-default-subtle bg-bg-surface-raised px-4 py-3">
-        <p className="type-body-sm-medium text-text-default-strong">Team requests</p>
+        <p className="type-body-sm-medium text-text-default-strong">{text.teamRequests}</p>
         <PopoverTrigger>
-          <Button intent="secondary" size="sm" aria-label="Open filters">
+          <Button intent="secondary" size="sm" aria-label={text.filterPanel.triggerAriaLabel}>
             <Funnel size={16} aria-hidden />
-            Filters
+            {text.filterPanel.trigger}
             {activeCount > 0 ? (
               <Badge counter appearance="emphasis" intent="pink" size="sm" count={activeCount} />
             ) : null}
@@ -355,9 +465,10 @@ function FilterPanelExample() {
               {({ close }) => (
                 <>
                   <PopoverHeader
-                    title="Filters"
+                    title={text.filterPanel.title}
                     icon={<Funnel size={16} aria-hidden />}
                     onClose={close}
+                    closeButtonLabel={text.closePopover}
                   />
                   <PopoverContent className="flex flex-col gap-3 py-2">
                     {FILTER_OPTIONS.map((option) => (
@@ -368,7 +479,7 @@ function FilterPanelExample() {
                           setFilters((current) => ({ ...current, [option.id]: selected }))
                         }
                       >
-                        {option.label}
+                        {text.filterPanel[option.textKey]}
                       </Checkbox>
                     ))}
                   </PopoverContent>
@@ -379,10 +490,10 @@ function FilterPanelExample() {
                       size="xs"
                       onPress={() => setFilters({ active: false, assigned: false, overdue: false })}
                     >
-                      Clear
+                      {text.filterPanel.clear}
                     </Button>
                     <Button intent="primary" size="xs" onPress={close}>
-                      Apply
+                      {text.filterPanel.apply}
                     </Button>
                   </PopoverFooter>
                 </>
@@ -402,53 +513,55 @@ export const FilterPanel: Story = {
 
 export const ContextualHelp: Story = {
   name: 'Contextual help',
-  render: () => (
-    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
-      <div className="w-full max-w-sm rounded-xl border border-border-default-subtle bg-bg-surface-raised p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <p className="type-body-sm-medium text-text-default-strong">API rate limit</p>
-            <p className="type-caption-regular text-text-default-muted">
-              Requests reset every hour based on your plan.
-            </p>
+  render: () => {
+    const text = usePopoverText();
+
+    return (
+      <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
+        <div className="w-full max-w-sm rounded-xl border border-border-default-subtle bg-bg-surface-raised p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <p className="type-body-sm-medium text-text-default-strong">{text.apiRateLimit}</p>
+              <p className="type-caption-regular text-text-default-muted">
+                {text.requestsResetInfo}
+              </p>
+            </div>
+            <PopoverTrigger>
+              <Button
+                intent="secondary"
+                appearance="ghost"
+                size="xs"
+                iconOnly
+                aria-label={text.contextualHelp.triggerAriaLabel}
+              >
+                <Info size={16} aria-hidden />
+              </Button>
+              <Popover intent="secondary" placement="left top" className="w-[260px]">
+                <PopoverDialog>
+                  {({ close }) => (
+                    <>
+                      <PopoverHeader
+                        title={text.contextualHelp.title}
+                        icon={<Info size={16} aria-hidden />}
+                        onClose={close}
+                        closeButtonLabel={text.closePopover}
+                      />
+                      <PopoverContent>
+                        <p className="type-body-sm-regular">{text.contextualHelp.body}</p>
+                      </PopoverContent>
+                      <PopoverFooter>
+                        <Button intent="primary" size="xs" onPress={close}>
+                          {text.contextualHelp.viewPlans}
+                        </Button>
+                      </PopoverFooter>
+                    </>
+                  )}
+                </PopoverDialog>
+              </Popover>
+            </PopoverTrigger>
           </div>
-          <PopoverTrigger>
-            <Button
-              intent="secondary"
-              appearance="ghost"
-              size="xs"
-              iconOnly
-              aria-label="Learn more about rate limits"
-            >
-              <Info size={16} aria-hidden />
-            </Button>
-            <Popover intent="secondary" placement="left top" className="w-[260px]">
-              <PopoverDialog>
-                {({ close }) => (
-                  <>
-                    <PopoverHeader
-                      title="Rate limits"
-                      icon={<Info size={16} aria-hidden />}
-                      onClose={close}
-                    />
-                    <PopoverContent>
-                      <p className="type-body-sm-regular">
-                        Free plans include 1,000 requests per hour. Upgrade to Pro for 10,000
-                        requests and burst capacity for traffic spikes.
-                      </p>
-                    </PopoverContent>
-                    <PopoverFooter>
-                      <Button intent="primary" size="xs" onPress={close}>
-                        View plans
-                      </Button>
-                    </PopoverFooter>
-                  </>
-                )}
-              </PopoverDialog>
-            </Popover>
-          </PopoverTrigger>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
