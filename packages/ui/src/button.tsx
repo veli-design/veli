@@ -316,6 +316,20 @@ const defaultSpotlightPosition: SpotlightPosition = {
 
 const spotlightCenterAnimationDuration = 180;
 
+interface UseButtonSpotlightOptions {
+  seaglass: boolean;
+  isDisabled?: boolean;
+  isLoading?: boolean;
+  onMouseEnter?: ButtonProps['onMouseEnter'];
+  onMouseMove?: ButtonProps['onMouseMove'];
+  onMouseLeave?: ButtonProps['onMouseLeave'];
+  onPointerDown?: ButtonProps['onPointerDown'];
+  onPointerUp?: ButtonProps['onPointerUp'];
+  onPointerCancel?: ButtonProps['onPointerCancel'];
+  onFocus?: ButtonProps['onFocus'];
+  onBlur?: ButtonProps['onBlur'];
+}
+
 function easeOutCubic(progress: number) {
   return 1 - (1 - progress) ** 3;
 }
@@ -334,16 +348,82 @@ function getSeaglassMetrics(width: number, height: number): SeaglassMetrics {
   };
 }
 
-export function Button({
-  intent,
-  appearance,
-  size,
+function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={twMerge(loadingIndicatorVariants({ size }), 'animate-spin text-current')}
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
+  );
+}
+
+function ButtonContent({
   children,
-  iconOnly,
+  isIconOnly,
   isLoading,
-  seaglass = false,
+  size,
+}: {
+  children: React.ReactNode;
+  isIconOnly: boolean;
+  isLoading?: boolean;
+  size: ButtonProps['size'];
+}) {
+  const loadingIndicator = <ButtonLoadingIndicator size={size} />;
+
+  if (isLoading) {
+    if (children) {
+      return (
+        <>
+          <span
+            className={twMerge(buttonContentVariants({ size, iconOnly: isIconOnly }), 'opacity-0')}
+          >
+            {children}
+          </span>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] inline-flex items-center justify-center"
+          >
+            {loadingIndicator}
+          </span>
+        </>
+      );
+    }
+
+    return (
+      <span
+        className={buttonContentVariants({
+          size,
+          hasChildren: false,
+          iconOnly: isIconOnly,
+        })}
+      >
+        {loadingIndicator}
+      </span>
+    );
+  }
+
+  return children ? (
+    <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>{children}</span>
+  ) : (
+    children
+  );
+}
+
+function useButtonSpotlight({
+  seaglass,
   isDisabled,
-  className,
+  isLoading,
   onMouseEnter,
   onMouseMove,
   onMouseLeave,
@@ -352,14 +432,7 @@ export function Button({
   onPointerCancel,
   onFocus,
   onBlur,
-  'aria-busy': ariaBusy,
-  ...props
-}: ButtonProps) {
-  const isLoadingOnly = Boolean(isLoading && !children);
-  const isIconOnly = Boolean(iconOnly);
-  const hasButtonAccessibleName = hasAccessibleName(props);
-  const resolvedIntent = intent ?? 'primary';
-  const resolvedAppearance: ButtonAppearance = appearance ?? 'fill';
+}: UseButtonSpotlightOptions) {
   const showSpotlight = seaglass && !isDisabled && !isLoading;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const spotlightFrameRef = React.useRef<number | null>(null);
@@ -368,15 +441,6 @@ export function Button({
   const pendingSpotlightPositionRef = React.useRef(defaultSpotlightPosition);
   const currentSpotlightPositionRef = React.useRef<NumericSpotlightPosition | null>(null);
   const [seaglassMetrics, setSeaglassMetrics] = React.useState(defaultSeaglassMetrics);
-
-  invariantDev(
-    !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
-  );
-  invariantDev(
-    !isLoadingOnly || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
-  );
 
   const writeSpotlightPosition = React.useCallback((x: string, y: string) => {
     const button = buttonRef.current;
@@ -402,8 +466,9 @@ export function Button({
       return;
     }
 
-    window.cancelAnimationFrame(spotlightFrameRef.current);
+    const spotlightFrame = spotlightFrameRef.current;
     spotlightFrameRef.current = null;
+    window.cancelAnimationFrame(spotlightFrame);
   }, []);
 
   const cancelSpotlightCenterAnimation = React.useCallback(() => {
@@ -411,8 +476,9 @@ export function Button({
       return;
     }
 
-    window.cancelAnimationFrame(spotlightAnimationFrameRef.current);
+    const spotlightAnimationFrame = spotlightAnimationFrameRef.current;
     spotlightAnimationFrameRef.current = null;
+    window.cancelAnimationFrame(spotlightAnimationFrame);
   }, []);
 
   const setSpotlightPosition = React.useCallback(
@@ -497,19 +563,23 @@ export function Button({
     [cancelSpotlightCenterAnimation, setSpotlightPosition, showSpotlight],
   );
 
-  React.useEffect(() => {
-    if (!seaglass || !buttonRef.current) {
-      return undefined;
+  const updateMetrics = React.useCallback(() => {
+    const button = buttonRef.current;
+
+    if (!button) {
+      return;
     }
 
-    const updateMetrics = () => {
-      if (!buttonRef.current) {
-        return;
-      }
+    const rect = button.getBoundingClientRect();
+    setSeaglassMetrics(getSeaglassMetrics(rect.width, rect.height));
+  }, []);
 
-      const rect = buttonRef.current.getBoundingClientRect();
-      setSeaglassMetrics(getSeaglassMetrics(rect.width, rect.height));
-    };
+  React.useEffect(() => {
+    const button = buttonRef.current;
+
+    if (!button) {
+      return undefined;
+    }
 
     updateMetrics();
 
@@ -518,12 +588,12 @@ export function Button({
     }
 
     const resizeObserver = new ResizeObserver(updateMetrics);
-    resizeObserver.observe(buttonRef.current);
+    resizeObserver.observe(button);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [seaglass]);
+  }, [updateMetrics]);
 
   React.useEffect(() => {
     if (showSpotlight) {
@@ -539,19 +609,10 @@ export function Button({
 
   React.useEffect(() => {
     return () => {
-      if (typeof window === 'undefined') {
-        return;
-      }
-
-      if (spotlightFrameRef.current !== null) {
-        window.cancelAnimationFrame(spotlightFrameRef.current);
-      }
-
-      if (spotlightAnimationFrameRef.current !== null) {
-        window.cancelAnimationFrame(spotlightAnimationFrameRef.current);
-      }
+      cancelSpotlightWriteFrame();
+      cancelSpotlightCenterAnimation();
     };
-  }, []);
+  }, [cancelSpotlightCenterAnimation, cancelSpotlightWriteFrame]);
 
   const handleMouseMove: NonNullable<ButtonProps['onMouseMove']> = (event) => {
     trackSpotlightFromPointer(event.currentTarget, event.clientX, event.clientY);
@@ -625,6 +686,67 @@ export function Button({
     onBlur?.(event);
   };
 
+  const spotlightStyle: SpotlightStyle = {
+    '--button-seaglass-radius-x': seaglassMetrics.radiusX,
+    '--button-seaglass-radius-y': seaglassMetrics.radiusY,
+    '--button-spotlight-x': defaultSpotlightPosition.x,
+    '--button-spotlight-y': defaultSpotlightPosition.y,
+    '--button-spotlight-position': `${defaultSpotlightPosition.x} ${defaultSpotlightPosition.y}`,
+    '--button-spotlight-size': seaglassMetrics.spotlightSize,
+  };
+
+  return {
+    buttonRef,
+    spotlightStyle,
+    buttonEventHandlers: {
+      onMouseMove: handleMouseMove,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onPointerDown: handlePointerDown,
+      onPointerUp: handlePointerUp,
+      onPointerCancel: handlePointerCancel,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+    },
+  };
+}
+
+export function Button({
+  intent,
+  appearance,
+  size,
+  children,
+  iconOnly,
+  isLoading,
+  seaglass = false,
+  isDisabled,
+  className,
+  onMouseEnter,
+  onMouseMove,
+  onMouseLeave,
+  onPointerDown,
+  onPointerUp,
+  onPointerCancel,
+  onFocus,
+  onBlur,
+  'aria-busy': ariaBusy,
+  ...props
+}: ButtonProps) {
+  const isLoadingOnly = Boolean(isLoading && !children);
+  const isIconOnly = Boolean(iconOnly);
+  const hasButtonAccessibleName = hasAccessibleName(props);
+  const resolvedIntent = intent ?? 'primary';
+  const resolvedAppearance: ButtonAppearance = appearance ?? 'fill';
+
+  invariantDev(
+    !isIconOnly || hasButtonAccessibleName,
+    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+  );
+  invariantDev(
+    !isLoadingOnly || hasButtonAccessibleName,
+    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
+  );
+
   const resolvedClassName = twMerge(
     buttonVariants({
       intent: resolvedIntent,
@@ -638,31 +760,19 @@ export function Button({
     isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
     className,
   );
-  const spotlightStyle: SpotlightStyle = {
-    '--button-seaglass-radius-x': seaglassMetrics.radiusX,
-    '--button-seaglass-radius-y': seaglassMetrics.radiusY,
-    '--button-spotlight-x': defaultSpotlightPosition.x,
-    '--button-spotlight-y': defaultSpotlightPosition.y,
-    '--button-spotlight-position': `${defaultSpotlightPosition.x} ${defaultSpotlightPosition.y}`,
-    '--button-spotlight-size': seaglassMetrics.spotlightSize,
-  };
-  const loadingIndicator = (
-    <svg
-      aria-hidden="true"
-      className={twMerge(loadingIndicatorVariants({ size }), 'animate-spin text-current')}
-      focusable="false"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
-  );
+  const { buttonRef, spotlightStyle, buttonEventHandlers } = useButtonSpotlight({
+    seaglass,
+    isDisabled,
+    isLoading,
+    onMouseEnter,
+    onMouseMove,
+    onMouseLeave,
+    onPointerDown,
+    onPointerUp,
+    onPointerCancel,
+    onFocus,
+    onBlur,
+  });
 
   return (
     <AriaButton
@@ -672,50 +782,12 @@ export function Button({
       ref={buttonRef}
       isDisabled={isDisabled || isLoading}
       style={spotlightStyle}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
+      {...buttonEventHandlers}
       className={resolvedClassName}
     >
-      {isLoading ? (
-        children ? (
-          <>
-            <span
-              className={twMerge(
-                buttonContentVariants({ size, iconOnly: isIconOnly }),
-                'opacity-0',
-              )}
-            >
-              {children}
-            </span>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-[1] inline-flex items-center justify-center"
-            >
-              {loadingIndicator}
-            </span>
-          </>
-        ) : (
-          <span
-            className={buttonContentVariants({
-              size,
-              hasChildren: false,
-              iconOnly: isIconOnly,
-            })}
-          >
-            {loadingIndicator}
-          </span>
-        )
-      ) : children ? (
-        <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>{children}</span>
-      ) : (
-        children
-      )}
+      <ButtonContent isLoading={isLoading} isIconOnly={isIconOnly} size={size}>
+        {children}
+      </ButtonContent>
     </AriaButton>
   );
 }
