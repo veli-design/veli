@@ -396,7 +396,7 @@ const requirementIndicatorCheckedVariants = cva(
 );
 
 const requirementTextVariants = cva(
-  'type-caption-regular motion-safe:transition-colors motion-safe:duration-200 motion-reduce:transition-none',
+  'type-caption-regular motion-safe:transition-colors motion-safe:duration-200 motion-reduce:transition-none [&:lang(dv)]:relative [&:lang(dv)]:top-0.5',
   {
     variants: {
       isMet: {
@@ -427,22 +427,25 @@ const requirementTextVariants = cva(
   },
 );
 
-const feedbackTextVariants = cva('type-caption-regular', {
-  variants: {
-    tone: {
-      success: 'text-text-success-muted',
-      danger: 'text-text-danger-muted',
+const feedbackTextVariants = cva(
+  'type-caption-regular [&:lang(dv)]:relative [&:lang(dv)]:top-0.5',
+  {
+    variants: {
+      tone: {
+        success: 'text-text-success-muted',
+        danger: 'text-text-danger-muted',
+      },
+      isDisabled: {
+        true: 'text-text-disabled-disabled',
+        false: '',
+      },
     },
-    isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: '',
+    defaultVariants: {
+      tone: 'danger',
+      isDisabled: false,
     },
   },
-  defaultVariants: {
-    tone: 'danger',
-    isDisabled: false,
-  },
-});
+);
 
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
@@ -478,30 +481,47 @@ export interface PasswordRequirement {
   test: (password: string) => boolean;
 }
 
+const defaultPasswordRequirementLabels = {
+  en: {
+    minLength: '8+ Character',
+    lowercase: 'Lowercase letter',
+    uppercase: 'Uppercase letter',
+    number: 'Number',
+    specialCharacter: 'Special Character',
+  },
+  dv: {
+    minLength: '8+ އަކުރު',
+    lowercase: 'ކުޑަ އަކުރެއް',
+    uppercase: 'ބޮޑު އަކުރެއް',
+    number: 'ނަންބަރެއް',
+    specialCharacter: 'ޚާއްޞަ ކެރެކްޓަރެއް',
+  },
+} as const satisfies Record<'en' | 'dv', Record<PasswordRequirementId, string>>;
+
 export const defaultPasswordRequirements: PasswordRequirement[] = [
   {
     id: 'minLength',
-    label: '8+ Character',
+    label: defaultPasswordRequirementLabels.en.minLength,
     test: (password) => password.length >= 8,
   },
   {
     id: 'lowercase',
-    label: 'Lowercase letter',
+    label: defaultPasswordRequirementLabels.en.lowercase,
     test: (password) => /[a-z]/.test(password),
   },
   {
     id: 'uppercase',
-    label: 'Uppercase letter',
+    label: defaultPasswordRequirementLabels.en.uppercase,
     test: (password) => /[A-Z]/.test(password),
   },
   {
     id: 'number',
-    label: 'Number',
+    label: defaultPasswordRequirementLabels.en.number,
     test: (password) => /\d/.test(password),
   },
   {
     id: 'specialCharacter',
-    label: 'Special Character',
+    label: defaultPasswordRequirementLabels.en.specialCharacter,
     test: (password) => /[^A-Za-z0-9]/.test(password),
   },
 ];
@@ -534,11 +554,27 @@ function getPasswordIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
   return size === 'lg' ? 20 : 16;
 }
 
+function getDefaultPasswordRequirements(
+  language: keyof typeof defaultPasswordRequirementLabels,
+): PasswordRequirement[] {
+  if (language === 'en') {
+    return defaultPasswordRequirements;
+  }
+
+  const labels = defaultPasswordRequirementLabels[language];
+
+  return defaultPasswordRequirements.map((requirement) => ({
+    ...requirement,
+    label: labels[requirement.id],
+  }));
+}
+
 function resolvePasswordRequirements(
   requirements: PasswordInputProps['requirements'],
+  language: keyof typeof defaultPasswordRequirementLabels,
 ): PasswordRequirement[] | undefined {
   if (requirements === true) {
-    return defaultPasswordRequirements;
+    return getDefaultPasswordRequirements(language);
   }
 
   if (Array.isArray(requirements) && requirements.length > 0) {
@@ -718,7 +754,10 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
     const resolvedInfoTooltipAriaLabel =
       infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
     const resolvedPlaceholder = placeholder ?? passwordPlaceholderDefaults[languageConfig.language];
-    const resolvedRequirements = resolvePasswordRequirements(requirements);
+    const resolvedRequirements = React.useMemo(
+      () => resolvePasswordRequirements(requirements, languageConfig.language),
+      [languageConfig.language, requirements],
+    );
     const [uncontrolledRevealed, setUncontrolledRevealed] = React.useState(defaultRevealed);
     const [uncontrolledValue, setUncontrolledValue] = React.useState(String(defaultValue ?? ''));
     const isRevealedControlled = isRevealed !== undefined;
@@ -851,6 +890,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
               ) : null}
 
               <Group
+                dir="ltr"
                 className={fieldShellVariants({
                   variant,
                   size,
@@ -880,6 +920,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
                   placeholder={resolvedPlaceholder}
                   spellCheck={spellCheck}
                   type={revealed ? 'text' : 'password'}
+                  dir="ltr"
                   className={inputElementVariants({ size })}
                 />
                 {isInvalid ? (
