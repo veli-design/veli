@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useEffect, type ComponentProps } from 'react';
+import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -66,9 +66,9 @@ const getLocalizedCheckboxText = (
   value: unknown,
   language: CheckboxLanguage,
   fallbackKey?: CheckboxTextKey,
-) => {
+): ReactNode => {
   if (typeof value !== 'string' || value.trim().length === 0) {
-    return fallbackKey ? localizedCheckboxText[language][fallbackKey] : value;
+    return fallbackKey ? localizedCheckboxText[language][fallbackKey] : (value as ReactNode);
   }
 
   const localizedKey = checkboxTextKeys.find(
@@ -79,7 +79,7 @@ const getLocalizedCheckboxText = (
     return localizedCheckboxText[language][localizedKey];
   }
 
-  return value;
+  return value as ReactNode;
 };
 
 function CheckboxPreview({ children, description, errorMessage, ...args }: CheckboxStoryArgs) {
