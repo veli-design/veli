@@ -52,6 +52,10 @@ const meta = {
       control: 'select',
       options: ['image', 'initials', 'icon', 'agencyIcon'],
     },
+    initials: {
+      control: 'text',
+      description: 'Accepts initials or a full name and formats the visible initials.',
+    },
   },
   args: {
     appearance: 'blue',
@@ -84,7 +88,7 @@ export const ImageFallback: Story = {
     type: 'image',
     src: 'https://example.invalid/avatar.jpg',
     alt: 'John Doe',
-    initials: 'JD',
+    initials: 'John Doe',
   },
   render: (args) => <Avatar {...args} />,
 };
@@ -94,6 +98,15 @@ export const Initials: Story = {
     type: 'initials',
     initials: 'MJ',
     alt: 'MJ',
+  },
+  render: (args) => <Avatar {...args} />,
+};
+
+export const FullName: Story = {
+  args: {
+    type: 'initials',
+    initials: 'Shiham Hussain',
+    alt: 'Shiham Hussain',
   },
   render: (args) => <Avatar {...args} />,
 };
@@ -169,8 +182,8 @@ export const AllVariants: Story = {
                         appearance={appearance}
                         size={size}
                         type="initials"
-                        initials="MJ"
-                        alt="MJ"
+                        initials="Shiham Hussain"
+                        alt="Shiham Hussain"
                       />
                     </td>
                   ))}
