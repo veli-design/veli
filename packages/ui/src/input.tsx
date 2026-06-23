@@ -284,10 +284,35 @@ const inputElementVariants = cva(
         true: 'text-text-default-strong',
         false: '',
       },
+      usesLtrValueTypography: {
+        true: '[&:lang(dv):placeholder-shown]:!text-right [&:lang(dv):not(:placeholder-shown)]:!h-auto [&:lang(dv):not(:placeholder-shown)]:!font-sans [&:lang(dv):not(:placeholder-shown)]:!font-normal [&:lang(dv):not(:placeholder-shown)]:!tracking-normal',
+        false: '',
+      },
     },
+    compoundVariants: [
+      {
+        usesLtrValueTypography: true,
+        size: 'sm',
+        className:
+          '[&:lang(dv):not(:placeholder-shown)]:!pt-2 [&:lang(dv):not(:placeholder-shown)]:!pb-2 [&:lang(dv):not(:placeholder-shown)]:!text-sm [&:lang(dv):not(:placeholder-shown)]:!leading-5',
+      },
+      {
+        usesLtrValueTypography: true,
+        size: 'md',
+        className:
+          '[&:lang(dv):not(:placeholder-shown)]:!pt-3 [&:lang(dv):not(:placeholder-shown)]:!pb-3 [&:lang(dv):not(:placeholder-shown)]:!text-sm [&:lang(dv):not(:placeholder-shown)]:!leading-5',
+      },
+      {
+        usesLtrValueTypography: true,
+        size: 'lg',
+        className:
+          '[&:lang(dv):not(:placeholder-shown)]:!pt-3.5 [&:lang(dv):not(:placeholder-shown)]:!pb-3.5 [&:lang(dv):not(:placeholder-shown)]:!text-base [&:lang(dv):not(:placeholder-shown)]:!leading-6',
+      },
+    ],
     defaultVariants: {
       size: 'md',
       isReadOnly: false,
+      usesLtrValueTypography: false,
     },
   },
 );
@@ -296,6 +321,12 @@ const infoTooltipDefaultAriaLabels = {
   en: 'More information',
   dv: 'އިތުރު މަޢުލޫމާތު',
 } as const;
+
+const ltrValueInputTypes = new Set(['email', 'password', 'tel', 'url']);
+
+function getInputValueDirection(type: React.InputHTMLAttributes<HTMLInputElement>['type']) {
+  return typeof type === 'string' && ltrValueInputTypes.has(type.toLowerCase()) ? 'ltr' : undefined;
+}
 
 function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
   if (isDisabled) return;
@@ -378,6 +409,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const languageConfig = useVeliLanguage();
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
+  const inputValueDirection = getInputValueDirection(type);
+  const usesLtrValueTypography = inputValueDirection === 'ltr';
   const hasSkeletonHeader = Boolean(
     label ||
     infoTooltip ||
@@ -485,7 +518,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
               placeholder={placeholder}
               spellCheck={spellCheck}
               type={type}
-              className={inputElementVariants({ size, isReadOnly })}
+              dir={inputValueDirection}
+              className={inputElementVariants({ size, isReadOnly, usesLtrValueTypography })}
             />
             {endContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>

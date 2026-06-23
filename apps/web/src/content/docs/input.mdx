@@ -66,3 +66,5 @@ All other `react-aria-components` `TextField` props are supported, excluding `st
 `className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Use it to identify repeated layout needs during internal adoption; repeated patterns should become explicit props before public release.
 
 For Dhivehi (`lang="dv"`) fields, the input text uses the `MV_Faseyha` font and size, height, line-height, and padding tuning so glyphs stay visually centered and inside the field container.
+
+In RTL layouts, `type="email"`, `type="url"`, `type="tel"`, and `type="password"` keep the surrounding field UI RTL while rendering entered values LTR with English typography metrics, so credentials, addresses, URLs, dial codes, and phone number punctuation remain in their expected order. Empty Dhivehi placeholders stay right-aligned until a value is entered.
