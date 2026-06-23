@@ -244,11 +244,15 @@ export function PopoverHeader({
   title,
   icon,
   onClose,
-  closeButtonLabel = 'Close popover',
+  closeButtonLabel,
   showDivider = true,
   children,
 }: PopoverHeaderProps) {
   const intent = usePopoverIntent();
+  const languageConfig = useVeliLanguage();
+  const resolvedCloseButtonLabel =
+    closeButtonLabel ??
+    (languageConfig.language === 'dv' ? 'ޕޮޕްއޯވަރ ބަންދުކުރައްވާ' : 'Close popover');
 
   return (
     <div className={twMerge('flex flex-col px-4', className)}>
@@ -266,7 +270,7 @@ export function PopoverHeader({
             appearance="ghost"
             size="xs"
             iconOnly
-            aria-label={closeButtonLabel}
+            aria-label={resolvedCloseButtonLabel}
             className={popoverCloseButtonVariants({ intent })}
           >
             <svg
@@ -321,7 +325,7 @@ export function PopoverFooter({
       <div className="flex items-center gap-2 py-3">
         {label ? <p className={popoverFooterLabelVariants({ intent })}>{label}</p> : null}
         {children ? (
-          <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2">
+          <div className="[margin-inline-start:auto] flex min-w-0 flex-1 items-center justify-end gap-2">
             {children}
           </div>
         ) : null}
