@@ -41,9 +41,9 @@ export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
-export function Kbd({ className, variant = 'default', children, ...props }: KbdProps) {
+export function Kbd({ className, variant = 'default', children, lang = 'en', ...props }: KbdProps) {
   return (
-    <kbd {...props} className={twMerge(kbdKeyVariants({ variant }), className)}>
+    <kbd {...props} lang={lang} className={twMerge(kbdKeyVariants({ variant }), className)}>
       {children}
     </kbd>
   );
