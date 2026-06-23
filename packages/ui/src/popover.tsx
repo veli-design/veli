@@ -142,8 +142,7 @@ const popoverVariants = cva(
       intent: {
         primary: 'bg-popover-bg-primary text-popover-fg-on-primary',
         secondary: 'bg-popover-bg-secondary text-popover-fg-on-secondary',
-        tertiary:
-          'bg-popover-bg-tertiary text-text-default-default shadow-[0_12px_32px_rgba(15,23,42,0.16)]',
+        tertiary: 'bg-popover-bg-tertiary text-text-default-default shadow-xl',
       },
     },
     defaultVariants: {

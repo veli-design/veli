@@ -515,6 +515,27 @@ function assertTypographyOutput(css) {
 
 assertTypographyOutput(tailwindTheme);
 
+const SHADOW_SCALES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
+
+function assertShadowOutput(themeCss, rawTokensCss) {
+  const missing = SHADOW_SCALES.filter((scale) => !themeCss.includes(`--shadow-${scale}:`));
+
+  if (missing.length) {
+    throw new Error(`tailwind-theme.css is missing shadow theme variables: ${missing.join(', ')}`);
+  }
+
+  for (const [filename, css] of [
+    ['tailwind-theme.css', themeCss],
+    ['tokens.css', rawTokensCss],
+  ]) {
+    if (css.includes('--effect-styles-')) {
+      throw new Error(`${filename} must not contain --effect-styles-* variables`);
+    }
+  }
+}
+
+assertShadowOutput(tailwindTheme, tokensCss);
+
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');
 

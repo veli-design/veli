@@ -21,9 +21,6 @@ import { Divider } from './divider';
 import { hasRenderableMessage } from './field-shared';
 import { useVeliLanguage } from './provider';
 
-const modalShadowClass =
-  'shadow-[0px_0px_2px_var(--color-effects-shadow-frame),0px_4px_6px_var(--color-effects-shadow-depth-50)]';
-
 const overlayVariants = cva(
   'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-200 ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0',
 );
@@ -32,7 +29,7 @@ const modalVariants = cva(
   [
     'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-text-default-default outline-none transition duration-200 ease-out',
     'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0',
-    modalShadowClass,
+    'shadow-sm',
   ],
   {
     variants: {
