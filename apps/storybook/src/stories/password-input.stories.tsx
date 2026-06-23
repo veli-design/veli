@@ -1,7 +1,11 @@
 import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { PasswordInput, defaultPasswordRequirements } from '@tradenetcorp/veli-ui/password-input';
+import {
+  PasswordInput,
+  defaultPasswordRequirements,
+  type PasswordRequirement,
+} from '@tradenetcorp/veli-ui/password-input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const enPasswordText = {
@@ -27,8 +31,8 @@ const dvPasswordText = {
   placeholder: 'ޕާސްވޯޑް ލިޔުއްވާ',
   helperText: 'އެހީތެރިވެދޭ ލިޔުން',
   errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
-  passwordMatch: 'ޕާސްވޯޑް ހަމަވެއްޖެ',
-  passwordMismatch: 'ޕާސްވޯޑް ހަމަނުވެ',
+  passwordMatch: 'ޕާސްވޯޑް ދިމާވޭ',
+  passwordMismatch: 'ޕާސްވޯޑް ދިމާނުވޭ',
   newPassword: 'އާ ޕާސްވޯޑް',
   confirmPassword: 'ޕާސްވޯޑް ޔަގީންކުރާ',
   default: 'އާދައިގެ',
@@ -44,6 +48,22 @@ const localizedPasswordText = {
 } as const;
 
 type PasswordLanguage = keyof typeof localizedPasswordText;
+
+const dhivehiPasswordRequirements = {
+  minLength: '8+ އަކުރު',
+  lowercase: 'ކުޑަ އަކުރެއް',
+  uppercase: 'ބޮޑު އަކުރެއް',
+  number: 'ނަންބަރެއް',
+  specialCharacter: 'ޚާއްޞަ ކެރެކްޓަރެއް',
+} as const satisfies Record<PasswordRequirement['id'], string>;
+
+const localizedPasswordRequirements = {
+  en: defaultPasswordRequirements,
+  dv: defaultPasswordRequirements.map((requirement) => ({
+    ...requirement,
+    label: dhivehiPasswordRequirements[requirement.id],
+  })),
+} satisfies Record<PasswordLanguage, PasswordRequirement[]>;
 
 const usePasswordLanguage = (): PasswordLanguage => {
   const { direction } = useVeliLanguage();
@@ -231,6 +251,7 @@ export const ValidationStates: Story = {
 export const NewPasswordSetup: Story = {
   render: () => {
     const text = usePasswordText();
+    const language = usePasswordLanguage();
     const [password, setPassword] = useState('Pass1!');
 
     return (
@@ -240,7 +261,7 @@ export const NewPasswordSetup: Story = {
           isRequired
           value={password}
           onChange={setPassword}
-          requirements={defaultPasswordRequirements}
+          requirements={localizedPasswordRequirements[language]}
         />
       </div>
     );
@@ -250,6 +271,7 @@ export const NewPasswordSetup: Story = {
 export const PasswordMatchFlow: Story = {
   render: () => {
     const text = usePasswordText();
+    const language = usePasswordLanguage();
     const [password, setPassword] = useState('SecretPass1!');
     const [confirmPassword, setConfirmPassword] = useState('SecretPass1!');
     const passwordsMatch = password.length > 0 && password === confirmPassword;
@@ -261,7 +283,7 @@ export const PasswordMatchFlow: Story = {
           isRequired
           value={password}
           onChange={setPassword}
-          requirements={defaultPasswordRequirements}
+          requirements={localizedPasswordRequirements[language]}
         />
         <PasswordInput
           label={text.confirmPassword}
