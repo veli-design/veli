@@ -1,5 +1,17 @@
 # @tradenetcorp/veli-ui
 
+## 0.5.1
+
+### Patch Changes
+
+- 9ed2dc9: Keep keyboard shortcut typography stable in Dhivehi RTL by opting key caps and menu shortcuts out of Dhivehi text-token font swaps.
+- ddb2252: Adjusted PasswordInput to render the password field as LTR while keeping RTL layout for surrounding content.
+  Localized PasswordInput requirement labels and password match/different status text in Dhivehi stories.
+  Preserved the existing ASCII-based validation logic so existing password policy behavior remains unchanged.
+- 55c5ec2: Mapped Avatar fallback initials, including common Thaana digraphs, to Dhivehi letters when Veli is in Dhivehi/RTL mode.
+- 94e15b1: Render email, URL, telephone, and password Input values left-to-right with English typography metrics in RTL layouts while preserving right-aligned Dhivehi placeholders.
+- 01825a0: Improve Popover Dhivehi RTL support by localizing the close button label and using logical footer spacing.
+
 ## 0.5.0
 
 ### Minor Changes
