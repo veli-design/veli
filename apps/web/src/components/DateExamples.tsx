@@ -35,7 +35,7 @@ export function CalendarUsageDemo() {
 }
 
 export function CalendarControlledDemo() {
-  const [value, setValue] = useState(parseDate('2026-04-30'));
+  const [value, setValue] = useState(() => parseDate('2026-04-30'));
   const [focusedValue, setFocusedValue] = useState(value);
 
   return (
