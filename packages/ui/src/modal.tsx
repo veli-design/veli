@@ -149,8 +149,8 @@ export function Modal({
   const normalizedAriaLabel = normalizeAccessibleText(ariaLabel);
   const normalizedAriaLabelledby = normalizeAccessibleText(ariaLabelledby);
   const isControlled = isOpenProp !== undefined;
-  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen ?? false);
-  const isModalOpen = isControlled ? isOpenProp : uncontrolledOpen;
+  const uncontrolledOpenRef = React.useRef(defaultOpen ?? false);
+  const openValidationFrameRef = React.useRef<number | null>(null);
   const layoutStateRef = React.useRef<ModalLayoutState>({
     hasHeader: false,
     hasDescription: false,
@@ -184,14 +184,45 @@ export function Modal({
     };
   }, []);
 
+  const validateDialogName = React.useCallback(() => {
+    const hasDialogName =
+      layoutStateRef.current.hasTitle ||
+      Boolean(normalizedAriaLabel) ||
+      Boolean(normalizedAriaLabelledby);
+
+    invariantDev(
+      hasDialogName,
+      'Veli UI: Modal requires Modal.Title, aria-label, or aria-labelledby so the dialog has an accessible name.',
+    );
+  }, [normalizedAriaLabel, normalizedAriaLabelledby]);
+
+  const scheduleOpenValidation = React.useCallback(() => {
+    if (openValidationFrameRef.current != null) {
+      cancelAnimationFrame(openValidationFrameRef.current);
+    }
+
+    openValidationFrameRef.current = requestAnimationFrame(() => {
+      openValidationFrameRef.current = null;
+
+      if (isControlled ? isOpenProp : uncontrolledOpenRef.current) {
+        validateDialogName();
+      }
+    });
+  }, [isControlled, isOpenProp, validateDialogName]);
+
   const handleOpenChange = React.useCallback(
     (open: boolean) => {
       if (!isControlled) {
-        setUncontrolledOpen(open);
+        uncontrolledOpenRef.current = open;
       }
+
+      if (open) {
+        scheduleOpenValidation();
+      }
+
       onOpenChange?.(open);
     },
-    [isControlled, onOpenChange],
+    [isControlled, onOpenChange, scheduleOpenValidation],
   );
 
   const layoutContext = React.useMemo<ModalLayoutContextValue>(
@@ -214,20 +245,23 @@ export function Modal({
   );
 
   React.useLayoutEffect(() => {
-    if (!isModalOpen) {
+    const open = isControlled ? isOpenProp : uncontrolledOpenRef.current;
+
+    if (!open) {
       return;
     }
 
-    const hasDialogName =
-      layoutStateRef.current.hasTitle ||
-      Boolean(normalizedAriaLabel) ||
-      Boolean(normalizedAriaLabelledby);
+    validateDialogName();
+  }, [isControlled, isOpenProp, layoutState.hasTitle, validateDialogName]);
 
-    invariantDev(
-      hasDialogName,
-      'Veli UI: Modal requires Modal.Title, aria-label, or aria-labelledby so the dialog has an accessible name.',
-    );
-  }, [isModalOpen, layoutState.hasTitle, normalizedAriaLabel, normalizedAriaLabelledby]);
+  React.useEffect(
+    () => () => {
+      if (openValidationFrameRef.current != null) {
+        cancelAnimationFrame(openValidationFrameRef.current);
+      }
+    },
+    [],
+  );
 
   return (
     <ModalOverlay
@@ -298,10 +332,10 @@ export interface ModalTitleProps extends Omit<HeadingProps, 'className' | 'child
 
 export function ModalTitle({ children, className, ...props }: ModalTitleProps) {
   const { register } = useModalLayout();
-  const titleIsEmptyString = typeof children === 'string' && !normalizeAccessibleText(children);
+  const titleHasRenderableContent = hasRenderableMessage(children);
 
   invariantDev(
-    !titleIsEmptyString,
+    titleHasRenderableContent,
     'Veli UI: Modal.Title must not be an empty string. Provide meaningful title content, aria-label, or aria-labelledby.',
   );
 
@@ -325,14 +359,6 @@ export interface ModalDescriptionProps extends Omit<TextProps, 'className' | 'ch
 
 export function ModalDescription({ children, className, ...props }: ModalDescriptionProps) {
   const { register } = useModalLayout();
-
-  const descriptionIsEmptyString =
-    typeof children === 'string' && !normalizeAccessibleText(children);
-
-  invariantDev(
-    !descriptionIsEmptyString,
-    'Veli UI: Modal.Description must not be an empty string.',
-  );
 
   React.useLayoutEffect(() => register('description'), [register]);
 
