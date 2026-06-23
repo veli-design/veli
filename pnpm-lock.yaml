@@ -195,9 +195,6 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       phosphor-react:
         specifier: ^1.4.1
         version: 1.4.1(react@18.3.1)
