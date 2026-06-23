@@ -417,8 +417,7 @@ export function Accordion({
       <AccordionSizeContext.Provider value={resolvedSize}>
         <AccordionAlignmentContext.Provider value={resolvedAlignment}>
           <AccordionFlushedContext.Provider value={resolvedFlushed}>
-            <div
-              role="status"
+            <output
               aria-busy="true"
               aria-label="Loading accordion"
               className={twMerge(accordionVariants(), className)}
@@ -433,7 +432,7 @@ export function Accordion({
                   showContent={index === 0}
                 />
               ))}
-            </div>
+            </output>
           </AccordionFlushedContext.Provider>
         </AccordionAlignmentContext.Provider>
       </AccordionSizeContext.Provider>
