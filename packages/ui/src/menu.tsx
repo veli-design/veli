@@ -274,7 +274,11 @@ function MenuItemContent({
         {children || shortcut ? (
           <div className={menuItemLabelRowVariants()}>
             {children ? <div className={menuItemLabelVariants({ size })}>{children}</div> : null}
-            {shortcut ? <Keyboard className={menuShortcutVariants()}>{shortcut}</Keyboard> : null}
+            {shortcut ? (
+              <Keyboard lang="en" className={menuShortcutVariants()}>
+                {shortcut}
+              </Keyboard>
+            ) : null}
           </div>
         ) : null}
         {description ? <div className={menuItemDescriptionVariants()}>{description}</div> : null}
