@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Buildings, User } from 'phosphor-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { type VeliLanguage, useVeliLanguage } from './provider';
 
 const avatarAppearances = {
   blue: {
@@ -78,6 +79,43 @@ const avatarInitialsTypography = {
   '16': 'text-[10px] font-medium leading-[1.34] tracking-[0.15px]',
 } as const;
 
+const dhivehiAvatarInitials: Readonly<Record<string, string>> = {
+  SH: 'ޝ',
+  DH: 'ދ',
+  TH: 'ތ',
+  CH: 'ޗ',
+  GH: 'ޣ',
+  KH: 'ޚ',
+  GN: 'ޏ',
+  PH: 'ފ',
+  A: 'އ',
+  B: 'ބ',
+  C: 'ކ',
+  D: 'ޑ',
+  E: 'އ',
+  F: 'ފ',
+  G: 'ގ',
+  H: 'ހ',
+  I: 'އ',
+  J: 'ޖ',
+  K: 'ކ',
+  L: 'ލ',
+  M: 'މ',
+  N: 'ނ',
+  O: 'އ',
+  P: 'ޕ',
+  Q: 'ޤ',
+  R: 'ރ',
+  S: 'ސ',
+  T: 'ޓ',
+  U: 'އ',
+  V: 'ވ',
+  W: 'ވ',
+  X: 'ޒ',
+  Y: 'ޔ',
+  Z: 'ޒ',
+};
+
 const avatarVariants = cva(
   'relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-sans antialiased',
   {
@@ -132,11 +170,15 @@ export interface AvatarProps
   initials?: string;
 }
 
-function formatInitials(value: string, size: AvatarSize) {
+function formatInitials(value: string, size: AvatarSize, language: VeliLanguage) {
   const trimmed = value.trim();
 
   if (trimmed.length === 0) {
     return '';
+  }
+
+  if (language === 'dv') {
+    return formatDhivehiInitials(trimmed, size);
   }
 
   const parts = trimmed.split(/\s+/).filter(Boolean);
@@ -147,6 +189,49 @@ function formatInitials(value: string, size: AvatarSize) {
 
   const single = parts[0]!.toUpperCase();
   return size === '16' || size === '20' ? single.slice(0, 1) : single.slice(0, 2);
+}
+
+function formatDhivehiInitials(value: string, size: AvatarSize) {
+  const parts = value.split(/\s+/).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return `${getDhivehiInitial(parts[0]!)}${getDhivehiInitial(parts[1]!)}`;
+  }
+
+  const single = parts[0]!;
+
+  if (size === '16' || size === '20') {
+    return getDhivehiInitial(single);
+  }
+
+  return getDhivehiInitialPrefix(single, 2);
+}
+
+function getDhivehiInitial(value: string) {
+  const characters = Array.from(value.trim());
+  const firstTwo = characters.slice(0, 2).join('').toUpperCase();
+  const firstOne = characters[0]?.toUpperCase() ?? '';
+
+  return dhivehiAvatarInitials[firstTwo] ?? dhivehiAvatarInitials[firstOne] ?? firstOne;
+}
+
+function getDhivehiInitialPrefix(value: string, maxLength: number) {
+  const characters = Array.from(value.trim());
+  const firstTwo = characters.slice(0, 2).join('').toUpperCase();
+  const digraph = dhivehiAvatarInitials[firstTwo];
+
+  if (digraph) {
+    return digraph;
+  }
+
+  return characters
+    .slice(0, maxLength)
+    .map((character) => {
+      const uppercaseCharacter = character.toUpperCase();
+
+      return dhivehiAvatarInitials[uppercaseCharacter] ?? uppercaseCharacter;
+    })
+    .join('');
 }
 
 function resolveContentType({
@@ -205,6 +290,7 @@ export function Avatar({
   ...props
 }: AvatarProps) {
   const [failedSrc, setFailedSrc] = React.useState<string | null>(null);
+  const { language } = useVeliLanguage();
   const imageError = Boolean(src && failedSrc === src);
   const resolvedSize = size ?? '60';
   const resolvedAppearance = appearance ?? 'blue';
@@ -212,7 +298,7 @@ export function Avatar({
   const appearanceTokens = avatarAppearances[resolvedAppearance];
   const label = getAccessibleLabel({ alt, initials, contentType });
   const displayInitials =
-    contentType === 'initials' ? formatInitials(initials ?? '', resolvedSize) : '';
+    contentType === 'initials' ? formatInitials(initials ?? '', resolvedSize, language) : '';
   const iconSize = avatarIconSizes[resolvedSize];
 
   return (
@@ -246,7 +332,7 @@ export function Avatar({
         <span
           aria-hidden="true"
           className={twMerge(
-            'select-none text-center uppercase [word-break:break-word]',
+            'select-none text-center uppercase [word-break:break-word] [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
             avatarInitialsTypography[resolvedSize],
             appearanceTokens.content,
           )}
