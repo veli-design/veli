@@ -41,14 +41,14 @@ Pass `isCentered` to center the tab list, suitable for marketing or landing surf
 
 ## Props
 
-| Prop                 | Type                                | Default | Description                                                  |
-| :------------------- | :---------------------------------- | :------ | :---------------------------------------------------------- |
-| `items`              | `[PageTabItem, PageTabItem, …]`     | -       | Tabs: `{ id, label, panel, isDisabled? }`. At least two.    |
-| `isCentered`         | `boolean`                           | `false` | Centers the tab list.                                       |
-| `listAriaLabel`      | `string`                            | -       | Accessible label for the tab list.                         |
-| `selectedKey`        | `Key`                               | -       | Controlled selected tab.                                    |
-| `defaultSelectedKey` | `Key`                               | -       | Initially selected tab (uncontrolled).                     |
-| `tabListClassName` / `tabClassName` / `panelClassName` | `string` | - | Class overrides for the list, each tab, and the panel.     |
-| `className`          | `string`                            | -       | Layout-only class override merged onto the root element.   |
+| Prop                                                   | Type                            | Default | Description                                              |
+| :----------------------------------------------------- | :------------------------------ | :------ | :------------------------------------------------------- |
+| `items`                                                | `[PageTabItem, PageTabItem, …]` | -       | Tabs: `{ id, label, panel, isDisabled? }`. At least two. |
+| `isCentered`                                           | `boolean`                       | `false` | Centers the tab list.                                    |
+| `listAriaLabel`                                        | `string`                        | -       | Accessible label for the tab list.                       |
+| `selectedKey`                                          | `Key`                           | -       | Controlled selected tab.                                 |
+| `defaultSelectedKey`                                   | `Key`                           | -       | Initially selected tab (uncontrolled).                   |
+| `tabListClassName` / `tabClassName` / `panelClassName` | `string`                        | -       | Class overrides for the list, each tab, and the panel.   |
+| `className`                                            | `string`                        | -       | Layout-only class override merged onto the root element. |
 
 All other React Aria `Tabs` props are supported. For inline, content-level tabs use [Tabs](/docs/tabs/) instead.

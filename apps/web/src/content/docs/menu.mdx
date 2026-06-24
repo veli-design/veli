@@ -60,14 +60,14 @@ Items support a `description`, leading and trailing icons, a `shortcut`, and a `
 
 ## MenuItem props
 
-| Prop            | Type                     | Default     | Description                                                            |
-| :-------------- | :----------------------- | :---------- | :-------------------------------------------------------------------- |
-| `size`          | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Item height and typography.                                           |
-| `intent`        | `'default' \| 'danger'`  | `'default'` | Use `danger` for destructive actions.                                |
-| `description`   | `ReactNode`              | -           | Secondary line beneath the label.                                    |
-| `startIcon`     | `ReactNode`              | -           | Leading icon.                                                        |
-| `endIcon`       | `ReactNode`              | -           | Trailing icon.                                                       |
-| `shortcut`      | `ReactNode`              | -           | Keyboard shortcut hint shown at the trailing edge.                   |
-| `closeOnSelect` | `boolean`                | -           | Whether selecting the item closes the menu; defaults to React Aria behavior per `selectionMode`. |
+| Prop            | Type                    | Default     | Description                                                                                      |
+| :-------------- | :---------------------- | :---------- | :----------------------------------------------------------------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Item height and typography.                                                                      |
+| `intent`        | `'default' \| 'danger'` | `'default'` | Use `danger` for destructive actions.                                                            |
+| `description`   | `ReactNode`             | -           | Secondary line beneath the label.                                                                |
+| `startIcon`     | `ReactNode`             | -           | Leading icon.                                                                                    |
+| `endIcon`       | `ReactNode`             | -           | Trailing icon.                                                                                   |
+| `shortcut`      | `ReactNode`             | -           | Keyboard shortcut hint shown at the trailing edge.                                               |
+| `closeOnSelect` | `boolean`               | -           | Whether selecting the item closes the menu; defaults to React Aria behavior per `selectionMode`. |
 
 `Menu` supports React Aria selection (`selectionMode`, `selectedKeys`, `onSelectionChange`). `MenuSection` accepts a `title`, and `MenuPopover` accepts an `offset`. All other React Aria props on each part are supported.

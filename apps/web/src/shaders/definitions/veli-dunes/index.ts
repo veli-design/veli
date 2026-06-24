@@ -27,17 +27,45 @@ export const veliDunes: ShaderDefinition = {
     // Dune field ----------------------------------------------------------
     duneScale: { type: 'float', value: 3.2, min: 0.5, max: 6, step: 0.1, label: 'Dune scale' },
     duneWarp: { type: 'float', value: 1.4, min: 0, max: 4, step: 0.1, label: 'Dune warp' },
-    flowSpeed: { type: 'float', value: 0.06, min: 0, max: 0.5, step: 0.01, label: 'Dune flow speed' },
+    flowSpeed: {
+      type: 'float',
+      value: 0.06,
+      min: 0,
+      max: 0.5,
+      step: 0.01,
+      label: 'Dune flow speed',
+    },
     windDir: { type: 'vec2', value: [1.0, -0.35], label: 'Wind direction' },
 
     // Flowing grain -------------------------------------------------------
     grainScale: { type: 'float', value: 60, min: 10, max: 200, step: 1, label: 'Grain scale' },
     grainFlow: { type: 'float', value: 0.5, min: 0, max: 3, step: 0.05, label: 'Grain flow speed' },
-    grainStrength: { type: 'float', value: 0.1, min: 0, max: 0.4, step: 0.01, label: 'Grain strength' },
+    grainStrength: {
+      type: 'float',
+      value: 0.1,
+      min: 0,
+      max: 0.4,
+      step: 0.01,
+      label: 'Grain strength',
+    },
 
     // Drift sand ----------------------------------------------------------
-    driftAmount: { type: 'float', value: 0.7, min: 0, max: 2, step: 0.05, label: 'Drift sand amount' },
-    driftSpeed: { type: 'float', value: 0.9, min: 0, max: 4, step: 0.05, label: 'Drift sand speed' },
+    driftAmount: {
+      type: 'float',
+      value: 0.7,
+      min: 0,
+      max: 2,
+      step: 0.05,
+      label: 'Drift sand amount',
+    },
+    driftSpeed: {
+      type: 'float',
+      value: 0.9,
+      min: 0,
+      max: 4,
+      step: 0.05,
+      label: 'Drift sand speed',
+    },
     pointerStrength: {
       type: 'float',
       value: 1.0,

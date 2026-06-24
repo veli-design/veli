@@ -60,15 +60,15 @@ For full control over markup, compose the parts directly:
 
 ## Props
 
-| Prop                     | Type                       | Default  | Description                                                          |
-| :----------------------- | :------------------------- | :------- | :------------------------------------------------------------------ |
-| `items`                  | `AccordionItemData[]`      | -        | Data-driven items: `{ id, label, content, isDisabled? }`.           |
-| `size`                   | `'md' \| 'lg'`             | `'md'`   | Trigger and panel sizing.                                           |
-| `alignment`              | `'left' \| 'right'`        | `'left'` | Side the expand indicator sits on.                                  |
-| `flushed`                | `boolean`                  | `false`  | Removes the default horizontal padding for edge-to-edge layouts.    |
-| `allowsMultipleExpanded` | `boolean`                  | `false`  | Allows more than one panel to be open at once.                      |
-| `defaultExpandedKeys`    | `Iterable<Key>`            | -        | Initially expanded item ids (uncontrolled).                         |
-| `isSkeleton`             | `boolean`                  | `false`  | Renders placeholder rows while content loads.                       |
-| `className`              | `string`                   | -        | Layout-only class override merged onto the root element.            |
+| Prop                     | Type                  | Default  | Description                                                      |
+| :----------------------- | :-------------------- | :------- | :--------------------------------------------------------------- |
+| `items`                  | `AccordionItemData[]` | -        | Data-driven items: `{ id, label, content, isDisabled? }`.        |
+| `size`                   | `'md' \| 'lg'`        | `'md'`   | Trigger and panel sizing.                                        |
+| `alignment`              | `'left' \| 'right'`   | `'left'` | Side the expand indicator sits on.                               |
+| `flushed`                | `boolean`             | `false`  | Removes the default horizontal padding for edge-to-edge layouts. |
+| `allowsMultipleExpanded` | `boolean`             | `false`  | Allows more than one panel to be open at once.                   |
+| `defaultExpandedKeys`    | `Iterable<Key>`       | -        | Initially expanded item ids (uncontrolled).                      |
+| `isSkeleton`             | `boolean`             | `false`  | Renders placeholder rows while content loads.                    |
+| `className`              | `string`              | -        | Layout-only class override merged onto the root element.         |
 
 All other React Aria `DisclosureGroup` props are supported.

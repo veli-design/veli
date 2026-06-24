@@ -42,19 +42,19 @@ import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 
 ### Kbd
 
-| Prop        | Type                       | Default     | Description                                            |
-| :---------- | :------------------------- | :---------- | :---------------------------------------------------- |
-| `variant`   | `'default' \| 'inverted'`  | `'default'` | Color treatment of the key.                           |
-| `children`  | `ReactNode`                | -           | Key label content (required).                         |
-| `className` | `string`                   | -           | Class override merged onto the `<kbd>` element.       |
+| Prop        | Type                      | Default     | Description                                     |
+| :---------- | :------------------------ | :---------- | :---------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Color treatment of the key.                     |
+| `children`  | `ReactNode`               | -           | Key label content (required).                   |
+| `className` | `string`                  | -           | Class override merged onto the `<kbd>` element. |
 
 All other `<kbd>` attributes are supported.
 
 ### KbdGroup
 
-| Prop        | Type                       | Default     | Description                                                  |
-| :---------- | :------------------------- | :---------- | :---------------------------------------------------------- |
-| `variant`   | `'default' \| 'inverted'`  | `'default'` | Treatment applied to the group and propagated to each key.  |
-| `className` | `string`                   | -           | Class override merged onto the group element.               |
+| Prop        | Type                      | Default     | Description                                                |
+| :---------- | :------------------------ | :---------- | :--------------------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Treatment applied to the group and propagated to each key. |
+| `className` | `string`                  | -           | Class override merged onto the group element.              |
 
 For Dhivehi (`lang="dv"`) contexts, `Kbd` keeps key labels in the sans font so shortcut glyphs stay legible regardless of the surrounding text direction.
