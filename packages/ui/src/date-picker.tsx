@@ -28,7 +28,7 @@ import {
 import { useVeliLanguage } from './provider';
 
 const popoverSurfaceClassName =
-  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)] outline-none';
+  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-md outline-none';
 
 export interface DatePickerProps<T extends DateValue>
   extends

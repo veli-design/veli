@@ -15,6 +15,7 @@ export default defineConfig({
       filename: 'tailwind-theme.css', // Must be .css for Tailwind v4!
       theme: {
         color: ['color.*'],
+        shadow: ['shadow.*'],
         font: ['font.*'],
         text: ['text.*'],
         leading: ['leading.*'],

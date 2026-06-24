@@ -98,12 +98,12 @@ function tooltipArrowProps(size: 'sm' | 'lg' | null | undefined, placement: stri
 }
 
 const tooltipVariants = cva(
-  'group box-border font-sans type-body-sm-regular shadow-[0_8px_24px_rgba(15,23,42,0.16)] will-change-transform',
+  'group box-border font-sans type-body-sm-regular will-change-transform',
   {
     variants: {
       size: {
-        sm: 'rounded-lg bg-tooltip-bg-small px-3 py-0.5 text-text-default-default',
-        lg: 'max-w-[221px] rounded-xl px-4 py-3',
+        sm: 'rounded-lg bg-tooltip-bg-small px-3 py-0.5 text-text-default-default shadow-md',
+        lg: 'max-w-[221px] rounded-xl px-4 py-3 shadow-lg',
       },
       tone: {
         primary: '',

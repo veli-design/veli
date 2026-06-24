@@ -271,6 +271,18 @@ function normalizeTypographyComposites(value) {
 
 normalizeTypographyComposites(tokens);
 
+function hoistShadowTokens(value) {
+  const effectStyles = value['Effect-styles'];
+  if (!isPlainObject(effectStyles) || !isPlainObject(effectStyles.Shadow)) {
+    return;
+  }
+
+  value.shadow = effectStyles.Shadow;
+  delete value['Effect-styles'];
+}
+
+hoistShadowTokens(tokens);
+
 mkdirSync(normalizedDir, { recursive: true });
 writeFileSync(normalizedTokensPath, JSON.stringify(tokens, null, 2), 'utf-8');
 
