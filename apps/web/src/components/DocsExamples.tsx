@@ -53,6 +53,10 @@ const REMOVABLE_TAG_SEED: TagDemoItem[] = [
   { id: 'licences', label: 'Licences' },
 ];
 
+const inputExplorationStartAddon = <MagnifyingGlass size={16} />;
+const inputExplorationEndAddon = <ArrowRight size={16} />;
+const comboBoxExplorationStartAddon = <MagnifyingGlass size={16} />;
+
 const radioDocsText = {
   en: {
     optionA: 'Option A',
@@ -457,7 +461,7 @@ export function InputExplorationDemo() {
         action="Action"
         placeholder="Placeholder"
         description="Helper text"
-        startAddon={<MagnifyingGlass size={16} />}
+        startAddon={inputExplorationStartAddon}
         startContent={<CalendarBlank size={16} />}
         endContent={
           <span className="flex items-center gap-[4px]">
@@ -465,7 +469,7 @@ export function InputExplorationDemo() {
             <CaretDown size={16} />
           </span>
         }
-        endAddon={<ArrowRight size={16} />}
+        endAddon={inputExplorationEndAddon}
       />
     </div>
   );
@@ -572,7 +576,7 @@ export function ComboBoxExplorationDemo() {
         description="Choose a service location or enter a custom value."
         placeholder="Search location"
         allowsCustomValue
-        startAddon={<MagnifyingGlass size={16} />}
+        startAddon={comboBoxExplorationStartAddon}
         startContent={<CalendarBlank size={16} />}
         endContent={<WarningCircle size={16} />}
       >

@@ -122,6 +122,11 @@ function useTabBarIndicatorPosition({
     setPosition(measureTabBarIndicatorPosition(container, target));
     return true;
   }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef]);
+  const measureRef = React.useRef(measure);
+
+  React.useLayoutEffect(() => {
+    measureRef.current = measure;
+  }, [measure]);
 
   React.useLayoutEffect(() => {
     measure();
@@ -130,9 +135,10 @@ function useTabBarIndicatorPosition({
   React.useEffect(() => {
     let frame = 0;
     let attempts = 0;
+    const runMeasure = () => measureRef.current();
 
     const retry = () => {
-      if (measure() || attempts >= 30) {
+      if (runMeasure() || attempts >= 30) {
         return;
       }
 
@@ -140,7 +146,7 @@ function useTabBarIndicatorPosition({
       frame = requestAnimationFrame(retry);
     };
 
-    if (!measure()) {
+    if (!runMeasure()) {
       frame = requestAnimationFrame(retry);
     }
 
@@ -149,7 +155,7 @@ function useTabBarIndicatorPosition({
       return () => cancelAnimationFrame(frame);
     }
 
-    const resizeObserver = new ResizeObserver(measure);
+    const resizeObserver = new ResizeObserver(runMeasure);
     resizeObserver.observe(container);
 
     const target = overflowItemIds.has(selectedKey ?? '')
@@ -161,22 +167,14 @@ function useTabBarIndicatorPosition({
       resizeObserver.observe(target);
     }
 
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', runMeasure);
 
     return () => {
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
-      window.removeEventListener('resize', measure);
+      window.removeEventListener('resize', runMeasure);
     };
-  }, [
-    containerRef,
-    measure,
-    overflowItemIds,
-    overflowTriggerRef,
-    selectedKey,
-    tabElementsRef,
-    version,
-  ]);
+  }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef, version]);
 
   return position;
 }
@@ -386,6 +384,16 @@ function TabItem({
   );
 }
 
+function useLazyRef<T>(createValue: () => T): React.MutableRefObject<T> {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = createValue();
+  }
+
+  return ref as React.MutableRefObject<T>;
+}
+
 export function Tabs({
   items,
   overflowItems,
@@ -419,7 +427,7 @@ export function Tabs({
     [overflowItems],
   );
   const tabBarRef = React.useRef<HTMLDivElement>(null);
-  const tabElementsRef = React.useRef(new Map<string | number, HTMLElement>());
+  const tabElementsRef = useLazyRef(() => new Map<string | number, HTMLElement>());
   const overflowTriggerRef = React.useRef<HTMLElement | null>(null);
   const [indicatorVersion, setIndicatorVersion] = React.useState(0);
 
@@ -432,7 +440,7 @@ export function Tabs({
       }
       setIndicatorVersion((version) => version + 1);
     },
-    [],
+    [tabElementsRef],
   );
 
   const handleOverflowTriggerChange = React.useCallback((element: HTMLElement | null) => {

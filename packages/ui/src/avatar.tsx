@@ -69,6 +69,9 @@ const avatarIconSizes = {
   '16': 12,
 } as const;
 
+const transparentAvatarImageSrc =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
 const avatarInitialsTypography = {
   '60': 'type-title-2-medium',
   '52': 'type-subtitle-medium',
@@ -304,8 +307,6 @@ export function Avatar({
   return (
     <div
       {...props}
-      role="img"
-      aria-label={label}
       className={twMerge(
         avatarVariants({
           appearance: resolvedAppearance,
@@ -318,7 +319,7 @@ export function Avatar({
       {src && !imageError ? (
         <img
           src={src}
-          alt=""
+          alt={label}
           className="size-full object-cover"
           onError={() => {
             if (src) {
@@ -326,6 +327,10 @@ export function Avatar({
             }
           }}
         />
+      ) : null}
+
+      {contentType !== 'image' ? (
+        <img src={transparentAvatarImageSrc} alt={label} className="sr-only" />
       ) : null}
 
       {contentType === 'initials' ? (

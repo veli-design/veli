@@ -1,9 +1,4 @@
-import {
-  DateInput,
-  DateSegment,
-  type DateSegmentRenderProps,
-  type DateValue,
-} from 'react-aria-components';
+import { type DateSegmentRenderProps, type DateValue } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import { getDhivehiMonthName } from './calendar-localization';
 import {
@@ -14,10 +9,9 @@ import {
   defaultFieldUnderlinePressed,
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
-} from './field-shared';
-import { twMerge } from 'tailwind-merge';
+} from './field-shared-variants';
 
-export { fieldRootVariants } from './field-shared';
+export { fieldRootVariants } from './field-shared-variants';
 
 export const fieldLabelRowVariants = cva('flex items-center justify-between gap-3');
 
@@ -215,12 +209,105 @@ export const fieldShellVariants = cva(
 
 export type DatePickerGranularity = 'day' | 'hour' | 'minute' | 'second';
 
+type DatePickerIntlLocale = 'en-GB' | 'dv-MV';
+type DatePickerTimeFormatterKey =
+  | '12-hour'
+  | '12-minute'
+  | '12-second'
+  | '24-hour'
+  | '24-minute'
+  | '24-second';
+
+const datePickerMonthFormatters = {
+  'en-GB': new Intl.DateTimeFormat('en-GB', { month: 'short' }),
+  'dv-MV': new Intl.DateTimeFormat('dv-MV', { month: 'short' }),
+} as const satisfies Record<DatePickerIntlLocale, Intl.DateTimeFormat>;
+
+const datePickerTimeFormatters = {
+  'en-GB': {
+    '12-hour': new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hour12: true }),
+    '12-minute': new Intl.DateTimeFormat('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    }),
+    '12-second': new Intl.DateTimeFormat('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
+    }),
+    '24-hour': new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hour12: false }),
+    '24-minute': new Intl.DateTimeFormat('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    }),
+    '24-second': new Intl.DateTimeFormat('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    }),
+  },
+  'dv-MV': {
+    '12-hour': new Intl.DateTimeFormat('dv-MV', { hour: 'numeric', hour12: true }),
+    '12-minute': new Intl.DateTimeFormat('dv-MV', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    }),
+    '12-second': new Intl.DateTimeFormat('dv-MV', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
+    }),
+    '24-hour': new Intl.DateTimeFormat('dv-MV', { hour: 'numeric', hour12: false }),
+    '24-minute': new Intl.DateTimeFormat('dv-MV', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    }),
+    '24-second': new Intl.DateTimeFormat('dv-MV', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    }),
+  },
+} as const satisfies Record<
+  DatePickerIntlLocale,
+  Record<DatePickerTimeFormatterKey, Intl.DateTimeFormat>
+>;
+
+function getDatePickerIntlLocale(locale: string): DatePickerIntlLocale {
+  return locale.startsWith('dv') ? 'dv-MV' : 'en-GB';
+}
+
+function getDatePickerTimeFormatterKey(
+  granularity: DatePickerGranularity,
+  hourCycle: 12 | 24,
+): DatePickerTimeFormatterKey {
+  const cycle = hourCycle === 24 ? '24' : '12';
+
+  if (granularity === 'second') {
+    return `${cycle}-second`;
+  }
+
+  if (granularity === 'minute') {
+    return `${cycle}-minute`;
+  }
+
+  return `${cycle}-hour`;
+}
+
 function formatDatePickerMonth(value: DateValue, locale: string) {
   if (locale.startsWith('dv')) {
     return getDhivehiMonthName(value.month);
   }
 
-  return new Intl.DateTimeFormat(locale, { month: 'short' }).format(
+  return datePickerMonthFormatters[getDatePickerIntlLocale(locale)].format(
     new Date(2020, value.month - 1, value.day),
   );
 }
@@ -247,12 +334,10 @@ export function formatDatePickerValue(
       'minute' in value ? value.minute : 0,
       'second' in value ? value.second : 0,
     );
-    const time = new Intl.DateTimeFormat(locale, {
-      hour: 'numeric',
-      minute: granularity === 'minute' || granularity === 'second' ? 'numeric' : undefined,
-      second: granularity === 'second' ? 'numeric' : undefined,
-      hour12: hourCycle !== 24,
-    }).format(date);
+    const time =
+      datePickerTimeFormatters[getDatePickerIntlLocale(locale)][
+        getDatePickerTimeFormatterKey(granularity, hourCycle)
+      ].format(date);
 
     formatted = `${formatted}, ${time}`;
   }
@@ -325,25 +410,6 @@ const dateSegmentVariants = cva(
     },
   },
 );
-
-export function DateSegments({
-  className,
-  size = 'md',
-}: {
-  className?: string;
-  size?: 'sm' | 'md' | 'lg';
-}) {
-  return (
-    <DateInput className={twMerge(dateInputVariants({ size }), className)}>
-      {(segment) => (
-        <DateSegment
-          segment={segment}
-          className={(state) => getDateSegmentClassName(state, size)}
-        />
-      )}
-    </DateInput>
-  );
-}
 
 export function getDateSegmentClassName(
   state: DateSegmentRenderProps,

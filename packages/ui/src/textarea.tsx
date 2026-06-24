@@ -332,17 +332,29 @@ function useVerticalTextAreaResize({
   const [shellHeight, setShellHeight] = React.useState<number | undefined>(undefined);
   const dragStateRef = React.useRef<{ startY: number; startHeight: number } | null>(null);
 
-  const endDrag = React.useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
-    if (!dragStateRef.current) return;
-
+  const clearDragState = React.useCallback(() => {
     dragStateRef.current = null;
+
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
   }, []);
+
+  const endDrag = React.useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (!dragStateRef.current) return;
+
+      clearDragState();
+
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    },
+    [clearDragState],
+  );
 
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -376,12 +388,8 @@ function useVerticalTextAreaResize({
   );
 
   React.useEffect(() => {
-    return () => {
-      dragStateRef.current = null;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-  }, []);
+    return clearDragState;
+  }, [clearDragState]);
 
   return {
     shellStyle: shellHeight != null ? ({ height: shellHeight } as const) : undefined,

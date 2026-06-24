@@ -92,11 +92,7 @@ export interface LinkProps
   children?: React.ReactNode;
 }
 
-/**
- * A link component that follows the Coral Design System standards.
- * Built on top of react-aria-components for maximum accessibility.
- */
-export function Link({
+function splitLinkProps({
   intent,
   size,
   underline,
@@ -105,24 +101,46 @@ export function Link({
   isDisabled: forcedDisabled,
   isFocusVisible: forcedFocus,
   children,
-  ...props
+  ...ariaLinkProps
 }: LinkProps) {
+  return {
+    ariaLinkProps,
+    children,
+    forcedDisabled,
+    variantProps: {
+      intent,
+      size,
+      underline,
+      forcedHover,
+      forcedPressed,
+      forcedFocus,
+    },
+  };
+}
+
+/**
+ * A link component that follows the Coral Design System standards.
+ * Built on top of react-aria-components for maximum accessibility.
+ */
+export function Link(props: LinkProps) {
+  const { ariaLinkProps, children, forcedDisabled, variantProps } = splitLinkProps(props);
+
   return (
     <AriaLink
-      {...props}
+      {...ariaLinkProps}
       isDisabled={forcedDisabled ?? undefined}
       className={(state) => {
         const isDisabled = forcedDisabled ?? state.isDisabled;
 
         return twMerge(
           linkVariants({
-            intent,
-            size,
-            underline,
-            isHovered: isDisabled ? false : (forcedHover ?? state.isHovered),
-            isPressed: isDisabled ? false : (forcedPressed ?? state.isPressed),
+            intent: variantProps.intent,
+            size: variantProps.size,
+            underline: variantProps.underline,
+            isHovered: isDisabled ? false : (variantProps.forcedHover ?? state.isHovered),
+            isPressed: isDisabled ? false : (variantProps.forcedPressed ?? state.isPressed),
             isDisabled,
-            isFocusVisible: forcedFocus ?? state.isFocusVisible,
+            isFocusVisible: variantProps.forcedFocus ?? state.isFocusVisible,
           }),
         );
       }}
