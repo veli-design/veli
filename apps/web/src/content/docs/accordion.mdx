@@ -1,0 +1,74 @@
+---
+title: Accordion
+description: Collapsible disclosure group built on React Aria, supporting data-driven items or composed sub-components.
+---
+
+import { AccordionUsageDemo, AccordionVariantsDemo } from '../../components/DocsExamples';
+
+# Accordion
+
+The Accordion component groups collapsible sections built on React Aria's `DisclosureGroup`. Provide a data-driven `items` array for the common case, or compose `AccordionItem`, `AccordionHeader`, and `AccordionPanel` directly for full control.
+
+## Import
+
+```tsx
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@tradenetcorp/veli-ui/accordion';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AccordionUsageDemo client:visible />
+</div>
+
+```tsx
+const items = [
+  { id: 'overview', label: 'Overview', content: 'Summary content.' },
+  { id: 'documents', label: 'Required documents', content: 'Upload guidance.' },
+];
+
+<Accordion defaultExpandedKeys={['overview']} items={items} />;
+```
+
+## Single vs. multiple expanded
+
+By default only one panel is open at a time. Pass `allowsMultipleExpanded` to let several stay open.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AccordionVariantsDemo client:visible />
+</div>
+
+For full control over markup, compose the parts directly:
+
+```tsx
+<Accordion defaultExpandedKeys={['overview']}>
+  <AccordionItem id="overview">
+    <AccordionHeader>Overview</AccordionHeader>
+    <AccordionPanel>Summary content.</AccordionPanel>
+  </AccordionItem>
+  <AccordionItem id="history" isDisabled>
+    <AccordionHeader>Submission history</AccordionHeader>
+    <AccordionPanel>Tracked applications.</AccordionPanel>
+  </AccordionItem>
+</Accordion>
+```
+
+## Props
+
+| Prop                     | Type                       | Default  | Description                                                          |
+| :----------------------- | :------------------------- | :------- | :------------------------------------------------------------------ |
+| `items`                  | `AccordionItemData[]`      | -        | Data-driven items: `{ id, label, content, isDisabled? }`.           |
+| `size`                   | `'md' \| 'lg'`             | `'md'`   | Trigger and panel sizing.                                           |
+| `alignment`              | `'left' \| 'right'`        | `'left'` | Side the expand indicator sits on.                                  |
+| `flushed`                | `boolean`                  | `false`  | Removes the default horizontal padding for edge-to-edge layouts.    |
+| `allowsMultipleExpanded` | `boolean`                  | `false`  | Allows more than one panel to be open at once.                      |
+| `defaultExpandedKeys`    | `Iterable<Key>`            | -        | Initially expanded item ids (uncontrolled).                         |
+| `isSkeleton`             | `boolean`                  | `false`  | Renders placeholder rows while content loads.                       |
+| `className`              | `string`                   | -        | Layout-only class override merged onto the root element.            |
+
+All other React Aria `DisclosureGroup` props are supported.

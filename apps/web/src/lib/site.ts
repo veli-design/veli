@@ -92,6 +92,21 @@ export const componentGroups: ComponentGroup[] = [
         slug: 'breadcrumbs',
         description: 'Hierarchical navigation for deep service surfaces.',
       },
+      {
+        title: 'Menu',
+        slug: 'menu',
+        description: 'Popover list of actions with icons, shortcuts, and submenus.',
+      },
+      {
+        title: 'Tabs',
+        slug: 'tabs',
+        description: 'Inline tabbed sections with optional overflow menu.',
+      },
+      {
+        title: 'PageTab',
+        slug: 'page-tab',
+        description: 'Page-level tab navigation for top-level sections.',
+      },
     ],
   },
   {
@@ -101,6 +116,21 @@ export const componentGroups: ComponentGroup[] = [
         title: 'Input',
         slug: 'input',
         description: 'Text fields with description, validation, and token styling.',
+      },
+      {
+        title: 'TextArea',
+        slug: 'textarea',
+        description: 'Multi-line input with character counter and resize control.',
+      },
+      {
+        title: 'PasswordInput',
+        slug: 'password-input',
+        description: 'Password entry with visibility toggle and requirement checklist.',
+      },
+      {
+        title: 'Search',
+        slug: 'search',
+        description: 'Search field with leading icon and shared field shell.',
       },
       {
         title: 'Select',
@@ -145,9 +175,29 @@ export const componentGroups: ComponentGroup[] = [
     title: 'Structure & feedback',
     items: [
       {
+        title: 'Accordion',
+        slug: 'accordion',
+        description: 'Collapsible disclosure group for progressive content.',
+      },
+      {
+        title: 'Avatar',
+        slug: 'avatar',
+        description: 'Person, agency, or service representation with initials, icon, or image.',
+      },
+      {
+        title: 'Badge',
+        slug: 'badge',
+        description: 'Status and counter indicator with semantic intents.',
+      },
+      {
         title: 'Divider',
         slug: 'divider',
         description: 'Content separation for page and component layouts.',
+      },
+      {
+        title: 'Kbd',
+        slug: 'kbd',
+        description: 'Keyboard key and shortcut display for affordances.',
       },
       {
         title: 'Modal',
@@ -155,6 +205,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Dialog surfaces with dismissal and sizing guidance.',
       },
       { title: 'Tags', slug: 'tags', description: 'Tag groups for compact categorization.' },
+      {
+        title: 'Tooltip',
+        slug: 'tooltip',
+        description: 'Hover and focus help with sizes and tones.',
+      },
       {
         title: 'VeliProvider',
         slug: 'provider',

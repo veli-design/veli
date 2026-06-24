@@ -1,0 +1,52 @@
+---
+title: Tooltip
+description: Hover and focus tooltip built on React Aria, with small and large sizes and primary or secondary tones.
+---
+
+import { TooltipUsageDemo, TooltipVariantsDemo } from '../../components/DocsExamples';
+
+# Tooltip
+
+The Tooltip component shows brief, non-interactive help on hover or focus, built on React Aria. Compose `TooltipTrigger` around a focusable trigger and a `Tooltip`. Tooltips must not contain interactive content.
+
+## Import
+
+```tsx
+import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
+import { Button } from '@tradenetcorp/veli-ui/button';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TooltipUsageDemo client:visible />
+</div>
+
+```tsx
+<TooltipTrigger delay={0}>
+  <Button intent="secondary">Hover or focus me</Button>
+  <Tooltip>Short help text for this action.</Tooltip>
+</TooltipTrigger>
+```
+
+## Sizes & tones
+
+`sm` suits short hints; `lg` allows a wider, multi-line tooltip with a caret. The `tone` selects between the primary and secondary surfaces.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TooltipVariantsDemo client:visible />
+</div>
+
+## Props
+
+| Prop                  | Type                         | Default     | Description                                                  |
+| :-------------------- | :--------------------------- | :---------- | :---------------------------------------------------------- |
+| `size`                | `'sm' \| 'lg'`               | `'sm'`      | Tooltip size; `lg` enables a wider, multi-line surface.     |
+| `tone`                | `'primary' \| 'secondary'`   | `'primary'` | Surface treatment.                                          |
+| `placement`           | `Placement`                  | `'top'`     | Preferred side, e.g. `top`, `bottom`, `left`, `right`, and start/end variants. |
+| `arrowBoundaryOffset` | `number`                     | -           | Keeps the caret within the trigger bounds.                  |
+| `children`            | `ReactNode`                  | -           | Tooltip content (non-interactive).                          |
+
+`TooltipTrigger` accepts React Aria props such as `delay`, `closeDelay`, `isOpen`, and `defaultOpen`. All other React Aria `Tooltip` props are supported.
+
+In Dhivehi (`lang="dv"`) contexts the tooltip inherits the localized typography and mirrors placement for RTL.

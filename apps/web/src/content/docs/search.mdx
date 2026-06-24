@@ -1,0 +1,54 @@
+---
+title: Search
+description: Search field built on React Aria TextField with a leading search icon, clearable input, and the shared field shell.
+---
+
+import { SearchUsageDemo, SearchVariantsDemo } from '../../components/DocsExamples';
+
+# Search
+
+The Search component is a purpose-built text field for search input. It wraps React Aria's `TextField` in the shared Veli field shell with a leading magnifying-glass icon, and supports the same sizing and validation surface as the other form fields.
+
+## Import
+
+```tsx
+import { Search } from '@tradenetcorp/veli-ui/search';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchUsageDemo client:visible />
+</div>
+
+```tsx
+<Search aria-label="Search services" placeholder="Search services" />
+```
+
+## Variants & sizes
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchVariantsDemo client:visible />
+</div>
+
+```tsx
+<Search variant="outline" placeholder="Outline" />
+<Search size="sm" placeholder="Small" />
+<Search size="lg" placeholder="Large" />
+```
+
+## Props
+
+| Prop             | Type                                   | Default     | Description                                                          |
+| :--------------- | :------------------------------------- | :---------- | :----------------------------------------------------------------- |
+| `variant`        | `'default' \| 'outline' \| 'skeleton'` | `'default'` | Visual appearance of the field shell.                              |
+| `size`           | `'sm' \| 'md' \| 'lg'`                 | `'md'`      | Field size.                                                        |
+| `skeletonVariant`| `'default' \| 'outline'`               | `'default'` | Shape used when `variant="skeleton"`.                              |
+| `description`    | `ReactNode`                            | -           | Helper text shown beneath the field when not invalid.             |
+| `errorMessage`   | `ReactNode`                            | -           | Validation content shown beneath the field when `isInvalid`.       |
+| `placeholder`    | `string`                               | -           | Placeholder text.                                                  |
+| `className`      | `string`                               | -           | Layout-only class override merged onto the root element.          |
+
+All other `react-aria-components` `TextField` props are supported (`value`, `onChange`, `isDisabled`, `isInvalid`, `aria-label`, …), excluding `style`, `type`, and direct child composition. Provide a `label` via the page or an `aria-label` so the field has an accessible name.
+
+In RTL layouts the field UI mirrors while entered values follow the standard input direction rules, so search terms read as expected.
