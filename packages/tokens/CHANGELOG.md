@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-tokens
 
+## 0.2.1
+
+### Patch Changes
+
+- dded15b: Expose Figma elevation shadows as theme-aware Tailwind `shadow-xs` through `shadow-3xl` utilities and migrate overlay components off hardcoded box shadows.
+
 ## 0.2.0
 
 ### Minor Changes

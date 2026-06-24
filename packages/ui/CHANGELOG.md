@@ -1,5 +1,12 @@
 # @tradenetcorp/veli-ui
 
+## 0.5.2
+
+### Patch Changes
+
+- dded15b: Expose Figma elevation shadows as theme-aware Tailwind `shadow-xs` through `shadow-3xl` utilities and migrate overlay components off hardcoded box shadows.
+- fbfe3d2: Refactor shared provider, field, date, and PasswordInput internals while preserving public import paths, and tighten component edge cases for Modal validation, Button loading state, Tabs indicator measurement, TextArea resize cleanup, Accordion loading semantics, and Avatar labeling.
+
 ## 0.5.1
 
 ### Patch Changes
