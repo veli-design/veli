@@ -32,9 +32,14 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
   import { createRenderer } from '../shaders/runtime/renderer';
   import { getShader } from '../shaders/registry';
 
+  // A `?shader=<id>` query param overrides the configured shader, so
+  // alternative backgrounds can be previewed without editing the page
+  // (e.g. `/?shader=veli-dunes`). Falls back to the component's prop.
+  const shaderOverride = new URLSearchParams(window.location.search).get('shader');
+
   for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
     const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
-    const id = wrapper.dataset.shader;
+    const id = shaderOverride ?? wrapper.dataset.shader;
     if (!canvas || !id) continue;
 
     const definition = getShader(id);

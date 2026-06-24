@@ -1,5 +1,6 @@
 import type { ShaderDefinition } from './types';
 import { veliAurora } from './definitions/veli-aurora';
+import { veliDunes } from './definitions/veli-dunes';
 
 /**
  * All available background shaders, keyed by id.
@@ -11,6 +12,7 @@ import { veliAurora } from './definitions/veli-aurora';
  */
 export const shaderRegistry = {
   [veliAurora.id]: veliAurora,
+  [veliDunes.id]: veliDunes,
 } satisfies Record<string, ShaderDefinition>;
 
 export type ShaderId = keyof typeof shaderRegistry;
