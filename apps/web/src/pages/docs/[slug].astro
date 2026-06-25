@@ -21,6 +21,7 @@ const { Content, headings } = await doc.render();
 const component = getComponentMeta(doc.slug);
 const pageDescription = doc.data.description ?? component?.description;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const pageKicker = doc.slug.startsWith('pd-') ? 'Proposal' : 'Component';
 ---
 
 <DocsLayout
@@ -30,7 +31,7 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
   headings={tocHeadings}
 >
   <header class="docs-page-header docs-page-header--article">
-    <p class="docs-kicker">Component</p>
+    <p class="docs-kicker">{pageKicker}</p>
     <h1>{doc.data.title}</h1>
     {pageDescription && <p>{pageDescription}</p>}
   </header>
