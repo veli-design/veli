@@ -340,6 +340,7 @@ export function Avatar({
             'select-none text-center uppercase [word-break:break-word]',
             avatarInitialsTypography[resolvedSize],
             appearanceTokens.content,
+            language === 'dv' && '-translate-y-1',
           )}
         >
           {displayInitials}
