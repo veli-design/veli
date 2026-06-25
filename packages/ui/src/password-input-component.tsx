@@ -25,6 +25,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   hasRenderableMessage,
+  webkitDhivehiInputAlignmentClassName,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
@@ -338,7 +339,7 @@ const visibilityToggleVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiInputAlignmentClassName}`,
   {
     variants: {
       size: {

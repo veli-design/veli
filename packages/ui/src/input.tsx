@@ -19,6 +19,7 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  webkitDhivehiInputAlignmentClassName,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
@@ -272,7 +273,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiInputAlignmentClassName}`,
   {
     variants: {
       size: {
