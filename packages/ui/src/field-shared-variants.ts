@@ -12,9 +12,6 @@ const underlineHoverRestTransform = 'hover:after:[transform:translateZ(0)_scaleY
 const underlineFocusActiveTransform =
   'focus-within:after:[transform:translateZ(0)_scaleY(1)] focus-within:hover:after:[transform:translateZ(0)_scaleY(1)]';
 
-export const webkitDhivehiInputAlignmentClassName =
-  '[@supports(-webkit-hyphens:none)]:[&:lang(dv)]:translate-y-0.5';
-
 export const defaultFieldUnderlineShell = `overflow-hidden after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:z-0 after:h-[2px] after:w-full after:origin-bottom after:content-[''] ${underlineRestTransform}`;
 
 export const defaultFieldUnderlineRest = `after:bg-text-input-stroke-default hover:after:bg-text-input-stroke-hover ${underlineHoverRestTransform}`;

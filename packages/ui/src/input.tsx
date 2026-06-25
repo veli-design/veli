@@ -19,10 +19,10 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
-  webkitDhivehiInputAlignmentClassName,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
@@ -273,7 +273,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiInputAlignmentClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {

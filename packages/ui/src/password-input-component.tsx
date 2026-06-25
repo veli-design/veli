@@ -25,9 +25,9 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   hasRenderableMessage,
-  webkitDhivehiInputAlignmentClassName,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 
@@ -339,7 +339,7 @@ const visibilityToggleVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiInputAlignmentClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
