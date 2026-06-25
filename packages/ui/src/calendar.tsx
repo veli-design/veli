@@ -43,6 +43,7 @@ type CalendarPickerItem = {
 };
 
 type CalendarWeekdayStyle = NonNullable<CalendarGridProps['weekdayStyle']>;
+type CalendarFirstDayOfWeek = NonNullable<AriaCalendarProps<DateValue>['firstDayOfWeek']>;
 type CalendarDirection = 'ltr' | 'rtl';
 
 type CalendarPickerSelectProps = {
@@ -69,6 +70,8 @@ const calendarNumericRegularTextClassName = calendarNumericTextClassName;
 const calendarHeaderYearLabelClassName = calendarNumericTextClassName;
 
 const calendarYearPickerItemClassName = calendarNumericRegularTextClassName;
+
+const defaultCalendarFirstDayOfWeek: CalendarFirstDayOfWeek = 'sun';
 
 const calendarHeaderIconButtonClassName =
   'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-default-strong';
@@ -261,6 +264,7 @@ export function Calendar<T extends DateValue>({
   className,
   gridClassName,
   weekdayStyle,
+  firstDayOfWeek = defaultCalendarFirstDayOfWeek,
   showTodayButton = false,
   todayButtonLabel,
   ...props
@@ -272,6 +276,7 @@ export function Calendar<T extends DateValue>({
   return (
     <AriaCalendar
       {...props}
+      firstDayOfWeek={firstDayOfWeek}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
       className={twMerge(calendarRootVariants(), className)}
@@ -309,6 +314,7 @@ export function RangeCalendar<T extends DateValue>({
   className,
   gridClassName,
   weekdayStyle,
+  firstDayOfWeek = defaultCalendarFirstDayOfWeek,
   showTodayButton = false,
   todayButtonLabel,
   ...props
@@ -320,6 +326,7 @@ export function RangeCalendar<T extends DateValue>({
   return (
     <AriaRangeCalendar
       {...props}
+      firstDayOfWeek={firstDayOfWeek}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
       className={twMerge(calendarRootVariants(), className)}
