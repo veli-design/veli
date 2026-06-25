@@ -1,0 +1,54 @@
+---
+title: Badge
+description: Compact status and counter indicator with semantic intents, three appearances, and a numeric counter mode.
+---
+
+import { BadgeUsageDemo, BadgeVariantsDemo } from '../../components/DocsExamples';
+
+# Badge
+
+The Badge component labels status, categories, and counts in a compact pill. It pairs a semantic `intent` with one of three `appearance` treatments, and switches to a numeric `counter` mode for notification-style counts.
+
+## Import
+
+```tsx
+import { Badge } from '@tradenetcorp/veli-ui/badge';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeUsageDemo client:visible />
+</div>
+
+```tsx
+<Badge intent="info">Info</Badge>
+<Badge intent="positive" appearance="subtle">Approved</Badge>
+<Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>Rejected</Badge>
+```
+
+## Appearances & counter mode
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeVariantsDemo client:visible />
+</div>
+
+```tsx
+<Badge intent="danger" counter count={5} />
+<Badge intent="neutral" counter count={128} max={99} /> {/* renders "99+" */}
+```
+
+## Props
+
+| Prop          | Type                                                                                                                                 | Default      | Description                                              |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------- | :----------- | :------------------------------------------------------- |
+| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'pink' \| 'indigo' \| 'turquoise' \| 'green' \| 'lime'` | `'neutral'`  | Semantic color of the badge.                             |
+| `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                                | `'emphasis'` | Visual treatment of the badge surface.                   |
+| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                               | `'sm'`       | Badge size.                                              |
+| `counter`     | `boolean`                                                                                                                            | `false`      | Switches to a numeric counter pill.                      |
+| `count`       | `number`                                                                                                                             | -            | Value shown in counter mode.                             |
+| `max`         | `number`                                                                                                                             | `99`         | Cap above which the count renders as `{max}+`.           |
+| `leadingIcon` | `ReactNode`                                                                                                                          | -            | Icon rendered before the label.                          |
+| `className`   | `string`                                                                                                                             | -            | Layout-only class override merged onto the root element. |
+
+All other `span` attributes are supported. In counter mode the value uses tabular numerals so widths stay stable as the count changes.

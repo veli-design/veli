@@ -1,0 +1,60 @@
+---
+title: TextArea
+description: Multi-line text field built on React Aria with the shared field shell, optional character counter, and resize control.
+---
+
+import { TextAreaUsageDemo, TextAreaVariantsDemo } from '../../components/DocsExamples';
+
+# TextArea
+
+The TextArea component wraps React Aria's `TextField` for multi-line input. It shares the Input field shell — labels, helper text, validation, and accessory slots — and adds a character counter, resize control, and height bounds.
+
+## Import
+
+```tsx
+import { TextArea } from '@tradenetcorp/veli-ui/textarea';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TextAreaUsageDemo client:visible />
+</div>
+
+```tsx
+<TextArea
+  label="Message"
+  placeholder="Tell us how we can help"
+  description="Helper text"
+  showCharacterCounter
+  maxLength={280}
+/>
+```
+
+## Resizable & validation
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TextAreaVariantsDemo client:visible />
+</div>
+
+## Props
+
+| Prop                      | Type                                   | Default     | Description                                                  |
+| :------------------------ | :------------------------------------- | :---------- | :----------------------------------------------------------- |
+| `variant`                 | `'default' \| 'outline' \| 'skeleton'` | `'default'` | Visual appearance of the field shell.                        |
+| `size`                    | `'sm' \| 'md' \| 'lg'`                 | `'md'`      | Field size.                                                  |
+| `label`                   | `ReactNode`                            | -           | Visible label content.                                       |
+| `labelSupplementary`      | `ReactNode`                            | -           | Inline helper copy beside the label, e.g. `Optional`.        |
+| `infoTooltip`             | `ReactNode`                            | -           | Tooltip content shown from a small info icon in the header.  |
+| `labelIcon`               | `ReactNode`                            | -           | Small icon placed after the label content.                   |
+| `description`             | `ReactNode`                            | -           | Helper text shown beneath the field when not invalid.        |
+| `errorMessage`            | `ReactNode`                            | -           | Validation content shown beneath the field when `isInvalid`. |
+| `showCharacterCounter`    | `boolean`                              | `false`     | Shows a live character counter; pair with `maxLength`.       |
+| `isResizable`             | `boolean`                              | `false`     | Allows the user to resize the field vertically.              |
+| `minHeight` / `maxHeight` | `number`                               | -           | Pixel bounds for the field height.                           |
+| `showRequiredIndicator`   | `boolean`                              | `true`      | Renders the required asterisk when `isRequired` is set.      |
+| `className`               | `string`                               | -           | Layout-only class override merged onto the root element.     |
+
+All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition.
+
+For Dhivehi (`lang="dv"`) fields the entered text uses the `MV_Faseyha` font with height and padding tuning, matching the Input component's localization behavior.

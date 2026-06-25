@@ -1,0 +1,58 @@
+---
+/**
+ * Animated WebGL shader background with a static-image fallback.
+ *
+ * Renders a `<canvas>` driven by a shader from the registry, layered over the
+ * provided fallback image. The image is what shows for users without
+ * JavaScript or WebGL; once the renderer starts successfully the canvas fades
+ * in over it. Pointer movement anywhere in the parent element drives the
+ * shader's interactive layers (e.g. Liquify).
+ *
+ * Swap backgrounds by passing a different registered `shader` id.
+ */
+import { DEFAULT_SHADER } from '../shaders/registry';
+
+interface Props {
+  /** Registered shader id (see shaders/registry.ts). */
+  shader?: string;
+  /** Static image shown before/instead of the canvas. */
+  fallbackSrc: string;
+  class?: string;
+}
+
+const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.props;
+---
+
+<div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
+  <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
+  <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+</div>
+
+<script>
+  import { createRenderer } from '../shaders/runtime/renderer';
+  import { getShader } from '../shaders/registry';
+
+  // A `?shader=<id>` query param overrides the configured shader, so
+  // alternative backgrounds can be previewed without editing the page
+  // (e.g. `/?shader=veli-dunes`). Falls back to the component's prop.
+  const shaderOverride = new URLSearchParams(window.location.search).get('shader');
+
+  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
+    const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
+    const id = shaderOverride ?? wrapper.dataset.shader;
+    if (!canvas || !id) continue;
+
+    const definition = getShader(id);
+    if (!definition) continue;
+
+    const renderer = createRenderer(canvas, definition, {
+      // Track the pointer across the whole hero, not just the canvas (which
+      // sits behind the foreground content).
+      pointerTarget: wrapper.parentElement ?? wrapper,
+    });
+
+    if (renderer) {
+      wrapper.dataset.shaderActive = 'true';
+    }
+  }
+</script>

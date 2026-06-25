@@ -1,0 +1,60 @@
+---
+title: Kbd
+description: Keyboard key and shortcut display, with a group wrapper for multi-key combinations and a default or inverted treatment.
+---
+
+import { KbdUsageDemo, KbdVariantsDemo } from '../../components/DocsExamples';
+
+# Kbd
+
+The `Kbd` component renders a single keyboard key, and `KbdGroup` composes several keys into a shortcut. Use them in menus, tooltips, and documentation to show keyboard affordances.
+
+## Import
+
+```tsx
+import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <KbdUsageDemo client:visible />
+</div>
+
+```tsx
+<KbdGroup aria-label="Command K">
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>
+
+<Kbd>Esc</Kbd>
+```
+
+## Variants
+
+`KbdGroup` propagates its `variant` to the keys it contains. Use `inverted` on dark surfaces.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <KbdVariantsDemo client:visible />
+</div>
+
+## Props
+
+### Kbd
+
+| Prop        | Type                      | Default     | Description                                     |
+| :---------- | :------------------------ | :---------- | :---------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Color treatment of the key.                     |
+| `children`  | `ReactNode`               | -           | Key label content (required).                   |
+| `className` | `string`                  | -           | Class override merged onto the `<kbd>` element. |
+
+All other `<kbd>` attributes are supported.
+
+### KbdGroup
+
+| Prop        | Type                      | Default     | Description                                                |
+| :---------- | :------------------------ | :---------- | :--------------------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Treatment applied to the group and propagated to each key. |
+| `className` | `string`                  | -           | Class override merged onto the group element.              |
+
+For Dhivehi (`lang="dv"`) contexts, `Kbd` keeps key labels in the sans font so shortcut glyphs stay legible regardless of the surrounding text direction.

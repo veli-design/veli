@@ -1,0 +1,50 @@
+---
+title: Avatar
+description: Represents a person, agency, or service with initials, an icon, or an image across a fixed set of design-system sizes.
+---
+
+import { AvatarUsageDemo, AvatarVariantsDemo } from '../../components/DocsExamples';
+
+# Avatar
+
+The Avatar component renders a compact, accessible representation of a person, agency, or service. It supports initials, a generic icon, an agency icon, or an image, and ships with the appearance palette and size scale from the Veli design system.
+
+## Import
+
+```tsx
+import { Avatar } from '@tradenetcorp/veli-ui/avatar';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AvatarUsageDemo client:visible />
+</div>
+
+```tsx
+<Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
+<Avatar type="icon" appearance="neutral" size="52" />
+<Avatar type="image" src="/people/aishath.jpg" alt="Aishath Mariyam" size="52" />
+```
+
+## Appearances & sizes
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AvatarVariantsDemo client:visible />
+</div>
+
+## Props
+
+| Prop         | Type                                                                                                                      | Default     | Description                                                                      |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------ | :---------- | :------------------------------------------------------------------------------- |
+| `type`       | `'image' \| 'initials' \| 'icon' \| 'agencyIcon'`                                                                         | `'icon'`    | Content rendered inside the avatar.                                              |
+| `appearance` | `'blue' \| 'neutral' \| 'successGreen' \| 'yellow' \| 'orange' \| 'pink' \| 'indigo' \| 'turquoise' \| 'green' \| 'lime'` | `'neutral'` | Surface, content, and icon color theme.                                          |
+| `size`       | `'60' \| '52' \| '44' \| '36' \| '28' \| '20' \| '16'`                                                                    | `'44'`      | Pixel size of the avatar; also scales the icon and initials.                     |
+| `initials`   | `string`                                                                                                                  | -           | Source name for `type="initials"`; reduced to one or two glyphs based on `size`. |
+| `src`        | `string`                                                                                                                  | -           | Image URL for `type="image"`.                                                    |
+| `alt`        | `string`                                                                                                                  | -           | Accessible description for `type="image"`.                                       |
+| `className`  | `string`                                                                                                                  | -           | Layout-only class override merged onto the root element.                         |
+
+All other `div` attributes are supported.
+
+For Dhivehi (`lang="dv"`) names, `type="initials"` derives initials with `formatDhivehiInitials` so the glyph count and shaping match Thaana conventions at each size.

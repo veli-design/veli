@@ -1,0 +1,52 @@
+---
+import DocsLayout from '../../layouts/docs-layout.astro';
+import { componentGroups } from '../../lib/site';
+
+const headings = componentGroups.map((group) => ({
+  depth: 2,
+  slug: group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and'),
+  text: group.title,
+}));
+---
+
+<DocsLayout
+  title="Documentation | Veli Design System"
+  description="Foundations and component documentation for the Veli Design System."
+  activePath="/docs/"
+  {headings}
+>
+  <header class="docs-page-header">
+    <p class="docs-kicker">Documentation</p>
+    <h1>Build with Veli</h1>
+    <p>
+      Start with the foundations behind the system, then use the component references to build
+      consistent and accessible public services.
+    </p>
+  </header>
+
+  <div class="docs-intro-links">
+    <a href="/foundations/">
+      <span>Foundations</span>
+      <small>Principles, color, type, spacing, accessibility, and language.</small>
+    </a>
+  </div>
+
+  {
+    componentGroups.map((group) => {
+      const id = group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
+      return (
+        <section class="docs-list-section" id={id}>
+          <h2>{group.title}</h2>
+          <div class="docs-link-list">
+            {group.items.map((item) => (
+              <a href={`/docs/${item.slug}/`}>
+                <span>{item.title}</span>
+                <p>{item.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      );
+    })
+  }
+</DocsLayout>

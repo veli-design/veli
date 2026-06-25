@@ -1,23 +1,42 @@
 import { useState } from 'react';
+import { Accordion } from '@tradenetcorp/veli-ui/accordion';
+import { Avatar } from '@tradenetcorp/veli-ui/avatar';
+import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
+import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import { Link } from '@tradenetcorp/veli-ui/link';
+import {
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSeparator,
+  MenuTrigger,
+} from '@tradenetcorp/veli-ui/menu';
+import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
+import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { Search } from '@tradenetcorp/veli-ui/search';
+import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { TextArea } from '@tradenetcorp/veli-ui/textarea';
+import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
 import {
   ArrowRight,
+  Bell,
   CalendarBlank,
   CaretLeft,
   CaretDown,
   DownloadSimple,
   Info,
   MagnifyingGlass,
+  PencilSimple,
   Plus,
   Trash,
   WarningCircle,
@@ -850,5 +869,399 @@ export function RadioDisabledDemo() {
         {text.disabledOn}
       </Radio>
     </RadioGroup>
+  );
+}
+
+export function AvatarUsageDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[16px]">
+      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
+      <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
+      <Avatar type="icon" appearance="neutral" size="52" />
+      <Avatar type="agencyIcon" appearance="successGreen" size="52" />
+    </div>
+  );
+}
+
+export function AvatarVariantsDemo() {
+  const appearances = ['blue', 'neutral', 'successGreen', 'yellow', 'orange', 'pink'] as const;
+  const sizes = ['60', '52', '44', '36', '28'] as const;
+
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Appearances</p>
+          <div className="flex flex-wrap items-center gap-[12px]">
+            {appearances.map((appearance) => (
+              <Avatar key={appearance} type="initials" initials="MV" appearance={appearance} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Sizes</p>
+          <div className="flex flex-wrap items-end gap-[12px]">
+            {sizes.map((size) => (
+              <Avatar key={size} type="icon" appearance="blue" size={size} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function BadgeUsageDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[12px]">
+      <Badge intent="info">Info</Badge>
+      <Badge intent="positive" appearance="subtle">
+        Approved
+      </Badge>
+      <Badge intent="warning" appearance="outline">
+        Pending
+      </Badge>
+      <Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>
+        Rejected
+      </Badge>
+    </div>
+  );
+}
+
+export function BadgeVariantsDemo() {
+  const intents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'] as const;
+
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Appearances</p>
+          <div className="space-y-[10px]">
+            {(['emphasis', 'subtle', 'outline'] as const).map((appearance) => (
+              <div key={appearance} className="flex flex-wrap items-center gap-[8px]">
+                {intents.map((intent) => (
+                  <Badge key={intent} appearance={appearance} intent={intent}>
+                    {intent}
+                  </Badge>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Counter mode</p>
+          <div className="flex flex-wrap items-center gap-[16px]">
+            <span className="inline-flex items-center gap-[6px] type-body-sm-regular text-text-default-default">
+              <Bell size={18} />
+              <Badge intent="danger" counter count={5} />
+            </span>
+            <Badge intent="info" counter count={42} />
+            <Badge intent="neutral" counter count={128} max={99} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function KbdUsageDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[16px]">
+      <KbdGroup aria-label="Command K">
+        <Kbd>⌘</Kbd>
+        <Kbd>K</Kbd>
+      </KbdGroup>
+      <KbdGroup aria-label="Control Shift P">
+        <Kbd>Ctrl</Kbd>
+        <Kbd>Shift</Kbd>
+        <Kbd>P</Kbd>
+      </KbdGroup>
+      <Kbd>Esc</Kbd>
+    </div>
+  );
+}
+
+export function KbdVariantsDemo() {
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Default</p>
+          <KbdGroup aria-label="Command Enter">
+            <Kbd>⌘</Kbd>
+            <Kbd>Enter</Kbd>
+          </KbdGroup>
+        </div>
+      </div>
+
+      <div
+        className="rounded-[16px] border border-white/10 p-[16px]"
+        style={{ background: '#1c1d22' }}
+      >
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-white">Inverted</p>
+          <KbdGroup variant="inverted" aria-label="Command Enter">
+            <Kbd>⌘</Kbd>
+            <Kbd>Enter</Kbd>
+          </KbdGroup>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SearchUsageDemo() {
+  return (
+    <div className="w-[320px]">
+      <Search aria-label="Search services" placeholder="Search services" />
+    </div>
+  );
+}
+
+export function SearchVariantsDemo() {
+  return (
+    <div className="grid w-full max-w-[360px] gap-[16px]">
+      <Search aria-label="Default search" placeholder="Default" />
+      <Search aria-label="Outline search" variant="outline" placeholder="Outline" />
+      <Search aria-label="Small search" size="sm" placeholder="Small" />
+      <Search aria-label="Large search" size="lg" placeholder="Large" />
+    </div>
+  );
+}
+
+export function TextAreaUsageDemo() {
+  return (
+    <div className="w-[360px]">
+      <TextArea
+        label="Message"
+        placeholder="Tell us how we can help"
+        description="Helper text"
+        showCharacterCounter
+        maxLength={280}
+      />
+    </div>
+  );
+}
+
+export function TextAreaVariantsDemo() {
+  return (
+    <div className="grid gap-[16px] md:grid-cols-2">
+      <TextArea
+        label="Resizable"
+        placeholder="Drag the handle to resize"
+        isResizable
+        description="Helper text"
+      />
+      <TextArea
+        label="Invalid"
+        placeholder="Enter details"
+        isInvalid
+        errorMessage="This field needs attention."
+      />
+    </div>
+  );
+}
+
+export function PasswordInputUsageDemo() {
+  return (
+    <div className="w-[360px]">
+      <PasswordInput
+        label="Password"
+        placeholder="Enter a password"
+        description="Use at least 8 characters."
+      />
+    </div>
+  );
+}
+
+export function PasswordInputRequirementsDemo() {
+  return (
+    <div className="w-[360px]">
+      <PasswordInput
+        label="Create password"
+        placeholder="Enter a password"
+        requirements
+        showRequirementsWhenEmpty
+      />
+    </div>
+  );
+}
+
+const ACCORDION_ITEMS = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    content:
+      'Veli connects shared tokens, accessible components, and service requirements into one design language.',
+  },
+  {
+    id: 'documents',
+    label: 'Required documents',
+    content: 'Upload a valid ID, proof of address, and any service-specific forms.',
+  },
+  {
+    id: 'history',
+    label: 'Submission history',
+    content: 'Track previous applications and their current status.',
+  },
+] as const;
+
+export function AccordionUsageDemo() {
+  return (
+    <div className="w-full max-w-[480px]">
+      <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
+    </div>
+  );
+}
+
+export function AccordionVariantsDemo() {
+  return (
+    <div className="grid gap-[24px] lg:grid-cols-2">
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Single expanded</p>
+          <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-text-default-emphasis">Multiple expanded</p>
+          <Accordion
+            allowsMultipleExpanded
+            defaultExpandedKeys={['overview', 'documents']}
+            items={ACCORDION_ITEMS}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function MenuUsageDemo() {
+  return (
+    <MenuTrigger>
+      <Button intent="secondary" appearance="transparent">
+        Actions
+        <CaretDown size={16} />
+      </Button>
+      <MenuPopover>
+        <Menu>
+          <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
+          <MenuItem startIcon={<DownloadSimple size={16} />} shortcut="⌘E">
+            Export
+          </MenuItem>
+          <MenuSeparator />
+          <MenuItem intent="danger" startIcon={<Trash size={16} />}>
+            Delete
+          </MenuItem>
+        </Menu>
+      </MenuPopover>
+    </MenuTrigger>
+  );
+}
+
+export function MenuVariantsDemo() {
+  return (
+    <MenuTrigger>
+      <Button intent="secondary" appearance="transparent">
+        Open menu
+        <CaretDown size={16} />
+      </Button>
+      <MenuPopover>
+        <Menu>
+          <MenuItem
+            startIcon={<PencilSimple size={16} />}
+            description="Update labels, metadata, and visibility."
+          >
+            Edit details
+          </MenuItem>
+          <MenuItem
+            startIcon={<DownloadSimple size={16} />}
+            description="Create a local copy for offline work."
+          >
+            Download
+          </MenuItem>
+          <MenuSeparator />
+          <MenuItem
+            intent="danger"
+            startIcon={<Trash size={16} />}
+            description="This action is permanent."
+          >
+            Remove file
+          </MenuItem>
+        </Menu>
+      </MenuPopover>
+    </MenuTrigger>
+  );
+}
+
+const TAB_ITEMS = [
+  { id: 'overview', label: 'Overview', panel: 'Summary of the service and what it offers.' },
+  { id: 'services', label: 'Services', panel: 'The list of services available under this agency.' },
+  { id: 'pricing', label: 'Pricing', panel: 'Fees, schedules, and payment options.' },
+] as const;
+
+export function TabsUsageDemo() {
+  return (
+    <div className="w-full max-w-[520px]">
+      <Tabs listAriaLabel="Service sections" items={TAB_ITEMS} />
+    </div>
+  );
+}
+
+export function PageTabUsageDemo() {
+  return (
+    <div className="w-full max-w-[520px]">
+      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} />
+    </div>
+  );
+}
+
+export function PageTabCenteredDemo() {
+  return (
+    <div className="w-full max-w-[520px]">
+      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} isCentered />
+    </div>
+  );
+}
+
+export function TooltipUsageDemo() {
+  return (
+    <TooltipTrigger delay={0}>
+      <Button intent="secondary">Hover or focus me</Button>
+      <Tooltip>Short help text for this action.</Tooltip>
+    </TooltipTrigger>
+  );
+}
+
+export function TooltipVariantsDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[16px]">
+      <TooltipTrigger delay={0}>
+        <Button intent="secondary" size="sm">
+          Small
+        </Button>
+        <Tooltip size="sm">Small tooltip.</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger delay={0}>
+        <Button intent="secondary">Large — Primary</Button>
+        <Tooltip size="lg" tone="primary">
+          A tooltip with a caret and a max width. Tooltips must not contain interactive content.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger delay={0}>
+        <Button intent="secondary">Large — Secondary</Button>
+        <Tooltip size="lg" tone="secondary">
+          A tooltip with a caret and a max width. Tooltips must not contain interactive content.
+        </Tooltip>
+      </TooltipTrigger>
+    </div>
   );
 }

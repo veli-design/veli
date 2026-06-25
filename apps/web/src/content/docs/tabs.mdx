@@ -1,0 +1,51 @@
+---
+title: Tabs
+description: Data-driven tabbed interface built on React Aria, with leading/trailing slots and optional overflow menu.
+---
+
+import { TabsUsageDemo } from '../../components/DocsExamples';
+
+# Tabs
+
+The Tabs component renders a data-driven tabbed interface on React Aria's `Tabs`. Pass an `items` array of tabs, each with a `label` and `panel`; extra tabs can be collapsed into an overflow menu via `overflowItems`.
+
+## Import
+
+```tsx
+import { Tabs } from '@tradenetcorp/veli-ui/tabs';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TabsUsageDemo client:visible />
+</div>
+
+```tsx
+const items = [
+  { id: 'overview', label: 'Overview', panel: 'Summary content.' },
+  { id: 'services', label: 'Services', panel: 'Service list.' },
+  { id: 'pricing', label: 'Pricing', panel: 'Fees and schedules.' },
+];
+
+<Tabs listAriaLabel="Service sections" items={items} />;
+```
+
+Each item also accepts `leading` and `trailing` nodes (for icons or badges) and `isDisabled`. At least two items are required.
+
+## Props
+
+| Prop                                                   | Type                      | Default | Description                                                     |
+| :----------------------------------------------------- | :------------------------ | :------ | :-------------------------------------------------------------- |
+| `items`                                                | `[TabsItem, TabsItem, …]` | -       | Tabs: `{ id, label, panel, leading?, trailing?, isDisabled? }`. |
+| `overflowItems`                                        | `TabsItem[]`              | -       | Additional tabs collapsed into an overflow menu.                |
+| `listAriaLabel`                                        | `string`                  | -       | Accessible label for the tab list.                              |
+| `selectedKey`                                          | `Key`                     | -       | Controlled selected tab.                                        |
+| `defaultSelectedKey`                                   | `Key`                     | -       | Initially selected tab (uncontrolled).                          |
+| `onSelectionChange`                                    | `(key: Key) => void`      | -       | Called when the active tab changes.                             |
+| `tabListClassName` / `tabClassName` / `panelClassName` | `string`                  | -       | Class overrides for the list, each tab, and the panel.          |
+| `className`                                            | `string`                  | -       | Layout-only class override merged onto the root element.        |
+
+All other React Aria `Tabs` props are supported.
+
+Use [PageTab](/docs/page-tab/) for the full-width, page-level tab treatment.

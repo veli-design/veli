@@ -1,6 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/layout.astro';
+import type { CollectionEntry } from 'astro:content';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import { getComponentMeta } from '../../lib/site';
+
+type Props = {
+  doc: CollectionEntry<'docs'>;
+};
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -10,14 +16,26 @@ export async function getStaticPaths() {
   }));
 }
 
-const { doc } = Astro.props;
-const { Content } = await doc.render();
+const { doc } = Astro.props as Props;
+const { Content, headings } = await doc.render();
+const component = getComponentMeta(doc.slug);
+const pageDescription = doc.data.description ?? component?.description;
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
-<Layout title={doc.data.title}>
-  <main class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto prose prose-lg">
-      <Content />
-    </div>
-  </main>
-</Layout>
+<DocsLayout
+  title={`${doc.data.title} | Veli Design System`}
+  description={pageDescription}
+  activePath={`/docs/${doc.slug}/`}
+  headings={tocHeadings}
+>
+  <header class="docs-page-header docs-page-header--article">
+    <p class="docs-kicker">Component</p>
+    <h1>{doc.data.title}</h1>
+    {pageDescription && <p>{pageDescription}</p>}
+  </header>
+
+  <article class="docs-prose">
+    <Content />
+  </article>
+</DocsLayout>

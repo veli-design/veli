@@ -3,9 +3,15 @@ import '../styles/global.css';
 
 interface Props {
   title: string;
+  description?: string;
+  pageClass?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = 'Veli Design System documentation and foundations.',
+  pageClass = '',
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -14,6 +20,7 @@ const { title } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <script is:inline>
@@ -42,19 +49,10 @@ const { title } = Astro.props;
       })();
     </script>
   </head>
-  <body class="min-h-screen bg-bg-surface-base text-text-default-default">
-    <div class="fixed right-4 top-4 z-50">
-      <div
-        class="inline-flex rounded-[6px] border border-border-default-subtle bg-bg-surface-overlay-raised p-[2px] shadow-[0_8px_24px_var(--color-effects-shadow-depth-100)]"
-        aria-label="Color scheme"
-        role="group"
-      >
-        <button class="theme-option" type="button" data-theme-choice="system">System</button>
-        <button class="theme-option" type="button" data-theme-choice="light">Light</button>
-        <button class="theme-option" type="button" data-theme-choice="dark">Dark</button>
-      </div>
-    </div>
+  <body class:list={['min-h-screen bg-bg-surface-base text-text-default-default', pageClass]}>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <slot />
+
     <script is:inline>
       (() => {
         const storageKey = 'veli-color-scheme';
@@ -62,6 +60,8 @@ const { title } = Astro.props;
         const root = document.documentElement;
         const media = window.matchMedia('(prefers-color-scheme: dark)');
         const buttons = Array.from(document.querySelectorAll('[data-theme-choice]'));
+        const cycleButton = document.querySelector('[data-theme-cycle]');
+        const cycleLabel = document.querySelector('[data-theme-label]');
 
         function getStoredColorScheme() {
           try {
@@ -85,6 +85,10 @@ const { title } = Astro.props;
             const isActive = button.dataset.themeChoice === colorScheme;
             button.setAttribute('aria-pressed', String(isActive));
           }
+
+          if (cycleLabel) {
+            cycleLabel.textContent = colorScheme[0].toUpperCase() + colorScheme.slice(1);
+          }
         }
 
         for (const button of buttons) {
@@ -102,6 +106,19 @@ const { title } = Astro.props;
           });
         }
 
+        cycleButton?.addEventListener('click', () => {
+          const current = getStoredColorScheme();
+          const next = choices[(choices.indexOf(current) + 1) % choices.length];
+
+          try {
+            window.localStorage.setItem(storageKey, next);
+          } catch {
+            // The visual state can still update if storage is unavailable.
+          }
+
+          applyColorScheme(next);
+        });
+
         media.addEventListener('change', () => {
           if (getStoredColorScheme() === 'system') {
             applyColorScheme('system');
@@ -113,30 +130,3 @@ const { title } = Astro.props;
     </script>
   </body>
 </html>
-
-<style>
-  .theme-option {
-    min-width: 60px;
-    border-radius: 4px;
-    padding: 6px 8px;
-    color: var(--color-text-default-subtle);
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 16px;
-    transition:
-      background-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .theme-option:hover {
-    color: var(--color-text-default-default);
-    background: var(--color-button-secondary-subtle-default);
-  }
-
-  .theme-option[aria-pressed='true'] {
-    color: var(--color-text-default-emphasis);
-    background: var(--color-bg-surface-raised);
-    box-shadow: 0 1px 2px var(--color-effects-shadow-depth-50);
-  }
-</style>

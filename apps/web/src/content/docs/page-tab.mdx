@@ -1,0 +1,54 @@
+---
+title: PageTab
+description: Page-level tab navigation built on React Aria, with a data-driven items API and optional centered layout.
+---
+
+import { PageTabUsageDemo, PageTabCenteredDemo } from '../../components/DocsExamples';
+
+# PageTab
+
+The PageTab component provides page-level tab navigation built on React Aria's `Tabs`. It shares the data-driven `items` API with [Tabs](/docs/tabs/) but uses the wider, page-heading treatment intended for top-level section switching.
+
+## Import
+
+```tsx
+import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <PageTabUsageDemo client:visible />
+</div>
+
+```tsx
+const items = [
+  { id: 'overview', label: 'Overview', panel: 'Summary content.' },
+  { id: 'services', label: 'Services', panel: 'Service list.' },
+  { id: 'pricing', label: 'Pricing', panel: 'Fees and schedules.' },
+];
+
+<PageTab listAriaLabel="Service sections" items={items} />;
+```
+
+## Centered
+
+Pass `isCentered` to center the tab list, suitable for marketing or landing surfaces.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <PageTabCenteredDemo client:visible />
+</div>
+
+## Props
+
+| Prop                                                   | Type                            | Default | Description                                              |
+| :----------------------------------------------------- | :------------------------------ | :------ | :------------------------------------------------------- |
+| `items`                                                | `[PageTabItem, PageTabItem, …]` | -       | Tabs: `{ id, label, panel, isDisabled? }`. At least two. |
+| `isCentered`                                           | `boolean`                       | `false` | Centers the tab list.                                    |
+| `listAriaLabel`                                        | `string`                        | -       | Accessible label for the tab list.                       |
+| `selectedKey`                                          | `Key`                           | -       | Controlled selected tab.                                 |
+| `defaultSelectedKey`                                   | `Key`                           | -       | Initially selected tab (uncontrolled).                   |
+| `tabListClassName` / `tabClassName` / `panelClassName` | `string`                        | -       | Class overrides for the list, each tab, and the panel.   |
+| `className`                                            | `string`                        | -       | Layout-only class override merged onto the root element. |
+
+All other React Aria `Tabs` props are supported. For inline, content-level tabs use [Tabs](/docs/tabs/) instead.

@@ -1,0 +1,73 @@
+---
+title: Menu
+description: Trigger-driven menu built on React Aria, with items, sections, separators, icons, shortcuts, and submenus.
+---
+
+import { MenuUsageDemo, MenuVariantsDemo } from '../../components/DocsExamples';
+
+# Menu
+
+The Menu component is a popover list of actions or choices, built on React Aria. Compose `MenuTrigger` with a trigger element, `MenuPopover`, `Menu`, and `MenuItem`; add `MenuSection`, `MenuSeparator`, and `MenuSubmenuTrigger` for richer structures.
+
+## Import
+
+```tsx
+import {
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSection,
+  MenuSeparator,
+  MenuSubmenuTrigger,
+  MenuTrigger,
+} from '@tradenetcorp/veli-ui/menu';
+import { Button } from '@tradenetcorp/veli-ui/button';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <MenuUsageDemo client:visible />
+</div>
+
+```tsx
+<MenuTrigger>
+  <Button intent="secondary" appearance="transparent">
+    Actions
+  </Button>
+  <MenuPopover>
+    <Menu>
+      <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
+      <MenuItem startIcon={<DownloadSimple size={16} />} shortcut="⌘E">
+        Export
+      </MenuItem>
+      <MenuSeparator />
+      <MenuItem intent="danger" startIcon={<Trash size={16} />}>
+        Delete
+      </MenuItem>
+    </Menu>
+  </MenuPopover>
+</MenuTrigger>
+```
+
+## Descriptions & intents
+
+Items support a `description`, leading and trailing icons, a `shortcut`, and a `danger` intent for destructive actions.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <MenuVariantsDemo client:visible />
+</div>
+
+## MenuItem props
+
+| Prop            | Type                    | Default     | Description                                                                                      |
+| :-------------- | :---------------------- | :---------- | :----------------------------------------------------------------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Item height and typography.                                                                      |
+| `intent`        | `'default' \| 'danger'` | `'default'` | Use `danger` for destructive actions.                                                            |
+| `description`   | `ReactNode`             | -           | Secondary line beneath the label.                                                                |
+| `startIcon`     | `ReactNode`             | -           | Leading icon.                                                                                    |
+| `endIcon`       | `ReactNode`             | -           | Trailing icon.                                                                                   |
+| `shortcut`      | `ReactNode`             | -           | Keyboard shortcut hint shown at the trailing edge.                                               |
+| `closeOnSelect` | `boolean`               | -           | Whether selecting the item closes the menu; defaults to React Aria behavior per `selectionMode`. |
+
+`Menu` supports React Aria selection (`selectionMode`, `selectedKeys`, `onSelectionChange`). `MenuSection` accepts a `title`, and `MenuPopover` accepts an `offset`. All other React Aria props on each part are supported.

@@ -1,0 +1,208 @@
+---
+import {
+  ArrowUpRight,
+  FigmaLogo,
+  GithubLogo,
+  List,
+  MagnifyingGlass,
+  Package,
+} from 'phosphor-react';
+import Layout from './layout.astro';
+import { componentGroups, externalResources, foundations } from '../lib/site';
+
+type Heading = {
+  depth: number;
+  slug: string;
+  text: string;
+};
+
+interface Props {
+  title: string;
+  description?: string;
+  activePath: string;
+  headings?: Heading[];
+}
+
+const { title, description, activePath, headings = [] } = Astro.props;
+
+const resourceIcons = {
+  figma: FigmaLogo,
+  github: GithubLogo,
+  package: Package,
+};
+
+function isActive(href: string) {
+  if (href === '/docs/') return activePath === href;
+  return activePath === href || activePath.startsWith(`${href}#`);
+}
+---
+
+<Layout title={title} description={description} pageClass="docs-page">
+  <div class="docs-workspace">
+    <aside class="docs-navigation" aria-label="Documentation navigation">
+      <div class="docs-navigation__scroll">
+        <a class="docs-brand" href="/" aria-label="Veli home">
+          <img src="/images/veli-mark.svg" alt="" />
+          <span>Veli</span>
+        </a>
+
+        <nav class="docs-nav" aria-label="Veli documentation">
+          <section class="docs-nav-group" data-doc-group>
+            <h2>Foundations</h2>
+            <a
+              class:list={['docs-nav-link', isActive('/foundations/') && 'is-active']}
+              href="/foundations/"
+              data-doc-link
+            >
+              Overview
+            </a>
+            {
+              foundations.map((item) => (
+                <a
+                  class:list={['docs-nav-link', isActive(item.href) && 'is-active']}
+                  href={item.href}
+                  data-doc-link
+                >
+                  {item.title}
+                </a>
+              ))
+            }
+          </section>
+
+          <section class="docs-nav-group" data-doc-group>
+            <h2>Components</h2>
+            <a
+              class:list={['docs-nav-link', isActive('/docs/') && 'is-active']}
+              href="/docs/"
+              data-doc-link
+            >
+              Overview
+            </a>
+            {
+              componentGroups.flatMap((group) =>
+                group.items.map((item) => (
+                  <a
+                    class:list={[
+                      'docs-nav-link',
+                      activePath === `/docs/${item.slug}/` && 'is-active',
+                    ]}
+                    href={`/docs/${item.slug}/`}
+                    data-doc-link
+                  >
+                    {item.title}
+                  </a>
+                )),
+              )
+            }
+          </section>
+        </nav>
+      </div>
+
+      <nav class="docs-resources" aria-label="Veli resources">
+        {
+          externalResources.map((item) => {
+            const Icon = resourceIcons[item.icon];
+            return (
+              <a href={item.href} target="_blank" rel="noreferrer">
+                <Icon size={18} weight="regular" aria-hidden="true" />
+                <span>{item.label}</span>
+                <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
+              </a>
+            );
+          })
+        }
+      </nav>
+    </aside>
+
+    <header class="docs-mobile-header">
+      <a class="docs-brand" href="/" aria-label="Veli home">
+        <img src="/images/veli-mark.svg" alt="" />
+        <span>Veli</span>
+      </a>
+      <details class="docs-mobile-menu">
+        <summary aria-label="Open documentation navigation">
+          <List size={22} aria-hidden="true" />
+        </summary>
+        <div class="docs-mobile-menu__panel">
+          <nav aria-label="Mobile documentation navigation">
+            <h2>Foundations</h2>
+            <a href="/foundations/">Overview</a>
+            {foundations.map((item) => <a href={item.href}>{item.title}</a>)}
+            <h2>Components</h2>
+            <a href="/docs/">Overview</a>
+            {
+              componentGroups.flatMap((group) =>
+                group.items.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>),
+              )
+            }
+          </nav>
+        </div>
+      </details>
+    </header>
+
+    <main id="main" class="docs-main">
+      <div class="docs-main__inner">
+        <slot />
+      </div>
+    </main>
+
+    <aside class="docs-utilities" aria-label="Page utilities">
+      <label class="docs-search">
+        <MagnifyingGlass size={17} aria-hidden="true" />
+        <span class="sr-only">Search documentation</span>
+        <input type="search" placeholder="Search" data-doc-search />
+      </label>
+      <p class="docs-search-status" aria-live="polite" data-search-status></p>
+
+      <nav class="docs-contents" aria-label="On this page">
+        <h2>On this page</h2>
+        {
+          headings.length > 0 ? (
+            headings.map((heading) => (
+              <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
+                {heading.text}
+              </a>
+            ))
+          ) : (
+            <a href="#main">Overview</a>
+          )
+        }
+      </nav>
+
+      <button class="theme-cycle" type="button" data-theme-cycle>
+        <span>Theme</span>
+        <span data-theme-label>System</span>
+      </button>
+    </aside>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const input = document.querySelector('[data-doc-search]');
+      const links = Array.from(document.querySelectorAll('[data-doc-link]'));
+      const groups = Array.from(document.querySelectorAll('[data-doc-group]'));
+      const status = document.querySelector('[data-search-status]');
+
+      if (!(input instanceof HTMLInputElement)) return;
+
+      input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+
+        for (const link of links) {
+          const matches = !query || link.textContent?.toLowerCase().includes(query);
+          link.toggleAttribute('hidden', !matches);
+          if (matches) visible += 1;
+        }
+
+        for (const group of groups) {
+          const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
+          group.toggleAttribute('hidden', !hasMatch);
+        }
+
+        if (status)
+          status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
+      });
+    })();
+  </script>
+</Layout>
