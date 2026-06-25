@@ -8,7 +8,7 @@ import {
   Package,
 } from 'phosphor-react';
 import Layout from './layout.astro';
-import { componentGroups, externalResources, foundations } from '../lib/site';
+import { componentGroups, externalResources, foundations, proposals } from '../lib/site';
 
 type Heading = {
   depth: number;
@@ -95,6 +95,24 @@ function isActive(href: string) {
               )
             }
           </section>
+
+          <section class="docs-nav-group" data-doc-group>
+            <h2>Proposals</h2>
+            {
+              proposals.map((item) => (
+                <a
+                  class:list={[
+                    'docs-nav-link',
+                    activePath === `/docs/${item.slug}/` && 'is-active',
+                  ]}
+                  href={`/docs/${item.slug}/`}
+                  data-doc-link
+                >
+                  {item.title}
+                </a>
+              ))
+            }
+          </section>
         </nav>
       </div>
 
@@ -135,6 +153,8 @@ function isActive(href: string) {
                 group.items.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>),
               )
             }
+            <h2>Proposals</h2>
+            {proposals.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>)}
           </nav>
         </div>
       </details>

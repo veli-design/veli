@@ -1,0 +1,202 @@
+---
+title: PD-442 Token Hierarchy Refactor
+description: Temporary proposal for a themeable Veli token hierarchy across primitive, theme, semantic, and component layers.
+---
+
+# PD-442 Token Hierarchy Refactor
+
+This is a proposal page for designer and engineering review. It is not production token guidance yet.
+
+The goal is to make Veli easier to theme without rewriting component classes or duplicating brand decisions inside every component.
+
+## One-Screen Summary
+
+Veli already has primitives, semantic tokens, and component tokens. The missing layer is a clear brand/theme tier.
+
+```text
+Primitive palette
+  -> Brand/theme roles
+  -> Semantic UI roles
+  -> Component anatomy
+```
+
+In practice:
+
+```text
+color.blue.800
+  -> color.theme.primary.default
+  -> color.bg.primary.default
+  -> color.button.primary.default
+```
+
+The component keeps using the same button API. The theme changes higher in the hierarchy.
+
+## What We Learned From Other Systems
+
+| Reference                                                                        | Useful idea for Veli                                                                                                                             |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Brad Frost](https://bradfrost.com/blog/post/creating-themeable-design-systems/) | Brand definitions should feed application roles, and component variables should map to those higher-level roles.                                 |
+| [shadcn/ui](https://ui.shadcn.com/docs/theming)                                  | Theme tokens are compact and semantic, with explicit foreground pairs such as primary and primary foreground.                                    |
+| [Carbon](https://carbondesignsystem.com/elements/color/tokens/)                  | Core tokens and component tokens are separated, and core tokens describe reusable UI roles such as background, border, text, support, and focus. |
+| [Atlassian](https://atlassian.design/foundations/tokens/design-tokens/)          | A theme is a collection of token values, and token names should communicate usage.                                                               |
+
+## Current Veli Shape
+
+Source audited: `packages/tokens/src/design.tokens.json`
+
+| Current layer      | Examples                                                                                                                             | What this means                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Primitive palettes | `color.cool gray`, `color.blue`, `color.success`, `color.orange`, `color.red`, `color.green`, `color.indigo`, `color.pink`           | Veli has the raw color material.                |
+| Semantic tokens    | `color.bg`, `color.text`, `color.icon`, `color.border`, `color.status`                                                               | Veli already has reusable UI roles.             |
+| Component tokens   | `color.button`, `color.text input`, `color.switch`, `color.radio`, `color.checkbox`, `color.tooltip`, `color.modal`, `color.popover` | Veli already has component-level styling hooks. |
+
+The problem is that many semantic and component tokens still point directly to primitive palette values.
+
+```text
+color.button.primary.default
+  -> color.blue.800
+```
+
+That should become:
+
+```text
+color.button.primary.default
+  -> color.bg.primary.default
+  -> color.theme.primary.default
+  -> color.blue.800
+```
+
+## Proposed Hierarchy
+
+| Layer | Name                 | Example                        | Who should think about it                 |
+| ----- | -------------------- | ------------------------------ | ----------------------------------------- |
+| 0     | Primitive/global     | `color.blue.800`               | Designers defining palettes               |
+| 1     | Brand/theme          | `color.theme.primary.default`  | Designers choosing the theme personality  |
+| 2     | Semantic/application | `color.bg.primary.default`     | Designers and engineers defining UI roles |
+| 3     | Component-scoped     | `color.button.primary.default` | Component maintainers                     |
+
+## Dependency Rule
+
+References should flow down the hierarchy only.
+
+```text
+primitive/global
+  -> brand/theme
+  -> semantic/application
+  -> component-scoped
+```
+
+Good:
+
+```text
+color.button.primary.default -> color.bg.primary.default
+color.bg.primary.default -> color.theme.primary.default
+color.theme.primary.default -> color.blue.800
+```
+
+Avoid:
+
+```text
+color.button.primary.default -> color.blue.800
+color.bg.primary.default -> color.button.primary.default
+```
+
+## Theme Layer Proposal
+
+The first pass should introduce `color.theme.*` aliases while keeping existing public output stable.
+
+| Theme role | Suggested tokens                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| Primary    | `color.theme.primary.default`, `hover`, `pressed`, `subtle.default`, `foreground`, `focus`       |
+| Secondary  | `color.theme.secondary.default`, `hover`, `pressed`, `subtle.default`, `foreground`              |
+| Accent     | `color.theme.accent.default`, `hover`, `pressed`, `subtle.default`, `foreground`                 |
+| Base       | `color.theme.base.surface`, `surface-raised`, `surface-overlay`, `muted`, `strong`, `foreground` |
+| Feedback   | `color.theme.success.*`, `warning.*`, `danger.*`, `info.*`                                       |
+
+## Example Mapping
+
+| Current token                           | Proposed direction              |
+| --------------------------------------- | ------------------------------- |
+| `color.bg.primary.DEFAULT`              | `color.theme.primary.default`   |
+| `color.bg.secondary.DEFAULT`            | `color.theme.secondary.default` |
+| `color.text.primary.default`            | `color.theme.primary.text`      |
+| `color.border.focus`                    | `color.theme.primary.focus`     |
+| `color.button.primary.default`          | `color.bg.primary.default`      |
+| `color.radio.container-selected-border` | `color.border.interactive`      |
+| `color.checkbox.container-checked-bg`   | `color.bg.primary.default`      |
+
+## Why This Helps Designers
+
+- Theme decisions happen in one layer instead of being scattered across component tokens.
+- Primary, secondary, accent, and base become reviewable concepts.
+- A second theme can prove the system without changing component APIs.
+- Component tokens remain useful, but they become anatomy mappings instead of brand decisions.
+
+## Why This Helps Engineers
+
+- Existing component props can stay stable.
+- Existing Tailwind utility names can stay stable for the first migration.
+- Token output diffs become easier to review because alias changes are separated from value changes.
+- The current `.dark` class runtime can continue to work.
+
+## Migration Plan
+
+### Phase 1: Add aliases
+
+Add `color.theme.*` aliases to the token source. Keep existing semantic and component token names.
+
+```text
+color.theme.primary.default -> color.blue.800
+color.bg.primary.default -> color.theme.primary.default
+```
+
+### Phase 2: Remap semantics
+
+Move common semantic tokens to reference theme tokens.
+
+Start with:
+
+- primary backgrounds
+- secondary backgrounds
+- base surfaces
+- default text
+- focus and interactive borders
+- feedback emphasis colors
+
+### Phase 3: Remap components
+
+Move component tokens to semantic references.
+
+Start with:
+
+- button
+- checkbox
+- radio
+- switch
+- tooltip
+- popover
+- modal
+
+### Phase 4: Prove a second theme
+
+Add a small non-shipping second-theme proof in Storybook or docs. Change primary, secondary, accent, and base at the theme layer, then confirm the common components inherit the new look.
+
+## Open Design Questions
+
+1. Should `secondary` mean neutral high-emphasis or a second brand color?
+2. Does Veli need `accent`, or should primary cover active accents?
+3. Should `base` mean the chosen gray family only, or also white, overlays, and inverse surfaces?
+4. Should success, warning, danger, and info be theme roles or semantic-only roles?
+5. What is the smallest second-theme proof designers need to trust the hierarchy?
+
+## Guardrails
+
+- Do not change component APIs for the first refactor pass.
+- Do not rename CSS custom properties until aliases and migration docs exist.
+- Do not replace every primitive reference mechanically.
+- Keep dark mode class-driven through the existing `.dark` contract.
+- Preserve Tailwind v4 output compatibility.
+
+## Recommended Next Step
+
+Create the theme tier as aliases first. That gives designers and engineers a concrete layer to review before any component output changes.
