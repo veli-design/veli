@@ -229,13 +229,13 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
     },
     defaultVariants: {
@@ -282,18 +282,14 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
+  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong',
 );
 
-const itemLabelVariants = cva(
-  'truncate type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5',
-);
+const itemLabelVariants = cva('truncate type-body-sm-regular');
 
 const itemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
 
-const itemSelectionIndicatorVariants = cva(
-  'shrink-0 text-text-primary-muted [&:lang(dv)]:-translate-y-1',
-);
+const itemSelectionIndicatorVariants = cva('shrink-0 text-text-primary-muted');
 
 const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-medium text-text-default-muted');
 

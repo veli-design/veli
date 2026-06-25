@@ -49,18 +49,13 @@ const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
       md: 'h-5',
       lg: 'h-6',
     },
-    hasFieldMessages: {
-      true: '[&:lang(dv)]:mt-1',
-      false: '',
-    },
   },
   defaultVariants: {
     size: 'md',
-    hasFieldMessages: false,
   },
 });
 
-const checkboxLabelVariants = cva('min-w-0 [&:lang(dv)]:translate-y-1');
+const checkboxLabelVariants = cva('min-w-0');
 
 const checkboxDescriptionVariants = cva('type-body-sm-regular text-text-default-muted', {
   variants: {
@@ -317,7 +312,6 @@ export function Checkbox({
             <span
               className={checkboxControlSlotVariants({
                 size: resolvedSize,
-                hasFieldMessages,
               })}
             >
               <span

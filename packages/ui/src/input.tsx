@@ -272,47 +272,22 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
       isReadOnly: {
         true: 'text-text-default-strong',
         false: '',
       },
-      usesLtrValueTypography: {
-        true: '[&:lang(dv):placeholder-shown]:!text-right [&:lang(dv):not(:placeholder-shown)]:!h-auto [&:lang(dv):not(:placeholder-shown)]:!font-sans [&:lang(dv):not(:placeholder-shown)]:!font-normal [&:lang(dv):not(:placeholder-shown)]:!tracking-normal',
-        false: '',
-      },
     },
-    compoundVariants: [
-      {
-        usesLtrValueTypography: true,
-        size: 'sm',
-        className:
-          '[&:lang(dv):not(:placeholder-shown)]:!pt-2 [&:lang(dv):not(:placeholder-shown)]:!pb-2 [&:lang(dv):not(:placeholder-shown)]:!text-sm [&:lang(dv):not(:placeholder-shown)]:!leading-5',
-      },
-      {
-        usesLtrValueTypography: true,
-        size: 'md',
-        className:
-          '[&:lang(dv):not(:placeholder-shown)]:!pt-3 [&:lang(dv):not(:placeholder-shown)]:!pb-3 [&:lang(dv):not(:placeholder-shown)]:!text-sm [&:lang(dv):not(:placeholder-shown)]:!leading-5',
-      },
-      {
-        usesLtrValueTypography: true,
-        size: 'lg',
-        className:
-          '[&:lang(dv):not(:placeholder-shown)]:!pt-3.5 [&:lang(dv):not(:placeholder-shown)]:!pb-3.5 [&:lang(dv):not(:placeholder-shown)]:!text-base [&:lang(dv):not(:placeholder-shown)]:!leading-6',
-      },
-    ],
     defaultVariants: {
       size: 'md',
       isReadOnly: false,
-      usesLtrValueTypography: false,
     },
   },
 );
@@ -410,7 +385,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
   const inputValueDirection = getInputValueDirection(type);
-  const usesLtrValueTypography = inputValueDirection === 'ltr';
   const hasSkeletonHeader = Boolean(
     label ||
     infoTooltip ||
@@ -519,7 +493,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
               spellCheck={spellCheck}
               type={type}
               dir={inputValueDirection}
-              className={inputElementVariants({ size, isReadOnly, usesLtrValueTypography })}
+              className={inputElementVariants({ size, isReadOnly })}
             />
             {endContent ? (
               <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>

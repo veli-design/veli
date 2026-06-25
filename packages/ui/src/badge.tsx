@@ -22,26 +22,22 @@ const badgeVariants = cva(
       {
         counter: false,
         size: 'sm',
-        className:
-          'h-5 gap-1 rounded-md px-1 type-caption-medium [&_svg]:size-3 [&:lang(dv)]:!text-[13px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal',
+        className: 'h-5 gap-1 rounded-md px-1 type-caption-medium [&_svg]:size-3',
       },
       {
         counter: false,
         size: 'md',
-        className:
-          'h-7 gap-1 rounded-md px-2 type-body-sm-medium [&_svg]:size-4 [&:lang(dv)]:!text-[15px] [&:lang(dv)]:!leading-7 [&:lang(dv)]:!tracking-normal',
+        className: 'h-7 gap-1 rounded-md px-2 type-body-sm-medium [&_svg]:size-4',
       },
       {
         counter: true,
         size: 'sm',
-        className:
-          'h-5 min-w-5 justify-center rounded-full px-1 type-caption-medium [&:lang(dv)]:!text-[13px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal',
+        className: 'h-5 min-w-5 justify-center rounded-full px-1 type-caption-medium',
       },
       {
         counter: true,
         size: 'md',
-        className:
-          'h-7 min-w-7 justify-center rounded-full px-2 type-body-sm-medium [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-7 [&:lang(dv)]:!tracking-normal',
+        className: 'h-7 min-w-7 justify-center rounded-full px-2 type-body-sm-medium',
       },
     ],
     defaultVariants: {
@@ -54,8 +50,8 @@ const badgeVariants = cva(
 const badgeLabelVariants = cva('min-w-0', {
   variants: {
     counter: {
-      true: 'tabular-nums text-center [font-variant-numeric:tabular-nums] [&:lang(dv)]:!font-sans',
-      false: 'block truncate px-0.5 text-center leading-[inherit] [&:lang(dv)]:translate-y-px',
+      true: 'tabular-nums text-center [font-variant-numeric:tabular-nums]',
+      false: 'block truncate px-0.5 text-center leading-[inherit]',
     },
   },
   defaultVariants: {

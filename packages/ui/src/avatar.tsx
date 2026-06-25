@@ -337,7 +337,7 @@ export function Avatar({
         <span
           aria-hidden="true"
           className={twMerge(
-            'select-none text-center uppercase [word-break:break-word] [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+            'select-none text-center uppercase [word-break:break-word]',
             avatarInitialsTypography[resolvedSize],
             appearanceTokens.content,
           )}

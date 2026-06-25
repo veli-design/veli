@@ -50,7 +50,7 @@ const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
-const tabLabelRegularClassName = 'inline-block type-body-sm-regular [&:lang(dv)]:translate-y-0.5';
+const tabLabelRegularClassName = 'inline-block type-body-sm-regular';
 const tabLabelSelectedClassName = 'inline-block type-body-sm-medium text-text-default-strong';
 
 function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {

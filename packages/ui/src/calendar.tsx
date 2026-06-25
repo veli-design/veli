@@ -62,18 +62,11 @@ const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar
 const calendarHeaderMonthLabelClassName =
   'min-w-0 flex-1 px-1 text-center type-body-sm-medium text-text-default-strong whitespace-nowrap';
 
-const calendarNumericTextClassName =
-  'tabular-nums [&:lang(dv)]:!font-sans [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!tracking-normal';
+const calendarNumericTextClassName = 'tabular-nums';
 
-const calendarNumericRegularTextClassName = twMerge(
-  calendarNumericTextClassName,
-  '[&:lang(dv)]:!font-normal',
-);
+const calendarNumericRegularTextClassName = calendarNumericTextClassName;
 
-const calendarHeaderYearLabelClassName = twMerge(
-  calendarNumericTextClassName,
-  '[&:lang(dv)]:!font-medium',
-);
+const calendarHeaderYearLabelClassName = calendarNumericTextClassName;
 
 const calendarYearPickerItemClassName = calendarNumericRegularTextClassName;
 
@@ -184,8 +177,6 @@ const calendarHeaderCellClassName =
 
 const calendarWeekdayLabelClassName = 'block truncate no-underline';
 
-const calendarLongWeekdayLabelClassName = '[&:lang(dv)]:text-[12px] [&:lang(dv)]:leading-5';
-
 const calendarDayLabelClassName = twMerge(
   'inline-flex h-5 min-w-5 items-center justify-center leading-5',
   calendarNumericRegularTextClassName,
@@ -195,11 +186,8 @@ function getDefaultCalendarWeekdayStyle(direction: CalendarDirection): CalendarW
   return direction === 'rtl' ? 'long' : 'narrow';
 }
 
-function getCalendarWeekdayLabelClassName(weekdayStyle: CalendarWeekdayStyle) {
-  return twMerge(
-    calendarWeekdayLabelClassName,
-    weekdayStyle === 'long' && calendarLongWeekdayLabelClassName,
-  );
+function getCalendarWeekdayLabelClassName() {
+  return calendarWeekdayLabelClassName;
 }
 
 const cellVariants = cva(
@@ -568,7 +556,7 @@ export function CalendarGridHeader({ weekdayStyle }: { weekdayStyle?: CalendarWe
             <abbr
               aria-label={weekdayFullLabel}
               title={weekdayFullLabel}
-              className={getCalendarWeekdayLabelClassName(resolvedWeekdayStyle)}
+              className={getCalendarWeekdayLabelClassName()}
             >
               {weekdayLabel}
             </abbr>
