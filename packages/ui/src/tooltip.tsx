@@ -98,7 +98,7 @@ function tooltipArrowProps(size: 'sm' | 'lg' | null | undefined, placement: stri
 }
 
 const tooltipVariants = cva(
-  'group box-border font-sans type-body-sm-regular will-change-transform',
+  'group box-border font-sans type-body-sm-regular transition-[opacity,transform] duration-normal ease-out will-change-transform data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
   {
     variants: {
       size: {
@@ -108,12 +108,6 @@ const tooltipVariants = cva(
       tone: {
         primary: '',
         secondary: '',
-      },
-      isEntering: {
-        true: 'animate-in fade-in placement-bottom:slide-in-from-top-0.5 placement-top:slide-in-from-bottom-0.5 placement-left:slide-in-from-right-0.5 placement-right:slide-in-from-left-0.5 ease-out duration-200',
-      },
-      isExiting: {
-        true: 'animate-out fade-out placement-bottom:slide-out-to-top-0.5 placement-top:slide-out-to-bottom-0.5 placement-left:slide-out-to-right-0.5 placement-right:slide-out-to-left-0.5 ease-in duration-150',
       },
     },
     compoundVariants: [
@@ -136,9 +130,7 @@ const tooltipVariants = cva(
 );
 
 export interface TooltipProps
-  extends
-    Omit<AriaTooltipProps, 'children'>,
-    Omit<VariantProps<typeof tooltipVariants>, 'isEntering' | 'isExiting'> {
+  extends Omit<AriaTooltipProps, 'children'>, VariantProps<typeof tooltipVariants> {
   children: React.ReactNode;
 }
 
@@ -171,13 +163,11 @@ export function Tooltip({
       arrowBoundaryOffset={
         showArrow ? (arrowBoundaryOffset ?? TOOLTIP_ARROW_BOUNDARY_OFFSET) : undefined
       }
-      className={composeRenderProps(className, (userClassName, renderProps) =>
+      className={composeRenderProps(className, (userClassName) =>
         twMerge(
           tooltipVariants({
             size,
             tone,
-            isEntering: renderProps.isEntering,
-            isExiting: renderProps.isExiting,
           }),
           userClassName,
         ),

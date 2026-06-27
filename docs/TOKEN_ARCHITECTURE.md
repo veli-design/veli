@@ -39,6 +39,7 @@ The typography alignment work was implemented on 2026-05-07.
 - Dhivehi text styles are emitted as `:lang(dv)` overrides for the same `type-*` utilities, so consumers switch typography by changing the inherited `lang` value through `VeliProvider`.
 - `text-*` remains Tailwind's primitive font-size namespace.
 - `type-*` is Veli's composite typography utility namespace.
+- Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
 - The old Figma `typography` collection is legacy. It may remain for one migration cycle, but it is excluded from canonical typography output.
 
 Build verification completed after a fresh Figma DTCG export:
@@ -48,6 +49,7 @@ Build verification completed after a fresh Figma DTCG export:
 - `pnpm --filter @tradenetcorp/veli-web build` passes.
 - `pnpm --filter @tradenetcorp/veli-storybook build` passes.
 - `tailwind-theme.css` emits non-zero `--text-*` variables and paired `--text-*--line-height` variables.
+- `tailwind-theme.css` emits motion primitives and named duration/delay utilities. Composite `animate-*` recipes are intentionally deferred until designers finalize motion aliases.
 - `--font-weight-semibold` emits `600`, not `600px`.
 - `--tracking-caption` emits `0.01em`.
 - 52 `@utility type-*` classes are generated from exported Figma typography composites.
@@ -210,6 +212,42 @@ Standalone tracking values:
 
 Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own font size. There is no base-16 discrepancy for `0.01em`; it is not fixed to 16px. For 12px caption text, both resolve to `0.12px`.
 
+## Motion Values
+
+Veli keeps motion primitives tokenized before any CSS transition, CSS keyframe, or Motion for React configuration is composed from them.
+
+Easing values:
+
+| Token         | CSS value                              | Tailwind utility |
+| ------------- | -------------------------------------- | ---------------- |
+| `ease/out`    | `cubic-bezier(0.00, 0.00, 0.20, 1.00)` | `ease-out`       |
+| `ease/in`     | `cubic-bezier(0.40, 0.00, 1.00, 1.00)` | `ease-in`        |
+| `ease/in-out` | `cubic-bezier(0.40, 0.00, 0.20, 1.00)` | `ease-in-out`    |
+| `ease/spring` | `cubic-bezier(0.34, 1.56, 0.64, 1.00)` | `ease-spring`    |
+| `ease/linear` | `linear`                               | `ease-linear`    |
+
+Duration values:
+
+| Token              | CSS value | Tailwind utility   |
+| ------------------ | --------: | ------------------ |
+| `duration/instant` |     `0ms` | `duration-instant` |
+| `duration/fast`    |    `80ms` | `duration-fast`    |
+| `duration/normal`  |   `200ms` | `duration-normal`  |
+| `duration/slow`    |   `350ms` | `duration-slow`    |
+| `duration/slower`  |   `500ms` | `duration-slower`  |
+| `duration/slowest` |  `1200ms` | `duration-slowest` |
+
+Delay values:
+
+| Token          | CSS value | Tailwind utility |
+| -------------- | --------: | ---------------- |
+| `delay/none`   |     `0ms` | `delay-none`     |
+| `delay/fast`   |    `40ms` | `delay-fast`     |
+| `delay/normal` |    `80ms` | `delay-normal`   |
+| `delay/slow`   |   `120ms` | `delay-slow`     |
+
+Composite `animate-*` recipes and Motion for React transition helpers are intentionally not shipped in this update. The research and implementation notes for that follow-up are captured in `docs/MOTION_COMPOSITE_RESEARCH.md`.
+
 ## DTCG Source Shape
 
 Figma variable names use slash paths that export cleanly to grouped DTCG tokens:
@@ -279,6 +317,8 @@ Current postbuild responsibilities:
 - Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
 - Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
 - Adds `--spacing: 4px;` inside `@theme`.
+- Emits motion primitives from the designer-approved values.
+- Generates Veli `@utility duration-*` and `@utility delay-*` classes from token CSS variables.
 - Converts grouped text variables to Tailwind's paired font-size and line-height syntax.
 - Converts font weight artifacts such as `600px` to numeric CSS values.
 - Converts tracking artifacts to `em`, including `--tracking-caption: 0.01em`.

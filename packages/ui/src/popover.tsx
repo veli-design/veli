@@ -100,14 +100,14 @@ function popoverArrowProps(placement: string | null) {
 
 /** Opacity on the positioned root — React Aria waits for transitions on this element before unmounting. */
 const popoverRootAnimationClassName = [
-  'group outline-0 transition-opacity duration-200 ease-in',
+  'group outline-0 transition-opacity duration-normal ease-out',
   'data-[entering]:opacity-0 data-[exiting]:opacity-0',
-  'data-[exiting]:duration-150',
+  'data-[exiting]:duration-fast data-[exiting]:ease-in',
 ].join(' ');
 
 /** Slide on the inner surface so we don't fight the overlay positioning transform. */
 const popoverSlideClassName = [
-  'transition-transform duration-200 ease-in group-data-[exiting]:duration-150',
+  'transition-transform duration-normal ease-out group-data-[exiting]:duration-fast group-data-[exiting]:ease-in',
   'group-data-[placement^=top]:group-data-[entering]:translate-y-2',
   'group-data-[placement^=top]:group-data-[exiting]:translate-y-2',
   'group-data-[placement^=bottom]:group-data-[entering]:-translate-y-2',
