@@ -109,6 +109,10 @@
       "types": "./dist/page-tab.d.ts",
       "import": "./dist/page-tab.js"
     },
+    "./pagination": {
+      "types": "./dist/pagination.d.ts",
+      "import": "./dist/pagination.js"
+    },
     "./tabs": {
       "types": "./dist/tabs.d.ts",
       "import": "./dist/tabs.js"

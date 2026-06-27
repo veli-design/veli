@@ -27,6 +27,7 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import {
   ArrowRight,
   Bell,
@@ -1263,5 +1264,17 @@ export function TooltipVariantsDemo() {
         </Tooltip>
       </TooltipTrigger>
     </div>
+  );
+}
+
+export function PaginationUsageDemo() {
+  const [page, setPage] = useState(1);
+  return <Pagination value={page} maxValue={8} onChange={setPage} variant="button" />;
+}
+
+export function PaginationVariantsDemo() {
+  const [page, setPage] = useState(3);
+  return (
+    <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
   );
 }

@@ -102,6 +102,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Hierarchical navigation for deep service surfaces.',
       },
       {
+        title: 'Pagination',
+        slug: 'pagination',
+        description: 'Page navigation with compact and explicit variants.',
+      },
+      {
         title: 'Menu',
         slug: 'menu',
         description: 'Popover list of actions with icons, shortcuts, and submenus.',

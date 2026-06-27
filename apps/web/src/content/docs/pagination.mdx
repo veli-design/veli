@@ -1,0 +1,47 @@
+---
+title: Pagination
+description: Accessible page navigation with compact and explicit page-list variants.
+---
+
+import { PaginationUsageDemo, PaginationVariantsDemo } from '../../components/DocsExamples';
+
+# Pagination
+
+Pagination helps users move through paged data sets. Pair it with table or list views by slicing items client-side or fetching the requested page from an API.
+
+## Import
+
+```tsx
+import { Pagination } from '@tradenetcorp/veli-ui/pagination';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <PaginationUsageDemo client:visible />
+</div>
+
+```tsx
+const [page, setPage] = useState(1);
+
+<Pagination value={page} maxValue={12} onChange={setPage} variant="button" />;
+```
+
+## Explicit page list
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <PaginationVariantsDemo client:visible />
+</div>
+
+## Props
+
+| Prop            | Type                     | Default    | Description                               |
+| :-------------- | :----------------------- | :--------- | :---------------------------------------- |
+| `value`         | `number`                 | -          | Current page (controlled).                |
+| `defaultValue`  | `number`                 | `1`        | Initial page (uncontrolled).              |
+| `maxValue`      | `number`                 | -          | Total number of pages.                    |
+| `onChange`      | `(page: number) => void` | -          | Called when the page changes.             |
+| `variant`       | `'button' \| 'explicit'` | `'button'` | Compact or numbered page list.            |
+| `siblingCount`  | `number`                 | `1`        | Pages shown on each side (explicit).      |
+| `boundaryCount` | `number`                 | `1`        | Pages pinned at the start/end (explicit). |
+| `isDisabled`    | `boolean`                | `false`    | Disables navigation controls.             |
