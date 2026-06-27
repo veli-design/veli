@@ -3,19 +3,20 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { Divider } from './divider';
+import { hasRenderableMessage } from './field-shared';
 
 type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 
-const cardPaddingClasses: Record<CardPadding, { header: string; content: string; footer: string }> =
-  {
-    none: { header: 'p-0', content: 'p-0', footer: 'p-0' },
-    sm: { header: 'px-4 pt-4 pb-2', content: 'px-4 py-2', footer: 'px-4 py-4' },
-    md: { header: 'px-6 pt-6 pb-3', content: 'px-6 py-3', footer: 'px-6 py-6' },
-    lg: { header: 'px-8 pt-8 pb-4', content: 'px-8 py-4', footer: 'px-8 py-8' },
-  };
+const cardPaddingClasses: Record<CardPadding, string> = {
+  none: 'p-0',
+  sm: 'px-4 py-4',
+  md: 'px-6 py-4',
+  lg: 'px-8 py-4',
+};
 
 const cardVariants = cva(
-  'flex w-full flex-col font-sans antialiased rounded-2xl border border-border-default-subtle bg-bg-surface-raised text-text-default-default',
+  'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-border-default-subtle bg-bg-surface-raised text-text-default-default',
   {
     variants: {
       elevation: {
@@ -37,19 +38,42 @@ const cardVariants = cva(
   },
 );
 
-const cardHeaderVariants = cva('flex items-start justify-between gap-4');
+const cardTitleVariants = cva('type-subtitle-medium text-text-default-strong');
 
-const cardTitleVariants = cva('type-subtitle-medium text-text-default-emphasis');
+const cardDescriptionVariants = cva('type-body-md-regular text-text-default-strong');
 
-const cardDescriptionVariants = cva('mt-1 type-body-sm-regular text-text-default-muted');
+const cardContentVariants = cva('min-w-0 flex-1');
 
-const cardContentVariants = cva('type-body-md-regular text-text-default-default');
+function CardSectionDivider() {
+  return (
+    <div className="flex w-full items-end">
+      <Divider className="w-full" />
+    </div>
+  );
+}
 
-const cardFooterVariants = cva(
-  'flex items-center justify-end gap-2 border-t border-border-default-subtle',
-);
+function isElementOfType<P>(
+  child: React.ReactNode,
+  component: React.ComponentType<P>,
+): child is React.ReactElement<P> {
+  return React.isValidElement(child) && child.type === component;
+}
 
-const CardPaddingContext = React.createContext<CardPadding>('md');
+function splitHeaderChildren(children: React.ReactNode) {
+  const titles: React.ReactNode[] = [];
+  const descriptions: React.ReactNode[] = [];
+
+  React.Children.forEach(children, (child) => {
+    if (isElementOfType(child, CardDescription)) {
+      descriptions.push(child);
+      return;
+    }
+
+    titles.push(child);
+  });
+
+  return { titles, descriptions };
+}
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
@@ -65,12 +89,19 @@ export function Card({
   interactive = false,
   ...props
 }: CardProps) {
+  const resolvedPadding = padding ?? 'md';
+
   return (
-    <CardPaddingContext.Provider value={padding ?? 'md'}>
-      <div {...props} className={twMerge(cardVariants({ elevation, interactive }), className)}>
-        {children}
-      </div>
-    </CardPaddingContext.Provider>
+    <div
+      {...props}
+      className={twMerge(
+        cardVariants({ elevation, interactive }),
+        cardPaddingClasses[resolvedPadding],
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -81,12 +112,24 @@ export interface CardHeaderProps {
 }
 
 export function CardHeader({ children, className, action }: CardHeaderProps) {
-  const padding = React.useContext(CardPaddingContext);
+  const { titles, descriptions } = splitHeaderChildren(children);
+  const hasDescription = descriptions.length > 0;
+  const hasTitles = titles.length > 0;
+
+  if (!hasTitles && !hasDescription && !action) {
+    return null;
+  }
 
   return (
-    <div className={twMerge(cardHeaderVariants(), cardPaddingClasses[padding].header, className)}>
-      <div className="min-w-0 flex-1">{children}</div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
+      <div className="flex items-end justify-between gap-2">
+        {titles.length > 0 ? (
+          <div className="flex min-w-0 flex-1 flex-col justify-center">{titles}</div>
+        ) : null}
+        {action ? <div className="shrink-0">{action}</div> : null}
+      </div>
+      {descriptions}
+      {hasDescription ? <Divider className="w-full mt-2" /> : null}
     </div>
   );
 }
@@ -106,6 +149,10 @@ export interface CardDescriptionProps {
 }
 
 export function CardDescription({ children, className }: CardDescriptionProps) {
+  if (!hasRenderableMessage(children)) {
+    return null;
+  }
+
   return <p className={twMerge(cardDescriptionVariants(), className)}>{children}</p>;
 }
 
@@ -115,13 +162,7 @@ export interface CardContentProps {
 }
 
 export function CardContent({ children, className }: CardContentProps) {
-  const padding = React.useContext(CardPaddingContext);
-
-  return (
-    <div className={twMerge(cardContentVariants(), cardPaddingClasses[padding].content, className)}>
-      {children}
-    </div>
-  );
+  return <div className={twMerge(cardContentVariants(), className)}>{children}</div>;
 }
 
 export interface CardFooterProps {
@@ -130,11 +171,14 @@ export interface CardFooterProps {
 }
 
 export function CardFooter({ children, className }: CardFooterProps) {
-  const padding = React.useContext(CardPaddingContext);
+  if (!hasRenderableMessage(children)) {
+    return null;
+  }
 
   return (
-    <div className={twMerge(cardFooterVariants(), cardPaddingClasses[padding].footer, className)}>
-      {children}
+    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
+      <CardSectionDivider />
+      <div className="flex w-full items-center justify-end gap-2 pt-2">{children}</div>
     </div>
   );
 }
