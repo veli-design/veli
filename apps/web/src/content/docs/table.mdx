@@ -1,0 +1,60 @@
+---
+title: Table
+description: Accessible data tables with sorting, selection, resizing, and Veli token styling.
+---
+
+import { TableUsageDemo } from '../../components/DocsExamples';
+
+# Table
+
+The Table component wraps React Aria table primitives with Veli typography, borders, hover states, and integrated checkbox selection for multi-select tables.
+
+## Import
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableResizableContainer,
+  TableColumnResizer,
+} from '@tradenetcorp/veli-ui/table';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4 overflow-x-auto">
+  <TableUsageDemo client:visible />
+</div>
+
+```tsx
+<Table aria-label="Permit applications">
+  <TableHeader>
+    <TableColumn isRowHeader>Name</TableColumn>
+    <TableColumn>Department</TableColumn>
+    <TableColumn>Status</TableColumn>
+  </TableHeader>
+  <TableBody items={rows}>
+    {(item) => (
+      <TableRow id={item.id}>
+        <TableCell>{item.name}</TableCell>
+        <TableCell>{item.department}</TableCell>
+        <TableCell>{item.status}</TableCell>
+      </TableRow>
+    )}
+  </TableBody>
+</Table>
+```
+
+## Features
+
+- **Sorting** — set `allowsSorting` on `TableColumn` and control `sortDescriptor` / `onSortChange` on `Table`.
+- **Selection** — `selectionMode="multiple"` adds a select-all header and row checkboxes.
+- **Row actions** — `onRowAction` on `Table` for keyboard and pointer activation.
+- **Resizing** — wrap the table in `TableResizableContainer` and add `TableColumnResizer` to columns.
+- **Sticky header** — `stickyHeader` on `Table` keeps header cells visible while scrolling.
+
+All React Aria `Table` props are supported on the root component.

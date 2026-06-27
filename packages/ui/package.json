@@ -101,6 +101,10 @@
       "types": "./dist/switch.d.ts",
       "import": "./dist/switch.js"
     },
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.js"
+    },
     "./tags": {
       "types": "./dist/tags.d.ts",
       "import": "./dist/tags.js"

@@ -213,6 +213,11 @@ export const componentGroups: ComponentGroup[] = [
         slug: 'modal',
         description: 'Dialog surfaces with dismissal and sizing guidance.',
       },
+      {
+        title: 'Table',
+        slug: 'table',
+        description: 'Sortable, selectable data tables with Veli styling.',
+      },
       { title: 'Tags', slug: 'tags', description: 'Tag groups for compact categorization.' },
       {
         title: 'Tooltip',
