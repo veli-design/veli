@@ -16,34 +16,21 @@ import {
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { StaticFieldMessage } from './field-shared';
+import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
-
-const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
 
 const TagGroupDisabledContext = React.createContext(false);
 
-const labelVariants = cva('type-body-sm-regular', {
-  variants: {
-    isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
 const tagListVariants = cva(
-  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex flex-wrap gap-2 rounded-lg outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
 );
 
 const emptyStateVariants = cva(
-  'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle',
+  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle',
 );
 
 const tagVariants = cva(
-  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] type-body-sm-medium antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'group inline-flex max-w-full items-center gap-1.5 rounded-full border border-transparent px-2.5 py-1.5 type-body-sm-medium antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       isSelected: {
@@ -59,7 +46,7 @@ const tagVariants = cva(
         false: 'cursor-default',
       },
       allowsRemoving: {
-        true: 'pr-[6px]',
+        true: 'pe-1.5',
         false: '',
       },
     },
@@ -101,10 +88,10 @@ const tagVariants = cva(
 
 const tagTextVariants = cva('min-w-0 truncate');
 
-const selectionIconVariants = cva('flex h-[14px] w-[14px] shrink-0 items-center justify-center');
+const selectionIconVariants = cva('flex size-3.5 shrink-0 items-center justify-center');
 
 const removeButtonVariants = cva(
-  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
+  'flex size-5 shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
   {
     variants: {
       isDisabled: {
@@ -123,7 +110,7 @@ function CheckIcon() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-[14px] w-[14px]"
+      className="size-3.5"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
@@ -140,7 +127,7 @@ function CloseIcon() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-[12px] w-[12px]"
+      className="size-3"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
@@ -207,9 +194,9 @@ export function TagGroup<T extends object>({
         {...props}
         ref={setRootRef}
         data-disabled={isDisabled || undefined}
-        className={twMerge(tagGroupRootVariants(), className)}
+        className={twMerge(fieldRootVariants(), className)}
       >
-        {label ? <Label className={labelVariants({ isDisabled })}>{label}</Label> : null}
+        {label ? <Label className={fieldHeaderLabelVariants({ isDisabled })}>{label}</Label> : null}
         <AriaTagList
           items={items}
           renderEmptyState={

@@ -72,6 +72,13 @@ const REMOVABLE_TAG_SEED: TagDemoItem[] = [
   { id: 'licences', label: 'Licences' },
 ];
 
+const tagsStoryPanelClassName =
+  'rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+
+const tagsStorySectionClassName = 'space-y-3';
+
+const tagsEmptyStateClassName =
+  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
 const inputExplorationStartAddon = <MagnifyingGlass size={16} />;
 const inputExplorationEndAddon = <ArrowRight size={16} />;
 const comboBoxExplorationStartAddon = <MagnifyingGlass size={16} />;
@@ -200,9 +207,9 @@ export function TagsVariantsDemo() {
   const [removableItems, setRemovableItems] = useState(REMOVABLE_TAG_SEED);
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
           <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
           <TagGroup
             label="Departments"
@@ -218,8 +225,8 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
           <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
           <TagGroup<TagDemoItem>
             label="Saved topics"
@@ -228,17 +235,15 @@ export function TagsVariantsDemo() {
               setRemovableItems((current: TagDemoItem[]) => removeTagItems(current, keys))
             }
             renderEmptyState={() => (
-              <div className="rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle">
-                All saved topics have been removed.
-              </div>
+              <div className={tagsEmptyStateClassName}>All saved topics have been removed.</div>
             )}
           >
             {(item) => (
-              <Tag id={item.id}>
-                <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <Tag id={item.id} textValue={item.label}>
+                <span className="inline-flex min-w-0 items-center gap-1.5">
                   <span
                     aria-hidden="true"
-                    className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary-default"
+                    className="size-1.5 shrink-0 rounded-full bg-button-primary-default"
                   />
                   <span className="min-w-0 truncate">{item.label}</span>
                 </span>
@@ -248,25 +253,25 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
           <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
           <TagGroup label="Related guidance">
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
+            <Tag id="passport" href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Passport services
             </Tag>
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
+            <Tag id="licensing" href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Licensing portal
             </Tag>
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
+            <Tag id="payments" href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Online payments
             </Tag>
           </TagGroup>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
           <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
           <TagGroup
             label="Amenities"
@@ -282,8 +287,8 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
           <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
           <TagGroup
             label="Restricted services"
@@ -301,7 +306,6 @@ export function TagsVariantsDemo() {
     </div>
   );
 }
-
 export function ButtonVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">

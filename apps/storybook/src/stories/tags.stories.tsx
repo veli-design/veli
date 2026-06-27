@@ -16,6 +16,14 @@ const removableSeed: TagItem[] = [
   { id: 'licences', label: 'Licences' },
 ];
 
+const storyPanelClassName =
+  'w-full max-w-md rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+
+const storySectionClassName = 'space-y-3';
+
+const tagEmptyStateClassName =
+  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
+
 const meta = {
   title: 'Components/Tags',
   component: TagGroup,
@@ -35,7 +43,7 @@ function removeItems(items: TagItem[], keys: Iterable<string | number>) {
 
 export const Default: Story = {
   render: () => (
-    <div className="w-[420px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+    <div className={storyPanelClassName}>
       <TagGroup label="Categories" aria-label="Categories">
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
@@ -51,9 +59,9 @@ export const Variations: Story = {
     const [removableItems, setRemovableItems] = useState(removableSeed);
 
     return (
-      <div className="grid gap-[24px] lg:grid-cols-2">
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-          <div className="space-y-[12px]">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className={storyPanelClassName}>
+          <div className={storySectionClassName}>
             <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
             <TagGroup
               label="Departments"
@@ -69,8 +77,8 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-          <div className="space-y-[12px]">
+        <div className={storyPanelClassName}>
+          <div className={storySectionClassName}>
             <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
             <TagGroup<TagItem>
               label="Saved topics"
@@ -79,17 +87,15 @@ export const Variations: Story = {
                 setRemovableItems((current: TagItem[]) => removeItems(current, keys))
               }
               renderEmptyState={() => (
-                <div className="rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle">
-                  All saved topics have been removed.
-                </div>
+                <div className={tagEmptyStateClassName}>All saved topics have been removed.</div>
               )}
             >
               {(item) => (
-                <Tag id={item.id}>
-                  <span className="inline-flex min-w-0 items-center gap-[6px]">
+                <Tag id={item.id} textValue={item.label}>
+                  <span className="inline-flex min-w-0 items-center gap-1.5">
                     <span
                       aria-hidden="true"
-                      className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary-default"
+                      className="size-1.5 shrink-0 rounded-full bg-button-primary-default"
                     />
                     <span className="min-w-0 truncate">{item.label}</span>
                   </span>
@@ -99,8 +105,8 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-          <div className="space-y-[12px]">
+        <div className={storyPanelClassName}>
+          <div className={storySectionClassName}>
             <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
             <TagGroup label="Related guidance">
               <Tag id="passport" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
@@ -116,8 +122,8 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-          <div className="space-y-[12px]">
+        <div className={storyPanelClassName}>
+          <div className={storySectionClassName}>
             <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
             <TagGroup
               label="Amenities"
@@ -133,8 +139,8 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
-          <div className="space-y-[12px]">
+        <div className={storyPanelClassName}>
+          <div className={storySectionClassName}>
             <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
             <TagGroup
               label="Restricted services"
@@ -154,9 +160,26 @@ export const Variations: Story = {
   },
 };
 
+export const SingleSelection: Story = {
+  render: () => (
+    <div className={storyPanelClassName}>
+      <TagGroup
+        label="Preferred channel"
+        selectionMode="single"
+        defaultSelectedKeys={['email']}
+        description="Only one channel can be selected at a time."
+      >
+        <Tag id="email">Email</Tag>
+        <Tag id="sms">SMS</Tag>
+        <Tag id="post">Post</Tag>
+      </TagGroup>
+    </div>
+  ),
+};
+
 export const Validation: Story = {
   render: () => (
-    <div className="w-[420px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+    <div className={storyPanelClassName}>
       <TagGroup
         label="Required departments"
         selectionMode="multiple"
