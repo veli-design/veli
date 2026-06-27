@@ -31,6 +31,14 @@ import { Card } from '@tradenetcorp/veli-ui/card';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
 import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@tradenetcorp/veli-ui/table';
+import {
   ArrowRight,
   Bell,
   CalendarBlank,
@@ -1390,5 +1398,33 @@ export function ToastUsageDemo() {
         Show toast
       </Button>
     </>
+  );
+}
+const TABLE_DEMO_ROWS = [
+  { id: '1', name: 'Tourism licence', department: 'Tourism', status: 'Approved' },
+  { id: '2', name: 'Fishing permit', department: 'Fisheries', status: 'Pending' },
+  { id: '3', name: 'Business registration', department: 'Commerce', status: 'Rejected' },
+];
+
+export function TableUsageDemo() {
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border-default-subtle">
+      <Table aria-label="Permit applications">
+        <TableHeader>
+          <TableColumn isRowHeader>Name</TableColumn>
+          <TableColumn>Department</TableColumn>
+          <TableColumn>Status</TableColumn>
+        </TableHeader>
+        <TableBody items={TABLE_DEMO_ROWS}>
+          {(item) => (
+            <TableRow id={item.id}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.department}</TableCell>
+              <TableCell>{item.status}</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
