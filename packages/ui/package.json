@@ -117,6 +117,10 @@
       "types": "./dist/textarea.d.ts",
       "import": "./dist/textarea.js"
     },
+    "./toast": {
+      "types": "./dist/toast.d.ts",
+      "import": "./dist/toast.js"
+    },
     "./tooltip": {
       "types": "./dist/tooltip.d.ts",
       "import": "./dist/tooltip.js"

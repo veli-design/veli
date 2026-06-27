@@ -27,6 +27,7 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
 import {
   ArrowRight,
   Bell,
@@ -1263,5 +1264,29 @@ export function TooltipVariantsDemo() {
         </Tooltip>
       </TooltipTrigger>
     </div>
+  );
+}
+
+const DOCS_TOAST_QUEUE = createToastQueue<VeliToastContent>();
+
+export function ToastUsageDemo() {
+  return (
+    <>
+      <ToastRegion queue={DOCS_TOAST_QUEUE} placement="bottom-end" />
+      <Button
+        onPress={() =>
+          DOCS_TOAST_QUEUE.add(
+            {
+              title: 'Application saved',
+              description: 'Your draft has been stored securely.',
+              intent: 'positive',
+            },
+            { timeout: 5000 },
+          )
+        }
+      >
+        Show toast
+      </Button>
+    </>
   );
 }
