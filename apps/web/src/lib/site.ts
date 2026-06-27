@@ -199,6 +199,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Status and counter indicator with semantic intents.',
       },
       {
+        title: 'Alert',
+        slug: 'alert',
+        description: 'Inline status banners with semantic intents and dismiss actions.',
+      },
+      {
         title: 'Divider',
         slug: 'divider',
         description: 'Content separation for page and component layouts.',
