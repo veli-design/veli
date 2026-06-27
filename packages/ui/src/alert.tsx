@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
 
 export type AlertIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
-export type AlertAppearance = 'subtle' | 'outline';
+export type AlertAppearance = 'emphasis' | 'outline' | 'subtle';
 
 const alertIntentClasses = {
   subtle: {
@@ -21,6 +21,19 @@ const alertIntentClasses = {
       'border-status-warning-subtle bg-status-warning-subtle text-text-warning-strong [&_svg]:text-icon-warning-strong',
     danger:
       'border-status-danger-subtle bg-status-danger-subtle text-text-danger-strong [&_svg]:text-icon-danger-strong',
+  },
+  emphasis: {
+    neutral:
+      'border-status-neutral-emphasis bg-status-neutral-emphasis text-text-default-inverted [&_svg]:text-icon-default-inverted',
+    info: 'border-status-info-emphasis bg-status-info-emphasis text-text-primary-inverted [&_svg]:text-icon-primary-inverted',
+    positive:
+      'border-status-success-emphasis bg-status-success-emphasis text-text-success-inverted [&_svg]:text-icon-success-inverted',
+    cautious:
+      'border-status-cautious-emphasis bg-status-cautious-emphasis text-text-cautious-inverted [&_svg]:text-icon-cautious-inverted',
+    warning:
+      'border-status-warning-emphasis bg-status-warning-emphasis text-text-warning-inverted [&_svg]:text-icon-warning-inverted',
+    danger:
+      'border-status-danger-emphasis bg-status-danger-emphasis text-text-danger-inverted [&_svg]:text-icon-danger-inverted',
   },
   outline: {
     neutral:
@@ -38,7 +51,7 @@ const alertIntentClasses = {
 } satisfies Record<AlertAppearance, Record<AlertIntent, string>>;
 
 const alertVariants = cva(
-  'relative flex w-full gap-3 rounded-xl border p-4 font-sans antialiased',
+  'relative flex w-full items-start gap-2 rounded-xl border p-4 font-sans antialiased',
   {
     variants: {
       live: {
@@ -117,7 +130,10 @@ export function Alert({
         )}
       >
         {leadingIcon ? (
-          <span aria-hidden="true" className="inline-flex shrink-0 pt-0.5 [&_svg]:size-5">
+          <span
+            aria-hidden="true"
+            className="inline-flex h-5 shrink-0 items-center justify-center [&_svg]:size-5"
+          >
             {leadingIcon}
           </span>
         ) : null}
