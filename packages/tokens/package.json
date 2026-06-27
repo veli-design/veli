@@ -1,6 +1,6 @@
 {
   "name": "@tradenetcorp/veli-tokens",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "type": "module",
   "main": "./dist/tailwind-theme.css",
   "exports": {

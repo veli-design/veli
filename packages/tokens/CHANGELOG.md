@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-tokens
 
+## 0.3.0
+
+### Minor Changes
+
+- 38eee3b: Add primitive motion tokens and migrate current overlay transitions to use them.
+
 ## 0.2.1
 
 ### Patch Changes
