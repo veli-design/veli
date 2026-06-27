@@ -199,6 +199,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Status and counter indicator with semantic intents.',
       },
       {
+        title: 'Card',
+        slug: 'card',
+        description: 'Raised surface container with header, content, and footer slots.',
+      },
+      {
         title: 'Divider',
         slug: 'divider',
         description: 'Content separation for page and component layouts.',

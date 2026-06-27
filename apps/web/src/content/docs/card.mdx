@@ -1,0 +1,55 @@
+---
+title: Card
+description: Compound surface container for grouped content with optional header, body, and footer slots.
+---
+
+import { CardUsageDemo, CardVariantsDemo } from '../../components/DocsExamples';
+
+# Card
+
+The Card component groups related content on a raised surface. Use the compound API for titles, descriptions, body copy, and footer actions.
+
+## Import
+
+```tsx
+import { Card } from '@tradenetcorp/veli-ui/card';
+import { Button } from '@tradenetcorp/veli-ui/button';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardUsageDemo client:visible />
+</div>
+
+```tsx
+<Card>
+  <Card.Header>
+    <Card.Title>Permit application</Card.Title>
+    <Card.Description>Track progress and required documents.</Card.Description>
+  </Card.Header>
+  <Card.Content>Your application is under review.</Card.Content>
+  <Card.Footer>
+    <Button size="sm">Continue</Button>
+  </Card.Footer>
+</Card>
+```
+
+## Variations
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardVariantsDemo client:visible />
+</div>
+
+## Props
+
+### `Card`
+
+| Prop          | Type                                     | Default | Description                         |
+| :------------ | :--------------------------------------- | :------ | :---------------------------------- |
+| `elevation`   | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg'` | `'xs'`  | Shadow depth from Veli token scale. |
+| `padding`     | `'none' \| 'sm' \| 'md' \| 'lg'`         | `'md'`  | Padding applied to compound slots.  |
+| `interactive` | `boolean`                                | `false` | Hover and pressed surface feedback. |
+| `className`   | `string`                                 | -       | Layout-only class override.         |
+
+Subcomponents: `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, `Card.Footer`.
