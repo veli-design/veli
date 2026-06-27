@@ -1,0 +1,49 @@
+---
+title: Alert
+description: Inline status banners with semantic intents, optional icons, and dismissible actions.
+---
+
+import { AlertUsageDemo, AlertVariantsDemo } from '../../components/DocsExamples';
+
+# Alert
+
+Alerts communicate important contextual information on the page. They are distinct from toast notifications, which appear temporarily in a landmark region.
+
+## Import
+
+```tsx
+import { Alert } from '@tradenetcorp/veli-ui/alert';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AlertUsageDemo client:visible />
+</div>
+
+```tsx
+<Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
+  <Alert.Title>Permit review in progress</Alert.Title>
+  <Alert.Description>You will receive an email when processing completes.</Alert.Description>
+</Alert>
+```
+
+## Variations
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AlertVariantsDemo client:visible />
+</div>
+
+Use `live="alert"` when the message is inserted or updated dynamically so assistive technologies announce it. Use `live="status"` (default) for always-visible banners.
+
+## Props
+
+| Prop          | Type                                                                       | Default     | Description                                    |
+| :------------ | :------------------------------------------------------------------------- | :---------- | :--------------------------------------------- |
+| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                      |
+| `appearance`  | `'subtle' \| 'outline'`                                                    | `'subtle'`  | Surface style.                                 |
+| `leadingIcon` | `ReactNode`                                                                | -           | Optional icon before the message.              |
+| `live`        | `'alert' \| 'status'`                                                      | `'status'`  | Live region behavior for screen readers.       |
+| `dismissible` | `boolean`                                                                  | `false`     | Pair with `Alert.CloseButton` and `onDismiss`. |
+| `isVisible`   | `boolean`                                                                  | -           | Controlled visibility.                         |
+| `onDismiss`   | `() => void`                                                               | -           | Called when the alert is dismissed.            |
