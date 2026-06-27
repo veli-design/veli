@@ -38,6 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from '@tradenetcorp/veli-ui/table';
+import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import {
   ArrowRight,
   Bell,
@@ -1484,5 +1485,17 @@ export function TableUsageDemo() {
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+export function PaginationUsageDemo() {
+  const [page, setPage] = useState(1);
+  return <Pagination value={page} maxValue={8} onChange={setPage} variant="button" />;
+}
+
+export function PaginationVariantsDemo() {
+  const [page, setPage] = useState(3);
+  return (
+    <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
   );
 }
