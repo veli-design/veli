@@ -27,6 +27,7 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { Card } from '@tradenetcorp/veli-ui/card';
 import {
   ArrowRight,
   Bell,
@@ -1262,6 +1263,45 @@ export function TooltipVariantsDemo() {
           A tooltip with a caret and a max width. Tooltips must not contain interactive content.
         </Tooltip>
       </TooltipTrigger>
+    </div>
+  );
+}
+
+export function CardUsageDemo() {
+  return (
+    <Card className="w-full max-w-md">
+      <Card.Header>
+        <Card.Title>Permit application</Card.Title>
+        <Card.Description>Track progress and required documents.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        Your application is under review. We will notify you when a decision is ready.
+      </Card.Content>
+      <Card.Footer>
+        <Button intent="secondary" appearance="transparent" size="sm">
+          View details
+        </Button>
+        <Button size="sm">Continue</Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+export function CardVariantsDemo() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <Card elevation="none" padding="sm">
+        <Card.Header>
+          <Card.Title>Border only</Card.Title>
+        </Card.Header>
+        <Card.Content>No shadow elevation.</Card.Content>
+      </Card>
+      <Card elevation="lg" padding="sm" interactive>
+        <Card.Header>
+          <Card.Title>Interactive</Card.Title>
+        </Card.Header>
+        <Card.Content>Hover for surface feedback.</Card.Content>
+      </Card>
     </div>
   );
 }
