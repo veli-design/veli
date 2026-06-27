@@ -39,6 +39,7 @@ import {
   TableRow,
 } from '@tradenetcorp/veli-ui/table';
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
+import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
   Bell,
@@ -1406,6 +1407,7 @@ export function TooltipVariantsDemo() {
   );
 }
 
+<<<<<<< HEAD
 export function CardUsageDemo() {
   const text = useCardDocsText();
 
@@ -1597,5 +1599,17 @@ export function PaginationVariantsDemo() {
   const [page, setPage] = useState(3);
   return (
     <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
+  );
+}
+
+export function DropzoneUsageDemo() {
+  return (
+    <Dropzone
+      label="Attachments"
+      aria-label="Upload attachments"
+      description="Supported formats: PDF, PNG, JPG."
+      allowsBrowse
+      acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+    />
   );
 }
