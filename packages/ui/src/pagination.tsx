@@ -1,12 +1,17 @@
 'use client';
 
 import * as React from 'react';
+import { Button as AriaButton } from 'react-aria-components';
+import { CaretLeft, CaretRight } from 'phosphor-react';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 import { useVeliLanguage } from './provider';
 
 const paginationRootVariants = cva('inline-flex items-center gap-1 font-sans antialiased');
+
+const paginationNavButtonClassName = '[&>span]:gap-1.5';
 
 const paginationPageButtonVariants = cva(
   'inline-flex h-9 min-w-9 items-center justify-center rounded-full px-2 type-body-sm-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
@@ -29,22 +34,54 @@ const paginationPageButtonVariants = cva(
   },
 );
 
-const paginationEllipsisVariants = cva(
-  'inline-flex h-9 min-w-9 items-center justify-center type-body-sm-medium text-text-default-muted',
+const paginationEllipsisTriggerVariants = cva(
+  'inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full type-body-sm-medium text-text-default-muted outline-none transition-colors',
+  {
+    variants: {
+      isHovered: {
+        true: 'bg-button-secondary-subtle-hover text-text-default-default',
+        false: '',
+      },
+      isPressed: {
+        true: 'bg-button-secondary-subtle-pressed text-text-default-default',
+        false: '',
+      },
+      isFocusVisible: {
+        true: 'text-text-default-default ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        false: '',
+      },
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled hover:bg-transparent active:bg-transparent',
+        false: 'hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
+      },
+    },
+    defaultVariants: {
+      isHovered: false,
+      isPressed: false,
+      isFocusVisible: false,
+      isDisabled: false,
+    },
+  },
 );
 
 const paginationText = {
   en: {
     label: 'Pagination',
-    previous: 'Previous page',
-    next: 'Next page',
+    previous: 'Previous',
+    next: 'Next',
     page: (current: number, total: number) => `Page ${current} of ${total}`,
+    pageLabel: (page: number) => `Page ${page}`,
+    ellipsisLabel: 'Show hidden pages',
+    ellipsisMenuLabel: 'Hidden pages',
   },
   dv: {
     label: 'ޕޭޖިނޭޝަން',
-    previous: 'ކުރީގެ ޞަފްޙާ',
-    next: 'ފަހުގެ ޞަފްޙާ',
+    previous: 'ކުރީ',
+    next: 'ފަހު',
     page: (current: number, total: number) => `ޞަފްޙާ ${current} / ${total}`,
+    pageLabel: (page: number) => `ޞަފްޙާ ${page}`,
+    ellipsisLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް ދައްކާ',
+    ellipsisMenuLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް',
   },
 } as const;
 
@@ -95,6 +132,90 @@ function getPaginationRange(
   return itemList;
 }
 
+function getHiddenPages(pages: Array<number | 'ellipsis'>, ellipsisIndex: number) {
+  const previous = pages[ellipsisIndex - 1];
+  const next = pages[ellipsisIndex + 1];
+
+  if (typeof previous !== 'number' || typeof next !== 'number') {
+    return [];
+  }
+
+  return range(previous + 1, next - 1);
+}
+
+interface PaginationEllipsisProps {
+  hiddenPages: number[];
+  isDisabled: boolean;
+  label: string;
+  menuLabel: string;
+  pageLabel: (page: number) => string;
+  onSelectPage: (page: number) => void;
+}
+
+function PaginationEllipsis({
+  hiddenPages,
+  isDisabled,
+  label,
+  menuLabel,
+  pageLabel,
+  onSelectPage,
+}: PaginationEllipsisProps) {
+  const { direction, lang } = useVeliLanguage();
+
+  if (hiddenPages.length === 0) {
+    return (
+      <span className={paginationEllipsisTriggerVariants({ isDisabled: true })} aria-hidden="true">
+        …
+      </span>
+    );
+  }
+
+  if (isDisabled) {
+    return (
+      <span className={paginationEllipsisTriggerVariants({ isDisabled: true })} aria-hidden="true">
+        …
+      </span>
+    );
+  }
+
+  return (
+    <MenuTrigger>
+      <AriaButton
+        aria-label={label}
+        className={(state) =>
+          paginationEllipsisTriggerVariants({
+            isHovered: state.isHovered && !state.isPressed,
+            isPressed: state.isPressed,
+            isFocusVisible: state.isFocusVisible,
+          })
+        }
+      >
+        <span aria-hidden="true">…</span>
+      </AriaButton>
+      <MenuPopover>
+        <Menu
+          aria-label={menuLabel}
+          dir={direction}
+          lang={lang}
+          onAction={(key) => onSelectPage(Number(key))}
+        >
+          {hiddenPages.map((page) => (
+            <MenuItem
+              key={page}
+              id={page}
+              size="sm"
+              className="cursor-pointer"
+              aria-label={pageLabel(page)}
+            >
+              {page}
+            </MenuItem>
+          ))}
+        </Menu>
+      </MenuPopover>
+    </MenuTrigger>
+  );
+}
+
 export type PaginationVariant = 'button' | 'explicit';
 
 export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange'> {
@@ -127,8 +248,10 @@ export function Pagination({
   className,
   ...props
 }: PaginationProps) {
-  const language = useVeliLanguage();
-  const copy = paginationText[language.language === 'dv' ? 'dv' : 'en'];
+  const { language: activeLanguage, direction } = useVeliLanguage();
+  const copy = paginationText[activeLanguage === 'dv' ? 'dv' : 'en'];
+  const PreviousIcon = direction === 'rtl' ? CaretRight : CaretLeft;
+  const NextIcon = direction === 'rtl' ? CaretLeft : CaretRight;
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : uncontrolledValue;
@@ -182,8 +305,10 @@ export function Pagination({
         size="sm"
         isDisabled={isDisabled || currentPage <= 1}
         aria-label={copy.previous}
+        className={paginationNavButtonClassName}
         onPress={goPrevious}
       >
+        <PreviousIcon aria-hidden size={16} weight="bold" />
         {copy.previous}
       </Button>
 
@@ -195,18 +320,20 @@ export function Pagination({
         <div className="flex items-center gap-1">
           {pages.map((page, index) =>
             page === 'ellipsis' ? (
-              <span
+              <PaginationEllipsis
                 key={`ellipsis-${index}`}
-                className={paginationEllipsisVariants()}
-                aria-hidden="true"
-              >
-                …
-              </span>
+                hiddenPages={getHiddenPages(pages, index)}
+                isDisabled={isDisabled}
+                label={copy.ellipsisLabel}
+                menuLabel={copy.ellipsisMenuLabel}
+                pageLabel={copy.pageLabel}
+                onSelectPage={setPage}
+              />
             ) : (
               <button
                 key={page}
                 type="button"
-                aria-label={`Page ${page}`}
+                aria-label={copy.pageLabel(page)}
                 aria-current={page === currentPage ? 'page' : undefined}
                 disabled={isDisabled}
                 className={paginationPageButtonVariants({
@@ -228,9 +355,11 @@ export function Pagination({
         size="sm"
         isDisabled={isDisabled || currentPage >= maxValue}
         aria-label={copy.next}
+        className={paginationNavButtonClassName}
         onPress={goNext}
       >
         {copy.next}
+        <NextIcon aria-hidden size={16} weight="bold" />
       </Button>
     </nav>
   );
