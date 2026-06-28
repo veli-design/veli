@@ -17,17 +17,37 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
+export type ToastAppearance = 'outline' | 'subtle' | 'emphasis';
 export type ToastIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
 
 const toastIntentClasses = {
-  neutral: 'border-status-neutral-subtle bg-bg-surface-raised text-text-default-default shadow-lg',
-  info: 'border-status-info-subtle bg-bg-surface-raised text-text-primary-default shadow-lg',
-  positive: 'border-status-success-subtle bg-bg-surface-raised text-text-success-default shadow-lg',
-  cautious:
-    'border-status-cautious-subtle bg-bg-surface-raised text-text-cautious-default shadow-lg',
-  warning: 'border-status-warning-subtle bg-bg-surface-raised text-text-warning-default shadow-lg',
-  danger: 'border-status-danger-subtle bg-bg-surface-raised text-text-danger-default shadow-lg',
-} satisfies Record<ToastIntent, string>;
+  outline: {
+    neutral: 'border-status-neutral-subtle bg-bg-surface-raised text-text-default-default',
+    info: 'border-status-info-subtle bg-bg-surface-raised text-text-primary-default',
+    positive: 'border-status-success-subtle bg-bg-surface-raised text-text-success-default',
+    cautious: 'border-status-cautious-subtle bg-bg-surface-raised text-text-cautious-default',
+    warning: 'border-status-warning-subtle bg-bg-surface-raised text-text-warning-default',
+    danger: 'border-status-danger-subtle bg-bg-surface-raised text-text-danger-default',
+  },
+  subtle: {
+    neutral: 'border-status-neutral-subtle bg-status-neutral-subtle text-text-default-strong',
+    info: 'border-status-info-subtle bg-status-info-subtle text-text-primary-strong',
+    positive: 'border-status-success-subtle bg-status-success-subtle text-text-success-strong',
+    cautious: 'border-status-cautious-subtle bg-status-cautious-subtle text-text-cautious-strong',
+    warning: 'border-status-warning-subtle bg-status-warning-subtle text-text-warning-strong',
+    danger: 'border-status-danger-subtle bg-status-danger-subtle text-text-danger-strong',
+  },
+  emphasis: {
+    neutral: 'border-status-neutral-emphasis bg-status-neutral-emphasis text-text-default-inverted',
+    info: 'border-status-info-emphasis bg-status-info-emphasis text-text-primary-inverted',
+    positive:
+      'border-status-success-emphasis bg-status-success-emphasis text-text-success-inverted',
+    cautious:
+      'border-status-cautious-emphasis bg-status-cautious-emphasis text-text-cautious-inverted',
+    warning: 'border-status-warning-emphasis bg-status-warning-emphasis text-text-warning-inverted',
+    danger: 'border-status-danger-emphasis bg-status-danger-emphasis text-text-danger-inverted',
+  },
+} satisfies Record<ToastAppearance, Record<ToastIntent, string>>;
 
 const toastRegionVariants = cva('fixed z-50 flex flex-col gap-2 outline-none', {
   variants: {
@@ -46,12 +66,13 @@ const toastRegionVariants = cva('fixed z-50 flex flex-col gap-2 outline-none', {
 });
 
 const toastVariants = cva(
-  'flex w-full max-w-sm items-start gap-3 rounded-xl border p-4 font-sans antialiased outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
+  'flex w-full max-w-sm items-start gap-3 rounded-xl border p-4 font-sans antialiased shadow-lg outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
 );
 
 type ToastPlacement = NonNullable<VariantProps<typeof toastRegionVariants>['placement']>;
 
 const ToastPlacementContext = React.createContext<ToastPlacement>('bottom-end');
+const ToastAppearanceContext = React.createContext<ToastAppearance>('outline');
 
 function getToastMotionStyle(placement: ToastPlacement): React.CSSProperties {
   switch (placement) {
@@ -91,12 +112,40 @@ const toastContentVariants = cva('flex min-w-0 flex-1 flex-col gap-1');
 
 const toastTitleVariants = cva('type-body-sm-medium');
 
-const toastDescriptionVariants = cva('type-body-sm-regular text-text-default-muted');
+const toastDescriptionVariants = cva('type-body-sm-regular', {
+  variants: {
+    appearance: {
+      outline: 'text-text-default-muted',
+      subtle: 'text-text-default-muted',
+      emphasis: 'text-current opacity-80',
+    },
+  },
+  defaultVariants: {
+    appearance: 'outline',
+  },
+});
+
+const toastCloseButtonVariants = cva(
+  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus',
+  {
+    variants: {
+      appearance: {
+        outline: 'text-icon-default-default hover:bg-gray-alpha-200',
+        subtle: 'text-icon-default-default hover:bg-gray-alpha-200',
+        emphasis: 'text-current hover:bg-white/15',
+      },
+    },
+    defaultVariants: {
+      appearance: 'outline',
+    },
+  },
+);
 
 export interface VeliToastContent {
   title: React.ReactNode;
   description?: React.ReactNode;
   intent?: ToastIntent;
+  appearance?: ToastAppearance;
 }
 
 export function createToastQueue<T = VeliToastContent>(
@@ -138,7 +187,11 @@ export function ToastRegion<T>({
       >
         {children ??
           (({ toast }) => (
-            <Toast toast={toast} intent={(toast.content as VeliToastContent).intent} />
+            <Toast
+              toast={toast}
+              intent={(toast.content as VeliToastContent).intent}
+              appearance={(toast.content as VeliToastContent).appearance}
+            />
           ))}
       </AriaToastRegion>
     </ToastPlacementContext.Provider>
@@ -148,31 +201,37 @@ export function ToastRegion<T>({
 export interface ToastProps<T> extends Omit<AriaToastProps<T>, 'className'> {
   className?: string;
   intent?: ToastIntent;
+  appearance?: ToastAppearance;
 }
 
-export function Toast<T>({ className, intent = 'neutral', style, toast, ...props }: ToastProps<T>) {
+export function Toast<T>({ className, intent, appearance, style, toast, ...props }: ToastProps<T>) {
   const placement = React.useContext(ToastPlacementContext);
-  const contentIntent =
-    intent ?? (toast.content as VeliToastContent | undefined)?.intent ?? 'neutral';
+  const content = toast.content as VeliToastContent | undefined;
+  const contentIntent = intent ?? content?.intent ?? 'neutral';
+  const contentAppearance = appearance ?? content?.appearance ?? 'outline';
 
   return (
-    <AriaToast
-      {...props}
-      toast={toast}
-      style={{
-        viewTransitionName: toast.key,
-        ...getToastMotionStyle(placement),
-        ...style,
-      }}
-      className={() => twMerge(toastVariants(), toastIntentClasses[contentIntent], className)}
-    >
-      {(state) => (
-        <>
-          <ToastContent toast={state.toast} />
-          <ToastCloseButton />
-        </>
-      )}
-    </AriaToast>
+    <ToastAppearanceContext.Provider value={contentAppearance}>
+      <AriaToast
+        {...props}
+        toast={toast}
+        style={{
+          viewTransitionName: toast.key,
+          ...getToastMotionStyle(placement),
+          ...style,
+        }}
+        className={() =>
+          twMerge(toastVariants(), toastIntentClasses[contentAppearance][contentIntent], className)
+        }
+      >
+        {(state) => (
+          <>
+            <ToastContent toast={state.toast} />
+            <ToastCloseButton />
+          </>
+        )}
+      </AriaToast>
+    </ToastAppearanceContext.Provider>
   );
 }
 
@@ -183,6 +242,7 @@ export interface ToastContentProps<T> {
 
 export function ToastContent<T>({ toast, className }: ToastContentProps<T>) {
   const content = toast.content as VeliToastContent;
+  const appearance = React.useContext(ToastAppearanceContext);
 
   return (
     <AriaToastContent className={twMerge(toastContentVariants(), className)}>
@@ -190,7 +250,7 @@ export function ToastContent<T>({ toast, className }: ToastContentProps<T>) {
         {content.title}
       </Text>
       {content.description ? (
-        <Text slot="description" className={toastDescriptionVariants()}>
+        <Text slot="description" className={toastDescriptionVariants({ appearance })}>
           {content.description}
         </Text>
       ) : null}
@@ -207,14 +267,13 @@ export function ToastCloseButton({
   'aria-label': ariaLabel = 'Close notification',
   className,
 }: ToastCloseButtonProps) {
+  const appearance = React.useContext(ToastAppearanceContext);
+
   return (
     <AriaButton
       slot="close"
       aria-label={ariaLabel}
-      className={twMerge(
-        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-gray-alpha-200 focus-visible:ring-2 focus-visible:ring-border-focus',
-        className,
-      )}
+      className={twMerge(toastCloseButtonVariants({ appearance }), className)}
     >
       <svg
         aria-hidden="true"
