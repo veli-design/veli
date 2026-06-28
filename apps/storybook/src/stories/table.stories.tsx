@@ -78,7 +78,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div className="w-full max-w-4xl overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised">
+    <div className="w-full max-w-4xl">
       <Table aria-label="Permit applications">
         <TableHeader>
           <TableColumn isRowHeader>Name</TableColumn>
@@ -119,7 +119,7 @@ export const Sortable: Story = {
     }, [sortDescriptor]);
 
     return (
-      <div className="w-full max-w-4xl overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised">
+      <div className="w-full max-w-4xl">
         <Table
           aria-label="Sortable permits"
           sortDescriptor={sortDescriptor}
@@ -161,7 +161,7 @@ export const WithSelection: Story = {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['2']));
 
     return (
-      <div className="w-full max-w-4xl overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised">
+      <div className="w-full max-w-4xl">
         <Table
           aria-label="Selectable permits"
           selectionMode="multiple"
@@ -191,7 +191,7 @@ export const WithSelection: Story = {
 
 export const ResizableColumns: Story = {
   render: () => (
-    <div className="w-full max-w-4xl rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-2">
+    <div className="w-full max-w-4xl">
       <TableResizableContainer>
         <Table aria-label="Resizable permits">
           <TableHeader>
@@ -249,7 +249,7 @@ export const DragAndDrop: Story = {
     });
 
     return (
-      <div className="w-full max-w-4xl overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised">
+      <div className="w-full max-w-4xl">
         <Table aria-label="Reorderable permits" dragAndDropHooks={dragAndDropHooks}>
           <TableHeader>
             <TableColumn isRowHeader>Name</TableColumn>

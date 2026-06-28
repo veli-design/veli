@@ -26,51 +26,73 @@ import { CaretDown, CaretUp, DotsSixVertical } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Checkbox } from './checkbox';
 
-const tableVariants = cva('w-full border-separate border-spacing-0 font-sans antialiased', {
-  variants: {
-    stickyHeader: {
-      true: '[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10 [&_thead_th]:bg-bg-surface-raised',
-      false: '',
+const TableFrameContext = React.createContext(false);
+
+const tableFrameVariants = cva(
+  'overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised',
+);
+
+const tableVariants = cva(
+  'w-full border-separate border-spacing-0 font-sans antialiased [&_tbody_tr:last-child_td]:border-b-0',
+  {
+    variants: {
+      stickyHeader: {
+        true: '[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10 [&_thead_th]:bg-bg-surface-raised',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      stickyHeader: false,
     },
   },
-  defaultVariants: {
-    stickyHeader: false,
-  },
-});
-
-const tableHeaderRowVariants = cva('border-b border-border-default-subtle');
+);
 
 const tableColumnVariants = cva(
-  'px-4 py-3 text-start type-body-sm-medium text-text-default-emphasis outline-none',
+  'border-b border-border-default-subtle text-start type-body-sm-medium text-text-default-emphasis outline-none',
   {
     variants: {
       allowsSorting: {
         true: 'cursor-pointer select-none data-[hovered]:bg-gray-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus',
         false: '',
       },
+      resizable: {
+        true: 'px-0 py-0',
+        false: 'px-4 py-3',
+      },
     },
     defaultVariants: {
       allowsSorting: false,
+      resizable: false,
     },
   },
 );
 
+const tableColumnContentVariants = cva('inline-flex min-w-0 flex-1 items-center gap-1.5', {
+  variants: {
+    resizable: {
+      true: 'px-4 py-3',
+      false: '',
+    },
+  },
+  defaultVariants: {
+    resizable: false,
+  },
+});
+
 const tableRowVariants = cva(
-  'border-b border-border-default-subtle outline-none transition-colors data-[hovered]:bg-gray-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus data-[selected]:bg-button-primary-subtle-default data-[disabled]:text-text-disabled-disabled',
+  'outline-none transition-colors data-[hovered]:bg-gray-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus data-[selected]:bg-button-primary-subtle-default data-[disabled]:text-text-disabled-disabled',
 );
 
-const tableCellVariants = cva('px-4 py-3 type-body-sm-regular text-text-default-default');
+const tableCellVariants = cva(
+  'border-b border-border-default-subtle px-4 py-3 type-body-sm-regular text-text-default-default',
+);
 
 const tableEmptyVariants = cva(
   'px-4 py-8 text-center type-body-sm-regular text-text-default-muted',
 );
 
 const tableResizerVariants = cva(
-  'flex w-3 items-stretch justify-center px-0.5 outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
-);
-
-const tableResizerHandleVariants = cva(
-  'w-px bg-border-default-subtle data-[resizing]:bg-border-focus',
+  'box-content w-px shrink-0 cursor-col-resize self-stretch touch-action-none bg-clip-content px-2 bg-border-default-subtle outline-none data-[resizing]:w-0.5 data-[resizing]:bg-border-focus data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
 );
 
 function SortIndicator({ direction }: { direction?: 'ascending' | 'descending' }) {
@@ -98,7 +120,16 @@ export interface TableProps extends Omit<AriaTableProps, 'className' | 'style'> 
 }
 
 export function Table({ className, stickyHeader = false, ...props }: TableProps) {
-  return <AriaTable {...props} className={twMerge(tableVariants({ stickyHeader }), className)} />;
+  const inFrame = React.useContext(TableFrameContext);
+  const table = (
+    <AriaTable {...props} className={twMerge(tableVariants({ stickyHeader }), className)} />
+  );
+
+  if (inFrame) {
+    return table;
+  }
+
+  return <div className={tableFrameVariants()}>{table}</div>;
 }
 
 export interface TableResizableContainerProps extends Omit<
@@ -110,10 +141,12 @@ export interface TableResizableContainerProps extends Omit<
 
 export function TableResizableContainer({ className, ...props }: TableResizableContainerProps) {
   return (
-    <AriaResizableTableContainer
-      {...props}
-      className={twMerge('max-w-full overflow-x-auto', className)}
-    />
+    <TableFrameContext.Provider value={true}>
+      <AriaResizableTableContainer
+        {...props}
+        className={twMerge(tableFrameVariants(), 'max-w-full', className)}
+      />
+    </TableFrameContext.Provider>
   );
 }
 
@@ -130,7 +163,7 @@ export function TableHeader<T = unknown>({ className, children, ...props }: Tabl
   const showSelection = selectionBehavior === 'toggle' && selectionMode === 'multiple';
 
   return (
-    <AriaTableHeader {...props} className={twMerge(tableHeaderRowVariants(), className)}>
+    <AriaTableHeader {...props} className={className}>
       {allowsDragging ? <AriaColumn className="w-10" /> : null}
       {showSelection ? (
         <AriaColumn className="w-12 px-4 py-3">
@@ -139,32 +172,6 @@ export function TableHeader<T = unknown>({ className, children, ...props }: Tabl
       ) : null}
       {children}
     </AriaTableHeader>
-  );
-}
-
-export interface TableColumnProps extends Omit<AriaColumnProps, 'className' | 'style'> {
-  className?: string;
-}
-
-export function TableColumn({ className, children, ...props }: TableColumnProps) {
-  return (
-    <AriaColumn
-      {...props}
-      className={(state) =>
-        twMerge(tableColumnVariants({ allowsSorting: state.allowsSorting }), className)
-      }
-    >
-      {(state) => (
-        <span className="inline-flex items-center gap-1.5">
-          {typeof children === 'function' ? children(state) : children}
-          {state.allowsSorting ? (
-            <span className={state.sortDirection ? '' : 'invisible'}>
-              <SortIndicator direction={state.sortDirection} />
-            </span>
-          ) : null}
-        </span>
-      )}
-    </AriaColumn>
   );
 }
 
@@ -177,9 +184,70 @@ export interface TableColumnResizerProps extends Omit<
 
 export function TableColumnResizer({ className, ...props }: TableColumnResizerProps) {
   return (
-    <AriaColumnResizer {...props} className={() => twMerge(tableResizerVariants(), className)}>
-      <div className={tableResizerHandleVariants()} />
-    </AriaColumnResizer>
+    <AriaColumnResizer {...props} className={() => twMerge(tableResizerVariants(), className)} />
+  );
+}
+
+export interface TableColumnProps extends Omit<AriaColumnProps, 'className' | 'style'> {
+  className?: string;
+}
+
+function isTableColumnResizer(child: React.ReactNode): boolean {
+  return React.isValidElement(child) && child.type === TableColumnResizer;
+}
+
+function splitColumnChildren(children: React.ReactNode) {
+  const items = React.Children.toArray(children);
+  return {
+    content: items.filter((child) => !isTableColumnResizer(child)),
+    resizers: items.filter(isTableColumnResizer),
+  };
+}
+
+export function TableColumn({ className, children, ...props }: TableColumnProps) {
+  const inResizableFrame = React.useContext(TableFrameContext);
+
+  return (
+    <AriaColumn
+      {...props}
+      className={(state) =>
+        twMerge(
+          tableColumnVariants({
+            allowsSorting: state.allowsSorting,
+            resizable: inResizableFrame,
+          }),
+          className,
+        )
+      }
+    >
+      {(state) => {
+        const resolvedChildren = typeof children === 'function' ? children(state) : children;
+        const { content, resizers } = splitColumnChildren(resolvedChildren);
+        const hasResizer = inResizableFrame && resizers.length > 0;
+
+        const label = (
+          <span className={tableColumnContentVariants({ resizable: inResizableFrame })}>
+            {content}
+            {state.allowsSorting ? (
+              <span className={state.sortDirection ? '' : 'invisible'}>
+                <SortIndicator direction={state.sortDirection} />
+              </span>
+            ) : null}
+          </span>
+        );
+
+        if (hasResizer) {
+          return (
+            <div className="flex items-stretch">
+              {label}
+              {resizers}
+            </div>
+          );
+        }
+
+        return label;
+      }}
+    </AriaColumn>
   );
 }
 
