@@ -1282,7 +1282,7 @@ const TABLE_DEMO_ROWS = [
 
 export function TableUsageDemo() {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border-default-subtle">
+    <div className="max-w-2xl">
       <Table aria-label="Permit applications">
         <TableHeader>
           <TableColumn isRowHeader>Name</TableColumn>
