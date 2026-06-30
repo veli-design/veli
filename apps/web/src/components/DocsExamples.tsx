@@ -1286,13 +1286,13 @@ export function CardUsageDemo() {
 export function CardVariantsDemo() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <Card elevation="none" padding="sm">
+      <Card elevation="none" spacing="sm">
         <Card.Header>
           <Card.Title>Border only</Card.Title>
         </Card.Header>
         <Card.Content>No shadow elevation.</Card.Content>
       </Card>
-      <Card elevation="lg" padding="sm" interactive>
+      <Card elevation="lg" spacing="sm" interactive>
         <Card.Header>
           <Card.Title>Interactive</Card.Title>
         </Card.Header>
