@@ -13,57 +13,59 @@ import {
   type TagProps as AriaTagProps,
   type TagRenderProps,
 } from 'react-aria-components';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { StaticFieldMessage } from './field-shared';
+import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 
-const tagGroupRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
-
 const TagGroupDisabledContext = React.createContext(false);
+const TagGroupSizeContext = React.createContext<TagSize | undefined>(undefined);
 
-const labelVariants = cva('type-body-sm-regular', {
-  variants: {
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
+export type TagSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const tagListVariants = cva(
-  'flex flex-wrap gap-[8px] rounded-[10px] outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex flex-wrap gap-2 rounded-lg outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
 );
 
 const emptyStateVariants = cva(
-  'rounded-[12px] border border-dashed border-base-subtle px-[12px] py-[10px] type-body-sm-regular text-base-subtle',
+  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle',
 );
 
 const tagVariants = cva(
-  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] type-body-sm-medium antialiased outline-none transition-colors duration-normal ease-out data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'group inline-flex max-w-full items-center rounded-full border border-transparent antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
+      size: {
+        xs: 'h-7 gap-1 px-2 type-caption-medium',
+        sm: 'h-8 gap-1 px-2 type-caption-medium',
+        md: 'h-9 gap-1.5 px-2.5 type-body-sm-medium',
+        lg: 'h-10 gap-1.5 px-3 type-body-sm-medium',
+        xl: 'h-11 gap-2 px-3 type-body-md-medium',
+      },
       isSelected: {
-        true: 'bg-button-primary-subtle text-primary-muted',
-        false: 'bg-button-secondary-subtle text-base',
+        true: 'bg-button-primary-subtle-default text-text-primary-muted',
+        false: 'bg-button-secondary-subtle-default text-text-default-default',
       },
       isDisabled: {
-        true: 'bg-button-disabled text-disabled',
+        true: 'bg-button-disabled-disabled text-text-disabled-disabled',
         false: '',
       },
       isLink: {
-        true: 'cursor-pointer text-links',
+        true: 'cursor-pointer text-text-links-default',
         false: 'cursor-default',
       },
       allowsRemoving: {
-        true: 'pr-[6px]',
+        true: '',
         false: '',
       },
     },
     compoundVariants: [
+      { size: 'xs', allowsRemoving: true, className: 'pe-1' },
+      { size: 'sm', allowsRemoving: true, className: 'pe-1' },
+      { size: 'md', allowsRemoving: true, className: 'pe-1.5' },
+      { size: 'lg', allowsRemoving: true, className: 'pe-2' },
+      { size: 'xl', allowsRemoving: true, className: 'pe-2' },
       {
         isSelected: false,
         isDisabled: false,
@@ -82,7 +84,7 @@ const tagVariants = cva(
         isDisabled: false,
         isLink: true,
         className:
-          'bg-button-primary-subtle hover:bg-button-primary-subtle-hover hover:text-links-hover active:bg-button-primary-subtle-pressed active:text-links-hover',
+          'bg-button-primary-subtle-default hover:bg-button-primary-subtle-hover hover:text-text-links-hover active:bg-button-primary-subtle-pressed active:text-text-links-hover',
       },
       {
         isDisabled: true,
@@ -91,6 +93,7 @@ const tagVariants = cva(
       },
     ],
     defaultVariants: {
+      size: 'sm',
       isSelected: false,
       isDisabled: false,
       isLink: false,
@@ -101,29 +104,68 @@ const tagVariants = cva(
 
 const tagTextVariants = cva('min-w-0 truncate');
 
-const selectionIconVariants = cva('flex h-[14px] w-[14px] shrink-0 items-center justify-center');
-
-const removeButtonVariants = cva(
-  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
+const tagLeadingVariants = cva(
+  'inline-flex shrink-0 items-center justify-center leading-none [&_svg]:shrink-0',
   {
     variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'text-current hover:bg-ash-alpha-200 active:bg-ash-alpha-300',
+      size: {
+        xs: '[&_svg]:size-2.5',
+        sm: '[&_svg]:size-3',
+        md: '[&_svg]:size-3.5',
+        lg: '[&_svg]:size-4',
+        xl: '[&_svg]:size-4',
       },
     },
     defaultVariants: {
+      size: 'sm',
+    },
+  },
+);
+
+const selectionIconVariants = cva('flex shrink-0 items-center justify-center', {
+  variants: {
+    size: {
+      xs: 'size-2.5 [&_svg]:size-2.5',
+      sm: 'size-3 [&_svg]:size-3',
+      md: 'size-3.5 [&_svg]:size-3.5',
+      lg: 'size-4 [&_svg]:size-4',
+      xl: 'size-4 [&_svg]:size-4',
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+});
+
+const removeButtonVariants = cva(
+  'flex shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
+  {
+    variants: {
+      size: {
+        xs: 'size-3.5 [&_svg]:size-2',
+        sm: 'size-4 [&_svg]:size-2.5',
+        md: 'size-5 [&_svg]:size-3',
+        lg: 'size-5 [&_svg]:size-3',
+        xl: 'size-6 [&_svg]:size-3.5',
+      },
+      isDisabled: {
+        true: 'cursor-not-allowed text-text-disabled-disabled',
+        false: 'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
+      },
+    },
+    defaultVariants: {
+      size: 'sm',
       isDisabled: false,
     },
   },
 );
 
-function CheckIcon() {
+function CheckIcon({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-[14px] w-[14px]"
+      className={className}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
@@ -135,12 +177,12 @@ function CheckIcon() {
   );
 }
 
-function CloseIcon() {
+function CloseIcon({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-[12px] w-[12px]"
+      className={className}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
@@ -161,6 +203,7 @@ export interface TagGroupProps<T extends object> extends Omit<
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   isDisabled?: boolean;
+  size?: TagSize;
   items?: Iterable<T>;
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   renderEmptyState?: (props: TagListRenderProps) => React.ReactNode;
@@ -168,9 +211,13 @@ export interface TagGroupProps<T extends object> extends Omit<
   listClassName?: string;
 }
 
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'className' | 'style'> {
+export interface TagProps
+  extends
+    Omit<AriaTagProps, 'children' | 'className' | 'style'>,
+    Pick<VariantProps<typeof tagVariants>, 'size'> {
   children?: React.ReactNode | ((state: TagRenderProps) => React.ReactNode);
   className?: string;
+  leading?: React.ReactNode;
   removeButtonLabel?: string | ((tagText: string | undefined) => string);
 }
 
@@ -182,6 +229,7 @@ export function TagGroup<T extends object>({
   children,
   renderEmptyState,
   isDisabled = false,
+  size,
   className,
   listClassName,
   ...props
@@ -203,26 +251,30 @@ export function TagGroup<T extends object>({
 
   return (
     <TagGroupDisabledContext.Provider value={isDisabled}>
-      <AriaTagGroup
-        {...props}
-        ref={setRootRef}
-        data-disabled={isDisabled || undefined}
-        className={twMerge(tagGroupRootVariants(), className)}
-      >
-        {label ? <Label className={labelVariants({ isDisabled })}>{label}</Label> : null}
-        <AriaTagList
-          items={items}
-          renderEmptyState={
-            renderEmptyState
-              ? renderEmptyState
-              : () => <div className={emptyStateVariants()}>No tags available.</div>
-          }
-          className={twMerge(tagListVariants(), listClassName)}
+      <TagGroupSizeContext.Provider value={size}>
+        <AriaTagGroup
+          {...props}
+          ref={setRootRef}
+          data-disabled={isDisabled || undefined}
+          className={twMerge(fieldRootVariants(), className)}
         >
-          {children as AriaTagListProps<T>['children']}
-        </AriaTagList>
-        <StaticFieldMessage description={description} errorMessage={errorMessage} />
-      </AriaTagGroup>
+          {label ? (
+            <Label className={fieldHeaderLabelVariants({ isDisabled })}>{label}</Label>
+          ) : null}
+          <AriaTagList
+            items={items}
+            renderEmptyState={
+              renderEmptyState
+                ? renderEmptyState
+                : () => <div className={emptyStateVariants()}>No tags available.</div>
+            }
+            className={twMerge(tagListVariants(), listClassName)}
+          >
+            {children as AriaTagListProps<T>['children']}
+          </AriaTagList>
+          <StaticFieldMessage description={description} errorMessage={errorMessage} />
+        </AriaTagGroup>
+      </TagGroupSizeContext.Provider>
     </TagGroupDisabledContext.Provider>
   );
 }
@@ -253,11 +305,15 @@ export function Tag({
   href,
   id,
   isDisabled,
+  leading,
   removeButtonLabel,
+  size: sizeProp,
   textValue,
   ...props
 }: TagProps) {
   const isGroupDisabled = React.useContext(TagGroupDisabledContext);
+  const groupSize = React.useContext(TagGroupSizeContext);
+  const size = sizeProp ?? groupSize ?? 'sm';
   const isTagDisabled = isGroupDisabled || isDisabled;
   const tagText = getTagText(children, textValue);
   const fallbackTagText = tagText ?? getPrimitiveTagIdText(id);
@@ -284,6 +340,7 @@ export function Tag({
       className={(state) =>
         twMerge(
           tagVariants({
+            size,
             isSelected: state.isSelected,
             isDisabled: state.isDisabled,
             isLink: href != null,
@@ -305,8 +362,13 @@ export function Tag({
         return (
           <>
             {state.isSelected ? (
-              <span className={selectionIconVariants()}>
+              <span className={selectionIconVariants({ size })}>
                 <CheckIcon />
+              </span>
+            ) : null}
+            {leading ? (
+              <span aria-hidden="true" className={tagLeadingVariants({ size })}>
+                {leading}
               </span>
             ) : null}
             <span className={tagTextVariants()}>{content}</span>
@@ -314,7 +376,7 @@ export function Tag({
               <AriaButton
                 slot="remove"
                 aria-label={resolvedRemoveButtonLabel}
-                className={removeButtonVariants({ isDisabled: state.isDisabled })}
+                className={removeButtonVariants({ size, isDisabled: state.isDisabled })}
               >
                 <CloseIcon />
               </AriaButton>
