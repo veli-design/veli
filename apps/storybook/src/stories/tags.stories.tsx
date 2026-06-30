@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from 'storybook/internal/preview-api';
 import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Tag, TagGroup, type TagSize } from '@tradenetcorp/veli-ui/tags';
 import { User } from 'phosphor-react';
 
@@ -11,17 +13,13 @@ type TagItem = {
   isDisabled?: boolean;
 };
 
-const removableSeed: TagItem[] = [
-  { id: 'permits', label: 'Permits' },
-  { id: 'forms', label: 'Forms' },
-  { id: 'notices', label: 'Notices' },
-  { id: 'licences', label: 'Licences' },
-];
-
 const storyPanelClassName =
   'w-full max-w-md rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
 
 const storySectionClassName = 'space-y-3';
+const sizesAndLeadingPanelClassName = `${storyPanelClassName} space-y-6`;
+const sizesAndLeadingSectionClassName = 'space-y-4';
+const sizesAndLeadingSectionHeaderClassName = 'space-y-1';
 
 const tagEmptyStateClassName =
   'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
@@ -38,8 +36,197 @@ const badgeIntents: BadgeIntent[] = [
   'danger',
 ];
 
+const englishTagsText = {
+  noTagsAvailable: 'No tags available.',
+  allTagsRemoved: 'All tags have been removed.',
+  allSavedTopicsRemoved: 'All saved topics have been removed.',
+  selectableTags: 'Selectable tags',
+  removableTags: 'Removable tags',
+  linkTags: 'Link tags',
+  disabledKeys: 'Disabled keys',
+  disabledGroup: 'Disabled group',
+  categories: 'Categories',
+  news: 'News',
+  travel: 'Travel',
+  gaming: 'Gaming',
+  shopping: 'Shopping',
+  savedTopics: 'Saved topics',
+  topic: 'Topic',
+  relatedGuidance: 'Related guidance',
+  departments: 'Departments',
+  requiredDepartments: 'Required departments',
+  chooseDepartments: 'Choose one or more departments.',
+  chooseOneDepartment: 'Choose at least one department.',
+  selectOneDepartment: 'Select at least one department.',
+  tourism: 'Tourism',
+  fisheries: 'Fisheries',
+  transport: 'Transport',
+  education: 'Education',
+  passportServices: 'Passport services',
+  licensingPortal: 'Licensing portal',
+  onlinePayments: 'Online payments',
+  amenities: 'Amenities',
+  laundry: 'Laundry',
+  parking: 'Parking',
+  breakfast: 'Breakfast',
+  wifi: 'Wi-Fi',
+  restrictedServices: 'Restricted services',
+  documents: 'Documents',
+  appointments: 'Appointments',
+  payments: 'Payments',
+  support: 'Support',
+  preferredChannel: 'Preferred channel',
+  oneChannelOnly: 'Only one channel can be selected at a time.',
+  email: 'Email',
+  sms: 'SMS',
+  post: 'Post',
+  sizes: 'Sizes',
+  fixedHeights: 'Fixed heights from xs (28px) to xl (44px).',
+  extraSmall: 'Extra small',
+  small: 'Small',
+  medium: 'Medium',
+  large: 'Large',
+  extraLarge: 'Extra large',
+  groupSize: 'Group size',
+  groupSizeDescription: 'Set size once on TagGroup to apply to every tag.',
+  departmentFilters: 'Department filters',
+  leadingIcon: 'Leading icon',
+  leadingIconDescription: 'Use the leading slot for icons such as a user avatar glyph.',
+  assignedPeople: 'Assigned people',
+  aishaHassan: 'Aisha Hassan',
+  ibrahimWaheed: 'Ibrahim Waheed',
+  mariyamAli: 'Mariyam Ali',
+  leadingCountBadge: 'Leading count badge',
+  counterBadgeDescription: 'Counter badges work well for unread or pending counts.',
+  inboxes: 'Inboxes',
+  inbox: 'Inbox',
+  requests: 'Requests',
+  alerts: 'Alerts',
+  leadingStatusBadges: 'Leading status badges',
+  statusBadgesDescription: 'Compose tags with the Badge component for labels and status.',
+  serviceStatus: 'Service status',
+  live: 'Live',
+  beta: 'Beta',
+  new: 'New',
+  iconAndCountTogether: 'Icon and count together',
+  teamChannels: 'Team channels',
+  supportTeam: 'Support team',
+  reviewQueue: 'Review queue',
+  leadingAtEachSize: 'Leading at each size',
+  iconsScaleDescription: 'Icons and badges scale with the tag size.',
+  selectableFiltersWithLeadingContent: 'Selectable filters with leading content',
+  leadingSlotsDescription: 'Leading slots work with selection, removable tags, and links.',
+  assigned: 'Assigned',
+  pending: 'Pending',
+  draft: 'Draft',
+  forms: 'Forms',
+  relatedContacts: 'Related contacts',
+  liaisonOfficer: 'Liaison officer',
+  supervisor: 'Supervisor',
+} as const;
+
+const dhivehiTagsText = {
+  noTagsAvailable: 'އެއްވެސް ޓެގެއް ލިބޭކަށް ނެތް.',
+  allTagsRemoved: 'ހުރިހާ ޓެގެއް ވަނީ އުނިކުރެވިފަ.',
+  allSavedTopicsRemoved: 'ސޭވްކުރެވިފައިވާ ހުރިހާ މައުޟޫޢުތަކެއް ވަނީ އުނިކުރެވިފަ.',
+  selectableTags: 'ޚިޔާރުކުރެވޭ ޓެގްތައް',
+  removableTags: 'އުނިކުރެވޭ ޓެގްތައް',
+  linkTags: 'ލިންކް ޓެގްތައް',
+  disabledKeys: 'ޑިސޭބަލް ކުރެވިފައިވާ ކީތައް',
+  disabledGroup: 'ޑިސޭބަލް ކުރެވިފައިވާ ގްރޫޕް',
+  categories: 'ކެޓަގަރީތައް',
+  news: 'ޚަބަރު',
+  travel: 'ދަތުރުފަތުރު',
+  gaming: 'ގޭމިންގ',
+  shopping: 'ވިޔަފާރިކުރުން',
+  savedTopics: 'ސޭވްކުރެވިފައިވާ މައުޟޫޢުތައް',
+  topic: 'މައުޟޫޢު',
+  relatedGuidance: 'ގުޅޭ އިރުޝާދު',
+  departments: 'ޑިޕާޓްމަންޓްތައް',
+  requiredDepartments: 'ބޭނުންވާ ޑިޕާޓްމަންޓްތައް',
+  chooseDepartments: 'އެއް ޑިޕާޓްމަންޓް ނުވަތަ އެއަށްވުރެ ގިނަ ޑިޕާޓްމަންޓް ޚިޔާރުކުރައްވާ.',
+  chooseOneDepartment: 'މަދުވެގެން އެއް ޑިޕާޓްމަންޓް ޚިޔާރުކުރައްވާ.',
+  selectOneDepartment: 'މަދުވެގެން އެއް ޑިޕާޓްމަންޓް ނަންގަވާ.',
+  tourism: 'ފަތުރުވެރިކަން',
+  fisheries: 'މަސްވެރިކަން',
+  transport: 'ޓްރާންސްޕޯޓް',
+  education: 'ތަޢުލީމު',
+  passportServices: 'ޕާސްޕޯޓްގެ ޚިދުމަތްތައް',
+  licensingPortal: 'ލައިސަންސް ޕޯޓަލް',
+  onlinePayments: 'އޮންލައިން ފައިސާދެއްކުން',
+  amenities: 'ވަސީލަތްތައް',
+  laundry: 'ލޯންޑްރީ',
+  parking: 'ޕާކިންގ',
+  breakfast: 'ހެނދުނުގެ ސައި',
+  wifi: 'ވައި-ފައި',
+  restrictedServices: 'ހިފެހެއްޓިފައިވާ ޚިދުމަތްތައް',
+  documents: 'ލިޔެކިޔުންތައް',
+  appointments: 'އެޕޮއިންޓްމަންޓްތައް',
+  payments: 'ފައިސާދެއްކުން',
+  support: 'ސަޕޯޓް',
+  preferredChannel: 'އިސްކަންދޭ ޗެނަލް',
+  oneChannelOnly: 'އެއްފަހަރާ ޚިޔާރުކުރެވޭނީ ހަމައެކަނި އެއް ޗެނަލެވެ.',
+  email: 'އީމެއިލް',
+  sms: 'އެސް.އެމް.އެސް',
+  post: 'ޕޯސްޓް',
+  sizes: 'ސައިޒުތައް',
+  fixedHeights: 'xs (28px) އިން ފެށިގެން xl (44px) އަށް ކަނޑައެޅިފައިވާ އުސްމިންތައް.',
+  extraSmall: 'ވަރަށް ކުޑަ',
+  small: 'ކުޑަ',
+  medium: 'މެދު',
+  large: 'ބޮޑު',
+  extraLarge: 'ވަރަށް ބޮޑު',
+  groupSize: 'ގްރޫޕް ސައިޒު',
+  groupSizeDescription:
+    'ހުރިހާ ޓެގަކަށް ބޭނުންކުރުމަށް ޓެގްގްރޫޕްގައި އެއްފަހަރު ސައިޒު ކަނޑައަޅާ.',
+  departmentFilters: 'ޑިޕާޓްމަންޓް ފިލްޓަރުތައް',
+  leadingIcon: 'ކުރީގައި އިންނަ އައިކަން',
+  leadingIconDescription: 'ޔޫޒަރ އެވަޓަރ ގްލިފް ފަދަ އައިކަންތަކަށް ލީޑިންގ ސްލޮޓް ބޭނުންކުރައްވާ.',
+  assignedPeople: 'ހަވާލުކުރެވިފައިވާ މީހުން',
+  aishaHassan: 'އާއިޝަތު ޙަސަން',
+  ibrahimWaheed: 'އިބްރާހީމް ވަޙީދު',
+  mariyamAli: 'މަރްޔަމް ޢަލީ',
+  leadingCountBadge: 'ލީޑިންގ ކައުންޓް ބެޖް',
+  counterBadgeDescription:
+    'ނުކިޔާ ނުވަތަ ނުނިމިހުރި އަދަދުތައް ދެއްކުމަށް ކައުންޓަރ ބެޖްތައް ރަނގަޅުވާނެއެވެ.',
+  inboxes: 'އިންބޮކްސްތައް',
+  inbox: 'އިންބޮކްސް',
+  requests: 'ރިކުއެސްޓްތައް',
+  alerts: 'އެލަރޓްތައް',
+  leadingStatusBadges: 'ލީޑިންގ ސްޓޭޓަސް ބެޖްތައް',
+  statusBadgesDescription:
+    'ލޭބަލްތަކާއި ސްޓޭޓަސްތަކަށް ބެޖް ކޮމްޕޯނަންޓާއެކު ޓެގްތައް ތައްޔާރުކުރައްވާ.',
+  serviceStatus: 'ޚިދުމަތުގެ ޙާލަތު',
+  live: 'ލައިވް',
+  beta: 'ބީޓާ',
+  new: 'އާ',
+  iconAndCountTogether: 'އައިކަން އާއި އަދަދު އެކީގައި',
+  teamChannels: 'ޓީމް ޗެނަލްތައް',
+  supportTeam: 'ސަޕޯޓް ޓީމް',
+  reviewQueue: 'ރިވިއު ކިއު',
+  leadingAtEachSize: 'ކޮންމެ ސައިޒެއްގައި ލީޑިންގ',
+  iconsScaleDescription: 'ޓެގްގެ ސައިޒާއެކު އައިކަންތަކާއި ބެޖްތައް ބަދަލުވާނެއެވެ.',
+  selectableFiltersWithLeadingContent: 'ލީޑިންގ ކޮންޓެންޓާއެކު ޚިޔާރުކުރެވޭ ފިލްޓަރުތައް',
+  leadingSlotsDescription:
+    'ލީޑިންގ ސްލޮޓްތައް ސިލެކްޝަން، އުނިކުރެވޭ ޓެގް އަދި ލިންކްތަކާއެކު މަސައްކަތްކުރާނެއެވެ.',
+  assigned: 'ހަވާލުކުރެވިފައި',
+  pending: 'ޕެންޑިންގ',
+  draft: 'ޑްރާފްޓް',
+  forms: 'ފޯމުތައް',
+  relatedContacts: 'ގުޅޭ ކޮންޓެކްޓްތައް',
+  liaisonOfficer: 'ލިއޭޒަން އޮފިސަރ',
+  supervisor: 'ސުޕަވައިޒަރ',
+} as const;
+
+const localizedTagsText = {
+  en: englishTagsText,
+  dv: dhivehiTagsText,
+} as const;
+
 type TagSelectionMode = (typeof selectionModes)[number];
 type TagLeadingType = (typeof leadingTypes)[number];
+type TagsLanguage = keyof typeof localizedTagsText;
+type TagsText = { [Key in keyof typeof englishTagsText]: string };
 
 type TagPlaygroundItem = {
   id: string;
@@ -65,11 +252,75 @@ type TagPlaygroundArgs = {
   countMax: number;
 };
 
-const playgroundSeed: TagPlaygroundItem[] = [
-  { id: 'tag-1', label: 'Tourism' },
-  { id: 'tag-2', label: 'Fisheries' },
-  { id: 'tag-3', label: 'Transport' },
-];
+const tagArgText = {
+  label: {
+    en: englishTagsText.departments,
+    dv: dhivehiTagsText.departments,
+  },
+  description: {
+    en: englishTagsText.chooseDepartments,
+    dv: dhivehiTagsText.chooseDepartments,
+  },
+  errorMessage: {
+    en: englishTagsText.selectOneDepartment,
+    dv: dhivehiTagsText.selectOneDepartment,
+  },
+  tagLabel: {
+    en: englishTagsText.tourism,
+    dv: dhivehiTagsText.tourism,
+  },
+  secondTagLabel: {
+    en: englishTagsText.fisheries,
+    dv: dhivehiTagsText.fisheries,
+  },
+  thirdTagLabel: {
+    en: englishTagsText.transport,
+    dv: dhivehiTagsText.transport,
+  },
+  badgeLabel: {
+    en: englishTagsText.new,
+    dv: dhivehiTagsText.new,
+  },
+} as const;
+
+type TagArgTextKey = keyof typeof tagArgText;
+
+const tagArgTextKeys = Object.keys(tagArgText) as TagArgTextKey[];
+
+const useTagsLanguage = (): TagsLanguage => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? 'dv' : 'en';
+};
+
+const useTagsText = () => {
+  const language = useTagsLanguage();
+
+  return localizedTagsText[language];
+};
+
+const getLocalizedTagArgText = (key: TagArgTextKey, value: unknown, language: TagsLanguage) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return value;
+  }
+
+  const localizedValues: readonly string[] = Object.values(tagArgText[key]);
+
+  if (localizedValues.includes(value)) {
+    return tagArgText[key][language];
+  }
+
+  return value;
+};
+
+function getRemovableSeed(text: TagsText): TagItem[] {
+  return [
+    { id: 'documents', label: text.documents },
+    { id: 'forms', label: text.forms },
+    { id: 'payments', label: text.payments },
+    { id: 'support', label: text.support },
+  ];
+}
 
 const tagIconSizes: Record<TagSize, number> = {
   xs: 10,
@@ -164,34 +415,57 @@ function TagsPlayground({
   count,
   countMax,
 }: TagPlaygroundArgs) {
+  const language = useTagsLanguage();
+  const text = useTagsText();
+  const localizedLabel = getLocalizedTagArgText('label', label, language) as string;
+  const localizedDescription = getLocalizedTagArgText(
+    'description',
+    description,
+    language,
+  ) as string;
+  const localizedErrorMessage = getLocalizedTagArgText(
+    'errorMessage',
+    errorMessage,
+    language,
+  ) as string;
+  const localizedTagLabel = getLocalizedTagArgText('tagLabel', tagLabel, language) as string;
+  const localizedSecondTagLabel = getLocalizedTagArgText(
+    'secondTagLabel',
+    secondTagLabel,
+    language,
+  ) as string;
+  const localizedThirdTagLabel = getLocalizedTagArgText(
+    'thirdTagLabel',
+    thirdTagLabel,
+    language,
+  ) as string;
+  const localizedBadgeLabel = getLocalizedTagArgText('badgeLabel', badgeLabel, language) as string;
   const staticTags = useMemo<TagPlaygroundItem[]>(
     () => [
-      { id: 'tag-1', label: tagLabel },
-      { id: 'tag-2', label: secondTagLabel },
-      { id: 'tag-3', label: thirdTagLabel },
+      { id: 'tag-1', label: localizedTagLabel },
+      { id: 'tag-2', label: localizedSecondTagLabel },
+      { id: 'tag-3', label: localizedThirdTagLabel },
     ],
-    [secondTagLabel, tagLabel, thirdTagLabel],
+    [localizedSecondTagLabel, localizedTagLabel, localizedThirdTagLabel],
   );
-  const [removableItems, setRemovableItems] = useState(playgroundSeed);
+  const [removedPlaygroundTagKeys, setRemovedPlaygroundTagKeys] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const removableItems = useMemo(
+    () => staticTags.filter((item) => !removedPlaygroundTagKeys.has(item.id)),
+    [removedPlaygroundTagKeys, staticTags],
+  );
   const leading = renderTagLeading({
     leadingType,
     size,
-    badgeLabel,
+    badgeLabel: localizedBadgeLabel,
     badgeIntent,
     count,
     countMax,
   });
 
-  useEffect(() => {
-    if (!isRemovable) {
-      return;
-    }
-
-    setRemovableItems(staticTags);
-  }, [isRemovable, staticTags]);
-
-  const resolvedDescription = errorMessage ? undefined : description || undefined;
-  const resolvedErrorMessage = errorMessage || undefined;
+  const resolvedDescription = localizedErrorMessage ? undefined : localizedDescription || undefined;
+  const resolvedErrorMessage = localizedErrorMessage || undefined;
   const resolvedSelectionMode = selectionMode === 'none' ? undefined : selectionMode;
   const defaultSelectedKeys =
     selectionMode === 'single'
@@ -204,7 +478,7 @@ function TagsPlayground({
     return (
       <div className={storyPanelClassName}>
         <TagGroup<TagPlaygroundItem>
-          label={label}
+          label={localizedLabel}
           description={resolvedDescription}
           errorMessage={resolvedErrorMessage}
           selectionMode={resolvedSelectionMode}
@@ -213,10 +487,10 @@ function TagsPlayground({
           size={size}
           items={removableItems}
           onRemove={(keys) =>
-            setRemovableItems((current) => current.filter((item) => !new Set(keys).has(item.id)))
+            setRemovedPlaygroundTagKeys((currentKeys) => addRemovedTagKeys(currentKeys, keys))
           }
           renderEmptyState={() => (
-            <div className={tagEmptyStateClassName}>All tags have been removed.</div>
+            <div className={tagEmptyStateClassName}>{text.allTagsRemoved}</div>
           )}
         >
           {(item) => (
@@ -232,7 +506,7 @@ function TagsPlayground({
   return (
     <div className={storyPanelClassName}>
       <TagGroup
-        label={label}
+        label={localizedLabel}
         description={resolvedDescription}
         errorMessage={resolvedErrorMessage}
         selectionMode={resolvedSelectionMode}
@@ -267,20 +541,72 @@ const meta = {
     },
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story, context) => {
+      const language: TagsLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const {
+        label,
+        description,
+        errorMessage,
+        tagLabel,
+        secondTagLabel,
+        thirdTagLabel,
+        badgeLabel,
+      } = args;
+
+      useEffect(() => {
+        const nextArgs: Partial<Record<TagArgTextKey, string>> = {};
+        const currentArgs = {
+          label,
+          description,
+          errorMessage,
+          tagLabel,
+          secondTagLabel,
+          thirdTagLabel,
+          badgeLabel,
+        };
+
+        tagArgTextKeys.forEach((key) => {
+          const localizedValue = getLocalizedTagArgText(key, currentArgs[key], language);
+
+          if (typeof localizedValue === 'string' && currentArgs[key] !== localizedValue) {
+            nextArgs[key] = localizedValue;
+          }
+        });
+
+        if (Object.keys(nextArgs).length > 0) {
+          updateArgs?.(nextArgs);
+        }
+      }, [
+        badgeLabel,
+        description,
+        errorMessage,
+        label,
+        language,
+        secondTagLabel,
+        tagLabel,
+        thirdTagLabel,
+        updateArgs,
+      ]);
+
+      return <Story />;
+    },
+  ],
   args: {
-    label: 'Departments',
-    description: 'Choose one or more departments.',
+    label: englishTagsText.departments,
+    description: englishTagsText.chooseDepartments,
     errorMessage: '',
     selectionMode: 'multiple',
     isDisabled: false,
     size: 'sm',
-    tagLabel: 'Tourism',
-    secondTagLabel: 'Fisheries',
-    thirdTagLabel: 'Transport',
+    tagLabel: englishTagsText.tourism,
+    secondTagLabel: englishTagsText.fisheries,
+    thirdTagLabel: englishTagsText.transport,
     isLink: false,
     isRemovable: false,
     leadingType: 'none',
-    badgeLabel: 'New',
+    badgeLabel: englishTagsText.new,
     badgeIntent: 'info',
     count: 5,
     countMax: 99,
@@ -348,9 +674,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<TagPlaygroundArgs>;
 
-function removeItems(items: TagItem[], keys: Iterable<string | number>) {
-  const removedKeys = new Set(keys);
-  return items.filter((item) => !removedKeys.has(item.id));
+function addRemovedTagKeys(currentKeys: Set<string>, keys: Iterable<string | number>) {
+  const nextKeys = new Set(currentKeys);
+
+  for (const key of keys) {
+    nextKeys.add(String(key));
+  }
+
+  return nextKeys;
 }
 
 function StorySection({
@@ -363,8 +694,8 @@ function StorySection({
   children: ReactNode;
 }) {
   return (
-    <div className={storySectionClassName}>
-      <div>
+    <div className={sizesAndLeadingSectionClassName}>
+      <div className={sizesAndLeadingSectionHeaderClassName}>
         <p className="type-body-sm-medium text-text-default-emphasis">{title}</p>
         {description ? (
           <p className="type-body-sm-regular text-text-default-subtle">{description}</p>
@@ -383,16 +714,20 @@ export const Default: Story = {
   parameters: {
     controls: { disable: true },
   },
-  render: () => (
-    <div className={storyPanelClassName}>
-      <TagGroup label="Categories" aria-label="Categories">
-        <Tag id="news">News</Tag>
-        <Tag id="travel">Travel</Tag>
-        <Tag id="gaming">Gaming</Tag>
-        <Tag id="shopping">Shopping</Tag>
-      </TagGroup>
-    </div>
-  ),
+  render: () => {
+    const text = useTagsText();
+
+    return (
+      <div className={storyPanelClassName}>
+        <TagGroup label={text.categories} aria-label={text.categories}>
+          <Tag id="news">{text.news}</Tag>
+          <Tag id="travel">{text.travel}</Tag>
+          <Tag id="gaming">{text.gaming}</Tag>
+          <Tag id="shopping">{text.shopping}</Tag>
+        </TagGroup>
+      </div>
+    );
+  },
 };
 
 export const Variations: Story = {
@@ -400,38 +735,44 @@ export const Variations: Story = {
     controls: { disable: true },
   },
   render: () => {
-    const [removableItems, setRemovableItems] = useState(removableSeed);
+    const text = useTagsText();
+    const removableSeed = useMemo(() => getRemovableSeed(text), [text]);
+    const [removedTagKeys, setRemovedTagKeys] = useState<Set<string>>(() => new Set());
+    const removableItems = useMemo(
+      () => removableSeed.filter((item) => !removedTagKeys.has(item.id)),
+      [removableSeed, removedTagKeys],
+    );
 
     return (
       <div className="grid gap-6 lg:grid-cols-2">
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">{text.selectableTags}</p>
             <TagGroup
-              label="Departments"
+              label={text.departments}
               selectionMode="multiple"
               defaultSelectedKeys={['tourism', 'fisheries']}
-              description="Use selection when tags act as filters."
+              description={text.chooseDepartments}
             >
-              <Tag id="tourism">Tourism</Tag>
-              <Tag id="fisheries">Fisheries</Tag>
-              <Tag id="transport">Transport</Tag>
-              <Tag id="education">Education</Tag>
+              <Tag id="tourism">{text.tourism}</Tag>
+              <Tag id="fisheries">{text.fisheries}</Tag>
+              <Tag id="transport">{text.transport}</Tag>
+              <Tag id="education">{text.education}</Tag>
             </TagGroup>
           </div>
         </div>
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">{text.removableTags}</p>
             <TagGroup<TagItem>
-              label="Saved topics"
+              label={text.savedTopics}
               items={removableItems}
               onRemove={(keys) =>
-                setRemovableItems((current: TagItem[]) => removeItems(current, keys))
+                setRemovedTagKeys((currentKeys) => addRemovedTagKeys(currentKeys, keys))
               }
               renderEmptyState={() => (
-                <div className={tagEmptyStateClassName}>All saved topics have been removed.</div>
+                <div className={tagEmptyStateClassName}>{text.allSavedTopicsRemoved}</div>
               )}
             >
               {(item) => (
@@ -440,7 +781,7 @@ export const Variations: Story = {
                   textValue={item.label}
                   leading={
                     <Badge appearance="emphasis" intent="info" size="sm">
-                      Topic
+                      {text.topic}
                     </Badge>
                   }
                 >
@@ -453,16 +794,16 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
-            <TagGroup label="Related guidance">
+            <p className="type-body-sm-medium text-text-default-emphasis">{text.linkTags}</p>
+            <TagGroup label={text.relatedGuidance}>
               <Tag id="passport" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
-                Passport services
+                {text.passportServices}
               </Tag>
               <Tag id="licensing" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
-                Licensing portal
+                {text.licensingPortal}
               </Tag>
               <Tag id="payments" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
-                Online payments
+                {text.onlinePayments}
               </Tag>
             </TagGroup>
           </div>
@@ -470,34 +811,34 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">{text.disabledKeys}</p>
             <TagGroup
-              label="Amenities"
+              label={text.amenities}
               selectionMode="multiple"
               defaultSelectedKeys={['laundry']}
               disabledKeys={['parking']}
             >
-              <Tag id="laundry">Laundry</Tag>
-              <Tag id="parking">Parking</Tag>
-              <Tag id="breakfast">Breakfast</Tag>
-              <Tag id="wifi">Wi-Fi</Tag>
+              <Tag id="laundry">{text.laundry}</Tag>
+              <Tag id="parking">{text.parking}</Tag>
+              <Tag id="breakfast">{text.breakfast}</Tag>
+              <Tag id="wifi">{text.wifi}</Tag>
             </TagGroup>
           </div>
         </div>
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
+            <p className="type-body-sm-medium text-text-default-emphasis">{text.disabledGroup}</p>
             <TagGroup
-              label="Restricted services"
+              label={text.restrictedServices}
               selectionMode="multiple"
               defaultSelectedKeys={['documents']}
               isDisabled
             >
-              <Tag id="documents">Documents</Tag>
-              <Tag id="appointments">Appointments</Tag>
-              <Tag id="payments">Payments</Tag>
-              <Tag id="support">Support</Tag>
+              <Tag id="documents">{text.documents}</Tag>
+              <Tag id="appointments">{text.appointments}</Tag>
+              <Tag id="payments">{text.payments}</Tag>
+              <Tag id="support">{text.support}</Tag>
             </TagGroup>
           </div>
         </div>
@@ -510,355 +851,352 @@ export const SingleSelection: Story = {
   parameters: {
     controls: { disable: true },
   },
-  render: () => (
-    <div className={storyPanelClassName}>
-      <TagGroup
-        label="Preferred channel"
-        selectionMode="single"
-        defaultSelectedKeys={['email']}
-        description="Only one channel can be selected at a time."
-      >
-        <Tag id="email">Email</Tag>
-        <Tag id="sms">SMS</Tag>
-        <Tag id="post">Post</Tag>
-      </TagGroup>
-    </div>
-  ),
+  render: () => {
+    const text = useTagsText();
+
+    return (
+      <div className={storyPanelClassName}>
+        <TagGroup
+          label={text.preferredChannel}
+          selectionMode="single"
+          defaultSelectedKeys={['email']}
+          description={text.oneChannelOnly}
+        >
+          <Tag id="email">{text.email}</Tag>
+          <Tag id="sms">{text.sms}</Tag>
+          <Tag id="post">{text.post}</Tag>
+        </TagGroup>
+      </div>
+    );
+  },
 };
 
 export const Validation: Story = {
   parameters: {
     controls: { disable: true },
   },
-  render: () => (
-    <div className={storyPanelClassName}>
-      <TagGroup
-        label="Required departments"
-        selectionMode="multiple"
-        description="Choose at least one department."
-        errorMessage="Select at least one department."
-      >
-        <Tag id="tourism">Tourism</Tag>
-        <Tag id="fisheries">Fisheries</Tag>
-        <Tag id="transport">Transport</Tag>
-        <Tag id="education">Education</Tag>
-      </TagGroup>
-    </div>
-  ),
+  render: () => {
+    const text = useTagsText();
+
+    return (
+      <div className={storyPanelClassName}>
+        <TagGroup
+          label={text.requiredDepartments}
+          selectionMode="multiple"
+          description={text.chooseOneDepartment}
+          errorMessage={text.selectOneDepartment}
+        >
+          <Tag id="tourism">{text.tourism}</Tag>
+          <Tag id="fisheries">{text.fisheries}</Tag>
+          <Tag id="transport">{text.transport}</Tag>
+          <Tag id="education">{text.education}</Tag>
+        </TagGroup>
+      </div>
+    );
+  },
 };
 
 export const SizesAndLeading: Story = {
   parameters: {
     controls: { disable: true },
   },
-  render: () => (
-    <div className="grid w-full max-w-4xl gap-6 lg:grid-cols-2">
-      <div className={storyPanelClassName}>
-        <StorySection title="Sizes" description="Fixed heights from xs (28px) to xl (44px).">
-          <TagGroup aria-label="Tag sizes">
-            <Tag id="xs" size="xs">
-              Extra small
-            </Tag>
-            <Tag id="sm" size="sm">
-              Small
-            </Tag>
-            <Tag id="md" size="md">
-              Medium
-            </Tag>
-            <Tag id="lg" size="lg">
-              Large
-            </Tag>
-            <Tag id="xl" size="xl">
-              Extra large
-            </Tag>
-          </TagGroup>
-        </StorySection>
+  render: () => {
+    const text = useTagsText();
 
-        <StorySection
-          title="Group size"
-          description="Set size once on TagGroup to apply to every tag."
-        >
-          <TagGroup label="Department filters" size="md">
-            <Tag id="tourism">Tourism</Tag>
-            <Tag id="fisheries">Fisheries</Tag>
-            <Tag id="transport">Transport</Tag>
-          </TagGroup>
-        </StorySection>
-      </div>
-
-      <div className={storyPanelClassName}>
-        <StorySection
-          title="Leading icon"
-          description="Use the leading slot for icons such as a user avatar glyph."
-        >
-          <TagGroup aria-label="Assigned people">
-            <Tag id="aisha" leading={<TagUserIcon size="sm" />}>
-              Aisha Hassan
-            </Tag>
-            <Tag id="ibrahim" leading={<TagUserIcon size="sm" />}>
-              Ibrahim Waheed
-            </Tag>
-            <Tag id="mariyam" leading={<TagUserIcon size="sm" />}>
-              Mariyam Ali
-            </Tag>
-          </TagGroup>
-        </StorySection>
-
-        <StorySection
-          title="Leading count badge"
-          description="Counter badges work well for unread or pending counts."
-        >
-          <TagGroup aria-label="Inboxes">
-            <Tag id="inbox" leading={<TagCountBadge count={3} size="sm" />}>
-              Inbox
-            </Tag>
-            <Tag id="requests" leading={<TagCountBadge count={12} size="sm" />}>
-              Requests
-            </Tag>
-            <Tag id="alerts" leading={<TagCountBadge count={128} max={99} size="sm" />}>
-              Alerts
-            </Tag>
-          </TagGroup>
-        </StorySection>
-      </div>
-
-      <div className={storyPanelClassName}>
-        <StorySection
-          title="Leading status badges"
-          description="Compose tags with the Badge component for labels and status."
-        >
-          <TagGroup aria-label="Service status">
-            <Tag
-              id="passport"
-              leading={
-                <Badge appearance="emphasis" intent="positive" size="sm">
-                  Live
-                </Badge>
-              }
-            >
-              Passport services
-            </Tag>
-            <Tag
-              id="licensing"
-              leading={
-                <Badge appearance="emphasis" intent="cautious" size="sm">
-                  Beta
-                </Badge>
-              }
-            >
-              Licensing portal
-            </Tag>
-            <Tag
-              id="payments"
-              leading={
-                <Badge appearance="emphasis" intent="info" size="sm">
-                  New
-                </Badge>
-              }
-            >
-              Online payments
-            </Tag>
-          </TagGroup>
-        </StorySection>
-
-        <StorySection title="Icon and count together">
-          <TagGroup aria-label="Team channels">
-            <Tag
-              id="support"
-              leading={
-                <span className="inline-flex items-center gap-1">
-                  <TagUserIcon size="sm" />
-                  <TagCountBadge count={5} size="sm" />
-                </span>
-              }
-            >
-              Support team
-            </Tag>
-            <Tag
-              id="review"
-              leading={
-                <span className="inline-flex items-center gap-1">
-                  <TagUserIcon size="sm" />
-                  <TagCountBadge count={2} size="sm" />
-                </span>
-              }
-            >
-              Review queue
-            </Tag>
-          </TagGroup>
-        </StorySection>
-      </div>
-
-      <div className={storyPanelClassName}>
-        <StorySection
-          title="Leading at each size"
-          description="Icons and badges scale with the tag size."
-        >
-          <div className="space-y-4">
-            <TagGroup aria-label="Extra small tags" size="xs">
-              <Tag id="xs-user" leading={<TagUserIcon size="xs" />}>
-                Assigned
+    return (
+      <div className="grid w-full max-w-4xl gap-6 lg:grid-cols-2">
+        <div className={sizesAndLeadingPanelClassName}>
+          <StorySection title={text.sizes} description={text.fixedHeights}>
+            <TagGroup aria-label={text.sizes}>
+              <Tag id="xs" size="xs">
+                {text.extraSmall}
               </Tag>
-              <Tag id="xs-count" leading={<TagCountBadge count={4} size="xs" />}>
-                Pending
+              <Tag id="sm" size="sm">
+                {text.small}
               </Tag>
+              <Tag id="md" size="md">
+                {text.medium}
+              </Tag>
+              <Tag id="lg" size="lg">
+                {text.large}
+              </Tag>
+              <Tag id="xl" size="xl">
+                {text.extraLarge}
+              </Tag>
+            </TagGroup>
+          </StorySection>
+
+          <StorySection title={text.groupSize} description={text.groupSizeDescription}>
+            <TagGroup label={text.departmentFilters} size="md">
+              <Tag id="tourism">{text.tourism}</Tag>
+              <Tag id="fisheries">{text.fisheries}</Tag>
+              <Tag id="transport">{text.transport}</Tag>
+            </TagGroup>
+          </StorySection>
+        </div>
+
+        <div className={sizesAndLeadingPanelClassName}>
+          <StorySection title={text.leadingIcon} description={text.leadingIconDescription}>
+            <TagGroup aria-label={text.assignedPeople}>
+              <Tag id="aisha" leading={<TagUserIcon size="sm" />}>
+                {text.aishaHassan}
+              </Tag>
+              <Tag id="ibrahim" leading={<TagUserIcon size="sm" />}>
+                {text.ibrahimWaheed}
+              </Tag>
+              <Tag id="mariyam" leading={<TagUserIcon size="sm" />}>
+                {text.mariyamAli}
+              </Tag>
+            </TagGroup>
+          </StorySection>
+
+          <StorySection title={text.leadingCountBadge} description={text.counterBadgeDescription}>
+            <TagGroup aria-label={text.inboxes}>
+              <Tag id="inbox" leading={<TagCountBadge count={3} size="sm" />}>
+                {text.inbox}
+              </Tag>
+              <Tag id="requests" leading={<TagCountBadge count={12} size="sm" />}>
+                {text.requests}
+              </Tag>
+              <Tag id="alerts" leading={<TagCountBadge count={128} max={99} size="sm" />}>
+                {text.alerts}
+              </Tag>
+            </TagGroup>
+          </StorySection>
+        </div>
+
+        <div className={sizesAndLeadingPanelClassName}>
+          <StorySection title={text.leadingStatusBadges} description={text.statusBadgesDescription}>
+            <TagGroup aria-label={text.serviceStatus}>
               <Tag
-                id="xs-badge"
+                id="passport"
                 leading={
-                  <Badge appearance="emphasis" intent="warning" size="sm">
-                    Draft
+                  <Badge appearance="emphasis" intent="positive" size="sm">
+                    {text.live}
                   </Badge>
                 }
               >
-                Forms
-              </Tag>
-            </TagGroup>
-
-            <TagGroup aria-label="Small tags" size="sm">
-              <Tag id="sm-user" leading={<TagUserIcon size="sm" />}>
-                Assigned
-              </Tag>
-              <Tag id="sm-count" leading={<TagCountBadge count={4} size="sm" />}>
-                Pending
+                {text.passportServices}
               </Tag>
               <Tag
-                id="sm-badge"
+                id="licensing"
                 leading={
-                  <Badge appearance="emphasis" intent="warning" size="sm">
-                    Draft
+                  <Badge appearance="emphasis" intent="cautious" size="sm">
+                    {text.beta}
                   </Badge>
                 }
               >
-                Forms
-              </Tag>
-            </TagGroup>
-
-            <TagGroup aria-label="Medium tags" size="md">
-              <Tag id="md-user" leading={<TagUserIcon size="md" />}>
-                Assigned
-              </Tag>
-              <Tag id="md-count" leading={<TagCountBadge count={4} size="md" />}>
-                Pending
+                {text.licensingPortal}
               </Tag>
               <Tag
-                id="md-badge"
-                leading={
-                  <Badge appearance="emphasis" intent="warning" size="md">
-                    Draft
-                  </Badge>
-                }
-              >
-                Forms
-              </Tag>
-            </TagGroup>
-
-            <TagGroup aria-label="Large tags" size="lg">
-              <Tag id="lg-user" leading={<TagUserIcon size="lg" />}>
-                Assigned
-              </Tag>
-              <Tag id="lg-count" leading={<TagCountBadge count={4} size="lg" />}>
-                Pending
-              </Tag>
-              <Tag
-                id="lg-badge"
-                leading={
-                  <Badge appearance="emphasis" intent="warning" size="md">
-                    Draft
-                  </Badge>
-                }
-              >
-                Forms
-              </Tag>
-            </TagGroup>
-
-            <TagGroup aria-label="Extra large tags" size="xl">
-              <Tag id="xl-user" leading={<TagUserIcon size="xl" />}>
-                Assigned
-              </Tag>
-              <Tag id="xl-count" leading={<TagCountBadge count={4} size="xl" />}>
-                Pending
-              </Tag>
-              <Tag
-                id="xl-badge"
-                leading={
-                  <Badge appearance="emphasis" intent="warning" size="md">
-                    Draft
-                  </Badge>
-                }
-              >
-                Forms
-              </Tag>
-            </TagGroup>
-          </div>
-        </StorySection>
-      </div>
-
-      <div className={`${storyPanelClassName} lg:col-span-2`}>
-        <StorySection
-          title="Selectable filters with leading content"
-          description="Leading slots work with selection, removable tags, and links."
-        >
-          <div className="grid gap-6 lg:grid-cols-2">
-            <TagGroup
-              label="Department filters"
-              selectionMode="multiple"
-              defaultSelectedKeys={['tourism']}
-            >
-              <Tag
-                id="tourism"
+                id="payments"
                 leading={
                   <Badge appearance="emphasis" intent="info" size="sm">
-                    12
+                    {text.new}
                   </Badge>
                 }
               >
-                Tourism
-              </Tag>
-              <Tag
-                id="fisheries"
-                leading={
-                  <Badge appearance="emphasis" intent="info" size="sm">
-                    4
-                  </Badge>
-                }
-              >
-                Fisheries
-              </Tag>
-              <Tag
-                id="transport"
-                leading={
-                  <Badge appearance="emphasis" intent="info" size="sm">
-                    7
-                  </Badge>
-                }
-              >
-                Transport
+                {text.onlinePayments}
               </Tag>
             </TagGroup>
+          </StorySection>
 
-            <TagGroup label="Related contacts">
+          <StorySection title={text.iconAndCountTogether}>
+            <TagGroup aria-label={text.teamChannels}>
               <Tag
-                id="liaison"
-                href="https://one.gov.mv/"
-                target="_blank"
-                rel="noreferrer"
-                leading={<TagUserIcon size="sm" />}
+                id="support"
+                leading={
+                  <span className="inline-flex items-center gap-1">
+                    <TagUserIcon size="sm" />
+                    <TagCountBadge count={5} size="sm" />
+                  </span>
+                }
               >
-                Liaison officer
+                {text.supportTeam}
               </Tag>
               <Tag
-                id="supervisor"
-                href="https://one.gov.mv/"
-                target="_blank"
-                rel="noreferrer"
-                leading={<TagUserIcon size="sm" />}
+                id="review"
+                leading={
+                  <span className="inline-flex items-center gap-1">
+                    <TagUserIcon size="sm" />
+                    <TagCountBadge count={2} size="sm" />
+                  </span>
+                }
               >
-                Supervisor
+                {text.reviewQueue}
               </Tag>
             </TagGroup>
-          </div>
-        </StorySection>
+          </StorySection>
+        </div>
+
+        <div className={sizesAndLeadingPanelClassName}>
+          <StorySection title={text.leadingAtEachSize} description={text.iconsScaleDescription}>
+            <div className="space-y-4">
+              <TagGroup aria-label={text.extraSmall} size="xs">
+                <Tag id="xs-user" leading={<TagUserIcon size="xs" />}>
+                  {text.assigned}
+                </Tag>
+                <Tag id="xs-count" leading={<TagCountBadge count={4} size="xs" />}>
+                  {text.pending}
+                </Tag>
+                <Tag
+                  id="xs-badge"
+                  leading={
+                    <Badge appearance="emphasis" intent="warning" size="sm">
+                      {text.draft}
+                    </Badge>
+                  }
+                >
+                  {text.forms}
+                </Tag>
+              </TagGroup>
+
+              <TagGroup aria-label={text.small} size="sm">
+                <Tag id="sm-user" leading={<TagUserIcon size="sm" />}>
+                  {text.assigned}
+                </Tag>
+                <Tag id="sm-count" leading={<TagCountBadge count={4} size="sm" />}>
+                  {text.pending}
+                </Tag>
+                <Tag
+                  id="sm-badge"
+                  leading={
+                    <Badge appearance="emphasis" intent="warning" size="sm">
+                      {text.draft}
+                    </Badge>
+                  }
+                >
+                  {text.forms}
+                </Tag>
+              </TagGroup>
+
+              <TagGroup aria-label={text.medium} size="md">
+                <Tag id="md-user" leading={<TagUserIcon size="md" />}>
+                  {text.assigned}
+                </Tag>
+                <Tag id="md-count" leading={<TagCountBadge count={4} size="md" />}>
+                  {text.pending}
+                </Tag>
+                <Tag
+                  id="md-badge"
+                  leading={
+                    <Badge appearance="emphasis" intent="warning" size="md">
+                      {text.draft}
+                    </Badge>
+                  }
+                >
+                  {text.forms}
+                </Tag>
+              </TagGroup>
+
+              <TagGroup aria-label={text.large} size="lg">
+                <Tag id="lg-user" leading={<TagUserIcon size="lg" />}>
+                  {text.assigned}
+                </Tag>
+                <Tag id="lg-count" leading={<TagCountBadge count={4} size="lg" />}>
+                  {text.pending}
+                </Tag>
+                <Tag
+                  id="lg-badge"
+                  leading={
+                    <Badge appearance="emphasis" intent="warning" size="md">
+                      {text.draft}
+                    </Badge>
+                  }
+                >
+                  {text.forms}
+                </Tag>
+              </TagGroup>
+
+              <TagGroup aria-label={text.extraLarge} size="xl">
+                <Tag id="xl-user" leading={<TagUserIcon size="xl" />}>
+                  {text.assigned}
+                </Tag>
+                <Tag id="xl-count" leading={<TagCountBadge count={4} size="xl" />}>
+                  {text.pending}
+                </Tag>
+                <Tag
+                  id="xl-badge"
+                  leading={
+                    <Badge appearance="emphasis" intent="warning" size="md">
+                      {text.draft}
+                    </Badge>
+                  }
+                >
+                  {text.forms}
+                </Tag>
+              </TagGroup>
+            </div>
+          </StorySection>
+        </div>
+
+        <div className={`${sizesAndLeadingPanelClassName} lg:col-span-2`}>
+          <StorySection
+            title={text.selectableFiltersWithLeadingContent}
+            description={text.leadingSlotsDescription}
+          >
+            <div className="grid gap-6 lg:grid-cols-2">
+              <TagGroup
+                label={text.departmentFilters}
+                selectionMode="multiple"
+                defaultSelectedKeys={['tourism']}
+              >
+                <Tag
+                  id="tourism"
+                  leading={
+                    <Badge appearance="emphasis" intent="info" size="sm">
+                      12
+                    </Badge>
+                  }
+                >
+                  {text.tourism}
+                </Tag>
+                <Tag
+                  id="fisheries"
+                  leading={
+                    <Badge appearance="emphasis" intent="info" size="sm">
+                      4
+                    </Badge>
+                  }
+                >
+                  {text.fisheries}
+                </Tag>
+                <Tag
+                  id="transport"
+                  leading={
+                    <Badge appearance="emphasis" intent="info" size="sm">
+                      7
+                    </Badge>
+                  }
+                >
+                  {text.transport}
+                </Tag>
+              </TagGroup>
+
+              <TagGroup label={text.relatedContacts}>
+                <Tag
+                  id="liaison"
+                  href="https://one.gov.mv/"
+                  target="_blank"
+                  rel="noreferrer"
+                  leading={<TagUserIcon size="sm" />}
+                >
+                  {text.liaisonOfficer}
+                </Tag>
+                <Tag
+                  id="supervisor"
+                  href="https://one.gov.mv/"
+                  target="_blank"
+                  rel="noreferrer"
+                  leading={<TagUserIcon size="sm" />}
+                >
+                  {text.supervisor}
+                </Tag>
+              </TagGroup>
+            </div>
+          </StorySection>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
