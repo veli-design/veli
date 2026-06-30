@@ -2,6 +2,7 @@
 @import 'tailwindcss';
 
 @import '@tradenetcorp/veli-tokens/tailwind';
+@import '@tradenetcorp/veli-ui/tailwind';
 
 @font-face {
   font-family: 'MV A Waheed';

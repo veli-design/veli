@@ -1,3 +1,26 @@
 /* Tailwind v4: register this package's built files for class detection.
    In the app: @import "@tradenetcorp/veli-ui/tailwind"; */
 @source "./dist";
+
+::view-transition-new(.toast):only-child {
+  animation: toast-enter 400ms ease;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: toast-exit 400ms ease forwards;
+}
+
+@keyframes toast-enter {
+  from {
+    translate: var(--toast-enter-x, 100%) var(--toast-enter-y, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes toast-exit {
+  to {
+    translate: var(--toast-exit-x, 100%) var(--toast-exit-y, 0);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
