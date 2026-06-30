@@ -80,8 +80,8 @@ const paginationText = {
   },
   dv: {
     label: 'ޕޭޖިނޭޝަން',
-    previous: 'ކުރީ',
-    next: 'ފަހު',
+    previous: 'ފަހު',
+    next: 'ކުރީ',
     pagePrefix: 'ޞަފްޙާ',
     pageSeparator: '/',
     pageLabel: (page: number) => `ޞަފްޙާ ${page}`,
@@ -293,7 +293,7 @@ export function Pagination({
   className,
   ...props
 }: PaginationProps) {
-  const { language: activeLanguage, direction } = useVeliLanguage();
+  const { language: activeLanguage, direction, lang } = useVeliLanguage();
   const paginationLanguage: PaginationLanguage = activeLanguage === 'dv' ? 'dv' : 'en';
   const copy = paginationText[paginationLanguage];
   const PreviousIcon = direction === 'rtl' ? CaretRight : CaretLeft;
@@ -343,6 +343,8 @@ export function Pagination({
     <nav
       {...props}
       aria-label={ariaLabel ?? copy.label}
+      dir={direction}
+      lang={lang}
       className={twMerge(paginationRootVariants(), className)}
     >
       <Button
