@@ -87,6 +87,13 @@ const tableCellVariants = cva(
   'border-b border-border-default-subtle px-4 py-3 type-body-sm-regular text-text-default-default',
 );
 
+const tableDragCellClassName = twMerge(
+  tableCellVariants(),
+  'cursor-grab group-data-[dragging]/row:cursor-grabbing',
+);
+
+const tableDragColumnClassName = twMerge(tableColumnVariants(), 'w-10 cursor-grab');
+
 const tableEmptyVariants = cva(
   'px-4 py-8 text-center type-body-sm-regular text-text-default-muted',
 );
@@ -164,9 +171,9 @@ export function TableHeader<T = unknown>({ className, children, ...props }: Tabl
 
   return (
     <AriaTableHeader {...props} className={className}>
-      {allowsDragging ? <AriaColumn className="w-10" /> : null}
+      {allowsDragging ? <AriaColumn className={tableDragColumnClassName} /> : null}
       {showSelection ? (
-        <AriaColumn className="w-12 px-4 py-3">
+        <AriaColumn className={twMerge(tableColumnVariants(), 'w-12')}>
           <Checkbox slot="selection" size="md" aria-label="Select all" />
         </AriaColumn>
       ) : null}
@@ -284,14 +291,48 @@ export interface TableRowProps<T = unknown> extends Omit<
   children?: React.ReactNode;
 }
 
-export function TableRow<T = unknown>({ className, children, ...props }: TableRowProps<T>) {
+export function TableRow<T = unknown>({
+  className,
+  children,
+  onDragStartCapture,
+  onPointerDownCapture,
+  ...props
+}: TableRowProps<T>) {
   const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
   const showSelection = selectionBehavior === 'toggle' && selectionMode === 'multiple';
+  const dragFromHandleRef = React.useRef(false);
+
+  const handlePointerDownCapture = React.useCallback(
+    (event: React.PointerEvent<HTMLTableRowElement>) => {
+      if (allowsDragging) {
+        dragFromHandleRef.current =
+          (event.target as HTMLElement).closest('[data-drag-handle]') != null;
+      }
+      onPointerDownCapture?.(event);
+    },
+    [allowsDragging, onPointerDownCapture],
+  );
+
+  const handleDragStartCapture = React.useCallback(
+    (event: React.DragEvent<HTMLTableRowElement>) => {
+      if (allowsDragging && !dragFromHandleRef.current) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      onDragStartCapture?.(event);
+    },
+    [allowsDragging, onDragStartCapture],
+  );
 
   return (
-    <AriaRow {...props} className={() => twMerge(tableRowVariants(), className)}>
+    <AriaRow
+      {...props}
+      onPointerDownCapture={handlePointerDownCapture}
+      onDragStartCapture={handleDragStartCapture}
+      className={() => twMerge(tableRowVariants(), 'group/row', className)}
+    >
       {allowsDragging ? (
-        <AriaCell className={tableCellVariants()}>
+        <AriaCell className={tableDragCellClassName} data-drag-handle>
           <AriaButton
             slot="drag"
             className="inline-flex rounded-md p-1 outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
