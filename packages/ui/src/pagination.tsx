@@ -64,12 +64,16 @@ const paginationEllipsisTriggerVariants = cva(
   },
 );
 
+const paginationNumberClassName =
+  'type-body-sm-medium tabular-nums [font-variant-numeric:tabular-nums]';
+
 const paginationText = {
   en: {
     label: 'Pagination',
     previous: 'Previous',
     next: 'Next',
-    page: (current: number, total: number) => `Page ${current} of ${total}`,
+    pagePrefix: 'Page',
+    pageSeparator: 'of',
     pageLabel: (page: number) => `Page ${page}`,
     ellipsisLabel: 'Show hidden pages',
     ellipsisMenuLabel: 'Hidden pages',
@@ -78,12 +82,53 @@ const paginationText = {
     label: 'ޕޭޖިނޭޝަން',
     previous: 'ކުރީ',
     next: 'ފަހު',
-    page: (current: number, total: number) => `ޞަފްޙާ ${current} / ${total}`,
+    pagePrefix: 'ޞަފްޙާ',
+    pageSeparator: '/',
     pageLabel: (page: number) => `ޞަފްޙާ ${page}`,
     ellipsisLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް ދައްކާ',
     ellipsisMenuLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް',
   },
 } as const;
+
+type PaginationLanguage = keyof typeof paginationText;
+
+function PaginationNumber({ children }: { children: React.ReactNode }) {
+  return (
+    <bdi lang="en" dir="ltr" className={paginationNumberClassName}>
+      {children}
+    </bdi>
+  );
+}
+
+function PaginationPageCount({
+  current,
+  language,
+  total,
+}: {
+  current: number;
+  language: PaginationLanguage;
+  total: number;
+}) {
+  const copy = paginationText[language];
+
+  if (language === 'dv') {
+    return (
+      <>
+        {copy.pagePrefix}{' '}
+        <PaginationNumber>
+          {current} {copy.pageSeparator} {total}
+        </PaginationNumber>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {copy.pagePrefix} <PaginationNumber>{current}</PaginationNumber> {copy.pageSeparator}{' '}
+      <PaginationNumber>{total}</PaginationNumber>
+    </>
+  );
+}
 
 function range(start: number, end: number) {
   const values: number[] = [];
@@ -207,7 +252,7 @@ function PaginationEllipsis({
               className="cursor-pointer"
               aria-label={pageLabel(page)}
             >
-              {page}
+              <PaginationNumber>{page}</PaginationNumber>
             </MenuItem>
           ))}
         </Menu>
@@ -249,7 +294,8 @@ export function Pagination({
   ...props
 }: PaginationProps) {
   const { language: activeLanguage, direction } = useVeliLanguage();
-  const copy = paginationText[activeLanguage === 'dv' ? 'dv' : 'en'];
+  const paginationLanguage: PaginationLanguage = activeLanguage === 'dv' ? 'dv' : 'en';
+  const copy = paginationText[paginationLanguage];
   const PreviousIcon = direction === 'rtl' ? CaretRight : CaretLeft;
   const NextIcon = direction === 'rtl' ? CaretLeft : CaretRight;
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
@@ -314,7 +360,11 @@ export function Pagination({
 
       {variant === 'button' ? (
         <span className="px-2 type-body-sm-medium text-text-default-muted" aria-live="polite">
-          {copy.page(currentPage, maxValue)}
+          <PaginationPageCount
+            current={currentPage}
+            language={paginationLanguage}
+            total={maxValue}
+          />
         </span>
       ) : (
         <div className="flex items-center gap-1">
@@ -342,7 +392,7 @@ export function Pagination({
                 })}
                 onClick={() => setPage(page)}
               >
-                {page}
+                <PaginationNumber>{page}</PaginationNumber>
               </button>
             ),
           )}
