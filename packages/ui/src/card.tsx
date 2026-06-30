@@ -6,15 +6,6 @@ import { twMerge } from 'tailwind-merge';
 import { Divider } from './divider';
 import { hasRenderableMessage } from './field-shared';
 
-type CardPadding = 'none' | 'sm' | 'md' | 'lg';
-
-const cardPaddingClasses: Record<CardPadding, string> = {
-  none: 'p-0',
-  sm: 'px-4 py-4',
-  md: 'px-6 py-4',
-  lg: 'px-8 py-4',
-};
-
 const cardVariants = cva(
   'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-border-default-subtle bg-bg-surface-raised text-text-default-default',
   {
@@ -27,18 +18,27 @@ const cardVariants = cva(
         lg: 'shadow-lg',
       },
       interactive: {
-        true: 'transition-colors hover:bg-gray-alpha-100 active:bg-gray-alpha-200',
+        true: 'cursor-pointer transition-colors hover:bg-gray-alpha-100 active:bg-gray-alpha-200',
         false: '',
+      },
+      spacing: {
+        sm: 'gap-3 p-4',
+        md: 'gap-4 p-5',
+        lg: 'gap-5 p-6',
+        xl: 'gap-7 p-8',
       },
     },
     defaultVariants: {
       elevation: 'xs',
       interactive: false,
+      spacing: 'md',
     },
   },
 );
 
-const cardTitleVariants = cva('type-subtitle-medium text-text-default-strong');
+const cardTitleVariants = cva(
+  'type-subtitle-medium text-text-default-strong -mt-[calc((1lh-1em)/2)]',
+);
 
 const cardDescriptionVariants = cva('type-body-md-regular text-text-default-strong');
 
@@ -78,27 +78,20 @@ function splitHeaderChildren(children: React.ReactNode) {
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
   className?: string;
-  padding?: CardPadding;
 }
 
 export function Card({
   children,
   className,
-  elevation = 'xs',
-  padding = 'md',
-  interactive = false,
+  elevation,
+  spacing,
+  interactive,
   ...props
 }: CardProps) {
-  const resolvedPadding = padding ?? 'md';
-
   return (
     <div
       {...props}
-      className={twMerge(
-        cardVariants({ elevation, interactive }),
-        cardPaddingClasses[resolvedPadding],
-        className,
-      )}
+      className={twMerge(cardVariants({ elevation, interactive, spacing }), className)}
     >
       {children}
     </div>
@@ -121,7 +114,7 @@ export function CardHeader({ children, className, action }: CardHeaderProps) {
   }
 
   return (
-    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
+    <div className={twMerge('flex shrink-0 flex-col gap-1', className)}>
       <div className="flex items-end justify-between gap-2">
         {titles.length > 0 ? (
           <div className="flex min-w-0 flex-1 flex-col justify-center">{titles}</div>
