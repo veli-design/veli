@@ -4,6 +4,7 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
+import { useVeliLanguage } from './provider';
 
 export type AlertIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
 export type AlertAppearance = 'emphasis' | 'outline' | 'subtle';
@@ -66,6 +67,10 @@ const alertVariants = cva(
 );
 
 const alertBodyVariants = cva('flex min-w-0 flex-1 flex-col gap-1');
+
+const alertLeadingIconVariants = cva(
+  'inline-flex h-5 shrink-0 items-center justify-center [&_svg]:size-5 [&:lang(dv)]:h-7',
+);
 
 const alertTitleVariants = cva('type-body-sm-medium');
 
@@ -130,10 +135,7 @@ export function Alert({
         )}
       >
         {leadingIcon ? (
-          <span
-            aria-hidden="true"
-            className="inline-flex h-5 shrink-0 items-center justify-center [&_svg]:size-5"
-          >
+          <span aria-hidden="true" className={alertLeadingIconVariants()}>
             {leadingIcon}
           </span>
         ) : null}
@@ -175,11 +177,11 @@ export interface AlertCloseButtonProps {
   className?: string;
 }
 
-export function AlertCloseButton({
-  'aria-label': ariaLabel = 'Dismiss alert',
-  className,
-}: AlertCloseButtonProps) {
+export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCloseButtonProps) {
   const onDismiss = React.useContext(AlertDismissContext);
+  const languageConfig = useVeliLanguage();
+  const resolvedAriaLabel =
+    ariaLabel ?? (languageConfig.language === 'dv' ? 'އެލާޓް ލައްޕާ' : 'Dismiss alert');
 
   return (
     <Button
@@ -188,7 +190,7 @@ export function AlertCloseButton({
       appearance="ghost"
       size="sm"
       iconOnly
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       className={twMerge('absolute end-3 top-3 shrink-0', className)}
       onPress={() => onDismiss?.()}
     >
