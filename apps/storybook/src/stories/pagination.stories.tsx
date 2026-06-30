@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Pagination, type PaginationProps } from '@tradenetcorp/veli-ui/pagination';
 
 type PaginationStoryArgs = PaginationProps;
+type UpdatePaginationArgs = (args: Partial<PaginationStoryArgs>) => void;
 
 function getClampedPage(value: number | undefined, maxValue: number) {
   if (value === undefined) {
@@ -12,24 +14,52 @@ function getClampedPage(value: number | undefined, maxValue: number) {
   return Math.min(Math.max(value, 1), Math.max(maxValue, 1));
 }
 
-function renderControlledPagination(args: PaginationStoryArgs) {
-  const [, updateArgs] = useArgs();
+function ControlledPaginationPreview({
+  args,
+  updateArgs,
+}: {
+  args: PaginationStoryArgs;
+  updateArgs: UpdatePaginationArgs;
+}) {
   const maxValue = Math.max(args.maxValue, 1);
-  const value = getClampedPage(args.value, maxValue);
+  const initialValue = getClampedPage(args.value ?? args.defaultValue ?? 1, maxValue) ?? 1;
+  const [page, setPage] = useState(initialValue);
 
-  const handleChange = (page: number) => {
-    updateArgs({ value: page });
-    args.onChange?.(page);
+  const handleChange = (nextPage: number) => {
+    setPage(nextPage);
+    updateArgs({ value: nextPage });
+    args.onChange?.(nextPage);
   };
 
   return (
     <Pagination
       {...args}
-      value={value}
+      value={page}
       maxValue={maxValue}
       onChange={handleChange}
       onPrevious={args.onPrevious}
       onNext={args.onNext}
+    />
+  );
+}
+
+function renderControlledPagination(args: PaginationStoryArgs) {
+  const [, updateArgs] = useArgs();
+  const maxValue = Math.max(args.maxValue, 1);
+  const value = getClampedPage(args.value ?? args.defaultValue ?? 1, maxValue) ?? 1;
+
+  return (
+    <ControlledPaginationPreview
+      key={[
+        value,
+        maxValue,
+        args.variant,
+        args.siblingCount,
+        args.boundaryCount,
+        args.isDisabled,
+      ].join('-')}
+      args={args}
+      updateArgs={updateArgs}
     />
   );
 }
