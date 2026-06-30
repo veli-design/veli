@@ -370,18 +370,28 @@ export function Pagination({
         </span>
       ) : (
         <div className="flex items-center gap-1">
-          {pages.map((page, index) =>
-            page === 'ellipsis' ? (
-              <PaginationEllipsis
-                key={`ellipsis-${index}`}
-                hiddenPages={getHiddenPages(pages, index)}
-                isDisabled={isDisabled}
-                label={copy.ellipsisLabel}
-                menuLabel={copy.ellipsisMenuLabel}
-                pageLabel={copy.pageLabel}
-                onSelectPage={setPage}
-              />
-            ) : (
+          {pages.map((page, index) => {
+            if (page === 'ellipsis') {
+              const previousPage = pages[index - 1];
+              const nextPage = pages[index + 1];
+              const hiddenPages = getHiddenPages(pages, index);
+              const previousKey = typeof previousPage === 'number' ? previousPage : 'start';
+              const nextKey = typeof nextPage === 'number' ? nextPage : 'end';
+
+              return (
+                <PaginationEllipsis
+                  key={`ellipsis-${previousKey}-${nextKey}`}
+                  hiddenPages={hiddenPages}
+                  isDisabled={isDisabled}
+                  label={copy.ellipsisLabel}
+                  menuLabel={copy.ellipsisMenuLabel}
+                  pageLabel={copy.pageLabel}
+                  onSelectPage={setPage}
+                />
+              );
+            }
+
+            return (
               <button
                 key={page}
                 type="button"
@@ -396,8 +406,8 @@ export function Pagination({
               >
                 <PaginationNumber>{page}</PaginationNumber>
               </button>
-            ),
-          )}
+            );
+          })}
         </div>
       )}
 
