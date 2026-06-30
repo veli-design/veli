@@ -9,6 +9,7 @@ import {
   UNSTABLE_ToastContent as AriaToastContent,
   UNSTABLE_ToastQueue as AriaToastQueue,
   UNSTABLE_ToastRegion as AriaToastRegion,
+  UNSTABLE_ToastStateContext as AriaToastStateContext,
   type QueuedToast,
   type ToastOptions,
   type ToastProps as AriaToastProps,
@@ -16,6 +17,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { Button } from './button';
 
 export type ToastAppearance = 'outline' | 'subtle' | 'emphasis';
 export type ToastIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
@@ -66,7 +68,7 @@ const toastRegionVariants = cva('fixed z-50 flex flex-col gap-2 outline-none', {
 });
 
 const toastVariants = cva(
-  'flex w-full max-w-sm items-start gap-3 rounded-xl border p-4 font-sans antialiased shadow-lg outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
+  'relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-xl border p-4 font-sans antialiased shadow-md outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
 );
 
 type ToastPlacement = NonNullable<VariantProps<typeof toastRegionVariants>['placement']>;
@@ -141,17 +143,85 @@ const toastCloseButtonVariants = cva(
   },
 );
 
+const toastActionsVariants = cva('flex flex-wrap items-center gap-2');
+
+const toastProgressTrackVariants = cva(
+  'pointer-events-none absolute inset-x-0 bottom-0 h-1 overflow-hidden rounded-b-[inherit]',
+  {
+    variants: {
+      appearance: {
+        outline: 'bg-gray-alpha-100',
+        subtle: 'bg-gray-alpha-200',
+        emphasis: 'bg-black/10',
+      },
+    },
+    defaultVariants: {
+      appearance: 'outline',
+    },
+  },
+);
+
+const toastProgressIntentFillClasses = {
+  neutral: 'bg-status-neutral-emphasis',
+  info: 'bg-status-info-emphasis',
+  positive: 'bg-status-success-emphasis',
+  cautious: 'bg-status-cautious-emphasis',
+  warning: 'bg-status-warning-emphasis',
+  danger: 'bg-status-danger-emphasis',
+} satisfies Record<ToastIntent, string>;
+
+type ToastTimerInternals = {
+  remaining: number;
+  startTime: number | null;
+  timerId: ReturnType<typeof setTimeout> | null;
+};
+
+function getToastRemainingMs(toast: QueuedToast<unknown>): number | null {
+  const { timeout, timer } = toast;
+  if (!timeout || timeout <= 0 || !timer) {
+    return null;
+  }
+
+  const { remaining, startTime, timerId } = timer as unknown as ToastTimerInternals;
+  if (remaining <= 0) {
+    return 0;
+  }
+
+  if (timerId == null) {
+    return remaining;
+  }
+
+  return Math.max(0, remaining - (Date.now() - (startTime ?? Date.now())));
+}
+
+export type VeliToastActionIntent = 'primary' | 'secondary' | 'danger';
+export type VeliToastActionAppearance = 'fill' | 'transparent' | 'ghost';
+
+export interface VeliToastAction {
+  label: React.ReactNode;
+  onPress?: () => void;
+  /** Dismiss the toast after the action runs. @default true */
+  dismissOnPress?: boolean;
+  intent?: VeliToastActionIntent;
+  /** @default 'fill' */
+  appearance?: VeliToastActionAppearance;
+}
+
 export interface VeliToastContent {
   title: React.ReactNode;
   description?: React.ReactNode;
   intent?: ToastIntent;
   appearance?: ToastAppearance;
+  actions?: VeliToastAction[];
+  /** Show a depleting progress bar for auto-dismiss toasts. Requires a `timeout` when queueing. */
+  showProgress?: boolean;
 }
 
 export function createToastQueue<T = VeliToastContent>(
   options?: ConstructorParameters<typeof AriaToastQueue<T>>[0],
 ) {
   return new AriaToastQueue<T>({
+    ...options,
     wrapUpdate(fn) {
       if (typeof document !== 'undefined' && 'startViewTransition' in document) {
         document.startViewTransition(() => {
@@ -161,7 +231,6 @@ export function createToastQueue<T = VeliToastContent>(
         fn();
       }
     },
-    ...options,
   });
 }
 
@@ -204,6 +273,8 @@ export interface ToastProps<T> extends Omit<AriaToastProps<T>, 'className'> {
   appearance?: ToastAppearance;
 }
 
+const ToastIntentContext = React.createContext<ToastIntent>('neutral');
+
 export function Toast<T>({ className, intent, appearance, style, toast, ...props }: ToastProps<T>) {
   const placement = React.useContext(ToastPlacementContext);
   const content = toast.content as VeliToastContent | undefined;
@@ -212,25 +283,35 @@ export function Toast<T>({ className, intent, appearance, style, toast, ...props
 
   return (
     <ToastAppearanceContext.Provider value={contentAppearance}>
-      <AriaToast
-        {...props}
-        toast={toast}
-        style={{
-          viewTransitionName: toast.key,
-          ...getToastMotionStyle(placement),
-          ...style,
-        }}
-        className={() =>
-          twMerge(toastVariants(), toastIntentClasses[contentAppearance][contentIntent], className)
-        }
-      >
-        {(state) => (
-          <>
-            <ToastContent toast={state.toast} />
-            <ToastCloseButton />
-          </>
-        )}
-      </AriaToast>
+      <ToastIntentContext.Provider value={contentIntent}>
+        <AriaToast
+          {...props}
+          toast={toast}
+          style={{
+            viewTransitionName: toast.key,
+            ...getToastMotionStyle(placement),
+            ...style,
+          }}
+          className={() =>
+            twMerge(
+              toastVariants(),
+              toastIntentClasses[contentAppearance][contentIntent],
+              className,
+            )
+          }
+        >
+          {(state) => (
+            <>
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <ToastContent toast={state.toast} />
+                <ToastActions toast={state.toast} />
+              </div>
+              <ToastCloseButton />
+              <ToastTimeoutProgress toast={state.toast} />
+            </>
+          )}
+        </AriaToast>
+      </ToastIntentContext.Provider>
     </ToastAppearanceContext.Provider>
   );
 }
@@ -258,9 +339,113 @@ export function ToastContent<T>({ toast, className }: ToastContentProps<T>) {
   );
 }
 
+export interface ToastActionsProps<T> {
+  toast: QueuedToast<T>;
+  className?: string;
+}
+
+export function ToastActions<T>({ toast, className }: ToastActionsProps<T>) {
+  const content = toast.content as VeliToastContent;
+  const toastAppearance = React.useContext(ToastAppearanceContext);
+  const state = React.useContext(AriaToastStateContext);
+
+  if (!content.actions?.length) {
+    return null;
+  }
+
+  return (
+    <div className={twMerge(toastActionsVariants(), className)}>
+      {content.actions.map((action, index) => {
+        const actionAppearance = action.appearance ?? 'fill';
+        const emphasisQuietActionClassName =
+          toastAppearance === 'emphasis' && actionAppearance !== 'fill'
+            ? 'text-current hover:bg-white/15 active:bg-white/20'
+            : undefined;
+
+        return (
+          <Button
+            key={`${String(action.label)}-${index}`}
+            size="xs"
+            intent={action.intent ?? 'secondary'}
+            appearance={actionAppearance}
+            className={emphasisQuietActionClassName}
+            onPress={() => {
+              action.onPress?.();
+              if (action.dismissOnPress !== false) {
+                state?.close(toast.key);
+              }
+            }}
+          >
+            {action.label}
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
 export interface ToastCloseButtonProps {
   'aria-label'?: string;
   className?: string;
+}
+
+export interface ToastTimeoutProgressProps<T> {
+  toast: QueuedToast<T>;
+  className?: string;
+}
+
+export function ToastTimeoutProgress<T>({ toast, className }: ToastTimeoutProgressProps<T>) {
+  const content = toast.content as VeliToastContent;
+  const appearance = React.useContext(ToastAppearanceContext);
+  const intent = React.useContext(ToastIntentContext);
+  const timeout = toast.timeout;
+  const [progress, setProgress] = React.useState(1);
+
+  React.useEffect(() => {
+    if (!content.showProgress || !timeout || timeout <= 0 || !toast.timer) {
+      return;
+    }
+
+    let frame = 0;
+
+    const tick = () => {
+      const remaining = getToastRemainingMs(toast as QueuedToast<unknown>);
+      if (remaining == null) {
+        return;
+      }
+
+      setProgress(remaining / timeout);
+
+      if (remaining > 0) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+
+    frame = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [content.showProgress, toast, timeout]);
+
+  if (!content.showProgress || !timeout || timeout <= 0 || !toast.timer) {
+    return null;
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className={twMerge(toastProgressTrackVariants({ appearance }), className)}
+    >
+      <div
+        className={twMerge(
+          'h-full origin-left will-change-transform',
+          appearance === 'emphasis' ? 'bg-white/70' : toastProgressIntentFillClasses[intent],
+        )}
+        style={{ transform: `scaleX(${progress})` }}
+      />
+    </div>
+  );
 }
 
 export function ToastCloseButton({
@@ -296,4 +481,6 @@ export type { QueuedToast, ToastOptions };
 ToastRegion.displayName = 'ToastRegion';
 Toast.displayName = 'Toast';
 ToastContent.displayName = 'ToastContent';
+ToastActions.displayName = 'ToastActions';
+ToastTimeoutProgress.displayName = 'ToastTimeoutProgress';
 ToastCloseButton.displayName = 'ToastCloseButton';
