@@ -289,6 +289,7 @@ export interface TableRowProps<T = unknown> extends Omit<
 > {
   className?: string;
   children?: React.ReactNode;
+  onDragStartCapture?: React.DragEventHandler<HTMLTableRowElement>;
 }
 
 export function TableRow<T = unknown>({
@@ -301,6 +302,7 @@ export function TableRow<T = unknown>({
   const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
   const showSelection = selectionBehavior === 'toggle' && selectionMode === 'multiple';
   const dragFromHandleRef = React.useRef(false);
+  const rowRef = React.useRef<HTMLTableRowElement>(null);
 
   const handlePointerDownCapture = React.useCallback(
     (event: React.PointerEvent<HTMLTableRowElement>) => {
@@ -313,22 +315,27 @@ export function TableRow<T = unknown>({
     [allowsDragging, onPointerDownCapture],
   );
 
-  const handleDragStartCapture = React.useCallback(
-    (event: React.DragEvent<HTMLTableRowElement>) => {
+  React.useEffect(() => {
+    const row = rowRef.current;
+    if (!row) return;
+
+    const handleDragStartCapture = (event: DragEvent) => {
       if (allowsDragging && !dragFromHandleRef.current) {
         event.preventDefault();
         event.stopPropagation();
       }
-      onDragStartCapture?.(event);
-    },
-    [allowsDragging, onDragStartCapture],
-  );
+      onDragStartCapture?.(event as unknown as React.DragEvent<HTMLTableRowElement>);
+    };
+
+    row.addEventListener('dragstart', handleDragStartCapture, true);
+    return () => row.removeEventListener('dragstart', handleDragStartCapture, true);
+  }, [allowsDragging, onDragStartCapture]);
 
   return (
     <AriaRow
+      ref={rowRef}
       {...props}
       onPointerDownCapture={handlePointerDownCapture}
-      onDragStartCapture={handleDragStartCapture}
       className={() => twMerge(tableRowVariants(), 'group/row', className)}
     >
       {allowsDragging ? (
