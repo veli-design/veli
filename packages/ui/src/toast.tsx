@@ -18,6 +18,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
+import { useVeliLanguage } from './provider';
 
 export type ToastAppearance = 'outline' | 'subtle' | 'emphasis';
 export type ToastIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
@@ -248,10 +249,14 @@ export function ToastRegion<T>({
   children,
   ...props
 }: ToastRegionProps<T>) {
+  const languageConfig = useVeliLanguage();
+
   return (
     <ToastPlacementContext.Provider value={placement ?? 'bottom-end'}>
       <AriaToastRegion
         {...props}
+        lang={languageConfig.lang}
+        dir={languageConfig.direction}
         className={() => twMerge(toastRegionVariants({ placement }), className)}
       >
         {children ??
@@ -276,6 +281,7 @@ export interface ToastProps<T> extends Omit<AriaToastProps<T>, 'className'> {
 const ToastIntentContext = React.createContext<ToastIntent>('neutral');
 
 export function Toast<T>({ className, intent, appearance, style, toast, ...props }: ToastProps<T>) {
+  const languageConfig = useVeliLanguage();
   const placement = React.useContext(ToastPlacementContext);
   const content = toast.content as VeliToastContent | undefined;
   const contentIntent = intent ?? content?.intent ?? 'neutral';
@@ -287,6 +293,8 @@ export function Toast<T>({ className, intent, appearance, style, toast, ...props
         <AriaToast
           {...props}
           toast={toast}
+          lang={languageConfig.lang}
+          dir={languageConfig.direction}
           style={{
             viewTransitionName: toast.key,
             ...getToastMotionStyle(placement),
@@ -448,16 +456,17 @@ export function ToastTimeoutProgress<T>({ toast, className }: ToastTimeoutProgre
   );
 }
 
-export function ToastCloseButton({
-  'aria-label': ariaLabel = 'Close notification',
-  className,
-}: ToastCloseButtonProps) {
+export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCloseButtonProps) {
   const appearance = React.useContext(ToastAppearanceContext);
+  const languageConfig = useVeliLanguage();
+  const resolvedAriaLabel =
+    ariaLabel ??
+    (languageConfig.language === 'dv' ? 'ނޮޓިފިކޭޝަން ބަންދުކުރޭ' : 'Close notification');
 
   return (
     <AriaButton
       slot="close"
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       className={twMerge(toastCloseButtonVariants({ appearance }), className)}
     >
       <svg
