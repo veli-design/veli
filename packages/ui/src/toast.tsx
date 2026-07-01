@@ -199,6 +199,8 @@ export type VeliToastActionIntent = 'primary' | 'secondary' | 'danger';
 export type VeliToastActionAppearance = 'fill' | 'transparent' | 'ghost';
 
 export interface VeliToastAction {
+  /** Stable id used when rendering the action list. */
+  id?: React.Key;
   label: React.ReactNode;
   onPress?: () => void;
   /** Dismiss the toast after the action runs. @default true */
@@ -206,6 +208,24 @@ export interface VeliToastAction {
   intent?: VeliToastActionIntent;
   /** @default 'fill' */
   appearance?: VeliToastActionAppearance;
+}
+
+function getToastActionKey(action: VeliToastAction): React.Key {
+  if (action.id != null) {
+    return action.id;
+  }
+
+  if (typeof action.label === 'string' || typeof action.label === 'number') {
+    return action.label;
+  }
+
+  if (React.isValidElement(action.label) && action.label.key != null) {
+    return action.label.key;
+  }
+
+  return `${action.intent ?? 'secondary'}-${action.appearance ?? 'fill'}-${
+    action.dismissOnPress ?? true
+  }`;
 }
 
 export interface VeliToastContent {
@@ -363,7 +383,7 @@ export function ToastActions<T>({ toast, className }: ToastActionsProps<T>) {
 
   return (
     <div className={twMerge(toastActionsVariants(), className)}>
-      {content.actions.map((action, index) => {
+      {content.actions.map((action) => {
         const actionAppearance = action.appearance ?? 'fill';
         const emphasisQuietActionClassName =
           toastAppearance === 'emphasis' && actionAppearance !== 'fill'
@@ -372,7 +392,7 @@ export function ToastActions<T>({ toast, className }: ToastActionsProps<T>) {
 
         return (
           <Button
-            key={`${String(action.label)}-${index}`}
+            key={getToastActionKey(action)}
             size="xs"
             intent={action.intent ?? 'secondary'}
             appearance={actionAppearance}

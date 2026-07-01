@@ -167,6 +167,18 @@ type StaticToastPreview = {
   progress?: number;
 };
 
+function getStaticToastActionKey(action: NonNullable<VeliToastContent['actions']>[number]) {
+  if (action.id != null) {
+    return action.id;
+  }
+
+  if (typeof action.label === 'string' || typeof action.label === 'number') {
+    return action.label;
+  }
+
+  return action.intent ?? action.appearance ?? 'toast-action';
+}
+
 const getStatusButtonIntent = (intent: ToastIntent) => {
   if (intent === 'danger') {
     return 'danger';
@@ -272,7 +284,7 @@ function StaticToastCard({ label, content, progress }: StaticToastPreview) {
           </div>
           {content.actions?.length ? (
             <div className="flex flex-wrap items-center gap-2">
-              {content.actions.map((action, index) => {
+              {content.actions.map((action) => {
                 const actionAppearance = action.appearance ?? 'fill';
                 const emphasisQuietActionClassName =
                   appearance === 'emphasis' && actionAppearance !== 'fill'
@@ -281,7 +293,7 @@ function StaticToastCard({ label, content, progress }: StaticToastPreview) {
 
                 return (
                   <Button
-                    key={`${String(action.label)}-${index}`}
+                    key={getStaticToastActionKey(action)}
                     size="xs"
                     intent={action.intent ?? 'secondary'}
                     appearance={actionAppearance}
@@ -507,7 +519,7 @@ const getActionToastExamples = (text: LocalizedToastText) =>
         description: text.budgetRemoved,
         intent: 'neutral',
         appearance: 'outline',
-        actions: [{ label: text.undo, intent: 'primary', appearance: 'fill' }],
+        actions: [{ id: 'undo', label: text.undo, intent: 'primary', appearance: 'fill' }],
       },
       timeout: 0,
     },
@@ -520,8 +532,8 @@ const getActionToastExamples = (text: LocalizedToastText) =>
         intent: 'danger',
         appearance: 'subtle',
         actions: [
-          { label: text.retry, intent: 'primary', appearance: 'fill' },
-          { label: text.dismiss, intent: 'secondary', appearance: 'transparent' },
+          { id: 'retry', label: text.retry, intent: 'primary', appearance: 'fill' },
+          { id: 'dismiss', label: text.dismiss, intent: 'secondary', appearance: 'transparent' },
         ],
       },
       timeout: 0,
@@ -535,8 +547,8 @@ const getActionToastExamples = (text: LocalizedToastText) =>
         intent: 'info',
         appearance: 'emphasis',
         actions: [
-          { label: text.installNow, intent: 'primary', appearance: 'fill' },
-          { label: text.later, intent: 'secondary', appearance: 'ghost' },
+          { id: 'install-now', label: text.installNow, intent: 'primary', appearance: 'fill' },
+          { id: 'later', label: text.later, intent: 'secondary', appearance: 'ghost' },
         ],
       },
       timeout: 0,
