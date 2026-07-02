@@ -40,14 +40,14 @@ import {
 } from '@tradenetcorp/veli-ui/table';
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import {
-  FileUpload,
-  FileUploadDropzone,
-  FileUploadItem,
-  FileUploadItemDelete,
-  FileUploadItemMetadata,
-  FileUploadItemPreview,
-  FileUploadList,
-  useFileUpload,
+  Dropzone,
+  DropzoneArea,
+  DropzoneItem,
+  DropzoneItemDelete,
+  DropzoneItemMetadata,
+  DropzoneItemPreview,
+  DropzoneList,
+  useDropzone,
 } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
@@ -1614,7 +1614,7 @@ export function DropzoneUsageDemo() {
   const [files, setFiles] = useState<File[]>([]);
 
   return (
-    <FileUpload
+    <Dropzone
       label="Upload attachments"
       accept="application/pdf,image/png,image/jpeg"
       maxFiles={2}
@@ -1622,27 +1622,27 @@ export function DropzoneUsageDemo() {
       value={files}
       onValueChange={setFiles}
     >
-      <FileUploadDropzone />
-      <FileUploadList>
+      <DropzoneArea />
+      <DropzoneList>
         <DropzoneFileListItems />
-      </FileUploadList>
-    </FileUpload>
+      </DropzoneList>
+    </Dropzone>
   );
 }
 
 function DropzoneFileListItems() {
-  const files = useFileUpload((state) =>
+  const files = useDropzone((state) =>
     Array.from(state.files.values()).map((fileState) => fileState.file),
   );
 
   return (
     <>
       {files.map((file) => (
-        <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
-          <FileUploadItemPreview />
-          <FileUploadItemMetadata />
-          <FileUploadItemDelete />
-        </FileUploadItem>
+        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
+          <DropzoneItemPreview />
+          <DropzoneItemMetadata />
+          <DropzoneItemDelete />
+        </DropzoneItem>
       ))}
     </>
   );
