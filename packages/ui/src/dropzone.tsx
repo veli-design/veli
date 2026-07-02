@@ -309,7 +309,7 @@ const listVariants = cva('flex gap-2', {
 });
 
 const itemVariants = cva(
-  'relative flex items-center gap-3 overflow-hidden rounded-xl border border-border-default-subtle bg-text-input-bg-default p-3',
+  'relative flex flex-wrap items-center gap-x-3 gap-y-2 overflow-hidden rounded-xl border border-border-default-subtle bg-text-input-bg-default p-3',
 );
 
 const previewVariants = cva(
@@ -1311,7 +1311,10 @@ export function FileUploadItemProgress({
 
   if (!itemContext.fileState) return null;
 
-  const shouldRender = forceMount || itemContext.fileState.progress !== 100;
+  const shouldRender =
+    forceMount ||
+    itemContext.fileState.status === 'uploading' ||
+    (itemContext.fileState.status === 'error' && itemContext.fileState.progress < 100);
 
   if (!shouldRender) return null;
 
@@ -1381,7 +1384,7 @@ export function FileUploadItemProgress({
           value={itemContext.fileState.progress}
           minValue={0}
           maxValue={100}
-          className={twMerge('w-full', className)}
+          className={twMerge('h-1 min-w-0 basis-full', className)}
           {...progressProps}
         >
           {({ percentage }) => (

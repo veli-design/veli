@@ -35,6 +35,7 @@ import {
   FileUploadItemMetadata,
   FileUploadItemPreview,
   FileUploadList,
+  useFileUpload,
 } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
@@ -1289,14 +1290,26 @@ export function DropzoneUsageDemo() {
     >
       <FileUploadDropzone />
       <FileUploadList>
-        {files.map((file) => (
-          <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
-            <FileUploadItemPreview />
-            <FileUploadItemMetadata />
-            <FileUploadItemDelete />
-          </FileUploadItem>
-        ))}
+        <DropzoneFileListItems />
       </FileUploadList>
     </FileUpload>
+  );
+}
+
+function DropzoneFileListItems() {
+  const files = useFileUpload((state) =>
+    Array.from(state.files.values()).map((fileState) => fileState.file),
+  );
+
+  return (
+    <>
+      {files.map((file) => (
+        <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
+          <FileUploadItemPreview />
+          <FileUploadItemMetadata />
+          <FileUploadItemDelete />
+        </FileUploadItem>
+      ))}
+    </>
   );
 }
