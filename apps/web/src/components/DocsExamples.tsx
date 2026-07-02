@@ -27,7 +27,15 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
-import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+} from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
   Bell,
@@ -1268,13 +1276,27 @@ export function TooltipVariantsDemo() {
 }
 
 export function DropzoneUsageDemo() {
+  const [files, setFiles] = useState<File[]>([]);
+
   return (
-    <Dropzone
-      label="Attachments"
-      aria-label="Upload attachments"
-      description="Supported formats: PDF, PNG, JPG."
-      allowsBrowse
-      acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
-    />
+    <FileUpload
+      label="Upload attachments"
+      accept="application/pdf,image/png,image/jpeg"
+      maxFiles={2}
+      multiple
+      value={files}
+      onValueChange={setFiles}
+    >
+      <FileUploadDropzone />
+      <FileUploadList>
+        {files.map((file) => (
+          <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
+            <FileUploadItemPreview />
+            <FileUploadItemMetadata />
+            <FileUploadItemDelete />
+          </FileUploadItem>
+        ))}
+      </FileUploadList>
+    </FileUpload>
   );
 }
