@@ -1,26 +1,26 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  FileUpload,
-  FileUploadClear,
-  FileUploadDropzone,
-  FileUploadItem,
-  FileUploadItemDelete,
-  FileUploadItemMetadata,
-  FileUploadItemPreview,
-  FileUploadItemProgress,
-  FileUploadList,
   Dropzone,
-  useFileUpload,
-  type FileUploadProps,
+  DropzoneClear,
+  DropzoneArea,
+  DropzoneItem,
+  DropzoneItemDelete,
+  DropzoneItemMetadata,
+  DropzoneItemPreview,
+  DropzoneItemProgress,
+  DropzoneList,
+  DropzoneField,
+  useDropzone,
+  type DropzoneProps,
 } from '@tradenetcorp/veli-ui/dropzone';
 
 const meta = {
   title: 'Components/Dropzone',
-  component: FileUpload,
+  component: Dropzone,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-} satisfies Meta<typeof FileUpload>;
+} satisfies Meta<typeof Dropzone>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -34,33 +34,33 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
 }
 
-function FileUploadListItems({ children }: { children?: React.ReactNode }) {
-  const files = useFileUpload((state) =>
+function DropzoneListItems({ children }: { children?: React.ReactNode }) {
+  const files = useDropzone((state) =>
     Array.from(state.files.values()).map((fileState) => fileState.file),
   );
 
   return (
     <>
       {files.map((file) => (
-        <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
+        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
           {children}
-        </FileUploadItem>
+        </DropzoneItem>
       ))}
     </>
   );
 }
 
-function FileUploadStory({
+function DropzoneStory({
   children,
   onFileReject: onFileRejectProp,
   ...props
-}: FileUploadProps & { children?: ReactNode }) {
+}: DropzoneProps & { children?: ReactNode }) {
   const [files, setFiles] = useState<File[]>([]);
   const [rejections, setRejections] = useState<Rejection[]>([]);
 
   return (
     <div className="w-[480px] space-y-3">
-      <FileUpload
+      <Dropzone
         multiple
         value={files}
         onValueChange={setFiles}
@@ -73,17 +73,17 @@ function FileUploadStory({
         }}
         {...props}
       >
-        {children ?? <FileUploadDropzone />}
-        <FileUploadList>
-          <FileUploadListItems>
-            <FileUploadItemPreview />
-            <FileUploadItemMetadata />
-            <FileUploadItemProgress />
-            <FileUploadItemDelete />
-          </FileUploadListItems>
-        </FileUploadList>
-        <FileUploadClear />
-      </FileUpload>
+        {children ?? <DropzoneArea />}
+        <DropzoneList>
+          <DropzoneListItems>
+            <DropzoneItemPreview />
+            <DropzoneItemMetadata />
+            <DropzoneItemProgress />
+            <DropzoneItemDelete />
+          </DropzoneListItems>
+        </DropzoneList>
+        <DropzoneClear />
+      </Dropzone>
 
       {rejections.length > 0 ? (
         <div
@@ -173,7 +173,7 @@ function createDemoUploadHandler() {
 }
 
 function injectDemoFiles(container: HTMLElement) {
-  const dropzone = container.querySelector('[data-slot="file-upload-dropzone"]');
+  const dropzone = container.querySelector('[data-slot="dropzone-area"]');
   if (!dropzone) {
     return false;
   }
@@ -223,25 +223,25 @@ function UploadProgressFileList({
   progressSize?: number;
   showFillOverlay?: boolean;
 }) {
-  const files = useFileUpload((state) =>
+  const files = useDropzone((state) =>
     Array.from(state.files.values()).map((fileState) => fileState.file),
   );
 
   return (
     <>
       {files.map((file) => (
-        <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
-          <FileUploadItemPreview />
-          <FileUploadItemMetadata />
+        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
+          <DropzoneItemPreview />
+          <DropzoneItemMetadata />
           {variant === 'circular' ? (
-            <FileUploadItemProgress variant="circular" size={progressSize} forceMount />
+            <DropzoneItemProgress variant="circular" size={progressSize} forceMount />
           ) : null}
-          <FileUploadItemDelete />
+          <DropzoneItemDelete />
           {variant === 'fill' || showFillOverlay ? (
-            <FileUploadItemProgress variant="fill" forceMount />
+            <DropzoneItemProgress variant="fill" forceMount />
           ) : null}
-          {variant === 'linear' ? <FileUploadItemProgress variant="linear" forceMount /> : null}
-        </FileUploadItem>
+          {variant === 'linear' ? <DropzoneItemProgress variant="linear" forceMount /> : null}
+        </DropzoneItem>
       ))}
     </>
   );
@@ -285,43 +285,43 @@ function UploadProgressShowcase({
         </button>
       </div>
 
-      <FileUpload key={seed} label={`${variant} upload progress`} multiple onUpload={onUpload}>
-        <FileUploadDropzone showTrigger={false}>
+      <Dropzone key={seed} label={`${variant} upload progress`} multiple onUpload={onUpload}>
+        <DropzoneArea showTrigger={false}>
           <span className="type-body-sm-regular text-text-default-subtle">
             Demo files load automatically for styling.
           </span>
-        </FileUploadDropzone>
-        <FileUploadList>
+        </DropzoneArea>
+        <DropzoneList>
           <UploadProgressFileList
             variant={variant}
             progressSize={progressSize}
             showFillOverlay={showFillOverlay}
           />
-        </FileUploadList>
-      </FileUpload>
+        </DropzoneList>
+      </Dropzone>
     </div>
   );
 }
 
 export const Default: Story = {
   render: () => (
-    <FileUploadStory label="Upload attachments">
-      <FileUploadDropzone />
-    </FileUploadStory>
+    <DropzoneStory label="Upload attachments">
+      <DropzoneArea />
+    </DropzoneStory>
   ),
 };
 
 export const AcceptedFileTypes: Story = {
   name: 'Accepted file types',
   render: () => (
-    <FileUploadStory label="Upload documents" accept="application/pdf,image/png,image/jpeg">
-      <FileUploadDropzone>
+    <DropzoneStory label="Upload documents" accept="application/pdf,image/png,image/jpeg">
+      <DropzoneArea>
         <span className="type-body-md-medium text-text-default-default">
           Drag & drop files here
         </span>
         <span className="type-body-sm-regular text-text-default-subtle">PDF, PNG, or JPG only</span>
-      </FileUploadDropzone>
-    </FileUploadStory>
+      </DropzoneArea>
+    </DropzoneStory>
   ),
 };
 
@@ -331,16 +331,16 @@ export const MaxFileSize: Story = {
     const maxSize = 1 * 1024 * 1024;
 
     return (
-      <FileUploadStory label="Upload with size limit" maxSize={maxSize}>
-        <FileUploadDropzone>
+      <DropzoneStory label="Upload with size limit" maxSize={maxSize}>
+        <DropzoneArea>
           <span className="type-body-md-medium text-text-default-default">
             Drag & drop files here
           </span>
           <span className="type-body-sm-regular text-text-default-subtle">
             Each file must be {formatBytes(maxSize)} or smaller
           </span>
-        </FileUploadDropzone>
-      </FileUploadStory>
+        </DropzoneArea>
+      </DropzoneStory>
     );
   },
 };
@@ -348,14 +348,14 @@ export const MaxFileSize: Story = {
 export const MaxFiles: Story = {
   name: 'Max files',
   render: () => (
-    <FileUploadStory label="Limited attachments" maxFiles={2}>
-      <FileUploadDropzone>
+    <DropzoneStory label="Limited attachments" maxFiles={2}>
+      <DropzoneArea>
         <span className="type-body-md-medium text-text-default-default">
           Drag & drop files here
         </span>
         <span className="type-body-sm-regular text-text-default-subtle">Upload up to 2 files</span>
-      </FileUploadDropzone>
-    </FileUploadStory>
+      </DropzoneArea>
+    </DropzoneStory>
   ),
 };
 
@@ -365,21 +365,21 @@ export const CombinedLimits: Story = {
     const maxSize = 5 * 1024 * 1024;
 
     return (
-      <FileUploadStory
+      <DropzoneStory
         label="Attachments"
         accept="application/pdf,image/png,image/jpeg"
         maxFiles={2}
         maxSize={maxSize}
       >
-        <FileUploadDropzone>
+        <DropzoneArea>
           <span className="type-body-md-medium text-text-default-default">
             Drag & drop files here
           </span>
           <span className="type-body-sm-regular text-text-default-subtle">
             Max 2 files · PDF, PNG, or JPG · up to {formatBytes(maxSize)} each
           </span>
-        </FileUploadDropzone>
-      </FileUploadStory>
+        </DropzoneArea>
+      </DropzoneStory>
     );
   },
 };
@@ -387,7 +387,7 @@ export const CombinedLimits: Story = {
 export const CustomValidation: Story = {
   name: 'Custom validation',
   render: () => (
-    <FileUploadStory
+    <DropzoneStory
       label="Invoice upload"
       accept="application/pdf"
       onFileValidate={(file) => {
@@ -397,29 +397,29 @@ export const CustomValidation: Story = {
         return null;
       }}
     >
-      <FileUploadDropzone>
+      <DropzoneArea>
         <span className="type-body-md-medium text-text-default-default">Upload an invoice PDF</span>
         <span className="type-body-sm-regular text-text-default-subtle">
           PDF only · filename must contain &quot;invoice&quot;
         </span>
-      </FileUploadDropzone>
-    </FileUploadStory>
+      </DropzoneArea>
+    </DropzoneStory>
   ),
 };
 
 export const ImageWildcard: Story = {
   name: 'Image wildcard (image/*)',
   render: () => (
-    <FileUploadStory label="Upload images" accept="image/*" maxSize={4 * 1024 * 1024}>
-      <FileUploadDropzone>
+    <DropzoneStory label="Upload images" accept="image/*" maxSize={4 * 1024 * 1024}>
+      <DropzoneArea>
         <span className="type-body-md-medium text-text-default-default">
           Drag & drop images here
         </span>
         <span className="type-body-sm-regular text-text-default-subtle">
           Any image type · up to 4 MB each
         </span>
-      </FileUploadDropzone>
-    </FileUploadStory>
+      </DropzoneArea>
+    </DropzoneStory>
   ),
 };
 
@@ -460,7 +460,7 @@ export const DirectUpload: Story = {
 
     return (
       <div className="w-[480px] space-y-3">
-        <FileUpload
+        <Dropzone
           label="Direct upload"
           maxFiles={10}
           maxSize={5 * 1024 * 1024}
@@ -477,16 +477,16 @@ export const DirectUpload: Story = {
             }
           }}
         >
-          <FileUploadDropzone />
-          <FileUploadList>
-            <FileUploadListItems>
-              <FileUploadItemPreview />
-              <FileUploadItemMetadata />
-              <FileUploadItemProgress variant="circular" size={36} />
-              <FileUploadItemDelete />
-            </FileUploadListItems>
-          </FileUploadList>
-        </FileUpload>
+          <DropzoneArea />
+          <DropzoneList>
+            <DropzoneListItems>
+              <DropzoneItemPreview />
+              <DropzoneItemMetadata />
+              <DropzoneItemProgress variant="circular" size={36} />
+              <DropzoneItemDelete />
+            </DropzoneListItems>
+          </DropzoneList>
+        </Dropzone>
       </div>
     );
   },
@@ -496,7 +496,7 @@ export const ConvenienceWrapper: Story = {
   name: 'Dropzone wrapper',
   render: () => (
     <div className="w-[480px]">
-      <Dropzone
+      <DropzoneField
         label="Attachments"
         aria-label="Upload attachments"
         description="Supported formats: PDF, PNG, JPG up to 10 MB."
@@ -511,9 +511,9 @@ export const ConvenienceWrapper: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="flex w-[520px] flex-col gap-4">
-      <Dropzone size="sm" aria-label="Small dropzone" allowsBrowse />
-      <Dropzone size="md" aria-label="Medium dropzone" allowsBrowse />
-      <Dropzone size="lg" aria-label="Large dropzone" allowsBrowse />
+      <DropzoneField size="sm" aria-label="Small dropzone" allowsBrowse />
+      <DropzoneField size="md" aria-label="Medium dropzone" allowsBrowse />
+      <DropzoneField size="lg" aria-label="Large dropzone" allowsBrowse />
     </div>
   ),
 };
@@ -521,7 +521,7 @@ export const Sizes: Story = {
 export const Disabled: Story = {
   render: () => (
     <div className="w-[480px]">
-      <Dropzone label="Uploads paused" aria-label="Uploads paused" isDisabled />
+      <DropzoneField label="Uploads paused" aria-label="Uploads paused" isDisabled />
     </div>
   ),
 };

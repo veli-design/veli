@@ -29,16 +29,16 @@ import { twMerge } from 'tailwind-merge';
 import { Button, type ButtonProps } from './button';
 import { StaticFieldMessage } from './field-shared';
 
-const ROOT_NAME = 'FileUpload';
-const DROPZONE_NAME = 'FileUploadDropzone';
-const TRIGGER_NAME = 'FileUploadTrigger';
-const LIST_NAME = 'FileUploadList';
-const ITEM_NAME = 'FileUploadItem';
-const ITEM_PREVIEW_NAME = 'FileUploadItemPreview';
-const ITEM_METADATA_NAME = 'FileUploadItemMetadata';
-const ITEM_PROGRESS_NAME = 'FileUploadItemProgress';
-const ITEM_DELETE_NAME = 'FileUploadItemDelete';
-const CLEAR_NAME = 'FileUploadClear';
+const ROOT_NAME = 'Dropzone';
+const DROPZONE_NAME = 'DropzoneArea';
+const TRIGGER_NAME = 'DropzoneTrigger';
+const LIST_NAME = 'DropzoneList';
+const ITEM_NAME = 'DropzoneItem';
+const ITEM_PREVIEW_NAME = 'DropzoneItemPreview';
+const ITEM_METADATA_NAME = 'DropzoneItemMetadata';
+const ITEM_PROGRESS_NAME = 'DropzoneItemProgress';
+const ITEM_DELETE_NAME = 'DropzoneItemDelete';
+const CLEAR_NAME = 'DropzoneClear';
 
 function useLazyRef<T>(createValue: () => T): React.MutableRefObject<T> {
   const ref = React.useRef<T | null>(null);
@@ -187,7 +187,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 const FILE_PICKER_SUPPRESS_MS = 500;
 
-interface FileUploadContextValue {
+interface DropzoneContextValue {
   dropzoneId: string;
   listId: string;
   disabled: boolean;
@@ -244,10 +244,10 @@ function getDropOperationForAccept(
   return 'copy' as const;
 }
 
-const FileUploadContext = React.createContext<FileUploadContextValue | null>(null);
+const DropzoneContext = React.createContext<DropzoneContextValue | null>(null);
 
-function useFileUploadContext(consumerName: string) {
-  const context = React.useContext(FileUploadContext);
+function useDropzoneContext(consumerName: string) {
+  const context = React.useContext(DropzoneContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
@@ -256,10 +256,8 @@ function useFileUploadContext(consumerName: string) {
 
 const rootVariants = cva('flex w-full flex-col gap-2 font-sans antialiased');
 
-function isFileUploadTriggerElement(target: EventTarget | null) {
-  return (
-    target instanceof HTMLElement && Boolean(target.closest('[data-slot="file-upload-trigger"]'))
-  );
+function isDropzoneTriggerElement(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest('[data-slot="dropzone-trigger"]'));
 }
 
 const dropzoneVariants = cva(
@@ -362,7 +360,7 @@ const fillProgressVariants = cva(
 
 const srOnlyVariants = cva('sr-only');
 
-export interface FileUploadProps extends Omit<
+export interface DropzoneProps extends Omit<
   React.ComponentProps<'div'>,
   'defaultValue' | 'onChange'
 > {
@@ -393,7 +391,7 @@ export interface FileUploadProps extends Omit<
   required?: boolean;
 }
 
-export function FileUpload(props: FileUploadProps) {
+export function Dropzone(props: DropzoneProps) {
   const {
     value,
     defaultValue,
@@ -808,7 +806,7 @@ export function FileUpload(props: FileUploadProps) {
     input.click();
   }, [isFilePickerSuppressed]);
 
-  const contextValue = React.useMemo<FileUploadContextValue>(
+  const contextValue = React.useMemo<DropzoneContextValue>(
     () => ({
       dropzoneId,
       listId,
@@ -846,33 +844,33 @@ export function FileUpload(props: FileUploadProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <FileUploadContext.Provider value={contextValue}>
+      <DropzoneContext.Provider value={contextValue}>
         <div
-          data-slot="file-upload"
+          data-slot="dropzone"
           dir={dirProp}
           className={twMerge(rootVariants(), className)}
           {...rootProps}
         >
           {children}
         </div>
-      </FileUploadContext.Provider>
+      </DropzoneContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-export interface FileUploadDropzoneProps extends Omit<AriaDropZoneProps, 'className' | 'children'> {
+export interface DropzoneAreaProps extends Omit<AriaDropZoneProps, 'className' | 'children'> {
   className?: string;
   children?: React.ReactNode | ((props: DropZoneRenderProps) => React.ReactNode);
   /** Show the browse button inside the dropzone. @default true */
   showTrigger?: boolean;
 }
 
-function FileUploadDropzoneContent({
+function DropzoneAreaContent({
   children,
   state,
   showTrigger,
 }: {
-  children?: FileUploadDropzoneProps['children'];
+  children?: DropzoneAreaProps['children'];
   state: DropZoneRenderProps;
   showTrigger: boolean;
 }) {
@@ -882,7 +880,7 @@ function FileUploadDropzoneContent({
     return (
       <>
         {content}
-        {showTrigger ? <FileUploadTrigger /> : null}
+        {showTrigger ? <DropzoneTrigger /> : null}
       </>
     );
   }
@@ -911,20 +909,20 @@ function FileUploadDropzoneContent({
       >
         Or click to browse
       </span>
-      {showTrigger ? <FileUploadTrigger /> : null}
+      {showTrigger ? <DropzoneTrigger /> : null}
     </>
   );
 }
 
-export function FileUploadDropzone({
+export function DropzoneArea({
   className,
   children,
   showTrigger = true,
   onDrop: onDropProp,
   getDropOperation: getDropOperationProp,
   ...dropzoneProps
-}: FileUploadDropzoneProps) {
-  const context = useFileUploadContext(DROPZONE_NAME);
+}: DropzoneAreaProps) {
+  const context = useDropzoneContext(DROPZONE_NAME);
   const {
     fileInputRef,
     disabled,
@@ -978,7 +976,7 @@ export function FileUploadDropzone({
 
   const onSurfaceClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (disabled || isFileUploadTriggerElement(event.target)) {
+      if (disabled || isDropzoneTriggerElement(event.target)) {
         return;
       }
 
@@ -989,7 +987,7 @@ export function FileUploadDropzone({
 
   const onSurfaceKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (disabled || isFileUploadTriggerElement(event.target)) {
+      if (disabled || isDropzoneTriggerElement(event.target)) {
         return;
       }
 
@@ -1021,7 +1019,7 @@ export function FileUploadDropzone({
         onKeyDown={onSurfaceKeyDown}
       >
         <AriaDropZone
-          data-slot="file-upload-dropzone"
+          data-slot="dropzone-area"
           aria-label={label}
           isDisabled={disabled}
           data-invalid={invalid ? '' : undefined}
@@ -1041,9 +1039,9 @@ export function FileUploadDropzone({
           {...dropzoneProps}
         >
           {(state) => (
-            <FileUploadDropzoneContent state={state} showTrigger={showTrigger}>
+            <DropzoneAreaContent state={state} showTrigger={showTrigger}>
               {children}
-            </FileUploadDropzoneContent>
+            </DropzoneAreaContent>
           )}
         </AriaDropZone>
       </div>
@@ -1051,15 +1049,15 @@ export function FileUploadDropzone({
   );
 }
 
-export interface FileUploadTriggerProps extends Omit<ButtonProps, 'iconOnly'> {}
+export interface DropzoneTriggerProps extends Omit<ButtonProps, 'iconOnly'> {}
 
-export function FileUploadTrigger({
+export function DropzoneTrigger({
   className,
   children,
   onPress: onPressProp,
   ...triggerProps
-}: FileUploadTriggerProps) {
-  const context = useFileUploadContext(TRIGGER_NAME);
+}: DropzoneTriggerProps) {
+  const context = useDropzoneContext(TRIGGER_NAME);
 
   const onPress = React.useCallback(
     (event: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
@@ -1071,7 +1069,7 @@ export function FileUploadTrigger({
 
   return (
     <Button
-      data-slot="file-upload-trigger"
+      data-slot="dropzone-trigger"
       type="button"
       intent="secondary"
       appearance="transparent"
@@ -1087,19 +1085,19 @@ export function FileUploadTrigger({
   );
 }
 
-export interface FileUploadListProps extends React.ComponentProps<'div'> {
+export interface DropzoneListProps extends React.ComponentProps<'div'> {
   orientation?: 'horizontal' | 'vertical';
   forceMount?: boolean;
 }
 
-export function FileUploadList({
+export function DropzoneList({
   className,
   orientation = 'vertical',
   forceMount,
   children,
   ...listProps
-}: FileUploadListProps) {
-  const context = useFileUploadContext(LIST_NAME);
+}: DropzoneListProps) {
+  const context = useDropzoneContext(LIST_NAME);
   const fileCount = useStore((state) => state.files.size);
   const shouldRender = forceMount || fileCount > 0;
 
@@ -1107,7 +1105,7 @@ export function FileUploadList({
 
   return (
     <div
-      data-slot="file-upload-list"
+      data-slot="dropzone-list"
       id={context.listId}
       role="list"
       data-orientation={orientation}
@@ -1120,7 +1118,7 @@ export function FileUploadList({
   );
 }
 
-interface FileUploadItemContextValue {
+interface DropzoneItemContextValue {
   id: string;
   fileState: FileState | undefined;
   nameId: string;
@@ -1129,21 +1127,21 @@ interface FileUploadItemContextValue {
   messageId: string;
 }
 
-const FileUploadItemContext = React.createContext<FileUploadItemContextValue | null>(null);
+const DropzoneItemContext = React.createContext<DropzoneItemContextValue | null>(null);
 
-function useFileUploadItemContext(consumerName: string) {
-  const context = React.useContext(FileUploadItemContext);
+function useDropzoneItemContext(consumerName: string) {
+  const context = React.useContext(DropzoneItemContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
   }
   return context;
 }
 
-export interface FileUploadItemProps extends React.ComponentProps<'div'> {
+export interface DropzoneItemProps extends React.ComponentProps<'div'> {
   value: File;
 }
 
-export function FileUploadItem({ value, className, children, ...itemProps }: FileUploadItemProps) {
+export function DropzoneItem({ value, className, children, ...itemProps }: DropzoneItemProps) {
   const id = React.useId();
   const statusId = `${id}-status`;
   const nameId = `${id}-name`;
@@ -1157,7 +1155,7 @@ export function FileUploadItem({ value, className, children, ...itemProps }: Fil
     return fileKeys.indexOf(value) + 1;
   });
 
-  const itemContext = React.useMemo<FileUploadItemContextValue>(
+  const itemContext = React.useMemo<DropzoneItemContextValue>(
     () => ({
       id,
       fileState,
@@ -1180,9 +1178,9 @@ export function FileUploadItem({ value, className, children, ...itemProps }: Fil
         : 'Ready to upload';
 
   return (
-    <FileUploadItemContext.Provider value={itemContext}>
+    <DropzoneItemContext.Provider value={itemContext}>
       <div
-        data-slot="file-upload-item"
+        data-slot="dropzone-item"
         role="listitem"
         aria-setsize={fileCount}
         aria-posinset={fileIndex}
@@ -1196,22 +1194,22 @@ export function FileUploadItem({ value, className, children, ...itemProps }: Fil
           {statusText}
         </span>
       </div>
-    </FileUploadItemContext.Provider>
+    </DropzoneItemContext.Provider>
   );
 }
 
-export interface FileUploadItemPreviewProps extends React.ComponentProps<'div'> {
+export interface DropzoneItemPreviewProps extends React.ComponentProps<'div'> {
   render?: (file: File, fallback: () => React.ReactNode) => React.ReactNode;
 }
 
-export function FileUploadItemPreview({
+export function DropzoneItemPreview({
   render,
   children,
   className,
   ...previewProps
-}: FileUploadItemPreviewProps) {
-  const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
-  const context = useFileUploadContext(ITEM_PREVIEW_NAME);
+}: DropzoneItemPreviewProps) {
+  const itemContext = useDropzoneItemContext(ITEM_PREVIEW_NAME);
+  const context = useDropzoneContext(ITEM_PREVIEW_NAME);
 
   const getDefaultRender = React.useCallback(
     (file: File) => {
@@ -1245,7 +1243,7 @@ export function FileUploadItemPreview({
 
   return (
     <div
-      data-slot="file-upload-item-preview"
+      data-slot="dropzone-item-preview"
       className={twMerge(previewVariants(), className)}
       {...previewProps}
     >
@@ -1255,23 +1253,23 @@ export function FileUploadItemPreview({
   );
 }
 
-export interface FileUploadItemMetadataProps extends React.ComponentProps<'div'> {
+export interface DropzoneItemMetadataProps extends React.ComponentProps<'div'> {
   size?: 'default' | 'sm';
 }
 
-export function FileUploadItemMetadata({
+export function DropzoneItemMetadata({
   size = 'default',
   children,
   className,
   ...metadataProps
-}: FileUploadItemMetadataProps) {
-  const itemContext = useFileUploadItemContext(ITEM_METADATA_NAME);
+}: DropzoneItemMetadataProps) {
+  const itemContext = useDropzoneItemContext(ITEM_METADATA_NAME);
 
   if (!itemContext.fileState) return null;
 
   return (
     <div
-      data-slot="file-upload-item-metadata"
+      data-slot="dropzone-item-metadata"
       className={twMerge(metadataVariants({ size }), className)}
       {...metadataProps}
     >
@@ -1294,20 +1292,20 @@ export function FileUploadItemMetadata({
   );
 }
 
-export interface FileUploadItemProgressProps extends React.ComponentProps<'div'> {
+export interface DropzoneItemProgressProps extends React.ComponentProps<'div'> {
   variant?: 'linear' | 'circular' | 'fill';
   size?: number;
   forceMount?: boolean;
 }
 
-export function FileUploadItemProgress({
+export function DropzoneItemProgress({
   variant = 'linear',
   size = 40,
   forceMount,
   className,
   ...progressProps
-}: FileUploadItemProgressProps) {
-  const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
+}: DropzoneItemProgressProps) {
+  const itemContext = useDropzoneItemContext(ITEM_PROGRESS_NAME);
 
   if (!itemContext.fileState) return null;
 
@@ -1326,7 +1324,7 @@ export function FileUploadItemProgress({
 
       return (
         <div
-          data-slot="file-upload-item-progress"
+          data-slot="dropzone-item-progress"
           className={twMerge('relative shrink-0', className)}
           style={{ width: size, height: size }}
           {...progressProps}
@@ -1368,7 +1366,7 @@ export function FileUploadItemProgress({
 
       return (
         <div
-          data-slot="file-upload-item-progress"
+          data-slot="dropzone-item-progress"
           className={twMerge(fillProgressVariants(), className)}
           style={{ clipPath: `inset(${topInset}% 0% 0% 0%)` }}
           {...progressProps}
@@ -1379,7 +1377,7 @@ export function FileUploadItemProgress({
     default:
       return (
         <ProgressBar
-          data-slot="file-upload-item-progress"
+          data-slot="dropzone-item-progress"
           aria-label={`Upload progress for ${itemContext.fileState.file.name}`}
           value={itemContext.fileState.progress}
           minValue={0}
@@ -1397,20 +1395,20 @@ export function FileUploadItemProgress({
   }
 }
 
-export interface FileUploadItemDeleteProps extends Omit<
+export interface DropzoneItemDeleteProps extends Omit<
   React.ComponentProps<typeof AriaButton>,
   'children' | 'className'
 > {
   className?: string;
 }
 
-export function FileUploadItemDelete({
+export function DropzoneItemDelete({
   onPress: onPressProp,
   className,
   ...deleteProps
-}: FileUploadItemDeleteProps) {
+}: DropzoneItemDeleteProps) {
   const store = useStoreContext(ITEM_DELETE_NAME);
-  const itemContext = useFileUploadItemContext(ITEM_DELETE_NAME);
+  const itemContext = useDropzoneItemContext(ITEM_DELETE_NAME);
 
   const onPress = React.useCallback(
     (event: Parameters<NonNullable<React.ComponentProps<typeof AriaButton>['onPress']>>[0]) => {
@@ -1431,7 +1429,7 @@ export function FileUploadItemDelete({
   return (
     <AriaButton
       type="button"
-      data-slot="file-upload-item-delete"
+      data-slot="dropzone-item-delete"
       aria-label={`Remove ${itemContext.fileState.file.name}`}
       className={twMerge(deleteButtonVariants(), className)}
       onPress={onPress}
@@ -1442,20 +1440,20 @@ export function FileUploadItemDelete({
   );
 }
 
-export interface FileUploadClearProps extends Omit<ButtonProps, 'onPress' | 'iconOnly'> {
+export interface DropzoneClearProps extends Omit<ButtonProps, 'onPress' | 'iconOnly'> {
   forceMount?: boolean;
   onPress?: ButtonProps['onPress'];
 }
 
-export function FileUploadClear({
+export function DropzoneClear({
   forceMount,
   isDisabled: disabled,
   onPress: onPressProp,
   className,
   children,
   ...clearProps
-}: FileUploadClearProps) {
-  const context = useFileUploadContext(CLEAR_NAME);
+}: DropzoneClearProps) {
+  const context = useDropzoneContext(CLEAR_NAME);
   const store = useStoreContext(CLEAR_NAME);
   const fileCount = useStore((state) => state.files.size);
 
@@ -1476,7 +1474,7 @@ export function FileUploadClear({
   return (
     <Button
       type="button"
-      data-slot="file-upload-clear"
+      data-slot="dropzone-clear"
       intent="secondary"
       appearance="ghost"
       size="sm"
@@ -1491,13 +1489,13 @@ export function FileUploadClear({
   );
 }
 
-export function useFileUpload<T>(selector: (state: StoreState) => T): T {
+export function useDropzone<T>(selector: (state: StoreState) => T): T {
   return useStore(selector);
 }
 
 export type DropzoneSize = 'sm' | 'md' | 'lg';
 
-export interface DropzoneProps {
+export interface DropzoneFieldProps {
   label?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
@@ -1515,8 +1513,8 @@ const dropzoneRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antia
 
 const labelVariants = cva('type-body-sm-regular text-text-default-default');
 
-/** Convenience wrapper around the FileUpload compound components. */
-export function Dropzone({
+/** Convenience field wrapper around the Dropzone compound components. */
+export function DropzoneField({
   label,
   description,
   errorMessage,
@@ -1528,7 +1526,7 @@ export function Dropzone({
   acceptedFileTypes,
   onSelect,
   'aria-label': ariaLabel,
-}: DropzoneProps) {
+}: DropzoneFieldProps) {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const dropzoneSizeClass =
@@ -1537,7 +1535,7 @@ export function Dropzone({
   return (
     <div className={dropzoneRootVariants()}>
       {label ? <Label className={labelVariants()}>{label}</Label> : null}
-      <FileUpload
+      <Dropzone
         label={ariaLabel ?? (typeof label === 'string' ? label : 'File upload')}
         accept={acceptedFileTypes?.join(',')}
         disabled={isDisabled}
@@ -1555,23 +1553,23 @@ export function Dropzone({
         }}
         className={className}
       >
-        <FileUploadDropzone className={dropzoneSizeClass} showTrigger={allowsBrowse}>
+        <DropzoneArea className={dropzoneSizeClass} showTrigger={allowsBrowse}>
           <UploadSimple size={24} aria-hidden className="text-text-default-muted" />
           <Text slot="label" className={dropzoneTitleVariants()}>
             Drag & drop files here
           </Text>
           <span className={dropzoneHintVariants()}>{hint ?? 'Or click to browse'}</span>
-        </FileUploadDropzone>
-        <FileUploadList>
+        </DropzoneArea>
+        <DropzoneList>
           {files.map((file) => (
-            <FileUploadItem key={`${file.name}-${file.lastModified}`} value={file}>
-              <FileUploadItemPreview />
-              <FileUploadItemMetadata />
-              <FileUploadItemDelete />
-            </FileUploadItem>
+            <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
+              <DropzoneItemPreview />
+              <DropzoneItemMetadata />
+              <DropzoneItemDelete />
+            </DropzoneItem>
           ))}
-        </FileUploadList>
-      </FileUpload>
+        </DropzoneList>
+      </Dropzone>
       <StaticFieldMessage description={description} errorMessage={errorMessage} />
     </div>
   );
