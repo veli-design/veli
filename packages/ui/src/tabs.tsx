@@ -15,6 +15,7 @@ import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 import { useVeliLanguage } from './provider';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 
 export type TabsItem = {
   id: string | number;
@@ -50,8 +51,8 @@ const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
-const tabLabelRegularClassName = 'inline-block type-body-sm-regular [&:lang(dv)]:translate-y-0.5';
-const tabLabelSelectedClassName = 'inline-block type-body-sm-medium text-text-default-strong';
+const tabLabelRegularClassName = `inline-block type-body-sm-regular ${webkitDhivehiTextBaselineClassName}`;
+const tabLabelSelectedClassName = `inline-block type-body-sm-medium text-text-default-strong ${webkitDhivehiTextBaselineClassName}`;
 
 function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {
   return (

@@ -42,18 +42,13 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
       md: 'h-5',
       lg: 'h-6',
     },
-    hasFieldMessages: {
-      true: '[&:lang(dv)]:mt-1',
-      false: '',
-    },
   },
   defaultVariants: {
     size: 'md',
-    hasFieldMessages: false,
   },
 });
 
-const radioLabelVariants = cva('min-w-0 [&:lang(dv)]:translate-y-1');
+const radioLabelVariants = cva('min-w-0');
 
 const radioDescriptionVariants = cva('type-body-sm-regular text-text-default-muted', {
   variants: {
@@ -336,7 +331,6 @@ export function Radio({
             <span
               className={radioControlSlotVariants({
                 size: resolvedSize,
-                hasFieldMessages,
               })}
             >
               <span

@@ -237,21 +237,18 @@ export const fieldTriggerButtonVariants = cva(
   },
 );
 
-export const fieldTriggerValueVariants = cva(
-  'box-border block min-w-0 flex-1 truncate [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
-  {
-    variants: {
-      size: {
-        sm: '-my-2 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
-        md: '-my-3 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
-        lg: '-my-3.5 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
-      },
-    },
-    defaultVariants: {
-      size: 'md',
+export const fieldTriggerValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
+  variants: {
+    size: {
+      sm: '-my-2 py-2 type-body-sm-regular',
+      md: '-my-3 py-3 type-body-sm-regular',
+      lg: '-my-3.5 py-3.5 type-body-md-regular',
     },
   },
-);
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
 export const fieldInlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {

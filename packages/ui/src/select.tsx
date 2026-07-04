@@ -258,9 +258,9 @@ const fieldButtonVariants = cva(
 const selectValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
   variants: {
     size: {
-      sm: '-my-2 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
-      md: '-my-3 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
-      lg: '-my-3.5 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
+      sm: '-my-2 py-2 type-body-sm-regular',
+      md: '-my-3 py-3 type-body-sm-regular',
+      lg: '-my-3.5 py-3.5 type-body-md-regular',
     },
   },
   defaultVariants: {
@@ -268,15 +268,11 @@ const selectValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
   },
 });
 
-const selectItemLabelVariants = cva(
-  'truncate type-body-sm-regular [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5',
-);
+const selectItemLabelVariants = cva('truncate type-body-sm-regular');
 
 const selectItemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
 
-const selectItemSelectionIndicatorVariants = cva(
-  'shrink-0 text-text-primary-muted [&:lang(dv)]:-translate-y-1',
-);
+const selectItemSelectionIndicatorVariants = cva('shrink-0 text-text-primary-muted');
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
@@ -317,7 +313,7 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors',
   {
     variants: {
       isSelected: {

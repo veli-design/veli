@@ -27,6 +27,7 @@ import {
   hasRenderableMessage,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 
@@ -338,13 +339,13 @@ const visibilityToggleVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular [&:lang(dv)]:!h-9 [&:lang(dv)]:!text-[14px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-3 [&:lang(dv)]:!pb-1',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular [&:lang(dv)]:!h-11 [&:lang(dv)]:!text-[16px] [&:lang(dv)]:!leading-5 [&:lang(dv)]:!pt-4 [&:lang(dv)]:!pb-2',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular [&:lang(dv)]:!h-13 [&:lang(dv)]:!text-[17px] [&:lang(dv)]:!leading-6 [&:lang(dv)]:!pt-[18px] [&:lang(dv)]:!pb-2.5',
+        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
+        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
     },
     defaultVariants: {
@@ -401,7 +402,7 @@ const requirementIndicatorCheckedVariants = cva(
 );
 
 const requirementTextVariants = cva(
-  'type-caption-regular motion-safe:transition-colors motion-safe:duration-200 motion-reduce:transition-none [&:lang(dv)]:relative [&:lang(dv)]:top-0.5',
+  'type-caption-regular motion-safe:transition-colors motion-safe:duration-200 motion-reduce:transition-none',
   {
     variants: {
       isMet: {
@@ -432,25 +433,22 @@ const requirementTextVariants = cva(
   },
 );
 
-const feedbackTextVariants = cva(
-  'type-caption-regular [&:lang(dv)]:relative [&:lang(dv)]:top-0.5',
-  {
-    variants: {
-      tone: {
-        success: 'text-text-success-muted',
-        danger: 'text-text-danger-muted',
-      },
-      isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: '',
-      },
+const feedbackTextVariants = cva('type-caption-regular', {
+  variants: {
+    tone: {
+      success: 'text-text-success-muted',
+      danger: 'text-text-danger-muted',
     },
-    defaultVariants: {
-      tone: 'danger',
-      isDisabled: false,
+    isDisabled: {
+      true: 'text-text-disabled-disabled',
+      false: '',
     },
   },
-);
+  defaultVariants: {
+    tone: 'danger',
+    isDisabled: false,
+  },
+});
 
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',

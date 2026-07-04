@@ -8,6 +8,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { hasRenderableMessage } from './field-shared';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
 
 const checkboxIndicatorSizes = {
@@ -21,15 +22,15 @@ const checkboxIndicatorSizes = {
   },
 } as const;
 
-const checkboxRootVariants = cva('group inline-flex gap-2 font-sans antialiased', {
+const checkboxRootVariants = cva('group font-sans antialiased', {
   variants: {
     size: {
       md: 'type-body-sm-regular',
       lg: 'type-body-md-regular',
     },
     hasFieldMessages: {
-      true: 'items-start',
-      false: 'items-center',
+      true: 'inline-grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1',
+      false: 'inline-flex items-center gap-2',
     },
     isDisabled: {
       true: 'cursor-not-allowed text-text-disabled-disabled',
@@ -49,32 +50,30 @@ const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
       md: 'h-5',
       lg: 'h-6',
     },
-    hasFieldMessages: {
-      true: '[&:lang(dv)]:mt-1',
-      false: '',
-    },
   },
   defaultVariants: {
     size: 'md',
-    hasFieldMessages: false,
   },
 });
 
-const checkboxLabelVariants = cva('min-w-0 [&:lang(dv)]:translate-y-1');
+const checkboxLabelVariants = cva(`min-w-0 ${webkitDhivehiTextBaselineClassName}`);
 
-const checkboxDescriptionVariants = cva('type-body-sm-regular text-text-default-muted', {
-  variants: {
-    isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: '',
+const checkboxDescriptionVariants = cva(
+  'col-start-2 type-body-sm-regular text-text-default-muted',
+  {
+    variants: {
+      isDisabled: {
+        true: 'text-text-disabled-disabled',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
     },
   },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
+);
 
-const checkboxErrorVariants = cva('text-text-danger-muted', {
+const checkboxErrorVariants = cva('col-start-2 text-text-danger-muted', {
   variants: {
     size: {
       md: 'type-caption-regular',
@@ -317,7 +316,6 @@ export function Checkbox({
             <span
               className={checkboxControlSlotVariants({
                 size: resolvedSize,
-                hasFieldMessages,
               })}
             >
               <span
@@ -364,7 +362,7 @@ export function Checkbox({
               </span>
             </span>
             {hasFieldMessages ? (
-              <span className="flex min-w-0 flex-col gap-1">
+              <>
                 {children ? <span className={checkboxLabelVariants()}>{children}</span> : null}
                 {hasDescription ? (
                   <Text
@@ -385,7 +383,7 @@ export function Checkbox({
                     {errorMessage}
                   </Text>
                 ) : null}
-              </span>
+              </>
             ) : children ? (
               <span className={checkboxLabelVariants()}>{children}</span>
             ) : null}
