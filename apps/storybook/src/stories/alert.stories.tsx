@@ -61,7 +61,7 @@ const alertArgText = {
 type AlertLanguage = keyof typeof localizedAlertText;
 type AlertArgTextKey = keyof typeof alertArgText;
 
-type AlertStoryArgs = Omit<ComponentProps<typeof Alert>, 'leadingIcon' | 'children'> & {
+type AlertStoryArgs = ComponentProps<typeof Alert> & {
   title: string;
   description: string;
   showLeadingIcon: boolean;
