@@ -577,16 +577,6 @@ const primitiveColorFamilies = new Set([
   'white',
 ]);
 
-const legacyPrimitiveColorFamilies = new Set([
-  'cool-gray',
-  'gray',
-  'warm-gray',
-  'green-gray',
-  'turquoise',
-  'pink',
-  'success-green',
-]);
-
 const brandColorFamilies = new Set([
   'neutral',
   'primary',
@@ -641,7 +631,6 @@ function colorFamilyFromVariable(variableName) {
   const knownFamilies = [
     ...propertyColorFamilies,
     ...componentColorFamilies,
-    ...legacyPrimitiveColorFamilies,
     ...primitiveColorFamilies,
     ...brandColorFamilies,
     ...semanticColorFamilies,
@@ -674,9 +663,6 @@ function commentForVariable(variableName) {
     if (componentColorFamilies.has(family)) {
       return `Component colors / ${family}`;
     }
-    if (legacyPrimitiveColorFamilies.has(family)) {
-      return `Legacy color aliases / ${family}`;
-    }
     return 'Other color tokens';
   }
 
@@ -704,7 +690,6 @@ const groupOrder = [
   'Semantic colors',
   'Tailwind property aliases',
   'Component colors',
-  'Legacy color aliases',
   'Effects',
   'Shape',
   'Typography',
@@ -730,8 +715,7 @@ function compareVariableUnits(a, b) {
 
   if (
     a.sort.comment.startsWith('Primitive colors') ||
-    a.sort.comment.startsWith('Brand theme roles') ||
-    a.sort.comment.startsWith('Legacy color aliases')
+    a.sort.comment.startsWith('Brand theme roles')
   ) {
     return naturalSort.compare(a.sort.variableName, b.sort.variableName);
   }
