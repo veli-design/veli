@@ -1400,22 +1400,80 @@ export function ToastUsageDemo() {
     </>
   );
 }
-const TABLE_DEMO_ROWS = [
-  { id: '1', name: 'Tourism licence', department: 'Tourism', status: 'Approved' },
-  { id: '2', name: 'Fishing permit', department: 'Fisheries', status: 'Pending' },
-  { id: '3', name: 'Business registration', department: 'Commerce', status: 'Rejected' },
-];
+type TableDocsRow = {
+  id: string;
+  name: string;
+  department: string;
+  status: string;
+};
+
+type TableDocsText = {
+  ariaLabel: string;
+  columns: {
+    name: string;
+    department: string;
+    status: string;
+  };
+  rows: TableDocsRow[];
+};
+
+const tableDocsText = {
+  en: {
+    ariaLabel: 'Permit applications',
+    columns: {
+      name: 'Name',
+      department: 'Department',
+      status: 'Status',
+    },
+    rows: [
+      { id: '1', name: 'Tourism licence', department: 'Tourism', status: 'Approved' },
+      { id: '2', name: 'Fishing permit', department: 'Fisheries', status: 'Pending' },
+      { id: '3', name: 'Business registration', department: 'Commerce', status: 'Rejected' },
+    ],
+  },
+  dv: {
+    ariaLabel: 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް',
+    columns: {
+      name: 'ނަން',
+      department: 'ޑިޕާޓްމަންޓް',
+      status: 'ޙާލަތު',
+    },
+    rows: [
+      {
+        id: '1',
+        name: 'ފަތުރުވެރިކަމުގެ ލައިސަންސް',
+        department: 'ފަތުރުވެރިކަން',
+        status: 'ފާސްކުރެވިފައި',
+      },
+      {
+        id: '2',
+        name: 'މަސްވެރިކަން ކުރުމުގެ ހުއްދަ',
+        department: 'މަސްވެރިކަން',
+        status: 'ޕެންޑިންގ',
+      },
+      {
+        id: '3',
+        name: 'ވިޔަފާރި ރަޖިސްޓްރީކުރުން',
+        department: 'ވިޔަފާރި',
+        status: 'ރިޖެކްޓްކުރެވިފައި',
+      },
+    ],
+  },
+} satisfies Record<'en' | 'dv', TableDocsText>;
 
 export function TableUsageDemo() {
+  const { direction } = useVeliLanguage();
+  const text = tableDocsText[direction === 'rtl' ? 'dv' : 'en'];
+
   return (
     <div className="max-w-2xl">
-      <Table aria-label="Permit applications">
+      <Table aria-label={text.ariaLabel}>
         <TableHeader>
-          <TableColumn isRowHeader>Name</TableColumn>
-          <TableColumn>Department</TableColumn>
-          <TableColumn>Status</TableColumn>
+          <TableColumn isRowHeader>{text.columns.name}</TableColumn>
+          <TableColumn>{text.columns.department}</TableColumn>
+          <TableColumn>{text.columns.status}</TableColumn>
         </TableHeader>
-        <TableBody items={TABLE_DEMO_ROWS}>
+        <TableBody items={text.rows}>
           {(item) => (
             <TableRow id={item.id}>
               <TableCell>{item.name}</TableCell>
