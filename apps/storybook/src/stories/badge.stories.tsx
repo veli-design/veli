@@ -14,7 +14,7 @@ const statusIntents: BadgeIntent[] = [
   'danger',
 ];
 
-const accentIntents: BadgeIntent[] = ['pink', 'indigo', 'turquoise', 'green', 'lime'];
+const accentIntents: BadgeIntent[] = ['magenta', 'indigo', 'teal', 'green', 'lime'];
 
 const appearances: BadgeAppearance[] = ['outline', 'subtle', 'emphasis'];
 
@@ -212,9 +212,7 @@ export const StatusColors: Story = {
       <div className="flex flex-col gap-6">
         {appearances.map((appearance) => (
           <div key={appearance} className="space-y-2">
-            <p className="type-body-sm-medium text-text-default-emphasis capitalize">
-              {appearance}
-            </p>
+            <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
             <div className="flex flex-wrap gap-2">
               {statusIntents.map((intent) => (
                 <Badge
@@ -242,9 +240,7 @@ export const AccentColors: Story = {
       <div className="flex flex-col gap-6">
         {appearances.map((appearance) => (
           <div key={appearance} className="space-y-2">
-            <p className="type-body-sm-medium text-text-default-emphasis capitalize">
-              {appearance}
-            </p>
+            <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
             <div className="flex flex-wrap gap-2">
               {accentIntents.map((intent) => (
                 <Badge
@@ -286,7 +282,7 @@ export const Counter: Story = {
     <div className="flex flex-col gap-6">
       {appearances.map((appearance) => (
         <div key={appearance} className="space-y-2">
-          <p className="type-body-sm-medium text-text-default-emphasis capitalize">{appearance}</p>
+          <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
           <div className="flex flex-wrap items-center gap-2">
             {statusIntents.map((intent) => (
               <Badge
@@ -324,7 +320,7 @@ export const CounterOnIcon: Story = {
 
     return (
       <div className="relative inline-flex">
-        <Bell aria-hidden size={24} className="text-icon-default-default" />
+        <Bell aria-hidden size={24} className="text-icon-base" />
         <Badge
           counter
           count={5}
@@ -344,7 +340,7 @@ export const StatusDots: Story = {
     <div className="flex flex-col gap-6">
       {(['subtle', 'emphasis'] as const).map((appearance) => (
         <div key={appearance} className="space-y-2">
-          <p className="type-body-sm-medium text-text-default-emphasis capitalize">{appearance}</p>
+          <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
           <div className="flex flex-wrap items-center gap-2">
             {[...statusIntents, ...accentIntents].map((intent) => (
               <Badge

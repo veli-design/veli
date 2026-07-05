@@ -10,13 +10,13 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const storyPanelClassName =
-  'w-[calc(100vw-2rem)] max-w-[640px] rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+  'w-[calc(100vw-2rem)] max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4';
 
 const storyGridClassName =
   'grid w-[calc(100vw-2rem)] max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2';
 
 const storyGridPanelClassName =
-  'w-full rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+  'w-full rounded-2xl border border-base-subtle bg-surface-raised p-4';
 
 type AccordionText = {
   headings: {
@@ -164,7 +164,7 @@ export const Sizes: Story = {
     return (
       <div className={storyGridClassName}>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Medium (md)
           </span>
           <div className={storyGridPanelClassName}>
@@ -176,7 +176,7 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Large (lg)
           </span>
           <div className={storyGridPanelClassName}>
@@ -199,9 +199,7 @@ export const Alignment: Story = {
     return (
       <div className={storyGridClassName}>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            Left
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Left</span>
           <div className={storyGridPanelClassName}>
             <Accordion
               alignment="left"
@@ -211,9 +209,7 @@ export const Alignment: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            Right
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Right</span>
           <div className={storyGridPanelClassName}>
             <Accordion
               alignment="right"
@@ -253,7 +249,7 @@ export const Skeleton: Story = {
   render: () => (
     <div className={storyGridClassName}>
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Medium (md)
         </span>
         <div className={storyGridPanelClassName}>
@@ -261,7 +257,7 @@ export const Skeleton: Story = {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Large (lg)
         </span>
         <div className={storyGridPanelClassName}>

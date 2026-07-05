@@ -142,7 +142,7 @@ const popoverVariants = cva(
       intent: {
         primary: 'bg-popover-bg-primary text-popover-fg-on-primary',
         secondary: 'bg-popover-bg-secondary text-popover-fg-on-secondary',
-        tertiary: 'bg-popover-bg-tertiary text-text-default-default shadow-xl',
+        tertiary: 'bg-popover-bg-tertiary text-base shadow-xl',
       },
     },
     defaultVariants: {
@@ -156,7 +156,7 @@ const popoverDividerVariants = cva('h-px w-full shrink-0', {
     intent: {
       primary: 'bg-popover-border-on-primary',
       secondary: 'bg-popover-border-on-secondary',
-      tertiary: 'bg-border-default-muted',
+      tertiary: 'bg-border-base-muted',
     },
   },
   defaultVariants: {
@@ -169,7 +169,7 @@ const popoverHeaderTitleVariants = cva('min-w-0 flex-1 type-body-sm-medium', {
     intent: {
       primary: 'text-popover-fg-on-primary',
       secondary: 'text-popover-fg-on-secondary',
-      tertiary: 'text-text-default-strong',
+      tertiary: 'text-base-strong',
     },
   },
   defaultVariants: {
@@ -182,7 +182,7 @@ const popoverFooterLabelVariants = cva('shrink-0 type-caption-regular', {
     intent: {
       primary: 'text-popover-fg-on-primary',
       secondary: 'text-popover-fg-on-secondary',
-      tertiary: 'text-text-default-default',
+      tertiary: 'text-base',
     },
   },
   defaultVariants: {
@@ -197,7 +197,7 @@ const popoverCloseButtonVariants = cva('', {
         'text-popover-fg-on-primary hover:bg-popover-fg-on-primary/10 active:bg-popover-fg-on-primary/20',
       secondary:
         'text-popover-fg-on-secondary hover:bg-popover-fg-on-secondary/10 active:bg-popover-fg-on-secondary/20',
-      tertiary: 'text-text-default-strong',
+      tertiary: 'text-base-strong',
     },
   },
   defaultVariants: {

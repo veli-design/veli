@@ -11,10 +11,10 @@ import { twMerge } from 'tailwind-merge';
 const dividerColorVariants = cva('', {
   variants: {
     appearance: {
-      subtle: 'border-border-default-subtle',
-      muted: 'border-border-default-muted',
-      strong: 'border-border-default-strong',
-      emphasis: 'border-border-default-emphasis',
+      subtle: 'border-base-subtle',
+      muted: 'border-base-muted',
+      strong: 'border-base-strong',
+      emphasis: 'border-base-emphasis',
     },
   },
   defaultVariants: {
@@ -25,10 +25,10 @@ const dividerColorVariants = cva('', {
 const dividerLineVariants = cva('min-w-0 flex-1 border-0 border-t', {
   variants: {
     appearance: {
-      subtle: 'border-border-default-subtle',
-      muted: 'border-border-default-muted',
-      strong: 'border-border-default-strong',
-      emphasis: 'border-border-default-emphasis',
+      subtle: 'border-base-subtle',
+      muted: 'border-base-muted',
+      strong: 'border-base-strong',
+      emphasis: 'border-base-emphasis',
     },
   },
   defaultVariants: {
@@ -75,7 +75,7 @@ export function Divider({
           aria-hidden
           className={dividerLineVariants({ appearance })}
         />
-        <span className="shrink-0 px-2.5 type-body-sm-regular text-text-default-muted">{text}</span>
+        <span className="shrink-0 px-2.5 type-body-sm-regular text-base-muted">{text}</span>
         <AriaSeparator
           orientation="horizontal"
           elementType="div"

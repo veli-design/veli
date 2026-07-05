@@ -32,8 +32,8 @@ const inputSkeletonRootVariants = cva('flex w-full flex-col items-start font-san
 const headerLabelVariants = cva('type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -44,11 +44,11 @@ const headerLabelVariants = cva('type-body-sm-medium', {
 const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -56,7 +56,7 @@ const headerMetaVariants = cva('type-caption-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-text-disabled-disabled',
+      className: 'text-disabled',
     },
   ],
   defaultVariants: {
@@ -70,8 +70,8 @@ const infoTooltipTriggerVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-help text-base-subtle hover:text-base',
       },
     },
     defaultVariants: {
@@ -83,8 +83,8 @@ const infoTooltipTriggerVariants = cva(
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-links-default',
+      true: 'text-disabled',
+      false: 'text-links',
     },
   },
   defaultVariants: {
@@ -92,7 +92,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
   },
 });
 
-const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-bg-skeleton', {
+const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-skeleton', {
   variants: {
     size: {
       sm: 'h-2',
@@ -105,7 +105,7 @@ const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-bg-skel
   },
 });
 
-const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-bg-skeleton', {
+const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-skeleton', {
   variants: {
     size: {
       sm: 'h-9',
@@ -151,7 +151,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'default',
@@ -163,13 +163,13 @@ const fieldShellVariants = cva(
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
@@ -181,7 +181,7 @@ const fieldShellVariants = cva(
         appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
@@ -189,7 +189,7 @@ const fieldShellVariants = cva(
         isInvalid: false,
         isReadOnly: false,
         className:
-          'border border-text-input-stroke-default bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
       },
       {
         appearance: 'outline',
@@ -201,14 +201,14 @@ const fieldShellVariants = cva(
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border border-text-input-stroke-error bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg-default',
+          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
       },
       {
         appearance: 'outline',
@@ -220,7 +220,7 @@ const fieldShellVariants = cva(
         appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
     ],
     defaultVariants: {
@@ -236,8 +236,8 @@ const fieldShellVariants = cva(
 const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-subtle',
+      true: 'text-disabled',
+      false: 'text-base-subtle',
     },
   },
   defaultVariants: {
@@ -248,8 +248,8 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-danger-muted',
+      true: 'text-disabled',
+      false: 'text-danger-muted',
     },
   },
   defaultVariants: {
@@ -262,8 +262,8 @@ const insetSlotVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: 'text-text-default-subtle',
+        true: 'text-disabled',
+        false: 'text-base-subtle',
       },
     },
     defaultVariants: {
@@ -273,7 +273,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -282,7 +282,7 @@ const inputElementVariants = cva(
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
       isReadOnly: {
-        true: 'text-text-default-strong',
+        true: 'text-base-strong',
         false: '',
       },
     },

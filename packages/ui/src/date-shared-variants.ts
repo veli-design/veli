@@ -18,8 +18,8 @@ export const fieldLabelRowVariants = cva('flex items-center justify-between gap-
 export const fieldLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -30,11 +30,11 @@ export const fieldLabelVariants = cva('type-body-sm-regular', {
 export const fieldMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -42,7 +42,7 @@ export const fieldMetaVariants = cva('type-caption-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-text-disabled-disabled',
+      className: 'text-disabled',
     },
   ],
   defaultVariants: {
@@ -93,19 +93,19 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-gray-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-ash-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'default',
@@ -123,7 +123,7 @@ export const fieldShellVariants = cva(
         appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
@@ -131,7 +131,7 @@ export const fieldShellVariants = cva(
         isInvalid: false,
         isReadOnly: false,
         className:
-          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg-default has-[span[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
+          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
       },
       {
         appearance: 'outline',
@@ -139,19 +139,19 @@ export const fieldShellVariants = cva(
         isInvalid: false,
         isReadOnly: true,
         className:
-          'border-text-input-stroke-default bg-gray-alpha-100 hover:border-text-input-stroke-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-gray-alpha-100 has-[span[data-focus-visible]]:hover:bg-gray-alpha-100',
+          'border-text-input-stroke bg-ash-alpha-100 hover:border-text-input-stroke-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-ash-alpha-100 has-[span[data-focus-visible]]:hover:bg-ash-alpha-100',
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -163,7 +163,7 @@ export const fieldShellVariants = cva(
         appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
       {
         appearance: 'default',
@@ -178,7 +178,7 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         className:
-          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[span[data-focus-visible]]:bg-text-input-bg-default has-[span[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
+          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
       },
       {
         appearance: 'default',
@@ -368,19 +368,19 @@ const dateSegmentVariants = cva(
         lg: 'type-body-md-regular',
       },
       isPlaceholder: {
-        true: 'text-text-default-inactive',
-        false: 'text-text-default-default',
+        true: 'text-base-inactive',
+        false: 'text-base',
       },
       isDisabled: {
-        true: 'text-text-disabled-disabled',
+        true: 'text-disabled',
         false: '',
       },
       isFocused: {
-        true: 'bg-button-primary-default text-text-primary-inverted',
+        true: 'bg-button-primary text-primary-inverted',
         false: '',
       },
       isInvalid: {
-        true: 'text-text-danger-muted data-[type=literal]:text-text-danger-muted',
+        true: 'text-danger-muted data-[type=literal]:text-danger-muted',
         false: '',
       },
       isReadOnly: {
@@ -388,7 +388,7 @@ const dateSegmentVariants = cva(
         false: '',
       },
       type: {
-        literal: 'px-0 text-text-default-subtle',
+        literal: 'px-0 text-base-subtle',
         day: '',
         month: '',
         year: '',
@@ -397,7 +397,7 @@ const dateSegmentVariants = cva(
         minute: '',
         second: '',
         dayPeriod: 'uppercase',
-        timeZoneName: 'type-caption-12-regular text-text-default-subtle',
+        timeZoneName: 'type-caption-12-regular text-base-subtle',
       },
     },
     defaultVariants: {

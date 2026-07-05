@@ -61,7 +61,7 @@ type CalendarPickerSelectProps = {
 const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar-bg-month-year';
 
 const calendarHeaderMonthLabelClassName =
-  'min-w-0 flex-1 px-1 text-center type-body-sm-medium text-text-default-strong whitespace-nowrap';
+  'min-w-0 flex-1 px-1 text-center type-body-sm-medium text-base-strong whitespace-nowrap';
 
 const calendarNumericTextClassName = 'tabular-nums';
 
@@ -74,10 +74,10 @@ const calendarYearPickerItemClassName = calendarNumericRegularTextClassName;
 const defaultCalendarFirstDayOfWeek: CalendarFirstDayOfWeek = 'sun';
 
 const calendarHeaderIconButtonClassName =
-  'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-default-strong';
+  'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-base-strong';
 
 const calendarPickerPopoverClassName =
-  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-lg outline-none';
+  'rounded-xl border border-base-subtle bg-surface-overlay-raised p-1 text-base-strong shadow-lg outline-none';
 
 const calendarYearPickerPopoverClassName = 'w-[90px]';
 
@@ -88,15 +88,15 @@ const calendarPickerItemVariants = cva(
   {
     variants: {
       isSelected: {
-        true: 'bg-button-primary-subtle-default text-text-default-strong',
-        false: 'text-text-default-strong',
+        true: 'bg-button-primary-subtle text-base-strong',
+        false: 'text-base-strong',
       },
       isFocused: {
         true: 'bg-button-primary-subtle-hover',
         false: '',
       },
       isDisabled: {
-        true: 'pointer-events-none text-text-disabled-disabled',
+        true: 'pointer-events-none text-disabled',
         false: '',
       },
     },
@@ -170,13 +170,13 @@ function CalendarPickerSelect({
 }
 
 const calendarRootVariants = cva(
-  'flex max-w-full flex-col rounded-xl border border-border-default-subtle bg-calendar-bg p-1 font-sans text-text-default-default shadow-md',
+  'flex max-w-full flex-col rounded-xl border border-base-subtle bg-calendar-bg p-1 font-sans text-base shadow-md',
 );
 
 const calendarGridClassName = 'w-[19.25rem] table-fixed border-spacing-0';
 
 const calendarHeaderCellClassName =
-  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-text-default-default';
+  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-base';
 
 const calendarWeekdayLabelClassName = 'block truncate no-underline';
 
@@ -204,11 +204,11 @@ const cellVariants = cva(
       },
       isSelected: {
         false:
-          'text-text-default-emphasis data-[outside-month]:text-text-default-subtle data-[outside-visible-range]:invisible',
-        true: 'bg-calendar-day-selected text-text-primary-inverted data-[invalid]:bg-button-danger-default data-[invalid]:text-text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
+          'text-base-emphasis data-[outside-month]:text-base-subtle data-[outside-visible-range]:invisible',
+        true: 'bg-calendar-day-selected text-primary-inverted data-[invalid]:bg-button-danger data-[invalid]:text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]',
+        true: 'cursor-not-allowed text-disabled forced-colors:text-[GrayText]',
         false: '',
       },
       isUnavailable: {
@@ -236,8 +236,7 @@ const cellVariants = cva(
       {
         isDisabled: false,
         isUnavailable: true,
-        className:
-          'text-text-danger-default line-through decoration-2 decoration-text-danger-default',
+        className: 'text-danger line-through decoration-2 decoration-text-danger',
       },
     ],
     defaultVariants: {
@@ -289,7 +288,7 @@ export function Calendar<T extends DateValue>({
         />
       ) : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-caption-regular text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-caption-regular text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -339,7 +338,7 @@ export function RangeCalendar<T extends DateValue>({
         />
       ) : null}
       {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-caption-regular text-text-danger-muted">
+        <Text slot="errorMessage" className="pt-3 type-caption-regular text-danger-muted">
           {errorMessage}
         </Text>
       ) : null}
@@ -465,7 +464,7 @@ function CalendarTodayButton({ label }: { label: string }) {
   }
 
   return (
-    <div className="border-t border-border-default-subtle px-0.5 pt-1">
+    <div className="border-t border-base-subtle px-0.5 pt-1">
       <Button
         slot={null}
         intent="primary"
@@ -619,13 +618,12 @@ function getRangeCalendarCellClassName(state: CalendarCellRenderProps) {
 
   return twMerge(
     'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
-    'bg-calendar-day-range text-text-default-emphasis data-[outside-month]:text-text-default-subtle data-[outside-visible-range]:invisible',
+    'bg-calendar-day-range text-base-emphasis data-[outside-month]:text-base-subtle data-[outside-visible-range]:invisible',
     isSingleDayRange && 'rounded-full',
     state.isSelectionStart && !state.isSelectionEnd && 'rounded-s-full',
     state.isSelectionEnd && !state.isSelectionStart && 'rounded-e-full',
     !state.isSelectionStart && !state.isSelectionEnd && 'rounded-none',
-    state.isDisabled &&
-      'cursor-not-allowed text-text-disabled-disabled forced-colors:text-[GrayText]',
+    state.isDisabled && 'cursor-not-allowed text-disabled forced-colors:text-[GrayText]',
     !state.isDisabled &&
       !state.isUnavailable &&
       'cursor-pointer hover:bg-calendar-day-range-hover active:bg-calendar-day-range-hover',

@@ -28,7 +28,7 @@ import {
 import { useVeliLanguage } from './provider';
 
 const popoverSurfaceClassName =
-  'rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-2 shadow-md outline-none';
+  'rounded-xl border border-base-subtle bg-surface-overlay-raised p-2 shadow-md outline-none';
 
 export interface DatePickerProps<T extends DateValue>
   extends
@@ -117,7 +117,7 @@ export function DatePicker<T extends DateValue>({
                   isOpen,
                   isFocusVisible,
                 }),
-                isReadOnly && !isDisabled && 'bg-gray-alpha-100',
+                isReadOnly && !isDisabled && 'bg-ash-alpha-100',
                 inputClassName,
               )}
             >
@@ -125,21 +125,16 @@ export function DatePicker<T extends DateValue>({
                 className={twMerge(
                   fieldTriggerValueVariants({ size }),
                   !displayValue
-                    ? 'text-text-default-inactive'
+                    ? 'text-base-inactive'
                     : isDisabled
-                      ? 'text-text-disabled-disabled'
-                      : 'text-text-default-strong',
+                      ? 'text-disabled'
+                      : 'text-base-strong',
                 )}
               >
                 {displayValue ?? placeholder}
               </span>
               <span className={fieldTriggerIndicatorVariants({ isDisabled, isOpen: false })}>
-                <CalendarBlank
-                  aria-hidden
-                  size={20}
-                  weight="regular"
-                  className="text-icon-default-default"
-                />
+                <CalendarBlank aria-hidden size={20} weight="regular" className="text-icon-base" />
               </span>
             </AriaButton>
 

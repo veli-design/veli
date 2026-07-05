@@ -129,9 +129,9 @@ export function BreadcrumbsVariantsDemo() {
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Static breadcrumb trail</p>
+          <p className="type-body-sm-medium text-base-emphasis">Static breadcrumb trail</p>
           <Breadcrumbs aria-label="Site navigation breadcrumb">
             <Breadcrumb href="#">Home</Breadcrumb>
             <Breadcrumb href="#">Departments</Breadcrumb>
@@ -143,9 +143,9 @@ export function BreadcrumbsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Back link treatment</p>
+          <p className="type-body-sm-medium text-base-emphasis">Back link treatment</p>
           <Breadcrumbs aria-label="Back breadcrumb">
             <Breadcrumb href="#" tone="accent">
               <CaretLeft aria-hidden size={16} weight="bold" />
@@ -159,11 +159,9 @@ export function BreadcrumbsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px] lg:col-span-2">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">
-            Data-driven breadcrumb trail
-          </p>
+          <p className="type-body-sm-medium text-base-emphasis">Data-driven breadcrumb trail</p>
           <Breadcrumbs
             aria-label="Application breadcrumb"
             items={items}
@@ -176,7 +174,7 @@ export function BreadcrumbsVariantsDemo() {
           >
             {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
           </Breadcrumbs>
-          <p className="type-caption-12-regular text-text-default-muted">
+          <p className="type-caption-12-regular text-base-muted">
             Activate an earlier crumb to collapse the trail to that level.
           </p>
         </div>
@@ -201,9 +199,9 @@ export function TagsVariantsDemo() {
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Selectable tags</p>
+          <p className="type-body-sm-medium text-base-emphasis">Selectable tags</p>
           <TagGroup
             label="Departments"
             selectionMode="multiple"
@@ -218,9 +216,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Removable tags</p>
+          <p className="type-body-sm-medium text-base-emphasis">Removable tags</p>
           <TagGroup<TagDemoItem>
             label="Saved topics"
             items={removableItems}
@@ -228,7 +226,7 @@ export function TagsVariantsDemo() {
               setRemovableItems((current: TagDemoItem[]) => removeTagItems(current, keys))
             }
             renderEmptyState={() => (
-              <div className="rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle">
+              <div className="rounded-[12px] border border-dashed border-base-subtle px-[12px] py-[10px] type-body-sm-regular text-base-subtle">
                 All saved topics have been removed.
               </div>
             )}
@@ -238,7 +236,7 @@ export function TagsVariantsDemo() {
                 <span className="inline-flex min-w-0 items-center gap-[6px]">
                   <span
                     aria-hidden="true"
-                    className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary-default"
+                    className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary"
                   />
                   <span className="min-w-0 truncate">{item.label}</span>
                 </span>
@@ -248,9 +246,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Link tags</p>
+          <p className="type-body-sm-medium text-base-emphasis">Link tags</p>
           <TagGroup label="Related guidance">
             <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
               Passport services
@@ -265,9 +263,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Disabled keys</p>
+          <p className="type-body-sm-medium text-base-emphasis">Disabled keys</p>
           <TagGroup
             label="Amenities"
             selectionMode="multiple"
@@ -282,9 +280,9 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Disabled group</p>
+          <p className="type-body-sm-medium text-base-emphasis">Disabled group</p>
           <TagGroup
             label="Restricted services"
             selectionMode="multiple"
@@ -306,9 +304,9 @@ export function ButtonVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
       <div />
-      <div className="text-xs font-bold uppercase text-text-default-muted">Fill</div>
-      <div className="text-xs font-bold uppercase text-text-default-muted">Transparent</div>
-      <div className="text-xs font-bold uppercase text-text-default-muted">Ghost</div>
+      <div className="text-xs font-bold uppercase text-base-muted">Fill</div>
+      <div className="text-xs font-bold uppercase text-base-muted">Transparent</div>
+      <div className="text-xs font-bold uppercase text-base-muted">Ghost</div>
 
       <div className="text-sm font-medium">Primary</div>
       <Button intent="primary" appearance="fill">
@@ -511,16 +509,16 @@ export function InputValidationDemo() {
 
 export function DividerUsageDemo() {
   return (
-    <div className="w-[320px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+    <div className="w-[320px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
       <div className="space-y-[12px]">
         <div>
-          <h3 className="type-body-sm-medium text-text-default-emphasis">Applicant details</h3>
-          <p className="type-caption-12-regular text-text-default-muted">
+          <h3 className="type-body-sm-medium text-base-emphasis">Applicant details</h3>
+          <p className="type-caption-12-regular text-base-muted">
             Review the information before continuing.
           </p>
         </div>
         <Divider />
-        <div className="space-y-[8px] type-body-sm-regular text-text-default-default">
+        <div className="space-y-[8px] type-body-sm-regular text-base">
           <p>Name: Aishath Mariyam</p>
           <p>Island: Male&apos;</p>
         </div>
@@ -532,27 +530,27 @@ export function DividerUsageDemo() {
 export function DividerVariantsDemo() {
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Horizontal divider</p>
-          <div className="space-y-[10px] type-body-sm-regular text-text-default-default">
+          <p className="type-body-sm-medium text-base-emphasis">Horizontal divider</p>
+          <div className="space-y-[10px] type-body-sm-regular text-base">
             <p>Passport number</p>
             <Divider />
             <p>National ID number</p>
-            <Divider className="bg-border-default-emphasis" />
+            <Divider className="bg-border-base-emphasis" />
             <p>Driving license number</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Vertical divider</p>
-          <div className="flex items-center gap-[12px] type-body-sm-regular text-text-default-default">
+          <p className="type-body-sm-medium text-base-emphasis">Vertical divider</p>
+          <div className="flex items-center gap-[12px] type-body-sm-regular text-base">
             <span>Overview</span>
             <Divider orientation="vertical" />
             <span>Documents</span>
-            <Divider orientation="vertical" className="bg-border-default-emphasis" />
+            <Divider orientation="vertical" className="bg-border-base-emphasis" />
             <span>History</span>
           </div>
         </div>
@@ -602,7 +600,7 @@ export function ComboBoxExplorationDemo() {
         <ComboBoxSection title="Popular">
           <ComboBoxItem id="male">
             <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-medium text-text-default-subtle">
+              <span aria-hidden="true" className="type-caption-medium text-base-subtle">
                 MLE
               </span>
               <span>Male'</span>
@@ -674,7 +672,7 @@ export function SelectExplorationDemo() {
         <SelectSection title="ASEAN">
           <SelectItem id="my" description="Bursa-linked products">
             <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-12-medium text-text-default-subtle">
+              <span aria-hidden="true" className="type-caption-12-medium text-base-subtle">
                 MY
               </span>
               <span>Malaysia</span>
@@ -721,11 +719,9 @@ export function LinkVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
       <div />
-      <div className="text-xs font-bold uppercase text-text-default-muted text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-text-default-muted text-center">
-        Hover Underline
-      </div>
-      <div className="text-xs font-bold uppercase text-text-default-muted text-center">
+      <div className="text-xs font-bold uppercase text-base-muted text-center">Plain</div>
+      <div className="text-xs font-bold uppercase text-base-muted text-center">Hover Underline</div>
+      <div className="text-xs font-bold uppercase text-base-muted text-center">
         Always Underline
       </div>
 
@@ -878,20 +874,20 @@ export function AvatarUsageDemo() {
       <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
       <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
       <Avatar type="icon" appearance="neutral" size="52" />
-      <Avatar type="agencyIcon" appearance="successGreen" size="52" />
+      <Avatar type="agencyIcon" appearance="emerald" size="52" />
     </div>
   );
 }
 
 export function AvatarVariantsDemo() {
-  const appearances = ['blue', 'neutral', 'successGreen', 'yellow', 'orange', 'pink'] as const;
+  const appearances = ['blue', 'neutral', 'emerald', 'yellow', 'orange', 'magenta'] as const;
   const sizes = ['60', '52', '44', '36', '28'] as const;
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Appearances</p>
+          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
           <div className="flex flex-wrap items-center gap-[12px]">
             {appearances.map((appearance) => (
               <Avatar key={appearance} type="initials" initials="MV" appearance={appearance} />
@@ -900,9 +896,9 @@ export function AvatarVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Sizes</p>
+          <p className="type-body-sm-medium text-base-emphasis">Sizes</p>
           <div className="flex flex-wrap items-end gap-[12px]">
             {sizes.map((size) => (
               <Avatar key={size} type="icon" appearance="blue" size={size} />
@@ -936,9 +932,9 @@ export function BadgeVariantsDemo() {
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Appearances</p>
+          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
           <div className="space-y-[10px]">
             {(['emphasis', 'subtle', 'outline'] as const).map((appearance) => (
               <div key={appearance} className="flex flex-wrap items-center gap-[8px]">
@@ -953,11 +949,11 @@ export function BadgeVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Counter mode</p>
+          <p className="type-body-sm-medium text-base-emphasis">Counter mode</p>
           <div className="flex flex-wrap items-center gap-[16px]">
-            <span className="inline-flex items-center gap-[6px] type-body-sm-regular text-text-default-default">
+            <span className="inline-flex items-center gap-[6px] type-body-sm-regular text-base">
               <Bell size={18} />
               <Badge intent="danger" counter count={5} />
             </span>
@@ -990,9 +986,9 @@ export function KbdUsageDemo() {
 export function KbdVariantsDemo() {
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Default</p>
+          <p className="type-body-sm-medium text-base-emphasis">Default</p>
           <KbdGroup aria-label="Command Enter">
             <Kbd>⌘</Kbd>
             <Kbd>Enter</Kbd>
@@ -1123,16 +1119,16 @@ export function AccordionUsageDemo() {
 export function AccordionVariantsDemo() {
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Single expanded</p>
+          <p className="type-body-sm-medium text-base-emphasis">Single expanded</p>
           <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-text-default-emphasis">Multiple expanded</p>
+          <p className="type-body-sm-medium text-base-emphasis">Multiple expanded</p>
           <Accordion
             allowsMultipleExpanded
             defaultExpandedKeys={['overview', 'documents']}

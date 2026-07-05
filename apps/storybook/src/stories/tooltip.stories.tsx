@@ -229,7 +229,7 @@ export const Playground: Story = {
     const text = localizedTooltipText[language];
 
     return (
-      <div className="flex min-h-[280px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[280px] items-center justify-center bg-surface-base p-8">
         <TooltipTrigger delay={delay}>
           <Button intent="secondary">{text.triggerHoverFocus}</Button>
           <Tooltip {...tooltipProps}>
@@ -247,7 +247,7 @@ export const IconButtons: Story = {
     const text = useTooltipText();
 
     return (
-      <div className="flex min-h-[280px] items-center justify-center gap-4 bg-bg-surface-base p-8">
+      <div className="flex min-h-[280px] items-center justify-center gap-4 bg-surface-base p-8">
         <TooltipTrigger delay={0}>
           <Button aria-label={text.copyAriaLabel} intent="secondary" size="sm" iconOnly={true}>
             <Copy size={16} weight="bold" />
@@ -273,11 +273,11 @@ export const Placements: Story = {
     const text = useTooltipText();
 
     return (
-      <div className="mx-auto w-full max-w-5xl bg-bg-surface-base p-8">
+      <div className="mx-auto w-full max-w-5xl bg-surface-base p-8">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {PLACEMENT_GROUPS.map((group) => (
             <section key={group.labelKey} className="flex flex-col gap-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 {text.groups[group.labelKey]}
               </h3>
               <div className="flex flex-col gap-3">
@@ -308,9 +308,9 @@ export const Variants: Story = {
     const text = useTooltipText();
 
     return (
-      <div className="flex min-h-[280px] flex-col items-center justify-center gap-10 bg-bg-surface-base p-8">
+      <div className="flex min-h-[280px] flex-col items-center justify-center gap-10 bg-surface-base p-8">
         <div className="flex flex-col items-center gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             {text.variants.small}
           </span>
           <TooltipTrigger delay={0}>
@@ -319,7 +319,7 @@ export const Variants: Story = {
           </TooltipTrigger>
         </div>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             {text.variants.largePrimary}
           </span>
           <TooltipTrigger delay={0}>
@@ -330,7 +330,7 @@ export const Variants: Story = {
           </TooltipTrigger>
         </div>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             {text.variants.largeSecondary}
           </span>
           <TooltipTrigger delay={0}>

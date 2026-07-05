@@ -25,8 +25,8 @@ const TagGroupDisabledContext = React.createContext(false);
 const labelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -39,7 +39,7 @@ const tagListVariants = cva(
 );
 
 const emptyStateVariants = cva(
-  'rounded-[12px] border border-dashed border-border-default-subtle px-[12px] py-[10px] type-body-sm-regular text-text-default-subtle',
+  'rounded-[12px] border border-dashed border-base-subtle px-[12px] py-[10px] type-body-sm-regular text-base-subtle',
 );
 
 const tagVariants = cva(
@@ -47,15 +47,15 @@ const tagVariants = cva(
   {
     variants: {
       isSelected: {
-        true: 'bg-button-primary-subtle-default text-text-primary-muted',
-        false: 'bg-button-secondary-subtle-default text-text-default-default',
+        true: 'bg-button-primary-subtle text-primary-muted',
+        false: 'bg-button-secondary-subtle text-base',
       },
       isDisabled: {
-        true: 'bg-button-disabled-disabled text-text-disabled-disabled',
+        true: 'bg-button-disabled text-disabled',
         false: '',
       },
       isLink: {
-        true: 'cursor-pointer text-text-links-default',
+        true: 'cursor-pointer text-links',
         false: 'cursor-default',
       },
       allowsRemoving: {
@@ -82,7 +82,7 @@ const tagVariants = cva(
         isDisabled: false,
         isLink: true,
         className:
-          'bg-button-primary-subtle-default hover:bg-button-primary-subtle-hover hover:text-text-links-hover active:bg-button-primary-subtle-pressed active:text-text-links-hover',
+          'bg-button-primary-subtle hover:bg-button-primary-subtle-hover hover:text-links-hover active:bg-button-primary-subtle-pressed active:text-links-hover',
       },
       {
         isDisabled: true,
@@ -108,8 +108,8 @@ const removeButtonVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'text-current hover:bg-ash-alpha-200 active:bg-ash-alpha-300',
       },
     },
     defaultVariants: {
