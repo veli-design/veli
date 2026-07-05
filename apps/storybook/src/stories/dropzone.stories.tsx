@@ -14,6 +14,7 @@ import {
   useDropzone,
   type DropzoneProps,
 } from '@tradenetcorp/veli-ui/dropzone';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const meta = {
   title: 'Components/Dropzone',
@@ -26,6 +27,85 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 type Rejection = { id: string; fileName: string; message: string };
+
+const dropzoneStoryText = {
+  en: {
+    uploadAttachments: 'Upload attachments',
+    uploadDocuments: 'Upload documents',
+    dragDropFilesHere: 'Drag & drop files here',
+    pdfPngJpgOnly: 'PDF, PNG, or JPG only',
+    uploadWithSizeLimit: 'Upload with size limit',
+    eachFileMustBeSizeOrSmaller: (size: string) => `Each file must be ${size} or smaller`,
+    limitedAttachments: 'Limited attachments',
+    uploadUpTo2Files: 'Upload up to 2 files',
+    attachments: 'Attachments',
+    max2FilesUpToEach: (size: string) => `Max 2 files · PDF, PNG, or JPG · up to ${size} each`,
+    invoiceUpload: 'Invoice upload',
+    fileNameMustIncludeInvoice: 'File name must include "invoice"',
+    uploadInvoicePdf: 'Upload an invoice PDF',
+    pdfOnlyFilenameInvoice: 'PDF only · filename must contain "invoice"',
+    uploadImages: 'Upload images',
+    dragDropImagesHere: 'Drag & drop images here',
+    anyImageTypeUpTo4Mb: 'Any image type · up to 4 MB each',
+    demoFilesLoadAutomatically: 'Demo files load automatically for styling.',
+    directUpload: 'Direct upload',
+    supportedFormats10Mb: 'Supported formats: PDF, PNG, JPG up to 10 MB.',
+    smallDropzone: 'Small dropzone',
+    mediumDropzone: 'Medium dropzone',
+    largeDropzone: 'Large dropzone',
+    uploadsPaused: 'Uploads paused',
+    uploadProgressLabel: (variant: 'linear' | 'circular' | 'fill') => `${variant} upload progress`,
+    networkConnectionLost: 'Network connection lost',
+  },
+  dv: {
+    uploadAttachments: 'އެޓޭޗްމަންޓްތައް އަޕްލޯޑްކުރޭ',
+    uploadDocuments: 'ލިޔެކިޔުންތައް އަޕްލޯޑްކުރޭ',
+    dragDropFilesHere: 'ފައިލްތައް މިތަނަށް ޑްރެގް އެންޑް ޑްރޮޕް ކުރައްވާ',
+    pdfPngJpgOnly: 'ހަމައެކަނި PDF، PNG، ނުވަތަ JPG',
+    uploadWithSizeLimit: 'ސައިޒު ލިމިޓާއެކު އަޕްލޯޑްކުރޭ',
+    eachFileMustBeSizeOrSmaller: (size: string) =>
+      `ކޮންމެ ފައިލެއް ${size} ނުވަތަ އެއަށްވުރެ ކުޑަވާންވާނެ`,
+    limitedAttachments: 'ލިމިޓްކުރެވިފައިވާ އެޓޭޗްމަންޓްތައް',
+    uploadUpTo2Files: 'ގިނަވެގެން 2 ފައިލް އަޕްލޯޑްކުރެވޭނެ',
+    attachments: 'އެޓޭޗްމަންޓްތައް',
+    max2FilesUpToEach: (size: string) =>
+      `ގިނަވެގެން 2 ފައިލް · PDF, PNG, ނުވަތަ JPG · ކޮންމެ ފައިލެއް ${size} އާ ހަމައަށް`,
+    invoiceUpload: 'އިންވޮއިސް އަޕްލޯޑް',
+    fileNameMustIncludeInvoice: 'ފައިލްގެ ނަމުގައި "invoice" ހިމެނެންވާނެ',
+    uploadInvoicePdf: 'އިންވޮއިސް PDF އެއް އަޕްލޯޑްކުރައްވާ',
+    pdfOnlyFilenameInvoice: 'ހަމައެކަނި PDF · ފައިލްގެ ނަމުގައި "invoice" ހިމެނެންވާނެ',
+    uploadImages: 'ފޮޓޯތައް އަޕްލޯޑްކުރޭ',
+    dragDropImagesHere: 'ފޮޓޯތައް މިތަނަށް ޑްރެގް އެންޑް ޑްރޮޕް ކުރައްވާ',
+    anyImageTypeUpTo4Mb: 'ކޮންމެ ވައްތަރެއްގެ ފޮޓޯއެއް · ކޮންމެ ފައިލެއް 4 MB އާ ހަމައަށް',
+    demoFilesLoadAutomatically: 'ސްޓައިލްކުރުމަށް ޑެމޯ ފައިލްތައް އަމިއްލައަށް ލޯޑުވާނެ.',
+    directUpload: 'ޑައިރެކްޓް އަޕްލޯޑް',
+    supportedFormats10Mb: 'ސަޕޯޓްކުރާ ފޯމެޓްތައް: 10 MB އާ ހަމައަށް PDF, PNG, JPG.',
+    smallDropzone: 'ކުޑަ ޑްރޮޕްޒޯން',
+    mediumDropzone: 'މެދު ޑްރޮޕްޒޯން',
+    largeDropzone: 'ބޮޑު ޑްރޮޕްޒޯން',
+    uploadsPaused: 'އަޕްލޯޑްތައް ޕޯޒްކުރެވިފައި',
+    uploadProgressLabel: (variant: 'linear' | 'circular' | 'fill') => {
+      const labels = {
+        linear: 'ލީނިއަރ',
+        circular: 'ސަރކިއުލަރ',
+        fill: 'ފިލް އޯވަރލޭ',
+      };
+
+      return `${labels[variant]} އަޕްލޯޑް ޕްރޮގްރެސް`;
+    },
+    networkConnectionLost: 'ނެޓްވޯކް ކަނެކްޝަން ކެނޑިއްޖެ',
+  },
+} as const;
+
+type DropzoneStoryLanguage = keyof typeof dropzoneStoryText;
+type DropzoneStoryText = (typeof dropzoneStoryText)[DropzoneStoryLanguage];
+
+const useDropzoneStoryText = (): DropzoneStoryText => {
+  const { direction } = useVeliLanguage();
+  const language: DropzoneStoryLanguage = direction === 'rtl' ? 'dv' : 'en';
+
+  return dropzoneStoryText[language];
+};
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 B';
@@ -125,7 +205,7 @@ const DEMO_UPLOAD_FILES = [
 type DemoUploadTarget = {
   progress: number;
   done?: boolean;
-  error?: string;
+  error?: 'networkConnectionLost';
 };
 
 const DEMO_UPLOAD_TARGETS: Record<string, DemoUploadTarget> = {
@@ -133,11 +213,11 @@ const DEMO_UPLOAD_TARGETS: Record<string, DemoUploadTarget> = {
   'design-45.pdf': { progress: 45 },
   'archive-72.zip': { progress: 72 },
   'photo-62.svg': { progress: 62 },
-  'failed-upload.pdf': { progress: 68, error: 'Network connection lost' },
+  'failed-upload.pdf': { progress: 68, error: 'networkConnectionLost' },
   'complete.pdf': { progress: 100, done: true },
 };
 
-function createDemoUploadHandler() {
+function createDemoUploadHandler(text: DropzoneStoryText) {
   return async (
     files: File[],
     {
@@ -161,7 +241,7 @@ function createDemoUploadHandler() {
       onProgress(file, target.progress);
 
       if (target.error) {
-        onError(file, new Error(target.error));
+        onError(file, new Error(text[target.error]));
         continue;
       }
 
@@ -258,7 +338,8 @@ function UploadProgressShowcase({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [seed, setSeed] = useState(0);
-  const onUpload = useMemo(() => createDemoUploadHandler(), []);
+  const text = useDropzoneStoryText();
+  const onUpload = useMemo(() => createDemoUploadHandler(text), [text]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -285,10 +366,10 @@ function UploadProgressShowcase({
         </button>
       </div>
 
-      <Dropzone key={seed} label={`${variant} upload progress`} multiple onUpload={onUpload}>
+      <Dropzone key={seed} label={text.uploadProgressLabel(variant)} multiple onUpload={onUpload}>
         <DropzoneArea showTrigger={false}>
           <span className="type-body-sm-regular text-text-default-subtle">
-            Demo files load automatically for styling.
+            {text.demoFilesLoadAutomatically}
           </span>
         </DropzoneArea>
         <DropzoneList>
@@ -304,40 +385,51 @@ function UploadProgressShowcase({
 }
 
 export const Default: Story = {
-  render: () => (
-    <DropzoneStory label="Upload attachments">
-      <DropzoneArea />
-    </DropzoneStory>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <DropzoneStory label={text.uploadAttachments}>
+        <DropzoneArea />
+      </DropzoneStory>
+    );
+  },
 };
 
 export const AcceptedFileTypes: Story = {
   name: 'Accepted file types',
-  render: () => (
-    <DropzoneStory label="Upload documents" accept="application/pdf,image/png,image/jpeg">
-      <DropzoneArea>
-        <span className="type-body-md-medium text-text-default-default">
-          Drag & drop files here
-        </span>
-        <span className="type-body-sm-regular text-text-default-subtle">PDF, PNG, or JPG only</span>
-      </DropzoneArea>
-    </DropzoneStory>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <DropzoneStory label={text.uploadDocuments} accept="application/pdf,image/png,image/jpeg">
+        <DropzoneArea>
+          <span className="type-body-md-medium text-text-default-default">
+            {text.dragDropFilesHere}
+          </span>
+          <span className="type-body-sm-regular text-text-default-subtle">
+            {text.pdfPngJpgOnly}
+          </span>
+        </DropzoneArea>
+      </DropzoneStory>
+    );
+  },
 };
 
 export const MaxFileSize: Story = {
   name: 'Max file size',
   render: () => {
     const maxSize = 1 * 1024 * 1024;
+    const text = useDropzoneStoryText();
 
     return (
-      <DropzoneStory label="Upload with size limit" maxSize={maxSize}>
+      <DropzoneStory label={text.uploadWithSizeLimit} maxSize={maxSize}>
         <DropzoneArea>
           <span className="type-body-md-medium text-text-default-default">
-            Drag & drop files here
+            {text.dragDropFilesHere}
           </span>
           <span className="type-body-sm-regular text-text-default-subtle">
-            Each file must be {formatBytes(maxSize)} or smaller
+            {text.eachFileMustBeSizeOrSmaller(formatBytes(maxSize))}
           </span>
         </DropzoneArea>
       </DropzoneStory>
@@ -347,36 +439,43 @@ export const MaxFileSize: Story = {
 
 export const MaxFiles: Story = {
   name: 'Max files',
-  render: () => (
-    <DropzoneStory label="Limited attachments" maxFiles={2}>
-      <DropzoneArea>
-        <span className="type-body-md-medium text-text-default-default">
-          Drag & drop files here
-        </span>
-        <span className="type-body-sm-regular text-text-default-subtle">Upload up to 2 files</span>
-      </DropzoneArea>
-    </DropzoneStory>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <DropzoneStory label={text.limitedAttachments} maxFiles={2}>
+        <DropzoneArea>
+          <span className="type-body-md-medium text-text-default-default">
+            {text.dragDropFilesHere}
+          </span>
+          <span className="type-body-sm-regular text-text-default-subtle">
+            {text.uploadUpTo2Files}
+          </span>
+        </DropzoneArea>
+      </DropzoneStory>
+    );
+  },
 };
 
 export const CombinedLimits: Story = {
   name: 'Combined limits',
   render: () => {
     const maxSize = 5 * 1024 * 1024;
+    const text = useDropzoneStoryText();
 
     return (
       <DropzoneStory
-        label="Attachments"
+        label={text.attachments}
         accept="application/pdf,image/png,image/jpeg"
         maxFiles={2}
         maxSize={maxSize}
       >
         <DropzoneArea>
           <span className="type-body-md-medium text-text-default-default">
-            Drag & drop files here
+            {text.dragDropFilesHere}
           </span>
           <span className="type-body-sm-regular text-text-default-subtle">
-            Max 2 files · PDF, PNG, or JPG · up to {formatBytes(maxSize)} each
+            {text.max2FilesUpToEach(formatBytes(maxSize))}
           </span>
         </DropzoneArea>
       </DropzoneStory>
@@ -386,41 +485,51 @@ export const CombinedLimits: Story = {
 
 export const CustomValidation: Story = {
   name: 'Custom validation',
-  render: () => (
-    <DropzoneStory
-      label="Invoice upload"
-      accept="application/pdf"
-      onFileValidate={(file) => {
-        if (!file.name.toLowerCase().includes('invoice')) {
-          return 'File name must include "invoice"';
-        }
-        return null;
-      }}
-    >
-      <DropzoneArea>
-        <span className="type-body-md-medium text-text-default-default">Upload an invoice PDF</span>
-        <span className="type-body-sm-regular text-text-default-subtle">
-          PDF only · filename must contain &quot;invoice&quot;
-        </span>
-      </DropzoneArea>
-    </DropzoneStory>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <DropzoneStory
+        label={text.invoiceUpload}
+        accept="application/pdf"
+        onFileValidate={(file) => {
+          if (!file.name.toLowerCase().includes('invoice')) {
+            return text.fileNameMustIncludeInvoice;
+          }
+          return null;
+        }}
+      >
+        <DropzoneArea>
+          <span className="type-body-md-medium text-text-default-default">
+            {text.uploadInvoicePdf}
+          </span>
+          <span className="type-body-sm-regular text-text-default-subtle">
+            {text.pdfOnlyFilenameInvoice}
+          </span>
+        </DropzoneArea>
+      </DropzoneStory>
+    );
+  },
 };
 
 export const ImageWildcard: Story = {
   name: 'Image wildcard (image/*)',
-  render: () => (
-    <DropzoneStory label="Upload images" accept="image/*" maxSize={4 * 1024 * 1024}>
-      <DropzoneArea>
-        <span className="type-body-md-medium text-text-default-default">
-          Drag & drop images here
-        </span>
-        <span className="type-body-sm-regular text-text-default-subtle">
-          Any image type · up to 4 MB each
-        </span>
-      </DropzoneArea>
-    </DropzoneStory>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <DropzoneStory label={text.uploadImages} accept="image/*" maxSize={4 * 1024 * 1024}>
+        <DropzoneArea>
+          <span className="type-body-md-medium text-text-default-default">
+            {text.dragDropImagesHere}
+          </span>
+          <span className="type-body-sm-regular text-text-default-subtle">
+            {text.anyImageTypeUpTo4Mb}
+          </span>
+        </DropzoneArea>
+      </DropzoneStory>
+    );
+  },
 };
 
 export const UploadProgress: Story = {
@@ -457,11 +566,12 @@ export const UploadProgress: Story = {
 export const DirectUpload: Story = {
   render: () => {
     const [files, setFiles] = useState<File[]>([]);
+    const text = useDropzoneStoryText();
 
     return (
       <div className="w-[480px] space-y-3">
         <Dropzone
-          label="Direct upload"
+          label={text.directUpload}
           maxFiles={10}
           maxSize={5 * 1024 * 1024}
           multiple
@@ -494,34 +604,46 @@ export const DirectUpload: Story = {
 
 export const ConvenienceWrapper: Story = {
   name: 'Dropzone wrapper',
-  render: () => (
-    <div className="w-[480px]">
-      <DropzoneField
-        label="Attachments"
-        aria-label="Upload attachments"
-        description="Supported formats: PDF, PNG, JPG up to 10 MB."
-        hint="PDF, PNG, or JPG only"
-        allowsBrowse
-        acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
-      />
-    </div>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <div className="w-[480px]">
+        <DropzoneField
+          label={text.attachments}
+          aria-label={text.uploadAttachments}
+          description={text.supportedFormats10Mb}
+          hint={text.pdfPngJpgOnly}
+          allowsBrowse
+          acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+        />
+      </div>
+    );
+  },
 };
 
 export const Sizes: Story = {
-  render: () => (
-    <div className="flex w-[520px] flex-col gap-4">
-      <DropzoneField size="sm" aria-label="Small dropzone" allowsBrowse />
-      <DropzoneField size="md" aria-label="Medium dropzone" allowsBrowse />
-      <DropzoneField size="lg" aria-label="Large dropzone" allowsBrowse />
-    </div>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <div className="flex w-[520px] flex-col gap-4">
+        <DropzoneField size="sm" aria-label={text.smallDropzone} allowsBrowse />
+        <DropzoneField size="md" aria-label={text.mediumDropzone} allowsBrowse />
+        <DropzoneField size="lg" aria-label={text.largeDropzone} allowsBrowse />
+      </div>
+    );
+  },
 };
 
 export const Disabled: Story = {
-  render: () => (
-    <div className="w-[480px]">
-      <DropzoneField label="Uploads paused" aria-label="Uploads paused" isDisabled />
-    </div>
-  ),
+  render: () => {
+    const text = useDropzoneStoryText();
+
+    return (
+      <div className="w-[480px]">
+        <DropzoneField label={text.uploadsPaused} aria-label={text.uploadsPaused} isDisabled />
+      </div>
+    );
+  },
 };
