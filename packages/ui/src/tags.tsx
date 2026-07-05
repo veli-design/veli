@@ -18,11 +18,25 @@ import { twMerge } from 'tailwind-merge';
 import { StaticFieldMessage } from './field-shared';
 import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
+import { useVeliLanguage } from './provider';
 
 const TagGroupDisabledContext = React.createContext(false);
 const TagGroupSizeContext = React.createContext<TagSize | undefined>(undefined);
 
 export type TagSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+const localizedTagText = {
+  en: {
+    noTagsAvailable: 'No tags available.',
+    removeTag: 'Remove {tag}',
+    removeGenericTag: 'Remove tag',
+  },
+  dv: {
+    noTagsAvailable: 'އެއްވެސް ޓެގެއް ލިބޭކަށް ނެތް.',
+    removeTag: '{tag} އުނިކުރޭ',
+    removeGenericTag: 'ޓެގް އުނިކުރޭ',
+  },
+} as const;
 
 const tagListVariants = cva(
   'flex flex-wrap gap-2 rounded-lg outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
@@ -234,6 +248,8 @@ export function TagGroup<T extends object>({
   listClassName,
   ...props
 }: TagGroupProps<T>) {
+  const languageConfig = useVeliLanguage();
+  const text = localizedTagText[languageConfig.language];
   const setRootRef = React.useCallback(
     (node: HTMLDivElement | null) => {
       if (!node) {
@@ -266,7 +282,7 @@ export function TagGroup<T extends object>({
             renderEmptyState={
               renderEmptyState
                 ? renderEmptyState
-                : () => <div className={emptyStateVariants()}>No tags available.</div>
+                : () => <div className={emptyStateVariants()}>{text.noTagsAvailable}</div>
             }
             className={twMerge(tagListVariants(), listClassName)}
           >
@@ -299,6 +315,10 @@ function getPrimitiveTagIdText(id: TagProps['id']) {
     : undefined;
 }
 
+function formatRemoveTagText(template: string, tag: string) {
+  return template.split('{tag}').join(tag);
+}
+
 export function Tag({
   children,
   className,
@@ -311,6 +331,8 @@ export function Tag({
   textValue,
   ...props
 }: TagProps) {
+  const languageConfig = useVeliLanguage();
+  const text = localizedTagText[languageConfig.language];
   const isGroupDisabled = React.useContext(TagGroupDisabledContext);
   const groupSize = React.useContext(TagGroupSizeContext);
   const size = sizeProp ?? groupSize ?? 'sm';
@@ -322,7 +344,9 @@ export function Tag({
   const normalizedCustomRemoveButtonLabel = normalizeAccessibleText(customRemoveButtonLabel);
   const resolvedRemoveButtonLabel =
     normalizedCustomRemoveButtonLabel ??
-    (fallbackTagText ? `Remove ${fallbackTagText}` : 'Remove tag');
+    (fallbackTagText
+      ? formatRemoveTagText(text.removeTag, fallbackTagText)
+      : text.removeGenericTag);
   const usesGenericRemoveButtonLabel = !normalizedCustomRemoveButtonLabel && !fallbackTagText;
 
   warnDev(

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -78,12 +78,87 @@ type TagDemoItem = {
   href?: string;
 };
 
-const REMOVABLE_TAG_SEED: TagDemoItem[] = [
-  { id: 'permits', label: 'Permits' },
-  { id: 'forms', label: 'Forms' },
-  { id: 'notices', label: 'Notices' },
-  { id: 'licences', label: 'Licences' },
-];
+const tagsStoryPanelClassName = 'rounded-2xl border border-base-subtle bg-surface-raised p-4';
+
+const tagsStorySectionClassName = 'space-y-3';
+
+const tagsEmptyStateClassName =
+  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-base-subtle';
+
+const tagsDocsText = {
+  en: {
+    categories: 'Categories',
+    news: 'News',
+    travel: 'Travel',
+    gaming: 'Gaming',
+    shopping: 'Shopping',
+    selectableTags: 'Selectable tags',
+    departments: 'Departments',
+    chooseDepartments: 'Choose one or more departments.',
+    tourism: 'Tourism',
+    fisheries: 'Fisheries',
+    transport: 'Transport',
+    education: 'Education',
+    removableTags: 'Removable tags',
+    savedTopics: 'Saved topics',
+    allSavedTopicsRemoved: 'All saved topics have been removed.',
+    documents: 'Documents',
+    forms: 'Forms',
+    payments: 'Payments',
+    support: 'Support',
+    linkTags: 'Link tags',
+    relatedGuidance: 'Related guidance',
+    passportServices: 'Passport services',
+    licensingPortal: 'Licensing portal',
+    onlinePayments: 'Online payments',
+    disabledKeys: 'Disabled keys',
+    amenities: 'Amenities',
+    laundry: 'Laundry',
+    parking: 'Parking',
+    breakfast: 'Breakfast',
+    wifi: 'Wi-Fi',
+    disabledGroup: 'Disabled group',
+    restrictedServices: 'Restricted services',
+    appointments: 'Appointments',
+  },
+  dv: {
+    categories: 'ކެޓަގަރީތައް',
+    news: 'ޚަބަރު',
+    travel: 'ދަތުރުފަތުރު',
+    gaming: 'ގޭމިންގ',
+    shopping: 'ވިޔަފާރިކުރުން',
+    selectableTags: 'ޚިޔާރުކުރެވޭ ޓެގްތައް',
+    departments: 'ޑިޕާޓްމަންޓްތައް',
+    chooseDepartments: 'އެއް ޑިޕާޓްމަންޓް ނުވަތަ އެއަށްވުރެ ގިނަ ޑިޕާޓްމަންޓް ޚިޔާރުކުރައްވާ.',
+    tourism: 'ފަތުރުވެރިކަން',
+    fisheries: 'މަސްވެރިކަން',
+    transport: 'ޓްރާންސްޕޯޓް',
+    education: 'ތަޢުލީމު',
+    removableTags: 'އުނިކުރެވޭ ޓެގްތައް',
+    savedTopics: 'ސޭވްކުރެވިފައިވާ މައުޟޫޢުތައް',
+    allSavedTopicsRemoved: 'ސޭވްކުރެވިފައިވާ ހުރިހާ މައުޟޫޢުތަކެއް ވަނީ އުނިކުރެވިފަ.',
+    documents: 'ލިޔެކިޔުންތައް',
+    forms: 'ފޯމުތައް',
+    payments: 'ފައިސާދެއްކުން',
+    support: 'ސަޕޯޓް',
+    linkTags: 'ލިންކް ޓެގްތައް',
+    relatedGuidance: 'ގުޅޭ އިރުޝާދު',
+    passportServices: 'ޕާސްޕޯޓްގެ ޚިދުމަތްތައް',
+    licensingPortal: 'ލައިސަންސް ޕޯޓަލް',
+    onlinePayments: 'އޮންލައިން ފައިސާދެއްކުން',
+    disabledKeys: 'ޑިސޭބަލް ކުރެވިފައިވާ ކީތައް',
+    amenities: 'ވަސީލަތްތައް',
+    laundry: 'ލޯންޑްރީ',
+    parking: 'ޕާކިންގ',
+    breakfast: 'ހެނދުނުގެ ސައި',
+    wifi: 'ވައި-ފައި',
+    disabledGroup: 'ޑިސޭބަލް ކުރެވިފައިވާ ގްރޫޕް',
+    restrictedServices: 'ހިފެހެއްޓިފައިވާ ޚިދުމަތްތައް',
+    appointments: 'އެޕޮއިންޓްމަންޓްތައް',
+  },
+} as const;
+
+type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
 
 const inputExplorationStartAddon = <MagnifyingGlass size={16} />;
 const inputExplorationEndAddon = <ArrowRight size={16} />;
@@ -120,6 +195,31 @@ const useRadioDocsText = () => {
   return direction === 'rtl' ? radioDocsText.dv : radioDocsText.en;
 };
 
+const useTagsDocsText = () => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? tagsDocsText.dv : tagsDocsText.en;
+};
+
+function getTagsDocsRemovableSeed(text: TagsDocsText): TagDemoItem[] {
+  return [
+    { id: 'documents', label: text.documents },
+    { id: 'forms', label: text.forms },
+    { id: 'payments', label: text.payments },
+    { id: 'support', label: text.support },
+  ];
+}
+
+function addRemovedTagKeys(currentKeys: Set<string>, keys: Iterable<string | number>) {
+  const nextKeys = new Set(currentKeys);
+
+  for (const key of keys) {
+    nextKeys.add(String(key));
+  }
+
+  return nextKeys;
+}
+
 const cardDocsText = {
   en: {
     permitApplication: 'Permit application',
@@ -150,11 +250,6 @@ const useCardDocsText = () => {
 
   return direction === 'rtl' ? cardDocsText.dv : cardDocsText.en;
 };
-
-function removeTagItems(items: TagDemoItem[], keys: Iterable<string | number>) {
-  const removedKeys = new Set(keys);
-  return items.filter((item) => !removedKeys.has(item.id));
-}
 
 export function BreadcrumbsUsageDemo() {
   return (
@@ -228,59 +323,65 @@ export function BreadcrumbsVariantsDemo() {
 }
 
 export function TagsUsageDemo() {
+  const text = useTagsDocsText();
+
   return (
-    <TagGroup label="Categories">
-      <Tag id="news">News</Tag>
-      <Tag id="travel">Travel</Tag>
-      <Tag id="gaming">Gaming</Tag>
-      <Tag id="shopping">Shopping</Tag>
+    <TagGroup label={text.categories}>
+      <Tag id="news">{text.news}</Tag>
+      <Tag id="travel">{text.travel}</Tag>
+      <Tag id="gaming">{text.gaming}</Tag>
+      <Tag id="shopping">{text.shopping}</Tag>
     </TagGroup>
   );
 }
 
 export function TagsVariantsDemo() {
-  const [removableItems, setRemovableItems] = useState(REMOVABLE_TAG_SEED);
+  const text = useTagsDocsText();
+  const removableSeed = useMemo(() => getTagsDocsRemovableSeed(text), [text]);
+  const [removedTagKeys, setRemovedTagKeys] = useState<Set<string>>(() => new Set());
+  const removableItems = useMemo(
+    () => removableSeed.filter((item) => !removedTagKeys.has(item.id)),
+    [removableSeed, removedTagKeys],
+  );
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Selectable tags</p>
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
+          <p className="type-body-sm-medium text-base-emphasis">{text.selectableTags}</p>
           <TagGroup
-            label="Departments"
+            label={text.departments}
             selectionMode="multiple"
             defaultSelectedKeys={['tourism', 'fisheries']}
-            description="Use selection when tags act as filters."
+            description={text.chooseDepartments}
           >
-            <Tag id="tourism">Tourism</Tag>
-            <Tag id="fisheries">Fisheries</Tag>
-            <Tag id="transport">Transport</Tag>
-            <Tag id="education">Education</Tag>
+            <Tag id="tourism">{text.tourism}</Tag>
+            <Tag id="fisheries">{text.fisheries}</Tag>
+            <Tag id="transport">{text.transport}</Tag>
+            <Tag id="education">{text.education}</Tag>
           </TagGroup>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Removable tags</p>
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
+          <p className="type-body-sm-medium text-base-emphasis">{text.removableTags}</p>
           <TagGroup<TagDemoItem>
-            label="Saved topics"
+            label={text.savedTopics}
             items={removableItems}
             onRemove={(keys) =>
-              setRemovableItems((current: TagDemoItem[]) => removeTagItems(current, keys))
+              setRemovedTagKeys((currentKeys) => addRemovedTagKeys(currentKeys, keys))
             }
             renderEmptyState={() => (
-              <div className="rounded-[12px] border border-dashed border-base-subtle px-[12px] py-[10px] type-body-sm-regular text-base-subtle">
-                All saved topics have been removed.
-              </div>
+              <div className={tagsEmptyStateClassName}>{text.allSavedTopicsRemoved}</div>
             )}
           >
             {(item) => (
-              <Tag id={item.id}>
-                <span className="inline-flex min-w-0 items-center gap-[6px]">
+              <Tag id={item.id} textValue={item.label}>
+                <span className="inline-flex min-w-0 items-center gap-1.5">
                   <span
                     aria-hidden="true"
-                    className="h-[6px] w-[6px] shrink-0 rounded-full bg-button-primary"
+                    className="size-1.5 shrink-0 rounded-full bg-button-primary"
                   />
                   <span className="min-w-0 truncate">{item.label}</span>
                 </span>
@@ -290,60 +391,59 @@ export function TagsVariantsDemo() {
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Link tags</p>
-          <TagGroup label="Related guidance">
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
-              Passport services
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
+          <p className="type-body-sm-medium text-base-emphasis">{text.linkTags}</p>
+          <TagGroup label={text.relatedGuidance}>
+            <Tag id="passport" href="https://www.gov.mv" target="_blank" rel="noreferrer">
+              {text.passportServices}
             </Tag>
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
-              Licensing portal
+            <Tag id="licensing" href="https://www.gov.mv" target="_blank" rel="noreferrer">
+              {text.licensingPortal}
             </Tag>
-            <Tag href="https://www.gov.mv" target="_blank" rel="noreferrer">
-              Online payments
+            <Tag id="payments" href="https://www.gov.mv" target="_blank" rel="noreferrer">
+              {text.onlinePayments}
             </Tag>
           </TagGroup>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Disabled keys</p>
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
+          <p className="type-body-sm-medium text-base-emphasis">{text.disabledKeys}</p>
           <TagGroup
-            label="Amenities"
+            label={text.amenities}
             selectionMode="multiple"
             defaultSelectedKeys={['laundry']}
             disabledKeys={['parking']}
           >
-            <Tag id="laundry">Laundry</Tag>
-            <Tag id="parking">Parking</Tag>
-            <Tag id="breakfast">Breakfast</Tag>
-            <Tag id="wifi">Wi-Fi</Tag>
+            <Tag id="laundry">{text.laundry}</Tag>
+            <Tag id="parking">{text.parking}</Tag>
+            <Tag id="breakfast">{text.breakfast}</Tag>
+            <Tag id="wifi">{text.wifi}</Tag>
           </TagGroup>
         </div>
       </div>
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Disabled group</p>
+      <div className={tagsStoryPanelClassName}>
+        <div className={tagsStorySectionClassName}>
+          <p className="type-body-sm-medium text-base-emphasis">{text.disabledGroup}</p>
           <TagGroup
-            label="Restricted services"
+            label={text.restrictedServices}
             selectionMode="multiple"
             defaultSelectedKeys={['documents']}
             isDisabled
           >
-            <Tag id="documents">Documents</Tag>
-            <Tag id="appointments">Appointments</Tag>
-            <Tag id="payments">Payments</Tag>
-            <Tag id="support">Support</Tag>
+            <Tag id="documents">{text.documents}</Tag>
+            <Tag id="appointments">{text.appointments}</Tag>
+            <Tag id="payments">{text.payments}</Tag>
+            <Tag id="support">{text.support}</Tag>
           </TagGroup>
         </div>
       </div>
     </div>
   );
 }
-
 export function ButtonVariantsDemo() {
   return (
     <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
