@@ -7077,7 +7077,7 @@
             }
           }
         },
-        "pink-subtle": {
+        "magenta-subtle": {
           "$type": "color",
           "$value": "{color.primitives.magenta.400}",
           "$description": "",
@@ -7090,7 +7090,7 @@
             }
           }
         },
-        "pink-emphasis": {
+        "magenta-emphasis": {
           "$type": "color",
           "$value": "{color.primitives.magenta.900}",
           "$description": "",
@@ -7129,7 +7129,7 @@
             }
           }
         },
-        "turquoise-subtle": {
+        "teal-subtle": {
           "$type": "color",
           "$value": "{color.primitives.teal.400}",
           "$description": "",
@@ -7142,7 +7142,7 @@
             }
           }
         },
-        "turquoise-emphasis": {
+        "teal-emphasis": {
           "$type": "color",
           "$value": "{color.primitives.teal.900}",
           "$description": "",
@@ -7983,7 +7983,7 @@
             }
           }
         },
-        "success green": {
+        "emerald": {
           "$type": "color",
           "$value": "{color.primitives.emerald.400}",
           "$description": "",
@@ -8022,7 +8022,7 @@
             }
           }
         },
-        "pink": {
+        "magenta": {
           "$type": "color",
           "$value": "{color.primitives.magenta.400}",
           "$description": "",
@@ -8048,7 +8048,7 @@
             }
           }
         },
-        "turquoise": {
+        "teal": {
           "$type": "color",
           "$value": "{color.primitives.teal.400}",
           "$description": "",

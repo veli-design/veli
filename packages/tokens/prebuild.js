@@ -33,20 +33,8 @@ function normalizePathSegment(value) {
 
 const colorStructuralGroups = new Set(['primitives', 'brand', 'semantics', 'components']);
 
-const legacyColorAliases = {
-  'cool-gray': 'slate',
-  gray: 'ash',
-  'warm-gray': 'stone',
-  'green-gray': 'sage',
-  turquoise: 'teal',
-  pink: 'magenta',
-};
-
 function normalizeColorOutputSegment(value) {
-  return normalizePathSegment(value)
-    .replace(/success-green/g, 'emerald')
-    .replace(/turquoise/g, 'teal')
-    .replace(/pink/g, 'magenta');
+  return normalizePathSegment(value);
 }
 
 function normalizeColorPathSegments(path) {
@@ -251,48 +239,6 @@ function createColorAliasGroupFromSource(source, targetPath) {
   );
 }
 
-function legacyColorKeyFor(key) {
-  return key
-    .replace(/emerald/g, 'success-green')
-    .replace(/magenta/g, 'pink')
-    .replace(/teal/g, 'turquoise');
-}
-
-function addRenamedColorAliases(value, path = []) {
-  if (!isPlainObject(value) || '$type' in value) return;
-
-  for (const [key, child] of Object.entries(value)) {
-    addRenamedColorAliases(child, [...path, key]);
-
-    const legacyKey = legacyColorKeyFor(key);
-    if (legacyKey !== key && value[legacyKey] === undefined) {
-      value[legacyKey] = createColorAliasGroupFromSource(child, [...path, key].join('.'));
-    }
-  }
-}
-
-function addLegacyColorAliases(colorTokens) {
-  for (const [legacyName, canonicalName] of Object.entries(legacyColorAliases)) {
-    if (!isPlainObject(colorTokens[canonicalName]) || isPlainObject(colorTokens[legacyName])) {
-      continue;
-    }
-
-    colorTokens[legacyName] = createColorAliasGroupFromSource(
-      colorTokens[canonicalName],
-      canonicalName,
-    );
-  }
-
-  if (isPlainObject(colorTokens.emerald) && !isPlainObject(colorTokens.success?.alpha)) {
-    colorTokens.success = colorTokens.success ?? {};
-    for (const [key, value] of Object.entries(colorTokens.emerald)) {
-      if (colorTokens.success[key] === undefined) {
-        colorTokens.success[key] = createColorAliasGroupFromSource(value, `emerald.${key}`);
-      }
-    }
-  }
-}
-
 function normalizeColorOutputKeys(value) {
   if (Array.isArray(value)) {
     return value.map(normalizeColorOutputKeys);
@@ -345,8 +291,6 @@ function collapseColorStructuralGroups(colorTokens) {
 
   const normalized = normalizeColorOutputKeys(collapsed);
 
-  addLegacyColorAliases(normalized);
-  addRenamedColorAliases(normalized);
   addDefaultColorAliases(normalized);
 
   return normalized;
