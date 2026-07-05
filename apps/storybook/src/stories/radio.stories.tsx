@@ -393,16 +393,10 @@ export const StatesAudit: Story = {
     return (
       <div className="grid grid-cols-3 gap-[20px] items-start">
         <div />
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
-          {text.states.off}
-        </div>
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
-          {text.states.on}
-        </div>
+        <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.off}</div>
+        <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.on}</div>
 
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
-          {text.states.md}
-        </div>
+        <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.md}</div>
         <RadioGroup aria-label="Medium off state">
           <Radio value="md-off" size="md" />
         </RadioGroup>
@@ -410,7 +404,7 @@ export const StatesAudit: Story = {
           <Radio value="md-on" size="md" />
         </RadioGroup>
 
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
+        <div className="text-[12px] font-bold uppercase text-base-muted">
           {text.states.mdDisabled}
         </div>
         <RadioGroup aria-label="Medium disabled off state">
@@ -420,9 +414,7 @@ export const StatesAudit: Story = {
           <Radio value="md-on-disabled" size="md" isDisabled />
         </RadioGroup>
 
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
-          {text.states.lg}
-        </div>
+        <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.lg}</div>
         <RadioGroup aria-label="Large off state">
           <Radio value="lg-off" size="lg" />
         </RadioGroup>
@@ -430,7 +422,7 @@ export const StatesAudit: Story = {
           <Radio value="lg-on" size="lg" />
         </RadioGroup>
 
-        <div className="text-[12px] font-bold uppercase text-text-default-muted">
+        <div className="text-[12px] font-bold uppercase text-base-muted">
           {text.states.lgDisabled}
         </div>
         <RadioGroup aria-label="Large disabled off state">

@@ -25,12 +25,12 @@ import { twMerge } from 'tailwind-merge';
 import { useVeliLanguage } from './provider';
 
 const menuPopoverClassName =
-  'min-w-56 w-max rounded-xl border border-border-default-subtle bg-menu-bg p-1 text-text-default-default shadow-md backdrop-blur-xs outline-none';
+  'min-w-56 w-max rounded-xl border border-base-subtle bg-menu-bg p-1 text-base shadow-md backdrop-blur-xs outline-none';
 
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[disabled]:[&_svg]:text-icon-disabled-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
@@ -39,9 +39,9 @@ const menuItemVariants = cva(
         lg: 'py-3.5 type-body-md-regular',
       },
       intent: {
-        default: 'text-text-default-strong',
+        default: 'text-base-strong',
         danger:
-          'text-text-danger-muted data-[disabled]:text-text-disabled-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
+          'text-danger-muted data-[disabled]:text-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
       },
     },
     defaultVariants: {
@@ -53,7 +53,7 @@ const menuItemVariants = cva(
 
 const menuSectionVariants = cva('py-1 first:pt-0 last:pb-0');
 
-const menuSectionTitleVariants = cva('px-3 text-start text-text-default-emphasis', {
+const menuSectionTitleVariants = cva('px-3 text-start text-base-emphasis', {
   variants: {
     size: {
       sm: 'py-1.5 type-body-sm-medium',
@@ -86,15 +86,15 @@ const menuItemLabelVariants = cva('min-w-0 flex-1 truncate', {
 });
 
 const menuItemDescriptionVariants = cva(
-  'truncate type-caption-regular text-text-default-muted group-data-[disabled]:text-text-disabled-disabled',
+  'truncate type-caption-regular text-base-muted group-data-[disabled]:text-disabled',
 );
 
 const menuShortcutVariants = cva(
-  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-text-default-default group-data-[disabled]:text-text-disabled-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-default-default group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
+  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-base group-data-[disabled]:text-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base group-data-[disabled]:[&_svg]:text-icon-disabled',
 );
 
 const menuItemCheckIconVariants = cva(
-  'mt-0.5 inline-flex shrink-0 items-center justify-center [&_svg]:shrink-0 group-data-[disabled]:[&_svg]:text-icon-disabled-disabled',
+  'mt-0.5 inline-flex shrink-0 items-center justify-center [&_svg]:shrink-0 group-data-[disabled]:[&_svg]:text-icon-disabled',
   {
     variants: {
       size: {
@@ -119,8 +119,8 @@ const menuItemIconVariants = cva(
         lg: '[&_svg]:size-5',
       },
       intent: {
-        default: 'text-text-default-muted group-data-[disabled]:text-icon-disabled-disabled',
-        danger: 'text-text-danger-muted group-data-[disabled]:text-icon-disabled-disabled',
+        default: 'text-base-muted group-data-[disabled]:text-icon-disabled',
+        danger: 'text-danger-muted group-data-[disabled]:text-icon-disabled',
       },
     },
     defaultVariants: {
@@ -135,7 +135,7 @@ function MenuItemCheckIcon() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="text-icon-primary-default"
+      className="text-icon-primary"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -221,7 +221,7 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
   return (
     <AriaSeparator
       {...props}
-      className={twMerge('mx-3 my-1 border-t border-border-default-subtle', className)}
+      className={twMerge('mx-3 my-1 border-t border-base-subtle', className)}
     />
   );
 }

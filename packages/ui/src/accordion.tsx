@@ -22,10 +22,10 @@ const accordionVariants = cva('w-full font-sans antialiased');
 
 const accordionItemVariants = cva('last:[&_[data-accordion-header]]:border-b-0');
 
-const accordionHeaderWrapperVariants = cva('border-b border-border-default-subtle pb-0.5');
+const accordionHeaderWrapperVariants = cva('border-b border-base-subtle pb-0.5');
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-2 rounded-xl text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full items-center gap-2 rounded-xl text-base-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {
@@ -77,10 +77,10 @@ const accordionChevronWrapperVariants = cva(
   },
 );
 
-const accordionChevronIconVariants = cva('text-icon-default-default', {
+const accordionChevronIconVariants = cva('text-icon-base', {
   variants: {
     isDisabled: {
-      true: 'text-icon-disabled-disabled',
+      true: 'text-icon-disabled',
       false: '',
     },
   },
@@ -93,7 +93,7 @@ const accordionPanelVariants = cva(
   'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height]',
 );
 
-const accordionPanelContentVariants = cva('pb-4 pt-1 text-text-default-default', {
+const accordionPanelContentVariants = cva('pb-4 pt-1 text-base', {
   variants: {
     size: {
       md: 'type-body-sm-regular',
@@ -122,7 +122,7 @@ const accordionPanelIndentVariants = cva('', {
   },
 });
 
-const accordionSkeletonBarVariants = cva('bg-bg-skeleton animate-pulse', {
+const accordionSkeletonBarVariants = cva('bg-skeleton animate-pulse', {
   variants: {
     size: {
       md: 'h-2.5',
@@ -216,9 +216,9 @@ function AccordionSkeletonItem({
       })}
     >
       {alignment === 'right' ? (
-        <CaretRight aria-hidden size={16} weight="regular" className="text-icon-default-inactive" />
+        <CaretRight aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
       ) : (
-        <CaretDown aria-hidden size={16} weight="regular" className="text-icon-default-inactive" />
+        <CaretDown aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
       )}
     </span>
   );

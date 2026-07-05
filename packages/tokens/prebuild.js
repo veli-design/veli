@@ -31,9 +31,37 @@ function normalizePathSegment(value) {
   return String(value).replace(/\s+/g, '-');
 }
 
+const colorStructuralGroups = new Set(['primitives', 'brand', 'semantics', 'components']);
+
+const legacyColorAliases = {
+  'cool-gray': 'slate',
+  gray: 'ash',
+  'warm-gray': 'stone',
+  'green-gray': 'sage',
+  turquoise: 'teal',
+  pink: 'magenta',
+};
+
+function normalizeColorOutputSegment(value) {
+  return normalizePathSegment(value)
+    .replace(/success-green/g, 'emerald')
+    .replace(/turquoise/g, 'teal')
+    .replace(/pink/g, 'magenta');
+}
+
+function normalizeColorPathSegments(path) {
+  const segments = path.split('.').map(normalizeColorOutputSegment);
+
+  if (colorStructuralGroups.has(segments[0])) {
+    segments.shift();
+  }
+
+  return segments;
+}
+
 function normalizeColorAlias(value) {
   return value.replace(/\{color\.([^}]+)\}/g, (_match, path) => {
-    return `{color.${path.split('.').map(normalizePathSegment).join('.')}}`;
+    return `{color.${normalizeColorPathSegments(path).join('.')}}`;
   });
 }
 
@@ -192,6 +220,140 @@ function normalizeObjectKeys(value) {
 
 if (isPlainObject(tokens.color)) {
   tokens.color = normalizeObjectKeys(tokens.color);
+}
+
+function createColorAliasToken(targetPath) {
+  return {
+    $type: 'color',
+    $value: `{color.${targetPath}}`,
+    $description: `Legacy alias for color.${targetPath}.`,
+    $extensions: {
+      mode: {
+        Dark: `{color.${targetPath}}`,
+        Light: `{color.${targetPath}}`,
+      },
+    },
+  };
+}
+
+function createColorAliasGroupFromSource(source, targetPath) {
+  if (!isPlainObject(source)) return source;
+
+  if ('$type' in source && source.$type === 'color') {
+    return createColorAliasToken(targetPath);
+  }
+
+  return Object.fromEntries(
+    Object.entries(source).map(([key, value]) => [
+      key,
+      createColorAliasGroupFromSource(value, `${targetPath}.${key}`),
+    ]),
+  );
+}
+
+function legacyColorKeyFor(key) {
+  return key
+    .replace(/emerald/g, 'success-green')
+    .replace(/magenta/g, 'pink')
+    .replace(/teal/g, 'turquoise');
+}
+
+function addRenamedColorAliases(value, path = []) {
+  if (!isPlainObject(value) || '$type' in value) return;
+
+  for (const [key, child] of Object.entries(value)) {
+    addRenamedColorAliases(child, [...path, key]);
+
+    const legacyKey = legacyColorKeyFor(key);
+    if (legacyKey !== key && value[legacyKey] === undefined) {
+      value[legacyKey] = createColorAliasGroupFromSource(child, [...path, key].join('.'));
+    }
+  }
+}
+
+function addLegacyColorAliases(colorTokens) {
+  for (const [legacyName, canonicalName] of Object.entries(legacyColorAliases)) {
+    if (!isPlainObject(colorTokens[canonicalName]) || isPlainObject(colorTokens[legacyName])) {
+      continue;
+    }
+
+    colorTokens[legacyName] = createColorAliasGroupFromSource(
+      colorTokens[canonicalName],
+      canonicalName,
+    );
+  }
+
+  if (isPlainObject(colorTokens.emerald) && !isPlainObject(colorTokens.success?.alpha)) {
+    colorTokens.success = colorTokens.success ?? {};
+    for (const [key, value] of Object.entries(colorTokens.emerald)) {
+      if (colorTokens.success[key] === undefined) {
+        colorTokens.success[key] = createColorAliasGroupFromSource(value, `emerald.${key}`);
+      }
+    }
+  }
+}
+
+function normalizeColorOutputKeys(value) {
+  if (Array.isArray(value)) {
+    return value.map(normalizeColorOutputKeys);
+  }
+
+  if (!isPlainObject(value) || '$type' in value) return value;
+
+  const normalized = {};
+  for (const [key, child] of Object.entries(value)) {
+    const normalizedSegment = normalizeColorOutputSegment(key);
+    const normalizedKey =
+      normalizedSegment === 'default' && isPlainObject(child) && child.$type === 'color'
+        ? 'DEFAULT'
+        : normalizedSegment;
+    normalized[normalizedKey] = normalizeColorOutputKeys(child);
+  }
+
+  return normalized;
+}
+
+function addDefaultColorAliases(value, path = []) {
+  if (!isPlainObject(value) || '$type' in value) return;
+
+  for (const [key, child] of Object.entries(value)) {
+    addDefaultColorAliases(child, [...path, key]);
+
+    if (key === 'DEFAULT' && value.default === undefined) {
+      value.default = createColorAliasGroupFromSource(child, [...path, key].join('.'));
+    }
+  }
+}
+
+function collapseColorStructuralGroups(colorTokens) {
+  const collapsed = {};
+
+  for (const [key, value] of Object.entries(colorTokens)) {
+    if (!colorStructuralGroups.has(key)) {
+      collapsed[key] = value;
+    }
+  }
+
+  for (const group of colorStructuralGroups) {
+    const groupTokens = colorTokens[group];
+    if (!isPlainObject(groupTokens)) continue;
+
+    for (const [key, value] of Object.entries(groupTokens)) {
+      collapsed[key] = value;
+    }
+  }
+
+  const normalized = normalizeColorOutputKeys(collapsed);
+
+  addLegacyColorAliases(normalized);
+  addRenamedColorAliases(normalized);
+  addDefaultColorAliases(normalized);
+
+  return normalized;
+}
+
+if (isPlainObject(tokens.color)) {
+  tokens.color = collapseColorStructuralGroups(tokens.color);
 }
 
 function normalizeColorTokens(value, path = [], errors = []) {

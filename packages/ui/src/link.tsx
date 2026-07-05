@@ -31,7 +31,7 @@ const linkVariants = cva(
       },
       isDisabled: {
         false: '',
-        true: 'pointer-events-none text-text-disabled-disabled [&_svg]:text-icon-disabled-disabled',
+        true: 'pointer-events-none text-disabled [&_svg]:text-icon-disabled',
       },
       isFocusVisible: {
         true: 'ring-border-focus ring-offset-2 ring-2 rounded-sm',
@@ -48,33 +48,33 @@ const linkVariants = cva(
       {
         intent: 'default',
         isDisabled: false,
-        className: 'text-text-links-default',
+        className: 'text-links',
       },
       {
         intent: 'default',
         isHovered: true,
-        className: 'text-text-links-hover',
+        className: 'text-links-hover',
       },
       {
         intent: 'default',
         isPressed: true,
-        className: 'text-text-links-hover',
+        className: 'text-links-hover',
       },
       // Secondary States
       {
         intent: 'secondary',
         isDisabled: false,
-        className: 'text-text-default-default',
+        className: 'text-base',
       },
       {
         intent: 'secondary',
         isHovered: true,
-        className: 'text-text-default-muted',
+        className: 'text-base-muted',
       },
       {
         intent: 'secondary',
         isPressed: true,
-        className: 'text-text-default-muted',
+        className: 'text-base-muted',
       },
     ],
     defaultVariants: {

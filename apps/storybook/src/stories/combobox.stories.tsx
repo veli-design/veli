@@ -417,7 +417,7 @@ export const Default: Story = {
         >
           {renderComboBoxItems}
         </ComboBox>
-        <p className="text-xs text-text-default-muted">
+        <p className="text-xs text-base-muted">
           {text.selectedKey}:{' '}
           <span className="font-medium">{selectedKey ? String(selectedKey) : text.none}</span>
         </p>
@@ -470,7 +470,7 @@ export const Outline: Story = {
         >
           {renderComboBoxItems}
         </ComboBox>
-        <p className="text-xs text-text-default-muted">
+        <p className="text-xs text-base-muted">
           {text.selectedKey}:{' '}
           <span className="font-medium">{selectedKey ? String(selectedKey) : text.none}</span>
         </p>
@@ -487,11 +487,11 @@ export const Sizes: Story = {
     return (
       <div className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <ComboBox
@@ -505,7 +505,7 @@ export const Sizes: Story = {
             </ComboBox>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <ComboBox
@@ -519,7 +519,7 @@ export const Sizes: Story = {
             </ComboBox>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <ComboBox
@@ -534,11 +534,11 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <ComboBox
@@ -553,7 +553,7 @@ export const Sizes: Story = {
             </ComboBox>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <ComboBox
@@ -568,7 +568,7 @@ export const Sizes: Story = {
             </ComboBox>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <ComboBox
@@ -641,7 +641,7 @@ export const GroupedSections: Story = {
             <ComboBoxItem id="kulhudhuffushi">{text.locations.kulhudhuffushi}</ComboBoxItem>
           </ComboBoxSection>
         </ComboBox>
-        <p className="text-xs text-text-default-muted">
+        <p className="text-xs text-base-muted">
           {text.selectedKey}:{' '}
           <span className="font-medium">{selectedKey ? String(selectedKey) : text.none}</span>
         </p>
@@ -704,7 +704,7 @@ export const FigmaExploration: Story = {
           <ComboBoxSection title={text.sections.popular}>
             <ComboBoxItem id="male">
               <span className="inline-flex min-w-0 items-center gap-[6px]">
-                <span aria-hidden="true" className="type-caption-medium text-text-default-subtle">
+                <span aria-hidden="true" className="type-caption-medium text-base-subtle">
                   {text.locationCodes.male}
                 </span>
                 <span>{text.locations.male}</span>
@@ -731,7 +731,7 @@ export const ValidationStates: Story = {
     return (
       <div className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           <ComboBox
@@ -779,7 +779,7 @@ export const ValidationStates: Story = {
           </ComboBox>
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <ComboBox

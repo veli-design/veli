@@ -33,8 +33,8 @@ const checkboxRootVariants = cva('group font-sans antialiased', {
       false: 'inline-flex items-center gap-2',
     },
     isDisabled: {
-      true: 'cursor-not-allowed text-text-disabled-disabled',
-      false: 'cursor-pointer text-text-default-strong',
+      true: 'cursor-not-allowed text-disabled',
+      false: 'cursor-pointer text-base-strong',
     },
   },
   defaultVariants: {
@@ -58,29 +58,26 @@ const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
 
 const checkboxLabelVariants = cva(`min-w-0 ${webkitDhivehiTextBaselineClassName}`);
 
-const checkboxDescriptionVariants = cva(
-  'col-start-2 type-body-sm-regular text-text-default-muted',
-  {
-    variants: {
-      isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: '',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
+const checkboxDescriptionVariants = cva('col-start-2 type-body-sm-regular text-base-muted', {
+  variants: {
+    isDisabled: {
+      true: 'text-disabled',
+      false: '',
     },
   },
-);
+  defaultVariants: {
+    isDisabled: false,
+  },
+});
 
-const checkboxErrorVariants = cva('col-start-2 text-text-danger-muted', {
+const checkboxErrorVariants = cva('col-start-2 text-danger-muted', {
   variants: {
     size: {
       md: 'type-caption-regular',
       lg: 'type-body-sm-regular',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -238,7 +235,7 @@ const checkboxControlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'pointer-events-none absolute inset-0 flex items-center justify-center text-text-default-inverted transition-transform duration-150 ease-out',
+  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-transform duration-150 ease-out',
   {
     variants: {
       isPressed: {

@@ -9,9 +9,11 @@ const __dirname = dirname(__filename);
 const tailwindThemePath = join(__dirname, 'dist', 'tailwind-theme.css');
 const tokensCssPath = join(__dirname, 'dist', 'tokens.css');
 const sourceTokensPath = join(__dirname, 'src', 'design.tokens.json');
+const normalizedTokensPath = join(__dirname, '.cache', 'design.tokens.normalized.json');
 let tailwindTheme = readFileSync(tailwindThemePath, 'utf-8');
 let tokensCss = readFileSync(tokensCssPath, 'utf-8');
 const sourceTokens = JSON.parse(readFileSync(sourceTokensPath, 'utf-8'));
+const normalizedTokens = JSON.parse(readFileSync(normalizedTokensPath, 'utf-8'));
 
 // Remove the @import "tailwindcss"; line since consuming apps will import it
 tailwindTheme = tailwindTheme.replace('@import "tailwindcss";\n\n', '');
@@ -126,7 +128,22 @@ function addDhivehiFontVariables(css) {
 }
 
 tailwindTheme = addDhivehiFontVariables(tailwindTheme);
-tailwindTheme = tailwindTheme.replace(/--color-([a-z0-9-]+)-DEFAULT:/g, '--color-$1-default:');
+function fixSelfReferentialDefaultColorAliases(css) {
+  const colorDefaultVariables = new Set(
+    css
+      .split('\n')
+      .map((line) => line.trim().match(/^(--color-[^:]+-DEFAULT):/)?.[1])
+      .filter(Boolean),
+  );
+
+  return css.replace(/(--color-[^:]+)-default:\s*var\(\1-default\);/g, (match, prefix) => {
+    const defaultVariable = `${prefix}-DEFAULT`;
+    return colorDefaultVariables.has(defaultVariable)
+      ? `${prefix}-default: var(${defaultVariable});`
+      : match;
+  });
+}
+
 tailwindTheme = tailwindTheme.replace(
   /@variant dark\s*\{\n([\s\S]*?)\n\}/,
   (_match, declarations) => {
@@ -267,6 +284,26 @@ function resolveTokenValue(tokens, value) {
 
   const resolved = lookupTokenValue(tokens, alias);
   return resolved === undefined ? value : resolveTokenValue(tokens, resolved);
+}
+
+function cssVariableNameForTokenPath(path) {
+  return `--${path.replace(/\./g, '-').replace(/-DEFAULT$/g, '-default')}`;
+}
+
+function cssValueForTokenValue(value) {
+  const alias = typeof value === 'string' ? value.trim().match(/^\{([^}]+)\}$/)?.[1] : undefined;
+  return alias ? `var(${cssVariableNameForTokenPath(alias)})` : value;
+}
+
+function fixTokensCssSelfReferentialColorAliases(css) {
+  return css.replace(
+    /(--color-[^:]+):\s*var\(\1\);\s*\/\*\s*Legacy alias for ([^*]+?)\.\s*\*\//g,
+    (match, variableName, targetPath) => {
+      const targetValue = lookupTokenValue(normalizedTokens, targetPath.trim());
+      const cssValue = cssValueForTokenValue(targetValue);
+      return typeof cssValue === 'string' ? `${variableName}: ${cssValue};` : match;
+    },
+  );
 }
 
 function normalizeTypographyValue(tokens, value) {
@@ -478,6 +515,303 @@ const motionPrimitiveUtilities = `
 }
 `;
 
+function propertyColorNameFromColorVariable(suffix) {
+  return suffix.replace(/-(?:DEFAULT|default)$/g, '');
+}
+
+function generatePropertyColorVariables(css) {
+  const propertyColorVariables = [
+    { colorPrefix: '--color-bg-', propertyPrefix: '--background-color-' },
+    { colorPrefix: '--color-text-', propertyPrefix: '--text-color-' },
+    { colorPrefix: '--color-border-', propertyPrefix: '--border-color-' },
+    { colorPrefix: '--color-border-', propertyPrefix: '--ring-color-' },
+    { colorPrefix: '--color-border-', propertyPrefix: '--outline-color-' },
+  ];
+  const declarations = css
+    .split('\n')
+    .map((line) => line.trim().match(/^(--color-[^:]+):/)?.[1])
+    .filter(Boolean);
+  const seen = new Set();
+  const variables = [];
+
+  for (const variableName of declarations) {
+    for (const { colorPrefix, propertyPrefix } of propertyColorVariables) {
+      if (!variableName.startsWith(colorPrefix)) continue;
+
+      const suffix = propertyColorNameFromColorVariable(variableName.slice(colorPrefix.length));
+      if (!suffix) continue;
+
+      const propertyName = `${propertyPrefix}${suffix}`;
+      if (seen.has(propertyName)) continue;
+
+      seen.add(propertyName);
+      variables.push(`  ${propertyName}: var(${variableName});`);
+    }
+  }
+
+  return variables.length ? `\n\n${variables.join('\n')}` : '';
+}
+
+function addPropertyColorVariables(css) {
+  const propertyVariables = generatePropertyColorVariables(css);
+  if (!propertyVariables) return css;
+
+  return css.replace(/\n\}\n\n@layer theme \{/, `${propertyVariables}\n}\n\n@layer theme {`);
+}
+
+const primitiveColorFamilies = new Set([
+  'slate',
+  'ash',
+  'stone',
+  'sage',
+  'blue',
+  'emerald',
+  'orange',
+  'red',
+  'teal',
+  'indigo',
+  'yellow',
+  'lime',
+  'green',
+  'magenta',
+  'white',
+]);
+
+const legacyPrimitiveColorFamilies = new Set([
+  'cool-gray',
+  'gray',
+  'warm-gray',
+  'green-gray',
+  'turquoise',
+  'pink',
+  'success-green',
+]);
+
+const brandColorFamilies = new Set([
+  'neutral',
+  'primary',
+  'secondary',
+  'accent',
+  'success',
+  'caution',
+  'warning',
+  'danger',
+  'info',
+]);
+
+const semanticColorFamilies = new Set(['bg', 'text', 'icon', 'border', 'status', 'effects']);
+
+const componentColorFamilies = new Set([
+  'accordion',
+  'avatar',
+  'breadcrumbs',
+  'button',
+  'calendar',
+  'checkbox',
+  'menu',
+  'modal',
+  'popover',
+  'radio',
+  'switch',
+  'tabs',
+  'text-input',
+  'tooltip',
+]);
+
+const propertyColorFamilies = new Set([
+  'background-color',
+  'text-color',
+  'border-color',
+  'ring-color',
+  'outline-color',
+]);
+
+function colorFamilyFromVariable(variableName) {
+  const prefix = [
+    '--background-color-',
+    '--text-color-',
+    '--border-color-',
+    '--ring-color-',
+    '--outline-color-',
+    '--color-',
+  ].find((item) => variableName.startsWith(item));
+  if (!prefix) return undefined;
+
+  const suffix = variableName.slice(prefix.length);
+  const knownFamilies = [
+    ...propertyColorFamilies,
+    ...componentColorFamilies,
+    ...legacyPrimitiveColorFamilies,
+    ...primitiveColorFamilies,
+    ...brandColorFamilies,
+    ...semanticColorFamilies,
+  ].sort((a, b) => b.length - a.length);
+
+  return knownFamilies.find((family) => suffix === family || suffix.startsWith(`${family}-`));
+}
+
+function commentForVariable(variableName) {
+  if (variableName.startsWith('--background-color-')) {
+    return 'Tailwind property aliases / background';
+  }
+  if (variableName.startsWith('--text-color-')) return 'Tailwind property aliases / text';
+  if (variableName.startsWith('--border-color-')) return 'Tailwind property aliases / border';
+  if (variableName.startsWith('--ring-color-')) return 'Tailwind property aliases / ring';
+  if (variableName.startsWith('--outline-color-')) return 'Tailwind property aliases / outline';
+
+  const family = colorFamilyFromVariable(variableName);
+
+  if (variableName.startsWith('--color-')) {
+    if (primitiveColorFamilies.has(family)) {
+      return `Primitive colors / ${family}`;
+    }
+    if (brandColorFamilies.has(family)) {
+      return `Brand theme roles / ${family}`;
+    }
+    if (semanticColorFamilies.has(family)) {
+      return `Semantic colors / ${family}`;
+    }
+    if (componentColorFamilies.has(family)) {
+      return `Component colors / ${family}`;
+    }
+    if (legacyPrimitiveColorFamilies.has(family)) {
+      return `Legacy color aliases / ${family}`;
+    }
+    return 'Other color tokens';
+  }
+
+  if (variableName.startsWith('--font-weight-')) return 'Typography / font weight';
+  if (variableName.startsWith('--font-')) return 'Typography / font families';
+  if (variableName.startsWith('--text-')) return 'Typography / text scale';
+  if (variableName.startsWith('--leading-')) return 'Typography / line height';
+  if (variableName.startsWith('--tracking-')) return 'Typography / letter spacing';
+  if (variableName.startsWith('--shadow-')) return 'Effects / shadows';
+  if (variableName.startsWith('--blur-')) return 'Effects / blur';
+  if (variableName.startsWith('--radius-')) return 'Shape / radius';
+  if (variableName.startsWith('--spacing')) return 'Layout / spacing';
+  if (variableName.startsWith('--breakpoint') || variableName.startsWith('--breakpoints-')) {
+    return 'Layout / breakpoints';
+  }
+
+  return undefined;
+}
+
+const groupOrder = [
+  'Layout / spacing',
+  'Layout / breakpoints',
+  'Primitive colors',
+  'Brand theme roles',
+  'Semantic colors',
+  'Tailwind property aliases',
+  'Component colors',
+  'Legacy color aliases',
+  'Effects',
+  'Shape',
+  'Typography',
+  'Other color tokens',
+];
+
+const naturalSort = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+
+function sortDescriptorForVariable(variableName) {
+  const comment = commentForVariable(variableName) ?? 'zz';
+  const groupIndex = groupOrder.findIndex((group) => comment.startsWith(group));
+  return {
+    groupIndex: groupIndex === -1 ? 99 : groupIndex,
+    comment,
+    variableName,
+  };
+}
+
+function compareVariableUnits(a, b) {
+  const groupComparison =
+    a.sort.groupIndex - b.sort.groupIndex || naturalSort.compare(a.sort.comment, b.sort.comment);
+  if (groupComparison) return groupComparison;
+
+  if (
+    a.sort.comment.startsWith('Primitive colors') ||
+    a.sort.comment.startsWith('Brand theme roles') ||
+    a.sort.comment.startsWith('Legacy color aliases')
+  ) {
+    return naturalSort.compare(a.sort.variableName, b.sort.variableName);
+  }
+
+  return a.index - b.index;
+}
+
+function sortVariableDeclarationRuns(css) {
+  const lines = css.split('\n');
+  const output = [];
+
+  for (let index = 0; index < lines.length; ) {
+    if (!lines[index].trim().match(/^--[a-z0-9-]+:/)) {
+      output.push(lines[index]);
+      index += 1;
+      continue;
+    }
+
+    const units = [];
+    let originalIndex = 0;
+    while (index < lines.length && lines[index].trim().match(/^--[a-z0-9-]+:/)) {
+      const unit = [lines[index]];
+      index += 1;
+
+      while (
+        index < lines.length &&
+        !lines[index].trim().match(/^--[a-z0-9-]+:/) &&
+        !lines[index].trim().startsWith('}')
+      ) {
+        unit.push(lines[index]);
+        index += 1;
+      }
+
+      const variableName = unit[0].trim().match(/^(--[a-z0-9-]+):/)?.[1] ?? '';
+      units.push({
+        index: originalIndex,
+        sort: sortDescriptorForVariable(variableName),
+        lines: unit,
+      });
+      originalIndex += 1;
+    }
+
+    for (const unit of units.sort(compareVariableUnits)) {
+      output.push(...unit.lines);
+    }
+  }
+
+  return output.join('\n');
+}
+
+function annotateVariableGroups(css) {
+  const lines = css.split('\n');
+  const output = [];
+  let currentComment;
+
+  for (const line of lines) {
+    const variableName = line.trim().match(/^(--[a-z0-9-]+):/)?.[1];
+    const nextComment = variableName ? commentForVariable(variableName) : undefined;
+
+    if (nextComment && nextComment !== currentComment) {
+      const indent = line.match(/^\s*/)?.[0] ?? '';
+      const previousLine = output.at(-1);
+      if (previousLine?.trim() && !previousLine.trim().endsWith('{')) {
+        output.push('');
+      }
+      output.push(`${indent}/* ${nextComment} */`);
+      currentComment = nextComment;
+    }
+
+    if (!variableName && line.trim().startsWith('}')) {
+      currentComment = undefined;
+    }
+
+    output.push(line);
+  }
+
+  return output.join('\n');
+}
+
+tailwindTheme = addPropertyColorVariables(tailwindTheme);
 tailwindTheme = `${tailwindTheme.trimEnd()}${motionPrimitiveUtilities}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
 
 tokensCss = tokensCss.replace(/(--font-weight-[^:]+:\s*)(-?\d+(?:\.\d+)?)px;/g, '$1$2;');
@@ -486,6 +820,13 @@ tokensCss = tokensCss.replace(
   (_match, property) => `${property}0.01em;`,
 );
 tokensCss = addDhivehiFontVariables(tokensCss);
+tailwindTheme = fixSelfReferentialDefaultColorAliases(tailwindTheme);
+tokensCss = fixSelfReferentialDefaultColorAliases(tokensCss);
+tokensCss = fixTokensCssSelfReferentialColorAliases(tokensCss);
+tailwindTheme = sortVariableDeclarationRuns(tailwindTheme);
+tokensCss = sortVariableDeclarationRuns(tokensCss);
+tailwindTheme = annotateVariableGroups(tailwindTheme);
+tokensCss = annotateVariableGroups(tokensCss);
 
 function assertOklchColorOutput(filename, css) {
   const colorDeclarations = css

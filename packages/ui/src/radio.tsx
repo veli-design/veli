@@ -25,8 +25,8 @@ const radioRootVariants = cva('group inline-flex gap-2 font-sans antialiased tra
       false: 'items-center',
     },
     isDisabled: {
-      true: 'cursor-not-allowed text-text-disabled-disabled',
-      false: 'cursor-pointer text-text-default-strong',
+      true: 'cursor-not-allowed text-disabled',
+      false: 'cursor-pointer text-base-strong',
     },
   },
   defaultVariants: {
@@ -50,10 +50,10 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
 
 const radioLabelVariants = cva('min-w-0');
 
-const radioDescriptionVariants = cva('type-body-sm-regular text-text-default-muted', {
+const radioDescriptionVariants = cva('type-body-sm-regular text-base-muted', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -62,14 +62,14 @@ const radioDescriptionVariants = cva('type-body-sm-regular text-text-default-mut
   },
 });
 
-const radioErrorVariants = cva('text-text-danger-muted', {
+const radioErrorVariants = cva('text-danger-muted', {
   variants: {
     size: {
       md: 'type-caption-regular',
       lg: 'type-body-sm-regular',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },

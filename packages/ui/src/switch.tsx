@@ -21,8 +21,8 @@ const switchVariants = cva(
         lg: 'type-body-lg-medium',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'cursor-pointer text-text-default-default',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-pointer text-base',
       },
     },
     defaultVariants: {
@@ -258,7 +258,7 @@ const checkIconVariants = cva(
       },
       isDisabled: {
         true: 'text-switch-handle-disabled-bg',
-        false: 'text-text-default-inverted',
+        false: 'text-base-inverted',
       },
     },
     defaultVariants: {

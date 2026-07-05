@@ -388,11 +388,11 @@ export const Sizes: Story = {
     return (
       <div className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <Select
@@ -405,7 +405,7 @@ export const Sizes: Story = {
             </Select>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <Select
@@ -418,7 +418,7 @@ export const Sizes: Story = {
             </Select>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <Select
@@ -432,11 +432,11 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <Select
@@ -450,7 +450,7 @@ export const Sizes: Story = {
             </Select>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <Select
@@ -464,7 +464,7 @@ export const Sizes: Story = {
             </Select>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <Select
@@ -526,7 +526,7 @@ export const FigmaExploration: Story = {
           <SelectSection title={text.sections.popular}>
             <SelectItem id="cash" description={text.descriptions.immediateSettlement}>
               <span className="inline-flex min-w-0 items-center gap-[6px]">
-                <span aria-hidden="true" className="type-caption-medium text-text-default-subtle">
+                <span aria-hidden="true" className="type-caption-medium text-base-subtle">
                   C
                 </span>
                 <span>{text.accounts.cash}</span>
@@ -553,7 +553,7 @@ export const ValidationStates: Story = {
     return (
       <div className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           <Select
@@ -587,7 +587,7 @@ export const ValidationStates: Story = {
           </Select>
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <Select

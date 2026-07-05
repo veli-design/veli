@@ -26,7 +26,7 @@ import {
 
 ## Usage
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
   <ButtonUsageDemo client:visible />
 </div>
 
@@ -38,7 +38,7 @@ import {
 
 The button supports three intents and three appearances, creating a flexible visual language.
 
-<div className="preview p-6 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 overflow-x-auto">
+<div className="preview p-6 border border-base-subtle rounded-lg bg-surface-raised mb-4 overflow-x-auto">
   <ButtonVariantsDemo client:visible />
 </div>
 
@@ -51,7 +51,7 @@ To maintain design consistency, icons should follow these size guidelines:
 - **MD/SM Buttons**: 16px
 - **XS Buttons**: 12px
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
   <ButtonIconsDemo client:visible />
 </div>
 
@@ -69,7 +69,7 @@ Use `iconOnly` when the button should render as a square icon action while keepi
 
 Always provide an accessible label with `aria-label` or `aria-labelledby` when there is no visible text. In development, `iconOnly` buttons without a label fail fast.
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
   <ButtonIconOnlyDemo client:visible />
 </div>
 
@@ -83,7 +83,7 @@ Always provide an accessible label with `aria-label` or `aria-labelledby` when t
 
 Heights range from 28px (XS) to 60px (XL) to accommodate various context requirements.
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
   <ButtonSizesDemo client:visible />
 </div>
 
@@ -91,7 +91,7 @@ Heights range from 28px (XS) to 60px (XL) to accommodate various context require
 
 When `isLoading` is true, the button is disabled, marked busy, and displays a spinner while maintaining its dimensions. If a loading button has no visible children, provide `aria-label` or `aria-labelledby` so it is not announced as an unnamed control.
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center">
   <ButtonLoadingDemo client:visible />
 </div>
 
@@ -104,7 +104,7 @@ When `isLoading` is true, the button is disabled, marked busy, and displays a sp
 
 Use `seaglass` to opt into the stylized treatment without changing the base button behavior.
 
-<div className="preview p-4 border border-border-default-subtle rounded-lg bg-bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
   <ButtonSeaglassDemo client:visible />
 </div>
 

@@ -264,7 +264,7 @@ export const ValidationStates: Story = {
     return (
       <div className="grid w-[560px] grid-cols-2 gap-8">
         <div className="flex flex-col gap-6">
-          <span className="type-caption-regular uppercase tracking-wider text-text-default-muted">
+          <span className="type-caption-regular uppercase tracking-wider text-base-muted">
             Default
           </span>
           <Search
@@ -283,7 +283,7 @@ export const ValidationStates: Story = {
           <Search variant="skeleton" />
         </div>
         <div className="flex flex-col gap-6">
-          <span className="type-caption-regular uppercase tracking-wider text-text-default-muted">
+          <span className="type-caption-regular uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <Search
@@ -331,11 +331,11 @@ export const FigmaMatrix: Story = {
       <div className="flex flex-col gap-10">
         {variants.map((variant) => (
           <div key={variant} className="space-y-4">
-            <p className="type-body-sm-medium capitalize text-text-default-emphasis">{variant}</p>
+            <p className="type-body-sm-medium capitalize text-base-emphasis">{variant}</p>
             <div className="flex flex-wrap gap-6">
               {sizes.map((size) => (
                 <div key={size} className="w-[257px] space-y-3">
-                  <p className="type-caption-regular text-text-default-subtle">{size}</p>
+                  <p className="type-caption-regular text-base-subtle">{size}</p>
                   <Search
                     variant={variant}
                     size={size}

@@ -49,7 +49,7 @@ export function PageTab({
       <AriaTabList
         aria-label={listAriaLabel}
         className={twMerge(
-          'flex w-full rounded-full border border-border-default-subtle bg-bg-surface-raised p-[4px] lg:w-fit',
+          'flex w-full rounded-full border border-base-subtle bg-surface-raised p-[4px] lg:w-fit',
           isCentered && 'mx-auto',
           tabListClassName,
         )}
@@ -61,10 +61,10 @@ export function PageTab({
             isDisabled={item.isDisabled}
             className={(state) =>
               twMerge(
-                'inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] type-body-lg-semibold whitespace-nowrap antialiased transition-colors duration-300 outline-none md:px-[40px] md:py-[20px] md:type-subtitle-semibold data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled',
+                'inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] type-body-lg-semibold whitespace-nowrap antialiased transition-colors duration-300 outline-none md:px-[40px] md:py-[20px] md:type-subtitle-semibold data-[disabled]:pointer-events-none data-[disabled]:text-disabled',
                 state.isSelected
-                  ? 'bg-button-primary-default text-text-primary-inverted'
-                  : 'bg-transparent text-text-default-muted data-[hovered]:text-text-default-default data-[pressed]:bg-button-secondary-subtle-hover',
+                  ? 'bg-button-primary text-primary-inverted'
+                  : 'bg-transparent text-base-muted data-[hovered]:text-base data-[pressed]:bg-button-secondary-subtle-hover',
                 state.isFocusVisible && 'ring-2 ring-border-focus ring-offset-2',
                 tabClassName,
               )
@@ -79,10 +79,7 @@ export function PageTab({
         <AriaTabPanel
           key={item.id}
           id={item.id}
-          className={twMerge(
-            'pt-[16px] type-body-md-regular text-text-default-default',
-            panelClassName,
-          )}
+          className={twMerge('pt-[16px] type-body-md-regular text-base', panelClassName)}
         >
           {item.panel}
         </AriaTabPanel>

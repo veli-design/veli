@@ -274,7 +274,7 @@ export const Playground: PlaygroundStory = {
     const currentLabel = getLocalizedBreadcrumbArgText('currentLabel', args.currentLabel, language);
 
     return (
-      <div className="w-[560px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="w-[560px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <Breadcrumbs
           aria-label="Breadcrumb playground"
           showBackLink={args.showBackLink}
@@ -303,7 +303,7 @@ export const Default: Story = {
     const text = useBreadcrumbText();
 
     return (
-      <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <Breadcrumbs aria-label="Breadcrumb">
           <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
           <Breadcrumb href="#">{text.navigation.services}</Breadcrumb>
@@ -322,11 +322,9 @@ export const Variations: Story = {
 
     return (
       <div className="grid gap-[24px] lg:grid-cols-2">
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-emphasis">
-              {text.stories.standardTrail}
-            </p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.stories.standardTrail}</p>
             <Breadcrumbs aria-label="Permit breadcrumb">
               <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
               <Breadcrumb href="#">{text.navigation.applications}</Breadcrumb>
@@ -336,9 +334,9 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-emphasis">
+            <p className="type-body-sm-medium text-base-emphasis">
               {text.stories.backLinkTreatment}
             </p>
             <Breadcrumbs
@@ -355,11 +353,9 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px] lg:col-span-2">
+        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px] lg:col-span-2">
           <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-text-default-emphasis">
-              {text.stories.disabledCrumb}
-            </p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.stories.disabledCrumb}</p>
             <Breadcrumbs aria-label="Disabled breadcrumb">
               <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
               <Breadcrumb href="#" isDisabled>
@@ -382,7 +378,7 @@ export const DataDrivenCollection: Story = {
     const items = breadcrumbTrail.slice(0, currentIndex + 1);
 
     return (
-      <div className="w-[420px] rounded-[16px] border border-border-default-subtle bg-bg-surface-raised p-[16px]">
+      <div className="w-[420px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <Breadcrumbs
           aria-label="Application breadcrumb"
           items={items}
