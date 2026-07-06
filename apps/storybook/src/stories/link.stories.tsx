@@ -206,13 +206,13 @@ export const AllVariants: Story = {
     return (
       <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
         <div />
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
           {text.plain}
         </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
           {text.hoverUnderline}
         </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted text-center">
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
           {text.alwaysUnderline}
         </div>
 
@@ -265,13 +265,13 @@ export const StatesAudit: Story = {
     return (
       <div className="flex items-center gap-16">
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
             {text.stateDefaultLabel}
           </span>
           <Link href="#">{text.stateDefaultLink}</Link>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
             {text.stateHoverLabel}
           </span>
           <Link href="#" isHovered={true}>
@@ -279,7 +279,7 @@ export const StatesAudit: Story = {
           </Link>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
             {text.statePressedLabel}
           </span>
           <Link href="#" isPressed={true}>
@@ -287,7 +287,7 @@ export const StatesAudit: Story = {
           </Link>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
             {text.stateDisabledLabel}
           </span>
           <Link href="#" isDisabled={true}>
@@ -295,7 +295,7 @@ export const StatesAudit: Story = {
           </Link>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-text-default-muted">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
             {text.disabledIconLabel}
           </span>
           <Link href="#" isDisabled={true}>
@@ -359,15 +359,13 @@ export const ComponentSizes: Story = {
           ] as const
         ).map(({ size, label, iconSize }) => (
           <div key={size} className="flex items-center gap-6">
-            <span className="w-20 text-text-default-muted">{label}</span>
+            <span className="w-20 text-base-muted">{label}</span>
             <Link {...args} size={size}>
               <Plus weight="bold" />
               {label} {linkTextValue}
               <DirectionalArrow weight="bold" />
             </Link>
-            <span className="text-xs text-text-default-muted italic">
-              {text.iconsLabel(iconSize)}
-            </span>
+            <span className="text-xs text-base-muted italic">{text.iconsLabel(iconSize)}</span>
           </div>
         ))}
       </div>
@@ -388,7 +386,7 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-6">
         {linkSizeExamples(text).map(({ className, label, size }) => (
           <div key={label} className="flex items-center gap-6">
-            <span className={`${className} w-28 text-text-default-muted`}>{label}</span>
+            <span className={`${className} w-28 text-base-muted`}>{label}</span>
             <span className={className}>
               <Link {...args} size={size}>
                 <Plus weight="bold" />
@@ -396,7 +394,7 @@ export const Sizes: Story = {
                 <DirectionalArrow weight="bold" />
               </Link>
             </span>
-            <span className="text-xs text-text-default-muted italic">{text.labelIcons(size)}</span>
+            <span className="text-xs text-base-muted italic">{text.labelIcons(size)}</span>
           </div>
         ))}
       </div>

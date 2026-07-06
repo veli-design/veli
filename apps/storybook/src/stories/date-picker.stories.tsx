@@ -284,11 +284,11 @@ export const Sizes: Story = {
     return (
       <div className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <DatePicker
@@ -299,7 +299,7 @@ export const Sizes: Story = {
             />
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <DatePicker
@@ -310,7 +310,7 @@ export const Sizes: Story = {
             />
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <DatePicker
@@ -322,11 +322,11 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Small (sm)
             </span>
             <DatePicker
@@ -338,7 +338,7 @@ export const Sizes: Story = {
             />
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Medium (md)
             </span>
             <DatePicker
@@ -350,7 +350,7 @@ export const Sizes: Story = {
             />
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Large (lg)
             </span>
             <DatePicker

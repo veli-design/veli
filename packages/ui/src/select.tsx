@@ -36,8 +36,8 @@ const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialias
 const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -48,11 +48,11 @@ const headerLabelVariants = cva('type-body-sm-regular', {
 const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -60,7 +60,7 @@ const headerMetaVariants = cva('type-caption-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-text-disabled-disabled',
+      className: 'text-disabled',
     },
   ],
   defaultVariants: {
@@ -74,8 +74,8 @@ const infoTooltipTriggerVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-help text-base-subtle hover:text-base',
       },
     },
     defaultVariants: {
@@ -87,8 +87,8 @@ const infoTooltipTriggerVariants = cva(
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-links-default',
+      true: 'text-disabled',
+      false: 'text-links',
     },
   },
   defaultVariants: {
@@ -133,7 +133,7 @@ const fieldButtonVariants = cva(
         isInvalid: false,
         isFocusVisible: false,
         isOpen: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
@@ -152,7 +152,7 @@ const fieldButtonVariants = cva(
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'default',
@@ -160,21 +160,21 @@ const fieldButtonVariants = cva(
         isDisabled: false,
         isFocusVisible: false,
         isOpen: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isFocusVisible: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isOpen: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
@@ -189,7 +189,7 @@ const fieldButtonVariants = cva(
         isFocusVisible: false,
         isOpen: false,
         className:
-          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
+          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -223,19 +223,19 @@ const fieldButtonVariants = cva(
         isFocusVisible: false,
         isOpen: true,
         className:
-          'border-2 border-text-input-stroke-error bg-text-input-bg-default hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border-2 border-text-input-stroke-error bg-text-input-bg hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -270,15 +270,17 @@ const selectValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
 
 const selectItemLabelVariants = cva('truncate type-body-sm-regular');
 
-const selectItemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
+const selectItemDescriptionVariants = cva('truncate type-caption-regular text-base-subtle');
 
-const selectItemSelectionIndicatorVariants = cva('shrink-0 text-text-primary-muted');
+const selectItemSelectionIndicatorVariants = cva(
+  'shrink-0 text-primary-muted [&:lang(dv)]:-translate-y-1',
+);
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-subtle',
+      true: 'text-disabled',
+      false: 'text-base-subtle',
     },
   },
   defaultVariants: {
@@ -291,8 +293,8 @@ const indicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: 'text-text-default-subtle',
+        true: 'text-disabled',
+        false: 'text-base-subtle',
       },
       isOpen: {
         true: 'rotate-180',
@@ -307,7 +309,7 @@ const indicatorVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border border-base-subtle bg-surface-overlay-raised p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
@@ -317,15 +319,15 @@ const selectItemVariants = cva(
   {
     variants: {
       isSelected: {
-        true: 'bg-button-primary-subtle-default text-text-default-strong',
-        false: 'text-text-default-strong',
+        true: 'bg-button-primary-subtle text-base-strong',
+        false: 'text-base-strong',
       },
       isFocused: {
         true: 'bg-button-primary-subtle-hover',
         false: '',
       },
       isDisabled: {
-        true: 'pointer-events-none text-text-disabled-disabled',
+        true: 'pointer-events-none text-disabled',
         false: '',
       },
     },
@@ -504,10 +506,10 @@ export function Select<T extends object>({
                 twMerge(
                   selectValueVariants({ size }),
                   isPlaceholder
-                    ? 'text-text-default-inactive'
+                    ? 'text-base-inactive'
                     : isDisabled
-                      ? 'text-text-disabled-disabled'
-                      : 'text-text-default-strong',
+                      ? 'text-disabled'
+                      : 'text-base-strong',
                 )
               }
             />
@@ -516,12 +518,7 @@ export function Select<T extends object>({
             ) : null}
             <span className={indicatorVariants({ isDisabled, isOpen })}>
               {indicator ?? (
-                <CaretDown
-                  aria-hidden
-                  size={20}
-                  weight="regular"
-                  className="text-icon-default-default"
-                />
+                <CaretDown aria-hidden size={20} weight="regular" className="text-icon-base" />
               )}
             </span>
           </AriaButton>
@@ -571,7 +568,7 @@ export function SelectSection<T extends object>({
   return (
     <AriaSection {...props} className={twMerge(selectSectionVariants(), className)}>
       {title ? (
-        <Header className="px-2 py-1 type-caption-semibold uppercase text-text-default-muted">
+        <Header className="px-2 py-1 type-caption-semibold uppercase text-base-muted">
           {title}
         </Header>
       ) : null}
@@ -623,9 +620,7 @@ export function SelectItem<T extends object = object>({
     >
       {({ isSelected }) => (
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          {startContent ? (
-            <span className="shrink-0 text-text-default-subtle">{startContent}</span>
-          ) : null}
+          {startContent ? <span className="shrink-0 text-base-subtle">{startContent}</span> : null}
           <div className="min-w-0 flex-1">
             {children ? <div className={selectItemLabelVariants()}>{children}</div> : null}
             {description ? (

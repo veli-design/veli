@@ -24,7 +24,7 @@ import { twMerge } from 'tailwind-merge';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const skeletonFieldVariants = cva('w-full shrink-0 bg-bg-skeleton', {
+const skeletonFieldVariants = cva('w-full shrink-0 bg-skeleton', {
   variants: {
     variant: {
       default: 'rounded-md',
@@ -75,7 +75,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         variant: 'default',
@@ -87,13 +87,13 @@ const fieldShellVariants = cva(
       {
         variant: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         variant: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         variant: 'default',
@@ -105,7 +105,7 @@ const fieldShellVariants = cva(
         variant: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
       {
         variant: 'outline',
@@ -113,7 +113,7 @@ const fieldShellVariants = cva(
         isInvalid: false,
         isReadOnly: false,
         className:
-          'border border-text-input-stroke-default bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
       },
       {
         variant: 'outline',
@@ -125,14 +125,14 @@ const fieldShellVariants = cva(
       {
         variant: 'outline',
         isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         variant: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border border-text-input-stroke-error bg-text-input-bg-default [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg-default',
+          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
       },
       {
         variant: 'outline',
@@ -144,7 +144,7 @@ const fieldShellVariants = cva(
         variant: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-gray-alpha-200',
+        className: 'bg-ash-alpha-200',
       },
     ],
     defaultVariants: {
@@ -160,8 +160,8 @@ const fieldShellVariants = cva(
 const leadingIconVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-subtle',
+      true: 'text-disabled',
+      false: 'text-base-subtle',
     },
   },
   defaultVariants: {
@@ -172,8 +172,8 @@ const leadingIconVariants = cva('relative z-[1] flex shrink-0 items-center justi
 const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-danger-muted',
+      true: 'text-disabled',
+      false: 'text-danger-muted',
     },
   },
   defaultVariants: {
@@ -191,8 +191,8 @@ const clearButtonVariants = cva(
         lg: 'size-5',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'cursor-pointer text-icon-default-muted hover:text-text-default-default',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-pointer text-icon-base-muted hover:text-base',
       },
     },
     defaultVariants: {
@@ -203,7 +203,7 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-default outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -212,7 +212,7 @@ const inputElementVariants = cva(
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
       isReadOnly: {
-        true: 'text-text-default-strong',
+        true: 'text-base-strong',
         false: '',
       },
     },

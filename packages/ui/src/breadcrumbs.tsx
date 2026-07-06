@@ -23,19 +23,19 @@ const breadcrumbsRootVariants = cva(
 const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5';
 
 const breadcrumbInteractiveTextClassName =
-  'text-text-default-muted hover:text-text-default-default active:text-text-default-default focus-visible:text-text-default-default';
+  'text-base-muted hover:text-base active:text-base focus-visible:text-base';
 
 const breadcrumbBackLinkLinkClassName =
-  'bg-transparent text-text-links-default hover:bg-transparent hover:text-text-links-hover active:bg-transparent active:text-text-links-hover focus-visible:bg-transparent focus-visible:text-text-links-hover [&_svg]:text-icon-links-default hover:[&_svg]:text-icon-links-hover active:[&_svg]:text-icon-links-hover focus-visible:[&_svg]:text-icon-links-hover';
+  'bg-transparent text-links hover:bg-transparent hover:text-links-hover active:bg-transparent active:text-links-hover focus-visible:bg-transparent focus-visible:text-links-hover [&_svg]:text-icon-links hover:[&_svg]:text-icon-links-hover active:[&_svg]:text-icon-links-hover focus-visible:[&_svg]:text-icon-links-hover';
 
 const breadcrumbBackLinkItemClassName = 'after:hidden';
 const breadcrumbBackLinkDividerItemClassName = 'self-stretch after:hidden';
 
 const breadcrumbBackLinkDividerClassName =
-  'box-border h-2 w-0 shrink-0 border-0 border-l border-border-default-strong';
+  'box-border h-2 w-0 shrink-0 border-0 border-l border-base-strong';
 
 const breadcrumbItemVariants = cva(
-  'inline-flex items-center gap-1.5 type-body-sm-regular after:text-text-default-inactive after:content-["/"] data-[current]:after:hidden',
+  'inline-flex items-center gap-1.5 type-body-sm-regular after:text-base-inactive after:content-["/"] data-[current]:after:hidden',
 );
 
 const breadcrumbLinkVariants = cva(
@@ -47,7 +47,7 @@ const breadcrumbLinkVariants = cva(
         muted: '',
       },
       isDisabled: {
-        true: 'cursor-default text-text-disabled-disabled hover:text-text-disabled-disabled active:text-text-disabled-disabled focus-visible:text-text-disabled-disabled',
+        true: 'cursor-default text-disabled hover:text-disabled active:text-disabled focus-visible:text-disabled',
         false: 'hover:bg-breadcrumbs-hover active:bg-breadcrumbs-pressed',
       },
     },
@@ -59,7 +59,7 @@ const breadcrumbLinkVariants = cva(
 );
 
 const breadcrumbTextVariants = cva(
-  `${breadcrumbItemContentClassName} type-body-sm-medium text-text-default-muted`,
+  `${breadcrumbItemContentClassName} type-body-sm-medium text-base-muted`,
   {
     variants: {
       tone: {
@@ -67,7 +67,7 @@ const breadcrumbTextVariants = cva(
         muted: '',
       },
       isDisabled: {
-        true: 'text-text-disabled-disabled',
+        true: 'text-disabled',
         false: '',
       },
     },
@@ -79,23 +79,23 @@ const breadcrumbTextVariants = cva(
 );
 
 const breadcrumbCurrentVariants = cva(
-  `${breadcrumbItemContentClassName} type-body-sm-medium text-text-default-strong`,
+  `${breadcrumbItemContentClassName} type-body-sm-medium text-base-strong`,
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
-  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-text-default-muted transition-colors outline-none`,
+  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-base-muted transition-colors outline-none`,
   {
     variants: {
       isHovered: {
-        true: 'bg-breadcrumbs-hover text-text-default-default',
+        true: 'bg-breadcrumbs-hover text-base',
         false: '',
       },
       isPressed: {
-        true: 'bg-breadcrumbs-pressed text-text-default-default',
+        true: 'bg-breadcrumbs-pressed text-base',
         false: '',
       },
       isFocusVisible: {
-        true: 'text-text-default-default ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        true: 'text-base ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
         false: '',
       },
     },

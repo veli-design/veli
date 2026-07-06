@@ -191,7 +191,7 @@ function CheckboxSizesExample() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Medium (md)
         </span>
         <div className="flex items-center gap-8">
@@ -205,7 +205,7 @@ function CheckboxSizesExample() {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Large (lg)
         </span>
         <div className="flex items-center gap-8">
@@ -283,18 +283,16 @@ function CheckboxStatesAuditExample() {
   return (
     <div className="grid grid-cols-4 gap-[20px] items-start">
       <div />
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">{text.off}</div>
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">{text.on}</div>
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">
-        {text.indeterminate}
-      </div>
+      <div className="text-[12px] font-bold uppercase text-base-muted">{text.off}</div>
+      <div className="text-[12px] font-bold uppercase text-base-muted">{text.on}</div>
+      <div className="text-[12px] font-bold uppercase text-base-muted">{text.indeterminate}</div>
 
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">Default</div>
+      <div className="text-[12px] font-bold uppercase text-base-muted">Default</div>
       <Checkbox />
       <Checkbox defaultSelected />
       <Checkbox isIndeterminate />
 
-      <div className="text-[12px] font-bold uppercase text-text-default-muted">Disabled</div>
+      <div className="text-[12px] font-bold uppercase text-base-muted">Disabled</div>
       <Checkbox isDisabled />
       <Checkbox defaultSelected isDisabled />
       <Checkbox isIndeterminate isDisabled />

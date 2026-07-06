@@ -25,7 +25,7 @@ export default defineConfig({
         tracking: ['tracking.*'],
         'font-weight': ['font-weight.*'],
       },
-      // Dark mode support - your tokens have Light/Dark modes!
+      // Keep govmv light/dark modes inert for now; they need separate theme outputs later.
       modeVariants: [{ variant: 'dark', mode: 'Dark' }],
     }),
   ],

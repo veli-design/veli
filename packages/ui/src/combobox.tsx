@@ -39,8 +39,8 @@ const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antiali
 const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -51,11 +51,11 @@ const headerLabelVariants = cva('type-body-sm-regular', {
 const headerMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -63,7 +63,7 @@ const headerMetaVariants = cva('type-caption-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-text-disabled-disabled',
+      className: 'text-disabled',
     },
   ],
   defaultVariants: {
@@ -77,8 +77,8 @@ const infoTooltipTriggerVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'cursor-help text-text-default-subtle hover:text-text-default-default',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-help text-base-subtle hover:text-base',
       },
     },
     defaultVariants: {
@@ -90,8 +90,8 @@ const infoTooltipTriggerVariants = cva(
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-links-default',
+      true: 'text-disabled',
+      false: 'text-links',
     },
   },
   defaultVariants: {
@@ -131,18 +131,18 @@ const fieldShellVariants = cva(
         appearance: 'default',
         isDisabled: false,
         isInvalid: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
@@ -155,19 +155,19 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         className:
-          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:bg-text-input-bg-default has-[input[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
+          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:bg-text-input-bg has-[input[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -188,7 +188,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         className:
-          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[input[data-focus-visible]]:bg-text-input-bg-default has-[input[data-focus-visible]]:hover:bg-text-input-bg-default has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg-default has-[button[data-focus-visible]]:hover:bg-text-input-bg-default',
+          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent has-[input[data-focus-visible]]:bg-text-input-bg has-[input[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
       },
       {
         appearance: 'default',
@@ -203,7 +203,7 @@ const fieldShellVariants = cva(
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-2 border-text-input-stroke-error bg-text-input-bg-default hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
+          'border-2 border-text-input-stroke-error bg-text-input-bg hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover has-[input[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
       },
     ],
     defaultVariants: {
@@ -219,8 +219,8 @@ const fieldShellVariants = cva(
 const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-subtle',
+      true: 'text-disabled',
+      false: 'text-base-subtle',
     },
   },
   defaultVariants: {
@@ -229,7 +229,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-text-default-strong outline-none placeholder:text-text-default-inactive disabled:text-text-disabled-disabled',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -264,9 +264,9 @@ const triggerButtonVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
+        true: 'cursor-not-allowed text-disabled',
         false:
-          'text-text-default-subtle hover:bg-gray-alpha-100 hover:text-text-default-default data-[pressed]:bg-gray-alpha-200 data-[open]:bg-gray-alpha-100 data-[open]:text-text-default-default',
+          'text-base-subtle hover:bg-ash-alpha-100 hover:text-base data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base',
       },
     },
     defaultVariants: {
@@ -276,24 +276,26 @@ const triggerButtonVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised p-1 text-text-default-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border border-base-subtle bg-surface-overlay-raised p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-text-default-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-disabled data-[focused]:bg-button-primary-subtle-default data-[selected]:bg-button-primary-subtle-default data-[selected]:text-text-default-strong',
+  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-base-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[focused]:bg-button-primary-subtle data-[selected]:bg-button-primary-subtle data-[selected]:text-base-strong [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
 );
 
 const itemLabelVariants = cva('truncate type-body-sm-regular');
 
-const itemDescriptionVariants = cva('truncate type-caption-regular text-text-default-subtle');
+const itemDescriptionVariants = cva('truncate type-caption-regular text-base-subtle');
 
-const itemSelectionIndicatorVariants = cva('shrink-0 text-text-primary-muted');
+const itemSelectionIndicatorVariants = cva(
+  'shrink-0 text-primary-muted [&:lang(dv)]:-translate-y-1',
+);
 
-const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-medium text-text-default-muted');
+const sectionHeaderVariants = cva('px-2 py-1.5 type-caption-medium text-base-muted');
 
-const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-text-default-subtle');
+const emptyStateVariants = cva('px-2 py-2.5 type-body-sm-regular text-base-subtle');
 
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
@@ -365,7 +367,7 @@ export function ComboBoxItem<T extends object = object>({
         return (
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {startContent ? (
-              <span className="shrink-0 text-text-default-subtle">{startContent}</span>
+              <span className="shrink-0 text-base-subtle">{startContent}</span>
             ) : null}
             <div className="min-w-0 flex-1">
               {renderedChildren ? (
@@ -567,10 +569,7 @@ function ComboBoxInner<T extends object>(
                   aria-hidden
                   size={20}
                   weight="regular"
-                  className={twMerge(
-                    'transition-transform text-icon-default-default',
-                    isOpen && 'rotate-180',
-                  )}
+                  className={twMerge('transition-transform text-icon-base', isOpen && 'rotate-180')}
                 />
               )}
             </AriaButton>

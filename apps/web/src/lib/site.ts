@@ -43,7 +43,7 @@ export const foundations = [
     title: 'Color',
     href: '/foundations/#color',
     description:
-      'Semantic light and dark palettes grounded in cool gray, blue, success, warning, and danger scales.',
+      'Semantic light and dark palettes grounded in slate, blue, success, warning, and danger scales.',
     status: 'Available',
   },
   {

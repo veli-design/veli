@@ -391,12 +391,12 @@ export const Sizes: Story = {
     return (
       <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <div key={size} className="flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
               </span>
               <TextArea
@@ -412,12 +412,12 @@ export const Sizes: Story = {
           ))}
         </div>
         <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <div key={size} className="flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
               </span>
               <TextArea

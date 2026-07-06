@@ -45,14 +45,14 @@ const tabSelectionIndicatorClassName =
   'absolute -bottom-1 left-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-200 motion-reduce:transition-none';
 
 const tabBaseClassName =
-  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 whitespace-nowrap text-text-default-default antialiased transition-colors outline-none [&_svg]:shrink-0 [&_svg]:text-icon-default-default';
+  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 whitespace-nowrap text-base antialiased transition-colors outline-none [&_svg]:shrink-0 [&_svg]:text-icon-base';
 
 const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
 const tabLabelRegularClassName = `inline-block type-body-sm-regular ${webkitDhivehiTextBaselineClassName}`;
-const tabLabelSelectedClassName = `inline-block type-body-sm-medium text-text-default-strong ${webkitDhivehiTextBaselineClassName}`;
+const tabLabelSelectedClassName = `inline-block type-body-sm-medium text-base-strong ${webkitDhivehiTextBaselineClassName}`;
 
 function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {
   return (
@@ -233,10 +233,10 @@ function getTabClassName(
   return twMerge(
     tabBaseClassName,
     options?.isDisabled &&
-      'pointer-events-none cursor-not-allowed text-text-disabled-disabled [&_svg]:text-icon-disabled-disabled',
+      'pointer-events-none cursor-not-allowed text-disabled [&_svg]:text-icon-disabled',
     options?.isHovered && 'bg-tabs-hover',
     options?.isPressed && 'bg-tabs-pressed',
-    isSelected && '[&_svg]:text-icon-default-strong',
+    isSelected && '[&_svg]:text-icon-base-strong',
     options?.isFocusVisible && 'ring-2 ring-border-focus ring-offset-2',
     options?.tabClassName,
   );
@@ -480,10 +480,7 @@ export function Tabs({
     <AriaTabPanel
       key={item.id}
       id={item.id}
-      className={twMerge(
-        'block w-full pt-4 type-body-md-regular text-text-default-default',
-        panelClassName,
-      )}
+      className={twMerge('block w-full pt-4 type-body-md-regular text-base', panelClassName)}
     >
       {item.panel}
     </AriaTabPanel>

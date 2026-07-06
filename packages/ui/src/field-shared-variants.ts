@@ -14,7 +14,7 @@ const underlineFocusActiveTransform =
 
 export const defaultFieldUnderlineShell = `overflow-hidden after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:z-0 after:h-[2px] after:w-full after:origin-bottom after:content-[''] ${underlineRestTransform}`;
 
-export const defaultFieldUnderlineRest = `after:bg-text-input-stroke-default hover:after:bg-text-input-stroke-hover ${underlineHoverRestTransform}`;
+export const defaultFieldUnderlineRest = `after:bg-text-input-stroke hover:after:bg-text-input-stroke-hover ${underlineHoverRestTransform}`;
 
 export const defaultFieldUnderlinePressed = `after:bg-text-input-stroke-pressed hover:after:bg-text-input-stroke-pressed ${underlineActiveTransform}`;
 
@@ -33,8 +33,8 @@ export const fieldRootVariants = cva('flex w-full flex-col gap-1.5 font-sans ant
 export const fieldHeaderLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-default',
+      true: 'text-disabled',
+      false: 'text-base',
     },
   },
   defaultVariants: {
@@ -45,11 +45,11 @@ export const fieldHeaderLabelVariants = cva('type-body-sm-regular', {
 export const fieldHeaderMetaVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
     isDisabled: {
-      true: 'text-text-disabled-disabled',
+      true: 'text-disabled',
       false: '',
     },
   },
@@ -57,7 +57,7 @@ export const fieldHeaderMetaVariants = cva('type-caption-regular', {
     {
       tone: 'danger',
       isDisabled: true,
-      className: 'text-text-disabled-disabled',
+      className: 'text-disabled',
     },
   ],
   defaultVariants: {
@@ -69,8 +69,8 @@ export const fieldHeaderMetaVariants = cva('type-caption-regular', {
 export const fieldHeaderActionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-links-default',
+      true: 'text-disabled',
+      false: 'text-links',
     },
   },
   defaultVariants: {
@@ -115,7 +115,7 @@ export const fieldTriggerButtonVariants = cva(
         isInvalid: false,
         isFocusVisible: false,
         isOpen: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg-default hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
@@ -134,7 +134,7 @@ export const fieldTriggerButtonVariants = cva(
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-gray-alpha-200`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'default',
@@ -171,7 +171,7 @@ export const fieldTriggerButtonVariants = cva(
         isFocusVisible: false,
         isOpen: false,
         className:
-          'border-text-input-stroke-default bg-text-input-bg-default hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
+          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -210,14 +210,14 @@ export const fieldTriggerButtonVariants = cva(
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-gray-alpha-200',
+        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
-          'border-text-input-stroke-error bg-text-input-bg-default hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -253,8 +253,8 @@ export const fieldTriggerValueVariants = cva('box-border block min-w-0 flex-1 tr
 export const fieldInlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-text-disabled-disabled',
-      false: 'text-text-default-subtle',
+      true: 'text-disabled',
+      false: 'text-base-subtle',
     },
   },
   defaultVariants: {
@@ -267,8 +267,8 @@ export const fieldTriggerIndicatorVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'text-text-disabled-disabled',
-        false: 'text-text-default-subtle',
+        true: 'text-disabled',
+        false: 'text-base-subtle',
       },
       isOpen: {
         true: 'rotate-180',
@@ -285,8 +285,8 @@ export const fieldTriggerIndicatorVariants = cva(
 export const messageVariants = cva('type-caption-regular', {
   variants: {
     tone: {
-      subtle: 'text-text-default-subtle',
-      danger: 'text-text-danger-muted',
+      subtle: 'text-base-subtle',
+      danger: 'text-danger-muted',
     },
   },
   defaultVariants: {

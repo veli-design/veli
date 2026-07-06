@@ -1614,15 +1614,11 @@ export const AllVariants: Story = {
     return (
       <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
         <div />
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Fill
-        </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Fill</div>
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Transparent
         </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Ghost
-        </div>
+        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Ghost</div>
 
         <div className="text-sm font-medium">Primary</div>
         <Button intent="primary" appearance="fill">
@@ -1687,7 +1683,7 @@ export const WithIcons: Story = {
             <DirectionalArrow size={size} weight="bold" />
           </Button>
         </div>
-        <div className="text-xs text-text-default-muted italic">
+        <div className="text-xs text-base-muted italic">
           Icon size for current {args.size} scale: {size}px
         </div>
       </div>
@@ -1811,25 +1807,21 @@ export const ExperimentalEnhanced: Story = {
       <div className="flex flex-col gap-12">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-base-muted">
               Figma XL Matrix
             </span>
-            <span className="text-sm text-text-default-subtle">
+            <span className="text-sm text-base-subtle">
               Primary and secondary mirror the stylized Figma set at XL. Danger extends the same
               seaglass treatment for system consistency.
             </span>
           </div>
           <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center w-fit">
             <div />
-            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Fill
-            </div>
-            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+            <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Fill</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-base-muted">
               Transparent
             </div>
-            <div className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-              Ghost
-            </div>
+            <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Ghost</div>
 
             <div className="text-sm font-medium">Primary</div>
             <Button intent="primary" appearance="fill" size="xl" seaglass>
@@ -1867,12 +1859,12 @@ export const ExperimentalEnhanced: Story = {
         </div>
 
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-base-muted">
             State Coverage
           </span>
           <div className="grid grid-cols-3 gap-8">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Primary Default
               </span>
               <Button intent="primary" appearance="fill" size="xl" seaglass>
@@ -1880,7 +1872,7 @@ export const ExperimentalEnhanced: Story = {
               </Button>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Primary Loading
               </span>
               <Button
@@ -1893,7 +1885,7 @@ export const ExperimentalEnhanced: Story = {
               />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Primary Disabled
               </span>
               <Button intent="primary" appearance="fill" size="xl" isDisabled seaglass>
@@ -1901,7 +1893,7 @@ export const ExperimentalEnhanced: Story = {
               </Button>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Secondary Default
               </span>
               <Button intent="secondary" appearance="fill" size="xl" seaglass>
@@ -1909,7 +1901,7 @@ export const ExperimentalEnhanced: Story = {
               </Button>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Secondary Loading
               </span>
               <Button
@@ -1922,7 +1914,7 @@ export const ExperimentalEnhanced: Story = {
               />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 Secondary Disabled
               </span>
               <Button intent="secondary" appearance="fill" size="xl" isDisabled seaglass>
@@ -1933,7 +1925,7 @@ export const ExperimentalEnhanced: Story = {
         </div>
 
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-base-muted">
             Size Adaptation
           </span>
           <div className="flex items-end gap-4 flex-wrap">
