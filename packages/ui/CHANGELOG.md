@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- 793ac42: Sync color tokens with the updated Figma variable hierarchy, rename the public color vocabulary to slate, ash, stone, sage, emerald, teal, and magenta, and remove resolved legacy color-name aliases from generated token output.
+
 ## 0.6.1
 
 ### Patch Changes
