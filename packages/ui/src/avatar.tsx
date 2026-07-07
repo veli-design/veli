@@ -185,25 +185,37 @@ function formatInitials(value: string, size: AvatarSize, language: VeliLanguage)
   }
 
   const parts = trimmed.split(/\s+/).filter(Boolean);
+  const singleInitial = size === '16' || size === '20';
 
   if (parts.length >= 2) {
-    return `${parts[0]![0] ?? ''}${parts[1]![0] ?? ''}`.toUpperCase();
+    const first = parts[0]![0] ?? '';
+
+    if (singleInitial) {
+      return first.toUpperCase();
+    }
+
+    return `${first}${parts[1]![0] ?? ''}`.toUpperCase();
   }
 
   const single = parts[0]!.toUpperCase();
-  return size === '16' || size === '20' ? single.slice(0, 1) : single.slice(0, 2);
+  return singleInitial ? single.slice(0, 1) : single.slice(0, 2);
 }
 
 function formatDhivehiInitials(value: string, size: AvatarSize) {
   const parts = value.split(/\s+/).filter(Boolean);
+  const singleInitial = size === '16' || size === '20';
 
   if (parts.length >= 2) {
+    if (singleInitial) {
+      return getDhivehiInitial(parts[0]!);
+    }
+
     return `${getDhivehiInitial(parts[0]!)}${getDhivehiInitial(parts[1]!)}`;
   }
 
   const single = parts[0]!;
 
-  if (size === '16' || size === '20') {
+  if (singleInitial) {
     return getDhivehiInitial(single);
   }
 
