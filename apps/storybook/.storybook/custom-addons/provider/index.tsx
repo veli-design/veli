@@ -69,11 +69,7 @@ function ProviderSwitcher({
       surface={values.surface}
       viewMode={context.viewMode}
     >
-      <VeliProvider
-        language={values.language}
-        colorScheme={values.theme}
-        className="text-text-default-default"
-      >
+      <VeliProvider language={values.language} colorScheme={values.theme} className="text-base">
         {children}
       </VeliProvider>
     </StorybookThemeRoot>

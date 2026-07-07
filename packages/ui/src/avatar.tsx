@@ -24,8 +24,8 @@ const avatarAppearances = {
   },
   yellow: {
     surface: 'bg-avatar-yellow',
-    content: 'text-cautious',
-    icon: 'text-icon-cautious',
+    content: 'text-caution',
+    icon: 'text-icon-caution',
   },
   orange: {
     surface: 'bg-avatar-orange',

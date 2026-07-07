@@ -144,6 +144,40 @@ function fixSelfReferentialDefaultColorAliases(css) {
   });
 }
 
+function addDefaultColorUtilityAliasesToDeclarations(css) {
+  const sourceLines = css.split('\n');
+  const existingVariables = new Set(
+    sourceLines.map((line) => line.trim().match(/^(--color-[^:]+):/)?.[1]).filter(Boolean),
+  );
+
+  return sourceLines
+    .reduce((lines, line) => {
+      lines.push(line);
+
+      const match = line.match(/^(\s*)(--color-[^:]+)-(DEFAULT|default):\s*[^;]+;/);
+      if (!match) return lines;
+
+      const [, indent, prefix, defaultSuffix] = match;
+      if (existingVariables.has(prefix)) return lines;
+
+      lines.push(`${indent}${prefix}: var(${prefix}-${defaultSuffix});`);
+      existingVariables.add(prefix);
+
+      return lines;
+    }, [])
+    .join('\n');
+}
+
+function addDefaultColorUtilityAliases(css) {
+  const nextCss = addDefaultColorUtilityAliasesToDeclarations(css);
+
+  return nextCss.replace(
+    /(:where\(\.dark, \.dark \*\) \{\n)([\s\S]*?)(\n\s*\})/g,
+    (_match, start, body, end) =>
+      `${start}${addDefaultColorUtilityAliasesToDeclarations(body)}${end}`,
+  );
+}
+
 tailwindTheme = tailwindTheme.replace(
   /@variant dark\s*\{\n([\s\S]*?)\n\}/,
   (_match, declarations) => {
@@ -554,9 +588,23 @@ function generatePropertyColorVariables(css) {
 
 function addPropertyColorVariables(css) {
   const propertyVariables = generatePropertyColorVariables(css);
-  if (!propertyVariables) return css;
+  let nextCss = css;
 
-  return css.replace(/\n\}\n\n@layer theme \{/, `${propertyVariables}\n}\n\n@layer theme {`);
+  if (propertyVariables) {
+    nextCss = nextCss.replace(
+      /\n\}\n\n@layer theme \{/,
+      `${propertyVariables}\n}\n\n@layer theme {`,
+    );
+  }
+
+  return nextCss.replace(
+    /(:where\(\.dark, \.dark \*\) \{\n)([\s\S]*?)(\n\s*\})/g,
+    (match, start, body, end) => {
+      const scopedPropertyVariables = generatePropertyColorVariables(body);
+
+      return scopedPropertyVariables ? `${start}${body}${scopedPropertyVariables}${end}` : match;
+    },
+  );
 }
 
 const primitiveColorFamilies = new Set([
@@ -795,6 +843,8 @@ function annotateVariableGroups(css) {
   return output.join('\n');
 }
 
+tailwindTheme = addDefaultColorUtilityAliases(tailwindTheme);
+tokensCss = addDefaultColorUtilityAliases(tokensCss);
 tailwindTheme = addPropertyColorVariables(tailwindTheme);
 tailwindTheme = `${tailwindTheme.trimEnd()}${motionPrimitiveUtilities}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
 
