@@ -88,7 +88,7 @@ const checkboxErrorVariants = cva('col-start-2 text-danger-muted', {
 });
 
 const checkboxControlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center transition-colors focus-visible:outline-none',
+  'relative inline-flex shrink-0 items-center justify-center transition-colors duration-fast ease-out focus-visible:outline-none',
   {
     variants: {
       size: {
@@ -155,6 +155,7 @@ const checkboxControlVariants = cva(
         isIndeterminate: false,
         isDisabled: false,
         isHovered: true,
+        isPressed: false,
         className: 'bg-checkbox-container-bg border-checkbox-container-border-hover',
       },
       {
@@ -162,7 +163,7 @@ const checkboxControlVariants = cva(
         isIndeterminate: false,
         isDisabled: false,
         isPressed: true,
-        className: 'bg-checkbox-container-bg border-checkbox-container-checked-bg',
+        className: 'bg-checkbox-container-bg border-checkbox-container-bg-hover',
       },
       {
         isSelected: false,
@@ -235,27 +236,20 @@ const checkboxControlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-transform duration-150 ease-out',
+  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-[transform,opacity] duration-normal ease-out',
   {
     variants: {
-      isPressed: {
-        true: '',
-        false: '',
+      isVisible: {
+        true: 'opacity-100',
+        false: 'opacity-0',
       },
       isIndeterminate: {
         true: '',
         false: '',
       },
     },
-    compoundVariants: [
-      {
-        isIndeterminate: false,
-        isPressed: true,
-        className: 'scale-90',
-      },
-    ],
     defaultVariants: {
-      isPressed: false,
+      isVisible: false,
       isIndeterminate: false,
     },
   },
@@ -307,6 +301,10 @@ export function Checkbox({
         const isPressed = state.isDisabled ? false : state.isPressed;
         const resolvedSize = size ?? 'md';
         const indicators = checkboxIndicatorSizes[resolvedSize];
+        const indicatorScaleClass =
+          checkedOrIndeterminate && (!isPressed || state.isIndeterminate)
+            ? 'scale-100'
+            : 'scale-70';
 
         return (
           <>
@@ -326,36 +324,37 @@ export function Checkbox({
                   isFocusVisible: state.isFocusVisible,
                 })}
               >
-                {checkedOrIndeterminate ? (
-                  <span
-                    className={indicatorVariants({
-                      isPressed,
+                <span
+                  className={twMerge(
+                    indicatorVariants({
+                      isVisible: checkedOrIndeterminate,
                       isIndeterminate: state.isIndeterminate,
-                    })}
-                  >
-                    {state.isIndeterminate ? (
-                      <svg
-                        aria-hidden="true"
-                        width={indicators.indeterminate.width}
-                        height={indicators.indeterminate.height}
-                        viewBox={indicators.indeterminate.viewBox}
-                        fill="none"
-                      >
-                        <path d="M0 2H10" stroke="currentColor" strokeWidth="2" />
-                      </svg>
-                    ) : (
-                      <svg
-                        aria-hidden="true"
-                        width={indicators.check.width}
-                        height={indicators.check.height}
-                        viewBox={indicators.check.viewBox}
-                        fill="none"
-                      >
-                        <path d="M0 2.5L3.5 6L9.5 0" stroke="currentColor" strokeWidth="2" />
-                      </svg>
-                    )}
-                  </span>
-                ) : null}
+                    }),
+                    indicatorScaleClass,
+                  )}
+                >
+                  {state.isIndeterminate ? (
+                    <svg
+                      aria-hidden="true"
+                      width={indicators.indeterminate.width}
+                      height={indicators.indeterminate.height}
+                      viewBox={indicators.indeterminate.viewBox}
+                      fill="none"
+                    >
+                      <path d="M0 2H10" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  ) : (
+                    <svg
+                      aria-hidden="true"
+                      width={indicators.check.width}
+                      height={indicators.check.height}
+                      viewBox={indicators.check.viewBox}
+                      fill="none"
+                    >
+                      <path d="M0 2.5L3.5 6L9.5 0" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  )}
+                </span>
               </span>
             </span>
             {hasFieldMessages ? (
