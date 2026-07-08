@@ -14,7 +14,7 @@ const avatarAppearances = {
   },
   neutral: {
     surface: 'bg-avatar-neutral',
-    content: 'text-base',
+    content: 'text-base-default',
     icon: 'text-icon-base',
   },
   emerald: {
