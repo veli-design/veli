@@ -1,5 +1,20 @@
 # @tradenetcorp/veli-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- 63d0e74: Sync color tokens with the updated Figma variable hierarchy, rename the public color vocabulary to slate, ash, stone, sage, emerald, teal, and magenta, and remove resolved legacy color-name aliases from generated token output.
+
+  Emit dark-scoped token aliases for Tailwind color utilities and align caution color utility usage in Avatar and Badge.
+
+  Avoid the ambiguous `text-base` color shorthand for neutral Avatar initials so the 16px initials typography keeps its Figma-specified 10px font size.
+
+### Patch Changes
+
+- fc3f421: Show only one initial letter in Avatar at sizes 16 and 20, including for multi-word names and Dhivehi initials.
+- 7e83207: Migrate Button seaglass transition timing and easing to primitive motion token utilities.
+
 ## 0.6.1
 
 ### Patch Changes
