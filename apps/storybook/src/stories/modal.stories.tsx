@@ -145,7 +145,7 @@ export const WithTrigger: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
         <Modal.Trigger>
           <Button>{text.openModal}</Button>
           <Modal {...args}>
@@ -178,7 +178,7 @@ export const Playground: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
         <Button onPress={() => setIsOpen(true)}>{text.openModal}</Button>
 
         <Modal {...args} isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -210,7 +210,7 @@ export const WithDescription: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
         <Button onPress={() => setIsOpen(true)}>{text.openModalWithDesc}</Button>
 
         <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -244,7 +244,7 @@ export const Confirmation: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
         <Button intent="danger" onPress={() => setIsOpen(true)}>
           {text.deleteProject}
         </Button>
@@ -279,7 +279,7 @@ export const Sizes: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-surface-base p-8">
         {modalSizes.map((size) => (
           <Button key={size} intent="secondary" onPress={() => setOpenSize(size)}>
             {formatModalText(text.openSize, { size: size.toUpperCase() })}
@@ -330,7 +330,7 @@ export const NonDismissable: Story = {
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
         <Button intent="danger" onPress={() => setIsOpen(true)}>
           {text.deleteProject}
         </Button>

@@ -82,7 +82,7 @@ const meta = {
   title: 'Components/Tabs',
   decorators: [
     (Story) => (
-      <div className="w-full bg-white px-8 py-6 dark:bg-bg-surface-base">
+      <div className="w-full bg-white px-8 py-6 dark:bg-surface-base">
         <Story />
       </div>
     ),

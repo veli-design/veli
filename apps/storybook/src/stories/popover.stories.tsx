@@ -240,7 +240,7 @@ function PopoverVariantCell({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <span className="text-center text-[10px] font-medium uppercase tracking-wide text-text-default-muted">
+      <span className="text-center text-[10px] font-medium uppercase tracking-wide text-base-muted">
         {label}
       </span>
       <div className="flex min-h-[300px] w-full min-w-[300px] items-center justify-center">
@@ -259,14 +259,14 @@ function PopoverVariantsMatrix() {
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-16 bg-bg-surface-base p-8">
-      <p className="type-body-sm-regular text-text-default-muted">
-        Click <strong className="text-text-default-default">Open</strong> on any anchor to preview
-        that position. Only one popover is shown at a time.
+    <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-16 bg-surface-base p-8">
+      <p className="type-body-sm-regular text-base-muted">
+        Click <strong className="text-base">Open</strong> on any anchor to preview that position.
+        Only one popover is shown at a time.
       </p>
       {POPOVER_INTENTS.map((intent) => (
         <section key={intent} className="flex flex-col gap-8">
-          <h2 className="type-title-2-bold capitalize text-text-default-high-contrast">{intent}</h2>
+          <h2 className="type-title-2-bold capitalize text-base-high-contrast">{intent}</h2>
           <div className="flex flex-col gap-10">
             {POPOVER_POSITION_ROWS.map((row, rowIndex) => (
               <div
@@ -337,7 +337,7 @@ export const Playground: Story = {
     const text = usePopoverText();
 
     return (
-      <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
+      <div className="flex min-h-[320px] items-center justify-center bg-surface-base p-8">
         <PopoverTrigger>
           <Button intent="secondary">{text.playground.trigger}</Button>
           <Popover {...popoverArgs} intent={intent} className="w-[274px]">
@@ -388,8 +388,8 @@ export const OnboardingTip: Story = {
     const text = usePopoverText();
 
     return (
-      <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
-        <div className="flex items-center gap-2 rounded-xl border border-border-default-subtle bg-bg-surface-raised p-2 shadow-sm">
+      <div className="flex min-h-[320px] items-center justify-center bg-surface-base p-8">
+        <div className="flex items-center gap-2 rounded-xl border border-base-subtle bg-surface-raised p-2 shadow-sm">
           <Button intent="secondary" appearance="ghost" size="sm">
             {text.dashboard}
           </Button>
@@ -449,15 +449,15 @@ function FilterPanelExample() {
   const text = usePopoverText();
 
   return (
-    <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
-      <div className="flex w-full max-w-md items-center justify-between rounded-xl gap-3 border border-border-default-subtle bg-bg-surface-raised px-4 py-3">
-        <p className="type-body-sm-medium text-text-default-strong">{text.teamRequests}</p>
+    <div className="flex min-h-[320px] items-center justify-center bg-surface-base p-8">
+      <div className="flex w-full max-w-md items-center justify-between rounded-xl gap-3 border border-base-subtle bg-surface-raised px-4 py-3">
+        <p className="type-body-sm-medium text-base-strong">{text.teamRequests}</p>
         <PopoverTrigger>
           <Button intent="secondary" size="sm" aria-label={text.filterPanel.triggerAriaLabel}>
             <Funnel size={16} aria-hidden />
             {text.filterPanel.trigger}
             {activeCount > 0 ? (
-              <Badge counter appearance="emphasis" intent="pink" size="sm" count={activeCount} />
+              <Badge counter appearance="emphasis" intent="magenta" size="sm" count={activeCount} />
             ) : null}
           </Button>
           <Popover intent="tertiary" placement="bottom end" className="w-[260px]">
@@ -517,14 +517,12 @@ export const ContextualHelp: Story = {
     const text = usePopoverText();
 
     return (
-      <div className="flex min-h-[320px] items-center justify-center bg-bg-surface-base p-8">
-        <div className="w-full max-w-sm rounded-xl border border-border-default-subtle bg-bg-surface-raised p-4">
+      <div className="flex min-h-[320px] items-center justify-center bg-surface-base p-8">
+        <div className="w-full max-w-sm rounded-xl border border-base-subtle bg-surface-raised p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1">
-              <p className="type-body-sm-medium text-text-default-strong">{text.apiRateLimit}</p>
-              <p className="type-caption-regular text-text-default-muted">
-                {text.requestsResetInfo}
-              </p>
+              <p className="type-body-sm-medium text-base-strong">{text.apiRateLimit}</p>
+              <p className="type-caption-regular text-base-muted">{text.requestsResetInfo}</p>
             </div>
             <PopoverTrigger>
               <Button

@@ -22,12 +22,12 @@ import { hasRenderableMessage } from './field-shared';
 import { useVeliLanguage } from './provider';
 
 const overlayVariants = cva(
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-gray-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-ash-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
 );
 
 const modalVariants = cva(
   [
-    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-text-default-default outline-none transition duration-normal ease-spring',
+    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-base outline-none transition duration-normal ease-spring',
     'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
     'shadow-sm',
   ],
@@ -342,7 +342,7 @@ export function ModalTitle({ children, className, ...props }: ModalTitleProps) {
     <Heading
       {...props}
       slot="title"
-      className={twMerge('type-subtitle-medium text-text-default-strong', className)}
+      className={twMerge('type-subtitle-medium text-base-strong', className)}
     >
       {children}
     </Heading>
@@ -367,7 +367,7 @@ export function ModalDescription({ children, className, ...props }: ModalDescrip
     <Text
       {...props}
       slot="description"
-      className={twMerge('type-body-md-regular text-text-default-strong', className)}
+      className={twMerge('type-body-md-regular text-base-strong', className)}
     >
       {children}
     </Text>
@@ -428,9 +428,7 @@ export interface ModalContentProps {
 
 export function ModalContent({ children, className }: ModalContentProps) {
   return (
-    <div className={twMerge('type-body-md-regular py-4 text-text-default-default', className)}>
-      {children}
-    </div>
+    <div className={twMerge('type-body-md-regular py-4 text-base', className)}>{children}</div>
   );
 }
 

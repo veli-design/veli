@@ -8,11 +8,11 @@ Last updated: 2026-06-25
 
 Veli already has many of the pieces needed for a themeable token system:
 
-- Primitive palette tokens live under `color.cool gray`, `color.blue`, `color.success`, `color.orange`, `color.red`, and the extended color families.
+- Primitive palette tokens live under `color.slate`, `color.blue`, `color.emerald`, `color.orange`, `color.red`, and the extended color families.
 - Semantic/application tokens already exist under groups such as `color.bg`, `color.text`, `color.icon`, `color.border`, and `color.status`.
 - Component-scoped tokens already exist under groups such as `color.button`, `color.text input`, `color.switch`, `color.radio`, `color.checkbox`, `color.tooltip`, `color.calendar`, `color.modal`, `color.avatar`, and `color.popover`.
 
-The missing architectural layer is a clear brand/theme tier between primitives and semantic tokens. Today, many semantic and component tokens point directly at palette scales such as `color.blue.800` or `color.cool gray.1100`. That works for a single Veli theme, but it makes multi-theme work more expensive because each theme change has to be reasoned through at many semantic and component points.
+The missing architectural layer is a clear brand/theme tier between primitives and semantic tokens. Today, many semantic and component tokens point directly at palette scales such as `color.blue.800` or `color.slate.1100`. That works for a single Veli theme, but it makes multi-theme work more expensive because each theme change has to be reasoned through at many semantic and component points.
 
 This proposal recommends a four-layer implementation model that maps to the three-tier themeable design-system idea in the issue:
 
@@ -92,7 +92,7 @@ Important current build constraints:
 
 | Layer today          | Current examples                                                                                                                                                       | Notes                                                                                                  |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Primitive palette    | `color.cool gray`, `color.blue`, `color.success`, `color.orange`, `color.red`, `color.green`, `color.indigo`, `color.pink`, `color.white`                              | These are the raw material collections. Many have numeric steps and alpha steps.                       |
+| Primitive palette    | `color.slate`, `color.blue`, `color.emerald`, `color.orange`, `color.red`, `color.green`, `color.indigo`, `color.magenta`, `color.white`                               | These are the raw material collections. Many have numeric steps and alpha steps.                       |
 | Semantic/application | `color.bg`, `color.text`, `color.icon`, `color.border`, `color.status`                                                                                                 | These are mostly Tier 2 already, but many still reference primitives directly.                         |
 | Component-scoped     | `color.button`, `color.text input`, `color.switch`, `color.radio`, `color.checkbox`, `color.tooltip`, `color.calendar`, `color.modal`, `color.avatar`, `color.popover` | These are Tier 3 already, but many still reference primitives or lower-level semantics inconsistently. |
 
@@ -101,7 +101,7 @@ Important current build constraints:
 | Current token                           | Current value pattern        | Refactor direction                                                      |
 | --------------------------------------- | ---------------------------- | ----------------------------------------------------------------------- |
 | `color.bg.primary.DEFAULT`              | `{color.blue.800}`           | Point to `color.theme.primary.default`.                                 |
-| `color.bg.secondary.DEFAULT`            | `{color.cool gray.1100}`     | Point to `color.theme.secondary.default`.                               |
+| `color.bg.secondary.DEFAULT`            | `{color.slate.1100}`         | Point to `color.theme.secondary.default`.                               |
 | `color.text.primary.default`            | `{color.blue.900}`           | Point to a semantic foreground role derived from `color.theme.primary`. |
 | `color.border.focus`                    | `{color.blue.700}`           | Point to a focus/ring semantic derived from the active theme.           |
 | `color.button.primary.default`          | `{color.blue.800}`           | Point to `color.bg.primary.default`.                                    |
@@ -117,7 +117,7 @@ The current setup is not broken. It is simply missing a documented and enforceab
 ```text
 Layer 0: Primitive/global tokens
   color.blue.800
-  color.cool gray.1100
+  color.slate.1100
   radius.md
   spacing.4
 
@@ -172,9 +172,9 @@ Primitive tokens stay close to the current source shape.
 Examples:
 
 ```text
-color.cool gray.100
-color.cool gray.1200
-color.cool gray.alpha.300
+color.slate.100
+color.slate.1200
+color.slate.alpha.300
 color.blue.800
 color.blue.alpha.400
 color.red.900
@@ -361,7 +361,7 @@ Example:
 
 Output compatibility goal:
 
-- Existing utilities such as `bg-bg-primary-default`, `text-text-default-strong`, and `border-border-focus` continue to work.
+- Existing utilities such as `bg-primary`, `text-base-strong`, and `border-focus` continue to work.
 - Existing CSS custom properties remain available.
 - No component source changes are required in this phase.
 

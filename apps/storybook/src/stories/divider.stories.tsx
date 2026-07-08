@@ -6,8 +6,7 @@ import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const dividerVariants = ['subtle', 'muted', 'strong', 'emphasis'] as const;
 
-const storyPanelClassName =
-  'w-80 rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+const storyPanelClassName = 'w-80 rounded-2xl border border-base-subtle bg-surface-raised p-4';
 
 const dividerText = {
   en: {
@@ -161,11 +160,9 @@ export const Default: Story = {
     return (
       <div className={storyPanelClassName}>
         <div className="space-y-3">
-          <p className="type-body-sm-medium text-text-default-emphasis">{text.permitInformation}</p>
+          <p className="type-body-sm-medium text-base-emphasis">{text.permitInformation}</p>
           <Divider {...args} />
-          <p className="type-body-sm-regular text-text-default-default">
-            {text.dividerDescription}
-          </p>
+          <p className="type-body-sm-regular text-base">{text.dividerDescription}</p>
         </div>
       </div>
     );
@@ -203,7 +200,7 @@ export const LineVariants: Story = {
     <div className={`${storyPanelClassName} space-y-4`}>
       {dividerVariants.map((appearance) => (
         <div key={appearance} className="space-y-2">
-          <p className="type-caption-12-medium text-text-default-muted capitalize">{appearance}</p>
+          <p className="type-caption-12-medium text-base-muted capitalize">{appearance}</p>
           <Divider appearance={appearance} />
         </div>
       ))}
@@ -219,8 +216,8 @@ export const Orientations: Story = {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className={storyPanelClassName}>
           <div className="space-y-3">
-            <p className="type-body-sm-medium text-text-default-emphasis">Horizontal</p>
-            <div className="space-y-2.5 type-body-sm-regular text-text-default-default">
+            <p className="type-body-sm-medium text-base-emphasis">Horizontal</p>
+            <div className="space-y-2.5 type-body-sm-regular text-base">
               <p>{text.sections.one}</p>
               <Divider />
               <p>{text.sections.two}</p>
@@ -232,8 +229,8 @@ export const Orientations: Story = {
 
         <div className={storyPanelClassName}>
           <div className="space-y-3">
-            <p className="type-body-sm-medium text-text-default-emphasis">Vertical</p>
-            <div className="flex items-center justify-between text-text-default-default">
+            <p className="type-body-sm-medium text-base-emphasis">Vertical</p>
+            <div className="flex items-center justify-between text-base">
               <span>{text.tabs.summary}</span>
               <Divider orientation="vertical" />
               <span>{text.tabs.documents}</span>

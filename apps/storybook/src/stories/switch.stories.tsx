@@ -44,9 +44,7 @@ export const Variants: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Default
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Default</span>
         <div className="flex items-center gap-4">
           <Switch appearance="default">Off</Switch>
           <Switch appearance="default" defaultSelected>
@@ -55,9 +53,7 @@ export const Variants: Story = {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Subtle
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Subtle</span>
         <div className="flex items-center gap-4">
           <Switch appearance="subtle">Off</Switch>
           <Switch appearance="subtle" defaultSelected>
@@ -76,11 +72,9 @@ export const Sizes: Story = {
   render: () => (
     <div className="grid w-[680px] grid-cols-2 gap-[24px]">
       <div className="flex flex-col gap-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Default
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Default</span>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Small (sm)
           </span>
           <div className="flex items-center gap-4">
@@ -91,7 +85,7 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Medium (md)
           </span>
           <div className="flex items-center gap-4">
@@ -102,7 +96,7 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Large (lg)
           </span>
           <div className="flex items-center gap-4">
@@ -114,11 +108,9 @@ export const Sizes: Story = {
         </div>
       </div>
       <div className="flex flex-col gap-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          Subtle
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">Subtle</span>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Small (sm)
           </span>
           <div className="flex items-center gap-4">
@@ -131,7 +123,7 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Medium (md)
           </span>
           <div className="flex items-center gap-4">
@@ -144,7 +136,7 @@ export const Sizes: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Large (lg)
           </span>
           <div className="flex items-center gap-4">
@@ -176,9 +168,7 @@ export const Directional: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-8">
       <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-          LTR
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">LTR</span>
         <div className="flex items-center gap-4">
           <Switch>Off</Switch>
           <Switch defaultSelected>On</Switch>
@@ -186,9 +176,7 @@ export const Directional: Story = {
       </div>
       <VeliProvider language="dv">
         <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
-            RTL
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">RTL</span>
           <div className="flex items-center gap-4">
             <Switch>Off</Switch>
             <Switch defaultSelected>On</Switch>
@@ -207,22 +195,18 @@ export const StatesAudit: Story = {
     <div className="flex flex-col gap-8">
       {(['default', 'subtle'] as const).map((appearance) => (
         <div key={appearance} className="flex flex-col gap-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-default-muted">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             {appearance}
           </span>
           <div className="flex flex-col gap-4">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">Off</span>
+            <span className="text-[10px] uppercase font-bold text-base-muted">Off</span>
             <div className="flex items-center gap-12">
               <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-text-default-muted">
-                  Active
-                </span>
+                <span className="text-[10px] uppercase font-bold text-base-muted">Active</span>
                 <Switch appearance={appearance}>Switch</Switch>
               </div>
               <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-text-default-muted">
-                  Disabled
-                </span>
+                <span className="text-[10px] uppercase font-bold text-base-muted">Disabled</span>
                 <Switch appearance={appearance} isDisabled>
                   Switch
                 </Switch>
@@ -230,20 +214,16 @@ export const StatesAudit: Story = {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-[10px] uppercase font-bold text-text-default-muted">On</span>
+            <span className="text-[10px] uppercase font-bold text-base-muted">On</span>
             <div className="flex items-center gap-12">
               <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-text-default-muted">
-                  Active
-                </span>
+                <span className="text-[10px] uppercase font-bold text-base-muted">Active</span>
                 <Switch appearance={appearance} defaultSelected>
                   Switch
                 </Switch>
               </div>
               <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-text-default-muted">
-                  Disabled
-                </span>
+                <span className="text-[10px] uppercase font-bold text-base-muted">Disabled</span>
                 <Switch appearance={appearance} defaultSelected isDisabled>
                   Switch
                 </Switch>

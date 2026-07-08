@@ -95,7 +95,7 @@ export const WithTodayButton: Story = {
             value={value}
             onChange={setValue}
           />
-          <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
+          <div className="rounded-xl border border-base-subtle bg-surface-overlay-raised px-3 py-2 text-sm text-base">
             Selected date: <span className="font-semibold">{value.toString()}</span>
           </div>
         </div>
@@ -106,7 +106,7 @@ export const WithTodayButton: Story = {
             value={rangeValue}
             onChange={setRangeValue}
           />
-          <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
+          <div className="rounded-xl border border-base-subtle bg-surface-overlay-raised px-3 py-2 text-sm text-base">
             Selected range:{' '}
             <span className="font-semibold">
               {rangeValue.start.toString()} – {rangeValue.end.toString()}
@@ -156,7 +156,7 @@ export const ControlledDateRange: Story = {
     return (
       <div className="space-y-3">
         <RangeCalendar aria-label="Controlled trip dates" value={value} onChange={setValue} />
-        <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
+        <div className="rounded-xl border border-base-subtle bg-surface-overlay-raised px-3 py-2 text-sm text-base">
           Selected range:{' '}
           <span className="font-semibold">
             {value.start.toString()} – {value.end.toString()}
@@ -218,7 +218,7 @@ export const ControlledByExternalState: Story = {
             Set to Today
           </Button>
         </div>
-        <div className="rounded-xl border border-border-default-subtle bg-bg-surface-overlay-raised px-3 py-2 text-sm text-text-default-default">
+        <div className="rounded-xl border border-base-subtle bg-surface-overlay-raised px-3 py-2 text-sm text-base">
           Selected date: <span className="font-semibold">{value.toString()}</span>
         </div>
       </div>
@@ -244,8 +244,8 @@ export const ConstraintsAndUnavailableDates: Story = {
         isDateUnavailable={appointmentUnavailable}
       />
       <div>
-        <p className="max-w-md text-xs text-text-default-muted">Greyed out: Disabled date</p>
-        <p className="max-w-md text-xs text-text-default-muted">Struck through: Unavailable date</p>
+        <p className="max-w-md text-xs text-base-muted">Greyed out: Disabled date</p>
+        <p className="max-w-md text-xs text-base-muted">Struck through: Unavailable date</p>
       </div>
     </div>
   ),

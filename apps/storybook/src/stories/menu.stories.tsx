@@ -514,13 +514,13 @@ export const Default: Story = {
             </Menu>
           </MenuPopover>
         </MenuTrigger>
-        <p className="type-caption-regular text-text-default-muted">
+        <p className="type-caption-regular text-base-muted">
           {text.lastAction}:{' '}
           <span className="type-caption-medium">
             {lastAction ? (itemLabels[lastAction] ?? lastAction) : text.noneYet}
           </span>
         </p>
-        <p className="type-caption-regular text-text-default-muted">
+        <p className="type-caption-regular text-base-muted">
           {text.selected}:{' '}
           <span className="type-caption-medium">
             {formatPlaygroundSelection(selectedKeys, safeItems, text)}
@@ -676,9 +676,7 @@ export const Checked: Story = {
     return (
       <div className="grid w-[min(48rem,calc(100vw-2rem))] grid-cols-1 gap-6 sm:grid-cols-3">
         <div className="flex min-w-0 flex-col items-start gap-2">
-          <p className="type-caption-medium text-text-default-default">
-            {text.singleClosesOnSelect}
-          </p>
+          <p className="type-caption-medium text-base">{text.singleClosesOnSelect}</p>
           <MenuTrigger>
             <Button intent="secondary" appearance="transparent" size="sm">
               {text.sortBy}
@@ -695,7 +693,7 @@ export const Checked: Story = {
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+          <p className="w-full min-w-0 truncate type-caption-regular text-base-muted">
             {text.selected}:{' '}
             <span className="type-caption-medium">
               {formatSelection(singleSelected, sortLabels, text)}
@@ -704,7 +702,7 @@ export const Checked: Story = {
         </div>
 
         <div className="flex min-w-0 flex-col items-start gap-2">
-          <p className="type-caption-medium text-text-default-default">{text.multipleStaysOpen}</p>
+          <p className="type-caption-medium text-base">{text.multipleStaysOpen}</p>
           <MenuTrigger>
             <Button intent="secondary" appearance="transparent" size="sm">
               {text.view}
@@ -721,7 +719,7 @@ export const Checked: Story = {
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+          <p className="w-full min-w-0 truncate type-caption-regular text-base-muted">
             {text.selected}:{' '}
             <span className="type-caption-medium">
               {formatSelection(multipleSelected, viewLabels, text)}
@@ -730,9 +728,7 @@ export const Checked: Story = {
         </div>
 
         <div className="flex min-w-0 flex-col items-start gap-2">
-          <p className="type-caption-medium text-text-default-default">
-            {text.singleCloseOnSelectFalse}
-          </p>
+          <p className="type-caption-medium text-base">{text.singleCloseOnSelectFalse}</p>
           <MenuTrigger>
             <Button intent="secondary" appearance="transparent" size="sm">
               {text.layout}
@@ -755,7 +751,7 @@ export const Checked: Story = {
               </Menu>
             </MenuPopover>
           </MenuTrigger>
-          <p className="w-full min-w-0 truncate type-caption-regular text-text-default-muted">
+          <p className="w-full min-w-0 truncate type-caption-regular text-base-muted">
             {text.selected}:{' '}
             <span className="type-caption-medium">
               {formatSelection(persistentSelected, layoutLabels, text)}

@@ -9,43 +9,43 @@ import { type VeliLanguage, useVeliLanguage } from './provider';
 const avatarAppearances = {
   blue: {
     surface: 'bg-avatar-blue',
-    content: 'text-text-primary-default',
-    icon: 'text-icon-primary-default',
+    content: 'text-primary',
+    icon: 'text-icon-primary',
   },
   neutral: {
     surface: 'bg-avatar-neutral',
-    content: 'text-text-default-default',
-    icon: 'text-icon-default-default',
+    content: 'text-base-default',
+    icon: 'text-icon-base',
   },
-  successGreen: {
-    surface: 'bg-avatar-success-green',
-    content: 'text-text-success-default',
-    icon: 'text-icon-success-default',
+  emerald: {
+    surface: 'bg-avatar-emerald',
+    content: 'text-success',
+    icon: 'text-icon-success',
   },
   yellow: {
     surface: 'bg-avatar-yellow',
-    content: 'text-text-cautious-default',
-    icon: 'text-icon-cautious-default',
+    content: 'text-caution',
+    icon: 'text-icon-caution',
   },
   orange: {
     surface: 'bg-avatar-orange',
-    content: 'text-text-warning-default',
-    icon: 'text-icon-warning-default',
+    content: 'text-warning',
+    icon: 'text-icon-warning',
   },
-  pink: {
-    surface: 'bg-avatar-pink',
-    content: 'text-status-pink-emphasis',
-    icon: 'text-status-pink-emphasis',
+  magenta: {
+    surface: 'bg-avatar-magenta',
+    content: 'text-status-magenta-emphasis',
+    icon: 'text-status-magenta-emphasis',
   },
   indigo: {
     surface: 'bg-avatar-indigo',
     content: 'text-status-indigo-emphasis',
     icon: 'text-status-indigo-emphasis',
   },
-  turquoise: {
-    surface: 'bg-avatar-turquoise',
-    content: 'text-status-turquoise-emphasis',
-    icon: 'text-status-turquoise-emphasis',
+  teal: {
+    surface: 'bg-avatar-teal',
+    content: 'text-status-teal-emphasis',
+    icon: 'text-status-teal-emphasis',
   },
   green: {
     surface: 'bg-avatar-green',
@@ -126,12 +126,12 @@ const avatarVariants = cva(
       appearance: {
         blue: avatarAppearances.blue.surface,
         neutral: avatarAppearances.neutral.surface,
-        successGreen: avatarAppearances.successGreen.surface,
+        emerald: avatarAppearances.emerald.surface,
         yellow: avatarAppearances.yellow.surface,
         orange: avatarAppearances.orange.surface,
-        pink: avatarAppearances.pink.surface,
+        magenta: avatarAppearances.magenta.surface,
         indigo: avatarAppearances.indigo.surface,
-        turquoise: avatarAppearances.turquoise.surface,
+        teal: avatarAppearances.teal.surface,
         green: avatarAppearances.green.surface,
         lime: avatarAppearances.lime.surface,
       },

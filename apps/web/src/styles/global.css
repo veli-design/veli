@@ -202,7 +202,7 @@ button {
 /* Documentation shell */
 .docs-page {
   background: var(--color-bg-surface-base);
-  color: var(--color-text-default-default);
+  color: var(--color-text-base-default);
 }
 
 .docs-workspace {
@@ -224,7 +224,7 @@ button {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border-right: 1px solid var(--color-border-default-subtle);
+  border-right: 1px solid var(--color-border-base-subtle);
 }
 
 .docs-navigation__scroll {
@@ -238,7 +238,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-size: 23px;
   font-weight: 600;
   line-height: 30px;
@@ -262,7 +262,7 @@ button {
 .docs-contents h2,
 .docs-mobile-menu h2 {
   margin: 0 0 9px;
-  color: var(--color-text-default-subtle);
+  color: var(--color-text-base-subtle);
   font-size: 11px;
   font-weight: 600;
   line-height: 16px;
@@ -272,7 +272,7 @@ button {
 .docs-nav-link {
   display: block;
   border-radius: 5px;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   padding: 6px 9px;
   font-size: 13px;
   font-weight: 500;
@@ -283,7 +283,7 @@ button {
 .docs-nav-link:hover,
 .docs-nav-link.is-active {
   background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
 }
 
 .docs-nav-link.is-active {
@@ -292,7 +292,7 @@ button {
 
 .docs-resources {
   flex: none;
-  border-top: 1px solid var(--color-border-default-subtle);
+  border-top: 1px solid var(--color-border-base-subtle);
   padding: 14px 20px 18px;
 }
 
@@ -303,7 +303,7 @@ button {
   align-items: center;
   gap: 9px;
   border-radius: 5px;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   padding: 7px 8px;
   font-size: 13px;
   font-weight: 500;
@@ -312,7 +312,7 @@ button {
 
 .docs-resources a:hover {
   background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
 }
 
 .external-arrow {
@@ -326,7 +326,7 @@ button {
 
 .docs-main {
   min-width: 0;
-  border-right: 1px solid var(--color-border-default-subtle);
+  border-right: 1px solid var(--color-border-base-subtle);
 }
 
 .docs-main__inner {
@@ -344,10 +344,10 @@ button {
   min-height: 38px;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--color-border-default-subtle);
+  border: 1px solid var(--color-border-base-subtle);
   border-radius: 6px;
   background: var(--color-bg-surface-raised);
-  color: var(--color-text-default-subtle);
+  color: var(--color-text-base-subtle);
   padding: 0 10px;
 }
 
@@ -362,18 +362,18 @@ button {
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-size: 13px;
 }
 
 .docs-search input::placeholder {
-  color: var(--color-text-default-subtle);
+  color: var(--color-text-base-subtle);
 }
 
 .docs-search-status {
   min-height: 16px;
   margin: 6px 2px 0;
-  color: var(--color-text-default-subtle);
+  color: var(--color-text-base-subtle);
   font-size: 11px;
 }
 
@@ -383,8 +383,8 @@ button {
 }
 
 .docs-contents a {
-  border-left: 1px solid var(--color-border-default-subtle);
-  color: var(--color-text-default-muted);
+  border-left: 1px solid var(--color-border-base-subtle);
+  color: var(--color-text-base-muted);
   padding: 5px 0 5px 12px;
   font-size: 12px;
   font-weight: 500;
@@ -394,7 +394,7 @@ button {
 
 .docs-contents a:hover {
   border-left-color: var(--color-border-primary-emphasis);
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
 }
 
 .docs-contents a.is-nested {
@@ -412,7 +412,7 @@ button {
   justify-content: space-between;
   border-radius: 5px;
   background: transparent;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   padding: 7px 9px;
   font-size: 12px;
   cursor: pointer;
@@ -420,7 +420,7 @@ button {
 
 .theme-cycle:hover {
   background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
 }
 
 .docs-mobile-header {
@@ -430,7 +430,7 @@ button {
 /* Documentation content */
 .docs-page-header {
   padding-bottom: 48px;
-  border-bottom: 1px solid var(--color-border-default-subtle);
+  border-bottom: 1px solid var(--color-border-base-subtle);
 }
 
 .docs-kicker {
@@ -444,7 +444,7 @@ button {
 .docs-page-header h1 {
   max-width: 680px;
   margin: 0;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-size: 48px;
   font-weight: 600;
   line-height: 1.14;
@@ -453,7 +453,7 @@ button {
 .docs-page-header > p:last-child {
   max-width: 650px;
   margin: 20px 0 0;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   font-size: 17px;
   line-height: 28px;
 }
@@ -469,8 +469,8 @@ button {
 .docs-intro-links a,
 .docs-link-list a {
   display: grid;
-  border-bottom: 1px solid var(--color-border-default-subtle);
-  color: var(--color-text-default-emphasis);
+  border-bottom: 1px solid var(--color-border-base-subtle);
+  color: var(--color-text-base-emphasis);
   text-decoration: none;
 }
 
@@ -488,7 +488,7 @@ button {
 .docs-intro-links small,
 .docs-link-list p {
   margin: 5px 0 0;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   font-size: 13px;
   font-weight: 400;
   line-height: 21px;
@@ -508,7 +508,7 @@ button {
 .foundation-section h2,
 .docs-prose h2 {
   margin: 0;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-size: 25px;
   font-weight: 600;
   line-height: 34px;
@@ -529,7 +529,7 @@ button {
 .foundation-section > p {
   max-width: 680px;
   margin: 14px 0 0;
-  color: var(--color-text-default-muted);
+  color: var(--color-text-base-muted);
   font-size: 15px;
   line-height: 26px;
 }
@@ -541,15 +541,15 @@ button {
 }
 
 .principle-list li {
-  border-top: 1px solid var(--color-border-default-subtle);
-  color: var(--color-text-default-muted);
+  border-top: 1px solid var(--color-border-base-subtle);
+  color: var(--color-text-base-muted);
   padding: 14px 0;
   font-size: 14px;
   line-height: 22px;
 }
 
 .principle-list strong {
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-weight: 600;
 }
 
@@ -562,13 +562,13 @@ button {
 
 .foundation-colors span {
   min-height: 82px;
-  border: 1px solid var(--color-border-default-subtle);
+  border: 1px solid var(--color-border-base-subtle);
   border-radius: 5px;
 }
 
 /* MDX component articles */
 .docs-prose {
-  color: var(--color-text-default-default);
+  color: var(--color-text-base-default);
   font-size: 15px;
   line-height: 1.75;
 }
@@ -587,7 +587,7 @@ button {
 
 .docs-prose h3 {
   margin: 34px 0 0;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-size: 18px;
   font-weight: 600;
   line-height: 26px;
@@ -610,7 +610,7 @@ button {
   border-radius: 4px;
   background: var(--color-bg-secondary-subtle-default);
   padding: 2px 5px;
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.92em;
   letter-spacing: 0;
@@ -619,8 +619,8 @@ button {
 .docs-prose pre {
   overflow-x: auto;
   border-radius: 6px;
-  background: var(--color-cool-gray-1200);
-  color: var(--color-cool-gray-100);
+  background: var(--color-slate-1200);
+  color: var(--color-slate-100);
   padding: 18px;
 }
 
@@ -641,20 +641,20 @@ button {
 
 .docs-prose th,
 .docs-prose td {
-  border-bottom: 1px solid var(--color-border-default-subtle);
+  border-bottom: 1px solid var(--color-border-base-subtle);
   padding: 10px 12px;
   text-align: left;
   vertical-align: top;
 }
 
 .docs-prose th {
-  color: var(--color-text-default-emphasis);
+  color: var(--color-text-base-emphasis);
   font-weight: 600;
 }
 
 .docs-prose .preview {
   margin-top: 18px;
-  border-color: var(--color-border-default-subtle);
+  border-color: var(--color-border-base-subtle);
   border-radius: 6px;
   background: var(--color-bg-surface-raised);
 }
@@ -741,7 +741,7 @@ button {
     min-height: 64px;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--color-border-default-subtle);
+    border-bottom: 1px solid var(--color-border-base-subtle);
     background: color-mix(in srgb, var(--color-bg-surface-base) 92%, transparent);
     padding: 0 18px;
     backdrop-filter: blur(14px);
@@ -768,7 +768,7 @@ button {
     list-style: none;
     place-items: center;
     border-radius: 5px;
-    color: var(--color-text-default-emphasis);
+    color: var(--color-text-base-emphasis);
   }
 
   .docs-mobile-menu summary::-webkit-details-marker {
@@ -786,7 +786,7 @@ button {
     bottom: 0;
     left: 0;
     overflow-y: auto;
-    border-top: 1px solid var(--color-border-default-subtle);
+    border-top: 1px solid var(--color-border-base-subtle);
     background: var(--color-bg-surface-base);
     padding: 24px 20px 48px;
   }
@@ -805,7 +805,7 @@ button {
 
   .docs-mobile-menu a {
     border-radius: 5px;
-    color: var(--color-text-default-muted);
+    color: var(--color-text-base-muted);
     padding: 9px 10px;
     font-size: 14px;
     text-decoration: none;
@@ -813,7 +813,7 @@ button {
 
   .docs-mobile-menu a:hover {
     background: var(--color-bg-secondary-subtle-default);
-    color: var(--color-text-default-emphasis);
+    color: var(--color-text-base-emphasis);
   }
 
   .docs-main__inner {

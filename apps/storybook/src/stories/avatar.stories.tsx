@@ -4,12 +4,12 @@ import { Avatar, type AvatarAppearance, type AvatarSize } from '@tradenetcorp/ve
 const appearances: AvatarAppearance[] = [
   'blue',
   'neutral',
-  'successGreen',
+  'emerald',
   'yellow',
   'orange',
-  'pink',
+  'magenta',
   'indigo',
-  'turquoise',
+  'teal',
   'green',
   'lime',
 ];
@@ -19,12 +19,12 @@ const sizes: AvatarSize[] = ['60', '52', '44', '36', '28', '20', '16'];
 const appearanceLabels: Record<AvatarAppearance, string> = {
   blue: 'Blue',
   neutral: 'Neutral',
-  successGreen: 'Success Green',
+  emerald: 'Emerald',
   yellow: 'Yellow',
   orange: 'Orange',
-  pink: 'Pink',
+  magenta: 'Magenta',
   indigo: 'Indigo',
-  turquoise: 'Turquoise',
+  teal: 'Teal',
   green: 'Green',
   lime: 'Lime',
 };
@@ -127,14 +127,12 @@ export const AllVariants: Story = {
     <div className="space-y-[32px]">
       {appearances.map((appearance) => (
         <section key={appearance} className="space-y-[12px]">
-          <h3 className="type-body-sm-medium text-text-default-emphasis">
-            {appearanceLabels[appearance]}
-          </h3>
+          <h3 className="type-body-sm-medium text-base-emphasis">{appearanceLabels[appearance]}</h3>
 
           <div className="overflow-x-auto">
             <table className="border-separate border-spacing-[12px]">
               <thead>
-                <tr className="type-body-sm-regular text-text-default-muted">
+                <tr className="type-body-sm-regular text-base-muted">
                   <th className="text-start font-medium">Type</th>
                   {sizes.map((size) => (
                     <th key={size} className="min-w-[60px] text-center font-medium">
@@ -145,7 +143,7 @@ export const AllVariants: Story = {
               </thead>
               <tbody>
                 <tr>
-                  <td className="type-body-sm-regular text-text-default-default">Image</td>
+                  <td className="type-body-sm-regular text-base">Image</td>
                   {sizes.map((size) => (
                     <td key={size} className="text-center">
                       <Avatar
@@ -159,7 +157,7 @@ export const AllVariants: Story = {
                   ))}
                 </tr>
                 <tr>
-                  <td className="type-body-sm-regular text-text-default-default">Icon</td>
+                  <td className="type-body-sm-regular text-base">Icon</td>
                   {sizes.map((size) => (
                     <td key={size} className="text-center">
                       <Avatar appearance={appearance} size={size} type="icon" alt="User" />
@@ -167,7 +165,7 @@ export const AllVariants: Story = {
                   ))}
                 </tr>
                 <tr>
-                  <td className="type-body-sm-regular text-text-default-default">Agency Icon</td>
+                  <td className="type-body-sm-regular text-base">Agency Icon</td>
                   {sizes.map((size) => (
                     <td key={size} className="text-center">
                       <Avatar appearance={appearance} size={size} type="agencyIcon" alt="Agency" />
@@ -175,7 +173,7 @@ export const AllVariants: Story = {
                   ))}
                 </tr>
                 <tr>
-                  <td className="type-body-sm-regular text-text-default-default">Initials</td>
+                  <td className="type-body-sm-regular text-base">Initials</td>
                   {sizes.map((size) => (
                     <td key={size} className="text-center">
                       <Avatar
