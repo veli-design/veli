@@ -1,5 +1,12 @@
 # @tradenetcorp/veli-ui
 
+## 0.7.2
+
+### Patch Changes
+
+- 24ffeb8: Migrate remaining component transition durations and easing utilities to primitive motion tokens.
+- 4455ac4: Migrate Tabs color and selection indicator transitions to primitive motion utilities.
+
 ## 0.7.1
 
 ### Patch Changes
