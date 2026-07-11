@@ -42,10 +42,10 @@ export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'>
 }
 
 const tabSelectionIndicatorClassName =
-  'absolute -bottom-1 left-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-200 motion-reduce:transition-none';
+  'absolute -bottom-1 left-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
 const tabBaseClassName =
-  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 whitespace-nowrap text-base antialiased transition-colors outline-none [&_svg]:shrink-0 [&_svg]:text-icon-base';
+  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 whitespace-nowrap text-base antialiased transition-colors duration-normal ease-in-out outline-none [&_svg]:shrink-0 [&_svg]:text-icon-base';
 
 const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
@@ -211,7 +211,7 @@ function TabsBarIndicator({
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute -bottom-0.5 left-0 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-200 motion-reduce:transition-none"
+      className="pointer-events-none absolute -bottom-0.5 left-0 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
       style={{
         width: position.width,
         left: position.x,
