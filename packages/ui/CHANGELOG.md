@@ -1,5 +1,11 @@
 # @tradenetcorp/veli-ui
 
+## 0.7.1
+
+### Patch Changes
+
+- eddd8ac: Migrate Checkbox color and indicator transitions to primitive motion utilities, and tune checked press-state feedback.
+
 ## 0.7.0
 
 ### Minor Changes
