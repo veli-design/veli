@@ -84,7 +84,7 @@ const calendarYearPickerPopoverClassName = 'w-[90px]';
 const calendarPickerListBoxClassName = 'max-h-60 overflow-auto outline-none';
 
 const calendarPickerItemVariants = cva(
-  'flex min-h-9 w-full cursor-default items-center rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors',
+  'flex min-h-9 w-full cursor-default items-center rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors duration-normal ease-out',
   {
     variants: {
       isSelected: {
@@ -194,7 +194,7 @@ function getCalendarWeekdayLabelClassName() {
 }
 
 const cellVariants = cva(
-  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
+  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors duration-normal ease-out [-webkit-tap-highlight-color:transparent]',
   {
     variants: {
       cellRadius: {
@@ -617,7 +617,7 @@ function getRangeCalendarCellClassName(state: CalendarCellRenderProps) {
   const isSingleDayRange = state.isSelectionStart && state.isSelectionEnd;
 
   return twMerge(
-    'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors [-webkit-tap-highlight-color:transparent]',
+    'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors duration-normal ease-out [-webkit-tap-highlight-color:transparent]',
     'bg-calendar-day-range text-base-emphasis data-[outside-month]:text-base-subtle data-[outside-visible-range]:invisible',
     isSingleDayRange && 'rounded-full',
     state.isSelectionStart && !state.isSelectionEnd && 'rounded-s-full',

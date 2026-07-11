@@ -58,7 +58,7 @@ const fieldShellOutlineFocusClassName =
   'has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent';
 
 export const fieldShellVariants = cva(
-  `relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] ${fieldShellFocusRingClassName}`,
+  `relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out ${fieldShellFocusRingClassName}`,
   {
     variants: {
       appearance: {
@@ -359,7 +359,7 @@ export const dateInputVariants = cva('flex min-w-0 flex-1 flex-wrap items-center
 });
 
 const dateSegmentVariants = cva(
-  'rounded px-[1px] py-1 tabular-nums outline-none transition-colors data-[type=literal]:px-0',
+  'rounded px-[1px] py-1 tabular-nums outline-none transition-colors duration-normal ease-out data-[type=literal]:px-0',
   {
     variants: {
       size: {
