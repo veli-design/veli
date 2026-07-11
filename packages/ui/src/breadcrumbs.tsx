@@ -39,7 +39,7 @@ const breadcrumbItemVariants = cva(
 );
 
 const breadcrumbLinkVariants = cva(
-  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTextClassName} rounded-md type-body-sm-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
+  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTextClassName} rounded-md type-body-sm-medium transition-colors duration-normal ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
   {
     variants: {
       tone: {
@@ -83,7 +83,7 @@ const breadcrumbCurrentVariants = cva(
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
-  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-base-muted transition-colors outline-none`,
+  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-base-muted transition-colors duration-normal ease-out outline-none`,
   {
     variants: {
       isHovered: {

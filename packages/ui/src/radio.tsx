@@ -14,27 +14,30 @@ import { twMerge } from 'tailwind-merge';
 
 const radioGroupVariants = cva('inline-flex flex-col gap-3');
 
-const radioRootVariants = cva('group inline-flex gap-2 font-sans antialiased transition-colors', {
-  variants: {
-    size: {
-      md: 'type-body-sm-regular',
-      lg: 'type-body-md-regular',
+const radioRootVariants = cva(
+  'group inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
+  {
+    variants: {
+      size: {
+        md: 'type-body-sm-regular',
+        lg: 'type-body-md-regular',
+      },
+      hasFieldMessages: {
+        true: 'items-start',
+        false: 'items-center',
+      },
+      isDisabled: {
+        true: 'cursor-not-allowed text-disabled',
+        false: 'cursor-pointer text-base-strong',
+      },
     },
-    hasFieldMessages: {
-      true: 'items-start',
-      false: 'items-center',
-    },
-    isDisabled: {
-      true: 'cursor-not-allowed text-disabled',
-      false: 'cursor-pointer text-base-strong',
+    defaultVariants: {
+      size: 'md',
+      hasFieldMessages: false,
+      isDisabled: false,
     },
   },
-  defaultVariants: {
-    size: 'md',
-    hasFieldMessages: false,
-    isDisabled: false,
-  },
-});
+);
 
 const radioControlSlotVariants = cva('flex shrink-0 items-center', {
   variants: {
@@ -80,7 +83,7 @@ const radioErrorVariants = cva('text-danger-muted', {
 });
 
 const controlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-radio-container-bg transition-colors focus-visible:outline-none',
+  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-radio-container-bg transition-colors duration-normal ease-out focus-visible:outline-none',
   {
     variants: {
       size: {
@@ -186,7 +189,7 @@ const controlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors',
+  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-normal ease-out',
   {
     variants: {
       size: {

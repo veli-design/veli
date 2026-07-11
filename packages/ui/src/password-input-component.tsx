@@ -83,7 +83,7 @@ const headerMetaVariants = cva('type-caption-regular', {
 });
 
 const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -136,7 +136,7 @@ const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-skeleton', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       variant: {
@@ -361,7 +361,7 @@ const requirementIndicatorShellVariants = cva(
 );
 
 const requirementIndicatorEmptyVariants = cva(
-  'absolute inset-0 motion-safe:origin-center motion-safe:transition-[transform,opacity] motion-safe:duration-200 motion-safe:ease-out motion-reduce:transition-none',
+  'absolute inset-0 motion-safe:origin-center motion-safe:transition-[transform,opacity] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none',
   {
     variants: {
       isMet: {
@@ -385,9 +385,9 @@ const requirementIndicatorCheckedVariants = cva(
   {
     variants: {
       isMet: {
-        true: 'motion-safe:scale-100 motion-safe:opacity-100 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+        true: 'motion-safe:scale-100 motion-safe:opacity-100 motion-safe:duration-slow motion-safe:ease-spring',
         false:
-          'motion-safe:scale-[0.65] motion-safe:opacity-0 motion-safe:duration-200 motion-safe:ease-out',
+          'motion-safe:scale-[0.65] motion-safe:opacity-0 motion-safe:duration-normal motion-safe:ease-out',
       },
       isDisabled: {
         true: 'text-disabled',
@@ -402,7 +402,7 @@ const requirementIndicatorCheckedVariants = cva(
 );
 
 const requirementTextVariants = cva(
-  'type-caption-regular motion-safe:transition-colors motion-safe:duration-200 motion-reduce:transition-none',
+  'type-caption-regular motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none',
   {
     variants: {
       isMet: {

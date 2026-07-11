@@ -70,7 +70,7 @@ const headerMetaVariants = cva('type-caption-regular', {
 });
 
 const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -97,7 +97,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color]',
+  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
   {
     variants: {
       appearance: {
@@ -289,7 +289,7 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const indicatorVariants = cva(
-  'flex  shrink-0 items-center justify-center rounded-xs transition-transform',
+  'flex shrink-0 items-center justify-center rounded-xs transition-transform duration-normal ease-in-out',
   {
     variants: {
       isDisabled: {
@@ -315,7 +315,7 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors duration-normal ease-out',
   {
     variants: {
       isSelected: {

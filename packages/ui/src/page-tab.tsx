@@ -61,7 +61,7 @@ export function PageTab({
             isDisabled={item.isDisabled}
             className={(state) =>
               twMerge(
-                'inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] type-body-lg-semibold whitespace-nowrap antialiased transition-colors duration-300 outline-none md:px-[40px] md:py-[20px] md:type-subtitle-semibold data-[disabled]:pointer-events-none data-[disabled]:text-disabled',
+                'inline-flex w-full items-center justify-center rounded-full px-[16px] py-[16px] type-body-lg-semibold whitespace-nowrap antialiased transition-colors duration-slow ease-out outline-none md:px-[40px] md:py-[20px] md:type-subtitle-semibold data-[disabled]:pointer-events-none data-[disabled]:text-disabled',
                 state.isSelected
                   ? 'bg-button-primary text-primary-inverted'
                   : 'bg-transparent text-base-muted data-[hovered]:text-base data-[pressed]:bg-button-secondary-subtle-hover',

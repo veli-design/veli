@@ -30,7 +30,7 @@ const menuPopoverClassName =
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {

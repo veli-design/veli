@@ -73,7 +73,7 @@ const headerMetaVariants = cva('type-caption-regular', {
 });
 
 const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -100,7 +100,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -260,7 +260,7 @@ function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: b
 }
 
 const triggerButtonVariants = cva(
-  'relative z-[1] flex shrink-0 items-center justify-center rounded-sm border-0 bg-transparent outline-none transition-colors',
+  'relative z-[1] flex shrink-0 items-center justify-center rounded-sm border-0 bg-transparent outline-none transition-colors duration-normal ease-out',
   {
     variants: {
       isDisabled: {
@@ -282,7 +282,7 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-base-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[focused]:bg-button-primary-subtle data-[selected]:bg-button-primary-subtle data-[selected]:text-base-strong [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
+  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-start text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[focused]:bg-button-primary-subtle data-[selected]:bg-button-primary-subtle data-[selected]:text-base-strong [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
 );
 
 const itemLabelVariants = cva('truncate type-body-sm-regular');
@@ -569,7 +569,10 @@ function ComboBoxInner<T extends object>(
                   aria-hidden
                   size={20}
                   weight="regular"
-                  className={twMerge('transition-transform text-icon-base', isOpen && 'rotate-180')}
+                  className={twMerge(
+                    'transition-transform duration-normal ease-in-out text-icon-base',
+                    isOpen && 'rotate-180',
+                  )}
                 />
               )}
             </AriaButton>

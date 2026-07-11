@@ -12,7 +12,7 @@ const switchCheckIconSizes = {
 } as const;
 
 const switchVariants = cva(
-  'group inline-flex items-center gap-2 font-sans antialiased transition-colors focus-visible:outline-none',
+  'group inline-flex items-center gap-2 font-sans antialiased transition-colors duration-normal ease-out focus-visible:outline-none',
   {
     variants: {
       size: {
@@ -33,7 +33,7 @@ const switchVariants = cva(
 );
 
 const trackVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-start rounded-full border-1 transition-all duration-200 outline-none select-none',
+  'relative inline-flex shrink-0 items-center justify-start rounded-full border-1 transition-all duration-normal ease-out outline-none select-none',
   {
     variants: {
       appearance: {
@@ -151,7 +151,7 @@ const trackVariants = cva(
 );
 
 const handleVariants = cva(
-  'absolute top-1/2 -translate-y-1/2 rounded-full transition-[inset-inline-start,width,height,background-color] duration-200 ease-in-out',
+  'absolute top-1/2 -translate-y-1/2 rounded-full transition-[inset-inline-start,width,height,background-color] duration-normal ease-in-out',
   {
     variants: {
       appearance: {

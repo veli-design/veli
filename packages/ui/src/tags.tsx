@@ -43,7 +43,7 @@ const emptyStateVariants = cva(
 );
 
 const tagVariants = cva(
-  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] type-body-sm-medium antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'group inline-flex max-w-full items-center gap-[6px] rounded-full border border-transparent px-[10px] py-[6px] type-body-sm-medium antialiased outline-none transition-colors duration-normal ease-out data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       isSelected: {
@@ -104,7 +104,7 @@ const tagTextVariants = cva('min-w-0 truncate');
 const selectionIconVariants = cva('flex h-[14px] w-[14px] shrink-0 items-center justify-center');
 
 const removeButtonVariants = cva(
-  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
+  'flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
   {
     variants: {
       isDisabled: {

@@ -79,7 +79,7 @@ export const fieldHeaderActionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 export const fieldTriggerButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color]',
+  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
   {
     variants: {
       appearance: {
@@ -263,7 +263,7 @@ export const fieldInlineSlotVariants = cva('flex shrink-0 items-center justify-c
 });
 
 export const fieldTriggerIndicatorVariants = cva(
-  'flex shrink-0 items-center justify-center rounded-xs transition-transform',
+  'flex shrink-0 items-center justify-center rounded-xs transition-transform duration-normal ease-in-out',
   {
     variants: {
       isDisabled: {

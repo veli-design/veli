@@ -25,7 +25,7 @@ const accordionItemVariants = cva('last:[&_[data-accordion-header]]:border-b-0')
 const accordionHeaderWrapperVariants = cva('border-b border-base-subtle pb-0.5');
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-2 rounded-xl text-base-strong outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full items-center gap-2 rounded-xl text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {
@@ -54,7 +54,7 @@ const AccordionAlignmentContext = React.createContext<'left' | 'right'>('left');
 const AccordionFlushedContext = React.createContext(false);
 
 const accordionChevronWrapperVariants = cva(
-  'inline-flex shrink-0 transition-transform duration-200 ease-in-out',
+  'inline-flex shrink-0 transition-transform duration-normal ease-in-out',
   {
     variants: {
       alignment: {
@@ -90,7 +90,7 @@ const accordionChevronIconVariants = cva('text-icon-base', {
 });
 
 const accordionPanelVariants = cva(
-  'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height]',
+  'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height] motion-safe:duration-normal motion-safe:ease-in-out',
 );
 
 const accordionPanelContentVariants = cva('pb-4 pt-1 text-base', {
