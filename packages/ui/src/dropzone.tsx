@@ -41,16 +41,6 @@ const ITEM_PROGRESS_NAME = 'DropzoneItemProgress';
 const ITEM_DELETE_NAME = 'DropzoneItemDelete';
 const CLEAR_NAME = 'DropzoneClear';
 
-function useLazyRef<T>(createValue: () => T): React.MutableRefObject<T> {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = createValue();
-  }
-
-  return ref as React.MutableRefObject<T>;
-}
-
 function useAsRef<T>(value: T): React.MutableRefObject<T> {
   const ref = React.useRef(value);
   React.useLayoutEffect(() => {
@@ -209,7 +199,7 @@ function useStoreContext(consumerName: string) {
 
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext('useStore');
-  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(() => null);
+  const lastValueRef = React.useRef<{ value: T; state: StoreState } | null>(null);
 
   const getSnapshot = React.useCallback(() => {
     const state = store.getState();
@@ -250,7 +240,13 @@ interface DropzoneContextValue {
 }
 
 async function filesFromDropEvent(event: DropEvent) {
-  return Promise.all(event.items.filter(isFileDropItem).map((item) => item.getFile()));
+  const filePromises: Promise<File>[] = [];
+  for (const item of event.items) {
+    if (isFileDropItem(item)) {
+      filePromises.push(item.getFile());
+    }
+  }
+  return Promise.all(filePromises);
 }
 
 function getDropOperationForAccept(
@@ -471,9 +467,10 @@ export function Dropzone(props: DropzoneProps) {
   const dropzoneId = React.useId();
   const listId = React.useId();
 
-  const listeners = useLazyRef(() => new Set<() => void>()).current;
-  const files = useLazyRef(() => new Map<File, FileState>()).current;
-  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
+  const [listeners] = React.useState(() => new Set<() => void>());
+  const [files] = React.useState(() => new Map<File, FileState>());
+  const [urlCache] = React.useState(() => new WeakMap<File, string>());
+
   const isControlled = value !== undefined;
 
   const acceptedFileTypes = React.useMemo(
@@ -635,20 +632,21 @@ export function Dropzone(props: DropzoneProps) {
 
   const acceptTypes = acceptedFileTypes ?? null;
 
-  const onProgress = useLazyRef(() => {
-    let frame = 0;
-    return (file: File, progress: number) => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
+  const progressFrameRef = React.useRef(0);
+  const onProgress = React.useCallback(
+    (file: File, progress: number) => {
+      if (progressFrameRef.current) return;
+      progressFrameRef.current = requestAnimationFrame(() => {
+        progressFrameRef.current = 0;
         store.dispatch({
           type: 'SET_PROGRESS',
           file,
           progress: Math.min(Math.max(0, progress), 100),
         });
       });
-    };
-  }).current;
+    },
+    [store],
+  );
 
   React.useEffect(() => {
     if (isControlled) {
