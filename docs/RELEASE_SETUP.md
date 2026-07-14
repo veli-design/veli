@@ -66,14 +66,11 @@ It runs on every push to `main` and delegates to `changesets/action@v1`:
 ## Manual Testing
 
 ```bash
-# Create a test changeset (interactive prompt)
+# Create a guided changeset
 pnpm changeset
 
 # Check changeset status against main
 pnpm changeset status --since main
-
-# Preview version bumps
-pnpm changeset version --dry-run
 
 # View changeset files
 cat .changeset/*.md
@@ -83,34 +80,45 @@ cat .changeset/*.md
 
 **File location:** `.changeset/[unique-id].md`
 
-**Patch version (token value updates):**
+Use `pnpm changeset` to create a valid file. Each releasing changeset has one or
+more [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) categories and
+user-facing bullets. See [Changelog authoring](./CHANGELOG_AUTHORING.md)
+for the category and SemVer rules.
+
+**Patch fix:**
 
 ```markdown
 ---
 '@tradenetcorp/veli-tokens': patch
 ---
 
-Updated design tokens from Figma
+### Fixed
+
+- Correct the generated Figma token value for the surface border.
 ```
 
-**Minor version (new tokens added):**
+**Minor feature:**
 
 ```markdown
 ---
 '@tradenetcorp/veli-tokens': minor
 ---
 
-Added new color tokens for success states
+### Added
+
+- Add success-state color tokens.
 ```
 
-**Major version (breaking changes):**
+**Major removal:**
 
 ```markdown
 ---
 '@tradenetcorp/veli-tokens': major
 ---
 
-BREAKING: Removed deprecated token values
+### Removed
+
+- Remove deprecated token values. Update consumers to the documented replacements.
 ```
 
 **Multiple packages:**
@@ -121,7 +129,9 @@ BREAKING: Removed deprecated token values
 '@tradenetcorp/veli-ui': patch
 ---
 
-Updated design tokens and corresponding UI components
+### Changed
+
+- Update design tokens and their corresponding UI components.
 ```
 
 ## Build Pipeline

@@ -42,6 +42,17 @@ export default [
       },
     },
   },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...globals.es2024,
+      },
+    },
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs['flat/recommended'],
