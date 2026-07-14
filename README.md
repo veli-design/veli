@@ -97,6 +97,7 @@ This monorepo uses [Changesets](https://github.com/changesets/changesets) for au
 
 **Documentation:**
 
+- [Contributing Guide](CONTRIBUTING.md) - Contributor workflow and pull request format
 - [Release Setup Guide](docs/RELEASE_SETUP.md) - Architecture, workflow, and troubleshooting
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
 - [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and trunk-based development conventions
