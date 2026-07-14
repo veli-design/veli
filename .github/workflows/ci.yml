@@ -27,6 +27,12 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate Changesets
+        run: pnpm changeset:check
+
+      - name: Test Changeset Tooling
+        run: pnpm test:changesets
+
       - name: Check Formatting
         run: pnpm format:check
 

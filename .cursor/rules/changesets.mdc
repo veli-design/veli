@@ -1,0 +1,6 @@
+---
+description: Author valid public release notes for published Veli packages.
+alwaysApply: true
+---
+
+Follow [the changeset and public release-note rules](../../AGENTS.md#changesets-and-public-release-notes).
