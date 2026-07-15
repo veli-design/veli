@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors duration-normal ease-out focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
+  'relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors duration-normal ease-out focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
   {
     variants: {
       intent: {
@@ -238,8 +238,8 @@ const buttonContentVariants = cva(
         false: 'gap-0',
       },
       iconOnly: {
-        true: 'gap-0',
-        false: '',
+        true: 'gap-0 px-0',
+        false: 'px-1.5',
       },
     },
     defaultVariants: {
