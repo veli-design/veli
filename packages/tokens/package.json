@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "node prebuild.js && terrazzo build && node postbuild.js",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "corepack pnpm run build"
   },
   "devDependencies": {
     "@terrazzo/cli": "^0.10.4",

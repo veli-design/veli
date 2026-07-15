@@ -7,6 +7,8 @@ on:
     paths:
       - 'apps/storybook/**'
       - 'packages/**'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
       - 'pnpm-lock.yaml'
       - '.github/workflows/deploy-storybook.yml'
   workflow_dispatch:
@@ -19,7 +21,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
         uses: actions/setup-node@v6

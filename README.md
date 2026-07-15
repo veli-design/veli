@@ -19,12 +19,22 @@ veli/
 ### Prerequisites
 
 - Node.js >= 24
-- pnpm 10.24.0
+- pnpm 11.10.0 (managed by Corepack)
 
 ### Installation
 
 ```bash
+corepack enable pnpm
+corepack install
+
 pnpm install
+```
+
+Confirm both commands resolve the repository-pinned version:
+
+```bash
+pnpm --version
+corepack pnpm --version
 ```
 
 ### Development
