@@ -9,21 +9,19 @@ import { Button } from './button';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 import { useVeliLanguage } from './provider';
 
-const paginationRootVariants = cva('inline-flex items-center gap-1 font-sans antialiased');
-
-const paginationNavButtonClassName = '[&>span]:gap-1.5';
+const paginationRootVariants = cva('inline-flex items-center gap-4 font-sans antialiased');
 
 const paginationPageButtonVariants = cva(
-  'inline-flex h-9 min-w-9 items-center justify-center rounded-full px-2 type-body-sm-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
+  'inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3.5 type-body-sm-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
   {
     variants: {
       isCurrent: {
-        true: 'bg-button-primary-subtle-default text-text-primary-muted',
+        true: 'bg-button-primary-default text-white',
         false:
-          'text-text-default-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
+          'bg-button-secondary-subtle-default text-text-default-strong hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled hover:bg-transparent active:bg-transparent',
+        true: 'cursor-not-allowed bg-button-disabled-disabled text-text-disabled-disabled hover:bg-button-disabled-disabled active:bg-button-disabled-disabled',
         false: '',
       },
     },
@@ -35,23 +33,23 @@ const paginationPageButtonVariants = cva(
 );
 
 const paginationEllipsisTriggerVariants = cva(
-  'inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full type-body-sm-medium text-text-default-muted outline-none transition-colors',
+  'inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full bg-button-secondary-subtle-default px-3.5 type-body-sm-medium text-text-default-strong outline-none transition-colors',
   {
     variants: {
       isHovered: {
-        true: 'bg-button-secondary-subtle-hover text-text-default-default',
+        true: 'bg-button-secondary-subtle-hover text-text-default-strong',
         false: '',
       },
       isPressed: {
-        true: 'bg-button-secondary-subtle-pressed text-text-default-default',
+        true: 'bg-button-secondary-subtle-pressed text-text-default-strong',
         false: '',
       },
       isFocusVisible: {
-        true: 'text-text-default-default ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
         false: '',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled hover:bg-transparent active:bg-transparent',
+        true: 'cursor-not-allowed bg-button-disabled-disabled text-text-disabled-disabled hover:bg-button-disabled-disabled active:bg-button-disabled-disabled',
         false: 'hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
       },
     },
@@ -70,8 +68,10 @@ const paginationNumberClassName =
 const paginationText = {
   en: {
     label: 'Pagination',
+    first: 'First',
     previous: 'Previous',
     next: 'Next',
+    last: 'Last',
     pagePrefix: 'Page',
     pageSeparator: 'of',
     pageLabel: (page: number) => `Page ${page}`,
@@ -80,8 +80,10 @@ const paginationText = {
   },
   dv: {
     label: 'ޕޭޖިނޭޝަން',
+    first: 'ފުރަތަމަ',
     previous: 'ފަހު',
     next: 'ކުރީ',
+    last: 'ފަހުގެ',
     pagePrefix: 'ޞަފްޙާ',
     pageSeparator: '/',
     pageLabel: (page: number) => `ޞަފްޙާ ${page}`,
@@ -268,8 +270,10 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   defaultValue?: number;
   maxValue: number;
   onChange?: (page: number) => void;
+  onFirst?: (page: number) => void;
   onPrevious?: (page: number) => void;
   onNext?: (page: number) => void;
+  onLast?: (page: number) => void;
   isDisabled?: boolean;
   variant?: PaginationVariant;
   siblingCount?: number;
@@ -283,8 +287,10 @@ export function Pagination({
   defaultValue = 1,
   maxValue,
   onChange,
+  onFirst,
   onPrevious,
   onNext,
+  onLast,
   isDisabled = false,
   variant = 'button',
   siblingCount = 1,
@@ -316,6 +322,14 @@ export function Pagination({
     [currentPage, isControlled, maxValue, onChange],
   );
 
+  const goFirst = () => {
+    if (currentPage <= 1 || isDisabled) {
+      return;
+    }
+    setPage(1);
+    onFirst?.(1);
+  };
+
   const goPrevious = () => {
     if (currentPage <= 1 || isDisabled) {
       return;
@@ -334,10 +348,21 @@ export function Pagination({
     onNext?.(next);
   };
 
+  const goLast = () => {
+    if (currentPage >= maxValue || isDisabled) {
+      return;
+    }
+    setPage(maxValue);
+    onLast?.(maxValue);
+  };
+
   const pages =
     variant === 'explicit'
       ? getPaginationRange(currentPage, maxValue, siblingCount, boundaryCount)
       : [];
+
+  const isAtStart = currentPage <= 1;
+  const isAtEnd = currentPage >= maxValue;
 
   return (
     <nav
@@ -351,13 +376,23 @@ export function Pagination({
         intent="secondary"
         appearance="transparent"
         size="sm"
-        isDisabled={isDisabled || currentPage <= 1}
+        isDisabled={isDisabled || isAtStart}
+        aria-label={copy.first}
+        onPress={goFirst}
+      >
+        {copy.first}
+      </Button>
+
+      <Button
+        intent="secondary"
+        appearance="transparent"
+        size="sm"
+        iconOnly
+        isDisabled={isDisabled || isAtStart}
         aria-label={copy.previous}
-        className={paginationNavButtonClassName}
         onPress={goPrevious}
       >
         <PreviousIcon aria-hidden size={16} weight="bold" />
-        {copy.previous}
       </Button>
 
       {variant === 'button' ? (
@@ -369,7 +404,7 @@ export function Pagination({
           />
         </span>
       ) : (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {pages.map((page, index) => {
             if (page === 'ellipsis') {
               const previousPage = pages[index - 1];
@@ -415,13 +450,23 @@ export function Pagination({
         intent="secondary"
         appearance="transparent"
         size="sm"
-        isDisabled={isDisabled || currentPage >= maxValue}
+        iconOnly
+        isDisabled={isDisabled || isAtEnd}
         aria-label={copy.next}
-        className={paginationNavButtonClassName}
         onPress={goNext}
       >
-        {copy.next}
         <NextIcon aria-hidden size={16} weight="bold" />
+      </Button>
+
+      <Button
+        intent="secondary"
+        appearance="transparent"
+        size="sm"
+        isDisabled={isDisabled || isAtEnd}
+        aria-label={copy.last}
+        onPress={goLast}
+      >
+        {copy.last}
       </Button>
     </nav>
   );

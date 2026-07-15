@@ -37,8 +37,10 @@ function ControlledPaginationPreview({
       value={page}
       maxValue={maxValue}
       onChange={handleChange}
+      onFirst={args.onFirst}
       onPrevious={args.onPrevious}
       onNext={args.onNext}
+      onLast={args.onLast}
     />
   );
 }
@@ -93,7 +95,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Pagination supports compact previous/next controls and explicit page-number navigation with sibling, boundary, disabled, controlled, and uncontrolled states.',
+          'Pagination includes First/Last and icon-only previous/next controls, with compact page-count or explicit page-number navigation, sibling, boundary, disabled, controlled, and uncontrolled states.',
       },
     },
   },
@@ -154,6 +156,13 @@ const meta = {
         category: 'Events',
       },
     },
+    onFirst: {
+      action: 'first',
+      control: false,
+      table: {
+        category: 'Events',
+      },
+    },
     onPrevious: {
       action: 'previous',
       control: false,
@@ -163,6 +172,13 @@ const meta = {
     },
     onNext: {
       action: 'next',
+      control: false,
+      table: {
+        category: 'Events',
+      },
+    },
+    onLast: {
+      action: 'last',
       control: false,
       table: {
         category: 'Events',
