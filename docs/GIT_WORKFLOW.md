@@ -21,6 +21,10 @@ lands through pull requests.
 - Keep PRs focused enough that one squash commit tells a coherent story.
 - PR titles must follow Conventional Commits because squash merge uses the PR
   title as the final commit message on `main`.
+- Use the repository PR template and follow the [contributing guide](../CONTRIBUTING.md)
+  for summary, issue-linking, and validation requirements. The `PD-###` branch
+  identifier links the primary Linear issue; use `Fixes PD-###` for additional
+  Linear issues and `Closes #123` for GitHub issues.
 
 ## Commit Messages
 
