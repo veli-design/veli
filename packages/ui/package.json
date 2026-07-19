@@ -53,6 +53,10 @@
       "types": "./dist/divider.d.ts",
       "import": "./dist/divider.js"
     },
+    "./dropzone": {
+      "types": "./dist/dropzone.d.ts",
+      "import": "./dist/dropzone.js"
+    },
     "./date-field": {
       "types": "./dist/date-field.d.ts",
       "import": "./dist/date-field.js"

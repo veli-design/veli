@@ -1,0 +1,49 @@
+---
+title: Dropzone
+description: Drag-and-drop upload target built on React Aria DropZone with optional file browsing.
+---
+
+import { DropzoneUsageDemo } from '../../components/DocsExamples';
+
+# Dropzone
+
+Dropzone provides an accessible target for drag-and-drop uploads. Enable `allowsBrowse` to open the system file picker on click via React Aria `FileTrigger`.
+
+## Import
+
+```tsx
+import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DropzoneUsageDemo client:visible />
+</div>
+
+```tsx
+<Dropzone
+  label="Attachments"
+  aria-label="Upload attachments"
+  allowsBrowse
+  acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+  onDrop={(event) => {
+    // handle dropped items
+  }}
+/>
+```
+
+## Key props
+
+| Prop                | Type                                | Description                          |
+| :------------------ | :---------------------------------- | :----------------------------------- |
+| `label`             | `ReactNode`                         | Visible field label.                 |
+| `description`       | `ReactNode`                         | Helper text below the dropzone.      |
+| `errorMessage`      | `ReactNode`                         | Validation message.                  |
+| `size`              | `'sm' \| 'md' \| 'lg'`              | Minimum height and typography scale. |
+| `allowsBrowse`      | `boolean`                           | Wraps the zone with `FileTrigger`.   |
+| `acceptedFileTypes` | `string[]`                          | MIME types passed to `FileTrigger`.  |
+| `getDropOperation`  | `DropZoneProps['getDropOperation']` | Control accepted drag types.         |
+| `onDrop`            | `DropZoneProps['onDrop']`           | Called when items are dropped.       |
+
+All other React Aria `DropZone` props are supported, excluding `className` and `style` overrides on the root wrapper.

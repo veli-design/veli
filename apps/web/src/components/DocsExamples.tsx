@@ -40,6 +40,16 @@ import {
 } from '@tradenetcorp/veli-ui/table';
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import {
+  Dropzone,
+  DropzoneArea,
+  DropzoneItem,
+  DropzoneItemDelete,
+  DropzoneItemMetadata,
+  DropzoneItemPreview,
+  DropzoneList,
+  useDropzone,
+} from '@tradenetcorp/veli-ui/dropzone';
+import {
   ArrowRight,
   Bell,
   CalendarBlank,
@@ -1597,5 +1607,43 @@ export function PaginationVariantsDemo() {
   const [page, setPage] = useState(3);
   return (
     <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
+  );
+}
+
+export function DropzoneUsageDemo() {
+  const [files, setFiles] = useState<File[]>([]);
+
+  return (
+    <Dropzone
+      label="Upload attachments"
+      accept="application/pdf,image/png,image/jpeg"
+      maxFiles={2}
+      multiple
+      value={files}
+      onValueChange={setFiles}
+    >
+      <DropzoneArea />
+      <DropzoneList>
+        <DropzoneFileListItems />
+      </DropzoneList>
+    </Dropzone>
+  );
+}
+
+function DropzoneFileListItems() {
+  const files = useDropzone((state) =>
+    Array.from(state.files.values()).map((fileState) => fileState.file),
+  );
+
+  return (
+    <>
+      {files.map((file) => (
+        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
+          <DropzoneItemPreview />
+          <DropzoneItemMetadata />
+          <DropzoneItemDelete />
+        </DropzoneItem>
+      ))}
+    </>
   );
 }

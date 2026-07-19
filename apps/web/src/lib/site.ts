@@ -147,6 +147,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Search field with leading icon and shared field shell.',
       },
       {
+        title: 'Dropzone',
+        slug: 'dropzone',
+        description: 'Drag-and-drop and browse-to-upload file target.',
+      },
+      {
         title: 'Select',
         slug: 'select',
         description: 'Accessible select menus for structured choices.',
