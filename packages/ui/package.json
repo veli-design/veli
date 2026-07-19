@@ -145,7 +145,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "corepack pnpm run build"
   },
   "peerDependencies": {
     "react": "^18.3.0",

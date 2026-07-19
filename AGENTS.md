@@ -1,5 +1,10 @@
 # Veli agent instructions
 
+## Package manager
+
+Use `corepack pnpm …` for repository commands. Do not assume a globally
+resolved bare `pnpm` matches the version declared in `packageManager`.
+
 ## Pull request authoring
 
 When opening or updating a pull request, use

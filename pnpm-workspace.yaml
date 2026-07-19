@@ -1,3 +1,21 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+
+overrides:
+  '@internationalized/date': ^3.12.2
+
+# Preserve pnpm 10's immediate-resolution behavior while upgrading the client.
+minimumReleaseAge: 0
+
+# CI and hooks install dependencies explicitly; avoid pnpm 11's implicit,
+# bare-pnpm install before `run` and `exec` in non-interactive environments.
+verifyDepsBeforeRun: false
+
+# pnpm 11 requires explicit approval for dependency build scripts. These packages
+# already ran their install scripts under pnpm 10 and are required by Veli tooling.
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  sharp: true
+  workerd: true

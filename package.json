@@ -7,10 +7,10 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "eslint . --cache --cache-location .cache/eslint/ --cache-strategy content --max-warnings 0",
-    "lint:fix": "pnpm lint --fix",
+    "lint:fix": "corepack pnpm lint --fix",
     "format": "prettier . --write --cache --cache-strategy content",
     "format:check": "prettier . --check --cache --cache-strategy content",
-    "check": "pnpm changeset:check && pnpm test:changesets && pnpm format:check && pnpm lint && pnpm build",
+    "check": "corepack pnpm changeset:check && corepack pnpm test:changesets && corepack pnpm format:check && corepack pnpm lint && corepack pnpm build",
     "changeset": "node scripts/create-changeset.mjs",
     "changeset:check": "node scripts/check-changesets.mjs",
     "changeset:raw": "changeset",
@@ -49,12 +49,7 @@
     "turbo": "^2.6.1",
     "typescript-eslint": "^8.59.3"
   },
-  "pnpm": {
-    "overrides": {
-      "@internationalized/date": "^3.12.2"
-    }
-  },
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@11.10.0",
   "engines": {
     "node": ">=24"
   }
