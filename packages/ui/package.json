@@ -33,6 +33,10 @@
       "types": "./dist/calendar.d.ts",
       "import": "./dist/calendar.js"
     },
+    "./card": {
+      "types": "./dist/card.d.ts",
+      "import": "./dist/card.js"
+    },
     "./checkbox": {
       "types": "./dist/checkbox.d.ts",
       "import": "./dist/checkbox.js"

@@ -27,6 +27,7 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { Card } from '@tradenetcorp/veli-ui/card';
 import {
   ArrowRight,
   Bell,
@@ -105,6 +106,37 @@ const useRadioDocsText = () => {
   const { direction } = useVeliLanguage();
 
   return direction === 'rtl' ? radioDocsText.dv : radioDocsText.en;
+};
+
+const cardDocsText = {
+  en: {
+    permitApplication: 'Permit application',
+    requiredDocuments: 'Track progress and required documents.',
+    reviewMessage: 'Your application is under review. We will notify you when a decision is ready.',
+    viewDetails: 'View details',
+    continue: 'Continue',
+    borderOnly: 'Border only',
+    noShadowElevation: 'No shadow elevation.',
+    interactive: 'Interactive',
+    hoverFeedback: 'Hover for surface feedback.',
+  },
+  dv: {
+    permitApplication: 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަން',
+    requiredDocuments: 'ޕްރޮގްރެސް އާއި ބޭނުންވާ ލިޔެކިޔުންތައް ޓްރެކްކުރައްވާ.',
+    reviewMessage: 'ތިޔަ އެޕްލިކޭޝަން ދަނީ ރިވިއުކުރެވެމުންނެވެ. ގޮތެއް ނިމުމުން އަންގާނަން.',
+    viewDetails: 'ތަފްސީލު ބައްލަވާ',
+    continue: 'ކުރިއަށްގެންދަވާ',
+    borderOnly: 'ހަމައެކަނި ބޯޑަރު',
+    noShadowElevation: 'އެއްވެސް ޝެޑޯ އެލިވޭޝަނެއް ނެތް.',
+    interactive: 'އިންޓަރެކްޓިވް',
+    hoverFeedback: 'ސަރފޭސް ފީޑްބެކް ހޯދުމަށް ހޯވަރ ކުރައްވާ.',
+  },
+} as const;
+
+const useCardDocsText = () => {
+  const { direction } = useVeliLanguage();
+
+  return direction === 'rtl' ? cardDocsText.dv : cardDocsText.en;
 };
 
 function removeTagItems(items: TagDemoItem[], keys: Iterable<string | number>) {
@@ -1258,6 +1290,47 @@ export function TooltipVariantsDemo() {
           A tooltip with a caret and a max width. Tooltips must not contain interactive content.
         </Tooltip>
       </TooltipTrigger>
+    </div>
+  );
+}
+
+export function CardUsageDemo() {
+  const text = useCardDocsText();
+
+  return (
+    <Card className="w-full max-w-md">
+      <Card.Header>
+        <Card.Title>{text.permitApplication}</Card.Title>
+        <Card.Description>{text.requiredDocuments}</Card.Description>
+      </Card.Header>
+      <Card.Content>{text.reviewMessage}</Card.Content>
+      <Card.Footer>
+        <Button intent="secondary" appearance="transparent" size="sm">
+          {text.viewDetails}
+        </Button>
+        <Button size="sm">{text.continue}</Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+export function CardVariantsDemo() {
+  const text = useCardDocsText();
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <Card elevation="none" spacing="sm">
+        <Card.Header>
+          <Card.Title>{text.borderOnly}</Card.Title>
+        </Card.Header>
+        <Card.Content>{text.noShadowElevation}</Card.Content>
+      </Card>
+      <Card elevation="lg" spacing="sm" interactive>
+        <Card.Header>
+          <Card.Title>{text.interactive}</Card.Title>
+        </Card.Header>
+        <Card.Content>{text.hoverFeedback}</Card.Content>
+      </Card>
     </div>
   );
 }
