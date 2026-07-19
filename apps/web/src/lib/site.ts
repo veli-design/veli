@@ -204,6 +204,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Raised surface container with header, content, and footer slots.',
       },
       {
+        title: 'Alert',
+        slug: 'alert',
+        description: 'Inline status banners with semantic intents and dismiss actions.',
+      },
+      {
         title: 'Divider',
         slug: 'divider',
         description: 'Content separation for page and component layouts.',
