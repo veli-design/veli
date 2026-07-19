@@ -37,7 +37,7 @@ const headerLabelVariants = cva('', {
     },
     isDisabled: {
       true: 'text-disabled',
-      false: 'text-base',
+      false: 'text-base-default',
     },
   },
   defaultVariants: {
@@ -82,7 +82,7 @@ const infoTooltipTriggerVariants = cva(
     variants: {
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base',
+        false: 'cursor-help text-base-subtle hover:text-base-default',
       },
     },
     defaultVariants: {

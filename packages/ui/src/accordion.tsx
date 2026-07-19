@@ -93,7 +93,7 @@ const accordionPanelVariants = cva(
   'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height] motion-safe:duration-normal motion-safe:ease-in-out',
 );
 
-const accordionPanelContentVariants = cva('pb-4 pt-1 text-base', {
+const accordionPanelContentVariants = cva('pb-4 pt-1 text-base-default', {
   variants: {
     size: {
       md: 'type-body-sm-regular',

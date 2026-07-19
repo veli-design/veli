@@ -102,7 +102,7 @@ const tooltipVariants = cva(
   {
     variants: {
       size: {
-        sm: 'rounded-lg bg-tooltip-bg-small px-3 py-0.5 text-base shadow-md',
+        sm: 'rounded-lg bg-tooltip-bg-small px-3 py-0.5 text-base-default shadow-md',
         lg: 'max-w-[221px] rounded-xl px-4 py-3 shadow-lg',
       },
       tone: {

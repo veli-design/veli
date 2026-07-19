@@ -33,7 +33,7 @@ const headerLabelVariants = cva('type-body-sm-medium', {
   variants: {
     isDisabled: {
       true: 'text-disabled',
-      false: 'text-base',
+      false: 'text-base-default',
     },
   },
   defaultVariants: {
@@ -71,7 +71,7 @@ const infoTooltipTriggerVariants = cva(
     variants: {
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base',
+        false: 'cursor-help text-base-subtle hover:text-base-default',
       },
     },
     defaultVariants: {
@@ -273,7 +273,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {

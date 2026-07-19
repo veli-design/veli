@@ -64,7 +64,7 @@ const linkVariants = cva(
       {
         intent: 'secondary',
         isDisabled: false,
-        className: 'text-base',
+        className: 'text-base-default',
       },
       {
         intent: 'secondary',

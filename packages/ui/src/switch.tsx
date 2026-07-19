@@ -22,7 +22,7 @@ const switchVariants = cva(
       },
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-pointer text-base',
+        false: 'cursor-pointer text-base-default',
       },
     },
     defaultVariants: {

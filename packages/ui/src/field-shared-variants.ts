@@ -34,7 +34,7 @@ export const fieldHeaderLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
       true: 'text-disabled',
-      false: 'text-base',
+      false: 'text-base-default',
     },
   },
   defaultVariants: {

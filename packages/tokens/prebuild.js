@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -8,8 +8,11 @@ const __dirname = dirname(__filename);
 const sourceTokensPath = join(__dirname, 'src', 'design.tokens.json');
 const normalizedDir = join(__dirname, '.cache');
 const normalizedTokensPath = join(normalizedDir, 'design.tokens.normalized.json');
+const distDir = join(__dirname, 'dist');
 
 const tokens = JSON.parse(readFileSync(sourceTokensPath, 'utf-8'));
+
+rmSync(distDir, { recursive: true, force: true });
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
@@ -27,18 +30,10 @@ function tokenPath(path) {
   return path.length ? path.join('.') : '<root>';
 }
 
-function normalizePathSegment(value) {
-  return String(value).replace(/\s+/g, '-');
-}
-
 const colorStructuralGroups = new Set(['primitives', 'brand', 'semantics', 'components']);
 
-function normalizeColorOutputSegment(value) {
-  return normalizePathSegment(value);
-}
-
 function normalizeColorPathSegments(path) {
-  const segments = path.split('.').map(normalizeColorOutputSegment);
+  const segments = path.split('.');
 
   if (colorStructuralGroups.has(segments[0])) {
     segments.shift();
@@ -52,6 +47,66 @@ function normalizeColorAlias(value) {
     return `{color.${normalizeColorPathSegments(path).join('.')}}`;
   });
 }
+
+function assertCanonicalColorPaths(value, path = ['color'], errors = []) {
+  if (!isPlainObject(value)) return errors;
+  if ('$value' in value) {
+    const serialized = JSON.stringify(value);
+    const aliasMatches = serialized.matchAll(/\{color\.([^}]+)\}/g);
+
+    for (const match of aliasMatches) {
+      if (/\s/.test(match[1])) {
+        errors.push(
+          `${tokenPath(path)} references a color alias containing whitespace: ${match[0]}`,
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key.startsWith('$')) continue;
+    if (/\s/.test(key)) {
+      errors.push(`${tokenPath([...path, key])} contains whitespace`);
+    }
+    assertCanonicalColorPaths(child, [...path, key], errors);
+  }
+
+  return errors;
+}
+
+const colorPathErrors = assertCanonicalColorPaths(tokens.color);
+if (colorPathErrors.length) {
+  throw new Error(
+    `Color token paths must use canonical hyphenated segments:\n${colorPathErrors
+      .slice(0, 40)
+      .map((error) => `- ${error}`)
+      .join('\n')}`,
+  );
+}
+
+function normalizeDtcgDimensionObjects(value) {
+  if (Array.isArray(value)) {
+    return value.map(normalizeDtcgDimensionObjects);
+  }
+
+  if (!isPlainObject(value)) return value;
+
+  if (
+    Object.keys(value).length === 2 &&
+    typeof value.value === 'number' &&
+    typeof value.unit === 'string'
+  ) {
+    return `${value.value}${value.unit}`;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, child]) => [key, normalizeDtcgDimensionObjects(child)]),
+  );
+}
+
+Object.assign(tokens, normalizeDtcgDimensionObjects(tokens));
 
 const oklchDescriptionPattern = /OKLCH\s+(light|dark)\s*:\s*(oklch\([^)]*\))/gi;
 
@@ -191,25 +246,6 @@ function normalizeTokenAliases(value) {
 
 normalizeTokenAliases(tokens);
 
-function normalizeObjectKeys(value) {
-  if (Array.isArray(value)) {
-    return value.map(normalizeObjectKeys);
-  }
-
-  if (!isPlainObject(value)) return value;
-
-  const normalized = {};
-  for (const [key, child] of Object.entries(value)) {
-    normalized[normalizePathSegment(key)] = normalizeObjectKeys(child);
-  }
-
-  return normalized;
-}
-
-if (isPlainObject(tokens.color)) {
-  tokens.color = normalizeObjectKeys(tokens.color);
-}
-
 function createColorAliasToken(targetPath) {
   return {
     $type: 'color',
@@ -248,11 +284,8 @@ function normalizeColorOutputKeys(value) {
 
   const normalized = {};
   for (const [key, child] of Object.entries(value)) {
-    const normalizedSegment = normalizeColorOutputSegment(key);
     const normalizedKey =
-      normalizedSegment === 'default' && isPlainObject(child) && child.$type === 'color'
-        ? 'DEFAULT'
-        : normalizedSegment;
+      key === 'default' && isPlainObject(child) && child.$type === 'color' ? 'DEFAULT' : key;
     normalized[normalizedKey] = normalizeColorOutputKeys(child);
   }
 

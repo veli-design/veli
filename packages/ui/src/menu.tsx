@@ -25,7 +25,7 @@ import { twMerge } from 'tailwind-merge';
 import { useVeliLanguage } from './provider';
 
 const menuPopoverClassName =
-  'min-w-56 w-max rounded-xl border border-base-subtle bg-menu-bg p-1 text-base shadow-md backdrop-blur-xs outline-none';
+  'min-w-56 w-max rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none';
 
 const menuVariants = cva('outline-none');
 
@@ -90,7 +90,7 @@ const menuItemDescriptionVariants = cva(
 );
 
 const menuShortcutVariants = cva(
-  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-base group-data-[disabled]:text-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base group-data-[disabled]:[&_svg]:text-icon-disabled',
+  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-base-default group-data-[disabled]:text-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base group-data-[disabled]:[&_svg]:text-icon-disabled',
 );
 
 const menuItemCheckIconVariants = cva(

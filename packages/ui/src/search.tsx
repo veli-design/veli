@@ -192,7 +192,7 @@ const clearButtonVariants = cva(
       },
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-pointer text-icon-base-muted hover:text-base',
+        false: 'cursor-pointer text-icon-base-muted hover:text-base-default',
       },
     },
     defaultVariants: {
@@ -203,7 +203,7 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
   {
     variants: {
       size: {

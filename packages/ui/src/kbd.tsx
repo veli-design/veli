@@ -24,7 +24,7 @@ const kbdKeyVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-menu-shortcut-bg text-base [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base',
+          'bg-menu-shortcut-bg text-base-default [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base',
         inverted:
           'bg-button-secondary-subtle text-base-inactive [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base-inactive',
       },
