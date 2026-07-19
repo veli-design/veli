@@ -1,5 +1,33 @@
 # @tradenetcorp/veli-ui
 
+All notable changes to `@tradenetcorp/veli-ui` will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.8.0] - 2026-07-19
+
+### Added
+
+- Add a `Card` compound component with header, title, description, content, and footer slots, plus elevation, spacing, and interactive variants. Export it from `@tradenetcorp/veli-ui/card`.
+- Add an `Alert` status banner with intent and appearance variants, title, description, actions, dismiss control, Dhivehi localization, and RTL support. Export it from `@tradenetcorp/veli-ui/alert`.
+- Add a `Toast` queue and region for temporary notifications, with intent and appearance variants, actions, timeout progress, animations, Dhivehi localization, and RTL support. Export it from `@tradenetcorp/veli-ui/toast`.
+- Add a `Dropzone` compound component for file uploads with drag-and-drop, file list, progress, validation, Dhivehi localization, and RTL support. Export it from `@tradenetcorp/veli-ui/dropzone`.
+- Add a `Table` component with sorting, selection, row actions, column resizing, and sticky headers. Export it from `@tradenetcorp/veli-ui/table`.
+- Add a `Pagination` component with compact and explicit page-list variants, first/previous/next/last controls, controlled and uncontrolled state, Dhivehi localization, and RTL support. Export it from `@tradenetcorp/veli-ui/pagination`.
+- Add size variants (`xs`–`xl`) and a `leading` slot to `Tag` and `TagGroup`.
+
+### Changed
+
+- Align Tags styling with the Veli token scale.
+
+### Fixed
+
+- Fix Button content horizontal padding for text and icon-only layouts, and show a pointer cursor on interactive buttons.
+- Prevent semantic text colors from overriding explicit font-size utilities when Veli component classes are merged.
+- Localize Tags fallback copy for Dhivehi and improve RTL layout.
+
 ## 0.7.2
 
 ### Patch Changes
