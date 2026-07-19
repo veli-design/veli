@@ -225,6 +225,11 @@ export const componentGroups: ComponentGroup[] = [
       },
       { title: 'Tags', slug: 'tags', description: 'Tag groups for compact categorization.' },
       {
+        title: 'Toast',
+        slug: 'toast',
+        description: 'Temporary notifications via a shared toast queue.',
+      },
+      {
         title: 'Tooltip',
         slug: 'tooltip',
         description: 'Hover and focus help with sizes and tones.',

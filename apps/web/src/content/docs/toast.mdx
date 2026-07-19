@@ -1,0 +1,64 @@
+---
+title: Toast
+description: Temporary notifications via React Aria ToastQueue and ToastRegion with Veli styling.
+---
+
+import { ToastUsageDemo } from '../../components/DocsExamples';
+
+# Toast
+
+Toasts display brief, temporary notifications. Mount a `ToastRegion` once at the app root (inside `VeliProvider`) and enqueue messages from anywhere using a shared `ToastQueue`.
+
+## Import
+
+```tsx
+import {
+  createToastQueue,
+  ToastRegion,
+  Toast,
+  type VeliToastContent,
+} from '@tradenetcorp/veli-ui/toast';
+```
+
+## Setup
+
+```tsx
+const queue = createToastQueue<VeliToastContent>();
+
+function AppShell({ children }) {
+  return (
+    <>
+      <ToastRegion queue={queue} placement="bottom-end" />
+      {children}
+    </>
+  );
+}
+
+// Anywhere in the app:
+queue.add({ title: 'Saved', description: 'Draft stored.', intent: 'positive' }, { timeout: 5000 });
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastUsageDemo client:visible />
+</div>
+
+## Props
+
+### `ToastRegion`
+
+| Prop        | Type                                                                              | Default        | Description                  |
+| :---------- | :-------------------------------------------------------------------------------- | :------------- | :--------------------------- |
+| `queue`     | `ToastQueue<T>`                                                                   | -              | Shared toast queue instance. |
+| `placement` | `'top' \| 'bottom' \| 'top-end' \| 'bottom-end' \| 'top-start' \| 'bottom-start'` | `'bottom-end'` | Screen position.             |
+
+### `VeliToastContent`
+
+| Field         | Type         | Description               |
+| :------------ | :----------- | :------------------------ |
+| `title`       | `ReactNode`  | Primary message.          |
+| `description` | `ReactNode`  | Optional supporting text. |
+| `intent`      | Toast intent | Semantic color treatment. |
+
+Use a minimum `timeout` of 5000 ms for auto-dismiss toasts. Omit `timeout` or set `timeout: 0` when the toast includes actions or must stay until dismissed.
