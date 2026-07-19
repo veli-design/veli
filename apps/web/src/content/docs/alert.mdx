@@ -38,12 +38,12 @@ Use `live="alert"` when the message is inserted or updated dynamically so assist
 
 ## Props
 
-| Prop          | Type                                                                       | Default     | Description                                    |
-| :------------ | :------------------------------------------------------------------------- | :---------- | :--------------------------------------------- |
-| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                      |
-| `appearance`  | `'subtle' \| 'outline'`                                                    | `'subtle'`  | Surface style.                                 |
-| `leadingIcon` | `ReactNode`                                                                | -           | Optional icon before the message.              |
-| `live`        | `'alert' \| 'status'`                                                      | `'status'`  | Live region behavior for screen readers.       |
-| `dismissible` | `boolean`                                                                  | `false`     | Pair with `Alert.CloseButton` and `onDismiss`. |
-| `isVisible`   | `boolean`                                                                  | -           | Controlled visibility.                         |
-| `onDismiss`   | `() => void`                                                               | -           | Called when the alert is dismissed.            |
+| Prop             | Type                                                                       | Default     | Description                              |
+| :--------------- | :------------------------------------------------------------------------- | :---------- | :--------------------------------------- |
+| `intent`         | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                |
+| `appearance`     | `'subtle' \| 'emphasis' \| 'outline'`                                      | `'subtle'`  | Surface style.                           |
+| `leadingIcon`    | `ReactNode`                                                                | -           | Optional icon before the message.        |
+| `live`           | `'alert' \| 'status'`                                                      | `'status'`  | Live region behavior for screen readers. |
+| `isVisible`      | `boolean`                                                                  | `true`      | Controlled visibility.                   |
+| `defaultVisible` | `boolean`                                                                  | `true`      | Initial uncontrolled visibility.         |
+| `onDismiss`      | `() => void`                                                               | -           | Called when the alert is dismissed.      |
