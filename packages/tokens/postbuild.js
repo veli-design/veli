@@ -15,6 +15,30 @@ let tokensCss = readFileSync(tokensCssPath, 'utf-8');
 const sourceTokens = JSON.parse(readFileSync(sourceTokensPath, 'utf-8'));
 const normalizedTokens = JSON.parse(readFileSync(normalizedTokensPath, 'utf-8'));
 
+function normalizeDtcgDimensionObjects(value) {
+  if (Array.isArray(value)) {
+    return value.map(normalizeDtcgDimensionObjects);
+  }
+
+  if (!value || typeof value !== 'object') return value;
+
+  if (
+    Object.keys(value).length === 2 &&
+    typeof value.value === 'number' &&
+    typeof value.unit === 'string'
+  ) {
+    return `${value.value}${value.unit}`;
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    value[key] = normalizeDtcgDimensionObjects(child);
+  }
+
+  return value;
+}
+
+normalizeDtcgDimensionObjects(sourceTokens);
+
 // Remove the @import "tailwindcss"; line since consuming apps will import it
 tailwindTheme = tailwindTheme.replace('@import "tailwindcss";\n\n', '');
 tailwindTheme = tailwindTheme.replace('@theme {\n', '@theme {\n  --spacing: 4px;\n');
@@ -568,22 +592,46 @@ function generatePropertyColorVariables(css) {
   const seen = new Set();
   const variables = [];
 
+  function addPropertyVariable(propertyName, variableName) {
+    if (seen.has(propertyName)) return;
+
+    seen.add(propertyName);
+    variables.push(`  ${propertyName}: var(${variableName});`);
+  }
+
   for (const variableName of declarations) {
     for (const { colorPrefix, propertyPrefix } of propertyColorVariables) {
       if (!variableName.startsWith(colorPrefix)) continue;
 
-      const suffix = propertyColorNameFromColorVariable(variableName.slice(colorPrefix.length));
+      const rawSuffix = variableName.slice(colorPrefix.length);
+      const suffix = propertyColorNameFromColorVariable(rawSuffix);
       if (!suffix) continue;
 
-      const propertyName = `${propertyPrefix}${suffix}`;
-      if (seen.has(propertyName)) continue;
+      addPropertyVariable(`${propertyPrefix}${suffix}`, variableName);
 
-      seen.add(propertyName);
-      variables.push(`  ${propertyName}: var(${variableName});`);
+      if (rawSuffix.endsWith('-DEFAULT') || rawSuffix.endsWith('-default')) {
+        addPropertyVariable(
+          `${propertyPrefix}${rawSuffix.replace(/-DEFAULT$/, '-default')}`,
+          variableName,
+        );
+      }
     }
   }
 
   return variables.length ? `\n\n${variables.join('\n')}` : '';
+}
+
+function addStatusCautiousCompatibilityAliases(css) {
+  return css
+    .split('\n')
+    .flatMap((line) => {
+      const match = line.match(/^(\s*)(--color-status-)caution-(subtle|emphasis):\s*[^;]+;/);
+      if (!match) return [line];
+
+      const [, indent, prefix, variant] = match;
+      return [line, `${indent}${prefix}cautious-${variant}: var(${prefix}caution-${variant});`];
+    })
+    .join('\n');
 }
 
 function addPropertyColorVariables(css) {
@@ -845,6 +893,8 @@ function annotateVariableGroups(css) {
 
 tailwindTheme = addDefaultColorUtilityAliases(tailwindTheme);
 tokensCss = addDefaultColorUtilityAliases(tokensCss);
+tailwindTheme = addStatusCautiousCompatibilityAliases(tailwindTheme);
+tokensCss = addStatusCautiousCompatibilityAliases(tokensCss);
 tailwindTheme = addPropertyColorVariables(tailwindTheme);
 tailwindTheme = `${tailwindTheme.trimEnd()}${motionPrimitiveUtilities}${generateTypeUtilities(sourceTokens)}${generateDhivehiTypeOverrides(sourceTokens)}`;
 
@@ -992,6 +1042,36 @@ function assertShadowOutput(themeCss, rawTokensCss) {
 }
 
 assertShadowOutput(tailwindTheme, tokensCss);
+
+function assertDefaultThemeOutput(css) {
+  const requiredLightAndDarkSnippets = [
+    '--color-primary-800: var(--color-teal-800);',
+    '--color-neutral-800: var(--color-sage-800);',
+    '--color-accent-800: var(--color-green-800);',
+    '--color-status-caution-subtle: var(--color-caution-400);',
+    '--color-status-caution-emphasis: var(--color-caution-900);',
+    '--color-status-cautious-subtle: var(--color-status-caution-subtle);',
+    '--color-status-cautious-emphasis: var(--color-status-caution-emphasis);',
+    '--text-color-base-default: var(--color-text-base-DEFAULT);',
+  ];
+  const missingSnippets = requiredLightAndDarkSnippets.filter(
+    (snippet) => css.split(snippet).length - 1 < 2,
+  );
+
+  if (missingSnippets.length) {
+    throw new Error(
+      `tailwind-theme.css is missing expected Light/Dark default-theme output:\n${missingSnippets
+        .map((snippet) => `- ${snippet}`)
+        .join('\n')}`,
+    );
+  }
+
+  if (css.includes('Blue Light') || css.includes('Blue Dark')) {
+    throw new Error('tailwind-theme.css must not expose the inactive Blue Light/Dark Figma modes.');
+  }
+}
+
+assertDefaultThemeOutput(tailwindTheme);
 
 writeFileSync(tailwindThemePath, tailwindTheme, 'utf-8');
 writeFileSync(tokensCssPath, tokensCss, 'utf-8');

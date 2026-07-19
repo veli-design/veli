@@ -82,7 +82,7 @@ const badgeIntentClasses = {
     positive:
       'border-status-success-subtle bg-status-success-subtle text-success-strong [&_svg]:text-icon-success-strong',
     cautious:
-      'border-status-cautious-subtle bg-status-cautious-subtle text-caution-strong [&_svg]:text-icon-caution-strong',
+      'border-status-caution-subtle bg-status-caution-subtle text-caution-strong [&_svg]:text-icon-caution-strong',
     warning:
       'border-status-warning-subtle bg-status-warning-subtle text-warning-strong [&_svg]:text-icon-warning-strong',
     danger:
@@ -103,7 +103,7 @@ const badgeIntentClasses = {
     positive:
       'border-status-success-emphasis bg-status-success-emphasis text-success-inverted [&_svg]:text-icon-success-inverted',
     cautious:
-      'border-status-cautious-emphasis bg-status-cautious-emphasis text-caution-inverted [&_svg]:text-icon-caution-inverted',
+      'border-status-caution-emphasis bg-status-caution-emphasis text-caution-inverted [&_svg]:text-icon-caution-inverted',
     warning:
       'border-status-warning-emphasis bg-status-warning-emphasis text-warning-inverted [&_svg]:text-icon-warning-inverted',
     danger:
@@ -118,10 +118,10 @@ const badgeIntentClasses = {
     lime: 'border-status-lime-emphasis bg-status-lime-emphasis text-lime-100 [&_svg]:text-lime-100',
   },
   outline: {
-    neutral: 'border-status-neutral-subtle bg-transparent text-base [&_svg]:text-icon-base',
+    neutral: 'border-status-neutral-subtle bg-transparent text-base-default [&_svg]:text-icon-base',
     info: 'border-status-info-subtle bg-transparent text-primary [&_svg]:text-icon-primary',
     positive: 'border-status-success-subtle bg-transparent text-success [&_svg]:text-icon-success',
-    cautious: 'border-status-cautious-subtle bg-transparent text-caution [&_svg]:text-icon-caution',
+    cautious: 'border-status-caution-subtle bg-transparent text-caution [&_svg]:text-icon-caution',
     warning: 'border-status-warning-subtle bg-transparent text-warning [&_svg]:text-icon-warning',
     danger: 'border-status-danger-subtle bg-transparent text-danger [&_svg]:text-icon-danger',
     magenta:

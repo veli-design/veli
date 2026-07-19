@@ -25,7 +25,7 @@ export default defineConfig({
         tracking: ['tracking.*'],
         'font-weight': ['font-weight.*'],
       },
-      // Keep govmv light/dark modes inert for now; they need separate theme outputs later.
+      // Light/Dark are the teal/green Veli defaults. Keep Blue Light/Dark inert for now.
       modeVariants: [{ variant: 'dark', mode: 'Dark' }],
     }),
   ],

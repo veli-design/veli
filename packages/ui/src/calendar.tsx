@@ -170,13 +170,13 @@ function CalendarPickerSelect({
 }
 
 const calendarRootVariants = cva(
-  'flex max-w-full flex-col rounded-xl border border-base-subtle bg-calendar-bg p-1 font-sans text-base shadow-md',
+  'flex max-w-full flex-col rounded-xl border border-base-subtle bg-calendar-bg p-1 font-sans text-base-default shadow-md',
 );
 
 const calendarGridClassName = 'w-[19.25rem] table-fixed border-spacing-0';
 
 const calendarHeaderCellClassName =
-  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-base';
+  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-base-default';
 
 const calendarWeekdayLabelClassName = 'block truncate no-underline';
 

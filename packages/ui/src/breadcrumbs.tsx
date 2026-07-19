@@ -23,7 +23,7 @@ const breadcrumbsRootVariants = cva(
 const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5';
 
 const breadcrumbInteractiveTextClassName =
-  'text-base-muted hover:text-base active:text-base focus-visible:text-base';
+  'text-base-muted hover:text-base-default active:text-base-default focus-visible:text-base-default';
 
 const breadcrumbBackLinkLinkClassName =
   'bg-transparent text-links hover:bg-transparent hover:text-links-hover active:bg-transparent active:text-links-hover focus-visible:bg-transparent focus-visible:text-links-hover [&_svg]:text-icon-links hover:[&_svg]:text-icon-links-hover active:[&_svg]:text-icon-links-hover focus-visible:[&_svg]:text-icon-links-hover';
@@ -87,15 +87,15 @@ const breadcrumbOverflowTriggerVariants = cva(
   {
     variants: {
       isHovered: {
-        true: 'bg-breadcrumbs-hover text-base',
+        true: 'bg-breadcrumbs-hover text-base-default',
         false: '',
       },
       isPressed: {
-        true: 'bg-breadcrumbs-pressed text-base',
+        true: 'bg-breadcrumbs-pressed text-base-default',
         false: '',
       },
       isFocusVisible: {
-        true: 'text-base ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        true: 'text-base-default ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
         false: '',
       },
     },

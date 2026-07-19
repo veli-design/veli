@@ -40,7 +40,7 @@ const headerLabelVariants = cva('type-body-sm-regular', {
   variants: {
     isDisabled: {
       true: 'text-disabled',
-      false: 'text-base',
+      false: 'text-base-default',
     },
   },
   defaultVariants: {
@@ -78,7 +78,7 @@ const infoTooltipTriggerVariants = cva(
     variants: {
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base',
+        false: 'cursor-help text-base-subtle hover:text-base-default',
       },
     },
     defaultVariants: {
@@ -266,7 +266,7 @@ const triggerButtonVariants = cva(
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
         false:
-          'text-base-subtle hover:bg-ash-alpha-100 hover:text-base data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base',
+          'text-base-subtle hover:bg-ash-alpha-100 hover:text-base-default data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base-default',
       },
     },
     defaultVariants: {

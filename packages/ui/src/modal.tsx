@@ -27,7 +27,7 @@ const overlayVariants = cva(
 
 const modalVariants = cva(
   [
-    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-base outline-none transition duration-normal ease-spring',
+    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-base-default outline-none transition duration-normal ease-spring',
     'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
     'shadow-sm',
   ],
@@ -428,7 +428,9 @@ export interface ModalContentProps {
 
 export function ModalContent({ children, className }: ModalContentProps) {
   return (
-    <div className={twMerge('type-body-md-regular py-4 text-base', className)}>{children}</div>
+    <div className={twMerge('type-body-md-regular py-4 text-base-default', className)}>
+      {children}
+    </div>
   );
 }
 

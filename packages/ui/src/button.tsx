@@ -64,13 +64,13 @@ const buttonVariants = cva(
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'bg-button-secondary-subtle text-base hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-secondary-subtle text-base-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base hover:bg-button-secondary-subtle active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled',
+          'bg-transparent text-base-default hover:bg-button-secondary-subtle active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled',
       },
       // Danger
       {
@@ -157,7 +157,7 @@ const seaglassButtonVariants = cva(
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'text-base bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled disabled:text-disabled disabled:before:opacity-0 disabled:after:shadow-none',
+          'text-base-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled disabled:text-disabled disabled:before:opacity-0 disabled:after:shadow-none',
       },
       {
         intent: 'danger',
@@ -176,7 +176,7 @@ const seaglassButtonVariants = cva(
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-disabled disabled:before:opacity-0',
+          'bg-transparent text-base-default before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-disabled disabled:before:opacity-0',
       },
       {
         intent: 'danger',

@@ -142,7 +142,7 @@ const popoverVariants = cva(
       intent: {
         primary: 'bg-popover-bg-primary text-popover-fg-on-primary',
         secondary: 'bg-popover-bg-secondary text-popover-fg-on-secondary',
-        tertiary: 'bg-popover-bg-tertiary text-base shadow-xl',
+        tertiary: 'bg-popover-bg-tertiary text-base-default shadow-xl',
       },
     },
     defaultVariants: {
@@ -182,7 +182,7 @@ const popoverFooterLabelVariants = cva('shrink-0 type-caption-regular', {
     intent: {
       primary: 'text-popover-fg-on-primary',
       secondary: 'text-popover-fg-on-secondary',
-      tertiary: 'text-base',
+      tertiary: 'text-base-default',
     },
   },
   defaultVariants: {
