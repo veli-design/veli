@@ -77,7 +77,7 @@ const calendarHeaderIconButtonClassName =
   'shrink-0 rounded-full hover:bg-calendar-day-hover active:bg-calendar-day-hover [&_svg]:text-icon-base-strong';
 
 const calendarPickerPopoverClassName =
-  'rounded-xl border border-base-subtle bg-surface-overlay-raised p-1 text-base-strong shadow-lg outline-none';
+  'rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-lg outline-none';
 
 const calendarYearPickerPopoverClassName = 'w-[90px]';
 
