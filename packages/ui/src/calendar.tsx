@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useRef, type RefObject } from 'react';
 import { today } from '@internationalized/date';
 import {
   Calendar as AriaCalendar,
@@ -27,7 +27,7 @@ import {
   type RangeCalendarProps as AriaRangeCalendarProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { CaretDown } from 'phosphor-react';
+import { CaretDown, CaretLeft, CaretRight, WarningCircle } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
 import {
@@ -56,12 +56,13 @@ type CalendarPickerSelectProps = {
   labelClassName?: string;
   itemClassName?: string;
   popoverClassName?: string;
+  triggerRef?: RefObject<Element | null>;
 };
 
 const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar-bg-month-year';
 
 const calendarHeaderMonthLabelClassName =
-  'min-w-0 flex-1 px-1 text-center type-body-sm-medium text-base-strong whitespace-nowrap';
+  'min-w-0 flex-1 px-0.5 text-center type-body-sm-medium text-base-strong whitespace-nowrap';
 
 const calendarNumericTextClassName = 'tabular-nums';
 
@@ -79,9 +80,12 @@ const calendarHeaderIconButtonClassName =
 const calendarPickerPopoverClassName =
   'rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-lg outline-none';
 
-const calendarYearPickerPopoverClassName = 'w-[90px]';
+const calendarYearPickerPopoverClassName = 'w-[var(--trigger-width)]';
 
 const calendarPickerListBoxClassName = 'max-h-60 overflow-auto outline-none';
+
+const calendarErrorMessageClassName =
+  'flex items-center gap-1.5 px-2 pb-2 pt-2 type-caption-regular text-danger-muted';
 
 const calendarPickerItemVariants = cva(
   'flex min-h-9 w-full cursor-default items-center rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors duration-normal ease-out',
@@ -108,6 +112,15 @@ const calendarPickerItemVariants = cva(
   },
 );
 
+function CalendarErrorMessage({ children }: { children: string }) {
+  return (
+    <Text slot="errorMessage" elementType="div" className={calendarErrorMessageClassName}>
+      <WarningCircle aria-hidden weight="fill" className="size-4 shrink-0" />
+      <span>{children}</span>
+    </Text>
+  );
+}
+
 function CalendarPickerSelect({
   'aria-label': ariaLabel,
   value,
@@ -118,6 +131,7 @@ function CalendarPickerSelect({
   labelClassName,
   itemClassName,
   popoverClassName,
+  triggerRef,
 }: CalendarPickerSelectProps) {
   const selectedLabel = items.find((item) => item.id === value)?.formatted ?? '';
 
@@ -126,7 +140,7 @@ function CalendarPickerSelect({
       aria-label={ariaLabel}
       selectedKey={value}
       onSelectionChange={onChange}
-      className="flex items-center gap-0.5"
+      className="flex items-center gap-2"
     >
       <span className={twMerge(calendarHeaderMonthLabelClassName, labelClassName)}>
         {selectedLabel}
@@ -144,6 +158,7 @@ function CalendarPickerSelect({
       <Popover
         offset={4}
         placement="bottom end"
+        triggerRef={triggerRef}
         lang={lang}
         dir={dir}
         className={twMerge(calendarPickerPopoverClassName, popoverClassName)}
@@ -180,13 +195,10 @@ const calendarHeaderCellClassName =
 
 const calendarWeekdayLabelClassName = 'block truncate no-underline';
 
-const calendarDayLabelClassName = twMerge(
-  'inline-flex h-5 min-w-5 items-center justify-center leading-5',
-  calendarNumericRegularTextClassName,
-);
+const calendarDayLabelClassName = 'inline-flex h-5 min-w-5 items-center justify-center leading-5';
 
 function getDefaultCalendarWeekdayStyle(direction: CalendarDirection): CalendarWeekdayStyle {
-  return direction === 'rtl' ? 'long' : 'narrow';
+  return direction === 'rtl' ? 'long' : 'short';
 }
 
 function getCalendarWeekdayLabelClassName() {
@@ -194,7 +206,7 @@ function getCalendarWeekdayLabelClassName() {
 }
 
 const cellVariants = cva(
-  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors duration-normal ease-out [-webkit-tap-highlight-color:transparent]',
+  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none [-webkit-tap-highlight-color:transparent]',
   {
     variants: {
       cellRadius: {
@@ -203,8 +215,7 @@ const cellVariants = cva(
         rangeEnd: 'rounded-e-full rounded-s-none',
       },
       isSelected: {
-        false:
-          'text-base-emphasis data-[outside-month]:text-base-subtle data-[outside-visible-range]:invisible',
+        false: 'text-base-emphasis data-[outside-month]:text-base-subtle',
         true: 'bg-calendar-day-selected text-primary-inverted data-[invalid]:bg-button-danger data-[invalid]:text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
       },
       isDisabled: {
@@ -287,11 +298,7 @@ export function Calendar<T extends DateValue>({
           label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
         />
       ) : null}
-      {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-caption-regular text-danger-muted">
-          {errorMessage}
-        </Text>
-      ) : null}
+      {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
     </AriaCalendar>
   );
 }
@@ -337,11 +344,7 @@ export function RangeCalendar<T extends DateValue>({
           label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
         />
       ) : null}
-      {errorMessage ? (
-        <Text slot="errorMessage" className="pt-3 type-caption-regular text-danger-muted">
-          {errorMessage}
-        </Text>
-      ) : null}
+      {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
     </AriaRangeCalendar>
   );
 }
@@ -464,7 +467,7 @@ function CalendarTodayButton({ label }: { label: string }) {
   }
 
   return (
-    <div className="border-t border-base-subtle px-0.5 pt-1">
+    <div className="mt-1 border-t border-base-subtle pt-1">
       <Button
         slot={null}
         intent="primary"
@@ -499,10 +502,13 @@ function CalendarTodayButton({ label }: { label: string }) {
 
 export function CalendarHeader() {
   const { direction, lang } = useVeliLanguage();
+  const yearTriggerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <header className="flex items-center gap-0.5 px-0.5 py-0.5">
-      <div className={twMerge(calendarHeaderControlClassName, 'min-w-0 flex-1 gap-0.5 px-1 py-1')}>
+    <header className="flex items-center gap-0.5">
+      <div
+        className={twMerge(calendarHeaderControlClassName, 'min-w-0 flex-1 justify-between p-0.5')}
+      >
         <Button
           slot="previous"
           intent="secondary"
@@ -512,7 +518,11 @@ export function CalendarHeader() {
           aria-label="Previous month"
           className={calendarHeaderIconButtonClassName}
         >
-          {direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          {direction === 'rtl' ? (
+            <CaretRight aria-hidden weight="regular" className="size-4 shrink-0" />
+          ) : (
+            <CaretLeft aria-hidden weight="regular" className="size-4 shrink-0" />
+          )}
         </Button>
         <CalendarMonthLabel className={calendarHeaderMonthLabelClassName} />
         <Button
@@ -524,10 +534,17 @@ export function CalendarHeader() {
           aria-label="Next month"
           className={calendarHeaderIconButtonClassName}
         >
-          {direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          {direction === 'rtl' ? (
+            <CaretLeft aria-hidden weight="regular" className="size-4 shrink-0" />
+          ) : (
+            <CaretRight aria-hidden weight="regular" className="size-4 shrink-0" />
+          )}
         </Button>
       </div>
-      <div className={twMerge(calendarHeaderControlClassName, 'shrink-0 gap-0.5 px-1 py-1')}>
+      <div
+        ref={yearTriggerRef}
+        className={twMerge(calendarHeaderControlClassName, 'shrink-0 py-0.5 pl-2 pr-0.5')}
+      >
         <CalendarYearPicker>
           {(props) => (
             <CalendarPickerSelect
@@ -537,6 +554,7 @@ export function CalendarHeader() {
               labelClassName={calendarHeaderYearLabelClassName}
               itemClassName={calendarYearPickerItemClassName}
               popoverClassName={calendarYearPickerPopoverClassName}
+              triggerRef={yearTriggerRef}
             />
           )}
         </CalendarYearPicker>
@@ -617,8 +635,8 @@ function getRangeCalendarCellClassName(state: CalendarCellRenderProps) {
   const isSingleDayRange = state.isSelectionStart && state.isSelectionEnd;
 
   return twMerge(
-    'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none transition-colors duration-normal ease-out [-webkit-tap-highlight-color:transparent]',
-    'bg-calendar-day-range text-base-emphasis data-[outside-month]:text-base-subtle data-[outside-visible-range]:invisible',
+    'flex h-11 w-full items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none [-webkit-tap-highlight-color:transparent]',
+    'bg-calendar-day-range text-base-emphasis data-[outside-month]:text-base-subtle',
     isSingleDayRange && 'rounded-full',
     state.isSelectionStart && !state.isSelectionEnd && 'rounded-s-full',
     state.isSelectionEnd && !state.isSelectionStart && 'rounded-e-full',
@@ -647,44 +665,4 @@ function getRangeCalendarCellInnerClassName(state: CalendarCellRenderProps) {
   }
 
   return null;
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12.5 5L7.5 10L12.5 15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M7.5 5L12.5 10L7.5 15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
