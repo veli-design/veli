@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-07-23
+
+### Fixed
+
+- Use solid menu and calendar background tokens for Select, ComboBox, DatePicker, and Calendar picker popovers so dropdown surfaces stay opaque in dark mode.
+
 ## [0.8.0] - 2026-07-19
 
 ### Added
