@@ -276,7 +276,7 @@ const triggerButtonVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-base-subtle bg-surface-overlay-raised p-1 text-base-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
