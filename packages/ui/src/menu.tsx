@@ -30,7 +30,7 @@ const menuPopoverClassName =
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[hovered]:bg-menu-hover data-[focus-visible]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
@@ -41,7 +41,7 @@ const menuItemVariants = cva(
       intent: {
         default: 'text-base-strong',
         danger:
-          'text-danger-muted data-[disabled]:text-disabled data-[focused]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
+          'text-danger-muted data-[disabled]:text-disabled data-[hovered]:bg-menu-hover-danger data-[focus-visible]:bg-menu-hover-danger data-[pressed]:bg-menu-pressed-danger data-[open]:bg-menu-hover-danger',
       },
     },
     defaultVariants: {
