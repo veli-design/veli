@@ -8,7 +8,7 @@ import {
   Package,
 } from 'phosphor-react';
 import Layout from './layout.astro';
-import { componentGroups, externalResources, foundations, proposals } from '../lib/site';
+import { componentGroups, externalResources, foundations } from '../lib/site';
 
 type Heading = {
   depth: number;
@@ -95,24 +95,6 @@ function isActive(href: string) {
               )
             }
           </section>
-
-          <section class="docs-nav-group" data-doc-group>
-            <h2>Proposals</h2>
-            {
-              proposals.map((item) => (
-                <a
-                  class:list={[
-                    'docs-nav-link',
-                    activePath === `/docs/${item.slug}/` && 'is-active',
-                  ]}
-                  href={`/docs/${item.slug}/`}
-                  data-doc-link
-                >
-                  {item.title}
-                </a>
-              ))
-            }
-          </section>
         </nav>
       </div>
 
@@ -153,8 +135,6 @@ function isActive(href: string) {
                 group.items.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>),
               )
             }
-            <h2>Proposals</h2>
-            {proposals.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>)}
           </nav>
         </div>
       </details>
@@ -202,6 +182,20 @@ function isActive(href: string) {
       const links = Array.from(document.querySelectorAll('[data-doc-link]'));
       const groups = Array.from(document.querySelectorAll('[data-doc-group]'));
       const status = document.querySelector('[data-search-status]');
+      const mobileMenu = document.querySelector('.docs-mobile-menu');
+      const mobileMenuLinks = document.querySelectorAll('.docs-mobile-menu a');
+      const mobileMenuPanel = document.querySelector('.docs-mobile-menu__panel');
+
+      function resetMobileMenuScroll() {
+        const isOpen = mobileMenu instanceof HTMLDetailsElement && mobileMenu.open;
+        if (isOpen && mobileMenuPanel instanceof HTMLElement) mobileMenuPanel.scrollTop = 0;
+      }
+
+      mobileMenu?.addEventListener('toggle', resetMobileMenuScroll);
+
+      for (const link of mobileMenuLinks) {
+        link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
+      }
 
       if (!(input instanceof HTMLInputElement)) return;
 

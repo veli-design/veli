@@ -1,6 +1,6 @@
 ---
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { componentGroups, proposals } from '../../lib/site';
+import { componentGroups } from '../../lib/site';
 
 const headings = [
   ...componentGroups.map((group) => ({
@@ -8,7 +8,6 @@ const headings = [
     slug: group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and'),
     text: group.title,
   })),
-  { depth: 2, slug: 'proposals', text: 'Proposals' },
 ];
 ---
 
@@ -52,18 +51,4 @@ const headings = [
       );
     })
   }
-
-  <section class="docs-list-section" id="proposals">
-    <h2>Proposals</h2>
-    <div class="docs-link-list">
-      {
-        proposals.map((item) => (
-          <a href={`/docs/${item.slug}/`}>
-            <span>{item.title}</span>
-            <p>{item.description}</p>
-          </a>
-        ))
-      }
-    </div>
-  </section>
 </DocsLayout>

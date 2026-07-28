@@ -9,15 +9,6 @@ export type ComponentGroup = {
   items: ComponentItem[];
 };
 
-export const proposals: ComponentItem[] = [
-  {
-    title: 'PD-442 Token Hierarchy Refactor',
-    slug: 'pd-442-token-hierarchy-refactor',
-    description:
-      'Temporary proposal for a themeable primitive, brand, semantic, and component token hierarchy.',
-  },
-] as const;
-
 export const externalResources = [
   {
     label: 'Figma',
