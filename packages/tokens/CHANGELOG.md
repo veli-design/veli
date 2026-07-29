@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.5.1
+
+_Released 2026-07-29._
+
+### Fixed
+
+- Publish package-specific metadata and release notes for each GitHub Packages version instead of blank or repository-wide version content.
+
 ## [0.5.0] - 2026-07-19
 
 ### Changed

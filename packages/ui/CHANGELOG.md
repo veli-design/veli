@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.8.4
+
+_Released 2026-07-29._
+
+### Fixed
+
+- Align unselected `MenuItem` labels with checked items when `selectionMode` is enabled by reserving a fixed-width selection slot for all items.
+- Publish package-specific metadata and release notes for each GitHub Packages version instead of blank or repository-wide version content.
+
 ## [0.8.3] - 2026-07-28
 
 ### Fixed
