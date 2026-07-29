@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { CHANGELOG_CATEGORIES, parseChangeset, updateChangelog } from './changeset-format.mjs';
+import {
+  CHANGELOG_CATEGORIES,
+  extractReleaseContent,
+  parseChangeset,
+  updateChangelog,
+} from './changeset-format.mjs';
 
 const frontmatter = "---\n'@tradenetcorp/veli-ui': patch\n---";
 
@@ -78,8 +83,42 @@ test('renders a dated, category-grouped release above legacy history', () => {
     changesets,
   );
 
-  assert.match(rendered, /## \[Unreleased\]\n\n## \[0.7.3\] - 2026-07-14/);
+  assert.match(rendered, /## \[Unreleased\]\n\n## 0.7.3\n\n_Released 2026-07-14\._/);
   assert.ok(rendered.indexOf('### Added') < rendered.indexOf('### Fixed'));
-  assert.ok(rendered.indexOf('## 0.7.2') > rendered.indexOf('## [0.7.3]'));
+  assert.ok(rendered.indexOf('## 0.7.2') > rendered.indexOf('## 0.7.3'));
   assert.match(rendered, /All notable changes to `@tradenetcorp\/veli-ui`/);
+});
+
+test('extracts only the exact version content used by release outputs', () => {
+  const changelog = `# Package
+
+## [Unreleased]
+
+## 0.8.0
+
+_Released 2026-07-19._
+
+### Added
+
+- Add a component.
+
+## 0.7.2
+
+### Patch Changes
+
+- Legacy entry.
+`;
+
+  assert.equal(
+    extractReleaseContent(changelog, '0.8.0'),
+    '_Released 2026-07-19._\n\n### Added\n\n- Add a component.\n',
+  );
+  assert.throws(() => extractReleaseContent(changelog, '0.8'), /exact ## 0\.8/);
+});
+
+test('rejects an empty exact version section', () => {
+  assert.throws(
+    () => extractReleaseContent('# Package\n\n## 1.0.0\n\n## 0.9.0\n\n- Older.\n', '1.0.0'),
+    /section is empty/,
+  );
 });
