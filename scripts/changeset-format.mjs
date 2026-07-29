@@ -111,6 +111,28 @@ export async function readChangesets(cwd) {
   return changesets;
 }
 
+export function extractReleaseContent(changelog, version) {
+  const lines = changelog.replace(/\r\n/g, '\n').split('\n');
+  const heading = `## ${version}`;
+  const start = lines.findIndex((line) => line === heading);
+
+  if (start === -1) {
+    throw new Error(`Could not find an exact ${heading} changelog heading.`);
+  }
+
+  const nextRelease = lines.findIndex((line, index) => index > start && line.startsWith('## '));
+  const content = lines
+    .slice(start + 1, nextRelease === -1 ? undefined : nextRelease)
+    .join('\n')
+    .trim();
+
+  if (content === '') {
+    throw new Error(`The ${heading} changelog section is empty.`);
+  }
+
+  return `${content}\n`;
+}
+
 function ensurePreamble(existing, packageName) {
   if (/^## \[Unreleased\]$/m.test(existing)) return existing.trimEnd();
 
@@ -153,7 +175,7 @@ export function renderReleaseSection(version, date, changesets) {
     sections.push('### Changed\n\n- Updated internal package dependencies.');
   }
 
-  return `## [${version}] - ${date}\n\n${sections.join('\n\n')}`;
+  return `## ${version}\n\n_Released ${date}._\n\n${sections.join('\n\n')}`;
 }
 
 export function updateChangelog(existing, packageName, version, date, changesets) {

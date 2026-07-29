@@ -1,6 +1,16 @@
 {
   "name": "@tradenetcorp/veli-tokens",
   "version": "0.5.0",
+  "description": "Design tokens for the Veli Design System in CSS, Tailwind, and DTCG formats.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
   "type": "module",
   "main": "./dist/tailwind-theme.css",
   "exports": {

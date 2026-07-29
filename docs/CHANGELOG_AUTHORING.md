@@ -62,3 +62,11 @@ changesets. During the release workflow, `pnpm version-packages` keeps
 Changesets' release plan and publishing behaviour, then writes dated Keep a
 Changelog sections to each published package's `CHANGELOG.md`. Existing legacy
 entries are intentionally preserved.
+
+Release headings use the exact form `## <version>`, with the release date on the
+following line. `changesets/action@v1` requires that exact heading to isolate one
+version for release pull requests and GitHub Releases. This intentionally favors
+Changesets compatibility over Keep a Changelog's optional bracketed version-link
+convention. During publishing, the same version section temporarily replaces the
+package README in the package artifact so GitHub Packages displays release-specific
+**About this version** content. The source package README is restored after publishing.

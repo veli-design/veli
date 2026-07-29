@@ -49,6 +49,17 @@ It runs on every push to `main` and delegates to `changesets/action@v1`:
   changesets, it runs `pnpm release` and publishes changed packages.
 - If no publishable package changed, no package is published.
 
+The packages remain connected to this repository, so GitHub renders the root
+repository README on each package landing page and inherits repository access
+permissions. Package manifests use `repository.directory` to identify their
+source folders, and the root README links to each package's stable documentation.
+
+For an individual version, the publish command temporarily stages that exact
+changelog section as the package artifact's README. GitHub Packages therefore
+shows release-specific **About this version** content, while Changesets Action
+uses the same section for the release pull request and GitHub Release body. The
+tracked package README is restored whether publishing succeeds or fails.
+
 ## How Selective Releases Work
 
 **Changesets determines what to publish based on changeset files:**

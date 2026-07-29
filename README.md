@@ -2,6 +2,18 @@
 
 A modern, accessible design system monorepo built with Turbo, React Aria, and Tailwind CSS v4.
 
+## Published packages
+
+| Package                                                  | Purpose                                                              | Install                              | Release history                           |
+| -------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------- |
+| [`@tradenetcorp/veli-ui`](packages/ui/README.md)         | Accessible React primitives styled with Tailwind CSS.                | `pnpm add @tradenetcorp/veli-ui`     | [Changelog](packages/ui/CHANGELOG.md)     |
+| [`@tradenetcorp/veli-tokens`](packages/tokens/README.md) | Veli design tokens exported as CSS, Tailwind theme, and DTCG source. | `pnpm add @tradenetcorp/veli-tokens` | [Changelog](packages/tokens/CHANGELOG.md) |
+
+GitHub shows this repository README on each connected package's landing page. Follow the
+package links above for package-specific installation and usage documentation. Under a
+package's **Recent versions**, **About this version** contains only that version's release
+notes; the same notes are used for the corresponding repository release.
+
 ## Structure
 
 ```
@@ -75,16 +87,6 @@ Husky installs Git hooks during `pnpm install`. Commits run `lint-staged` so sta
 files are formatted and lint-fixed before they land. Pushes run `pnpm check` to
 verify formatting, linting, and builds across the monorepo. Contributors can bypass
 local hooks with `--no-verify`, but CI runs the same checks and blocks invalid PRs.
-
-## Packages
-
-### @tradenetcorp/veli-ui
-
-Primitive UI components built with React Aria for accessibility, styled with Tailwind CSS.
-
-### @tradenetcorp/veli-tokens
-
-Design tokens in DTCG format, built with Terrazzo to generate CSS variables and Tailwind theme.
 
 ## Apps
 
