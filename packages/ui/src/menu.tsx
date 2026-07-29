@@ -98,9 +98,9 @@ const menuItemCheckIconVariants = cva(
   {
     variants: {
       size: {
-        sm: '[&_svg]:size-4',
-        md: '[&_svg]:size-4',
-        lg: '[&_svg]:size-5',
+        sm: 'size-4 [&_svg]:size-4',
+        md: 'size-4 [&_svg]:size-4',
+        lg: 'size-5 [&_svg]:size-5',
       },
     },
     defaultVariants: {
@@ -147,6 +147,29 @@ function MenuItemCheckIcon() {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+function MenuItemSelectionSlot({
+  isSelected,
+  showSelectionSlot,
+  size,
+}: {
+  isSelected: boolean;
+  showSelectionSlot: boolean;
+  size?: 'sm' | 'md' | 'lg' | null;
+}) {
+  if (!showSelectionSlot) {
+    return null;
+  }
+
+  return (
+    <span
+      className={menuItemCheckIconVariants({ size })}
+      aria-hidden={isSelected ? undefined : true}
+    >
+      {isSelected ? <MenuItemCheckIcon /> : null}
+    </span>
   );
 }
 
@@ -228,6 +251,7 @@ export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
 
 interface MenuItemContentProps {
   isSelected: boolean;
+  showSelectionSlot: boolean;
   size?: 'sm' | 'md' | 'lg' | null;
   intent?: 'default' | 'danger' | null;
   description?: React.ReactNode;
@@ -239,6 +263,7 @@ interface MenuItemContentProps {
 
 function MenuItemContent({
   isSelected,
+  showSelectionSlot,
   size,
   intent,
   description,
@@ -248,7 +273,7 @@ function MenuItemContent({
   children,
 }: MenuItemContentProps) {
   const hasStructuredLayout =
-    isSelected ||
+    showSelectionSlot ||
     description !== undefined ||
     startIcon !== undefined ||
     endIcon !== undefined ||
@@ -260,11 +285,11 @@ function MenuItemContent({
 
   return (
     <div className={menuItemRowVariants()}>
-      {isSelected ? (
-        <span className={menuItemCheckIconVariants({ size })}>
-          <MenuItemCheckIcon />
-        </span>
-      ) : null}
+      <MenuItemSelectionSlot
+        isSelected={isSelected}
+        showSelectionSlot={showSelectionSlot}
+        size={size}
+      />
       {startIcon ? (
         <span className={menuItemIconVariants({ size, intent: intent ?? 'default' })}>
           {startIcon}
@@ -317,24 +342,30 @@ export function MenuItem({
   return (
     <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, intent }), className)}>
       {(renderProps) => {
-        const { isSelected } = renderProps;
+        const { isSelected, selectionMode } = renderProps;
+        const showSelectionSlot = selectionMode !== 'none';
 
         if (typeof children === 'function') {
-          return isSelected ? (
+          if (!showSelectionSlot) {
+            return children(renderProps);
+          }
+
+          return (
             <div className={menuItemRowVariants()}>
-              <span className={menuItemCheckIconVariants({ size })}>
-                <MenuItemCheckIcon />
-              </span>
+              <MenuItemSelectionSlot
+                isSelected={isSelected}
+                showSelectionSlot={showSelectionSlot}
+                size={size}
+              />
               <div className={menuItemTextVariants()}>{children(renderProps)}</div>
             </div>
-          ) : (
-            children(renderProps)
           );
         }
 
         return (
           <MenuItemContent
             isSelected={isSelected}
+            showSelectionSlot={showSelectionSlot}
             size={size}
             intent={intent}
             description={description}
