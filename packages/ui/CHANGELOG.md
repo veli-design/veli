@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-07-28
+
+### Fixed
+
+- Prevent Menu from flashing a highlight on the first item when dismissing by clicking outside.
+
+## [0.8.2] - 2026-07-28
+
+### Changed
+
+- Align Calendar header controls, year picker, and Today button spacing with the design system.
+- Default LTR Calendar weekday headers to short labels (`Sun`, `Mon`, …).
+- Show adjacent-month dates in a muted color instead of hiding them.
+- Use Phosphor carets for Calendar month navigation.
+- Show Calendar validation errors with a leading warning icon and clearer padding.
+
+### Fixed
+
+- Make Calendar day cell hover feedback apply immediately.
+- Size and right-align the Calendar year picker popover to its trigger container.
+
 ## [0.8.1] - 2026-07-23
 
 ### Fixed
