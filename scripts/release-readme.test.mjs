@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -36,7 +37,11 @@ _Released 2026-07-30._
   await fs.writeFile(path.join(dir, 'CHANGELOG.md'), changelog);
   await fs.writeFile(
     path.join(dir, 'package.json'),
-    JSON.stringify({ name: '@tradenetcorp/example', version: '1.2.3' }),
+    JSON.stringify({
+      name: '@tradenetcorp/example',
+      version: '1.2.3',
+      packageManager: 'pnpm@11.18.0',
+    }),
   );
 
   return {
@@ -108,6 +113,55 @@ test('packs the release-specific README into the package artifact', async (t) =>
     packedReadme,
     '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
   );
+  assert.equal(
+    await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
+    fixture.originalReadme,
+  );
+});
+
+test('publishes the release-specific README in pnpm registry metadata', async (t) => {
+  const fixture = await createPackageFixture();
+  t.after(() => fs.rm(fixture.dir, { recursive: true, force: true }));
+  const requests = [];
+  const registry = http.createServer(async (request, response) => {
+    let body = '';
+    for await (const chunk of request) body += chunk;
+    requests.push({ method: request.method, url: request.url, body });
+
+    if (request.method === 'PUT') {
+      response.writeHead(201, { 'content-type': 'application/json' });
+      response.end('{"ok":true}');
+      return;
+    }
+
+    response.writeHead(404, { 'content-type': 'application/json' });
+    response.end('{"error":"not_found"}');
+  });
+  await new Promise((resolve) => registry.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise((resolve) => registry.close(resolve)));
+
+  const address = registry.address();
+  const registryUrl = `http://127.0.0.1:${address.port}`;
+  const userConfig = path.join(fixture.dir, '.npmrc');
+  await fs.writeFile(userConfig, '');
+
+  await withReleaseReadmes(fixture.packages, () =>
+    execFileAsync(
+      'corepack',
+      ['pnpm', 'publish', '--registry', registryUrl, '--no-git-checks', '--ignore-scripts'],
+      {
+        cwd: fixture.dir,
+        env: { ...process.env, npm_config_userconfig: userConfig },
+      },
+    ),
+  );
+
+  const publishRequest = requests.find((request) => request.method === 'PUT');
+  assert.ok(publishRequest, 'expected pnpm to send a registry publish request');
+  const metadata = JSON.parse(publishRequest.body);
+  const releaseReadme =
+    '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n';
+  assert.equal(metadata.versions['1.2.3'].readme, releaseReadme);
   assert.equal(
     await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
     fixture.originalReadme,
