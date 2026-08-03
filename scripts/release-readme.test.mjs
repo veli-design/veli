@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import os from 'node:os';
@@ -11,13 +12,21 @@ import { gunzipSync } from 'node:zlib';
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
-const npmCli = path.join(
-  path.dirname(process.execPath),
-  'node_modules',
-  'npm',
-  'bin',
-  'npm-cli.js',
-);
+
+function resolveNpmCli() {
+  const execDir = path.dirname(process.execPath);
+  const candidates = [
+    // Windows Node distributions keep npm next to the node binary.
+    path.join(execDir, 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+    // Unix Node distributions keep npm under lib/.
+    path.join(execDir, '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  ];
+  const npmCli = candidates.find((candidate) => existsSync(candidate));
+  if (npmCli == null) {
+    throw new Error(`Unable to locate npm-cli.js from ${process.execPath}`);
+  }
+  return npmCli;
+}
 
 function readTarEntry(tarball, entryName) {
   const buffer = gunzipSync(tarball);
@@ -126,7 +135,7 @@ test('packs the release-specific README into the package artifact', async (t) =>
   await withReleaseReadmes(fixture.packages, async () => {
     const { stdout } = await execFileAsync(
       process.execPath,
-      [npmCli, 'pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
+      [resolveNpmCli(), 'pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
       {
         cwd: fixture.dir,
         env: { ...process.env, npm_config_cache: path.join(fixture.dir, '.npm-cache') },
