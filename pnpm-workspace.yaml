@@ -4,6 +4,8 @@ packages:
 
 overrides:
   '@internationalized/date': ^3.12.2
+  'hono@^4': ^4.12.32
+  'immutable@^5': ^5.1.9
 
 # Preserve pnpm 10's immediate-resolution behavior while upgrading the client.
 minimumReleaseAge: 0
