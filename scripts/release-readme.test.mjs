@@ -13,19 +13,27 @@ import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
 
-function resolveNpmCli() {
+function resolveBundledCli(relativeSegments) {
   const execDir = path.dirname(process.execPath);
   const candidates = [
-    // Windows Node distributions keep npm next to the node binary.
-    path.join(execDir, 'node_modules', 'npm', 'bin', 'npm-cli.js'),
-    // Unix Node distributions keep npm under lib/.
-    path.join(execDir, '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+    // Windows Node distributions keep package managers next to the node binary.
+    path.join(execDir, ...relativeSegments),
+    // Unix Node distributions keep package managers under lib/.
+    path.join(execDir, '..', 'lib', ...relativeSegments),
   ];
-  const npmCli = candidates.find((candidate) => existsSync(candidate));
-  if (npmCli == null) {
-    throw new Error(`Unable to locate npm-cli.js from ${process.execPath}`);
+  const cli = candidates.find((candidate) => existsSync(candidate));
+  if (cli == null) {
+    throw new Error(`Unable to locate ${relativeSegments.join('/')} from ${process.execPath}`);
   }
-  return npmCli;
+  return cli;
+}
+
+function resolveNpmCli() {
+  return resolveBundledCli(['node_modules', 'npm', 'bin', 'npm-cli.js']);
+}
+
+function resolveCorepackCli() {
+  return resolveBundledCli(['node_modules', 'corepack', 'dist', 'corepack.js']);
 }
 
 function readTarEntry(tarball, entryName) {
@@ -183,8 +191,16 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
 
   await withReleaseReadmes(fixture.packages, () =>
     execFileAsync(
-      'corepack',
-      ['pnpm', 'publish', '--registry', registryUrl, '--no-git-checks', '--ignore-scripts'],
+      process.execPath,
+      [
+        resolveCorepackCli(),
+        'pnpm',
+        'publish',
+        '--registry',
+        registryUrl,
+        '--no-git-checks',
+        '--ignore-scripts',
+      ],
       {
         cwd: fixture.dir,
         env: { ...process.env, npm_config_userconfig: userConfig },
