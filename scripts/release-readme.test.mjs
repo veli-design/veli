@@ -5,10 +5,41 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { promisify } from 'node:util';
+import { gunzipSync } from 'node:zlib';
 
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
+const npmCli = path.join(
+  path.dirname(process.execPath),
+  'node_modules',
+  'npm',
+  'bin',
+  'npm-cli.js',
+);
+
+function readTarEntry(tarball, entryName) {
+  const buffer = gunzipSync(tarball);
+  let offset = 0;
+
+  while (offset + 512 <= buffer.length) {
+    const name = buffer.toString('utf8', offset, offset + 100).replace(/\0.*$/, '');
+    if (!name) {
+      break;
+    }
+
+    const size = Number.parseInt(buffer.toString('utf8', offset + 124, offset + 136).trim(), 8);
+    offset += 512;
+
+    if (name === entryName || name === `./${entryName}`) {
+      return buffer.subarray(offset, offset + size).toString('utf8');
+    }
+
+    offset += Math.ceil(size / 512) * 512;
+  }
+
+  throw new Error(`Missing ${entryName} in tarball`);
+}
 
 async function createPackageFixture() {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'veli-release-readme-'));
@@ -89,8 +120,8 @@ test('packs the release-specific README into the package artifact', async (t) =>
   let tarball;
   await withReleaseReadmes(fixture.packages, async () => {
     const { stdout } = await execFileAsync(
-      'npm',
-      ['pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
+      process.execPath,
+      [npmCli, 'pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
       {
         cwd: fixture.dir,
         env: { ...process.env, npm_config_cache: path.join(fixture.dir, '.npm-cache') },
@@ -99,11 +130,7 @@ test('packs the release-specific README into the package artifact', async (t) =>
     tarball = path.join(packDirectory, JSON.parse(stdout)[0].filename);
   });
 
-  const { stdout: packedReadme } = await execFileAsync('tar', [
-    '-xOf',
-    tarball,
-    'package/README.md',
-  ]);
+  const packedReadme = readTarEntry(await fs.readFile(tarball), 'package/README.md');
   assert.equal(
     packedReadme,
     '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
