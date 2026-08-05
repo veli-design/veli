@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.8.5
+
+_Released 2026-08-05._
+
+### Fixed
+
+- Align Modal header and footer spacing so each section divider has 16px clearance from adjacent content.
+- Restore subtle semantic borders for Card, Dropzone, Table, and Tags after the token hierarchy update.
+- Use the Switch handle-on color for the selected checkmark, and scale its stroke width by size (1.5 for sm/md, 2.25 for lg).
+
 ## 0.8.4
 
 _Released 2026-07-29._
