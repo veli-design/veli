@@ -6,9 +6,9 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const switchCheckIconSizes = {
-  sm: { width: 10, height: 9, viewBox: '-1 -1 15 8.8' },
-  md: { width: 12, height: 10, viewBox: '-1 -1 11.5 8.8' },
-  lg: { width: 14, height: 14, viewBox: '-1 -1 11.5 8.8' },
+  sm: { width: 10, height: 9, viewBox: '-1 -1 15 8.8', strokeWidth: 1.5 },
+  md: { width: 12, height: 10, viewBox: '-1 -1 11.5 8.8', strokeWidth: 1.5 },
+  lg: { width: 14, height: 14, viewBox: '-1 -1 11.5 8.8', strokeWidth: 2.25 },
 } as const;
 
 const switchVariants = cva(
@@ -258,7 +258,7 @@ const checkIconVariants = cva(
       },
       isDisabled: {
         true: 'text-switch-handle-disabled-bg',
-        false: 'text-base-inverted',
+        false: 'text-switch-handle-on-bg',
       },
     },
     defaultVariants: {
@@ -324,7 +324,11 @@ export function Switch({ size, appearance, children, className, ...props }: Swit
                     viewBox={checkIcon.viewBox}
                     fill="none"
                   >
-                    <path d="M0 2.5L3.5 6L9.5 0" stroke="currentColor" strokeWidth="2" />
+                    <path
+                      d="M0 2.5L3.5 6L9.5 0"
+                      stroke="currentColor"
+                      strokeWidth={checkIcon.strokeWidth}
+                    />
                   </svg>
                 </span>
               ) : null}
