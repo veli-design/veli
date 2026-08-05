@@ -309,14 +309,16 @@ export function ModalHeader({ children, className }: ModalHeaderProps) {
   React.useLayoutEffect(() => register('header'), [register]);
 
   return (
-    <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
-      <div className="flex items-end justify-between gap-2">
-        {titles.length > 0 ? (
-          <div className="flex min-w-0 flex-1 flex-col justify-center pt-2">{titles}</div>
-        ) : null}
-        {closeButton}
+    <div className={twMerge('flex shrink-0 flex-col', className)}>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-end justify-between gap-2">
+          {titles.length > 0 ? (
+            <div className="flex min-w-0 flex-1 flex-col justify-center pt-2">{titles}</div>
+          ) : null}
+          {closeButton}
+        </div>
+        {descriptions}
       </div>
-      {descriptions}
       {hasDescription ? <ModalSectionDivider /> : null}
     </div>
   );
@@ -443,7 +445,7 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
     <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
       <ModalSectionDivider />
-      <div className="flex w-full items-center justify-end gap-2">{children}</div>
+      <div className="flex w-full items-center justify-end gap-2 pt-2">{children}</div>
     </div>
   );
 }
