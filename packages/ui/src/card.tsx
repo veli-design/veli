@@ -7,7 +7,7 @@ import { Divider } from './divider';
 import { hasRenderableMessage } from './field-shared';
 
 const cardVariants = cva(
-  'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-border-default-subtle bg-bg-surface-raised text-text-default-default',
+  'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-base-subtle bg-bg-surface-raised text-text-default-default',
   {
     variants: {
       elevation: {

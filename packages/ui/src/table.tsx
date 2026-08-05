@@ -29,7 +29,7 @@ import { Checkbox } from './checkbox';
 const TableFrameContext = React.createContext(false);
 
 const tableFrameVariants = cva(
-  'overflow-x-auto rounded-2xl border border-border-default-subtle bg-bg-surface-raised',
+  'overflow-x-auto rounded-2xl border border-base-subtle bg-bg-surface-raised',
 );
 
 const tableVariants = cva(
@@ -48,7 +48,7 @@ const tableVariants = cva(
 );
 
 const tableColumnVariants = cva(
-  'border-b border-border-default-subtle text-start type-body-sm-medium text-text-default-emphasis outline-none',
+  'border-b border-base-subtle text-start type-body-sm-medium text-text-default-emphasis outline-none',
   {
     variants: {
       allowsSorting: {
@@ -84,7 +84,7 @@ const tableRowVariants = cva(
 );
 
 const tableCellVariants = cva(
-  'border-b border-border-default-subtle px-4 py-3 type-body-sm-regular text-text-default-default',
+  'border-b border-base-subtle px-4 py-3 type-body-sm-regular text-text-default-default',
 );
 
 const tableDragCellClassName = twMerge(
@@ -99,7 +99,7 @@ const tableEmptyVariants = cva(
 );
 
 const tableResizerVariants = cva(
-  'box-content w-px shrink-0 cursor-col-resize self-stretch touch-action-none bg-clip-content px-2 bg-border-default-subtle outline-none data-[resizing]:w-0.5 data-[resizing]:bg-border-focus data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
+  'box-content w-px shrink-0 cursor-col-resize self-stretch touch-action-none bg-clip-content px-2 bg-border-base-subtle outline-none data-[resizing]:w-0.5 data-[resizing]:bg-border-focus data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
 );
 
 function SortIndicator({ direction }: { direction?: 'ascending' | 'descending' }) {
