@@ -14,7 +14,7 @@ type TagItem = {
 };
 
 const storyPanelClassName =
-  'w-full max-w-md rounded-2xl border border-border-default-subtle bg-bg-surface-raised p-4';
+  'w-full max-w-md rounded-2xl border border-base-subtle bg-bg-surface-raised p-4';
 
 const storySectionClassName = 'space-y-3';
 const sizesAndLeadingPanelClassName = `${storyPanelClassName} space-y-6`;
@@ -22,7 +22,7 @@ const sizesAndLeadingSectionClassName = 'space-y-4';
 const sizesAndLeadingSectionHeaderClassName = 'space-y-1';
 
 const tagEmptyStateClassName =
-  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
+  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
 
 const tagSizes: TagSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
 const selectionModes = ['none', 'single', 'multiple'] as const;

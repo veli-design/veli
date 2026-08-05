@@ -168,7 +168,7 @@ function DropzoneStory({
       {rejections.length > 0 ? (
         <div
           role="status"
-          className="rounded-xl border border-border-danger-default bg-button-danger-subtle-default px-4 py-3"
+          className="rounded-xl border border-danger bg-button-danger-subtle-default px-4 py-3"
         >
           <p className="type-body-sm-medium text-text-danger-muted">Rejected files</p>
           <ul className="mt-2 space-y-1">
@@ -359,7 +359,7 @@ function UploadProgressShowcase({
         </p>
         <button
           type="button"
-          className="rounded-full border border-border-default-subtle px-3 py-1.5 type-caption-medium text-text-default-default transition-colors hover:bg-button-secondary-subtle-hover"
+          className="rounded-full border border-base-subtle px-3 py-1.5 type-caption-medium text-text-default-default transition-colors hover:bg-button-secondary-subtle-hover"
           onClick={() => setSeed((current) => current + 1)}
         >
           Reload demo

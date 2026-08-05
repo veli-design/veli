@@ -301,19 +301,19 @@ function isDropzoneTriggerElement(target: EventTarget | null) {
 }
 
 const dropzoneVariants = cva(
-  'flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-center outline-none transition-colors data-[drop-target]:border-border-focus data-[drop-target]:bg-button-primary-subtle-default data-[drop-target]:text-text-primary-muted',
+  'flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-center outline-none transition-colors data-[drop-target]:border-focus data-[drop-target]:bg-button-primary-subtle-default data-[drop-target]:text-text-primary-muted',
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed border-border-default-subtle bg-text-input-bg-default text-text-disabled-disabled',
-        false: 'border-border-default-subtle bg-text-input-bg-default text-text-default-muted',
+        true: 'cursor-not-allowed border-base-subtle bg-text-input-bg-default text-text-disabled-disabled',
+        false: 'border-base-subtle bg-text-input-bg-default text-text-default-muted',
       },
       isDragging: {
-        true: 'border-border-focus bg-button-primary-subtle-default text-text-primary-muted',
+        true: 'border-focus bg-button-primary-subtle-default text-text-primary-muted',
         false: '',
       },
       isInvalid: {
-        true: 'border-border-danger-default',
+        true: 'border-danger',
         false: '',
       },
       isFocused: {
@@ -347,7 +347,7 @@ const listVariants = cva('flex gap-2', {
 });
 
 const itemVariants = cva(
-  'relative flex flex-wrap items-center gap-x-3 gap-y-2 overflow-hidden rounded-xl border border-border-default-subtle bg-text-input-bg-default p-3',
+  'relative flex flex-wrap items-center gap-x-3 gap-y-2 overflow-hidden rounded-xl border border-base-subtle bg-text-input-bg-default p-3',
 );
 
 const previewVariants = cva(
@@ -385,7 +385,7 @@ const metadataSizeVariants = cva('type-caption-regular text-text-default-subtle'
 const metadataErrorVariants = cva('type-caption-regular text-text-danger-muted');
 
 const progressTrackVariants = cva(
-  'relative h-1 w-full overflow-hidden rounded-full bg-border-default-subtle',
+  'relative h-1 w-full overflow-hidden rounded-full bg-border-base-subtle',
 );
 
 const progressBarVariants = cva(
@@ -1400,7 +1400,7 @@ export function DropzoneItemProgress({
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
-              className="text-border-default-subtle"
+              className="text-border-base-subtle"
             />
             <circle
               cx={size / 2}

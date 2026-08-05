@@ -43,7 +43,7 @@ const tagListVariants = cva(
 );
 
 const emptyStateVariants = cva(
-  'rounded-xl border border-dashed border-border-default-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle',
+  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle',
 );
 
 const tagVariants = cva(
