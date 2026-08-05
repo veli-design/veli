@@ -1,15 +1,63 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { promisify } from 'node:util';
+import { gunzipSync } from 'node:zlib';
 
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
+
+function resolveBundledCli(relativeSegments) {
+  const execDir = path.dirname(process.execPath);
+  const candidates = [
+    // Windows Node distributions keep package managers next to the node binary.
+    path.join(execDir, ...relativeSegments),
+    // Unix Node distributions keep package managers under lib/.
+    path.join(execDir, '..', 'lib', ...relativeSegments),
+  ];
+  const cli = candidates.find((candidate) => existsSync(candidate));
+  if (cli == null) {
+    throw new Error(`Unable to locate ${relativeSegments.join('/')} from ${process.execPath}`);
+  }
+  return cli;
+}
+
+function resolveNpmCli() {
+  return resolveBundledCli(['node_modules', 'npm', 'bin', 'npm-cli.js']);
+}
+
+function resolveCorepackCli() {
+  return resolveBundledCli(['node_modules', 'corepack', 'dist', 'corepack.js']);
+}
+
+function readTarEntry(tarball, entryName) {
+  const buffer = gunzipSync(tarball);
+  let offset = 0;
+
+  while (offset + 512 <= buffer.length) {
+    const name = buffer.toString('utf8', offset, offset + 100).replace(/\0.*$/, '');
+    if (!name) {
+      break;
+    }
+
+    const size = Number.parseInt(buffer.toString('utf8', offset + 124, offset + 136).trim(), 8);
+    offset += 512;
+
+    if (name === entryName || name === `./${entryName}`) {
+      return buffer.subarray(offset, offset + size).toString('utf8');
+    }
+
+    offset += Math.ceil(size / 512) * 512;
+  }
+
+  throw new Error(`Missing ${entryName} in tarball`);
+}
 
 async function createPackageFixture() {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'veli-release-readme-'));
@@ -94,8 +142,8 @@ test('packs the release-specific README into the package artifact', async (t) =>
   let tarball;
   await withReleaseReadmes(fixture.packages, async () => {
     const { stdout } = await execFileAsync(
-      'npm',
-      ['pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
+      process.execPath,
+      [resolveNpmCli(), 'pack', '--ignore-scripts', '--json', '--pack-destination', packDirectory],
       {
         cwd: fixture.dir,
         env: { ...process.env, npm_config_cache: path.join(fixture.dir, '.npm-cache') },
@@ -104,11 +152,7 @@ test('packs the release-specific README into the package artifact', async (t) =>
     tarball = path.join(packDirectory, JSON.parse(stdout)[0].filename);
   });
 
-  const { stdout: packedReadme } = await execFileAsync('tar', [
-    '-xOf',
-    tarball,
-    'package/README.md',
-  ]);
+  const packedReadme = readTarEntry(await fs.readFile(tarball), 'package/README.md');
   assert.equal(
     packedReadme,
     '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
@@ -147,8 +191,16 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
 
   await withReleaseReadmes(fixture.packages, () =>
     execFileAsync(
-      'corepack',
-      ['pnpm', 'publish', '--registry', registryUrl, '--no-git-checks', '--ignore-scripts'],
+      process.execPath,
+      [
+        resolveCorepackCli(),
+        'pnpm',
+        'publish',
+        '--registry',
+        registryUrl,
+        '--no-git-checks',
+        '--ignore-scripts',
+      ],
       {
         cwd: fixture.dir,
         env: { ...process.env, npm_config_userconfig: userConfig },
