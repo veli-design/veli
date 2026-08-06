@@ -7,8 +7,11 @@ overrides:
   'hono@^4': ^4.12.32
   'immutable@^5': ^5.1.9
 
-# Preserve pnpm 10's immediate-resolution behavior while upgrading the client.
-minimumReleaseAge: 0
+# Reject transitive dependencies that resolve outside the configured registries.
+blockExoticSubdeps: true
+
+# Wait 24 hours before resolving newly published package versions.
+minimumReleaseAge: 1440
 
 # CI and hooks install dependencies explicitly; avoid pnpm 11's implicit,
 # bare-pnpm install before `run` and `exec` in non-interactive environments.
@@ -16,6 +19,7 @@ verifyDepsBeforeRun: false
 
 # pnpm 11 requires explicit approval for dependency build scripts. These packages
 # already ran their install scripts under pnpm 10 and are required by Veli tooling.
+strictDepBuilds: true
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
