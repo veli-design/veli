@@ -1,0 +1,33 @@
+---
+title: Language & direction
+description: English, Dhivehi, LTR, and RTL support through one shared provider contract.
+---
+
+## Treat language as context
+
+Veli supports English and Dhivehi as application-level modes. The selected language determines content language, locale, reading direction, and the appropriate type stack.
+
+| Language | Locale  | Direction |
+| :------- | :------ | :-------- |
+| English  | `en-GB` | `ltr`     |
+| Dhivehi  | `dv-MV` | `rtl`     |
+
+## Use the provider contract
+
+Set language through `VeliProvider` so components receive a supported combination of locale and direction.
+
+```tsx
+<VeliProvider language="dv">
+  <App />
+</VeliProvider>
+```
+
+Do not pass direction independently from language unless a contained piece of authored content genuinely uses another writing direction.
+
+## Design logical layouts
+
+Use logical properties such as `margin-inline-start`, `padding-inline`, and `inset-inline-end`. Directional icons should mirror only when their meaning depends on reading direction.
+
+## Review real translations
+
+Translated strings vary in length and rhythm. Test navigation, form labels, validation, tables, dates, and empty states with production-like English and Dhivehi content at every supported breakpoint.
