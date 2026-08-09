@@ -1,0 +1,30 @@
+---
+title: Spacing
+description: A 4px baseline for predictable component rhythm and page composition.
+---
+
+## Start with the baseline
+
+Veli uses a 4px spacing baseline. Multiples of the baseline create a consistent rhythm while still supporting dense service workflows and comfortable touch interaction.
+
+| Step | Value | Typical use              |
+| :--- | ----: | :----------------------- |
+| 1    |   4px | Tight optical adjustment |
+| 2    |   8px | Related icon and label   |
+| 3    |  12px | Compact control padding  |
+| 4    |  16px | Default content gap      |
+| 6    |  24px | Group separation         |
+| 8    |  32px | Section spacing          |
+| 12   |  48px | Large content transition |
+
+## Express relationships
+
+Elements that belong together should sit closer than separate groups. Use spacing to communicate structure before adding borders, backgrounds, or containers.
+
+## Keep touch targets usable
+
+Visual density must not reduce the interactive target. Compact controls can retain smaller visible shapes while preserving sufficient hit area and separation from adjacent actions.
+
+## Use tokens
+
+Choose the closest shared spacing token instead of adding isolated pixel values. Exceptions should solve a specific optical or platform constraint and remain local to that component.

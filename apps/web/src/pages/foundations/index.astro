@@ -1,15 +1,12 @@
 ---
 import DocsLayout from '../../layouts/docs-layout.astro';
+import { foundations } from '../../lib/site';
 
-const headings = [
-  { depth: 2, slug: 'principles', text: 'Principles' },
-  { depth: 2, slug: 'color', text: 'Color' },
-  { depth: 2, slug: 'typography', text: 'Typography' },
-  { depth: 2, slug: 'spacing', text: 'Spacing' },
-  { depth: 2, slug: 'motion', text: 'Motion' },
-  { depth: 2, slug: 'accessibility', text: 'Accessibility' },
-  { depth: 2, slug: 'language-direction', text: 'Language & direction' },
-];
+const headings = foundations.map((foundation) => ({
+  depth: 2,
+  slug: foundation.slug,
+  text: foundation.title,
+}));
 ---
 
 <DocsLayout
@@ -17,83 +14,50 @@ const headings = [
   description="Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli."
   activePath="/foundations/"
   {headings}
+  fullBleedHeader
 >
-  <header class="docs-page-header">
-    <p class="docs-kicker">Foundations</p>
-    <h1>The decisions beneath every service</h1>
-    <p>
-      Veli connects shared tokens, accessible components, and government service requirements into
-      one design language.
-    </p>
+  <header class="docs-page-header docs-page-header--overview">
+    <img
+      class="docs-overview-hero"
+      src="/images/foundations-overview.webp"
+      alt=""
+      width="2048"
+      height="1152"
+    />
+    <div class="docs-page-header__content">
+      <p class="docs-kicker">Foundations</p>
+      <h1>The decisions beneath every service</h1>
+      <p>
+        Veli connects shared tokens, accessible components, and government service requirements into
+        one design language.
+      </p>
+    </div>
   </header>
 
-  <section class="foundation-section" id="principles">
-    <h2>Principles</h2>
-    <p>
-      Public services should be clear, dependable, and familiar without making every product feel
-      identical. These principles guide decisions across the system.
-    </p>
-    <ul class="principle-list">
-      <li><strong>Clarity before novelty.</strong> Make the next action easy to understand.</li>
-      <li><strong>Access is the baseline.</strong> Design for different needs from the start.</li>
-      <li>
-        <strong>Local language matters.</strong> English and Dhivehi are first-class contexts.
-      </li>
-      <li><strong>Use shared foundations.</strong> Build with traceable tokens and components.</li>
-    </ul>
-  </section>
-
-  <section class="foundation-section" id="color">
-    <h2>Color</h2>
-    <p>
-      Semantic colors communicate hierarchy and state consistently across light and dark surfaces.
-    </p>
-    <div class="foundation-colors" aria-label="Veli semantic color samples">
-      <span style="background: var(--color-slate-200)"></span>
-      <span style="background: var(--color-blue-800)"></span>
-      <span style="background: var(--color-success-800)"></span>
-      <span style="background: var(--color-orange-800)"></span>
-      <span style="background: var(--color-red-800)"></span>
-    </div>
-  </section>
-
-  <section class="foundation-section" id="typography">
-    <h2>Typography</h2>
-    <p>
-      Inter supports Latin interfaces. Tokenized Dhivehi stacks let services respect local language
-      and direction without rebuilding typography rules.
-    </p>
-  </section>
-
-  <section class="foundation-section" id="spacing">
-    <h2>Spacing</h2>
-    <p>
-      A predictable 4px baseline keeps dense government workflows aligned while preserving enough
-      space for comprehension and touch interaction.
-    </p>
-  </section>
-
-  <section class="foundation-section" id="motion">
-    <h2>Motion</h2>
-    <p>
-      Motion should explain change, state, and direction. It must remain subtle and provide a
-      reduced-motion alternative.
-    </p>
-  </section>
-
-  <section class="foundation-section" id="accessibility">
-    <h2>Accessibility</h2>
-    <p>
-      Keyboard access, visible focus, readable contrast, semantic names, and robust interaction
-      behavior are part of the component contract.
-    </p>
-  </section>
-
-  <section class="foundation-section" id="language-direction">
-    <h2>Language & direction</h2>
-    <p>
-      Veli supports English, Dhivehi, LTR, and RTL interfaces through a shared provider contract so
-      teams can adapt services without duplicating runtime rules.
-    </p>
-  </section>
+  <div class="foundation-directory">
+    {
+      foundations.map((foundation) => (
+        <section id={foundation.slug}>
+          <a href={foundation.href}>
+            <div class="foundation-directory__icon" aria-hidden="true">
+              <img
+                src={foundation.icon}
+                alt=""
+                width={foundation.iconWidth}
+                height={foundation.iconHeight}
+                loading="lazy"
+              />
+            </div>
+            <div class="foundation-directory__content">
+              <h2>{foundation.title}</h2>
+              <p>{foundation.description}</p>
+            </div>
+            <span class="foundation-directory__arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        </section>
+      ))
+    }
+  </div>
 </DocsLayout>

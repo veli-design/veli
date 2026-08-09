@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import DocsLayout from '../../layouts/docs-layout.astro';
+
+type Props = {
+  foundation: CollectionEntry<'foundations'>;
+};
+
+export async function getStaticPaths() {
+  const foundations = await getCollection('foundations');
+  return foundations.map((foundation) => ({
+    params: { slug: foundation.slug },
+    props: { foundation },
+  }));
+}
+
+const { foundation } = Astro.props as Props;
+const { Content, headings } = await foundation.render();
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+---
+
+<DocsLayout
+  title={`${foundation.data.title} | Veli Design System`}
+  description={foundation.data.description}
+  activePath={`/foundations/${foundation.slug}/`}
+  headings={tocHeadings}
+>
+  <header class="docs-page-header docs-page-header--article">
+    <p class="docs-kicker">Foundation</p>
+    <h1>{foundation.data.title}</h1>
+    {foundation.data.description && <p>{foundation.data.description}</p>}
+  </header>
+
+  <article class="docs-prose foundation-prose">
+    <Content />
+  </article>
+</DocsLayout>

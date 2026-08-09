@@ -1,0 +1,27 @@
+---
+title: Accessibility
+description: Keyboard, contrast, focus, semantics, and multilingual behavior as baseline requirements.
+---
+
+## Build on semantics
+
+Start with the native element whose meaning matches the interaction. Preserve its name, role, value, and state when composing Veli components into a service.
+
+Use buttons for actions and links for navigation. Associate every form control with a visible label and connect validation messages programmatically.
+
+## Support keyboard use
+
+All interactive behavior must be operable without a pointer. Keep focus order aligned with reading order, provide visible focus, and return focus predictably when overlays close.
+
+## Make content perceivable
+
+- Maintain readable text and non-text contrast.
+- Provide text alternatives for meaningful imagery.
+- Do not communicate status through color alone.
+- Allow zoom and text resizing without clipping or lost actions.
+
+## Test real workflows
+
+Automated checks catch only part of the accessibility surface. Test complete tasks with a keyboard, screen reader, zoom, high contrast, and reduced-motion settings.
+
+Include both English and Dhivehi content in accessibility review so language, direction, pronunciation, and reading order are exercised together.
