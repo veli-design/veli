@@ -1545,7 +1545,7 @@ const meta = {
   argTypes: {
     intent: {
       control: 'select',
-      options: ['primary', 'secondary', 'danger'],
+      options: ['primary', 'secondary', 'danger', 'accent'],
     },
     appearance: {
       control: 'select',
@@ -1652,6 +1652,13 @@ export const AllVariants: Story = {
         <Button intent="danger" appearance="ghost">
           {text.argsChildren}
         </Button>
+
+        <div className="text-sm font-medium">Accent</div>
+        <Button intent="accent" appearance="fill">
+          {text.argsChildren}
+        </Button>
+        <div className="text-xs text-base-muted">Fill only</div>
+        <div className="text-xs text-base-muted">Fill only</div>
       </div>
     );
   },
@@ -1855,6 +1862,13 @@ export const ExperimentalEnhanced: Story = {
             <Button intent="danger" appearance="ghost" size="xl" seaglass>
               <ButtonLabel size="xl" />
             </Button>
+
+            <div className="text-sm font-medium">Accent</div>
+            <Button intent="accent" appearance="fill" size="xl" seaglass>
+              <ButtonLabel size="xl" />
+            </Button>
+            <div className="text-xs text-base-muted">Fill only</div>
+            <div className="text-xs text-base-muted">Fill only</div>
           </div>
         </div>
 

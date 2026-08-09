@@ -494,6 +494,13 @@ export function ButtonVariantsDemo() {
       <Button intent="danger" appearance="ghost">
         Button
       </Button>
+
+      <div className="text-sm font-medium">Accent</div>
+      <Button intent="accent" appearance="fill">
+        Button
+      </Button>
+      <div className="text-xs text-base-muted">Fill only</div>
+      <div className="text-xs text-base-muted">Fill only</div>
     </div>
   );
 }

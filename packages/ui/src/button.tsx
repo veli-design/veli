@@ -14,6 +14,7 @@ const buttonVariants = cva(
         primary: '',
         secondary: '',
         danger: '',
+        accent: '',
       },
       appearance: {
         fill: 'text-base-inverted',
@@ -91,6 +92,13 @@ const buttonVariants = cva(
         className:
           'bg-transparent text-danger-muted hover:bg-button-danger-subtle active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled',
       },
+      // Accent (fill only in Figma)
+      {
+        intent: 'accent',
+        appearance: 'fill',
+        className:
+          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled',
+      },
       { size: 'xs', iconOnly: true, className: 'w-7' },
       { size: 'sm', iconOnly: true, className: 'w-9' },
       { size: 'md', iconOnly: true, className: 'w-11' },
@@ -117,6 +125,7 @@ const seaglassButtonVariants = cva(
         primary: '',
         secondary: '',
         danger: '',
+        accent: '',
       },
       appearance: {
         fill: '',
@@ -140,6 +149,11 @@ const seaglassButtonVariants = cva(
         intent: 'danger',
         appearance: 'fill',
         className: `${seaglassFillOverlay} bg-button-danger text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
+      },
+      {
+        intent: 'accent',
+        appearance: 'fill',
+        className: `${seaglassFillOverlay} bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed`,
       },
       {
         appearance: 'fill',

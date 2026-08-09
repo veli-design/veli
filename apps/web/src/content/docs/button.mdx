@@ -36,7 +36,7 @@ import {
 
 ## Intent And Appearance Matrix
 
-The button supports three intents and three appearances, creating a flexible visual language.
+The button supports four intents (`primary`, `secondary`, `danger`, `accent`) and three appearances. Accent is fill-only.
 
 <div className="preview p-6 border border-base-subtle rounded-lg bg-surface-raised mb-4 overflow-x-auto">
   <ButtonVariantsDemo client:visible />
@@ -118,14 +118,14 @@ Use `seaglass` to opt into the stylized treatment without changing the base butt
 
 ## Props
 
-| Prop         | Type                                   | Default     | Description                                                                                                          |
-| :----------- | :------------------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------- |
-| `intent`     | `'primary' \| 'secondary' \| 'danger'` | `'primary'` | The semantic visual indication level of the button.                                                                  |
-| `appearance` | `'fill' \| 'transparent' \| 'ghost'`   | `'fill'`    | The surface treatment of the button.                                                                                 |
-| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'`      | The vertical scale of the button.                                                                                    |
-| `iconOnly`   | `boolean`                              | `false`     | Renders the button as a square icon action. Requires `aria-label` or `aria-labelledby`.                              |
-| `seaglass`   | `boolean`                              | `false`     | Enables the stylized seaglass rendering while preserving the same intent and appearance API.                         |
-| `isLoading`  | `boolean`                              | `false`     | Shows a loading spinner, disables interaction, and sets `aria-busy`. Spinner-only usage requires an accessible name. |
-| `isDisabled` | `boolean`                              | `false`     | Standard disabled state.                                                                                             |
+| Prop         | Type                                               | Default     | Description                                                                                                          |
+| :----------- | :------------------------------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------- |
+| `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent'` | `'primary'` | The semantic visual indication level of the button. Accent is fill-only.                                             |
+| `appearance` | `'fill' \| 'transparent' \| 'ghost'`               | `'fill'`    | The surface treatment of the button.                                                                                 |
+| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`             | `'md'`      | The vertical scale of the button.                                                                                    |
+| `iconOnly`   | `boolean`                                          | `false`     | Renders the button as a square icon action. Requires `aria-label` or `aria-labelledby`.                              |
+| `seaglass`   | `boolean`                                          | `false`     | Enables the stylized seaglass rendering while preserving the same intent and appearance API.                         |
+| `isLoading`  | `boolean`                                          | `false`     | Shows a loading spinner, disables interaction, and sets `aria-busy`. Spinner-only usage requires an accessible name. |
+| `isDisabled` | `boolean`                                          | `false`     | Standard disabled state.                                                                                             |
 
 _Note: All other `react-aria-components` Button props are supported, excluding `className` and `style` overrides._
