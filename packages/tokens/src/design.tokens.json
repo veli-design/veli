@@ -11126,6 +11126,17 @@
         "mode": {}
       }
     },
+    "4xl": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "",
+      "$extensions": {
+        "mode": {}
+      }
+    },
     "full": {
       "$type": "dimension",
       "$value": {
