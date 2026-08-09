@@ -12,6 +12,7 @@ import {
   Modal as AriaModal,
   ModalOverlay,
   type ModalOverlayProps as AriaModalOverlayProps,
+  OverlayTriggerStateContext,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
@@ -27,7 +28,7 @@ const overlayVariants = cva(
 
 const modalVariants = cva(
   [
-    'relative w-full max-h-[90dvh] overflow-auto rounded-3xl bg-modal-bg-solid text-base-default outline-none transition duration-normal ease-spring',
+    'relative w-full max-h-[90dvh] overflow-auto rounded-4xl bg-modal-bg-solid text-base-default outline-none transition duration-normal ease-spring',
     'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
     'shadow-sm',
   ],
@@ -143,6 +144,8 @@ export function Modal({
   ...overlayProps
 }: ModalProps) {
   const languageConfig = useVeliLanguage();
+  const triggerState = React.useContext(OverlayTriggerStateContext);
+  const isInsideTrigger = triggerState != null;
   const normalizedAriaLabel = normalizeAccessibleText(ariaLabel);
   const normalizedAriaLabelledby = normalizeAccessibleText(ariaLabelledby);
   const isControlled = isOpenProp !== undefined;
@@ -201,11 +204,17 @@ export function Modal({
     openValidationFrameRef.current = requestAnimationFrame(() => {
       openValidationFrameRef.current = null;
 
-      if (isControlled ? isOpenProp : uncontrolledOpenRef.current) {
+      const open = isInsideTrigger
+        ? Boolean(triggerState?.isOpen)
+        : isControlled
+          ? Boolean(isOpenProp)
+          : uncontrolledOpenRef.current;
+
+      if (open) {
         validateDialogName();
       }
     });
-  }, [isControlled, isOpenProp, validateDialogName]);
+  }, [isControlled, isInsideTrigger, isOpenProp, triggerState, validateDialogName]);
 
   const handleOpenChange = React.useCallback(
     (open: boolean) => {
@@ -240,16 +249,32 @@ export function Modal({
     ariaLabelledby == null || Boolean(normalizedAriaLabelledby),
     'Veli UI: Modal aria-labelledby must be a non-empty id reference.',
   );
+  invariantDev(
+    !isInsideTrigger ||
+      (isOpenProp === undefined && defaultOpen === undefined && onOpenChange == null),
+    'Veli UI: Modal open state is controlled by Modal.Trigger. Pass isOpen, defaultOpen, and onOpenChange to Modal.Trigger instead.',
+  );
 
   React.useLayoutEffect(() => {
-    const open = isControlled ? isOpenProp : uncontrolledOpenRef.current;
+    const open = isInsideTrigger
+      ? Boolean(triggerState?.isOpen)
+      : isControlled
+        ? Boolean(isOpenProp)
+        : uncontrolledOpenRef.current;
 
     if (!open) {
       return;
     }
 
     validateDialogName();
-  }, [isControlled, isOpenProp, layoutState.hasTitle, validateDialogName]);
+  }, [
+    isControlled,
+    isInsideTrigger,
+    isOpenProp,
+    layoutState.hasTitle,
+    triggerState?.isOpen,
+    validateDialogName,
+  ]);
 
   React.useEffect(
     () => () => {
@@ -263,9 +288,9 @@ export function Modal({
   return (
     <ModalOverlay
       {...overlayProps}
-      {...(isControlled ? { isOpen: isOpenProp } : {})}
-      {...(defaultOpen !== undefined && !isControlled ? { defaultOpen } : {})}
-      onOpenChange={handleOpenChange}
+      {...(!isInsideTrigger && isControlled ? { isOpen: isOpenProp } : {})}
+      {...(!isInsideTrigger && defaultOpen !== undefined && !isControlled ? { defaultOpen } : {})}
+      {...(!isInsideTrigger ? { onOpenChange: handleOpenChange } : {})}
       isDismissable={isDismissable}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
@@ -281,7 +306,7 @@ export function Modal({
           aria-labelledby={normalizedAriaLabelledby}
           lang={languageConfig.lang}
           dir={languageConfig.direction}
-          className="flex flex-col px-6 py-4 outline-none"
+          className="flex flex-col px-6 pt-4 pb-6 outline-none"
         >
           {({ close }) => (
             <ModalCloseContext.Provider value={close}>

@@ -143,12 +143,13 @@ type Story = StoryObj<typeof meta>;
 export const WithTrigger: Story = {
   render: (args) => {
     const text = useModalText();
+    const { isOpen, defaultOpen, onOpenChange, ...modalArgs } = args;
 
     return (
       <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Modal.Trigger>
+        <Modal.Trigger isOpen={isOpen} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
           <Button>{text.openModal}</Button>
-          <Modal {...args}>
+          <Modal {...modalArgs}>
             <Modal.Header>
               <Modal.Title>{text.editProfile}</Modal.Title>
               <Modal.Description>{text.updateProfileDesc}</Modal.Description>
