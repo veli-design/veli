@@ -569,23 +569,6 @@ export function ButtonLoadingDemo() {
   return <Button isLoading>Processing...</Button>;
 }
 
-export function ButtonSeaglassDemo() {
-  return (
-    <div className="flex gap-4 items-center flex-wrap">
-      <Button intent="primary" appearance="fill" size="xl" seaglass>
-        <Plus size={20} weight="bold" />
-        Label
-        <ArrowRight size={20} weight="bold" />
-      </Button>
-      <Button intent="secondary" appearance="transparent" size="xl" seaglass>
-        <Plus size={20} weight="bold" />
-        Label
-        <ArrowRight size={20} weight="bold" />
-      </Button>
-    </div>
-  );
-}
-
 export function CheckboxUsageDemo() {
   return (
     <div className="flex flex-col gap-[12px]">

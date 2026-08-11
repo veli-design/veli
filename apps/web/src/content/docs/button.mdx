@@ -18,7 +18,6 @@ import {
   ButtonIconOnlyDemo,
   ButtonIconsDemo,
   ButtonLoadingDemo,
-  ButtonSeaglassDemo,
   ButtonSizesDemo,
   ButtonUsageDemo,
   ButtonVariantsDemo,
@@ -65,7 +64,7 @@ To maintain design consistency, icons should follow these size guidelines:
 
 ## Icon-Only
 
-Use `iconOnly` when the button should render as a square icon action while keeping the same intent, appearance, size, and seaglass behavior as the standard button.
+Use `iconOnly` when the button should render as a square icon action while keeping the same intent, appearance, and size behavior as the standard button.
 
 Always provide an accessible label with `aria-label` or `aria-labelledby` when there is no visible text. In development, `iconOnly` buttons without a label fail fast.
 
@@ -100,22 +99,6 @@ When `isLoading` is true, the button is disabled, marked busy, and displays a sp
 <Button isLoading aria-label="Saving" />
 ```
 
-## Enhanced Styling
-
-Use `seaglass` to opt into the stylized treatment without changing the base button behavior.
-
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
-  <ButtonSeaglassDemo client:visible />
-</div>
-
-```tsx
-<Button intent="primary" appearance="fill" size="xl" seaglass>
-  <Plus size={20} />
-  Label
-  <ArrowRight size={20} />
-</Button>
-```
-
 ## Props
 
 | Prop         | Type                                               | Default     | Description                                                                                                          |
@@ -124,7 +107,6 @@ Use `seaglass` to opt into the stylized treatment without changing the base butt
 | `appearance` | `'fill' \| 'transparent' \| 'ghost'`               | `'fill'`    | The surface treatment of the button.                                                                                 |
 | `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`             | `'md'`      | The vertical scale of the button.                                                                                    |
 | `iconOnly`   | `boolean`                                          | `false`     | Renders the button as a square icon action. Requires `aria-label` or `aria-labelledby`.                              |
-| `seaglass`   | `boolean`                                          | `false`     | Enables the stylized seaglass rendering while preserving the same intent and appearance API.                         |
 | `isLoading`  | `boolean`                                          | `false`     | Shows a loading spinner, disables interaction, and sets `aria-busy`. Spinner-only usage requires an accessible name. |
 | `isDisabled` | `boolean`                                          | `false`     | Standard disabled state.                                                                                             |
 

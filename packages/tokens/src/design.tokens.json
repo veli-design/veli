@@ -14586,6 +14586,11 @@
       "$value": [0, 0, 0.2, 1],
       "$description": "Motion primitive: ease-out."
     },
+    "out-quad": {
+      "$type": "cubicBezier",
+      "$value": [0.25, 0.46, 0.45, 0.94],
+      "$description": "Motion primitive: ease-out-quad."
+    },
     "in": {
       "$type": "cubicBezier",
       "$value": [0.4, 0, 1, 1],

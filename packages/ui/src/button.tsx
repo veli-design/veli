@@ -7,7 +7,23 @@ import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
 
 const buttonVariants = cva(
-  'relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased transition-colors duration-normal ease-out focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base disabled:pointer-events-none',
+  [
+    'relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased',
+    // Colors use duration-normal/ease-out; press scale uses duration-fast/ease-out-quad in both directions.
+    '[transition-property:background-color,color,scale]',
+    '[transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)]',
+    '[transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+    'focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
+    'disabled:pointer-events-none',
+    'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
+    // Keep label/icons optically fixed while the chrome scales.
+    '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
+    'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
+    "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
+    'after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)]',
+    'after:opacity-0 after:transition-opacity after:duration-normal after:ease-out',
+    'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
+  ].join(' '),
   {
     variants: {
       intent: {
@@ -40,64 +56,64 @@ const buttonVariants = cva(
         intent: 'primary',
         appearance: 'fill',
         className:
-          'bg-button-primary text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-primary text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)] dark:[--button-ripple-color:rgb(0_175_172_/_0.75)]',
       },
       {
         intent: 'primary',
         appearance: 'transparent',
         className:
-          'bg-button-primary-subtle text-primary-muted hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-primary-subtle text-primary-muted hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       {
         intent: 'primary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-primary hover:bg-button-primary-subtle active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled',
+          'bg-transparent text-primary hover:bg-button-primary-subtle active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       // Secondary
       {
         intent: 'secondary',
         appearance: 'fill',
         className:
-          'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'bg-button-secondary-subtle text-base-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-secondary-subtle text-base-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_255_255_/_0.15)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base-default hover:bg-button-secondary-subtle active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled',
+          'bg-transparent text-base-default hover:bg-button-secondary-subtle active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_255_255_/_0.15)]',
       },
       // Danger
       {
         intent: 'danger',
         appearance: 'fill',
         className:
-          'bg-button-danger text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-danger text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.9)]',
       },
       {
         intent: 'danger',
         appearance: 'transparent',
         className:
-          'bg-button-danger-subtle text-danger-muted hover:bg-button-danger-subtle-hover active:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-danger-subtle text-danger-muted hover:bg-button-danger-subtle-hover active:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       {
         intent: 'danger',
         appearance: 'ghost',
         className:
-          'bg-transparent text-danger-muted hover:bg-button-danger-subtle active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled',
+          'bg-transparent text-danger-muted hover:bg-button-danger-subtle active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       // Accent (fill only in Figma)
       {
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled',
+          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(154_243_102_/_1)] dark:[--button-ripple-color:rgb(154_243_102_/_1)]',
       },
       { size: 'xs', iconOnly: true, className: 'w-7' },
       { size: 'sm', iconOnly: true, className: 'w-9' },
@@ -110,98 +126,6 @@ const buttonVariants = cva(
       appearance: 'fill',
       size: 'md',
       iconOnly: false,
-    },
-  },
-);
-
-const seaglassFillOverlay =
-  'shadow-[0_1px_2px_rgba(0,14,48,0.14)] hover:shadow-[0_2px_6px_rgba(0,14,48,0.16)] active:shadow-[0_1px_1px_rgba(0,14,48,0.12)] [background-image:radial-gradient(ellipse_var(--button-seaglass-overlay-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-overlay-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-fill-alpha-1,0))_var(--button-seaglass-fill-stop-1,8%),rgba(255,255,255,var(--button-seaglass-fill-alpha-2,0.0625))_var(--button-seaglass-fill-stop-2,13.75%),rgba(255,255,255,var(--button-seaglass-fill-alpha-3,0.125))_var(--button-seaglass-fill-stop-3,19.5%),rgba(255,255,255,var(--button-seaglass-fill-alpha-4,0.25))_var(--button-seaglass-fill-stop-4,31%),rgba(255,255,255,var(--button-seaglass-fill-alpha-5,0.5))_var(--button-seaglass-fill-stop-5,54%),rgba(255,255,255,var(--button-seaglass-fill-alpha-6,0))_var(--button-seaglass-fill-stop-6,100%))] before:transition-shadow before:duration-normal before:ease-out before:shadow-[inset_0_1px_2px_rgba(255,255,255,0.26),inset_0_-1px_2px_rgba(0,14,48,0.08)] hover:before:shadow-[inset_0_2px_4px_rgba(255,255,255,0.36),inset_0_-1px_2px_rgba(0,14,48,0.07)] active:before:shadow-[inset_0_3px_5px_rgba(0,14,48,0.12),inset_0_1px_1px_rgba(255,255,255,0.18)] after:bg-[radial-gradient(ellipse_var(--button-seaglass-active-radius-x,var(--button-seaglass-radius-x))_var(--button-seaglass-active-radius-y,var(--button-seaglass-radius-y))_at_var(--button-spotlight-position),rgba(255,255,255,var(--button-seaglass-active-alpha-1,0))_var(--button-seaglass-active-stop-1,6%),rgba(255,255,255,var(--button-seaglass-active-alpha-2,0.08))_var(--button-seaglass-active-stop-2,14%),rgba(255,255,255,var(--button-seaglass-active-alpha-3,0.18))_var(--button-seaglass-active-stop-3,28%),rgba(255,255,255,var(--button-seaglass-active-alpha-4,0.32))_var(--button-seaglass-active-stop-4,46%),rgba(255,255,255,var(--button-seaglass-active-alpha-5,0.48))_var(--button-seaglass-active-stop-5,68%),rgba(255,255,255,var(--button-seaglass-active-alpha-6,0.64))_var(--button-seaglass-active-stop-6,100%))] after:opacity-0 after:transition-opacity after:duration-normal after:ease-spring active:after:opacity-[var(--button-seaglass-active-overlay-opacity,1)] active:after:duration-fast active:after:ease-out disabled:bg-[radial-gradient(84.08%_120.69%_at_50%_50%,rgba(215,220,228,1)_0%,rgba(255,255,255,1)_100%)] disabled:text-disabled disabled:shadow-none disabled:before:opacity-0 disabled:before:shadow-none disabled:after:opacity-0';
-
-const seaglassButtonVariants = cva(
-  "relative isolate overflow-hidden border-0 transition-[background-color,background-image,box-shadow,color,border-color,transform] duration-normal ease-spring before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:border-0 focus-visible:ring-border-focus",
-  {
-    variants: {
-      intent: {
-        primary: '',
-        secondary: '',
-        danger: '',
-        accent: '',
-      },
-      appearance: {
-        fill: '',
-        transparent: '',
-        ghost: '',
-      },
-    },
-    compoundVariants: [
-      // Fill
-      {
-        intent: 'primary',
-        appearance: 'fill',
-        className: `${seaglassFillOverlay} bg-[#0066FF] text-white hover:bg-[#0066FF] active:bg-[#0052CC]`,
-      },
-      {
-        intent: 'secondary',
-        appearance: 'fill',
-        className: `${seaglassFillOverlay} bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed`,
-      },
-      {
-        intent: 'danger',
-        appearance: 'fill',
-        className: `${seaglassFillOverlay} bg-button-danger text-danger-inverted hover:bg-button-danger-hover active:bg-button-danger-pressed`,
-      },
-      {
-        intent: 'accent',
-        appearance: 'fill',
-        className: `${seaglassFillOverlay} bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed`,
-      },
-      {
-        appearance: 'fill',
-        className:
-          'active:translate-y-px active:scale-[0.985] active:duration-fast active:ease-out',
-      },
-      // Transparent
-      {
-        intent: 'primary',
-        appearance: 'transparent',
-        className:
-          'text-primary-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.28)_0%,rgba(0,102,255,0)_100%)] before:opacity-80 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-70 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled disabled:text-disabled disabled:before:opacity-0 disabled:after:shadow-none',
-      },
-      {
-        intent: 'secondary',
-        appearance: 'transparent',
-        className:
-          'text-base-default bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.24)_0%,rgba(0,14,48,0)_100%)] before:opacity-78 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-66 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.25)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.34)] disabled:bg-button-disabled disabled:text-disabled disabled:before:opacity-0 disabled:after:shadow-none',
-      },
-      {
-        intent: 'danger',
-        appearance: 'transparent',
-        className:
-          'text-danger-muted bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-76 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-64 after:shadow-[inset_0_3px_3px_rgba(255,255,255,0.23)] hover:after:shadow-[inset_0_3px_4px_rgba(255,255,255,0.32)] disabled:bg-button-disabled disabled:text-disabled disabled:before:opacity-0 disabled:after:shadow-none',
-      },
-      // Ghost
-      {
-        intent: 'primary',
-        appearance: 'ghost',
-        className:
-          'bg-transparent text-primary-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,102,255,0.24)_0%,rgba(0,102,255,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-84 disabled:bg-transparent disabled:text-disabled disabled:before:opacity-0',
-      },
-      {
-        intent: 'secondary',
-        appearance: 'ghost',
-        className:
-          'bg-transparent text-base-default before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(0,14,48,0.22)_0%,rgba(0,14,48,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-74 disabled:bg-transparent disabled:text-disabled disabled:before:opacity-0',
-      },
-      {
-        intent: 'danger',
-        appearance: 'ghost',
-        className:
-          'bg-transparent text-danger-muted before:bg-[radial-gradient(55%_140%_at_var(--button-spotlight-x)_var(--button-spotlight-y),rgba(192,24,0,0.2)_0%,rgba(192,24,0,0)_100%)] before:opacity-0 active:bg-[linear-gradient(90deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.2)_100%)] active:before:opacity-72 disabled:bg-transparent disabled:text-disabled disabled:before:opacity-0',
-      },
-    ],
-    defaultVariants: {
-      intent: 'primary',
-      appearance: 'fill',
     },
   },
 );
@@ -274,7 +198,6 @@ interface ButtonSharedProps
     Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
-  seaglass?: boolean;
   className?: string;
 }
 
@@ -292,74 +215,42 @@ type StandardButtonProps = ButtonSharedProps & {
 export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
 
 type ButtonAppearance = NonNullable<ButtonProps['appearance']>;
-type SpotlightStyle = React.CSSProperties & {
-  '--button-seaglass-radius-x': string;
-  '--button-seaglass-radius-y': string;
-  '--button-spotlight-x': string;
-  '--button-spotlight-y': string;
-  '--button-spotlight-position': string;
-  '--button-spotlight-size': string;
-};
 
-type SeaglassMetrics = {
-  radiusX: string;
-  radiusY: string;
-  spotlightSize: string;
-};
+const pressRippleAnimationDuration = 420;
+const pressRippleStartSizePx = 12;
 
-type SpotlightPosition = {
-  x: string;
-  y: string;
-};
-
-type NumericSpotlightPosition = {
-  x: number;
-  y: number;
-};
-
-const defaultSeaglassMetrics: SeaglassMetrics = {
-  radiusX: '320px',
-  radiusY: '362px',
-  spotlightSize: '82px',
-};
-
-const defaultSpotlightPosition: SpotlightPosition = {
-  x: '50%',
-  y: '50%',
-};
-
-const spotlightCenterAnimationDuration = 180;
-
-interface UseButtonSpotlightOptions {
-  seaglass: boolean;
+interface UseButtonRippleOptions {
   isDisabled?: boolean;
   isLoading?: boolean;
-  onMouseEnter?: ButtonProps['onMouseEnter'];
-  onMouseMove?: ButtonProps['onMouseMove'];
-  onMouseLeave?: ButtonProps['onMouseLeave'];
-  onPointerDown?: ButtonProps['onPointerDown'];
+  onPointerMove?: ButtonProps['onPointerMove'];
   onPointerUp?: ButtonProps['onPointerUp'];
   onPointerCancel?: ButtonProps['onPointerCancel'];
-  onFocus?: ButtonProps['onFocus'];
-  onBlur?: ButtonProps['onBlur'];
+  onPressStart?: ButtonProps['onPressStart'];
+  onPressEnd?: ButtonProps['onPressEnd'];
 }
 
 function easeOutCubic(progress: number) {
   return 1 - (1 - progress) ** 3;
 }
 
-function getSeaglassMetrics(width: number, height: number): SeaglassMetrics {
-  const normalizedWidth = Math.min(Math.max((width - 120) / 300, 0), 1);
-  const radiusMultiplier = 2.1 - normalizedWidth * 0.55;
-  const radiusX = Math.round(Math.max(width * radiusMultiplier, 220));
-  const radiusY = Math.round(Math.max(height * 6, 280));
-  const spotlightSize = Math.round(Math.min(Math.max(width * 0.24, 72), 96));
+function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
 
-  return {
-    radiusX: `${radiusX}px`,
-    radiusY: `${radiusY}px`,
-    spotlightSize: `${spotlightSize}px`,
-  };
+function getPressRippleEndSize(width: number, height: number, x: number, y: number) {
+  const reach = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
+  return Math.round(Math.max(reach * 2.2, Math.max(width, height) * 1.35));
+}
+
+function cancelAnimationFrameRef(frameRef: React.MutableRefObject<number | null>) {
+  if (typeof window === 'undefined' || frameRef.current === null) {
+    return;
+  }
+
+  window.cancelAnimationFrame(frameRef.current);
+  frameRef.current = null;
 }
 
 function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
@@ -434,238 +325,130 @@ function ButtonContent({
   );
 }
 
-function useButtonSpotlight({
-  seaglass,
+function useButtonRipple({
   isDisabled,
   isLoading,
-  onMouseEnter,
-  onMouseMove,
-  onMouseLeave,
-  onPointerDown,
+  onPointerMove,
   onPointerUp,
   onPointerCancel,
-  onFocus,
-  onBlur,
-}: UseButtonSpotlightOptions) {
-  const showSpotlight = seaglass && !isDisabled && !isLoading;
+  onPressStart,
+  onPressEnd,
+}: UseButtonRippleOptions) {
+  const canRipple = !isDisabled && !isLoading;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const spotlightFrameRef = React.useRef<number | null>(null);
-  const spotlightAnimationFrameRef = React.useRef<number | null>(null);
+  const expandFrameRef = React.useRef<number | null>(null);
+  const pointerFrameRef = React.useRef<number | null>(null);
   const isPressingRef = React.useRef(false);
-  const pendingSpotlightPositionRef = React.useRef(defaultSpotlightPosition);
-  const currentSpotlightPositionRef = React.useRef<NumericSpotlightPosition | null>(null);
-  const [seaglassMetrics, setSeaglassMetrics] = React.useState(defaultSeaglassMetrics);
+  const pendingPointerRef = React.useRef<{ x: number; y: number } | null>(null);
+  const rippleRef = React.useRef({ x: 0, y: 0, size: 0 });
 
-  const writeSpotlightPosition = React.useCallback((x: string, y: string) => {
+  const writeRipple = React.useCallback(() => {
     const button = buttonRef.current;
 
     if (!button) {
       return;
     }
 
-    button.style.setProperty('--button-spotlight-x', x);
-    button.style.setProperty('--button-spotlight-y', y);
-    button.style.setProperty('--button-spotlight-position', `${x} ${y}`);
-
-    const numericX = Number.parseFloat(x);
-    const numericY = Number.parseFloat(y);
-    currentSpotlightPositionRef.current =
-      x.endsWith('px') && y.endsWith('px') && Number.isFinite(numericX) && Number.isFinite(numericY)
-        ? { x: numericX, y: numericY }
-        : null;
+    const { x, y, size } = rippleRef.current;
+    button.style.setProperty('--button-ripple-x', `${x}px`);
+    button.style.setProperty('--button-ripple-y', `${y}px`);
+    button.style.setProperty('--button-ripple-size', `${size}px`);
   }, []);
 
-  const cancelSpotlightWriteFrame = React.useCallback(() => {
-    if (typeof window === 'undefined' || spotlightFrameRef.current === null) {
-      return;
-    }
-
-    const spotlightFrame = spotlightFrameRef.current;
-    spotlightFrameRef.current = null;
-    window.cancelAnimationFrame(spotlightFrame);
-  }, []);
-
-  const cancelSpotlightCenterAnimation = React.useCallback(() => {
-    if (typeof window === 'undefined' || spotlightAnimationFrameRef.current === null) {
-      return;
-    }
-
-    const spotlightAnimationFrame = spotlightAnimationFrameRef.current;
-    spotlightAnimationFrameRef.current = null;
-    window.cancelAnimationFrame(spotlightAnimationFrame);
-  }, []);
-
-  const setSpotlightPosition = React.useCallback(
-    (x: string, y: string) => {
-      pendingSpotlightPositionRef.current = { x, y };
-
-      if (typeof window === 'undefined') {
-        writeSpotlightPosition(x, y);
-        return;
-      }
-
-      if (spotlightFrameRef.current !== null) {
-        return;
-      }
-
-      spotlightFrameRef.current = window.requestAnimationFrame(() => {
-        spotlightFrameRef.current = null;
-        const position = pendingSpotlightPositionRef.current;
-        writeSpotlightPosition(position.x, position.y);
-      });
+  const setRipplePosition = React.useCallback(
+    (x: number, y: number) => {
+      rippleRef.current.x = x;
+      rippleRef.current.y = y;
+      writeRipple();
     },
-    [writeSpotlightPosition],
+    [writeRipple],
   );
 
-  const animateSpotlightToCenter = React.useCallback(() => {
-    const button = buttonRef.current;
-
-    if (!button) {
-      return;
-    }
-
-    const rect = button.getBoundingClientRect();
-    const targetPosition = { x: rect.width / 2, y: rect.height / 2 };
-    const startPosition = currentSpotlightPositionRef.current ?? targetPosition;
-
-    if (typeof window === 'undefined') {
-      writeSpotlightPosition(`${targetPosition.x}px`, `${targetPosition.y}px`);
-      return;
-    }
-
-    cancelSpotlightWriteFrame();
-    cancelSpotlightCenterAnimation();
-
-    const startTime = window.performance.now();
-
-    const tick = (time: number) => {
-      const progress = Math.min((time - startTime) / spotlightCenterAnimationDuration, 1);
-      const easedProgress = easeOutCubic(progress);
-      const nextX = startPosition.x + (targetPosition.x - startPosition.x) * easedProgress;
-      const nextY = startPosition.y + (targetPosition.y - startPosition.y) * easedProgress;
-
-      writeSpotlightPosition(`${nextX}px`, `${nextY}px`);
-
-      if (progress < 1) {
-        spotlightAnimationFrameRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      spotlightAnimationFrameRef.current = null;
-    };
-
-    spotlightAnimationFrameRef.current = window.requestAnimationFrame(tick);
-  }, [cancelSpotlightCenterAnimation, cancelSpotlightWriteFrame, writeSpotlightPosition]);
-
-  const trackSpotlightFromPointer = React.useCallback(
+  const trackRippleFromPointer = React.useCallback(
     (target: HTMLButtonElement, clientX: number, clientY: number) => {
-      if (!showSpotlight || isPressingRef.current) {
+      if (!isPressingRef.current || !canRipple) {
         return;
       }
-
-      cancelSpotlightCenterAnimation();
 
       const rect = target.getBoundingClientRect();
-      const nextPosition = {
+      pendingPointerRef.current = {
         x: clientX - rect.left,
         y: clientY - rect.top,
       };
 
-      currentSpotlightPositionRef.current = nextPosition;
-      setSpotlightPosition(`${nextPosition.x}px`, `${nextPosition.y}px`);
+      if (typeof window === 'undefined') {
+        const position = pendingPointerRef.current;
+        setRipplePosition(position.x, position.y);
+        return;
+      }
+
+      if (pointerFrameRef.current !== null) {
+        return;
+      }
+
+      pointerFrameRef.current = window.requestAnimationFrame(() => {
+        pointerFrameRef.current = null;
+        const position = pendingPointerRef.current;
+
+        if (!position || !isPressingRef.current) {
+          return;
+        }
+
+        setRipplePosition(position.x, position.y);
+      });
     },
-    [cancelSpotlightCenterAnimation, setSpotlightPosition, showSpotlight],
+    [canRipple, setRipplePosition],
   );
 
-  const updateMetrics = React.useCallback(() => {
-    const button = buttonRef.current;
+  const animatePressRipple = React.useCallback(
+    (width: number, height: number, x: number, y: number) => {
+      const endSize = getPressRippleEndSize(width, height, x, y);
+      rippleRef.current = { x, y, size: endSize };
+      writeRipple();
 
-    if (!button) {
-      return;
-    }
+      if (typeof window === 'undefined' || prefersReducedMotion()) {
+        return;
+      }
 
-    const rect = button.getBoundingClientRect();
-    setSeaglassMetrics(getSeaglassMetrics(rect.width, rect.height));
+      cancelAnimationFrameRef(expandFrameRef);
+      rippleRef.current.size = pressRippleStartSizePx;
+      writeRipple();
+
+      const startTime = window.performance.now();
+
+      const tick = (time: number) => {
+        const progress = Math.min((time - startTime) / pressRippleAnimationDuration, 1);
+        rippleRef.current.size =
+          pressRippleStartSizePx + (endSize - pressRippleStartSizePx) * easeOutCubic(progress);
+        writeRipple();
+
+        if (progress < 1) {
+          expandFrameRef.current = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        expandFrameRef.current = null;
+      };
+
+      expandFrameRef.current = window.requestAnimationFrame(tick);
+    },
+    [writeRipple],
+  );
+
+  React.useEffect(() => {
+    return () => {
+      cancelAnimationFrameRef(expandFrameRef);
+      cancelAnimationFrameRef(pointerFrameRef);
+    };
   }, []);
 
-  React.useEffect(() => {
-    const button = buttonRef.current;
-
-    if (!button) {
-      return undefined;
-    }
-
-    updateMetrics();
-
-    if (typeof ResizeObserver === 'undefined') {
-      return undefined;
-    }
-
-    const resizeObserver = new ResizeObserver(updateMetrics);
-    resizeObserver.observe(button);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [updateMetrics]);
-
-  React.useEffect(() => {
-    if (showSpotlight) {
-      return undefined;
-    }
-
-    isPressingRef.current = false;
-    cancelSpotlightCenterAnimation();
-    setSpotlightPosition(defaultSpotlightPosition.x, defaultSpotlightPosition.y);
-
-    return undefined;
-  }, [cancelSpotlightCenterAnimation, setSpotlightPosition, showSpotlight]);
-
-  React.useEffect(() => {
-    return () => {
-      cancelSpotlightWriteFrame();
-      cancelSpotlightCenterAnimation();
-    };
-  }, [cancelSpotlightCenterAnimation, cancelSpotlightWriteFrame]);
-
-  const handleMouseMove: NonNullable<ButtonProps['onMouseMove']> = (event) => {
-    trackSpotlightFromPointer(event.currentTarget, event.clientX, event.clientY);
-
-    onMouseMove?.(event);
-  };
-
-  const handleMouseEnter: NonNullable<ButtonProps['onMouseEnter']> = (event) => {
-    trackSpotlightFromPointer(event.currentTarget, event.clientX, event.clientY);
-
-    onMouseEnter?.(event);
-  };
-
-  const handleMouseLeave: NonNullable<ButtonProps['onMouseLeave']> = (event) => {
-    if (showSpotlight) {
-      isPressingRef.current = false;
-      cancelSpotlightCenterAnimation();
-      setSpotlightPosition(defaultSpotlightPosition.x, defaultSpotlightPosition.y);
-    }
-
-    onMouseLeave?.(event);
-  };
-
-  const handlePointerDown: NonNullable<ButtonProps['onPointerDown']> = (event) => {
-    if (showSpotlight) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      currentSpotlightPositionRef.current = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      };
-      isPressingRef.current = true;
-      animateSpotlightToCenter();
-    }
-
-    onPointerDown?.(event);
+  const handlePointerMove: NonNullable<ButtonProps['onPointerMove']> = (event) => {
+    trackRippleFromPointer(event.currentTarget, event.clientX, event.clientY);
+    onPointerMove?.(event);
   };
 
   const handlePointerUp: NonNullable<ButtonProps['onPointerUp']> = (event) => {
-    if (showSpotlight) {
+    if (event.buttons === 0) {
       isPressingRef.current = false;
     }
 
@@ -673,54 +456,38 @@ function useButtonSpotlight({
   };
 
   const handlePointerCancel: NonNullable<ButtonProps['onPointerCancel']> = (event) => {
-    if (showSpotlight) {
-      isPressingRef.current = false;
-    }
-
+    isPressingRef.current = false;
     onPointerCancel?.(event);
   };
 
-  const handleFocus: NonNullable<ButtonProps['onFocus']> = (event) => {
-    if (showSpotlight && !isPressingRef.current) {
-      cancelSpotlightCenterAnimation();
-      const rect = event.currentTarget.getBoundingClientRect();
-      setSpotlightPosition(`${rect.width / 2}px`, `${rect.height / 2}px`);
+  const handlePressStart: NonNullable<ButtonProps['onPressStart']> = (event) => {
+    if (canRipple) {
+      const button = buttonRef.current;
+      const width = button?.offsetWidth ?? 0;
+      const height = button?.offsetHeight ?? 0;
+      const pressX = Number.isFinite(event.x) ? event.x : width / 2;
+      const pressY = Number.isFinite(event.y) ? event.y : height / 2;
+
+      isPressingRef.current = true;
+      animatePressRipple(width, height, pressX, pressY);
     }
 
-    onFocus?.(event);
+    onPressStart?.(event);
   };
 
-  const handleBlur: NonNullable<ButtonProps['onBlur']> = (event) => {
-    if (showSpotlight) {
-      isPressingRef.current = false;
-      cancelSpotlightCenterAnimation();
-      setSpotlightPosition(defaultSpotlightPosition.x, defaultSpotlightPosition.y);
-    }
-
-    onBlur?.(event);
-  };
-
-  const spotlightStyle: SpotlightStyle = {
-    '--button-seaglass-radius-x': seaglassMetrics.radiusX,
-    '--button-seaglass-radius-y': seaglassMetrics.radiusY,
-    '--button-spotlight-x': defaultSpotlightPosition.x,
-    '--button-spotlight-y': defaultSpotlightPosition.y,
-    '--button-spotlight-position': `${defaultSpotlightPosition.x} ${defaultSpotlightPosition.y}`,
-    '--button-spotlight-size': seaglassMetrics.spotlightSize,
+  const handlePressEnd: NonNullable<ButtonProps['onPressEnd']> = (event) => {
+    isPressingRef.current = false;
+    onPressEnd?.(event);
   };
 
   return {
     buttonRef,
-    spotlightStyle,
     buttonEventHandlers: {
-      onMouseMove: handleMouseMove,
-      onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave,
-      onPointerDown: handlePointerDown,
+      onPointerMove: handlePointerMove,
       onPointerUp: handlePointerUp,
       onPointerCancel: handlePointerCancel,
-      onFocus: handleFocus,
-      onBlur: handleBlur,
+      onPressStart: handlePressStart,
+      onPressEnd: handlePressEnd,
     },
   };
 }
@@ -732,17 +499,13 @@ export function Button({
   children,
   iconOnly,
   isLoading,
-  seaglass = false,
   isDisabled,
   className,
-  onMouseEnter,
-  onMouseMove,
-  onMouseLeave,
-  onPointerDown,
+  onPointerMove,
   onPointerUp,
   onPointerCancel,
-  onFocus,
-  onBlur,
+  onPressStart,
+  onPressEnd,
   'aria-busy': ariaBusy,
   ...props
 }: ButtonProps) {
@@ -768,24 +531,17 @@ export function Button({
       size,
       iconOnly: isIconOnly,
     }),
-    seaglass
-      ? seaglassButtonVariants({ intent: resolvedIntent, appearance: resolvedAppearance })
-      : undefined,
     isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
     className,
   );
-  const { buttonRef, spotlightStyle, buttonEventHandlers } = useButtonSpotlight({
-    seaglass,
+  const { buttonRef, buttonEventHandlers } = useButtonRipple({
     isDisabled,
     isLoading,
-    onMouseEnter,
-    onMouseMove,
-    onMouseLeave,
-    onPointerDown,
+    onPointerMove,
     onPointerUp,
     onPointerCancel,
-    onFocus,
-    onBlur,
+    onPressStart,
+    onPressEnd,
   });
 
   return (
@@ -795,7 +551,6 @@ export function Button({
       aria-label={isLoadingOnly && !hasButtonAccessibleName ? 'Loading' : props['aria-label']}
       ref={buttonRef}
       isDisabled={isDisabled || isLoading}
-      style={spotlightStyle}
       {...buttonEventHandlers}
       className={resolvedClassName}
     >
