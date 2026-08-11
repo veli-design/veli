@@ -95,7 +95,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Underlined tab navigation built with `react-aria-components`. Supports optional `leading` and `trailing` slots on each item for icons or other content.',
+          'Underlined tab navigation built with `react-aria-components`. Supports `sm`, `md`, and `lg` sizes, plus optional `leading` and `trailing` slots on each item for icons or other content.',
       },
     },
   },
@@ -128,6 +128,55 @@ export const Default: Story = {
           },
         ]}
       />
+    );
+  },
+};
+
+/**
+ * Small, medium, and large tab sizes.
+ */
+export const Sizes: Story = {
+  render: () => {
+    const text = useTabsText();
+    const items = [
+      {
+        id: 'overview',
+        label: text.labels.overview,
+        panel: text.panels.overview,
+      },
+      {
+        id: 'services',
+        label: text.labels.services,
+        panel: text.panels.services,
+      },
+      {
+        id: 'pricing',
+        label: text.labels.pricing,
+        panel: text.panels.pricing,
+      },
+    ] as const;
+
+    return (
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            Small (sm)
+          </span>
+          <Tabs listAriaLabel="Small tabs" size="sm" items={items} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            Medium (md)
+          </span>
+          <Tabs listAriaLabel="Medium tabs" size="md" items={items} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            Large (lg)
+          </span>
+          <Tabs listAriaLabel="Large tabs" size="lg" items={items} />
+        </div>
+      </div>
     );
   },
 };
