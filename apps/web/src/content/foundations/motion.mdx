@@ -1,0 +1,33 @@
+---
+title: Motion
+description: Subtle motion for orientation and feedback, always paired with reduced-motion behavior.
+---
+
+## Explain change
+
+Motion should help people understand what changed, where content came from, or whether an action completed. If an animation does not improve that understanding, remove it.
+
+## Match duration to distance
+
+Use short transitions for local state changes and slightly longer transitions for larger spatial changes. Keep common interactions responsive and consistent across a flow.
+
+- Hover and focus feedback should feel immediate.
+- Expanding content should preserve spatial continuity.
+- Loading indicators should communicate activity without demanding attention.
+
+## Choose restrained easing
+
+Use easing that settles naturally into the destination. Avoid repeated bounce, excessive overshoot, and long decorative sequences in task-focused services.
+
+## Respect reduced motion
+
+Every non-essential animation must have a reduced-motion alternative. Remove transforms and smooth scrolling when `prefers-reduced-motion: reduce` is active while keeping state changes understandable.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .animated-element {
+    animation: none;
+    transition: none;
+  }
+}
+```

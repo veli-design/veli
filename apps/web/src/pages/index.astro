@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
+import VeliLogo from '../components/VeliLogo.astro';
 ---
 
 <Layout
@@ -15,9 +16,8 @@ import ShaderBackground from '../components/ShaderBackground.astro';
       fallbackSrc="/images/veli-home-background.png"
     />
     <div class="home-hero__content">
-      <div class="home-wordmark" aria-label="Veli">
-        <img src="/images/veli-mark.svg" alt="" />
-        <span>Veli</span>
+      <div class="home-wordmark">
+        <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
       </div>
 
       <div class="home-copy">

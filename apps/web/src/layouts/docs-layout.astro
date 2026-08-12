@@ -9,6 +9,7 @@ import {
 } from 'phosphor-react';
 import Layout from './layout.astro';
 import { componentGroups, externalResources, foundations } from '../lib/site';
+import VeliLogo from '../components/VeliLogo.astro';
 
 type Heading = {
   depth: number;
@@ -21,9 +22,10 @@ interface Props {
   description?: string;
   activePath: string;
   headings?: Heading[];
+  fullBleedHeader?: boolean;
 }
 
-const { title, description, activePath, headings = [] } = Astro.props;
+const { title, description, activePath, headings = [], fullBleedHeader = false } = Astro.props;
 
 const resourceIcons = {
   figma: FigmaLogo,
@@ -41,9 +43,8 @@ function isActive(href: string) {
   <div class="docs-workspace">
     <aside class="docs-navigation" aria-label="Documentation navigation">
       <div class="docs-navigation__scroll">
-        <a class="docs-brand" href="/" aria-label="Veli home">
-          <img src="/images/veli-mark.svg" alt="" />
-          <span>Veli</span>
+        <a class="docs-brand" href="/" aria-label="Veli Design home">
+          <VeliLogo class="veli-logo" clipId="veli-logo-desktop" />
         </a>
 
         <nav class="docs-nav" aria-label="Veli documentation">
@@ -115,9 +116,8 @@ function isActive(href: string) {
     </aside>
 
     <header class="docs-mobile-header">
-      <a class="docs-brand" href="/" aria-label="Veli home">
-        <img src="/images/veli-mark.svg" alt="" />
-        <span>Veli</span>
+      <a class="docs-brand" href="/" aria-label="Veli Design home">
+        <VeliLogo class="veli-logo" clipId="veli-logo-mobile" />
       </a>
       <details class="docs-mobile-menu">
         <summary aria-label="Open documentation navigation">
@@ -140,7 +140,7 @@ function isActive(href: string) {
       </details>
     </header>
 
-    <main id="main" class="docs-main">
+    <main id="main" class:list={['docs-main', fullBleedHeader && 'docs-main--full-bleed-header']}>
       <div class="docs-main__inner">
         <slot />
       </div>
