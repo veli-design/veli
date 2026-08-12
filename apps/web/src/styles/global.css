@@ -727,13 +727,17 @@ button {
   border-radius: 6px;
   background: var(--color-slate-1200);
   color: var(--color-slate-100);
-  padding: 18px;
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  tab-size: 2;
 }
 
 .docs-prose pre code {
   background: transparent;
   color: inherit;
   padding: 0;
+  font-size: inherit;
 }
 
 .docs-prose table {
