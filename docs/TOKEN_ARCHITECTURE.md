@@ -218,13 +218,14 @@ Veli keeps motion primitives tokenized before any CSS transition, CSS keyframe, 
 
 Easing values:
 
-| Token         | CSS value                              | Tailwind utility |
-| ------------- | -------------------------------------- | ---------------- |
-| `ease/out`    | `cubic-bezier(0.00, 0.00, 0.20, 1.00)` | `ease-out`       |
-| `ease/in`     | `cubic-bezier(0.40, 0.00, 1.00, 1.00)` | `ease-in`        |
-| `ease/in-out` | `cubic-bezier(0.40, 0.00, 0.20, 1.00)` | `ease-in-out`    |
-| `ease/spring` | `cubic-bezier(0.34, 1.56, 0.64, 1.00)` | `ease-spring`    |
-| `ease/linear` | `linear`                               | `ease-linear`    |
+| Token           | CSS value                              | Tailwind utility |
+| --------------- | -------------------------------------- | ---------------- |
+| `ease/out`      | `cubic-bezier(0.00, 0.00, 0.20, 1.00)` | `ease-out`       |
+| `ease/out-quad` | `cubic-bezier(0.25, 0.46, 0.45, 0.94)` | `ease-out-quad`  |
+| `ease/in`       | `cubic-bezier(0.40, 0.00, 1.00, 1.00)` | `ease-in`        |
+| `ease/in-out`   | `cubic-bezier(0.40, 0.00, 0.20, 1.00)` | `ease-in-out`    |
+| `ease/spring`   | `cubic-bezier(0.34, 1.56, 0.64, 1.00)` | `ease-spring`    |
+| `ease/linear`   | `linear`                               | `ease-linear`    |
 
 Duration values:
 
