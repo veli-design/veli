@@ -986,6 +986,7 @@ assertTypographyOutput(tailwindTheme);
 function assertMotionPrimitiveOutput(css) {
   const requiredSnippets = [
     '--ease-out: cubic-bezier(0, 0, 0.2, 1);',
+    '--ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);',
     '--ease-in: cubic-bezier(0.4, 0, 1, 1);',
     '--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);',
     '--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);',
