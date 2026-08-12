@@ -33,12 +33,21 @@ const items = [
 
 Each item also accepts `leading` and `trailing` nodes (for icons or badges) and `isDisabled`. At least two items are required.
 
+## Sizes
+
+Tabs support `sm`, `md`, and `lg`. The default is `sm`.
+
+```tsx
+<Tabs size="md" listAriaLabel="Service sections" items={items} />
+```
+
 ## Props
 
 | Prop                                                   | Type                      | Default | Description                                                     |
 | :----------------------------------------------------- | :------------------------ | :------ | :-------------------------------------------------------------- |
 | `items`                                                | `[TabsItem, TabsItem, …]` | -       | Tabs: `{ id, label, panel, leading?, trailing?, isDisabled? }`. |
 | `overflowItems`                                        | `TabsItem[]`              | -       | Additional tabs collapsed into an overflow menu.                |
+| `size`                                                 | `'sm' \| 'md' \| 'lg'`    | `'sm'`  | Tab padding and label typography scale.                         |
 | `listAriaLabel`                                        | `string`                  | -       | Accessible label for the tab list.                              |
 | `selectedKey`                                          | `Key`                     | -       | Controlled selected tab.                                        |
 | `defaultSelectedKey`                                   | `Key`                     | -       | Initially selected tab (uncontrolled).                          |

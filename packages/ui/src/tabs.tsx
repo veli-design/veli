@@ -17,6 +17,8 @@ import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 import { useVeliLanguage } from './provider';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 
+export type TabsSize = 'sm' | 'md' | 'lg';
+
 export type TabsItem = {
   id: string | number;
   label: React.ReactNode;
@@ -34,6 +36,7 @@ export type TabsOverflowItem = Pick<
 export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'> {
   items: readonly [TabsItem, TabsItem, ...TabsItem[]];
   overflowItems?: readonly TabsItem[];
+  size?: TabsSize;
   listAriaLabel?: string;
   className?: string;
   tabListClassName?: string;
@@ -45,22 +48,64 @@ const tabSelectionIndicatorClassName =
   'absolute -bottom-1 left-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
 const tabBaseClassName =
-  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 whitespace-nowrap text-base-default antialiased transition-colors duration-normal ease-in-out outline-none [&_svg]:shrink-0 [&_svg]:text-icon-base';
+  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg whitespace-nowrap text-base-default antialiased transition-colors duration-normal ease-in-out outline-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-icon-base';
+
+const tabSizeClassName: Record<TabsSize, string> = {
+  sm: 'px-3.5 py-2',
+  md: 'px-4 py-2.5',
+  lg: 'px-4 py-2.5',
+};
+
+const tabLabelTypeClassName: Record<
+  TabsSize,
+  { regular: string; medium: string; reserve: string }
+> = {
+  sm: {
+    regular: 'type-body-sm-regular',
+    medium: 'type-body-sm-medium',
+    reserve: 'type-body-sm-medium',
+  },
+  md: {
+    regular: 'type-body-md-regular',
+    medium: 'type-body-md-medium',
+    reserve: 'type-body-md-medium',
+  },
+  lg: {
+    regular: 'type-body-lg-regular',
+    medium: 'type-body-lg-medium',
+    reserve: 'type-body-lg-medium',
+  },
+};
 
 const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
-const tabLabelGridClassName = 'inline-grid [&>*]:col-start-1 [&>*]:row-start-1';
-const tabLabelRegularClassName = `inline-block type-body-sm-regular ${webkitDhivehiTextBaselineClassName}`;
-const tabLabelSelectedClassName = `inline-block type-body-sm-medium text-base-strong ${webkitDhivehiTextBaselineClassName}`;
+const tabLabelGridClassName =
+  'inline-grid justify-items-center [&>*]:col-start-1 [&>*]:row-start-1';
 
-function TabLabel({ children, isSelected }: { children: React.ReactNode; isSelected: boolean }) {
+function TabLabel({
+  children,
+  isSelected,
+  size,
+}: {
+  children: React.ReactNode;
+  isSelected: boolean;
+  size: TabsSize;
+}) {
+  const type = tabLabelTypeClassName[size];
+
   return (
     <span className={tabLabelGridClassName}>
-      <span aria-hidden="true" className="invisible inline-block type-body-sm-medium">
+      <span aria-hidden="true" className={twMerge('invisible inline-block', type.reserve)}>
         {children}
       </span>
-      <span className={isSelected ? tabLabelSelectedClassName : tabLabelRegularClassName}>
+      <span
+        className={twMerge(
+          'inline-block',
+          webkitDhivehiTextBaselineClassName,
+          isSelected ? `${type.medium} text-base-strong` : type.regular,
+        )}
+      >
         {children}
       </span>
     </span>
@@ -223,6 +268,7 @@ function TabsBarIndicator({
 function getTabClassName(
   isSelected: boolean,
   options?: {
+    size?: TabsSize;
     isFocusVisible?: boolean;
     isHovered?: boolean;
     isPressed?: boolean;
@@ -230,8 +276,11 @@ function getTabClassName(
     tabClassName?: string;
   },
 ) {
+  const size = options?.size ?? 'sm';
+
   return twMerge(
     tabBaseClassName,
+    tabSizeClassName[size],
     options?.isDisabled &&
       'pointer-events-none cursor-not-allowed text-disabled [&_svg]:text-icon-disabled',
     options?.isHovered && 'bg-tabs-hover',
@@ -246,6 +295,7 @@ export interface TabsOverflowProps {
   items: readonly TabsOverflowItem[];
   selectedKey?: string | number | null;
   onSelectTab?: (key: string | number) => void;
+  size?: TabsSize;
   label?: React.ReactNode;
   menuLabel?: string;
   className?: string;
@@ -258,6 +308,7 @@ export function TabsOverflow({
   items,
   selectedKey: selectedKeyProp,
   onSelectTab,
+  size = 'sm',
   label,
   menuLabel = 'More tabs',
   className,
@@ -294,6 +345,7 @@ export function TabsOverflow({
           {...{ [tabsOverflowTriggerAttribute]: '' }}
           className={(buttonState) =>
             getTabClassName(isSelected, {
+              size,
               isFocusVisible: buttonState.isFocusVisible,
               isHovered: buttonState.isHovered,
               isPressed: buttonState.isPressed,
@@ -304,7 +356,9 @@ export function TabsOverflow({
           {isSelected && selectedOverflowItem.leading ? (
             <span className="shrink-0">{selectedOverflowItem.leading}</span>
           ) : null}
-          <TabLabel isSelected={isSelected}>{triggerLabel}</TabLabel>
+          <TabLabel isSelected={isSelected} size={size}>
+            {triggerLabel}
+          </TabLabel>
           <CaretDown aria-hidden="true" size={16} />
         </AriaButton>
         <MenuPopover className={popoverClassName}>
@@ -323,7 +377,7 @@ export function TabsOverflow({
                 key={item.id}
                 id={item.id}
                 isDisabled={item.isDisabled}
-                size="sm"
+                size={size}
                 className="cursor-pointer"
                 startIcon={item.leading}
                 endIcon={item.trailing}
@@ -340,11 +394,13 @@ export function TabsOverflow({
 
 function TabItem({
   item,
+  size,
   tabClassName,
   showSelectionIndicator = true,
   onTabElementChange,
 }: {
   item: TabsItem | TabsOverflowItem;
+  size: TabsSize;
   tabClassName?: string;
   showSelectionIndicator?: boolean;
   onTabElementChange?: (id: string | number, element: HTMLElement | null) => void;
@@ -363,6 +419,7 @@ function TabItem({
       isDisabled={item.isDisabled}
       className={(state) =>
         getTabClassName(state.isSelected, {
+          size,
           isFocusVisible: state.isFocusVisible,
           isHovered: state.isHovered,
           isPressed: state.isPressed,
@@ -374,7 +431,9 @@ function TabItem({
       {(state) => (
         <>
           {item.leading ? <span className="shrink-0">{item.leading}</span> : null}
-          <TabLabel isSelected={state.isSelected}>{item.label}</TabLabel>
+          <TabLabel isSelected={state.isSelected} size={size}>
+            {item.label}
+          </TabLabel>
           {item.trailing ? <span className="shrink-0">{item.trailing}</span> : null}
           {showSelectionIndicator ? (
             <SelectionIndicator className={tabSelectionIndicatorClassName} />
@@ -398,6 +457,7 @@ function useLazyRef<T>(createValue: () => T): React.MutableRefObject<T> {
 export function Tabs({
   items,
   overflowItems,
+  size = 'sm',
   listAriaLabel = 'Tabs',
   className,
   tabListClassName,
@@ -458,6 +518,7 @@ export function Tabs({
         <TabItem
           key={item.id}
           item={item}
+          size={size}
           tabClassName={tabClassName}
           showSelectionIndicator={!hasOverflow}
           onTabElementChange={handleTabElementChange}
@@ -503,7 +564,7 @@ export function Tabs({
           className={twMerge('flex border-b-2 border-tabs-border-inactive', tabListClassName)}
         >
           {items.map((item) => (
-            <TabItem key={item.id} item={item} tabClassName={tabClassName} />
+            <TabItem key={item.id} item={item} size={size} tabClassName={tabClassName} />
           ))}
         </AriaTabList>
         {panels}
@@ -527,6 +588,7 @@ export function Tabs({
           items={overflowItems}
           selectedKey={currentSelectedKey}
           onSelectTab={handleSelectionChange}
+          size={size}
           triggerRef={handleOverflowTriggerChange}
         />
         <TabsBarIndicator
