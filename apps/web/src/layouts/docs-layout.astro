@@ -9,6 +9,7 @@ import {
 } from 'phosphor-react';
 import Layout from './layout.astro';
 import { componentGroups, externalResources, foundations } from '../lib/site';
+import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
 import VeliLogo from '../components/VeliLogo.astro';
 
 type Heading = {
@@ -219,4 +220,5 @@ function isActive(href: string) {
       });
     })();
   </script>
+  <DocsCodeBlocks />
 </Layout>
