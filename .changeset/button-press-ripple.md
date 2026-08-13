@@ -1,5 +1,5 @@
 ---
-'@tradenetcorp/veli-ui': major
+'@tradenetcorp/veli-ui': minor
 ---
 
 ### Removed

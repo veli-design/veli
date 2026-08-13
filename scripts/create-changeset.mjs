@@ -8,7 +8,7 @@ import path from 'node:path';
 import { cancel, confirm, isCancel, multiselect, outro, select, text } from '@clack/prompts';
 import { getPackages } from '@manypkg/get-packages';
 
-import { CHANGELOG_CATEGORIES } from './changeset-format.mjs';
+import { CHANGELOG_CATEGORIES, isPreStableVersion } from './changeset-format.mjs';
 
 function stopIfCancelled(value) {
   if (isCancel(value)) {
@@ -27,6 +27,9 @@ async function createChangeset() {
     .filter(({ packageJson }) => packageJson.name && !packageJson.private)
     .filter(({ packageJson }) => !ignored.has(packageJson.name))
     .sort((a, b) => a.packageJson.name.localeCompare(b.packageJson.name));
+  const publishablePackagesByName = new Map(
+    publishablePackages.map((pkg) => [pkg.packageJson.name, pkg]),
+  );
 
   const selectedPackages = stopIfCancelled(
     await multiselect({
@@ -41,13 +44,21 @@ async function createChangeset() {
 
   const releases = [];
   for (const packageName of selectedPackages) {
+    const currentVersion = publishablePackagesByName.get(packageName).packageJson.version;
+    const preStable = isPreStableVersion(currentVersion);
     const type = stopIfCancelled(
       await select({
-        message: `What release type does ${packageName} need?`,
+        message: `What release type does ${packageName} (${currentVersion}) need?`,
         options: [
           { label: 'Patch', value: 'patch', hint: 'backwards-compatible fix' },
-          { label: 'Minor', value: 'minor', hint: 'backwards-compatible feature' },
-          { label: 'Major', value: 'major', hint: 'breaking change' },
+          {
+            label: 'Minor',
+            value: 'minor',
+            hint: preStable
+              ? 'feature or breaking change before 1.0.0'
+              : 'backwards-compatible feature',
+          },
+          ...(!preStable ? [{ label: 'Major', value: 'major', hint: 'breaking change' }] : []),
         ],
       }),
     );
