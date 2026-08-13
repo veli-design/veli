@@ -120,7 +120,7 @@ for the category and SemVer rules.
 - Add success-state color tokens.
 ```
 
-**Major removal:**
+**Major removal for an already stable package:**
 
 ```markdown
 ---
@@ -131,6 +131,10 @@ for the category and SemVer rules.
 
 - Remove deprecated token values. Update consumers to the documented replacements.
 ```
+
+Packages on the pre-stable `0.x` line use `minor` for breaking changes. The guided creator and
+CI validation reject a `major` changeset for those packages because it would promote them to
+`1.0.0`. That promotion is reserved for an intentional stable-release change.
 
 **Multiple packages:**
 

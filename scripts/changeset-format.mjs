@@ -14,6 +14,24 @@ export const CHANGELOG_CATEGORIES = [
 
 const categorySet = new Set(CHANGELOG_CATEGORIES);
 
+export function isPreStableVersion(version) {
+  const major = /^(\d+)\./.exec(version)?.[1];
+  return major === '0';
+}
+
+export function validateReleasePolicy(changeset, packageVersions) {
+  for (const release of changeset.releases) {
+    const currentVersion = packageVersions.get(release.name);
+
+    if (release.type === 'major' && currentVersion && isPreStableVersion(currentVersion)) {
+      throw new Error(
+        `${release.name} is currently ${currentVersion}; use a minor bump for breaking changes before 1.0.0. ` +
+          'A 1.0.0 promotion requires an intentional update to the pre-stable release policy.',
+      );
+    }
+  }
+}
+
 export function parseKeepAChangelogSummary(summary, filename = 'changeset') {
   const lines = summary.trim().split(/\r?\n/);
   const sections = [];

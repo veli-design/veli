@@ -48,8 +48,15 @@ The changelog category describes the kind of user-visible change; the Changeset
 bump describes its SemVer impact.
 
 - Use `patch` for backwards-compatible fixes and small compatible corrections.
-- Use `minor` for backwards-compatible additions and meaningful compatible changes.
-- Use `major` when consumers must change code, imports, configuration, tokens, or behaviour to upgrade safely.
+- Use `minor` for backwards-compatible additions and meaningful compatible changes. While a
+  package is below `1.0.0`, also use `minor` for breaking changes so the package remains on the
+  explicitly pre-stable `0.x` line.
+- Use `major` when a package is already stable and consumers must change code, imports,
+  configuration, tokens, or behaviour to upgrade safely.
+
+The changeset tooling prevents `major` bumps for `0.x` packages because that would promote the
+package to the stable `1.0.0` release. Preparing `1.0.0` requires an intentional, separately
+reviewed update to this policy and its validation guardrail.
 
 Documentation-only, tooling-only, and internal refactors that do not change a
 published package do not need a changeset. An empty Changeset is allowed only
