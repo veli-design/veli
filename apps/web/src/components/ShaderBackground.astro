@@ -2,11 +2,11 @@
 /**
  * Animated WebGL shader background with a static-image fallback.
  *
- * Renders a `<canvas>` driven by a shader from the registry, layered over the
- * provided fallback image. The image is what shows for users without
+ * Renders a `<canvas>` driven by a shader from the registry, layered over a
+ * CSS or image fallback. The fallback is what shows for users without
  * JavaScript or WebGL; once the renderer starts successfully the canvas fades
  * in over it. Pointer movement anywhere in the parent element drives the
- * shader's interactive layers (e.g. Liquify).
+ * shader's interactive layers.
  *
  * Swap backgrounds by passing a different registered `shader` id.
  */
@@ -15,8 +15,8 @@ import { DEFAULT_SHADER } from '../shaders/registry';
 interface Props {
   /** Registered shader id (see shaders/registry.ts). */
   shader?: string;
-  /** Static image shown before/instead of the canvas. */
-  fallbackSrc: string;
+  /** Optional static image shown before/instead of the canvas. */
+  fallbackSrc?: string;
   class?: string;
 }
 
@@ -25,7 +25,13 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 
 <div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
   <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
-  <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+  {
+    fallbackSrc ? (
+      <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+    ) : (
+      <div class="shader-bg__fallback" aria-hidden="true" />
+    )
+  }
 </div>
 
 <script>

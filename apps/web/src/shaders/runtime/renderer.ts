@@ -13,7 +13,10 @@ import type { ParamSpec, ShaderDefinition } from '../types';
  *   uniform float u_aspect;           // resolution.x / resolution.y
  *   uniform vec2  u_pointer;          // smoothed pointer, uv (0..1), -1 idle
  *   uniform vec2  u_pointerDrag;      // trailing-lag vector, uv (motion dir, bounded)
+ *   uniform float u_pointerPresence;  // eased hover presence (0..1)
  *   uniform float u_quality;          // 1.0 full, <1.0 reduced
+ *   uniform float u_theme;            // 0.0 light, 1.0 dark
+ *   uniform float u_motion;           // 0.0 reduced motion, 1.0 animated
  *
  * Performance & resilience:
  *   - caps device pixel ratio (lower on coarse-pointer / low-core devices),
@@ -149,7 +152,10 @@ export function createRenderer(
   const uAspect = gl.getUniformLocation(program, 'u_aspect');
   const uPointer = gl.getUniformLocation(program, 'u_pointer');
   const uPointerDrag = gl.getUniformLocation(program, 'u_pointerDrag');
+  const uPointerPresence = gl.getUniformLocation(program, 'u_pointerPresence');
   const uQuality = gl.getUniformLocation(program, 'u_quality');
+  const uTheme = gl.getUniformLocation(program, 'u_theme');
+  const uMotion = gl.getUniformLocation(program, 'u_motion');
 
   // Param uniforms — uploaded once (they're static defaults). Re-run this loop
   // if/when live tweaking is added.
@@ -167,6 +173,16 @@ export function createRenderer(
   const quality = coarse || lowCore ? 0.6 : 1.0;
   const maxDpr = options.maxPixelRatio ?? (coarse || lowCore ? 1.0 : 1.5);
   if (uQuality) gl.uniform1f(uQuality, quality);
+  if (uMotion) gl.uniform1f(uMotion, reducedMotion ? 0 : 1);
+
+  // --- Theme ---------------------------------------------------------------
+  // Layout resolves light/dark/system onto `data-theme`. Keep that state in a
+  // built-in uniform so shader definitions can use design-token palettes for
+  // both modes and transition without rebuilding the WebGL program.
+  const readTheme = () => (document.documentElement.dataset.theme === 'dark' ? 1 : 0);
+  let themeTarget = readTheme();
+  let themeCurrent = themeTarget;
+  if (uTheme) gl.uniform1f(uTheme, themeCurrent);
 
   // --- Resize ---------------------------------------------------------------
   let width = 0;
@@ -209,19 +225,26 @@ export function createRenderer(
   const velocity = { x: 0, y: 0 }; // momentum (carries inertia)
   const flow = { x: 0, y: 0 }; // applied displacement vector (uploaded as u_pointerDrag)
   let active = false;
+  let pointerPresenceTarget = 0;
+  let pointerPresence = 0;
 
   function onPointerMove(e: PointerEvent) {
     const rect = target.getBoundingClientRect();
     pointer.x = (e.clientX - rect.left) / rect.width;
     pointer.y = 1 - (e.clientY - rect.top) / rect.height; // flip to GL space
+    pointerPresenceTarget = 1;
     if (!active) {
       center.x = prevCenter.x = pointer.x;
       center.y = prevCenter.y = pointer.y;
       active = true;
     }
   }
+  function onPointerLeave() {
+    pointerPresenceTarget = 0;
+  }
   if (!reducedMotion) {
     target.addEventListener('pointermove', onPointerMove, { passive: true });
+    target.addEventListener('pointerleave', onPointerLeave, { passive: true });
   }
 
   // --- Render loop ----------------------------------------------------------
@@ -287,8 +310,18 @@ export function createRenderer(
     }
 
     if (uTime) gl.uniform1f(uTime, (now - start) / 1000);
+    if (uTheme) {
+      const tk = 1 - Math.exp(-7 * dt);
+      themeCurrent += (themeTarget - themeCurrent) * tk;
+      gl.uniform1f(uTheme, themeCurrent);
+    }
     if (uPointer) gl.uniform2f(uPointer, active ? center.x : -1, active ? center.y : -1);
     if (uPointerDrag) gl.uniform2f(uPointerDrag, flow.x, flow.y);
+    if (uPointerPresence) {
+      const pk = 1 - Math.exp(-8 * dt);
+      pointerPresence += (pointerPresenceTarget - pointerPresence) * pk;
+      gl.uniform1f(uPointerPresence, pointerPresence);
+    }
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     raf = requestAnimationFrame(frame);
@@ -311,14 +344,31 @@ export function createRenderer(
     if (uTime) gl.uniform1f(uTime, 0);
     if (uPointer) gl.uniform2f(uPointer, -1, -1);
     if (uPointerDrag) gl.uniform2f(uPointerDrag, 0, 0);
+    if (uPointerPresence) gl.uniform1f(uPointerPresence, 0);
+    if (uTheme) gl.uniform1f(uTheme, themeCurrent);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
+
+  const themeObserver = uTheme
+    ? new MutationObserver(() => {
+        themeTarget = readTheme();
+        if (reducedMotion) {
+          themeCurrent = themeTarget;
+          renderOnce();
+        }
+      })
+    : null;
+  themeObserver?.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme'],
+  });
 
   // Reduced motion: one static frame, no loop, no listeners.
   if (reducedMotion) {
     renderOnce();
     return {
       destroy() {
+        themeObserver?.disconnect();
         gl.deleteProgram(program);
         gl.deleteShader(vert);
         gl.deleteShader(frag);
@@ -358,6 +408,8 @@ export function createRenderer(
       document.removeEventListener('visibilitychange', onVisibility);
       canvas.removeEventListener('webglcontextlost', onContextLost);
       target.removeEventListener('pointermove', onPointerMove);
+      target.removeEventListener('pointerleave', onPointerLeave);
+      themeObserver?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vert);
       gl.deleteShader(frag);

@@ -1,5 +1,6 @@
 import type { ShaderDefinition } from './types';
 import { veliAurora } from './definitions/veli-aurora';
+import { veliCymatics } from './definitions/veli-cymatics';
 import { veliDunes } from './definitions/veli-dunes';
 
 /**
@@ -12,12 +13,13 @@ import { veliDunes } from './definitions/veli-dunes';
  */
 export const shaderRegistry = {
   [veliAurora.id]: veliAurora,
+  [veliCymatics.id]: veliCymatics,
   [veliDunes.id]: veliDunes,
 } satisfies Record<string, ShaderDefinition>;
 
 export type ShaderId = keyof typeof shaderRegistry;
 
-export const DEFAULT_SHADER: ShaderId = veliAurora.id;
+export const DEFAULT_SHADER: ShaderId = veliCymatics.id;
 
 export function getShader(id: string): ShaderDefinition | undefined {
   return shaderRegistry[id as ShaderId];

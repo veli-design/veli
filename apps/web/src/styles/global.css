@@ -104,6 +104,20 @@ button {
   opacity: 1;
   transition: opacity 600ms ease;
   animation: home-background-breathe 18s ease-in-out infinite alternate;
+  background-color: var(--color-bg-surface-base);
+  background-image:
+    radial-gradient(
+      ellipse 46% 58% at 50% 50%,
+      color-mix(in srgb, var(--color-bg-surface-base) 94%, transparent),
+      transparent 78%
+    ),
+    repeating-radial-gradient(
+      ellipse at 82% 18%,
+      transparent 0 18px,
+      color-mix(in srgb, var(--color-primary-800) 7%, transparent) 19px 20px,
+      transparent 21px 39px
+    ),
+    linear-gradient(145deg, var(--color-neutral-100), var(--color-neutral-300));
 }
 
 .shader-bg[data-shader-active] .shader-bg__canvas {
@@ -112,6 +126,18 @@ button {
 
 .shader-bg[data-shader-active] .shader-bg__fallback {
   opacity: 0;
+}
+
+.home-hero__background::after {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 42% 58% at 50% 51%,
+    color-mix(in srgb, var(--color-bg-surface-base) 36%, transparent),
+    transparent 82%
+  );
+  content: '';
+  pointer-events: none;
 }
 
 .home-hero__content {
@@ -167,7 +193,8 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: rgba(12, 26, 69, 0.07);
+  border: 1px solid color-mix(in srgb, var(--color-border-primary) 72%, transparent);
+  background: color-mix(in srgb, var(--color-bg-primary-subtle-default) 72%, transparent);
   color: inherit;
   padding: 16px 24px;
   font-size: 20px;
@@ -180,12 +207,12 @@ button {
 }
 
 .home-cta:hover {
-  background: rgba(12, 26, 69, 0.13);
+  background: var(--color-bg-primary-subtle-hover);
   transform: translateY(-2px);
 }
 
 .home-cta:focus-visible {
-  outline: 3px solid rgba(0, 59, 130, 0.7);
+  outline: 3px solid var(--color-border-focus);
   outline-offset: 3px;
 }
 
