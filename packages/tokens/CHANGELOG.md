@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.6.0
+
+_Released 2026-08-13._
+
+### Added
+
+- Add an `accent` Button intent (fill only) backed by new `button-accent` and `text-*-on-light` color tokens.
+- Add an `ease-out-quad` motion easing token (`cubic-bezier(0.25, 0.46, 0.45, 0.94)`).
+- Add a `radius.4xl` token (32px) for larger corner radii such as Modal.
+
+### Changed
+
+- Update Modal corner radius to `4xl` (32px) and bottom padding from 16px to 24px to match the design system.
+
+### Fixed
+
+- Stop forwarding open-state props to React Aria when Modal is used inside `Modal.Trigger`, which removes the build warning to place `onOpenChange` on the trigger.
+
 ## 0.5.1
 
 _Released 2026-07-29._

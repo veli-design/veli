@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.9.0
+
+_Released 2026-08-13._
+
+### Added
+
+- Add an `accent` Button intent (fill only) backed by new `button-accent` and `text-*-on-light` color tokens.
+- Add a press ripple on fill, transparent, and ghost Buttons with intent-specific light and dark overlay colors. Buttons scale to 1.045× while pressed.
+- Add a `radius.4xl` token (32px) for larger corner radii such as Modal.
+- Add `sm`, `md`, and `lg` size variants to `Tabs` and `TabsOverflow`, scaling padding and label typography to match the design system.
+
+### Changed
+
+- Update Modal corner radius to `4xl` (32px) and bottom padding from 16px to 24px to match the design system.
+
+### Removed
+
+- Remove the experimental `seaglass` Button prop and related spotlight styling.
+
+### Fixed
+
+- Stop forwarding open-state props to React Aria when Modal is used inside `Modal.Trigger`, which removes the build warning to place `onOpenChange` on the trigger.
+
 ## 0.8.5
 
 _Released 2026-08-05._
