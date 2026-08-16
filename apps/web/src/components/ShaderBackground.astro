@@ -1,24 +1,19 @@
 ---
-/** Animated WebGL background with an exact embedded renderer for Stipple BG. */
-import { DEFAULT_SHADER } from '../shaders/registry';
-
+/** The designer's exact Stipple BG renderer, hosted as the homepage background. */
 interface Props {
-  shader?: string;
   fallbackSrc?: string;
   class?: string;
 }
 
-const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.props;
+const { fallbackSrc, class: className = '' } = Astro.props;
 ---
 
-<div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
-  <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
+<div class:list={['shader-bg', className]} data-stipple-bg data-shader="veli-gradient-stipple">
   <iframe
     class="shader-bg__iframe"
     data-gradient-stipple-frame
-    title="Veli Stipple BG"
-    allow="clipboard-read; clipboard-write"
-    hidden></iframe>
+    src="/gradient-stipple.html?embedded=1"
+    title="Veli Stipple BG"></iframe>
   {
     fallbackSrc ? (
       <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
@@ -29,53 +24,20 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 </div>
 
 <script>
-  import { createRenderer } from '../shaders/runtime/renderer';
-  import { DEFAULT_SHADER, getShader, PD784_SHADER_IDS } from '../shaders/registry';
-  import type { ParamValue, ShaderDefinition } from '../shaders/types';
-  import type { ShaderRenderer } from '../shaders/runtime/renderer';
-
   type ValueFolder = Record<string, unknown>;
-  type DialValues = {
-    implementation?: string;
-    originalStipple?: ValueFolder;
-    veliCymatics?: ValueFolder;
-    shoreCymatics?: ValueFolder;
-  };
-  const query = new URLSearchParams(window.location.search);
-  const shaderOverride = query.get('shader');
-  const tunableShaderIds = new Set<string>(PD784_SHADER_IDS);
-
-  function copyValue(value: ParamValue): ParamValue {
-    return Array.isArray(value) ? ([...value] as ParamValue) : value;
-  }
-
-  function folderParams(folder: ValueFolder, definition: ShaderDefinition) {
-    const values: Record<string, ParamValue> = {};
-    for (const [name, spec] of Object.entries(definition.params)) {
-      const value = folder?.[name];
-      values[name] =
-        spec.type === 'vec2' || spec.type === 'vec3'
-          ? (Object.values(value ?? {}) as ParamValue)
-          : ((value ?? spec.value) as ParamValue);
-    }
-    return values;
-  }
+  type DialValues = { originalStipple?: ValueFolder };
 
   function exactPreset(values: DialValues) {
     const exact = values.originalStipple ?? {};
-    const sceneTiming = (exact.sceneTiming ?? {}) as ValueFolder;
-    const motion = (exact.motion ?? {}) as ValueFolder;
-    const lightDance = (exact.lightDance ?? {}) as ValueFolder;
-    const stipple = (exact.stipple ?? {}) as ValueFolder;
     return {
       version: 1,
       shader: 'veli-gradient-stipple',
       scene: Number(exact.scene ?? 0),
       controls: {
-        ...sceneTiming,
-        ...motion,
-        ...lightDance,
-        ...stipple,
+        ...((exact.sceneTiming ?? {}) as ValueFolder),
+        ...((exact.motion ?? {}) as ValueFolder),
+        ...((exact.lightDance ?? {}) as ValueFolder),
+        ...((exact.stipple ?? {}) as ValueFolder),
       },
       sceneAdjustments: ['wave', 'dune', 'shore'].map(
         (scene) => (exact[scene] as ValueFolder | undefined) ?? {},
@@ -83,111 +45,38 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
     };
   }
 
-  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
-    const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
+  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-stipple-bg]')) {
     const frame = wrapper.querySelector<HTMLIFrameElement>('[data-gradient-stipple-frame]');
-    if (!canvas || !frame) continue;
-    const activeCanvas = canvas;
+    if (!frame) continue;
     const stippleFrame = frame;
-
-    let renderer: ShaderRenderer | null = null;
-    let activeDefinition: ShaderDefinition | null = null;
     let latestDialValues: DialValues | null = null;
-    const valuesByShader = new Map<string, Record<string, ParamValue>>();
 
-    function valuesFor(definition: ShaderDefinition): Record<string, ParamValue> {
-      let values = valuesByShader.get(definition.id);
-      if (!values) {
-        values = Object.fromEntries(
-          Object.entries(definition.params).map(([name, spec]) => [name, copyValue(spec.value)]),
-        );
-        valuesByShader.set(definition.id, values);
-      }
-      return values;
-    }
-
-    function applyNativeValues() {
-      if (!renderer || !activeDefinition || !latestDialValues) return;
-      const folder =
-        activeDefinition.id === 'veli-cymatics'
-          ? latestDialValues.veliCymatics
-          : latestDialValues.shoreCymatics;
-      const params = folderParams(folder ?? {}, activeDefinition);
-      valuesByShader.set(activeDefinition.id, params);
-      for (const [name, value] of Object.entries(params)) renderer.setParam(name, value);
-    }
-
-    function postExact(message: unknown) {
+    function post(message: unknown) {
       stippleFrame.contentWindow?.postMessage(message, window.location.origin);
     }
 
-    function activateShader(id: string): boolean {
-      const definition = getShader(id);
-      if (!definition || !tunableShaderIds.has(id)) return false;
-
-      renderer?.destroy();
-      renderer = null;
-      activeDefinition = definition;
-      wrapper.dataset.shader = id;
-      delete wrapper.dataset.shaderActive;
-
-      if (id === 'veli-gradient-stipple') {
-        activeCanvas.hidden = true;
-        stippleFrame.hidden = false;
-        if (!stippleFrame.src || stippleFrame.src === 'about:blank') {
-          const url = new URL('/gradient-stipple.html', window.location.origin);
-          url.searchParams.set('embedded', '1');
-          stippleFrame.src = url.toString();
-        }
-        wrapper.dataset.shaderActive = 'true';
-        return true;
-      }
-
-      activeCanvas.hidden = false;
-      stippleFrame.hidden = true;
-      stippleFrame.src = 'about:blank';
-      renderer = createRenderer(activeCanvas, definition, {
-        pointerTarget: wrapper.parentElement ?? wrapper,
-        onContextLost: () => delete wrapper.dataset.shaderActive,
-      });
-      if (!renderer) return false;
-
-      const cached = valuesFor(definition);
-      for (const [name, value] of Object.entries(cached)) renderer.setParam(name, value);
-      applyNativeValues();
-      wrapper.dataset.shaderActive = 'true';
-      return true;
-    }
-
-    function updateUrl(id: string) {
-      const nextUrl = new URL(window.location.href);
-      nextUrl.searchParams.set('shader', id);
-      nextUrl.searchParams.delete('shaderControls');
-      window.history.replaceState({}, '', nextUrl);
-    }
-
-    function applyExactChanges(changedPaths: string[]) {
-      if (!latestDialValues || activeDefinition?.id !== 'veli-gradient-stipple') return;
+    function applyChanges(changedPaths: string[]) {
+      if (!latestDialValues) return;
       const exact = latestDialValues.originalStipple ?? {};
       if (changedPaths.length !== 1) {
-        postExact({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+        post({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
         return;
       }
       const path = changedPaths[0];
       const parts = path.split('.');
       if (path === 'originalStipple.scene') {
-        postExact({ type: 'veli:stipple:set-scene', scene: Number(exact.scene) });
+        post({ type: 'veli:stipple:set-scene', scene: Number(exact.scene) });
       } else if (parts[0] === 'originalStipple' && parts.length === 3) {
         const [, group, key] = parts;
         if (['wave', 'dune', 'shore'].includes(group)) {
-          postExact({
+          post({
             type: 'veli:stipple:set-adjustment',
             scene: ['wave', 'dune', 'shore'].indexOf(group),
             key,
             value: (exact[group] as ValueFolder | undefined)?.[key],
           });
         } else {
-          postExact({
+          post({
             type: 'veli:stipple:set-control',
             key,
             value: (exact[group] as ValueFolder | undefined)?.[key],
@@ -196,10 +85,6 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
       }
     }
 
-    const configuredId = wrapper.dataset.shader ?? String(DEFAULT_SHADER);
-    const initialId = shaderOverride && getShader(shaderOverride) ? shaderOverride : configuredId;
-    activateShader(initialId);
-
     const onDialChange = (event: Event) => {
       const detail = (event as CustomEvent).detail as {
         values?: DialValues;
@@ -207,13 +92,7 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
       };
       if (!detail?.values) return;
       latestDialValues = detail.values;
-      const requested = String(detail.values.implementation ?? DEFAULT_SHADER);
-      const changedPaths = detail.changedPaths ?? [];
-      if (requested !== activeDefinition?.id) {
-        if (activateShader(requested)) updateUrl(requested);
-      }
-      if (requested === 'veli-gradient-stipple') applyExactChanges(changedPaths);
-      else applyNativeValues();
+      applyChanges(detail.changedPaths ?? []);
     };
 
     const onFrameMessage = (event: MessageEvent) => {
@@ -223,18 +102,18 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
         event.data?.type !== 'veli:stipple:ready'
       )
         return;
+      wrapper.dataset.shaderActive = 'true';
       if (latestDialValues) {
-        postExact({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+        post({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
       }
     };
 
-    window.addEventListener('veli:shader-dial-change', onDialChange);
+    window.addEventListener('veli:stipple-dial-change', onDialChange);
     window.addEventListener('message', onFrameMessage);
     document.addEventListener(
       'astro:before-swap',
       () => {
-        renderer?.destroy();
-        window.removeEventListener('veli:shader-dial-change', onDialChange);
+        window.removeEventListener('veli:stipple-dial-change', onDialChange);
         window.removeEventListener('message', onFrameMessage);
       },
       { once: true },
@@ -250,9 +129,5 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
     height: 100%;
     border: 0;
     background: #050a10;
-  }
-
-  .shader-bg__iframe[hidden] {
-    display: none;
   }
 </style>

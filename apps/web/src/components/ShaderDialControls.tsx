@@ -1,13 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDialKitController } from 'dialkit';
 import type { DialConfig } from 'dialkit';
-import { DEFAULT_SHADER, getShader, PD784_SHADER_IDS } from '../shaders/registry';
-import type { ParamSpec, ParamValue, ShaderDefinition } from '../shaders/types';
 
-const SHADER_OPTIONS = PD784_SHADER_IDS.map((id) => ({
-  value: id,
-  label: getShader(id)?.label ?? id,
-}));
+const SHADER_ID = 'veli-gradient-stipple';
 
 const ADJUSTMENT_DEFAULTS = {
   hue: 0,
@@ -30,46 +25,7 @@ const SCENE_ADJUSTMENT_CONFIG = {
   dy: [0, -0.5, 0.5, 0.01],
 } satisfies DialConfig;
 
-function limitsFor(spec: ParamSpec) {
-  const value = spec.value as number;
-  const span = Math.max(Math.abs(value) * 2, 1);
-  const min = spec.min ?? value - span;
-  const max = spec.max ?? value + span;
-  const step = spec.step ?? Math.max((max - min) / 200, 0.001);
-  return [value, min, max, step] as [number, number, number, number];
-}
-
-function definitionConfig(definition: ShaderDefinition): DialConfig {
-  const config: DialConfig = { _collapsed: true };
-  for (const [name, spec] of Object.entries(definition.params)) {
-    if (spec.type === 'float') {
-      config[name] = limitsFor(spec);
-    } else if (spec.type === 'color') {
-      config[name] = { type: 'color', default: spec.value as string };
-    } else {
-      const components = spec.value as number[];
-      const min = spec.min ?? (name.toLowerCase().includes('size') ? 0 : -2);
-      const max = spec.max ?? 2;
-      const step = spec.step ?? 0.01;
-      config[name] = Object.fromEntries(
-        components.map((value, index) => [['x', 'y', 'z'][index], [value, min, max, step]]),
-      ) as DialConfig;
-    }
-  }
-  return config;
-}
-
-const cymatics = getShader('veli-cymatics');
-const fusion = getShader('veli-cymatics-gradient');
-
-if (!cymatics || !fusion) throw new Error('PD-784 shader definitions are not registered.');
-
 const CONFIG = {
-  implementation: {
-    type: 'select',
-    options: SHADER_OPTIONS,
-    default: String(DEFAULT_SHADER),
-  },
   originalStipple: {
     _collapsed: false,
     scene: {
@@ -116,13 +72,11 @@ const CONFIG = {
     dune: SCENE_ADJUSTMENT_CONFIG,
     shore: SCENE_ADJUSTMENT_CONFIG,
   },
-  veliCymatics: definitionConfig(cymatics),
-  shoreCymatics: definitionConfig(fusion),
   actions: {
     _collapsed: false,
     reseedParticles: { type: 'action', label: 'Reseed particles' },
     resetSceneTuning: { type: 'action', label: 'Reset scene tuning' },
-    resetCurrentShader: { type: 'action', label: 'Reset current shader' },
+    resetAllControls: { type: 'action', label: 'Reset all controls' },
     copyJson: { type: 'action', label: 'Copy JSON' },
     downloadJson: { type: 'action', label: 'Download JSON' },
     importJson: { type: 'action', label: 'Import JSON' },
@@ -169,53 +123,28 @@ function flatten(value: AnyRecord, prefix = '', output: Record<string, unknown> 
   return output;
 }
 
-function paramValues(folder: AnyRecord, definition: ShaderDefinition) {
-  const values: Record<string, ParamValue> = {};
-  for (const [name, spec] of Object.entries(definition.params)) {
-    const value = folder[name];
-    values[name] =
-      spec.type === 'vec2' || spec.type === 'vec3'
-        ? (Object.values(value as AnyRecord) as ParamValue)
-        : (value as ParamValue);
-  }
-  return values;
-}
-
 function exactPreset(values: AnyRecord) {
   const exact = values.originalStipple as AnyRecord;
-  const controls = {
-    ...(exact.sceneTiming as AnyRecord),
-    ...(exact.motion as AnyRecord),
-    ...(exact.lightDance as AnyRecord),
-    ...(exact.stipple as AnyRecord),
-  };
   return {
     version: 1,
-    shader: 'veli-gradient-stipple',
+    shader: SHADER_ID,
     scene: Number(exact.scene),
-    controls,
+    controls: {
+      ...(exact.sceneTiming as AnyRecord),
+      ...(exact.motion as AnyRecord),
+      ...(exact.lightDance as AnyRecord),
+      ...(exact.stipple as AnyRecord),
+    },
     sceneAdjustments: ['wave', 'dune', 'shore'].map((name) => clone(exact[name] as AnyRecord)),
   };
 }
 
-function exportValue(values: AnyRecord) {
-  const shader = String(values.implementation);
-  if (shader === 'veli-gradient-stipple') return exactPreset(values);
-  const definition = getShader(shader);
-  const folder = shader === 'veli-cymatics' ? values.veliCymatics : values.shoreCymatics;
-  return {
-    version: 1,
-    shader,
-    params: definition ? paramValues(folder as AnyRecord, definition) : {},
-  };
-}
-
-function downloadJson(value: unknown, shader: string) {
+function downloadJson(value: unknown) {
   const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${shader}-preset.json`;
+  link.download = `${SHADER_ID}-preset.json`;
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -227,14 +156,12 @@ function randomSeed() {
 export default function ShaderDialControls() {
   const fileInput = useRef<HTMLInputElement>(null);
   const previous = useRef<Record<string, unknown>>({});
-  const queryApplied = useRef(false);
 
-  const controller = useDialKitController('Homepage shaders', CONFIG, {
-    id: 'pd-784-homepage-shaders',
-    persist: { key: 'veli-pd-784-shader-controls', storage: 'localStorage', presets: true },
+  const controller = useDialKitController('Stipple BG', CONFIG, {
+    id: 'pd-784-stipple-bg',
+    persist: { key: 'veli-pd-784-stipple-controls', storage: 'localStorage', presets: true },
     onAction: (action) => {
       const values = controller.getValues() as unknown as AnyRecord;
-      const activeShader = String(values.implementation);
       if (action.endsWith('reseedParticles')) {
         controller.setValue('originalStipple.stipple.seed', randomSeed());
       } else if (action.endsWith('resetSceneTuning')) {
@@ -243,17 +170,12 @@ export default function ShaderDialControls() {
         controller.setValues({
           originalStipple: { [scene]: clone(ADJUSTMENT_DEFAULTS) },
         } as never);
-      } else if (action.endsWith('resetCurrentShader')) {
-        if (activeShader === 'veli-gradient-stipple') {
-          controller.setValues({ originalStipple: clone(DEFAULT_VALUES.originalStipple) } as never);
-        } else {
-          const key = activeShader === 'veli-cymatics' ? 'veliCymatics' : 'shoreCymatics';
-          controller.setValues({ [key]: clone(DEFAULT_VALUES[key]) } as never);
-        }
+      } else if (action.endsWith('resetAllControls')) {
+        controller.setValues({ originalStipple: clone(DEFAULT_VALUES.originalStipple) } as never);
       } else if (action.endsWith('copyJson')) {
-        void navigator.clipboard.writeText(JSON.stringify(exportValue(values), null, 2));
+        void navigator.clipboard.writeText(JSON.stringify(exactPreset(values), null, 2));
       } else if (action.endsWith('downloadJson')) {
-        downloadJson(exportValue(values), activeShader);
+        downloadJson(exactPreset(values));
       } else if (action.endsWith('importJson')) {
         fileInput.current?.click();
       }
@@ -264,22 +186,13 @@ export default function ShaderDialControls() {
   const serialised = useMemo(() => JSON.stringify(values), [values]);
 
   useEffect(() => {
-    if (queryApplied.current) return;
-    queryApplied.current = true;
-    const requested = new URLSearchParams(window.location.search).get('shader');
-    if (requested && PD784_SHADER_IDS.some((id) => id === requested)) {
-      controller.setValue('implementation', requested);
-    }
-  }, [controller]);
-
-  useEffect(() => {
     const next = flatten(values);
     const changedPaths = Object.keys(next).filter(
       (path) => JSON.stringify(next[path]) !== JSON.stringify(previous.current[path]),
     );
     previous.current = next;
     window.dispatchEvent(
-      new CustomEvent('veli:shader-dial-change', {
+      new CustomEvent('veli:stipple-dial-change', {
         detail: { values: clone(values), changedPaths },
       }),
     );
@@ -287,66 +200,46 @@ export default function ShaderDialControls() {
 
   async function importPreset(file: File) {
     const preset = JSON.parse(await file.text()) as AnyRecord;
-    const shader = String(preset.shader ?? '');
-    if (!PD784_SHADER_IDS.some((id) => id === shader) || preset.version !== 1) {
-      throw new Error('This is not a supported PD-784 shader preset.');
+    if (preset.shader !== SHADER_ID || preset.version !== 1) {
+      throw new Error('This is not a Veli Stipple BG preset.');
     }
-    if (shader === 'veli-gradient-stipple') {
-      const controls = (preset.controls ?? {}) as AnyRecord;
-      const adjustments = (preset.sceneAdjustments ?? []) as AnyRecord[];
-      controller.setValues({
-        implementation: shader,
-        originalStipple: {
-          scene: String(preset.scene ?? 0),
-          sceneTiming: {
-            autoCycle: controls.autoCycle,
-            dwell: controls.dwell,
-            morphDur: controls.morphDur,
-            stagger: controls.stagger,
-          },
-          motion: {
-            speed: controls.speed,
-            driftOn: controls.driftOn,
-            driftAmt: controls.driftAmt,
-            wanderAmt: controls.wanderAmt,
-            wanderSpeed: controls.wanderSpeed,
-            paused: controls.paused,
-          },
-          lightDance: {
-            danceOn: controls.danceOn,
-            danceAmt: controls.danceAmt,
-            dancePulse: controls.dancePulse,
-          },
-          stipple: {
-            density: controls.density,
-            dotSize: controls.dotSize,
-            sizeVar: controls.sizeVar,
-            dotGlow: controls.dotGlow,
-            twinkle: controls.twinkle,
-            seed: controls.seed,
-          },
-          wave: adjustments[0] ?? ADJUSTMENT_DEFAULTS,
-          dune: adjustments[1] ?? ADJUSTMENT_DEFAULTS,
-          shore: adjustments[2] ?? ADJUSTMENT_DEFAULTS,
+    const controls = (preset.controls ?? {}) as AnyRecord;
+    const adjustments = (preset.sceneAdjustments ?? []) as AnyRecord[];
+    controller.setValues({
+      originalStipple: {
+        scene: String(preset.scene ?? 0),
+        sceneTiming: {
+          autoCycle: controls.autoCycle,
+          dwell: controls.dwell,
+          morphDur: controls.morphDur,
+          stagger: controls.stagger,
         },
-      } as never);
-    } else {
-      const key = shader === 'veli-cymatics' ? 'veliCymatics' : 'shoreCymatics';
-      const definition = getShader(shader);
-      const params = (preset.params ?? {}) as Record<string, ParamValue>;
-      const folder: AnyRecord = {};
-      if (definition) {
-        for (const [name, spec] of Object.entries(definition.params)) {
-          const value = params[name] ?? spec.value;
-          folder[name] = Array.isArray(value)
-            ? Object.fromEntries(
-                value.map((component, index) => [['x', 'y', 'z'][index], component]),
-              )
-            : value;
-        }
-      }
-      controller.setValues({ implementation: shader, [key]: folder } as never);
-    }
+        motion: {
+          speed: controls.speed,
+          driftOn: controls.driftOn,
+          driftAmt: controls.driftAmt,
+          wanderAmt: controls.wanderAmt,
+          wanderSpeed: controls.wanderSpeed,
+          paused: controls.paused,
+        },
+        lightDance: {
+          danceOn: controls.danceOn,
+          danceAmt: controls.danceAmt,
+          dancePulse: controls.dancePulse,
+        },
+        stipple: {
+          density: controls.density,
+          dotSize: controls.dotSize,
+          sizeVar: controls.sizeVar,
+          dotGlow: controls.dotGlow,
+          twinkle: controls.twinkle,
+          seed: controls.seed,
+        },
+        wave: adjustments[0] ?? ADJUSTMENT_DEFAULTS,
+        dune: adjustments[1] ?? ADJUSTMENT_DEFAULTS,
+        shore: adjustments[2] ?? ADJUSTMENT_DEFAULTS,
+      },
+    } as never);
   }
 
   return (

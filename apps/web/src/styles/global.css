@@ -108,20 +108,12 @@ button {
   overflow: hidden;
 }
 
-.shader-bg__canvas,
 .shader-bg__fallback {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* The canvas fades in over the fallback image once the renderer starts; if it
-   never starts (no JS / no WebGL) the image simply stays. */
-.shader-bg__canvas {
-  opacity: 0;
-  transition: opacity 600ms ease;
 }
 
 .shader-bg__fallback {
@@ -144,31 +136,9 @@ button {
     linear-gradient(145deg, var(--color-neutral-100), var(--color-neutral-300));
 }
 
-.shader-bg[data-shader-active] .shader-bg__canvas {
-  opacity: 1;
-}
-
 .shader-bg[data-shader-active] .shader-bg__fallback {
   opacity: 0;
   pointer-events: none;
-}
-
-.home-hero__background::after {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 42% 58% at 50% 51%,
-    color-mix(in srgb, var(--color-bg-surface-base) 36%, transparent),
-    transparent 82%
-  );
-  content: '';
-  pointer-events: none;
-}
-
-/* The designer's original Stipple BG owns its full composition. Do not add
-   the homepage reading veil when previewing that implementation. */
-.home-hero__background[data-shader='veli-gradient-stipple']::after {
-  display: none;
 }
 
 .home-hero__content {
