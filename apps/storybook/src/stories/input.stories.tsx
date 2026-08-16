@@ -250,6 +250,17 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
+    appearance: {
+      control: 'select',
+      options: ['default', 'outline', 'skeleton'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+    defaultValue: {
+      control: 'text',
+    },
     label: {
       control: 'text',
     },
@@ -277,22 +288,11 @@ const meta = {
     placeholder: {
       control: 'text',
     },
-    defaultValue: {
-      control: 'text',
-    },
     description: {
       control: 'text',
     },
     errorMessage: {
       control: 'text',
-    },
-    appearance: {
-      control: 'select',
-      options: ['default', 'outline', 'skeleton'],
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
     },
     type: {
       control: 'select',

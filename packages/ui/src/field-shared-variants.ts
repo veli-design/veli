@@ -30,38 +30,50 @@ export const defaultFieldUnderlineErrorFocusPressed = `focus-within:after:bg-tex
 
 export const fieldRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-export const fieldHeaderLabelVariants = cva('type-body-sm-regular', {
+export const fieldHeaderLabelVariants = cva('', {
   variants: {
+    size: {
+      sm: 'type-body-sm-regular',
+      md: 'type-body-sm-regular',
+      lg: 'type-body-md-regular',
+    },
     isDisabled: {
       true: 'text-disabled',
       false: 'text-base-default',
     },
   },
   defaultVariants: {
+    size: 'md',
     isDisabled: false,
   },
 });
 
-export const fieldHeaderMetaVariants = cva('type-caption-regular', {
+export const fieldHeaderSupplementaryVariants = cva('', {
   variants: {
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
+    size: {
+      sm: 'type-caption-regular',
+      md: 'type-caption-regular',
+      lg: 'type-body-sm-regular',
     },
     isDisabled: {
       true: 'text-disabled',
-      false: '',
+      false: 'text-base-subtle',
     },
   },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
   defaultVariants: {
-    tone: 'subtle',
+    size: 'md',
+    isDisabled: false,
+  },
+});
+
+export const fieldHeaderRequiredIndicatorVariants = cva('type-caption-regular', {
+  variants: {
+    isDisabled: {
+      true: 'text-disabled',
+      false: 'text-danger-muted',
+    },
+  },
+  defaultVariants: {
     isDisabled: false,
   },
 });
@@ -282,14 +294,20 @@ export const fieldTriggerIndicatorVariants = cva(
   },
 );
 
-export const messageVariants = cva('type-caption-regular', {
+export const messageVariants = cva('', {
   variants: {
+    size: {
+      sm: 'type-caption-regular',
+      md: 'type-caption-regular',
+      lg: 'type-body-sm-regular',
+    },
     tone: {
       subtle: 'text-base-subtle',
       danger: 'text-danger-muted',
     },
   },
   defaultVariants: {
+    size: 'md',
     tone: 'subtle',
   },
 });

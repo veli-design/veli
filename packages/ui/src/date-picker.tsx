@@ -19,7 +19,8 @@ import { formatDatePickerValue } from './date-shared';
 import {
   FieldMessage,
   fieldHeaderLabelVariants,
-  fieldHeaderMetaVariants,
+  fieldHeaderRequiredIndicatorVariants,
+  fieldHeaderSupplementaryVariants,
   fieldRootVariants,
   fieldTriggerButtonVariants,
   fieldTriggerIndicatorVariants,
@@ -89,17 +90,17 @@ export function DatePicker<T extends DateValue>({
               <div className="flex w-full items-center gap-2">
                 <div className="flex min-w-0 flex-1 items-center gap-1">
                   {label ? (
-                    <Label className={fieldHeaderLabelVariants({ isDisabled })}>{label}</Label>
+                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                      {label}
+                    </Label>
                   ) : null}
                   {labelSupplementary ? (
-                    <span className={fieldHeaderMetaVariants({ tone: 'subtle', isDisabled })}>
+                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
                       {labelSupplementary}
                     </span>
                   ) : null}
                   {showRequired ? (
-                    <span className={fieldHeaderMetaVariants({ tone: 'danger', isDisabled })}>
-                      *
-                    </span>
+                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
                   ) : null}
                 </div>
               </div>
@@ -140,6 +141,7 @@ export function DatePicker<T extends DateValue>({
 
             <FieldMessage
               isInvalid={isInvalid}
+              size={size ?? 'md'}
               description={description}
               errorMessage={errorMessage}
             />

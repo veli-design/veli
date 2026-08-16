@@ -15,22 +15,29 @@ const switchVariants = cva(
   'group inline-flex items-center gap-2 font-sans antialiased transition-colors duration-normal ease-out focus-visible:outline-none',
   {
     variants: {
-      size: {
-        sm: 'type-body-sm-medium',
-        md: 'type-body-md-medium',
-        lg: 'type-body-lg-medium',
-      },
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
         false: 'cursor-pointer text-base-default',
       },
     },
     defaultVariants: {
-      size: 'md',
       isDisabled: false,
     },
   },
 );
+
+const switchLabelVariants = cva('', {
+  variants: {
+    size: {
+      sm: 'type-body-sm-medium',
+      md: 'type-body-sm-medium',
+      lg: 'type-body-md-medium',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
 const trackVariants = cva(
   'relative inline-flex shrink-0 items-center justify-start rounded-full border-1 transition-all duration-normal ease-out outline-none select-none',
@@ -272,13 +279,14 @@ export interface SwitchProps
   extends
     Omit<AriaSwitchProps, 'className' | 'style' | 'children'>,
     Omit<VariantProps<typeof switchVariants>, 'isDisabled'>,
-    Pick<VariantProps<typeof trackVariants>, 'appearance'> {
+    Pick<VariantProps<typeof trackVariants>, 'appearance' | 'size'> {
   children?: React.ReactNode;
   className?: string;
 }
 
 export function Switch({ size, appearance, children, className, ...props }: SwitchProps) {
   const resolvedAppearance = appearance ?? 'default';
+  const resolvedSize = size ?? 'md';
 
   return (
     <AriaSwitch
@@ -286,7 +294,6 @@ export function Switch({ size, appearance, children, className, ...props }: Swit
       className={({ isDisabled }) =>
         twMerge(
           switchVariants({
-            size,
             isDisabled,
           }),
           className,
@@ -294,7 +301,6 @@ export function Switch({ size, appearance, children, className, ...props }: Swit
       }
     >
       {(state) => {
-        const resolvedSize = size ?? 'md';
         const checkIcon = switchCheckIconSizes[resolvedSize];
         const showCheckmark = resolvedAppearance === 'default' && state.isSelected;
 
@@ -341,7 +347,9 @@ export function Switch({ size, appearance, children, className, ...props }: Swit
                 })}
               />
             </div>
-            {children}
+            {children ? (
+              <span className={switchLabelVariants({ size: resolvedSize })}>{children}</span>
+            ) : null}
           </>
         );
       }}
