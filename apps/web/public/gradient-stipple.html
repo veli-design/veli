@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VELI · Stipple BG</title>
+<style>
+  :root{
+    --panel-bg: rgba(10, 16, 22, 0.72);
+    --panel-border: rgba(255,255,255,0.08);
+    --txt: rgba(235, 242, 248, 0.92);
+    --txt-dim: rgba(235, 242, 248, 0.45);
+    --accent: #6ab8ff;
+    --track: rgba(255,255,255,0.12);
+  }
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+  html, body{ width:100%; height:100%; overflow:hidden; background:#050a10; }
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: var(--txt);
+  }
+  #stage{ position:fixed; inset:0; width:100%; height:100%; display:block; }
+
+  /* ---------- panel ---------- */
+  #panel{
+    position:fixed; top:16px; right:16px; width:264px;
+    max-height: calc(100vh - 32px);
+    display:flex; flex-direction:column;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    transition: opacity .3s ease, transform .3s ease;
+    z-index: 10;
+  }
+  #panel.hidden{ opacity:0; transform: translateX(12px); pointer-events:none; }
+  #panel[hidden], #toggleUi[hidden], #hint[hidden]{ display:none !important; }
+  #panelHead{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--panel-border);
+    flex-shrink:0;
+  }
+  #panelHead h1{
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  #panelHead h1 span{ color: var(--txt-dim); font-weight: 500; }
+  #panelBody{ overflow-y:auto; padding: 4px 14px 14px; scrollbar-width: thin; }
+  #panelBody::-webkit-scrollbar{ width:6px; }
+  #panelBody::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.15); border-radius:3px; }
+
+  .group{ padding-top: 12px; }
+  .group + .group{ margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); }
+  .groupLabel{
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--txt-dim);
+    margin-bottom: 10px;
+  }
+
+  /* scene buttons */
+  #scenes{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
+  .sceneBtn{
+    position:relative;
+    border:1px solid var(--panel-border); border-radius:10px;
+    padding: 8px 4px 7px; cursor:pointer;
+    background: rgba(255,255,255,0.03);
+    color: var(--txt); font-family:inherit;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition: border-color .25s, background .25s;
+  }
+  .sceneBtn:hover{ background: rgba(255,255,255,0.07); }
+  .sceneBtn.active{ border-color: var(--accent); background: rgba(255,255,255,0.06); }
+  .sceneBtn .sw{
+    width: 34px; height: 22px; border-radius: 5px;
+    background: var(--sw, #123);
+  }
+  .sceneBtn .nm{ font-size: 10.5px; font-weight:500; letter-spacing:0.02em; }
+
+  /* rows */
+  .row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 10px; margin-bottom: 9px; min-height: 20px;
+  }
+  .row label{ font-size: 11.5px; color: var(--txt); flex-shrink:0; }
+  .row .val{
+    font-size: 10.5px; color: var(--txt-dim);
+    font-variant-numeric: tabular-nums;
+    min-width: 30px; text-align:right; flex-shrink:0;
+  }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    flex:1; height: 18px; background:transparent; cursor:pointer; min-width:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:3px; border-radius:2px; background: var(--track);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); margin-top: -4.5px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    transition: transform .15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover{ transform: scale(1.2); }
+  input[type=range]::-moz-range-track{ height:3px; border-radius:2px; background:var(--track); }
+  input[type=range]::-moz-range-thumb{
+    width:12px; height:12px; border:none; border-radius:50%; background:var(--accent);
+  }
+
+  /* toggle */
+  .toggle{
+    position:relative; width: 30px; height: 17px; flex-shrink:0;
+    border-radius: 9px; background: rgba(255,255,255,0.14);
+    cursor:pointer; transition: background .2s; border:none;
+  }
+  .toggle::after{
+    content:""; position:absolute; top:2.5px; left:2.5px;
+    width:12px; height:12px; border-radius:50%;
+    background:#fff; opacity:0.85;
+    transition: transform .2s ease;
+  }
+  .toggle.on{ background: var(--accent); }
+  .toggle.on::after{ transform: translateX(13px); opacity:1; }
+
+  .btn{
+    border:1px solid var(--panel-border); border-radius:8px;
+    background: rgba(255,255,255,0.04); color: var(--txt);
+    font-family:inherit; font-size: 11px; font-weight:500;
+    padding: 6px 10px; cursor:pointer;
+    transition: background .2s;
+  }
+  .btn:hover{ background: rgba(255,255,255,0.09); }
+  .btnRow{ display:flex; gap:8px; margin-bottom: 4px; }
+  .btnRow .btn{ flex:1; }
+  .select{
+    width:100%; border:1px solid var(--panel-border); border-radius:8px;
+    background:rgba(255,255,255,0.04); color:var(--txt);
+    font-family:inherit; font-size:11px; font-weight:500;
+    padding:7px 9px; cursor:pointer;
+  }
+  .select option{ background:#101820; color:var(--txt); }
+  #presetFile{ display:none; }
+  #presetStatus{
+    min-height:14px; margin-top:7px; color:var(--txt-dim);
+    font-size:10px; line-height:1.4;
+  }
+
+  #foot{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 14px; border-top:1px solid var(--panel-border);
+    font-size: 10px; color: var(--txt-dim); flex-shrink:0;
+  }
+  #fps{ font-variant-numeric: tabular-nums; }
+
+  /* floating buttons */
+  .fab{
+    position:fixed; z-index:11;
+    width: 34px; height: 34px; border-radius: 10px;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--txt); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s;
+  }
+  .fab:hover{ background: rgba(255,255,255,0.12); }
+  #toggleUi{ top:16px; right:16px; opacity:0; pointer-events:none; transition: opacity .3s; }
+  #toggleUi.show{ opacity:1; pointer-events:auto; }
+  .fab svg{ width:16px; height:16px; stroke: currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  #hint{
+    position:fixed; bottom:14px; left:16px; z-index:5;
+    font-size: 10.5px; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.03em; user-select:none; pointer-events:none;
+    transition: opacity .4s;
+  }
+  #hint.hidden{ opacity:0; }
+  kbd{
+    font-family:inherit; font-size:9.5px;
+    border:1px solid rgba(255,255,255,0.2); border-radius:3px;
+    padding: 0.5px 4px; margin: 0 1px;
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="panel">
+  <div id="panelHead">
+    <h1>VELI <span>· Stipple BG</span></h1>
+    <button class="fab" id="hideUi" style="position:static; width:26px; height:26px; border-radius:7px;" title="Hide UI (H)">
+      <svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg>
+    </button>
+  </div>
+  <div id="panelBody">
+
+    <div class="group">
+      <div class="groupLabel">Implementation</div>
+      <select class="select" id="implementation" aria-label="Shader implementation">
+        <option value="veli-cymatics">Veli Cymatics</option>
+        <option value="veli-gradient-stipple" selected>Stipple BG · Original</option>
+        <option value="veli-cymatics-gradient">Shore Cymatics</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Scene</div>
+      <div id="scenes">
+        <button class="sceneBtn active" data-scene="0"><span class="sw" style="--sw:linear-gradient(160deg,#08182e 20%,#2b7fd4 60%,#dff3ff)"></span><span class="nm">Wave</span></button>
+        <button class="sceneBtn" data-scene="1"><span class="sw" style="--sw:linear-gradient(170deg,#0a2408 25%,#7ab52a 65%,#f4f9d8)"></span><span class="nm">Dune</span></button>
+        <button class="sceneBtn" data-scene="2"><span class="sw" style="--sw:linear-gradient(150deg,#0b1e28 25%,#2fa8b8 60%,#e8fbff)"></span><span class="nm">Shore</span></button>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <label>Auto-cycle</label>
+        <button class="toggle on" id="autoCycle"></button>
+      </div>
+      <div class="row"><label>Dwell</label><input type="range" id="dwell" min="4" max="30" step="1" value="10"><span class="val" id="dwellV">10s</span></div>
+      <div class="row"><label>Morph time</label><input type="range" id="morphDur" min="1" max="6" step="0.1" value="3"><span class="val" id="morphDurV">3.0s</span></div>
+      <div class="row"><label>Stagger</label><input type="range" id="stagger" min="0" max="1" step="0.05" value="0.65"><span class="val" id="staggerV">0.65</span></div>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Motion</div>
+      <div class="row"><label>Speed</label><input type="range" id="speed" min="0" max="3" step="0.05" value="1"><span class="val" id="speedV">1.0</span></div>
+      <div class="row">
+        <label>Pointer drift</label>
+        <button class="toggle on" id="driftOn"></button>
+      </div>
+      <div class="row"><label>Drift amount</label><input type="range" id="driftAmt" min="0" max="1" step="0.05" value="0.5"><span class="val" id="driftAmtV">0.5</span></div>
+      <div class="row"><label>Light wander</label><input type="range" id="wanderAmt" min="0" max="2.5" step="0.05" value="1"><span class="val" id="wanderAmtV">1.0</span></div>
+      <div class="row"><label>Wander speed</label><input type="range" id="wanderSpeed" min="0" max="2.5" step="0.05" value="1"><span class="val" id="wanderSpeedV">1.0</span></div>
+      <div class="row">
+        <label>Pause</label>
+        <button class="toggle" id="pause"></button>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Light dance</div>
+      <div class="row">
+        <label>Enabled</label>
+        <button class="toggle on" id="danceOn"></button>
+      </div>
+      <div class="row"><label>Amount</label><input type="range" id="danceAmt" min="0" max="2" step="0.05" value="1"><span class="val" id="danceAmtV">1.0</span></div>
+      <div class="row"><label>Pulse</label><input type="range" id="dancePulse" min="0" max="2" step="0.05" value="1"><span class="val" id="dancePulseV">1.0</span></div>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Stipple</div>
+      <div class="row"><label>Density</label><input type="range" id="density" min="400" max="9000" step="100" value="5200"><span class="val" id="densityV">5200</span></div>
+      <div class="row"><label>Dot size</label><input type="range" id="dotSize" min="0.5" max="3" step="0.05" value="1.2"><span class="val" id="dotSizeV">1.2</span></div>
+      <div class="row"><label>Size variance</label><input type="range" id="sizeVar" min="0" max="1" step="0.05" value="1"><span class="val" id="sizeVarV">1.0</span></div>
+      <div class="row"><label>Brightness</label><input type="range" id="dotGlow" min="0.3" max="2" step="0.05" value="1"><span class="val" id="dotGlowV">1.0</span></div>
+      <div class="row"><label>Twinkle</label><input type="range" id="twinkle" min="0" max="1" step="0.05" value="0.4"><span class="val" id="twinkleV">0.4</span></div>
+      <div class="btnRow"><button class="btn" id="reseed">Reseed pattern</button></div>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Tune · <span id="colScene">Wave</span></div>
+      <div class="row"><label>Hue shift</label><input type="range" id="hueShift" min="-60" max="60" step="1" value="0"><span class="val" id="hueShiftV">0°</span></div>
+      <div class="row"><label>Light</label><input type="range" id="lightAmt" min="0.5" max="1.6" step="0.05" value="1"><span class="val" id="lightAmtV">1.0</span></div>
+      <div class="row"><label>Glow spread</label><input type="range" id="glowSpread" min="0.6" max="1.6" step="0.05" value="1"><span class="val" id="glowSpreadV">1.0</span></div>
+      <div class="row"><label>Light pos X</label><input type="range" id="lightX" min="-0.5" max="0.5" step="0.01" value="0"><span class="val" id="lightXV">0</span></div>
+      <div class="row"><label>Light pos Y</label><input type="range" id="lightY" min="-0.5" max="0.5" step="0.01" value="0"><span class="val" id="lightYV">0</span></div>
+      <div class="row"><label>Dots pos X</label><input type="range" id="dotsX" min="-0.5" max="0.5" step="0.01" value="0"><span class="val" id="dotsXV">0</span></div>
+      <div class="row"><label>Dots pos Y</label><input type="range" id="dotsY" min="-0.5" max="0.5" step="0.01" value="0"><span class="val" id="dotsYV">0</span></div>
+      <div class="btnRow"><button class="btn" id="resetColor">Reset scene tune</button></div>
+    </div>
+
+    <div class="group">
+      <div class="groupLabel">Preset</div>
+      <div class="btnRow">
+        <button class="btn" id="copyPreset">Copy JSON</button>
+        <button class="btn" id="downloadPreset">Download JSON</button>
+      </div>
+      <div class="btnRow">
+        <button class="btn" id="importPreset">Import JSON</button>
+        <input id="presetFile" type="file" accept="application/json,.json">
+      </div>
+      <div id="presetStatus" role="status" aria-live="polite"></div>
+    </div>
+
+  </div>
+  <div id="foot">
+    <span>continuous · morphing</span>
+    <span id="fps">— fps</span>
+  </div>
+</div>
+
+<button class="fab" id="toggleUi" title="Show UI (H)">
+  <svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg>
+</button>
+
+<div id="hint"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> scenes &nbsp; <kbd>Space</kbd> pause &nbsp; <kbd>H</kbd> hide UI</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   VELI · Stipple BG — three stipple scenes over OKLab light gradients
+   Scene 0 "Wave"  — blue, sinuous stipple band with depth drift
+   Scene 1 "Dune"  — green/lime, aerial dune ridges, drone fly-forward
+   Scene 2 "Shore" — teal, top-down swash with speed-ramped calm waves
+   ===================================================================== */
+
+/* ---------------- utilities ---------------- */
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const lerp = (a,b,t)=>a+(b-a)*t;
+const clamp = (v,a,b)=>v<a?a:(v>b?b:v);
+const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+const smoothstep = (a,b,x)=>{ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
+const TAU = Math.PI*2;
+
+/* OKLCH (L,C,H°) -> OKLab (L,a,b) */
+function oklchToLab(L,C,H){
+  const h = H*Math.PI/180;
+  return [L, C*Math.cos(h), C*Math.sin(h)];
+}
+/* OKLab -> gamma sRGB [0,1] (clamped) — for dot colors computed on CPU */
+function oklabToSrgb(L,a,b){
+  const l_=L+0.3963377774*a+0.2158037573*b;
+  const m_=L-0.1055613458*a-0.0638541728*b;
+  const s_=L-0.0894841775*a-1.2914855480*b;
+  const l=l_*l_*l_, m=m_*m_*m_, s=s_*s_*s_;
+  let r= 4.0767416621*l-3.3077115913*m+0.2309699292*s;
+  let g=-1.2684380046*l+2.6097574011*m-0.3413193965*s;
+  let bl=-0.0041960863*l-0.7034186147*m+1.7076147010*s;
+  const gam=c=>{ c=clamp(c,0,1); return c<=0.0031308 ? 12.92*c : 1.055*Math.pow(c,1/2.4)-0.055; };
+  return [gam(r),gam(g),gam(bl)];
+}
+
+/* ---------------- scene definitions ----------------
+   Coordinates are 0..1 with y=0 at the BOTTOM (GL convention).
+   Palettes are OKLCH stops: deep (dark base), mid, light (the shine).
+   Lights: [x, y, radius, intensity] gaussian light blobs.            */
+const SCENES = [
+  { name:"Wave",
+    deep:[0.22,0.055,255], mid:[0.58,0.165,248], light:[0.975,0.055,215],
+    dotA:[0.92,0.06,220], dotB:[0.70,0.16,245],
+    lights:[[0.20,-0.05,0.42,1.25],[0.88,0.02,0.34,0.85]],
+    base:{ off:0.06, dirX:0.0, dirY:-0.38 },
+    accent:"#6ab8ff" },
+  { name:"Dune",
+    deep:[0.26,0.072,142], mid:[0.76,0.185,122], light:[0.975,0.095,108],
+    dotA:[0.95,0.08,112], dotB:[0.78,0.17,125],
+    lights:[[0.28,-0.10,0.52,1.35],[0.75,-0.02,0.36,0.65]],
+    base:{ off:0.05, dirX:0.0, dirY:-0.42 },
+    accent:"#a8d94a" },
+  { name:"Shore",
+    deep:[0.25,0.048,230], mid:[0.74,0.105,198], light:[0.975,0.035,200],
+    dotA:[0.93,0.04,200], dotB:[0.72,0.11,205],
+    lights:[[0.12,0.10,0.40,1.10],[0.72,0.28,0.42,0.55]],
+    base:{ off:0.07, dirX:-0.12, dirY:-0.30 },
+    accent:"#57c8d8" },
+];
+
+/* per-scene user adjustments: color + light position + dots field offset */
+const defaultAdjust = ()=>({ hue:0, light:1, spread:1, lx:0, ly:0, dx:0, dy:0 });
+const colAdjust = SCENES.map(defaultAdjust);
+
+/* ---------------- state ---------------- */
+const state = {
+  scene: 0,           // current (or morph source)
+  target: 0,          // morph target
+  morphT: 1,          // 0..1 progress, 1 = settled on target
+  morphDur: 3,
+  stagger: 0.65,
+  autoCycle: true,
+  dwell: 10,
+  dwellClock: 0,
+  speed: 1,
+  paused: false,
+  density: 5200,
+  dotSize: 1.2,
+  sizeVar: 1,
+  dotGlow: 1,
+  twinkle: 0.4,
+  driftOn: true,
+  driftAmt: 0.5,
+  wanderAmt: 1,
+  wanderSpeed: 1,
+  danceOn: true,
+  danceAmt: 1,
+  dancePulse: 1,
+  seed: 1337,
+};
+const embedded = new URLSearchParams(window.location.search).get("embedded") === "1";
+const embeddedControls = new URLSearchParams(window.location.search).get("controls") === "1";
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+  state.speed = 0.25; state.autoCycle = false;
+}
+
+/* ---------------- WebGL setup ---------------- */
+const canvas = document.getElementById("stage");
+const gl = canvas.getContext("webgl", { antialias:false, alpha:false, powerPreference:"high-performance" });
+
+function compile(type, src){
+  const sh = gl.createShader(type);
+  gl.shaderSource(sh, src); gl.compileShader(sh);
+  if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS))
+    throw new Error(gl.getShaderInfoLog(sh) + "\n" + src);
+  return sh;
+}
+function program(vs, fs){
+  const p = gl.createProgram();
+  gl.attachShader(p, compile(gl.VERTEX_SHADER, vs));
+  gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if(!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  return p;
+}
+
+/* --- gradient pass: fullscreen quad, OKLab ramp + gaussian lights --- */
+const gradVS = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main(){ vUv = aPos*0.5+0.5; gl_Position = vec4(aPos,0.,1.); }`;
+
+const gradFS = `
+precision highp float;
+varying vec2 vUv;
+uniform vec3 uLabA, uLabB, uLabC;   /* deep, mid, light in OKLab */
+uniform vec4 uL1, uL2;              /* lights: xy pos, z radius, w intensity */
+uniform vec3 uBase;                 /* x,y grad dir · z offset */
+uniform float uAspect;              /* width/height */
+uniform float uTime;
+
+vec3 oklab2lrgb(vec3 lab){
+  float l_ = lab.x + 0.3963377774*lab.y + 0.2158037573*lab.z;
+  float m_ = lab.x - 0.1055613458*lab.y - 0.0638541728*lab.z;
+  float s_ = lab.x - 0.0894841775*lab.y - 1.2914855480*lab.z;
+  vec3 lms = vec3(l_*l_*l_, m_*m_*m_, s_*s_*s_);
+  return vec3(
+     4.0767416621*lms.x - 3.3077115913*lms.y + 0.2309699292*lms.z,
+    -1.2684380046*lms.x + 2.6097574011*lms.y - 0.3413193965*lms.z,
+    -0.0041960863*lms.x - 0.7034186147*lms.y + 1.7076147010*lms.z);
+}
+float gauss(vec2 p, vec4 l){
+  vec2 d = vec2((p.x-l.x)*uAspect, p.y-l.y);
+  float r = max(l.z, 0.001);
+  return l.w * exp(-dot(d,d)/(r*r));
+}
+float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
+void main(){
+  vec2 uv = vUv;
+  float f = uBase.z + dot(uv - vec2(0.5), uBase.xy);
+  f += gauss(uv, uL1);
+  f += gauss(uv, uL2);
+  f = clamp(f, 0.0, 1.0);
+  /* three-stop ramp mixed in OKLab so mids stay chromatic, not gray */
+  vec3 lab = mix(uLabA, uLabB, smoothstep(0.0, 0.62, f));
+  lab = mix(lab, uLabC, smoothstep(0.52, 0.97, f));
+  /* extra bloom lift at the hot core so it reads as emitted light */
+  lab.x += 0.06 * pow(smoothstep(0.75, 1.0, f), 2.0);
+  vec3 rgb = oklab2lrgb(lab);
+  rgb = clamp(rgb, 0.0, 1.0);
+  rgb = pow(rgb, vec3(1.0/2.2));
+  /* dither kills banding on the long dark falloffs */
+  rgb += (hash(gl_FragCoord.xy + fract(uTime)) - 0.5) * (1.6/255.0);
+  gl_FragColor = vec4(rgb, 1.0);
+}`;
+
+/* --- stipple pass: additive soft points --- */
+const dotVS = `
+attribute vec2 aPos;      /* 0..1, y-up */
+attribute vec3 aProp;     /* size(px@1x), alpha, colorMix */
+uniform float uDpr;
+varying float vAlpha;
+varying float vMix;
+void main(){
+  vAlpha = aProp.y;
+  vMix = aProp.z;
+  gl_Position = vec4(aPos*2.0-1.0, 0.0, 1.0);
+  gl_PointSize = max(aProp.x * uDpr, 0.75);
+}`;
+
+const dotFS = `
+precision mediump float;
+varying float vAlpha;
+varying float vMix;
+uniform vec3 uDotA;   /* bright core color (sRGB) */
+uniform vec3 uDotB;   /* deeper tint color */
+uniform float uGlow;
+void main(){
+  vec2 q = gl_PointCoord - 0.5;
+  float d = length(q);
+  float a = smoothstep(0.5, 0.08, d);
+  a *= a;
+  vec3 c = mix(uDotA, uDotB, vMix);
+  gl_FragColor = vec4(c * (a * vAlpha * uGlow), 1.0);
+}`;
+
+const gradProg = program(gradVS, gradFS);
+const dotProg  = program(dotVS, dotFS);
+
+const quadBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+
+const U = {};
+for (const n of ["uLabA","uLabB","uLabC","uL1","uL2","uBase","uAspect","uTime"])
+  U[n] = gl.getUniformLocation(gradProg, n);
+const UD = {};
+for (const n of ["uDpr","uDotA","uDotB","uGlow"])
+  UD[n] = gl.getUniformLocation(dotProg, n);
+const gradPosLoc = gl.getAttribLocation(gradProg, "aPos");
+const dotPosLoc  = gl.getAttribLocation(dotProg, "aPos");
+const dotPropLoc = gl.getAttribLocation(dotProg, "aProp");
+
+/* ---------------- particles ---------------- */
+const N_MAX = 9000;
+const seeds = new Float32Array(N_MAX*4);   // u, v, depth, q per particle
+const verts = new Float32Array(N_MAX*5);   // x, y, size, alpha, mix
+const curRaw = new Float32Array(N_MAX*4);  // last rendered raw x, y, alpha, size
+const dotBuf = gl.createBuffer();
+
+function reseed(){
+  const rnd = mulberry32(state.seed);
+  for(let i=0;i<N_MAX;i++){
+    seeds[i*4]   = rnd();
+    seeds[i*4+1] = rnd();
+    seeds[i*4+2] = rnd();
+    seeds[i*4+3] = rnd();
+  }
+}
+reseed();
+
+/* Scene position/appearance functions.
+   Write x, y (0..1, y-up), alpha (0..1), size multiplier into `out`. */
+const out = { x:0, y:0, a:0, s:1 };
+
+function sceneWave(i, t){
+  const u=seeds[i*4], v=seeds[i*4+1], d=seeds[i*4+2], q=seeds[i*4+3];
+  const x = (u + t*0.008*(0.6+0.4*d)) % 1;
+  /* sinuous band centre, y-up: band sits in upper-middle, glow below */
+  const yc = 0.52
+    + 0.13*Math.sin(x*4.6 + 1.4 + t*0.16)
+    + 0.05*Math.sin(x*9.7 - t*0.26 + 2.0);
+  /* signed, centre-weighted scatter = dense core, sparse halo */
+  const sv = v*2-1;
+  const off = Math.sign(sv)*Math.pow(Math.abs(sv), 1.7) * (0.13 + 0.20*q);
+  const bob = 0.012*Math.sin(t*0.7 + u*47.0 + q*6.0);
+  out.x = x;
+  out.y = yc + off + bob;
+  const core = 1 - Math.min(1, Math.abs(off)/(0.13 + 0.20*q));
+  out.a = (0.25 + 0.75*core) * (0.45 + 0.55*d);
+  out.s = 0.55 + 0.85*d;
+}
+
+function sceneDune(i, t){
+  const u=seeds[i*4], v=seeds[i*4+1], d=seeds[i*4+2], q=seeds[i*4+3];
+  const x = u + 0.006*Math.sin(t*0.5 + q*TAU);
+  /* fly-forward: field scrolls toward the bright bottom, parallax by depth */
+  let y = (v + t*0.0115*(0.45 + 0.55*d)) % 1;
+  y = 1 - y;  /* moving downward in screen = toward camera/light */
+  /* dune ridge banding via alpha, ridges bow with x */
+  const ridge = 0.5 + 0.5*Math.sin(y*15.0 + 2.3*Math.sin(x*2.6+1.2) + q*0.4);
+  const edgeFade = smoothstep(0.0,0.10,y) * smoothstep(1.0,0.90,y);
+  out.x = x;
+  out.y = y;
+  out.a = (0.5 + 0.5*Math.pow(ridge,1.2)) * edgeFade * (0.6 + 0.4*d) * (0.8 + 0.2*(1-y));
+  out.s = (0.65 + 0.65*d) * (0.8 + 0.5*(1-y)); /* nearer (lower) dots bigger */
+}
+
+/* Shore uses a WARPED clock: calm crawl, then an eased surge — the
+   speed-ramp. warpPhase(t) is continuous & monotonic; all shore motion
+   derives from it so everything accelerates together. */
+const SHORE_T = 12.0;
+function warpPhase(t){
+  const c = t / SHORE_T;
+  const k = Math.floor(c);
+  const s = c - k;
+  let w;
+  if (s < 0.55) w = 0.32 * (s/0.55);                       /* calm crawl */
+  else          w = 0.32 + 0.68 * easeInOutCubic((s-0.55)/0.45); /* surge */
+  return k + w;
+}
+function sceneShore(i, t){
+  const u=seeds[i*4], v=seeds[i*4+1], d=seeds[i*4+2], q=seeds[i*4+3];
+  const ph = warpPhase(t);
+  /* swash line advances & retreats with the warped clock */
+  const swash = 0.085*Math.sin(ph*TAU) + 0.028*Math.sin(ph*TAU*2 + 1.1);
+  const x = (u + ph*0.02*(0.5+0.5*d)) % 1;
+  /* gentle diagonal front, higher on the right (mirrors ref) */
+  const yc = 0.52 + 0.14*(x-0.35)
+    + 0.045*Math.sin(x*5.2 + ph*TAU*0.5 + 0.7)
+    + swash;
+  const sv = v*2-1;
+  const off = Math.sign(sv)*Math.pow(Math.abs(sv), 1.35) * (0.20 + 0.16*q);
+  const ripple = 0.010*Math.sin(ph*TAU*1.5 + u*33.0 + q*9.0);
+  out.x = x;
+  out.y = yc + off + ripple;
+  const core = 1 - Math.min(1, Math.abs(off)/(0.20 + 0.16*q));
+  out.a = (0.30 + 0.70*core) * (0.40 + 0.60*d);
+  out.s = 0.55 + 0.75*d;
+}
+
+const SCENE_FN = [sceneWave, sceneDune, sceneShore];
+
+/* ---------------- light dance ----------------
+   The lights ride the SAME equations that drive each scene's stipples,
+   so gradient and dots read as one force:
+   - Wave:  the band's sine terms evaluated at the light's own x — the
+            light lifts and falls as the crest passes over it.
+   - Dune:  intensity swells at the ridge-crossing rate of the forward
+            scroll (scroll speed 0.0115 × ridge frequency 15).
+   - Shore: position and brightness follow warpPhase's swash — the light
+            surges up the beach and retreats on the same ramped clock.
+   Returns [dx, dy, brightnessMul] for light j of scene idx.          */
+function lightDance(idx, t, j){
+  const A = state.danceAmt, P = state.dancePulse;
+  if (idx === 0){
+    const lx = SCENES[0].lights[j][0];
+    const dy = (0.13*Math.sin(lx*4.6 + 1.4 + t*0.16)
+              + 0.05*Math.sin(lx*9.7 - t*0.26 + 2.0)) * 0.55 * A;
+    const dx = 0.025*A*Math.sin(t*0.11 + j*2.1);
+    const mul = 1 + 0.15*P*Math.sin(t*0.32 + j*2.0);
+    return [dx, dy, mul];
+  }
+  if (idx === 1){
+    const ridgeRate = 0.0115 * 15;
+    const dx = 0.02*A*Math.sin(t*0.06 + j*1.3);
+    const dy = -0.035*A*Math.sin(t*ridgeRate*0.5 + j*1.5);
+    const mul = 1 + 0.22*P*Math.sin(t*ridgeRate + j*2.4);
+    return [dx, dy, mul];
+  }
+  const ph = warpPhase(t);
+  const sw = 0.085*Math.sin(ph*TAU) + 0.028*Math.sin(ph*TAU*2 + 1.1);
+  const dx = 0.02*A*Math.sin(ph*TAU*0.5 + j*1.7);
+  const dy = sw*0.9*A;
+  const mul = 1 + 0.20*P*Math.sin(ph*TAU + 0.5 + j*0.8);
+  return [dx, dy, mul];
+}
+let danceMix = 1;   /* eased 0..1 so toggling never jumps the lights */
+
+/* ---------------- pointer drift ---------------- */
+const drift = { x:0, y:0, tx:0, ty:0 };
+window.addEventListener("pointermove", e => {
+  drift.tx = (e.clientX / window.innerWidth  - 0.5);
+  drift.ty = (e.clientY / window.innerHeight - 0.5);
+}, { passive:true });
+
+/* ---------------- palette / uniform blending ---------------- */
+function scenePalette(idx){
+  const sc = SCENES[idx], adj = colAdjust[idx];
+  const shift = c => [c[0], c[1], c[2] + adj.hue];
+  return {
+    labA: oklchToLab(...shift(sc.deep)),
+    labB: oklchToLab(...shift(sc.mid)),
+    labC: oklchToLab(...shift(sc.light)),
+    dotA: oklabToSrgb(...oklchToLab(...shift(sc.dotA))),
+    dotB: oklabToSrgb(...oklchToLab(...shift(sc.dotB))),
+    lights: sc.lights.map(l => [l[0]+adj.lx, l[1]+adj.ly, l[2]*adj.spread, l[3]*adj.light]),
+    base: [sc.base.dirX, sc.base.dirY, sc.base.off],
+  };
+}
+function mixArr(a,b,t){ return a.map((v,i)=>lerp(v,b[i],t)); }
+function blendPalettes(pa, pb, t){
+  return {
+    labA: mixArr(pa.labA, pb.labA, t),
+    labB: mixArr(pa.labB, pb.labB, t),
+    labC: mixArr(pa.labC, pb.labC, t),
+    dotA: mixArr(pa.dotA, pb.dotA, t),
+    dotB: mixArr(pa.dotB, pb.dotB, t),
+    lights: [ mixArr(pa.lights[0], pb.lights[0], t),
+              mixArr(pa.lights[1], pb.lights[1], t) ],
+    base: mixArr(pa.base, pb.base, t),
+  };
+}
+
+/* ---------------- morph control ---------------- */
+/* When a morph is interrupted, the current on-screen blend is frozen and
+   becomes the new morph source, so retargeting never pops. */
+let frozen = null;      // { pal, raw, n }
+let lastPal = null;
+let lastN = 0;
+function goToScene(idx, manual){
+  if (idx === state.target) return;
+  if (state.morphT < 1 && lastPal){
+    frozen = { pal: lastPal, raw: curRaw.slice(0, lastN*4), n: lastN };
+  } else {
+    frozen = null;
+  }
+  state.scene = state.target;
+  state.target = idx;
+  state.morphT = 0;
+  state.dwellClock = 0;
+  if (manual) syncSceneUI();
+}
+function activeSceneIdx(){ return state.morphT > 0.5 ? state.target : state.scene; }
+
+/* ---------------- resize ---------------- */
+let dpr = 1;
+function resize(){
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width  = Math.round(window.innerWidth  * dpr);
+  canvas.height = Math.round(window.innerHeight * dpr);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* ---------------- main loop ---------------- */
+let animT = 0;            /* scene clock, scaled by speed */
+let wanderT = 0;          /* light-wander clock, integrates its own speed so
+                             dragging the slider never phase-jumps the lights */
+let last = performance.now();
+let fpsAcc = 0, fpsN = 0, fpsTimer = 0;
+const fpsEl = document.getElementById("fps");
+
+function frame(now){
+  requestAnimationFrame(frame);
+  let dt = (now - last) / 1000;
+  last = now;
+  if (dt > 0.1) dt = 0.1;
+
+  /* fps */
+  fpsAcc += dt; fpsN++; fpsTimer += dt;
+  if (fpsTimer > 0.5){
+    fpsEl.textContent = Math.round(fpsN/fpsAcc) + " fps";
+    fpsAcc = 0; fpsN = 0; fpsTimer = 0;
+  }
+
+  if (!state.paused){
+    animT += dt * state.speed;
+    wanderT += dt * state.speed * state.wanderSpeed;
+
+    /* morph progress runs on real time so it stays responsive at speed 0 */
+    if (state.morphT < 1)
+      state.morphT = Math.min(1, state.morphT + dt/state.morphDur);
+    else if (state.autoCycle){
+      state.dwellClock += dt;
+      if (state.dwellClock >= state.dwell){
+        goToScene((state.target+1)%3, false);
+        syncSceneUI();
+      }
+    }
+  }
+
+  /* pointer drift easing */
+  const dk = 1 - Math.pow(0.002, dt);   /* ~smooth follow */
+  const dAmt = state.driftOn ? state.driftAmt : 0;
+  drift.x += (drift.tx*dAmt - drift.x) * dk;
+  drift.y += (drift.ty*dAmt - drift.y) * dk;
+
+  const e = easeInOutCubic(state.morphT);
+  const morphing = state.morphT < 1;
+  if (!morphing && frozen) frozen = null;
+
+  /* ---- gradient uniforms ---- */
+  const srcPal = frozen ? frozen.pal : scenePalette(state.scene);
+  const pal = morphing ? blendPalettes(srcPal, scenePalette(state.target), e)
+            : scenePalette(state.target);
+  lastPal = pal;
+  const t = animT;
+  /* slow orbital wander for the light blobs + pointer drift */
+  const wAmp = state.wanderAmt;
+  const lw = (l, ph) => [
+    l[0] + wAmp*0.030*Math.sin(wanderT*0.070+ph) + drift.x*0.06,
+    l[1] + wAmp*0.022*Math.sin(wanderT*0.055+ph*1.7+1.0) - drift.y*0.05,
+    l[2], l[3] ];
+  const L1 = lw(pal.lights[0], 0.0), L2 = lw(pal.lights[1], 2.4);
+
+  /* light dance: same force as the stipples, blended across morphs */
+  danceMix += ((state.danceOn ? 1 : 0) - danceMix) * (1 - Math.pow(0.02, dt));
+  if (danceMix > 0.001){
+    const applyDance = (L, j) => {
+      let d = lightDance(state.target, t, j);
+      if (morphing){
+        const da = lightDance(state.scene, t, j);
+        d = [lerp(da[0],d[0],e), lerp(da[1],d[1],e), lerp(da[2],d[2],e)];
+      }
+      L[0] += d[0]*danceMix;
+      L[1] += d[1]*danceMix;
+      const m = 1 + (d[2]-1)*danceMix;
+      L[3] *= m;
+      L[2] *= 1 + (m-1)*0.4;   /* radius breathes gently with brightness */
+    };
+    applyDance(L1, 0); applyDance(L2, 1);
+  }
+
+  gl.disable(gl.BLEND);
+  gl.useProgram(gradProg);
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+  gl.enableVertexAttribArray(gradPosLoc);
+  gl.vertexAttribPointer(gradPosLoc, 2, gl.FLOAT, false, 0, 0);
+  gl.uniform3fv(U.uLabA, pal.labA);
+  gl.uniform3fv(U.uLabB, pal.labB);
+  gl.uniform3fv(U.uLabC, pal.labC);
+  gl.uniform4fv(U.uL1, L1);
+  gl.uniform4fv(U.uL2, L2);
+  gl.uniform3fv(U.uBase, pal.base);
+  gl.uniform1f(U.uAspect, canvas.width/canvas.height);
+  gl.uniform1f(U.uTime, t);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  /* ---- particles ---- */
+  const n = state.density;
+  const fnA = SCENE_FN[state.scene], fnB = SCENE_FN[state.target];
+  const adjS = colAdjust[state.scene], adjT = colAdjust[state.target];
+  const baseSize = state.dotSize * 2.6;
+  const tw = state.twinkle;
+  const sv = state.sizeVar;
+  const px = drift.x, py = drift.y;
+  /* stagger spreads each particle's morph window across the morph:
+     particle i starts at st·S and animates over 1/(1+S) of the total */
+  const S = state.stagger * 1.6;
+  for (let i=0;i<n;i++){
+    let x,y,a,s;
+    if (morphing){
+      let xa, ya, aa, sa;
+      if (frozen){
+        if (i < frozen.n){
+          const fo = i*4;
+          xa=frozen.raw[fo]; ya=frozen.raw[fo+1]; aa=frozen.raw[fo+2]; sa=frozen.raw[fo+3];
+        } else {
+          /* particle added mid-morph: fade it in at its target spot */
+          fnB(i, t); xa=out.x+adjT.dx; ya=out.y+adjT.dy; aa=0; sa=out.s;
+        }
+      } else {
+        fnA(i, t); xa=out.x+adjS.dx; ya=out.y+adjS.dy; aa=out.a; sa=out.s;
+      }
+      fnB(i, t);
+      const xb=out.x+adjT.dx, yb=out.y+adjT.dy;
+      const st = seeds[i*4+3];
+      const ei = easeInOutCubic(clamp(state.morphT*(1+S) - st*S, 0, 1));
+      x = lerp(xa, xb, ei); y = lerp(ya, yb, ei);
+      a = lerp(aa, out.a, ei); s = lerp(sa, out.s, ei);
+      /* slight per-particle bow so dots travel individual curved paths */
+      const arc = Math.sin(Math.PI*ei);
+      x += arc*0.05*(seeds[i*4+2]-0.5);
+      y += arc*0.05*(0.5-st);
+    } else {
+      fnB(i, t); x=out.x+adjT.dx; y=out.y+adjT.dy; a=out.a; s=out.s;
+    }
+    const ro = i*4;
+    curRaw[ro]=x; curRaw[ro+1]=y; curRaw[ro+2]=a; curRaw[ro+3]=s;
+    const d = seeds[i*4+2];
+    /* size variance: 1 = scene's natural spread, 0 = perfectly uniform */
+    s = 1 + (s-1)*sv;
+    /* twinkle + pointer parallax (deeper dots move more) */
+    if (tw > 0) a *= 1 - tw*0.5 + tw*0.5*Math.sin(t*1.8 + i*2.4);
+    x += px * (0.012 + 0.035*d);
+    y -= py * (0.010 + 0.030*d);
+    const o = i*5;
+    verts[o]   = x;
+    verts[o+1] = y;
+    verts[o+2] = baseSize * s;
+    verts[o+3] = Math.max(a, 0);
+    verts[o+4] = 1 - d*0.85;    /* deep dots tinted, near dots bright */
+  }
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE);
+  gl.useProgram(dotProg);
+  gl.bindBuffer(gl.ARRAY_BUFFER, dotBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, verts.subarray(0, n*5), gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(dotPosLoc);
+  gl.vertexAttribPointer(dotPosLoc, 2, gl.FLOAT, false, 20, 0);
+  gl.enableVertexAttribArray(dotPropLoc);
+  gl.vertexAttribPointer(dotPropLoc, 3, gl.FLOAT, false, 20, 8);
+  gl.uniform1f(UD.uDpr, dpr);
+  gl.uniform3fv(UD.uDotA, pal.dotA);
+  gl.uniform3fv(UD.uDotB, pal.dotB);
+  gl.uniform1f(UD.uGlow, state.dotGlow);
+  gl.drawArrays(gl.POINTS, 0, n);
+  lastN = n;
+}
+requestAnimationFrame(frame);
+
+/* ---------------- UI wiring ---------------- */
+const $ = id => document.getElementById(id);
+
+function bindRange(id, key, fmt, target){
+  const el = $(id), val = $(id+"V");
+  el.addEventListener("input", ()=>{
+    const v = parseFloat(el.value);
+    (target || state)[key] = v;
+    val.textContent = fmt(v);
+  });
+}
+const fmt2 = v=>v.toFixed(2).replace(/0$/,"");
+bindRange("dwell","dwell", v=>v+"s");
+bindRange("morphDur","morphDur", v=>v.toFixed(1)+"s");
+bindRange("stagger","stagger", fmt2);
+bindRange("speed","speed", fmt2);
+bindRange("driftAmt","driftAmt", fmt2);
+bindRange("wanderAmt","wanderAmt", fmt2);
+bindRange("wanderSpeed","wanderSpeed", fmt2);
+bindRange("danceAmt","danceAmt", fmt2);
+bindRange("dancePulse","dancePulse", fmt2);
+bindRange("density","density", v=>v);
+bindRange("dotSize","dotSize", fmt2);
+bindRange("sizeVar","sizeVar", fmt2);
+bindRange("dotGlow","dotGlow", fmt2);
+bindRange("twinkle","twinkle", fmt2);
+
+function bindToggle(id, key){
+  const el = $(id);
+  el.classList.toggle("on", state[key]);
+  el.addEventListener("click", ()=>{
+    state[key] = !state[key];
+    el.classList.toggle("on", state[key]);
+    if (key === "autoCycle") state.dwellClock = 0;
+  });
+}
+bindToggle("autoCycle","autoCycle");
+bindToggle("driftOn","driftOn");
+bindToggle("danceOn","danceOn");
+bindToggle("pause","paused");
+
+/* ---------------- preset import / export ----------------
+   This integration-only block serialises every user-facing control plus all
+   three scene adjustments. The original renderer and control wiring above are
+   unchanged, so an exported preset can be promoted directly into defaults. */
+const RANGE_PRESET = [
+  ["dwell","dwell"], ["morphDur","morphDur"], ["stagger","stagger"],
+  ["speed","speed"], ["driftAmt","driftAmt"], ["wanderAmt","wanderAmt"],
+  ["wanderSpeed","wanderSpeed"], ["danceAmt","danceAmt"],
+  ["dancePulse","dancePulse"], ["density","density"], ["dotSize","dotSize"],
+  ["sizeVar","sizeVar"], ["dotGlow","dotGlow"], ["twinkle","twinkle"],
+];
+const TOGGLE_PRESET = [
+  ["autoCycle","autoCycle"], ["driftOn","driftOn"],
+  ["danceOn","danceOn"], ["pause","paused"],
+];
+const ADJUST_KEYS = ["hue","light","spread","lx","ly","dx","dy"];
+
+function getPreset(){
+  const controls = {};
+  for (const [,key] of RANGE_PRESET) controls[key] = state[key];
+  for (const [,key] of TOGGLE_PRESET) controls[key] = state[key];
+  controls.seed = state.seed;
+  return {
+    version: 1,
+    shader: "veli-gradient-stipple",
+    scene: state.target,
+    controls,
+    sceneAdjustments: colAdjust.map(adj => ({...adj})),
+  };
+}
+
+function setPresetStatus(message){ $("presetStatus").textContent = message; }
+
+function applyPreset(preset){
+  if (!preset || preset.shader !== "veli-gradient-stipple" || preset.version !== 1)
+    throw new Error("This is not a Veli Stipple BG preset.");
+  const controls = preset.controls || {};
+  for (const [id,key] of RANGE_PRESET){
+    if (!Number.isFinite(controls[key])) continue;
+    const input = $(id);
+    const value = clamp(controls[key], parseFloat(input.min), parseFloat(input.max));
+    input.value = value;
+    input.dispatchEvent(new Event("input"));
+  }
+  for (const [id,key] of TOGGLE_PRESET){
+    if (typeof controls[key] !== "boolean") continue;
+    state[key] = controls[key];
+    $(id).classList.toggle("on", state[key]);
+  }
+  if (Number.isFinite(controls.seed)){
+    state.seed = controls.seed >>> 0;
+    reseed();
+  }
+  if (Array.isArray(preset.sceneAdjustments)){
+    for (let i=0;i<Math.min(3,preset.sceneAdjustments.length);i++){
+      const source = preset.sceneAdjustments[i];
+      if (!source || typeof source !== "object") continue;
+      const next = defaultAdjust();
+      for (const key of ADJUST_KEYS)
+        if (Number.isFinite(source[key])) next[key] = source[key];
+      colAdjust[i] = next;
+    }
+  }
+  if (Number.isInteger(preset.scene) && preset.scene >= 0 && preset.scene <= 2){
+    state.scene = preset.scene;
+    state.target = preset.scene;
+    state.morphT = 1;
+    state.dwellClock = 0;
+    frozen = null;
+  }
+  syncSceneUI();
+  setPresetStatus("Preset imported.");
+}
+
+$("copyPreset").addEventListener("click", async ()=>{
+  const json = JSON.stringify(getPreset(), null, 2);
+  try {
+    await navigator.clipboard.writeText(json);
+    setPresetStatus("Preset copied to clipboard.");
+  } catch {
+    setPresetStatus("Clipboard unavailable — use Download JSON.");
+  }
+});
+$("downloadPreset").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(getPreset(), null, 2)+"\n"], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "veli-gradient-stipple-preset.json";
+  link.click();
+  URL.revokeObjectURL(url);
+  setPresetStatus("Preset downloaded.");
+});
+$("importPreset").addEventListener("click", ()=> $("presetFile").click());
+$("presetFile").addEventListener("change", async event=>{
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  try { applyPreset(JSON.parse(await file.text())); }
+  catch (error) { setPresetStatus(error instanceof Error ? error.message : "Preset import failed."); }
+  event.target.value = "";
+});
+
+$("implementation").addEventListener("change", event=>{
+  const shader = event.target.value;
+  if (shader === "veli-gradient-stipple") return;
+  window.parent.postMessage({type:"veli:select-shader", shader}, window.location.origin);
+});
+
+/* scene buttons + accent + per-scene color section */
+const sceneBtns = [...document.querySelectorAll(".sceneBtn")];
+sceneBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=> goToScene(+btn.dataset.scene, true));
+});
+/* per-scene tune sliders edit the TARGET scene's adjustment */
+const TUNE = [
+  ["hueShift","hue",    v=>v+"°"],
+  ["lightAmt","light",  fmt2],
+  ["glowSpread","spread",fmt2],
+  ["lightX","lx", fmt2],
+  ["lightY","ly", fmt2],
+  ["dotsX","dx",  fmt2],
+  ["dotsY","dy",  fmt2],
+];
+function syncSceneUI(){
+  const idx = state.target;
+  sceneBtns.forEach(b => b.classList.toggle("active", +b.dataset.scene === idx));
+  document.documentElement.style.setProperty("--accent", SCENES[idx].accent);
+  $("colScene").textContent = SCENES[idx].name;
+  const adj = colAdjust[idx];
+  for (const [id, key, fmt] of TUNE){
+    $(id).value = adj[key];
+    $(id+"V").textContent = fmt(adj[key]);
+  }
+}
+for (const [id, key, fmt] of TUNE){
+  $(id).addEventListener("input", e=>{
+    const v = parseFloat(e.target.value);
+    colAdjust[state.target][key] = v;
+    $(id+"V").textContent = fmt(v);
+  });
+}
+$("resetColor").addEventListener("click", ()=>{
+  colAdjust[state.target] = defaultAdjust();
+  syncSceneUI();
+});
+
+$("reseed").addEventListener("click", ()=>{
+  state.seed = (Math.random()*0xffffffff)>>>0;
+  reseed();
+});
+
+/* hide / show UI */
+const panel = $("panel"), toggleUi = $("toggleUi"), hint = $("hint");
+function setUiHidden(h){
+  panel.classList.toggle("hidden", h);
+  toggleUi.classList.toggle("show", h);
+  hint.classList.toggle("hidden", h);
+}
+$("hideUi").addEventListener("click", ()=> setUiHidden(true));
+toggleUi.addEventListener("click", ()=> setUiHidden(false));
+
+/* keyboard */
+window.addEventListener("keydown", e=>{
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === "1" || e.key === "2" || e.key === "3"){
+    goToScene(+e.key - 1, true);
+  } else if (e.key === " "){
+    e.preventDefault();
+    state.paused = !state.paused;
+    $("pause").classList.toggle("on", state.paused);
+  } else if (e.key.toLowerCase() === "h"){
+    setUiHidden(!panel.classList.contains("hidden"));
+  }
+});
+
+/* init reflect reduced-motion defaults */
+$("speed").value = state.speed; $("speedV").textContent = state.speed.toFixed(2).replace(/0$/,"");
+$("autoCycle").classList.toggle("on", state.autoCycle);
+syncSceneUI();
+if (embedded && !embeddedControls){
+  panel.hidden = true;
+  panel.setAttribute("inert", "");
+  panel.setAttribute("aria-hidden", "true");
+  toggleUi.hidden = true;
+  hint.hidden = true;
+}
+</script>
+</body>
+</html>

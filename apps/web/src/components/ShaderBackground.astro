@@ -19,6 +19,12 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 
 <div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
   <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
+  <iframe
+    class="shader-bg__iframe"
+    data-gradient-stipple-frame
+    title="Veli Stipple BG controls"
+    allow="clipboard-read; clipboard-write"
+    hidden></iframe>
   {
     fallbackSrc ? (
       <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
@@ -83,6 +89,9 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 
   for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
     const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
+    const gradientStippleFrame = wrapper.querySelector<HTMLIFrameElement>(
+      '[data-gradient-stipple-frame]',
+    );
     const drawer = wrapper.querySelector<HTMLElement>('[data-shader-tuner]');
     const title = drawer?.querySelector<HTMLElement>('#shader-tuner-title');
     const fields = drawer?.querySelector<HTMLElement>('[data-shader-fields]');
@@ -231,6 +240,33 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
       activeDefinition = definition;
       wrapper.dataset.shader = definition.id;
 
+      if (definition.id === 'veli-gradient-stipple' && gradientStippleFrame) {
+        activeCanvas.hidden = true;
+        gradientStippleFrame.hidden = false;
+        const frameUrl = new URL('/gradient-stipple.html', window.location.origin);
+        frameUrl.searchParams.set('embedded', '1');
+        if (controlsEnabled) frameUrl.searchParams.set('controls', '1');
+        gradientStippleFrame.src = frameUrl.toString();
+        wrapper.dataset.shaderActive = 'true';
+        if (select) select.value = definition.id;
+        if (drawer && open) {
+          drawer.hidden = true;
+          open.hidden = true;
+        }
+        announce(`${definition.label} active`);
+        return true;
+      }
+
+      activeCanvas.hidden = false;
+      if (gradientStippleFrame) {
+        gradientStippleFrame.hidden = true;
+        gradientStippleFrame.src = 'about:blank';
+      }
+      if (controlsEnabled && drawer && open) {
+        drawer.hidden = false;
+        open.hidden = true;
+      }
+
       renderer = createRenderer(activeCanvas, definition, {
         pointerTarget: wrapper.parentElement ?? wrapper,
         onContextLost: () => {
@@ -312,11 +348,35 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
     activateShader(initialId);
 
     if (controlsEnabled && drawer && open) {
-      drawer.hidden = false;
-      open.hidden = true;
+      const originalStippleActive = wrapper.dataset.shader === 'veli-gradient-stipple';
+      drawer.hidden = originalStippleActive;
+      open.hidden = originalStippleActive;
     }
 
-    document.addEventListener('astro:before-swap', () => renderer?.destroy(), { once: true });
+    const onShaderMessage = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin ||
+        event.source !== gradientStippleFrame?.contentWindow ||
+        event.data?.type !== 'veli:select-shader' ||
+        typeof event.data.shader !== 'string' ||
+        !tunableShaderIds.has(event.data.shader)
+      )
+        return;
+      if (!activateShader(event.data.shader)) return;
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('shader', event.data.shader);
+      window.history.replaceState({}, '', nextUrl);
+    };
+    window.addEventListener('message', onShaderMessage);
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        renderer?.destroy();
+        window.removeEventListener('message', onShaderMessage);
+      },
+      { once: true },
+    );
   }
 </script>
 
@@ -330,6 +390,19 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
     box-shadow: 0 18px 60px color-mix(in srgb, #001c27 24%, transparent);
     color: var(--color-text-base-emphasis);
     backdrop-filter: blur(20px) saturate(1.2);
+  }
+
+  .shader-bg__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #050a10;
+  }
+
+  .shader-bg__iframe[hidden] {
+    display: none;
   }
 
   .shader-tuner[hidden],

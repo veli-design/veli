@@ -150,6 +150,7 @@ button {
 
 .shader-bg[data-shader-active] .shader-bg__fallback {
   opacity: 0;
+  pointer-events: none;
 }
 
 .home-hero__background::after {
@@ -162,6 +163,12 @@ button {
   );
   content: '';
   pointer-events: none;
+}
+
+/* The designer's original Stipple BG owns its full composition. Do not add
+   the homepage reading veil when previewing that implementation. */
+.home-hero__background[data-shader='veli-gradient-stipple']::after {
+  display: none;
 }
 
 .home-hero__content {
