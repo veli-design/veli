@@ -1255,7 +1255,8 @@ button {
 }
 
 .docs-utilities {
-  height: calc(100svh - 16px);
+  /* Match the main canvas's 8px bottom gutter while this rail is sticky. */
+  height: calc(100svh - 8px);
   margin: 8px 8px 8px 0;
   border-radius: 0 8px 8px 0;
   background: var(--color-bg-surface-raised);
