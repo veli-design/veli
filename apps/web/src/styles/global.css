@@ -223,14 +223,10 @@ button {
   align-items: center;
 }
 
-.home-wordmark picture,
-.home-wordmark img {
+.home-wordmark .veli-logo {
   display: block;
-}
-
-.home-wordmark img {
-  width: 126px;
-  height: 34px;
+  width: 194px;
+  height: auto;
 }
 
 .home-copy {
@@ -318,10 +314,6 @@ button {
   border-radius: 3px;
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
-}
-
-.dark .home-wordmark img {
-  filter: brightness(0) invert(1);
 }
 
 /* Documentation shell */
@@ -959,9 +951,8 @@ button {
     width: 100%;
   }
 
-  .home-wordmark img {
-    width: 104px;
-    height: 28px;
+  .home-wordmark .veli-logo {
+    width: 160px;
   }
 
   .home-copy {

@@ -2,6 +2,7 @@
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
 import ShaderDialControls from '../components/ShaderDialControls';
+import VeliLogo from '../components/VeliLogo.astro';
 ---
 
 <Layout
@@ -23,10 +24,7 @@ import ShaderDialControls from '../components/ShaderDialControls';
 
     <section class="home-hero__content" aria-labelledby="home-title">
       <div class="home-wordmark">
-        <picture>
-          <source media="(max-width: 760px)" srcset="/images/home-veli-logo-mobile.svg" />
-          <img src="/images/home-veli-logo-desktop.svg" alt="Veli" width="126" height="34" />
-        </picture>
+        <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
       </div>
 
       <div class="home-copy">
