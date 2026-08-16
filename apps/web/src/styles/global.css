@@ -237,10 +237,6 @@ button {
   max-width: 660px;
   margin: 0;
   color: inherit;
-  font-size: 48px;
-  font-weight: 500;
-  line-height: 1.34;
-  letter-spacing: -0.02em;
 }
 
 .home-copy h1 span:last-child {
@@ -251,9 +247,6 @@ button {
   max-width: 599px;
   margin: 20px 0 0;
   color: inherit;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.53;
 }
 
 .home-cta {
@@ -962,9 +955,6 @@ button {
 
   .home-copy h1 {
     max-width: none;
-    font-size: 28px;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
   }
 
   .home-copy h1 span {
@@ -974,8 +964,6 @@ button {
   .home-copy p {
     max-width: none;
     margin-top: 20px;
-    font-size: 14px;
-    line-height: 1.45;
   }
 
   .home-cta {
