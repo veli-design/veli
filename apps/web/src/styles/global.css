@@ -261,6 +261,8 @@ button {
 .docs-page {
   background: var(--color-bg-surface-base);
   color: var(--color-text-base-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .docs-workspace {
