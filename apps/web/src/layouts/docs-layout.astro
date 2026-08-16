@@ -276,25 +276,25 @@ function isSectionActive(section: (typeof docsSections)[number]) {
     <main id="main" class:list={['docs-main', fullBleedHeader && 'docs-main--full-bleed-header']}>
       <div class="docs-main__inner">
         <slot />
+
+        <aside class="docs-utilities" aria-label="Page utilities">
+          <nav class="docs-contents" aria-label="On this page">
+            <h2>On this page</h2>
+            {
+              headings.length > 0 ? (
+                headings.map((heading) => (
+                  <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
+                    {heading.text}
+                  </a>
+                ))
+              ) : (
+                <a href="#main">Overview</a>
+              )
+            }
+          </nav>
+        </aside>
       </div>
     </main>
-
-    <aside class="docs-utilities" aria-label="Page utilities">
-      <nav class="docs-contents" aria-label="On this page">
-        <h2>On this page</h2>
-        {
-          headings.length > 0 ? (
-            headings.map((heading) => (
-              <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
-                {heading.text}
-              </a>
-            ))
-          ) : (
-            <a href="#main">Overview</a>
-          )
-        }
-      </nav>
-    </aside>
   </div>
 
   <script is:inline>

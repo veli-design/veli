@@ -1041,7 +1041,7 @@ button {
 }
 
 .docs-workspace {
-  grid-template-columns: 280px minmax(0, 1fr) 228px;
+  grid-template-columns: 280px minmax(0, 1fr);
 }
 
 .docs-navigation {
@@ -1242,47 +1242,48 @@ button {
 .docs-main {
   position: relative;
   isolation: isolate;
-  display: flex;
   height: calc(100svh - 16px);
   min-width: 0;
-  margin-block: 8px;
+  margin: 8px 8px 8px 0;
   align-self: start;
   overflow: hidden;
   border: 0;
-  border-radius: 24px 0 0 24px;
+  border-radius: 24px 8px 8px 24px;
   background: var(--color-bg-surface-raised);
 }
 
 .docs-main__inner,
 .docs-main--full-bleed-header .docs-main__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  column-gap: 96px;
+  align-content: start;
   min-height: 0;
-  flex: 1;
   height: 100%;
-  width: min(100% - 96px, 1000px);
-  margin-inline: auto;
+  width: 100%;
+  margin: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 72px 104px;
+  padding: 80px;
   scrollbar-gutter: stable;
 }
 
 .docs-utilities {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  height: calc(100svh - 16px);
-  margin: 8px 8px 8px 0;
-  align-self: start;
-  overflow: hidden;
-  border-radius: 0 8px 8px 0;
-  background: var(--color-bg-surface-raised);
-  padding: 280px 8px 32px 0;
+  position: static;
+  top: auto;
+  grid-column: 2;
+  grid-row: 2;
+  height: auto;
+  min-width: 0;
+  align-self: stretch;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  padding: 80px 0 0;
 }
 
 .docs-main::before,
-.docs-main::after,
-.docs-utilities::before,
-.docs-utilities::after {
+.docs-main::after {
   position: absolute;
   z-index: 1;
   right: 0;
@@ -1292,8 +1293,7 @@ button {
   pointer-events: none;
 }
 
-.docs-main::before,
-.docs-utilities::before {
+.docs-main::before {
   top: 0;
   background: linear-gradient(
     to bottom,
@@ -1303,8 +1303,7 @@ button {
   );
 }
 
-.docs-main::after,
-.docs-utilities::after {
+.docs-main::after {
   bottom: 0;
   background: linear-gradient(
     to top,
@@ -1315,14 +1314,26 @@ button {
 }
 
 .docs-contents {
-  min-height: 0;
-  flex: 1;
+  position: sticky;
+  top: 0;
+  max-height: calc(100svh - 160px);
   margin: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   border-left: 1px solid var(--color-border-base-muted);
   padding-block: 8px;
   scrollbar-gutter: stable;
+}
+
+.docs-page-header {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.docs-overview-content,
+.docs-prose {
+  grid-column: 1;
+  min-width: 0;
 }
 
 .docs-contents h2 {
@@ -1396,7 +1407,7 @@ button {
 }
 
 .docs-overview-content {
-  padding-top: 72px;
+  padding-top: 80px;
 }
 
 .docs-overview-copy {
@@ -1510,6 +1521,18 @@ button {
   border-bottom: 1px solid var(--color-border-base-muted);
 }
 
+.docs-prose {
+  padding-top: 80px;
+}
+
+.docs-page-header + .docs-prose {
+  margin-top: 0;
+}
+
+.docs-prose > h2:first-child {
+  margin-top: 0;
+}
+
 .docs-page-header--illustrated {
   display: flex;
   align-items: center;
@@ -1578,7 +1601,9 @@ button {
 
   .docs-main__inner,
   .docs-main--full-bleed-header .docs-main__inner {
-    width: min(100% - 64px, 920px);
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    padding: 64px 48px 80px;
   }
 }
 
@@ -1618,10 +1643,12 @@ button {
 
   .docs-main__inner,
   .docs-main--full-bleed-header .docs-main__inner {
+    display: block;
     height: auto;
-    width: min(100% - 40px, 760px);
+    width: 100%;
+    margin: 0;
     overflow: visible;
-    padding-block: 48px 80px;
+    padding: 48px 20px 80px;
   }
 
   .docs-main::before,
