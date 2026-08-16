@@ -2,7 +2,6 @@
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
 import ShaderDialControls from '../components/ShaderDialControls';
-import VeliLogo from '../components/VeliLogo.astro';
 ---
 
 <Layout
@@ -11,22 +10,42 @@ import VeliLogo from '../components/VeliLogo.astro';
   pageClass="home-page"
 >
   <main id="main" class="home-hero">
-    <ShaderBackground class="home-hero__background" />
+    <div class="home-shader-frame" aria-hidden="true">
+      <ShaderBackground class="home-hero__background" />
+      <span class="home-shader-cut home-shader-cut--top-right"></span>
+      <span class="home-shader-cut home-shader-cut--bottom-left"></span>
+      <span class="home-shader-seam home-shader-seam--top"></span>
+      <span class="home-shader-seam home-shader-seam--right"></span>
+      <span class="home-shader-seam home-shader-seam--bottom"></span>
+      <span class="home-shader-seam home-shader-seam--left"></span>
+    </div>
     <ShaderDialControls client:load />
-    <div class="home-hero__content">
+
+    <section class="home-hero__content" aria-labelledby="home-title">
       <div class="home-wordmark">
-        <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
+        <picture>
+          <source media="(max-width: 760px)" srcset="/images/home-veli-logo-mobile.svg" />
+          <img src="/images/home-veli-logo-desktop.svg" alt="Veli" width="126" height="34" />
+        </picture>
       </div>
 
       <div class="home-copy">
-        <h1>The foundation for<br />public services</h1>
+        <h1 id="home-title">
+          <span>One system.</span>
+          <span>Every service.</span><span>Built for everyone.</span>
+        </h1>
         <p>
-          Government services are outgrowing scattered interfaces.<br />
-          Veli gives every Maldivian service one accessible, bilingual system to build from.
+          The official design system powering Maldives' public services. Consistent, accessible, and
+          built to last.
         </p>
       </div>
 
       <a class="home-cta" href="/docs/">Start building</a>
-    </div>
+    </section>
+
+    <footer class="home-footer">
+      <span>Stewarded by</span>
+      <a href="https://mindco.mv/">MINDCo</a>
+    </footer>
   </main>
 </Layout>

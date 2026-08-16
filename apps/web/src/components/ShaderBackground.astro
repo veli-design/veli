@@ -13,7 +13,8 @@ const { fallbackSrc, class: className = '' } = Astro.props;
     class="shader-bg__iframe"
     data-gradient-stipple-frame
     src="/gradient-stipple.html?embedded=1"
-    title="Veli Stipple BG"></iframe>
+    title="Veli Stipple BG"
+    tabindex="-1"></iframe>
   {
     fallbackSrc ? (
       <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
