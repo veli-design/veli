@@ -249,33 +249,6 @@ button {
   color: inherit;
 }
 
-.home-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 32px;
-  background: var(--color-bg-secondary-subtle-default);
-  color: inherit;
-  padding: 16px 24px;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.42;
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    transform 160ms ease;
-}
-
-.home-cta:hover {
-  background: var(--color-bg-secondary-subtle-hover);
-  transform: translateY(-2px);
-}
-
-.home-cta:focus-visible {
-  outline: 3px solid var(--color-border-focus);
-  outline-offset: 3px;
-}
-
 .home-footer {
   position: absolute;
   z-index: 2;
@@ -964,12 +937,6 @@ button {
   .home-copy p {
     max-width: none;
     margin-top: 20px;
-  }
-
-  .home-cta {
-    padding: 10px 18px;
-    font-size: 16px;
-    line-height: 1.5;
   }
 
   .home-footer {

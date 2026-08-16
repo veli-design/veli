@@ -38,7 +38,28 @@ import VeliLogo from '../components/VeliLogo.astro';
         </p>
       </div>
 
-      <a class="home-cta" href="/docs/">Start building</a>
+      <a
+        href="/docs/"
+        data-home-cta
+        class:list={[
+          'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',
+          '[transition-property:background-color,color,scale] [transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)] [transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+          'focus-visible:border-base-subtle focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
+          '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
+          'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
+          "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-normal after:ease-out after:content-['']",
+          'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
+          'bg-button-secondary-subtle text-base-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
+          '[--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_255_255_/_0.15)]',
+        ]}
+      >
+        <span
+          class="relative z-[1] inline-flex items-center justify-center gap-2 px-1.5 font-sans antialiased type-subtitle-medium"
+        >
+          Start building
+        </span>
+      </a>
     </section>
 
     <footer class="home-footer">
@@ -47,3 +68,86 @@ import VeliLogo from '../components/VeliLogo.astro';
     </footer>
   </main>
 </Layout>
+
+<script>
+  const rippleDuration = 420;
+  const rippleStartSize = 12;
+
+  function easeOutCubic(progress: number) {
+    return 1 - (1 - progress) ** 3;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-home-cta]').forEach((cta) => {
+    let animationFrame: number | null = null;
+    let pointerFrame: number | null = null;
+    let isPressing = false;
+    let rippleX = 0;
+    let rippleY = 0;
+    let rippleSize = 0;
+    let pendingPointer: { x: number; y: number } | null = null;
+
+    const writeRipple = () => {
+      cta.style.setProperty('--button-ripple-x', `${rippleX}px`);
+      cta.style.setProperty('--button-ripple-y', `${rippleY}px`);
+      cta.style.setProperty('--button-ripple-size', `${rippleSize}px`);
+    };
+
+    const beginPress = (x: number, y: number) => {
+      const { width, height } = cta.getBoundingClientRect();
+      const reach = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
+      const endSize = Math.round(Math.max(reach * 2.2, Math.max(width, height) * 1.35));
+
+      isPressing = true;
+      cta.dataset.pressed = '';
+      rippleX = x;
+      rippleY = y;
+      rippleSize = endSize;
+      writeRipple();
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+      const startTime = performance.now();
+
+      const tick = (time: number) => {
+        const progress = Math.min((time - startTime) / rippleDuration, 1);
+        rippleSize = rippleStartSize + (endSize - rippleStartSize) * easeOutCubic(progress);
+        writeRipple();
+        animationFrame = progress < 1 ? requestAnimationFrame(tick) : null;
+      };
+
+      animationFrame = requestAnimationFrame(tick);
+    };
+
+    cta.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      const rect = cta.getBoundingClientRect();
+      beginPress(event.clientX - rect.left, event.clientY - rect.top);
+      cta.setPointerCapture(event.pointerId);
+    });
+
+    cta.addEventListener('pointermove', (event) => {
+      if (!isPressing) return;
+      const rect = cta.getBoundingClientRect();
+      pendingPointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (pointerFrame !== null) return;
+
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = null;
+        if (isPressing && pendingPointer) {
+          rippleX = pendingPointer.x;
+          rippleY = pendingPointer.y;
+          writeRipple();
+        }
+      });
+    });
+
+    const endPress = () => {
+      isPressing = false;
+      delete cta.dataset.pressed;
+    };
+
+    cta.addEventListener('pointerup', endPress);
+    cta.addEventListener('pointercancel', endPress);
+  });
+</script>
