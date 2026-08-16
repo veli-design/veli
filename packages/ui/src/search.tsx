@@ -404,6 +404,7 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
 
             <FieldMessage
               isInvalid={isInvalid}
+              size={size ?? 'md'}
               description={description}
               errorMessage={errorMessage}
             />

@@ -26,48 +26,15 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderLabelVariants,
+  fieldHeaderRequiredIndicatorVariants,
+  fieldHeaderSupplementaryVariants,
 } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 
 const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const headerLabelVariants = cva('type-body-sm-regular', {
-  variants: {
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-default',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
-const headerMetaVariants = cva('type-caption-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: '',
-    },
-  },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
-  defaultVariants: {
-    tone: 'subtle',
-    isDisabled: false,
-  },
-});
 
 const infoTooltipTriggerVariants = cva(
   'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
@@ -450,7 +417,7 @@ export function Select<T extends object>({
             <div className="flex w-full items-center gap-2">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 {label ? (
-                  <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
+                  <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>{label}</Label>
                 ) : null}
                 {infoTooltip ? (
                   <TooltipTrigger>
@@ -472,12 +439,12 @@ export function Select<T extends object>({
                   </TooltipTrigger>
                 ) : null}
                 {labelSupplementary ? (
-                  <span className={headerMetaVariants({ tone: 'subtle', isDisabled })}>
+                  <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
                     {labelSupplementary}
                   </span>
                 ) : null}
                 {showRequiredIndicator && isRequired ? (
-                  <span className={headerMetaVariants({ tone: 'danger', isDisabled })}>*</span>
+                  <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
                 ) : null}
                 {labelIcon ? (
                   <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
@@ -541,6 +508,7 @@ export function Select<T extends object>({
 
           <FieldMessage
             isInvalid={isInvalid}
+            size={size ?? 'md'}
             description={description}
             errorMessage={errorMessage}
           />

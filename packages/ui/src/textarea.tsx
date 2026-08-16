@@ -19,6 +19,9 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderLabelVariants,
+  fieldHeaderRequiredIndicatorVariants,
+  fieldHeaderSupplementaryVariants,
 } from './field-shared';
 import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
@@ -27,54 +30,6 @@ import { twMerge } from 'tailwind-merge';
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
 const textareaSkeletonRootVariants = cva('flex w-full flex-col items-start font-sans antialiased');
-
-const headerLabelVariants = cva('', {
-  variants: {
-    size: {
-      sm: 'type-body-sm-medium',
-      md: 'type-body-sm-medium',
-      lg: 'type-body-md-regular',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-default',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-    isDisabled: false,
-  },
-});
-
-const headerMetaVariants = cva('', {
-  variants: {
-    size: {
-      sm: 'type-caption-regular',
-      md: 'type-caption-regular',
-      lg: 'type-body-sm-regular',
-    },
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: '',
-    },
-  },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
-  defaultVariants: {
-    size: 'md',
-    tone: 'subtle',
-    isDisabled: false,
-  },
-});
 
 const infoTooltipTriggerVariants = cva(
   'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
@@ -622,7 +577,9 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
               <div className="flex w-full items-center justify-between gap-2">
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   {label ? (
-                    <Label className={headerLabelVariants({ size, isDisabled })}>{label}</Label>
+                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                      {label}
+                    </Label>
                   ) : null}
                   {infoTooltip ? (
                     <TooltipTrigger>
@@ -644,14 +601,12 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
                     </TooltipTrigger>
                   ) : null}
                   {labelSupplementary ? (
-                    <span className={headerMetaVariants({ size, tone: 'subtle', isDisabled })}>
+                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
                       {labelSupplementary}
                     </span>
                   ) : null}
                   {showRequiredIndicator && isRequired ? (
-                    <span className={headerMetaVariants({ size, tone: 'danger', isDisabled })}>
-                      *
-                    </span>
+                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
                   ) : null}
                   {labelIcon ? (
                     <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
@@ -710,6 +665,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
 
             <FieldMessage
               isInvalid={isInvalid}
+              size={size ?? 'md'}
               description={description}
               errorMessage={errorMessage}
             />
