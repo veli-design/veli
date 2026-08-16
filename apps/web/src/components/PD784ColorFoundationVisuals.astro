@@ -1,0 +1,227 @@
+---
+interface Props {
+  kind: 'architecture' | 'scale' | 'contrast';
+}
+
+const { kind } = Astro.props;
+
+const architecture = [
+  { eyebrow: 'Base · Primitive', name: 'teal-800' },
+  { eyebrow: 'Tier 1 · Brand', name: 'brand-primary-800' },
+  { eyebrow: 'Tier 2 · Semantic', name: 'text-primary' },
+  { eyebrow: 'Tier 3 · Component', name: 'button-primary-label' },
+];
+
+const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
+---
+
+{
+  kind === 'architecture' && (
+    <ol class="architecture" aria-label="Color token reference chain">
+      {architecture.map((tier) => (
+        <li>
+          <span>{tier.eyebrow}</span>
+          <strong>{tier.name}</strong>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+{
+  kind === 'scale' && (
+    <div class="scale" aria-label="Teal 12-step scale">
+      {steps.map((step) => (
+        <div>
+          <span style={`background: var(--color-teal-${step})`} aria-hidden="true" />
+          <small>{step}</small>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  kind === 'contrast' && (
+    <figure class="contrast">
+      <div class="contrast__sample">
+        <strong>One unified experience for the Government of Maldives</strong>
+        <span>Every citizen can use this service, on any island, on any device.</span>
+      </div>
+      <figcaption>
+        <span>Reference pairing</span>
+        <strong>800 on 200</strong>
+        <small>WCAG AA body text</small>
+      </figcaption>
+    </figure>
+  )
+}
+
+<style>
+  .architecture {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    margin: 24px 0 8px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border-base-subtle);
+    border-radius: 8px;
+    background: var(--color-border-base-subtle);
+    list-style: none;
+  }
+
+  .architecture li {
+    position: relative;
+    display: grid;
+    min-height: 112px;
+    align-content: center;
+    gap: 7px;
+    background: var(--color-bg-surface-raised);
+    padding: 18px;
+  }
+
+  .architecture li:not(:last-child)::after {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: -7px;
+    width: 12px;
+    height: 12px;
+    transform: translateY(-50%) rotate(45deg);
+    border-top: 1px solid var(--color-border-base-subtle);
+    border-right: 1px solid var(--color-border-base-subtle);
+    background: var(--color-bg-surface-raised);
+    content: '';
+  }
+
+  .architecture span,
+  .contrast figcaption > span {
+    color: var(--color-text-base-muted);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .architecture strong {
+    overflow-wrap: anywhere;
+    color: var(--color-text-base-emphasis);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 19px;
+  }
+
+  .scale {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(26px, 1fr));
+    gap: 5px;
+    margin: 24px 0 8px;
+  }
+
+  .scale div {
+    min-width: 0;
+  }
+
+  .scale span {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, var(--color-border-base-strong) 45%, transparent);
+    border-radius: 4px;
+  }
+
+  .scale small {
+    display: block;
+    margin-top: 5px;
+    color: var(--color-text-base-muted);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 9px;
+    line-height: 14px;
+    text-align: center;
+  }
+
+  .contrast {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 156px;
+    margin: 24px 0 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-border-base-subtle);
+    border-radius: 8px;
+  }
+
+  .contrast__sample {
+    display: grid;
+    min-height: 180px;
+    align-content: center;
+    gap: 12px;
+    background: var(--color-teal-200);
+    color: var(--color-teal-800);
+    padding: 32px;
+  }
+
+  .contrast__sample strong {
+    max-width: 430px;
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
+  .contrast__sample span {
+    max-width: 420px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .contrast figcaption {
+    display: grid;
+    align-content: center;
+    gap: 8px;
+    border-inline-start: 1px solid var(--color-border-base-subtle);
+    background: var(--color-bg-surface-raised);
+    padding: 22px;
+  }
+
+  .contrast figcaption strong {
+    color: var(--color-text-base-emphasis);
+    font-size: 19px;
+    line-height: 26px;
+  }
+
+  .contrast figcaption small {
+    color: var(--color-text-base-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  @media (max-width: 720px) {
+    .architecture {
+      grid-template-columns: 1fr;
+    }
+
+    .architecture li {
+      min-height: auto;
+    }
+
+    .architecture li:not(:last-child)::after {
+      top: auto;
+      right: 50%;
+      bottom: -7px;
+      transform: translateX(50%) rotate(135deg);
+    }
+
+    .scale {
+      grid-template-columns: repeat(6, minmax(30px, 1fr));
+      row-gap: 10px;
+    }
+
+    .contrast {
+      grid-template-columns: 1fr;
+    }
+
+    .contrast figcaption {
+      border-top: 1px solid var(--color-border-base-subtle);
+      border-inline-start: 0;
+    }
+  }
+</style>

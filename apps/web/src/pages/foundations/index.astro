@@ -2,11 +2,14 @@
 import DocsLayout from '../../layouts/docs-layout.astro';
 import { foundations } from '../../lib/site';
 
-const headings = foundations.map((foundation) => ({
-  depth: 2,
-  slug: foundation.slug,
-  text: foundation.title,
-}));
+const headings = [
+  { depth: 2, slug: 'overview', text: 'Overview' },
+  ...foundations.map((foundation) => ({
+    depth: 2,
+    slug: foundation.slug,
+    text: foundation.title === 'Color' ? 'Colors' : foundation.title,
+  })),
+];
 ---
 
 <DocsLayout
@@ -16,48 +19,70 @@ const headings = foundations.map((foundation) => ({
   {headings}
   fullBleedHeader
 >
-  <header class="docs-page-header docs-page-header--overview">
-    <img
-      class="docs-overview-hero"
-      src="/images/foundations-overview.webp"
-      alt=""
-      width="2048"
-      height="1152"
-    />
+  <header class="docs-page-header docs-page-header--overview docs-overview-header">
     <div class="docs-page-header__content">
-      <p class="docs-kicker">Foundations</p>
-      <h1>The decisions beneath every service</h1>
+      <h1>Veli Foundation</h1>
       <p>
-        Veli connects shared tokens, accessible components, and government service requirements into
-        one design language.
+        The operating beliefs behind Veli—clarity, access, local context, and shared foundations.
       </p>
     </div>
+    <img
+      class="docs-overview-hero"
+      src="/images/foundations-overview-figma.png"
+      alt=""
+      width="1001"
+      height="400"
+    />
   </header>
 
-  <div class="foundation-directory">
-    {
-      foundations.map((foundation) => (
-        <section id={foundation.slug}>
-          <a href={foundation.href}>
-            <div class="foundation-directory__icon" aria-hidden="true">
-              <img
-                src={foundation.icon}
-                alt=""
-                width={foundation.iconWidth}
-                height={foundation.iconHeight}
-                loading="lazy"
-              />
-            </div>
-            <div class="foundation-directory__content">
-              <h2>{foundation.title}</h2>
-              <p>{foundation.description}</p>
-            </div>
-            <span class="foundation-directory__arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
-        </section>
-      ))
-    }
+  <div class="docs-overview-content">
+    <section class="docs-overview-copy" id="overview">
+      <h2>Overview</h2>
+      <p>
+        Veli’s foundations turn shared product values into practical design decisions. They define
+        how services communicate hierarchy, respond to people, and stay coherent across languages,
+        devices, and color schemes.
+      </p>
+      <p>
+        Start here when making a system-level decision, then carry the guidance into components,
+        patterns, and complete service experiences.
+      </p>
+    </section>
+
+    <div class="foundation-directory docs-overview-directory">
+      {
+        foundations.map((foundation) => (
+          <section id={foundation.slug}>
+            <a href={foundation.href}>
+              <div class="foundation-directory__icon" aria-hidden="true">
+                <img
+                  class="foundation-directory__icon-light"
+                  src={foundation.icon}
+                  alt=""
+                  width={foundation.iconWidth}
+                  height={foundation.iconHeight}
+                  loading="lazy"
+                />
+                <img
+                  class="foundation-directory__icon-dark"
+                  src={foundation.iconDark}
+                  alt=""
+                  width={foundation.iconWidth}
+                  height={foundation.iconHeight}
+                  loading="lazy"
+                />
+              </div>
+              <div class="foundation-directory__content">
+                <h2>{foundation.title === 'Color' ? 'Colors' : foundation.title}</h2>
+                <p>{foundation.description}</p>
+              </div>
+              <span class="foundation-directory__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </section>
+        ))
+      }
+    </div>
   </div>
 </DocsLayout>

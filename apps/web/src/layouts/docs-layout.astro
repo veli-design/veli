@@ -1,16 +1,21 @@
 ---
 import {
   ArrowUpRight,
+  CaretDown,
+  Command,
   FigmaLogo,
   GithubLogo,
   List,
   MagnifyingGlass,
+  Monitor,
+  Moon,
   Package,
+  Sun,
 } from 'phosphor-react';
-import Layout from './layout.astro';
-import { componentGroups, externalResources, foundations } from '../lib/site';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
 import VeliLogo from '../components/VeliLogo.astro';
+import { docsSections, externalResources } from '../lib/site';
+import Layout from './layout.astro';
 
 type Heading = {
   depth: number;
@@ -34,9 +39,18 @@ const resourceIcons = {
   package: Package,
 };
 
+const themeChoices = [
+  { id: 'light', label: 'Light theme', icon: Sun },
+  { id: 'dark', label: 'Dark theme', icon: Moon },
+  { id: 'system', label: 'Use system theme', icon: Monitor },
+] as const;
+
 function isActive(href: string) {
-  if (href === '/docs/') return activePath === href;
-  return activePath === href || activePath.startsWith(`${href}#`);
+  return activePath === href;
+}
+
+function isSectionActive(section: (typeof docsSections)[number]) {
+  return section.items.some((item) => isActive(item.href));
 }
 ---
 
@@ -48,72 +62,105 @@ function isActive(href: string) {
           <VeliLogo class="veli-logo" clipId="veli-logo-desktop" />
         </a>
 
-        <nav class="docs-nav" aria-label="Veli documentation">
-          <section class="docs-nav-group" data-doc-group>
-            <h2>Foundations</h2>
-            <a
-              class:list={['docs-nav-link', isActive('/foundations/') && 'is-active']}
-              href="/foundations/"
-              data-doc-link
-            >
-              Overview
-            </a>
-            {
-              foundations.map((item) => (
-                <a
-                  class:list={['docs-nav-link', isActive(item.href) && 'is-active']}
-                  href={item.href}
-                  data-doc-link
-                >
-                  {item.title}
-                </a>
-              ))
-            }
-          </section>
+        <div class="docs-nav-filter" data-doc-filter>
+          <label class="docs-search">
+            <MagnifyingGlass size={20} aria-hidden="true" />
+            <span class="sr-only">Filter documentation navigation</span>
+            <input type="search" placeholder="Search" autocomplete="off" data-doc-search />
+            <span class="docs-search__shortcut" aria-hidden="true">
+              <Command size={12} />
+              <span>K</span>
+            </span>
+          </label>
+          <p class="docs-search-status" aria-live="polite" data-search-status></p>
 
-          <section class="docs-nav-group" data-doc-group>
-            <h2>Components</h2>
-            <a
-              class:list={['docs-nav-link', isActive('/docs/') && 'is-active']}
-              href="/docs/"
-              data-doc-link
-            >
-              Overview
-            </a>
+          <nav class="docs-nav" aria-label="Veli documentation">
             {
-              componentGroups.flatMap((group) =>
-                group.items.map((item) => (
-                  <a
-                    class:list={[
-                      'docs-nav-link',
-                      activePath === `/docs/${item.slug}/` && 'is-active',
-                    ]}
-                    href={`/docs/${item.slug}/`}
-                    data-doc-link
+              docsSections.map((section) => {
+                const sectionActive = isSectionActive(section);
+                return (
+                  <details
+                    class="docs-nav-group"
+                    data-doc-group
+                    data-default-open={sectionActive ? 'true' : undefined}
+                    open={sectionActive}
                   >
-                    {item.title}
-                  </a>
-                )),
-              )
+                    <summary>
+                      <span>{section.title}</span>
+                      <CaretDown className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                    </summary>
+                    <div class="docs-nav-group__links">
+                      {section.items.map((item) => {
+                        const itemActive = isActive(item.href);
+                        return (
+                          <a
+                            class:list={['docs-nav-link', itemActive && 'is-active']}
+                            href={item.href}
+                            aria-current={itemActive ? 'page' : undefined}
+                            data-doc-link
+                          >
+                            {item.title}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </details>
+                );
+              })
             }
-          </section>
-        </nav>
+          </nav>
+        </div>
       </div>
 
-      <nav class="docs-resources" aria-label="Veli resources">
-        {
-          externalResources.map((item) => {
-            const Icon = resourceIcons[item.icon];
-            return (
-              <a href={item.href} target="_blank" rel="noreferrer">
-                <Icon size={18} weight="regular" aria-hidden="true" />
-                <span>{item.label}</span>
-                <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
-              </a>
-            );
-          })
-        }
-      </nav>
+      <div class="docs-navigation__footer">
+        <div class="docs-theme-picker" aria-label="Color theme">
+          <span>Theme</span>
+          <div class="docs-theme-picker__choices">
+            {
+              themeChoices.map((choice) => {
+                const Icon = choice.icon;
+                return (
+                  <button
+                    type="button"
+                    title={choice.label}
+                    aria-label={choice.label}
+                    aria-pressed="false"
+                    data-theme-choice={choice.id}
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                  </button>
+                );
+              })
+            }
+          </div>
+        </div>
+
+        <nav class="docs-resources" aria-label="Veli resources">
+          {
+            externalResources.map((item) => {
+              const Icon = resourceIcons[item.icon];
+
+              if (!item.href) {
+                return (
+                  <div class="docs-resource is-disabled" aria-disabled="true">
+                    <Icon size={16} weight="regular" aria-hidden="true" />
+                    <span>{item.label}</span>
+                    <small>Coming soon</small>
+                  </div>
+                );
+              }
+
+              return (
+                <a class="docs-resource" href={item.href} target="_blank" rel="noreferrer">
+                  <Icon size={16} weight="regular" aria-hidden="true" />
+                  <span>{item.label}</span>
+                  <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
+                </a>
+              );
+            })
+          }
+        </nav>
+      </div>
     </aside>
 
     <header class="docs-mobile-header">
@@ -124,19 +171,104 @@ function isActive(href: string) {
         <summary aria-label="Open documentation navigation">
           <List size={22} aria-hidden="true" />
         </summary>
-        <div class="docs-mobile-menu__panel">
-          <nav aria-label="Mobile documentation navigation">
-            <h2>Foundations</h2>
-            <a href="/foundations/">Overview</a>
-            {foundations.map((item) => <a href={item.href}>{item.title}</a>)}
-            <h2>Components</h2>
-            <a href="/docs/">Overview</a>
+        <div class="docs-mobile-menu__panel" data-doc-filter>
+          <label class="docs-search">
+            <MagnifyingGlass size={20} aria-hidden="true" />
+            <span class="sr-only">Filter documentation navigation</span>
+            <input
+              type="search"
+              placeholder="Search documentation"
+              autocomplete="off"
+              data-doc-search
+            />
+          </label>
+          <p class="docs-search-status" aria-live="polite" data-search-status></p>
+
+          <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">
             {
-              componentGroups.flatMap((group) =>
-                group.items.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>),
-              )
+              docsSections.map((section) => {
+                const sectionActive = isSectionActive(section);
+                return (
+                  <details
+                    class="docs-nav-group"
+                    data-doc-group
+                    data-default-open={sectionActive ? 'true' : undefined}
+                    open={sectionActive}
+                  >
+                    <summary>
+                      <span>{section.title}</span>
+                      <CaretDown className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                    </summary>
+                    <div class="docs-nav-group__links">
+                      {section.items.map((item) => {
+                        const itemActive = isActive(item.href);
+                        return (
+                          <a
+                            class:list={['docs-nav-link', itemActive && 'is-active']}
+                            href={item.href}
+                            aria-current={itemActive ? 'page' : undefined}
+                            data-doc-link
+                          >
+                            {item.title}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </details>
+                );
+              })
             }
           </nav>
+
+          <div class="docs-mobile-menu__footer">
+            <div class="docs-theme-picker" aria-label="Color theme">
+              <span>Theme</span>
+              <div class="docs-theme-picker__choices">
+                {
+                  themeChoices.map((choice) => {
+                    const Icon = choice.icon;
+                    return (
+                      <button
+                        type="button"
+                        title={choice.label}
+                        aria-label={choice.label}
+                        aria-pressed="false"
+                        data-theme-choice={choice.id}
+                      >
+                        <Icon size={16} aria-hidden="true" />
+                      </button>
+                    );
+                  })
+                }
+              </div>
+            </div>
+
+            <nav class="docs-resources" aria-label="Veli resources">
+              {
+                externalResources.map((item) => {
+                  const Icon = resourceIcons[item.icon];
+
+                  if (!item.href) {
+                    return (
+                      <div class="docs-resource is-disabled" aria-disabled="true">
+                        <Icon size={16} weight="regular" aria-hidden="true" />
+                        <span>{item.label}</span>
+                        <small>Coming soon</small>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <a class="docs-resource" href={item.href} target="_blank" rel="noreferrer">
+                      <Icon size={16} weight="regular" aria-hidden="true" />
+                      <span>{item.label}</span>
+                      <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
+                    </a>
+                  );
+                })
+              }
+            </nav>
+          </div>
         </div>
       </details>
     </header>
@@ -148,13 +280,6 @@ function isActive(href: string) {
     </main>
 
     <aside class="docs-utilities" aria-label="Page utilities">
-      <label class="docs-search">
-        <MagnifyingGlass size={17} aria-hidden="true" />
-        <span class="sr-only">Search documentation</span>
-        <input type="search" placeholder="Search" data-doc-search />
-      </label>
-      <p class="docs-search-status" aria-live="polite" data-search-status></p>
-
       <nav class="docs-contents" aria-label="On this page">
         <h2>On this page</h2>
         {
@@ -169,54 +294,75 @@ function isActive(href: string) {
           )
         }
       </nav>
-
-      <button class="theme-cycle" type="button" data-theme-cycle>
-        <span>Theme</span>
-        <span data-theme-label>System</span>
-      </button>
     </aside>
   </div>
 
   <script is:inline>
     (() => {
-      const input = document.querySelector('[data-doc-search]');
-      const links = Array.from(document.querySelectorAll('[data-doc-link]'));
-      const groups = Array.from(document.querySelectorAll('[data-doc-group]'));
-      const status = document.querySelector('[data-search-status]');
       const mobileMenu = document.querySelector('.docs-mobile-menu');
-      const mobileMenuLinks = document.querySelectorAll('.docs-mobile-menu a');
       const mobileMenuPanel = document.querySelector('.docs-mobile-menu__panel');
 
-      function resetMobileMenuScroll() {
+      mobileMenu?.addEventListener('toggle', () => {
         const isOpen = mobileMenu instanceof HTMLDetailsElement && mobileMenu.open;
         if (isOpen && mobileMenuPanel instanceof HTMLElement) mobileMenuPanel.scrollTop = 0;
-      }
+      });
 
-      mobileMenu?.addEventListener('toggle', resetMobileMenuScroll);
-
-      for (const link of mobileMenuLinks) {
+      for (const link of document.querySelectorAll('.docs-mobile-menu a')) {
         link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
       }
 
-      if (!(input instanceof HTMLInputElement)) return;
+      for (const filter of document.querySelectorAll('[data-doc-filter]')) {
+        const input = filter.querySelector('[data-doc-search]');
+        const links = Array.from(filter.querySelectorAll('[data-doc-link]'));
+        const groups = Array.from(filter.querySelectorAll('[data-doc-group]'));
+        const status = filter.querySelector('[data-search-status]');
 
-      input.addEventListener('input', () => {
-        const query = input.value.trim().toLowerCase();
-        let visible = 0;
+        if (!(input instanceof HTMLInputElement)) continue;
 
-        for (const link of links) {
-          const matches = !query || link.textContent?.toLowerCase().includes(query);
-          link.toggleAttribute('hidden', !matches);
-          if (matches) visible += 1;
-        }
+        input.addEventListener('input', () => {
+          const query = input.value.trim().toLocaleLowerCase();
+          let visible = 0;
 
-        for (const group of groups) {
-          const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
-          group.toggleAttribute('hidden', !hasMatch);
-        }
+          for (const link of links) {
+            const matches = !query || link.textContent?.trim().toLocaleLowerCase().includes(query);
+            link.toggleAttribute('hidden', !matches);
+            if (matches) visible += 1;
+          }
 
-        if (status)
-          status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
+          for (const group of groups) {
+            const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
+            group.toggleAttribute('hidden', !hasMatch);
+
+            if (!(group instanceof HTMLDetailsElement)) continue;
+
+            if (query) {
+              if (!group.hasAttribute('data-search-open')) {
+                group.dataset.searchOpen = String(group.open);
+              }
+              if (hasMatch) group.open = true;
+            } else if (group.dataset.searchOpen) {
+              group.open = group.dataset.searchOpen === 'true';
+              delete group.dataset.searchOpen;
+            }
+          }
+
+          if (status) {
+            status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (!(event.metaKey || event.ctrlKey) || event.key.toLocaleLowerCase() !== 'k') return;
+
+        const input = Array.from(document.querySelectorAll('[data-doc-search]')).find(
+          (candidate) => candidate instanceof HTMLElement && candidate.offsetParent !== null,
+        );
+
+        if (!(input instanceof HTMLInputElement)) return;
+        event.preventDefault();
+        input.focus();
+        input.select();
       });
     })();
   </script>

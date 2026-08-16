@@ -20,9 +20,11 @@ export type ParamType = 'float' | 'vec2' | 'vec3' | 'color';
  * linear-light RGB before being uploaded, so shaders always receive linear
  * colours and can mix them correctly (e.g. in OKLab).
  */
+export type ParamValue = number | [number, number] | [number, number, number] | string;
+
 export interface ParamSpec {
   type: ParamType;
-  value: number | [number, number] | [number, number, number] | string;
+  value: ParamValue;
   min?: number;
   max?: number;
   step?: number;

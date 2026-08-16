@@ -45,6 +45,14 @@ export const veliCymatics: ShaderDefinition = {
       step: 0.005,
       label: 'Cymatic breathing',
     },
+    formationDuration: {
+      type: 'float',
+      value: 4.2,
+      min: 0.5,
+      max: 12,
+      step: 0.1,
+      label: 'Formation duration',
+    },
 
     // Grain --------------------------------------------------------------
     grainSize: { type: 'float', value: 5.2, min: 3, max: 10, step: 0.1, label: 'Grain spacing' },
@@ -64,6 +72,16 @@ export const veliCymatics: ShaderDefinition = {
       max: 2,
       step: 0.05,
       label: 'Pointer vibration',
+    },
+    safeZoneCenter: { type: 'vec2', value: [0.5, 0.51], label: 'Reading zone centre' },
+    safeZoneSize: { type: 'vec2', value: [0.4, 0.49], label: 'Reading zone size' },
+    safeZoneStrength: {
+      type: 'float',
+      value: 0.86,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: 'Reading zone calm',
     },
   },
 };

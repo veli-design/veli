@@ -18,6 +18,19 @@ export async function getStaticPaths() {
 const { foundation } = Astro.props as Props;
 const { Content, headings } = await foundation.render();
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const headerArt = {
+  color: {
+    src: '/images/foundation-headers/color.png',
+    width: 148,
+    height: 134,
+  },
+  typography: {
+    src: '/images/foundation-headers/typography.png',
+    width: 197,
+    height: 178,
+  },
+} as const;
+const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt];
 ---
 
 <DocsLayout
@@ -26,10 +39,29 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
   activePath={`/foundations/${foundation.slug}/`}
   headings={tocHeadings}
 >
-  <header class="docs-page-header docs-page-header--article">
-    <p class="docs-kicker">Foundation</p>
-    <h1>{foundation.data.title}</h1>
-    {foundation.data.description && <p>{foundation.data.description}</p>}
+  <header
+    class:list={[
+      'docs-page-header',
+      'docs-page-header--article',
+      foundationHeaderArt && 'docs-page-header--illustrated',
+    ]}
+  >
+    <div class="docs-page-header__copy">
+      <p class="docs-kicker">Foundation</p>
+      <h1>{foundation.data.title}</h1>
+      {foundation.data.description && <p>{foundation.data.description}</p>}
+    </div>
+    {
+      foundationHeaderArt && (
+        <img
+          class="docs-page-header__art"
+          src={foundationHeaderArt.src}
+          alt=""
+          width={foundationHeaderArt.width}
+          height={foundationHeaderArt.height}
+        />
+      )
+    }
   </header>
 
   <article class="docs-prose foundation-prose">

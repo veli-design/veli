@@ -35,11 +35,15 @@ uniform float u_frequencyB;
 uniform float u_nodeWidth;
 uniform float u_patternScale;
 uniform float u_morphSpeed;
+uniform float u_formationDuration;
 
 uniform float u_grainSize;
 uniform float u_grainDensity;
 uniform float u_dustAmount;
 uniform float u_pointerStrength;
+uniform vec2 u_safeZoneCenter;
+uniform vec2 u_safeZoneSize;
+uniform float u_safeZoneStrength;
 
 float chladni(vec2 p, float a, float b) {
   return 0.5 * (
@@ -54,7 +58,7 @@ void main() {
   // Reduced-motion renders the fully settled composition rather than freezing
   // the energetic first frame of the entrance choreography.
   float motionTime = mix(12.0, u_time, u_motion);
-  float formation = smoothstep(0.2, 4.2, motionTime);
+  float formation = smoothstep(0.2, u_formationDuration, motionTime);
   float introEnergy = 1.0 - formation;
 
   vec3 base = mixOklab(u_lightBase, u_darkBase, theme);
@@ -113,9 +117,9 @@ void main() {
   // Leave the foreground copy in a deliberately calm pocket. The field still
   // ghosts through at low contrast, keeping the canvas continuous rather than
   // looking like a panel was placed behind the text.
-  float safeDistance = length((uv - vec2(0.5, 0.51)) * vec2(1.22, 1.0));
-  float safeZone = 1.0 - smoothstep(0.26, 0.49, safeDistance);
-  float patternPresence = mix(0.14, 1.0, 1.0 - safeZone);
+  float safeDistance = length((uv - u_safeZoneCenter) / max(u_safeZoneSize, vec2(0.001)));
+  float safeZone = 1.0 - smoothstep(0.58, 1.0, safeDistance);
+  float patternPresence = mix(1.0 - u_safeZoneStrength, 1.0, 1.0 - safeZone);
 
   // A faint continuous deposit beneath the discrete grains helps the pattern
   // read at a distance and on lower-density mobile rendering.

@@ -1,4 +1,4 @@
-import type { ParamSpec, ShaderDefinition } from '../types';
+import type { ParamSpec, ParamValue, ShaderDefinition } from '../types';
 
 /**
  * Minimal WebGL renderer for fullscreen fragment-shader backgrounds.
@@ -54,27 +54,47 @@ function hexToLinearRgb(hex: string): [number, number, number] {
   ];
 }
 
-type ApplyUniform = (gl: WebGLRenderingContext, loc: WebGLUniformLocation) => void;
-
-function bindParam(spec: ParamSpec): ApplyUniform {
+function applyParam(
+  gl: WebGLRenderingContext,
+  loc: WebGLUniformLocation,
+  spec: ParamSpec,
+  value: ParamValue = spec.value,
+) {
   switch (spec.type) {
     case 'float': {
-      const v = spec.value as number;
-      return (gl, loc) => gl.uniform1f(loc, v);
+      gl.uniform1f(loc, value as number);
+      break;
     }
     case 'vec2': {
-      const v = spec.value as [number, number];
-      return (gl, loc) => gl.uniform2f(loc, v[0], v[1]);
+      const v = value as [number, number];
+      gl.uniform2f(loc, v[0], v[1]);
+      break;
     }
     case 'vec3': {
-      const v = spec.value as [number, number, number];
-      return (gl, loc) => gl.uniform3f(loc, v[0], v[1], v[2]);
+      const v = value as [number, number, number];
+      gl.uniform3f(loc, v[0], v[1], v[2]);
+      break;
     }
     case 'color': {
-      const v = hexToLinearRgb(spec.value as string);
-      return (gl, loc) => gl.uniform3f(loc, v[0], v[1], v[2]);
+      const v = hexToLinearRgb(value as string);
+      gl.uniform3f(loc, v[0], v[1], v[2]);
+      break;
     }
   }
+}
+
+function isValidParamValue(spec: ParamSpec, value: ParamValue): boolean {
+  if (spec.type === 'float') return typeof value === 'number' && Number.isFinite(value);
+  if (spec.type === 'color') {
+    return typeof value === 'string' && /^#[\da-f]{6}$/i.test(value);
+  }
+
+  const expectedLength = spec.type === 'vec2' ? 2 : 3;
+  return (
+    Array.isArray(value) &&
+    value.length === expectedLength &&
+    value.every((component) => typeof component === 'number' && Number.isFinite(component))
+  );
 }
 
 function compile(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
@@ -93,6 +113,8 @@ function compile(gl: WebGLRenderingContext, type: number, source: string): WebGL
 }
 
 export interface ShaderRenderer {
+  /** Update one declared parameter without rebuilding the WebGL program. */
+  setParam: (name: string, value: ParamValue) => boolean;
   destroy: () => void;
 }
 
@@ -101,6 +123,8 @@ export interface ShaderRendererOptions {
   pointerTarget?: HTMLElement;
   /** Hard cap on device pixel ratio (default 1.5). */
   maxPixelRatio?: number;
+  /** Called if the active WebGL context is lost so the fallback can reappear. */
+  onContextLost?: () => void;
 }
 
 export function createRenderer(
@@ -123,10 +147,18 @@ export function createRenderer(
 
   const vert = compile(gl, gl.VERTEX_SHADER, VERTEX_SOURCE);
   const frag = compile(gl, gl.FRAGMENT_SHADER, definition.fragment);
-  if (!vert || !frag) return null;
+  if (!vert || !frag) {
+    if (vert) gl.deleteShader(vert);
+    if (frag) gl.deleteShader(frag);
+    return null;
+  }
 
   const program = gl.createProgram();
-  if (!program) return null;
+  if (!program) {
+    gl.deleteShader(vert);
+    gl.deleteShader(frag);
+    return null;
+  }
   gl.attachShader(program, vert);
   gl.attachShader(program, frag);
   gl.linkProgram(program);
@@ -134,12 +166,21 @@ export function createRenderer(
     if (import.meta.env.DEV) {
       console.error('[shader] link error:', gl.getProgramInfoLog(program));
     }
+    gl.deleteProgram(program);
+    gl.deleteShader(vert);
+    gl.deleteShader(frag);
     return null;
   }
   gl.useProgram(program);
 
   // Fullscreen triangle.
   const buffer = gl.createBuffer();
+  if (!buffer) {
+    gl.deleteProgram(program);
+    gl.deleteShader(vert);
+    gl.deleteShader(frag);
+    return null;
+  }
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
   const posLoc = gl.getAttribLocation(program, 'a_position');
@@ -157,11 +198,13 @@ export function createRenderer(
   const uTheme = gl.getUniformLocation(program, 'u_theme');
   const uMotion = gl.getUniformLocation(program, 'u_motion');
 
-  // Param uniforms — uploaded once (they're static defaults). Re-run this loop
-  // if/when live tweaking is added.
+  // Param uniforms are retained so the opt-in tuning panel can update them
+  // live without recompiling or mutating the shared definition defaults.
+  const paramLocations = new Map<string, WebGLUniformLocation | null>();
   for (const [name, spec] of Object.entries(definition.params)) {
     const loc = gl.getUniformLocation(program, `u_${name}`);
-    if (loc) bindParam(spec)(gl, loc);
+    paramLocations.set(name, loc);
+    if (loc !== null) applyParam(gl, loc, spec);
   }
 
   // --- Quality / DPR heuristics --------------------------------------------
@@ -349,6 +392,25 @@ export function createRenderer(
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
+  function setParam(name: string, value: ParamValue): boolean {
+    const spec = definition.params[name];
+    if (!spec || !isValidParamValue(spec, value)) return false;
+
+    const loc = paramLocations.get(name);
+    if (loc !== null && loc !== undefined) {
+      gl.useProgram(program);
+      applyParam(gl, loc, spec, value);
+      if (reducedMotion) renderOnce();
+    }
+    return true;
+  }
+
+  const resizeObserver =
+    reducedMotion && typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => renderOnce())
+      : null;
+  resizeObserver?.observe(canvas);
+
   const themeObserver = uTheme
     ? new MutationObserver(() => {
         themeTarget = readTheme();
@@ -367,7 +429,9 @@ export function createRenderer(
   if (reducedMotion) {
     renderOnce();
     return {
+      setParam,
       destroy() {
+        resizeObserver?.disconnect();
         themeObserver?.disconnect();
         gl.deleteProgram(program);
         gl.deleteShader(vert);
@@ -396,12 +460,14 @@ export function createRenderer(
   function onContextLost(e: Event) {
     e.preventDefault();
     pause();
+    options.onContextLost?.();
   }
   canvas.addEventListener('webglcontextlost', onContextLost);
 
   play();
 
   return {
+    setParam,
     destroy() {
       pause();
       io.disconnect();
@@ -410,6 +476,7 @@ export function createRenderer(
       target.removeEventListener('pointermove', onPointerMove);
       target.removeEventListener('pointerleave', onPointerLeave);
       themeObserver?.disconnect();
+      resizeObserver?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vert);
       gl.deleteShader(frag);

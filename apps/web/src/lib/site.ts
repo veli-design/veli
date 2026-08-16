@@ -9,11 +9,31 @@ export type ComponentGroup = {
   items: ComponentItem[];
 };
 
-export const externalResources = [
+export type DocsNavigationItem = {
+  title: string;
+  href: string;
+  description?: string;
+};
+
+export type DocsNavigationSection = {
+  id: 'foundations' | 'components' | 'patterns' | 'ui-blocks';
+  title: string;
+  href: string;
+  items: readonly DocsNavigationItem[];
+};
+
+export type ExternalResource = {
+  label: string;
+  icon: 'figma' | 'github' | 'package';
+  href?: string;
+  status?: 'coming-soon';
+};
+
+export const externalResources: readonly ExternalResource[] = [
   {
     label: 'Figma',
-    href: 'https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Design-System',
     icon: 'figma',
+    status: 'coming-soon',
   },
   { label: 'GitHub', href: 'https://github.com/tradenetcorp/veli', icon: 'github' },
   {
@@ -29,8 +49,9 @@ export const foundations = [
     slug: 'principles',
     href: '/foundations/principles/',
     icon: '/images/foundation-icons/principles.png',
-    iconWidth: 195,
-    iconHeight: 195,
+    iconDark: '/images/foundation-icons-dark/principles.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description: 'The operating beliefs behind Veli: clarity, access, trust, and continuity.',
     status: 'Starter',
   },
@@ -39,8 +60,9 @@ export const foundations = [
     slug: 'color',
     href: '/foundations/color/',
     icon: '/images/foundation-icons/color.png',
-    iconWidth: 191,
-    iconHeight: 190,
+    iconDark: '/images/foundation-icons-dark/color.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
       'Semantic light and dark palettes grounded in slate, blue, success, warning, and danger scales.',
     status: 'Available',
@@ -50,8 +72,9 @@ export const foundations = [
     slug: 'typography',
     href: '/foundations/typography/',
     icon: '/images/foundation-icons/typography.png',
-    iconWidth: 256,
-    iconHeight: 214,
+    iconDark: '/images/foundation-icons-dark/typography.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
       'Inter for Latin UI and Dhivehi font stacks for government services that need local language support.',
     status: 'Available',
@@ -61,8 +84,9 @@ export const foundations = [
     slug: 'spacing',
     href: '/foundations/spacing/',
     icon: '/images/foundation-icons/spacing.png',
-    iconWidth: 177,
-    iconHeight: 177,
+    iconDark: '/images/foundation-icons-dark/spacing.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description: 'A 4px baseline for predictable component rhythm and page composition.',
     status: 'Available',
   },
@@ -71,8 +95,9 @@ export const foundations = [
     slug: 'motion',
     href: '/foundations/motion/',
     icon: '/images/foundation-icons/motion.png',
-    iconWidth: 181,
-    iconHeight: 182,
+    iconDark: '/images/foundation-icons-dark/motion.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
       'Subtle motion for orientation and feedback, always paired with reduced-motion behavior.',
     status: 'Starter',
@@ -82,8 +107,9 @@ export const foundations = [
     slug: 'accessibility',
     href: '/foundations/accessibility/',
     icon: '/images/foundation-icons/accessibility.png',
-    iconWidth: 181,
-    iconHeight: 183,
+    iconDark: '/images/foundation-icons-dark/accessibility.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
       'Keyboard, contrast, focus, semantics, and multilingual reading direction as baseline requirements.',
     status: 'Starter',
@@ -93,8 +119,9 @@ export const foundations = [
     slug: 'language-direction',
     href: '/foundations/language-direction/',
     icon: '/images/foundation-icons/language-direction.png',
-    iconWidth: 262,
-    iconHeight: 214,
+    iconDark: '/images/foundation-icons-dark/language-direction.png',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
       'Provider support for English, Dhivehi, LTR, RTL, and system color-scheme behavior.',
     status: 'Available',
@@ -278,6 +305,52 @@ export const componentGroups: ComponentGroup[] = [
 ] as const;
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
+
+/**
+ * The single source of truth for every documentation navigation surface.
+ * Overview entries deliberately live alongside child pages so filtering and
+ * active states behave identically on desktop and mobile.
+ */
+export const docsSections: readonly DocsNavigationSection[] = [
+  {
+    id: 'foundations',
+    title: 'Foundation',
+    href: '/foundations/',
+    items: [
+      { title: 'Overview', href: '/foundations/' },
+      ...foundations.map((item) => ({
+        title: item.title === 'Language & direction' ? 'Language & Direction' : item.title,
+        href: item.href,
+        description: item.description,
+      })),
+    ],
+  },
+  {
+    id: 'components',
+    title: 'Components',
+    href: '/docs/',
+    items: [
+      { title: 'Overview', href: '/docs/' },
+      ...allComponents.map((item) => ({
+        title: item.title,
+        href: `/docs/${item.slug}/`,
+        description: item.description,
+      })),
+    ],
+  },
+  {
+    id: 'patterns',
+    title: 'Patterns',
+    href: '/patterns/',
+    items: [{ title: 'Overview', href: '/patterns/' }],
+  },
+  {
+    id: 'ui-blocks',
+    title: 'UI Blocks',
+    href: '/ui-blocks/',
+    items: [{ title: 'Overview', href: '/ui-blocks/' }],
+  },
+];
 
 export function getComponentMeta(slug: string) {
   return allComponents.find((item) => item.slug === slug);
