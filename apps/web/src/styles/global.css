@@ -1544,7 +1544,7 @@ button {
 }
 
 .docs-page-header--article {
-  min-height: 0;
+  min-height: 258px;
   padding-bottom: 80px;
   border-bottom: 1px solid var(--color-border-base-muted);
 }
