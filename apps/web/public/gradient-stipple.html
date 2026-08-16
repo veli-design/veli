@@ -994,6 +994,49 @@ function applyPreset(preset){
   setPresetStatus("Preset imported.");
 }
 
+/* Parent control bridge. The embedded renderer remains the supplied experiment;
+   DialKit only updates the same state and inputs as its original panel. */
+function setExternalControl(key, value){
+  if (key === "seed" && Number.isFinite(value)){
+    state.seed = value >>> 0;
+    reseed();
+    return;
+  }
+  const range = RANGE_PRESET.find(([,stateKey]) => stateKey === key);
+  if (range && Number.isFinite(value)){
+    const input = $(range[0]);
+    input.value = clamp(value, parseFloat(input.min), parseFloat(input.max));
+    input.dispatchEvent(new Event("input"));
+    return;
+  }
+  const toggle = TOGGLE_PRESET.find(([,stateKey]) => stateKey === key);
+  if (toggle && typeof value === "boolean"){
+    state[key] = value;
+    $(toggle[0]).classList.toggle("on", value);
+    if (key === "autoCycle") state.dwellClock = 0;
+  }
+}
+
+window.addEventListener("message", event => {
+  if (event.origin !== window.location.origin || event.source !== window.parent) return;
+  const message = event.data || {};
+  if (message.type === "veli:stipple:apply-preset"){
+    try { applyPreset(message.preset); } catch (error) { console.error(error); }
+  } else if (message.type === "veli:stipple:set-control"){
+    setExternalControl(message.key, message.value);
+  } else if (message.type === "veli:stipple:set-scene"){
+    const scene = Number(message.scene);
+    if (Number.isInteger(scene) && scene >= 0 && scene <= 2) goToScene(scene, true);
+  } else if (message.type === "veli:stipple:set-adjustment"){
+    const scene = Number(message.scene);
+    if (Number.isInteger(scene) && scene >= 0 && scene <= 2 &&
+        ADJUST_KEYS.includes(message.key) && Number.isFinite(message.value)){
+      colAdjust[scene][message.key] = message.value;
+      if (scene === state.target) syncSceneUI();
+    }
+  }
+});
+
 $("copyPreset").addEventListener("click", async ()=>{
   const json = JSON.stringify(getPreset(), null, 2);
   try {
@@ -1105,6 +1148,9 @@ if (embedded && !embeddedControls){
   panel.setAttribute("aria-hidden", "true");
   toggleUi.hidden = true;
   hint.hidden = true;
+}
+if (embedded){
+  window.parent.postMessage({type:"veli:stipple:ready", preset:getPreset()}, window.location.origin);
 }
 </script>
 </body>

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import DialKitRoot from '../components/DialKitRoot';
 
 interface Props {
   title: string;
@@ -52,6 +53,7 @@ const {
   <body class:list={['min-h-screen bg-surface-base text-base', pageClass]}>
     <a class="skip-link" href="#main">Skip to main content</a>
     <slot />
+    <DialKitRoot client:load />
 
     <script is:inline>
       (() => {

@@ -1,15 +1,9 @@
 ---
-/**
- * Animated WebGL shader background with a static fallback and an opt-in tuning
- * drawer. Add `?shaderControls=1` to expose the drawer; ordinary visitors only
- * receive the background. `?shader=<id>` remains available for deep links.
- */
+/** Animated WebGL background with an exact embedded renderer for Stipple BG. */
 import { DEFAULT_SHADER } from '../shaders/registry';
 
 interface Props {
-  /** Registered shader id (see shaders/registry.ts). */
   shader?: string;
-  /** Optional static image shown before/instead of the canvas. */
   fallbackSrc?: string;
   class?: string;
 }
@@ -22,7 +16,7 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
   <iframe
     class="shader-bg__iframe"
     data-gradient-stipple-frame
-    title="Veli Stipple BG controls"
+    title="Veli Stipple BG"
     allow="clipboard-read; clipboard-write"
     hidden></iframe>
   {
@@ -32,79 +26,73 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
       <div class="shader-bg__fallback" aria-hidden="true" />
     )
   }
-
-  <aside class="shader-tuner" data-shader-tuner aria-labelledby="shader-tuner-title" hidden>
-    <header class="shader-tuner__header">
-      <div>
-        <p>PD-784 preview</p>
-        <h2 id="shader-tuner-title" tabindex="-1">Shader tuning</h2>
-      </div>
-      <button type="button" data-shader-controls-close aria-label="Close shader tuning controls">
-        ×
-      </button>
-    </header>
-
-    <div class="shader-tuner__body">
-      <label class="shader-tuner__select">
-        <span>Implementation</span>
-        <select data-shader-select></select>
-      </label>
-      <div class="shader-tuner__fields" data-shader-fields></div>
-    </div>
-
-    <footer class="shader-tuner__footer">
-      <button type="button" data-shader-reset>Reset parameters</button>
-      <span data-shader-status aria-live="polite"></span>
-    </footer>
-  </aside>
-
-  <button class="shader-tuner__reopen" type="button" data-shader-controls-open hidden>
-    Tune shader
-  </button>
 </div>
 
 <script>
   import { createRenderer } from '../shaders/runtime/renderer';
   import { DEFAULT_SHADER, getShader, PD784_SHADER_IDS } from '../shaders/registry';
-  import type { ParamSpec, ParamValue, ShaderDefinition } from '../shaders/types';
+  import type { ParamValue, ShaderDefinition } from '../shaders/types';
   import type { ShaderRenderer } from '../shaders/runtime/renderer';
 
+  type ValueFolder = Record<string, unknown>;
+  type DialValues = {
+    implementation?: string;
+    originalStipple?: ValueFolder;
+    veliCymatics?: ValueFolder;
+    shoreCymatics?: ValueFolder;
+  };
   const query = new URLSearchParams(window.location.search);
   const shaderOverride = query.get('shader');
-  const controlsEnabled = query.get('shaderControls') === '1';
   const tunableShaderIds = new Set<string>(PD784_SHADER_IDS);
 
   function copyValue(value: ParamValue): ParamValue {
     return Array.isArray(value) ? ([...value] as ParamValue) : value;
   }
 
-  function limitsFor(spec: ParamSpec) {
-    const value = spec.value as number;
-    const span = Math.max(Math.abs(value) * 2, 1);
-    const min = spec.min ?? value - span;
-    const max = spec.max ?? value + span;
-    const step = spec.step ?? Math.max((max - min) / 200, 0.001);
-    return { min, max, step };
+  function folderParams(folder: ValueFolder, definition: ShaderDefinition) {
+    const values: Record<string, ParamValue> = {};
+    for (const [name, spec] of Object.entries(definition.params)) {
+      const value = folder?.[name];
+      values[name] =
+        spec.type === 'vec2' || spec.type === 'vec3'
+          ? (Object.values(value ?? {}) as ParamValue)
+          : ((value ?? spec.value) as ParamValue);
+    }
+    return values;
+  }
+
+  function exactPreset(values: DialValues) {
+    const exact = values.originalStipple ?? {};
+    const sceneTiming = (exact.sceneTiming ?? {}) as ValueFolder;
+    const motion = (exact.motion ?? {}) as ValueFolder;
+    const lightDance = (exact.lightDance ?? {}) as ValueFolder;
+    const stipple = (exact.stipple ?? {}) as ValueFolder;
+    return {
+      version: 1,
+      shader: 'veli-gradient-stipple',
+      scene: Number(exact.scene ?? 0),
+      controls: {
+        ...sceneTiming,
+        ...motion,
+        ...lightDance,
+        ...stipple,
+      },
+      sceneAdjustments: ['wave', 'dune', 'shore'].map(
+        (scene) => (exact[scene] as ValueFolder | undefined) ?? {},
+      ),
+    };
   }
 
   for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
     const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
-    const gradientStippleFrame = wrapper.querySelector<HTMLIFrameElement>(
-      '[data-gradient-stipple-frame]',
-    );
-    const drawer = wrapper.querySelector<HTMLElement>('[data-shader-tuner]');
-    const title = drawer?.querySelector<HTMLElement>('#shader-tuner-title');
-    const fields = drawer?.querySelector<HTMLElement>('[data-shader-fields]');
-    const select = drawer?.querySelector<HTMLSelectElement>('[data-shader-select]');
-    const reset = drawer?.querySelector<HTMLButtonElement>('[data-shader-reset]');
-    const status = drawer?.querySelector<HTMLElement>('[data-shader-status]');
-    const close = drawer?.querySelector<HTMLButtonElement>('[data-shader-controls-close]');
-    const open = wrapper.querySelector<HTMLButtonElement>('[data-shader-controls-open]');
-    if (!canvas) continue;
+    const frame = wrapper.querySelector<HTMLIFrameElement>('[data-gradient-stipple-frame]');
+    if (!canvas || !frame) continue;
     const activeCanvas = canvas;
+    const stippleFrame = frame;
 
     let renderer: ShaderRenderer | null = null;
     let activeDefinition: ShaderDefinition | null = null;
+    let latestDialValues: DialValues | null = null;
     const valuesByShader = new Map<string, Record<string, ParamValue>>();
 
     function valuesFor(definition: ShaderDefinition): Record<string, ParamValue> {
@@ -118,262 +106,136 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
       return values;
     }
 
-    function announce(message: string) {
-      if (status) status.textContent = message;
+    function applyNativeValues() {
+      if (!renderer || !activeDefinition || !latestDialValues) return;
+      const folder =
+        activeDefinition.id === 'veli-cymatics'
+          ? latestDialValues.veliCymatics
+          : latestDialValues.shoreCymatics;
+      const params = folderParams(folder ?? {}, activeDefinition);
+      valuesByShader.set(activeDefinition.id, params);
+      for (const [name, value] of Object.entries(params)) renderer.setParam(name, value);
     }
 
-    function updateParam(name: string, value: ParamValue) {
-      if (!renderer || !activeDefinition) return;
-      if (!renderer.setParam(name, value)) return;
-      valuesFor(activeDefinition)[name] = copyValue(value);
-      announce(`${activeDefinition.params[name]?.label ?? name} updated`);
-    }
-
-    function makeFloatControl(name: string, spec: ParamSpec, value: number): HTMLElement {
-      const group = document.createElement('div');
-      group.className = 'shader-param shader-param--float';
-      const label = document.createElement('label');
-      label.textContent = spec.label ?? name;
-      const range = document.createElement('input');
-      const number = document.createElement('input');
-      const limits = limitsFor(spec);
-      range.type = 'range';
-      number.type = 'number';
-      for (const input of [range, number]) {
-        input.min = String(limits.min);
-        input.max = String(limits.max);
-        input.step = String(limits.step);
-        input.value = String(value);
-        input.setAttribute('aria-label', spec.label ?? name);
-      }
-      const apply = (next: number) => {
-        const bounded = Math.min(limits.max, Math.max(limits.min, next));
-        range.value = String(bounded);
-        number.value = String(bounded);
-        updateParam(name, bounded);
-      };
-      range.addEventListener('input', () => apply(Number(range.value)));
-      number.addEventListener('change', () => {
-        const next = Number(number.value);
-        if (Number.isFinite(next)) apply(next);
-      });
-      group.append(label, range, number);
-      return group;
-    }
-
-    function makeColorControl(name: string, spec: ParamSpec, value: string): HTMLElement {
-      const label = document.createElement('label');
-      label.className = 'shader-param shader-param--color';
-      const text = document.createElement('span');
-      text.textContent = spec.label ?? name;
-      const input = document.createElement('input');
-      input.type = 'color';
-      input.value = value;
-      input.setAttribute('aria-label', spec.label ?? name);
-      input.addEventListener('input', () => updateParam(name, input.value));
-      label.append(text, input);
-      return label;
-    }
-
-    function makeVectorControl(
-      name: string,
-      spec: ParamSpec,
-      value: [number, number] | [number, number, number],
-    ): HTMLElement {
-      const group = document.createElement('fieldset');
-      group.className = 'shader-param shader-param--vector';
-      const legend = document.createElement('legend');
-      legend.textContent = spec.label ?? name;
-      group.append(legend);
-      value.forEach((component, index) => {
-        const axis = ['X', 'Y', 'Z'][index];
-        const label = document.createElement('label');
-        const text = document.createElement('span');
-        const input = document.createElement('input');
-        text.textContent = axis;
-        input.type = 'number';
-        input.step = String(spec.step ?? 0.01);
-        if (spec.min !== undefined) input.min = String(spec.min);
-        if (spec.max !== undefined) input.max = String(spec.max);
-        input.value = String(component);
-        input.setAttribute('aria-label', `${spec.label ?? name} ${axis}`);
-        input.addEventListener('change', () => {
-          const nextComponent = Number(input.value);
-          if (!Number.isFinite(nextComponent) || !activeDefinition) return;
-          const current = valuesFor(activeDefinition)[name];
-          if (!Array.isArray(current)) return;
-          const next = [...current] as [number, number] | [number, number, number];
-          next[index] = nextComponent;
-          updateParam(name, next);
-        });
-        label.append(text, input);
-        group.append(label);
-      });
-      return group;
-    }
-
-    function buildControls(definition: ShaderDefinition) {
-      if (!fields) return;
-      fields.replaceChildren();
-      const values = valuesFor(definition);
-      for (const [name, spec] of Object.entries(definition.params)) {
-        const value = values[name] ?? spec.value;
-        if (spec.type === 'float') {
-          fields.append(makeFloatControl(name, spec, value as number));
-        } else if (spec.type === 'color') {
-          fields.append(makeColorControl(name, spec, value as string));
-        } else {
-          fields.append(
-            makeVectorControl(name, spec, value as [number, number] | [number, number, number]),
-          );
-        }
-      }
+    function postExact(message: unknown) {
+      stippleFrame.contentWindow?.postMessage(message, window.location.origin);
     }
 
     function activateShader(id: string): boolean {
       const definition = getShader(id);
-      if (!definition) return false;
+      if (!definition || !tunableShaderIds.has(id)) return false;
 
       renderer?.destroy();
       renderer = null;
-      delete wrapper.dataset.shaderActive;
       activeDefinition = definition;
-      wrapper.dataset.shader = definition.id;
+      wrapper.dataset.shader = id;
+      delete wrapper.dataset.shaderActive;
 
-      if (definition.id === 'veli-gradient-stipple' && gradientStippleFrame) {
+      if (id === 'veli-gradient-stipple') {
         activeCanvas.hidden = true;
-        gradientStippleFrame.hidden = false;
-        const frameUrl = new URL('/gradient-stipple.html', window.location.origin);
-        frameUrl.searchParams.set('embedded', '1');
-        if (controlsEnabled) frameUrl.searchParams.set('controls', '1');
-        gradientStippleFrame.src = frameUrl.toString();
-        wrapper.dataset.shaderActive = 'true';
-        if (select) select.value = definition.id;
-        if (drawer && open) {
-          drawer.hidden = true;
-          open.hidden = true;
+        stippleFrame.hidden = false;
+        if (!stippleFrame.src || stippleFrame.src === 'about:blank') {
+          const url = new URL('/gradient-stipple.html', window.location.origin);
+          url.searchParams.set('embedded', '1');
+          stippleFrame.src = url.toString();
         }
-        announce(`${definition.label} active`);
+        wrapper.dataset.shaderActive = 'true';
         return true;
       }
 
       activeCanvas.hidden = false;
-      if (gradientStippleFrame) {
-        gradientStippleFrame.hidden = true;
-        gradientStippleFrame.src = 'about:blank';
-      }
-      if (controlsEnabled && drawer && open) {
-        drawer.hidden = false;
-        open.hidden = true;
-      }
-
+      stippleFrame.hidden = true;
+      stippleFrame.src = 'about:blank';
       renderer = createRenderer(activeCanvas, definition, {
         pointerTarget: wrapper.parentElement ?? wrapper,
-        onContextLost: () => {
-          delete wrapper.dataset.shaderActive;
-          announce('WebGL unavailable — showing the static fallback');
-        },
+        onContextLost: () => delete wrapper.dataset.shaderActive,
       });
+      if (!renderer) return false;
 
-      if (!renderer) {
-        announce('WebGL unavailable — showing the static fallback');
-        return false;
-      }
-
-      const values = valuesFor(definition);
-      for (const [name, value] of Object.entries(values)) renderer.setParam(name, value);
+      const cached = valuesFor(definition);
+      for (const [name, value] of Object.entries(cached)) renderer.setParam(name, value);
+      applyNativeValues();
       wrapper.dataset.shaderActive = 'true';
-      if (select) {
-        select.value = tunableShaderIds.has(definition.id) ? definition.id : '';
-      }
-      if (controlsEnabled) buildControls(definition);
-      announce(`${definition.label} active`);
       return true;
     }
 
-    if (select) {
-      for (const id of PD784_SHADER_IDS) {
-        const definition = getShader(id);
-        if (!definition) continue;
-        const option = document.createElement('option');
-        option.value = id;
-        option.textContent = definition.label;
-        select.append(option);
-      }
-      select.addEventListener('change', () => {
-        if (!activateShader(select.value)) return;
-        const nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set('shader', select.value);
-        window.history.replaceState({}, '', nextUrl);
-      });
-    }
-
-    reset?.addEventListener('click', () => {
-      if (!activeDefinition || !renderer) return;
-      const defaults = Object.fromEntries(
-        Object.entries(activeDefinition.params).map(([name, spec]) => [
-          name,
-          copyValue(spec.value),
-        ]),
-      );
-      valuesByShader.set(activeDefinition.id, defaults);
-      for (const [name, value] of Object.entries(defaults)) renderer.setParam(name, value);
-      buildControls(activeDefinition);
-      announce('Parameters reset');
-    });
-
-    function closeControls() {
-      if (!drawer || !open) return;
-      drawer.hidden = true;
-      open.hidden = false;
-      open.focus();
+    function updateUrl(id: string) {
       const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('shader', id);
       nextUrl.searchParams.delete('shaderControls');
       window.history.replaceState({}, '', nextUrl);
     }
 
-    close?.addEventListener('click', closeControls);
-    open?.addEventListener('click', () => {
-      if (!drawer) return;
-      drawer.hidden = false;
-      open.hidden = true;
-      title?.focus();
-    });
-    drawer?.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeControls();
-    });
+    function applyExactChanges(changedPaths: string[]) {
+      if (!latestDialValues || activeDefinition?.id !== 'veli-gradient-stipple') return;
+      const exact = latestDialValues.originalStipple ?? {};
+      if (changedPaths.length !== 1) {
+        postExact({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+        return;
+      }
+      const path = changedPaths[0];
+      const parts = path.split('.');
+      if (path === 'originalStipple.scene') {
+        postExact({ type: 'veli:stipple:set-scene', scene: Number(exact.scene) });
+      } else if (parts[0] === 'originalStipple' && parts.length === 3) {
+        const [, group, key] = parts;
+        if (['wave', 'dune', 'shore'].includes(group)) {
+          postExact({
+            type: 'veli:stipple:set-adjustment',
+            scene: ['wave', 'dune', 'shore'].indexOf(group),
+            key,
+            value: (exact[group] as ValueFolder | undefined)?.[key],
+          });
+        } else {
+          postExact({
+            type: 'veli:stipple:set-control',
+            key,
+            value: (exact[group] as ValueFolder | undefined)?.[key],
+          });
+        }
+      }
+    }
 
     const configuredId = wrapper.dataset.shader ?? String(DEFAULT_SHADER);
     const initialId = shaderOverride && getShader(shaderOverride) ? shaderOverride : configuredId;
     activateShader(initialId);
 
-    if (controlsEnabled && drawer && open) {
-      const originalStippleActive = wrapper.dataset.shader === 'veli-gradient-stipple';
-      drawer.hidden = originalStippleActive;
-      open.hidden = originalStippleActive;
-    }
+    const onDialChange = (event: Event) => {
+      const detail = (event as CustomEvent).detail as {
+        values?: DialValues;
+        changedPaths?: string[];
+      };
+      if (!detail?.values) return;
+      latestDialValues = detail.values;
+      const requested = String(detail.values.implementation ?? DEFAULT_SHADER);
+      const changedPaths = detail.changedPaths ?? [];
+      if (requested !== activeDefinition?.id) {
+        if (activateShader(requested)) updateUrl(requested);
+      }
+      if (requested === 'veli-gradient-stipple') applyExactChanges(changedPaths);
+      else applyNativeValues();
+    };
 
-    const onShaderMessage = (event: MessageEvent) => {
+    const onFrameMessage = (event: MessageEvent) => {
       if (
         event.origin !== window.location.origin ||
-        event.source !== gradientStippleFrame?.contentWindow ||
-        event.data?.type !== 'veli:select-shader' ||
-        typeof event.data.shader !== 'string' ||
-        !tunableShaderIds.has(event.data.shader)
+        event.source !== stippleFrame.contentWindow ||
+        event.data?.type !== 'veli:stipple:ready'
       )
         return;
-      if (!activateShader(event.data.shader)) return;
-      const nextUrl = new URL(window.location.href);
-      nextUrl.searchParams.set('shader', event.data.shader);
-      window.history.replaceState({}, '', nextUrl);
+      if (latestDialValues) {
+        postExact({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+      }
     };
-    window.addEventListener('message', onShaderMessage);
 
+    window.addEventListener('veli:shader-dial-change', onDialChange);
+    window.addEventListener('message', onFrameMessage);
     document.addEventListener(
       'astro:before-swap',
       () => {
         renderer?.destroy();
-        window.removeEventListener('message', onShaderMessage);
+        window.removeEventListener('veli:shader-dial-change', onDialChange);
+        window.removeEventListener('message', onFrameMessage);
       },
       { once: true },
     );
@@ -381,17 +243,6 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 </script>
 
 <style>
-  .shader-tuner,
-  .shader-tuner__reopen {
-    position: fixed;
-    z-index: 20;
-    border: 1px solid color-mix(in srgb, var(--color-border-base-subtle) 76%, transparent);
-    background: color-mix(in srgb, var(--color-bg-surface-raised) 88%, transparent);
-    box-shadow: 0 18px 60px color-mix(in srgb, #001c27 24%, transparent);
-    color: var(--color-text-base-emphasis);
-    backdrop-filter: blur(20px) saturate(1.2);
-  }
-
   .shader-bg__iframe {
     position: absolute;
     inset: 0;
@@ -403,238 +254,5 @@ const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.pr
 
   .shader-bg__iframe[hidden] {
     display: none;
-  }
-
-  .shader-tuner[hidden],
-  .shader-tuner__reopen[hidden] {
-    display: none;
-  }
-
-  .shader-tuner {
-    top: 16px;
-    right: 16px;
-    display: flex;
-    width: min(320px, calc(100vw - 32px));
-    max-height: calc(100svh - 32px);
-    flex-direction: column;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .shader-tuner__header,
-  .shader-tuner__footer {
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 16px;
-  }
-
-  .shader-tuner__header {
-    border-bottom: 1px solid var(--color-border-base-subtle);
-  }
-
-  .shader-tuner__header p,
-  .shader-tuner__header h2 {
-    margin: 0;
-  }
-
-  .shader-tuner__header p {
-    color: var(--color-text-base-subtle);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .shader-tuner__header h2 {
-    margin-top: 2px;
-    font-size: 15px;
-    line-height: 1.35;
-  }
-
-  .shader-tuner__header button,
-  .shader-tuner__footer button,
-  .shader-tuner__reopen {
-    border: 1px solid var(--color-border-base-subtle);
-    border-radius: 8px;
-    background: var(--color-bg-surface-base);
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .shader-tuner__header button {
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    font-size: 20px;
-    line-height: 1;
-  }
-
-  .shader-tuner__body {
-    min-height: 0;
-    overflow-y: auto;
-    padding: 14px 16px 18px;
-  }
-
-  .shader-tuner__select {
-    display: grid;
-    gap: 6px;
-  }
-
-  .shader-tuner__select span,
-  .shader-tuner :global(.shader-param label),
-  .shader-tuner :global(.shader-param > span),
-  .shader-tuner :global(.shader-param legend) {
-    color: var(--color-text-base-muted);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1.4;
-  }
-
-  .shader-tuner select,
-  .shader-tuner :global(input[type='number']) {
-    min-height: 34px;
-    border: 1px solid var(--color-border-base-subtle);
-    border-radius: 7px;
-    background: var(--color-bg-surface-base);
-    color: inherit;
-    padding: 6px 8px;
-    font: inherit;
-  }
-
-  .shader-tuner__fields {
-    display: grid;
-    gap: 12px;
-    margin-top: 18px;
-  }
-
-  .shader-tuner :global(.shader-param) {
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .shader-tuner :global(.shader-param--float) {
-    display: grid;
-    grid-template-columns: minmax(88px, 1fr) minmax(70px, 1fr) 62px;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .shader-tuner :global(.shader-param--float input[type='range']) {
-    width: 100%;
-    accent-color: var(--color-bg-primary-default);
-  }
-
-  .shader-tuner :global(.shader-param--float input[type='number']) {
-    width: 62px;
-    min-height: 30px;
-    font-size: 11px;
-  }
-
-  .shader-tuner :global(.shader-param--color) {
-    display: flex;
-    min-height: 34px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .shader-tuner :global(.shader-param--color input) {
-    width: 42px;
-    height: 28px;
-    border: 1px solid var(--color-border-base-subtle);
-    border-radius: 7px;
-    background: transparent;
-    padding: 2px;
-    cursor: pointer;
-  }
-
-  .shader-tuner :global(.shader-param--vector) {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-  }
-
-  .shader-tuner :global(.shader-param--vector legend) {
-    grid-column: 1 / -1;
-    margin-bottom: 2px;
-  }
-
-  .shader-tuner :global(.shader-param--vector label) {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 4px;
-  }
-
-  .shader-tuner :global(.shader-param--vector input) {
-    width: 100%;
-    min-width: 0;
-    font-size: 11px;
-  }
-
-  .shader-tuner__footer {
-    border-top: 1px solid var(--color-border-base-subtle);
-  }
-
-  .shader-tuner__footer button,
-  .shader-tuner__reopen {
-    min-height: 34px;
-    padding: 7px 11px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .shader-tuner__footer span {
-    overflow: hidden;
-    color: var(--color-text-base-subtle);
-    font-size: 10px;
-    text-align: right;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .shader-tuner__reopen {
-    top: 16px;
-    right: 16px;
-  }
-
-  .shader-tuner button:hover,
-  .shader-tuner__reopen:hover {
-    background: var(--color-bg-secondary-subtle-default);
-  }
-
-  .shader-tuner button:focus-visible,
-  .shader-tuner select:focus-visible,
-  .shader-tuner input:focus-visible,
-  .shader-tuner__reopen:focus-visible {
-    outline: 2px solid var(--color-border-focus);
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 520px) {
-    .shader-tuner {
-      top: 8px;
-      right: 8px;
-      width: calc(100vw - 16px);
-      max-height: calc(100svh - 16px);
-    }
-
-    .shader-tuner__reopen {
-      top: 8px;
-      right: 8px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .shader-tuner,
-    .shader-tuner__reopen {
-      backdrop-filter: none;
-    }
   }
 </style>

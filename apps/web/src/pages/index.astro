@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
+import ShaderDialControls from '../components/ShaderDialControls';
 import VeliLogo from '../components/VeliLogo.astro';
 ---
 
@@ -11,6 +12,7 @@ import VeliLogo from '../components/VeliLogo.astro';
 >
   <main id="main" class="home-hero">
     <ShaderBackground class="home-hero__background" shader="veli-cymatics-gradient" />
+    <ShaderDialControls client:load />
     <div class="home-hero__content">
       <div class="home-wordmark">
         <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
