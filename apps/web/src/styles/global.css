@@ -1240,8 +1240,14 @@ button {
 }
 
 .docs-main {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  height: calc(100svh - 16px);
   min-width: 0;
   margin-block: 8px;
+  align-self: start;
+  overflow: hidden;
   border: 0;
   border-radius: 24px 0 0 24px;
   background: var(--color-bg-surface-raised);
@@ -1249,23 +1255,74 @@ button {
 
 .docs-main__inner,
 .docs-main--full-bleed-header .docs-main__inner {
+  min-height: 0;
+  flex: 1;
+  height: 100%;
   width: min(100% - 96px, 1000px);
   margin-inline: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding-block: 72px 104px;
+  scrollbar-gutter: stable;
 }
 
 .docs-utilities {
-  /* Match the main canvas's 8px bottom gutter while this rail is sticky. */
-  height: calc(100svh - 8px);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  height: calc(100svh - 16px);
   margin: 8px 8px 8px 0;
+  align-self: start;
+  overflow: hidden;
   border-radius: 0 8px 8px 0;
   background: var(--color-bg-surface-raised);
   padding: 280px 8px 32px 0;
 }
 
+.docs-main::before,
+.docs-main::after,
+.docs-utilities::before,
+.docs-utilities::after {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  left: 0;
+  height: 44px;
+  content: '';
+  pointer-events: none;
+}
+
+.docs-main::before,
+.docs-utilities::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-surface-raised),
+    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+}
+
+.docs-main::after,
+.docs-utilities::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--color-bg-surface-raised),
+    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+}
+
 .docs-contents {
+  min-height: 0;
+  flex: 1;
   margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border-left: 1px solid var(--color-border-base-muted);
+  padding-block: 8px;
+  scrollbar-gutter: stable;
 }
 
 .docs-contents h2 {
@@ -1553,13 +1610,23 @@ button {
 
   .docs-main {
     margin: 0;
+    display: block;
+    height: auto;
+    overflow: visible;
     border-radius: 0;
   }
 
   .docs-main__inner,
   .docs-main--full-bleed-header .docs-main__inner {
+    height: auto;
     width: min(100% - 40px, 760px);
+    overflow: visible;
     padding-block: 48px 80px;
+  }
+
+  .docs-main::before,
+  .docs-main::after {
+    display: none;
   }
 
   .docs-page-header h1 {
