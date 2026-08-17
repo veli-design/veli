@@ -1,18 +1,21 @@
 ---
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { foundations } from '../../lib/site';
+import { foundations, foundationsOverview } from '../../lib/site';
 
 const headings = foundations.map((foundation) => ({
   depth: 2,
   slug: foundation.slug,
   text: foundation.title,
 }));
+const markdownPath = foundationsOverview.markdownPath;
 ---
 
 <DocsLayout
-  title="Foundations | Veli Design System"
-  description="Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli."
-  activePath="/foundations/"
+  title={foundationsOverview.documentTitle}
+  description={foundationsOverview.documentDescription}
+  activePath={foundationsOverview.htmlPath}
+  {markdownPath}
   {headings}
   fullBleedHeader
 >
@@ -25,12 +28,10 @@ const headings = foundations.map((foundation) => ({
       height="1152"
     />
     <div class="docs-page-header__content">
-      <p class="docs-kicker">Foundations</p>
-      <h1>The decisions beneath every service</h1>
-      <p>
-        Veli connects shared tokens, accessible components, and government service requirements into
-        one design language.
-      </p>
+      <p class="docs-kicker">{foundationsOverview.kicker}</p>
+      <h1>{foundationsOverview.title}</h1>
+      <p class="docs-page-description">{foundationsOverview.description}</p>
+      <DocsPageActions {markdownPath} />
     </div>
   </header>
 

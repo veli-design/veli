@@ -9,6 +9,31 @@ export type ComponentGroup = {
   items: ComponentItem[];
 };
 
+export const docsOverview = {
+  label: 'Components overview',
+  kicker: 'Documentation',
+  title: 'Build with Veli',
+  description:
+    'Start with the foundations behind the system, then use the component references to build consistent and accessible public services.',
+  documentTitle: 'Documentation | Veli Design System',
+  documentDescription: 'Foundations and component documentation for the Veli Design System.',
+  htmlPath: '/docs/',
+  markdownPath: '/docs/index.md',
+} as const;
+
+export const foundationsOverview = {
+  label: 'Foundations overview',
+  kicker: 'Foundations',
+  title: 'The decisions beneath every service',
+  description:
+    'Veli connects shared tokens, accessible components, and government service requirements into one design language.',
+  documentTitle: 'Foundations | Veli Design System',
+  documentDescription:
+    'Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli.',
+  htmlPath: '/foundations/',
+  markdownPath: '/foundations/index.md',
+} as const;
+
 export const externalResources = [
   {
     label: 'Figma',
@@ -278,6 +303,10 @@ export const componentGroups: ComponentGroup[] = [
 ] as const;
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
+
+export function getComponentGroupSlug(title: string) {
+  return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
+}
 
 export function getComponentMeta(slug: string) {
   return allComponents.find((item) => item.slug === slug);

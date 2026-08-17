@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
 import { getComponentMeta } from '../../lib/site';
 
@@ -22,18 +23,21 @@ const component = getComponentMeta(doc.slug);
 const pageDescription = doc.data.description ?? component?.description;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const pageKicker = doc.slug.startsWith('pd-') ? 'Proposal' : 'Component';
+const markdownPath = `/docs/${doc.slug}/index.md`;
 ---
 
 <DocsLayout
   title={`${doc.data.title} | Veli Design System`}
   description={pageDescription}
   activePath={`/docs/${doc.slug}/`}
+  {markdownPath}
   headings={tocHeadings}
 >
   <header class="docs-page-header docs-page-header--article">
     <p class="docs-kicker">{pageKicker}</p>
     <h1>{doc.data.title}</h1>
-    {pageDescription && <p>{pageDescription}</p>}
+    {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
+    <DocsPageActions {markdownPath} />
   </header>
 
   <article class="docs-prose">

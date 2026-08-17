@@ -5,12 +5,14 @@ interface Props {
   title: string;
   description?: string;
   pageClass?: string;
+  markdownPath?: string;
 }
 
 const {
   title,
   description = 'Veli Design System documentation and foundations.',
   pageClass = '',
+  markdownPath,
 } = Astro.props;
 ---
 
@@ -20,6 +22,8 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {markdownPath && <link rel="alternate" type="text/markdown" href={markdownPath} />}
+    <link rel="describedby" href="/llms.txt" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
