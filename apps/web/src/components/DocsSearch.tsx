@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { MagnifyingGlass } from 'phosphor-react';
+import { Command, MagnifyingGlass } from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Kbd } from '@tradenetcorp/veli-ui/kbd';
 
@@ -16,20 +16,9 @@ function isEditableTarget(target: EventTarget | null) {
   );
 }
 
-function getShortcutModifier() {
-  if (typeof navigator === 'undefined') return '⌘';
-
-  const navigatorWithUserAgentData = navigator as Navigator & {
-    userAgentData?: { platform?: string };
-  };
-  const platform = navigatorWithUserAgentData.userAgentData?.platform ?? navigator.userAgent;
-  return /Mac|iPhone|iPad|iPod/.test(platform) ? '⌘' : 'Ctrl';
-}
-
 export function DocsSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldRenderDialog, setShouldRenderDialog] = useState(false);
-  const [shortcutModifier] = useState(getShortcutModifier);
 
   const openSearch = useCallback(() => {
     setShouldRenderDialog(true);
@@ -83,10 +72,12 @@ export function DocsSearch() {
         onMouseEnter={() => void loadDocsSearchDialog()}
         onFocus={() => void loadDocsSearchDialog()}
       >
-        <MagnifyingGlass size={16} aria-hidden="true" />
+        <MagnifyingGlass size={20} aria-hidden="true" />
         <span className="docs-search-trigger__label">Search</span>
         <span className="docs-search-trigger__shortcut" aria-hidden="true">
-          <Kbd>{shortcutModifier}</Kbd>
+          <Kbd>
+            <Command size={12} aria-hidden="true" />
+          </Kbd>
           <Kbd>K</Kbd>
         </span>
       </Button>
