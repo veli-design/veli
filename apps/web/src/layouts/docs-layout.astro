@@ -1,14 +1,8 @@
 ---
-import {
-  ArrowUpRight,
-  FigmaLogo,
-  GithubLogo,
-  List,
-  MagnifyingGlass,
-  Package,
-} from 'phosphor-react';
+import { ArrowUpRight, FigmaLogo, GithubLogo, List, Package } from 'phosphor-react';
 import Layout from './layout.astro';
 import { componentGroups, externalResources, foundations } from '../lib/site';
+import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
 
 type Heading = {
@@ -147,12 +141,7 @@ function isActive(href: string) {
     </main>
 
     <aside class="docs-utilities" aria-label="Page utilities">
-      <label class="docs-search">
-        <MagnifyingGlass size={17} aria-hidden="true" />
-        <span class="sr-only">Search documentation</span>
-        <input type="search" placeholder="Search" data-doc-search />
-      </label>
-      <p class="docs-search-status" aria-live="polite" data-search-status></p>
+      <DocsSearch client:load />
 
       <nav class="docs-contents" aria-label="On this page">
         <h2>On this page</h2>
@@ -178,10 +167,6 @@ function isActive(href: string) {
 
   <script is:inline>
     (() => {
-      const input = document.querySelector('[data-doc-search]');
-      const links = Array.from(document.querySelectorAll('[data-doc-link]'));
-      const groups = Array.from(document.querySelectorAll('[data-doc-group]'));
-      const status = document.querySelector('[data-search-status]');
       const mobileMenu = document.querySelector('.docs-mobile-menu');
       const mobileMenuLinks = document.querySelectorAll('.docs-mobile-menu a');
       const mobileMenuPanel = document.querySelector('.docs-mobile-menu__panel');
@@ -196,27 +181,6 @@ function isActive(href: string) {
       for (const link of mobileMenuLinks) {
         link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
       }
-
-      if (!(input instanceof HTMLInputElement)) return;
-
-      input.addEventListener('input', () => {
-        const query = input.value.trim().toLowerCase();
-        let visible = 0;
-
-        for (const link of links) {
-          const matches = !query || link.textContent?.toLowerCase().includes(query);
-          link.toggleAttribute('hidden', !matches);
-          if (matches) visible += 1;
-        }
-
-        for (const group of groups) {
-          const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
-          group.toggleAttribute('hidden', !hasMatch);
-        }
-
-        if (status)
-          status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
-      });
     })();
   </script>
 </Layout>
