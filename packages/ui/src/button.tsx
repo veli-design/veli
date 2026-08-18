@@ -16,13 +16,10 @@ const buttonVariants = cva(
     'focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
     'disabled:pointer-events-none',
     'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
-    // Keep label/icons optically fixed while the chrome scales.
-    '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
-    'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
     "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
     'after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)]',
-    'after:opacity-0 after:transition-opacity after:duration-normal after:ease-out',
-    'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
+    'after:opacity-0 after:[transition:opacity_120ms_var(--ease-in)]',
+    'data-[ripple-active]:after:opacity-100 data-[ripple-active]:after:[transition-timing-function:var(--ease-out)]',
   ].join(' '),
   {
     variants: {
@@ -33,7 +30,7 @@ const buttonVariants = cva(
         accent: '',
       },
       appearance: {
-        fill: 'text-base-inverted',
+        fill: '',
         transparent: '',
         ghost: 'bg-transparent',
       },
@@ -56,7 +53,7 @@ const buttonVariants = cva(
         intent: 'primary',
         appearance: 'fill',
         className:
-          'bg-button-primary text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)] dark:[--button-ripple-color:rgb(0_175_172_/_0.75)]',
+          'bg-button-primary text-white hover:bg-button-primary-hover data-[pressed]:bg-button-primary-hover disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)] dark:[--button-ripple-color:rgb(0_175_172_/_0.75)]',
       },
       {
         intent: 'primary',
@@ -94,7 +91,7 @@ const buttonVariants = cva(
         intent: 'danger',
         appearance: 'fill',
         className:
-          'bg-button-danger text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.9)]',
+          'bg-button-danger text-white hover:bg-button-danger-hover data-[pressed]:bg-button-danger-hover disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.9)]',
       },
       {
         intent: 'danger',
@@ -113,7 +110,7 @@ const buttonVariants = cva(
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(154_243_102_/_1)] dark:[--button-ripple-color:rgb(154_243_102_/_1)]',
+          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--color-button-accent)]',
       },
       { size: 'xs', iconOnly: true, className: 'w-7' },
       { size: 'sm', iconOnly: true, className: 'w-9' },
@@ -216,12 +213,13 @@ export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
 
 type ButtonAppearance = NonNullable<ButtonProps['appearance']>;
 
-const pressRippleAnimationDuration = 420;
+const pressRippleAnimationDuration = 200;
 const pressRippleStartSizePx = 12;
 
 interface UseButtonRippleOptions {
   isDisabled?: boolean;
   isLoading?: boolean;
+  onPointerDown?: ButtonProps['onPointerDown'];
   onPointerMove?: ButtonProps['onPointerMove'];
   onPointerUp?: ButtonProps['onPointerUp'];
   onPointerCancel?: ButtonProps['onPointerCancel'];
@@ -242,6 +240,13 @@ function prefersReducedMotion() {
 function getPressRippleEndSize(width: number, height: number, x: number, y: number) {
   const reach = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
   return Math.round(Math.max(reach * 2.2, Math.max(width, height) * 1.35));
+}
+
+function clampRipplePointerPosition(rect: DOMRect, clientX: number, clientY: number) {
+  return {
+    x: Math.min(Math.max(clientX - rect.left, 0), rect.width),
+    y: Math.min(Math.max(clientY - rect.top, 0), rect.height),
+  };
 }
 
 function cancelAnimationFrameRef(frameRef: React.MutableRefObject<number | null>) {
@@ -328,6 +333,7 @@ function ButtonContent({
 function useButtonRipple({
   isDisabled,
   isLoading,
+  onPointerDown,
   onPointerMove,
   onPointerUp,
   onPointerCancel,
@@ -339,8 +345,32 @@ function useButtonRipple({
   const expandFrameRef = React.useRef<number | null>(null);
   const pointerFrameRef = React.useRef<number | null>(null);
   const isPressingRef = React.useRef(false);
+  const isExpandingRef = React.useRef(false);
   const pendingPointerRef = React.useRef<{ x: number; y: number } | null>(null);
   const rippleRef = React.useRef({ x: 0, y: 0, size: 0 });
+
+  const setRippleActive = React.useCallback((active: boolean) => {
+    const button = buttonRef.current;
+
+    if (!button) {
+      return;
+    }
+
+    if (active) {
+      button.setAttribute('data-ripple-active', '');
+      return;
+    }
+
+    button.removeAttribute('data-ripple-active');
+  }, []);
+
+  const fadeRippleIfReleased = React.useCallback(() => {
+    if (isPressingRef.current || isExpandingRef.current) {
+      return;
+    }
+
+    setRippleActive(false);
+  }, [setRippleActive]);
 
   const writeRipple = React.useCallback(() => {
     const button = buttonRef.current;
@@ -371,10 +401,7 @@ function useButtonRipple({
       }
 
       const rect = target.getBoundingClientRect();
-      pendingPointerRef.current = {
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      };
+      pendingPointerRef.current = clampRipplePointerPosition(rect, clientX, clientY);
 
       if (typeof window === 'undefined') {
         const position = pendingPointerRef.current;
@@ -403,14 +430,19 @@ function useButtonRipple({
   const animatePressRipple = React.useCallback(
     (width: number, height: number, x: number, y: number) => {
       const endSize = getPressRippleEndSize(width, height, x, y);
+
+      setRippleActive(true);
       rippleRef.current = { x, y, size: endSize };
       writeRipple();
 
       if (typeof window === 'undefined' || prefersReducedMotion()) {
+        isExpandingRef.current = false;
+        fadeRippleIfReleased();
         return;
       }
 
       cancelAnimationFrameRef(expandFrameRef);
+      isExpandingRef.current = true;
       rippleRef.current.size = pressRippleStartSizePx;
       writeRipple();
 
@@ -428,11 +460,13 @@ function useButtonRipple({
         }
 
         expandFrameRef.current = null;
+        isExpandingRef.current = false;
+        fadeRippleIfReleased();
       };
 
       expandFrameRef.current = window.requestAnimationFrame(tick);
     },
-    [writeRipple],
+    [fadeRippleIfReleased, setRippleActive, writeRipple],
   );
 
   React.useEffect(() => {
@@ -442,21 +476,39 @@ function useButtonRipple({
     };
   }, []);
 
+  const handlePointerDown: NonNullable<ButtonProps['onPointerDown']> = (event) => {
+    if (canRipple) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    onPointerDown?.(event);
+  };
+
   const handlePointerMove: NonNullable<ButtonProps['onPointerMove']> = (event) => {
     trackRippleFromPointer(event.currentTarget, event.clientX, event.clientY);
     onPointerMove?.(event);
   };
 
   const handlePointerUp: NonNullable<ButtonProps['onPointerUp']> = (event) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
     if (event.buttons === 0) {
       isPressingRef.current = false;
+      fadeRippleIfReleased();
     }
 
     onPointerUp?.(event);
   };
 
   const handlePointerCancel: NonNullable<ButtonProps['onPointerCancel']> = (event) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
     isPressingRef.current = false;
+    fadeRippleIfReleased();
     onPointerCancel?.(event);
   };
 
@@ -476,13 +528,19 @@ function useButtonRipple({
   };
 
   const handlePressEnd: NonNullable<ButtonProps['onPressEnd']> = (event) => {
-    isPressingRef.current = false;
+    // Pointer presses release via pointerup (including drag-outside). Keyboard presses end here.
+    if (event.pointerType === 'keyboard' || event.pointerType === 'virtual') {
+      isPressingRef.current = false;
+      fadeRippleIfReleased();
+    }
+
     onPressEnd?.(event);
   };
 
   return {
     buttonRef,
     buttonEventHandlers: {
+      onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerUp,
       onPointerCancel: handlePointerCancel,
@@ -501,6 +559,7 @@ export function Button({
   isLoading,
   isDisabled,
   className,
+  onPointerDown,
   onPointerMove,
   onPointerUp,
   onPointerCancel,
@@ -523,6 +582,10 @@ export function Button({
     !isLoadingOnly || hasButtonAccessibleName,
     'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
   );
+  invariantDev(
+    resolvedIntent !== 'accent' || resolvedAppearance === 'fill',
+    'Veli UI: Button accent intent only supports fill appearance.',
+  );
 
   const resolvedClassName = twMerge(
     buttonVariants({
@@ -537,6 +600,7 @@ export function Button({
   const { buttonRef, buttonEventHandlers } = useButtonRipple({
     isDisabled,
     isLoading,
+    onPointerDown,
     onPointerMove,
     onPointerUp,
     onPointerCancel,
