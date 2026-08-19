@@ -19,6 +19,10 @@
   ],
   "exports": {
     "./tailwind": "./tailwind.css",
+    "./theme-script": {
+      "types": "./dist/theme-script.d.ts",
+      "import": "./dist/theme-script.js"
+    },
     "./avatar": {
       "types": "./dist/avatar.d.ts",
       "import": "./dist/avatar.js"
