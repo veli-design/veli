@@ -11,61 +11,55 @@ import VeliLogo from '../components/VeliLogo.astro';
   pageClass="home-page"
 >
   <main id="main" class="home-hero antialiased">
-    <div class="home-shader-frame" aria-hidden="true">
-      <ShaderBackground class="home-hero__background" />
-      <span class="home-shader-cut home-shader-cut--top-right"></span>
-      <span class="home-shader-cut home-shader-cut--bottom-left"></span>
-      <span class="home-shader-seam home-shader-seam--top"></span>
-      <span class="home-shader-seam home-shader-seam--right"></span>
-      <span class="home-shader-seam home-shader-seam--bottom"></span>
-      <span class="home-shader-seam home-shader-seam--left"></span>
-    </div>
-    <ShaderDialControls client:load />
-
-    <section class="home-hero__content" aria-labelledby="home-title">
-      <div class="home-wordmark">
-        <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
+    <div class="home-frame">
+      <div class="home-shader-frame" aria-hidden="true">
+        <ShaderBackground class="home-hero__background" />
       </div>
 
-      <div class="home-copy">
-        <h1 id="home-title" class="type-heading-1-medium">
-          <span>One system.</span>
-          <span>Every service.</span><span>Built for everyone.</span>
-        </h1>
-        <p class="type-body-lg-medium">
-          The official design system powering Maldives' public services. Consistent, accessible, and
-          built to last.
-        </p>
-      </div>
+      <section class="home-hero__content" aria-labelledby="home-title">
+        <div class="home-wordmark">
+          <span class="home-wordmark__logo">
+            <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
+          </span>
+        </div>
 
-      <a
-        href="/foundations/"
-        data-home-cta
-        class:list={[
-          'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',
-          '[transition-property:background-color,color,scale] [transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)] [transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
-          'focus-visible:border-base-subtle focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-          'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
-          '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
-          'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
-          "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-normal after:ease-out after:content-['']",
-          'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
-          'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed',
-          '[--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
-        ]}
-      >
-        <span
-          class="relative z-[1] inline-flex items-center justify-center gap-2 px-1.5 font-sans antialiased type-subtitle-medium"
+        <div class="home-copy">
+          <h1 id="home-title" class="type-heading-1-medium">
+            <span>One system.</span>
+            <span>Every service.</span><span>Built for everyone.</span>
+          </h1>
+          <p class="type-body-lg-medium">
+            The official design system powering Maldives' public services. Consistent, accessible,
+            and built to last.
+          </p>
+        </div>
+
+        <a
+          href="/foundations/"
+          data-home-cta
+          class:list={[
+            'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',
+            '[transition-property:background-color,color,scale] [transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)] [transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+            'focus-visible:border-base-subtle focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
+            '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
+            'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
+            "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-normal after:ease-out after:content-['']",
+            'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
+            'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed',
+            '[--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
+          ]}
         >
-          Start building
-        </span>
-      </a>
-    </section>
+          <span
+            class="relative z-[1] inline-flex items-center justify-center gap-2 px-1.5 font-sans antialiased type-subtitle-medium"
+          >
+            Start building
+          </span>
+        </a>
+      </section>
+    </div>
 
-    <footer class="home-footer">
-      <span>Stewarded by</span>
-      <a href="https://mindco.mv/">MINDCo</a>
-    </footer>
+    <ShaderDialControls client:load />
   </main>
 </Layout>
 
