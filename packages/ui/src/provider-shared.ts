@@ -24,6 +24,8 @@ export type VeliResolvedColorScheme = Exclude<VeliColorScheme, 'system'>;
 export interface VeliProviderProps {
   language?: VeliLanguage;
   colorScheme?: VeliColorScheme;
+  /** Suppress CSS transitions for one frame while the theme changes. */
+  disableTransitionOnChange?: boolean;
   children: React.ReactNode;
   className?: string;
 }
