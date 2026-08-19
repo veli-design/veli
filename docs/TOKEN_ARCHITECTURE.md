@@ -27,7 +27,38 @@ Veli is Tailwind-aligned, not Tailwind-default-valued. We use Tailwind v4's nati
 
 Dark mode is class-driven. Token CSS emits light variables by default and dark overrides under `:where(.dark, .dark *)`, and consuming apps should apply `.dark` to the document root or the relevant provider boundary. Veli supports `system`, `light`, and `dark` color scheme intents; `system` resolves from `prefers-color-scheme`.
 
-Frameworks should own their own app-shell theme runtime. In Next.js, prefer `next-themes` with `attribute="class"` so Veli's Tailwind theme CSS responds to `<html class="dark">`. For React Router, TanStack Router, TanStack Start, Astro, and Vite-based apps, any runtime is compatible as long as it applies the same `.dark` contract before or during first paint.
+`VeliProvider` injects a parser-blocking inline script and syncs `.dark`, `data-theme`, and `color-scheme` to `document.documentElement`. Portaled components (modals, popovers, tooltips, menus) then match `:where(.dark, .dark *)` even though they render under `document.body`.
+
+Put `suppressHydrationWarning` on `<html>`. Key canvas colours off `html` / `html.dark` — do not transition `body { background: white }` or the first paint will flash.
+
+```tsx
+// Next.js App Router: app/layout.tsx
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <VeliProvider>{children}</VeliProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+If `VeliProvider` is not the first node in `<body>`, inline the script in `<head>` with `getVeliThemeScript()` from `@tradenetcorp/veli-ui/theme-script`.
+
+```astro
+---
+import { getVeliThemeScript } from '@tradenetcorp/veli-ui/theme-script';
+---
+
+<head>
+  <script is:inline set:html={getVeliThemeScript()} />
+</head>
+```
+
+Frameworks that manage their own theme persistence (e.g. `next-themes`) can continue to do so. When using `next-themes`, set `attribute="class"` and `storageKey="veli-color-scheme"` so that Veli's Tailwind theme CSS responds to `<html class="dark">` and the storage key stays consistent.
 
 ## Current State
 
