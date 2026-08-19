@@ -1,0 +1,45 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "button",
+  "apiPattern": "flat",
+  "purpose": "Triggers an action with semantic emphasis, including destructive, icon-only, disabled, and loading actions.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Triggering an immediate user action.",
+    "Showing an action that can become disabled or busy.",
+    "Presenting a compact icon-only action with an accessible name."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The control navigates to another location.",
+      "guidance": "Use a semantic navigation link instead of an action button.",
+      "useInstead": ["link"]
+    }
+  ],
+  "supportedInteractions": [
+    "Pointer and keyboard press",
+    "Disabled interaction blocking",
+    "Busy loading state"
+  ],
+  "approvedPatterns": [
+    "Use danger intent for destructive actions.",
+    "Pair leading or trailing icons with visible action text.",
+    "Keep visible content mounted while loading to preserve dimensions."
+  ],
+  "limitations": [
+    "Accent treatment is supported only with the fill appearance.",
+    "Icon sizing is supplied by the consumer."
+  ],
+  "accessibility": [
+    "Provide aria-label or aria-labelledby for icon-only buttons.",
+    "Provide an accessible name when loading without visible children.",
+    "Loading disables interaction and marks the button busy."
+  ],
+  "responsive": ["Choose a size appropriate to the available space and interaction context."],
+  "rtl": ["Order directional leading and trailing content for the active writing direction."],
+  "relatedComponents": ["link", "menu"]
+}

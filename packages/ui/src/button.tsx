@@ -517,11 +517,11 @@ export function Button({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !isLoadingOnly || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const resolvedClassName = twMerge(

@@ -1,0 +1,48 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "provider",
+  "apiPattern": "provider",
+  "purpose": "Provides supported language, direction, locale, and color-scheme context to a Veli subtree.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional",
+    "notes": ["Place VeliProvider at the application or Veli subtree boundary."]
+  },
+  "useWhen": [
+    "Veli components need coordinated English or Dhivehi language and direction.",
+    "A subtree needs Veli light, dark, or system color-scheme context."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A framework theme runtime already owns document-level theme state.",
+      "guidance": "Use VeliProvider for component context without competing for the document root."
+    }
+  ],
+  "supportedInteractions": [
+    "React to system color-scheme changes.",
+    "Read active language and color-scheme context through exported hooks."
+  ],
+  "approvedPatterns": [
+    "Wrap the application or Veli component subtree once.",
+    "Select language rather than passing locale and direction independently.",
+    "Use an application-level theme bridge when another runtime owns the document root.",
+    "Keep the document root synchronized for portaled overlays."
+  ],
+  "limitations": [
+    "Only English and Dhivehi language mappings are supported.",
+    "Only system, light, and dark color schemes are supported.",
+    "The provider wrapper does not automatically synchronize documentElement."
+  ],
+  "accessibility": [
+    "The wrapper sets lang and dir for its subtree.",
+    "React Aria receives the mapped locale.",
+    "Keep document language and direction coherent when the provider does not wrap the full page."
+  ],
+  "responsive": [],
+  "rtl": [
+    "Dhivehi maps to dv-MV and rtl.",
+    "Direction-aware components should consume provider context or inherited direction."
+  ],
+  "relatedComponents": ["alert", "avatar", "modal", "popover", "tags", "toast", "tooltip"]
+}

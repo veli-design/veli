@@ -1,0 +1,58 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "select",
+  "apiPattern": "compound",
+  "purpose": "Choose one value from a predefined list presented in an accessible trigger and popover.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider so the trigger, popover, options, tooltip labels, and typography follow the active language and direction."
+    ]
+  },
+  "useWhen": [
+    "Users must choose one value from a known set of options.",
+    "Options benefit from descriptions, leading or trailing content, or grouped sections."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Users need to type to filter a long option list or enter a custom value.",
+      "guidance": "Use the searchable selection field.",
+      "useInstead": ["combobox"]
+    },
+    {
+      "situation": "A small set of choices should remain visible for comparison.",
+      "guidance": "Use a visible single-choice group.",
+      "useInstead": ["radio"]
+    }
+  ],
+  "supportedInteractions": [
+    "Open and close the option popover",
+    "Keyboard navigation and typeahead through React Aria",
+    "Controlled or uncontrolled single selection",
+    "Grouped option navigation"
+  ],
+  "approvedPatterns": [
+    "Compose Select with SelectItem and optional SelectSection.",
+    "Provide textValue or aria-label for complex or icon-only option content.",
+    "Use description text normally and errorMessage when invalid."
+  ],
+  "limitations": [
+    "This component is not an editable or filterable input.",
+    "Direct style and child layout overrides are not supported.",
+    "className is intended for outer layout."
+  ],
+  "accessibility": [
+    "Uses React Aria Select, Button, Popover, ListBox, and Label semantics.",
+    "Selected options expose a visual check indicator.",
+    "Complex options require reliable accessible text for typeahead, selected value text, and screen readers."
+  ],
+  "responsive": [
+    "The popover tracks the trigger width and the option list scrolls when its maximum height is reached."
+  ],
+  "rtl": [
+    "The trigger, popover, option text, and section labels follow the active language and direction."
+  ],
+  "relatedComponents": ["combobox", "radio", "input"]
+}

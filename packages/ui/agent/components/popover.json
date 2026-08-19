@@ -1,0 +1,61 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "popover",
+  "apiPattern": "compound",
+  "purpose": "Shows an interactive floating panel anchored to a trigger.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "No Popover MDX documentation exists; semantics are based on implementation and stories.",
+      "Provider language and direction are applied to the positioned overlay."
+    ]
+  },
+  "useWhen": [
+    "Contextual actions, filters, onboarding guidance, or help need an anchored panel.",
+    "The floating content contains interactive controls."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The content is brief and non-interactive.",
+      "guidance": "Use a tooltip.",
+      "useInstead": ["tooltip"]
+    },
+    {
+      "situation": "The task requires a blocking dialog.",
+      "guidance": "Use a modal.",
+      "useInstead": ["modal"]
+    }
+  ],
+  "supportedInteractions": [
+    "Open and close from a trigger.",
+    "Control open state.",
+    "Interact with focusable panel content.",
+    "Flip or position around the trigger."
+  ],
+  "approvedPatterns": [
+    "Compose Popover Trigger, Popover, and Popover Dialog.",
+    "Add optional header, content, and footer parts.",
+    "Use the dialog close render value for close controls and action completion.",
+    "Use start and end placements for direction-aware alignment."
+  ],
+  "limitations": [
+    "Popover Header only renders its close button when an onClose callback is supplied.",
+    "Header title uses paragraph markup rather than dialog-title semantics.",
+    "Arrow display changes the overlay offset."
+  ],
+  "accessibility": [
+    "Wrap panel content in Popover Dialog for dialog behavior and focus management.",
+    "Give icon-only triggers an accessible label.",
+    "Provide a useful close button label when overriding the localized default."
+  ],
+  "responsive": [
+    "Set an appropriate panel width and allow positioning to flip when space is constrained."
+  ],
+  "rtl": [
+    "Provider direction is applied to the overlay.",
+    "Prefer start and end placements when alignment should mirror."
+  ],
+  "relatedComponents": ["modal", "provider", "tooltip"]
+}

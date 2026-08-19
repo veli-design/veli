@@ -1,0 +1,55 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "dropzone",
+  "apiPattern": "compound",
+  "purpose": "Accept files through drag and drop or the system picker, validate them, and compose file lists with upload progress and removal actions.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Use VeliProvider for localized upload text, statuses, action labels, and direction."]
+  },
+  "useWhen": [
+    "Users need to attach one or more files by dropping or browsing.",
+    "The UI must show accepted files, rejection feedback, upload progress, previews, or removal controls."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The workflow does not accept files.",
+      "guidance": "Choose the form control that matches the value being collected."
+    }
+  ],
+  "supportedInteractions": [
+    "Drag and drop files",
+    "Open the system file picker by click, Enter, Space, or trigger button",
+    "Controlled or uncontrolled file collections",
+    "Validate by type, size, count, or custom rule",
+    "Report upload progress, success, and error",
+    "Remove individual files or clear the list"
+  ],
+  "approvedPatterns": [
+    "Compose Dropzone with DropzoneArea and optionally DropzoneList, item parts, progress, and clear actions.",
+    "State accepted types, size limits, and count limits near the target.",
+    "Surface rejection messages outside the target when users need persistent detail.",
+    "Use DropzoneField for the simpler labeled field composition."
+  ],
+  "limitations": [
+    "Upload transport is consumer-supplied through the upload callback.",
+    "File acceptance is checked after drop; dragover feedback may accept generic OS file payloads.",
+    "Compound child components must remain inside Dropzone, and item parts must remain inside DropzoneItem."
+  ],
+  "accessibility": [
+    "Uses React Aria DropZone, FileTrigger, Button, and ProgressBar primitives.",
+    "The drop target supports keyboard activation and has an accessible upload label.",
+    "File rows expose list position, metadata, status text, and named removal actions."
+  ],
+  "responsive": [
+    "The target fills its container.",
+    "File lists may be vertical or wrap horizontally; choose orientation for available space."
+  ],
+  "rtl": [
+    "The root applies the active language and direction.",
+    "File names use automatic direction while sizes and percentages remain LTR."
+  ],
+  "relatedComponents": ["button"]
+}

@@ -7,12 +7,24 @@ import { DropzoneUsageDemo } from '../../components/DocsExamples';
 
 # Dropzone
 
-Dropzone provides an accessible target for drag-and-drop uploads. Enable `allowsBrowse` to open the system file picker on click via React Aria `FileTrigger`.
+Dropzone provides a compound file-upload workflow with drag-and-drop, system file browsing,
+validation, file lists, progress, and removal controls. The upload transport remains
+application-owned.
 
 ## Import
 
 ```tsx
-import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
+import { useState } from 'react';
+import {
+  Dropzone,
+  DropzoneArea,
+  DropzoneItem,
+  DropzoneItemDelete,
+  DropzoneItemMetadata,
+  DropzoneItemPreview,
+  DropzoneList,
+  useDropzone,
+} from '@tradenetcorp/veli-ui/dropzone';
 ```
 
 ## Usage
@@ -22,28 +34,64 @@ import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
 </div>
 
 ```tsx
-<Dropzone
-  label="Attachments"
-  aria-label="Upload attachments"
-  allowsBrowse
-  acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
-  onDrop={(event) => {
-    // handle dropped items
-  }}
-/>
+function FileListItems() {
+  const files = useDropzone((state) =>
+    Array.from(state.files.values()).map((fileState) => fileState.file),
+  );
+
+  return files.map((file) => (
+    <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
+      <DropzoneItemPreview />
+      <DropzoneItemMetadata />
+      <DropzoneItemDelete />
+    </DropzoneItem>
+  ));
+}
+
+function Attachments() {
+  const [files, setFiles] = useState<File[]>([]);
+
+  return (
+    <Dropzone
+      label="Upload attachments"
+      accept="application/pdf,image/png,image/jpeg"
+      maxFiles={2}
+      multiple
+      value={files}
+      onValueChange={setFiles}
+    >
+      <DropzoneArea />
+      <DropzoneList>
+        <FileListItems />
+      </DropzoneList>
+    </Dropzone>
+  );
+}
 ```
 
-## Key props
+## Composition
 
-| Prop                | Type                                | Description                          |
-| :------------------ | :---------------------------------- | :----------------------------------- |
-| `label`             | `ReactNode`                         | Visible field label.                 |
-| `description`       | `ReactNode`                         | Helper text below the dropzone.      |
-| `errorMessage`      | `ReactNode`                         | Validation message.                  |
-| `size`              | `'sm' \| 'md' \| 'lg'`              | Minimum height and typography scale. |
-| `allowsBrowse`      | `boolean`                           | Wraps the zone with `FileTrigger`.   |
-| `acceptedFileTypes` | `string[]`                          | MIME types passed to `FileTrigger`.  |
-| `getDropOperation`  | `DropZoneProps['getDropOperation']` | Control accepted drag types.         |
-| `onDrop`            | `DropZoneProps['onDrop']`           | Called when items are dropped.       |
+- `Dropzone` owns the file collection, validation, and optional upload lifecycle.
+- `DropzoneArea` is the keyboard-accessible drop and browse target.
+- `DropzoneList` contains `DropzoneItem` rows.
+- Item preview, metadata, progress, and delete components compose each row.
+- `DropzoneClear` clears the collection.
+- `DropzoneField` provides a simpler labeled drop target when a custom composition is unnecessary.
 
-All other React Aria `DropZone` props are supported, excluding `className` and `style` overrides on the root wrapper.
+## Key root props
+
+| Prop             | Type                                          | Description                                      |
+| :--------------- | :-------------------------------------------- | :----------------------------------------------- |
+| `value`          | `File[]`                                      | Controlled file collection.                      |
+| `defaultValue`   | `File[]`                                      | Initial uncontrolled file collection.            |
+| `onValueChange`  | `(files: File[]) => void`                     | Called when the collection changes.              |
+| `accept`         | `string`                                      | Comma-separated MIME types or file extensions.   |
+| `maxFiles`       | `number`                                      | Maximum number of accepted files.                |
+| `maxSize`        | `number`                                      | Maximum bytes per file.                          |
+| `multiple`       | `boolean`                                     | Allows more than one file.                       |
+| `onFileValidate` | `(file: File) => string \| null \| undefined` | Adds application-specific validation.            |
+| `onFileReject`   | `(file: File, message: string) => void`       | Reports rejected files.                          |
+| `onUpload`       | `(files, progressCallbacks) => Promise<void>` | Connects the application-owned upload transport. |
+
+Keep compound parts inside their required parent. State accepted types and limits near the target,
+and surface persistent rejection details outside the drop target when users need to act on them.

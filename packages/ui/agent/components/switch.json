@@ -1,0 +1,50 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "switch",
+  "apiPattern": "flat",
+  "purpose": "Turn a setting between on and off states with immediate toggle semantics.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "A setting has two mutually exclusive on and off states.",
+    "Changing the state can take effect immediately."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The boolean value is submitted as part of a form or represents acknowledgement.",
+      "guidance": "Use a checkbox.",
+      "useInstead": ["checkbox"]
+    },
+    {
+      "situation": "Users must choose one value from more than two named options.",
+      "guidance": "Use a radio group or select.",
+      "useInstead": ["radio", "select"]
+    }
+  ],
+  "supportedInteractions": [
+    "Pointer and keyboard toggle through React Aria",
+    "Controlled or uncontrolled selected state",
+    "Disabled state"
+  ],
+  "approvedPatterns": [
+    "Provide a concise label describing the setting.",
+    "Use controlled state when surrounding content must react to the setting."
+  ],
+  "limitations": [
+    "The component represents only binary on and off state.",
+    "Track and handle internals are private.",
+    "style overrides are not supported and className is intended for outer layout."
+  ],
+  "accessibility": [
+    "Uses React Aria Switch semantics with keyboard, focus, selected, and disabled behavior.",
+    "The visible label is part of the switch control."
+  ],
+  "responsive": [
+    "The control is inline-flex; place multiple switches in a responsive grid or vertical stack."
+  ],
+  "rtl": ["Logical positioning mirrors the handle and checkmark in RTL layouts."],
+  "relatedComponents": ["checkbox", "radio"]
+}

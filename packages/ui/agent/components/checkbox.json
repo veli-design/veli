@@ -1,0 +1,53 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "checkbox",
+  "apiPattern": "flat",
+  "purpose": "Toggle an independent boolean choice, including checked, unchecked, and indeterminate presentation.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Users can independently opt in or out of an item.",
+    "A parent choice needs an indeterminate state to summarize partial child selection.",
+    "A form needs an acknowledgement such as accepting terms."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Users must choose exactly one option from a mutually exclusive set.",
+      "guidance": "Use a radio group.",
+      "useInstead": ["radio"]
+    },
+    {
+      "situation": "The control changes a setting immediately and is naturally described as on or off.",
+      "guidance": "Use a switch.",
+      "useInstead": ["switch"]
+    }
+  ],
+  "supportedInteractions": [
+    "Pointer and keyboard toggle through React Aria",
+    "Controlled or uncontrolled selection",
+    "Indeterminate presentation",
+    "Disabled and invalid states"
+  ],
+  "approvedPatterns": [
+    "Provide concise label content unless another accessible name is supplied.",
+    "Use description for supporting context and errorMessage with the invalid state.",
+    "Use indeterminate to represent partial aggregate selection, not a third submitted value."
+  ],
+  "limitations": [
+    "Control and indicator internals are private.",
+    "style overrides are not supported and className is intended for outer layout.",
+    "Indeterminate is a visual state layered on boolean selection semantics."
+  ],
+  "accessibility": [
+    "Uses React Aria Checkbox semantics with keyboard, focus, disabled, selected, and indeterminate behavior.",
+    "Description and invalid error content use React Aria text slots."
+  ],
+  "responsive": [
+    "Label and field messages occupy available inline space; place groups in a wrapping or vertical layout as needed."
+  ],
+  "rtl": ["The inline control and label follow inherited document direction."],
+  "relatedComponents": ["radio", "switch"]
+}

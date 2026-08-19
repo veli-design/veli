@@ -1,0 +1,57 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "breadcrumbs",
+  "apiPattern": "compound",
+  "purpose": "Communicates the current hierarchical location and provides navigation to ancestor pages or workflow levels.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "VeliProvider supplies language and direction for back-link icons and overflow menus; English LTR is the fallback."
+    ]
+  },
+  "useWhen": [
+    "A page belongs to a multi-level hierarchy.",
+    "Users need to navigate back to ancestor levels.",
+    "A long trail needs an overflow menu for hidden levels."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Switching between peer sections on the same page.",
+      "guidance": "Use tabs for peer content rather than hierarchical navigation.",
+      "useInstead": ["tabs", "page-tab"]
+    }
+  ],
+  "supportedInteractions": [
+    "Link navigation",
+    "Press-driven app-state navigation",
+    "Back navigation",
+    "Overflow menu selection",
+    "Data-driven collection actions"
+  ],
+  "approvedPatterns": [
+    "Compose Breadcrumbs with Breadcrumb items.",
+    "Render the current page as the final non-interactive crumb.",
+    "Use BreadcrumbOverflow for hidden intermediate levels.",
+    "Use the back-link treatment when a direct return action is needed."
+  ],
+  "limitations": [
+    "The automatic back link is not inserted when children use a render function.",
+    "Overflow items must be selected or navigated by the consumer."
+  ],
+  "accessibility": [
+    "Give the breadcrumb trail an accessible label when no surrounding label exists.",
+    "The current crumb is marked with aria-current page.",
+    "Give overflow controls and their menu descriptive accessible labels."
+  ],
+  "responsive": [
+    "The trail wraps across lines.",
+    "Collapse hidden intermediate levels into BreadcrumbOverflow when space is constrained."
+  ],
+  "rtl": [
+    "Back-link caret direction follows VeliProvider direction.",
+    "Overflow menu language and direction follow VeliProvider."
+  ],
+  "relatedComponents": ["link", "menu", "tabs", "page-tab", "provider"]
+}

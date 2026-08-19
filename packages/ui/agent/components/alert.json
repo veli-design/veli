@@ -1,0 +1,47 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "alert",
+  "apiPattern": "compound",
+  "purpose": "Communicates important contextual information inline on a page.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language localizes the built-in dismiss label."]
+  },
+  "useWhen": [
+    "A persistent contextual status or warning belongs near related content.",
+    "A dynamically inserted message must be announced."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The message is brief, temporary, and global.",
+      "guidance": "Use a toast region notification.",
+      "useInstead": ["toast"]
+    }
+  ],
+  "supportedInteractions": [
+    "Dismiss in controlled or uncontrolled visibility mode.",
+    "Present optional inline actions."
+  ],
+  "approvedPatterns": [
+    "Compose title, description, actions, and an optional close button.",
+    "Use alert live behavior only for dynamically inserted or updated messages.",
+    "Use status live behavior for always-visible banners."
+  ],
+  "limitations": [
+    "The close button only dismisses through its enclosing Alert.",
+    "Leading icons are decorative."
+  ],
+  "accessibility": [
+    "Choose alert or status live behavior based on message timing.",
+    "Keep visible text sufficient without relying on intent color or icon.",
+    "Override the localized dismiss label when additional context is needed."
+  ],
+  "responsive": ["The alert fills its container and actions wrap."],
+  "rtl": [
+    "The close button uses logical end positioning.",
+    "Provider language supplies the Dhivehi dismiss label."
+  ],
+  "relatedComponents": ["badge", "toast", "provider"]
+}

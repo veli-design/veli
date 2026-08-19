@@ -1,0 +1,61 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "menu",
+  "apiPattern": "compound",
+  "purpose": "Presents a trigger-driven popover list of actions or choices, with optional grouping, selection, rich item content, and submenus.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["VeliProvider supplies popover language and direction; English LTR is the fallback."]
+  },
+  "useWhen": [
+    "A trigger opens a compact list of actions.",
+    "Users select one or more choices from a popover.",
+    "Actions need sections, separators, descriptions, shortcuts, or nested submenus."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A single prominent action can be shown directly.",
+      "guidance": "Expose the action as a button instead of hiding it in a menu.",
+      "useInstead": ["button"]
+    },
+    {
+      "situation": "Users switch between persistent content panels.",
+      "guidance": "Use tabs for persistent peer content.",
+      "useInstead": ["tabs", "page-tab"]
+    }
+  ],
+  "supportedInteractions": [
+    "Trigger open and close",
+    "Keyboard and pointer item activation",
+    "Single and multiple selection",
+    "Persistent selection without closing",
+    "Nested submenu navigation",
+    "Disabled items"
+  ],
+  "approvedPatterns": [
+    "Compose MenuTrigger, a trigger control, MenuPopover, Menu, and MenuItem.",
+    "Use sections and separators to group related actions.",
+    "Use danger intent for destructive items.",
+    "Use descriptions, icons, and shortcut hints for richer action context."
+  ],
+  "limitations": [
+    "Shortcut content is a displayed hint; command handling remains the consumer's responsibility.",
+    "Long rich content may require a consumer-supplied popover width cap."
+  ],
+  "accessibility": [
+    "Provide an accessible name for menus when the trigger does not label the choices clearly.",
+    "React Aria supplies menu keyboard navigation and selection semantics.",
+    "Disabled and selected item states are exposed through React Aria."
+  ],
+  "responsive": [
+    "Item sizes support dense and spacious contexts.",
+    "Constrain popover width when descriptions are long."
+  ],
+  "rtl": [
+    "Popover language and direction follow VeliProvider.",
+    "Consumer-supplied submenu carets should mirror for RTL."
+  ],
+  "relatedComponents": ["button", "popover", "tabs", "breadcrumbs", "pagination", "provider"]
+}

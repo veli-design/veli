@@ -40,15 +40,15 @@ import { Badge } from '@tradenetcorp/veli-ui/badge';
 
 ## Props
 
-| Prop          | Type                                                                                                                               | Default      | Description                                              |
-| :------------ | :--------------------------------------------------------------------------------------------------------------------------------- | :----------- | :------------------------------------------------------- |
-| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'neutral'`  | Semantic color of the badge.                             |
-| `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                              | `'emphasis'` | Visual treatment of the badge surface.                   |
-| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                             | `'sm'`       | Badge size.                                              |
-| `counter`     | `boolean`                                                                                                                          | `false`      | Switches to a numeric counter pill.                      |
-| `count`       | `number`                                                                                                                           | -            | Value shown in counter mode.                             |
-| `max`         | `number`                                                                                                                           | `99`         | Cap above which the count renders as `{max}+`.           |
-| `leadingIcon` | `ReactNode`                                                                                                                        | -            | Icon rendered before the label.                          |
-| `className`   | `string`                                                                                                                           | -            | Layout-only class override merged onto the root element. |
+| Prop          | Type                                                                                                                               | Default     | Description                                              |
+| :------------ | :--------------------------------------------------------------------------------------------------------------------------------- | :---------- | :------------------------------------------------------- |
+| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'neutral'` | Semantic color of the badge.                             |
+| `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                              | `'outline'` | Visual treatment of the badge surface.                   |
+| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                             | `'sm'`      | Badge size.                                              |
+| `counter`     | `boolean`                                                                                                                          | `false`     | Switches to a numeric counter pill.                      |
+| `count`       | `number`                                                                                                                           | -           | Value shown in counter mode.                             |
+| `max`         | `number`                                                                                                                           | `99`        | Cap above which the count renders as `{max}+`.           |
+| `leadingIcon` | `ReactNode`                                                                                                                        | -           | Icon rendered before the label.                          |
+| `className`   | `string`                                                                                                                           | -           | Layout-only class override merged onto the root element. |
 
 All other `span` attributes are supported. In counter mode the value uses tabular numerals so widths stay stable as the count changes.

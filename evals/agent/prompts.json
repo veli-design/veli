@@ -1,0 +1,130 @@
+{
+  "sharedForbidSnippets": [
+    "calendarButtonLabel",
+    "allowsBrowse",
+    "acceptedFileTypes",
+    "RangeDatePicker",
+    "DateRangePicker",
+    "Coral UI"
+  ],
+  "tasks": [
+    {
+      "id": "01-setup",
+      "title": "Setup",
+      "goal": "Install both packages, Tailwind v4 token/ui imports, and VeliProvider.",
+      "prompt": "This Vite React app should use Veli for its interface. Get the project ready so we can start building screens. Some of those screens will be English and some Dhivehi, and users may prefer light or dark appearance.",
+      "requireImports": ["provider"],
+      "forbidImports": [],
+      "requireSnippets": [
+        "@import 'tailwindcss'",
+        "@tradenetcorp/veli-tokens/tailwind",
+        "@tradenetcorp/veli-ui/tailwind",
+        "VeliProvider"
+      ],
+      "requirePackages": ["@tradenetcorp/veli-ui", "@tradenetcorp/veli-tokens"],
+      "requireProvider": true
+    },
+    {
+      "id": "02-action-nav",
+      "title": "Action vs navigation",
+      "goal": "Button + onPress for Create; Link + href for Learn more.",
+      "prompt": "On the empty permits screen, add Create application and Learn more. Create starts a new draft. Learn more goes to /help.",
+      "requireImports": ["button", "link"],
+      "forbidImports": [],
+      "requireSnippets": ["onPress", "href"],
+      "requireProvider": false
+    },
+    {
+      "id": "03-form",
+      "title": "Accessible form",
+      "goal": "Input + Select with SelectItem and visible labels; not ComboBox.",
+      "prompt": "A resident is requesting a service. Collect their full name and the service they want. The services are Permits and Registrations. They send the request from this screen.",
+      "requireImports": ["button", "input", "select"],
+      "forbidImports": ["combobox"],
+      "requireSnippets": ["SelectItem", "label="],
+      "requireProvider": false
+    },
+    {
+      "id": "04-tabs-table",
+      "title": "Tabs and table",
+      "goal": "Data-driven Tabs with items, plus Table; not PageTab or RAC TabList.",
+      "prompt": "Staff review applications. They move between Active and Archived. Active lists each application with its name and status. Archived has nothing in it yet.",
+      "requireImports": ["tabs", "table"],
+      "forbidImports": ["page-tab"],
+      "requireSnippets": ["items=", "TableHeader", "aria-label"],
+      "requireProvider": false
+    },
+    {
+      "id": "05-confirm",
+      "title": "Blocking confirmation",
+      "goal": "Modal, not Popover/Tooltip; keep it open while delete is in progress.",
+      "prompt": "Staff can delete an application. They have to confirm before it is removed. If the delete request is still running, they should not be able to leave that confirmation unfinished.",
+      "requireImports": ["button", "modal"],
+      "forbidImports": ["popover", "tooltip"],
+      "requireSnippets": ["Modal.Title", "isOpen"],
+      "requireProvider": false
+    },
+    {
+      "id": "06-filters",
+      "title": "Anchored filters",
+      "goal": "Popover composition with checkbox; not Modal, Tooltip, or Menu.",
+      "prompt": "The applications toolbar needs Filters. People can choose Active only and Assigned to me, then apply those choices.",
+      "requireImports": ["button", "popover", "checkbox"],
+      "forbidImports": ["modal", "tooltip", "menu"],
+      "requireSnippets": ["PopoverTrigger", "PopoverDialog"],
+      "requireProvider": false
+    },
+    {
+      "id": "07-date",
+      "title": "Appointment date",
+      "goal": "DatePicker form field; not DateField segments or an inline Calendar.",
+      "prompt": "Residents book an office appointment. They need to choose the date on this form.",
+      "requireImports": ["date-picker"],
+      "forbidImports": ["date-field", "calendar"],
+      "requireSnippets": ["label="],
+      "requireProvider": false
+    },
+    {
+      "id": "08-files",
+      "title": "File upload",
+      "goal": "Compound Dropzone with area, list, and item; not the old flat API.",
+      "prompt": "Applicants attach supporting documents. They may add at most two files, and only PDF or images. They need to see what they attached and remove a file if it was the wrong one.",
+      "requireImports": ["dropzone"],
+      "forbidImports": [],
+      "requireSnippets": ["DropzoneArea", "DropzoneList", "DropzoneItem"],
+      "requireProvider": false
+    },
+    {
+      "id": "09-feedback",
+      "title": "Alert and toast",
+      "goal": "Alert for the policy notice; ToastRegion queue for Saved.",
+      "prompt": "There is a new records-retention policy that people must notice while they are on this page. After they save a draft, let them know it worked so they can keep editing.",
+      "requireImports": ["alert", "toast"],
+      "forbidImports": [],
+      "requireSnippets": ["ToastRegion", "createToastQueue"],
+      "requireProvider": true
+    },
+    {
+      "id": "10-rtl",
+      "title": "Dhivehi responsive cards",
+      "goal": "VeliProvider language=dv and Card; two columns on desktop.",
+      "prompt": "Show Permits and Registrations as service tiles. The copy is Dhivehi. This is the Dhivehi site, including for people who prefer dark appearance. On a laptop the tiles should sit side by side.",
+      "requireImports": ["card", "provider"],
+      "forbidImports": [],
+      "requireSnippets": ["language=\"dv\"", "md:grid-cols-2"],
+      "requireProvider": true
+    },
+    {
+      "id": "11-range",
+      "title": "Unsupported range picker",
+      "goal": "Refuse a single range-picker control; RangeCalendar or two fields is acceptable.",
+      "prompt": "A hotel booking form needs check-in and check-out together as one date range field.",
+      "requireImports": [],
+      "forbidImports": [],
+      "requireSnippets": [],
+      "acceptedImports": ["calendar", "date-picker"],
+      "requireProvider": false,
+      "expectRefusal": true
+    }
+  ]
+}

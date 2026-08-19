@@ -16,6 +16,10 @@ storybook-static
 .env
 .env*.local
 
+# Agent eval submissions
+evals/agent/runs/**
+!evals/agent/runs/.gitkeep
+
 # Logs
 *.log
 npm-debug.log*
@@ -29,3 +33,7 @@ Thumbs.db
 .idea
 *.swp
 *.swo
+
+# Lyse local cache (baseline.json is tracked)
+.lyse/*
+!.lyse/baseline.json

@@ -30,11 +30,8 @@ pnpm add @tradenetcorp/veli-tokens
 Import the Tailwind theme in your CSS:
 
 \`\`\`css
-@import "@tradenetcorp/veli-tokens/tailwind";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import '@tradenetcorp/veli-tokens/tailwind';
 \`\`\`
 
 This automatically includes:

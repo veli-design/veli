@@ -1,0 +1,420 @@
+{
+  "$schema": "./manifest.schema.json",
+  "schemaVersion": 1,
+  "system": {
+    "name": "Veli Design System",
+    "framework": "React",
+    "language": "TypeScript",
+    "packages": {
+      "ui": "@tradenetcorp/veli-ui",
+      "tokens": "@tradenetcorp/veli-tokens"
+    },
+    "supportedLanguages": ["en", "dv"]
+  },
+  "sources": {
+    "componentApi": "Published TypeScript declarations",
+    "tokens": "@tradenetcorp/veli-tokens/tokens",
+    "tailwind": "@tradenetcorp/veli-tokens/tailwind",
+    "css": "@tradenetcorp/veli-tokens/css"
+  },
+  "groups": [
+    {
+      "id": "actions-navigation",
+      "title": "Actions & navigation",
+      "components": [
+        {
+          "id": "button",
+          "name": "Button",
+          "summary": "Primary, secondary, danger, icon-only, and loading actions.",
+          "importPath": "@tradenetcorp/veli-ui/button",
+          "source": "src/button.tsx",
+          "declaration": "../dist/button.d.ts",
+          "metadata": "./components/button.json",
+          "docs": "apps/web/src/content/docs/button.mdx",
+          "storybook": "apps/storybook/src/stories/button.stories.tsx"
+        },
+        {
+          "id": "link",
+          "name": "Link",
+          "summary": "Accessible navigation with icon and typography inheritance guidance.",
+          "importPath": "@tradenetcorp/veli-ui/link",
+          "source": "src/link.tsx",
+          "declaration": "../dist/link.d.ts",
+          "metadata": "./components/link.json",
+          "docs": "apps/web/src/content/docs/link.mdx",
+          "storybook": "apps/storybook/src/stories/link.stories.tsx"
+        },
+        {
+          "id": "breadcrumbs",
+          "name": "Breadcrumbs",
+          "summary": "Hierarchical navigation for deep service surfaces.",
+          "importPath": "@tradenetcorp/veli-ui/breadcrumbs",
+          "source": "src/breadcrumbs.tsx",
+          "declaration": "../dist/breadcrumbs.d.ts",
+          "metadata": "./components/breadcrumbs.json",
+          "docs": "apps/web/src/content/docs/breadcrumbs.mdx",
+          "storybook": "apps/storybook/src/stories/breadcrumbs.stories.tsx"
+        },
+        {
+          "id": "pagination",
+          "name": "Pagination",
+          "summary": "Page navigation with compact and explicit variants.",
+          "importPath": "@tradenetcorp/veli-ui/pagination",
+          "source": "src/pagination.tsx",
+          "declaration": "../dist/pagination.d.ts",
+          "metadata": "./components/pagination.json",
+          "docs": "apps/web/src/content/docs/pagination.mdx",
+          "storybook": "apps/storybook/src/stories/pagination.stories.tsx"
+        },
+        {
+          "id": "menu",
+          "name": "Menu",
+          "summary": "Popover list of actions with icons, shortcuts, and submenus.",
+          "importPath": "@tradenetcorp/veli-ui/menu",
+          "source": "src/menu.tsx",
+          "declaration": "../dist/menu.d.ts",
+          "metadata": "./components/menu.json",
+          "docs": "apps/web/src/content/docs/menu.mdx",
+          "storybook": "apps/storybook/src/stories/menu.stories.tsx"
+        },
+        {
+          "id": "tabs",
+          "name": "Tabs",
+          "summary": "Inline tabbed sections with optional overflow menu.",
+          "importPath": "@tradenetcorp/veli-ui/tabs",
+          "source": "src/tabs.tsx",
+          "declaration": "../dist/tabs.d.ts",
+          "metadata": "./components/tabs.json",
+          "docs": "apps/web/src/content/docs/tabs.mdx",
+          "storybook": "apps/storybook/src/stories/tabs.stories.tsx"
+        },
+        {
+          "id": "page-tab",
+          "name": "PageTab",
+          "summary": "Page-level tab navigation for top-level sections.",
+          "importPath": "@tradenetcorp/veli-ui/page-tab",
+          "source": "src/page-tab.tsx",
+          "declaration": "../dist/page-tab.d.ts",
+          "metadata": "./components/page-tab.json",
+          "docs": "apps/web/src/content/docs/page-tab.mdx",
+          "storybook": "apps/storybook/src/stories/page-tab.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "forms",
+      "title": "Forms",
+      "components": [
+        {
+          "id": "input",
+          "name": "Input",
+          "summary": "Text fields with description, validation, and token styling.",
+          "importPath": "@tradenetcorp/veli-ui/input",
+          "source": "src/input.tsx",
+          "declaration": "../dist/input.d.ts",
+          "metadata": "./components/input.json",
+          "docs": "apps/web/src/content/docs/input.mdx",
+          "storybook": "apps/storybook/src/stories/input.stories.tsx"
+        },
+        {
+          "id": "textarea",
+          "name": "TextArea",
+          "summary": "Multi-line input with character counter and resize control.",
+          "importPath": "@tradenetcorp/veli-ui/textarea",
+          "source": "src/textarea.tsx",
+          "declaration": "../dist/textarea.d.ts",
+          "metadata": "./components/textarea.json",
+          "docs": "apps/web/src/content/docs/textarea.mdx",
+          "storybook": "apps/storybook/src/stories/textarea.stories.tsx"
+        },
+        {
+          "id": "password-input",
+          "name": "PasswordInput",
+          "summary": "Password entry with visibility toggle and requirement checklist.",
+          "importPath": "@tradenetcorp/veli-ui/password-input",
+          "source": "src/password-input.ts",
+          "declaration": "../dist/password-input.d.ts",
+          "metadata": "./components/password-input.json",
+          "docs": "apps/web/src/content/docs/password-input.mdx",
+          "storybook": "apps/storybook/src/stories/password-input.stories.tsx"
+        },
+        {
+          "id": "search",
+          "name": "Search",
+          "summary": "Search field with leading icon and shared field shell.",
+          "importPath": "@tradenetcorp/veli-ui/search",
+          "source": "src/search.tsx",
+          "declaration": "../dist/search.d.ts",
+          "metadata": "./components/search.json",
+          "docs": "apps/web/src/content/docs/search.mdx",
+          "storybook": "apps/storybook/src/stories/search.stories.tsx"
+        },
+        {
+          "id": "dropzone",
+          "name": "Dropzone",
+          "summary": "Drag-and-drop and browse-to-upload file workflow.",
+          "importPath": "@tradenetcorp/veli-ui/dropzone",
+          "source": "src/dropzone.tsx",
+          "declaration": "../dist/dropzone.d.ts",
+          "metadata": "./components/dropzone.json",
+          "docs": "apps/web/src/content/docs/dropzone.mdx",
+          "storybook": "apps/storybook/src/stories/dropzone.stories.tsx"
+        },
+        {
+          "id": "select",
+          "name": "Select",
+          "summary": "Accessible select menus for structured choices.",
+          "importPath": "@tradenetcorp/veli-ui/select",
+          "source": "src/select.tsx",
+          "declaration": "../dist/select.d.ts",
+          "metadata": "./components/select.json",
+          "docs": "apps/web/src/content/docs/select.mdx",
+          "storybook": "apps/storybook/src/stories/select.stories.tsx"
+        },
+        {
+          "id": "combobox",
+          "name": "ComboBox",
+          "summary": "Searchable selection with grouped options.",
+          "importPath": "@tradenetcorp/veli-ui/combobox",
+          "source": "src/combobox.tsx",
+          "declaration": "../dist/combobox.d.ts",
+          "metadata": "./components/combobox.json",
+          "docs": "apps/web/src/content/docs/combobox.mdx",
+          "storybook": "apps/storybook/src/stories/combobox.stories.tsx"
+        },
+        {
+          "id": "checkbox",
+          "name": "Checkbox",
+          "summary": "Boolean and indeterminate selection states.",
+          "importPath": "@tradenetcorp/veli-ui/checkbox",
+          "source": "src/checkbox.tsx",
+          "declaration": "../dist/checkbox.d.ts",
+          "metadata": "./components/checkbox.json",
+          "docs": "apps/web/src/content/docs/checkbox.mdx",
+          "storybook": "apps/storybook/src/stories/checkbox.stories.tsx"
+        },
+        {
+          "id": "radio",
+          "name": "Radio",
+          "summary": "Single-choice groups with semantic geometry.",
+          "importPath": "@tradenetcorp/veli-ui/radio",
+          "source": "src/radio.tsx",
+          "declaration": "../dist/radio.d.ts",
+          "metadata": "./components/radio.json",
+          "docs": "apps/web/src/content/docs/radio.mdx",
+          "storybook": "apps/storybook/src/stories/radio.stories.tsx"
+        },
+        {
+          "id": "switch",
+          "name": "Switch",
+          "summary": "Binary settings with clear selected and disabled states.",
+          "importPath": "@tradenetcorp/veli-ui/switch",
+          "source": "src/switch.tsx",
+          "declaration": "../dist/switch.d.ts",
+          "metadata": "./components/switch.json",
+          "docs": "apps/web/src/content/docs/switch.mdx",
+          "storybook": "apps/storybook/src/stories/switch.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "date-time",
+      "title": "Date & time",
+      "components": [
+        {
+          "id": "calendar",
+          "name": "Calendar",
+          "summary": "Standalone date and range selection surface.",
+          "importPath": "@tradenetcorp/veli-ui/calendar",
+          "source": "src/calendar.tsx",
+          "declaration": "../dist/calendar.d.ts",
+          "metadata": "./components/calendar.json",
+          "docs": "apps/web/src/content/docs/calendar.mdx",
+          "storybook": "apps/storybook/src/stories/calendar.stories.tsx"
+        },
+        {
+          "id": "date-field",
+          "name": "DateField",
+          "summary": "Segment-based date and time entry.",
+          "importPath": "@tradenetcorp/veli-ui/date-field",
+          "source": "src/date-field.tsx",
+          "declaration": "../dist/date-field.d.ts",
+          "metadata": "./components/date-field.json",
+          "docs": "apps/web/src/content/docs/date-field.mdx",
+          "storybook": "apps/storybook/src/stories/date-field.stories.tsx"
+        },
+        {
+          "id": "date-picker",
+          "name": "DatePicker",
+          "summary": "Date field trigger plus calendar popover composition.",
+          "importPath": "@tradenetcorp/veli-ui/date-picker",
+          "source": "src/date-picker.tsx",
+          "declaration": "../dist/date-picker.d.ts",
+          "metadata": "./components/date-picker.json",
+          "docs": "apps/web/src/content/docs/date-picker.mdx",
+          "storybook": "apps/storybook/src/stories/date-picker.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "structure-feedback",
+      "title": "Structure & feedback",
+      "components": [
+        {
+          "id": "accordion",
+          "name": "Accordion",
+          "summary": "Collapsible disclosure group for progressive content.",
+          "importPath": "@tradenetcorp/veli-ui/accordion",
+          "source": "src/accordion.tsx",
+          "declaration": "../dist/accordion.d.ts",
+          "metadata": "./components/accordion.json",
+          "docs": "apps/web/src/content/docs/accordion.mdx",
+          "storybook": "apps/storybook/src/stories/accordion.stories.tsx"
+        },
+        {
+          "id": "avatar",
+          "name": "Avatar",
+          "summary": "Person, agency, or service representation with initials, icon, or image.",
+          "importPath": "@tradenetcorp/veli-ui/avatar",
+          "source": "src/avatar.tsx",
+          "declaration": "../dist/avatar.d.ts",
+          "metadata": "./components/avatar.json",
+          "docs": "apps/web/src/content/docs/avatar.mdx",
+          "storybook": "apps/storybook/src/stories/avatar.stories.tsx"
+        },
+        {
+          "id": "badge",
+          "name": "Badge",
+          "summary": "Status and counter indicator with semantic intents.",
+          "importPath": "@tradenetcorp/veli-ui/badge",
+          "source": "src/badge.tsx",
+          "declaration": "../dist/badge.d.ts",
+          "metadata": "./components/badge.json",
+          "docs": "apps/web/src/content/docs/badge.mdx",
+          "storybook": "apps/storybook/src/stories/badge.stories.tsx"
+        },
+        {
+          "id": "card",
+          "name": "Card",
+          "summary": "Raised surface container with header, content, and footer slots.",
+          "importPath": "@tradenetcorp/veli-ui/card",
+          "source": "src/card.tsx",
+          "declaration": "../dist/card.d.ts",
+          "metadata": "./components/card.json",
+          "docs": "apps/web/src/content/docs/card.mdx",
+          "storybook": "apps/storybook/src/stories/card.stories.tsx"
+        },
+        {
+          "id": "alert",
+          "name": "Alert",
+          "summary": "Inline status banners with semantic intents and dismiss actions.",
+          "importPath": "@tradenetcorp/veli-ui/alert",
+          "source": "src/alert.tsx",
+          "declaration": "../dist/alert.d.ts",
+          "metadata": "./components/alert.json",
+          "docs": "apps/web/src/content/docs/alert.mdx",
+          "storybook": "apps/storybook/src/stories/alert.stories.tsx"
+        },
+        {
+          "id": "divider",
+          "name": "Divider",
+          "summary": "Content separation for page and component layouts.",
+          "importPath": "@tradenetcorp/veli-ui/divider",
+          "source": "src/divider.tsx",
+          "declaration": "../dist/divider.d.ts",
+          "metadata": "./components/divider.json",
+          "docs": "apps/web/src/content/docs/divider.mdx",
+          "storybook": "apps/storybook/src/stories/divider.stories.tsx"
+        },
+        {
+          "id": "kbd",
+          "name": "Kbd",
+          "summary": "Keyboard key and shortcut display for affordances.",
+          "importPath": "@tradenetcorp/veli-ui/kbd",
+          "source": "src/kbd.tsx",
+          "declaration": "../dist/kbd.d.ts",
+          "metadata": "./components/kbd.json",
+          "docs": "apps/web/src/content/docs/kbd.mdx",
+          "storybook": "apps/storybook/src/stories/kbd.stories.tsx"
+        },
+        {
+          "id": "modal",
+          "name": "Modal",
+          "summary": "Blocking dialog surfaces with dismissal and sizing guidance.",
+          "importPath": "@tradenetcorp/veli-ui/modal",
+          "source": "src/modal.tsx",
+          "declaration": "../dist/modal.d.ts",
+          "metadata": "./components/modal.json",
+          "docs": "apps/web/src/content/docs/modal.mdx",
+          "storybook": "apps/storybook/src/stories/modal.stories.tsx"
+        },
+        {
+          "id": "popover",
+          "name": "Popover",
+          "summary": "Anchored interactive panel for contextual controls and rich content.",
+          "importPath": "@tradenetcorp/veli-ui/popover",
+          "source": "src/popover.tsx",
+          "declaration": "../dist/popover.d.ts",
+          "metadata": "./components/popover.json",
+          "docs": "apps/web/src/content/docs/popover.mdx",
+          "storybook": "apps/storybook/src/stories/popover.stories.tsx"
+        },
+        {
+          "id": "table",
+          "name": "Table",
+          "summary": "Sortable, selectable data tables with Veli styling.",
+          "importPath": "@tradenetcorp/veli-ui/table",
+          "source": "src/table.tsx",
+          "declaration": "../dist/table.d.ts",
+          "metadata": "./components/table.json",
+          "docs": "apps/web/src/content/docs/table.mdx",
+          "storybook": "apps/storybook/src/stories/table.stories.tsx"
+        },
+        {
+          "id": "tags",
+          "name": "Tags",
+          "summary": "Tag groups for compact categorization, selection, and removal.",
+          "importPath": "@tradenetcorp/veli-ui/tags",
+          "source": "src/tags.tsx",
+          "declaration": "../dist/tags.d.ts",
+          "metadata": "./components/tags.json",
+          "docs": "apps/web/src/content/docs/tags.mdx",
+          "storybook": "apps/storybook/src/stories/tags.stories.tsx"
+        },
+        {
+          "id": "toast",
+          "name": "Toast",
+          "summary": "Temporary notifications via a shared toast queue.",
+          "importPath": "@tradenetcorp/veli-ui/toast",
+          "source": "src/toast.tsx",
+          "declaration": "../dist/toast.d.ts",
+          "metadata": "./components/toast.json",
+          "docs": "apps/web/src/content/docs/toast.mdx",
+          "storybook": "apps/storybook/src/stories/toast.stories.tsx"
+        },
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "summary": "Hover and focus help with sizes and tones.",
+          "importPath": "@tradenetcorp/veli-ui/tooltip",
+          "source": "src/tooltip.tsx",
+          "declaration": "../dist/tooltip.d.ts",
+          "metadata": "./components/tooltip.json",
+          "docs": "apps/web/src/content/docs/tooltip.mdx",
+          "storybook": "apps/storybook/src/stories/tooltip.stories.tsx"
+        },
+        {
+          "id": "provider",
+          "name": "VeliProvider",
+          "summary": "Language, direction, and color-scheme runtime contract.",
+          "importPath": "@tradenetcorp/veli-ui/provider",
+          "source": "src/provider.ts",
+          "declaration": "../dist/provider.d.ts",
+          "metadata": "./components/provider.json",
+          "docs": "apps/web/src/content/docs/provider.mdx",
+          "storybook": null
+        }
+      ]
+    }
+  ]
+}

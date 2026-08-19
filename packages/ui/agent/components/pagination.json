@@ -1,0 +1,54 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "pagination",
+  "apiPattern": "flat",
+  "purpose": "Moves through pages of a paged list or table with compact page-count or explicit page-number navigation.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "VeliProvider supplies English or Dhivehi labels and direction; English LTR is the fallback."
+    ]
+  },
+  "useWhen": [
+    "A list or table is split into discrete pages.",
+    "Users need first, previous, next, and last navigation.",
+    "Users need direct access to explicit page numbers."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Switching between named peer sections rather than numbered pages.",
+      "guidance": "Use tabs for section switching.",
+      "useInstead": ["tabs", "page-tab"]
+    }
+  ],
+  "supportedInteractions": [
+    "First, previous, next, and last page navigation",
+    "Direct page-number selection",
+    "Hidden-page selection from an ellipsis menu",
+    "Controlled and uncontrolled page state",
+    "Disabled navigation"
+  ],
+  "approvedPatterns": [
+    "Pair pagination with a paged table or list.",
+    "Use compact page count when direct numbered access is unnecessary.",
+    "Use explicit page numbers with sibling and boundary ranges for direct access."
+  ],
+  "limitations": [
+    "The consumer slices local data or fetches the selected page.",
+    "The component expects a positive total page count."
+  ],
+  "accessibility": [
+    "The root is a labeled navigation landmark.",
+    "The current explicit page is marked with aria-current page.",
+    "Compact page count updates are announced politely.",
+    "Icon-only controls and ellipsis menus have localized accessible labels."
+  ],
+  "responsive": ["Choose compact page-count navigation when explicit page controls do not fit."],
+  "rtl": [
+    "Previous and next caret directions mirror with VeliProvider direction.",
+    "Numbers remain isolated left-to-right within Dhivehi content."
+  ],
+  "relatedComponents": ["button", "menu", "table", "provider"]
+}

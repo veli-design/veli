@@ -22,6 +22,7 @@ export default [
       '**/coverage/**',
       '**/out/**',
       '**/storybook-static/**',
+      'evals/agent/runs/**',
       'pnpm-lock.yaml',
     ],
   },
@@ -43,7 +44,7 @@ export default [
     },
   },
   {
-    files: ['scripts/**/*.mjs'],
+    files: ['scripts/**/*.mjs', 'evals/**/*.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

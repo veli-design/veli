@@ -31,6 +31,15 @@ jobs:
       - name: Test Changeset Tooling
         run: pnpm test:changesets
 
+      - name: Test Agent Eval Scorer
+        run: pnpm test:agent-eval
+
+      - name: Test UI Package
+        run: pnpm test:ui
+
+      - name: Validate Agent Skill
+        run: pnpm test:skills
+
       - name: Check Formatting
         run: pnpm format:check
 

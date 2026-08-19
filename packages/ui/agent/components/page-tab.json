@@ -1,0 +1,53 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "page-tab",
+  "apiPattern": "data-driven",
+  "purpose": "Switches between top-level page sections using a wide segmented tab treatment and corresponding panels.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Users switch between top-level sections of one page.",
+    "A wide page-heading tab treatment is appropriate.",
+    "A centered tab list suits a landing or marketing surface."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Tabs organize inline content within a page section.",
+      "guidance": "Use the content-level tabs component.",
+      "useInstead": ["tabs"]
+    },
+    {
+      "situation": "The choices perform actions rather than reveal panels.",
+      "guidance": "Use action controls instead.",
+      "useInstead": ["button", "menu"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard and pointer tab selection",
+    "Controlled and uncontrolled selection",
+    "Disabled tabs"
+  ],
+  "approvedPatterns": [
+    "Supply at least two items with stable ids, labels, and panels.",
+    "Use centered layout for marketing or landing surfaces.",
+    "Use each item for a peer page section and its content panel."
+  ],
+  "limitations": [
+    "No overflow menu is provided.",
+    "Items support labels and panels but not the leading or trailing slots offered by Tabs."
+  ],
+  "accessibility": [
+    "Provide a descriptive label for the tab list.",
+    "React Aria associates each tab with its panel and supplies keyboard behavior.",
+    "Disabled tabs are removed from interaction."
+  ],
+  "responsive": [
+    "The tab list fills available width below the large breakpoint and fits content at larger widths.",
+    "Tab controls share the available row width."
+  ],
+  "rtl": ["Text and tab order follow the surrounding document direction."],
+  "relatedComponents": ["tabs", "button", "menu"]
+}

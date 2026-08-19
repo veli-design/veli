@@ -119,7 +119,7 @@ function splitLinkProps({
 }
 
 /**
- * A link component that follows the Coral Design System standards.
+ * A link component that follows the Veli Design System standards.
  * Built on top of react-aria-components for maximum accessibility.
  */
 export function Link(props: LinkProps) {

@@ -16,10 +16,11 @@ Accessible React primitives for the Veli Design System. Built on [React Aria Com
 **Packages:**
 
 ```bash
-pnpm add @tradenetcorp/veli-ui
+pnpm add @tradenetcorp/veli-ui @tradenetcorp/veli-tokens
 ```
 
-Peers (`react`, `react-dom`, `react-aria-components`) are required. `phosphor-react` is optional but used in docs/examples.
+Peers (`@tradenetcorp/veli-tokens`, `react`, `react-dom`, `react-aria-components`) are
+required. `phosphor-react` is optional but used in docs/examples.
 
 ## Tailwind setup
 
@@ -35,7 +36,7 @@ In your global CSS (import once from app entry):
 
 ```tsx
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Tabs, TabList, Tab, TabPanel } from '@tradenetcorp/veli-ui/tabs';
+import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 ```
 
 ```tsx
@@ -51,6 +52,31 @@ export function CreateAction() {
   );
 }
 ```
+
+## AI assistants
+
+The installed package includes version-matched guidance and semantic component metadata:
+
+- `AGENT_GUIDE.md` — setup, lookup order, and Veli-wide implementation rules
+- `agent/manifest.json` — component discovery and links to semantic sidecars
+- `agent/components/*.json` — when to use each component, limitations, and relationships
+- `agent/recipes/` — type-checked integration examples
+- `skills/veli-ui/SKILL.md` — optional Agent Skill for automatic or manual loading
+
+Use the published TypeScript declarations for props and variants. Use
+`@tradenetcorp/veli-tokens/tokens`, `/tailwind`, and `/css` as the token authorities.
+Do not infer unsupported Veli APIs from the metadata.
+
+Agents that support project skills can copy `skills/veli-ui/` into their project skill
+directory. [TanStack Intent](https://tanstack.com/intent/latest) users can opt in after
+installing Veli:
+
+```bash
+npx @tanstack/intent@latest install
+```
+
+Intent discovers the version-matched skill from installed dependencies and adds loading
+guidance to the consuming project.
 
 ## Troubleshooting
 

@@ -574,7 +574,7 @@ export function SelectItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
+    'Veli UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (

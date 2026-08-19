@@ -5,7 +5,7 @@ import { componentGroups } from '../../lib/site';
 const headings = [
   ...componentGroups.map((group) => ({
     depth: 2,
-    slug: group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and'),
+    slug: group.id,
     text: group.title,
   })),
 ];
@@ -45,9 +45,8 @@ const headings = [
 
   {
     componentGroups.map((group) => {
-      const id = group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
       return (
-        <section class="docs-list-section" id={id}>
+        <section class="docs-list-section" id={group.id}>
           <h2>{group.title}</h2>
           <div class="docs-link-list">
             {group.items.map((item) => (
