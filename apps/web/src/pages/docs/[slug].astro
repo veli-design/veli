@@ -35,7 +35,7 @@ const markdownPath = `/docs/${doc.slug}/index.md`;
   <header class="docs-page-header docs-page-header--article">
     <h1>{doc.data.title}</h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
-    <DocsPageActions {markdownPath} />
+    <DocsPageActions {markdownPath} placement="inline" />
   </header>
 
   <article class="docs-prose">
