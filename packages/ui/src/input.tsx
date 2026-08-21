@@ -27,6 +27,7 @@ import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -295,7 +296,8 @@ export interface InputProps
     Omit<
       VariantProps<typeof fieldShellVariants>,
       'appearance' | 'isDisabled' | 'isInvalid' | 'isReadOnly' | 'size'
-    > {
+    >,
+    RefProp<HTMLInputElement> {
   appearance?: InputAppearance;
   size?: InputSize;
   defaultValue?: string;
@@ -325,39 +327,37 @@ export interface InputProps
   spellCheck?: React.InputHTMLAttributes<HTMLInputElement>['spellCheck'];
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(
-  {
-    label,
-    infoTooltip,
-    infoTooltipAriaLabel,
-    labelSupplementary,
-    labelIcon,
-    action,
-    description,
-    errorMessage,
-    showRequiredIndicator = true,
-    startAddon,
-    startContent,
-    endContent,
-    endAddon,
-    className,
-    appearance = 'default',
-    size = 'md',
-    autoCapitalize,
-    autoComplete,
-    autoCorrect,
-    enterKeyHint,
-    inputMode,
-    maxLength,
-    minLength,
-    pattern,
-    placeholder,
-    spellCheck,
-    type = 'text',
-    ...props
-  },
+export function Input({
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  action,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  startAddon,
+  startContent,
+  endContent,
+  endAddon,
+  className,
+  appearance = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  enterKeyHint,
+  inputMode,
+  maxLength,
+  minLength,
+  pattern,
+  placeholder,
+  spellCheck,
+  type = 'text',
   ref,
-) {
+  ...props
+}: InputProps) {
   const languageConfig = useVeliLanguage();
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
@@ -493,4 +493,4 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       )}
     </AriaTextField>
   );
-});
+}
