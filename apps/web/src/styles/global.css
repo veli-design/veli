@@ -280,40 +280,6 @@ button {
   font-weight: 600;
 }
 
-.docs-resources {
-  flex: none;
-  border-top: 1px solid var(--color-border-base-subtle);
-  padding: 14px 20px 18px;
-}
-
-.docs-resources a {
-  display: grid;
-  min-height: 38px;
-  grid-template-columns: 20px 1fr auto;
-  align-items: center;
-  gap: 9px;
-  border-radius: 5px;
-  color: var(--color-text-base-muted);
-  padding: 7px 8px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.docs-resources a:hover {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
-}
-
-.external-arrow {
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.docs-resources a:hover .external-arrow {
-  opacity: 1;
-}
-
 .docs-main {
   min-width: 0;
   border-right: 1px solid var(--color-border-base-subtle);
@@ -1120,7 +1086,7 @@ button {
     padding: 24px 20px 48px;
   }
 
-  .docs-mobile-menu nav {
+  .docs-mobile-menu .docs-mobile-nav {
     display: grid;
   }
 
@@ -1227,6 +1193,7 @@ button {
 }
 
 .docs-navigation {
+  z-index: 20;
   border: 0;
 }
 
@@ -1332,7 +1299,7 @@ button {
 .docs-navigation__footer {
   position: relative;
   flex: none;
-  padding: 24px 8px 8px;
+  padding: 8px;
 }
 
 .docs-navigation__footer::before {
@@ -1346,79 +1313,151 @@ button {
   pointer-events: none;
 }
 
-.docs-theme-picker {
+.docs-footer-controls {
+  position: relative;
   display: flex;
-  min-height: 40px;
+  width: 100%;
+  height: 40px;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  color: var(--color-text-base-strong);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.docs-theme-picker__choices {
-  display: flex;
-  gap: 4px;
   border-radius: 999px;
-  background: var(--color-bg-secondary-subtle-default);
-  padding: 2px;
-}
-
-.docs-theme-picker__choices button {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-text-base-muted);
-  cursor: pointer;
-}
-
-.docs-theme-picker__choices button[aria-pressed='true'] {
-  background: var(--color-bg-surface-raised);
-  color: var(--color-text-base-emphasis);
-  box-shadow: 0 1px 4px color-mix(in srgb, var(--color-text-base-emphasis) 12%, transparent);
-}
-
-.docs-resources {
-  display: grid;
-  margin-top: 16px;
-  border: 0;
-  border-radius: 24px;
   background: var(--color-bg-surface-raised);
   padding: 4px;
 }
 
-.docs-resource {
-  display: grid;
-  min-height: 36px;
-  grid-template-columns: 20px minmax(0, 1fr) auto;
+.docs-resources {
+  display: flex;
+  min-width: 0;
+  flex: 1;
   align-items: center;
-  gap: 8px;
-  border-radius: 16px;
-  color: var(--color-text-base-strong);
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
+  gap: 0;
+  border: 0;
+  padding: 0;
 }
 
-.docs-resource:hover {
+.docs-footer-control {
+  position: relative;
+  display: grid;
+  height: 32px;
+  place-items: center;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--color-text-base-strong);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.docs-control-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: var(--docs-control-icon) center / contain no-repeat;
+  mask: var(--docs-control-icon) center / contain no-repeat;
+}
+
+.docs-footer-control:hover,
+.docs-footer-control:focus-visible {
   background: var(--color-bg-secondary-subtle-default);
+  color: var(--color-text-base-emphasis);
+}
+
+.docs-control-tooltip {
+  position: absolute;
+  z-index: 30;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  max-width: 180px;
+  transform: translate(-50%, 2px);
+  border-radius: 8px;
+  background: var(--color-tooltip-bg-small);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text-base-default);
+  opacity: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+.docs-footer-control:hover .docs-control-tooltip,
+.docs-footer-control:focus-visible .docs-control-tooltip {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.docs-resources .docs-resource {
+  box-sizing: border-box;
+  width: 50px;
+  height: 32px;
+  min-height: 0;
+  flex: none;
+  grid-template-columns: none;
+  gap: 0;
+  border-radius: 16px;
+  padding: 0 17px;
+}
+
+.docs-resources .docs-resource:last-child {
+  width: auto;
+  flex: 1;
+  justify-items: start;
+}
+
+.docs-resources .docs-resource:hover,
+.docs-resources .docs-resource:focus-visible {
+  background: transparent;
 }
 
 .docs-resource.is-disabled {
   opacity: 0.5;
+  cursor: default;
 }
 
-.docs-resource small {
-  color: var(--color-text-base-inactive);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.docs-resource.is-disabled:hover,
+.docs-resource.is-disabled:focus-visible {
+  background: transparent;
+  color: var(--color-text-base-strong);
+}
+
+.docs-resource:first-child .docs-control-tooltip {
+  left: 0;
+  transform: translateY(2px);
+}
+
+.docs-resource:first-child:hover .docs-control-tooltip,
+.docs-resource:first-child:focus-visible .docs-control-tooltip {
+  transform: translateY(0);
+}
+
+.docs-footer-controls__divider {
+  width: 1px;
+  height: 12px;
+  flex: none;
+  background: var(--color-border-base-strong);
+}
+
+.docs-theme-cycle {
+  box-sizing: border-box;
+  width: 50px;
+  min-height: 0;
+  flex: none;
+  padding: 0 17px;
+}
+
+[data-theme-icon] {
+  display: none;
+}
+
+html[data-color-scheme='light'] [data-theme-icon='light'],
+html[data-color-scheme='dark'] [data-theme-icon='dark'],
+html[data-color-scheme='system'] [data-theme-icon='system'] {
+  display: block;
 }
 
 .docs-main {

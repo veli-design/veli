@@ -58,12 +58,17 @@ const {
     <script is:inline>
       (() => {
         const storageKey = 'veli-color-scheme';
-        const choices = ['system', 'light', 'dark'];
+        const choices = ['light', 'dark', 'system'];
         const root = document.documentElement;
         const media = window.matchMedia('(prefers-color-scheme: dark)');
         const buttons = Array.from(document.querySelectorAll('[data-theme-choice]'));
-        const cycleButton = document.querySelector('[data-theme-cycle]');
-        const cycleLabel = document.querySelector('[data-theme-label]');
+        const cycleButtons = Array.from(document.querySelectorAll('[data-theme-cycle]'));
+        const cycleLabels = Array.from(document.querySelectorAll('[data-theme-label]'));
+        const themeLabels = {
+          light: 'Light theme',
+          dark: 'Dark theme',
+          system: 'Use system theme',
+        };
 
         function getStoredColorScheme() {
           try {
@@ -88,8 +93,13 @@ const {
             button.setAttribute('aria-pressed', String(isActive));
           }
 
-          if (cycleLabel) {
-            cycleLabel.textContent = colorScheme[0].toUpperCase() + colorScheme.slice(1);
+          for (const cycleButton of cycleButtons) {
+            const label = themeLabels[colorScheme];
+            cycleButton.setAttribute('aria-label', label);
+          }
+
+          for (const cycleLabel of cycleLabels) {
+            cycleLabel.textContent = themeLabels[colorScheme];
           }
         }
 
@@ -108,18 +118,20 @@ const {
           });
         }
 
-        cycleButton?.addEventListener('click', () => {
-          const current = getStoredColorScheme();
-          const next = choices[(choices.indexOf(current) + 1) % choices.length];
+        for (const cycleButton of cycleButtons) {
+          cycleButton.addEventListener('click', () => {
+            const current = getStoredColorScheme();
+            const next = choices[(choices.indexOf(current) + 1) % choices.length];
 
-          try {
-            window.localStorage.setItem(storageKey, next);
-          } catch {
-            // The visual state can still update if storage is unavailable.
-          }
+            try {
+              window.localStorage.setItem(storageKey, next);
+            } catch {
+              // The visual state can still update if storage is unavailable.
+            }
 
-          applyColorScheme(next);
-        });
+            applyColorScheme(next);
+          });
+        }
 
         media.addEventListener('change', () => {
           if (getStoredColorScheme() === 'system') {
