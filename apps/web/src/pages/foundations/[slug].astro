@@ -52,7 +52,7 @@ const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt]
     <div class="docs-page-header__copy">
       <h1>{foundation.data.title}</h1>
       {foundation.data.description && <p>{foundation.data.description}</p>}
-      <DocsPageActions {markdownPath} />
+      <DocsPageActions {markdownPath} placement="inline" />
     </div>
     {
       foundationHeaderArt && (

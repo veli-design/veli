@@ -2,6 +2,7 @@
 import { CaretDown, List } from 'phosphor-react';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
 import DocsFooterControls from '../components/DocsFooterControls.astro';
+import DocsPageActions from '../components/DocsPageActions.astro';
 import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
 import { docsSections } from '../lib/site';
@@ -153,20 +154,23 @@ function isSectionActive(section: (typeof docsSections)[number]) {
         <slot />
 
         <aside class="docs-utilities" aria-label="Page utilities">
-          <nav class="docs-contents" aria-label="On this page">
-            <h2>On this page</h2>
-            {
-              headings.length > 0 ? (
-                headings.map((heading) => (
-                  <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
-                    {heading.text}
-                  </a>
-                ))
-              ) : (
-                <a href="#main">Overview</a>
-              )
-            }
-          </nav>
+          <div class="docs-utilities__sticky">
+            {markdownPath && <DocsPageActions {markdownPath} placement="utility" />}
+            <nav class="docs-contents" aria-label="On this page">
+              <h2>On this page</h2>
+              {
+                headings.length > 0 ? (
+                  headings.map((heading) => (
+                    <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
+                      {heading.text}
+                    </a>
+                  ))
+                ) : (
+                  <a href="#main">Overview</a>
+                )
+              }
+            </nav>
+          </div>
         </aside>
       </div>
     </main>
