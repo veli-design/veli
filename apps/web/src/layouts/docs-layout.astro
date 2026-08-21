@@ -1,19 +1,10 @@
 ---
-import {
-  ArrowUpRight,
-  CaretDown,
-  FigmaLogo,
-  GithubLogo,
-  List,
-  Monitor,
-  Moon,
-  Package,
-  Sun,
-} from 'phosphor-react';
+import { CaretDown, List } from 'phosphor-react';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
+import DocsFooterControls from '../components/DocsFooterControls.astro';
 import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
-import { docsSections, externalResources } from '../lib/site';
+import { docsSections } from '../lib/site';
 import Layout from './layout.astro';
 
 type Heading = {
@@ -31,18 +22,6 @@ interface Props {
 }
 
 const { title, description, activePath, headings = [], fullBleedHeader = false } = Astro.props;
-
-const resourceIcons = {
-  figma: FigmaLogo,
-  github: GithubLogo,
-  package: Package,
-};
-
-const themeChoices = [
-  { id: 'light', label: 'Light theme', icon: Sun },
-  { id: 'dark', label: 'Dark theme', icon: Moon },
-  { id: 'system', label: 'Use system theme', icon: Monitor },
-] as const;
 
 function isActive(href: string) {
   return activePath === href;
@@ -103,53 +82,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
       </div>
 
       <div class="docs-navigation__footer">
-        <div class="docs-theme-picker" aria-label="Color theme">
-          <span>Theme</span>
-          <div class="docs-theme-picker__choices">
-            {
-              themeChoices.map((choice) => {
-                const Icon = choice.icon;
-                return (
-                  <button
-                    type="button"
-                    title={choice.label}
-                    aria-label={choice.label}
-                    aria-pressed="false"
-                    data-theme-choice={choice.id}
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                  </button>
-                );
-              })
-            }
-          </div>
-        </div>
-
-        <nav class="docs-resources" aria-label="Veli resources">
-          {
-            externalResources.map((item) => {
-              const Icon = resourceIcons[item.icon];
-
-              if (!item.href) {
-                return (
-                  <div class="docs-resource is-disabled" aria-disabled="true">
-                    <Icon size={16} weight="regular" aria-hidden="true" />
-                    <span>{item.label}</span>
-                    <small>Coming soon</small>
-                  </div>
-                );
-              }
-
-              return (
-                <a class="docs-resource" href={item.href} target="_blank" rel="noreferrer">
-                  <Icon size={16} weight="regular" aria-hidden="true" />
-                  <span>{item.label}</span>
-                  <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
-                </a>
-              );
-            })
-          }
-        </nav>
+        <DocsFooterControls />
       </div>
     </aside>
 
@@ -201,53 +134,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           </nav>
 
           <div class="docs-mobile-menu__footer">
-            <div class="docs-theme-picker" aria-label="Color theme">
-              <span>Theme</span>
-              <div class="docs-theme-picker__choices">
-                {
-                  themeChoices.map((choice) => {
-                    const Icon = choice.icon;
-                    return (
-                      <button
-                        type="button"
-                        title={choice.label}
-                        aria-label={choice.label}
-                        aria-pressed="false"
-                        data-theme-choice={choice.id}
-                      >
-                        <Icon size={16} aria-hidden="true" />
-                      </button>
-                    );
-                  })
-                }
-              </div>
-            </div>
-
-            <nav class="docs-resources" aria-label="Veli resources">
-              {
-                externalResources.map((item) => {
-                  const Icon = resourceIcons[item.icon];
-
-                  if (!item.href) {
-                    return (
-                      <div class="docs-resource is-disabled" aria-disabled="true">
-                        <Icon size={16} weight="regular" aria-hidden="true" />
-                        <span>{item.label}</span>
-                        <small>Coming soon</small>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <a class="docs-resource" href={item.href} target="_blank" rel="noreferrer">
-                      <Icon size={16} weight="regular" aria-hidden="true" />
-                      <span>{item.label}</span>
-                      <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
-                    </a>
-                  );
-                })
-              }
-            </nav>
+            <DocsFooterControls />
           </div>
         </div>
       </details>

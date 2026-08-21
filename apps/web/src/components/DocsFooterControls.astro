@@ -1,0 +1,89 @@
+---
+import { externalResources } from '../lib/site';
+
+const resourceIcons = {
+  figma: '/images/docs-footer/figma.svg',
+  github: '/images/docs-footer/github.svg',
+  package: '/images/docs-footer/package.svg',
+};
+
+const themeChoices = [
+  { id: 'light', icon: '/images/docs-footer/sun.svg' },
+  { id: 'dark', icon: '/images/docs-footer/moon.svg' },
+  { id: 'system', icon: '/images/docs-footer/monitor.svg' },
+] as const;
+---
+
+<div class="docs-footer-controls">
+  <nav class="docs-resources" aria-label="Veli resources">
+    {
+      externalResources.map((item) => {
+        const icon = resourceIcons[item.icon];
+        const tooltip = item.status === 'coming-soon' ? 'Coming soon' : item.label;
+
+        if (!item.href) {
+          return (
+            <span
+              class="docs-footer-control docs-resource is-disabled"
+              role="link"
+              aria-label={`${item.label}: ${tooltip}`}
+              aria-disabled="true"
+              tabindex="0"
+            >
+              <span
+                class="docs-control-icon"
+                style={`--docs-control-icon: url('${icon}')`}
+                aria-hidden="true"
+              />
+              <span class="docs-control-tooltip" aria-hidden="true">
+                {tooltip}
+              </span>
+            </span>
+          );
+        }
+
+        return (
+          <a
+            class="docs-footer-control docs-resource"
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={item.label}
+          >
+            <span
+              class="docs-control-icon"
+              style={`--docs-control-icon: url('${icon}')`}
+              aria-hidden="true"
+            />
+            <span class="docs-control-tooltip" aria-hidden="true">
+              {tooltip}
+            </span>
+          </a>
+        );
+      })
+    }
+  </nav>
+
+  <span class="docs-footer-controls__divider" aria-hidden="true"></span>
+
+  <button
+    class="docs-footer-control docs-theme-cycle"
+    type="button"
+    aria-label="Use system theme"
+    data-theme-cycle
+  >
+    {
+      themeChoices.map((choice) => {
+        return (
+          <span
+            class="docs-control-icon"
+            style={`--docs-control-icon: url('${choice.icon}')`}
+            aria-hidden="true"
+            data-theme-icon={choice.id}
+          />
+        );
+      })
+    }
+    <span class="docs-control-tooltip" aria-hidden="true" data-theme-label> Use system theme </span>
+  </button>
+</div>
