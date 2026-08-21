@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Key } from 'react';
 import { Autocomplete } from 'react-aria-components';
-import { CaretRight, CircleNotch, MagnifyingGlass } from 'phosphor-react';
+import {
+  ArrowDown,
+  ArrowElbowDownLeft,
+  ArrowUp,
+  CaretRight,
+  CircleNotch,
+  MagnifyingGlass,
+} from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { Kbd } from '@tradenetcorp/veli-ui/kbd';
 import { Menu, MenuItem } from '@tradenetcorp/veli-ui/menu';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { Search } from '@tradenetcorp/veli-ui/search';
@@ -184,94 +192,123 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
       overlayClassName="docs-search-overlay bg-black/60 motion-reduce:transition-none"
     >
       <Modal.Content className="docs-search-command">
-        <Autocomplete<DocsSearchItem>
-          inputValue={query}
-          onInputChange={setQuery}
-          filter={() => true}
-        >
-          <Search
-            ref={searchInputRef}
-            className="docs-search-field"
-            value={query}
-            onChange={setQuery}
-            aria-label="Search documentation"
-            placeholder="Search"
-            autoComplete="off"
-            spellCheck={false}
-            variant="default"
-            size="lg"
-          />
+        <div className="docs-search-command__body">
+          <Autocomplete<DocsSearchItem>
+            inputValue={query}
+            onInputChange={setQuery}
+            filter={() => true}
+          >
+            <Search
+              ref={searchInputRef}
+              className="docs-search-field"
+              value={query}
+              onChange={setQuery}
+              aria-label="Search documentation"
+              placeholder="Search"
+              autoComplete="off"
+              spellCheck={false}
+              variant="default"
+              size="lg"
+            />
 
-          <p className="sr-only" aria-live="polite" aria-atomic="true">
-            {loadState === 'loaded' ? resultLabel : ''}
-          </p>
+            <p className="sr-only" aria-live="polite" aria-atomic="true">
+              {loadState === 'loaded' ? resultLabel : ''}
+            </p>
 
-          <div className="docs-search-results">
-            {loadState === 'loading' || loadState === 'idle' ? (
-              <div className="docs-search-state" role="status">
-                <CircleNotch className="docs-search-state__spinner" size={20} aria-hidden="true" />
-                <span>Loading documentation…</span>
-              </div>
-            ) : loadState === 'error' ? (
-              <div className="docs-search-state" role="alert">
-                <p>Search could not be loaded.</p>
-                <Button
-                  intent="secondary"
-                  appearance="transparent"
-                  size="sm"
-                  onPress={() => void loadSearchIndex()}
-                >
-                  Try again
-                </Button>
-              </div>
-            ) : (
-              <>
-                <p className="docs-search-suggestions">Suggestions</p>
-                <Divider className="docs-search-divider" />
-                <Menu
-                  aria-label="Search results"
-                  className="docs-search-results__menu"
-                  dependencies={[results]}
-                  onAction={openResult}
-                  renderEmptyState={() => (
-                    <div className="docs-search-empty">
-                      <MagnifyingGlass size={24} aria-hidden="true" />
-                      <p>No documentation found.</p>
-                      <span>Try a component, foundation, prop, or phrase.</span>
-                    </div>
-                  )}
-                >
-                  {results.map((item) => {
-                    const description =
-                      item.kind === 'section'
-                        ? `${item.pageTitle} · ${item.description || 'Documentation section'}`
-                        : item.description;
+            <div className="docs-search-results">
+              {loadState === 'loading' || loadState === 'idle' ? (
+                <div className="docs-search-state" role="status">
+                  <CircleNotch
+                    className="docs-search-state__spinner"
+                    size={20}
+                    aria-hidden="true"
+                  />
+                  <span>Loading documentation…</span>
+                </div>
+              ) : loadState === 'error' ? (
+                <div className="docs-search-state" role="alert">
+                  <p>Search could not be loaded.</p>
+                  <Button
+                    intent="secondary"
+                    appearance="transparent"
+                    size="sm"
+                    onPress={() => void loadSearchIndex()}
+                  >
+                    Try again
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="docs-search-suggestions">Suggestions</p>
+                  <Divider className="docs-search-divider" />
+                  <Menu
+                    aria-label="Search results"
+                    className="docs-search-results__menu"
+                    dependencies={[results]}
+                    onAction={openResult}
+                    renderEmptyState={() => (
+                      <div className="docs-search-empty">
+                        <MagnifyingGlass size={24} aria-hidden="true" />
+                        <p>No documentation found.</p>
+                        <span>Try a component, foundation, prop, or phrase.</span>
+                      </div>
+                    )}
+                  >
+                    {results.map((item) => {
+                      const description =
+                        item.kind === 'section'
+                          ? `${item.pageTitle} · ${item.description || 'Documentation section'}`
+                          : item.description;
 
-                    return (
-                      <MenuItem
-                        key={item.id}
-                        id={item.id}
-                        size="md"
-                        textValue={`${item.pageTitle} ${item.title} ${item.description}`}
-                        className="docs-search-result data-[focused]:bg-menu-hover"
-                      >
-                        {() => (
-                          <div className="docs-search-result__content">
-                            <div className="docs-search-result__text">
-                              <span className="docs-search-result__label">{item.title}</span>
-                              <span className="docs-search-result__description">{description}</span>
+                      return (
+                        <MenuItem
+                          key={item.id}
+                          id={item.id}
+                          size="md"
+                          textValue={`${item.pageTitle} ${item.title} ${item.description}`}
+                          className="docs-search-result data-[focused]:bg-menu-hover"
+                        >
+                          {() => (
+                            <div className="docs-search-result__content">
+                              <div className="docs-search-result__text">
+                                <span className="docs-search-result__label">{item.title}</span>
+                                <span className="docs-search-result__description">
+                                  {description}
+                                </span>
+                              </div>
+                              <CaretRight size={16} aria-hidden="true" />
                             </div>
-                            <CaretRight size={16} aria-hidden="true" />
-                          </div>
-                        )}
-                      </MenuItem>
-                    );
-                  })}
-                </Menu>
-              </>
-            )}
-          </div>
-        </Autocomplete>
+                          )}
+                        </MenuItem>
+                      );
+                    })}
+                  </Menu>
+                </>
+              )}
+            </div>
+          </Autocomplete>
+        </div>
+
+        <div className="docs-search-shortcuts" aria-label="Search keyboard shortcuts">
+          <span className="docs-search-shortcut">
+            <Kbd aria-label="Down arrow">
+              <ArrowDown aria-hidden="true" />
+            </Kbd>
+            <span>Move down</span>
+          </span>
+          <span className="docs-search-shortcut">
+            <Kbd aria-label="Up arrow">
+              <ArrowUp aria-hidden="true" />
+            </Kbd>
+            <span>Move up</span>
+          </span>
+          <span className="docs-search-shortcut">
+            <Kbd aria-label="Enter">
+              <ArrowElbowDownLeft aria-hidden="true" />
+            </Kbd>
+            <span>Go to page</span>
+          </span>
+        </div>
       </Modal.Content>
     </Modal>
   );
