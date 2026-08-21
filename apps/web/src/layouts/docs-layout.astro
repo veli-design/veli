@@ -2,17 +2,16 @@
 import {
   ArrowUpRight,
   CaretDown,
-  Command,
   FigmaLogo,
   GithubLogo,
   List,
-  MagnifyingGlass,
   Monitor,
   Moon,
   Package,
   Sun,
 } from 'phosphor-react';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
+import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
 import { docsSections, externalResources } from '../lib/site';
 import Layout from './layout.astro';
@@ -62,17 +61,8 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           <VeliLogo class="veli-logo" clipId="veli-logo-desktop" />
         </a>
 
-        <div class="docs-nav-filter" data-doc-filter>
-          <label class="docs-search">
-            <MagnifyingGlass size={20} aria-hidden="true" />
-            <span class="sr-only">Filter documentation navigation</span>
-            <input type="search" placeholder="Search" autocomplete="off" data-doc-search />
-            <span class="docs-search__shortcut" aria-hidden="true">
-              <Command size={12} />
-              <span>K</span>
-            </span>
-          </label>
-          <p class="docs-search-status" aria-live="polite" data-search-status></p>
+        <div class="docs-nav-filter">
+          <DocsSearch client:load />
 
           <nav class="docs-nav" aria-label="Veli documentation">
             {
@@ -171,18 +161,8 @@ function isSectionActive(section: (typeof docsSections)[number]) {
         <summary aria-label="Open documentation navigation">
           <List size={22} aria-hidden="true" />
         </summary>
-        <div class="docs-mobile-menu__panel" data-doc-filter>
-          <label class="docs-search">
-            <MagnifyingGlass size={20} aria-hidden="true" />
-            <span class="sr-only">Filter documentation navigation</span>
-            <input
-              type="search"
-              placeholder="Search documentation"
-              autocomplete="off"
-              data-doc-search
-            />
-          </label>
-          <p class="docs-search-status" aria-live="polite" data-search-status></p>
+        <div class="docs-mobile-menu__panel">
+          <DocsSearch client:load enableShortcut={false} />
 
           <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">
             {
@@ -310,60 +290,6 @@ function isSectionActive(section: (typeof docsSections)[number]) {
       for (const link of document.querySelectorAll('.docs-mobile-menu a')) {
         link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
       }
-
-      for (const filter of document.querySelectorAll('[data-doc-filter]')) {
-        const input = filter.querySelector('[data-doc-search]');
-        const links = Array.from(filter.querySelectorAll('[data-doc-link]'));
-        const groups = Array.from(filter.querySelectorAll('[data-doc-group]'));
-        const status = filter.querySelector('[data-search-status]');
-
-        if (!(input instanceof HTMLInputElement)) continue;
-
-        input.addEventListener('input', () => {
-          const query = input.value.trim().toLocaleLowerCase();
-          let visible = 0;
-
-          for (const link of links) {
-            const matches = !query || link.textContent?.trim().toLocaleLowerCase().includes(query);
-            link.toggleAttribute('hidden', !matches);
-            if (matches) visible += 1;
-          }
-
-          for (const group of groups) {
-            const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
-            group.toggleAttribute('hidden', !hasMatch);
-
-            if (!(group instanceof HTMLDetailsElement)) continue;
-
-            if (query) {
-              if (!group.hasAttribute('data-search-open')) {
-                group.dataset.searchOpen = String(group.open);
-              }
-              if (hasMatch) group.open = true;
-            } else if (group.dataset.searchOpen) {
-              group.open = group.dataset.searchOpen === 'true';
-              delete group.dataset.searchOpen;
-            }
-          }
-
-          if (status) {
-            status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
-          }
-        });
-      }
-
-      document.addEventListener('keydown', (event) => {
-        if (!(event.metaKey || event.ctrlKey) || event.key.toLocaleLowerCase() !== 'k') return;
-
-        const input = Array.from(document.querySelectorAll('[data-doc-search]')).find(
-          (candidate) => candidate instanceof HTMLElement && candidate.offsetParent !== null,
-        );
-
-        if (!(input instanceof HTMLInputElement)) return;
-        event.preventDefault();
-        input.focus();
-        input.select();
-      });
     })();
   </script>
   <DocsCodeBlocks />
