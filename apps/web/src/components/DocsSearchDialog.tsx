@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Key } from 'react';
 import { Autocomplete } from 'react-aria-components';
 import {
   ArrowDown,
@@ -168,19 +167,7 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
   );
 
   const results = useMemo(() => getSearchResults(index, query), [index, query]);
-  const resultById = useMemo(() => new Map(results.map((item) => [item.id, item])), [results]);
   const resultLabel = `${results.length} result${results.length === 1 ? '' : 's'}`;
-
-  const openResult = useCallback(
-    (id: Key) => {
-      const result = resultById.get(String(id));
-      if (!result) return;
-
-      handleOpenChange(false);
-      window.location.assign(result.href);
-    },
-    [handleOpenChange, resultById],
-  );
 
   return (
     <Modal
@@ -245,7 +232,6 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
                     aria-label="Search results"
                     className="docs-search-results__menu"
                     dependencies={[results]}
-                    onAction={openResult}
                     renderEmptyState={() => (
                       <div className="docs-search-empty">
                         <MagnifyingGlass size={24} aria-hidden="true" />
@@ -264,6 +250,8 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
                         <MenuItem
                           key={item.id}
                           id={item.id}
+                          href={item.href}
+                          onAction={() => handleOpenChange(false)}
                           size="md"
                           textValue={`${item.pageTitle} ${item.title} ${item.description}`}
                           className="docs-search-result data-[focused]:bg-menu-hover"
