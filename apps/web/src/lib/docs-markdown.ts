@@ -317,8 +317,10 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
   lines.push(
     '## Optional',
     '',
-    ...externalResources.map((resource) =>
-      markdownListItem(resource.label, resource.href, optionalDescriptions[resource.label]),
+    ...externalResources.flatMap((resource) =>
+      resource.href
+        ? [markdownListItem(resource.label, resource.href, optionalDescriptions[resource.label])]
+        : [],
     ),
   );
 

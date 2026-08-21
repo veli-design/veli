@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
 
@@ -14,7 +15,7 @@ export default defineConfig({
   ...(site ? { site } : {}),
   integrations: [mdx(), react()],
   markdown: {
-    remarkPlugins: [remarkDocsMarkdown],
+    remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch],
     rehypePlugins: [rehypeCodeBlocks],
   },
   vite: {

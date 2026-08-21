@@ -1,0 +1,35 @@
+---
+import { Path } from 'phosphor-react';
+import DocsLayout from '../../layouts/docs-layout.astro';
+
+const headings = [{ depth: 2, slug: 'overview', text: 'Overview' }];
+---
+
+<DocsLayout
+  title="Patterns | Veli Design System"
+  description="Reusable interaction and content patterns for Veli services."
+  activePath="/patterns/"
+  {headings}
+  fullBleedHeader
+>
+  <header class="docs-page-header docs-page-header--overview docs-overview-header">
+    <div class="docs-page-header__content">
+      <h1>Veli Patterns</h1>
+      <p>Reusable approaches for recurring service interactions and content flows.</p>
+    </div>
+    <div class="docs-overview-hero docs-overview-hero--placeholder" aria-hidden="true">
+      <Path size={72} weight="duotone" />
+    </div>
+  </header>
+
+  <div class="docs-overview-content">
+    <section class="docs-overview-copy docs-coming-soon" id="overview">
+      <p class="docs-kicker">Coming soon</p>
+      <h2>Overview</h2>
+      <p>
+        Patterns will document how Veli components work together across common service journeys,
+        including validation, progressive disclosure, navigation, and feedback.
+      </p>
+    </section>
+  </div>
+</DocsLayout>
