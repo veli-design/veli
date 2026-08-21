@@ -1,21 +1,24 @@
 ---
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { componentGroups } from '../../lib/site';
+import { componentGroups, docsOverview, getComponentGroupSlug } from '../../lib/site';
 
 const headings = [
   { depth: 2, slug: 'overview', text: 'Overview' },
   ...componentGroups.map((group) => ({
     depth: 2,
-    slug: group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and'),
+    slug: getComponentGroupSlug(group.title),
     text: group.title,
   })),
 ];
+const markdownPath = docsOverview.markdownPath;
 ---
 
 <DocsLayout
-  title="Documentation | Veli Design System"
-  description="Foundations and component documentation for the Veli Design System."
-  activePath="/docs/"
+  title={docsOverview.documentTitle}
+  description={docsOverview.documentDescription}
+  activePath={docsOverview.htmlPath}
+  {markdownPath}
   {headings}
   fullBleedHeader
 >
@@ -23,6 +26,7 @@ const headings = [
     <div class="docs-page-header__content">
       <h1>Veli Components</h1>
       <p>Accessible building blocks for consistent, dependable public-service interfaces.</p>
+      <DocsPageActions {markdownPath} />
     </div>
     <img
       class="docs-overview-hero"
@@ -50,7 +54,7 @@ const headings = [
     <div class="docs-overview-directory">
       {
         componentGroups.map((group) => {
-          const id = group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
+          const id = getComponentGroupSlug(group.title);
           return (
             <section class="docs-list-section" id={id}>
               <h2>{group.title}</h2>

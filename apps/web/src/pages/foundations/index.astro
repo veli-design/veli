@@ -1,6 +1,7 @@
 ---
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { foundations } from '../../lib/site';
+import { foundations, foundationsOverview } from '../../lib/site';
 
 const headings = [
   { depth: 2, slug: 'overview', text: 'Overview' },
@@ -10,12 +11,14 @@ const headings = [
     text: foundation.title === 'Color' ? 'Colors' : foundation.title,
   })),
 ];
+const markdownPath = foundationsOverview.markdownPath;
 ---
 
 <DocsLayout
-  title="Foundations | Veli Design System"
-  description="Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli."
-  activePath="/foundations/"
+  title={foundationsOverview.documentTitle}
+  description={foundationsOverview.documentDescription}
+  activePath={foundationsOverview.htmlPath}
+  {markdownPath}
   {headings}
   fullBleedHeader
 >
@@ -25,6 +28,7 @@ const headings = [
       <p>
         The operating beliefs behind Veli—clarity, access, local context, and shared foundations.
       </p>
+      <DocsPageActions {markdownPath} />
     </div>
     <img
       class="docs-overview-hero"

@@ -17,11 +17,19 @@ interface Props {
   title: string;
   description?: string;
   activePath: string;
+  markdownPath?: string;
   headings?: Heading[];
   fullBleedHeader?: boolean;
 }
 
-const { title, description, activePath, headings = [], fullBleedHeader = false } = Astro.props;
+const {
+  title,
+  description,
+  activePath,
+  markdownPath,
+  headings = [],
+  fullBleedHeader = false,
+} = Astro.props;
 
 function isActive(href: string) {
   return activePath === href;
@@ -32,7 +40,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
 }
 ---
 
-<Layout title={title} description={description} pageClass="docs-page">
+<Layout title={title} description={description} pageClass="docs-page" {markdownPath}>
   <div class="docs-workspace">
     <aside class="docs-navigation" aria-label="Documentation navigation">
       <div class="docs-navigation__scroll">

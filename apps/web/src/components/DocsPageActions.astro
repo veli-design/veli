@@ -1,0 +1,170 @@
+---
+import { ArrowSquareOut, CopySimple } from 'phosphor-react';
+
+interface Props {
+  markdownPath: string;
+}
+
+const { markdownPath } = Astro.props;
+---
+
+<div class="docs-page-actions" data-docs-page-actions data-markdown-path={markdownPath}>
+  <button class="docs-page-action" type="button" data-copy-markdown>
+    <CopySimple size={16} aria-hidden="true" />
+    <span data-copy-markdown-label>Copy Markdown</span>
+  </button>
+  <a class="docs-page-action" href={markdownPath} target="_blank" rel="noreferrer">
+    <ArrowSquareOut size={16} aria-hidden="true" />
+    <span>View Markdown</span>
+  </a>
+  <p class="sr-only" role="status" aria-live="polite" data-copy-markdown-status></p>
+</div>
+
+<script>
+  function copyWithFallback(value: string) {
+    const previouslyFocused = document.activeElement;
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.select();
+
+    try {
+      const legacyDocument = document as unknown as {
+        execCommand(commandId: string): boolean;
+      };
+      return legacyDocument.execCommand('copy');
+    } finally {
+      textarea.remove();
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
+    }
+  }
+
+  async function copyText(value: string) {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return true;
+      } catch {
+        // Clipboard access can be unavailable in embedded or non-secure contexts.
+      }
+    }
+
+    try {
+      return copyWithFallback(value);
+    } catch {
+      return false;
+    }
+  }
+
+  for (const actions of document.querySelectorAll<HTMLElement>('[data-docs-page-actions]')) {
+    const markdownPath = actions.dataset.markdownPath;
+    const button = actions.querySelector<HTMLButtonElement>('[data-copy-markdown]');
+    const label = actions.querySelector<HTMLElement>('[data-copy-markdown-label]');
+    const status = actions.querySelector<HTMLElement>('[data-copy-markdown-status]');
+    if (!markdownPath || !button || !label || !status) continue;
+
+    let resetTimer: number | undefined;
+
+    button.addEventListener('click', async () => {
+      window.clearTimeout(resetTimer);
+      button.disabled = true;
+      button.dataset.state = 'pending';
+      label.textContent = 'Copying…';
+      status.textContent = '';
+
+      let copied = false;
+      try {
+        const response = await fetch(markdownPath, {
+          headers: { Accept: 'text/markdown' },
+        });
+        const contentType = response.headers.get('content-type') ?? '';
+        if (!response.ok || contentType.includes('text/html')) {
+          throw new Error(`Markdown request failed with ${response.status}`);
+        }
+
+        copied = await copyText(await response.text());
+      } catch {
+        copied = false;
+      }
+
+      const message = copied
+        ? 'Page Markdown copied'
+        : 'Unable to copy. Open Markdown to copy it manually.';
+      button.disabled = false;
+      button.dataset.state = copied ? 'copied' : 'error';
+      label.textContent = copied ? 'Copied' : 'Try again';
+      window.setTimeout(() => {
+        status.textContent = message;
+      });
+
+      resetTimer = window.setTimeout(() => {
+        button.dataset.state = 'idle';
+        label.textContent = 'Copy Markdown';
+        status.textContent = '';
+      }, 2500);
+    });
+  }
+</script>
+
+<style>
+  .docs-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .docs-page-action {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--color-border-base-subtle);
+    border-radius: 6px;
+    background: var(--color-bg-surface-raised);
+    color: var(--color-text-base-muted);
+    padding: 7px 11px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 140ms ease,
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .docs-page-action:hover {
+    border-color: var(--color-border-primary-emphasis);
+    background: var(--color-bg-primary-subtle-default);
+    color: var(--color-text-base-emphasis);
+  }
+
+  .docs-page-action:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+
+  .docs-page-action:disabled {
+    cursor: wait;
+    opacity: 0.72;
+  }
+
+  .docs-page-action[data-state='copied'] {
+    color: var(--color-text-success-default);
+  }
+
+  .docs-page-action[data-state='error'] {
+    color: var(--color-text-danger-default);
+  }
+
+  .docs-page-action :global(svg) {
+    flex: none;
+  }
+</style>

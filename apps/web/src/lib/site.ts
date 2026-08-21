@@ -9,6 +9,28 @@ export type ComponentGroup = {
   items: ComponentItem[];
 };
 
+export const docsOverview = {
+  label: 'Components overview',
+  title: 'Veli Components',
+  description: 'Accessible building blocks for consistent, dependable public-service interfaces.',
+  documentTitle: 'Documentation | Veli Design System',
+  documentDescription: 'Foundations and component documentation for the Veli Design System.',
+  htmlPath: '/docs/',
+  markdownPath: '/docs/index.md',
+} as const;
+
+export const foundationsOverview = {
+  label: 'Foundations overview',
+  title: 'Veli Foundation',
+  description:
+    'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
+  documentTitle: 'Foundations | Veli Design System',
+  documentDescription:
+    'Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli.',
+  htmlPath: '/foundations/',
+  markdownPath: '/foundations/index.md',
+} as const;
+
 export type DocsNavigationItem = {
   title: string;
   href: string;
@@ -23,7 +45,7 @@ export type DocsNavigationSection = {
 };
 
 export type ExternalResource = {
-  label: string;
+  label: 'Figma' | 'GitHub' | 'npm';
   icon: 'figma' | 'github' | 'package';
   href?: string;
   status?: 'coming-soon';
@@ -307,6 +329,10 @@ export const componentGroups: ComponentGroup[] = [
 ] as const;
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
+
+export function getComponentGroupSlug(title: string) {
+  return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
+}
 
 /**
  * The single source of truth for every documentation navigation surface.
