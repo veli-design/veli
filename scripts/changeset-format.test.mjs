@@ -4,8 +4,10 @@ import test from 'node:test';
 import {
   CHANGELOG_CATEGORIES,
   extractReleaseContent,
+  isPreStableVersion,
   parseChangeset,
   updateChangelog,
+  validateReleasePolicy,
 } from './changeset-format.mjs';
 
 const frontmatter = "---\n'@tradenetcorp/veli-ui': patch\n---";
@@ -60,6 +62,35 @@ test('rejects malformed changelog entries', () => {
   assert.throws(
     () => parseChangeset(`${frontmatter}\n\n### Added\n\nNo bullet.\n`, 'bullet.md'),
     /Markdown bullets/,
+  );
+});
+
+test('identifies pre-stable package versions', () => {
+  assert.equal(isPreStableVersion('0.8.5'), true);
+  assert.equal(isPreStableVersion('0.10.0'), true);
+  assert.equal(isPreStableVersion('1.0.0'), false);
+});
+
+test('rejects major changesets for pre-stable packages', () => {
+  const changeset = parseChangeset(
+    "---\n'@tradenetcorp/veli-ui': major\n---\n\n### Removed\n\n- Remove an API.\n",
+    'major.md',
+  );
+
+  assert.throws(
+    () => validateReleasePolicy(changeset, new Map([['@tradenetcorp/veli-ui', '0.9.4']])),
+    /use a minor bump for breaking changes before 1\.0\.0/,
+  );
+});
+
+test('allows major changesets for stable packages', () => {
+  const changeset = parseChangeset(
+    "---\n'@tradenetcorp/veli-ui': major\n---\n\n### Removed\n\n- Remove an API.\n",
+    'major.md',
+  );
+
+  assert.doesNotThrow(() =>
+    validateReleasePolicy(changeset, new Map([['@tradenetcorp/veli-ui', '1.4.0']])),
   );
 });
 

@@ -24,6 +24,9 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderLabelVariants,
+  fieldHeaderRequiredIndicatorVariants,
+  fieldHeaderSupplementaryVariants,
   hasRenderableMessage,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
@@ -45,42 +48,6 @@ const passwordInputFooterVariants = cva('flex w-full flex-col gap-2 pt-2');
 const passwordInputSkeletonRootVariants = cva(
   'flex w-full flex-col items-start font-sans antialiased',
 );
-
-const headerLabelVariants = cva('type-body-sm-medium', {
-  variants: {
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-default',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
-const headerMetaVariants = cva('type-caption-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: '',
-    },
-  },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
-  defaultVariants: {
-    tone: 'subtle',
-    isDisabled: false,
-  },
-});
 
 const infoTooltipTriggerVariants = cva(
   'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
@@ -402,9 +369,14 @@ const requirementIndicatorCheckedVariants = cva(
 );
 
 const requirementTextVariants = cva(
-  'type-caption-regular motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none',
+  'motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none',
   {
     variants: {
+      size: {
+        sm: 'type-caption-regular',
+        md: 'type-caption-regular',
+        lg: 'type-body-sm-regular',
+      },
       isMet: {
         true: 'text-success-muted',
         false: 'text-danger-muted',
@@ -427,31 +399,35 @@ const requirementTextVariants = cva(
       },
     ],
     defaultVariants: {
+      size: 'md',
       isMet: false,
       isDisabled: false,
     },
   },
 );
 
-const feedbackTextVariants = cva(
-  'type-caption-regular [&:lang(dv)]:relative [&:lang(dv)]:top-0.5',
-  {
-    variants: {
-      tone: {
-        success: 'text-success-muted',
-        danger: 'text-danger-muted',
-      },
-      isDisabled: {
-        true: 'text-disabled',
-        false: '',
-      },
+const feedbackTextVariants = cva('[&:lang(dv)]:relative [&:lang(dv)]:top-0.5', {
+  variants: {
+    size: {
+      sm: 'type-caption-regular',
+      md: 'type-caption-regular',
+      lg: 'type-body-sm-regular',
     },
-    defaultVariants: {
-      tone: 'danger',
-      isDisabled: false,
+    tone: {
+      success: 'text-success-muted',
+      danger: 'text-danger-muted',
+    },
+    isDisabled: {
+      true: 'text-disabled',
+      false: '',
     },
   },
-);
+  defaultVariants: {
+    size: 'md',
+    tone: 'danger',
+    isDisabled: false,
+  },
+});
 
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
@@ -519,12 +495,14 @@ function PasswordRequirementIndicator({ isMet, isDisabled }: PasswordRequirement
 interface PasswordRequirementsListProps {
   requirements: PasswordRequirement[];
   value: string;
+  size: 'sm' | 'md' | 'lg';
   isDisabled: boolean;
 }
 
 function PasswordRequirementsList({
   requirements,
   value,
+  size,
   isDisabled,
 }: PasswordRequirementsListProps) {
   return (
@@ -535,7 +513,7 @@ function PasswordRequirementsList({
         return (
           <div key={requirement.id} className="flex items-center gap-2">
             <PasswordRequirementIndicator isMet={isMet} isDisabled={isDisabled} />
-            <span className={requirementTextVariants({ isMet, isDisabled })}>
+            <span className={requirementTextVariants({ size, isMet, isDisabled })}>
               {requirement.label}
             </span>
           </div>
@@ -547,11 +525,17 @@ function PasswordRequirementsList({
 
 interface PasswordFeedbackMessageProps {
   tone: 'success' | 'danger';
+  size: 'sm' | 'md' | 'lg';
   isDisabled: boolean;
   children: React.ReactNode;
 }
 
-function PasswordFeedbackMessage({ tone, isDisabled, children }: PasswordFeedbackMessageProps) {
+function PasswordFeedbackMessage({
+  tone,
+  size,
+  isDisabled,
+  children,
+}: PasswordFeedbackMessageProps) {
   return (
     <div className="flex items-center gap-2">
       {tone === 'success' ? (
@@ -568,7 +552,7 @@ function PasswordFeedbackMessage({ tone, isDisabled, children }: PasswordFeedbac
           className={isDisabled ? 'text-disabled' : 'text-icon-danger-subtle'}
         />
       )}
-      <span className={feedbackTextVariants({ tone, isDisabled })}>{children}</span>
+      <span className={feedbackTextVariants({ size, tone, isDisabled })}>{children}</span>
     </div>
   );
 }
@@ -674,7 +658,8 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
     const isRevealedControlled = isRevealed !== undefined;
     const revealed = isRevealedControlled ? isRevealed : uncontrolledRevealed;
     const passwordValue = value === undefined ? uncontrolledValue : String(value);
-    const iconSize = getPasswordIconSize(size);
+    const resolvedSize = size ?? 'md';
+    const iconSize = getPasswordIconSize(resolvedSize);
     const visibilityLabels = visibilityToggleDefaultAriaLabels[languageConfig.language];
 
     const setRevealed = React.useCallback(
@@ -763,7 +748,9 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
                 <div className="flex w-full items-center gap-2 pb-2">
                   <div className="flex min-w-0 flex-1 items-center gap-2">
                     {label ? (
-                      <Label className={headerLabelVariants({ isDisabled })}>{label}</Label>
+                      <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                        {label}
+                      </Label>
                     ) : null}
                     {infoTooltip ? (
                       <TooltipTrigger>
@@ -785,12 +772,14 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
                       </TooltipTrigger>
                     ) : null}
                     {labelSupplementary ? (
-                      <span className={headerMetaVariants({ tone: 'subtle', isDisabled })}>
+                      <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
                         {labelSupplementary}
                       </span>
                     ) : null}
                     {showRequiredIndicator && isRequired ? (
-                      <span className={headerMetaVariants({ tone: 'danger', isDisabled })}>*</span>
+                      <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>
+                        *
+                      </span>
                     ) : null}
                     {labelIcon ? (
                       <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
@@ -864,17 +853,23 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
                     <PasswordRequirementsList
                       requirements={resolvedRequirements}
                       value={passwordValue}
+                      size={resolvedSize}
                       isDisabled={isDisabled}
                     />
                   ) : null}
                   {showFeedback ? (
-                    <PasswordFeedbackMessage tone={feedbackTone} isDisabled={isDisabled}>
+                    <PasswordFeedbackMessage
+                      tone={feedbackTone}
+                      size={resolvedSize}
+                      isDisabled={isDisabled}
+                    >
                       {feedbackMessage}
                     </PasswordFeedbackMessage>
                   ) : null}
                   {showStandardMessage ? (
                     <FieldMessage
                       isInvalid={isInvalid}
+                      size={resolvedSize}
                       description={description}
                       errorMessage={errorMessage}
                     />

@@ -3,9 +3,12 @@ import { Command, MagnifyingGlass } from 'phosphor-react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Kbd } from '@tradenetcorp/veli-ui/kbd';
 
-const searchTriggerSelector = 'button[aria-label="Search documentation"]';
 const loadDocsSearchDialog = () => import('./DocsSearchDialog');
 const DocsSearchDialog = lazy(loadDocsSearchDialog);
+
+type DocsSearchProps = {
+  enableShortcut?: boolean;
+};
 
 function isEditableTarget(target: EventTarget | null) {
   return (
@@ -16,7 +19,7 @@ function isEditableTarget(target: EventTarget | null) {
   );
 }
 
-export function DocsSearch() {
+export function DocsSearch({ enableShortcut = true }: DocsSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldRenderDialog, setShouldRenderDialog] = useState(false);
 
@@ -28,17 +31,8 @@ export function DocsSearch() {
   const handleOpenChange = useCallback((open: boolean) => setIsOpen(open), []);
 
   useEffect(() => {
-    const trigger = document.querySelector<HTMLButtonElement>(searchTriggerSelector);
-    trigger?.setAttribute('aria-haspopup', 'dialog');
-    trigger?.setAttribute('aria-keyshortcuts', 'Meta+K Control+K');
+    if (!enableShortcut) return;
 
-    return () => {
-      trigger?.removeAttribute('aria-haspopup');
-      trigger?.removeAttribute('aria-keyshortcuts');
-    };
-  }, []);
-
-  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const isCommandShortcut =
         event.key.toLocaleLowerCase() === 'k' &&
@@ -57,16 +51,18 @@ export function DocsSearch() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [openSearch]);
+  }, [enableShortcut, openSearch]);
 
   return (
-    <>
+    <div className="docs-search-root">
       <Button
         className="docs-search-trigger"
         intent="secondary"
         appearance="ghost"
         size="sm"
         aria-label="Search documentation"
+        aria-haspopup="dialog"
+        aria-keyshortcuts={enableShortcut ? 'Meta+K Control+K' : undefined}
         aria-expanded={isOpen}
         onPress={openSearch}
         onMouseEnter={() => void loadDocsSearchDialog()}
@@ -95,6 +91,6 @@ export function DocsSearch() {
           <DocsSearchDialog isOpen={isOpen} onOpenChange={handleOpenChange} />
         </Suspense>
       ) : null}
-    </>
+    </div>
   );
 }

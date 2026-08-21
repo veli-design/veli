@@ -2,16 +2,24 @@
 
 import path from 'node:path';
 
-import { getChangesetFiles, parseChangeset } from './changeset-format.mjs';
+import { getPackages } from '@manypkg/get-packages';
+
+import { getChangesetFiles, parseChangeset, validateReleasePolicy } from './changeset-format.mjs';
 import fs from 'node:fs/promises';
 
 const cwd = process.cwd();
 const files = await getChangesetFiles(cwd);
 const errors = [];
+const { packages } = await getPackages(cwd);
+const packageVersions = new Map(
+  packages.map(({ packageJson }) => [packageJson.name, packageJson.version]),
+);
 
 for (const file of files) {
   try {
-    parseChangeset(await fs.readFile(file, 'utf8'), path.relative(cwd, file));
+    const relativePath = path.relative(cwd, file);
+    const changeset = parseChangeset(await fs.readFile(file, 'utf8'), relativePath);
+    validateReleasePolicy(changeset, packageVersions);
   } catch (error) {
     errors.push(`${path.relative(cwd, file)}: ${error.message}`);
   }
