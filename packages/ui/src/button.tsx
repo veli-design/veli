@@ -5,6 +5,7 @@ import { Button as AriaButton, ButtonProps as AriaButtonProps } from 'react-aria
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y';
+import { assignRef, type RefProp } from './ref';
 
 const buttonVariants = cva(
   [
@@ -195,7 +196,8 @@ type AccessibleButtonName =
 interface ButtonSharedProps
   extends
     Omit<AriaButtonProps, 'style' | 'children'>,
-    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
+    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'>,
+    RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
   className?: string;
@@ -335,7 +337,7 @@ function useButtonRipple({
   onPressEnd,
 }: UseButtonRippleOptions) {
   const canRipple = !isDisabled && !isLoading;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const expandFrameRef = React.useRef<number | null>(null);
   const pointerFrameRef = React.useRef<number | null>(null);
   const isPressingRef = React.useRef(false);
@@ -507,6 +509,7 @@ export function Button({
   onPressStart,
   onPressEnd,
   'aria-busy': ariaBusy,
+  ref,
   ...props
 }: ButtonProps) {
   const isLoadingOnly = Boolean(isLoading && !children);
@@ -543,13 +546,20 @@ export function Button({
     onPressStart,
     onPressEnd,
   });
+  const setButtonRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      buttonRef.current = node;
+      assignRef(ref, node);
+    },
+    [buttonRef, ref],
+  );
 
   return (
     <AriaButton
       {...props}
       aria-busy={isLoading ? true : ariaBusy}
       aria-label={isLoadingOnly && !hasButtonAccessibleName ? 'Loading' : props['aria-label']}
-      ref={buttonRef}
+      ref={setButtonRef}
       isDisabled={isDisabled || isLoading}
       {...buttonEventHandlers}
       className={resolvedClassName}

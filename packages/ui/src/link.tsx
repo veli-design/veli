@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { Link as AriaLink, LinkProps as AriaLinkProps } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
@@ -89,7 +88,11 @@ export interface LinkProps
   extends
     Omit<AriaLinkProps, 'className' | 'style' | 'children' | 'isDisabled'>,
     VariantProps<typeof linkVariants> {
-  children?: React.ReactNode;
+  /**
+   * Link content. A function receives React Aria link state, including
+   * `isCurrent`, `isHovered`, and `isPressed`.
+   */
+  children?: AriaLinkProps['children'];
 }
 
 function splitLinkProps({
