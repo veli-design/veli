@@ -18,146 +18,182 @@
     "tailwind.css"
   ],
   "exports": {
+    "./package.json": "./package.json",
     "./tailwind": "./tailwind.css",
     "./theme-script": {
       "types": "./dist/theme-script.d.ts",
-      "import": "./dist/theme-script.js"
+      "import": "./dist/theme-script.js",
+      "default": "./dist/theme-script.js"
     },
     "./avatar": {
       "types": "./dist/avatar.d.ts",
-      "import": "./dist/avatar.js"
+      "import": "./dist/avatar.js",
+      "default": "./dist/avatar.js"
     },
     "./accordion": {
       "types": "./dist/accordion.d.ts",
-      "import": "./dist/accordion.js"
+      "import": "./dist/accordion.js",
+      "default": "./dist/accordion.js"
     },
     "./alert": {
       "types": "./dist/alert.d.ts",
-      "import": "./dist/alert.js"
+      "import": "./dist/alert.js",
+      "default": "./dist/alert.js"
     },
     "./badge": {
       "types": "./dist/badge.d.ts",
-      "import": "./dist/badge.js"
+      "import": "./dist/badge.js",
+      "default": "./dist/badge.js"
     },
     "./breadcrumbs": {
       "types": "./dist/breadcrumbs.d.ts",
-      "import": "./dist/breadcrumbs.js"
+      "import": "./dist/breadcrumbs.js",
+      "default": "./dist/breadcrumbs.js"
     },
     "./button": {
       "types": "./dist/button.d.ts",
-      "import": "./dist/button.js"
+      "import": "./dist/button.js",
+      "default": "./dist/button.js"
     },
     "./calendar": {
       "types": "./dist/calendar.d.ts",
-      "import": "./dist/calendar.js"
+      "import": "./dist/calendar.js",
+      "default": "./dist/calendar.js"
     },
     "./card": {
       "types": "./dist/card.d.ts",
-      "import": "./dist/card.js"
+      "import": "./dist/card.js",
+      "default": "./dist/card.js"
     },
     "./checkbox": {
       "types": "./dist/checkbox.d.ts",
-      "import": "./dist/checkbox.js"
+      "import": "./dist/checkbox.js",
+      "default": "./dist/checkbox.js"
     },
     "./combobox": {
       "types": "./dist/combobox.d.ts",
-      "import": "./dist/combobox.js"
+      "import": "./dist/combobox.js",
+      "default": "./dist/combobox.js"
     },
     "./divider": {
       "types": "./dist/divider.d.ts",
-      "import": "./dist/divider.js"
+      "import": "./dist/divider.js",
+      "default": "./dist/divider.js"
     },
     "./dropzone": {
       "types": "./dist/dropzone.d.ts",
-      "import": "./dist/dropzone.js"
+      "import": "./dist/dropzone.js",
+      "default": "./dist/dropzone.js"
     },
     "./date-field": {
       "types": "./dist/date-field.d.ts",
-      "import": "./dist/date-field.js"
+      "import": "./dist/date-field.js",
+      "default": "./dist/date-field.js"
     },
     "./date-picker": {
       "types": "./dist/date-picker.d.ts",
-      "import": "./dist/date-picker.js"
+      "import": "./dist/date-picker.js",
+      "default": "./dist/date-picker.js"
     },
     "./input": {
       "types": "./dist/input.d.ts",
-      "import": "./dist/input.js"
+      "import": "./dist/input.js",
+      "default": "./dist/input.js"
     },
     "./kbd": {
       "types": "./dist/kbd.d.ts",
-      "import": "./dist/kbd.js"
+      "import": "./dist/kbd.js",
+      "default": "./dist/kbd.js"
     },
     "./link": {
       "types": "./dist/link.d.ts",
-      "import": "./dist/link.js"
+      "import": "./dist/link.js",
+      "default": "./dist/link.js"
     },
     "./menu": {
       "types": "./dist/menu.d.ts",
-      "import": "./dist/menu.js"
+      "import": "./dist/menu.js",
+      "default": "./dist/menu.js"
     },
     "./modal": {
       "types": "./dist/modal.d.ts",
-      "import": "./dist/modal.js"
+      "import": "./dist/modal.js",
+      "default": "./dist/modal.js"
     },
     "./popover": {
       "types": "./dist/popover.d.ts",
-      "import": "./dist/popover.js"
+      "import": "./dist/popover.js",
+      "default": "./dist/popover.js"
     },
     "./password-input": {
       "types": "./dist/password-input.d.ts",
-      "import": "./dist/password-input.js"
+      "import": "./dist/password-input.js",
+      "default": "./dist/password-input.js"
     },
     "./provider": {
       "types": "./dist/provider.d.ts",
-      "import": "./dist/provider.js"
+      "import": "./dist/provider.js",
+      "default": "./dist/provider.js"
     },
     "./radio": {
       "types": "./dist/radio.d.ts",
-      "import": "./dist/radio.js"
+      "import": "./dist/radio.js",
+      "default": "./dist/radio.js"
     },
     "./search": {
       "types": "./dist/search.d.ts",
-      "import": "./dist/search.js"
+      "import": "./dist/search.js",
+      "default": "./dist/search.js"
     },
     "./select": {
       "types": "./dist/select.d.ts",
-      "import": "./dist/select.js"
+      "import": "./dist/select.js",
+      "default": "./dist/select.js"
     },
     "./switch": {
       "types": "./dist/switch.d.ts",
-      "import": "./dist/switch.js"
+      "import": "./dist/switch.js",
+      "default": "./dist/switch.js"
     },
     "./table": {
       "types": "./dist/table.d.ts",
-      "import": "./dist/table.js"
+      "import": "./dist/table.js",
+      "default": "./dist/table.js"
     },
     "./tags": {
       "types": "./dist/tags.d.ts",
-      "import": "./dist/tags.js"
+      "import": "./dist/tags.js",
+      "default": "./dist/tags.js"
     },
     "./page-tab": {
       "types": "./dist/page-tab.d.ts",
-      "import": "./dist/page-tab.js"
+      "import": "./dist/page-tab.js",
+      "default": "./dist/page-tab.js"
     },
     "./pagination": {
       "types": "./dist/pagination.d.ts",
-      "import": "./dist/pagination.js"
+      "import": "./dist/pagination.js",
+      "default": "./dist/pagination.js"
     },
     "./tabs": {
       "types": "./dist/tabs.d.ts",
-      "import": "./dist/tabs.js"
+      "import": "./dist/tabs.js",
+      "default": "./dist/tabs.js"
     },
     "./textarea": {
       "types": "./dist/textarea.d.ts",
-      "import": "./dist/textarea.js"
+      "import": "./dist/textarea.js",
+      "default": "./dist/textarea.js"
     },
     "./toast": {
       "types": "./dist/toast.d.ts",
-      "import": "./dist/toast.js"
+      "import": "./dist/toast.js",
+      "default": "./dist/toast.js"
     },
     "./tooltip": {
       "types": "./dist/tooltip.d.ts",
-      "import": "./dist/tooltip.js"
+      "import": "./dist/tooltip.js",
+      "default": "./dist/tooltip.js"
     }
   },
   "scripts": {
@@ -167,9 +203,9 @@
     "prepublishOnly": "corepack pnpm run build"
   },
   "peerDependencies": {
-    "react": "^18.3.0",
+    "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
-    "react-dom": "^18.3.0"
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
@@ -178,11 +214,11 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "react": "^18.3.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.0.0",
     "typescript": "^5.7.2"
   },
   "publishConfig": {

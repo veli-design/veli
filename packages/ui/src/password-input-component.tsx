@@ -33,6 +33,7 @@ import { useVeliLanguage } from './provider';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref';
 
 const underlineActiveTransform = 'after:[transform:translateZ(0)_scaleY(1)]';
 const underlineFocusActiveTransform =
@@ -563,7 +564,8 @@ export interface PasswordInputProps
     Omit<
       VariantProps<typeof fieldShellVariants>,
       'isDisabled' | 'isInvalid' | 'isReadOnly' | 'isSuccess'
-    > {
+    >,
+    RefProp<HTMLInputElement> {
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
@@ -602,284 +604,278 @@ export interface PasswordInputProps
   onRevealedChange?: (isRevealed: boolean) => void;
 }
 
-export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  function PasswordInput(
-    {
-      label,
-      infoTooltip,
-      infoTooltipAriaLabel,
-      labelSupplementary,
-      labelIcon,
-      action,
-      description,
-      errorMessage,
-      showRequiredIndicator = true,
-      startAddon,
-      startContent,
-      className,
-      variant = 'default',
-      size = 'md',
-      autoCapitalize,
-      autoComplete = 'current-password',
-      autoCorrect,
-      enterKeyHint,
-      inputMode,
-      maxLength,
-      minLength,
-      pattern,
-      placeholder,
-      spellCheck,
-      requirements,
-      showRequirementsWhenEmpty = false,
-      isSuccess = false,
-      feedbackMessage,
-      feedbackTone = 'danger',
-      showVisibilityToggle = true,
-      defaultRevealed = false,
-      isRevealed,
-      onRevealedChange,
-      onChange,
-      value,
-      defaultValue,
-      ...props
+export function PasswordInput({
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  action,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  startAddon,
+  startContent,
+  className,
+  variant = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete = 'current-password',
+  autoCorrect,
+  enterKeyHint,
+  inputMode,
+  maxLength,
+  minLength,
+  pattern,
+  placeholder,
+  spellCheck,
+  requirements,
+  showRequirementsWhenEmpty = false,
+  isSuccess = false,
+  feedbackMessage,
+  feedbackTone = 'danger',
+  showVisibilityToggle = true,
+  defaultRevealed = false,
+  isRevealed,
+  onRevealedChange,
+  onChange,
+  value,
+  defaultValue,
+  ref,
+  ...props
+}: PasswordInputProps) {
+  const languageConfig = useVeliLanguage();
+  const resolvedInfoTooltipAriaLabel =
+    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
+  const resolvedPlaceholder = placeholder ?? passwordPlaceholderDefaults[languageConfig.language];
+  const resolvedRequirements = React.useMemo(
+    () => resolvePasswordRequirements(requirements, languageConfig.language),
+    [languageConfig.language, requirements],
+  );
+  const [uncontrolledRevealed, setUncontrolledRevealed] = React.useState(defaultRevealed);
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(String(defaultValue ?? ''));
+  const isRevealedControlled = isRevealed !== undefined;
+  const revealed = isRevealedControlled ? isRevealed : uncontrolledRevealed;
+  const passwordValue = value === undefined ? uncontrolledValue : String(value);
+  const resolvedSize = size ?? 'md';
+  const iconSize = getPasswordIconSize(resolvedSize);
+  const visibilityLabels = visibilityToggleDefaultAriaLabels[languageConfig.language];
+
+  const setRevealed = React.useCallback(
+    (nextRevealed: boolean) => {
+      if (!isRevealedControlled) {
+        setUncontrolledRevealed(nextRevealed);
+      }
+
+      onRevealedChange?.(nextRevealed);
     },
-    ref,
-  ) {
-    const languageConfig = useVeliLanguage();
-    const resolvedInfoTooltipAriaLabel =
-      infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
-    const resolvedPlaceholder = placeholder ?? passwordPlaceholderDefaults[languageConfig.language];
-    const resolvedRequirements = React.useMemo(
-      () => resolvePasswordRequirements(requirements, languageConfig.language),
-      [languageConfig.language, requirements],
-    );
-    const [uncontrolledRevealed, setUncontrolledRevealed] = React.useState(defaultRevealed);
-    const [uncontrolledValue, setUncontrolledValue] = React.useState(String(defaultValue ?? ''));
-    const isRevealedControlled = isRevealed !== undefined;
-    const revealed = isRevealedControlled ? isRevealed : uncontrolledRevealed;
-    const passwordValue = value === undefined ? uncontrolledValue : String(value);
-    const resolvedSize = size ?? 'md';
-    const iconSize = getPasswordIconSize(resolvedSize);
-    const visibilityLabels = visibilityToggleDefaultAriaLabels[languageConfig.language];
+    [isRevealedControlled, onRevealedChange],
+  );
 
-    const setRevealed = React.useCallback(
-      (nextRevealed: boolean) => {
-        if (!isRevealedControlled) {
-          setUncontrolledRevealed(nextRevealed);
-        }
+  const handleChange = React.useCallback(
+    (nextValue: string) => {
+      if (value === undefined) {
+        setUncontrolledValue(nextValue);
+      }
 
-        onRevealedChange?.(nextRevealed);
-      },
-      [isRevealedControlled, onRevealedChange],
-    );
+      onChange?.(nextValue);
+    },
+    [onChange, value],
+  );
 
-    const handleChange = React.useCallback(
-      (nextValue: string) => {
-        if (value === undefined) {
-          setUncontrolledValue(nextValue);
-        }
+  const hasSkeletonHeader = Boolean(
+    label ||
+    infoTooltip ||
+    labelSupplementary ||
+    labelIcon ||
+    action ||
+    (showRequiredIndicator && props.isRequired),
+  );
+  const hasSkeletonFooter = Boolean(
+    description || errorMessage || feedbackMessage || resolvedRequirements,
+  );
 
-        onChange?.(nextValue);
-      },
-      [onChange, value],
-    );
-
-    const hasSkeletonHeader = Boolean(
-      label ||
-      infoTooltip ||
-      labelSupplementary ||
-      labelIcon ||
-      action ||
-      (showRequiredIndicator && props.isRequired),
-    );
-    const hasSkeletonFooter = Boolean(
-      description || errorMessage || feedbackMessage || resolvedRequirements,
-    );
-
-    if (variant === 'skeleton') {
-      return (
-        <div className={twMerge(passwordInputSkeletonRootVariants(), className)} aria-hidden="true">
-          {hasSkeletonHeader ? (
-            <div className="flex w-full items-center pb-2">
-              <div className={skeletonLineVariants({ size })} />
-            </div>
-          ) : null}
-          <div className={skeletonFieldVariants({ size })} />
-          {hasSkeletonFooter ? (
-            <div className="flex w-full items-center pt-2">
-              <div className={skeletonLineVariants({ size })} />
-            </div>
-          ) : null}
-        </div>
-      );
-    }
-
+  if (variant === 'skeleton') {
     return (
-      <AriaTextField
-        {...props}
-        value={value}
-        defaultValue={defaultValue}
-        onChange={handleChange}
-        className={twMerge(passwordInputRootVariants(), className)}
-      >
-        {({ isDisabled, isInvalid, isReadOnly, isRequired }) => {
-          const shouldShowRequirements =
-            resolvedRequirements !== undefined &&
-            (showRequirementsWhenEmpty || passwordValue.length > 0);
-          const allRequirementsMet =
-            resolvedRequirements !== undefined &&
-            arePasswordRequirementsMet(resolvedRequirements, passwordValue);
-          const showSuccessState =
-            isSuccess ||
-            feedbackTone === 'success' ||
-            (shouldShowRequirements && allRequirementsMet && passwordValue.length > 0);
-          const resolvedSuccess = showSuccessState && !isInvalid && !isDisabled;
-          const showFeedback = hasRenderableMessage(feedbackMessage);
-          const showStandardMessage = !shouldShowRequirements && !showFeedback;
-
-          return (
-            <>
-              {label ||
-              infoTooltip ||
-              labelSupplementary ||
-              labelIcon ||
-              action ||
-              (showRequiredIndicator && isRequired) ? (
-                <div className="flex w-full items-center gap-2 pb-2">
-                  <div className="flex min-w-0 flex-1 items-center gap-2">
-                    {label ? (
-                      <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
-                        {label}
-                      </Label>
-                    ) : null}
-                    {infoTooltip ? (
-                      <TooltipTrigger>
-                        <AriaButton
-                          type="button"
-                          aria-label={resolvedInfoTooltipAriaLabel}
-                          className={infoTooltipTriggerVariants({ isDisabled })}
-                          isDisabled={isDisabled}
-                        >
-                          <Info size={16} aria-hidden />
-                        </AriaButton>
-                        <Tooltip
-                          placement="top"
-                          lang={languageConfig.lang}
-                          dir={languageConfig.direction}
-                        >
-                          {infoTooltip}
-                        </Tooltip>
-                      </TooltipTrigger>
-                    ) : null}
-                    {labelSupplementary ? (
-                      <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                        {labelSupplementary}
-                      </span>
-                    ) : null}
-                    {showRequiredIndicator && isRequired ? (
-                      <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>
-                        *
-                      </span>
-                    ) : null}
-                    {labelIcon ? (
-                      <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
-                    ) : null}
-                  </div>
-                  {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
-                </div>
-              ) : null}
-
-              <Group
-                dir="ltr"
-                className={fieldShellVariants({
-                  variant,
-                  size,
-                  isDisabled,
-                  isInvalid,
-                  isReadOnly,
-                  isSuccess: resolvedSuccess,
-                })}
-                onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
-              >
-                {startAddon ? (
-                  <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
-                ) : null}
-                {startContent ? (
-                  <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
-                ) : null}
-                <AriaInput
-                  ref={ref}
-                  autoCapitalize={autoCapitalize}
-                  autoComplete={autoComplete}
-                  autoCorrect={autoCorrect}
-                  enterKeyHint={enterKeyHint}
-                  inputMode={inputMode}
-                  maxLength={maxLength}
-                  minLength={minLength}
-                  pattern={pattern}
-                  placeholder={resolvedPlaceholder}
-                  spellCheck={spellCheck}
-                  type={revealed ? 'text' : 'password'}
-                  dir="ltr"
-                  className={inputElementVariants({ size })}
-                />
-                {isInvalid ? (
-                  <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                    <Info size={iconSize} weight="fill" />
-                  </div>
-                ) : showVisibilityToggle ? (
-                  <AriaButton
-                    type="button"
-                    aria-label={revealed ? visibilityLabels.hide : visibilityLabels.show}
-                    aria-pressed={revealed}
-                    isDisabled={isDisabled}
-                    className={visibilityToggleVariants({ isDisabled })}
-                    onPress={() => setRevealed(!revealed)}
-                  >
-                    {revealed ? (
-                      <EyeSlash size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
-                    ) : (
-                      <Eye size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
-                    )}
-                  </AriaButton>
-                ) : null}
-              </Group>
-
-              {(shouldShowRequirements && resolvedRequirements) ||
-              showFeedback ||
-              showStandardMessage ? (
-                <div className={passwordInputFooterVariants()}>
-                  {shouldShowRequirements && resolvedRequirements ? (
-                    <PasswordRequirementsList
-                      requirements={resolvedRequirements}
-                      value={passwordValue}
-                      size={resolvedSize}
-                      isDisabled={isDisabled}
-                    />
-                  ) : null}
-                  {showFeedback ? (
-                    <PasswordFeedbackMessage
-                      tone={feedbackTone}
-                      size={resolvedSize}
-                      isDisabled={isDisabled}
-                    >
-                      {feedbackMessage}
-                    </PasswordFeedbackMessage>
-                  ) : null}
-                  {showStandardMessage ? (
-                    <FieldMessage
-                      isInvalid={isInvalid}
-                      size={resolvedSize}
-                      description={description}
-                      errorMessage={errorMessage}
-                    />
-                  ) : null}
-                </div>
-              ) : null}
-            </>
-          );
-        }}
-      </AriaTextField>
+      <div className={twMerge(passwordInputSkeletonRootVariants(), className)} aria-hidden="true">
+        {hasSkeletonHeader ? (
+          <div className="flex w-full items-center pb-2">
+            <div className={skeletonLineVariants({ size })} />
+          </div>
+        ) : null}
+        <div className={skeletonFieldVariants({ size })} />
+        {hasSkeletonFooter ? (
+          <div className="flex w-full items-center pt-2">
+            <div className={skeletonLineVariants({ size })} />
+          </div>
+        ) : null}
+      </div>
     );
-  },
-);
+  }
+
+  return (
+    <AriaTextField
+      {...props}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={handleChange}
+      className={twMerge(passwordInputRootVariants(), className)}
+    >
+      {({ isDisabled, isInvalid, isReadOnly, isRequired }) => {
+        const shouldShowRequirements =
+          resolvedRequirements !== undefined &&
+          (showRequirementsWhenEmpty || passwordValue.length > 0);
+        const allRequirementsMet =
+          resolvedRequirements !== undefined &&
+          arePasswordRequirementsMet(resolvedRequirements, passwordValue);
+        const showSuccessState =
+          isSuccess ||
+          feedbackTone === 'success' ||
+          (shouldShowRequirements && allRequirementsMet && passwordValue.length > 0);
+        const resolvedSuccess = showSuccessState && !isInvalid && !isDisabled;
+        const showFeedback = hasRenderableMessage(feedbackMessage);
+        const showStandardMessage = !shouldShowRequirements && !showFeedback;
+
+        return (
+          <>
+            {label ||
+            infoTooltip ||
+            labelSupplementary ||
+            labelIcon ||
+            action ||
+            (showRequiredIndicator && isRequired) ? (
+              <div className="flex w-full items-center gap-2 pb-2">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {label ? (
+                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                      {label}
+                    </Label>
+                  ) : null}
+                  {infoTooltip ? (
+                    <TooltipTrigger>
+                      <AriaButton
+                        type="button"
+                        aria-label={resolvedInfoTooltipAriaLabel}
+                        className={infoTooltipTriggerVariants({ isDisabled })}
+                        isDisabled={isDisabled}
+                      >
+                        <Info size={16} aria-hidden />
+                      </AriaButton>
+                      <Tooltip
+                        placement="top"
+                        lang={languageConfig.lang}
+                        dir={languageConfig.direction}
+                      >
+                        {infoTooltip}
+                      </Tooltip>
+                    </TooltipTrigger>
+                  ) : null}
+                  {labelSupplementary ? (
+                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
+                      {labelSupplementary}
+                    </span>
+                  ) : null}
+                  {showRequiredIndicator && isRequired ? (
+                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
+                  ) : null}
+                  {labelIcon ? (
+                    <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
+                  ) : null}
+                </div>
+                {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
+              </div>
+            ) : null}
+
+            <Group
+              dir="ltr"
+              className={fieldShellVariants({
+                variant,
+                size,
+                isDisabled,
+                isInvalid,
+                isReadOnly,
+                isSuccess: resolvedSuccess,
+              })}
+              onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
+            >
+              {startAddon ? (
+                <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
+              ) : null}
+              {startContent ? (
+                <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
+              ) : null}
+              <AriaInput
+                ref={ref}
+                autoCapitalize={autoCapitalize}
+                autoComplete={autoComplete}
+                autoCorrect={autoCorrect}
+                enterKeyHint={enterKeyHint}
+                inputMode={inputMode}
+                maxLength={maxLength}
+                minLength={minLength}
+                pattern={pattern}
+                placeholder={resolvedPlaceholder}
+                spellCheck={spellCheck}
+                type={revealed ? 'text' : 'password'}
+                dir="ltr"
+                className={inputElementVariants({ size })}
+              />
+              {isInvalid ? (
+                <div className={errorIconVariants({ isDisabled })} aria-hidden>
+                  <Info size={iconSize} weight="fill" />
+                </div>
+              ) : showVisibilityToggle ? (
+                <AriaButton
+                  type="button"
+                  aria-label={revealed ? visibilityLabels.hide : visibilityLabels.show}
+                  aria-pressed={revealed}
+                  isDisabled={isDisabled}
+                  className={visibilityToggleVariants({ isDisabled })}
+                  onPress={() => setRevealed(!revealed)}
+                >
+                  {revealed ? (
+                    <EyeSlash size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
+                  ) : (
+                    <Eye size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
+                  )}
+                </AriaButton>
+              ) : null}
+            </Group>
+
+            {(shouldShowRequirements && resolvedRequirements) ||
+            showFeedback ||
+            showStandardMessage ? (
+              <div className={passwordInputFooterVariants()}>
+                {shouldShowRequirements && resolvedRequirements ? (
+                  <PasswordRequirementsList
+                    requirements={resolvedRequirements}
+                    value={passwordValue}
+                    size={resolvedSize}
+                    isDisabled={isDisabled}
+                  />
+                ) : null}
+                {showFeedback ? (
+                  <PasswordFeedbackMessage
+                    tone={feedbackTone}
+                    size={resolvedSize}
+                    isDisabled={isDisabled}
+                  >
+                    {feedbackMessage}
+                  </PasswordFeedbackMessage>
+                ) : null}
+                {showStandardMessage ? (
+                  <FieldMessage
+                    isInvalid={isInvalid}
+                    size={resolvedSize}
+                    description={description}
+                    errorMessage={errorMessage}
+                  />
+                ) : null}
+              </div>
+            ) : null}
+          </>
+        );
+      }}
+    </AriaTextField>
+  );
+}

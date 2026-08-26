@@ -21,6 +21,7 @@ import {
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { twMerge } from 'tailwind-merge';
+import { assignRef, type RefProp } from './ref';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -255,7 +256,8 @@ function getSearchIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
 export interface SearchProps
   extends
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck' | 'type'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'> {
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    RefProp<HTMLInputElement> {
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   className?: string;
@@ -273,31 +275,29 @@ export interface SearchProps
   spellCheck?: React.InputHTMLAttributes<HTMLInputElement>['spellCheck'];
 }
 
-export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function Search(
-  {
-    description,
-    errorMessage,
-    className,
-    variant = 'default',
-    skeletonVariant = 'default',
-    size = 'md',
-    autoCapitalize,
-    autoComplete = 'off',
-    autoCorrect,
-    enterKeyHint = 'search',
-    inputMode,
-    maxLength,
-    minLength,
-    pattern,
-    placeholder,
-    spellCheck,
-    onChange,
-    value,
-    defaultValue,
-    ...props
-  },
+export function Search({
+  description,
+  errorMessage,
+  className,
+  variant = 'default',
+  skeletonVariant = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete = 'off',
+  autoCorrect,
+  enterKeyHint = 'search',
+  inputMode,
+  maxLength,
+  minLength,
+  pattern,
+  placeholder,
+  spellCheck,
+  onChange,
+  value,
+  defaultValue,
   ref,
-) {
+  ...props
+}: SearchProps) {
   const languageConfig = useVeliLanguage();
   const resolvedPlaceholder = placeholder ?? searchPlaceholderDefaults[languageConfig.language];
   const iconSize = getSearchIconSize(size);
@@ -309,14 +309,7 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
 
-      if (typeof ref === 'function') {
-        ref(node);
-        return;
-      }
-
-      if (ref) {
-        ref.current = node;
-      }
+      assignRef(ref, node);
     },
     [ref],
   );
@@ -413,4 +406,4 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
       }}
     </AriaTextField>
   );
-});
+}
