@@ -64,13 +64,14 @@ Frameworks that manage their own theme persistence (e.g. `next-themes`) can cont
 
 The typography alignment work was implemented on 2026-05-07.
 
-- Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, and `tracking`.
+- Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, `tracking`, `spacing`, `radius`, `blur`, `breakpoint`, and `container`.
 - Semantic Figma text styles are canonical for designer usage: `Type/Heading/1/Semibold`, `Type/Body/md/Regular`, `Type/Caption/12/Regular`, etc.
 - Generated semantic utilities bridge Figma and code: `type-heading-1-semibold`, `type-body-md-regular`, `type-caption-12-regular`, etc.
 - Dhivehi text styles are emitted as `:lang(dv)` overrides for the same `type-*` utilities, so consumers switch typography by changing the inherited `lang` value through `VeliProvider`.
 - `text-*` remains Tailwind's primitive font-size namespace.
 - `type-*` is Veli's composite typography utility namespace.
 - Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
+- Foundation groups `radius`, `spacing`, `blur`, `breakpoints`, and `container` map into the Tailwind theme so utilities use Veli tokens instead of Tailwind defaults. The DTCG `breakpoints` collection remaps to Tailwind's singular `--breakpoint-*` namespace.
 - The old Figma `typography` collection is legacy. It may remain for one migration cycle, but it is excluded from canonical typography output.
 
 Build verification completed after a fresh Figma DTCG export:
@@ -341,6 +342,8 @@ Current prebuild responsibilities:
 - Keeps `packages/tokens/src/design.tokens.json` as the untouched raw Figma export.
 - Rewrites stale aliases such as `{typography.font.sans}` to the canonical namespace.
 - Resolves typography composite `fontFamily` aliases to literal font family values before Terrazzo, because current `font/*` tokens export as `$type: "string"` rather than `$type: "fontFamily"`.
+- Renames Figma fractional spacing keys that use commas (`0,5`) to Tailwind dotted form (`0.5`) so CSS custom properties stay valid.
+- Hoists `Effect-styles.Shadow` into a top-level `shadow` group for the Tailwind theme map.
 
 `packages/tokens/postbuild.js` normalizes final CSS output.
 
@@ -348,7 +351,9 @@ Current postbuild responsibilities:
 
 - Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
 - Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
-- Adds `--spacing: 4px;` inside `@theme`.
+- Adds `--spacing: 4px;` inside `@theme` as the Tailwind spacing multiplier (named `--spacing-*` tokens still override matching utilities).
+- Rewrites Terrazzo fractional spacing hyphens (`--spacing-0-5`) to Tailwind dotted form (`--spacing-0.5`).
+- Aliases `radius.DEFAULT` to bare `--radius` (`rounded`) and `--radius-md` (`rounded-md`), because Veli has no separate `radius.md` token.
 - Emits motion primitives from the designer-approved values.
 - Generates Veli `@utility duration-*` and `@utility delay-*` classes from token CSS variables.
 - Converts grouped text variables to Tailwind's paired font-size and line-height syntax.
