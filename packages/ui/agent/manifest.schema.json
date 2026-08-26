@@ -104,17 +104,7 @@
     "component": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "name",
-        "summary",
-        "importPath",
-        "source",
-        "declaration",
-        "metadata",
-        "docs",
-        "storybook"
-      ],
+      "required": ["id", "name", "summary", "importPath", "declaration", "metadata"],
       "properties": {
         "id": {
           "type": "string",
@@ -132,10 +122,6 @@
           "type": "string",
           "pattern": "^@tradenetcorp/veli-ui/[a-z0-9-]+$"
         },
-        "source": {
-          "type": "string",
-          "pattern": "^src/[a-z0-9-]+\\.(?:ts|tsx)$"
-        },
         "declaration": {
           "type": "string",
           "pattern": "^\\.\\./dist/[a-z0-9-]+\\.d\\.ts$"
@@ -143,14 +129,6 @@
         "metadata": {
           "type": "string",
           "pattern": "^\\./components/[a-z0-9-]+\\.json$"
-        },
-        "docs": {
-          "type": "string",
-          "pattern": "^apps/web/src/content/docs/[a-z0-9-]+\\.mdx$"
-        },
-        "storybook": {
-          "type": ["string", "null"],
-          "pattern": "^apps/storybook/src/stories/[a-z0-9-]+\\.stories\\.tsx$"
         }
       }
     }

@@ -30,27 +30,43 @@ test('agent manifest is a complete index of public component exports', () => {
   assert.deepEqual([...manifestIdSet].sort(), componentExportSlugs.sort());
 });
 
-test('manifest entries point to public source, declarations, metadata, docs, and stories', async () => {
+test('manifest entries point to published declarations and metadata', async () => {
   for (const component of manifestComponents) {
     assert.equal(component.importPath, `${packageJson.name}/${component.id}`);
     assert.equal(component.declaration, `../dist/${component.id}.d.ts`);
     assert.equal(component.metadata, `./components/${component.id}.json`);
     assert.equal(packageJson.exports[`./${component.id}`].types, `./dist/${component.id}.d.ts`);
+    assert.equal(component.source, undefined);
+    assert.equal(component.docs, undefined);
+    assert.equal(component.storybook, undefined);
 
-    await fs.access(path.join(uiDir, component.source));
     await fs.access(path.join(agentDir, component.metadata));
-    await fs.access(path.join(repoDir, component.docs));
 
-    if (component.storybook === null) {
-      assert.equal(component.id, 'provider');
-    } else {
-      await fs.access(path.join(repoDir, component.storybook));
-      assert.equal(path.basename(component.storybook), `${component.id}.stories.tsx`);
-    }
+    const sourceCandidates = [`src/${component.id}.tsx`, `src/${component.id}.ts`];
+    const sourceExists = await Promise.all(
+      sourceCandidates.map(async (relativePath) => {
+        try {
+          await fs.access(path.join(uiDir, relativePath));
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+    );
+    assert.ok(sourceExists.some(Boolean), `${component.id} is missing a src file`);
 
-    const docsSource = await fs.readFile(path.join(repoDir, component.docs), 'utf8');
+    const docsPath = path.join(repoDir, 'apps/web/src/content/docs', `${component.id}.mdx`);
+    const docsSource = await fs.readFile(docsPath, 'utf8');
     const docsTitle = docsSource.match(/^title:\s*(.+)$/m)?.[1]?.trim();
     assert.equal(docsTitle, component.name);
+
+    if (component.id === 'provider') {
+      continue;
+    }
+
+    await fs.access(
+      path.join(repoDir, 'apps/storybook/src/stories', `${component.id}.stories.tsx`),
+    );
   }
 });
 
