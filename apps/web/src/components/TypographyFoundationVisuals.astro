@@ -1,0 +1,382 @@
+---
+interface Props {
+  kind: 'families' | 'scale' | 'weights' | 'rhythm';
+}
+
+const { kind } = Astro.props;
+
+const roles = [
+  { name: 'Display lg', latin: [64, 132], dhivehi: [69, 128], family: 'waheed' },
+  { name: 'Display md', latin: [56, 135], dhivehi: [62, 129], family: 'waheed' },
+  { name: 'Heading 1', latin: [48, 134], dhivehi: [52, 138], family: 'waheed' },
+  { name: 'Heading 2', latin: [40, 130], dhivehi: [46, 135], family: 'waheed' },
+  { name: 'Heading 3', latin: [36, 134], dhivehi: [39, 134], family: 'waheed' },
+  { name: 'Heading 4', latin: [32, 136], dhivehi: [35, 136], family: 'waheed' },
+  { name: 'Title 1', latin: [28, 130], dhivehi: [32, 149], family: 'waheed' },
+  { name: 'Title 2', latin: [24, 135], dhivehi: [27, 147], family: 'waheed' },
+  { name: 'Subtitle', latin: [20, 142], dhivehi: [24, 135], family: 'waheed' },
+  { name: 'Body lg', latin: [18, 153], dhivehi: [19, 187], family: 'faseyha' },
+  { name: 'Body md', latin: [16, 150], dhivehi: [17, 186], family: 'faseyha' },
+  { name: 'Body sm', latin: [14, 145], dhivehi: [16, 178], family: 'faseyha' },
+  { name: 'Caption', latin: [12, 134], dhivehi: [14, 170], family: 'faseyha' },
+];
+
+const families = [
+  {
+    name: 'Inter',
+    detail: 'Regular · Medium · Semibold · Bold',
+    sample: 'Aa Bb Cc 123',
+    lang: 'en',
+    family: 'var(--font-sans)',
+  },
+  {
+    name: 'MV Aaamu FK',
+    detail: 'Bold · Display',
+    sample: 'އެމްވީ އާންމު',
+    lang: 'dv',
+    family: 'var(--font-dhivehi-aaamu)',
+  },
+  {
+    name: 'MV A Waheed',
+    detail: 'Bold · Headings and labels',
+    sample: 'އެމްވީ އޭ ވަހީދު',
+    lang: 'dv',
+    family: 'var(--font-dhivehi-waheed)',
+  },
+  {
+    name: 'MV Faseyha',
+    detail: 'Regular · Body and caption',
+    sample: 'އެމްވީ ފަސޭހަ',
+    lang: 'dv',
+    family: 'var(--font-dhivehi-faseyha)',
+  },
+];
+
+const weights = [
+  { name: 'Regular', value: 400 },
+  { name: 'Medium', value: 500 },
+  { name: 'Semibold', value: 600 },
+  { name: 'Bold', value: 700 },
+];
+
+const rhythm = [
+  { group: 'Leading', name: '4', value: '16px' },
+  { group: 'Leading', name: '6', value: '24px' },
+  { group: 'Leading', name: '8', value: '32px' },
+  { group: 'Leading', name: '10', value: '40px' },
+  { group: 'Tracking', name: 'tight', value: '-0.025em' },
+  { group: 'Tracking', name: 'normal', value: '0' },
+  { group: 'Tracking', name: 'wide', value: '0.025em' },
+  { group: 'Tracking', name: 'caption', value: '0.01em' },
+];
+---
+
+{
+  kind === 'families' && (
+    <div class="families">
+      {families.map((family) => (
+        <article>
+          <div>
+            <h3>{family.name}</h3>
+            <p>{family.detail}</p>
+          </div>
+          <p
+            class="families__sample"
+            lang={family.lang}
+            dir={family.lang === 'dv' ? 'rtl' : 'ltr'}
+            style={`font-family: ${family.family}`}
+          >
+            {family.sample}
+          </p>
+        </article>
+      ))}
+    </div>
+  )
+}
+
+{
+  kind === 'scale' && (
+    <div class="type-scale">
+      <div class="type-scale__header" aria-hidden="true">
+        <span>Role</span>
+        <span>English</span>
+        <span>Dhivehi</span>
+      </div>
+      {roles.map((role) => (
+        <article>
+          <header>
+            <strong>{role.name}</strong>
+            <span>
+              {role.latin[0]}px / {role.latin[1]}% · {role.dhivehi[0]}px / {role.dhivehi[1]}%
+            </span>
+          </header>
+          <p
+            class="type-scale__latin"
+            lang="en"
+            style={`font-size: ${role.latin[0]}px; line-height: ${role.latin[1]}%`}
+          >
+            The quick brown fox
+          </p>
+          <p
+            class="type-scale__dhivehi"
+            lang="dv"
+            dir="rtl"
+            style={`font-family: var(--font-dhivehi-${role.family}); font-size: ${role.dhivehi[0]}px; line-height: ${role.dhivehi[1]}%`}
+          >
+            ބޮޑު ބާޒާރުގައި ހުންނަ މޮޅު އެއްޗެއް
+          </p>
+        </article>
+      ))}
+    </div>
+  )
+}
+
+{
+  kind === 'weights' && (
+    <div class="weights" aria-label="Inter font weights">
+      {weights.map((weight) => (
+        <div>
+          <p style={`font-weight: ${weight.value}`}>Aa Bb 123</p>
+          <span>
+            {weight.name} · {weight.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  kind === 'rhythm' && (
+    <dl class="rhythm">
+      {rhythm.map((token) => (
+        <div>
+          <dt>
+            <span>{token.group}</span>
+            <code>
+              --{token.group.toLowerCase()}-{token.name}
+            </code>
+          </dt>
+          <dd>{token.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .families,
+  .type-scale,
+  .weights,
+  .rhythm {
+    margin-block: 24px 8px;
+  }
+
+  .families {
+    border-top: 1px solid var(--color-border-base-subtle);
+  }
+
+  .families article {
+    display: grid;
+    min-height: 132px;
+    grid-template-columns: minmax(170px, 0.55fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 28px;
+    border-bottom: 1px solid var(--color-border-base-subtle);
+    padding-block: 22px;
+  }
+
+  .families h3,
+  .families p,
+  .type-scale p,
+  .weights p {
+    margin: 0;
+  }
+
+  .families h3 {
+    color: var(--color-text-base-emphasis);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 22px;
+  }
+
+  .families article > div p,
+  .type-scale header span,
+  .weights span {
+    margin-top: 5px;
+    color: var(--color-text-base-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .families__sample {
+    overflow: hidden;
+    color: var(--color-text-base-emphasis);
+    font-size: 34px;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .type-scale {
+    overflow: hidden;
+    border: 1px solid var(--color-border-base-subtle);
+    border-radius: 8px;
+  }
+
+  .type-scale__header,
+  .type-scale article {
+    display: grid;
+    grid-template-columns: 150px repeat(2, minmax(0, 1fr));
+  }
+
+  .type-scale__header {
+    background: var(--color-bg-secondary-subtle-default);
+  }
+
+  .type-scale__header span {
+    color: var(--color-text-base-muted);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .type-scale article {
+    border-top: 1px solid var(--color-border-base-subtle);
+  }
+
+  .type-scale header,
+  .type-scale article > p {
+    min-width: 0;
+    padding: 16px 14px;
+  }
+
+  .type-scale header {
+    background: color-mix(in srgb, var(--color-bg-secondary-subtle-default) 66%, transparent);
+  }
+
+  .type-scale header strong {
+    display: block;
+    color: var(--color-text-base-emphasis);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .type-scale header span {
+    display: block;
+  }
+
+  .type-scale article > p {
+    overflow: hidden;
+    align-self: center;
+    color: var(--color-text-base-default);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .type-scale__dhivehi {
+    border-inline-start: 1px solid var(--color-border-base-subtle);
+  }
+
+  .weights {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-block: 1px solid var(--color-border-base-subtle);
+  }
+
+  .weights div {
+    padding: 24px 18px;
+  }
+
+  .weights div + div {
+    border-inline-start: 1px solid var(--color-border-base-subtle);
+  }
+
+  .weights p {
+    color: var(--color-text-base-emphasis);
+    font-size: 25px;
+    line-height: 34px;
+  }
+
+  .weights span {
+    display: block;
+  }
+
+  .rhythm {
+    border-top: 1px solid var(--color-border-base-subtle);
+  }
+
+  .rhythm div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--color-border-base-subtle);
+    padding-block: 13px;
+  }
+
+  .rhythm dt {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .rhythm dt > span {
+    min-width: 56px;
+    color: var(--color-text-base-muted);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    text-transform: uppercase;
+  }
+
+  .rhythm code {
+    color: var(--color-text-base-emphasis);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 12px;
+  }
+
+  .rhythm dd {
+    margin: 0;
+    color: var(--color-text-base-muted);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 760px) {
+    .families article {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .type-scale__header {
+      display: none;
+    }
+
+    .type-scale article {
+      grid-template-columns: 1fr;
+    }
+
+    .type-scale__dhivehi {
+      border-top: 1px solid var(--color-border-base-subtle);
+      border-inline-start: 0;
+    }
+
+    .weights {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .weights div:nth-child(3) {
+      border-top: 1px solid var(--color-border-base-subtle);
+      border-inline-start: 0;
+    }
+
+    .weights div:nth-child(4) {
+      border-top: 1px solid var(--color-border-base-subtle);
+    }
+  }
+</style>

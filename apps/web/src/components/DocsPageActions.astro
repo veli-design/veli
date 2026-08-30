@@ -1,0 +1,69 @@
+---
+import { DocsPageActionButtons } from './DocsPageActionButtons';
+
+interface Props {
+  markdownPath: string;
+  placement?: 'inline' | 'utility';
+}
+
+const { markdownPath, placement = 'inline' } = Astro.props;
+---
+
+<div
+  class:list={['docs-page-actions', `docs-page-actions--${placement}`]}
+  data-docs-page-actions
+  data-markdown-path={markdownPath}
+>
+  {placement === 'utility' && <h2 class="docs-page-actions__title">Page actions</h2>}
+  <DocsPageActionButtons client:load {markdownPath} {placement} />
+</div>
+
+<style>
+  .docs-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .docs-page-actions--utility {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 28px;
+  }
+
+  .docs-page-actions--inline {
+    display: none;
+  }
+
+  .docs-page-actions__title {
+    margin: 0 0 2px;
+    color: var(--color-text-base-subtle);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 1180px) {
+    .docs-page-actions--inline {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .docs-page-actions--inline {
+      display: grid;
+      grid-template-columns: 1fr;
+      order: 2;
+      width: 100%;
+      margin-top: 0;
+    }
+
+    .docs-page-actions--inline :global(button) {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+</style>

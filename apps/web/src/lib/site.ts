@@ -9,11 +9,53 @@ export type ComponentGroup = {
   items: ComponentItem[];
 };
 
-export const externalResources = [
+export const docsOverview = {
+  label: 'Components overview',
+  title: 'Veli Components',
+  description: 'Accessible building blocks for consistent, dependable public-service interfaces.',
+  documentTitle: 'Documentation | Veli Design System',
+  documentDescription: 'Foundations and component documentation for the Veli Design System.',
+  htmlPath: '/docs/',
+  markdownPath: '/docs/index.md',
+} as const;
+
+export const foundationsOverview = {
+  label: 'Foundations overview',
+  title: 'Veli Foundation',
+  description:
+    'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
+  documentTitle: 'Foundations | Veli Design System',
+  documentDescription:
+    'Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli.',
+  htmlPath: '/foundations/',
+  markdownPath: '/foundations/index.md',
+} as const;
+
+export type DocsNavigationItem = {
+  title: string;
+  href: string;
+  description?: string;
+};
+
+export type DocsNavigationSection = {
+  id: 'foundations' | 'components' | 'patterns' | 'ui-blocks';
+  title: string;
+  href: string;
+  items: readonly DocsNavigationItem[];
+};
+
+export type ExternalResource = {
+  label: 'Figma' | 'GitHub' | 'npm';
+  icon: 'figma' | 'github' | 'package';
+  href?: string;
+  status?: 'coming-soon';
+};
+
+export const externalResources: readonly ExternalResource[] = [
   {
     label: 'Figma',
-    href: 'https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Design-System',
     icon: 'figma',
+    status: 'coming-soon',
   },
   { label: 'GitHub', href: 'https://github.com/tradenetcorp/veli', icon: 'github' },
   {
@@ -28,75 +70,84 @@ export const foundations = [
     title: 'Principles',
     slug: 'principles',
     href: '/foundations/principles/',
-    icon: '/images/foundation-icons/principles.png',
-    iconWidth: 195,
-    iconHeight: 195,
-    description: 'The operating beliefs behind Veli: clarity, access, trust, and continuity.',
+    icon: '/images/foundation-icons/principles.svg',
+    iconDark: '/images/foundation-icons-dark/principles.svg',
+    iconWidth: 48,
+    iconHeight: 48,
+    description:
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Starter',
   },
   {
     title: 'Color',
     slug: 'color',
     href: '/foundations/color/',
-    icon: '/images/foundation-icons/color.png',
-    iconWidth: 191,
-    iconHeight: 190,
+    icon: '/images/foundation-icons/color.svg',
+    iconDark: '/images/foundation-icons-dark/color.svg',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
-      'Semantic light and dark palettes grounded in slate, blue, success, warning, and danger scales.',
+      'Semantic light and dark palettes for hierarchy, interaction, status, and feedback.',
     status: 'Available',
   },
   {
     title: 'Typography',
     slug: 'typography',
     href: '/foundations/typography/',
-    icon: '/images/foundation-icons/typography.png',
-    iconWidth: 256,
-    iconHeight: 214,
+    icon: '/images/foundation-icons/typography.svg',
+    iconDark: '/images/foundation-icons-dark/typography.svg',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
-      'Inter for Latin UI and Dhivehi font stacks for government services that need local language support.',
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Available',
   },
   {
     title: 'Spacing',
     slug: 'spacing',
     href: '/foundations/spacing/',
-    icon: '/images/foundation-icons/spacing.png',
-    iconWidth: 177,
-    iconHeight: 177,
-    description: 'A 4px baseline for predictable component rhythm and page composition.',
+    icon: '/images/foundation-icons/spacing.svg',
+    iconDark: '/images/foundation-icons-dark/spacing.svg',
+    iconWidth: 48,
+    iconHeight: 48,
+    description:
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Available',
   },
   {
     title: 'Motion',
     slug: 'motion',
     href: '/foundations/motion/',
-    icon: '/images/foundation-icons/motion.png',
-    iconWidth: 181,
-    iconHeight: 182,
+    icon: '/images/foundation-icons/motion.svg',
+    iconDark: '/images/foundation-icons-dark/motion.svg',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
-      'Subtle motion for orientation and feedback, always paired with reduced-motion behavior.',
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Starter',
   },
   {
     title: 'Accessibility',
     slug: 'accessibility',
     href: '/foundations/accessibility/',
-    icon: '/images/foundation-icons/accessibility.png',
-    iconWidth: 181,
-    iconHeight: 183,
+    icon: '/images/foundation-icons/accessibility.svg',
+    iconDark: '/images/foundation-icons-dark/accessibility.svg',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
-      'Keyboard, contrast, focus, semantics, and multilingual reading direction as baseline requirements.',
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Starter',
   },
   {
     title: 'Language & direction',
     slug: 'language-direction',
     href: '/foundations/language-direction/',
-    icon: '/images/foundation-icons/language-direction.png',
-    iconWidth: 262,
-    iconHeight: 214,
+    icon: '/images/foundation-icons/language-direction.svg',
+    iconDark: '/images/foundation-icons-dark/language-direction.svg',
+    iconWidth: 48,
+    iconHeight: 48,
     description:
-      'Provider support for English, Dhivehi, LTR, RTL, and system color-scheme behavior.',
+      'The operating beliefs behind Veli—clarity, access, local context, and shared foundations.',
     status: 'Available',
   },
 ] as const;
@@ -278,6 +329,56 @@ export const componentGroups: ComponentGroup[] = [
 ] as const;
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
+
+export function getComponentGroupSlug(title: string) {
+  return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
+}
+
+/**
+ * The single source of truth for every documentation navigation surface.
+ * Overview entries deliberately live alongside child pages so filtering and
+ * active states behave identically on desktop and mobile.
+ */
+export const docsSections: readonly DocsNavigationSection[] = [
+  {
+    id: 'foundations',
+    title: 'Foundation',
+    href: '/foundations/',
+    items: [
+      { title: 'Overview', href: '/foundations/' },
+      ...foundations.map((item) => ({
+        title: item.title === 'Language & direction' ? 'Language & Direction' : item.title,
+        href: item.href,
+        description: item.description,
+      })),
+    ],
+  },
+  {
+    id: 'components',
+    title: 'Components',
+    href: '/docs/',
+    items: [
+      { title: 'Overview', href: '/docs/' },
+      ...allComponents.map((item) => ({
+        title: item.title,
+        href: `/docs/${item.slug}/`,
+        description: item.description,
+      })),
+    ],
+  },
+  {
+    id: 'patterns',
+    title: 'Patterns',
+    href: '/patterns/',
+    items: [{ title: 'Overview', href: '/patterns/' }],
+  },
+  {
+    id: 'ui-blocks',
+    title: 'UI Blocks',
+    href: '/ui-blocks/',
+    items: [{ title: 'Overview', href: '/ui-blocks/' }],
+  },
+];
 
 export function getComponentMeta(slug: string) {
   return allComponents.find((item) => item.slug === slug);

@@ -31,7 +31,7 @@ export function DateFieldUsageDemo() {
 }
 
 export function CalendarUsageDemo() {
-  return <Calendar aria-label="Appointment calendar" />;
+  return <Calendar aria-label="Appointment calendar" className="mx-auto w-fit" />;
 }
 
 export function CalendarControlledDemo() {
@@ -42,6 +42,7 @@ export function CalendarControlledDemo() {
     <div className="space-y-3">
       <Calendar
         aria-label="Controlled calendar"
+        className="mx-auto w-fit"
         value={value}
         focusedValue={focusedValue}
         onFocusChange={setFocusedValue}
@@ -67,6 +68,7 @@ export function CalendarVariantsDemo() {
       <div className="space-y-3">
         <Calendar
           aria-label="Unavailable dates calendar"
+          className="mx-auto w-fit"
           minValue={now}
           maxValue={now.add({ months: 2 })}
           isDateUnavailable={appointmentUnavailable}

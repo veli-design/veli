@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
+import ShaderDialControls from '../components/ShaderDialControls';
 import VeliLogo from '../components/VeliLogo.astro';
 ---
 
@@ -9,26 +10,138 @@ import VeliLogo from '../components/VeliLogo.astro';
   description="Veli gives every Maldivian service one accessible, bilingual system to build from."
   pageClass="home-page"
 >
-  <main id="main" class="home-hero">
-    <ShaderBackground
-      class="home-hero__background"
-      shader="veli-aurora"
-      fallbackSrc="/images/veli-home-background.png"
-    />
-    <div class="home-hero__content">
-      <div class="home-wordmark">
-        <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
+  <main id="main" class="home-hero antialiased">
+    <div class="home-frame">
+      <div class="home-shader-frame" aria-hidden="true">
+        <ShaderBackground class="home-hero__background" />
       </div>
 
-      <div class="home-copy">
-        <h1>The foundation for<br />public services</h1>
-        <p>
-          Government services are outgrowing scattered interfaces.<br />
-          Veli gives every Maldivian service one accessible, bilingual system to build from.
-        </p>
-      </div>
+      <section class="home-hero__content" aria-labelledby="home-title">
+        <div class="home-wordmark">
+          <span class="home-wordmark__logo">
+            <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
+          </span>
+        </div>
 
-      <a class="home-cta" href="/docs/">Start building</a>
+        <div class="home-copy">
+          <h1 id="home-title" class="type-heading-1-medium">
+            <span>One system.</span>
+            <span>Every service.</span><span>Built for everyone.</span>
+          </h1>
+          <p class="type-body-lg-medium">
+            The official design system powering Maldives' public services. Consistent, accessible,
+            and built to last.
+          </p>
+        </div>
+
+        <a
+          href="/foundations/"
+          data-home-cta
+          class:list={[
+            'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',
+            '[transition-property:background-color,color,scale] [transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)] [transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+            'focus-visible:border-base-subtle focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
+            '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
+            'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
+            "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-normal after:ease-out after:content-['']",
+            'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
+            'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed',
+            '[--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
+          ]}
+        >
+          <span
+            class="relative z-[1] inline-flex items-center justify-center gap-2 px-1.5 font-sans antialiased type-subtitle-medium"
+          >
+            Start building
+          </span>
+        </a>
+      </section>
     </div>
+
+    <ShaderDialControls client:load />
   </main>
 </Layout>
+
+<script>
+  const rippleDuration = 420;
+  const rippleStartSize = 12;
+
+  function easeOutCubic(progress: number) {
+    return 1 - (1 - progress) ** 3;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-home-cta]').forEach((cta) => {
+    let animationFrame: number | null = null;
+    let pointerFrame: number | null = null;
+    let isPressing = false;
+    let rippleX = 0;
+    let rippleY = 0;
+    let rippleSize = 0;
+    let pendingPointer: { x: number; y: number } | null = null;
+
+    const writeRipple = () => {
+      cta.style.setProperty('--button-ripple-x', `${rippleX}px`);
+      cta.style.setProperty('--button-ripple-y', `${rippleY}px`);
+      cta.style.setProperty('--button-ripple-size', `${rippleSize}px`);
+    };
+
+    const beginPress = (x: number, y: number) => {
+      const { width, height } = cta.getBoundingClientRect();
+      const reach = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
+      const endSize = Math.round(Math.max(reach * 2.2, Math.max(width, height) * 1.35));
+
+      isPressing = true;
+      cta.dataset.pressed = '';
+      rippleX = x;
+      rippleY = y;
+      rippleSize = endSize;
+      writeRipple();
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+      const startTime = performance.now();
+
+      const tick = (time: number) => {
+        const progress = Math.min((time - startTime) / rippleDuration, 1);
+        rippleSize = rippleStartSize + (endSize - rippleStartSize) * easeOutCubic(progress);
+        writeRipple();
+        animationFrame = progress < 1 ? requestAnimationFrame(tick) : null;
+      };
+
+      animationFrame = requestAnimationFrame(tick);
+    };
+
+    cta.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      const rect = cta.getBoundingClientRect();
+      beginPress(event.clientX - rect.left, event.clientY - rect.top);
+      cta.setPointerCapture(event.pointerId);
+    });
+
+    cta.addEventListener('pointermove', (event) => {
+      if (!isPressing) return;
+      const rect = cta.getBoundingClientRect();
+      pendingPointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (pointerFrame !== null) return;
+
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = null;
+        if (isPressing && pendingPointer) {
+          rippleX = pendingPointer.x;
+          rippleY = pendingPointer.y;
+          writeRipple();
+        }
+      });
+    });
+
+    const endPress = () => {
+      isPressing = false;
+      delete cta.dataset.pressed;
+    };
+
+    cta.addEventListener('pointerup', endPress);
+    cta.addEventListener('pointercancel', endPress);
+  });
+</script>
