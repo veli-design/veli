@@ -748,7 +748,7 @@ button {
 
 .docs-list-section h2,
 .foundation-section h2,
-.docs-prose h2 {
+.docs-prose > h2 {
   margin: 0;
   color: var(--color-text-base-emphasis);
   font-size: 25px;
@@ -827,11 +827,11 @@ button {
   display: none;
 }
 
-.docs-prose h2 {
+.docs-prose > h2 {
   margin-top: 48px;
 }
 
-.docs-prose h3 {
+.docs-prose > h3 {
   margin: 34px 0 0;
   color: var(--color-text-base-emphasis);
   font-size: 18px;
@@ -842,7 +842,7 @@ button {
 .docs-prose p,
 .docs-prose ul,
 .docs-prose ol,
-.docs-prose table,
+.docs-prose > table,
 .docs-prose pre {
   margin-top: 15px;
 }
@@ -880,7 +880,7 @@ button {
   font-size: inherit;
 }
 
-.docs-prose table {
+.docs-prose > table {
   display: block;
   width: 100%;
   overflow-x: auto;
@@ -889,15 +889,15 @@ button {
   line-height: 20px;
 }
 
-.docs-prose th,
-.docs-prose td {
+.docs-prose > table th,
+.docs-prose > table td {
   border-bottom: 1px solid var(--color-border-base-subtle);
   padding: 10px 12px;
   text-align: left;
   vertical-align: top;
 }
 
-.docs-prose th {
+.docs-prose > table th {
   color: var(--color-text-base-emphasis);
   font-weight: 600;
 }
