@@ -123,6 +123,12 @@ const meta = {
   ],
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component:
+          "For client-side routing, use React Aria's forwarded `render` prop to render your router link component. See the Veli Link documentation for Next.js, React Router, and TanStack Start examples.",
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {

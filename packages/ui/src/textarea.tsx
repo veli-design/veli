@@ -26,6 +26,7 @@ import {
 import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref';
 
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -435,7 +436,8 @@ function CharacterCounterRing({ value, max }: { value: number; max: number }) {
 export interface TextAreaProps
   extends
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'> {
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    RefProp<HTMLTextAreaElement> {
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
@@ -462,43 +464,41 @@ export interface TextAreaProps
   wrap?: React.TextareaHTMLAttributes<HTMLTextAreaElement>['wrap'];
 }
 
-export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
-  {
-    label,
-    infoTooltip,
-    infoTooltipAriaLabel,
-    labelSupplementary,
-    labelIcon,
-    description,
-    errorMessage,
-    showRequiredIndicator = true,
-    showCharacterCounter,
-    isResizable = true,
-    minHeight,
-    maxHeight,
-    className,
-    variant = 'default',
-    size = 'md',
-    autoCapitalize,
-    autoComplete,
-    autoCorrect,
-    enterKeyHint,
-    inputMode,
-    maxLength,
-    minLength,
-    placeholder,
-    rows,
-    spellCheck,
-    wrap,
-    value,
-    defaultValue,
-    onChange,
-    isDisabled: isDisabledProp,
-    isReadOnly: isReadOnlyProp,
-    ...props
-  },
+export function TextArea({
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  showCharacterCounter,
+  isResizable = true,
+  minHeight,
+  maxHeight,
+  className,
+  variant = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  enterKeyHint,
+  inputMode,
+  maxLength,
+  minLength,
+  placeholder,
+  rows,
+  spellCheck,
+  wrap,
+  value,
+  defaultValue,
+  onChange,
+  isDisabled: isDisabledProp,
+  isReadOnly: isReadOnlyProp,
   ref,
-) {
+  ...props
+}: TextAreaProps) {
   const languageConfig = useVeliLanguage();
   const shellRef = React.useRef<HTMLDivElement>(null);
   const resolvedInfoTooltipAriaLabel =
@@ -674,4 +674,4 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(fun
       }}
     </AriaTextField>
   );
-});
+}

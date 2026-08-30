@@ -19,6 +19,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CaretDown, Info } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -384,7 +385,8 @@ export interface ComboBoxProps<T extends object>
       AriaComboBoxProps<T>,
       'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
     >,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'> {
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'>,
+    RefProp<HTMLInputElement> {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
@@ -405,34 +407,32 @@ export interface ComboBoxProps<T extends object>
   className?: string;
 }
 
-function ComboBoxInner<T extends object>(
-  {
-    children,
-    label,
-    infoTooltip,
-    infoTooltipAriaLabel,
-    labelSupplementary,
-    labelIcon,
-    action,
-    description,
-    errorMessage,
-    showRequiredIndicator = true,
-    startAddon,
-    startContent,
-    endContent,
-    placeholder,
-    menuTriggerIcon,
-    emptyState = 'No matches found.',
-    inputRef,
-    className,
-    appearance = 'default',
-    size = 'md',
-    menuTrigger = 'focus',
-    ...props
-  }: ComboBoxProps<T>,
-  forwardedRef: React.ForwardedRef<HTMLInputElement>,
-) {
-  const resolvedInputRef = inputRef ?? forwardedRef;
+export function ComboBox<T extends object>({
+  children,
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  action,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  startAddon,
+  startContent,
+  endContent,
+  placeholder,
+  menuTriggerIcon,
+  emptyState = 'No matches found.',
+  inputRef,
+  ref,
+  className,
+  appearance = 'default',
+  size = 'md',
+  menuTrigger = 'focus',
+  ...props
+}: ComboBoxProps<T>) {
+  const resolvedInputRef = inputRef ?? ref;
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
   const languageConfig = useVeliLanguage();
@@ -575,7 +575,3 @@ function ComboBoxInner<T extends object>(
     </AriaComboBox>
   );
 }
-
-export const ComboBox = React.forwardRef(ComboBoxInner) as <T extends object>(
-  props: ComboBoxProps<T> & React.RefAttributes<HTMLInputElement>,
-) => React.ReactElement | null;

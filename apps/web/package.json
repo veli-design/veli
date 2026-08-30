@@ -16,15 +16,15 @@
     "@tradenetcorp/veli-ui": "workspace:*",
     "astro": "^5.18.2",
     "phosphor-react": "^1.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@astrojs/mdx": "^4.3.12",
     "@tailwindcss/vite": "^4.1.17",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"
