@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import styles from './PD784PaletteExplorer.module.css';
+import styles from './PaletteExplorer.module.css';
 
 const PALETTES = [
   'slate',
@@ -31,7 +31,7 @@ function tokenName(
   return `--color-${palette}-${variant === 'alpha' ? 'alpha-' : ''}${step}`;
 }
 
-export function PD784PaletteExplorer() {
+export function PaletteExplorer() {
   const [variant, setVariant] = useState<Variant>('solid');
   const [status, setStatus] = useState('');
 

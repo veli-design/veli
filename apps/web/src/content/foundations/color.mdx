@@ -3,8 +3,8 @@ title: Color
 description: One color source for readable, theme-aware Maldivian government services.
 ---
 
-import PD784ColorFoundationVisuals from '../../components/PD784ColorFoundationVisuals.astro';
-import { PD784PaletteExplorer } from '../../components/PD784PaletteExplorer';
+import ColorFoundationVisuals from '../../components/ColorFoundationVisuals.astro';
+import { PaletteExplorer } from '../../components/PaletteExplorer';
 
 ## Overview
 
@@ -34,7 +34,7 @@ Steps are spaced by how the eye reads lightness, not by even numeric jumps. Colo
 
 Tokens are organised in three tiers over a shared primitive base. Each tier references the one below it rather than storing another raw value.
 
-<PD784ColorFoundationVisuals kind="architecture" data-docs-markdown="omit" />
+<ColorFoundationVisuals kind="architecture" data-docs-markdown="omit" />
 
 The reference chain shows how one primitive reaches a rendered component. Change `teal-800` once and the button label follows because each tier only holds a reference.
 
@@ -57,7 +57,7 @@ Unlike HSL or hex, OKLCH lightness closely follows human perception. Two hues wi
 
 Every palette runs from step 100, the lightest role, to step 1200, the darkest. The values invert in dark mode while each step's role remains stable.
 
-<PD784ColorFoundationVisuals kind="scale" data-docs-markdown="omit" />
+<ColorFoundationVisuals kind="scale" data-docs-markdown="omit" />
 
 | Steps     | Role                     | Typical use                                       |
 | :-------- | :----------------------- | :------------------------------------------------ |
@@ -74,7 +74,7 @@ These roles are guidance rather than a lock. The contrast relationship is what k
 
 Contrast follows the gap between steps. Keep a text step and its surface step at least six steps apart and the pair meets WCAG AA's 4.5:1 target for normal text. Step 800 on step 200 is the reference pairing. Step 700 reaches the 3:1 large-text threshold on light surfaces, but not the 4.5:1 body-text threshold.
 
-<PD784ColorFoundationVisuals kind="contrast" data-docs-markdown="omit" />
+<ColorFoundationVisuals kind="contrast" data-docs-markdown="omit" />
 
 Contrast must still be checked when color sits over imagery, transparency, gradients, or another surface that changes beneath it.
 
@@ -116,4 +116,4 @@ Color must never be the only signal. Pair a status color with a label, icon, or 
 
 The complete primitive set is shown below. Choose solid or alpha, then select any swatch to copy the resolved OKLCH value for the active site appearance.
 
-<PD784PaletteExplorer client:visible data-docs-markdown="interactive-example" />
+<PaletteExplorer client:visible data-docs-markdown="interactive-example" />
