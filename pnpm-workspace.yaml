@@ -3,6 +3,8 @@ packages:
   - 'packages/*'
 
 overrides:
+  '@types/react': ^19.0.0
+  '@types/react-dom': ^19.0.0
   '@internationalized/date': ^3.12.2
   'hono@^4': ^4.12.32
   'immutable@^5': ^5.1.9

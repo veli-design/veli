@@ -66,12 +66,106 @@ Links inherit font size and line height from their parent context.
   <LinkSizesDemo client:visible />
 </div>
 
+## Client-side routing
+
+`Link` forwards React Aria's `render` prop. Use it to render your router's link
+component while preserving Veli styling, React Aria keyboard behavior, and router
+features such as prefetching. Keep `href` on Veli `Link`: it tells React Aria that
+the rendered element is a navigational link. Always pass the props supplied to
+`render` through to the router component.
+
+### Next.js (App Router)
+
+Use this in a Client Component. `next/link` accepts the React Aria props directly;
+its production prefetching behavior remains available.
+
+```tsx
+'use client';
+
+import NextLink from 'next/link';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+export function AccountLink() {
+  return (
+    <Link
+      href="/account"
+      render={(props) => {
+        if (!('href' in props)) return <span {...props} />;
+        return <NextLink {...props} />;
+      }}
+    >
+      Account
+    </Link>
+  );
+}
+```
+
+### React Router
+
+React Router uses `to` rather than `href`. Map React Aria's resolved `href` to
+`to`, then put React Router-specific options such as `prefetch` on the router
+link.
+
+```tsx
+import { Link as RouterLink } from 'react-router';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+<Link
+  href="/account"
+  render={(props) => {
+    if (!('href' in props)) return <span {...props} />;
+    return <RouterLink {...props} to={props.href} prefetch="intent" />;
+  }}
+>
+  Account
+</Link>;
+```
+
+### TanStack Start
+
+TanStack Start uses TanStack Router's `Link`. Keep the route options on that
+component so route, parameter, search, and preload types remain checked. Omit the
+Veli `href` from the props passed through because TanStack Router creates the final
+anchor `href` from `to`.
+
+```tsx
+import { Link as TanStackLink } from '@tanstack/react-router';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+<Link
+  href="/account"
+  render={(props) => {
+    if (!('href' in props)) return <span {...props} />;
+    const { href: _href, ...linkProps } = props;
+    return <TanStackLink {...linkProps} to="/account" preload="intent" />;
+  }}
+>
+  Account
+</Link>;
+```
+
+For a dynamic TanStack route, supply its `to`, `params`, `search`, and other
+router options in the rendered `TanStackLink`; use the matching resolved URL for
+Veli's `href`.
+
+## Render-prop children
+
+As with React Aria `Link`, `children` can be a function when its content needs to
+respond to link state. It receives `isCurrent`, `isHovered`, `isPressed`,
+`isFocused`, `isFocusVisible`, and `isDisabled`.
+
+```tsx
+<Link href="/account">{({ isCurrent }) => (isCurrent ? 'Current account' : 'Account')}</Link>
+```
+
 ## Props
 
-| Prop         | Type                            | Default     | Description                      |
-| :----------- | :------------------------------ | :---------- | :------------------------------- |
-| `intent`     | `'default' \| 'secondary'`      | `'default'` | The visual category of the link. |
-| `underline`  | `'none' \| 'hover' \| 'always'` | `'none'`    | Underline behavior.              |
-| `isDisabled` | `boolean`                       | `false`     | Standard disabled state.         |
+| Prop         | Type                                | Default     | Description                                                   |
+| :----------- | :---------------------------------- | :---------- | :------------------------------------------------------------ |
+| `intent`     | `'default' \| 'secondary'`          | `'default'` | The visual category of the link.                              |
+| `underline`  | `'none' \| 'hover' \| 'always'`     | `'none'`    | Underline behavior.                                           |
+| `isDisabled` | `boolean`                           | `false`     | Standard disabled state.                                      |
+| `children`   | `ReactNode \| (state) => ReactNode` | -           | Link content, optionally rendered from React Aria link state. |
+| `render`     | `(props, state) => ReactElement`    | -           | Renders a compatible router link or other anchor element.     |
 
-_Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides._
+_Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides. This includes React Aria's `render` prop._
