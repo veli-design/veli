@@ -21,15 +21,33 @@ const { Content, headings } = await foundation.render();
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const markdownPath = `/foundations/${foundation.slug}/index.md`;
 const headerArt = {
+  principles: {
+    src: '/images/foundation-headers/principles.png',
+    srcDark: '/images/foundation-headers/principles-dark.png',
+  },
   color: {
     src: '/images/foundation-headers/color.png',
-    width: 148,
-    height: 134,
+    srcDark: '/images/foundation-headers/color-dark.png',
   },
   typography: {
     src: '/images/foundation-headers/typography.png',
-    width: 197,
-    height: 178,
+    srcDark: '/images/foundation-headers/typography-dark.png',
+  },
+  spacing: {
+    src: '/images/foundation-headers/spacing.png',
+    srcDark: '/images/foundation-headers/spacing-dark.png',
+  },
+  motion: {
+    src: '/images/foundation-headers/motion.png',
+    srcDark: '/images/foundation-headers/motion-dark.png',
+  },
+  accessibility: {
+    src: '/images/foundation-headers/accessibility.png',
+    srcDark: '/images/foundation-headers/accessibility-dark.png',
+  },
+  'language-direction': {
+    src: '/images/foundation-headers/language-direction.png',
+    srcDark: '/images/foundation-headers/language-direction-dark.png',
   },
 } as const;
 const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt];
@@ -56,13 +74,22 @@ const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt]
     </div>
     {
       foundationHeaderArt && (
-        <img
-          class="docs-page-header__art"
-          src={foundationHeaderArt.src}
-          alt=""
-          width={foundationHeaderArt.width}
-          height={foundationHeaderArt.height}
-        />
+        <span class="docs-page-header__art" aria-hidden="true">
+          <img
+            class="docs-page-header__art-image docs-page-header__art-image--light"
+            src={foundationHeaderArt.src}
+            alt=""
+            width="195"
+            height="195"
+          />
+          <img
+            class="docs-page-header__art-image docs-page-header__art-image--dark"
+            src={foundationHeaderArt.srcDark}
+            alt=""
+            width="195"
+            height="195"
+          />
+        </span>
       )
     }
   </header>
