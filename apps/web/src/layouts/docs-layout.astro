@@ -189,6 +189,74 @@ function isSectionActive(section: (typeof docsSections)[number]) {
       for (const link of document.querySelectorAll('.docs-mobile-menu a')) {
         link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
       }
+
+      const contents = document.querySelector('.docs-contents');
+      const scrollRoot = document.querySelector('.docs-main__inner');
+
+      if (contents && scrollRoot instanceof HTMLElement) {
+        const sections = [...contents.querySelectorAll('a[href^="#"]')].flatMap((link) => {
+          const id = link.getAttribute('href')?.slice(1);
+          const heading = id ? document.getElementById(id) : null;
+          return heading ? [{ link, heading }] : [];
+        });
+        let activeLink;
+        let updateFrame;
+
+        const updateContents = () => {
+          updateFrame = undefined;
+          const rootRect = scrollRoot.getBoundingClientRect();
+          const remainingScroll = Math.max(
+            0,
+            scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop,
+          );
+          const activeLine = Math.max(rootRect.top + 64, rootRect.bottom - 64 - remainingScroll);
+          let active = sections[0];
+
+          for (const section of sections) {
+            if (section.heading.getBoundingClientRect().top > activeLine) break;
+            active = section;
+          }
+
+          const hashActive =
+            remainingScroll <= 1 &&
+            sections.find(({ link, heading }) => {
+              const headingRect = heading.getBoundingClientRect();
+              return (
+                link.getAttribute('href') === location.hash &&
+                headingRect.top < rootRect.bottom &&
+                headingRect.bottom > rootRect.top
+              );
+            });
+          if (hashActive) active = hashActive;
+
+          if (!active || active.link === activeLink) return;
+          activeLink = active.link;
+
+          for (const { link } of sections) {
+            const isActive = link === activeLink;
+            link.classList.toggle('is-active', isActive);
+            if (isActive) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          }
+
+          const rail = contents;
+          if (rail.clientHeight === 0) return;
+          const linkRect = activeLink.getBoundingClientRect();
+          const railRect = rail.getBoundingClientRect();
+          if (linkRect.top < railRect.top + 8) rail.scrollTop += linkRect.top - railRect.top - 8;
+          else if (linkRect.bottom > railRect.bottom - 8)
+            rail.scrollTop += linkRect.bottom - railRect.bottom + 8;
+        };
+
+        const scheduleContentsUpdate = () => {
+          if (updateFrame) return;
+          updateFrame = requestAnimationFrame(updateContents);
+        };
+
+        scrollRoot.addEventListener('scroll', scheduleContentsUpdate, { passive: true });
+        window.addEventListener('resize', scheduleContentsUpdate);
+        scheduleContentsUpdate();
+      }
     })();
   </script>
   <DocsCodeBlocks />
