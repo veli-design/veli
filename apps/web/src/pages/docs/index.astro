@@ -1,24 +1,33 @@
 ---
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { componentGroups } from '../../lib/site';
+import { componentGroups, docsOverview, getComponentGroupSlug } from '../../lib/site';
 
 const headings = [
+  { depth: 2, slug: 'overview', text: 'Overview' },
   ...componentGroups.map((group) => ({
     depth: 2,
-    slug: group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and'),
+    slug: getComponentGroupSlug(group.title),
     text: group.title,
   })),
 ];
+const markdownPath = docsOverview.markdownPath;
 ---
 
 <DocsLayout
-  title="Documentation | Veli Design System"
-  description="Foundations and component documentation for the Veli Design System."
-  activePath="/docs/"
+  title={docsOverview.documentTitle}
+  description={docsOverview.documentDescription}
+  activePath={docsOverview.htmlPath}
+  {markdownPath}
   {headings}
   fullBleedHeader
 >
-  <header class="docs-page-header docs-page-header--overview">
+  <header class="docs-page-header docs-page-header--overview docs-overview-header">
+    <div class="docs-page-header__content">
+      <h1>Veli Components</h1>
+      <p>Accessible building blocks for consistent, dependable public-service interfaces.</p>
+      <DocsPageActions {markdownPath} placement="inline" />
+    </div>
     <img
       class="docs-overview-hero"
       src="/images/components-overview.webp"
@@ -26,39 +35,41 @@ const headings = [
       width="2048"
       height="1163"
     />
-    <div class="docs-page-header__content">
-      <p class="docs-kicker">Documentation</p>
-      <h1>Build with Veli</h1>
-      <p>
-        Start with the foundations behind the system, then use the component references to build
-        consistent and accessible public services.
-      </p>
-    </div>
   </header>
 
-  <div class="docs-intro-links">
-    <a href="/foundations/">
-      <span>Foundations</span>
-      <small>Principles, color, type, spacing, accessibility, and language.</small>
-    </a>
-  </div>
+  <div class="docs-overview-content">
+    <section class="docs-overview-copy" id="overview">
+      <h2>Overview</h2>
+      <p>
+        Veli components pair accessible behavior with the visual decisions defined by the system’s
+        foundations. Each reference covers the supported interface, states, and composition guidance
+        needed to use a component with confidence.
+      </p>
+      <p>
+        Choose the component that communicates the interaction most directly, and prefer documented
+        variants before creating local conventions.
+      </p>
+    </section>
 
-  {
-    componentGroups.map((group) => {
-      const id = group.title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
-      return (
-        <section class="docs-list-section" id={id}>
-          <h2>{group.title}</h2>
-          <div class="docs-link-list">
-            {group.items.map((item) => (
-              <a href={`/docs/${item.slug}/`}>
-                <span>{item.title}</span>
-                <p>{item.description}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-      );
-    })
-  }
+    <div class="docs-overview-directory">
+      {
+        componentGroups.map((group) => {
+          const id = getComponentGroupSlug(group.title);
+          return (
+            <section class="docs-list-section" id={id}>
+              <h2>{group.title}</h2>
+              <div class="docs-link-list">
+                {group.items.map((item) => (
+                  <a href={`/docs/${item.slug}/`}>
+                    <span>{item.title}</span>
+                    <p>{item.description}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          );
+        })
+      }
+    </div>
+  </div>
 </DocsLayout>

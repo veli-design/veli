@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro sync && astro-check && astro build",
+    "test": "node --test src/lib/*.test.mjs",
+    "build": "node --test src/lib/*.test.mjs && astro sync && astro-check && astro build && node scripts/validate-docs-artifacts.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -15,8 +16,11 @@
     "@tradenetcorp/veli-tokens": "workspace:*",
     "@tradenetcorp/veli-ui": "workspace:*",
     "astro": "^5.18.2",
+    "dialkit": "^1.4.3",
+    "motion": "^13.1.0",
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
+    "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
@@ -25,6 +29,8 @@
     "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "mdast-util-gfm-table": "^2.0.0",
+    "mdast-util-to-markdown": "^2.1.2",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"

@@ -1,58 +1,134 @@
 ---
-/**
- * Animated WebGL shader background with a static-image fallback.
- *
- * Renders a `<canvas>` driven by a shader from the registry, layered over the
- * provided fallback image. The image is what shows for users without
- * JavaScript or WebGL; once the renderer starts successfully the canvas fades
- * in over it. Pointer movement anywhere in the parent element drives the
- * shader's interactive layers (e.g. Liquify).
- *
- * Swap backgrounds by passing a different registered `shader` id.
- */
-import { DEFAULT_SHADER } from '../shaders/registry';
-
+/** The designer's exact Stipple BG renderer, hosted as the homepage background. */
 interface Props {
-  /** Registered shader id (see shaders/registry.ts). */
-  shader?: string;
-  /** Static image shown before/instead of the canvas. */
-  fallbackSrc: string;
+  fallbackSrc?: string;
   class?: string;
 }
 
-const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.props;
+const { fallbackSrc, class: className = '' } = Astro.props;
 ---
 
-<div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
-  <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
-  <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+<div class:list={['shader-bg', className]} data-stipple-bg data-shader="veli-gradient-stipple">
+  <iframe
+    class="shader-bg__iframe"
+    data-gradient-stipple-frame
+    src="/gradient-stipple.html?embedded=1"
+    title="Veli Stipple BG"
+    tabindex="-1"></iframe>
+  {
+    fallbackSrc ? (
+      <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+    ) : (
+      <div class="shader-bg__fallback" aria-hidden="true" />
+    )
+  }
 </div>
 
 <script>
-  import { createRenderer } from '../shaders/runtime/renderer';
-  import { getShader } from '../shaders/registry';
+  type ValueFolder = Record<string, unknown>;
+  type DialValues = { originalStipple?: ValueFolder };
 
-  // A `?shader=<id>` query param overrides the configured shader, so
-  // alternative backgrounds can be previewed without editing the page
-  // (e.g. `/?shader=veli-dunes`). Falls back to the component's prop.
-  const shaderOverride = new URLSearchParams(window.location.search).get('shader');
+  function exactPreset(values: DialValues) {
+    const exact = values.originalStipple ?? {};
+    return {
+      version: 1,
+      shader: 'veli-gradient-stipple',
+      scene: Number(exact.scene ?? 0),
+      controls: {
+        ...((exact.sceneTiming ?? {}) as ValueFolder),
+        ...((exact.motion ?? {}) as ValueFolder),
+        ...((exact.lightDance ?? {}) as ValueFolder),
+        ...((exact.stipple ?? {}) as ValueFolder),
+      },
+      sceneAdjustments: ['wave', 'dune', 'shore'].map(
+        (scene) => (exact[scene] as ValueFolder | undefined) ?? {},
+      ),
+    };
+  }
 
-  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
-    const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
-    const id = shaderOverride ?? wrapper.dataset.shader;
-    if (!canvas || !id) continue;
+  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-stipple-bg]')) {
+    const frame = wrapper.querySelector<HTMLIFrameElement>('[data-gradient-stipple-frame]');
+    if (!frame) continue;
+    const stippleFrame = frame;
+    let latestDialValues: DialValues | null = null;
 
-    const definition = getShader(id);
-    if (!definition) continue;
-
-    const renderer = createRenderer(canvas, definition, {
-      // Track the pointer across the whole hero, not just the canvas (which
-      // sits behind the foreground content).
-      pointerTarget: wrapper.parentElement ?? wrapper,
-    });
-
-    if (renderer) {
-      wrapper.dataset.shaderActive = 'true';
+    function post(message: unknown) {
+      stippleFrame.contentWindow?.postMessage(message, window.location.origin);
     }
+
+    function applyChanges(changedPaths: string[]) {
+      if (!latestDialValues) return;
+      const exact = latestDialValues.originalStipple ?? {};
+      if (changedPaths.length !== 1) {
+        post({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+        return;
+      }
+      const path = changedPaths[0];
+      const parts = path.split('.');
+      if (path === 'originalStipple.scene') {
+        post({ type: 'veli:stipple:set-scene', scene: Number(exact.scene) });
+      } else if (parts[0] === 'originalStipple' && parts.length === 3) {
+        const [, group, key] = parts;
+        if (['wave', 'dune', 'shore'].includes(group)) {
+          post({
+            type: 'veli:stipple:set-adjustment',
+            scene: ['wave', 'dune', 'shore'].indexOf(group),
+            key,
+            value: (exact[group] as ValueFolder | undefined)?.[key],
+          });
+        } else {
+          post({
+            type: 'veli:stipple:set-control',
+            key,
+            value: (exact[group] as ValueFolder | undefined)?.[key],
+          });
+        }
+      }
+    }
+
+    const onDialChange = (event: Event) => {
+      const detail = (event as CustomEvent).detail as {
+        values?: DialValues;
+        changedPaths?: string[];
+      };
+      if (!detail?.values) return;
+      latestDialValues = detail.values;
+      applyChanges(detail.changedPaths ?? []);
+    };
+
+    const onFrameMessage = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin ||
+        event.source !== stippleFrame.contentWindow ||
+        event.data?.type !== 'veli:stipple:ready'
+      )
+        return;
+      wrapper.dataset.shaderActive = 'true';
+      if (latestDialValues) {
+        post({ type: 'veli:stipple:apply-preset', preset: exactPreset(latestDialValues) });
+      }
+    };
+
+    window.addEventListener('veli:stipple-dial-change', onDialChange);
+    window.addEventListener('message', onFrameMessage);
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        window.removeEventListener('veli:stipple-dial-change', onDialChange);
+        window.removeEventListener('message', onFrameMessage);
+      },
+      { once: true },
+    );
   }
 </script>
+
+<style>
+  .shader-bg__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #050a10;
+  }
+</style>
