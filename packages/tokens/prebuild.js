@@ -304,6 +304,24 @@ function addDefaultColorAliases(value, path = []) {
   }
 }
 
+function mergeColorGroups(existing, incoming) {
+  if (
+    !isPlainObject(existing) ||
+    !isPlainObject(incoming) ||
+    '$type' in existing ||
+    '$type' in incoming
+  ) {
+    return incoming;
+  }
+
+  const merged = { ...existing };
+  for (const [key, value] of Object.entries(incoming)) {
+    merged[key] = key in merged ? mergeColorGroups(merged[key], value) : value;
+  }
+
+  return merged;
+}
+
 function collapseColorStructuralGroups(colorTokens) {
   const collapsed = {};
 
@@ -318,7 +336,7 @@ function collapseColorStructuralGroups(colorTokens) {
     if (!isPlainObject(groupTokens)) continue;
 
     for (const [key, value] of Object.entries(groupTokens)) {
-      collapsed[key] = value;
+      collapsed[key] = key in collapsed ? mergeColorGroups(collapsed[key], value) : value;
     }
   }
 
