@@ -1,0 +1,57 @@
+name: Accessibility issue
+description: Report an accessibility barrier in Veli.
+title: '[Accessibility]: '
+labels:
+  - bug
+body:
+  - type: input
+    id: affected-area
+    attributes:
+      label: Affected component or page
+      description: Identify the Veli component, documentation page, Storybook story, or other affected area.
+    validations:
+      required: true
+  - type: textarea
+    id: concern
+    attributes:
+      label: Accessibility concern
+      description: Describe the barrier, including the relevant interaction, content, or accessibility requirement when known.
+    validations:
+      required: true
+  - type: textarea
+    id: user-impact
+    attributes:
+      label: User impact
+      description: Explain who is affected and how this prevents or makes completion of a task more difficult.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include the smallest set of steps that demonstrates the barrier.
+      placeholder: |
+        1. Go to …
+        2. Use …
+        3. Observe …
+    validations:
+      required: true
+  - type: textarea
+    id: assistive-technology
+    attributes:
+      label: Assistive technology and environment
+      description: Include browser, operating system, and any assistive technology or input method used. State "Not applicable" when none was used.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected accessible behavior
+      description: Describe the outcome that would make the experience accessible.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional context
+      description: Add screenshots, recordings, logs, links, or other useful evidence.
