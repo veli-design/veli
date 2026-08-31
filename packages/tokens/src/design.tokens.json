@@ -298,7 +298,7 @@
           "100": {
             "$type": "color",
             "$value": "#b4b4b40a",
-            "$description": "OKLCH light: oklch(76.99% 0 none / 0.04)\nOKLCH dark: oklch(6.76% 0.0214 253.83 / 0.43)",
+            "$description": "OKLCH light: oklch(76.99% 0 none / 0.04)\nOKLCH dark: oklch(0.725 0 0 / 0.02)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#a6a6a605",
@@ -311,7 +311,7 @@
           "200": {
             "$type": "color",
             "$value": "#37375f0d",
-            "$description": "OKLCH light: oklch(35.66% 0.0686 282.36 / 0.05)\nOKLCH dark: oklch(20.14% 0.0101 276.52 / 0.44)",
+            "$description": "OKLCH light: oklch(35.66% 0.0686 282.36 / 0.05)\nOKLCH dark: oklch(0.836 0 0 / 0.03)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#c9c9c908",
@@ -614,7 +614,7 @@
           "100": {
             "$type": "color",
             "$value": "#8282820a",
-            "$description": "OKLCH light: oklch(60.66% 0 none / 0.04)\nOKLCH dark: oklch(0% 0 none / 0.33)",
+            "$description": "OKLCH light: oklch(60.66% 0 none / 0.04)\nOKLCH dark: oklch(0.87 0 0 / 0.02)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#d4d4d405",
@@ -627,7 +627,7 @@
           "200": {
             "$type": "color",
             "$value": "#3737370d",
-            "$description": "OKLCH light: oklch(33.68% 0 none / 0.05)\nOKLCH dark: oklch(19.57% 0 none / 0.34)",
+            "$description": "OKLCH light: oklch(33.68% 0 none / 0.05)\nOKLCH dark: oklch(0.864 0 0 / 0.03)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#d2d2d208",
@@ -930,7 +930,7 @@
           "100": {
             "$type": "color",
             "$value": "#b4b49b0a",
-            "$description": "OKLCH light: oklch(76.31% 0.0346 107.19 / 0.04)\nOKLCH dark: oklch(8.2% 0.0179 109.77 / 0.35)",
+            "$description": "OKLCH light: oklch(76.31% 0.0346 107.19 / 0.04)\nOKLCH dark: oklch(0.898 0 0 / 0.02)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#dddddd05",
@@ -943,7 +943,7 @@
           "200": {
             "$type": "color",
             "$value": "#3737230d",
-            "$description": "OKLCH light: oklch(33.08% 0.0329 108.07 / 0.05)\nOKLCH dark: oklch(19.83% 0.0097 107.25 / 0.36)",
+            "$description": "OKLCH light: oklch(33.08% 0.0329 108.07 / 0.05)\nOKLCH dark: oklch(0.931 0 0 / 0.03)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#e8e8e808",
@@ -1246,7 +1246,7 @@
           "100": {
             "$type": "color",
             "$value": "#9bb49b0a",
-            "$description": "OKLCH light: oklch(74.39% 0.0449 145.11 / 0.04)\nOKLCH dark: oklch(0% 0 none / 0.36)",
+            "$description": "OKLCH light: oklch(74.39% 0.0449 145.11 / 0.04)\nOKLCH dark: oklch(0.651 0.004 145.532 / 0.02)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#8e908e05",
@@ -1259,7 +1259,7 @@
           "200": {
             "$type": "color",
             "$value": "#234b0f0d",
-            "$description": "OKLCH light: oklch(36.98% 0.0989 137.31 / 0.05)\nOKLCH dark: oklch(19.94% 0.0039 106.75 / 0.37)",
+            "$description": "OKLCH light: oklch(36.98% 0.0989 137.31 / 0.05)\nOKLCH dark: oklch(0.651 0.004 145.532 / 0.04)",
             "$extensions": {
               "mode": {
                 "Blue Dark": "#8e908e0a",
@@ -2392,7 +2392,7 @@
         "400": {
           "$type": "color",
           "$value": "#9af366",
-          "$description": "OKLCH light: oklch(89.66% 0.1793 138.08)\nOKLCH dark: oklch(26% 0.0758 136.13)",
+          "$description": "OKLCH light: oklch(0.879 0.196 135.571)\nOKLCH dark: oklch(26% 0.0758 136.13)",
           "$extensions": {
             "mode": {
               "Blue Dark": "#112c01",
@@ -2483,7 +2483,7 @@
         "1100": {
           "$type": "color",
           "$value": "#0e2801",
-          "$description": "OKLCH light: oklch(24.5% 0.0714 136.13)\nOKLCH dark: oklch(91.08% 0.1551 139.4)",
+          "$description": "OKLCH light: oklch(24.5% 0.0714 136.13)\nOKLCH dark: oklch(0.879 0.196 135.571)",
           "$extensions": {
             "mode": {
               "Blue Dark": "#aafa95",
@@ -7093,6 +7093,21 @@
       }
     },
     "semantics": {
+      "accent": {
+        "gov-mv": {
+          "$type": "color",
+          "$value": "{color.brand.accent.400}",
+          "$description": "",
+          "$extensions": {
+            "mode": {
+              "Blue Dark": "{color.brand.accent.1000}",
+              "Blue Light": "{color.brand.accent.400}",
+              "Light": "{color.brand.accent.400}",
+              "Dark": "{color.brand.accent.1100}"
+            }
+          }
+        }
+      },
       "bg": {
         "skeleton": {
           "$type": "color",
