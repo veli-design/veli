@@ -9,4 +9,4 @@
 ### Changed
 
 - Emit `--radius` and `--radius-md` from `radius.DEFAULT` (6px) so bare `rounded` and `rounded-md` track the design token.
-- Normalize Figma fractional spacing keys such as `0,5` to dotted CSS form (`0.5`) in theme output.
+- Normalize Figma fractional spacing keys such as `0,5` to Tailwind underscore CSS names (`--spacing-0_5`) for `p-0.5` and related utilities.

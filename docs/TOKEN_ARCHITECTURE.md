@@ -352,7 +352,7 @@ Current postbuild responsibilities:
 - Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
 - Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
 - Adds `--spacing: 4px;` inside `@theme` as the Tailwind spacing multiplier (named `--spacing-*` tokens still override matching utilities).
-- Rewrites Terrazzo fractional spacing hyphens (`--spacing-0-5`) to Tailwind dotted form (`--spacing-0.5`).
+- Rewrites Terrazzo fractional spacing hyphens (`--spacing-0-5`) to Tailwind underscore form (`--spacing-0_5`); unescaped dots are invalid in CSS custom-property names.
 - Aliases `radius.DEFAULT` to bare `--radius` (`rounded`) and `--radius-md` (`rounded-md`), because Veli has no separate `radius.md` token.
 - Emits motion primitives from the designer-approved values.
 - Generates Veli `@utility duration-*` and `@utility delay-*` classes from token CSS variables.

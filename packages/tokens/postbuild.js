@@ -65,10 +65,11 @@ tailwindTheme = tailwindTheme.replace(
 );
 
 // Terrazzo turns dotted token keys into hyphens (0.5 → --spacing-0-5).
-// Tailwind v4 fractional spacing utilities expect a literal dot (--spacing-0.5).
-tailwindTheme = tailwindTheme.replace(/--spacing-(\d+)-(\d+):/g, '--spacing-$1.$2:');
+// Tailwind v4 fractional spacing uses underscore names (--spacing-0_5); unescaped
+// dots are invalid in CSS custom-property names.
+tailwindTheme = tailwindTheme.replace(/--spacing-(\d+)-(\d+):/g, '--spacing-$1_$2:');
 tokensCss = tokensCss.replace(/--(?:veli-)?spacing-(\d+)-(\d+):/g, (match, a, b) =>
-  match.replace(`${a}-${b}:`, `${a}.${b}:`),
+  match.replace(`${a}-${b}:`, `${a}_${b}:`),
 );
 
 const tailwindLeadingByName = {
@@ -1107,7 +1108,7 @@ function assertFoundationThemeOutput(css) {
     '--radius-4xl:',
     '--spacing-container:',
     '--spacing-paragraph:',
-    '--spacing-0.5:',
+    '--spacing-0_5:',
     '--blur-3xl:',
     '--breakpoint-sm:',
     '--container-3xs:',
@@ -1128,7 +1129,13 @@ function assertFoundationThemeOutput(css) {
 
   if (/--spacing-\d+,\d+:/.test(css)) {
     throw new Error(
-      'tailwind-theme.css must not contain comma spacing keys; use dotted form (e.g. --spacing-0.5).',
+      'tailwind-theme.css must not contain comma spacing keys; use underscore form (e.g. --spacing-0_5).',
+    );
+  }
+
+  if (/--spacing-\d+\.\d+:/.test(css)) {
+    throw new Error(
+      'tailwind-theme.css must not contain unescaped dots in spacing keys; use underscore form (e.g. --spacing-0_5).',
     );
   }
 }
