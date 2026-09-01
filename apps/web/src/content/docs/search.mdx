@@ -39,15 +39,14 @@ import { Search } from '@tradenetcorp/veli-ui/search';
 
 ## Props
 
-| Prop              | Type                                   | Default     | Description                                                  |
-| :---------------- | :------------------------------------- | :---------- | :----------------------------------------------------------- |
-| `variant`         | `'default' \| 'outline' \| 'skeleton'` | `'default'` | Visual appearance of the field shell.                        |
-| `size`            | `'sm' \| 'md' \| 'lg'`                 | `'md'`      | Field size.                                                  |
-| `skeletonVariant` | `'default' \| 'outline'`               | `'default'` | Shape used when `variant="skeleton"`.                        |
-| `description`     | `ReactNode`                            | -           | Helper text shown beneath the field when not invalid.        |
-| `errorMessage`    | `ReactNode`                            | -           | Validation content shown beneath the field when `isInvalid`. |
-| `placeholder`     | `string`                               | -           | Placeholder text.                                            |
-| `className`       | `string`                               | -           | Layout-only class override merged onto the root element.     |
+| Prop           | Type                     | Default     | Description                                                  |
+| :------------- | :----------------------- | :---------- | :----------------------------------------------------------- |
+| `variant`      | `'default' \| 'outline'` | `'default'` | Visual appearance of the field shell.                        |
+| `size`         | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                                  |
+| `description`  | `ReactNode`              | -           | Helper text shown beneath the field when not invalid.        |
+| `errorMessage` | `ReactNode`              | -           | Validation content shown beneath the field when `isInvalid`. |
+| `placeholder`  | `string`                 | -           | Placeholder text.                                            |
+| `className`    | `string`                 | -           | Layout-only class override merged onto the root element.     |
 
 All other `react-aria-components` `TextField` props are supported (`value`, `onChange`, `isDisabled`, `isInvalid`, `aria-label`, …), excluding `style`, `type`, and direct child composition. Provide a `label` via the page or an `aria-label` so the field has an accessible name.
 

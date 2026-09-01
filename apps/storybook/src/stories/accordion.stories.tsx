@@ -244,26 +244,3 @@ export const Flushed: Story = {
     );
   },
 };
-
-export const Skeleton: Story = {
-  render: () => (
-    <div className={storyGridClassName}>
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          Medium (md)
-        </span>
-        <div className={storyGridPanelClassName}>
-          <Accordion isSkeleton size="md" alignment="left" />
-        </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          Large (lg)
-        </span>
-        <div className={storyGridPanelClassName}>
-          <Accordion isSkeleton size="lg" alignment="right" />
-        </div>
-      </div>
-    </div>
-  ),
-};

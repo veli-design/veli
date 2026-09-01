@@ -46,10 +46,6 @@ const passwordInputRootVariants = cva('flex w-full flex-col font-sans antialiase
 
 const passwordInputFooterVariants = cva('flex w-full flex-col gap-2 pt-2');
 
-const passwordInputSkeletonRootVariants = cva(
-  'flex w-full flex-col items-start font-sans antialiased',
-);
-
 const infoTooltipTriggerVariants = cva(
   'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
@@ -77,32 +73,6 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
   },
 });
 
-const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-2',
-      md: 'h-2',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-9',
-      md: 'h-11',
-      lg: 'h-13',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
 const fieldShellVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
@@ -110,7 +80,6 @@ const fieldShellVariants = cva(
       variant: {
         default: '',
         outline: '',
-        skeleton: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -682,36 +651,6 @@ export function PasswordInput({
     },
     [onChange, value],
   );
-
-  const hasSkeletonHeader = Boolean(
-    label ||
-    infoTooltip ||
-    labelSupplementary ||
-    labelIcon ||
-    action ||
-    (showRequiredIndicator && props.isRequired),
-  );
-  const hasSkeletonFooter = Boolean(
-    description || errorMessage || feedbackMessage || resolvedRequirements,
-  );
-
-  if (variant === 'skeleton') {
-    return (
-      <div className={twMerge(passwordInputSkeletonRootVariants(), className)} aria-hidden="true">
-        {hasSkeletonHeader ? (
-          <div className="flex w-full items-center pb-2">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-        <div className={skeletonFieldVariants({ size })} />
-        {hasSkeletonFooter ? (
-          <div className="flex w-full items-center pt-2">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-      </div>
-    );
-  }
 
   return (
     <AriaTextField

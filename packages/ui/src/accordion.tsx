@@ -122,20 +122,6 @@ const accordionPanelIndentVariants = cva('', {
   },
 });
 
-const accordionSkeletonBarVariants = cva('bg-skeleton animate-pulse', {
-  variants: {
-    size: {
-      md: 'h-2.5',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-const skeletonLabelWidths = ['max-w-2/5', 'max-w-1/3', 'max-w-1/2'] as const;
-
 export type AccordionItemData = {
   id: string | number;
   label: React.ReactNode;
@@ -153,8 +139,6 @@ export interface AccordionProps
   itemClassName?: string;
   triggerClassName?: string;
   panelClassName?: string;
-  isSkeleton?: boolean;
-  skeletonItemCount?: number;
 }
 
 export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className'> {
@@ -182,97 +166,6 @@ export interface AccordionPanelProps
 
 export function AccordionItem({ className, ...props }: AccordionItemProps) {
   return <AriaDisclosure {...props} className={twMerge(accordionItemVariants(), className)} />;
-}
-
-type AccordionSkeletonItemProps = VariantProps<typeof accordionTriggerVariants> & {
-  index: number;
-  showContent?: boolean;
-};
-
-function AccordionSkeletonItem({
-  index,
-  size = 'md',
-  alignment = 'left',
-  flushed = false,
-  showContent = false,
-}: AccordionSkeletonItemProps) {
-  const labelWidth = skeletonLabelWidths[index % skeletonLabelWidths.length];
-  const labelSkeleton = (
-    <span
-      aria-hidden
-      className={twMerge(
-        accordionSkeletonBarVariants({ size }),
-        'flex-1',
-        labelWidth,
-        alignment === 'right' && 'text-start',
-      )}
-    />
-  );
-  const chevron = (
-    <span
-      className={accordionChevronWrapperVariants({
-        alignment: alignment ?? 'left',
-        isExpanded: showContent,
-      })}
-    >
-      {alignment === 'right' ? (
-        <CaretRight aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
-      ) : (
-        <CaretDown aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
-      )}
-    </span>
-  );
-
-  return (
-    <div className={accordionItemVariants()}>
-      <div
-        data-accordion-header
-        className={twMerge(accordionHeaderWrapperVariants(), showContent && 'border-b-0 pb-0')}
-      >
-        <div
-          aria-hidden
-          className={accordionTriggerVariants({
-            size,
-            alignment,
-            flushed,
-          })}
-        >
-          {alignment === 'right' ? (
-            <>
-              {chevron}
-              {labelSkeleton}
-            </>
-          ) : (
-            <>
-              {labelSkeleton}
-              {chevron}
-            </>
-          )}
-        </div>
-      </div>
-      {showContent ? (
-        <div
-          className={accordionPanelContentVariants({
-            size,
-            flushed,
-          })}
-        >
-          <div
-            className={accordionPanelIndentVariants({
-              alignment: alignment ?? 'left',
-            })}
-            aria-hidden
-          >
-            <div className="flex flex-col gap-2">
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-full')} />
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-11/12')} />
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-3/4')} />
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
 }
 
 export function AccordionHeader({
@@ -404,41 +297,8 @@ export function Accordion({
   size = 'md',
   alignment = 'left',
   flushed = false,
-  isSkeleton = false,
-  skeletonItemCount = 3,
   ...props
 }: AccordionProps) {
-  const resolvedSize = size ?? 'md';
-  const resolvedAlignment = alignment ?? 'left';
-  const resolvedFlushed = flushed ?? false;
-
-  if (isSkeleton) {
-    return (
-      <AccordionSizeContext.Provider value={resolvedSize}>
-        <AccordionAlignmentContext.Provider value={resolvedAlignment}>
-          <AccordionFlushedContext.Provider value={resolvedFlushed}>
-            <output
-              aria-busy="true"
-              aria-label="Loading accordion"
-              className={twMerge(accordionVariants(), className)}
-            >
-              {Array.from({ length: skeletonItemCount }, (_, index) => (
-                <AccordionSkeletonItem
-                  key={index}
-                  index={index}
-                  size={resolvedSize}
-                  alignment={resolvedAlignment}
-                  flushed={resolvedFlushed}
-                  showContent={index === 0}
-                />
-              ))}
-            </output>
-          </AccordionFlushedContext.Provider>
-        </AccordionAlignmentContext.Provider>
-      </AccordionSizeContext.Provider>
-    );
-  }
-
   return (
     <AccordionSizeContext.Provider value={size ?? 'md'}>
       <AccordionAlignmentContext.Provider value={alignment ?? 'left'}>

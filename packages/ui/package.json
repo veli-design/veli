@@ -150,6 +150,11 @@
       "import": "./dist/select.js",
       "default": "./dist/select.js"
     },
+    "./skeleton": {
+      "types": "./dist/skeleton.d.ts",
+      "import": "./dist/skeleton.js",
+      "default": "./dist/skeleton.js"
+    },
     "./switch": {
       "types": "./dist/switch.d.ts",
       "import": "./dist/switch.js",
