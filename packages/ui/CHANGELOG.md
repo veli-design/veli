@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.11.0
+
+_Released 2026-09-01._
+
+### Added
+
+- Add a generic `Skeleton` placeholder primitive exported from `@tradenetcorp/veli-ui/skeleton` for composing loading state skeletons.
+
+### Changed
+
+- Require React 19 and React DOM 19, eliminating peer dependency warnings for React 19 applications.
+
+### Removed
+
+- Remove embedded skeleton loading modes from `Input`, `TextArea`, `PasswordInput`, `Search`, and `Accordion`. Compose `Skeleton` placeholders instead of using `appearance="skeleton"`, `variant="skeleton"`, or `isSkeleton`.
+
+### Fixed
+
+- Allow `Link` children to use React Aria's state render function alongside router link rendering.
+- Standardize interactive component refs as React 19 ref props while preserving access to their underlying controls.
+- Add default ESM export conditions so bundlers can resolve every public component subpath consistently.
+
 ## 0.10.0
 
 _Released 2026-08-19._
