@@ -24,6 +24,12 @@ export default defineConfig({
         leading: ['leading.*'],
         tracking: ['tracking.*'],
         'font-weight': ['font-weight.*'],
+        spacing: ['spacing.*'],
+        radius: ['radius.*'],
+        blur: ['blur.*'],
+        // DTCG collection is plural; Tailwind v4 expects --breakpoint-*
+        breakpoint: ['breakpoints.*'],
+        container: ['container.*'],
       },
       // Light/Dark are the teal/green Veli defaults. Keep Blue Light/Dark inert for now.
       modeVariants: [{ variant: 'dark', mode: 'Dark' }],
