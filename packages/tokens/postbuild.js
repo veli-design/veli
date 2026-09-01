@@ -625,7 +625,7 @@ function addStatusCautiousCompatibilityAliases(css) {
   return css
     .split('\n')
     .flatMap((line) => {
-      const match = line.match(/^(\s*)(--color-status-)caution-(subtle|emphasis):\s*[^;]+;/);
+      const match = line.match(/^(\s*)(--color-status-)caution-(subtle|emphasis|stroke):\s*[^;]+;/);
       if (!match) return [line];
 
       const [, indent, prefix, variant] = match;
@@ -1049,10 +1049,11 @@ function assertDefaultThemeOutput(css) {
     '--color-primary-800: var(--color-teal-800);',
     '--color-neutral-800: var(--color-sage-800);',
     '--color-accent-800: var(--color-green-800);',
-    '--color-status-caution-subtle: var(--color-caution-400);',
+    '--color-status-caution-subtle: var(--color-caution-alpha-200);',
     '--color-status-caution-emphasis: var(--color-caution-900);',
     '--color-status-cautious-subtle: var(--color-status-caution-subtle);',
     '--color-status-cautious-emphasis: var(--color-status-caution-emphasis);',
+    '--color-status-cautious-stroke: var(--color-status-caution-stroke);',
     '--text-color-base-default: var(--color-text-base-DEFAULT);',
   ];
   const missingSnippets = requiredLightAndDarkSnippets.filter(
