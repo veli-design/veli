@@ -31,8 +31,6 @@ import { type RefProp } from './ref';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const inputSkeletonRootVariants = cva('flex w-full flex-col items-start font-sans antialiased');
-
 type InputAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type InputSize = VariantProps<typeof fieldShellVariants>['size'];
 
@@ -63,32 +61,6 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
   },
 });
 
-const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-2',
-      md: 'h-2',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-9',
-      md: 'h-11',
-      lg: 'h-13',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
 const fieldShellVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
@@ -96,7 +68,6 @@ const fieldShellVariants = cva(
       appearance: {
         default: '',
         outline: '',
-        skeleton: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -362,34 +333,6 @@ export function Input({
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
   const inputValueDirection = getInputValueDirection(type);
-  const hasSkeletonHeader = Boolean(
-    label ||
-    infoTooltip ||
-    labelSupplementary ||
-    labelIcon ||
-    action ||
-    (showRequiredIndicator && props.isRequired),
-  );
-  const hasSkeletonFooter = Boolean(description || errorMessage);
-
-  if (appearance === 'skeleton') {
-    return (
-      <div className={twMerge(inputSkeletonRootVariants(), className)} aria-hidden="true">
-        {hasSkeletonHeader ? (
-          <div className="flex w-full items-center pb-2">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-        <div className={skeletonFieldVariants({ size })} />
-        {hasSkeletonFooter ? (
-          <div className="flex w-full items-center pt-1">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
   return (
     <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
