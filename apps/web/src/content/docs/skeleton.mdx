@@ -1,0 +1,83 @@
+---
+title: Skeleton
+description: Generic loading placeholder primitive for composing field, list, and content skeleton layouts.
+---
+
+import { SkeletonUsageDemo } from '../../components/DocsExamples';
+
+# Skeleton
+
+`Skeleton` is a lightweight placeholder primitive for loading states. Compose it with layout classes to match the shape and size of the content it replaces.
+
+## Import
+
+```tsx
+import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SkeletonUsageDemo client:visible />
+</div>
+
+```tsx
+<div aria-busy="true" aria-label="Loading content" className="w-[320px] space-y-3">
+  <Skeleton className="h-5 w-2/5 rounded-sm" />
+  <div className="space-y-2">
+    <Skeleton className="h-2.5 w-full rounded-xs" />
+    <Skeleton className="h-2.5 w-full rounded-xs" />
+    <Skeleton className="h-2.5 w-4/5 rounded-xs" />
+  </div>
+</div>
+```
+
+## Accessibility
+
+Each `Skeleton` sets `aria-hidden="true"` because placeholders are decorative. Wrap the loading region in a live status element when you need to announce progress:
+
+```tsx
+<div aria-busy="true" aria-label="Loading form">
+  <Skeleton className="h-11 w-full" />
+</div>
+```
+
+## Sizing and shape
+
+Control dimensions with Tailwind utilities on `className`:
+
+| Pattern           | Example classes            |
+| :---------------- | :------------------------- |
+| Label line        | `h-2 w-[76px] rounded-xs`  |
+| Input field (md)  | `h-11 w-full`              |
+| Text area (md)    | `min-h-[146px] w-full`     |
+| Pill search field | `h-11 w-full rounded-full` |
+| Avatar            | `size-10 rounded-full`     |
+
+## Composition
+
+Build component-specific placeholders by stacking `Skeleton` elements:
+
+```tsx
+function InputFieldSkeleton() {
+  return (
+    <div className="flex w-full flex-col items-start">
+      <div className="flex w-full items-center pb-2">
+        <Skeleton className="h-2 w-[76px] rounded-xs" />
+      </div>
+      <Skeleton className="h-11 w-full" />
+      <div className="flex w-full items-center pt-1">
+        <Skeleton className="h-2 w-[76px] rounded-xs" />
+      </div>
+    </div>
+  );
+}
+```
+
+## Props
+
+| Prop        | Type     | Default | Description                                             |
+| :---------- | :------- | :------ | :------------------------------------------------------ |
+| `className` | `string` | -       | Size, shape, and layout overrides merged onto the base. |
+
+All standard HTML `div` attributes are supported.

@@ -98,7 +98,8 @@ Generated files in \`dist/\` are automatically built on publish via the \`prepub
 
 The \`terrazzo.config.js\` maps your DTCG tokens to Tailwind v4 theme CSS. The current configuration:
 
-- Maps all \`colors.\*\` tokens to Tailwind color variables
-- Maps \`typography.font-stack.\*\` to font families
-- Maps \`typography.type-scale.\*\` to font sizes
+- Maps \`color.\*\` tokens to Tailwind color variables
+- Maps \`font.\*\`, \`font-weight.\*\`, \`text.\*\`, \`leading.\*\`, and \`tracking.\*\` to typography theme variables
+- Maps \`shadow.\*\`, \`ease.\*\`, \`duration.\*\`, and \`delay.\*\` to effect and motion theme variables
+- Maps \`spacing.\*\`, \`radius.\*\`, \`blur.\*\`, \`breakpoints.\*\` (as \`breakpoint\`), and \`container.\*\` to layout and shape theme variables
 - Generates dark mode variants from your token's \`Dark\` mode values

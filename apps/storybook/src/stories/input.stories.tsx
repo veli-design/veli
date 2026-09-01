@@ -252,7 +252,7 @@ const meta = {
   argTypes: {
     appearance: {
       control: 'select',
-      options: ['default', 'outline', 'skeleton'],
+      options: ['default', 'outline'],
     },
     size: {
       control: 'select',
@@ -571,16 +571,6 @@ export const Sizes: Story = {
       </div>
     );
   },
-};
-
-export const Skeleton: Story = {
-  render: () => (
-    <div className="flex w-[320px] flex-col gap-8">
-      <Input appearance="skeleton" size="sm" label="Label" description="Helper text" />
-      <Input appearance="skeleton" size="md" label="Label" description="Helper text" />
-      <Input appearance="skeleton" size="lg" label="Label" description="Helper text" />
-    </div>
-  ),
 };
 
 export const RootClassName: Story = {

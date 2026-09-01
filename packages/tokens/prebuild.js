@@ -440,6 +440,23 @@ function hoistShadowTokens(value) {
 
 hoistShadowTokens(tokens);
 
+// Figma exports fractional spacing keys with commas (e.g. "0,5"). CSS custom
+// properties cannot contain commas; rename to Tailwind dotted form ("0.5").
+function renameDecimalCommaKeys(value) {
+  if (!isPlainObject(value)) return value;
+
+  const next = {};
+  for (const [key, child] of Object.entries(value)) {
+    const renamedKey = /^\d+,\d+$/.test(key) ? key.replace(',', '.') : key;
+    next[renamedKey] = renameDecimalCommaKeys(child);
+  }
+  return next;
+}
+
+if (isPlainObject(tokens.spacing)) {
+  tokens.spacing = renameDecimalCommaKeys(tokens.spacing);
+}
+
 mkdirSync(normalizedDir, { recursive: true });
 writeFileSync(normalizedTokensPath, JSON.stringify(tokens, null, 2), 'utf-8');
 
