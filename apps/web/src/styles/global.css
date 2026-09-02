@@ -926,6 +926,10 @@ button {
     display: none !important;
     transition: none;
   }
+
+  .docs-page-header__art-bg {
+    display: none !important;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -1839,8 +1843,32 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   width: 195px;
   max-width: 24%;
   aspect-ratio: 1;
+  container-type: size;
+  /*
+    Lottie BG lattice (800-comp × 76% layer scale):
+    pitch 27.702, radius 3.1236, origin (10.21, 11.88), ink #008F8D.
+  */
+  --foundation-art-comp: 800;
+  --foundation-art-pitch: 27.702;
+  --foundation-art-radius: 3.1236;
+  --foundation-art-origin-x: 10.21;
+  --foundation-art-origin-y: 11.88;
+  --foundation-art-dot: #008f8d;
+  --foundation-art-dot-opacity: 0.65;
+  --foundation-art-plate: #ffffff;
 }
 
+html[data-color-scheme='dark'] .docs-page-header__art {
+  --foundation-art-plate: #161614;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-scheme='system'] .docs-page-header__art {
+    --foundation-art-plate: #161614;
+  }
+}
+
+.docs-page-header__art-bg,
 .docs-page-header__art-image,
 .docs-page-header__art-lottie {
   position: absolute;
@@ -1851,7 +1879,48 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   pointer-events: none;
 }
 
+/*
+  CSS hex lattice: each gradient layer tiles 1×2 pitches so odd rows are
+  only painted by the half-pitch-shifted second layer.
+*/
+.docs-page-header__art-bg {
+  --s: calc(100cqw / var(--foundation-art-comp));
+  --cell: calc(var(--foundation-art-pitch) * var(--s));
+  --r: calc(var(--foundation-art-radius) * var(--s));
+  --ox: calc(var(--foundation-art-origin-x) * var(--s));
+  --oy: calc(var(--foundation-art-origin-y) * var(--s));
+  --half: calc(var(--cell) / 2);
+  --ink: color-mix(
+    in srgb,
+    var(--foundation-art-dot) calc(var(--foundation-art-dot-opacity) * 100%),
+    transparent
+  );
+  z-index: 0;
+  background-color: var(--foundation-art-plate);
+  background-image:
+    radial-gradient(circle var(--r) at var(--ox) var(--oy), var(--ink) 99%, transparent 100%),
+    radial-gradient(circle var(--r) at var(--ox) var(--oy), var(--ink) 99%, transparent 100%);
+  background-size:
+    var(--cell) calc(var(--cell) * 2),
+    var(--cell) calc(var(--cell) * 2);
+  background-position:
+    0 0,
+    var(--half) var(--cell);
+  background-repeat: repeat;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.docs-page-header__art:has(.docs-page-header__art-lottie.is-ready) .docs-page-header__art-bg {
+  opacity: 1;
+}
+
+.docs-page-header__art.is-fallback .docs-page-header__art-bg {
+  opacity: 0;
+}
+
 .docs-page-header__art-image {
+  z-index: 1;
   object-fit: contain;
   opacity: 0;
 }
@@ -1865,6 +1934,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 }
 
 .docs-page-header__art-lottie {
+  z-index: 2;
   opacity: 0;
   transition: opacity 320ms ease;
 }

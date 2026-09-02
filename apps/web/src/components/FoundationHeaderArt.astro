@@ -17,6 +17,8 @@ const usesSharedLottie = !lottieDark;
   data-lottie-src={lottie}
   data-lottie-src-dark={lottieDark}
 >
+  {/* Native dotted plate — replaces baked Lottie BG; hidden when PNG fallback is shown. */}
+  <span class="docs-page-header__art-bg"></span>
   <img
     class="docs-page-header__art-image docs-page-header__art-image--light"
     src={src}
