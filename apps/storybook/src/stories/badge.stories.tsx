@@ -1,5 +1,6 @@
 import { type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Bell, FlagBanner } from 'phosphor-react';
@@ -46,6 +47,10 @@ const enBadgeText = {
   pending: 'Pending',
   statusAriaLabel: 'Status',
   notificationAriaLabel: '5 notifications',
+  onlineStatusLabel: 'Online',
+  awayStatusLabel: 'Away',
+  busyStatusLabel: 'Busy',
+  offlineStatusLabel: 'Offline',
 } as const;
 
 const dhivehiBadgeText = {
@@ -54,6 +59,10 @@ const dhivehiBadgeText = {
   pending: 'މަޑުކުރެވިފައި',
   statusAriaLabel: 'ހާލަތު',
   notificationAriaLabel: '5 ނޯޓިފިކޭޝަން',
+  onlineStatusLabel: 'އޮންލައިން',
+  awayStatusLabel: 'އެވޭ',
+  busyStatusLabel: 'ބިޒީ',
+  offlineStatusLabel: 'އޮފްލައިން',
 } as const;
 
 const localizedBadgeText = {
@@ -321,6 +330,66 @@ export const StatusDots: Story = {
       ))}
     </div>
   ),
+};
+
+export const OnlineStatus: Story = {
+  render: () => {
+    const text = useBadgeText();
+
+    const presenceUsers = [
+      {
+        name: 'John Doe',
+        initials: 'JD',
+        src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'positive' as const,
+        statusLabel: text.onlineStatusLabel,
+      },
+      {
+        name: 'Aisha Hassan',
+        initials: 'AH',
+        src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'cautious' as const,
+        statusLabel: text.awayStatusLabel,
+      },
+      {
+        name: 'Michael Chen',
+        initials: 'MC',
+        src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'danger' as const,
+        statusLabel: text.busyStatusLabel,
+      },
+      {
+        name: 'Sara Ibrahim',
+        initials: 'SI',
+        src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'neutral' as const,
+        statusLabel: text.offlineStatusLabel,
+      },
+    ];
+
+    return (
+      <ul className="flex w-64 flex-col gap-3">
+        {presenceUsers.map(({ name, initials, src, intent, statusLabel }) => (
+          <li key={name} className="flex items-center gap-3">
+            <div className="relative inline-flex shrink-0">
+              <Avatar type="image" src={src} initials={initials} alt={name} size="44" />
+              <Badge
+                appearance="emphasis"
+                intent={intent}
+                size="xs"
+                className="absolute bottom-0.5 end-0.5 ring-2 ring-bg-surface-base"
+                aria-label={statusLabel}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="type-body-sm-medium truncate text-base">{name}</p>
+              <p className="type-caption-regular text-base-muted">{statusLabel}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  },
 };
 
 export const WithoutIcon: Story = {
