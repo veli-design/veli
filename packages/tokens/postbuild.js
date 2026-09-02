@@ -64,6 +64,14 @@ tailwindTheme = tailwindTheme.replace(
   '--text-$1--line-height:',
 );
 
+// Terrazzo turns dotted token keys into hyphens (0.5 → --spacing-0-5).
+// Tailwind v4 fractional spacing uses underscore names (--spacing-0_5); unescaped
+// dots are invalid in CSS custom-property names.
+tailwindTheme = tailwindTheme.replace(/--spacing-(\d+)-(\d+):/g, '--spacing-$1_$2:');
+tokensCss = tokensCss.replace(/--(?:veli-)?spacing-(\d+)-(\d+):/g, (match, a, b) =>
+  match.replace(`${a}-${b}:`, `${a}_${b}:`),
+);
+
 const tailwindLeadingByName = {
   none: '1',
   tight: '1.25',
@@ -199,6 +207,49 @@ function addDefaultColorUtilityAliases(css) {
     /(:where\(\.dark, \.dark \*\) \{\n)([\s\S]*?)(\n\s*\})/g,
     (_match, start, body, end) =>
       `${start}${addDefaultColorUtilityAliasesToDeclarations(body)}${end}`,
+  );
+}
+
+// Veli has radius.DEFAULT (6px) and no radius.md. Emit bare --radius for
+// `rounded` and --radius-md so `rounded-md` tracks the design token.
+function addRadiusDefaultAliasesToDeclarations(css) {
+  const sourceLines = css.split('\n');
+  const existingVariables = new Set(
+    sourceLines.map((line) => line.trim().match(/^(--[a-z0-9.-]+):/)?.[1]).filter(Boolean),
+  );
+
+  return sourceLines
+    .reduce((lines, line) => {
+      lines.push(line);
+
+      const match = line.match(/^(\s*)(--radius)-(DEFAULT|default):\s*[^;]+;/);
+      if (!match) return lines;
+
+      const [, indent, prefix, defaultSuffix] = match;
+      const defaultVar = `${prefix}-${defaultSuffix}`;
+
+      if (!existingVariables.has(prefix)) {
+        lines.push(`${indent}${prefix}: var(${defaultVar});`);
+        existingVariables.add(prefix);
+      }
+
+      const mdVar = `${prefix}-md`;
+      if (!existingVariables.has(mdVar)) {
+        lines.push(`${indent}${mdVar}: var(${defaultVar});`);
+        existingVariables.add(mdVar);
+      }
+
+      return lines;
+    }, [])
+    .join('\n');
+}
+
+function addRadiusDefaultAliases(css) {
+  const nextCss = addRadiusDefaultAliasesToDeclarations(css);
+
+  return nextCss.replace(
+    /(:where\(\.dark, \.dark \*\) \{\n)([\s\S]*?)(\n\s*\})/g,
+    (_match, start, body, end) => `${start}${addRadiusDefaultAliasesToDeclarations(body)}${end}`,
   );
 }
 
@@ -769,11 +820,14 @@ function commentForVariable(variableName) {
   if (variableName.startsWith('--tracking-')) return 'Typography / letter spacing';
   if (variableName.startsWith('--shadow-')) return 'Effects / shadows';
   if (variableName.startsWith('--blur-')) return 'Effects / blur';
-  if (variableName.startsWith('--radius-')) return 'Shape / radius';
+  if (variableName === '--radius' || variableName.startsWith('--radius-')) {
+    return 'Shape / radius';
+  }
   if (variableName.startsWith('--spacing')) return 'Layout / spacing';
   if (variableName.startsWith('--breakpoint') || variableName.startsWith('--breakpoints-')) {
     return 'Layout / breakpoints';
   }
+  if (variableName.startsWith('--container-')) return 'Layout / container';
 
   return undefined;
 }
@@ -781,6 +835,7 @@ function commentForVariable(variableName) {
 const groupOrder = [
   'Layout / spacing',
   'Layout / breakpoints',
+  'Layout / container',
   'Primitive colors',
   'Brand theme roles',
   'Semantic colors',
@@ -893,6 +948,8 @@ function annotateVariableGroups(css) {
 
 tailwindTheme = addDefaultColorUtilityAliases(tailwindTheme);
 tokensCss = addDefaultColorUtilityAliases(tokensCss);
+tailwindTheme = addRadiusDefaultAliases(tailwindTheme);
+tokensCss = addRadiusDefaultAliases(tokensCss);
 tailwindTheme = addStatusCautiousCompatibilityAliases(tailwindTheme);
 tokensCss = addStatusCautiousCompatibilityAliases(tokensCss);
 tailwindTheme = addPropertyColorVariables(tailwindTheme);
@@ -1043,6 +1100,47 @@ function assertShadowOutput(themeCss, rawTokensCss) {
 }
 
 assertShadowOutput(tailwindTheme, tokensCss);
+
+function assertFoundationThemeOutput(css) {
+  const requiredSnippets = [
+    '--radius:',
+    '--radius-md:',
+    '--radius-4xl:',
+    '--spacing-container:',
+    '--spacing-paragraph:',
+    '--spacing-0_5:',
+    '--blur-3xl:',
+    '--breakpoint-sm:',
+    '--container-3xs:',
+  ];
+  const missingSnippets = requiredSnippets.filter((snippet) => !css.includes(snippet));
+
+  if (missingSnippets.length) {
+    throw new Error(
+      `tailwind-theme.css is missing expected foundation theme output:\n${missingSnippets
+        .map((snippet) => `- ${snippet}`)
+        .join('\n')}`,
+    );
+  }
+
+  if (css.includes('--breakpoints-')) {
+    throw new Error('tailwind-theme.css must emit --breakpoint-* (singular), not --breakpoints-*.');
+  }
+
+  if (/--spacing-\d+,\d+:/.test(css)) {
+    throw new Error(
+      'tailwind-theme.css must not contain comma spacing keys; use underscore form (e.g. --spacing-0_5).',
+    );
+  }
+
+  if (/--spacing-\d+\.\d+:/.test(css)) {
+    throw new Error(
+      'tailwind-theme.css must not contain unescaped dots in spacing keys; use underscore form (e.g. --spacing-0_5).',
+    );
+  }
+}
+
+assertFoundationThemeOutput(tailwindTheme);
 
 function assertDefaultThemeOutput(css) {
   const requiredLightAndDarkSnippets = [

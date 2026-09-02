@@ -147,6 +147,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.2
         version: 3.12.2
+      '@lottiefiles/dotlottie-web':
+        specifier: ^0.80.0
+        version: 0.80.0
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -2203,6 +2206,12 @@ packages:
     resolution:
       {
         integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==,
+      }
+
+  '@lottiefiles/dotlottie-web@0.80.0':
+    resolution:
+      {
+        integrity: sha512-M00APgOJfP6xPZ3kAzZAUNATxluFiMU0wD3asp6HQSXDX8qLzSDh/Jmqbo0H7+WcqfpQkN8WYBu3aOzm2y/b4g==,
       }
 
   '@manypkg/find-root@1.1.0':
@@ -10286,6 +10295,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@lottiefiles/dotlottie-web@0.80.0': {}
 
   '@manypkg/find-root@1.1.0':
     dependencies:

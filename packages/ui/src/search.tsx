@@ -25,24 +25,6 @@ import { assignRef, type RefProp } from './ref';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const skeletonFieldVariants = cva('w-full shrink-0 bg-skeleton', {
-  variants: {
-    variant: {
-      default: 'rounded-md',
-      outline: 'rounded-full',
-    },
-    size: {
-      sm: 'h-9',
-      md: 'h-11',
-      lg: 'h-13',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-    size: 'md',
-  },
-});
-
 const fieldShellVariants = cva(
   'relative flex w-full items-center gap-2 transition-[background-color,border-color] duration-normal ease-out has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
@@ -50,7 +32,6 @@ const fieldShellVariants = cva(
       variant: {
         default: 'rounded-md',
         outline: 'rounded-full',
-        skeleton: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -261,8 +242,6 @@ export interface SearchProps
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   className?: string;
-  /** Shape used when `variant="skeleton"`. Defaults to `default`. */
-  skeletonVariant?: 'default' | 'outline';
   autoCapitalize?: React.InputHTMLAttributes<HTMLInputElement>['autoCapitalize'];
   autoComplete?: React.InputHTMLAttributes<HTMLInputElement>['autoComplete'];
   autoCorrect?: React.InputHTMLAttributes<HTMLInputElement>['autoCorrect'];
@@ -280,7 +259,6 @@ export function Search({
   errorMessage,
   className,
   variant = 'default',
-  skeletonVariant = 'default',
   size = 'md',
   autoCapitalize,
   autoComplete = 'off',
@@ -329,14 +307,6 @@ export function Search({
     handleChange('');
     inputRef.current?.focus();
   }, [handleChange]);
-
-  if (variant === 'skeleton') {
-    return (
-      <div className={twMerge(searchRootVariants(), className)} aria-hidden="true">
-        <div className={skeletonFieldVariants({ variant: skeletonVariant, size })} />
-      </div>
-    );
-  }
 
   return (
     <AriaTextField

@@ -238,7 +238,7 @@ const meta = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'outline', 'skeleton'],
+      options: ['default', 'outline'],
     },
     size: {
       control: 'select',
@@ -522,32 +522,4 @@ export const States: Story = {
       </div>
     );
   },
-};
-
-export const Skeleton: Story = {
-  render: () => (
-    <div className="flex w-[320px] flex-col gap-8">
-      <TextArea
-        variant="skeleton"
-        size="sm"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-      <TextArea
-        variant="skeleton"
-        size="md"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-      <TextArea
-        variant="skeleton"
-        size="lg"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-    </div>
-  ),
 };

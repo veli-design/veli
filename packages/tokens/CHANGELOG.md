@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.7.0
+
+_Released 2026-09-01._
+
+### Added
+
+- Add a theme-aware gov.mv accent token for light and dark Tailwind themes.
+- Map `radius`, `spacing`, `blur`, `breakpoints` (as `breakpoint`), and `container` tokens into the Tailwind theme so those utilities use Veli values instead of Tailwind defaults.
+
+### Changed
+
+- Update Figma-aligned OKLCH values for green, sage, slate, ash, and stone color primitives.
+- Emit `--radius` and `--radius-md` from `radius.DEFAULT` (6px) so bare `rounded` and `rounded-md` track the design token.
+- Normalize Figma fractional spacing keys such as `0,5` to Tailwind underscore CSS names (`--spacing-0_5`) for `p-0.5` and related utilities.
+
 ## 0.6.0
 
 _Released 2026-08-13._

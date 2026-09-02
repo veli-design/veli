@@ -22,6 +22,7 @@ import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Search } from '@tradenetcorp/veli-ui/search';
+import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
 import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
@@ -1240,6 +1241,19 @@ export function SearchVariantsDemo() {
       <Search aria-label="Outline search" variant="outline" placeholder="Outline" />
       <Search aria-label="Small search" size="sm" placeholder="Small" />
       <Search aria-label="Large search" size="lg" placeholder="Large" />
+    </div>
+  );
+}
+
+export function SkeletonUsageDemo() {
+  return (
+    <div aria-busy="true" aria-label="Loading content" className="w-[320px] space-y-3">
+      <Skeleton className="h-5 w-2/5 rounded-sm" />
+      <div className="space-y-2">
+        <Skeleton className="h-2.5 w-full rounded-xs" />
+        <Skeleton className="h-2.5 w-full rounded-xs" />
+        <Skeleton className="h-2.5 w-4/5 rounded-xs" />
+      </div>
     </div>
   );
 }

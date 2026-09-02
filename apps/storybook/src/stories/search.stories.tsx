@@ -182,12 +182,7 @@ const meta = {
     'aria-label': { control: 'text' },
     variant: {
       control: 'select',
-      options: ['default', 'outline', 'skeleton'],
-    },
-    skeletonVariant: {
-      control: 'select',
       options: ['default', 'outline'],
-      if: { arg: 'variant', eq: 'skeleton' },
     },
     size: {
       control: 'select',
@@ -280,7 +275,6 @@ export const ValidationStates: Story = {
           />
           <Search aria-label={text.disabled} placeholder={text.disabledValue} isDisabled />
           <Search aria-label={text.readOnly} defaultValue={text.lockedValue} isReadOnly />
-          <Search variant="skeleton" />
         </div>
         <div className="flex flex-col gap-6">
           <span className="type-caption-regular uppercase tracking-wider text-base-muted">
@@ -311,7 +305,6 @@ export const ValidationStates: Story = {
             defaultValue={text.lockedValue}
             isReadOnly
           />
-          <Search variant="skeleton" skeletonVariant="outline" />
         </div>
       </div>
     );
@@ -357,7 +350,6 @@ export const FigmaMatrix: Story = {
                     placeholder={text.placeholder}
                     isDisabled
                   />
-                  <Search variant="skeleton" skeletonVariant={variant} size={size} />
                 </div>
               ))}
             </div>
