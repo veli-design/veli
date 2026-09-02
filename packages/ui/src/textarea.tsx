@@ -30,8 +30,6 @@ import { type RefProp } from './ref';
 
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const textareaSkeletonRootVariants = cva('flex w-full flex-col items-start font-sans antialiased');
-
 const infoTooltipTriggerVariants = cva(
   'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
@@ -74,37 +72,11 @@ const characterCounterVariants = cva(
   },
 );
 
-const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-2',
-      md: 'h-2',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
 const shellMinHeights = {
   sm: 120,
   md: 146,
   lg: 181,
 } as const;
-
-const skeletonFieldVariants = cva('w-full shrink-0 flex-1 rounded-md bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'min-h-[120px]',
-      md: 'min-h-[146px]',
-      lg: 'min-h-[181px]',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
 
 const fieldShellVariants = cva(
   'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
@@ -113,7 +85,6 @@ const fieldShellVariants = cva(
       variant: {
         default: '',
         outline: '',
-        skeleton: '',
       },
       size: {
         sm: 'min-h-[120px] py-2 px-3',
@@ -524,34 +495,6 @@ export function TextArea({
 
     onChange?.(nextValue);
   };
-
-  const hasSkeletonHeader = Boolean(
-    label ||
-    infoTooltip ||
-    labelSupplementary ||
-    labelIcon ||
-    (showRequiredIndicator && props.isRequired) ||
-    shouldShowCharacterCounter,
-  );
-  const hasSkeletonFooter = Boolean(description || errorMessage);
-
-  if (variant === 'skeleton') {
-    return (
-      <div className={twMerge(textareaSkeletonRootVariants(), className)} aria-hidden="true">
-        {hasSkeletonHeader ? (
-          <div className="flex w-full items-center pb-2">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-        <div className={skeletonFieldVariants({ size })} />
-        {hasSkeletonFooter ? (
-          <div className="flex w-full items-center pt-1">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-      </div>
-    );
-  }
 
   return (
     <AriaTextField

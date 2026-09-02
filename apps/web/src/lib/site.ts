@@ -294,6 +294,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Content separation for page and component layouts.',
       },
       {
+        title: 'Skeleton',
+        slug: 'skeleton',
+        description: 'Generic loading placeholder for composing loading states.',
+      },
+      {
         title: 'Kbd',
         slug: 'kbd',
         description: 'Keyboard key and shortcut display for affordances.',

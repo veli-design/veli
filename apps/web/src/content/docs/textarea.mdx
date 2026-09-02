@@ -39,21 +39,21 @@ import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 
 ## Props
 
-| Prop                      | Type                                   | Default     | Description                                                  |
-| :------------------------ | :------------------------------------- | :---------- | :----------------------------------------------------------- |
-| `variant`                 | `'default' \| 'outline' \| 'skeleton'` | `'default'` | Visual appearance of the field shell.                        |
-| `size`                    | `'sm' \| 'md' \| 'lg'`                 | `'md'`      | Field size.                                                  |
-| `label`                   | `ReactNode`                            | -           | Visible label content.                                       |
-| `labelSupplementary`      | `ReactNode`                            | -           | Inline helper copy beside the label, e.g. `Optional`.        |
-| `infoTooltip`             | `ReactNode`                            | -           | Tooltip content shown from a small info icon in the header.  |
-| `labelIcon`               | `ReactNode`                            | -           | Small icon placed after the label content.                   |
-| `description`             | `ReactNode`                            | -           | Helper text shown beneath the field when not invalid.        |
-| `errorMessage`            | `ReactNode`                            | -           | Validation content shown beneath the field when `isInvalid`. |
-| `showCharacterCounter`    | `boolean`                              | `false`     | Shows a live character counter; pair with `maxLength`.       |
-| `isResizable`             | `boolean`                              | `false`     | Allows the user to resize the field vertically.              |
-| `minHeight` / `maxHeight` | `number`                               | -           | Pixel bounds for the field height.                           |
-| `showRequiredIndicator`   | `boolean`                              | `true`      | Renders the required asterisk when `isRequired` is set.      |
-| `className`               | `string`                               | -           | Layout-only class override merged onto the root element.     |
+| Prop                      | Type                     | Default     | Description                                                  |
+| :------------------------ | :----------------------- | :---------- | :----------------------------------------------------------- |
+| `variant`                 | `'default' \| 'outline'` | `'default'` | Visual appearance of the field shell.                        |
+| `size`                    | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                                  |
+| `label`                   | `ReactNode`              | -           | Visible label content.                                       |
+| `labelSupplementary`      | `ReactNode`              | -           | Inline helper copy beside the label, e.g. `Optional`.        |
+| `infoTooltip`             | `ReactNode`              | -           | Tooltip content shown from a small info icon in the header.  |
+| `labelIcon`               | `ReactNode`              | -           | Small icon placed after the label content.                   |
+| `description`             | `ReactNode`              | -           | Helper text shown beneath the field when not invalid.        |
+| `errorMessage`            | `ReactNode`              | -           | Validation content shown beneath the field when `isInvalid`. |
+| `showCharacterCounter`    | `boolean`                | `false`     | Shows a live character counter; pair with `maxLength`.       |
+| `isResizable`             | `boolean`                | `false`     | Allows the user to resize the field vertically.              |
+| `minHeight` / `maxHeight` | `number`                 | -           | Pixel bounds for the field height.                           |
+| `showRequiredIndicator`   | `boolean`                | `true`      | Renders the required asterisk when `isRequired` is set.      |
+| `className`               | `string`                 | -           | Layout-only class override merged onto the root element.     |
 
 All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition.
 
