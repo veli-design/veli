@@ -1,12 +1,10 @@
 ---
 interface Props {
-  src: string;
-  srcDark: string;
   lottie: string;
   lottieDark?: string;
 }
 
-const { src, srcDark, lottie, lottieDark } = Astro.props;
+const { lottie, lottieDark } = Astro.props;
 const usesSharedLottie = !lottieDark;
 ---
 
@@ -17,22 +15,8 @@ const usesSharedLottie = !lottieDark;
   data-lottie-src={lottie}
   data-lottie-src-dark={lottieDark}
 >
-  {/* Native dotted plate — replaces baked Lottie BG; hidden when PNG fallback is shown. */}
+  {/* Native dotted plate — always present; doubles as load / reduced-motion fallback. */}
   <span class="docs-page-header__art-bg"></span>
-  <img
-    class="docs-page-header__art-image docs-page-header__art-image--light"
-    src={src}
-    alt=""
-    width="195"
-    height="195"
-  />
-  <img
-    class="docs-page-header__art-image docs-page-header__art-image--dark"
-    src={srcDark}
-    alt=""
-    width="195"
-    height="195"
-  />
   {
     usesSharedLottie ? (
       <canvas
@@ -66,11 +50,6 @@ const usesSharedLottie = !lottieDark;
     };
   };
 
-  type MountState = {
-    expected: number;
-    failed: number;
-  };
-
   const players = new WeakMap<HTMLCanvasElement, DotLottie>();
   let wasmConfigured = false;
 
@@ -82,10 +61,6 @@ const usesSharedLottie = !lottieDark;
 
   function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }
-
-  function showFallback(root: HeaderArtRoot) {
-    root.classList.add('is-fallback');
   }
 
   function destroyPlayer(canvas: HTMLCanvasElement) {
@@ -108,12 +83,7 @@ const usesSharedLottie = !lottieDark;
     player.addEventListener('destroy', () => observer.disconnect());
   }
 
-  function mountPlayer(
-    canvas: HTMLCanvasElement,
-    src: string,
-    root: HeaderArtRoot,
-    state: MountState,
-  ) {
+  function mountPlayer(canvas: HTMLCanvasElement, src: string) {
     if (!src || players.has(canvas)) return;
 
     const player = new DotLottie({
@@ -136,52 +106,33 @@ const usesSharedLottie = !lottieDark;
     player.addEventListener('loadError', (event) => {
       console.error('[FoundationHeaderArt] Failed to load Lottie', src, event);
       destroyPlayer(canvas);
-      state.failed += 1;
-      if (state.failed >= state.expected) {
-        showFallback(root);
-      }
     });
   }
 
   function initHeaderArt(root: HeaderArtRoot) {
     if (root.dataset.lottieMounted === 'true') return;
     root.dataset.lottieMounted = 'true';
-    root.classList.remove('is-fallback');
 
-    if (prefersReducedMotion()) {
-      showFallback(root);
-      return;
-    }
+    // CSS dotted plate stays visible; skip animation when motion is reduced.
+    if (prefersReducedMotion()) return;
+
+    const lightSrc = root.dataset.lottieSrc;
+    if (!lightSrc) return;
 
     ensureWasm();
 
-    const lightSrc = root.dataset.lottieSrc;
-    const darkSrc = root.dataset.lottieSrcDark;
-    if (!lightSrc) {
-      showFallback(root);
-      return;
-    }
-
     const sharedCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="shared"]');
     if (sharedCanvas) {
-      mountPlayer(sharedCanvas, lightSrc, root, { expected: 1, failed: 0 });
+      mountPlayer(sharedCanvas, lightSrc);
       return;
     }
 
     const lightCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="light"]');
     const darkCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="dark"]');
-    const state = {
-      expected: Number(Boolean(lightCanvas)) + Number(Boolean(darkCanvas && darkSrc)),
-      failed: 0,
-    };
+    const darkSrc = root.dataset.lottieSrcDark;
 
-    if (state.expected === 0) {
-      showFallback(root);
-      return;
-    }
-
-    if (lightCanvas) mountPlayer(lightCanvas, lightSrc, root, state);
-    if (darkCanvas && darkSrc) mountPlayer(darkCanvas, darkSrc, root, state);
+    if (lightCanvas) mountPlayer(lightCanvas, lightSrc);
+    if (darkCanvas && darkSrc) mountPlayer(darkCanvas, darkSrc);
   }
 
   function initAll() {
@@ -196,7 +147,6 @@ const usesSharedLottie = !lottieDark;
       const root = canvas.closest<HeaderArtRoot>('[data-foundation-header-art]');
       if (root) {
         delete root.dataset.lottieMounted;
-        root.classList.remove('is-fallback');
       }
     }
   }
