@@ -1073,17 +1073,18 @@ export function BadgeUsageDemo() {
 }
 
 export function BadgeVariantsDemo() {
-  const intents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'] as const;
+  const statusIntents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'] as const;
+  const accentIntents = ['magenta', 'indigo', 'brand', 'green', 'lime'] as const;
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
+          <p className="type-body-sm-medium text-base-emphasis">Status appearances</p>
           <div className="space-y-[10px]">
-            {(['emphasis', 'subtle', 'outline'] as const).map((appearance) => (
+            {(['outline', 'subtle', 'emphasis'] as const).map((appearance) => (
               <div key={appearance} className="flex flex-wrap items-center gap-[8px]">
-                {intents.map((intent) => (
+                {statusIntents.map((intent) => (
                   <Badge key={intent} appearance={appearance} intent={intent}>
                     {intent}
                   </Badge>
@@ -1096,17 +1097,85 @@ export function BadgeVariantsDemo() {
 
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-base-emphasis">Accent intents</p>
+          <div className="flex flex-wrap items-center gap-[8px]">
+            {accentIntents.map((intent) => (
+              <Badge key={intent} appearance="outline" intent={intent}>
+                {intent}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
           <p className="type-body-sm-medium text-base-emphasis">Counter mode</p>
           <div className="flex flex-wrap items-center gap-[16px]">
-            <span className="inline-flex items-center gap-[6px] type-body-sm-regular text-base">
-              <Bell size={18} />
-              <Badge intent="danger" counter count={5} />
-            </span>
-            <Badge intent="info" counter count={42} />
+            <Badge intent="info" counter count={42} size="sm" />
+            <Badge intent="info" counter count={42} size="md" />
             <Badge intent="neutral" counter count={128} max={99} />
           </div>
         </div>
       </div>
+
+      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+        <div className="space-y-[12px]">
+          <p className="type-body-sm-medium text-base-emphasis">Counter on icon</p>
+          <div className="relative inline-flex">
+            <Bell aria-hidden size={24} className="text-icon-base" />
+            <Badge
+              counter
+              count={5}
+              appearance="emphasis"
+              intent="danger"
+              size="sm"
+              className="absolute -top-1 -end-1"
+              aria-label="5 notifications"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function BadgeSizesDemo() {
+  return (
+    <div className="flex flex-wrap items-end gap-[12px]">
+      <Badge appearance="outline" intent="info" size="sm">
+        sm
+      </Badge>
+      <Badge appearance="outline" intent="info" size="md">
+        md
+      </Badge>
+    </div>
+  );
+}
+
+export function BadgeStatusDotsDemo() {
+  const intents = [
+    'neutral',
+    'info',
+    'positive',
+    'cautious',
+    'warning',
+    'danger',
+    'magenta',
+    'brand',
+  ] as const;
+
+  return (
+    <div className="flex flex-wrap items-center gap-[10px]">
+      {intents.map((intent) => (
+        <Badge
+          key={intent}
+          appearance="emphasis"
+          intent={intent}
+          size="xs"
+          aria-label={`${intent} status`}
+        />
+      ))}
     </div>
   );
 }
