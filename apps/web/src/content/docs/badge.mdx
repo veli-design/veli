@@ -3,11 +3,16 @@ title: Badge
 description: Compact status and counter indicator with semantic intents, three appearances, and a numeric counter mode.
 ---
 
-import { BadgeUsageDemo, BadgeVariantsDemo } from '../../components/DocsExamples';
+import {
+  BadgeUsageDemo,
+  BadgeVariantsDemo,
+  BadgeSizesDemo,
+  BadgeStatusDotsDemo,
+} from '../../components/DocsExamples';
 
 # Badge
 
-The Badge component labels status, categories, and counts in a compact pill. It pairs a semantic `intent` with one of three `appearance` treatments, and switches to a numeric `counter` mode for notification-style counts.
+The Badge component labels status, categories, and counts in a compact pill. It pairs a semantic `intent` with one of three `appearance` treatments, and switches to a numeric counter mode for notification-style counts.
 
 ## Import
 
@@ -27,7 +32,7 @@ import { Badge } from '@tradenetcorp/veli-ui/badge';
 <Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>Rejected</Badge>
 ```
 
-## Appearances & counter mode
+## Appearances, accents, and counter mode
 
 <div className="preview mb-4 rounded-lg border p-4">
   <BadgeVariantsDemo client:visible />
@@ -36,19 +41,70 @@ import { Badge } from '@tradenetcorp/veli-ui/badge';
 ```tsx
 <Badge intent="danger" counter count={5} />
 <Badge intent="neutral" counter count={128} max={99} /> {/* renders "99+" */}
+<Badge count={7} appearance="emphasis" intent="danger" size="sm" /> {/* counter via count alone */}
 ```
+
+## Sizes
+
+Label badges support `sm` and `md`. Use `xs` for an 8px status dot without a visible label.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeSizesDemo client:visible />
+</div>
+
+```tsx
+<Badge intent="info" size="sm">Small</Badge>
+<Badge intent="info" size="md">Medium</Badge>
+```
+
+## Status dots
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeStatusDotsDemo client:visible />
+</div>
+
+```tsx
+<Badge intent="positive" appearance="emphasis" size="xs" aria-label="Approved" />
+<Badge intent="warning" appearance="subtle" size="xs" aria-label="Pending review" />
+```
+
+## Counter on an icon
+
+Position the counter with layout utilities. Provide `aria-label` when the count is not exposed as visible text for assistive technologies.
+
+```tsx
+<div className="relative inline-flex">
+  <Bell aria-hidden size={24} />
+  <Badge
+    counter
+    count={5}
+    appearance="emphasis"
+    intent="danger"
+    size="sm"
+    className="absolute -top-1 -end-1"
+    aria-label="5 notifications"
+  />
+</div>
+```
+
+## Accessibility
+
+- Label badges expose their text to assistive technologies through the rendered label.
+- `size="xs"` status dots are `aria-hidden` unless you pass `aria-label` (or `aria-labelledby`).
+- Counter badges and icon-only counts should include `aria-label` describing the notification count.
+- Badge is a non-interactive `span` by default. Wrap it in a button or link when it should be focusable and actionable.
 
 ## Props
 
-| Prop          | Type                                                                                                                               | Default      | Description                                              |
-| :------------ | :--------------------------------------------------------------------------------------------------------------------------------- | :----------- | :------------------------------------------------------- |
-| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'neutral'`  | Semantic color of the badge.                             |
-| `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                              | `'emphasis'` | Visual treatment of the badge surface.                   |
-| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                             | `'sm'`       | Badge size.                                              |
-| `counter`     | `boolean`                                                                                                                          | `false`      | Switches to a numeric counter pill.                      |
-| `count`       | `number`                                                                                                                           | -            | Value shown in counter mode.                             |
-| `max`         | `number`                                                                                                                           | `99`         | Cap above which the count renders as `{max}+`.           |
-| `leadingIcon` | `ReactNode`                                                                                                                        | -            | Icon rendered before the label.                          |
-| `className`   | `string`                                                                                                                           | -            | Layout-only class override merged onto the root element. |
+| Prop          | Type                                                                                                                                | Default     | Description                                              |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------------------- | :---------- | :------------------------------------------------------- |
+| `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'magenta' \| 'indigo' \| 'brand' \| 'green' \| 'lime'` | `'neutral'` | Semantic color of the badge.                             |
+| `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                               | `'outline'` | Visual treatment of the badge surface.                   |
+| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                              | `'md'`      | Badge size.                                              |
+| `counter`     | `boolean`                                                                                                                           | `false`     | Switches to a numeric counter pill.                      |
+| `count`       | `number`                                                                                                                            | -           | Value shown in counter mode (also enables counter mode). |
+| `max`         | `number`                                                                                                                            | `99`        | Cap above which the count renders as `{max}+`.           |
+| `leadingIcon` | `ReactNode`                                                                                                                         | -           | Icon rendered before the label.                          |
+| `className`   | `string`                                                                                                                            | -           | Layout-only class override merged onto the root element. |
 
 All other `span` attributes are supported. In counter mode the value uses tabular numerals so widths stay stable as the count changes.

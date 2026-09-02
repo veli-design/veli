@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const badgeVariants = cva(
-  'inline-flex max-w-full items-center border font-sans antialiased whitespace-nowrap align-middle [&_svg]:shrink-0',
+  'inline-flex max-w-full items-center border border-transparent font-sans antialiased whitespace-nowrap align-middle [&_svg]:shrink-0',
   {
     variants: {
       counter: {
@@ -60,7 +60,7 @@ const badgeLabelVariants = cva('min-w-0', {
 });
 
 export type BadgeAppearance = 'emphasis' | 'outline' | 'subtle';
-export type BadgeIntent =
+export type BadgeIntentKey =
   | 'neutral'
   | 'info'
   | 'positive'
@@ -69,69 +69,59 @@ export type BadgeIntent =
   | 'danger'
   | 'magenta'
   | 'indigo'
-  | 'teal'
+  | 'brand'
   | 'green'
   | 'lime';
+/** @deprecated Use `brand` instead. */
+export type BadgeIntent = BadgeIntentKey | 'teal';
 export type BadgeSize = 'xs' | 'sm' | 'md';
 
 const badgeIntentClasses = {
   subtle: {
-    neutral:
-      'border-status-neutral-subtle bg-status-neutral-subtle text-base-strong [&_svg]:text-icon-base-strong',
-    info: 'border-status-info-subtle bg-status-info-subtle text-primary-strong [&_svg]:text-icon-primary-strong',
-    positive:
-      'border-status-success-subtle bg-status-success-subtle text-success-strong [&_svg]:text-icon-success-strong',
-    cautious:
-      'border-status-caution-subtle bg-status-caution-subtle text-caution-strong [&_svg]:text-icon-caution-strong',
-    warning:
-      'border-status-warning-subtle bg-status-warning-subtle text-warning-strong [&_svg]:text-icon-warning-strong',
-    danger:
-      'border-status-danger-subtle bg-status-danger-subtle text-danger-strong [&_svg]:text-icon-danger-strong',
-    magenta:
-      'border-status-magenta-subtle bg-status-magenta-subtle text-magenta-1000 [&_svg]:text-magenta-1000',
-    indigo:
-      'border-status-indigo-subtle bg-status-indigo-subtle text-indigo-1000 [&_svg]:text-indigo-1000',
-    teal: 'border-status-teal-subtle bg-status-teal-subtle text-teal-1000 [&_svg]:text-teal-1000',
-    green:
-      'border-status-green-subtle bg-status-green-subtle text-green-1000 [&_svg]:text-green-1000',
-    lime: 'border-status-lime-subtle bg-status-lime-subtle text-lime-1000 [&_svg]:text-lime-1000',
+    neutral: 'bg-status-neutral-subtle text-base-strong [&_svg]:text-icon-base-strong',
+    info: 'bg-status-info-subtle text-info-1000 [&_svg]:text-info-1000',
+    positive: 'bg-status-success-subtle text-success-strong [&_svg]:text-icon-success-strong',
+    cautious: 'bg-status-caution-subtle text-caution-strong [&_svg]:text-icon-caution-strong',
+    warning: 'bg-status-warning-subtle text-warning-strong [&_svg]:text-icon-warning-strong',
+    danger: 'bg-status-danger-subtle text-danger-strong [&_svg]:text-icon-danger-strong',
+    magenta: 'bg-status-magenta-subtle text-magenta-1000 [&_svg]:text-magenta-1000',
+    indigo: 'bg-status-indigo-subtle text-indigo-1000 [&_svg]:text-indigo-1000',
+    brand: 'bg-status-teal-subtle text-primary-strong [&_svg]:text-icon-primary-strong',
+    green: 'bg-status-green-subtle text-green-1000 [&_svg]:text-green-1000',
+    lime: 'bg-status-lime-subtle text-lime-1000 [&_svg]:text-lime-1000',
   },
   emphasis: {
-    neutral:
-      'border-status-neutral-emphasis bg-status-neutral-emphasis text-base-inverted [&_svg]:text-icon-base-inverted',
-    info: 'border-status-info-emphasis bg-status-info-emphasis text-primary-inverted [&_svg]:text-icon-primary-inverted',
-    positive:
-      'border-status-success-emphasis bg-status-success-emphasis text-success-inverted [&_svg]:text-icon-success-inverted',
-    cautious:
-      'border-status-caution-emphasis bg-status-caution-emphasis text-caution-inverted [&_svg]:text-icon-caution-inverted',
-    warning:
-      'border-status-warning-emphasis bg-status-warning-emphasis text-warning-inverted [&_svg]:text-icon-warning-inverted',
-    danger:
-      'border-status-danger-emphasis bg-status-danger-emphasis text-danger-inverted [&_svg]:text-icon-danger-inverted',
-    magenta:
-      'border-status-magenta-emphasis bg-status-magenta-emphasis text-magenta-100 [&_svg]:text-magenta-100',
-    indigo:
-      'border-status-indigo-emphasis bg-status-indigo-emphasis text-indigo-100 [&_svg]:text-indigo-100',
-    teal: 'border-status-teal-emphasis bg-status-teal-emphasis text-teal-100 [&_svg]:text-teal-100',
-    green:
-      'border-status-green-emphasis bg-status-green-emphasis text-green-100 [&_svg]:text-green-100',
-    lime: 'border-status-lime-emphasis bg-status-lime-emphasis text-lime-100 [&_svg]:text-lime-100',
+    neutral: 'bg-status-neutral-emphasis text-base-inverted [&_svg]:text-icon-base-inverted',
+    info: 'bg-status-info-emphasis text-info-100 [&_svg]:text-info-100',
+    positive: 'bg-status-success-emphasis text-success-inverted [&_svg]:text-icon-success-inverted',
+    cautious: 'bg-status-caution-emphasis text-caution-inverted [&_svg]:text-icon-caution-inverted',
+    warning: 'bg-status-warning-emphasis text-warning-inverted [&_svg]:text-icon-warning-inverted',
+    danger: 'bg-status-danger-emphasis text-danger-inverted [&_svg]:text-icon-danger-inverted',
+    magenta: 'bg-status-magenta-emphasis text-magenta-100 [&_svg]:text-magenta-100',
+    indigo: 'bg-status-indigo-emphasis text-indigo-100 [&_svg]:text-indigo-100',
+    brand: 'bg-status-teal-emphasis text-primary-inverted [&_svg]:text-icon-primary-inverted',
+    green: 'bg-status-green-emphasis text-green-100 [&_svg]:text-green-100',
+    lime: 'bg-status-lime-emphasis text-lime-100 [&_svg]:text-lime-100',
   },
   outline: {
-    neutral: 'border-status-neutral-subtle bg-transparent text-base-default [&_svg]:text-icon-base',
-    info: 'border-status-info-subtle bg-transparent text-primary [&_svg]:text-icon-primary',
-    positive: 'border-status-success-subtle bg-transparent text-success [&_svg]:text-icon-success',
-    cautious: 'border-status-caution-subtle bg-transparent text-caution [&_svg]:text-icon-caution',
-    warning: 'border-status-warning-subtle bg-transparent text-warning [&_svg]:text-icon-warning',
-    danger: 'border-status-danger-subtle bg-transparent text-danger [&_svg]:text-icon-danger',
+    neutral: 'border-status-neutral-stroke bg-transparent text-base-default [&_svg]:text-icon-base',
+    info: 'border-status-info-stroke bg-transparent text-info-900 [&_svg]:text-info-900',
+    positive: 'border-status-success-stroke bg-transparent text-success [&_svg]:text-icon-success',
+    cautious: 'border-status-caution-stroke bg-transparent text-caution [&_svg]:text-icon-caution',
+    warning: 'border-status-warning-stroke bg-transparent text-warning [&_svg]:text-icon-warning',
+    danger: 'border-status-danger-stroke bg-transparent text-danger [&_svg]:text-icon-danger',
     magenta:
-      'border-status-magenta-subtle bg-transparent text-magenta-900 [&_svg]:text-magenta-900',
-    indigo: 'border-status-indigo-subtle bg-transparent text-indigo-900 [&_svg]:text-indigo-900',
-    teal: 'border-status-teal-subtle bg-transparent text-teal-900 [&_svg]:text-teal-900',
-    green: 'border-status-green-subtle bg-transparent text-green-900 [&_svg]:text-green-900',
-    lime: 'border-status-lime-subtle bg-transparent text-lime-900 [&_svg]:text-lime-900',
+      'border-status-magenta-stroke bg-transparent text-magenta-900 [&_svg]:text-magenta-900',
+    indigo: 'border-status-indigo-stroke bg-transparent text-indigo-900 [&_svg]:text-indigo-900',
+    brand: 'border-status-teal-stroke bg-transparent text-primary [&_svg]:text-icon-primary',
+    green: 'border-status-green-stroke bg-transparent text-green-900 [&_svg]:text-green-900',
+    lime: 'border-status-lime-stroke bg-transparent text-lime-900 [&_svg]:text-lime-900',
   },
-} satisfies Record<BadgeAppearance, Record<BadgeIntent, string>>;
+} satisfies Record<BadgeAppearance, Record<BadgeIntentKey, string>>;
+
+function resolveBadgeIntent(intent: BadgeIntent): BadgeIntentKey {
+  return intent === 'teal' ? 'brand' : intent;
+}
 
 function formatBadgeCount(count: number, max: number) {
   return count > max ? `${max}+` : String(count);
@@ -162,6 +152,7 @@ export function Badge({
   leadingIcon,
   ...props
 }: BadgeProps) {
+  const resolvedIntent = resolveBadgeIntent(intent);
   const isCounter = (counter || count != null) && size !== 'xs';
   const isDot = size === 'xs';
   const label = isCounter && count != null ? formatBadgeCount(count, max) : children;
@@ -173,7 +164,7 @@ export function Badge({
       aria-hidden={isDot && props['aria-label'] == null ? true : undefined}
       className={twMerge(
         badgeVariants({ counter: isCounter, size }),
-        badgeIntentClasses[appearance][intent],
+        badgeIntentClasses[appearance][resolvedIntent],
         className,
       )}
     >
