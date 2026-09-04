@@ -1020,13 +1020,30 @@ export function AvatarUsageDemo() {
       <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
       <Avatar type="icon" appearance="neutral" size="52" />
       <Avatar type="agencyIcon" appearance="emerald" size="52" />
+      <Avatar
+        type="image"
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80"
+        alt="Aishath Mariyam"
+        size="52"
+      />
     </div>
   );
 }
 
 export function AvatarVariantsDemo() {
-  const appearances = ['blue', 'neutral', 'emerald', 'yellow', 'orange', 'magenta'] as const;
-  const sizes = ['60', '52', '44', '36', '28'] as const;
+  const appearances = [
+    'blue',
+    'neutral',
+    'emerald',
+    'yellow',
+    'orange',
+    'magenta',
+    'indigo',
+    'teal',
+    'green',
+    'lime',
+  ] as const;
+  const sizes = ['60', '52', '44', '36', '28', '20', '16'] as const;
 
   return (
     <div className="grid gap-[24px] lg:grid-cols-2">

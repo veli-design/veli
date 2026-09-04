@@ -24,27 +24,48 @@ import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 ```tsx
 <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
 <Avatar type="icon" appearance="neutral" size="52" />
+<Avatar type="agencyIcon" appearance="emerald" size="52" />
 <Avatar type="image" src="/people/aishath.jpg" alt="Aishath Mariyam" size="52" />
 ```
 
 ## Appearances & sizes
 
+Avatar sizes are fixed pixel diameters from the design system. Choose a `size` that fits the layout; the component does not change size by breakpoint.
+
 <div className="preview mb-4 rounded-lg border p-4">
   <AvatarVariantsDemo client:visible />
 </div>
 
+## Content resolution
+
+When more than one content prop is set, Avatar resolves what to render in this order:
+
+1. A loadable `src` shows the image.
+2. Non-empty `initials` show formatted initials (including when an image fails to load).
+3. An explicit `type` other than `image` (`icon` or `agencyIcon`) is used.
+4. Otherwise the generic user icon is shown.
+
+Sizes `16` and `20` render a single initial glyph; larger sizes use up to two.
+
+When `VeliProvider` is set to Dhivehi (`language="dv"`), Latin name sources map to Thaana initials, including common digraphs such as `SH` → `ޝ`.
+
+## Accessibility
+
+- Pass a meaningful `alt` for every avatar. It labels the visible image and the screen-reader-only image used for icon and initials content.
+- Without `alt`, initials fall back to the `initials` string; agency icons fall back to `"Agency"`; other content falls back to `"User"`.
+- Visible initials and icons are `aria-hidden`. Assistive technologies read the accessible label from the image element.
+- Avatar is a non-interactive `div` by default. Wrap it in a button or link when it should be focusable and actionable.
+
 ## Props
 
-| Prop         | Type                                                                                                               | Default     | Description                                                                      |
-| :----------- | :----------------------------------------------------------------------------------------------------------------- | :---------- | :------------------------------------------------------------------------------- |
-| `type`       | `'image' \| 'initials' \| 'icon' \| 'agencyIcon'`                                                                  | `'icon'`    | Content rendered inside the avatar.                                              |
-| `appearance` | `'blue' \| 'neutral' \| 'emerald' \| 'yellow' \| 'orange' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'neutral'` | Surface, content, and icon color theme.                                          |
-| `size`       | `'60' \| '52' \| '44' \| '36' \| '28' \| '20' \| '16'`                                                             | `'44'`      | Pixel size of the avatar; also scales the icon and initials.                     |
-| `initials`   | `string`                                                                                                           | -           | Source name for `type="initials"`; reduced to one or two glyphs based on `size`. |
-| `src`        | `string`                                                                                                           | -           | Image URL for `type="image"`.                                                    |
-| `alt`        | `string`                                                                                                           | -           | Accessible description for `type="image"`.                                       |
-| `className`  | `string`                                                                                                           | -           | Layout-only class override merged onto the root element.                         |
+| Prop         | Type                                                                                                               | Default  | Description                                                                                         |
+| :----------- | :----------------------------------------------------------------------------------------------------------------- | :------- | :-------------------------------------------------------------------------------------------------- |
+| `type`       | `'image' \| 'initials' \| 'icon' \| 'agencyIcon'`                                                                  | `'icon'` | Preferred content when `src` and `initials` do not resolve a higher-priority type.                  |
+| `appearance` | `'blue' \| 'neutral' \| 'emerald' \| 'yellow' \| 'orange' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'blue'` | Surface, content, and icon color theme.                                                             |
+| `size`       | `'60' \| '52' \| '44' \| '36' \| '28' \| '20' \| '16'`                                                             | `'44'`   | Pixel size of the avatar; also scales the icon and initials.                                        |
+| `initials`   | `string`                                                                                                           | -        | Source name for initials content; reduced to one or two glyphs based on `size` and language.        |
+| `src`        | `string`                                                                                                           | -        | Image URL. When loadable, image content takes priority; on error, initials are used when available. |
+| `alt`        | `string`                                                                                                           | -        | Accessible name for all content types.                                                              |
+| `className`  | `string`                                                                                                           | -        | Layout-only class override merged onto the root element.                                            |
 
 All other `div` attributes are supported.
-
-For Dhivehi (`lang="dv"`) names, `type="initials"` derives initials with `formatDhivehiInitials` so the glyph count and shaping match Thaana conventions at each size.
