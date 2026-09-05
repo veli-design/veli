@@ -31,30 +31,70 @@ import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 />
 ```
 
-## Resizable & validation
+## Appearances, resize, and validation
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TextAreaVariantsDemo client:visible />
 </div>
 
+```tsx
+<TextArea label="Default" placeholder="Write a note" description="Helper text" />
+<TextArea
+  appearance="outline"
+  label="Outline"
+  placeholder="Write a note"
+  description="Helper text"
+/>
+<TextArea label="Resizable" placeholder="Drag the handle to resize" isResizable maxHeight={320} />
+<TextArea
+  label="Invalid"
+  placeholder="Enter details"
+  isInvalid
+  errorMessage="This field needs attention."
+/>
+```
+
+The resize grip is shown by default. Set `isResizable={false}` to hide it. Native browser resize is disabled so only the design-system handle is used. Dragging is pointer-only, matching native textarea resize.
+
+TextArea does not ship an embedded skeleton. Compose the [`Skeleton`](/docs/skeleton/) primitive if you need a loading placeholder.
+
+## Accessibility
+
+- The visible `label` is associated through React Aria's `Label`. Pass `aria-label` or `aria-labelledby` when the field has no visible label.
+- `description` is exposed as the accessible description. When `isInvalid` is set, `errorMessage` replaces it and is announced as the field error.
+- The info tooltip trigger uses `infoTooltipAriaLabel`, or a localized default (`More information` / Dhivehi equivalent).
+- The resize handle has a localized `aria-label`. It is omitted when the field is disabled or read-only.
+- Keyboard users can tab to the textarea, info button, and resize handle. Height changes are pointer-drag only.
+
 ## Props
 
-| Prop                      | Type                     | Default     | Description                                                  |
-| :------------------------ | :----------------------- | :---------- | :----------------------------------------------------------- |
-| `variant`                 | `'default' \| 'outline'` | `'default'` | Visual appearance of the field shell.                        |
-| `size`                    | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                                  |
-| `label`                   | `ReactNode`              | -           | Visible label content.                                       |
-| `labelSupplementary`      | `ReactNode`              | -           | Inline helper copy beside the label, e.g. `Optional`.        |
-| `infoTooltip`             | `ReactNode`              | -           | Tooltip content shown from a small info icon in the header.  |
-| `labelIcon`               | `ReactNode`              | -           | Small icon placed after the label content.                   |
-| `description`             | `ReactNode`              | -           | Helper text shown beneath the field when not invalid.        |
-| `errorMessage`            | `ReactNode`              | -           | Validation content shown beneath the field when `isInvalid`. |
-| `showCharacterCounter`    | `boolean`                | `false`     | Shows a live character counter; pair with `maxLength`.       |
-| `isResizable`             | `boolean`                | `false`     | Allows the user to resize the field vertically.              |
-| `minHeight` / `maxHeight` | `number`                 | -           | Pixel bounds for the field height.                           |
-| `showRequiredIndicator`   | `boolean`                | `true`      | Renders the required asterisk when `isRequired` is set.      |
-| `className`               | `string`                 | -           | Layout-only class override merged onto the root element.     |
+| Prop                      | Type                     | Default          | Description                                                                                  |
+| :------------------------ | :----------------------- | :--------------- | :------------------------------------------------------------------------------------------- |
+| `appearance`              | `'default' \| 'outline'` | `'default'`      | Visual appearance of the field shell. Replaces the former `variant` prop.                    |
+| `size`                    | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size. Large uses a 173px minimum shell height.                                         |
+| `label`                   | `ReactNode`              | -                | Visible label content.                                                                       |
+| `labelSupplementary`      | `ReactNode`              | -                | Inline helper copy beside the label, e.g. `Optional`.                                        |
+| `infoTooltip`             | `ReactNode`              | -                | Tooltip content shown from a small info icon in the header.                                  |
+| `infoTooltipAriaLabel`    | `string`                 | Localized string | Accessible name for the info tooltip trigger.                                                |
+| `labelIcon`               | `ReactNode`              | -                | Small icon placed after the label content.                                                   |
+| `description`             | `ReactNode`              | -                | Helper text shown beneath the field when not invalid.                                        |
+| `errorMessage`            | `ReactNode`              | -                | Validation content shown beneath the field when `isInvalid`.                                 |
+| `placeholder`             | `string`                 | -                | Placeholder text for an empty field.                                                         |
+| `maxLength`               | `number`                 | -                | Native maxlength; also shows the character counter unless `showCharacterCounter` is `false`. |
+| `showCharacterCounter`    | `boolean`                | auto             | Shows a live character counter. Defaults to on when `maxLength` is set, otherwise off.       |
+| `isResizable`             | `boolean`                | `true`           | Shows the vertical resize grip. Hidden automatically when disabled or read-only.             |
+| `minHeight` / `maxHeight` | `number`                 | size min-height  | Pixel bounds for the field height. `minHeight` defaults to the size shell (120 / 146 / 173). |
+| `isDisabled`              | `boolean`                | `false`          | Disables the field.                                                                          |
+| `isInvalid`               | `boolean`                | `false`          | Marks the field invalid and shows `errorMessage`.                                            |
+| `isReadOnly`              | `boolean`                | `false`          | Prevents editing while keeping the value visible.                                            |
+| `isRequired`              | `boolean`                | `false`          | Marks the field required.                                                                    |
+| `showRequiredIndicator`   | `boolean`                | `true`           | Renders the required asterisk when `isRequired` is set.                                      |
+| `className`               | `string`                 | -                | Layout-only class override merged onto the root element.                                     |
 
 All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition.
 
-For Dhivehi (`lang="dv"`) fields the entered text uses the `MV_Faseyha` font with height and padding tuning, matching the Input component's localization behavior.
+`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement.
+
+Replace `variant="outline"` with `appearance="outline"`. The `variant` prop is no longer accepted.
+
+For Dhivehi (`lang="dv"`) fields the entered text uses the `MV_Faseyha` font with the same Safari baseline offset as Input.

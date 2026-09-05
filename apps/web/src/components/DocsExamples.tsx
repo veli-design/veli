@@ -1275,10 +1275,18 @@ export function TextAreaUsageDemo() {
 export function TextAreaVariantsDemo() {
   return (
     <div className="grid gap-[16px] md:grid-cols-2">
+      <TextArea label="Default" placeholder="Write a note" description="Helper text" />
+      <TextArea
+        appearance="outline"
+        label="Outline"
+        placeholder="Write a note"
+        description="Helper text"
+      />
       <TextArea
         label="Resizable"
         placeholder="Drag the handle to resize"
         isResizable
+        maxHeight={320}
         description="Helper text"
       />
       <TextArea
