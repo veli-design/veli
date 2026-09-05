@@ -82,7 +82,7 @@ const fieldShellVariants = cva(
   'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         outline: '',
       },
@@ -106,44 +106,44 @@ const fieldShellVariants = cva(
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isInvalid: true,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
         className: 'bg-ash-alpha-200',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
@@ -151,39 +151,39 @@ const fieldShellVariants = cva(
           'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[textarea[data-focus-visible]]:border-transparent has-[textarea[data-focus-visible]]:hover:border-transparent',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         className:
           'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
         className: 'border border-text-input-stroke-disabled',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
         className: 'bg-ash-alpha-200',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,
@@ -191,6 +191,9 @@ const fieldShellVariants = cva(
     },
   },
 );
+
+type TextAreaAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
+type TextAreaSize = VariantProps<typeof fieldShellVariants>['size'];
 
 const textareaElementVariants = cva(
   'relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
@@ -407,8 +410,13 @@ function CharacterCounterRing({ value, max }: { value: number; max: number }) {
 export interface TextAreaProps
   extends
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    Omit<
+      VariantProps<typeof fieldShellVariants>,
+      'appearance' | 'isDisabled' | 'isInvalid' | 'isReadOnly' | 'size'
+    >,
     RefProp<HTMLTextAreaElement> {
+  appearance?: TextAreaAppearance;
+  size?: TextAreaSize;
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
@@ -449,7 +457,7 @@ export function TextArea({
   minHeight,
   maxHeight,
   className,
-  variant = 'default',
+  appearance = 'default',
   size = 'md',
   autoCapitalize,
   autoComplete,
@@ -570,7 +578,7 @@ export function TextArea({
               ref={shellRef}
               style={{ minHeight: resolvedMinHeight, ...shellStyle }}
               className={fieldShellVariants({
-                variant,
+                appearance,
                 size,
                 isDisabled,
                 isInvalid,
