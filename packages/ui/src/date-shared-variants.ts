@@ -10,55 +10,18 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
 } from './field-shared-variants';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 
 export { fieldRootVariants } from './field-shared-variants';
 
-export const fieldLabelRowVariants = cva('flex items-center justify-between gap-3');
-
-export const fieldLabelVariants = cva('type-body-sm-regular', {
-  variants: {
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-default',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
-export const fieldMetaVariants = cva('type-caption-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: '',
-    },
-  },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
-  defaultVariants: {
-    tone: 'subtle',
-    isDisabled: false,
-  },
-});
-
 const fieldShellFocusRingClassName =
-  'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-base has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-base';
+  'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised';
 
 const fieldShellOutlineFocusClassName =
   'has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent';
 
 export const fieldShellVariants = cva(
-  `relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out ${fieldShellFocusRingClassName}`,
+  `relative flex w-full items-center gap-1 rounded-md motion-safe:transition-[background-color,border-color] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
   {
     variants: {
       appearance: {
@@ -345,21 +308,24 @@ export function formatDatePickerValue(
   return formatted;
 }
 
-export const dateInputVariants = cva('flex min-w-0 flex-1 flex-wrap items-center gap-0', {
-  variants: {
-    size: {
-      sm: '-mx-3 -my-2 px-3 py-2',
-      md: '-mx-4 -my-3 px-4 py-3',
-      lg: '-mx-4 -my-3.5 px-4 py-3.5',
+export const dateInputVariants = cva(
+  `flex min-w-0 flex-1 flex-wrap items-center gap-0 ${webkitDhivehiTextBaselineClassName}`,
+  {
+    variants: {
+      size: {
+        sm: '-mx-3 -my-2 px-3 py-2',
+        md: '-mx-4 -my-3 px-4 py-3',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
     },
   },
-  defaultVariants: {
-    size: 'md',
-  },
-});
+);
 
 const dateSegmentVariants = cva(
-  'rounded px-[1px] py-1 tabular-nums outline-none transition-colors duration-normal ease-out data-[type=literal]:px-0',
+  'rounded px-[1px] py-1 tabular-nums outline-none motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none data-[type=literal]:px-0',
   {
     variants: {
       size: {
@@ -369,7 +335,7 @@ const dateSegmentVariants = cva(
       },
       isPlaceholder: {
         true: 'text-base-inactive',
-        false: 'text-base-default',
+        false: '',
       },
       isDisabled: {
         true: 'text-disabled',
@@ -400,6 +366,24 @@ const dateSegmentVariants = cva(
         timeZoneName: 'type-caption-12-regular text-base-subtle',
       },
     },
+    compoundVariants: [
+      {
+        isPlaceholder: false,
+        isDisabled: false,
+        isFocused: false,
+        isInvalid: false,
+        isReadOnly: false,
+        className: 'text-base-default',
+      },
+      {
+        isPlaceholder: false,
+        isDisabled: false,
+        isFocused: false,
+        isInvalid: false,
+        isReadOnly: true,
+        className: 'text-base-strong',
+      },
+    ],
     defaultVariants: {
       size: 'md',
       isPlaceholder: false,

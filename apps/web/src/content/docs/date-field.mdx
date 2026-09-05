@@ -3,11 +3,11 @@ title: DateField
 description: Segment-based date input built with React Aria.
 ---
 
-import { DateFieldUsageDemo } from '../../components/DateExamples';
+import { DateFieldUsageDemo, DateFieldVariantsDemo } from '../../components/DateExamples';
 
 # DateField
 
-`DateField` is the low-level editable date input. It is best when users should type a date directly, and it is also the text-entry foundation for `DatePicker`.
+`DateField` is the low-level editable date input. It is best when users should type a date directly. Prefer `DatePicker` when users need a calendar popover.
 
 ## Import
 
@@ -25,23 +25,49 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 <DateField label="Appointment date" description="Type a date segment by segment." />
 ```
 
+## Locale
+
+Date segment order and formatting follow the locale from `VeliProvider`. Set language on the provider rather than passing a separate locale prop:
+
+```tsx
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+<VeliProvider language="en">
+  <DateField label="Appointment date" />
+</VeliProvider>;
+```
+
+See [VeliProvider](/docs/provider/) for the full language and locale contract.
+
+## Variants
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DateFieldVariantsDemo client:visible />
+</div>
+
 ## Key Props
 
 ### Common
 
-| Prop               | Type                | Description                                                        |
-| :----------------- | :------------------ | :----------------------------------------------------------------- |
-| `label`            | `ReactNode`         | Visible field label.                                               |
-| `description`      | `ReactNode`         | Helper text shown below the field when not invalid.                |
-| `errorMessage`     | `ReactNode`         | Validation content shown below the field when invalid.             |
-| `isRequired`       | `boolean`           | Marks the field as required.                                       |
-| `isDisabled`       | `boolean`           | Disables editing and focus.                                        |
-| `isReadOnly`       | `boolean`           | Prevents editing while keeping the value readable.                 |
-| `value`            | `DateValue \| null` | Controlled value.                                                  |
-| `defaultValue`     | `DateValue`         | Uncontrolled initial value.                                        |
-| `onChange`         | `(value) => void`   | Called when the value changes.                                     |
-| `name`             | `string`            | Submits the value in forms as an ISO string.                       |
-| `placeholderValue` | `DateValue`         | Sets the placeholder shape and default calendar/time zone context. |
+| Prop                    | Type                     | Description                                                        |
+| :---------------------- | :----------------------- | :----------------------------------------------------------------- |
+| `label`                 | `ReactNode`              | Visible field label.                                               |
+| `description`           | `ReactNode`              | Helper text shown below the field when not invalid.                |
+| `errorMessage`          | `ReactNode`              | Validation content shown below the field when invalid.             |
+| `labelSupplementary`    | `ReactNode`              | Secondary label text shown next to the primary label.              |
+| `showRequiredIndicator` | `boolean`                | Shows the required asterisk when the field is required.            |
+| `appearance`            | `'default' \| 'outline'` | Visual shell style. Defaults to `'default'`.                       |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | Field height and typography. Defaults to `'md'`.                   |
+| `isRequired`            | `boolean`                | Marks the field as required.                                       |
+| `isDisabled`            | `boolean`                | Disables editing and focus.                                        |
+| `isReadOnly`            | `boolean`                | Prevents editing while keeping the value readable.                 |
+| `value`                 | `DateValue \| null`      | Controlled value.                                                  |
+| `defaultValue`          | `DateValue`              | Uncontrolled initial value.                                        |
+| `onChange`              | `(value) => void`        | Called when the value changes.                                     |
+| `name`                  | `string`                 | Submits the value in forms as an ISO string.                       |
+| `placeholderValue`      | `DateValue`              | Sets the placeholder shape and default calendar/time zone context. |
+| `className`             | `string`                 | Classes applied to the field root.                                 |
+| `inputClassName`        | `string`                 | Classes applied to the input shell.                                |
 
 ### Formatting
 
