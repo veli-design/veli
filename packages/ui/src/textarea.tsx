@@ -19,31 +19,18 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
 } from './field-shared';
 import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref';
 
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
@@ -58,7 +45,7 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const characterCounterVariants = cva(
-  'inline-flex h-3.5 shrink-0 items-center font-sans text-[14px] leading-none tabular-nums text-base-subtle',
+  'inline-flex shrink-0 items-center type-body-sm-regular tabular-nums text-base-subtle',
   {
     variants: {
       isDisabled: {
@@ -75,11 +62,11 @@ const characterCounterVariants = cva(
 const shellMinHeights = {
   sm: 120,
   md: 146,
-  lg: 181,
+  lg: 173,
 } as const;
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -89,7 +76,7 @@ const fieldShellVariants = cva(
       size: {
         sm: 'min-h-[120px] py-2 px-3',
         md: 'min-h-[146px] py-3 px-4',
-        lg: 'min-h-[181px] py-3.5 px-4',
+        lg: 'min-h-[173px] py-3.5 px-4',
       },
       isDisabled: {
         true: 'cursor-not-allowed',
@@ -196,7 +183,7 @@ type TextAreaAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type TextAreaSize = VariantProps<typeof fieldShellVariants>['size'];
 
 const textareaElementVariants = cva(
-  'relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -212,7 +199,7 @@ const textareaElementVariants = cva(
 );
 
 const resizeIndicatorVariants = cva(
-  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -537,7 +524,7 @@ export function TextArea({
                       <AriaButton
                         type="button"
                         aria-label={resolvedInfoTooltipAriaLabel}
-                        className={infoTooltipTriggerVariants({ isDisabled })}
+                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                         isDisabled={isDisabled}
                       >
                         <Info size={16} aria-hidden />
