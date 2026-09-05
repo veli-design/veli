@@ -65,8 +65,25 @@ const shellMinHeights = {
   lg: 173,
 } as const;
 
+/**
+ * Outline stroke as an inset box-shadow (Figma strokeAlign INSIDE).
+ * Rest 1px, hover 1.5px, active/focus-within 2px — outer box never changes.
+ * Hide the inner stroke when the keyboard focus ring is shown.
+ */
+const outlineFieldStrokeRest =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+
+const outlineFieldStrokeError =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+
+const outlineFieldStrokeDisabled =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-disabled)]';
+
+const outlineFieldStrokeFocusVisibleHide =
+  'has-[textarea[data-focus-visible]]:shadow-none has-[textarea[data-focus-visible]]:hover:shadow-none';
+
 const fieldShellVariants = cva(
-  'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-start rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -134,8 +151,7 @@ const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className:
-          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[textarea[data-focus-visible]]:border-transparent has-[textarea[data-focus-visible]]:hover:border-transparent',
+        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'outline',
@@ -147,20 +163,19 @@ const fieldShellVariants = cva(
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
+        className: `${outlineFieldStrokeDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border border-text-input-stroke-disabled',
+        className: outlineFieldStrokeDisabled,
       },
       {
         appearance: 'outline',
