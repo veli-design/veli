@@ -3,7 +3,13 @@ title: Card
 description: Compound surface container for grouped content with optional header, body, and footer slots.
 ---
 
-import { CardUsageDemo, CardVariantsDemo } from '../../components/DocsExamples';
+import {
+  CardUsageDemo,
+  CardVariantsDemo,
+  CardSpacingDemo,
+  CardHeaderActionDemo,
+  CardCompositionDemo,
+} from '../../components/DocsExamples';
 
 # Card
 
@@ -37,9 +43,84 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 
 ## Variations
 
+Elevation and interactive surface feedback. Elevation values are `none`, `xs`, `sm`, `md`, and `lg`.
+
 <div className="preview mb-4 rounded-lg border p-4">
   <CardVariantsDemo client:visible />
 </div>
+
+```tsx
+<Card elevation="none" spacing="sm">…</Card>
+<Card elevation="lg" spacing="sm" interactive>…</Card>
+```
+
+## Spacing
+
+`spacing` controls padding and the gap between header, content, and footer.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardSpacingDemo client:visible />
+</div>
+
+```tsx
+<Card spacing="sm">…</Card>
+<Card spacing="md">…</Card>
+<Card spacing="lg">…</Card>
+<Card spacing="xl">…</Card>
+```
+
+## Header action
+
+Pass an `action` node to `Card.Header` for trailing controls such as an overflow menu.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardHeaderActionDemo client:visible />
+</div>
+
+```tsx
+<Card>
+  <Card.Header
+    action={
+      <Button intent="secondary" appearance="transparent" size="sm" iconOnly aria-label="Open menu">
+        <DotsThree size={16} weight="bold" />
+      </Button>
+    }
+  >
+    <Card.Title>Permit application</Card.Title>
+    <Card.Description>Track progress and required documents.</Card.Description>
+  </Card.Header>
+  <Card.Content>Your application is under review.</Card.Content>
+</Card>
+```
+
+## Composition patterns
+
+Header and footer are optional. Use `Card.Content` for a dedicated body slot, or put children directly inside `Card`. `interactive` only adds cursor and hover/active surface feedback.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardCompositionDemo client:visible />
+</div>
+
+```tsx
+<Card>
+  <Card.Content>Payment received for fishing permit renewal.</Card.Content>
+</Card>
+
+<Card interactive onClick={onOpen}>
+  <Card.Header>
+    <Card.Title>Open details</Card.Title>
+    <Card.Description>Hover to see the interactive state.</Card.Description>
+  </Card.Header>
+  <Card.Content>Your application is under review.</Card.Content>
+</Card>
+```
+
+## Accessibility
+
+- `Card.Title` renders an `<h3>`. Match that to the page outline, or replace it if you need a different heading level.
+- Empty `Card.Description` and `Card.Footer` children are not rendered.
+- Card is a plain `div` by default. `interactive` only adds hover and press styling. If the whole card is clickable, wrap it in a link or button, or add `role`, `tabIndex`, and keyboard handlers yourself.
+- Prefer footer or header actions over making the whole card the only control.
 
 ## Props
 
@@ -52,4 +133,40 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 | `interactive` | `boolean`                                | `false` | Hover and pressed surface feedback.    |
 | `className`   | `string`                                 | -       | Layout-only class override.            |
 
-Subcomponents: `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, `Card.Footer`.
+All other `div` attributes are supported.
+
+### `Card.Header`
+
+| Prop        | Type        | Default | Description                                      |
+| :---------- | :---------- | :------ | :----------------------------------------------- |
+| `children`  | `ReactNode` | -       | Title and optional `Card.Description` nodes.     |
+| `action`    | `ReactNode` | -       | Trailing control aligned opposite the title row. |
+| `className` | `string`    | -       | Layout-only class override.                      |
+
+### `Card.Title`
+
+| Prop        | Type        | Default | Description                 |
+| :---------- | :---------- | :------ | :-------------------------- |
+| `children`  | `ReactNode` | -       | Title content (`h3`).       |
+| `className` | `string`    | -       | Layout-only class override. |
+
+### `Card.Description`
+
+| Prop        | Type        | Default | Description                          |
+| :---------- | :---------- | :------ | :----------------------------------- |
+| `children`  | `ReactNode` | -       | Supporting copy; omitted when empty. |
+| `className` | `string`    | -       | Layout-only class override.          |
+
+### `Card.Content`
+
+| Prop        | Type        | Default | Description                 |
+| :---------- | :---------- | :------ | :-------------------------- |
+| `children`  | `ReactNode` | -       | Main body region.           |
+| `className` | `string`    | -       | Layout-only class override. |
+
+### `Card.Footer`
+
+| Prop        | Type        | Default | Description                     |
+| :---------- | :---------- | :------ | :------------------------------ |
+| `children`  | `ReactNode` | -       | Action row; omitted when empty. |
+| `className` | `string`    | -       | Layout-only class override.     |

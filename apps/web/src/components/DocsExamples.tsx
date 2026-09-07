@@ -57,6 +57,7 @@ import {
   CaretLeft,
   CaretDown,
   CheckCircle,
+  DotsThree,
   DownloadSimple,
   Info,
   MagnifyingGlass,
@@ -239,9 +240,15 @@ const cardDocsText = {
     viewDetails: 'View details',
     continue: 'Continue',
     borderOnly: 'Border only',
-    noShadowElevation: 'No shadow elevation.',
-    interactive: 'Interactive',
-    hoverFeedback: 'Hover for surface feedback.',
+    noShadowElevation: 'Flat card with a border only.',
+    interactive: 'Open details',
+    hoverFeedback: 'Hover to see the interactive state.',
+    openMenu: 'Open menu',
+    spacingSm: 'Compact',
+    spacingMd: 'Default',
+    spacingLg: 'Roomy',
+    spacingXl: 'Spacious',
+    contentOnly: 'Payment received for fishing permit renewal.',
   },
   dv: {
     permitApplication: 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަން',
@@ -249,10 +256,16 @@ const cardDocsText = {
     reviewMessage: 'ތިޔަ އެޕްލިކޭޝަން ދަނީ ރިވިއުކުރެވެމުންނެވެ. ގޮތެއް ނިމުމުން އަންގާނަން.',
     viewDetails: 'ތަފްސީލު ބައްލަވާ',
     continue: 'ކުރިއަށްގެންދަވާ',
-    borderOnly: 'ހަމައެކަނި ބޯޑަރު',
-    noShadowElevation: 'އެއްވެސް ޝެޑޯ އެލިވޭޝަނެއް ނެތް.',
-    interactive: 'އިންޓަރެކްޓިވް',
-    hoverFeedback: 'ސަރފޭސް ފީޑްބެކް ހޯދުމަށް ހޯވަރ ކުރައްވާ.',
+    borderOnly: 'Border only',
+    noShadowElevation: 'ހަމައެކަނި ބޯޑަރު އޮތް ފްލެޓް ކާރޑް.',
+    interactive: 'ތަފްސީލު ހުޅުވާ',
+    hoverFeedback: 'އިންޓަރެކްޓިވް ސްޓޭޓް ބައްލަވާނީ ހޯވަރ ކުރައްވާ.',
+    openMenu: 'މެނޫ ހުޅުވާ',
+    spacingSm: 'ކޮމްޕެކްޓް',
+    spacingMd: 'ޑިފޯލްޓް',
+    spacingLg: 'ރޫމީ',
+    spacingXl: 'ސްޕޭޝަސް',
+    contentOnly: 'މަސްވެރިކަމުގެ ހުއްދަ ރިނިއުއަލްގެ ފައިސާ ލިބިއްޖެ.',
   },
 } as const;
 
@@ -1525,6 +1538,74 @@ export function CardVariantsDemo() {
           <Card.Title>{text.interactive}</Card.Title>
         </Card.Header>
         <Card.Content>{text.hoverFeedback}</Card.Content>
+      </Card>
+    </div>
+  );
+}
+
+export function CardSpacingDemo() {
+  const text = useCardDocsText();
+  const spacings = [
+    { spacing: 'sm' as const, label: text.spacingSm },
+    { spacing: 'md' as const, label: text.spacingMd },
+    { spacing: 'lg' as const, label: text.spacingLg },
+    { spacing: 'xl' as const, label: text.spacingXl },
+  ];
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {spacings.map(({ spacing, label }) => (
+        <Card key={spacing} spacing={spacing} elevation="xs">
+          <Card.Header>
+            <Card.Title>{label}</Card.Title>
+          </Card.Header>
+          <Card.Content>{text.reviewMessage}</Card.Content>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+export function CardHeaderActionDemo() {
+  const text = useCardDocsText();
+
+  return (
+    <Card className="w-full max-w-md">
+      <Card.Header
+        action={
+          <Button
+            intent="secondary"
+            appearance="transparent"
+            size="sm"
+            iconOnly
+            aria-label={text.openMenu}
+          >
+            <DotsThree size={16} weight="bold" />
+          </Button>
+        }
+      >
+        <Card.Title>{text.permitApplication}</Card.Title>
+        <Card.Description>{text.requiredDocuments}</Card.Description>
+      </Card.Header>
+      <Card.Content>{text.reviewMessage}</Card.Content>
+    </Card>
+  );
+}
+
+export function CardCompositionDemo() {
+  const text = useCardDocsText();
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <Card elevation="xs" spacing="md">
+        <Card.Content>{text.contentOnly}</Card.Content>
+      </Card>
+      <Card elevation="xs" spacing="md" interactive>
+        <Card.Header>
+          <Card.Title>{text.interactive}</Card.Title>
+          <Card.Description>{text.hoverFeedback}</Card.Description>
+        </Card.Header>
+        <Card.Content>{text.reviewMessage}</Card.Content>
       </Card>
     </div>
   );
