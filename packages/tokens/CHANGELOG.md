@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.7.1
+
+_Released 2026-09-05._
+
+### Added
+
+- Add `color.status.*-stroke` tokens for badge outline borders, including `cautious-stroke` compatibility aliases.
+
+### Changed
+
+- Refresh Badge status subtle fills to alpha-200 tokens and map the Brand accent intent from the deprecated `teal` name.
+- Point Badge info colors at the blue primitive scale instead of brand primary.
+
+### Deprecated
+
+- Badge `intent="teal"` now aliases to `intent="brand"`.
+
+### Fixed
+
+- Align Badge outline borders with Figma stroke tokens instead of subtle fill tokens.
+- Remove visible borders from Badge subtle and emphasis appearances to match the design spec.
+
 ## 0.7.0
 
 _Released 2026-09-01._
