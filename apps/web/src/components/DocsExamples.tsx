@@ -1265,32 +1265,26 @@ export function TextAreaUsageDemo() {
         label="Message"
         placeholder="Tell us how we can help"
         description="Helper text"
-        showCharacterCounter
         maxLength={280}
       />
     </div>
   );
 }
 
-export function TextAreaVariantsDemo() {
+export function TextAreaAppearancesDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
-      <TextArea label="Default" placeholder="Write a note" description="Helper text" />
+    <div className="grid gap-4 md:grid-cols-2">
+      <TextArea label="Default" placeholder="Write a note" />
+      <TextArea appearance="outline" label="Outline" placeholder="Write a note" />
+    </div>
+  );
+}
+
+export function TextAreaValidationDemo() {
+  return (
+    <div className="w-[360px]">
       <TextArea
-        appearance="outline"
-        label="Outline"
-        placeholder="Write a note"
-        description="Helper text"
-      />
-      <TextArea
-        label="Resizable"
-        placeholder="Drag the handle to resize"
-        isResizable
-        maxHeight={320}
-        description="Helper text"
-      />
-      <TextArea
-        label="Invalid"
+        label="Details"
         placeholder="Enter details"
         isInvalid
         errorMessage="This field needs attention."
