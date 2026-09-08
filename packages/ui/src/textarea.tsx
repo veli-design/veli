@@ -12,7 +12,6 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Info } from 'phosphor-react';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
@@ -76,9 +75,6 @@ const outlineFieldStrokeRest =
 const outlineFieldStrokeError =
   'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
 
-const outlineFieldStrokeDisabled =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-disabled)]';
-
 const outlineFieldStrokeFocusVisibleHide =
   'has-[textarea[data-focus-visible]]:shadow-none has-[textarea[data-focus-visible]]:hover:shadow-none';
 
@@ -126,7 +122,7 @@ const fieldShellVariants = cva(
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
@@ -138,13 +134,13 @@ const fieldShellVariants = cva(
         appearance: 'default',
         isDisabled: true,
         isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -163,7 +159,7 @@ const fieldShellVariants = cva(
       {
         appearance: 'outline',
         isDisabled: true,
-        className: `${outlineFieldStrokeDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -175,13 +171,13 @@ const fieldShellVariants = cva(
         appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: outlineFieldStrokeDisabled,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
     ],
     defaultVariants: {
