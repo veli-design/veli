@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Bell, FlagBanner } from 'phosphor-react';
+import { Bell, CheckCircle, Clock, FlagBanner, XCircle } from 'phosphor-react';
 
 const statusIntents: BadgeIntent[] = [
   'neutral',
@@ -99,7 +99,7 @@ const meta = {
     appearance: 'outline',
     intent: 'neutral',
     size: 'md',
-    showIcon: true,
+    showIcon: false,
     counter: false,
     count: undefined,
     max: 99,
@@ -132,6 +132,12 @@ const meta = {
     children: {
       control: 'text',
     },
+    className: {
+      table: { disable: true },
+    },
+    leadingIcon: {
+      table: { disable: true },
+    },
   },
 } satisfies Meta<BadgeStoryArgs>;
 
@@ -142,7 +148,7 @@ function BadgeIcon({ size }: { size: 'sm' | 'md' }) {
   return <FlagBanner aria-hidden size={size === 'sm' ? 12 : 16} weight="regular" />;
 }
 
-export const Playground: Story = {
+export const Default: Story = {
   render: ({ showIcon, size = 'md', intent = 'neutral', counter, count, ...args }) => {
     const text = useBadgeText();
     const isCounter = counter || count != null;
@@ -167,14 +173,6 @@ export const Playground: Story = {
   },
 };
 
-export const Default: Story = {
-  render: () => (
-    <Badge appearance="outline" intent="neutral" leadingIcon={<BadgeIcon size="md" />}>
-      {intentLabels.neutral}
-    </Badge>
-  ),
-};
-
 export const StatusColors: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
@@ -183,12 +181,7 @@ export const StatusColors: Story = {
           <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
           <div className="flex flex-wrap gap-2">
             {statusIntents.map((intent) => (
-              <Badge
-                key={`${appearance}-${intent}`}
-                appearance={appearance}
-                intent={intent}
-                leadingIcon={<BadgeIcon size="md" />}
-              >
+              <Badge key={`${appearance}-${intent}`} appearance={appearance} intent={intent}>
                 {intentLabels[intent]}
               </Badge>
             ))}
@@ -207,12 +200,7 @@ export const AccentColors: Story = {
           <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
           <div className="flex flex-wrap gap-2">
             {accentIntents.map((intent) => (
-              <Badge
-                key={`${appearance}-${intent}`}
-                appearance={appearance}
-                intent={intent}
-                leadingIcon={<BadgeIcon size="md" />}
-              >
+              <Badge key={`${appearance}-${intent}`} appearance={appearance} intent={intent}>
                 {intentLabels[intent]}
               </Badge>
             ))}
@@ -229,13 +217,11 @@ export const Sizes: Story = {
       {(['sm', 'md'] as const).map((size) => (
         <div key={size} className="flex items-center gap-3">
           <span className="type-body-sm-regular w-8 text-base-muted">{size}</span>
-          <Badge
-            appearance="outline"
-            intent="info"
-            size={size}
-            leadingIcon={<BadgeIcon size={size === 'sm' ? 'sm' : 'md'} />}
-          >
+          <Badge appearance="emphasis" intent="info" size={size}>
             {intentLabels.info}
+          </Badge>
+          <Badge appearance="subtle" intent="danger" size={size}>
+            {intentLabels.danger}
           </Badge>
         </div>
       ))}
@@ -332,7 +318,7 @@ export const StatusDots: Story = {
   ),
 };
 
-export const OnlineStatus: Story = {
+export const OnlineStatusExample: Story = {
   render: () => {
     const text = useBadgeText();
 
@@ -392,19 +378,31 @@ export const OnlineStatus: Story = {
   },
 };
 
-export const WithoutIcon: Story = {
+export const WithLeadingIcon: Story = {
   render: () => {
     const text = useBadgeText();
 
     return (
       <div className="flex flex-wrap gap-2">
-        <Badge appearance="subtle" intent="positive">
+        <Badge
+          appearance="subtle"
+          intent="positive"
+          leadingIcon={<CheckCircle aria-hidden size={16} weight="regular" />}
+        >
           {text.approved}
         </Badge>
-        <Badge appearance="emphasis" intent="danger">
+        <Badge
+          appearance="emphasis"
+          intent="danger"
+          leadingIcon={<XCircle aria-hidden size={16} weight="regular" />}
+        >
           {text.rejected}
         </Badge>
-        <Badge appearance="outline" intent="warning">
+        <Badge
+          appearance="outline"
+          intent="warning"
+          leadingIcon={<Clock aria-hidden size={16} weight="regular" />}
+        >
           {text.pending}
         </Badge>
       </div>
@@ -439,22 +437,12 @@ export const AllVariants: Story = {
                   <tr key={intent}>
                     <td className="type-body-sm-regular text-base">{intentLabels[intent]}</td>
                     <td className="text-center">
-                      <Badge
-                        appearance={appearance}
-                        intent={intent}
-                        size="sm"
-                        leadingIcon={<BadgeIcon size="sm" />}
-                      >
+                      <Badge appearance={appearance} intent={intent} size="sm">
                         {intentLabels[intent]}
                       </Badge>
                     </td>
                     <td className="text-center">
-                      <Badge
-                        appearance={appearance}
-                        intent={intent}
-                        size="md"
-                        leadingIcon={<BadgeIcon size="md" />}
-                      >
+                      <Badge appearance={appearance} intent={intent} size="md">
                         {intentLabels[intent]}
                       </Badge>
                     </td>
