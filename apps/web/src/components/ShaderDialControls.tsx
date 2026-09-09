@@ -1,8 +1,40 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDialKitController } from 'dialkit';
 import type { DialConfig } from 'dialkit';
 
 const BRIDGE_EVENT = 'veli:wave-formation-dial-change';
+const THEME_EVENT = 'veli:color-scheme-change';
+const APPEARANCE_PRESETS_STORAGE_KEY = 'veli-wave-formation-appearance-presets-v1';
+
+type ShaderMode = 'light' | 'dark';
+
+type AppearanceValues = {
+  dotColor: string;
+  bgmode: string;
+  bgColor: string;
+  bgColor2: string;
+  bgangle: number;
+  bgspread: number;
+};
+
+const DEFAULT_APPEARANCE: Record<ShaderMode, AppearanceValues> = {
+  dark: {
+    dotColor: '#f5f5f0',
+    bgmode: 'solid',
+    bgColor: '#08090a',
+    bgColor2: '#1a3a5c',
+    bgangle: 180,
+    bgspread: 1,
+  },
+  light: {
+    dotColor: '#08213a',
+    bgmode: 'linear',
+    bgColor: '#f5f5f0',
+    bgColor2: '#d8eaf8',
+    bgangle: 145,
+    bgspread: 1,
+  },
+};
 
 const CONFIG = {
   particles: {
@@ -198,7 +230,54 @@ function toEngineState(values: AnyRecord): AnyRecord {
   };
 }
 
+function isShaderMode(value: unknown): value is ShaderMode {
+  return value === 'light' || value === 'dark';
+}
+
+function getAppearance(values: AnyRecord): AppearanceValues {
+  return clone(values.appearance as AppearanceValues);
+}
+
+function readAppearancePresets(): Record<ShaderMode, AppearanceValues> {
+  const presets = clone(DEFAULT_APPEARANCE);
+
+  try {
+    const stored = window.localStorage.getItem(APPEARANCE_PRESETS_STORAGE_KEY);
+    if (!stored) return presets;
+
+    const parsed = JSON.parse(stored) as Partial<Record<ShaderMode, Partial<AppearanceValues>>>;
+    for (const mode of ['light', 'dark'] as const) {
+      if (parsed[mode]) {
+        presets[mode] = { ...presets[mode], ...parsed[mode] };
+      }
+    }
+  } catch {
+    // The tuned defaults remain available if storage contains invalid data.
+  }
+
+  return presets;
+}
+
+function hasStoredAppearancePresets() {
+  try {
+    return Boolean(window.localStorage.getItem(APPEARANCE_PRESETS_STORAGE_KEY));
+  } catch {
+    return false;
+  }
+}
+
+function writeAppearancePresets(presets: Record<ShaderMode, AppearanceValues>) {
+  try {
+    window.localStorage.setItem(APPEARANCE_PRESETS_STORAGE_KEY, JSON.stringify(presets));
+  } catch {
+    // The active shader still updates if storage is unavailable.
+  }
+}
+
 export default function ShaderDialControls() {
+  const activeModeRef = useRef<ShaderMode | null>(null);
+  const presetsRef = useRef<Record<ShaderMode, AppearanceValues> | null>(null);
+  const presetsReadyRef = useRef(false);
   const controller = useDialKitController('WaveFormation BG', CONFIG, {
     id: 'pd-901-wave-formation-v2',
     persist: {
@@ -208,15 +287,62 @@ export default function ShaderDialControls() {
     },
     onAction: (action) => {
       if (action.endsWith('resetTunedDefaults')) {
-        controller.setValues(clone(DEFAULT_VALUES) as never);
+        const tunedDefaults = clone(DEFAULT_VALUES);
+        tunedDefaults.appearance = clone(DEFAULT_APPEARANCE[activeModeRef.current ?? 'dark']);
+        controller.setValues(tunedDefaults as never);
       }
     },
   });
+  const controllerRef = useRef(controller);
 
   const values = controller.values as unknown as AnyRecord;
   const serialised = useMemo(() => JSON.stringify(values), [values]);
 
   useEffect(() => {
+    const dial = controllerRef.current;
+
+    let activeMode = isShaderMode(document.documentElement.dataset.theme)
+      ? document.documentElement.dataset.theme
+      : 'dark';
+    const presets = readAppearancePresets();
+
+    // Preserve colors tuned before mode-aware presets existed as the dark preset.
+    if (!hasStoredAppearancePresets()) {
+      presets.dark = getAppearance(dial.getValues() as unknown as AnyRecord);
+      writeAppearancePresets(presets);
+    }
+
+    activeModeRef.current = activeMode;
+    presetsRef.current = presets;
+    presetsReadyRef.current = true;
+    dial.setValues({ appearance: presets[activeMode] } as never);
+
+    const onThemeChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ resolvedColorScheme?: string }>).detail;
+      if (!isShaderMode(detail?.resolvedColorScheme) || detail.resolvedColorScheme === activeMode) {
+        return;
+      }
+
+      presets[activeMode] = getAppearance(dial.getValues() as unknown as AnyRecord);
+      activeMode = detail.resolvedColorScheme;
+      activeModeRef.current = activeMode;
+      dial.setValues({ appearance: presets[activeMode] } as never);
+      writeAppearancePresets(presets);
+    };
+
+    window.addEventListener(THEME_EVENT, onThemeChange);
+
+    return () => window.removeEventListener(THEME_EVENT, onThemeChange);
+  }, []);
+
+  useEffect(() => {
+    if (!presetsReadyRef.current || !activeModeRef.current || !presetsRef.current) return;
+
+    const activeMode = activeModeRef.current;
+    const presets = presetsRef.current;
+    presets[activeMode] = getAppearance(values);
+    writeAppearancePresets(presets);
+
     window.dispatchEvent(
       new CustomEvent(BRIDGE_EVENT, {
         detail: { state: clone(toEngineState(values)) },

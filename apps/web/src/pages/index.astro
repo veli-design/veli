@@ -2,6 +2,7 @@
 import Layout from '../layouts/layout.astro';
 import ShaderBackground from '../components/ShaderBackground.astro';
 import ShaderDialControls from '../components/ShaderDialControls';
+import HomeThemeControl from '../components/HomeThemeControl.astro';
 import VeliLogo from '../components/VeliLogo.astro';
 ---
 
@@ -14,6 +15,10 @@ import VeliLogo from '../components/VeliLogo.astro';
     <div class="home-frame">
       <div class="home-shader-frame" aria-hidden="true">
         <ShaderBackground class="home-hero__background" />
+      </div>
+
+      <div class="home-utility-controls" aria-label="Homepage controls">
+        <HomeThemeControl />
       </div>
 
       <section class="home-hero__content" aria-labelledby="home-title">
