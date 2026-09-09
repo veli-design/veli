@@ -99,7 +99,7 @@ button {
   min-height: 100svh;
   overflow: hidden;
   background: var(--color-bg-surface-base);
-  color: var(--color-text-base-emphasis);
+  color: rgb(255 255 255 / 0.96);
 }
 
 .home-frame {
