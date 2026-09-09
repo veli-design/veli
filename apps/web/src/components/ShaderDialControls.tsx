@@ -135,7 +135,6 @@ const CONFIG = {
   appearance: {
     _collapsed: true,
     dotColor: { type: 'color', default: '#f5f5f0' },
-    bgColor: { type: 'color', default: '#08090a' },
     bgmode: {
       type: 'select',
       options: [
@@ -145,6 +144,7 @@ const CONFIG = {
       ],
       default: 'solid',
     },
+    bgColor: { type: 'color', default: '#08090a' },
     bgColor2: { type: 'color', default: '#1a3a5c' },
     bgangle: [180, 0, 360, 5],
     bgspread: [1, 0.2, 2, 0.05],
