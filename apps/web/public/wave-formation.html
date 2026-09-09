@@ -1827,9 +1827,11 @@
     const bgSwatchWrap = document.getElementById('bg-swatches');
     function setBgColor(hex, fromSwatch) {
       state.bgColor = hex;
+      document.documentElement.style.setProperty('--bg', hex);
       bgPicker.value = hex;
       bgHexLabel.textContent = hex;
       stage.style.background = hex;
+      canvas.style.background = hex;
       bgSwatchWrap.querySelectorAll('.swatch').forEach((s) => {
         s.classList.toggle(
           'active',
