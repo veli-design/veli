@@ -210,7 +210,7 @@ const textareaElementVariants = cva(
 );
 
 const resizeIndicatorVariants = cva(
-  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       isDisabled: {
@@ -227,11 +227,6 @@ const resizeIndicatorVariants = cva(
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
   dv: 'އިތުރު މަޢުލޫމާތު',
-} as const;
-
-const resizeHandleAriaLabels = {
-  en: 'Resize textarea',
-  dv: 'ޓެކްސްޓް އޭރިއާ ކަނޑައަޅަން',
 } as const;
 
 function clampHeight(value: number, min: number, max?: number) {
@@ -272,7 +267,7 @@ function useVerticalTextAreaResize({
   }, []);
 
   const endDrag = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!dragStateRef.current) return;
 
       clearDragState();
@@ -285,7 +280,7 @@ function useVerticalTextAreaResize({
   );
 
   const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!enabled || !shellRef.current) return;
 
       event.preventDefault();
@@ -304,7 +299,7 @@ function useVerticalTextAreaResize({
   );
 
   const handlePointerMove = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!dragStateRef.current) return;
 
       const { startY, startHeight } = dragStateRef.current;
@@ -480,7 +475,6 @@ export function TextArea({
   const shellRef = React.useRef<HTMLDivElement>(null);
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
-  const resolvedResizeHandleAriaLabel = resizeHandleAriaLabels[languageConfig.language];
   const resolvedMinHeight = minHeight ?? shellMinHeights[size ?? 'md'];
   const [uncontrolledCharacterCount, setUncontrolledCharacterCount] = React.useState(() =>
     getInitialCharacterCount(value, defaultValue),
@@ -600,15 +594,14 @@ export function TextArea({
                 className={textareaElementVariants({ size })}
               />
               {showResizeIndicator && resizeHandleProps ? (
-                <button
-                  type="button"
+                <div
+                  aria-hidden
                   data-textarea-resize-handle
-                  aria-label={resolvedResizeHandleAriaLabel}
                   className={resizeIndicatorVariants({ isDisabled })}
                   {...resizeHandleProps}
                 >
                   <TextAreaResizeIndicator direction={languageConfig.direction} />
-                </button>
+                </div>
               ) : null}
             </Group>
 

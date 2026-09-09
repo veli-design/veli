@@ -16,3 +16,4 @@
 - Draw the TextArea outline stroke inside the shell so hover (1.5px) and active (2px) do not shift the field or its label.
 - Drop the muted TextArea disabled stroke and underline so Default and Outline match Figma (fill only).
 - Use the text-input hover fill for disabled TextArea shells so they match read-only and Figma `components/text-input/bg-hover`.
+- Keep the TextArea resize handle out of the tab order. Resize stays pointer-drag only, matching a native textarea.
