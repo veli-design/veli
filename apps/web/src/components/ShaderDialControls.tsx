@@ -7,9 +7,9 @@ const BRIDGE_EVENT = 'veli:wave-formation-dial-change';
 const CONFIG = {
   particles: {
     _collapsed: false,
-    count: [3700, 100, 6000, 100],
-    size: [8.7, 0.5, 20, 0.1],
-    sizevar: [0.2, 0, 1, 0.05],
+    count: [700, 100, 6000, 100],
+    size: [1.6, 0.5, 20, 0.1],
+    sizevar: [0, 0, 1, 0.05],
     sizevarstyle: {
       type: 'select',
       options: [
@@ -19,7 +19,7 @@ const CONFIG = {
       ],
       default: 'uniform',
     },
-    speed: [0.3, 0, 20, 0.1],
+    speed: [0.4, 0, 20, 0.1],
   },
   mouse: {
     _collapsed: true,
@@ -32,13 +32,13 @@ const CONFIG = {
       ],
       default: 'repel',
     },
-    radius: [230, 0, 300, 5],
-    force: [5.5, 0, 8, 0.1],
+    radius: [110, 0, 300, 5],
+    force: [2.2, 0, 8, 0.1],
   },
   ballToBall: {
     _collapsed: true,
-    interforce: [4, 0, 4, 0.1],
-    interradius: [40, 0, 60, 1],
+    interforce: [1.2, 0, 4, 0.1],
+    interradius: [18, 0, 60, 1],
     rangevar: [0, 0, 1, 0.05],
     rangevarstyle: {
       type: 'select',
@@ -67,12 +67,12 @@ const CONFIG = {
         { value: 'radial', label: 'Radial' },
         { value: 'hex', label: 'Hex grid' },
       ],
-      default: 'wave',
+      default: 'free',
     },
-    formationstrength: [0.85, 0, 1, 0.05],
-    formationscale: [1.5, 0.3, 2.5, 0.05],
-    formationrotation: [162, 0, 360, 1],
-    formationoffsetx: [60, -400, 400, 5],
+    formationstrength: [0.75, 0, 1, 0.05],
+    formationscale: [1, 0.3, 2.5, 0.05],
+    formationrotation: [0, 0, 360, 1],
+    formationoffsetx: [0, -400, 400, 5],
     offsetxloop: false,
     formationoffsety: [0, -300, 300, 5],
   },
@@ -86,10 +86,10 @@ const CONFIG = {
       ],
       default: 'horizontal',
     },
-    waveamp: [1.95, 0, 3, 0.05],
-    wavefreq: [1.25, 0.2, 3, 0.05],
-    wavedensity: [0.8, 0.3, 3, 0.05],
-    wavespeed: [4, 0, 5, 0.05],
+    waveamp: [1, 0, 3, 0.05],
+    wavefreq: [1, 0.2, 3, 0.05],
+    wavedensity: [1, 0.3, 3, 0.05],
+    wavespeed: [1, 0, 5, 0.05],
     waveshape: {
       type: 'select',
       options: [
@@ -99,8 +99,8 @@ const CONFIG = {
       ],
       default: 'sine',
     },
-    wavevariation: [1.35, 0, 2, 0.05],
-    wavecomplexity: [0.3, 0, 1, 0.05],
+    wavevariation: [1, 0, 2, 0.05],
+    wavecomplexity: [0, 0, 1, 0.05],
   },
   marqueeLoop: {
     _collapsed: true,
@@ -127,10 +127,27 @@ const CONFIG = {
     gravity: [0, 0, 3, 0.05],
     trail: [1, 0.02, 1, 0.02],
   },
+  canvas: {
+    _collapsed: true,
+    canvasw: [1920, 320, 3840, 20],
+    canvash: [1080, 320, 2160, 20],
+  },
   appearance: {
     _collapsed: true,
-    dotColor: { type: 'color', default: '#67c4fe' },
-    bgColor: { type: 'color', default: '#08213a' },
+    dotColor: { type: 'color', default: '#f5f5f0' },
+    bgColor: { type: 'color', default: '#08090a' },
+    bgmode: {
+      type: 'select',
+      options: [
+        { value: 'solid', label: 'Solid' },
+        { value: 'linear', label: 'Linear gradient' },
+        { value: 'radial', label: 'Radial gradient' },
+      ],
+      default: 'solid',
+    },
+    bgColor2: { type: 'color', default: '#1a3a5c' },
+    bgangle: [180, 0, 360, 5],
+    bgspread: [1, 0.2, 2, 0.05],
   },
   actions: {
     _collapsed: false,
@@ -176,14 +193,19 @@ function toEngineState(values: AnyRecord): AnyRecord {
     ...(values.marqueeLoop as AnyRecord),
     ...(values.seamlessLoop as AnyRecord),
     ...(values.fieldForces as AnyRecord),
+    ...(values.canvas as AnyRecord),
     ...(values.appearance as AnyRecord),
   };
 }
 
 export default function ShaderDialControls() {
   const controller = useDialKitController('WaveFormation BG', CONFIG, {
-    id: 'pd-901-wave-formation',
-    persist: { key: 'veli-pd-901-wave-formation-controls', storage: 'localStorage', presets: true },
+    id: 'pd-901-wave-formation-v2',
+    persist: {
+      key: 'veli-pd-901-wave-formation-controls-v2',
+      storage: 'localStorage',
+      presets: true,
+    },
     onAction: (action) => {
       if (action.endsWith('resetTunedDefaults')) {
         controller.setValues(clone(DEFAULT_VALUES) as never);
