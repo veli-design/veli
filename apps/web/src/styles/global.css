@@ -99,7 +99,7 @@ button {
   min-height: 100svh;
   overflow: hidden;
   background: var(--color-bg-surface-base);
-  color: rgb(255 255 255 / 0.96);
+  color: var(--color-text-base-emphasis);
 }
 
 .home-frame {
@@ -112,6 +112,66 @@ button {
 .home-shader-frame {
   position: absolute;
   inset: 0;
+}
+
+.home-utility-controls {
+  position: absolute;
+  z-index: 3;
+  bottom: 20px;
+  left: 20px;
+}
+
+.home-theme-cycle {
+  position: relative;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-text-base-emphasis) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-bg-surface-base) 72%, transparent);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-base-emphasis);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.home-theme-cycle:hover,
+.home-theme-cycle:focus-visible {
+  background: color-mix(in srgb, var(--color-bg-surface-base) 90%, transparent);
+}
+
+.home-theme-cycle:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.home-theme-cycle__tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  border-radius: 8px;
+  background: var(--color-tooltip-bg-small);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text-base-default);
+  opacity: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateY(2px);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+.home-theme-cycle:hover .home-theme-cycle__tooltip,
+.home-theme-cycle:focus-visible .home-theme-cycle__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .home-hero__background {
