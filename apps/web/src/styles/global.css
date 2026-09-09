@@ -907,6 +907,12 @@ button {
   margin-top: 15px;
 }
 
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol {
+  margin-bottom: 0;
+}
+
 .docs-prose a {
   color: var(--color-text-links-default);
   font-weight: 600;
@@ -941,9 +947,8 @@ button {
 }
 
 .docs-prose > table {
-  display: block;
   width: 100%;
-  overflow-x: auto;
+  margin-bottom: 32px;
   border-collapse: collapse;
   font-size: 13px;
   line-height: 20px;
@@ -2023,6 +2028,16 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 .docs-prose table,
 .docs-prose pre {
   margin-top: 16px;
+}
+
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol {
+  margin-bottom: 0;
+}
+
+.docs-prose table {
+  margin-bottom: 32px;
 }
 
 .docs-coming-soon {
