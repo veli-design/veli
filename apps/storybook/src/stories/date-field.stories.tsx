@@ -1,54 +1,82 @@
-import { useEffect } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { getLocalTimeZone, parseDate, parseDateTime, today } from '@internationalized/date';
+import { parseDate, parseDateTime } from '@internationalized/date';
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-const now = today(getLocalTimeZone());
+const collapsedControlGroups = ['Content', 'State'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function DateFieldDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
 
 const enDateFieldText = {
-  appointmentDate: 'Appointment date',
-  typeDateSegmentBySegment: 'Type a date segment by segment.',
-  helperText: 'Helper text',
+  label: 'Label',
   optional: 'Optional',
+  helperText: 'Helper text',
+  errorMessage: 'Enter a valid service date.',
+  default: 'Default',
+  invalid: 'Invalid',
+  disabled: 'Disabled',
+  readOnly: 'Read only',
   dateOnly: 'Date only',
   dateAndMinute: 'Date and minute',
   twentyFourHourFormat: '24 hour format',
-  required: 'Required',
-  futureDatesOnly: 'Future dates only.',
-  minAndMax: 'Min and max',
-  selectableForTheNextMonth: 'Selectable for the next month.',
-  invalid: 'Invalid',
-  helperTextHiddenWhileInvalid: 'This helper text is hidden while invalid.',
-  enterAValidServiceDate: 'Enter a valid service date.',
-  invalidWithoutMessage: 'Invalid without message',
-  disabled: 'Disabled',
-  readOnly: 'Read only',
-  empty: 'Empty',
-  filled: 'Filled',
 } as const;
 
 const dhivehiDateFieldText = {
-  appointmentDate: 'އެޕޮއިންޓްމަންޓް ތާރީޚު',
-  typeDateSegmentBySegment: 'ސެގްމަންޓް އަކުން އަކަށް ތާރީޚެއް ލިޔުއްވާ.',
-  helperText: 'އެހީތެރިވެދޭ ލިޔުން',
+  label: 'ލޭބަލް',
   optional: 'އިޚްތިޔާރީ',
+  helperText: 'އެހީތެރިވެދޭ ލިޔުން',
+  errorMessage: 'ސައްޙަ ޚިދުމަތު ތާރީޚެއް ލިޔުއްވާ.',
+  default: 'އާދައިގެ',
+  invalid: 'ސައްޙަނޫން',
+  disabled: 'ބޭނުންނުކުރެވޭ',
+  readOnly: 'ކިޔަން އެކަނި',
   dateOnly: 'ތާރީޚު އެކަނި',
   dateAndMinute: 'ތާރީޚާއި މިނެޓު',
   twentyFourHourFormat: '24 ގަޑިއިރުގެ ފޯމެޓް',
-  required: 'ފުރިހަމަކުރަންޖެހޭ',
-  futureDatesOnly: 'ހަމައެކަނި ކުރިއަށް އޮތް ތާރީޚުތައް.',
-  minAndMax: 'މިން އަދި މެކްސް',
-  selectableForTheNextMonth: 'ކުރިއަށް އޮތް މަހުގެ ތެރެއިން ޚިޔާރުކުރެވޭނެއެވެ.',
-  invalid: 'ސައްޙަނޫން',
-  helperTextHiddenWhileInvalid: 'ސައްޙަނޫން ހާލަތެއްގައި މި އެހީތެރިވެދޭ ލިޔުން ނުފެންނާނެއެވެ.',
-  enterAValidServiceDate: 'ސައްޙަ ޚިދުމަތު ތާރީޚެއް ލިޔުއްވާ.',
-  invalidWithoutMessage: 'މެސެޖަކާ ނުލައި ސައްޙަނޫން',
-  disabled: 'ބޭނުންނުކުރެވޭ',
-  readOnly: 'ކިޔަން އެކަނި',
-  empty: 'ހުސް',
-  filled: 'ފުރިހަމަ',
 } as const;
 
 const localizedDateFieldText = {
@@ -72,26 +100,50 @@ const useDateFieldText = () => {
 
 const dateFieldArgText = {
   label: {
-    en: enDateFieldText.appointmentDate,
-    dv: dhivehiDateFieldText.appointmentDate,
-  },
-  description: {
-    en: enDateFieldText.typeDateSegmentBySegment,
-    dv: dhivehiDateFieldText.typeDateSegmentBySegment,
+    en: enDateFieldText.label,
+    dv: dhivehiDateFieldText.label,
   },
   labelSupplementary: {
     en: enDateFieldText.optional,
     dv: dhivehiDateFieldText.optional,
   },
+  description: {
+    en: enDateFieldText.helperText,
+    dv: dhivehiDateFieldText.helperText,
+  },
   errorMessage: {
-    en: enDateFieldText.enterAValidServiceDate,
-    dv: dhivehiDateFieldText.enterAValidServiceDate,
+    en: enDateFieldText.errorMessage,
+    dv: dhivehiDateFieldText.errorMessage,
   },
 } as const;
 
 type DateFieldArgTextKey = keyof typeof dateFieldArgText;
+type DateFieldStoryArgs = ComponentProps<typeof DateField> & {
+  showOptional: boolean;
+};
 
 const dateFieldArgTextKeys = Object.keys(dateFieldArgText) as DateFieldArgTextKey[];
+
+const getDateFieldPreviewKey = (
+  language: DateFieldLanguage,
+  defaultValue: DateFieldStoryArgs['defaultValue'],
+) => `${language}:${defaultValue == null ? '' : String(defaultValue)}`;
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
 
 const getLocalizedDateFieldArgText = (
   key: DateFieldArgTextKey,
@@ -110,6 +162,22 @@ const getLocalizedDateFieldArgText = (
 
   return value;
 };
+
+const hiddenDateFieldArgTypes = {
+  className: { table: { disable: true } },
+  inputClassName: { table: { disable: true } },
+  value: { control: false, table: { disable: true } },
+  defaultValue: { control: false, table: { disable: true } },
+  onChange: { control: false, table: { disable: true } },
+  placeholderValue: { control: false, table: { disable: true } },
+  minValue: { control: false, table: { disable: true } },
+  maxValue: { control: false, table: { disable: true } },
+  validate: { control: false, table: { disable: true } },
+  name: { control: false, table: { disable: true } },
+  autoFocus: { control: false, table: { disable: true } },
+  hideTimeZone: { control: false, table: { disable: true } },
+  shouldForceLeadingZeros: { control: false, table: { disable: true } },
+} as const;
 
 const meta = {
   title: 'Components/DateField',
@@ -147,55 +215,90 @@ const meta = {
   ],
   parameters: {
     layout: 'centered',
+    controls: {
+      sort: 'none',
+    },
+    docs: {
+      container: DateFieldDocsContainer,
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    label: {
-      control: 'text',
-    },
-    description: {
-      control: 'text',
-    },
-    labelSupplementary: {
-      control: 'text',
-    },
-    errorMessage: {
-      control: 'text',
-    },
-    appearance: {
-      control: 'select',
-      options: ['default', 'outline'],
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
-    isDisabled: {
-      control: 'boolean',
-    },
-    isReadOnly: {
-      control: 'boolean',
-    },
-    isRequired: {
-      control: 'boolean',
-    },
-    isInvalid: {
-      control: 'boolean',
-    },
-    showRequiredIndicator: {
-      control: 'boolean',
-    },
+    ...withArgCategory('Appearance', {
+      appearance: {
+        control: 'select',
+        options: ['default', 'outline'],
+      },
+      size: {
+        control: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
+    }),
+    ...withArgCategory('Label', {
+      label: {
+        control: 'text',
+        table: { type: { summary: 'string' } },
+      },
+      labelSupplementary: {
+        control: 'text',
+        table: { type: { summary: 'string' } },
+      },
+      showOptional: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Content', {
+      description: {
+        control: 'text',
+        table: { type: { summary: 'string' } },
+      },
+      granularity: {
+        control: 'select',
+        options: ['day', 'hour', 'minute', 'second'],
+      },
+      hourCycle: {
+        control: 'select',
+        options: [12, 24],
+      },
+    }),
+    ...withArgCategory('State', {
+      isRequired: {
+        control: 'boolean',
+      },
+      showRequiredIndicator: {
+        control: 'boolean',
+      },
+      isInvalid: {
+        control: 'boolean',
+      },
+      errorMessage: {
+        control: 'text',
+        table: { type: { summary: 'string' } },
+      },
+      isDisabled: {
+        control: 'boolean',
+      },
+      isReadOnly: {
+        control: 'boolean',
+      },
+    }),
+    ...hiddenDateFieldArgTypes,
   },
   args: {
-    label: enDateFieldText.appointmentDate,
-    description: enDateFieldText.typeDateSegmentBySegment,
-    labelSupplementary: enDateFieldText.optional,
-    errorMessage: enDateFieldText.enterAValidServiceDate,
     appearance: 'default',
     size: 'md',
+    label: enDateFieldText.label,
+    labelSupplementary: enDateFieldText.optional,
+    showOptional: true,
+    description: enDateFieldText.helperText,
+    isRequired: false,
     showRequiredIndicator: true,
+    isInvalid: false,
+    errorMessage: enDateFieldText.errorMessage,
+    isDisabled: false,
+    isReadOnly: false,
   },
-} satisfies Meta<typeof DateField>;
+} satisfies Meta<DateFieldStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -203,18 +306,23 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useDateFieldLanguage();
+    const { showOptional, ...dateFieldArgs } = args;
 
     return (
-      <div className="w-[320px]">
+      <div key={getDateFieldPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <DateField
-          {...args}
+          {...dateFieldArgs}
           label={getLocalizedDateFieldArgText('label', args.label, language)}
+          labelSupplementary={
+            showOptional
+              ? getLocalizedDateFieldArgText(
+                  'labelSupplementary',
+                  args.labelSupplementary,
+                  language,
+                )
+              : undefined
+          }
           description={getLocalizedDateFieldArgText('description', args.description, language)}
-          labelSupplementary={getLocalizedDateFieldArgText(
-            'labelSupplementary',
-            args.labelSupplementary,
-            language,
-          )}
           errorMessage={getLocalizedDateFieldArgText('errorMessage', args.errorMessage, language)}
         />
       </div>
@@ -226,143 +334,146 @@ export const Outline: Story = {
   args: {
     appearance: 'outline',
   },
-  render: (args) => {
-    const language = useDateFieldLanguage();
-
-    return (
-      <div className="w-[320px]">
-        <DateField
-          {...args}
-          label={getLocalizedDateFieldArgText('label', args.label, language)}
-          description={getLocalizedDateFieldArgText('description', args.description, language)}
-          labelSupplementary={getLocalizedDateFieldArgText(
-            'labelSupplementary',
-            args.labelSupplementary,
-            language,
-          )}
-          errorMessage={getLocalizedDateFieldArgText('errorMessage', args.errorMessage, language)}
-        />
-      </div>
-    );
-  },
+  render: Default.render,
 };
 
-/**
- * Showcases all size and appearance combinations of the DateField component.
- */
 export const Sizes: Story = {
   render: () => {
+    const language = useDateFieldLanguage();
     const text = useDateFieldText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-8">
           <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Default
           </span>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Small (sm)
-            </span>
-            <DateField
-              size="sm"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Medium (md)
-            </span>
-            <DateField
-              size="md"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Large (lg)
-            </span>
-            <DateField
-              size="lg"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
+          {(['sm', 'md', 'lg'] as const).map((size) => (
+            <div key={size} className="flex flex-col gap-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+                {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
+              </span>
+              <DateField
+                size={size}
+                label={text.label}
+                labelSupplementary={text.optional}
+                description={text.helperText}
+              />
+            </div>
+          ))}
         </div>
         <div className="flex flex-col gap-8">
           <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
             Outline
           </span>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Small (sm)
-            </span>
-            <DateField
-              size="sm"
-              appearance="outline"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Medium (md)
-            </span>
-            <DateField
-              size="md"
-              appearance="outline"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Large (lg)
-            </span>
-            <DateField
-              size="lg"
-              appearance="outline"
-              label={text.appointmentDate}
-              defaultValue={parseDate('2026-04-18')}
-              description={text.helperText}
-            />
-          </div>
+          {(['sm', 'md', 'lg'] as const).map((size) => (
+            <div key={size} className="flex flex-col gap-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+                {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
+              </span>
+              <DateField
+                size={size}
+                appearance="outline"
+                label={text.label}
+                labelSupplementary={text.optional}
+                description={text.helperText}
+              />
+            </div>
+          ))}
         </div>
       </div>
     );
   },
 };
 
-export const EmptyAndFilled: Story = {
+export const States: Story = {
   render: () => {
+    const language = useDateFieldLanguage();
     const text = useDateFieldText();
+    const filledValue = parseDate('2026-04-18');
 
     return (
-      <div className="grid w-[320px] gap-4">
-        <DateField label={text.empty} description={text.helperText} />
-        <DateField
-          label={text.filled}
-          defaultValue={parseDate('2026-04-18')}
-          description={text.helperText}
-        />
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        <div className="flex flex-col gap-4">
+          <DateField
+            label={text.default}
+            labelSupplementary={text.optional}
+            description={text.helperText}
+          />
+          <DateField
+            label={text.invalid}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            errorMessage={text.errorMessage}
+            isInvalid
+          />
+          <DateField
+            label={text.disabled}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            description={text.helperText}
+            isDisabled
+          />
+          <DateField
+            label={text.readOnly}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            description={text.helperText}
+            isReadOnly
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <DateField
+            appearance="outline"
+            label={text.default}
+            labelSupplementary={text.optional}
+            description={text.helperText}
+          />
+          <DateField
+            appearance="outline"
+            label={text.invalid}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            errorMessage={text.errorMessage}
+            isInvalid
+          />
+          <DateField
+            appearance="outline"
+            label={text.disabled}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            description={text.helperText}
+            isDisabled
+          />
+          <DateField
+            appearance="outline"
+            label={text.readOnly}
+            labelSupplementary={text.optional}
+            defaultValue={filledValue}
+            description={text.helperText}
+            isReadOnly
+          />
+        </div>
       </div>
     );
   },
 };
 
-export const DateAndTime: Story = {
+export const Required: Story = {
+  args: {
+    isRequired: true,
+    showOptional: false,
+  },
+  render: Default.render,
+};
+
+export const Granularity: Story = {
   render: () => {
+    const language = useDateFieldLanguage();
     const text = useDateFieldText();
 
     return (
-      <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
+      <div key={language} className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
         <DateField label={text.dateOnly} defaultValue={parseDate('2026-04-18')} />
         <DateField
           label={text.dateAndMinute}
@@ -374,67 +485,6 @@ export const DateAndTime: Story = {
           granularity="minute"
           hourCycle={24}
           defaultValue={parseDateTime('2026-04-18T21:10:00')}
-        />
-      </div>
-    );
-  },
-};
-
-export const ConstraintsAndValidation: Story = {
-  render: () => {
-    const text = useDateFieldText();
-
-    return (
-      <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-        <DateField
-          label={text.required}
-          isRequired
-          minValue={now}
-          description={text.futureDatesOnly}
-        />
-        <DateField
-          label={text.minAndMax}
-          minValue={now}
-          maxValue={now.add({ months: 1 })}
-          description={text.selectableForTheNextMonth}
-        />
-        <DateField
-          label={text.invalid}
-          isInvalid
-          description={text.helperTextHiddenWhileInvalid}
-          errorMessage={text.enterAValidServiceDate}
-          defaultValue={parseDate('2026-04-01')}
-        />
-        <DateField
-          label={text.invalidWithoutMessage}
-          isInvalid
-          description={text.helperTextHiddenWhileInvalid}
-          defaultValue={parseDate('2026-04-01')}
-        />
-      </div>
-    );
-  },
-};
-
-export const DisabledAndReadOnly: Story = {
-  render: () => {
-    const text = useDateFieldText();
-
-    return (
-      <div className="grid w-[760px] grid-cols-1 gap-4 md:grid-cols-2">
-        <DateField label={text.disabled} isDisabled defaultValue={parseDate('2026-04-18')} />
-        <DateField label={text.readOnly} isReadOnly defaultValue={parseDate('2026-04-18')} />
-        <DateField
-          appearance="outline"
-          label={text.disabled}
-          isDisabled
-          defaultValue={parseDate('2026-04-18')}
-        />
-        <DateField
-          appearance="outline"
-          label={text.readOnly}
-          isReadOnly
-          defaultValue={parseDate('2026-04-18')}
         />
       </div>
     );

@@ -17,16 +17,36 @@ export { fieldRootVariants } from './field-shared-variants';
 const fieldShellFocusRingClassName =
   'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised';
 
-const fieldShellOutlineFocusClassName =
-  'has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent';
+/**
+ * Outline stroke as an inset box-shadow (Figma strokeAlign INSIDE).
+ * Rest 1px, hover 1.5px, active/focus-within 2px — outer box never changes.
+ * Hide the inner stroke when the keyboard focus ring is shown.
+ */
+const outlineFieldStrokeRest =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(span[data-focus-visible])):not(:has(button[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+
+const outlineFieldStrokeError =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+
+const outlineFieldStrokeDisabled =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-disabled)]';
+
+const outlineFieldStrokePressed =
+  'shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)] hover:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+
+const outlineFieldStrokeErrorPressed =
+  'shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)] hover:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+
+const outlineFieldStrokeFocusVisibleHide =
+  'has-[span[data-focus-visible]]:shadow-none has-[span[data-focus-visible]]:hover:shadow-none has-[button[data-focus-visible]]:shadow-none has-[button[data-focus-visible]]:hover:shadow-none';
 
 export const fieldShellVariants = cva(
-  `relative flex w-full items-center gap-1 rounded-md motion-safe:transition-[background-color,border-color] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
+  `relative flex w-full items-center gap-1 rounded-md motion-safe:transition-[background-color,box-shadow] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
   {
     variants: {
       appearance: {
         default: '',
-        outline: `border hover:border-[1.5px] focus-within:border-2 focus-within:hover:border-2 ${fieldShellOutlineFocusClassName}`,
+        outline: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -93,34 +113,31 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className:
-          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
+        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg`,
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className:
-          'border-text-input-stroke bg-ash-alpha-100 hover:border-text-input-stroke-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-ash-alpha-100 has-[span[data-focus-visible]]:hover:bg-ash-alpha-100',
+        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-ash-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-ash-alpha-100 has-[span[data-focus-visible]]:hover:bg-ash-alpha-100`,
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
+        className: `${outlineFieldStrokeDisabled} bg-ash-alpha-200`,
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border-text-input-stroke-disabled',
+        className: outlineFieldStrokeDisabled,
       },
       {
         appearance: 'outline',
@@ -140,8 +157,7 @@ export const fieldShellVariants = cva(
         isOpen: true,
         isDisabled: false,
         isInvalid: false,
-        className:
-          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
+        className: `${outlineFieldStrokePressed} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg`,
       },
       {
         appearance: 'default',
@@ -155,8 +171,7 @@ export const fieldShellVariants = cva(
         isOpen: true,
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error has-[span[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
+        className: `${outlineFieldStrokeErrorPressed} ${outlineFieldStrokeFocusVisibleHide}`,
       },
     ],
     defaultVariants: {

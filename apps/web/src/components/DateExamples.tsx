@@ -9,7 +9,6 @@ import {
 } from '@internationalized/date';
 import { I18nProvider } from 'react-aria-components';
 import { Calendar } from '@tradenetcorp/veli-ui/calendar';
-import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 
 const now = today(getLocalTimeZone());
@@ -26,52 +25,6 @@ const appointmentUnavailable = (date: DateValue) =>
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {
   return <I18nProvider locale="en-GB">{children}</I18nProvider>;
-}
-
-export function DateFieldUsageDemo() {
-  return (
-    <DocsEnGbLocale>
-      <div className="w-[320px]">
-        <DateField label="Appointment date" description="Type a date segment by segment." />
-      </div>
-    </DocsEnGbLocale>
-  );
-}
-
-export function DateFieldVariantsDemo() {
-  return (
-    <DocsEnGbLocale>
-      <div className="grid gap-4 md:grid-cols-2">
-        <DateField
-          size="sm"
-          label="Small"
-          defaultValue={parseDate('2026-04-18')}
-          description="Compact field height."
-        />
-        <DateField
-          size="lg"
-          appearance="outline"
-          label="Large outline"
-          defaultValue={parseDate('2026-04-18')}
-          description="Outline appearance at large size."
-        />
-        <DateField
-          label="Invalid"
-          isInvalid
-          errorMessage="Enter a valid service date."
-          defaultValue={parseDate('2026-04-01')}
-        />
-        <DateField label="Disabled" isDisabled defaultValue={parseDate('2026-04-18')} />
-        <DateField label="Read only" isReadOnly defaultValue={parseDate('2026-04-18')} />
-        <DateField
-          label="Date and minute"
-          granularity="minute"
-          defaultValue={parseDateTime('2026-04-18T14:30:00')}
-          description="Time segments when granularity includes time."
-        />
-      </div>
-    </DocsEnGbLocale>
-  );
 }
 
 export function CalendarUsageDemo() {

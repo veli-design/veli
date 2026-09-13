@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { I18nProvider } from 'react-aria-components';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -6,6 +7,7 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
+import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
@@ -65,6 +67,11 @@ import {
   Trash,
   WarningCircle,
 } from 'phosphor-react';
+
+/** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
+function DocsEnGbLocale({ children }: { children: ReactNode }) {
+  return <I18nProvider locale="en-GB">{children}</I18nProvider>;
+}
 
 export function ButtonUsageDemo() {
   return <Button>Click me</Button>;
@@ -1290,6 +1297,37 @@ export function TextAreaValidationDemo() {
         errorMessage="This field needs attention."
       />
     </div>
+  );
+}
+
+export function DateFieldUsageDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField label="Appointment date" description="Type a date segment by segment." />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldAppearancesDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="grid gap-4 md:grid-cols-2">
+        <DateField label="Default" />
+        <DateField appearance="outline" label="Outline" />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldValidationDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField label="Service date" isInvalid errorMessage="Enter a valid service date." />
+      </div>
+    </DocsEnGbLocale>
   );
 }
 
