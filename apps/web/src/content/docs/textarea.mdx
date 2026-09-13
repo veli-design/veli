@@ -1,13 +1,17 @@
 ---
 title: TextArea
-description: Multi-line text field built on React Aria with the shared field shell, optional character counter, and resize control.
+description: Multi-line text field with a character counter and vertical resize.
 ---
 
-import { TextAreaUsageDemo, TextAreaVariantsDemo } from '../../components/DocsExamples';
+import {
+  TextAreaAppearancesDemo,
+  TextAreaUsageDemo,
+  TextAreaValidationDemo,
+} from '../../components/DocsExamples';
 
 # TextArea
 
-The TextArea component wraps React Aria's `TextField` for multi-line input. It shares the Input field shell — labels, helper text, validation, and accessory slots — and adds a character counter, resize control, and height bounds.
+Use TextArea for longer copy — comments, descriptions, messages. It follows the same label, helper, and validation pattern as [Input](/docs/input/), and adds a character counter plus vertical resize.
 
 ## Import
 
@@ -26,35 +30,119 @@ import { TextArea } from '@tradenetcorp/veli-ui/textarea';
   label="Message"
   placeholder="Tell us how we can help"
   description="Helper text"
-  showCharacterCounter
   maxLength={280}
 />
 ```
 
-## Resizable & validation
+Setting `maxLength` shows a live character counter. Pass `showCharacterCounter={false}` to hide it. The field resizes vertically by default; use `isResizable={false}` to lock the height, or `minHeight` / `maxHeight` to bound it.
+
+## Appearances
+
+`default` uses the underline shell. `outline` draws a bordered field. Size the field with `sm`, `md`, or `lg`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <TextAreaVariantsDemo client:visible />
+  <TextAreaAppearancesDemo client:visible />
 </div>
 
-## Props
+```tsx
+<TextArea label="Default" placeholder="Write a note" />
+<TextArea appearance="outline" label="Outline" placeholder="Write a note" />
+```
 
-| Prop                      | Type                     | Default     | Description                                                  |
-| :------------------------ | :----------------------- | :---------- | :----------------------------------------------------------- |
-| `variant`                 | `'default' \| 'outline'` | `'default'` | Visual appearance of the field shell.                        |
-| `size`                    | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                                  |
-| `label`                   | `ReactNode`              | -           | Visible label content.                                       |
-| `labelSupplementary`      | `ReactNode`              | -           | Inline helper copy beside the label, e.g. `Optional`.        |
-| `infoTooltip`             | `ReactNode`              | -           | Tooltip content shown from a small info icon in the header.  |
-| `labelIcon`               | `ReactNode`              | -           | Small icon placed after the label content.                   |
-| `description`             | `ReactNode`              | -           | Helper text shown beneath the field when not invalid.        |
-| `errorMessage`            | `ReactNode`              | -           | Validation content shown beneath the field when `isInvalid`. |
-| `showCharacterCounter`    | `boolean`                | `false`     | Shows a live character counter; pair with `maxLength`.       |
-| `isResizable`             | `boolean`                | `false`     | Allows the user to resize the field vertically.              |
-| `minHeight` / `maxHeight` | `number`                 | -           | Pixel bounds for the field height.                           |
-| `showRequiredIndicator`   | `boolean`                | `true`      | Renders the required asterisk when `isRequired` is set.      |
-| `className`               | `string`                 | -           | Layout-only class override merged onto the root element.     |
+## Validation
 
-All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition.
+When `isInvalid` is set, `errorMessage` replaces the helper text.
 
-For Dhivehi (`lang="dv"`) fields the entered text uses the `MV_Faseyha` font with height and padding tuning, matching the Input component's localization behavior.
+<div className="preview mb-4 rounded-lg border p-4">
+  <TextAreaValidationDemo client:visible />
+</div>
+
+```tsx
+<TextArea
+  label="Details"
+  placeholder="Enter details"
+  isInvalid
+  errorMessage="This field needs attention."
+/>
+```
+
+## API Reference
+
+TextArea is a Veli field on React Aria [`TextField`](https://react-spectrum.adobe.com/react-aria/TextField.html), which wraps a native `<textarea>`. Props below follow that stack.
+
+### TextArea
+
+Veli-specific props for the composed field.
+
+| Prop                    | Type                       | Default          | Description                                             |
+| :---------------------- | :------------------------- | :--------------- | :------------------------------------------------------ |
+| `appearance`            | `'default' \| 'outline'`   | `'default'`      | Underline or bordered field.                            |
+| `size`                  | `'sm' \| 'md' \| 'lg'`     | `'md'`           | Field size.                                             |
+| `label`                 | `ReactNode`                | -                | Visible label.                                          |
+| `labelSupplementary`    | `ReactNode`                | -                | Inline label helper, e.g. `Optional`.                   |
+| `infoTooltip`           | `ReactNode`                | -                | Content for the header info tooltip.                    |
+| `infoTooltipAriaLabel`  | `string`                   | Localized string | Accessible name for the info tooltip trigger.           |
+| `labelIcon`             | `ReactNode`                | -                | Small icon after the label.                             |
+| `description`           | `ReactNode`                | -                | Helper text beneath the field.                          |
+| `errorMessage`          | `ReactNode`                | -                | Error text shown when `isInvalid`.                      |
+| `showRequiredIndicator` | `boolean`                  | `true`           | Shows the required asterisk when `isRequired`.          |
+| `showCharacterCounter`  | `boolean`                  | with `maxLength` | Shows the character counter.                            |
+| `isResizable`           | `boolean`                  | `true`           | Allows vertical resize. Off when disabled or read-only. |
+| `minHeight`             | `number`                   | size shell       | Lower resize bound, in pixels.                          |
+| `maxHeight`             | `number`                   | -                | Upper resize bound, in pixels.                          |
+| `className`             | `string`                   | -                | Layout class on the root (width, margin, flex/grid).    |
+| `ref`                   | `Ref<HTMLTextAreaElement>` | -                | Forwarded to the inner textarea.                        |
+
+### TextField
+
+React Aria’s headless [`TextField`](https://react-spectrum.adobe.com/react-aria/TextField.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop           | Type                      | Default | Description                    |
+| :------------- | :------------------------ | :------ | :----------------------------- |
+| `value`        | `string`                  | -       | Controlled value.              |
+| `defaultValue` | `string`                  | -       | Uncontrolled initial value.    |
+| `onChange`     | `(value: string) => void` | -       | Called when the value changes. |
+| `isDisabled`   | `boolean`                 | `false` | Disables the field.            |
+| `isInvalid`    | `boolean`                 | `false` | Marks the field invalid.       |
+| `isReadOnly`   | `boolean`                 | `false` | Prevents editing.              |
+| `isRequired`   | `boolean`                 | `false` | Marks the field required.      |
+| `name`         | `string`                  | -       | Native form field name.        |
+| `validate`     | `function`                | -       | Custom validation.             |
+| `autoFocus`    | `boolean`                 | `false` | Focuses the field on mount.    |
+
+Not forwarded from `TextField`:
+
+| Prop         | Why                                                                 |
+| :----------- | :------------------------------------------------------------------ |
+| `children`   | Veli owns the field composition.                                    |
+| `style`      | Not supported.                                                      |
+| `className`  | Replaced by Veli’s layout `className` on the root.                  |
+| `spellCheck` | Omitted from `TextField` and applied to the inner textarea instead. |
+
+### Native textarea
+
+The native `<textarea>` that React Aria wraps. These attributes are applied to that element. `maxLength` also turns on the character counter unless `showCharacterCounter` is `false`.
+
+| Prop             | Type      | Description                       |
+| :--------------- | :-------- | :-------------------------------- |
+| `placeholder`    | `string`  | Placeholder for an empty field.   |
+| `maxLength`      | `number`  | Maximum length.                   |
+| `minLength`      | `number`  | Minimum length.                   |
+| `rows`           | `number`  | Initial visible row count.        |
+| `autoComplete`   | `string`  | Browser autocomplete token.       |
+| `autoCapitalize` | `string`  | Virtual-keyboard capitalization.  |
+| `autoCorrect`    | `string`  | iOS autocorrect.                  |
+| `enterKeyHint`   | `string`  | Virtual-keyboard enter-key label. |
+| `inputMode`      | `string`  | Virtual-keyboard type.            |
+| `spellCheck`     | `boolean` | Spellcheck on the inner textarea. |
+| `wrap`           | `string`  | How text wraps.                   |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- `description` is the accessible helper. On error, `errorMessage` replaces it.
+- Resize is pointer-drag only, same as a native textarea. The handle is not in the tab order, and it is hidden when the field is disabled or read-only.
+
+## RTL and Language
+
+On `lang="dv"` pages, entered text uses `MV_Faseyha`, same as Input. In RTL, the label row and resize handle follow `dir`. The character counter stays left-to-right so the count does not reverse.
