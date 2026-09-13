@@ -2,7 +2,6 @@ import { type DateSegmentRenderProps, type DateValue } from 'react-aria-componen
 import { cva } from 'class-variance-authority';
 import { getDhivehiMonthName } from './calendar-localization';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
@@ -27,9 +26,6 @@ const outlineFieldStrokeRest =
 
 const outlineFieldStrokeError =
   'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
-
-const outlineFieldStrokeDisabled =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-disabled)]';
 
 const outlineFieldStrokePressed =
   'shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)] hover:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
@@ -83,12 +79,12 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-ash-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
@@ -100,13 +96,13 @@ export const fieldShellVariants = cva(
         appearance: 'default',
         isDisabled: true,
         isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -120,12 +116,12 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-ash-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-ash-alpha-100 has-[span[data-focus-visible]]:hover:bg-ash-alpha-100`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: `${outlineFieldStrokeDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
@@ -137,13 +133,13 @@ export const fieldShellVariants = cva(
         appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: outlineFieldStrokeDisabled,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
