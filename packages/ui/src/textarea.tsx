@@ -12,38 +12,24 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Info } from 'phosphor-react';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
 } from './field-shared';
 import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref';
 
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
   variants: {
@@ -58,7 +44,7 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const characterCounterVariants = cva(
-  'inline-flex h-3.5 shrink-0 items-center font-sans text-[14px] leading-none tabular-nums text-base-subtle',
+  'inline-flex shrink-0 items-center type-body-sm-regular tabular-nums text-base-subtle',
   {
     variants: {
       isDisabled: {
@@ -75,21 +61,35 @@ const characterCounterVariants = cva(
 const shellMinHeights = {
   sm: 120,
   md: 146,
-  lg: 181,
+  lg: 173,
 } as const;
 
+/**
+ * Outline stroke as an inset box-shadow (Figma strokeAlign INSIDE).
+ * Rest 1px, hover 1.5px, active/focus-within 2px — outer box never changes.
+ * Hide the inner stroke when the keyboard focus ring is shown.
+ */
+const outlineFieldStrokeRest =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+
+const outlineFieldStrokeError =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+
+const outlineFieldStrokeFocusVisibleHide =
+  'has-[textarea[data-focus-visible]]:shadow-none has-[textarea[data-focus-visible]]:hover:shadow-none';
+
 const fieldShellVariants = cva(
-  'relative flex w-full items-start rounded-md transition-[background-color,border-color] duration-normal ease-out has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-start rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         outline: '',
       },
       size: {
         sm: 'min-h-[120px] py-2 px-3',
         md: 'min-h-[146px] py-3 px-4',
-        lg: 'min-h-[181px] py-3.5 px-4',
+        lg: 'min-h-[173px] py-3.5 px-4',
       },
       isDisabled: {
         true: 'cursor-not-allowed',
@@ -106,84 +106,82 @@ const fieldShellVariants = cva(
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className:
-          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[textarea[data-focus-visible]]:border-transparent has-[textarea[data-focus-visible]]:hover:border-transparent',
+        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border border-text-input-stroke-disabled',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,
@@ -192,8 +190,11 @@ const fieldShellVariants = cva(
   },
 );
 
+type TextAreaAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
+type TextAreaSize = VariantProps<typeof fieldShellVariants>['size'];
+
 const textareaElementVariants = cva(
-  'relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -209,7 +210,7 @@ const textareaElementVariants = cva(
 );
 
 const resizeIndicatorVariants = cva(
-  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'absolute bottom-1 end-1 z-[1] flex size-4 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       isDisabled: {
@@ -226,11 +227,6 @@ const resizeIndicatorVariants = cva(
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
   dv: 'އިތުރު މަޢުލޫމާތު',
-} as const;
-
-const resizeHandleAriaLabels = {
-  en: 'Resize textarea',
-  dv: 'ޓެކްސްޓް އޭރިއާ ކަނޑައަޅަން',
 } as const;
 
 function clampHeight(value: number, min: number, max?: number) {
@@ -271,7 +267,7 @@ function useVerticalTextAreaResize({
   }, []);
 
   const endDrag = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!dragStateRef.current) return;
 
       clearDragState();
@@ -284,7 +280,7 @@ function useVerticalTextAreaResize({
   );
 
   const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!enabled || !shellRef.current) return;
 
       event.preventDefault();
@@ -303,7 +299,7 @@ function useVerticalTextAreaResize({
   );
 
   const handlePointerMove = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (!dragStateRef.current) return;
 
       const { startY, startHeight } = dragStateRef.current;
@@ -407,8 +403,13 @@ function CharacterCounterRing({ value, max }: { value: number; max: number }) {
 export interface TextAreaProps
   extends
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    Omit<
+      VariantProps<typeof fieldShellVariants>,
+      'appearance' | 'isDisabled' | 'isInvalid' | 'isReadOnly' | 'size'
+    >,
     RefProp<HTMLTextAreaElement> {
+  appearance?: TextAreaAppearance;
+  size?: TextAreaSize;
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
@@ -449,7 +450,7 @@ export function TextArea({
   minHeight,
   maxHeight,
   className,
-  variant = 'default',
+  appearance = 'default',
   size = 'md',
   autoCapitalize,
   autoComplete,
@@ -474,7 +475,6 @@ export function TextArea({
   const shellRef = React.useRef<HTMLDivElement>(null);
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
-  const resolvedResizeHandleAriaLabel = resizeHandleAriaLabels[languageConfig.language];
   const resolvedMinHeight = minHeight ?? shellMinHeights[size ?? 'md'];
   const [uncontrolledCharacterCount, setUncontrolledCharacterCount] = React.useState(() =>
     getInitialCharacterCount(value, defaultValue),
@@ -529,7 +529,7 @@ export function TextArea({
                       <AriaButton
                         type="button"
                         aria-label={resolvedInfoTooltipAriaLabel}
-                        className={infoTooltipTriggerVariants({ isDisabled })}
+                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                         isDisabled={isDisabled}
                       >
                         <Info size={16} aria-hidden />
@@ -570,7 +570,7 @@ export function TextArea({
               ref={shellRef}
               style={{ minHeight: resolvedMinHeight, ...shellStyle }}
               className={fieldShellVariants({
-                variant,
+                appearance,
                 size,
                 isDisabled,
                 isInvalid,
@@ -594,15 +594,14 @@ export function TextArea({
                 className={textareaElementVariants({ size })}
               />
               {showResizeIndicator && resizeHandleProps ? (
-                <button
-                  type="button"
+                <div
+                  aria-hidden
                   data-textarea-resize-handle
-                  aria-label={resolvedResizeHandleAriaLabel}
                   className={resizeIndicatorVariants({ isDisabled })}
                   {...resizeHandleProps}
                 >
                   <TextAreaResizeIndicator direction={languageConfig.direction} />
-                </button>
+                </div>
               ) : null}
             </Group>
 
