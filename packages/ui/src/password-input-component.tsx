@@ -23,15 +23,12 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
-  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
-  fieldHeaderSupplementaryVariants,
   hasRenderableMessage,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
-import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref';
 
@@ -395,11 +392,6 @@ const feedbackTextVariants = cva('[&:lang(dv)]:relative [&:lang(dv)]:top-0.5', {
   },
 });
 
-const infoTooltipDefaultAriaLabels = {
-  en: 'More information',
-  dv: 'އިތުރު މަޢުލޫމާތު',
-} as const;
-
 const visibilityToggleDefaultAriaLabels = {
   en: {
     show: 'Show password',
@@ -534,9 +526,6 @@ export interface PasswordInputProps
   appearance?: PasswordInputAppearance;
   size?: PasswordInputSize;
   label?: React.ReactNode;
-  infoTooltip?: React.ReactNode;
-  infoTooltipAriaLabel?: string;
-  labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
   description?: React.ReactNode;
@@ -573,14 +562,12 @@ export interface PasswordInputProps
 
 export function PasswordInput({
   label,
-  infoTooltip,
-  infoTooltipAriaLabel,
-  labelSupplementary,
   labelIcon,
   action,
   description,
   errorMessage,
   showRequiredIndicator = true,
+  isRequired = true,
   startAddon,
   startContent,
   className,
@@ -612,8 +599,6 @@ export function PasswordInput({
   ...props
 }: PasswordInputProps) {
   const languageConfig = useVeliLanguage();
-  const resolvedInfoTooltipAriaLabel =
-    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
   const resolvedPlaceholder = placeholder ?? passwordPlaceholderDefaults[languageConfig.language];
   const resolvedRequirements = React.useMemo(
     () => resolvePasswordRequirements(requirements, languageConfig.language),
@@ -653,6 +638,7 @@ export function PasswordInput({
   return (
     <AriaTextField
       {...props}
+      isRequired={isRequired}
       value={value}
       defaultValue={defaultValue}
       onChange={handleChange}
@@ -675,42 +661,13 @@ export function PasswordInput({
 
         return (
           <>
-            {label ||
-            infoTooltip ||
-            labelSupplementary ||
-            labelIcon ||
-            action ||
-            (showRequiredIndicator && isRequired) ? (
+            {label || labelIcon || action || (showRequiredIndicator && isRequired) ? (
               <div className="flex w-full items-center gap-2 pb-2">
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   {label ? (
                     <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
                       {label}
                     </Label>
-                  ) : null}
-                  {infoTooltip ? (
-                    <TooltipTrigger>
-                      <AriaButton
-                        type="button"
-                        aria-label={resolvedInfoTooltipAriaLabel}
-                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
-                        isDisabled={isDisabled}
-                      >
-                        <Info size={16} aria-hidden />
-                      </AriaButton>
-                      <Tooltip
-                        placement="top"
-                        lang={languageConfig.lang}
-                        dir={languageConfig.direction}
-                      >
-                        {infoTooltip}
-                      </Tooltip>
-                    </TooltipTrigger>
-                  ) : null}
-                  {labelSupplementary ? (
-                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                      {labelSupplementary}
-                    </span>
                   ) : null}
                   {showRequiredIndicator && isRequired ? (
                     <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>

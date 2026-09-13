@@ -22,6 +22,8 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  getFieldOptionalLabel,
+  shouldShowFieldOptional,
 } from './field-shared';
 import { type VeliDirection, useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
@@ -413,7 +415,7 @@ export interface TextAreaProps
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
-  labelSupplementary?: React.ReactNode;
+  isOptional?: boolean;
   labelIcon?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
@@ -440,7 +442,7 @@ export function TextArea({
   label,
   infoTooltip,
   infoTooltipAriaLabel,
-  labelSupplementary,
+  isOptional = false,
   labelIcon,
   description,
   errorMessage,
@@ -508,12 +510,13 @@ export function TextArea({
     >
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => {
         const showResizeIndicator = isResizable && !isDisabled && !isReadOnly;
+        const showOptionalLabel = shouldShowFieldOptional(isOptional, isRequired);
 
         return (
           <>
             {label ||
             infoTooltip ||
-            labelSupplementary ||
+            showOptionalLabel ||
             labelIcon ||
             (showRequiredIndicator && isRequired) ||
             shouldShowCharacterCounter ? (
@@ -543,9 +546,9 @@ export function TextArea({
                       </Tooltip>
                     </TooltipTrigger>
                   ) : null}
-                  {labelSupplementary ? (
+                  {showOptionalLabel ? (
                     <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                      {labelSupplementary}
+                      {getFieldOptionalLabel(languageConfig.language)}
                     </span>
                   ) : null}
                   {showRequiredIndicator && isRequired ? (

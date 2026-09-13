@@ -140,18 +140,6 @@ const passwordArgText = {
     en: enFormText.core.label,
     dv: dhivehiFormText.core.label,
   },
-  labelSupplementary: {
-    en: enFormText.core.optional,
-    dv: dhivehiFormText.core.optional,
-  },
-  infoTooltip: {
-    en: enFormText.password.infoTip,
-    dv: dhivehiFormText.password.infoTip,
-  },
-  infoTooltipAriaLabel: {
-    en: enFormText.password.infoTipLabel,
-    dv: dhivehiFormText.password.infoTipLabel,
-  },
   placeholder: {
     en: enFormText.password.placeholder,
     dv: dhivehiFormText.password.placeholder,
@@ -167,10 +155,7 @@ const passwordArgText = {
 } as const;
 
 type PasswordArgTextKey = keyof typeof passwordArgText;
-type PasswordStoryArgs = ComponentProps<typeof PasswordInput> & {
-  showOptional: boolean;
-  showInfoTooltip: boolean;
-};
+type PasswordStoryArgs = ComponentProps<typeof PasswordInput>;
 
 const passwordArgTextKeys = Object.keys(passwordArgText) as PasswordArgTextKey[];
 
@@ -232,24 +217,13 @@ const meta = {
     (Story, context) => {
       const language: PasswordLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const {
-        description,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-        errorMessage,
-      } = args;
+      const { description, label, placeholder, errorMessage } = args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<PasswordArgTextKey, string>> = {};
         const currentArgs = {
           description,
-          infoTooltip,
-          infoTooltipAriaLabel,
           label,
-          labelSupplementary,
           placeholder,
           errorMessage,
         };
@@ -265,17 +239,7 @@ const meta = {
         if (Object.keys(nextArgs).length > 0) {
           updateArgs?.(nextArgs);
         }
-      }, [
-        description,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-        errorMessage,
-        language,
-        updateArgs,
-      ]);
+      }, [description, label, placeholder, errorMessage, language, updateArgs]);
 
       return <Story />;
     },
@@ -304,21 +268,6 @@ const meta = {
     ...withArgCategory('Label', {
       label: {
         control: 'text',
-      },
-      labelSupplementary: {
-        control: 'text',
-      },
-      showOptional: {
-        control: 'boolean',
-      },
-      infoTooltip: {
-        control: 'text',
-      },
-      infoTooltipAriaLabel: {
-        control: 'text',
-      },
-      showInfoTooltip: {
-        control: 'boolean',
       },
     }),
     ...withArgCategory('Content', {
@@ -392,15 +341,10 @@ const meta = {
     appearance: 'default',
     size: 'md',
     label: enFormText.core.label,
-    labelSupplementary: enFormText.core.optional,
-    showOptional: true,
-    infoTooltip: enFormText.password.infoTip,
-    infoTooltipAriaLabel: enFormText.password.infoTipLabel,
-    showInfoTooltip: true,
     placeholder: enFormText.password.placeholder,
     defaultValue: '',
     description: enFormText.core.helperText,
-    isRequired: false,
+    isRequired: true,
     showRequiredIndicator: true,
     isInvalid: false,
     errorMessage: enFormText.password.errorMessage,
@@ -421,28 +365,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = usePasswordLanguage();
-    const { showInfoTooltip, showOptional, ...inputArgs } = args;
 
     return (
       <div key={getPasswordPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <PasswordInput
-          {...inputArgs}
+          {...args}
           label={getLocalizedPasswordArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedPasswordArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
-          infoTooltip={
-            showInfoTooltip
-              ? getLocalizedPasswordArgText('infoTooltip', args.infoTooltip, language)
-              : undefined
-          }
-          infoTooltipAriaLabel={getLocalizedPasswordArgText(
-            'infoTooltipAriaLabel',
-            args.infoTooltipAriaLabel,
-            language,
-          )}
           placeholder={getLocalizedPasswordArgText('placeholder', args.placeholder, language)}
           description={getLocalizedPasswordArgText('description', args.description, language)}
           errorMessage={getLocalizedPasswordArgText('errorMessage', args.errorMessage, language)}
@@ -478,7 +406,6 @@ export const Sizes: Story = {
               <PasswordInput
                 size={size}
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
                 placeholder={text.password.placeholder}
                 description={text.core.helperText}
               />
@@ -498,7 +425,6 @@ export const Sizes: Story = {
                 size={size}
                 appearance="outline"
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
                 placeholder={text.password.placeholder}
                 description={text.core.helperText}
               />
@@ -520,7 +446,6 @@ export const States: Story = {
         <div className="flex flex-col gap-4">
           <PasswordInput
             label={text.core.default}
-            labelSupplementary={text.core.optional}
             placeholder={text.password.placeholder}
             description={text.core.helperText}
           />
@@ -547,7 +472,6 @@ export const States: Story = {
           <PasswordInput
             appearance="outline"
             label={text.core.default}
-            labelSupplementary={text.core.optional}
             placeholder={text.password.placeholder}
             description={text.core.helperText}
           />
@@ -581,7 +505,6 @@ export const States: Story = {
 export const Required: Story = {
   args: {
     isRequired: true,
-    showOptional: false,
   },
   render: Default.render,
 };
@@ -648,8 +571,6 @@ export const Revealed: Story = {
   args: {
     defaultValue: 'SecretPass1!',
     defaultRevealed: true,
-    showOptional: false,
-    showInfoTooltip: false,
   },
   render: Default.render,
 };

@@ -1263,6 +1263,7 @@ export function TextAreaUsageDemo() {
     <div className="w-[360px]">
       <TextArea
         label="Message"
+        isOptional
         placeholder="Tell us how we can help"
         description="Helper text"
         maxLength={280}
