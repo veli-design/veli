@@ -30,6 +30,7 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -39,21 +40,6 @@ import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -475,7 +461,7 @@ export function ComboBox<T extends object>({
                     <AriaButton
                       type="button"
                       aria-label={resolvedInfoTooltipAriaLabel}
-                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
                       <Info size={16} aria-hidden />

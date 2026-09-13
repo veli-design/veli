@@ -90,6 +90,21 @@ export const fieldHeaderActionVariants = cva('shrink-0 type-body-sm-medium', {
   },
 });
 
+export const fieldHeaderInfoTooltipTriggerVariants = cva(
+  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  {
+    variants: {
+      isDisabled: {
+        true: 'cursor-not-allowed text-icon-disabled',
+        false: 'cursor-help text-icon-base',
+      },
+    },
+    defaultVariants: {
+      isDisabled: false,
+    },
+  },
+);
+
 export const fieldTriggerButtonVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
   {

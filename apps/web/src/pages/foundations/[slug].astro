@@ -23,41 +23,27 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
 const markdownPath = `/foundations/${foundation.slug}/index.md`;
 const headerArt = {
   principles: {
-    src: '/images/foundation-headers/principles.png',
-    srcDark: '/images/foundation-headers/principles-dark.png',
     lottie: '/images/foundation-headers/principles.lottie',
   },
   color: {
-    src: '/images/foundation-headers/color.png',
-    srcDark: '/images/foundation-headers/color-dark.png',
     lottie: '/images/foundation-headers/color.lottie',
     lottieDark: '/images/foundation-headers/color-dark.lottie',
   },
   typography: {
-    src: '/images/foundation-headers/typography.png',
-    srcDark: '/images/foundation-headers/typography-dark.png',
     lottie: '/images/foundation-headers/typography.lottie',
   },
   spacing: {
-    src: '/images/foundation-headers/spacing.png',
-    srcDark: '/images/foundation-headers/spacing-dark.png',
     lottie: '/images/foundation-headers/spacing.lottie',
   },
   motion: {
-    src: '/images/foundation-headers/motion.png',
-    srcDark: '/images/foundation-headers/motion-dark.png',
     lottie: '/images/foundation-headers/motion.lottie',
     lottieDark: '/images/foundation-headers/motion-dark.lottie',
   },
   accessibility: {
-    src: '/images/foundation-headers/accessibility.png',
-    srcDark: '/images/foundation-headers/accessibility-dark.png',
     lottie: '/images/foundation-headers/accessibility.lottie',
     lottieDark: '/images/foundation-headers/accessibility-dark.lottie',
   },
   'language-direction': {
-    src: '/images/foundation-headers/language-direction.png',
-    srcDark: '/images/foundation-headers/language-direction-dark.png',
     lottie: '/images/foundation-headers/language-direction.lottie',
   },
 } as const;
@@ -86,8 +72,6 @@ const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt]
     {
       foundationHeaderArt && (
         <FoundationHeaderArt
-          src={foundationHeaderArt.src}
-          srcDark={foundationHeaderArt.srcDark}
           lottie={foundationHeaderArt.lottie}
           lottieDark={
             'lottieDark' in foundationHeaderArt ? foundationHeaderArt.lottieDark : undefined
