@@ -94,7 +94,7 @@ const enFormText = {
     infoTipLabel: 'More information',
     errorMessage: 'This field needs attention.',
     passwordMatch: 'Password match',
-    passwordMismatch: 'Password do not match',
+    passwordMismatch: 'Passwords do not match',
     newPassword: 'New password',
     confirmPassword: 'Confirm password',
   },
