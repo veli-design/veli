@@ -33,3 +33,4 @@ Thumbs.db
 # Local editor and browser-agent artifacts
 .cursor/settings.json
 .playwright-cli/
+.playwright-mcp/
