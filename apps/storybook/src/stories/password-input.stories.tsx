@@ -73,7 +73,7 @@ const dhivehiFormText = {
     passwordMatch: 'ޕާސްވޯޑް ދިމާވޭ',
     passwordMismatch: 'ޕާސްވޯޑް ދިމާނުވޭ',
     newPassword: 'އާ ޕާސްވޯޑް',
-    confirmPassword: 'ޕާސްވޯޑް ޔަގީންކުރާ',
+    confirmPassword: 'ޕާސްވޯޑް ޔަގީންކުރޭ',
   },
 } as const;
 
