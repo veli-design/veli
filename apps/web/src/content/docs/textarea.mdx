@@ -28,6 +28,7 @@ import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 ```tsx
 <TextArea
   label="Message"
+  isOptional
   placeholder="Tell us how we can help"
   description="Helper text"
   maxLength={280}
@@ -74,24 +75,24 @@ TextArea is a Veli field on React Aria [`TextField`](https://react-spectrum.adob
 
 Veli-specific props for the composed field.
 
-| Prop                    | Type                       | Default          | Description                                             |
-| :---------------------- | :------------------------- | :--------------- | :------------------------------------------------------ |
-| `appearance`            | `'default' \| 'outline'`   | `'default'`      | Underline or bordered field.                            |
-| `size`                  | `'sm' \| 'md' \| 'lg'`     | `'md'`           | Field size.                                             |
-| `label`                 | `ReactNode`                | -                | Visible label.                                          |
-| `labelSupplementary`    | `ReactNode`                | -                | Inline label helper, e.g. `Optional`.                   |
-| `infoTooltip`           | `ReactNode`                | -                | Content for the header info tooltip.                    |
-| `infoTooltipAriaLabel`  | `string`                   | Localized string | Accessible name for the info tooltip trigger.           |
-| `labelIcon`             | `ReactNode`                | -                | Small icon after the label.                             |
-| `description`           | `ReactNode`                | -                | Helper text beneath the field.                          |
-| `errorMessage`          | `ReactNode`                | -                | Error text shown when `isInvalid`.                      |
-| `showRequiredIndicator` | `boolean`                  | `true`           | Shows the required asterisk when `isRequired`.          |
-| `showCharacterCounter`  | `boolean`                  | with `maxLength` | Shows the character counter.                            |
-| `isResizable`           | `boolean`                  | `true`           | Allows vertical resize. Off when disabled or read-only. |
-| `minHeight`             | `number`                   | size shell       | Lower resize bound, in pixels.                          |
-| `maxHeight`             | `number`                   | -                | Upper resize bound, in pixels.                          |
-| `className`             | `string`                   | -                | Layout class on the root (width, margin, flex/grid).    |
-| `ref`                   | `Ref<HTMLTextAreaElement>` | -                | Forwarded to the inner textarea.                        |
+| Prop                    | Type                       | Default          | Description                                                          |
+| :---------------------- | :------------------------- | :--------------- | :------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'`   | `'default'`      | Underline or bordered field.                                         |
+| `size`                  | `'sm' \| 'md' \| 'lg'`     | `'md'`           | Field size.                                                          |
+| `label`                 | `ReactNode`                | -                | Visible label.                                                       |
+| `isOptional`            | `boolean`                  | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`. |
+| `infoTooltip`           | `ReactNode`                | -                | Content for the header info tooltip.                                 |
+| `infoTooltipAriaLabel`  | `string`                   | Localized string | Accessible name for the info tooltip trigger.                        |
+| `labelIcon`             | `ReactNode`                | -                | Small icon after the label.                                          |
+| `description`           | `ReactNode`                | -                | Helper text beneath the field.                                       |
+| `errorMessage`          | `ReactNode`                | -                | Error text shown when `isInvalid`.                                   |
+| `showRequiredIndicator` | `boolean`                  | `true`           | Shows the required asterisk when `isRequired`.                       |
+| `showCharacterCounter`  | `boolean`                  | with `maxLength` | Shows the character counter.                                         |
+| `isResizable`           | `boolean`                  | `true`           | Allows vertical resize. Off when disabled or read-only.              |
+| `minHeight`             | `number`                   | size shell       | Lower resize bound, in pixels.                                       |
+| `maxHeight`             | `number`                   | -                | Upper resize bound, in pixels.                                       |
+| `className`             | `string`                   | -                | Layout class on the root (width, margin, flex/grid).                 |
+| `ref`                   | `Ref<HTMLTextAreaElement>` | -                | Forwarded to the inner textarea.                                     |
 
 ### TextField
 

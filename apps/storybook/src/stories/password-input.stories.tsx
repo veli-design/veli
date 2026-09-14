@@ -1,50 +1,108 @@
 import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import {
-  PasswordInput,
-  defaultPasswordRequirements,
-  type PasswordRequirement,
+import { PasswordInput, defaultPasswordRequirements } from '@tradenetcorp/veli-ui/password-input';
+import type {
+  PasswordRequirement,
+  PasswordRequirementId,
 } from '@tradenetcorp/veli-ui/password-input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-const enPasswordText = {
-  label: 'Label',
-  optional: 'Optional',
-  placeholder: 'Enter Password',
-  helperText: 'Helper text',
-  errorMessage: 'This field needs attention.',
-  passwordMatch: 'Password match',
-  passwordMismatch: 'Password do not match',
-  newPassword: 'New password',
-  confirmPassword: 'Confirm password',
-  default: 'Default',
-  invalid: 'Invalid',
-  disabled: 'Disabled',
-  readOnly: 'Read only',
-  required: 'Required',
+const collapsedControlGroups = ['Content', 'State', 'Password-specific'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function PasswordInputDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
+
+const dhivehiFormText = {
+  core: {
+    label: 'ލޭބަލް',
+    optional: 'އިޚްތިޔާރީ',
+    helperText: 'އެހީތެރިވެދޭ ލިޔުން',
+    default: 'އާދައިގެ',
+    invalid: 'ސައްޙަނޫން',
+    disabled: 'ބޭނުންނުކުރެވޭ',
+    readOnly: 'ކިޔަން އެކަނި',
+    required: 'ފުރިހަމަކުރަންޖެހޭ',
+  },
+  password: {
+    placeholder: 'ޕާސްވޯޑް ލިޔުއްވާ',
+    infoTip: 'މި ފީލްޑަށް ބޭނުންވާ މަޢުލޫމާތު ބަލާ ލިޔުއްވާ.',
+    infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
+    errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
+    passwordMatch: 'ޕާސްވޯޑް ދިމާވޭ',
+    passwordMismatch: 'ޕާސްވޯޑް ދިމާނުވޭ',
+    newPassword: 'އާ ޕާސްވޯޑް',
+    confirmPassword: 'ޕާސްވޯޑް ޔަގީންކުރޭ',
+  },
 } as const;
 
-const dvPasswordText = {
-  label: 'ލޭބަލް',
-  optional: 'އިޚްތިޔާރީ',
-  placeholder: 'ޕާސްވޯޑް ލިޔުއްވާ',
-  helperText: 'އެހީތެރިވެދޭ ލިޔުން',
-  errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
-  passwordMatch: 'ޕާސްވޯޑް ދިމާވޭ',
-  passwordMismatch: 'ޕާސްވޯޑް ދިމާނުވޭ',
-  newPassword: 'އާ ޕާސްވޯޑް',
-  confirmPassword: 'ޕާސްވޯޑް ޔަގީންކުރާ',
-  default: 'އާދައިގެ',
-  invalid: 'ސައްޙަނޫން',
-  disabled: 'ބޭނުންނުކުރެވޭ',
-  readOnly: 'ކިޔަން އެކަނި',
-  required: 'ފުރިހަމަކުރަންޖެހޭ',
+const enFormText = {
+  core: {
+    label: 'Label',
+    optional: 'Optional',
+    helperText: 'Helper text',
+    default: 'Default',
+    invalid: 'Invalid',
+    disabled: 'Disabled',
+    readOnly: 'Read only',
+    required: 'Required',
+  },
+  password: {
+    placeholder: 'Enter Password',
+    infoTip: 'Use this field for the requested supporting information.',
+    infoTipLabel: 'More information',
+    errorMessage: 'This field needs attention.',
+    passwordMatch: 'Password match',
+    passwordMismatch: 'Passwords do not match',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm password',
+  },
 } as const;
 
 const localizedPasswordText = {
-  en: enPasswordText,
-  dv: dvPasswordText,
+  en: enFormText,
+  dv: dhivehiFormText,
 } as const;
 
 type PasswordLanguage = keyof typeof localizedPasswordText;
@@ -55,7 +113,7 @@ const dhivehiPasswordRequirements = {
   uppercase: 'ބޮޑު އަކުރެއް',
   number: 'ނަންބަރެއް',
   specialCharacter: 'ޚާއްޞަ ކެރެކްޓަރެއް',
-} as const satisfies Record<PasswordRequirement['id'], string>;
+} as const satisfies Record<PasswordRequirementId, string>;
 
 const localizedPasswordRequirements = {
   en: defaultPasswordRequirements,
@@ -67,47 +125,94 @@ const localizedPasswordRequirements = {
 
 const usePasswordLanguage = (): PasswordLanguage => {
   const { direction } = useVeliLanguage();
+
   return direction === 'rtl' ? 'dv' : 'en';
 };
 
 const usePasswordText = () => {
   const language = usePasswordLanguage();
+
   return localizedPasswordText[language];
 };
 
 const passwordArgText = {
   label: {
-    en: enPasswordText.label,
-    dv: dvPasswordText.label,
+    en: enFormText.core.label,
+    dv: dhivehiFormText.core.label,
   },
   placeholder: {
-    en: enPasswordText.placeholder,
-    dv: dvPasswordText.placeholder,
+    en: enFormText.password.placeholder,
+    dv: dhivehiFormText.password.placeholder,
   },
   description: {
-    en: enPasswordText.helperText,
-    dv: dvPasswordText.helperText,
+    en: enFormText.core.helperText,
+    dv: dhivehiFormText.core.helperText,
   },
   errorMessage: {
-    en: enPasswordText.errorMessage,
-    dv: dvPasswordText.errorMessage,
+    en: enFormText.password.errorMessage,
+    dv: dhivehiFormText.password.errorMessage,
   },
 } as const;
 
 type PasswordArgTextKey = keyof typeof passwordArgText;
-type PasswordStoryArgs = ComponentProps<typeof PasswordInput> & {
-  showOptional: boolean;
-};
+type PasswordStoryArgs = ComponentProps<typeof PasswordInput>;
 
 const passwordArgTextKeys = Object.keys(passwordArgText) as PasswordArgTextKey[];
+
+const getPasswordPreviewKey = (
+  language: PasswordLanguage,
+  defaultValue: PasswordStoryArgs['defaultValue'],
+) => `${language}:${typeof defaultValue === 'string' ? defaultValue : ''}`;
+
+const hiddenNativePasswordArgTypes = {
+  autoCapitalize: { control: false, table: { disable: true } },
+  autoComplete: { control: false, table: { disable: true } },
+  autoCorrect: { control: false, table: { disable: true } },
+  enterKeyHint: { control: false, table: { disable: true } },
+  inputMode: { control: false, table: { disable: true } },
+  maxLength: { control: false, table: { disable: true } },
+  minLength: { control: false, table: { disable: true } },
+  pattern: { control: false, table: { disable: true } },
+  spellCheck: { control: false, table: { disable: true } },
+} as const;
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
+const getLocalizedPasswordArgText = (
+  key: PasswordArgTextKey,
+  value: unknown,
+  language: PasswordLanguage,
+) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return passwordArgText[key][language];
+  }
+
+  const localizedValues: readonly string[] = Object.values(passwordArgText[key]);
+
+  if (localizedValues.includes(value)) {
+    return passwordArgText[key][language];
+  }
+
+  return value;
+};
 
 const meta = {
   title: 'Components/PasswordInput',
   component: PasswordInput,
-  parameters: {
-    layout: 'centered',
-  },
-  tags: ['autodocs'],
   decorators: [
     (Story, context) => {
       const language: PasswordLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
@@ -116,10 +221,16 @@ const meta = {
 
       useEffect(() => {
         const nextArgs: Partial<Record<PasswordArgTextKey, string>> = {};
-        const currentArgs = { description, label, placeholder, errorMessage };
+        const currentArgs = {
+          description,
+          label,
+          placeholder,
+          errorMessage,
+        };
 
         passwordArgTextKeys.forEach((key) => {
-          const localizedValue = passwordArgText[key][language];
+          const localizedValue = getLocalizedPasswordArgText(key, currentArgs[key], language);
+
           if (currentArgs[key] !== localizedValue) {
             nextArgs[key] = localizedValue;
           }
@@ -133,36 +244,118 @@ const meta = {
       return <Story />;
     },
   ],
-  argTypes: {
-    showOptional: { control: 'boolean' },
-    variant: {
-      control: 'select',
-      options: ['default', 'outline'],
+  parameters: {
+    layout: 'centered',
+    controls: {
+      sort: 'none',
     },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
-    requirements: { control: 'boolean' },
-    showRequirementsWhenEmpty: { control: 'boolean' },
-    isSuccess: { control: 'boolean' },
-    feedbackTone: {
-      control: 'select',
-      options: ['success', 'danger'],
+    docs: {
+      container: PasswordInputDocsContainer,
     },
   },
+  tags: ['autodocs'],
+  argTypes: {
+    ...withArgCategory('Appearance', {
+      appearance: {
+        control: 'select',
+        options: ['default', 'outline'],
+      },
+      size: {
+        control: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
+    }),
+    ...withArgCategory('Label', {
+      label: {
+        control: 'text',
+      },
+    }),
+    ...withArgCategory('Content', {
+      placeholder: {
+        control: 'text',
+      },
+      defaultValue: {
+        control: 'text',
+      },
+      description: {
+        control: 'text',
+      },
+    }),
+    ...withArgCategory('State', {
+      isRequired: {
+        control: 'boolean',
+      },
+      showRequiredIndicator: {
+        control: 'boolean',
+      },
+      isInvalid: {
+        control: 'boolean',
+      },
+      errorMessage: {
+        control: 'text',
+      },
+      isDisabled: {
+        control: 'boolean',
+      },
+      isReadOnly: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Password-specific', {
+      requirements: {
+        control: 'boolean',
+      },
+      showRequirementsWhenEmpty: {
+        control: 'boolean',
+      },
+      isSuccess: {
+        control: 'boolean',
+      },
+      feedbackMessage: {
+        control: 'text',
+      },
+      feedbackTone: {
+        control: 'select',
+        options: ['success', 'danger'],
+      },
+      showVisibilityToggle: {
+        control: 'boolean',
+      },
+      defaultRevealed: {
+        control: 'boolean',
+      },
+      isRevealed: {
+        control: 'boolean',
+      },
+    }),
+    ref: { table: { disable: true } },
+    className: { table: { disable: true } },
+    labelIcon: { control: false, table: { disable: true } },
+    action: { control: false, table: { disable: true } },
+    startAddon: { control: false, table: { disable: true } },
+    startContent: { control: false, table: { disable: true } },
+    onRevealedChange: { control: false, table: { disable: true } },
+    ...hiddenNativePasswordArgTypes,
+  },
   args: {
-    label: enPasswordText.label,
-    placeholder: enPasswordText.placeholder,
-    description: enPasswordText.helperText,
-    errorMessage: enPasswordText.errorMessage,
-    showOptional: false,
+    appearance: 'default',
+    size: 'md',
+    label: enFormText.core.label,
+    placeholder: enFormText.password.placeholder,
+    defaultValue: '',
+    description: enFormText.core.helperText,
     isRequired: true,
     showRequiredIndicator: true,
+    isInvalid: false,
+    errorMessage: enFormText.password.errorMessage,
+    isDisabled: false,
+    isReadOnly: false,
     requirements: false,
     showRequirementsWhenEmpty: false,
     isSuccess: false,
     feedbackTone: 'danger',
+    showVisibilityToggle: true,
+    defaultRevealed: false,
   },
 } satisfies Meta<PasswordStoryArgs>;
 
@@ -172,17 +365,15 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = usePasswordLanguage();
-    const { showOptional, ...inputArgs } = args;
 
     return (
-      <div className="w-[320px]">
+      <div key={getPasswordPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <PasswordInput
-          {...inputArgs}
-          label={passwordArgText.label[language]}
-          labelSupplementary={showOptional ? localizedPasswordText[language].optional : undefined}
-          placeholder={passwordArgText.placeholder[language]}
-          description={passwordArgText.description[language]}
-          errorMessage={passwordArgText.errorMessage[language]}
+          {...args}
+          label={getLocalizedPasswordArgText('label', args.label, language)}
+          placeholder={getLocalizedPasswordArgText('placeholder', args.placeholder, language)}
+          description={getLocalizedPasswordArgText('description', args.description, language)}
+          errorMessage={getLocalizedPasswordArgText('errorMessage', args.errorMessage, language)}
         />
       </div>
     );
@@ -191,73 +382,143 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: Default.render,
 };
 
 export const Sizes: Story = {
   render: () => {
+    const language = usePasswordLanguage();
     const text = usePasswordText();
 
     return (
-      <div className="flex w-[320px] flex-col gap-8">
-        <PasswordInput size="sm" label={text.label} isRequired placeholder={text.placeholder} />
-        <PasswordInput size="md" label={text.label} isRequired placeholder={text.placeholder} />
-        <PasswordInput size="lg" label={text.label} isRequired placeholder={text.placeholder} />
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        <div className="flex flex-col gap-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            Default
+          </span>
+          {(['sm', 'md', 'lg'] as const).map((size) => (
+            <div key={size} className="flex flex-col gap-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+                {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
+              </span>
+              <PasswordInput
+                size={size}
+                label={text.core.label}
+                placeholder={text.password.placeholder}
+                description={text.core.helperText}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            Outline
+          </span>
+          {(['sm', 'md', 'lg'] as const).map((size) => (
+            <div key={size} className="flex flex-col gap-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+                {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
+              </span>
+              <PasswordInput
+                size={size}
+                appearance="outline"
+                label={text.core.label}
+                placeholder={text.password.placeholder}
+                description={text.core.helperText}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     );
   },
 };
 
-export const ValidationStates: Story = {
+export const States: Story = {
   render: () => {
+    const language = usePasswordLanguage();
     const text = usePasswordText();
 
     return (
-      <div className="flex w-[320px] flex-col gap-8">
-        <PasswordInput
-          label={text.default}
-          placeholder={text.placeholder}
-          description={text.helperText}
-        />
-        <PasswordInput
-          label={text.invalid}
-          defaultValue="secret-password"
-          isInvalid
-          errorMessage={text.errorMessage}
-        />
-        <PasswordInput
-          label={text.confirmPassword}
-          defaultValue="secret-password"
-          isInvalid
-          feedbackMessage={text.passwordMismatch}
-          feedbackTone="danger"
-        />
-        <PasswordInput
-          label={text.confirmPassword}
-          defaultValue="secret-password"
-          feedbackMessage={text.passwordMatch}
-          feedbackTone="success"
-          isSuccess
-        />
-        <PasswordInput label={text.disabled} placeholder={text.placeholder} isDisabled />
-        <PasswordInput label={text.readOnly} defaultValue="secret-password" isReadOnly />
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        <div className="flex flex-col gap-4">
+          <PasswordInput
+            label={text.core.default}
+            placeholder={text.password.placeholder}
+            description={text.core.helperText}
+          />
+          <PasswordInput
+            label={text.core.invalid}
+            defaultValue="secret-password"
+            isInvalid
+            errorMessage={text.password.errorMessage}
+          />
+          <PasswordInput
+            label={text.core.disabled}
+            placeholder={text.password.placeholder}
+            description={text.core.helperText}
+            isDisabled
+          />
+          <PasswordInput
+            label={text.core.readOnly}
+            defaultValue="secret-password"
+            description={text.core.helperText}
+            isReadOnly
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <PasswordInput
+            appearance="outline"
+            label={text.core.default}
+            placeholder={text.password.placeholder}
+            description={text.core.helperText}
+          />
+          <PasswordInput
+            appearance="outline"
+            label={text.core.invalid}
+            defaultValue="secret-password"
+            isInvalid
+            errorMessage={text.password.errorMessage}
+          />
+          <PasswordInput
+            appearance="outline"
+            label={text.core.disabled}
+            placeholder={text.password.placeholder}
+            description={text.core.helperText}
+            isDisabled
+          />
+          <PasswordInput
+            appearance="outline"
+            label={text.core.readOnly}
+            defaultValue="secret-password"
+            description={text.core.helperText}
+            isReadOnly
+          />
+        </div>
       </div>
     );
   },
 };
 
-export const NewPasswordSetup: Story = {
+export const Required: Story = {
+  args: {
+    isRequired: true,
+  },
+  render: Default.render,
+};
+
+export const Requirements: Story = {
   render: () => {
     const text = usePasswordText();
     const language = usePasswordLanguage();
     const [password, setPassword] = useState('Pass1!');
 
     return (
-      <div className="w-[320px]">
+      <div key={language} className="w-[320px]">
         <PasswordInput
-          label={text.newPassword}
+          label={text.password.newPassword}
           isRequired
           value={password}
           onChange={setPassword}
@@ -268,7 +529,7 @@ export const NewPasswordSetup: Story = {
   },
 };
 
-export const PasswordMatchFlow: Story = {
+export const MatchMismatch: Story = {
   render: () => {
     const text = usePasswordText();
     const language = usePasswordLanguage();
@@ -277,16 +538,16 @@ export const PasswordMatchFlow: Story = {
     const passwordsMatch = password.length > 0 && password === confirmPassword;
 
     return (
-      <div className="flex w-[320px] flex-col gap-6">
+      <div key={language} className="flex w-[320px] flex-col gap-6">
         <PasswordInput
-          label={text.newPassword}
+          label={text.password.newPassword}
           isRequired
           value={password}
           onChange={setPassword}
           requirements={localizedPasswordRequirements[language]}
         />
         <PasswordInput
-          label={text.confirmPassword}
+          label={text.password.confirmPassword}
           isRequired
           value={confirmPassword}
           onChange={setConfirmPassword}
@@ -295,8 +556,8 @@ export const PasswordMatchFlow: Story = {
           feedbackMessage={
             confirmPassword.length > 0
               ? passwordsMatch
-                ? text.passwordMatch
-                : text.passwordMismatch
+                ? text.password.passwordMatch
+                : text.password.passwordMismatch
               : undefined
           }
           feedbackTone={passwordsMatch ? 'success' : 'danger'}
@@ -304,4 +565,12 @@ export const PasswordMatchFlow: Story = {
       </div>
     );
   },
+};
+
+export const Revealed: Story = {
+  args: {
+    defaultValue: 'SecretPass1!',
+    defaultRevealed: true,
+  },
+  render: Default.render,
 };
