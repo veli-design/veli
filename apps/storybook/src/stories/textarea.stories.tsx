@@ -113,10 +113,6 @@ const textareaArgText = {
     en: enFormText.core.label,
     dv: dhivehiFormText.core.label,
   },
-  labelSupplementary: {
-    en: enFormText.core.optional,
-    dv: dhivehiFormText.core.optional,
-  },
   infoTooltip: {
     en: enFormText.textarea.infoTip,
     dv: dhivehiFormText.textarea.infoTip,
@@ -141,7 +137,6 @@ const textareaArgText = {
 
 type TextAreaArgTextKey = keyof typeof textareaArgText;
 type TextAreaStoryArgs = ComponentProps<typeof TextArea> & {
-  showOptional: boolean;
   showInfoTooltip: boolean;
 };
 
@@ -205,15 +200,8 @@ const meta = {
     (Story, context) => {
       const language: TextAreaLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const {
-        description,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-        errorMessage,
-      } = args;
+      const { description, infoTooltip, infoTooltipAriaLabel, label, placeholder, errorMessage } =
+        args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<TextAreaArgTextKey, string>> = {};
@@ -222,7 +210,6 @@ const meta = {
           infoTooltip,
           infoTooltipAriaLabel,
           label,
-          labelSupplementary,
           placeholder,
           errorMessage,
         };
@@ -243,7 +230,6 @@ const meta = {
         infoTooltip,
         infoTooltipAriaLabel,
         label,
-        labelSupplementary,
         placeholder,
         errorMessage,
         language,
@@ -278,10 +264,7 @@ const meta = {
       label: {
         control: 'text',
       },
-      labelSupplementary: {
-        control: 'text',
-      },
-      showOptional: {
+      isOptional: {
         control: 'boolean',
       },
       infoTooltip: {
@@ -349,8 +332,7 @@ const meta = {
     appearance: 'default',
     size: 'md',
     label: enFormText.core.label,
-    labelSupplementary: enFormText.core.optional,
-    showOptional: true,
+    isOptional: true,
     infoTooltip: enFormText.textarea.infoTip,
     infoTooltipAriaLabel: enFormText.textarea.infoTipLabel,
     showInfoTooltip: true,
@@ -375,18 +357,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useTextAreaLanguage();
-    const { showInfoTooltip, showOptional, ...textareaArgs } = args;
+    const { showInfoTooltip, ...textareaArgs } = args;
 
     return (
       <div key={getTextAreaPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <TextArea
           {...textareaArgs}
           label={getLocalizedTextAreaArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedTextAreaArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedTextAreaArgText('infoTooltip', args.infoTooltip, language)
@@ -432,7 +409,7 @@ export const Sizes: Story = {
               <TextArea
                 size={size}
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
+                isOptional
                 placeholder={text.core.placeholder}
                 description={text.core.helperText}
                 maxLength={100}
@@ -453,7 +430,7 @@ export const Sizes: Story = {
                 size={size}
                 appearance="outline"
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
+                isOptional
                 placeholder={text.core.placeholder}
                 description={text.core.helperText}
                 maxLength={100}
@@ -476,14 +453,14 @@ export const States: Story = {
         <div className="flex flex-col gap-4">
           <TextArea
             label={text.core.default}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
           />
           <TextArea
             label={text.core.invalid}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             errorMessage={text.textarea.errorMessage}
             maxLength={100}
@@ -491,7 +468,7 @@ export const States: Story = {
           />
           <TextArea
             label={text.core.disabled}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
@@ -499,7 +476,7 @@ export const States: Story = {
           />
           <TextArea
             label={text.core.readOnly}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
@@ -510,7 +487,7 @@ export const States: Story = {
           <TextArea
             appearance="outline"
             label={text.core.default}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
@@ -518,7 +495,7 @@ export const States: Story = {
           <TextArea
             appearance="outline"
             label={text.core.invalid}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             errorMessage={text.textarea.errorMessage}
             maxLength={100}
@@ -527,7 +504,7 @@ export const States: Story = {
           <TextArea
             appearance="outline"
             label={text.core.disabled}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
@@ -536,7 +513,7 @@ export const States: Story = {
           <TextArea
             appearance="outline"
             label={text.core.readOnly}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
@@ -551,7 +528,7 @@ export const States: Story = {
 export const Required: Story = {
   args: {
     isRequired: true,
-    showOptional: false,
+    isOptional: false,
     showCharacterCounter: false,
     maxLength: undefined,
   },
@@ -561,18 +538,13 @@ export const Required: Story = {
 export const LabelIcon: Story = {
   render: (args) => {
     const language = useTextAreaLanguage();
-    const { showInfoTooltip, showOptional, ...textareaArgs } = args;
+    const { showInfoTooltip, ...textareaArgs } = args;
 
     return (
       <div key={getTextAreaPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <TextArea
           {...textareaArgs}
           label={getLocalizedTextAreaArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedTextAreaArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedTextAreaArgText('infoTooltip', args.infoTooltip, language)
