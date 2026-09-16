@@ -1376,7 +1376,7 @@ const ACCORDION_ITEMS = [
 
 export function AccordionUsageDemo() {
   return (
-    <div className="w-full max-w-[480px]">
+    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
       <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
     </div>
   );
@@ -1384,7 +1384,7 @@ export function AccordionUsageDemo() {
 
 export function AccordionVariantsDemo() {
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
           <p className="type-body-sm-medium text-base-emphasis">Single expanded</p>
@@ -1402,6 +1402,44 @@ export function AccordionVariantsDemo() {
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+export function AccordionControlledDemo() {
+  const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set(['overview']));
+  return (
+    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
+      <Accordion
+        items={ACCORDION_ITEMS}
+        expandedKeys={expandedKeys}
+        onExpandedChange={setExpandedKeys}
+      />
+      <output className="mt-4 block type-body-sm-regular" aria-live="polite">
+        Open sections: {Array.from(expandedKeys).join(', ') || 'none'}
+      </output>
+    </div>
+  );
+}
+
+export function AccordionAppearanceDemo() {
+  return (
+    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
+      {(
+        [
+          { label: 'Medium', size: 'md' },
+          { label: 'Large', size: 'lg' },
+          { label: 'Trailing indicator', alignment: 'left' },
+          { label: 'Leading indicator', alignment: 'right' },
+          { label: 'Default inset', flushed: false },
+          { label: 'Flushed', flushed: true },
+        ] as const
+      ).map(({ label, ...props }) => (
+        <div key={label} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
+          <p className="mb-3 type-body-sm-medium">{label}</p>
+          <Accordion {...props} items={ACCORDION_ITEMS} defaultExpandedKeys={['overview']} />
+        </div>
+      ))}
     </div>
   );
 }
