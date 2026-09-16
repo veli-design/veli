@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Bell, CheckCircle, Clock, FlagBanner, XCircle } from 'phosphor-react';
 
@@ -383,15 +384,23 @@ export const CounterOnIcon: Story = {
 
     return (
       <div className="relative inline-flex">
-        <Bell aria-hidden size={24} className="text-icon-base" />
+        <Button
+          iconOnly
+          intent="secondary"
+          appearance="transparent"
+          size="md"
+          aria-label={text.notificationAriaLabel}
+        >
+          <Bell aria-hidden size={20} weight="regular" />
+        </Button>
         <Badge
           counter
           count={5}
           appearance="emphasis"
           intent="danger"
           size="sm"
-          className="absolute -top-1 -end-1"
-          aria-label={text.notificationAriaLabel}
+          className="absolute -top-0.5 -end-0.5"
+          aria-hidden
         />
       </div>
     );

@@ -52,6 +52,7 @@ import {
 } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
+  Bell,
   CalendarBlank,
   CaretLeft,
   CaretDown,
@@ -1084,6 +1085,31 @@ export function BadgeCounterDemo() {
       <Badge intent="danger" counter count={5} />
       <Badge intent="neutral" counter count={128} max={99} />
       <Badge count={7} appearance="emphasis" intent="danger" size="sm" />
+    </div>
+  );
+}
+
+export function BadgeCounterOnIconDemo() {
+  return (
+    <div className="relative inline-flex">
+      <Button
+        iconOnly
+        intent="secondary"
+        appearance="transparent"
+        size="md"
+        aria-label="5 notifications"
+      >
+        <Bell aria-hidden size={20} weight="regular" />
+      </Button>
+      <Badge
+        counter
+        count={5}
+        appearance="emphasis"
+        intent="danger"
+        size="sm"
+        className="absolute -top-0.5 -end-0.5"
+        aria-hidden
+      />
     </div>
   );
 }

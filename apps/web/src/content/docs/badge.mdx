@@ -7,6 +7,7 @@ import {
   BadgeUsageDemo,
   BadgeAppearancesDemo,
   BadgeCounterDemo,
+  BadgeCounterOnIconDemo,
   BadgeStatusDotsDemo,
 } from '../../components/DocsExamples';
 
@@ -57,18 +58,51 @@ Pass `counter` or `count` for a numeric pill. Values above `max` render as `{max
 ```tsx
 <Badge intent="danger" counter count={5} />
 <Badge intent="neutral" counter count={128} max={99} />
+<Badge count={7} appearance="emphasis" intent="danger" size="sm" />
+```
+
+When overlaying a counter on an icon, put the icon in a button (or similar padded control). A bare icon leaves too little room, so the badge clips the glyph.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeCounterOnIconDemo client:visible />
+</div>
+
+```tsx
+<div className="relative inline-flex">
+  <Button
+    iconOnly
+    intent="secondary"
+    appearance="transparent"
+    size="md"
+    aria-label="5 notifications"
+  >
+    <Bell aria-hidden size={20} weight="regular" />
+  </Button>
+  <Badge
+    counter
+    count={5}
+    appearance="emphasis"
+    intent="danger"
+    size="sm"
+    className="absolute -top-0.5 -end-0.5"
+    aria-hidden
+  />
+</div>
 ```
 
 ## Status dots
 
-`size="xs"` renders an 8px status dot without a label. Pass `aria-label` so assistive technologies can name it.
+`size="xs"` renders an 8px status dot without a label.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <BadgeStatusDotsDemo client:visible />
 </div>
 
 ```tsx
-<Badge intent="positive" appearance="emphasis" size="xs" aria-label="Online" />
+<Badge appearance="emphasis" intent="positive" size="xs" aria-label="Online" />
+<Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
+<Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
+<Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
 ```
 
 ## API Reference
@@ -91,6 +125,7 @@ All other `span` attributes are supported.
 - Label badges expose their text through the rendered label.
 - `size="xs"` status dots are `aria-hidden` unless you pass `aria-label` or `aria-labelledby`.
 - Counter badges should include `aria-label` when the count is not clear from visible text alone.
+- When a counter overlays an icon button, put the count in the button’s `aria-label` and mark the badge `aria-hidden`.
 - Badge is a non-interactive `span` by default. Wrap it in a button or link when it should be actionable.
 
 ## RTL and Language
