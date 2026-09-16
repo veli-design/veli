@@ -1,18 +1,19 @@
 ---
 title: Badge
-description: Compact status and counter indicator with semantic intents, three appearances, and a numeric counter mode.
+description: Compact status, category, and count labels with semantic intents and three appearances.
 ---
 
 import {
   BadgeUsageDemo,
-  BadgeVariantsDemo,
-  BadgeSizesDemo,
+  BadgeAppearancesDemo,
+  BadgeCounterDemo,
+  BadgeCounterOnIconDemo,
   BadgeStatusDotsDemo,
 } from '../../components/DocsExamples';
 
 # Badge
 
-The Badge component labels status, categories, and counts in a compact pill. It pairs a semantic `intent` with one of three `appearance` treatments, and switches to a numeric counter mode for notification-style counts.
+Use Badge for compact status, category, and count labels. For page-level banners, use [Alert](/docs/alert/). For temporary notifications, use [Toast](/docs/toast/).
 
 ## Import
 
@@ -27,72 +28,82 @@ import { Badge } from '@tradenetcorp/veli-ui/badge';
 </div>
 
 ```tsx
-<Badge intent="info">Info</Badge>
-<Badge intent="positive" appearance="subtle">Approved</Badge>
-<Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>Rejected</Badge>
+<Badge intent="positive" appearance="subtle">
+  Approved
+</Badge>
 ```
 
-## Appearances, accents, and counter mode
+## Appearances
+
+`outline`, `subtle`, and `emphasis` change the surface treatment. Size label badges with `sm` or `md`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <BadgeVariantsDemo client:visible />
+  <BadgeAppearancesDemo client:visible />
+</div>
+
+```tsx
+<Badge intent="info" appearance="outline">Outline</Badge>
+<Badge intent="info" appearance="subtle">Subtle</Badge>
+<Badge intent="info" appearance="emphasis">Emphasis</Badge>
+```
+
+## Counter mode
+
+Pass `counter` or `count` for a numeric pill. Values above `max` render as `{max}+`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeCounterDemo client:visible />
 </div>
 
 ```tsx
 <Badge intent="danger" counter count={5} />
-<Badge intent="neutral" counter count={128} max={99} /> {/* renders "99+" */}
-<Badge count={7} appearance="emphasis" intent="danger" size="sm" /> {/* counter via count alone */}
+<Badge intent="neutral" counter count={128} max={99} />
+<Badge count={7} appearance="emphasis" intent="danger" size="sm" />
 ```
 
-## Sizes
-
-Label badges support `sm` and `md`. Use `xs` for an 8px status dot without a visible label.
+When overlaying a counter on an icon, put the icon in a button (or similar padded control). A bare icon leaves too little room, so the badge clips the glyph.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <BadgeSizesDemo client:visible />
+  <BadgeCounterOnIconDemo client:visible />
 </div>
-
-```tsx
-<Badge intent="info" size="sm">Small</Badge>
-<Badge intent="info" size="md">Medium</Badge>
-```
-
-## Status dots
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <BadgeStatusDotsDemo client:visible />
-</div>
-
-```tsx
-<Badge intent="positive" appearance="emphasis" size="xs" aria-label="Approved" />
-<Badge intent="warning" appearance="subtle" size="xs" aria-label="Pending review" />
-```
-
-## Counter on an icon
-
-Position the counter with layout utilities. Provide `aria-label` when the count is not exposed as visible text for assistive technologies.
 
 ```tsx
 <div className="relative inline-flex">
-  <Bell aria-hidden size={24} />
+  <Button
+    iconOnly
+    intent="secondary"
+    appearance="transparent"
+    size="md"
+    aria-label="5 notifications"
+  >
+    <Bell aria-hidden size={20} weight="regular" />
+  </Button>
   <Badge
     counter
     count={5}
     appearance="emphasis"
     intent="danger"
     size="sm"
-    className="absolute -top-1 -end-1"
-    aria-label="5 notifications"
+    className="absolute -top-0.5 -end-0.5"
+    aria-hidden
   />
 </div>
 ```
 
-## Accessibility
+## Status dots
 
-- Label badges expose their text to assistive technologies through the rendered label.
-- `size="xs"` status dots are `aria-hidden` unless you pass `aria-label` (or `aria-labelledby`).
-- Counter badges and icon-only counts should include `aria-label` describing the notification count.
-- Badge is a non-interactive `span` by default. Wrap it in a button or link when it should be focusable and actionable.
+`size="xs"` renders an 8px status dot without a label.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <BadgeStatusDotsDemo client:visible />
+</div>
+
+```tsx
+<Badge appearance="emphasis" intent="positive" size="xs" aria-label="Online" />
+<Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
+<Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
+<Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
+```
 
 ## API Reference
 
@@ -100,11 +111,23 @@ Position the counter with layout utilities. Provide `aria-label` when the count 
 | :------------ | :---------------------------------------------------------------------------------------------------------------------------------- | :---------- | :------------------------------------------------------- |
 | `intent`      | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger' \| 'magenta' \| 'indigo' \| 'brand' \| 'green' \| 'lime'` | `'neutral'` | Semantic color of the badge.                             |
 | `appearance`  | `'emphasis' \| 'outline' \| 'subtle'`                                                                                               | `'outline'` | Visual treatment of the badge surface.                   |
-| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                              | `'md'`      | Badge size.                                              |
+| `size`        | `'xs' \| 'sm' \| 'md'`                                                                                                              | `'md'`      | Badge size. `xs` is the status-dot mode.                 |
 | `counter`     | `boolean`                                                                                                                           | `false`     | Switches to a numeric counter pill.                      |
 | `count`       | `number`                                                                                                                            | -           | Value shown in counter mode (also enables counter mode). |
 | `max`         | `number`                                                                                                                            | `99`        | Cap above which the count renders as `{max}+`.           |
 | `leadingIcon` | `ReactNode`                                                                                                                         | -           | Icon rendered before the label.                          |
-| `className`   | `string`                                                                                                                            | -           | Layout-only class override merged onto the root element. |
+| `className`   | `string`                                                                                                                            | -           | Layout class on the root.                                |
 
-All other `span` attributes are supported. In counter mode the value uses tabular numerals so widths stay stable as the count changes.
+All other `span` attributes are supported.
+
+## Accessibility
+
+- Label badges expose their text through the rendered label.
+- `size="xs"` status dots are `aria-hidden` unless you pass `aria-label` or `aria-labelledby`.
+- Counter badges should include `aria-label` when the count is not clear from visible text alone.
+- When a counter overlays an icon button, put the count in the button’s `aria-label` and mark the badge `aria-hidden`.
+- Badge is a non-interactive `span` by default. Wrap it in a button or link when it should be actionable.
+
+## RTL and Language
+
+In RTL, the leading icon and label follow `dir`. Localized label copy is fine; status dots still need an `aria-label` in the active language.

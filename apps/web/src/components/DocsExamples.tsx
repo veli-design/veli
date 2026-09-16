@@ -1057,125 +1057,70 @@ export function AvatarVariantsDemo() {
 
 export function BadgeUsageDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-[12px]">
-      <Badge intent="info">Info</Badge>
-      <Badge intent="positive" appearance="subtle">
-        Approved
+    <Badge intent="positive" appearance="subtle">
+      Approved
+    </Badge>
+  );
+}
+
+export function BadgeAppearancesDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[8px]">
+      <Badge appearance="outline" intent="info">
+        Outline
       </Badge>
-      <Badge intent="warning" appearance="outline">
-        Pending
+      <Badge appearance="subtle" intent="info">
+        Subtle
       </Badge>
-      <Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>
-        Rejected
+      <Badge appearance="emphasis" intent="info">
+        Emphasis
       </Badge>
     </div>
   );
 }
 
-export function BadgeVariantsDemo() {
-  const statusIntents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'] as const;
-  const accentIntents = ['magenta', 'indigo', 'brand', 'green', 'lime'] as const;
-
+export function BadgeCounterDemo() {
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Status appearances</p>
-          <div className="space-y-[10px]">
-            {(['outline', 'subtle', 'emphasis'] as const).map((appearance) => (
-              <div key={appearance} className="flex flex-wrap items-center gap-[8px]">
-                {statusIntents.map((intent) => (
-                  <Badge key={intent} appearance={appearance} intent={intent}>
-                    {intent}
-                  </Badge>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Accent intents</p>
-          <div className="flex flex-wrap items-center gap-[8px]">
-            {accentIntents.map((intent) => (
-              <Badge key={intent} appearance="outline" intent={intent}>
-                {intent}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Counter mode</p>
-          <div className="flex flex-wrap items-center gap-[16px]">
-            <Badge intent="info" counter count={42} size="sm" />
-            <Badge intent="info" counter count={42} size="md" />
-            <Badge intent="neutral" counter count={128} max={99} />
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Counter on icon</p>
-          <div className="relative inline-flex">
-            <Bell aria-hidden size={24} className="text-icon-base" />
-            <Badge
-              counter
-              count={5}
-              appearance="emphasis"
-              intent="danger"
-              size="sm"
-              className="absolute -top-1 -end-1"
-              aria-label="5 notifications"
-            />
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-[16px]">
+      <Badge intent="danger" counter count={5} />
+      <Badge intent="neutral" counter count={128} max={99} />
+      <Badge count={7} appearance="emphasis" intent="danger" size="sm" />
     </div>
   );
 }
 
-export function BadgeSizesDemo() {
+export function BadgeCounterOnIconDemo() {
   return (
-    <div className="flex flex-wrap items-end gap-[12px]">
-      <Badge appearance="outline" intent="info" size="sm">
-        sm
-      </Badge>
-      <Badge appearance="outline" intent="info" size="md">
-        md
-      </Badge>
+    <div className="relative inline-flex">
+      <Button
+        iconOnly
+        intent="secondary"
+        appearance="transparent"
+        size="md"
+        aria-label="5 notifications"
+      >
+        <Bell aria-hidden size={20} weight="regular" />
+      </Button>
+      <Badge
+        counter
+        count={5}
+        appearance="emphasis"
+        intent="danger"
+        size="sm"
+        className="absolute -top-0.5 -end-0.5"
+        aria-hidden
+      />
     </div>
   );
 }
 
 export function BadgeStatusDotsDemo() {
-  const intents = [
-    'neutral',
-    'info',
-    'positive',
-    'cautious',
-    'warning',
-    'danger',
-    'magenta',
-    'brand',
-  ] as const;
-
   return (
     <div className="flex flex-wrap items-center gap-[10px]">
-      {intents.map((intent) => (
-        <Badge
-          key={intent}
-          appearance="emphasis"
-          intent={intent}
-          size="xs"
-          aria-label={`${intent} status`}
-        />
-      ))}
+      <Badge appearance="emphasis" intent="positive" size="xs" aria-label="Online" />
+      <Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
+      <Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
+      <Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
     </div>
   );
 }
