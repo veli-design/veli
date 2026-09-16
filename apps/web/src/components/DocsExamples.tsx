@@ -1388,16 +1388,19 @@ export function AccordionControlledDemo() {
 export function AccordionAppearanceDemo() {
   return (
     <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
-      {(['md', 'lg'] as const).map((size) => (
-        <div key={size} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
-          <p className="mb-3 type-body-sm-medium">{size} / leading indicator / flushed</p>
-          <Accordion
-            size={size}
-            alignment="right"
-            flushed
-            items={ACCORDION_ITEMS}
-            defaultExpandedKeys={['overview']}
-          />
+      {(
+        [
+          { label: 'Medium', size: 'md' },
+          { label: 'Large', size: 'lg' },
+          { label: 'Trailing indicator', alignment: 'left' },
+          { label: 'Leading indicator', alignment: 'right' },
+          { label: 'Default inset', flushed: false },
+          { label: 'Flushed', flushed: true },
+        ] as const
+      ).map(({ label, ...props }) => (
+        <div key={label} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
+          <p className="mb-3 type-body-sm-medium">{label}</p>
+          <Accordion {...props} items={ACCORDION_ITEMS} defaultExpandedKeys={['overview']} />
         </div>
       ))}
     </div>

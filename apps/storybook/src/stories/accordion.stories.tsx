@@ -271,6 +271,7 @@ export const States: Story = {
     await userEvent.click(buttons[0]);
     await expect(buttons[0]).toHaveAttribute('aria-expanded', 'true');
     await expect(buttons[1]).toHaveAttribute('aria-expanded', 'false');
+    buttons[0].blur();
   },
 };
 

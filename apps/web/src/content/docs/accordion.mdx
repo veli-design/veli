@@ -28,7 +28,7 @@ import {
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionUsageDemo client:visible />
+  <AccordionUsageDemo client:load />
 </div>
 
 ```tsx
@@ -45,7 +45,7 @@ const items = [
 By default only one panel is open at a time. Pass `allowsMultipleExpanded` to let several stay open.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionVariantsDemo client:visible />
+  <AccordionVariantsDemo client:load />
 </div>
 
 For full control over markup, compose the parts directly:
@@ -76,7 +76,7 @@ const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set([
 Import `useState` from React. Item keys are strings or numbers.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionControlledDemo client:visible />
+  <AccordionControlledDemo client:load />
 </div>
 
 ## Sizes and alignment
@@ -84,7 +84,7 @@ Import `useState` from React. Item keys are strings or numbers.
 Use `md` for compact sections and `lg` for larger text. `alignment="left"` places the indicator after the label; `alignment="right"` places it before the label. Both layouts follow the reading direction. `flushed` reduces the outer inset; it does not remove all padding.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionAppearanceDemo client:visible />
+  <AccordionAppearanceDemo client:load />
 </div>
 
 ## Custom indicator

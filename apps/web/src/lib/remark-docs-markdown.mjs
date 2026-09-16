@@ -85,13 +85,13 @@ function isInteractivePreview(node, importedNames, file) {
     child.name.endsWith('Demo') &&
     importedNames.has(child.name) &&
     child.attributes?.length === 1 &&
-    hasBooleanAttribute(child, 'client:visible') &&
+    (hasBooleanAttribute(child, 'client:visible') || hasBooleanAttribute(child, 'client:load')) &&
     child.children?.length === 0;
 
   if (!isValid) {
     throw markdownError(
       file,
-      'preview JSX must contain one imported, client:visible *Demo component',
+      'preview JSX must contain one imported *Demo component with client:visible or client:load',
       node,
     );
   }
