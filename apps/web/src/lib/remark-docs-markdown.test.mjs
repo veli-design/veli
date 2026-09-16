@@ -113,6 +113,17 @@ test('creates clean GFM Markdown without changing the render tree', () => {
   assert.equal(markdown.endsWith('\n\n'), false);
 });
 
+test('exports eagerly hydrated previews without changing their hydration directive', () => {
+  const preview = previewNode('AccordionUsageDemo');
+  preview.children[0].attributes[0].name = 'client:load';
+  const tree = { type: 'root', children: [importNode('AccordionUsageDemo'), preview] };
+  const originalTree = globalThis.structuredClone(tree);
+  const markdown = createCanonicalMarkdown(tree, createFile());
+
+  assert.match(markdown, /View the interactive example in the rendered page/);
+  assert.deepEqual(tree, originalTree);
+});
+
 test('supports pages without an authored H1 and explicit visual-only omissions', () => {
   const tree = {
     type: 'root',
