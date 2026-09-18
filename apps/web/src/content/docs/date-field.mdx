@@ -26,7 +26,7 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 </div>
 
 ```tsx
-<DateField label="Appointment date" description="Type a date segment by segment." />
+<DateField label="Appointment date" isOptional description="Type a date segment by segment." />
 ```
 
 ## Appearances
@@ -62,17 +62,19 @@ DateField is a Veli field on React Aria [`DateField`](https://react-spectrum.ado
 
 Veli-specific props for the composed field.
 
-| Prop                    | Type                     | Default     | Description                                          |
-| :---------------------- | :----------------------- | :---------- | :--------------------------------------------------- |
-| `appearance`            | `'default' \| 'outline'` | `'default'` | Underline or bordered field.                         |
-| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                          |
-| `label`                 | `ReactNode`              | -           | Visible label.                                       |
-| `labelSupplementary`    | `ReactNode`              | -           | Inline label helper, e.g. `Optional`.                |
-| `description`           | `ReactNode`              | -           | Helper text beneath the field.                       |
-| `errorMessage`          | `ReactNode`              | -           | Error text shown when `isInvalid`.                   |
-| `showRequiredIndicator` | `boolean`                | `true`      | Shows the required asterisk when `isRequired`.       |
-| `className`             | `string`                 | -           | Layout class on the root (width, margin, flex/grid). |
-| `inputClassName`        | `string`                 | -           | Layout class on the input shell.                     |
+| Prop                    | Type                     | Default          | Description                                                          |
+| :---------------------- | :----------------------- | :--------------- | :------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                         |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                          |
+| `label`                 | `ReactNode`              | -                | Visible label.                                                       |
+| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`. |
+| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                 |
+| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                        |
+| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                       |
+| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                   |
+| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                       |
+| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                 |
+| `inputClassName`        | `string`                 | -                | Layout class on the input shell.                                     |
 
 ### React Aria DateField
 

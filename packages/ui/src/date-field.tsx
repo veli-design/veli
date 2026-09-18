@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Info } from 'phosphor-react';
 import {
+  Button as AriaButton,
   DateField as AriaDateField,
   Group,
   Label,
@@ -14,10 +15,15 @@ import { twMerge } from 'tailwind-merge';
 import { DateSegments, fieldRootVariants, fieldShellVariants } from './date-shared';
 import {
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  getFieldOptionalLabel,
+  shouldShowFieldOptional,
 } from './field-shared';
+import { useVeliLanguage } from './provider';
+import { Tooltip, TooltipTrigger } from './tooltip';
 
 type DateFieldAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type DateFieldSize = VariantProps<typeof fieldShellVariants>['size'];
@@ -33,6 +39,11 @@ const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify
     isDisabled: false,
   },
 });
+
+const infoTooltipDefaultAriaLabels = {
+  en: 'More information',
+  dv: 'އިތުރު މަޢުލޫމާތު',
+} as const;
 
 function focusDateSegmentFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
   if (isDisabled) return;
@@ -59,9 +70,11 @@ export interface DateFieldProps<T extends DateValue>
   appearance?: DateFieldAppearance;
   size?: DateFieldSize;
   label?: React.ReactNode;
+  infoTooltip?: React.ReactNode;
+  infoTooltipAriaLabel?: string;
+  isOptional?: boolean;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
-  labelSupplementary?: React.ReactNode;
   showRequiredIndicator?: boolean;
   className?: string;
   inputClassName?: string;
@@ -69,9 +82,11 @@ export interface DateFieldProps<T extends DateValue>
 
 export function DateField<T extends DateValue>({
   label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  isOptional = false,
   description,
   errorMessage,
-  labelSupplementary,
   showRequiredIndicator = true,
   className,
   inputClassName,
@@ -79,24 +94,48 @@ export function DateField<T extends DateValue>({
   size = 'md',
   ...props
 }: DateFieldProps<T>) {
+  const languageConfig = useVeliLanguage();
+  const resolvedInfoTooltipAriaLabel =
+    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
+
   return (
     <AriaDateField {...props} className={twMerge(fieldRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, state }) => {
         const showRequired = showRequiredIndicator && state.isRequired;
+        const showOptionalLabel = shouldShowFieldOptional(isOptional, state.isRequired);
 
         return (
           <>
-            {label || labelSupplementary || showRequired ? (
+            {label || infoTooltip || showOptionalLabel || showRequired ? (
               <div className="flex w-full items-center gap-2">
-                <div className="flex min-w-0 flex-1 items-center gap-1">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
                   {label ? (
                     <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
                       {label}
                     </Label>
                   ) : null}
-                  {labelSupplementary ? (
+                  {infoTooltip ? (
+                    <TooltipTrigger>
+                      <AriaButton
+                        type="button"
+                        aria-label={resolvedInfoTooltipAriaLabel}
+                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
+                        isDisabled={isDisabled}
+                      >
+                        <Info size={16} aria-hidden />
+                      </AriaButton>
+                      <Tooltip
+                        placement="top"
+                        lang={languageConfig.lang}
+                        dir={languageConfig.direction}
+                      >
+                        {infoTooltip}
+                      </Tooltip>
+                    </TooltipTrigger>
+                  ) : null}
+                  {showOptionalLabel ? (
                     <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                      {labelSupplementary}
+                      {getFieldOptionalLabel(languageConfig.language)}
                     </span>
                   ) : null}
                   {showRequired ? (

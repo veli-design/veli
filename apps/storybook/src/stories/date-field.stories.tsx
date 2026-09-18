@@ -53,9 +53,10 @@ function DateFieldDocsContainer(props: DocsContainerProps) {
 
 const enDateFieldText = {
   label: 'Label',
-  optional: 'Optional',
   helperText: 'Helper text',
   errorMessage: 'Enter a valid service date.',
+  infoTip: 'Use this field for the requested appointment date.',
+  infoTipLabel: 'More information',
   default: 'Default',
   invalid: 'Invalid',
   disabled: 'Disabled',
@@ -67,9 +68,10 @@ const enDateFieldText = {
 
 const dhivehiDateFieldText = {
   label: 'ލޭބަލް',
-  optional: 'އިޚްތިޔާރީ',
   helperText: 'އެހީތެރިވެދޭ ލިޔުން',
   errorMessage: 'ސައްޙަ ޚިދުމަތު ތާރީޚެއް ލިޔުއްވާ.',
+  infoTip: 'މި ފީލްޑަށް ބޭނުންވާ އެޕޮއިންޓްމަންޓް ތާރީޚު ބަލާ ލިޔުއްވާ.',
+  infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
   default: 'އާދައިގެ',
   invalid: 'ސައްޙަނޫން',
   disabled: 'ބޭނުންނުކުރެވޭ',
@@ -103,9 +105,13 @@ const dateFieldArgText = {
     en: enDateFieldText.label,
     dv: dhivehiDateFieldText.label,
   },
-  labelSupplementary: {
-    en: enDateFieldText.optional,
-    dv: dhivehiDateFieldText.optional,
+  infoTooltip: {
+    en: enDateFieldText.infoTip,
+    dv: dhivehiDateFieldText.infoTip,
+  },
+  infoTooltipAriaLabel: {
+    en: enDateFieldText.infoTipLabel,
+    dv: dhivehiDateFieldText.infoTipLabel,
   },
   description: {
     en: enDateFieldText.helperText,
@@ -119,7 +125,7 @@ const dateFieldArgText = {
 
 type DateFieldArgTextKey = keyof typeof dateFieldArgText;
 type DateFieldStoryArgs = ComponentProps<typeof DateField> & {
-  showOptional: boolean;
+  showInfoTooltip: boolean;
 };
 
 const dateFieldArgTextKeys = Object.keys(dateFieldArgText) as DateFieldArgTextKey[];
@@ -186,15 +192,16 @@ const meta = {
     (Story, context) => {
       const language: DateFieldLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const { description, errorMessage, label, labelSupplementary } = args;
+      const { description, errorMessage, infoTooltip, infoTooltipAriaLabel, label } = args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<DateFieldArgTextKey, string>> = {};
         const currentArgs = {
           description,
           errorMessage,
+          infoTooltip,
+          infoTooltipAriaLabel,
           label,
-          labelSupplementary,
         };
 
         dateFieldArgTextKeys.forEach((key) => {
@@ -208,7 +215,15 @@ const meta = {
         if (Object.keys(nextArgs).length > 0) {
           updateArgs?.(nextArgs);
         }
-      }, [description, errorMessage, label, labelSupplementary, language, updateArgs]);
+      }, [
+        description,
+        errorMessage,
+        infoTooltip,
+        infoTooltipAriaLabel,
+        label,
+        language,
+        updateArgs,
+      ]);
 
       return <Story />;
     },
@@ -239,11 +254,18 @@ const meta = {
         control: 'text',
         table: { type: { summary: 'string' } },
       },
-      labelSupplementary: {
+      isOptional: {
+        control: 'boolean',
+      },
+      infoTooltip: {
         control: 'text',
         table: { type: { summary: 'string' } },
       },
-      showOptional: {
+      infoTooltipAriaLabel: {
+        control: 'text',
+        table: { type: { summary: 'string' } },
+      },
+      showInfoTooltip: {
         control: 'boolean',
       },
     }),
@@ -288,8 +310,10 @@ const meta = {
     appearance: 'default',
     size: 'md',
     label: enDateFieldText.label,
-    labelSupplementary: enDateFieldText.optional,
-    showOptional: true,
+    isOptional: true,
+    infoTooltip: enDateFieldText.infoTip,
+    infoTooltipAriaLabel: enDateFieldText.infoTipLabel,
+    showInfoTooltip: true,
     description: enDateFieldText.helperText,
     isRequired: false,
     showRequiredIndicator: true,
@@ -306,22 +330,23 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useDateFieldLanguage();
-    const { showOptional, ...dateFieldArgs } = args;
+    const { showInfoTooltip, ...dateFieldArgs } = args;
 
     return (
       <div key={getDateFieldPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <DateField
           {...dateFieldArgs}
           label={getLocalizedDateFieldArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedDateFieldArgText(
-                  'labelSupplementary',
-                  args.labelSupplementary,
-                  language,
-                )
+          infoTooltip={
+            showInfoTooltip
+              ? getLocalizedDateFieldArgText('infoTooltip', args.infoTooltip, language)
               : undefined
           }
+          infoTooltipAriaLabel={getLocalizedDateFieldArgText(
+            'infoTooltipAriaLabel',
+            args.infoTooltipAriaLabel,
+            language,
+          )}
           description={getLocalizedDateFieldArgText('description', args.description, language)}
           errorMessage={getLocalizedDateFieldArgText('errorMessage', args.errorMessage, language)}
         />
@@ -353,12 +378,7 @@ export const Sizes: Story = {
               <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
                 {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
               </span>
-              <DateField
-                size={size}
-                label={text.label}
-                labelSupplementary={text.optional}
-                description={text.helperText}
-              />
+              <DateField size={size} label={text.label} isOptional description={text.helperText} />
             </div>
           ))}
         </div>
@@ -375,7 +395,7 @@ export const Sizes: Story = {
                 size={size}
                 appearance="outline"
                 label={text.label}
-                labelSupplementary={text.optional}
+                isOptional
                 description={text.helperText}
               />
             </div>
@@ -395,28 +415,24 @@ export const States: Story = {
     return (
       <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-4">
-          <DateField
-            label={text.default}
-            labelSupplementary={text.optional}
-            description={text.helperText}
-          />
+          <DateField label={text.default} isOptional description={text.helperText} />
           <DateField
             label={text.invalid}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             errorMessage={text.errorMessage}
             isInvalid
           />
           <DateField
             label={text.disabled}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             description={text.helperText}
             isDisabled
           />
           <DateField
             label={text.readOnly}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             description={text.helperText}
             isReadOnly
@@ -426,13 +442,13 @@ export const States: Story = {
           <DateField
             appearance="outline"
             label={text.default}
-            labelSupplementary={text.optional}
+            isOptional
             description={text.helperText}
           />
           <DateField
             appearance="outline"
             label={text.invalid}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             errorMessage={text.errorMessage}
             isInvalid
@@ -440,7 +456,7 @@ export const States: Story = {
           <DateField
             appearance="outline"
             label={text.disabled}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             description={text.helperText}
             isDisabled
@@ -448,7 +464,7 @@ export const States: Story = {
           <DateField
             appearance="outline"
             label={text.readOnly}
-            labelSupplementary={text.optional}
+            isOptional
             defaultValue={filledValue}
             description={text.helperText}
             isReadOnly
@@ -462,7 +478,7 @@ export const States: Story = {
 export const Required: Story = {
   args: {
     isRequired: true,
-    showOptional: false,
+    isOptional: false,
   },
   render: Default.render,
 };

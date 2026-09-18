@@ -1305,7 +1305,11 @@ export function DateFieldUsageDemo() {
   return (
     <DocsEnGbLocale>
       <div className="w-[320px]">
-        <DateField label="Appointment date" description="Type a date segment by segment." />
+        <DateField
+          label="Appointment date"
+          isOptional
+          description="Type a date segment by segment."
+        />
       </div>
     </DocsEnGbLocale>
   );
