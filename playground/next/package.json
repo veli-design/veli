@@ -1,5 +1,5 @@
 {
-  "name": "@tradenetcorp/veli-playground-next",
+  "name": "@tradenetcorp/veli-tabs-playground-next",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "@tradenetcorp/veli-ui": "workspace:*",
     "next": "^15.5.3",
     "react": "^19.0.0",
+    "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
