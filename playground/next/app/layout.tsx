@@ -3,8 +3,8 @@ import { VeliAppProviders } from '@/components/veli-app-providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Veli Tabs — Next.js playground',
-  description: 'Temporary PD-914 Tabs href navigation playground for Next.js App Router.',
+  title: 'Veli — Next.js playground',
+  description: 'Clean Next.js App Router playground for verifying Veli components.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

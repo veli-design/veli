@@ -1,5 +1,5 @@
 {
-  "name": "@tradenetcorp/veli-tabs-playground-tanstack",
+  "name": "@tradenetcorp/veli-playground-tanstack",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,6 @@
     "@tradenetcorp/veli-tokens": "workspace:*",
     "@tradenetcorp/veli-ui": "workspace:*",
     "react": "^19.0.0",
-    "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
