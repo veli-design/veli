@@ -1,7 +1,6 @@
 packages:
   - 'apps/*'
   - 'packages/*'
-  - 'playground/*'
 
 overrides:
   '@types/react': ^19.0.0
@@ -9,10 +8,6 @@ overrides:
   '@internationalized/date': ^3.12.2
   'hono@^4': ^4.12.32
   'immutable@^5': ^5.1.9
-  vite: 6.4.3
-  '@types/node': ^24.10.1
-  jiti: 2.7.0
-  lightningcss: 1.32.0
 
 # Reject transitive dependencies that resolve outside the configured registries.
 blockExoticSubdeps: true

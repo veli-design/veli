@@ -12,9 +12,6 @@ dist
 out
 storybook-static
 
-# Next.js generated types (playground and local apps)
-**/next-env.d.ts
-
 # Environment
 .env
 .env*.local
@@ -37,3 +34,6 @@ Thumbs.db
 .cursor/settings.json
 .playwright-cli/
 .playwright-mcp/
+
+# Local temporary router playgrounds (do not commit)
+playground/
