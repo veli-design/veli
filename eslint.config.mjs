@@ -22,7 +22,6 @@ export default [
       '**/coverage/**',
       '**/out/**',
       '**/storybook-static/**',
-      'playground/**',
       'pnpm-lock.yaml',
     ],
   },
