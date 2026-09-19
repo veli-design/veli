@@ -12,6 +12,9 @@ dist
 out
 storybook-static
 
+# Next.js generated types (playground and local apps)
+**/next-env.d.ts
+
 # Environment
 .env
 .env*.local
