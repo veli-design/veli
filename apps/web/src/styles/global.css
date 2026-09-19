@@ -954,6 +954,13 @@ button {
   line-height: 20px;
 }
 
+@media (max-width: 767px) {
+  .docs-prose:has(> #accordion) > table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 .docs-prose > table th,
 .docs-prose > table td {
   border-bottom: 1px solid var(--color-border-base-subtle);
