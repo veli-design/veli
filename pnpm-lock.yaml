@@ -273,9 +273,6 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.8
-      react-aria-components:
-        specifier: ^1.18.0
-        version: 1.18.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dom:
         specifier: ^19.0.0
         version: 19.2.8(react@19.2.8)
@@ -313,9 +310,6 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.8
-      react-aria-components:
-        specifier: ^1.18.0
-        version: 1.18.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dom:
         specifier: ^19.0.0
         version: 19.2.8(react@19.2.8)
