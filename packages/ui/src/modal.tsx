@@ -22,15 +22,22 @@ import { Divider } from './divider';
 import { hasRenderableMessage } from './field-shared';
 import { useVeliLanguage } from './provider';
 
-const overlayVariants = cva(
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-ash-alpha-900 p-4 backdrop-blur-xs transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
-);
+const overlayVariants = cva([
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-ash-alpha-900 p-4 backdrop-blur-xs',
+  'motion-safe:transition-opacity motion-safe:duration-normal motion-safe:ease-out',
+  'motion-safe:data-[entering]:opacity-0 motion-safe:data-[exiting]:opacity-0',
+  'motion-safe:data-[exiting]:duration-fast motion-safe:data-[exiting]:ease-in',
+  'motion-reduce:transition-none',
+]);
 
 const modalVariants = cva(
   [
-    'relative w-full max-h-[90dvh] overflow-auto rounded-4xl bg-modal-bg-solid text-base-default outline-none transition duration-normal ease-spring',
-    'data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
-    'shadow-sm',
+    'relative w-full max-h-[90dvh] overflow-auto rounded-4xl bg-modal-bg-solid text-base-default outline-none shadow-sm',
+    'motion-safe:transition motion-safe:duration-normal motion-safe:ease-spring',
+    'motion-safe:data-[entering]:scale-[0.98] motion-safe:data-[entering]:opacity-0',
+    'motion-safe:data-[exiting]:scale-[0.98] motion-safe:data-[exiting]:opacity-0',
+    'motion-safe:data-[exiting]:duration-fast motion-safe:data-[exiting]:ease-in',
+    'motion-reduce:transition-none',
   ],
   {
     variants: {
@@ -470,7 +477,7 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
     <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
       <ModalSectionDivider />
-      <div className="flex w-full items-center justify-end gap-2 pt-2">{children}</div>
+      <div className="flex w-full items-center justify-between gap-2 pt-2">{children}</div>
     </div>
   );
 }

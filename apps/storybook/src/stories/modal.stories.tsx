@@ -1,80 +1,114 @@
+import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-const englishModalText = {
-  openModal: 'Open Modal',
+const collapsedControlGroups = ['State'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function ModalDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
+
+const enModalText = {
+  openModal: 'Open modal',
   editProfile: 'Edit profile',
   updateProfileDesc: 'Update your profile details and save when you are done.',
-  openStateManagedByTrigger:
-    'Open state is managed by Modal.Trigger. Focus returns to the trigger when the modal closes.',
+  body: 'Your changes have been saved successfully.',
   cancel: 'Cancel',
   saveChanges: 'Save changes',
-  changesSavedSuccess:
-    'Your changes have been saved successfully. You can continue editing or close this window to return to the dashboard.',
-  openModalWithDesc: 'Open modal with description',
+  close: 'Close',
+  default: 'Default',
+  nonDismissable: 'Non-dismissable',
+  confirmDestructiveAction: 'Confirm destructive action',
+  modalCannotBeDismissed: 'This modal cannot be dismissed by clicking outside or pressing Escape.',
   deleteProject: 'Delete project',
-  cannotBeUndoneProjectData:
-    'This action cannot be undone. All project data will be permanently removed.',
-  exportBeforeDeleting:
-    'If you need a copy of this project, export it before deleting. Deleted projects cannot be recovered after 30 days.',
-  delete: 'Delete',
-  extraSmallModalDeleteConfirmation:
+  confirmationBody:
     'Extra small modals are used for action confirmations such as delete. This action cannot be undone.',
+  delete: 'Delete',
   openSize: 'Open {size}',
   sizeModal: '{size} modal',
-  modalDetailedOverview:
+  sizeDescription:
     'This modal offers a detailed overview, featuring rich text and seamlessly integrated links for easy navigation.',
-  extraSmallModalReplaceMessage:
+  sizeBody: 'This is the {size} size variant ({width}).',
+  confirmationReplace:
     'Extra small modals are used for action confirmations such as delete. Replace the confirmation message here.',
-  sizeVariantWidth: 'This is the {size} size variant ({width}).',
-  close: 'Close',
-  confirmDestructiveAction: 'Confirm destructive action',
-  modalCannotBeDismissed:
-    'This modal cannot be dismissed by clicking outside or pressing escape. The user must choose one of the explicit actions.',
 } as const;
 
-const dhivehiModalText = {
+const dvModalText = {
   openModal: 'މޯޑަލް ހުޅުވާ',
   editProfile: 'ޕްރޮފައިލް އެޑިޓްކުރޭ',
   updateProfileDesc: 'ޕްރޮފައިލްގެ މަޢުލޫމާތު އަޕްޑޭޓްކުރުމަށްފަހު ސޭވްކުރައްވާ.',
-  openStateManagedByTrigger:
-    'މޯޑަލް ހުޅުވިފައިވާކަން ކޮންޓްރޯލްކުރަނީ Modal.Trigger އިންނެވެ. މޯޑަލް ލެއްޕުމުން އަލުން ފޯކަސް ދާނީ ޓްރިގަރއަށެވެ.',
+  body: 'ގެންނެވި ބަދަލުތައް ކާމިޔާބުކަމާއެކު ސޭވްކުރެވިއްޖެއެވެ.',
   cancel: 'ކެންސަލް',
   saveChanges: 'ބަދަލުތައް ސޭވްކުރޭ',
-  changesSavedSuccess:
-    'ގެންނެވި ބަދަލުތައް ކާމިޔާބުކަމާއެކު ސޭވްކުރެވިއްޖެއެވެ. އެޑިޓްކުރުން ކުރިއަށްގެންދެވޭނެއެވެ. ނުވަތަ ޑޭޝްބޯޑަށް އެނބުރި ދިޔުމަށް މި ވިންޑޯ ލައްޕަވާލައްވާ.',
-  openModalWithDesc: 'ތަފްސީލާއެކު މޯޑަލް ހުޅުވާ',
-  deleteProject: 'ޕްރޮޖެކްޓް ޑިލީޓްކުރޭ',
-  cannotBeUndoneProjectData:
-    'މިކަން އަނބުރާ އިއާދައެއް ނުކުރެވޭނެއެވެ. ޕްރޮޖެކްޓްގެ ހުރިހާ ޑޭޓާއެއް އެއްކޮށް ފުހެވޭނެއެވެ.',
-  exportBeforeDeleting:
-    'މި ޕްރޮޖެކްޓްގެ ކޮޕީއެއް ބޭނުންފުޅުވާނަމަ، ޑިލީޓްކުރުމުގެ ކުރިން އެކްސްޕޯޓްކުރައްވާ. ޑިލީޓްކޮށްފައިވާ ޕްރޮޖެކްޓްތައް 30 ދުވަސް ފަހުން އަނބުރާ ނުހޯދޭނެއެވެ.',
-  delete: 'ޑިލީޓްކުރޭ',
-  extraSmallModalDeleteConfirmation:
-    'ޑިލީޓްކުރުން ފަދަ ކަންކަން ޔަގީންކުރުމަށް ބޭނުންކުރަނީ ވަރަށް ކުދި މޯޑަލްތަކެވެ. މިކަން އަނބުރާ އިއާދައެއް ނުކުރެވޭނެއެވެ.',
-  openSize: '{size} ހުޅުވާ',
-  sizeModal: '{size} މޯޑަލް',
-  modalDetailedOverview:
-    'މި މޯޑަލްގައި ތަފްސީލީ މަޢުލޫމާތާއި، ރިޗް ޓެކްސްޓް އަދި ފަސޭހައިން ބޭނުންކުރެވޭނެހެން ލިންކުތައް ހިމެނިފައިވާނެއެވެ.',
-  extraSmallModalReplaceMessage:
-    'ޑިލީޓްކުރުން ފަދަ ކަންކަން ޔަގީންކުރުމަށް ބޭނުންކުރަނީ ވަރަށް ކުދި މޯޑަލްތަކެވެ. ކަށަވަރުކުރުމުގެ މެސެޖު މިތަނަށް ލާށެވެ.',
-  sizeVariantWidth: 'މިއީ {size} ސައިޒުގެ ވޭރިއަންޓެވެ ({width}).',
   close: 'ލައްޕާ',
+  default: 'އާދައިގެ',
+  nonDismissable: 'ލެއްޕަން ނުލެވޭ',
   confirmDestructiveAction: 'ގެއްލުންދެނިވި އަމަލެއްކަން ކަށަވަރުކުރޭ',
   modalCannotBeDismissed:
-    'ބޭރަށް ކްލިކްކޮށްގެން ނުވަތަ އެސްކޭޕް ފިތްކޮށްގެން މި މޯޑަލް ނުލެއްޕޭނެއެވެ. ޔޫޒަރު ޖެހޭނީ ކޮންމެވެސް އެއް ގޮތެއް ޚިޔާރުކުރާށެވެ.',
+    'ބޭރަށް ކްލިކްކޮށްގެން ނުވަތަ އެސްކޭޕް ފިތްކޮށްގެން މި މޯޑަލް ނުލެއްޕޭނެއެވެ.',
+  deleteProject: 'ޕްރޮޖެކްޓް ޑިލީޓްކުރޭ',
+  confirmationBody:
+    'ޑިލީޓްކުރުން ފަދަ ކަންކަން ޔަގީންކުރުމަށް ބޭނުންކުރަނީ ވަރަށް ކުދި މޯޑަލްތަކެވެ. މިކަން އަނބުރާ އިއާދައެއް ނުކުރެވޭނެއެވެ.',
+  delete: 'ޑިލީޓްކުރޭ',
+  openSize: '{size} ހުޅުވާ',
+  sizeModal: '{size} މޯޑަލް',
+  sizeDescription:
+    'މި މޯޑަލްގައި ތަފްސީލީ މަޢުލޫމާތާއި، ރިޗް ޓެކްސްޓް އަދި ފަސޭހައިން ބޭނުންކުރެވޭނެހެން ލިންކުތައް ހިމެނިފައިވާނެއެވެ.',
+  sizeBody: 'މިއީ {size} ސައިޒުގެ ވޭރިއަންޓެވެ ({width}).',
+  confirmationReplace:
+    'ޑިލީޓްކުރުން ފަދަ ކަންކަން ޔަގީންކުރުމަށް ބޭނުންކުރަނީ ވަރަށް ކުދި މޯޑަލްތަކެވެ. ކަށަވަރުކުރުމުގެ މެސެޖު މިތަނަށް ލާށެވެ.',
 } as const;
 
 const localizedModalText = {
-  en: englishModalText,
-  dv: dhivehiModalText,
+  en: enModalText,
+  dv: dvModalText,
 } as const;
 
 type ModalLanguage = keyof typeof localizedModalText;
 type ModalSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+type ModalStoryArgs = ComponentProps<typeof Modal>;
 
 const modalSizes = ['xs', 'sm', 'md', 'lg', 'xl', 'full'] as const;
 const modalWidths: Record<ModalSize, string> = {
@@ -104,30 +138,62 @@ const formatModalText = (text: string, replacements: Record<string, string>) =>
     text,
   );
 
+const RightActions = ({ children }: { children: ReactNode }) => (
+  <div className="ms-auto flex gap-2">{children}</div>
+);
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
 const meta = {
   title: 'Components/Modal',
   component: Modal,
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
+    controls: {
+      sort: 'none',
+    },
     docs: {
-      description: {
-        component:
-          'Accessible modal built with `react-aria-components`, styled with Veli design tokens. Compose with `Modal.Trigger`, `Modal.Header`, `Modal.Title`, `Modal.Description`, `Modal.CloseButton`, `Modal.Content`, and `Modal.Footer`.',
-      },
+      container: ModalDocsContainer,
     },
   },
   argTypes: {
-    size: {
-      control: 'select',
-      options: modalSizes,
-    },
-    isDismissable: {
-      control: 'boolean',
-    },
-    isKeyboardDismissDisabled: {
-      control: 'boolean',
-    },
+    ...withArgCategory('Appearance', {
+      size: {
+        control: 'select',
+        options: modalSizes,
+      },
+    }),
+    ...withArgCategory('State', {
+      isDismissable: {
+        control: 'boolean',
+      },
+      isKeyboardDismissDisabled: {
+        control: 'boolean',
+      },
+    }),
+    children: { table: { disable: true } },
+    className: { table: { disable: true } },
+    overlayClassName: { table: { disable: true } },
+    isOpen: { table: { disable: true } },
+    defaultOpen: { table: { disable: true } },
+    onOpenChange: { table: { disable: true } },
+    'aria-label': { table: { disable: true } },
+    'aria-labelledby': { table: { disable: true } },
   },
   args: {
     children: null,
@@ -135,36 +201,44 @@ const meta = {
     isDismissable: true,
     isKeyboardDismissDisabled: false,
   },
-} satisfies Meta<typeof Modal>;
+} satisfies Meta<ModalStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const WithTrigger: Story = {
+export const Default: Story = {
   render: (args) => {
+    const language = useModalLanguage();
     const text = useModalText();
-    const { isOpen, defaultOpen, onOpenChange, ...modalArgs } = args;
+    const { size, isDismissable, isKeyboardDismissDisabled } = args;
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Modal.Trigger isOpen={isOpen} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+      <div
+        key={language}
+        className="flex min-h-[420px] items-center justify-center bg-surface-base p-8"
+      >
+        <Modal.Trigger>
           <Button>{text.openModal}</Button>
-          <Modal {...modalArgs}>
+          <Modal
+            size={size}
+            isDismissable={isDismissable}
+            isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+          >
             <Modal.Header>
               <Modal.Title>{text.editProfile}</Modal.Title>
               <Modal.Description>{text.updateProfileDesc}</Modal.Description>
               <Modal.CloseButton />
             </Modal.Header>
             <Modal.Content>
-              <p>{text.openStateManagedByTrigger}</p>
+              <p>{text.body}</p>
             </Modal.Content>
             <Modal.Footer>
-              <div className="flex flex-1 justify-end gap-2">
+              <RightActions>
                 <Button slot="close" intent="secondary" appearance="transparent">
                   {text.cancel}
                 </Button>
                 <Button slot="close">{text.saveChanges}</Button>
-              </div>
+              </RightActions>
             </Modal.Footer>
           </Modal>
         </Modal.Trigger>
@@ -173,192 +247,151 @@ export const WithTrigger: Story = {
   },
 };
 
-export const Playground: Story = {
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(false);
+export const Sizes: Story = {
+  render: () => {
+    const language = useModalLanguage();
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Button onPress={() => setIsOpen(true)}>{text.openModal}</Button>
-
-        <Modal {...args} isOpen={isOpen} onOpenChange={setIsOpen}>
-          <Modal.Header>
-            <Modal.Title>{text.editProfile}</Modal.Title>
-            <Modal.Description>{text.updateProfileDesc}</Modal.Description>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Content>
-            <p>{text.changesSavedSuccess}</p>
-          </Modal.Content>
-          <Modal.Footer>
-            <div className="flex flex-1 justify-end gap-2">
-              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-                {text.cancel}
-              </Button>
-              <Button onPress={() => setIsOpen(false)}>{text.saveChanges}</Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+      <div
+        key={language}
+        className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-surface-base p-8"
+      >
+        {modalSizes.map((size) => (
+          <Modal.Trigger key={size}>
+            <Button intent="secondary">
+              {formatModalText(text.openSize, { size: size.toUpperCase() })}
+            </Button>
+            <Modal size={size}>
+              <Modal.Header>
+                <Modal.Title>
+                  {formatModalText(text.sizeModal, { size: size.toUpperCase() })}
+                </Modal.Title>
+                {size !== 'xs' ? (
+                  <Modal.Description>{text.sizeDescription}</Modal.Description>
+                ) : null}
+                <Modal.CloseButton />
+              </Modal.Header>
+              <Modal.Content>
+                <p>
+                  {size === 'xs'
+                    ? text.confirmationReplace
+                    : formatModalText(text.sizeBody, {
+                        size: size.toUpperCase(),
+                        width: modalWidths[size],
+                      })}
+                </p>
+              </Modal.Content>
+              <Modal.Footer>
+                <RightActions>
+                  <Button slot="close">{text.close}</Button>
+                </RightActions>
+              </Modal.Footer>
+            </Modal>
+          </Modal.Trigger>
+        ))}
       </div>
     );
   },
 };
 
-export const WithDescription: Story = {
+export const States: Story = {
   render: () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const language = useModalLanguage();
     const text = useModalText();
 
     return (
-      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Button onPress={() => setIsOpen(true)}>{text.openModalWithDesc}</Button>
+      <div
+        key={language}
+        className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-surface-base p-8"
+      >
+        <Modal.Trigger>
+          <Button intent="secondary">{text.default}</Button>
+          <Modal>
+            <Modal.Header>
+              <Modal.Title>{text.editProfile}</Modal.Title>
+              <Modal.CloseButton />
+            </Modal.Header>
+            <Modal.Content>
+              <p>{text.body}</p>
+            </Modal.Content>
+            <Modal.Footer>
+              <RightActions>
+                <Button slot="close" intent="secondary" appearance="transparent">
+                  {text.cancel}
+                </Button>
+                <Button slot="close">{text.saveChanges}</Button>
+              </RightActions>
+            </Modal.Footer>
+          </Modal>
+        </Modal.Trigger>
 
-        <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-          <Modal.Header>
-            <Modal.Title>{text.deleteProject}</Modal.Title>
-            <Modal.Description>{text.cannotBeUndoneProjectData}</Modal.Description>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Content>
-            <p>{text.exportBeforeDeleting}</p>
-          </Modal.Content>
-          <Modal.Footer>
-            <div className="flex flex-1 justify-end gap-2">
-              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-                {text.cancel}
-              </Button>
-              <Button intent="danger" onPress={() => setIsOpen(false)}>
-                {text.delete}
-              </Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+        <Modal.Trigger>
+          <Button intent="danger">{text.nonDismissable}</Button>
+          <Modal isDismissable={false} isKeyboardDismissDisabled>
+            <Modal.Header>
+              <Modal.Title>{text.confirmDestructiveAction}</Modal.Title>
+            </Modal.Header>
+            <Modal.Content>
+              <p>{text.modalCannotBeDismissed}</p>
+            </Modal.Content>
+            <Modal.Footer>
+              <RightActions>
+                <Button slot="close" intent="secondary" appearance="transparent">
+                  {text.cancel}
+                </Button>
+                <Button slot="close" intent="danger">
+                  {text.delete}
+                </Button>
+              </RightActions>
+            </Modal.Footer>
+          </Modal>
+        </Modal.Trigger>
       </div>
     );
   },
 };
 
 export const Confirmation: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const text = useModalText();
-
-    return (
-      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Button intent="danger" onPress={() => setIsOpen(true)}>
-          {text.deleteProject}
-        </Button>
-
-        <Modal isOpen={isOpen} onOpenChange={setIsOpen} size="xs">
-          <Modal.Header>
-            <Modal.Title>{text.deleteProject}</Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Content>
-            <p>{text.extraSmallModalDeleteConfirmation}</p>
-          </Modal.Content>
-          <Modal.Footer>
-            <div className="flex flex-1 justify-end gap-2">
-              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-                {text.cancel}
-              </Button>
-              <Button intent="danger" onPress={() => setIsOpen(false)}>
-                {text.delete}
-              </Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
-      </div>
-    );
+  args: {
+    size: 'xs',
   },
-};
-
-export const Sizes: Story = {
-  render: () => {
-    const [openSize, setOpenSize] = useState<null | ModalSize>(null);
+  render: (args) => {
+    const language = useModalLanguage();
     const text = useModalText();
+    const { size, isDismissable, isKeyboardDismissDisabled } = args;
 
     return (
-      <div className="flex min-h-[420px] flex-wrap items-center justify-center gap-3 bg-surface-base p-8">
-        {modalSizes.map((size) => (
-          <Button key={size} intent="secondary" onPress={() => setOpenSize(size)}>
-            {formatModalText(text.openSize, { size: size.toUpperCase() })}
-          </Button>
-        ))}
-
-        {modalSizes.map((size) => (
+      <div
+        key={language}
+        className="flex min-h-[420px] items-center justify-center bg-surface-base p-8"
+      >
+        <Modal.Trigger>
+          <Button intent="danger">{text.deleteProject}</Button>
           <Modal
-            key={size}
-            isOpen={openSize === size}
-            onOpenChange={(isOpen) => setOpenSize(isOpen ? size : null)}
             size={size}
+            isDismissable={isDismissable}
+            isKeyboardDismissDisabled={isKeyboardDismissDisabled}
           >
             <Modal.Header>
-              <Modal.Title>
-                {formatModalText(text.sizeModal, { size: size.toUpperCase() })}
-              </Modal.Title>
-              {size !== 'xs' ? (
-                <Modal.Description>{text.modalDetailedOverview}</Modal.Description>
-              ) : null}
+              <Modal.Title>{text.deleteProject}</Modal.Title>
               <Modal.CloseButton />
             </Modal.Header>
             <Modal.Content>
-              <p>
-                {size === 'xs'
-                  ? text.extraSmallModalReplaceMessage
-                  : formatModalText(text.sizeVariantWidth, {
-                      size: size.toUpperCase(),
-                      width: modalWidths[size],
-                    })}
-              </p>
+              <p>{text.confirmationBody}</p>
             </Modal.Content>
             <Modal.Footer>
-              <div className="flex flex-1 justify-end gap-2">
-                <Button onPress={() => setOpenSize(null)}>{text.close}</Button>
-              </div>
+              <RightActions>
+                <Button slot="close" intent="secondary" appearance="transparent">
+                  {text.cancel}
+                </Button>
+                <Button slot="close" intent="danger">
+                  {text.delete}
+                </Button>
+              </RightActions>
             </Modal.Footer>
           </Modal>
-        ))}
-      </div>
-    );
-  },
-};
-
-export const NonDismissable: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const text = useModalText();
-
-    return (
-      <div className="flex min-h-[420px] items-center justify-center bg-surface-base p-8">
-        <Button intent="danger" onPress={() => setIsOpen(true)}>
-          {text.deleteProject}
-        </Button>
-
-        <Modal
-          isOpen={isOpen}
-          onOpenChange={setIsOpen}
-          isDismissable={false}
-          isKeyboardDismissDisabled
-        >
-          <Modal.Header>
-            <Modal.Title>{text.confirmDestructiveAction}</Modal.Title>
-          </Modal.Header>
-          <Modal.Content>
-            <p>{text.modalCannotBeDismissed}</p>
-          </Modal.Content>
-          <Modal.Footer>
-            <div className="flex flex-1 justify-end gap-2">
-              <Button intent="secondary" appearance="transparent" onPress={() => setIsOpen(false)}>
-                {text.cancel}
-              </Button>
-              <Button intent="danger" onPress={() => setIsOpen(false)}>
-                {text.delete}
-              </Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+        </Modal.Trigger>
       </div>
     );
   },
