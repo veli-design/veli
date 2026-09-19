@@ -1,54 +1,8 @@
-import { useEffect, type ComponentProps, type ReactNode } from 'react';
+import { type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-
-const collapsedControlGroups = ['State'] as const;
-
-const collapseControlGroup = (group: string) => {
-  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
-  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
-
-  toggle?.click();
-};
-
-function ModalDocsContainer(props: DocsContainerProps) {
-  useEffect(() => {
-    let cancelled = false;
-    let attempts = 0;
-
-    const tryCollapse = () => {
-      if (cancelled) {
-        return;
-      }
-
-      const tableReady = collapsedControlGroups.every(
-        (group) =>
-          document.querySelector(
-            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
-          ) != null,
-      );
-
-      if (!tableReady && attempts < 40) {
-        attempts += 1;
-        requestAnimationFrame(tryCollapse);
-        return;
-      }
-
-      collapsedControlGroups.forEach(collapseControlGroup);
-    };
-
-    tryCollapse();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return <DocsContainer {...props} />;
-}
 
 const enModalText = {
   openModal: 'Open modal',
@@ -142,50 +96,24 @@ const RightActions = ({ children }: { children: ReactNode }) => (
   <div className="ms-auto flex gap-2">{children}</div>
 );
 
-const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
-  Object.fromEntries(
-    Object.entries(argTypes).map(([name, argType]) => [
-      name,
-      {
-        ...argType,
-        table: {
-          ...('table' in argType && argType.table && typeof argType.table === 'object'
-            ? argType.table
-            : {}),
-          category,
-        },
-      },
-    ]),
-  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
-
 const meta = {
   title: 'Components/Modal',
   component: Modal,
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
-    controls: {
-      sort: 'none',
-    },
-    docs: {
-      container: ModalDocsContainer,
-    },
   },
   argTypes: {
-    ...withArgCategory('Appearance', {
-      size: {
-        control: 'select',
-        options: modalSizes,
-      },
-    }),
-    ...withArgCategory('State', {
-      isDismissable: {
-        control: 'boolean',
-      },
-      isKeyboardDismissDisabled: {
-        control: 'boolean',
-      },
-    }),
+    size: {
+      control: 'select',
+      options: modalSizes,
+    },
+    isDismissable: {
+      control: 'boolean',
+    },
+    isKeyboardDismissDisabled: {
+      control: 'boolean',
+    },
     children: { table: { disable: true } },
     className: { table: { disable: true } },
     overlayClassName: { table: { disable: true } },
