@@ -1,0 +1,25 @@
+---
+const themeChoices = [
+  { id: 'light', icon: '/images/docs-footer/sun.svg' },
+  { id: 'dark', icon: '/images/docs-footer/moon.svg' },
+  { id: 'system', icon: '/images/docs-footer/monitor.svg' },
+] as const;
+---
+
+<button class="home-theme-cycle" type="button" aria-label="Use system theme" data-theme-cycle>
+  {
+    themeChoices.map((choice) => {
+      return (
+        <span
+          class="docs-control-icon"
+          style={`--docs-control-icon: url('${choice.icon}')`}
+          aria-hidden="true"
+          data-theme-icon={choice.id}
+        />
+      );
+    })
+  }
+  <span class="home-theme-cycle__tooltip" aria-hidden="true" data-theme-label>
+    Use system theme
+  </span>
+</button>

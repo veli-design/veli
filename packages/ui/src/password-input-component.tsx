@@ -17,7 +17,6 @@ import {
   type PasswordRequirement,
 } from './password-input-shared';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
@@ -26,12 +25,10 @@ import {
   FieldMessage,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
-  fieldHeaderSupplementaryVariants,
   hasRenderableMessage,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
-import { Tooltip, TooltipTrigger } from './tooltip';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref';
 
@@ -42,24 +39,26 @@ const underlineFocusActiveTransform =
 const defaultFieldUnderlineSuccess = `after:bg-border-success-emphasis hover:after:bg-border-success-emphasis ${underlineActiveTransform}`;
 const defaultFieldUnderlineSuccessFocus = `focus-within:after:bg-border-success-emphasis focus-within:hover:after:bg-border-success-emphasis ${underlineFocusActiveTransform}`;
 
+/**
+ * Outline stroke as an inset box-shadow (Figma strokeAlign INSIDE).
+ * Rest 1px, hover 1.5px, active/focus-within 2px — outer box never changes.
+ * Hide the inner stroke when the keyboard focus ring is shown.
+ */
+const outlineFieldStrokeRest =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(input[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+
+const outlineFieldStrokeError =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+
+const outlineFieldStrokeSuccess =
+  'shadow-[inset_0_0_0_1px_var(--color-border-success-emphasis)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-border-success-emphasis)] focus-within:shadow-[inset_0_0_0_2px_var(--color-border-success-emphasis)]';
+
+const outlineFieldStrokeFocusVisibleHide =
+  'has-[input[data-focus-visible]]:shadow-none has-[input[data-focus-visible]]:hover:shadow-none';
+
 const passwordInputRootVariants = cva('flex w-full flex-col font-sans antialiased');
 
 const passwordInputFooterVariants = cva('flex w-full flex-col gap-2 pt-2');
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -74,10 +73,10 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
-      variant: {
+      appearance: {
         default: '',
         outline: '',
       },
@@ -105,7 +104,7 @@ const fieldShellVariants = cva(
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
@@ -113,7 +112,7 @@ const fieldShellVariants = cva(
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
@@ -121,7 +120,7 @@ const fieldShellVariants = cva(
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineSuccess} ${defaultFieldUnderlineSuccessFocus} bg-text-input-bg-success hover:bg-text-input-bg-success focus-within:bg-text-input-bg-success focus-within:hover:bg-text-input-bg-success`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
@@ -129,52 +128,47 @@ const fieldShellVariants = cva(
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
-        isSuccess: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isSuccess: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isInvalid: true,
-        isSuccess: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        isSuccess: false,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         isSuccess: false,
-        className:
-          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+        className: `${outlineFieldStrokeRest} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         isSuccess: true,
-        className:
-          'border border-success-emphasis bg-text-input-bg-success [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-success-emphasis focus-within:border-2 focus-within:border-success-emphasis focus-within:bg-text-input-bg-success has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+        className: `${outlineFieldStrokeSuccess} ${outlineFieldStrokeFocusVisibleHide} bg-text-input-bg-success`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
@@ -182,36 +176,32 @@ const fieldShellVariants = cva(
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
-        isSuccess: false,
-        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
         isSuccess: false,
-        className:
-          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        isSuccess: false,
-        className: 'border border-text-input-stroke-disabled',
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        isSuccess: false,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,
@@ -220,6 +210,9 @@ const fieldShellVariants = cva(
     },
   },
 );
+
+type PasswordInputAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
+type PasswordInputSize = VariantProps<typeof fieldShellVariants>['size'];
 
 const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
@@ -261,7 +254,7 @@ const insetSlotVariants = cva(
 );
 
 const visibilityToggleVariants = cva(
-  'relative z-[1] inline-flex shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'relative z-[1] inline-flex shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       isDisabled: {
@@ -399,11 +392,6 @@ const feedbackTextVariants = cva('[&:lang(dv)]:relative [&:lang(dv)]:top-0.5', {
   },
 });
 
-const infoTooltipDefaultAriaLabels = {
-  en: 'More information',
-  dv: 'އިތުރު މަޢުލޫމާތު',
-} as const;
-
 const visibilityToggleDefaultAriaLabels = {
   en: {
     show: 'Show password',
@@ -532,13 +520,12 @@ export interface PasswordInputProps
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck' | 'type'>,
     Omit<
       VariantProps<typeof fieldShellVariants>,
-      'isDisabled' | 'isInvalid' | 'isReadOnly' | 'isSuccess'
+      'appearance' | 'isDisabled' | 'isInvalid' | 'isReadOnly' | 'isSuccess' | 'size'
     >,
     RefProp<HTMLInputElement> {
+  appearance?: PasswordInputAppearance;
+  size?: PasswordInputSize;
   label?: React.ReactNode;
-  infoTooltip?: React.ReactNode;
-  infoTooltipAriaLabel?: string;
-  labelSupplementary?: React.ReactNode;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
   description?: React.ReactNode;
@@ -575,18 +562,16 @@ export interface PasswordInputProps
 
 export function PasswordInput({
   label,
-  infoTooltip,
-  infoTooltipAriaLabel,
-  labelSupplementary,
   labelIcon,
   action,
   description,
   errorMessage,
   showRequiredIndicator = true,
+  isRequired = true,
   startAddon,
   startContent,
   className,
-  variant = 'default',
+  appearance = 'default',
   size = 'md',
   autoCapitalize,
   autoComplete = 'current-password',
@@ -614,8 +599,6 @@ export function PasswordInput({
   ...props
 }: PasswordInputProps) {
   const languageConfig = useVeliLanguage();
-  const resolvedInfoTooltipAriaLabel =
-    infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
   const resolvedPlaceholder = placeholder ?? passwordPlaceholderDefaults[languageConfig.language];
   const resolvedRequirements = React.useMemo(
     () => resolvePasswordRequirements(requirements, languageConfig.language),
@@ -655,6 +638,7 @@ export function PasswordInput({
   return (
     <AriaTextField
       {...props}
+      isRequired={isRequired}
       value={value}
       defaultValue={defaultValue}
       onChange={handleChange}
@@ -677,42 +661,13 @@ export function PasswordInput({
 
         return (
           <>
-            {label ||
-            infoTooltip ||
-            labelSupplementary ||
-            labelIcon ||
-            action ||
-            (showRequiredIndicator && isRequired) ? (
+            {label || labelIcon || action || (showRequiredIndicator && isRequired) ? (
               <div className="flex w-full items-center gap-2 pb-2">
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   {label ? (
                     <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
                       {label}
                     </Label>
-                  ) : null}
-                  {infoTooltip ? (
-                    <TooltipTrigger>
-                      <AriaButton
-                        type="button"
-                        aria-label={resolvedInfoTooltipAriaLabel}
-                        className={infoTooltipTriggerVariants({ isDisabled })}
-                        isDisabled={isDisabled}
-                      >
-                        <Info size={16} aria-hidden />
-                      </AriaButton>
-                      <Tooltip
-                        placement="top"
-                        lang={languageConfig.lang}
-                        dir={languageConfig.direction}
-                      >
-                        {infoTooltip}
-                      </Tooltip>
-                    </TooltipTrigger>
-                  ) : null}
-                  {labelSupplementary ? (
-                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                      {labelSupplementary}
-                    </span>
                   ) : null}
                   {showRequiredIndicator && isRequired ? (
                     <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
@@ -728,7 +683,7 @@ export function PasswordInput({
             <Group
               dir="ltr"
               className={fieldShellVariants({
-                variant,
+                appearance,
                 size,
                 isDisabled,
                 isInvalid,

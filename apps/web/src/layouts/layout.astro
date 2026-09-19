@@ -86,11 +86,18 @@ const {
         function applyColorScheme(colorScheme) {
           const isDark = colorScheme === 'dark' || (colorScheme === 'system' && media.matches);
           const resolvedColorScheme = isDark ? 'dark' : 'light';
+          const previousResolvedColorScheme = root.dataset.theme;
 
           root.classList.toggle('dark', isDark);
           root.dataset.theme = resolvedColorScheme;
           root.dataset.colorScheme = colorScheme;
           root.style.colorScheme = resolvedColorScheme;
+
+          window.dispatchEvent(
+            new CustomEvent('veli:color-scheme-change', {
+              detail: { colorScheme, resolvedColorScheme, previousResolvedColorScheme },
+            }),
+          );
 
           for (const button of buttons) {
             const isActive = button.dataset.themeChoice === colorScheme;

@@ -72,8 +72,7 @@ export type BadgeIntentKey =
   | 'brand'
   | 'green'
   | 'lime';
-/** @deprecated Use `brand` instead. */
-export type BadgeIntent = BadgeIntentKey | 'teal';
+export type BadgeIntent = BadgeIntentKey;
 export type BadgeSize = 'xs' | 'sm' | 'md';
 
 const badgeIntentClasses = {
@@ -119,10 +118,6 @@ const badgeIntentClasses = {
   },
 } satisfies Record<BadgeAppearance, Record<BadgeIntentKey, string>>;
 
-function resolveBadgeIntent(intent: BadgeIntent): BadgeIntentKey {
-  return intent === 'teal' ? 'brand' : intent;
-}
-
 function formatBadgeCount(count: number, max: number) {
   return count > max ? `${max}+` : String(count);
 }
@@ -152,7 +147,6 @@ export function Badge({
   leadingIcon,
   ...props
 }: BadgeProps) {
-  const resolvedIntent = resolveBadgeIntent(intent);
   const isCounter = (counter || count != null) && size !== 'xs';
   const isDot = size === 'xs';
   const label = isCounter && count != null ? formatBadgeCount(count, max) : children;
@@ -164,7 +158,7 @@ export function Badge({
       aria-hidden={isDot && props['aria-label'] == null ? true : undefined}
       className={twMerge(
         badgeVariants({ counter: isCounter, size }),
-        badgeIntentClasses[appearance][resolvedIntent],
+        badgeIntentClasses[appearance][intent],
         className,
       )}
     >
