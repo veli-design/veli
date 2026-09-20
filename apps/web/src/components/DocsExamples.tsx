@@ -1015,42 +1015,62 @@ export function RadioDisabledDemo() {
 
 export function AvatarUsageDemo() {
   return (
+    <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+  );
+}
+
+export function AvatarTypesDemo() {
+  return (
     <div className="flex flex-wrap items-center gap-[16px]">
-      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
-      <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
-      <Avatar type="icon" appearance="neutral" size="52" />
-      <Avatar type="agencyIcon" appearance="emerald" size="52" />
+      <Avatar
+        type="image"
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80"
+        alt="Aishath Mariyam"
+      />
+      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+      <Avatar type="icon" appearance="neutral" alt="User" />
+      <Avatar type="agencyIcon" appearance="emerald" alt="Agency" />
     </div>
   );
 }
 
-export function AvatarVariantsDemo() {
-  const appearances = ['blue', 'neutral', 'emerald', 'yellow', 'orange', 'magenta'] as const;
-  const sizes = ['60', '52', '44', '36', '28'] as const;
+export function AvatarAppearancesDemo() {
+  const appearances = [
+    'blue',
+    'neutral',
+    'emerald',
+    'yellow',
+    'orange',
+    'magenta',
+    'indigo',
+    'teal',
+    'green',
+    'lime',
+  ] as const;
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
-          <div className="flex flex-wrap items-center gap-[12px]">
-            {appearances.map((appearance) => (
-              <Avatar key={appearance} type="initials" initials="MV" appearance={appearance} />
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-[12px]">
+      {appearances.map((appearance) => (
+        <Avatar
+          key={appearance}
+          type="initials"
+          initials="MV"
+          appearance={appearance}
+          alt={appearance}
+        />
+      ))}
+    </div>
+  );
+}
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Sizes</p>
-          <div className="flex flex-wrap items-end gap-[12px]">
-            {sizes.map((size) => (
-              <Avatar key={size} type="icon" appearance="blue" size={size} />
-            ))}
-          </div>
-        </div>
-      </div>
+export function AvatarSizesDemo() {
+  const sizes = ['60', '52', '44', '36', '28', '20', '16'] as const;
+
+  return (
+    <div className="flex flex-wrap items-end gap-[12px]">
+      {sizes.map((size) => (
+        <Avatar key={size} type="icon" appearance="blue" size={size} alt="User" />
+      ))}
     </div>
   );
 }
