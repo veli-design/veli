@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import * as React from 'react';
 import { Gear, House, SquaresFour, User } from 'phosphor-react';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage, VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 
 const tabsText = {
@@ -373,6 +374,57 @@ export const WithLeadingAndTrailingSlots: Story = {
           },
         ]}
       />
+    );
+  },
+};
+
+/**
+ * Route-style tabs with hrefs. Selection is controlled in story state; the
+ * provider navigate callback intercepts navigation so Storybook does not leave
+ * the page.
+ */
+export const NavigationTabs: Story = {
+  render: () => {
+    const text = useTabsText();
+    const [selectedKey, setSelectedKey] = React.useState<string | number>('/overview');
+    const navigate = React.useCallback((href: string) => {
+      setSelectedKey(href);
+    }, []);
+
+    return (
+      <VeliProvider navigate={navigate}>
+        <div className="flex flex-col gap-4">
+          <Tabs
+            listAriaLabel="Section navigation"
+            selectedKey={selectedKey}
+            onSelectionChange={setSelectedKey}
+            items={[
+              {
+                id: '/overview',
+                label: text.labels.overview,
+                href: '/overview',
+              },
+              {
+                id: '/services',
+                label: text.labels.services,
+                href: '/services',
+              },
+              {
+                id: '/pricing',
+                label: text.labels.pricing,
+                href: '/pricing',
+              },
+            ]}
+          />
+          <p className="type-body-md-regular text-base-default">
+            {selectedKey === '/overview'
+              ? text.panels.overview
+              : selectedKey === '/services'
+                ? text.panels.services
+                : text.panels.pricing}
+          </p>
+        </div>
+      </VeliProvider>
     );
   },
 };

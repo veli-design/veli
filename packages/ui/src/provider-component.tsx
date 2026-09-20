@@ -1,15 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import { I18nProvider } from 'react-aria-components';
+import { I18nProvider, RouterProvider } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
 import {
   getVeliLanguageConfig,
   VeliColorSchemeContext,
   VeliLanguageContext,
+  VeliRouterContext,
   type VeliColorScheme,
   type VeliProviderProps,
   type VeliResolvedColorScheme,
+  type VeliRouterConfig,
 } from './provider-shared';
 import { getVeliThemeScript, VELI_COLOR_SCHEME_STORAGE_KEY } from './theme-script';
 
@@ -17,6 +19,8 @@ export function VeliProvider({
   language = 'en',
   colorScheme = 'system',
   disableTransitionOnChange = false,
+  navigate,
+  useHref,
   children,
   className,
 }: VeliProviderProps) {
@@ -27,26 +31,42 @@ export function VeliProvider({
     () => ({ colorScheme, resolvedColorScheme }),
     [colorScheme, resolvedColorScheme],
   );
+  const routerContext = React.useMemo<VeliRouterConfig | null>(
+    () => (navigate != null ? { navigate, useHref } : null),
+    [navigate, useHref],
+  );
 
   useSyncThemeToDocument(colorScheme, disableTransitionOnChange);
+
+  const content = (
+    <div
+      lang={config.lang}
+      dir={config.direction}
+      data-theme={resolvedColorScheme}
+      data-color-scheme={colorScheme}
+      className={twMerge('scheme-light dark:scheme-dark', isDark && 'dark', className)}
+      suppressHydrationWarning
+    >
+      {children}
+    </div>
+  );
 
   return (
     <>
       <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: getVeliThemeScript() }} />
       <VeliLanguageContext.Provider value={config}>
         <VeliColorSchemeContext.Provider value={colorSchemeContext}>
-          <I18nProvider locale={config.locale}>
-            <div
-              lang={config.lang}
-              dir={config.direction}
-              data-theme={resolvedColorScheme}
-              data-color-scheme={colorScheme}
-              className={twMerge('scheme-light dark:scheme-dark', isDark && 'dark', className)}
-              suppressHydrationWarning
-            >
-              {children}
-            </div>
-          </I18nProvider>
+          <VeliRouterContext.Provider value={routerContext}>
+            <I18nProvider locale={config.locale}>
+              {navigate != null ? (
+                <RouterProvider navigate={navigate} useHref={useHref}>
+                  {content}
+                </RouterProvider>
+              ) : (
+                content
+              )}
+            </I18nProvider>
+          </VeliRouterContext.Provider>
         </VeliColorSchemeContext.Provider>
       </VeliLanguageContext.Provider>
     </>
