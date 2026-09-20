@@ -6,6 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.12.0
+
+_Released 2026-09-20._
+
+### Added
+
+- Align `DateField` with Input `appearance` (`default` | `outline`) and `size` (`sm` | `md` | `lg`) for segment-based date entry.
+- Add `isOptional`, `infoTooltip`, and `infoTooltipAriaLabel` to `DateField`, matching the TextArea label pattern.
+- Add TextArea `isOptional` to show localized Optional beside the label. Required fields hide that caption.
+- Support `href`, link DOM props, `routerOptions`, and a `render` escape hatch on Tabs items so individual tabs can navigate with Next.js or TanStack Router links.
+- Accept optional `navigate` and `useHref` on `VeliProvider` to wire React Aria's `RouterProvider` for app-wide client-side navigation.
+
+### Changed
+
+- Change Avatar's default size from 60px to 44px.
+- Lay out `Modal.Footer` actions with `justify-between` so start-edge and end-edge action groups match the Figma Modal footer. Cluster right-only actions with `ms-auto` when you do not need a start group.
+- Rename the PasswordInput `variant` prop to `appearance` so Default and Outline match Input, Select, ComboBox, and TextArea. Replace `variant="outline"` with `appearance="outline"`.
+- Default PasswordInput `isRequired` to `true`. Pass `isRequired={false}` to opt out, or `showRequiredIndicator={false}` to keep the field required without a visible asterisk.
+- Make `TabsItem.panel` optional so route-driven tabs can omit in-component panel content; Tabs still renders a visually hidden panel so `aria-controls` resolves.
+- Rename the TextArea `variant` prop to `appearance` so Default and Outline match Input, Select, and ComboBox. Replace `variant="outline"` with `appearance="outline"`.
+
+### Removed
+
+- Remove the deprecated Badge `intent="teal"` alias. Use `intent="brand"` instead.
+- Remove TextArea `labelSupplementary`. Replace `labelSupplementary="Optional"` with `isOptional`.
+- Remove PasswordInput `infoTooltip`, `infoTooltipAriaLabel`, and `labelSupplementary`. Password fields do not show an info icon or Optional caption.
+
+### Fixed
+
+- Align Card footer actions to the inline end with `ms-auto` so the action row follows LTR and RTL correctly.
+- Restore interactive Card hover and pressed feedback with an `ash-alpha` overlay (replacing invalid `gray-alpha` utilities) and opacity transitions that respect `prefers-reduced-motion`.
+- Stop outline `DateField` shells from shifting layout on hover and focus by painting the stroke with an inset box-shadow.
+- Use `bg-text-input-bg-hover` for disabled and read-only `DateField` shells so they match Figma and TextArea in light and dark.
+- Correct Accordion spacing and dividers between expanded sections, mirror panel insets and leading chevrons in RTL, honor reduced motion, and align decorative custom indicators. Public props and imports are unchanged; review custom spacing overrides when upgrading.
+- Honor `prefers-reduced-motion` on Modal overlay and panel enter/exit transitions.
+- Draw the PasswordInput outline stroke inside the shell so hover (1.5px) and active (2px) do not shift the field or its value.
+- Drop the muted PasswordInput disabled stroke and underline so Default and Outline match Figma (fill only).
+- Use the text-input hover fill for disabled PasswordInput shells so they match Figma `components/text-input/bg-hover`.
+- Honor reduced-motion preferences on PasswordInput color transitions.
+- Keep link tab selection in sync with `selectedKey` / `onSelectionChange` after React Aria resets selection on href tab presses.
+- Set the large TextArea shell minimum height to 173px to match the Figma specification.
+- Apply the shared Dhivehi Safari baseline offset to TextArea so Thaana glyphs sit on the same line box as Input.
+- Honor reduced-motion preferences on TextArea color transitions.
+- Use `type-body-sm-regular` for the TextArea character counter at every size instead of hardcoded 14px type.
+- Color field-header info tooltip triggers with `icon/base/default` (and `icon/disabled` when disabled) to match Figma. This applies to Input, TextArea, Select, ComboBox, and PasswordInput.
+- Draw the TextArea outline stroke inside the shell so hover (1.5px) and active (2px) do not shift the field or its label.
+- Drop the muted TextArea disabled stroke and underline so Default and Outline match Figma (fill only).
+- Use the text-input hover fill for disabled TextArea shells so they match read-only and Figma `components/text-input/bg-hover`.
+- Keep the TextArea resize handle out of the tab order. Resize stays pointer-drag only, matching a native textarea.
+
 ## 0.11.1
 
 _Released 2026-09-05._
