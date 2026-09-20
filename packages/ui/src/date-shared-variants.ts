@@ -2,68 +2,32 @@ import { type DateSegmentRenderProps, type DateValue } from 'react-aria-componen
 import { cva } from 'class-variance-authority';
 import { getDhivehiMonthName } from './calendar-localization';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
   defaultFieldUnderlinePressed,
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
+  outlineFieldStrokeError,
+  outlineFieldStrokeErrorPressed,
+  outlineFieldStrokeFocusVisibleHide,
+  outlineFieldStrokePressed,
+  outlineFieldStrokeRest,
 } from './field-shared-variants';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 
 export { fieldRootVariants } from './field-shared-variants';
 
-export const fieldLabelRowVariants = cva('flex items-center justify-between gap-3');
-
-export const fieldLabelVariants = cva('type-body-sm-regular', {
-  variants: {
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-default',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
-export const fieldMetaVariants = cva('type-caption-regular', {
-  variants: {
-    tone: {
-      subtle: 'text-base-subtle',
-      danger: 'text-danger-muted',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: '',
-    },
-  },
-  compoundVariants: [
-    {
-      tone: 'danger',
-      isDisabled: true,
-      className: 'text-disabled',
-    },
-  ],
-  defaultVariants: {
-    tone: 'subtle',
-    isDisabled: false,
-  },
-});
-
 const fieldShellFocusRingClassName =
-  'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-base has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-base';
-
-const fieldShellOutlineFocusClassName =
-  'has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent';
+  'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised';
 
 export const fieldShellVariants = cva(
-  `relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out ${fieldShellFocusRingClassName}`,
+  `relative flex w-full items-center gap-1 rounded-md motion-safe:transition-[background-color,box-shadow] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
   {
     variants: {
       appearance: {
         default: '',
-        outline: `border hover:border-[1.5px] focus-within:border-2 focus-within:hover:border-2 ${fieldShellOutlineFocusClassName}`,
+        outline: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -100,70 +64,67 @@ export const fieldShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-ash-alpha-100 focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} hover:bg-text-input-bg-hover`,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'default',
         isDisabled: true,
         isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className:
-          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
+        className: `${outlineFieldStrokeRest.dateField} ${outlineFieldStrokeFocusVisibleHide.dateField} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg`,
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
-        className:
-          'border-text-input-stroke bg-ash-alpha-100 hover:border-text-input-stroke-hover focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed focus-within:hover:border-text-input-stroke-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-ash-alpha-100 has-[span[data-focus-visible]]:hover:bg-ash-alpha-100',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isInvalid: true,
-        className: 'border-text-input-stroke-disabled',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: true,
         isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'default',
@@ -177,8 +138,7 @@ export const fieldShellVariants = cva(
         isOpen: true,
         isDisabled: false,
         isInvalid: false,
-        className:
-          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:border-transparent has-[span[data-focus-visible]]:hover:border-transparent has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:hover:border-transparent has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg',
+        className: `${outlineFieldStrokePressed} ${outlineFieldStrokeFocusVisibleHide.dateField} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg has-[span[data-focus-visible]]:hover:bg-text-input-bg has-[button[data-focus-visible]]:bg-text-input-bg has-[button[data-focus-visible]]:hover:bg-text-input-bg`,
       },
       {
         appearance: 'default',
@@ -192,8 +152,7 @@ export const fieldShellVariants = cva(
         isOpen: true,
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border-2 border-text-input-stroke-error hover:border-2 hover:border-text-input-stroke-error has-[span[data-focus-visible]]:border-transparent has-[button[data-focus-visible]]:border-transparent',
+        className: `${outlineFieldStrokeErrorPressed} ${outlineFieldStrokeFocusVisibleHide.dateField}`,
       },
     ],
     defaultVariants: {
@@ -345,21 +304,24 @@ export function formatDatePickerValue(
   return formatted;
 }
 
-export const dateInputVariants = cva('flex min-w-0 flex-1 flex-wrap items-center gap-0', {
-  variants: {
-    size: {
-      sm: '-mx-3 -my-2 px-3 py-2',
-      md: '-mx-4 -my-3 px-4 py-3',
-      lg: '-mx-4 -my-3.5 px-4 py-3.5',
+export const dateInputVariants = cva(
+  `flex min-w-0 flex-1 flex-wrap items-center gap-0 ${webkitDhivehiTextBaselineClassName}`,
+  {
+    variants: {
+      size: {
+        sm: '-mx-3 -my-2 px-3 py-2',
+        md: '-mx-4 -my-3 px-4 py-3',
+        lg: '-mx-4 -my-3.5 px-4 py-3.5',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
     },
   },
-  defaultVariants: {
-    size: 'md',
-  },
-});
+);
 
 const dateSegmentVariants = cva(
-  'rounded px-[1px] py-1 tabular-nums outline-none transition-colors duration-normal ease-out data-[type=literal]:px-0',
+  'rounded px-[1px] py-1 tabular-nums outline-none motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none data-[type=literal]:px-0',
   {
     variants: {
       size: {
@@ -369,7 +331,7 @@ const dateSegmentVariants = cva(
       },
       isPlaceholder: {
         true: 'text-base-inactive',
-        false: 'text-base-default',
+        false: '',
       },
       isDisabled: {
         true: 'text-disabled',
@@ -400,6 +362,24 @@ const dateSegmentVariants = cva(
         timeZoneName: 'type-caption-12-regular text-base-subtle',
       },
     },
+    compoundVariants: [
+      {
+        isPlaceholder: false,
+        isDisabled: false,
+        isFocused: false,
+        isInvalid: false,
+        isReadOnly: false,
+        className: 'text-base-default',
+      },
+      {
+        isPlaceholder: false,
+        isDisabled: false,
+        isFocused: false,
+        isInvalid: false,
+        isReadOnly: true,
+        className: 'text-base-strong',
+      },
+    ],
     defaultVariants: {
       size: 'md',
       isPlaceholder: false,

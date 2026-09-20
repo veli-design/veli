@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { I18nProvider } from 'react-aria-components';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -6,6 +7,7 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
+import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
@@ -65,6 +67,11 @@ import {
   Trash,
   WarningCircle,
 } from 'phosphor-react';
+
+/** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
+function DocsEnGbLocale({ children }: { children: ReactNode }) {
+  return <I18nProvider locale="en-GB">{children}</I18nProvider>;
+}
 
 export function ButtonUsageDemo() {
   return <Button>Click me</Button>;
@@ -1029,42 +1036,62 @@ export function RadioDisabledDemo() {
 
 export function AvatarUsageDemo() {
   return (
+    <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+  );
+}
+
+export function AvatarTypesDemo() {
+  return (
     <div className="flex flex-wrap items-center gap-[16px]">
-      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
-      <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
-      <Avatar type="icon" appearance="neutral" size="52" />
-      <Avatar type="agencyIcon" appearance="emerald" size="52" />
+      <Avatar
+        type="image"
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80"
+        alt="Aishath Mariyam"
+      />
+      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+      <Avatar type="icon" appearance="neutral" alt="User" />
+      <Avatar type="agencyIcon" appearance="emerald" alt="Agency" />
     </div>
   );
 }
 
-export function AvatarVariantsDemo() {
-  const appearances = ['blue', 'neutral', 'emerald', 'yellow', 'orange', 'magenta'] as const;
-  const sizes = ['60', '52', '44', '36', '28'] as const;
+export function AvatarAppearancesDemo() {
+  const appearances = [
+    'blue',
+    'neutral',
+    'emerald',
+    'yellow',
+    'orange',
+    'magenta',
+    'indigo',
+    'teal',
+    'green',
+    'lime',
+  ] as const;
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
-          <div className="flex flex-wrap items-center gap-[12px]">
-            {appearances.map((appearance) => (
-              <Avatar key={appearance} type="initials" initials="MV" appearance={appearance} />
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-[12px]">
+      {appearances.map((appearance) => (
+        <Avatar
+          key={appearance}
+          type="initials"
+          initials="MV"
+          appearance={appearance}
+          alt={appearance}
+        />
+      ))}
+    </div>
+  );
+}
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Sizes</p>
-          <div className="flex flex-wrap items-end gap-[12px]">
-            {sizes.map((size) => (
-              <Avatar key={size} type="icon" appearance="blue" size={size} />
-            ))}
-          </div>
-        </div>
-      </div>
+export function AvatarSizesDemo() {
+  const sizes = ['60', '52', '44', '36', '28', '20', '16'] as const;
+
+  return (
+    <div className="flex flex-wrap items-end gap-[12px]">
+      {sizes.map((size) => (
+        <Avatar key={size} type="icon" appearance="blue" size={size} alt="User" />
+      ))}
     </div>
   );
 }
@@ -1250,6 +1277,41 @@ export function TextAreaValidationDemo() {
         errorMessage="This field needs attention."
       />
     </div>
+  );
+}
+
+export function DateFieldUsageDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField
+          label="Appointment date"
+          isOptional
+          description="Type a date segment by segment."
+        />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldAppearancesDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="grid gap-4 md:grid-cols-2">
+        <DateField label="Default" />
+        <DateField appearance="outline" label="Outline" />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldValidationDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField label="Service date" isInvalid errorMessage="Enter a valid service date." />
+      </div>
+    </DocsEnGbLocale>
   );
 }
 
