@@ -153,7 +153,7 @@ const avatarVariants = cva(
     },
     defaultVariants: {
       appearance: 'blue',
-      size: '60',
+      size: '44',
       contentType: 'icon',
     },
   },
@@ -297,7 +297,7 @@ function getAccessibleLabel({
 export function Avatar({
   className,
   appearance = 'blue',
-  size = '60',
+  size = '44',
   type,
   src,
   alt,
@@ -307,7 +307,7 @@ export function Avatar({
   const [failedSrc, setFailedSrc] = React.useState<string | null>(null);
   const { language } = useVeliLanguage();
   const imageError = Boolean(src && failedSrc === src);
-  const resolvedSize = size ?? '60';
+  const resolvedSize = size ?? '44';
   const resolvedAppearance = appearance ?? 'blue';
   const contentType = resolveContentType({ type, src, initials, imageError });
   const appearanceTokens = avatarAppearances[resolvedAppearance];
