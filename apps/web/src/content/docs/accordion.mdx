@@ -3,7 +3,12 @@ title: Accordion
 description: Collapsible disclosure group built on React Aria, supporting data-driven items or composed sub-components.
 ---
 
-import { AccordionUsageDemo, AccordionVariantsDemo } from '../../components/DocsExamples';
+import {
+  AccordionUsageDemo,
+  AccordionVariantsDemo,
+  AccordionControlledDemo,
+  AccordionAppearanceDemo,
+} from '../../components/DocsExamples';
 
 # Accordion
 
@@ -23,7 +28,7 @@ import {
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionUsageDemo client:visible />
+  <AccordionUsageDemo client:load />
 </div>
 
 ```tsx
@@ -40,7 +45,7 @@ const items = [
 By default only one panel is open at a time. Pass `allowsMultipleExpanded` to let several stay open.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AccordionVariantsDemo client:visible />
+  <AccordionVariantsDemo client:load />
 </div>
 
 For full control over markup, compose the parts directly:
@@ -58,16 +63,104 @@ For full control over markup, compose the parts directly:
 </Accordion>
 ```
 
+## Controlled expansion
+
+Use stable item IDs. Supply `expandedKeys` with `onExpandedChange` to control the open sections.
+
+```tsx
+const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set(['overview']));
+
+<Accordion items={items} expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} />;
+```
+
+Import `useState` from React. Item keys are strings or numbers.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AccordionControlledDemo client:load />
+</div>
+
+## Sizes and alignment
+
+Use `md` for compact sections and `lg` for larger text. `alignment="left"` places the indicator after the label; `alignment="right"` places it before the label. Both layouts follow the reading direction. `flushed` reduces the outer inset; it does not remove all padding.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AccordionAppearanceDemo client:load />
+</div>
+
+## Custom indicator
+
+The `icon` slot is decorative and has a 20 × 24px wrapper. Use a 16px icon. Custom icons do not rotate automatically: use the item's render state to choose their appearance.
+
+```tsx
+<Accordion>
+  <AccordionItem id="details">
+    {({ isExpanded }) => (
+      <>
+        <AccordionHeader
+          level={2}
+          icon={<Plus size={16} className={isExpanded ? 'rotate-45' : undefined} />}
+        >
+          Details
+        </AccordionHeader>
+        <AccordionPanel>Section content.</AccordionPanel>
+      </>
+    )}
+  </AccordionItem>
+</Accordion>
+```
+
+Import `Plus` from `phosphor-react`. Keep interactive elements inside the panel, not inside the header button.
+
 ## API Reference
 
-| Prop                     | Type                  | Default  | Description                                                      |
-| :----------------------- | :-------------------- | :------- | :--------------------------------------------------------------- |
-| `items`                  | `AccordionItemData[]` | -        | Data-driven items: `{ id, label, content, isDisabled? }`.        |
-| `size`                   | `'md' \| 'lg'`        | `'md'`   | Trigger and panel sizing.                                        |
-| `alignment`              | `'left' \| 'right'`   | `'left'` | Side the expand indicator sits on.                               |
-| `flushed`                | `boolean`             | `false`  | Removes the default horizontal padding for edge-to-edge layouts. |
-| `allowsMultipleExpanded` | `boolean`             | `false`  | Allows more than one panel to be open at once.                   |
-| `defaultExpandedKeys`    | `Iterable<Key>`       | -        | Initially expanded item ids (uncontrolled).                      |
-| `className`              | `string`              | -        | Layout-only class override merged onto the root element.         |
+### Veli
 
-All other React Aria `DisclosureGroup` props are supported.
+| Prop               | Type                           | Default  | Description                                                            |
+| :----------------- | :----------------------------- | :------- | :--------------------------------------------------------------------- |
+| `items`            | `readonly AccordionItemData[]` | -        | Data-driven sections. When supplied, takes precedence over `children`. |
+| `children`         | `ReactNode`                    | -        | Composed Accordion parts.                                              |
+| `size`             | `'md' \| 'lg'`                 | `'md'`   | Trigger and panel text size.                                           |
+| `alignment`        | `'left' \| 'right'`            | `'left'` | Trailing or leading indicator, respectively.                           |
+| `flushed`          | `boolean`                      | `false`  | Reduces horizontal insets.                                             |
+| `className`        | `string`                       | -        | Classes merged onto the group.                                         |
+| `itemClassName`    | `string`                       | -        | Classes merged onto each data-driven item.                             |
+| `triggerClassName` | `string`                       | -        | Classes merged onto each data-driven trigger button.                   |
+| `panelClassName`   | `string`                       | -        | Classes merged onto each data-driven panel.                            |
+
+`AccordionItemData` contains `id: string | number`, `label: ReactNode`, `content: ReactNode`, and optional `isDisabled: boolean`.
+
+### DisclosureGroup
+
+React Aria's headless [DisclosureGroup](https://react-spectrum.adobe.com/react-aria/DisclosureGroup.html#props). These props pass through.
+
+| Prop                     | Type                       | Default | Description                                             |
+| :----------------------- | :------------------------- | :------ | :------------------------------------------------------ |
+| `allowsMultipleExpanded` | `boolean`                  | `false` | Allows several open panels.                             |
+| `defaultExpandedKeys`    | `Iterable<Key>`            | -       | Initially open item IDs.                                |
+| `expandedKeys`           | `Iterable<Key>`            | -       | Controlled open item IDs.                               |
+| `onExpandedChange`       | `(keys: Set<Key>) => void` | -       | Called when expansion changes.                          |
+| `isDisabled`             | `boolean`                  | `false` | Disables every trigger; does not close existing panels. |
+
+React Aria's `children` and `className` render functions are replaced by Veli's `ReactNode` children and string class names. Other group props, including DOM attributes and `style`, pass through.
+
+### Composition
+
+| Component         | Props                                                                       | Description                                                                                                                                                          |
+| :---------------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AccordionItem`   | React Aria `Disclosure` props; string `className`                           | Supports `id`, `isDisabled`, `isExpanded`, `defaultExpanded`, `onExpandedChange`, and render-function children. Group expansion state takes precedence when present. |
+| `AccordionHeader` | `children`, `icon`, `level`, `size`, `alignment`, `flushed`, `className`    | `level` defaults to `3`. Heading attributes pass to the heading; `className` styles its trigger button. Size, alignment, and flushed inherit from the group.         |
+| `AccordionPanel`  | `children`, `size`, `alignment`, `flushed`, `className`, `contentClassName` | Panel attributes pass through. `className` styles the animated outer panel; `contentClassName` styles its inner content. Variants inherit from the group.            |
+
+Header and panel children are React nodes. Panel `className` is a string, not a React Aria render function. If overriding the header's size, alignment, or flushed setting, apply the same overrides to its panel.
+
+## Accessibility
+
+- Each header contains a native button with `aria-expanded` and `aria-controls`, linked to its panel.
+- Use Tab and Shift+Tab to move between enabled triggers, and Enter or Space to toggle. Arrow-key navigation is not part of this component.
+- Choose the heading `level` to fit the page hierarchy. Keep labels meaningful and unique.
+- Disabled triggers are skipped by keyboard navigation. Collapsed panel content is not focusable.
+- Keyboard focus uses the theme's focus ring. Hover, pressed, and disabled states use semantic tokens.
+
+## Motion
+
+Panels animate their height and built-in indicators rotate using the normal motion duration. Hover and pressed color feedback use the fast duration (80ms). With reduced motion enabled, these transitions are disabled. Apply the same preference to any custom indicator animation.
