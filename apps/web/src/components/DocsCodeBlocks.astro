@@ -131,6 +131,7 @@
       expandLabel.textContent = isExpanded ? 'Hide Code' : 'View Code';
 
       if (!isExpanded) {
+        pre.scrollTop = 0;
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         wrapper.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
       }
@@ -140,7 +141,7 @@
 
 <style is:global>
   .docs-code-block {
-    --docs-code-collapsed-height: 104px;
+    --docs-code-collapsed-height: 144px;
 
     position: relative;
     overflow: hidden;
@@ -267,6 +268,8 @@
   }
 
   .docs-prose .docs-code-block > pre {
+    max-height: 480px;
+    overflow: auto;
     margin-top: 0;
     border-radius: 0;
     padding: var(--spacing-4) 60px var(--spacing-4) var(--spacing-4);
@@ -361,14 +364,14 @@
     position: relative;
     z-index: 1;
     display: flex;
-    min-height: 104px;
+    min-height: var(--docs-code-collapsed-height);
     align-items: flex-end;
     justify-content: center;
-    margin-top: -104px;
+    margin-top: calc(-1 * var(--docs-code-collapsed-height));
     background: linear-gradient(
       to bottom,
-      var(--color-neutral-100),
-      color-mix(in srgb, var(--color-neutral-100) 80%, transparent) 65%,
+      transparent 48%,
+      color-mix(in srgb, var(--color-neutral-100) 80%, transparent) 78%,
       var(--color-neutral-100)
     );
     padding: var(--spacing-4);
