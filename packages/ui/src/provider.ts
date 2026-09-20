@@ -3,6 +3,7 @@ export {
   getVeliLanguageConfig,
   useVeliColorScheme,
   useVeliLanguage,
+  useVeliRouter,
   veliLanguageConfigs,
 } from './provider-shared';
 export type {
@@ -12,4 +13,5 @@ export type {
   VeliLanguageConfig,
   VeliProviderProps,
   VeliResolvedColorScheme,
+  VeliRouterConfig,
 } from './provider-shared';

@@ -33,6 +33,14 @@ export function ProviderTypeExpectations() {
         <div />
       </VeliProvider>
 
+      <VeliProvider navigate={(href) => href}>
+        <div />
+      </VeliProvider>
+
+      <VeliProvider navigate={(href) => href} useHref={(href) => href}>
+        <div />
+      </VeliProvider>
+
       {/* @ts-expect-error Veli only supports English and Dhivehi. */}
       <VeliProvider language="ar">
         <div />

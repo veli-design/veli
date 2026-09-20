@@ -246,6 +246,57 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
 }
 ```
 
+## Client-side routing
+
+Pass `navigate` (and optionally `useHref`) to wrap the subtree in React Aria's `RouterProvider`. Every Veli component that accepts `href` — including Tabs, Link, MenuItem, and Breadcrumb — then uses client-side navigation instead of a full page load.
+
+```tsx
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  return (
+    <VeliProvider navigate={(href, options) => router.push(href, options)}>{children}</VeliProvider>
+  );
+}
+```
+
+```tsx
+'use client';
+
+import { useRouter } from '@tanstack/react-router';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  return (
+    <VeliProvider
+      navigate={(to, options) => router.navigate({ to, ...options })}
+      useHref={(to) => router.buildLocation({ to }).href}
+    >
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+To type `routerOptions` on individual links, augment React Aria's `RouterConfig`:
+
+```ts
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>;
+  }
+}
+```
+
+`navigate` is optional. When omitted, `href` falls back to the browser's default navigation.
+
 ## Helpers
 
 ```tsx
@@ -274,9 +325,12 @@ Consumers should keep using the same semantic `type-*` classes in both languages
 
 ## API Reference
 
-| Prop          | Type                            | Default    | Description                                                                 |
-| :------------ | :------------------------------ | :--------- | :-------------------------------------------------------------------------- |
-| `language`    | `'en' \| 'dv'`                  | `'en'`     | Selects Veli's supported language and direction mode.                       |
-| `colorScheme` | `'system' \| 'light' \| 'dark'` | `'system'` | Selects Veli's requested color scheme mode.                                 |
-| `className`   | `string`                        | -          | Adds classes to the provider wrapper.                                       |
-| `children`    | `ReactNode`                     | -          | Application or component subtree that should inherit the provider contract. |
+| Prop                        | Type                            | Default    | Description                                                                 |
+| :-------------------------- | :------------------------------ | :--------- | :-------------------------------------------------------------------------- |
+| `language`                  | `'en' \| 'dv'`                  | `'en'`     | Selects Veli's supported language and direction mode.                       |
+| `colorScheme`               | `'system' \| 'light' \| 'dark'` | `'system'` | Selects Veli's requested color scheme mode.                                 |
+| `navigate`                  | `(path, options?) => void`      | -          | Client-side navigate function; enables React Aria `RouterProvider`.         |
+| `useHref`                   | `(path) => string`              | -          | Optional href resolver for the configured client-side router.               |
+| `disableTransitionOnChange` | `boolean`                       | `false`    | Suppresses CSS transitions for one frame while the theme changes.           |
+| `className`                 | `string`                        | -          | Adds classes to the provider wrapper.                                       |
+| `children`                  | `ReactNode`                     | -          | Application or component subtree that should inherit the provider contract. |
