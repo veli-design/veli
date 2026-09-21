@@ -104,9 +104,43 @@ Use `client:load` when interaction must be ready on page load. Put state, props,
 additional markup, and configuration inside the React demo. If an example needs
 fixed props, export a small `*Demo` wrapper that supplies them.
 
-Language switches, variant selectors, and multiple controls are authored inside
-the React demo. They are not built-in code-preview props, and changing them does
-not automatically update the source fence. Keep their effects scoped to the demo.
+### Previews with options
+
+Use `DocsPreview` and `DocsPreviewOption` from `src/components/DocsPreview.tsx`
+inside a React demo. `DocsPreview` supplies the surface-base options header and
+raised canvas; `DocsPreviewOption` supplies the dropdown with Veli menu items.
+Controls wrap on narrow screens. Keep selection state in the demo:
+
+```tsx
+import { useState } from 'react';
+import { Button } from '@tradenetcorp/veli-ui/button';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
+
+export function ButtonOptionsDemo() {
+  const [label, setLabel] = useState('Continue');
+
+  return (
+    <DocsPreview
+      controls={
+        <DocsPreviewOption
+          label="Button label"
+          value={label}
+          options={['Continue', 'Save']}
+          onChange={setLabel}
+        />
+      }
+    >
+      <Button>{label}</Button>
+    </DocsPreview>
+  );
+}
+```
+
+Place the demo in an MDX wrapper with
+`className="preview preview--options"`, followed by its source fence. Add
+`preview--expanded` or `preview--collapsible` as needed. For multiple controls,
+pass a fragment of `DocsPreviewOption` components to `controls`, each with its
+own state. Changing controls updates the live demo, not the source fence.
 
 The site's plain Markdown export replaces interactive previews with a link to the
 rendered page and preserves the source fences. Unsupported preview JSX fails the

@@ -1000,6 +1000,12 @@ button {
   border-radius: 12px;
 }
 
+.docs-prose .preview--options {
+  display: block;
+  padding: 0;
+  background: transparent;
+}
+
 .docs-example > .docs-code-block {
   margin-top: 8px;
   border-radius: 12px;
