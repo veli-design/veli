@@ -14,9 +14,13 @@ keep its `Summary`, `Issues`, and `Validation` sections.
 - Use a Conventional Commits PR title, such as `feat(ui): add segmented
 control`; squash merge uses it as the commit message on `main`.
 - For an internal branch containing `PD-###`, Linear automatically links the
-  primary issue. Add `Fixes PD-###` in the PR body for every additional Linear
-  issue the PR completes.
-- For an external GitHub issue, add `Closes #123` in the PR body. For
+  primary issue. In the PR body, use a closing magic word (`Resolves PD-###`)
+  only for Linear issues this PR should close, including additional issues.
+  Use `Related to PD-###` when the PR should relate to an issue without
+  closing it, or `Ref PD-###` for a partial contribution that must not close
+  the issue.
+- For an external GitHub issue, add `Closes #123` only when the PR should
+  close it; otherwise mention `#123` without a closing keyword. For
   untracked maintenance work, write `N/A` with a brief reason.
 - List every automated and manual check run in `Validation`, and state any
   intentionally skipped check and why.
