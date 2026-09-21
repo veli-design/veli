@@ -1,10 +1,11 @@
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { ArrowSquareOut, CopySimple } from 'phosphor-react';
+import { MenuItem } from '@tradenetcorp/veli-ui/menu';
+import { Button, Menu, MenuTrigger, Popover, Text } from 'react-aria-components';
+import styles from './DocsPageActionButtons.module.css';
+import { ArrowSquareOut, CaretDown, Copy } from 'phosphor-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   markdownPath: string;
-  placement: 'inline' | 'utility';
 }
 
 type CopyState = 'idle' | 'copied' | 'error';
@@ -47,7 +48,8 @@ async function copyText(value: string) {
   }
 }
 
-export function DocsPageActionButtons({ markdownPath, placement }: Props) {
+export function DocsPageActionButtons({ markdownPath }: Props) {
+  const [action, setAction] = useState('copy');
   const [copyState, setCopyState] = useState<CopyState>('idle');
   const [isCopying, setIsCopying] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
@@ -91,36 +93,62 @@ export function DocsPageActionButtons({ markdownPath, placement }: Props) {
       : copyState === 'error'
         ? 'Unable to copy. Open Markdown to copy it manually.'
         : '';
-  const layoutClass = placement === 'utility' ? 'w-full justify-start' : undefined;
 
   return (
-    <>
+    <div className={styles.actions}>
       <Button
-        className={layoutClass}
-        intent="primary"
-        appearance="transparent"
-        size="sm"
-        isLoading={isCopying}
-        data-copy-markdown
+        className={styles.main}
+        isDisabled={isCopying}
+        aria-busy={isCopying || undefined}
         data-state={copyState}
-        onPress={copyPage}
+        onPress={action === 'copy' ? copyPage : viewMarkdown}
       >
-        <CopySimple size={16} aria-hidden="true" />
-        <span data-copy-markdown-label>{copyLabel}</span>
+        {action === 'copy' ? (
+          <Copy size={16} aria-hidden="true" />
+        ) : (
+          <ArrowSquareOut size={16} aria-hidden="true" />
+        )}
+        <span>{action === 'copy' ? copyLabel : 'View as Markdown'}</span>
       </Button>
-      <Button
-        className={layoutClass}
-        intent="secondary"
-        appearance="transparent"
-        size="sm"
-        onPress={viewMarkdown}
-      >
-        <ArrowSquareOut size={16} aria-hidden="true" />
-        View markdown
-      </Button>
+      <MenuTrigger>
+        <Button className={styles.trigger} aria-label="Choose page action" isDisabled={isCopying}>
+          <CaretDown size={16} aria-hidden="true" />
+        </Button>
+        <Popover className={styles.popover} placement="bottom end" offset={2}>
+          <Menu
+            aria-label="Page actions"
+            className={styles.menu}
+            onAction={(key) => {
+              setAction(String(key));
+              setCopyState('idle');
+            }}
+          >
+            <MenuItem id="copy" size="sm" textValue="Copy page" className="px-4">
+              {() => (
+                <div className={styles.item}>
+                  <Text slot="label">Copy page</Text>
+                  <Text slot="description" className={styles.description}>
+                    Copy page as markdown for LLMs
+                  </Text>
+                </div>
+              )}
+            </MenuItem>
+            <MenuItem id="view" size="sm" textValue="View as Markdown" className="px-4">
+              {() => (
+                <div className={styles.item}>
+                  <Text slot="label">View as Markdown</Text>
+                  <Text slot="description" className={styles.description}>
+                    Open this page as plain text in a new tab.
+                  </Text>
+                </div>
+              )}
+            </MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
       <p className="sr-only" role="status" aria-live="polite" data-copy-markdown-status>
         {status}
       </p>
-    </>
+    </div>
   );
 }
