@@ -142,23 +142,39 @@ the relevant information.
 ### Issue links
 
 For internal work, the `PD-###` identifier in the branch name automatically
-links the primary Linear issue. If the pull request also completes other Linear
-issues, include each one in the PR description with a closing magic word:
+links the primary Linear issue. Choose the Linear magic word by intent, and
+use one keyword per issue:
 
 ```text
-Fixes PD-123
+Resolves PD-123
+Related to PD-456
+Ref PD-789
 ```
 
-For external work, link and close the GitHub issue addressed by the pull
-request in the PR description:
+- `Resolves PD-###` (or another closing word such as `Fixes`) when this
+  pull request should close the issue.
+- `Related to PD-###` when the pull request should relate to an issue
+  without closing it.
+- `Ref PD-###` for a partial contribution that must not close the issue.
+
+Do not use a closing keyword unless the pull request should close that
+issue. Linear's [GitHub magic words](https://linear.app/docs/github)
+document the full closing, non-closing, and relation variants.
+
+If a branch contains `PD-###` but this pull request must not auto-link or
+auto-close that issue, add `Ignore PD-###` or `Skip PD-###` in the PR
+description.
+
+For external work, use a GitHub closing keyword only when this pull
+request should close the issue:
 
 ```text
 Closes #123
 ```
 
-Use one closing reference for each additional issue. For untracked maintenance
-work, write `N/A` in the `Issues` section and briefly explain why no issue is
-linked.
+Otherwise mention `#123` with no closing keyword. For untracked
+maintenance work, write `N/A` in the `Issues` section and briefly explain
+why no issue is linked.
 
 ### Validation
 
