@@ -1,0 +1,26 @@
+{
+  "name": "@tradenetcorp/veli-blocks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./site-footer": "./src/site-footer/site-footer.tsx",
+    "./catalog": "./scripts/catalog.mjs"
+  },
+  "scripts": {
+    "build": "node scripts/check.mjs && tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "test:consumer": "node scripts/consumer.mjs"
+  },
+  "dependencies": {
+    "@tradenetcorp/veli-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-aria-components": "^1.18.0"
+  }
+}

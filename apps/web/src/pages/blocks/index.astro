@@ -1,0 +1,23 @@
+---
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import { blocksOverviewMarkdown } from '../../lib/blocks';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import DocsPageActions from '../../components/DocsPageActions.astro';
+const rendered = await (
+  await createMarkdownProcessor()
+).render(blocksOverviewMarkdown.replace(/^# .*\n/, ''));
+const markdownPath = '/blocks/index.md';
+---
+
+<DocsLayout
+  title="Blocks | Veli Design System"
+  description="Editable compositions built from Veli primitives."
+  activePath="/blocks/"
+  {markdownPath}
+  headings={rendered.metadata.headings}
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1>Veli Blocks</h1><DocsPageActions {markdownPath} placement="inline" />
+  </header>
+  <article class="docs-prose" set:html={rendered.code} />
+</DocsLayout>

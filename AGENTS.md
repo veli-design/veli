@@ -30,3 +30,13 @@ categories, with at least one user-facing Markdown bullet per category. Use a
 separate changeset only when the package set or SemVer bump decision differs,
 then run `pnpm changeset:check` before handoff. Do not add a changeset for
 non-published, documentation-only, or internal-only work.
+
+## Blocks versioning and lifecycle
+
+`packages/blocks` is a private authoring workspace for copied source, so do
+not create a Changeset for it. Version each distributable block in its
+`manifest.json` and add its release notes to that block's `CHANGELOG.md`.
+Follow [the Blocks versioning and lifecycle guide](docs/BLOCKS_VERSIONING.md):
+new blocks are `experimental`; only a deliberate approval may promote a block
+to `stable` and its first stable release is `1.0.0`; `deprecated` blocks must
+name a replacement or migration path. Do not invent other status values.

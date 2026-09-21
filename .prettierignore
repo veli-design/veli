@@ -27,3 +27,7 @@ pnpm-debug.log*
 Thumbs.db
 .vscode
 .idea
+
+# Local browser-tool output (not repository source)
+.playwright-cli
+.playwright-mcp

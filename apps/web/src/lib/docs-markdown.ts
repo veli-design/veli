@@ -1,3 +1,4 @@
+import { blockPages } from './blocks';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import {
   componentGroups,
@@ -9,7 +10,7 @@ import {
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Foundations' | 'Components';
+export type DocsSection = 'Foundations' | 'Components' | 'Blocks' | 'Blocks';
 
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
@@ -29,7 +30,7 @@ export type DocsCatalogPage = {
   description: string;
   htmlPath: string;
   markdownPath: string;
-  source: EntrySource | OverviewSource;
+  source: EntrySource | OverviewSource | { kind: 'block'; markdown: string };
 };
 
 export type RenderedDocsPage = Omit<DocsCatalogPage, 'source'> & {
@@ -173,6 +174,19 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
     ),
   ];
 
+  pages.push(
+    ...blockPages.map(
+      (page): DocsCatalogPage => ({
+        ...page,
+        section: 'Blocks',
+        label: page.title,
+        htmlPath: `/${page.id}/`,
+        markdownPath: `/${page.id}/index.md`,
+        source: { kind: 'block', markdown: page.markdown },
+      }),
+    ),
+  );
+
   validateCatalog(pages);
   return pages;
 }
@@ -227,7 +241,9 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
 async function renderDocsPage(page: DocsCatalogPage): Promise<RenderedDocsPage> {
   let markdown: string;
 
-  if (page.source.kind === 'overview') {
+  if (page.source.kind === 'block') {
+    markdown = page.source.markdown;
+  } else if (page.source.kind === 'overview') {
     markdown = buildOverviewMarkdown(page);
   } else {
     const rendered = await page.source.entry.render();
@@ -308,6 +324,17 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
       '',
     );
   }
+
+  lines.push(
+    '## Blocks',
+    '',
+    ...pages
+      .filter((page) => page.section === 'Blocks')
+      .map((page) =>
+        markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
+      ),
+    '',
+  );
 
   const optionalDescriptions = {
     Figma: 'Design source for Veli components and foundations.',

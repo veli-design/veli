@@ -2172,3 +2172,7 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
     padding-top: 48px;
   }
 }
+
+@source "../../../../packages/blocks/src";
+
+@source "../../../../packages/blocks/src";

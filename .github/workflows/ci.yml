@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -39,3 +41,34 @@ jobs:
 
       - name: Build Packages
         run: pnpm build
+
+      - name: Validate block source and versions
+        run: corepack pnpm test:blocks && corepack pnpm --filter @tradenetcorp/veli-blocks build
+        env:
+          BLOCKS_BASE_REF: ${{ github.event.pull_request.base.sha }}
+
+  blocks-consumer:
+    name: Published-package block consumer
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm test:blocks:consumer
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOCKS_CONSUMER_DIR: ${{ runner.temp }}/veli-blocks-consumer
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blocks-consumer-evidence
+          path: ${{ runner.temp }}/veli-blocks-consumer/test-results
