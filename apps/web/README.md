@@ -16,10 +16,10 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 ```
 ````
 
-Blocks with **24 or more lines** start collapsed with a **View Code** button.
+Blocks with **24 or more lines** start collapsed with an **Expand (N lines)** button.
 Expanded code areas have a **480px maximum height** and scroll vertically;
 long lines scroll horizontally. Copy includes the complete source, without line
-numbers. **Hide Code** collapses the block and resets its vertical scroll position.
+numbers. **Collapse** collapses the block and resets its vertical scroll position.
 
 ### Install commands
 

@@ -1,4 +1,8 @@
 <script>
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { DocsCodeExpandButton } from './DocsCodeExpandButton';
+
   const copyIcon = `
     <svg viewBox="0 0 20 20" aria-hidden="true">
       <path d="M7.5 6.5h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z" />
@@ -119,23 +123,16 @@
       }, 2000);
     });
 
-    const expandButton = wrapper.querySelector<HTMLButtonElement>(
-      '.docs-code-block__expand-button',
-    );
-    const expandLabel = expandButton?.querySelector('span');
-    if (!expandButton || !expandLabel) continue;
-
-    expandButton.addEventListener('click', () => {
-      const isExpanded = wrapper.classList.toggle('is-expanded');
-      expandButton.setAttribute('aria-expanded', String(isExpanded));
-      expandLabel.textContent = isExpanded ? 'Hide Code' : 'View Code';
-
-      if (!isExpanded) {
-        pre.scrollTop = 0;
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        wrapper.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
-      }
-    });
+    const expandControl = wrapper.querySelector<HTMLElement>('.docs-code-block__expand');
+    if (expandControl) {
+      createRoot(expandControl).render(
+        createElement(DocsCodeExpandButton, {
+          pre,
+          wrapper,
+          lineCount: Number(expandControl.dataset.lineCount),
+        }),
+      );
+    }
   }
 </script>
 
@@ -147,7 +144,7 @@
     overflow: hidden;
     margin-top: 15px;
     border-radius: var(--radius-2xl);
-    background: var(--color-neutral-100);
+    background: var(--color-bg-surface-base);
     color: var(--color-text-base-strong);
   }
 
@@ -237,7 +234,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: var(--color-neutral-100);
+    background: var(--color-bg-surface-base);
     color: inherit;
     cursor: pointer;
     transition: background-color 140ms ease;
@@ -364,15 +361,14 @@
     position: relative;
     z-index: 1;
     display: flex;
-    min-height: var(--docs-code-collapsed-height);
-    align-items: flex-end;
+    min-height: 60px;
+    align-items: center;
     justify-content: center;
-    margin-top: calc(-1 * var(--docs-code-collapsed-height));
+    margin-top: -60px;
     background: linear-gradient(
       to bottom,
-      transparent 48%,
-      color-mix(in srgb, var(--color-neutral-100) 80%, transparent) 78%,
-      var(--color-neutral-100)
+      transparent,
+      color-mix(in srgb, var(--color-bg-surface-base) 90%, transparent) 57.666%
     );
     padding: var(--spacing-4);
   }
@@ -386,33 +382,15 @@
     padding: 8px;
   }
 
-  .docs-code-block__expand-button {
-    display: inline-flex;
-    min-height: 36px;
-    align-items: center;
-    border-radius: var(--radius-full);
-    background: var(--color-button-secondary-subtle-default);
-    color: var(--color-text-base-strong);
-    padding: var(--spacing-2) var(--spacing-3_5);
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--text-sm--line-height);
-    cursor: pointer;
-    transition: background-color 140ms ease;
-  }
-
-  .docs-code-block__expand-button:hover {
-    background: var(--color-button-secondary-subtle-hover);
-  }
-
-  .docs-code-block__expand-button:focus-visible {
-    outline: 2px solid var(--color-border-focus);
-    outline-offset: 1px;
+  .docs-code-block__expand-icon {
+    width: 12px;
+    height: 12px;
+    background: currentColor;
+    mask: url('/images/docs/caret-up-down.svg') center / contain no-repeat;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .docs-code-block__copy,
-    .docs-code-block__expand-button {
+    .docs-code-block__copy {
       transition: none;
     }
   }

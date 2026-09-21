@@ -48,7 +48,7 @@ function findAll(node, predicate) {
 
 const byRole = (role) => (node) => node.properties?.role === role;
 const hasClass = (name) => (node) => node.properties?.className?.includes(name);
-const expandButtons = (tree) => findAll(tree, (node) => node.properties?.ariaExpanded != null);
+const expandControls = (tree) => findAll(tree, hasClass('docs-code-block__expand'));
 const lines = (count) =>
   Array.from({ length: count }, (_, index) => `// Line ${index + 1}`).join('\n');
 
@@ -113,13 +113,13 @@ test('empty and short blocks stay open; 24-line and huge blocks get independent 
   const blocks = sources.map((source) => codeBlock(source));
   const tree = render(...blocks);
   assert.deepEqual(
-    tree.children.map((wrapper) => expandButtons(wrapper).length),
+    tree.children.map((wrapper) => expandControls(wrapper).length),
     [0, 0, 0, 1, 1],
   );
   for (const index of [3, 4]) {
-    const [button] = expandButtons(tree.children[index]);
-    assert.equal(button.properties.ariaExpanded, 'false');
-    assert.equal(button.properties.ariaControls, blocks[index].properties.id);
+    const [control] = expandControls(tree.children[index]);
+    assert.equal(control.properties.dataLineCount, index === 3 ? 24 : 213);
+    assert.ok(blocks[index].properties.id);
   }
   assert.notEqual(blocks[3].properties.id, blocks[4].properties.id);
   blocks.forEach((block, index) => {
@@ -165,7 +165,7 @@ test('explicit preview expansion overrides the threshold without affecting subse
   ]) {
     const tree = render(preview(modifier), codeBlock(lines(count)), codeBlock(lines(24)));
     assert.equal(findAll(tree, hasClass('docs-example')).length, 1);
-    assert.equal(expandButtons(tree.children[0]).length, expected);
-    assert.equal(expandButtons(tree.children[1]).length, 1);
+    assert.equal(expandControls(tree.children[0]).length, expected);
+    assert.equal(expandControls(tree.children[1]).length, 1);
   }
 });

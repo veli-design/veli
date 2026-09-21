@@ -172,18 +172,10 @@ function enhanceCodeBlocks(tree) {
       }
       if (isCollapsible) {
         children.push(
-          element('div', { className: ['docs-code-block__expand'] }, [
-            element(
-              'button',
-              {
-                className: ['docs-code-block__expand-button'],
-                type: 'button',
-                ariaControls: preId,
-                ariaExpanded: 'false',
-              },
-              [element('span', {}, [text('View Code')])],
-            ),
-          ]),
+          element('div', {
+            className: ['docs-code-block__expand'],
+            dataLineCount: lineCount,
+          }),
         );
       }
 
