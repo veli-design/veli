@@ -14,8 +14,7 @@ const { markdownPath, placement = 'inline' } = Astro.props;
   data-docs-page-actions
   data-markdown-path={markdownPath}
 >
-  {placement === 'utility' && <h2 class="docs-page-actions__title">Page actions</h2>}
-  <DocsPageActionButtons client:load {markdownPath} {placement} />
+  <DocsPageActionButtons client:load {markdownPath} />
 </div>
 
 <style>
@@ -37,15 +36,6 @@ const { markdownPath, placement = 'inline' } = Astro.props;
     display: none;
   }
 
-  .docs-page-actions__title {
-    margin: 0 0 2px;
-    color: var(--color-text-base-subtle);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 16px;
-    text-transform: uppercase;
-  }
-
   @media (max-width: 1180px) {
     .docs-page-actions--inline {
       display: flex;
@@ -59,11 +49,6 @@ const { markdownPath, placement = 'inline' } = Astro.props;
       order: 2;
       width: 100%;
       margin-top: 0;
-    }
-
-    .docs-page-actions--inline :global(button) {
-      width: 100%;
-      justify-content: flex-start;
     }
   }
 </style>
