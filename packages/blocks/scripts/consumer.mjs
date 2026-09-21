@@ -13,7 +13,9 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
   throw new Error('BLOCKS_CONSUMER_DIR must not exist');
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
-for (const file of bundleFiles(getBlocks().find(({ manifest }) => manifest.id === 'site-footer'))) {
+const siteFooter = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
+if (!siteFooter) throw new Error('Missing site-footer block');
+for (const file of bundleFiles(siteFooter)) {
   const path = resolve(target, file.path);
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, file.bytes);

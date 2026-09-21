@@ -1,3 +1,5 @@
+// @ts-check
+
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, realpathSync } from 'node:fs';
@@ -6,14 +8,74 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import ts from 'typescript';
 
+/** @typedef {import('./manifest.d.ts').BlockManifest} BlockManifest */
+/** @typedef {import('./manifest.d.ts').BundledFile} BundledFile */
+/** @typedef {import('./manifest.d.ts').DependencyMap} DependencyMap */
+/** @typedef {import('./manifest.d.ts').Provenance} Provenance */
+/** @typedef {import('./manifest.d.ts').ValidatedBlock} ValidatedBlock */
+
 export const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const sourceRoot = resolve(packageRoot, 'src');
+/** @param {import('node:crypto').BinaryLike} bytes */
 export const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+/** @param {string} path @returns {unknown} */
 const json = (path) => JSON.parse(readFileSync(path, 'utf8'));
+/** @param {string} message @returns {never} */
 const fail = (message) => {
   throw new Error(`[blocks] ${message}`);
 };
 
+/** @param {unknown} value @returns {value is Record<string, unknown>} */
+function isRecord(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** @param {unknown} value @returns {value is DependencyMap} */
+function isDependencyMap(value) {
+  return isRecord(value) && Object.values(value).every((entry) => typeof entry === 'string');
+}
+
+/** @param {unknown} input @returns {asserts input is BlockManifest} */
+export function validateManifest(input) {
+  if (!isRecord(input)) fail('Manifest must be an object');
+  const manifest = input;
+  if (
+    typeof manifest.id !== 'string' ||
+    !/^[a-z][a-z0-9-]*$/.test(manifest.id) ||
+    typeof manifest.version !== 'string' ||
+    !/^\d+\.\d+\.\d+$/.test(manifest.version)
+  )
+    fail('Invalid block identity/version');
+  if (
+    typeof manifest.status !== 'string' ||
+    !['experimental', 'stable', 'deprecated'].includes(manifest.status) ||
+    typeof manifest.title !== 'string' ||
+    !manifest.title ||
+    typeof manifest.description !== 'string' ||
+    !manifest.description
+  )
+    fail(`${manifest.id}: missing metadata`);
+  if (
+    !Array.isArray(manifest.files) ||
+    !manifest.files.length ||
+    !manifest.files.every((path) => typeof path === 'string') ||
+    new Set(manifest.files).size !== manifest.files.length
+  )
+    fail(`${manifest.id}: invalid file inventory`);
+  for (const key of ['dependencies', 'setupDependencies', 'testedDependencies']) {
+    const dependencies = manifest[key];
+    if (!isDependencyMap(dependencies)) fail(`Missing ${key}`);
+    for (const [name, version] of Object.entries(dependencies)) {
+      if (
+        !/^(?:@[a-z0-9-]+\/)?[a-z0-9-]+$/.test(name) ||
+        !/^\d+\.\d+\.\d+$/.test(version.replace(/^[~^]/, ''))
+      )
+        fail(`Invalid dependency ${name}`);
+    }
+  }
+}
+
+/** @param {string} path @returns {string} */
 export function safePath(path) {
   if (
     typeof path !== 'string' ||
@@ -24,34 +86,10 @@ export function safePath(path) {
   return path;
 }
 
+/** @param {string} directory @returns {ValidatedBlock} */
 export function validateBlock(directory) {
   const manifest = json(resolve(directory, 'manifest.json'));
-  if (!/^[a-z][a-z0-9-]*$/.test(manifest.id) || !/^\d+\.\d+\.\d+$/.test(manifest.version))
-    fail('Invalid block identity/version');
-  if (
-    !['experimental', 'stable', 'deprecated'].includes(manifest.status) ||
-    !manifest.title ||
-    !manifest.description
-  )
-    fail(`${manifest.id}: missing metadata`);
-  if (
-    !Array.isArray(manifest.files) ||
-    !manifest.files.length ||
-    new Set(manifest.files).size !== manifest.files.length
-  )
-    fail(`${manifest.id}: invalid file inventory`);
-  for (const key of ['dependencies', 'setupDependencies', 'testedDependencies']) {
-    if (!manifest[key] || typeof manifest[key] !== 'object' || Array.isArray(manifest[key]))
-      fail(`Missing ${key}`);
-    for (const [name, version] of Object.entries(manifest[key])) {
-      if (
-        !/^(?:@[a-z0-9-]+\/)?[a-z0-9-]+$/.test(name) ||
-        typeof version !== 'string' ||
-        !/^[~^]?\d+\.\d+\.\d+$/.test(version)
-      )
-        fail(`Invalid dependency ${name}`);
-    }
-  }
+  validateManifest(manifest);
   const files = manifest.files.map((path) => {
     safePath(path);
     const fullPath = realpathSync(resolve(directory, path));
@@ -65,9 +103,15 @@ export function validateBlock(directory) {
         ts.ScriptTarget.Latest,
         true,
       );
+      /** @type {string[]} */
       const imports = [];
+      /** @param {import('typescript').Node} node */
       function visit(node) {
-        if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier)
+        if (
+          (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+          node.moduleSpecifier &&
+          ts.isStringLiteral(node.moduleSpecifier)
+        )
           imports.push(node.moduleSpecifier.text);
         if (
           ts.isCallExpression(node) &&
@@ -100,7 +144,10 @@ export function validateBlock(directory) {
           if (!manifest.dependencies[name] || /^(next|astro)(\/|$)/.test(specifier))
             fail(`Undeclared/framework import ${specifier}`);
           if (name === '@tradenetcorp/veli-ui') {
-            const exports = json(resolve(packageRoot, '../ui/package.json')).exports;
+            const uiPackage = json(resolve(packageRoot, '../ui/package.json'));
+            if (!isRecord(uiPackage) || !isRecord(uiPackage.exports))
+              fail('Invalid Veli UI export map');
+            const exports = uiPackage.exports;
             if (!exports['.' + specifier.slice(name.length)] || specifier === name)
               fail(`Nonpublic Veli import ${specifier}`);
           }
@@ -116,6 +163,7 @@ export function validateBlock(directory) {
   return { manifest, files, readme, changelog };
 }
 
+/** @returns {ValidatedBlock[]} */
 export function getBlocks() {
   return readdirSync(sourceRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -127,6 +175,7 @@ export function getBlocks() {
     .sort((a, b) => a.manifest.id.localeCompare(b.manifest.id));
 }
 
+/** @returns {Provenance} */
 export function getProvenance() {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], {
     cwd: packageRoot,
@@ -142,6 +191,7 @@ export function getProvenance() {
   return { sourceCommit, dirty };
 }
 
+/** @param {ValidatedBlock} block @param {Provenance} [provenance] @returns {BundledFile[]} */
 export function bundleFiles(block, provenance = getProvenance()) {
   const { manifest, files } = block;
   const receipt = {
@@ -170,12 +220,15 @@ export function bundleFiles(block, provenance = getProvenance()) {
 }
 
 /** Deterministic ustar archive: fixed metadata, exact source bytes, no shell tools. */
-export function archive(block, provenance) {
+/** @param {ValidatedBlock} block @param {Provenance} [provenance] @returns {Buffer} */
+export function archive(block, provenance = getProvenance()) {
+  /** @type {Buffer[]} */
   const parts = [];
   for (const { path, bytes } of bundleFiles(block, provenance)) {
     if (Buffer.byteLength(path) > 100) fail(`Archive path too long: ${path}`);
     const header = Buffer.alloc(512);
     header.write(path, 0, 100);
+    /** @param {number} value @param {number} offset @param {number} length */
     const octal = (value, offset, length) =>
       header.write(value.toString(8).padStart(length - 1, '0') + '\0', offset, length);
     octal(0o644, 100, 8);
@@ -200,6 +253,7 @@ export function archive(block, provenance) {
   return gzipSync(Buffer.concat([...parts, Buffer.alloc(1024)]));
 }
 
+/** @param {ValidatedBlock} block @returns {string} */
 export function blockMarkdown(block) {
   const { manifest, readme, files, changelog } = block;
   const example = readFileSync(resolve(packageRoot, 'examples', `${manifest.id}-next.tsx`), 'utf8');

@@ -5,8 +5,10 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
+    "allowJs": true,
+    "checkJs": true,
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src/**/*.tsx"]
+  "include": ["src/**/*.tsx", "scripts/**/*.mjs"]
 }

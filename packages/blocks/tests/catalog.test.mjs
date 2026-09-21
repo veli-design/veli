@@ -67,6 +67,20 @@ test('unsafe destinations and missing inventory files are rejected', () => {
   });
 });
 
+test('manifest fields must match the typed runtime contract', () => {
+  for (const manifest of [
+    null,
+    { id: 'site-footer', version: '0.1.0' },
+    { ...block.manifest, status: 'preview' },
+    { ...block.manifest, files: ['site-footer.tsx', 42] },
+    { ...block.manifest, dependencies: ['@tradenetcorp/veli-ui'] },
+  ])
+    fixture((dir) => {
+      writeFileSync(resolve(dir, 'manifest.json'), JSON.stringify(manifest));
+      assert.throws(() => validateBlock(dir));
+    });
+});
+
 test('external symlinks cannot leak files into a download', () =>
   fixture((dir) => {
     rmSync(resolve(dir, 'site-footer.tsx'));

@@ -224,6 +224,9 @@ importers:
         specifier: workspace:*
         version: link:../ui
     devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
       '@types/react':
         specifier: ^19.0.0
         version: 19.2.18
