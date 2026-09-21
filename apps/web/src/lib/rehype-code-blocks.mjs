@@ -42,24 +42,6 @@ function getLanguage(pre, code) {
   return languageClass ? String(languageClass).slice('language-'.length).toLowerCase() : 'text';
 }
 
-function getThemeProperties(style) {
-  if (typeof style !== 'string') return '';
-
-  const declarations = new Map(
-    style
-      .split(';')
-      .map((declaration) => declaration.split(':', 2).map((part) => part.trim()))
-      .filter(([property, value]) => property && value),
-  );
-  const properties = [];
-  const background = declarations.get('background-color');
-  const color = declarations.get('color');
-
-  if (background) properties.push(`--docs-code-block-background:${background}`);
-  if (color) properties.push(`--docs-code-block-color:${color}`);
-  return properties.join(';');
-}
-
 function icon(paths) {
   return element(
     'svg',
@@ -75,17 +57,13 @@ function copyIcon() {
   ]);
 }
 
-function caretIcon() {
-  return icon(['m5.5 7.5 4.5 4.5 4.5-4.5']);
-}
-
 function enhanceCodeBlocks(tree) {
   let codeBlockIndex = 0;
 
   function visit(parent) {
     if (!parent.children) return;
 
-    parent.children = parent.children.map((node) => {
+    parent.children = parent.children.map((node, index) => {
       if (node.type !== 'element' || node.tagName !== 'pre') {
         visit(node);
         return node;
@@ -100,10 +78,27 @@ function enhanceCodeBlocks(tree) {
       const language = getLanguage(node, code);
       const languageLabel = languageNames[language] || language.toUpperCase();
       const source = nodeText(code).replace(/\n$/, '');
-      const isCollapsible = source.split('\n').length >= collapsibleLineCount;
+      const lineCount = source.split('\n').length;
+      const fileTitle = node.properties?.dataCodeTitle;
+      const installPackages = ['bash', 'sh', 'shell'].includes(language)
+        ? source.match(/^pnpm add ([^\n]+)$/)?.[1]
+        : undefined;
+      let previousIndex = index - 1;
+      while (
+        parent.children[previousIndex]?.type === 'text' &&
+        !parent.children[previousIndex].value.trim()
+      )
+        previousIndex -= 1;
+      const previewClasses = parent.children[previousIndex]?.attributes?.find(
+        (attribute) => attribute.name === 'className',
+      )?.value;
+      const previewFlags = typeof previewClasses === 'string' ? previewClasses.split(/\s+/) : [];
+      const isCollapsible =
+        (lineCount >= collapsibleLineCount && !previewFlags.includes('preview--expanded')) ||
+        previewFlags.includes('preview--collapsible');
       const preId = `docs-code-block-${codeBlockIndex}`;
       const wrapperClasses = ['docs-code-block'];
-      const wrapperStyle = getThemeProperties(node.properties?.style);
+      if (lineCount > 1) wrapperClasses.push('is-multiline');
 
       if (isCollapsible) {
         wrapperClasses.push('is-collapsible');
@@ -134,20 +129,53 @@ function enhanceCodeBlocks(tree) {
       ]);
 
       const children = [toolbar, node];
+      if (typeof fileTitle === 'string') {
+        wrapperClasses.push('docs-code-file');
+        toolbar.children.unshift(
+          element('span', { className: ['docs-code-file__icon'], ariaHidden: 'true' }),
+          element('span', { className: ['docs-code-file__name'] }, [text(fileTitle)]),
+        );
+      }
+      if (installPackages) {
+        wrapperClasses.push('docs-code-command');
+        const managers = ['pnpm', 'npm', 'yarn', 'bun'];
+        node.properties = {
+          ...node.properties,
+          id: preId,
+          role: 'tabpanel',
+          tabIndex: 0,
+          ariaLabelledBy: `${preId}-pnpm`,
+        };
+        code.children = [text(source)];
+        toolbar.children.unshift(
+          element('span', { className: ['docs-code-command__icon'], ariaHidden: 'true' }),
+          element(
+            'div',
+            { role: 'tablist', ariaLabel: 'Package manager' },
+            managers.map((manager) =>
+              element(
+                'button',
+                {
+                  type: 'button',
+                  role: 'tab',
+                  id: `${preId}-${manager}`,
+                  ariaControls: preId,
+                  ariaSelected: manager === 'pnpm' ? 'true' : 'false',
+                  tabIndex: manager === 'pnpm' ? 0 : -1,
+                  dataCommand: `${manager} ${manager === 'npm' ? 'install' : 'add'} ${installPackages}`,
+                },
+                [text(manager)],
+              ),
+            ),
+          ),
+        );
+      }
       if (isCollapsible) {
         children.push(
-          element('div', { className: ['docs-code-block__expand'] }, [
-            element(
-              'button',
-              {
-                className: ['docs-code-block__expand-button'],
-                type: 'button',
-                ariaControls: preId,
-                ariaExpanded: 'false',
-              },
-              [caretIcon(), element('span', {}, [text('Expand code')])],
-            ),
-          ]),
+          element('div', {
+            className: ['docs-code-block__expand'],
+            dataLineCount: lineCount,
+          }),
         );
       }
 
@@ -155,11 +183,40 @@ function enhanceCodeBlocks(tree) {
         'div',
         {
           className: wrapperClasses,
-          ...(wrapperStyle ? { style: wrapperStyle } : {}),
         },
         children,
       );
     });
+
+    // Keep authored demos and highlighted code together without changing MDX content.
+    for (let index = 0; index < parent.children.length - 1; index += 1) {
+      const preview = parent.children[index];
+      const className = preview.attributes?.find(
+        (attribute) => attribute.name === 'className',
+      )?.value;
+      if (
+        preview.type !== 'mdxJsxFlowElement' ||
+        preview.name !== 'div' ||
+        typeof className !== 'string' ||
+        !className.split(/\s+/).includes('preview')
+      )
+        continue;
+
+      let codeIndex = index + 1;
+      while (
+        parent.children[codeIndex]?.type === 'text' &&
+        !parent.children[codeIndex].value.trim()
+      )
+        codeIndex += 1;
+      const codeBlock = parent.children[codeIndex];
+      if (!codeBlock?.properties?.className?.includes('docs-code-block')) continue;
+
+      parent.children.splice(
+        index,
+        codeIndex - index + 1,
+        element('div', { className: ['docs-example'] }, [preview, codeBlock]),
+      );
+    }
   }
 
   visit(tree);
