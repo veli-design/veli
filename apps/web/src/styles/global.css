@@ -2073,6 +2073,34 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   margin-bottom: 0;
 }
 
+.docs-prose [data-accordion-header] :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.docs-prose [data-accordion-header] button.type-body-sm-medium {
+  @apply type-body-sm-medium;
+}
+
+.docs-prose [data-accordion-header] button.type-body-md-medium {
+  @apply type-body-md-medium;
+}
+
+.docs-prose [data-accordion-header] button.type-body-sm-medium:lang(dv) {
+  font-family: var(--font-dhivehi-waheed);
+  font-size: 17px;
+  line-height: 1.62;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.docs-prose [data-accordion-header] button.type-body-md-medium:lang(dv) {
+  font-family: var(--font-dhivehi-waheed);
+  font-size: 19px;
+  line-height: 1.71;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
 .docs-prose table {
   margin-bottom: 32px;
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -1396,9 +1397,84 @@ const ACCORDION_ITEMS = [
   },
 ] as const;
 
+const ACCORDION_RTL_ITEMS = [
+  {
+    id: 'overview',
+    label: 'ޚުލާޞާ',
+    content:
+      'ބަދަލެއް ގެނައުމުގެ ކުރިން، ހުއްދައިގެ ސްޓޭޓަސް، ހުށަހެޅި ތާރީޚު، އަދި މައްސަލަ ހަވާލުކުރެވިފައިވާ ރިވިއުވަރ ޗެކްކުރައްވާ.',
+  },
+  {
+    id: 'documents',
+    label: 'ލިޔެކިޔުންތައް',
+    content:
+      'ކާކުކަން އަންގައިދޭ ލިޔުމާއި، އެޑްރެސް އަންގައިދޭ ލިޔުން، އަދި ފައިސާ ދެއްކިކަމުގެ ރަސީދު ފަދަ ގުޅޭ ލިޔެކިޔުންތައް އަޕްލޯޑްކުރައްވާ.',
+  },
+  {
+    id: 'history',
+    label: 'ހިސްޓްރީ',
+    content:
+      'މި އެޕްލިކޭޝަނާ ގުޅިގެން ރެކޯޑުކުރެވިފައިވާ ކޮންމެ އަޕްޑޭޓަކާއި، ކޮމެންޓެއް އަދި ސްޓޭޓަސްއަށް އައިސްފައިވާ ބަދަލުތައް ބައްލަވާލައްވާ.',
+  },
+] as const;
+
+const ACCORDION_LTR_ITEMS = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    content:
+      'Review the permit status, submission date, and assigned reviewer before making changes.',
+  },
+  {
+    id: 'documents',
+    label: 'Documents',
+    content:
+      'Upload supporting files such as identification, proof of address, and payment receipts.',
+  },
+  {
+    id: 'history',
+    label: 'History',
+    content: 'Track every update, comment, and status change recorded for this application.',
+  },
+] as const;
+
+export function AccordionRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+
+  return (
+    <DocsPreview
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
+        <div
+          className="w-full max-w-[420px] min-w-0"
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+        >
+          <Accordion
+            key={language}
+            size="lg"
+            alignment="left"
+            defaultExpandedKeys={['overview']}
+            items={isDhivehi ? ACCORDION_RTL_ITEMS : ACCORDION_LTR_ITEMS}
+          />
+        </div>
+      </I18nProvider>
+    </DocsPreview>
+  );
+}
+
 export function AccordionUsageDemo() {
   return (
-    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
+    <div className="mx-auto w-full max-w-[640px]">
       <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
     </div>
   );
@@ -1406,17 +1482,17 @@ export function AccordionUsageDemo() {
 
 export function AccordionVariantsDemo() {
   return (
-    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Single expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Single expanded</span>
           <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
         </div>
       </div>
 
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Multiple expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Multiple expanded</span>
           <Accordion
             allowsMultipleExpanded
             defaultExpandedKeys={['overview', 'documents']}
@@ -1431,7 +1507,7 @@ export function AccordionVariantsDemo() {
 export function AccordionControlledDemo() {
   const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set(['overview']));
   return (
-    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
+    <div className="mx-auto w-full max-w-[640px]">
       <Accordion
         items={ACCORDION_ITEMS}
         expandedKeys={expandedKeys}
@@ -1446,7 +1522,7 @@ export function AccordionControlledDemo() {
 
 export function AccordionAppearanceDemo() {
   return (
-    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
       {(
         [
           { label: 'Medium', size: 'md' },
@@ -1458,7 +1534,7 @@ export function AccordionAppearanceDemo() {
         ] as const
       ).map(({ label, ...props }) => (
         <div key={label} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
-          <p className="mb-3 type-body-sm-medium">{label}</p>
+          <span className="mb-3 block type-body-sm-medium">{label}</span>
           <Accordion {...props} items={ACCORDION_ITEMS} defaultExpandedKeys={['overview']} />
         </div>
       ))}

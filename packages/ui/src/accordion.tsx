@@ -21,11 +21,11 @@ import { twMerge } from 'tailwind-merge';
 const accordionVariants = cva('w-full font-sans antialiased');
 
 const accordionItemVariants = cva(
-  'relative pb-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-base-subtle last:after:border-b-0',
+  'relative pb-[3px] pt-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-base-subtle',
 );
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {
@@ -79,18 +79,6 @@ const accordionChevronWrapperVariants = cva(
   },
 );
 
-const accordionChevronIconVariants = cva('text-icon-base', {
-  variants: {
-    isDisabled: {
-      true: 'text-icon-disabled',
-      false: '',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
 const accordionPanelVariants = cva(
   'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height] motion-safe:duration-normal motion-safe:ease-in-out',
 );
@@ -133,12 +121,11 @@ export type AccordionItemData = {
   id: string | number;
   label: React.ReactNode;
   content: React.ReactNode;
-  isDisabled?: boolean;
 };
 
 export interface AccordionProps
   extends
-    Omit<AriaDisclosureGroupProps, 'children' | 'className'>,
+    Omit<AriaDisclosureGroupProps, 'children' | 'className' | 'isDisabled'>,
     VariantProps<typeof accordionTriggerVariants> {
   items?: readonly AccordionItemData[];
   children?: React.ReactNode;
@@ -148,7 +135,7 @@ export interface AccordionProps
   panelClassName?: string;
 }
 
-export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className'> {
+export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className' | 'isDisabled'> {
   className?: string;
 }
 
@@ -172,7 +159,12 @@ export interface AccordionPanelProps
 }
 
 export function AccordionItem({ className, ...props }: AccordionItemProps) {
-  return <AriaDisclosure {...props} className={twMerge(accordionItemVariants(), className)} />;
+  const disclosureProps = { ...props } as AriaDisclosureProps;
+  delete disclosureProps.isDisabled;
+
+  return (
+    <AriaDisclosure {...disclosureProps} className={twMerge(accordionItemVariants(), className)} />
+  );
 }
 
 export function AccordionHeader({
@@ -209,36 +201,31 @@ export function AccordionHeader({
             className,
           )}
         >
-          {({ isDisabled }) => (
-            <>
+          <span
+            aria-hidden
+            className={twMerge(
+              'inline-flex h-6 w-5 shrink-0 items-center justify-center text-icon-base',
+              resolvedAlignment === 'left' && 'order-1',
+            )}
+          >
+            {icon ?? (
               <span
-                aria-hidden
-                className={twMerge(
-                  'inline-flex h-6 w-5 shrink-0 items-center justify-center',
-                  resolvedAlignment === 'left' && 'order-1',
-                  accordionChevronIconVariants({ isDisabled }),
-                )}
+                className={accordionChevronWrapperVariants({
+                  alignment: resolvedAlignment,
+                  isExpanded,
+                })}
               >
-                {icon ?? (
-                  <span
-                    className={accordionChevronWrapperVariants({
-                      alignment: resolvedAlignment,
-                      isExpanded,
-                    })}
-                  >
-                    {resolvedAlignment === 'right' ? (
-                      <CaretRight aria-hidden size={16} weight="regular" />
-                    ) : (
-                      <CaretDown aria-hidden size={16} weight="regular" />
-                    )}
-                  </span>
+                {resolvedAlignment === 'right' ? (
+                  <CaretRight aria-hidden size={16} weight="regular" />
+                ) : (
+                  <CaretDown aria-hidden size={16} weight="regular" />
                 )}
               </span>
-              <span className="min-w-0 flex-1 px-1.5 text-start [overflow-wrap:anywhere]">
-                {children}
-              </span>
-            </>
-          )}
+            )}
+          </span>
+          <span className="min-w-0 flex-1 px-1.5 text-start [overflow-wrap:anywhere]">
+            {children}
+          </span>
         </AriaButton>
       </Heading>
     </div>
@@ -297,19 +284,17 @@ export function Accordion({
   flushed = false,
   ...props
 }: AccordionProps) {
+  const groupProps = { ...props } as AriaDisclosureGroupProps;
+  delete groupProps.isDisabled;
+
   return (
     <AccordionSizeContext.Provider value={size ?? 'md'}>
       <AccordionAlignmentContext.Provider value={alignment ?? 'left'}>
         <AccordionFlushedContext.Provider value={flushed ?? false}>
-          <AriaDisclosureGroup {...props} className={twMerge(accordionVariants(), className)}>
+          <AriaDisclosureGroup {...groupProps} className={twMerge(accordionVariants(), className)}>
             {items
               ? items.map((item) => (
-                  <AccordionItem
-                    key={item.id}
-                    id={item.id}
-                    isDisabled={item.isDisabled}
-                    className={itemClassName}
-                  >
+                  <AccordionItem key={item.id} id={item.id} className={itemClassName}>
                     <AccordionHeader
                       size={size}
                       alignment={alignment}
