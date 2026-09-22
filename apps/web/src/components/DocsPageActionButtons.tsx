@@ -49,7 +49,6 @@ async function copyText(value: string) {
 }
 
 export function DocsPageActionButtons({ markdownPath }: Props) {
-  const [action, setAction] = useState('copy');
   const [copyState, setCopyState] = useState<CopyState>('idle');
   const [isCopying, setIsCopying] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
@@ -81,10 +80,6 @@ export function DocsPageActionButtons({ markdownPath }: Props) {
     resetTimer.current = window.setTimeout(() => setCopyState('idle'), 2500);
   };
 
-  const viewMarkdown = () => {
-    window.open(markdownPath, '_blank', 'noopener,noreferrer');
-  };
-
   const copyLabel =
     copyState === 'copied' ? 'Copied' : copyState === 'error' ? 'Try again' : 'Copy page';
   const status =
@@ -101,29 +96,24 @@ export function DocsPageActionButtons({ markdownPath }: Props) {
         isDisabled={isCopying}
         aria-busy={isCopying || undefined}
         data-state={copyState}
-        onPress={action === 'copy' ? copyPage : viewMarkdown}
+        onPress={copyPage}
       >
-        {action === 'copy' ? (
-          <Copy size={16} aria-hidden="true" />
-        ) : (
-          <ArrowSquareOut size={16} aria-hidden="true" />
-        )}
-        <span>{action === 'copy' ? copyLabel : 'View as Markdown'}</span>
+        <Copy size={16} aria-hidden="true" />
+        <span>{copyLabel}</span>
       </Button>
       <MenuTrigger>
         <Button className={styles.trigger} aria-label="Choose page action" isDisabled={isCopying}>
           <CaretDown size={16} aria-hidden="true" />
         </Button>
         <Popover className={styles.popover} placement="bottom end" offset={2}>
-          <Menu
-            aria-label="Page actions"
-            className={styles.menu}
-            onAction={(key) => {
-              setAction(String(key));
-              setCopyState('idle');
-            }}
-          >
-            <MenuItem id="copy" size="sm" textValue="Copy page" className="px-4">
+          <Menu aria-label="Page actions" className={styles.menu}>
+            <MenuItem
+              id="copy"
+              size="sm"
+              textValue="Copy page"
+              className="px-4"
+              onAction={copyPage}
+            >
               {() => (
                 <div className={styles.item}>
                   <Text slot="label">Copy page</Text>
@@ -133,15 +123,22 @@ export function DocsPageActionButtons({ markdownPath }: Props) {
                 </div>
               )}
             </MenuItem>
-            <MenuItem id="view" size="sm" textValue="View as Markdown" className="px-4">
-              {() => (
-                <div className={styles.item}>
-                  <Text slot="label">View as Markdown</Text>
-                  <Text slot="description" className={styles.description}>
-                    Open this page as plain text in a new tab.
-                  </Text>
-                </div>
-              )}
+            <MenuItem
+              id="view"
+              size="sm"
+              textValue="View as Markdown"
+              className="px-4"
+              href={markdownPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              endIcon={<ArrowSquareOut size={16} aria-hidden="true" />}
+            >
+              <div className={styles.item}>
+                <Text slot="label">View as Markdown</Text>
+                <Text slot="description" className={styles.description}>
+                  Open this page as plain text.
+                </Text>
+              </div>
             </MenuItem>
           </Menu>
         </Popover>
