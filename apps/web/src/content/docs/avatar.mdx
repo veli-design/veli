@@ -1,13 +1,18 @@
 ---
 title: Avatar
-description: Represents a person, agency, or service with initials, an icon, or an image across a fixed set of design-system sizes.
+description: Compact representation of a person, agency, or service with an image, initials, or icon.
 ---
 
-import { AvatarUsageDemo, AvatarVariantsDemo } from '../../components/DocsExamples';
+import {
+  AvatarUsageDemo,
+  AvatarTypesDemo,
+  AvatarAppearancesDemo,
+  AvatarSizesDemo,
+} from '../../components/DocsExamples';
 
 # Avatar
 
-The Avatar component renders a compact, accessible representation of a person, agency, or service. It supports initials, a generic icon, an agency icon, or an image, and ships with the appearance palette and size scale from the Veli design system.
+The Avatar component represents a person, agency, or service with an image, initials, or icon.
 
 ## Import
 
@@ -22,29 +27,76 @@ import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 </div>
 
 ```tsx
-<Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
-<Avatar type="icon" appearance="neutral" size="52" />
-<Avatar type="image" src="/people/aishath.jpg" alt="Aishath Mariyam" size="52" />
+<Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
 ```
 
-## Appearances & sizes
+## Types
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AvatarVariantsDemo client:visible />
+  <AvatarTypesDemo client:visible />
 </div>
+
+```tsx
+<Avatar type="image" src="/people/aishath.jpg" alt="Aishath Mariyam" />
+<Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+<Avatar type="icon" appearance="neutral" alt="User" />
+<Avatar type="agencyIcon" appearance="emerald" alt="Agency" />
+```
+
+## Appearances
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AvatarAppearancesDemo client:visible />
+</div>
+
+```tsx
+<Avatar type="initials" initials="MV" appearance="blue" />
+<Avatar type="initials" initials="MV" appearance="neutral" />
+<Avatar type="initials" initials="MV" appearance="emerald" />
+<Avatar type="initials" initials="MV" appearance="yellow" />
+<Avatar type="initials" initials="MV" appearance="orange" />
+<Avatar type="initials" initials="MV" appearance="magenta" />
+<Avatar type="initials" initials="MV" appearance="indigo" />
+<Avatar type="initials" initials="MV" appearance="teal" />
+<Avatar type="initials" initials="MV" appearance="green" />
+<Avatar type="initials" initials="MV" appearance="lime" />
+```
+
+## Sizes
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AvatarSizesDemo client:visible />
+</div>
+
+```tsx
+<Avatar type="icon" appearance="blue" size="60" />
+<Avatar type="icon" appearance="blue" size="52" />
+<Avatar type="icon" appearance="blue" size="44" />
+<Avatar type="icon" appearance="blue" size="36" />
+<Avatar type="icon" appearance="blue" size="28" />
+<Avatar type="icon" appearance="blue" size="20" />
+<Avatar type="icon" appearance="blue" size="16" />
+```
 
 ## API Reference
 
-| Prop         | Type                                                                                                               | Default     | Description                                                                      |
-| :----------- | :----------------------------------------------------------------------------------------------------------------- | :---------- | :------------------------------------------------------------------------------- |
-| `type`       | `'image' \| 'initials' \| 'icon' \| 'agencyIcon'`                                                                  | `'icon'`    | Content rendered inside the avatar.                                              |
-| `appearance` | `'blue' \| 'neutral' \| 'emerald' \| 'yellow' \| 'orange' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'neutral'` | Surface, content, and icon color theme.                                          |
-| `size`       | `'60' \| '52' \| '44' \| '36' \| '28' \| '20' \| '16'`                                                             | `'44'`      | Pixel size of the avatar; also scales the icon and initials.                     |
-| `initials`   | `string`                                                                                                           | -           | Source name for `type="initials"`; reduced to one or two glyphs based on `size`. |
-| `src`        | `string`                                                                                                           | -           | Image URL for `type="image"`.                                                    |
-| `alt`        | `string`                                                                                                           | -           | Accessible description for `type="image"`.                                       |
-| `className`  | `string`                                                                                                           | -           | Layout-only class override merged onto the root element.                         |
+| Prop         | Type                                                                                                               | Default  | Description                                                                                 |
+| :----------- | :----------------------------------------------------------------------------------------------------------------- | :------- | :------------------------------------------------------------------------------------------ |
+| `type`       | `'image' \| 'initials' \| 'icon' \| 'agencyIcon'`                                                                  | `'icon'` | Preferred content when `src` and `initials` do not resolve first.                           |
+| `appearance` | `'blue' \| 'neutral' \| 'emerald' \| 'yellow' \| 'orange' \| 'magenta' \| 'indigo' \| 'teal' \| 'green' \| 'lime'` | `'blue'` | Surface and content color.                                                                  |
+| `size`       | `'60' \| '52' \| '44' \| '36' \| '28' \| '20' \| '16'`                                                             | `'44'`   | Diameter in pixels; scales icon and initials.                                               |
+| `initials`   | `string`                                                                                                           | -        | Name or initials; takes priority over `type` when set. Sizes `16` and `20` show one glyph.  |
+| `src`        | `string`                                                                                                           | -        | Image URL; takes priority when loadable. On error, falls back to `initials` when available. |
+| `alt`        | `string`                                                                                                           | -        | Accessible name for every content type.                                                     |
 
 All other `div` attributes are supported.
 
-For Dhivehi (`lang="dv"`) names, `type="initials"` derives initials with `formatDhivehiInitials` so the glyph count and shaping match Thaana conventions at each size.
+## Accessibility
+
+- Pass a meaningful `alt` for every avatar.
+- Without `alt`, initials fall back to the `initials` string; agency icons to `"Agency"`; otherwise `"User"`.
+- Avatar is a non-interactive `div`. Wrap it in a button or link when it should be actionable.
+
+## RTL and Language
+
+With `VeliProvider` set to Dhivehi (`language="dv"`), Latin `initials` sources map to Thaana glyphs, including digraphs such as `SH` → `ޝ`.

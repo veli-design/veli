@@ -15,6 +15,17 @@ export default defineConfig({
   ...(site ? { site } : {}),
   integrations: [mdx(), react()],
   markdown: {
+    shikiConfig: {
+      themes: { light: 'github-light', dark: 'github-dark' },
+      transformers: [
+        {
+          pre(node) {
+            const title = this.options.meta?.__raw?.match(/title="([^"]+)"/)?.[1];
+            if (title) node.properties.dataCodeTitle = title;
+          },
+        },
+      ],
+    },
     remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch],
     rehypePlugins: [rehypeCodeBlocks],
   },

@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { I18nProvider } from 'react-aria-components';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -6,6 +8,7 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
+import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
@@ -17,6 +20,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@tradenetcorp/veli-ui/menu';
+import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -65,6 +69,11 @@ import {
   Trash,
   WarningCircle,
 } from 'phosphor-react';
+
+/** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
+function DocsEnGbLocale({ children }: { children: ReactNode }) {
+  return <I18nProvider locale="en-GB">{children}</I18nProvider>;
+}
 
 export function ButtonUsageDemo() {
   return <Button>Click me</Button>;
@@ -238,10 +247,17 @@ const cardDocsText = {
     reviewMessage: 'Your application is under review. We will notify you when a decision is ready.',
     viewDetails: 'View details',
     continue: 'Continue',
-    borderOnly: 'Border only',
-    noShadowElevation: 'No shadow elevation.',
-    interactive: 'Interactive',
-    hoverFeedback: 'Hover for surface feedback.',
+    defaultElevation: 'Default',
+    spacingToggleLabel: 'Card spacing',
+    contactTitle: 'Contact details',
+    contactDescription: 'How we reach you about this application.',
+    emailLabel: 'Email',
+    emailPlaceholder: 'name@example.com',
+    phoneLabel: 'Phone',
+    phonePlaceholder: '+960 7XX XXXX',
+    notesLabel: 'Notes',
+    notesPlaceholder: 'Anything the reviewer should know',
+    save: 'Save',
   },
   dv: {
     permitApplication: 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަން',
@@ -249,10 +265,17 @@ const cardDocsText = {
     reviewMessage: 'ތިޔަ އެޕްލިކޭޝަން ދަނީ ރިވިއުކުރެވެމުންނެވެ. ގޮތެއް ނިމުމުން އަންގާނަން.',
     viewDetails: 'ތަފްސީލު ބައްލަވާ',
     continue: 'ކުރިއަށްގެންދަވާ',
-    borderOnly: 'ހަމައެކަނި ބޯޑަރު',
-    noShadowElevation: 'އެއްވެސް ޝެޑޯ އެލިވޭޝަނެއް ނެތް.',
-    interactive: 'އިންޓަރެކްޓިވް',
-    hoverFeedback: 'ސަރފޭސް ފީޑްބެކް ހޯދުމަށް ހޯވަރ ކުރައްވާ.',
+    defaultElevation: 'އާދައިގެ',
+    spacingToggleLabel: 'ކާރޑް ސްޕޭސިންގް',
+    contactTitle: 'ގުޅުންތައް',
+    contactDescription: 'މި އެޕްލިކޭޝަން ގެންގުޅުން ހަމަޖެއްސުމަށް.',
+    emailLabel: 'އީމެއިލް',
+    emailPlaceholder: 'name@example.com',
+    phoneLabel: 'ފޯން',
+    phonePlaceholder: '+960 7XX XXXX',
+    notesLabel: 'ނޯޓްސް',
+    notesPlaceholder: 'ރިވިއުވަރަށް އެނގޭނެ އެއްޗެއް',
+    save: 'ސޭވް',
   },
 } as const;
 
@@ -1015,167 +1038,132 @@ export function RadioDisabledDemo() {
 
 export function AvatarUsageDemo() {
   return (
+    <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+  );
+}
+
+export function AvatarTypesDemo() {
+  return (
     <div className="flex flex-wrap items-center gap-[16px]">
-      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" size="52" />
-      <Avatar type="initials" initials="Ibrahim Naseer" appearance="indigo" size="52" />
-      <Avatar type="icon" appearance="neutral" size="52" />
-      <Avatar type="agencyIcon" appearance="emerald" size="52" />
+      <Avatar
+        type="image"
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80"
+        alt="Aishath Mariyam"
+      />
+      <Avatar type="initials" initials="Aishath Mariyam" appearance="blue" alt="Aishath Mariyam" />
+      <Avatar type="icon" appearance="neutral" alt="User" />
+      <Avatar type="agencyIcon" appearance="emerald" alt="Agency" />
     </div>
   );
 }
 
-export function AvatarVariantsDemo() {
-  const appearances = ['blue', 'neutral', 'emerald', 'yellow', 'orange', 'magenta'] as const;
-  const sizes = ['60', '52', '44', '36', '28'] as const;
+export function AvatarAppearancesDemo() {
+  const appearances = [
+    'blue',
+    'neutral',
+    'emerald',
+    'yellow',
+    'orange',
+    'magenta',
+    'indigo',
+    'teal',
+    'green',
+    'lime',
+  ] as const;
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Appearances</p>
-          <div className="flex flex-wrap items-center gap-[12px]">
-            {appearances.map((appearance) => (
-              <Avatar key={appearance} type="initials" initials="MV" appearance={appearance} />
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-[12px]">
+      {appearances.map((appearance) => (
+        <Avatar
+          key={appearance}
+          type="initials"
+          initials="MV"
+          appearance={appearance}
+          alt={appearance}
+        />
+      ))}
+    </div>
+  );
+}
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Sizes</p>
-          <div className="flex flex-wrap items-end gap-[12px]">
-            {sizes.map((size) => (
-              <Avatar key={size} type="icon" appearance="blue" size={size} />
-            ))}
-          </div>
-        </div>
-      </div>
+export function AvatarSizesDemo() {
+  const sizes = ['60', '52', '44', '36', '28', '20', '16'] as const;
+
+  return (
+    <div className="flex flex-wrap items-end gap-[12px]">
+      {sizes.map((size) => (
+        <Avatar key={size} type="icon" appearance="blue" size={size} alt="User" />
+      ))}
     </div>
   );
 }
 
 export function BadgeUsageDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-[12px]">
-      <Badge intent="info">Info</Badge>
-      <Badge intent="positive" appearance="subtle">
-        Approved
+    <Badge intent="positive" appearance="subtle">
+      Approved
+    </Badge>
+  );
+}
+
+export function BadgeAppearancesDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-[8px]">
+      <Badge appearance="outline" intent="info">
+        Outline
       </Badge>
-      <Badge intent="warning" appearance="outline">
-        Pending
+      <Badge appearance="subtle" intent="info">
+        Subtle
       </Badge>
-      <Badge intent="danger" leadingIcon={<WarningCircle size={12} weight="bold" />}>
-        Rejected
+      <Badge appearance="emphasis" intent="info">
+        Emphasis
       </Badge>
     </div>
   );
 }
 
-export function BadgeVariantsDemo() {
-  const statusIntents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'] as const;
-  const accentIntents = ['magenta', 'indigo', 'brand', 'green', 'lime'] as const;
-
+export function BadgeCounterDemo() {
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Status appearances</p>
-          <div className="space-y-[10px]">
-            {(['outline', 'subtle', 'emphasis'] as const).map((appearance) => (
-              <div key={appearance} className="flex flex-wrap items-center gap-[8px]">
-                {statusIntents.map((intent) => (
-                  <Badge key={intent} appearance={appearance} intent={intent}>
-                    {intent}
-                  </Badge>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Accent intents</p>
-          <div className="flex flex-wrap items-center gap-[8px]">
-            {accentIntents.map((intent) => (
-              <Badge key={intent} appearance="outline" intent={intent}>
-                {intent}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Counter mode</p>
-          <div className="flex flex-wrap items-center gap-[16px]">
-            <Badge intent="info" counter count={42} size="sm" />
-            <Badge intent="info" counter count={42} size="md" />
-            <Badge intent="neutral" counter count={128} max={99} />
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Counter on icon</p>
-          <div className="relative inline-flex">
-            <Bell aria-hidden size={24} className="text-icon-base" />
-            <Badge
-              counter
-              count={5}
-              appearance="emphasis"
-              intent="danger"
-              size="sm"
-              className="absolute -top-1 -end-1"
-              aria-label="5 notifications"
-            />
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-[16px]">
+      <Badge intent="danger" counter count={5} />
+      <Badge intent="neutral" counter count={128} max={99} />
+      <Badge count={7} appearance="emphasis" intent="danger" size="sm" />
     </div>
   );
 }
 
-export function BadgeSizesDemo() {
+export function BadgeCounterOnIconDemo() {
   return (
-    <div className="flex flex-wrap items-end gap-[12px]">
-      <Badge appearance="outline" intent="info" size="sm">
-        sm
-      </Badge>
-      <Badge appearance="outline" intent="info" size="md">
-        md
-      </Badge>
+    <div className="relative inline-flex">
+      <Button
+        iconOnly
+        intent="secondary"
+        appearance="transparent"
+        size="md"
+        aria-label="5 notifications"
+      >
+        <Bell aria-hidden size={20} weight="regular" />
+      </Button>
+      <Badge
+        counter
+        count={5}
+        appearance="emphasis"
+        intent="danger"
+        size="sm"
+        className="absolute -top-0.5 -end-0.5"
+        aria-hidden
+      />
     </div>
   );
 }
 
 export function BadgeStatusDotsDemo() {
-  const intents = [
-    'neutral',
-    'info',
-    'positive',
-    'cautious',
-    'warning',
-    'danger',
-    'magenta',
-    'brand',
-  ] as const;
-
   return (
     <div className="flex flex-wrap items-center gap-[10px]">
-      {intents.map((intent) => (
-        <Badge
-          key={intent}
-          appearance="emphasis"
-          intent={intent}
-          size="xs"
-          aria-label={`${intent} status`}
-        />
-      ))}
+      <Badge appearance="emphasis" intent="positive" size="xs" aria-label="Online" />
+      <Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
+      <Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
+      <Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
     </div>
   );
 }
@@ -1263,6 +1251,7 @@ export function TextAreaUsageDemo() {
     <div className="w-[360px]">
       <TextArea
         label="Message"
+        isOptional
         placeholder="Tell us how we can help"
         description="Helper text"
         maxLength={280}
@@ -1293,9 +1282,44 @@ export function TextAreaValidationDemo() {
   );
 }
 
+export function DateFieldUsageDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField
+          label="Appointment date"
+          isOptional
+          description="Type a date segment by segment."
+        />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldAppearancesDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="grid gap-4 md:grid-cols-2">
+        <DateField label="Default" />
+        <DateField appearance="outline" label="Outline" />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DateFieldValidationDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-[320px]">
+        <DateField label="Service date" isInvalid errorMessage="Enter a valid service date." />
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
 export function PasswordInputUsageDemo() {
   return (
-    <div className="w-[360px]">
+    <div className="w-[320px]">
       <PasswordInput
         label="Password"
         placeholder="Enter a password"
@@ -1305,14 +1329,50 @@ export function PasswordInputUsageDemo() {
   );
 }
 
+export function PasswordInputAppearancesDemo() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <PasswordInput label="Default" placeholder="Enter a password" />
+      <PasswordInput appearance="outline" label="Outline" placeholder="Enter a password" />
+    </div>
+  );
+}
+
 export function PasswordInputRequirementsDemo() {
   return (
-    <div className="w-[360px]">
+    <div className="w-[320px]">
       <PasswordInput
         label="Create password"
         placeholder="Enter a password"
         requirements
         showRequirementsWhenEmpty
+      />
+    </div>
+  );
+}
+
+export function PasswordInputMatchDemo() {
+  return (
+    <div className="w-[320px]">
+      <PasswordInput
+        label="Confirm password"
+        defaultValue="SecretPass1!"
+        feedbackMessage="Password match"
+        feedbackTone="success"
+        isSuccess
+      />
+    </div>
+  );
+}
+
+export function PasswordInputValidationDemo() {
+  return (
+    <div className="w-[320px]">
+      <PasswordInput
+        label="Password"
+        defaultValue="secret"
+        isInvalid
+        errorMessage="This field needs attention."
       />
     </div>
   );
@@ -1337,9 +1397,84 @@ const ACCORDION_ITEMS = [
   },
 ] as const;
 
+const ACCORDION_RTL_ITEMS = [
+  {
+    id: 'overview',
+    label: 'ޚުލާޞާ',
+    content:
+      'ބަދަލެއް ގެނައުމުގެ ކުރިން، ހުއްދައިގެ ސްޓޭޓަސް، ހުށަހެޅި ތާރީޚު، އަދި މައްސަލަ ހަވާލުކުރެވިފައިވާ ރިވިއުވަރ ޗެކްކުރައްވާ.',
+  },
+  {
+    id: 'documents',
+    label: 'ލިޔެކިޔުންތައް',
+    content:
+      'ކާކުކަން އަންގައިދޭ ލިޔުމާއި، އެޑްރެސް އަންގައިދޭ ލިޔުން، އަދި ފައިސާ ދެއްކިކަމުގެ ރަސީދު ފަދަ ގުޅޭ ލިޔެކިޔުންތައް އަޕްލޯޑްކުރައްވާ.',
+  },
+  {
+    id: 'history',
+    label: 'ހިސްޓްރީ',
+    content:
+      'މި އެޕްލިކޭޝަނާ ގުޅިގެން ރެކޯޑުކުރެވިފައިވާ ކޮންމެ އަޕްޑޭޓަކާއި، ކޮމެންޓެއް އަދި ސްޓޭޓަސްއަށް އައިސްފައިވާ ބަދަލުތައް ބައްލަވާލައްވާ.',
+  },
+] as const;
+
+const ACCORDION_LTR_ITEMS = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    content:
+      'Review the permit status, submission date, and assigned reviewer before making changes.',
+  },
+  {
+    id: 'documents',
+    label: 'Documents',
+    content:
+      'Upload supporting files such as identification, proof of address, and payment receipts.',
+  },
+  {
+    id: 'history',
+    label: 'History',
+    content: 'Track every update, comment, and status change recorded for this application.',
+  },
+] as const;
+
+export function AccordionRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+
+  return (
+    <DocsPreview
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
+        <div
+          className="w-full max-w-[420px] min-w-0"
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+        >
+          <Accordion
+            key={language}
+            size="lg"
+            alignment="left"
+            defaultExpandedKeys={['overview']}
+            items={isDhivehi ? ACCORDION_RTL_ITEMS : ACCORDION_LTR_ITEMS}
+          />
+        </div>
+      </I18nProvider>
+    </DocsPreview>
+  );
+}
+
 export function AccordionUsageDemo() {
   return (
-    <div className="w-full max-w-[480px]">
+    <div className="mx-auto w-full max-w-[640px]">
       <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
     </div>
   );
@@ -1347,17 +1482,17 @@ export function AccordionUsageDemo() {
 
 export function AccordionVariantsDemo() {
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Single expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Single expanded</span>
           <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
         </div>
       </div>
 
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Multiple expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Multiple expanded</span>
           <Accordion
             allowsMultipleExpanded
             defaultExpandedKeys={['overview', 'documents']}
@@ -1365,6 +1500,44 @@ export function AccordionVariantsDemo() {
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+export function AccordionControlledDemo() {
+  const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set(['overview']));
+  return (
+    <div className="mx-auto w-full max-w-[640px]">
+      <Accordion
+        items={ACCORDION_ITEMS}
+        expandedKeys={expandedKeys}
+        onExpandedChange={setExpandedKeys}
+      />
+      <output className="mt-4 block type-body-sm-regular" aria-live="polite">
+        Open sections: {Array.from(expandedKeys).join(', ') || 'none'}
+      </output>
+    </div>
+  );
+}
+
+export function AccordionAppearanceDemo() {
+  return (
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
+      {(
+        [
+          { label: 'Medium', size: 'md' },
+          { label: 'Large', size: 'lg' },
+          { label: 'Trailing indicator', alignment: 'left' },
+          { label: 'Leading indicator', alignment: 'right' },
+          { label: 'Default inset', flushed: false },
+          { label: 'Flushed', flushed: true },
+        ] as const
+      ).map(({ label, ...props }) => (
+        <div key={label} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
+          <span className="mb-3 block type-body-sm-medium">{label}</span>
+          <Accordion {...props} items={ACCORDION_ITEMS} defaultExpandedKeys={['overview']} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -1511,24 +1684,91 @@ export function CardUsageDemo() {
   );
 }
 
-export function CardVariantsDemo() {
+export function CardElevationsDemo() {
+  const text = useCardDocsText();
+  const elevations = ['none', 'xs', 'sm', 'md', 'lg'] as const;
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {elevations.map((elevation) => (
+        <Card key={elevation} elevation={elevation} spacing="sm">
+          <Card.Header>
+            <Card.Title>{elevation === 'xs' ? text.defaultElevation : elevation}</Card.Title>
+          </Card.Header>
+          <Card.Content>{elevation}</Card.Content>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+export function CardSpacingDemo() {
+  const text = useCardDocsText();
+  const spacings = ['sm', 'md', 'lg', 'xl'] as const;
+  const [spacing, setSpacing] = useState<(typeof spacings)[number]>('md');
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div
+        className="flex flex-wrap justify-center gap-1"
+        role="group"
+        aria-label={text.spacingToggleLabel}
+      >
+        {spacings.map((value) => {
+          const selected = spacing === value;
+
+          return (
+            <Button
+              key={value}
+              size="sm"
+              intent={selected ? 'primary' : 'secondary'}
+              appearance={selected ? 'fill' : 'transparent'}
+              aria-pressed={selected}
+              onPress={() => setSpacing(value)}
+            >
+              {value === 'md' ? text.defaultElevation : value}
+            </Button>
+          );
+        })}
+      </div>
+      <Card className="w-full max-w-md" spacing={spacing} elevation="xs">
+        <Card.Header>
+          <Card.Title>{text.permitApplication}</Card.Title>
+          <Card.Description>{text.requiredDocuments}</Card.Description>
+        </Card.Header>
+        <Card.Content>{text.reviewMessage}</Card.Content>
+        <Card.Footer>
+          <Button size="sm">{text.continue}</Button>
+        </Card.Footer>
+      </Card>
+    </div>
+  );
+}
+
+export function CardFormDemo() {
   const text = useCardDocsText();
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <Card elevation="none" spacing="sm">
-        <Card.Header>
-          <Card.Title>{text.borderOnly}</Card.Title>
-        </Card.Header>
-        <Card.Content>{text.noShadowElevation}</Card.Content>
-      </Card>
-      <Card elevation="lg" spacing="sm" interactive>
-        <Card.Header>
-          <Card.Title>{text.interactive}</Card.Title>
-        </Card.Header>
-        <Card.Content>{text.hoverFeedback}</Card.Content>
-      </Card>
-    </div>
+    <Card className="w-full max-w-md">
+      <Card.Header>
+        <Card.Title>{text.contactTitle}</Card.Title>
+        <Card.Description>{text.contactDescription}</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <div className="flex flex-col gap-3">
+          <Input
+            label={text.emailLabel}
+            placeholder={text.emailPlaceholder}
+            defaultValue="aisha.mohamed@example.com"
+          />
+          <Input label={text.phoneLabel} placeholder={text.phonePlaceholder} />
+          <TextArea label={text.notesLabel} placeholder={text.notesPlaceholder} rows={3} />
+        </div>
+      </Card.Content>
+      <Card.Footer>
+        <Button size="sm">{text.save}</Button>
+      </Card.Footer>
+    </Card>
   );
 }
 
@@ -1559,6 +1799,138 @@ export function AlertVariantsDemo() {
         <Alert.Description>Check the required fields and try again.</Alert.Description>
         <Alert.CloseButton />
       </Alert>
+    </div>
+  );
+}
+
+export function ModalUsageDemo() {
+  return (
+    <div className="flex min-h-[180px] items-center justify-center">
+      <Modal.Trigger>
+        <Button>Open modal</Button>
+        <Modal>
+          <Modal.Header>
+            <Modal.Title>Edit profile</Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Content>
+            <p>Update your profile details and save when done.</p>
+          </Modal.Content>
+          <Modal.Footer>
+            <Button slot="close" intent="secondary" appearance="transparent">
+              Cancel
+            </Button>
+            <Button slot="close">Save changes</Button>
+          </Modal.Footer>
+        </Modal>
+      </Modal.Trigger>
+    </div>
+  );
+}
+
+const MODAL_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', 'full'] as const;
+
+export function ModalSizesDemo() {
+  const [activeSize, setActiveSize] = useState<(typeof MODAL_SIZES)[number] | null>(null);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-3">
+        {MODAL_SIZES.map((size) => (
+          <Button
+            key={size}
+            intent="secondary"
+            appearance="transparent"
+            onPress={() => setActiveSize(size)}
+          >
+            Open {size.toUpperCase()}
+          </Button>
+        ))}
+      </div>
+
+      <Modal
+        size={activeSize ?? 'md'}
+        isOpen={activeSize !== null}
+        onOpenChange={(isOpen) => setActiveSize(isOpen ? activeSize : null)}
+      >
+        <Modal.Header>
+          <Modal.Title>{(activeSize ?? 'md').toUpperCase()} modal</Modal.Title>
+          {activeSize !== 'xs' ? (
+            <Modal.Description>
+              Width scales with `size`. Confirmation dialogs use `xs` without a description.
+            </Modal.Description>
+          ) : null}
+          <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Content>
+          <p>
+            {activeSize === 'xs'
+              ? 'Extra small modals are used for action confirmations such as delete.'
+              : 'Content can grow up to 90dvh before the panel scrolls.'}
+          </p>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button onPress={() => setActiveSize(null)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+}
+
+export function ModalDismissDemo() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Modal.Trigger>
+        <Button intent="danger">Open locked modal</Button>
+        <Modal isDismissable={false} isKeyboardDismissDisabled>
+          <Modal.Header>
+            <Modal.Title>Confirm destructive action</Modal.Title>
+          </Modal.Header>
+          <Modal.Content>
+            <p>Outside click and Escape are disabled. Choose an explicit action.</p>
+          </Modal.Content>
+          <Modal.Footer>
+            <Button slot="close" intent="secondary" appearance="transparent">
+              Cancel
+            </Button>
+            <Button slot="close" intent="danger">
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </Modal.Trigger>
+    </div>
+  );
+}
+
+export function ModalFooterDemo() {
+  return (
+    <div className="flex min-h-[180px] items-center justify-center">
+      <Modal.Trigger>
+        <Button>Open footer actions</Button>
+        <Modal size="lg">
+          <Modal.Header>
+            <Modal.Title>Edit profile</Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Content>
+            <p>Start-edge and end-edge actions sit on opposite sides of the footer.</p>
+          </Modal.Content>
+          <Modal.Footer>
+            <div className="flex gap-2">
+              <Button slot="close" intent="secondary" appearance="transparent">
+                View history
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button slot="close" intent="secondary" appearance="transparent">
+                Cancel
+              </Button>
+              <Button slot="close">Save changes</Button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+      </Modal.Trigger>
     </div>
   );
 }

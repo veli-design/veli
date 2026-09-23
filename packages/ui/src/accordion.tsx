@@ -20,16 +20,16 @@ import { twMerge } from 'tailwind-merge';
 
 const accordionVariants = cva('w-full font-sans antialiased');
 
-const accordionItemVariants = cva('last:[&_[data-accordion-header]]:border-b-0');
-
-const accordionHeaderWrapperVariants = cva('border-b border-base-subtle pb-0.5');
+const accordionItemVariants = cva(
+  'relative pb-0.5 pt-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:translate-y-1/2 after:border-b after:border-base-subtle',
+);
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-2 rounded-xl text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {
-        md: 'py-3 type-body-sm-medium',
+        md: 'py-2.5 type-body-sm-medium',
         lg: 'py-4 type-body-md-medium',
       },
       alignment: {
@@ -37,10 +37,11 @@ const accordionTriggerVariants = cva(
         right: 'justify-start text-start',
       },
       flushed: {
-        true: 'px-1.5',
+        true: 'ps-0 pe-1.5',
         false: 'px-4',
       },
     },
+    compoundVariants: [{ alignment: 'right', flushed: true, className: 'ps-1.5' }],
     defaultVariants: {
       size: 'md',
       alignment: 'left',
@@ -54,12 +55,12 @@ const AccordionAlignmentContext = React.createContext<'left' | 'right'>('left');
 const AccordionFlushedContext = React.createContext(false);
 
 const accordionChevronWrapperVariants = cva(
-  'inline-flex shrink-0 transition-transform duration-normal ease-in-out',
+  'inline-flex size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-in-out',
   {
     variants: {
       alignment: {
         left: '',
-        right: 'p-1',
+        right: '',
       },
       isExpanded: {
         true: '',
@@ -68,6 +69,7 @@ const accordionChevronWrapperVariants = cva(
     },
     compoundVariants: [
       { alignment: 'left', isExpanded: true, className: '-rotate-180' },
+      { alignment: 'right', isExpanded: false, className: 'rtl:rotate-180' },
       { alignment: 'right', isExpanded: true, className: 'rotate-90' },
     ],
     defaultVariants: {
@@ -77,61 +79,53 @@ const accordionChevronWrapperVariants = cva(
   },
 );
 
-const accordionChevronIconVariants = cva('text-icon-base', {
-  variants: {
-    isDisabled: {
-      true: 'text-icon-disabled',
-      false: '',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
 const accordionPanelVariants = cva(
   'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height] motion-safe:duration-normal motion-safe:ease-in-out',
 );
 
-const accordionPanelContentVariants = cva('pb-4 pt-1 text-base-default', {
-  variants: {
-    size: {
-      md: 'type-body-sm-regular',
-      lg: 'type-body-md-regular',
+const accordionPanelContentVariants = cva(
+  'pb-4.5 pt-0.5 text-start text-base-default [overflow-wrap:anywhere]',
+  {
+    variants: {
+      size: {
+        md: 'type-body-sm-regular',
+        lg: 'type-body-md-regular',
+      },
+      flushed: {
+        true: '',
+        false: '',
+      },
     },
-    flushed: {
-      true: 'px-1.5',
-      false: 'px-4',
+    defaultVariants: {
+      size: 'md',
+      flushed: false,
     },
   },
-  defaultVariants: {
-    size: 'md',
-    flushed: false,
-  },
-});
+);
 
 const accordionPanelIndentVariants = cva('', {
   variants: {
-    alignment: {
-      left: '',
-      right: 'pl-8',
-    },
+    alignment: { left: 'pe-10.5', right: 'pe-5.5' },
+    flushed: { true: '', false: '' },
   },
-  defaultVariants: {
-    alignment: 'left',
-  },
+  compoundVariants: [
+    { alignment: 'left', flushed: false, className: 'ps-5.5' },
+    { alignment: 'left', flushed: true, className: 'ps-1.5' },
+    { alignment: 'right', flushed: false, className: 'ps-10.5' },
+    { alignment: 'right', flushed: true, className: 'ps-8' },
+  ],
+  defaultVariants: { alignment: 'left', flushed: false },
 });
 
 export type AccordionItemData = {
   id: string | number;
   label: React.ReactNode;
   content: React.ReactNode;
-  isDisabled?: boolean;
 };
 
 export interface AccordionProps
   extends
-    Omit<AriaDisclosureGroupProps, 'children' | 'className'>,
+    Omit<AriaDisclosureGroupProps, 'children' | 'className' | 'isDisabled'>,
     VariantProps<typeof accordionTriggerVariants> {
   items?: readonly AccordionItemData[];
   children?: React.ReactNode;
@@ -141,7 +135,7 @@ export interface AccordionProps
   panelClassName?: string;
 }
 
-export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className'> {
+export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className' | 'isDisabled'> {
   className?: string;
 }
 
@@ -165,7 +159,12 @@ export interface AccordionPanelProps
 }
 
 export function AccordionItem({ className, ...props }: AccordionItemProps) {
-  return <AriaDisclosure {...props} className={twMerge(accordionItemVariants(), className)} />;
+  const disclosureProps = { ...props } as AriaDisclosureProps;
+  delete disclosureProps.isDisabled;
+
+  return (
+    <AriaDisclosure {...disclosureProps} className={twMerge(accordionItemVariants(), className)} />
+  );
 }
 
 export function AccordionHeader({
@@ -189,10 +188,7 @@ export function AccordionHeader({
   const isExpanded = state?.isExpanded ?? false;
 
   return (
-    <div
-      data-accordion-header
-      className={twMerge(accordionHeaderWrapperVariants(), isExpanded && 'border-b-0 pb-0')}
-    >
+    <div data-accordion-header>
       <Heading {...props} level={level} className="m-0">
         <AriaButton
           slot="trigger"
@@ -205,47 +201,31 @@ export function AccordionHeader({
             className,
           )}
         >
-          {({ isDisabled }) =>
-            resolvedAlignment === 'right' ? (
-              <>
-                {icon ?? (
-                  <span
-                    className={accordionChevronWrapperVariants({
-                      alignment: resolvedAlignment,
-                      isExpanded,
-                    })}
-                  >
-                    <CaretRight
-                      aria-hidden
-                      size={16}
-                      weight="regular"
-                      className={accordionChevronIconVariants({ isDisabled })}
-                    />
-                  </span>
+          <span
+            aria-hidden
+            className={twMerge(
+              'inline-flex h-6 w-5 shrink-0 items-center justify-center text-icon-base',
+              resolvedAlignment === 'left' && 'order-1',
+            )}
+          >
+            {icon ?? (
+              <span
+                className={accordionChevronWrapperVariants({
+                  alignment: resolvedAlignment,
+                  isExpanded,
+                })}
+              >
+                {resolvedAlignment === 'right' ? (
+                  <CaretRight aria-hidden size={16} weight="regular" />
+                ) : (
+                  <CaretDown aria-hidden size={16} weight="regular" />
                 )}
-                <span className="min-w-0 flex-1 text-start">{children}</span>
-              </>
-            ) : (
-              <>
-                <span className="min-w-0 flex-1">{children}</span>
-                {icon ?? (
-                  <span
-                    className={accordionChevronWrapperVariants({
-                      alignment: resolvedAlignment,
-                      isExpanded,
-                    })}
-                  >
-                    <CaretDown
-                      aria-hidden
-                      size={16}
-                      weight="regular"
-                      className={accordionChevronIconVariants({ isDisabled })}
-                    />
-                  </span>
-                )}
-              </>
-            )
-          }
+              </span>
+            )}
+          </span>
+          <span className="min-w-0 flex-1 px-1.5 text-start [overflow-wrap:anywhere]">
+            {children}
+          </span>
         </AriaButton>
       </Heading>
     </div>
@@ -279,7 +259,12 @@ export function AccordionPanel({
           contentClassName,
         )}
       >
-        <div className={accordionPanelIndentVariants({ alignment: resolvedAlignment })}>
+        <div
+          className={accordionPanelIndentVariants({
+            alignment: resolvedAlignment,
+            flushed: resolvedFlushed,
+          })}
+        >
           {children}
         </div>
       </div>
@@ -299,19 +284,17 @@ export function Accordion({
   flushed = false,
   ...props
 }: AccordionProps) {
+  const groupProps = { ...props } as AriaDisclosureGroupProps;
+  delete groupProps.isDisabled;
+
   return (
     <AccordionSizeContext.Provider value={size ?? 'md'}>
       <AccordionAlignmentContext.Provider value={alignment ?? 'left'}>
         <AccordionFlushedContext.Provider value={flushed ?? false}>
-          <AriaDisclosureGroup {...props} className={twMerge(accordionVariants(), className)}>
+          <AriaDisclosureGroup {...groupProps} className={twMerge(accordionVariants(), className)}>
             {items
               ? items.map((item) => (
-                  <AccordionItem
-                    key={item.id}
-                    id={item.id}
-                    isDisabled={item.isDisabled}
-                    className={itemClassName}
-                  >
+                  <AccordionItem key={item.id} id={item.id} className={itemClassName}>
                     <AccordionHeader
                       size={size}
                       alignment={alignment}

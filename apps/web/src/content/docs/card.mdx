@@ -1,19 +1,23 @@
 ---
 title: Card
-description: Compound surface container for grouped content with optional header, body, and footer slots.
+description: Raised surface for grouping related content with optional header, body, and footer slots.
 ---
 
-import { CardUsageDemo, CardVariantsDemo } from '../../components/DocsExamples';
+import {
+  CardUsageDemo,
+  CardElevationsDemo,
+  CardSpacingDemo,
+  CardFormDemo,
+} from '../../components/DocsExamples';
 
 # Card
 
-The Card component groups related content on a raised surface. Use the compound API for titles, descriptions, body copy, and footer actions.
+Use Card to group related content on a raised surface: summaries, application status, or short forms. Compose with `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, and `Card.Footer`. Prefer [Alert](/docs/alert/) for page-level status banners and [Modal](/docs/modal/) for focused dialogs.
 
 ## Import
 
 ```tsx
 import { Card } from '@tradenetcorp/veli-ui/card';
-import { Button } from '@tradenetcorp/veli-ui/button';
 ```
 
 ## Usage
@@ -28,28 +32,132 @@ import { Button } from '@tradenetcorp/veli-ui/button';
     <Card.Title>Permit application</Card.Title>
     <Card.Description>Track progress and required documents.</Card.Description>
   </Card.Header>
-  <Card.Content>Your application is under review.</Card.Content>
+  <Card.Content>
+    Your application is under review. We will notify you when a decision is ready.
+  </Card.Content>
   <Card.Footer>
+    <Button intent="secondary" appearance="transparent" size="sm">
+      View details
+    </Button>
     <Button size="sm">Continue</Button>
   </Card.Footer>
 </Card>
 ```
 
-## Variations
+Header, description, content, and footer are optional. Pass `action` on `Card.Header` for a trailing control.
+
+## Elevations
+
+Elevation sets the shadow. `interactive` adds hover and press feedback.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <CardVariantsDemo client:visible />
+  <CardElevationsDemo client:visible />
 </div>
+
+```tsx
+<Card elevation="none">…</Card>
+<Card elevation="xs">…</Card>
+<Card elevation="sm">…</Card>
+<Card elevation="md">…</Card>
+<Card elevation="lg">…</Card>
+<Card interactive>…</Card>
+```
+
+## Spacing
+
+Spacing controls padding and the gap between header, content, and footer.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardSpacingDemo client:visible />
+</div>
+
+```tsx
+<Card spacing="sm">…</Card>
+<Card spacing="md">…</Card>
+<Card spacing="lg">…</Card>
+<Card spacing="xl">…</Card>
+```
+
+## With form fields
+
+Use Card to group related inputs for a short form.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <CardFormDemo client:visible />
+</div>
+
+```tsx
+<Card>
+  <Card.Header>
+    <Card.Title>Contact details</Card.Title>
+    <Card.Description>How we reach you about this application.</Card.Description>
+  </Card.Header>
+  <Card.Content>
+    <Input label="Email" placeholder="name@example.com" />
+    <Input label="Phone" placeholder="+960 7XX XXXX" />
+    <TextArea label="Notes" placeholder="Anything the reviewer should know" rows={3} />
+  </Card.Content>
+  <Card.Footer>
+    <Button size="sm">Save</Button>
+  </Card.Footer>
+</Card>
+```
 
 ## API Reference
 
-### `Card`
+### Card
 
-| Prop          | Type                                     | Default | Description                            |
-| :------------ | :--------------------------------------- | :------ | :------------------------------------- |
-| `elevation`   | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg'` | `'xs'`  | Shadow depth from Veli token scale.    |
-| `spacing`     | `'sm' \| 'md' \| 'lg' \| 'xl'`           | `'md'`  | Padding and gap between card sections. |
-| `interactive` | `boolean`                                | `false` | Hover and pressed surface feedback.    |
-| `className`   | `string`                                 | -       | Layout-only class override.            |
+| Prop          | Type                                     | Default | Description                         |
+| :------------ | :--------------------------------------- | :------ | :---------------------------------- |
+| `elevation`   | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg'` | `'xs'`  | Shadow depth.                       |
+| `spacing`     | `'sm' \| 'md' \| 'lg' \| 'xl'`           | `'md'`  | Padding and gap between sections.   |
+| `interactive` | `boolean`                                | `false` | Hover and pressed surface feedback. |
+| `className`   | `string`                                 | -       | Layout class on the root.           |
 
-Subcomponents: `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, `Card.Footer`.
+Native `div` attributes pass through to the root.
+
+### Card.Header
+
+| Prop        | Type        | Default | Description                            |
+| :---------- | :---------- | :------ | :------------------------------------- |
+| `children`  | `ReactNode` | -       | Title and optional `Card.Description`. |
+| `action`    | `ReactNode` | -       | Trailing control opposite the title.   |
+| `className` | `string`    | -       | Layout class on the header.            |
+
+### Card.Title
+
+| Prop        | Type        | Default | Description           |
+| :---------- | :---------- | :------ | :-------------------- |
+| `children`  | `ReactNode` | -       | Title content (`h3`). |
+| `className` | `string`    | -       | Layout class.         |
+
+### Card.Description
+
+| Prop        | Type        | Default | Description                          |
+| :---------- | :---------- | :------ | :----------------------------------- |
+| `children`  | `ReactNode` | -       | Supporting copy; omitted when empty. |
+| `className` | `string`    | -       | Layout class.                        |
+
+### Card.Content
+
+| Prop        | Type        | Default | Description   |
+| :---------- | :---------- | :------ | :------------ |
+| `children`  | `ReactNode` | -       | Main body.    |
+| `className` | `string`    | -       | Layout class. |
+
+### Card.Footer
+
+| Prop        | Type        | Default | Description                     |
+| :---------- | :---------- | :------ | :------------------------------ |
+| `children`  | `ReactNode` | -       | Action row; omitted when empty. |
+| `className` | `string`    | -       | Layout class.                   |
+
+## Accessibility
+
+- `Card.Title` is an `<h3>`. Match it to the page outline, or replace the title node when you need a different heading level.
+- Card is a plain `div`. `interactive` only styles hover and press. If the whole card is clickable, wrap it in a link or button, or add `role`, `tabIndex`, and keyboard handlers yourself.
+- Prefer footer or header actions over making the card surface the only control.
+
+## RTL and Language
+
+On `lang="dv"` pages, title and body text use the Dhivehi typefaces from the design tokens. In RTL, the header action and footer button row follow `dir`.

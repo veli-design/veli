@@ -29,3 +29,11 @@ Thumbs.db
 .idea
 *.swp
 *.swo
+
+# Local editor and browser-agent artifacts
+.cursor/settings.json
+.playwright-cli/
+.playwright-mcp/
+
+# Local temporary router playgrounds (do not commit)
+playground/
