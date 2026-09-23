@@ -21,7 +21,7 @@ import { twMerge } from 'tailwind-merge';
 const accordionVariants = cva('w-full font-sans antialiased');
 
 const accordionItemVariants = cva(
-  'relative pb-[3px] pt-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-base-subtle',
+  'relative pb-0.5 pt-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:translate-y-1/2 after:border-b after:border-base-subtle',
 );
 
 const accordionTriggerVariants = cva(
