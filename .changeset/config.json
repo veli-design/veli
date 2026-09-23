@@ -7,12 +7,7 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@tradenetcorp/veli-web",
-    "@tradenetcorp/veli-storybook",
-    "@tradenetcorp/veli-blocks",
-    "@tradenetcorp/veli-blocks"
-  ],
+  "ignore": ["@tradenetcorp/veli-web", "@tradenetcorp/veli-storybook", "@tradenetcorp/veli-blocks"],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
   }
