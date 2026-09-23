@@ -33,24 +33,33 @@ cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),
   resolve(target, 'public/fonts/MV_Faseyha_Regular.ttf'),
 );
-writeFileSync(
-  resolve(target, '.npmrc'),
-  '@tradenetcorp:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n',
-);
 if (process.argv.includes('--prepare')) {
   console.log(target);
   process.exit(0);
 }
+/** @type {NodeJS.ProcessEnv} */
 const env = {
   ...process.env,
   NODE_AUTH_TOKEN: process.env.NODE_AUTH_TOKEN || process.env.GITHUB_TOKEN,
   NEXT_TELEMETRY_DISABLED: '1',
+  NPM_CONFIG_USERCONFIG: undefined,
 };
 if (!env.NODE_AUTH_TOKEN)
   throw new Error(`Set NODE_AUTH_TOKEN with package-read access. Fixture retained at ${target}`);
+const npmConfigDirectory = mkdtempSync(resolve(tmpdir(), 'veli-blocks-npmrc-'));
+const npmConfigPath = resolve(npmConfigDirectory, 'npmrc');
+// pnpm intentionally ignores environment expansion in a project .npmrc. A temporary
+// user-level config keeps the token out of the fixture while allowing CI authentication.
+writeFileSync(
+  npmConfigPath,
+  '@tradenetcorp:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n',
+  { mode: 0o600 },
+);
+env.NPM_CONFIG_USERCONFIG = npmConfigPath;
 console.log(`Isolated consumer: ${target}`);
 for (const args of [
-  ['pnpm', 'install', '--frozen-lockfile'],
+  // The fixture is intentionally materialized in a temporary directory and has no lockfile.
+  ['pnpm', 'install', '--no-frozen-lockfile'],
   ['pnpm', 'build'],
   ['pnpm', 'exec', 'playwright', 'install', 'chromium'],
   ['pnpm', 'test'],
