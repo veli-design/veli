@@ -2073,6 +2073,14 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   margin-bottom: 0;
 }
 
+.docs-prose [data-accordion-header] :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.docs-prose [data-accordion-header] button {
+  font: revert-layer;
+}
+
 .docs-prose table {
   margin-bottom: 32px;
 }
