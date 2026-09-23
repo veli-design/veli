@@ -10,7 +10,9 @@ export function ApplicationFooter() {
       endLabel="Policies"
       startLinks={[{ id: 'about', label: 'About', href: '/about' }]}
       endLinks={[{ id: 'privacy', label: 'Privacy', href: '/privacy' }]}
-      renderLink={(props) => <NextLink {...props} href={props.href!} />}
+      renderLink={(props) =>
+        'href' in props ? <NextLink {...props} href={props.href!} /> : <span {...props} />
+      }
     />
   );
 }

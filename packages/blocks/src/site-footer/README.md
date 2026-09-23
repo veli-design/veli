@@ -26,11 +26,11 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `startLinks` and `endLinks` are arrays of `{ id, label, href }`. IDs must be stable and unique within each group. Supply translated labels and fully resolved application URLs. Empty groups are omitted.
 
-`startLabel` and `endLabel` optionally name the link lists. Translate these labels too. `className` customizes the root footer. `renderLink` has the same type as Veli Link's `render` prop; forward all supplied props, including the ref, to your router link. Ordinary anchors work without an adapter.
+`startLabel` and `endLabel` optionally name the link groups. Translate these labels too. `className` customizes the root footer; `startGroupClassName` and `endGroupClassName` adjust one group when the application needs a different gap or alignment. `renderLink` has the same type as Veli Link's `render` prop; forward all supplied props, including the ref, to your router link. Ordinary anchors work without an adapter.
 
 ## Accessibility and responsive behavior
 
-Use a single page-level footer landmark. Preserve link names, keyboard focus indicators, DOM reading order, and the Veli Link integration when adapting the block. Link groups wrap at narrow widths and use logical reading order for English/LTR and Dhivehi/RTL. Do not visually reorder links independently of their DOM order.
+Use a single page-level footer landmark. Preserve link names, keyboard focus indicators, DOM reading order, and the Veli Link integration when adapting the block. The default compact link rows do not wrap, matching the established footer baseline; choose a wrapping group class only after documenting and approving that accessibility-driven change. Link groups use logical reading order for English/LTR and Dhivehi/RTL. Do not visually reorder links independently of their DOM order.
 
 Validate your own labels, fonts, colors, routes, and surrounding page. The automated fixture covers both directions, light/dark modes, narrow screens, long labels, keyboard focus, hydration, and navigation; it is not a certification of downstream accessibility. Manual screen-reader and device testing remains part of adopting an experimental block.
 

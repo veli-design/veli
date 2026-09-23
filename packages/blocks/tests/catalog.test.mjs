@@ -116,7 +116,7 @@ test('three-way update retains an application customization and upstream fix', (
   try {
     const original = block.files[0].bytes.toString();
     const local = original.replace("className = ''", "className = 'application-footer'");
-    const upstream = original.replace('gap-y-3', 'gap-y-4');
+    const upstream = original.replace('md:gap-14', 'md:gap-16');
     for (const [name, text] of Object.entries({ original, local, upstream }))
       writeFileSync(resolve(dir, name), text);
     const merged = execFileSync(
@@ -131,7 +131,7 @@ test('three-way update retains an application customization and upstream fix', (
       { encoding: 'utf8' },
     );
     assert.ok(merged.includes("className = 'application-footer'"));
-    assert.ok(merged.includes('gap-y-4'));
+    assert.ok(merged.includes('md:gap-16'));
     assert.equal(readFileSync(resolve(dir, 'original'), 'utf8'), original);
   } finally {
     rmSync(dir, { recursive: true, force: true });
