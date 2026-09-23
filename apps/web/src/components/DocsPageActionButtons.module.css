@@ -79,6 +79,7 @@
 .item {
   display: flex;
   flex-direction: column;
+  white-space: normal;
   gap: 6px;
 }
 
