@@ -10,7 +10,7 @@ import {
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Foundations' | 'Components' | 'Blocks' | 'Blocks';
+export type DocsSection = 'Foundations' | 'Components' | 'Blocks';
 
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
