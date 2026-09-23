@@ -4,7 +4,6 @@ import {
   getLocalTimeZone,
   isWeekend,
   parseDate,
-  parseDateTime,
   today,
 } from '@internationalized/date';
 import { I18nProvider } from 'react-aria-components';
@@ -87,39 +86,38 @@ export function CalendarVariantsDemo() {
 export function DatePickerUsageDemo() {
   return (
     <DocsEnGbLocale>
-      <div className="w-[320px]">
+      <div className="w-full min-w-0 max-w-[284px]">
         <DatePicker
           label="Appointment date"
-          description="Choose a date from the field or the calendar."
+          isOptional
+          infoTooltip="Type a date or choose one from the calendar."
+          description="Type a date or choose one from the calendar."
         />
       </div>
     </DocsEnGbLocale>
   );
 }
 
-export function DatePickerVariantsDemo() {
+export function DatePickerAppearancesDemo() {
   return (
     <DocsEnGbLocale>
-      <div className="grid gap-4 md:grid-cols-2">
-        <DatePicker label="Date only" defaultValue={parseDate('2026-04-18')} />
-        <DatePicker
-          label="Date and minute"
-          granularity="minute"
-          defaultValue={parseDateTime('2026-04-18T14:30:00')}
-        />
-        <DatePicker
-          label="Constraints"
-          minValue={now}
-          maxValue={now.add({ months: 1 })}
-          description="Selectable for the next month."
-        />
-        <DatePicker
-          label="Unavailable dates"
-          minValue={now}
-          maxValue={now.add({ months: 1 })}
-          isDateUnavailable={appointmentUnavailable}
-          description="Weekends and blackout dates cannot be chosen."
-        />
+      <div className="flex w-full min-w-0 flex-wrap gap-4">
+        <div className="min-w-0 w-[284px] max-w-full">
+          <DatePicker label="Default" />
+        </div>
+        <div className="min-w-0 w-[284px] max-w-full">
+          <DatePicker appearance="outline" label="Outline" />
+        </div>
+      </div>
+    </DocsEnGbLocale>
+  );
+}
+
+export function DatePickerValidationDemo() {
+  return (
+    <DocsEnGbLocale>
+      <div className="w-full min-w-0 max-w-[284px]">
+        <DatePicker label="Service date" isInvalid errorMessage="Enter a valid service date." />
       </div>
     </DocsEnGbLocale>
   );
