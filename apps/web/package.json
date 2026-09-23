@@ -22,7 +22,9 @@
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@tradenetcorp/veli-blocks": "workspace:*",
+    "@astrojs/markdown-remark": "6.3.11"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

@@ -30,6 +30,7 @@ export default defineConfig({
     rehypePlugins: [rehypeCodeBlocks],
   },
   vite: {
+    ssr: { external: ['@tradenetcorp/veli-blocks/catalog'] },
     plugins: [tailwindcss()],
   },
   output: 'static',

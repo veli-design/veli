@@ -77,6 +77,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.2
         version: 3.12.2
+      '@tradenetcorp/veli-blocks':
+        specifier: workspace:*
+        version: link:../../packages/blocks
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -141,6 +144,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@astrojs/markdown-remark':
+        specifier: 6.3.11
+        version: 6.3.11(supports-color@10.2.2)
       '@astrojs/react':
         specifier: ^4.4.2
         version: 4.4.2(@types/node@24.10.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.94.2)(supports-color@10.2.2)(terser@5.44.1)(yaml@2.9.0)
@@ -150,6 +156,9 @@ importers:
       '@lottiefiles/dotlottie-web':
         specifier: ^0.80.0
         version: 0.80.0
+      '@tradenetcorp/veli-blocks':
+        specifier: workspace:*
+        version: link:../../packages/blocks
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -208,6 +217,34 @@ importers:
       wrangler:
         specifier: ^4.116.0
         version: 4.116.0
+
+  packages/blocks:
+    dependencies:
+      '@tradenetcorp/veli-ui':
+        specifier: workspace:*
+        version: link:../ui
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.4(@types/react@19.2.18)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.8
+      react-aria-components:
+        specifier: ^1.18.0
+        version: 1.18.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.8(react@19.2.8)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/tokens:
     devDependencies:
@@ -2213,6 +2250,7 @@ packages:
       {
         integrity: sha512-M00APgOJfP6xPZ3kAzZAUNATxluFiMU0wD3asp6HQSXDX8qLzSDh/Jmqbo0H7+WcqfpQkN8WYBu3aOzm2y/b4g==,
       }
+    engines: { node: '>=18.17.0', npm: '>=9.5.0' }
 
   '@manypkg/find-root@1.1.0':
     resolution:

@@ -45,3 +45,7 @@ html {
 }
 
 @source "../../../packages/ui";
+
+@source "../../../../packages/blocks/src";
+
+@source "../../../../packages/blocks/src";

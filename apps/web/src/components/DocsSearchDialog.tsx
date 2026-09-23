@@ -103,7 +103,9 @@ function isDocsSearchItem(value: unknown): value is DocsSearchItem {
   return (
     typeof item.id === 'string' &&
     typeof item.href === 'string' &&
-    (item.category === 'Foundations' || item.category === 'Components') &&
+    (item.category === 'Foundations' ||
+      item.category === 'Components' ||
+      item.category === 'Blocks') &&
     (item.kind === 'page' || item.kind === 'section') &&
     typeof item.pageTitle === 'string' &&
     typeof item.title === 'string' &&
