@@ -14,6 +14,10 @@ import {
   archive,
   sha256,
   blockMarkdown,
+  sourceArchive,
+  sourceBundleFiles,
+  blocksCatalog,
+  getBlockVersions,
 } from '../scripts/catalog.mjs';
 
 const block = getBlocks()[0];
@@ -56,6 +60,30 @@ test('archive is deterministic and its entries contain the exact advertised byte
     assert.deepEqual(tar.subarray(offset + 512, offset + 512 + size), file.bytes);
     offset += 512 + Math.ceil(size / 512) * 512;
   }
+});
+
+test('CLI source archive and catalog are deterministic and content-addressed', () => {
+  const zipped = sourceArchive(block, provenance);
+  assert.deepEqual(zipped, sourceArchive(block, provenance));
+  const files = sourceBundleFiles(block, provenance);
+  assert.ok(files.some((file) => file.path === 'manifest.json'));
+  assert.ok(files.some((file) => file.path === 'receipt.json'));
+  for (const file of block.files)
+    assert.ok(files.some((entry) => entry.path === `source/${file.path}`));
+
+  const releases = getBlockVersions(block, provenance);
+  const canonical = sourceArchive(releases[0].block, releases[0].provenance);
+  const catalog = blocksCatalog(provenance);
+  const entry = catalog.blocks.find(({ manifest }) => manifest.id === block.manifest.id);
+  assert.equal(catalog.schemaVersion, 1);
+  assert.equal(entry.versions[0].version, block.manifest.version);
+  assert.equal(entry.versions[0].archiveSha256, sha256(canonical));
+  assert.equal(entry.versions[0].sourceCommit, releases[0].provenance.sourceCommit);
+  const unrelatedDeploy = blocksCatalog({ sourceCommit: 'b'.repeat(40), dirty: false });
+  assert.equal(
+    unrelatedDeploy.blocks[0].versions[0].archiveSha256,
+    entry.versions[0].archiveSha256,
+  );
 });
 
 test('unsafe destinations and missing inventory files are rejected', () => {

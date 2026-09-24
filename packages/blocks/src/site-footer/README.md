@@ -18,7 +18,14 @@ Use Tailwind 4 with your framework's integration. In your global stylesheet:
 @import '@tradenetcorp/veli-ui/tailwind';
 ```
 
-Copy `site-footer.tsx` into `src/components/blocks/site-footer/`. Import it directly from there. Download the complete archive to retain its original source and receipt under `.veli/blocks/site-footer/` before customizing your working copy. Commit the baseline and receipt alongside your adaptation. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.
+Initialize Veli Blocks and add the footer:
+
+```sh
+corepack pnpm dlx @tradenetcorp/veli init
+corepack pnpm dlx @tradenetcorp/veli add site-footer
+```
+
+The CLI copies `site-footer.tsx` into the configured Blocks directory and retains its exact original source and receipt under `.veli/blocks/site-footer/`. Import the editable working copy directly from your application and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.
 
 Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, and `colorScheme="light"`, `"dark"`, or `"system"`. Follow the [provider guide](/docs/provider/) for document direction, theme initialization, and font setup. The footer inherits its language and direction; it does not write document attributes or persist preferences.
 
@@ -36,9 +43,9 @@ Validate your own labels, fonts, colors, routes, and surrounding page. The autom
 
 ## Updating your copy
 
-1. Read the new block changelog and dependency requirements. Updating Veli UI alone does not update this source.
-2. Compare your saved original, customized working file, and the new download. For example, `git diff --no-index .veli/blocks/site-footer/site-footer.tsx src/components/blocks/site-footer/site-footer.tsx` shows local adaptations; compare the same baseline against the new download to see upstream changes.
-3. Apply relevant upstream changes without discarding local adaptations. Run your application's build, interaction, and accessibility checks.
-4. After successful adoption, replace the baseline and receipt with the new originals. Keep customizations only in the working copy.
+1. Run `veli status` and read the new block changelog and dependency requirements. Updating Veli UI alone does not update this source.
+2. Run `veli update site-footer`. The CLI verifies both releases and performs a three-way merge using your saved original, customized working file, and the new canonical source.
+3. Resolve any labelled conflicts, then run `veli update --continue site-footer`; use `--abort` to restore the pre-update working copy.
+4. Run your application's build, interaction, and accessibility checks and commit the updated working copy and baseline together.
 
 Each receipt records the source commit and SHA-256 hashes. Historical source is available at that commit to repository members. A receipt marked `dirty` represents a local preview, not a published release. Report critical composition fixes upstream; consuming teams own applying them.

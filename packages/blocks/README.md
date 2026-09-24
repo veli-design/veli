@@ -1,6 +1,6 @@
 # Veli Blocks
 
-Private authoring workspace for editable React source. Consumers install Veli tokens and primitives, then copy blocks into their application. No blocks npm release, CLI, or third-party registry is required.
+Private authoring workspace for editable React source. Consumers install Veli tokens and primitives, then use the `@tradenetcorp/veli` CLI to copy blocks into their application. Blocks are not published to npm and Veli does not operate a third-party or shadcn-compatible registry.
 
 ## Authoring
 
@@ -12,7 +12,7 @@ Preview canonical source in Astro and Storybook. Never duplicate implementation 
 
 Every source or dependency-contract change needs a block version increase and an entry in its changelog. Identify breaking changes explicitly. CI compares against the pull request base; local authors can run `BLOCKS_BASE_REF=origin/main corepack pnpm --filter @tradenetcorp/veli-blocks build`.
 
-Downloads contain working source plus `.veli/blocks/<id>/` originals and a receipt with source commit and byte hashes. Production builds must use a clean, committed block tree. Local artifacts mark uncommitted block changes as dirty. Source history is retained in Git; the site serves the current revision.
+Veli Web serves a versioned catalog and deterministic source archives. CLI installs contain working source plus `.veli/blocks/<id>/` originals and a receipt with source commit and byte hashes. Production builds must use a clean, committed block tree. Local artifacts mark uncommitted block changes as dirty. Source history is retained in Git so previously released archive URLs remain available.
 
 Use block changelogs, not npm changesets, for this private workspace. Published primitive changes still follow the repository changeset policy.
 
