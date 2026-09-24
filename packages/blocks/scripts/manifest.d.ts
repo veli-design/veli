@@ -37,3 +37,26 @@ export interface BundledFile {
   path: string;
   bytes: Buffer;
 }
+
+export interface CatalogVersion {
+  version: string;
+  sourceCommit: string;
+  archiveUrl: string;
+  archiveSha256: string;
+}
+
+export interface CatalogBlock {
+  manifest: BlockManifest;
+  documentationUrl: string;
+  versions: CatalogVersion[];
+}
+
+export interface BlocksCatalog {
+  schemaVersion: 1;
+  blocks: CatalogBlock[];
+}
+
+export interface VersionedBlock {
+  block: ValidatedBlock;
+  provenance: Provenance;
+}

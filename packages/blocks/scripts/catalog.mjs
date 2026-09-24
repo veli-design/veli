@@ -13,9 +13,12 @@ import ts from 'typescript';
 /** @typedef {import('./manifest.d.ts').DependencyMap} DependencyMap */
 /** @typedef {import('./manifest.d.ts').Provenance} Provenance */
 /** @typedef {import('./manifest.d.ts').ValidatedBlock} ValidatedBlock */
+/** @typedef {import('./manifest.d.ts').BlocksCatalog} BlocksCatalog */
+/** @typedef {import('./manifest.d.ts').VersionedBlock} VersionedBlock */
 
 export const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const sourceRoot = resolve(packageRoot, 'src');
+const repositoryRoot = resolve(packageRoot, '../..');
 /** @param {import('node:crypto').BinaryLike} bytes */
 export const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 /** @param {string} path @returns {unknown} */
@@ -175,6 +178,67 @@ export function getBlocks() {
     .sort((a, b) => a.manifest.id.localeCompare(b.manifest.id));
 }
 
+/** @param {string} revision @param {string} repositoryPath @returns {Buffer} */
+function gitFile(revision, repositoryPath) {
+  return execFileSync('git', ['show', `${revision}:${repositoryPath}`], {
+    cwd: repositoryRoot,
+    maxBuffer: 50 * 1024 * 1024,
+  });
+}
+
+/** @param {string} id @param {string} revision @returns {ValidatedBlock} */
+function blockAtRevision(id, revision) {
+  const root = `packages/blocks/src/${id}`;
+  const manifest = JSON.parse(gitFile(revision, `${root}/manifest.json`).toString('utf8'));
+  validateManifest(manifest);
+  if (manifest.id !== id) fail(`${revision}: directory and block ID differ`);
+  const files = manifest.files.map((path) => {
+    safePath(path);
+    const bytes = gitFile(revision, `${root}/${path}`);
+    return { path, bytes, sha256: sha256(bytes) };
+  });
+  const readme = gitFile(revision, `${root}/README.md`).toString('utf8');
+  const changelog = gitFile(revision, `${root}/CHANGELOG.md`).toString('utf8');
+  if (!changelog.includes(`## ${manifest.version}\n`))
+    fail(`${id}@${manifest.version}: historical changelog entry is missing`);
+  return { manifest, files, readme, changelog };
+}
+
+/**
+ * Return the working-tree release plus every earlier manifest version retained
+ * by Git. Production builds fetch complete history so versioned URLs remain
+ * available without duplicating canonical source in the repository.
+ * @param {ValidatedBlock} current
+ * @param {Provenance} provenance
+ * @returns {VersionedBlock[]}
+ */
+export function getBlockVersions(current, provenance = getProvenance()) {
+  const manifestPath = `packages/blocks/src/${current.manifest.id}/manifest.json`;
+  const revisions = execFileSync('git', ['log', '--format=%H', '--', manifestPath], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+  })
+    .trim()
+    .split('\n')
+    .filter(Boolean);
+  /** @type {VersionedBlock[]} */
+  const versions = [{ block: current, provenance }];
+  const seen = new Set([current.manifest.version]);
+  for (const revision of revisions) {
+    const block = blockAtRevision(current.manifest.id, revision);
+    if (seen.has(block.manifest.version)) continue;
+    seen.add(block.manifest.version);
+    versions.push({ block, provenance: { sourceCommit: revision, dirty: false } });
+  }
+  return versions.sort((a, b) => {
+    const av = a.block.manifest.version.split('.').map(Number);
+    const bv = b.block.manifest.version.split('.').map(Number);
+    for (let index = 0; index < 3; index++)
+      if (av[index] !== bv[index]) return bv[index] - av[index];
+    return 0;
+  });
+}
+
 /** @returns {Provenance} */
 export function getProvenance() {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], {
@@ -219,12 +283,46 @@ export function bundleFiles(block, provenance = getProvenance()) {
   ];
 }
 
-/** Deterministic ustar archive: fixed metadata, exact source bytes, no shell tools. */
-/** @param {ValidatedBlock} block @param {Provenance} [provenance] @returns {Buffer} */
-export function archive(block, provenance = getProvenance()) {
+/**
+ * Canonical, destination-neutral archive consumed by the CLI. The existing
+ * download bundle remains install-ready for people using the website manually.
+ * @param {ValidatedBlock} block
+ * @param {Provenance} [provenance]
+ * @returns {BundledFile[]}
+ */
+export function sourceBundleFiles(block, provenance = getProvenance()) {
+  const receiptFile = bundleFiles(block, provenance).find((file) =>
+    file.path.endsWith('/receipt.json'),
+  );
+  if (!receiptFile) fail(`${block.manifest.id}: generated receipt is missing`);
+  const receipt = JSON.parse(receiptFile.bytes.toString('utf8'));
+  return [
+    ...block.files.map(({ path, bytes }) => ({ path: `source/${path}`, bytes })),
+    {
+      path: 'receipt.json',
+      bytes: Buffer.from(JSON.stringify(receipt, null, 2) + '\n'),
+    },
+    { path: 'README.md', bytes: Buffer.from(block.readme) },
+    { path: 'CHANGELOG.md', bytes: Buffer.from(block.changelog) },
+    {
+      path: 'manifest.json',
+      bytes: Buffer.from(JSON.stringify(block.manifest, null, 2) + '\n'),
+    },
+  ];
+}
+
+/** @param {BundledFile[]} files @returns {Buffer} */
+function tarGzip(files) {
   /** @type {Buffer[]} */
   const parts = [];
-  for (const { path, bytes } of bundleFiles(block, provenance)) {
+  for (const { path, bytes } of files) {
+    if (
+      typeof path !== 'string' ||
+      path.startsWith('/') ||
+      path.includes('\\') ||
+      path.split('/').some((part) => !part || part === '.' || part === '..')
+    )
+      fail(`Unsafe archive path: ${path}`);
     if (Buffer.byteLength(path) > 100) fail(`Archive path too long: ${path}`);
     const header = Buffer.alloc(512);
     header.write(path, 0, 100);
@@ -251,6 +349,39 @@ export function archive(block, provenance = getProvenance()) {
     parts.push(header, bytes, Buffer.alloc((512 - (bytes.length % 512)) % 512));
   }
   return gzipSync(Buffer.concat([...parts, Buffer.alloc(1024)]));
+}
+
+/** Deterministic ustar archive: fixed metadata, exact source bytes, no shell tools. */
+/** @param {ValidatedBlock} block @param {Provenance} [provenance] @returns {Buffer} */
+export function archive(block, provenance = getProvenance()) {
+  return tarGzip(bundleFiles(block, provenance));
+}
+
+/** @param {ValidatedBlock} block @param {Provenance} [provenance] @returns {Buffer} */
+export function sourceArchive(block, provenance = getProvenance()) {
+  return tarGzip(sourceBundleFiles(block, provenance));
+}
+
+/** @param {Provenance} [provenance] @returns {BlocksCatalog} */
+export function blocksCatalog(provenance = getProvenance()) {
+  return {
+    schemaVersion: 1,
+    blocks: getBlocks().map((block) => {
+      return {
+        manifest: block.manifest,
+        documentationUrl: `/blocks/${block.manifest.id}/`,
+        versions: getBlockVersions(block, provenance).map(({ block: versioned, provenance }) => {
+          const bytes = sourceArchive(versioned, provenance);
+          return {
+            version: versioned.manifest.version,
+            sourceCommit: provenance.sourceCommit,
+            archiveUrl: `/api/blocks/v1/${versioned.manifest.id}/${versioned.manifest.version}.tar.gz`,
+            archiveSha256: sha256(bytes),
+          };
+        }),
+      };
+    }),
+  };
 }
 
 /** @param {ValidatedBlock} block @returns {string} */
