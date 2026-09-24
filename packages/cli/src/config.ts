@@ -25,6 +25,8 @@ export function normalizeBlocksDir(cwd: string, input: string): string {
   const normalized = input.replaceAll('\\', '/').replace(/^\.\//, '').replace(/\/$/, '');
   if (!normalized || normalized.startsWith('/') || normalized.split('/').includes('..'))
     throw new Error('Blocks directory must be a project-relative path.');
+  if (normalized === '.veli' || normalized.startsWith('.veli/'))
+    throw new Error('The .veli directory is reserved for Veli configuration and baselines.');
   const resolved = path.resolve(cwd, normalized);
   if (resolved !== cwd && !resolved.startsWith(cwd + path.sep))
     throw new Error('Blocks directory must stay inside the project.');

@@ -17,11 +17,12 @@ catalog, archive, receipt, and individual file hashes before placing editable
 source in an application-selected directory. It retains canonical originals in
 `.veli/blocks/<id>` and uses them as the base for three-way updates.
 
-Interactive developers authenticate through the existing Cloudflare Access
-identity flow using `cloudflared`; the CLI reuses its short-lived token without
-copying it into project configuration. Non-interactive jobs must inject a
-Cloudflare Access service-token pair. Removing the Access gate when Veli becomes
-public does not change the catalog protocol or project format.
+Developers request a time-limited IP grant through MINDCo WFA, then the CLI
+uses ordinary HTTPS requests from that network. It guides them back to WFA if
+the grant expires. Non-interactive jobs can inject a Cloudflare Access
+service-token pair only if DevOps configures a Service Auth policy. Removing
+the Access gate when Veli becomes public does not change the catalog protocol
+or project format.
 
 Updates never silently replace customized source. Clean changes merge into the
 working copy. Conflicts retain the installed baseline and a rollback snapshot

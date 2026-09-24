@@ -35,7 +35,11 @@ export async function dependencyPlan(
   return { missing, incompatible };
 }
 
-export async function installDependencies(cwd: string, packages: string[]): Promise<void> {
+export async function installDependencies(
+  cwd: string,
+  packages: string[],
+  json = false,
+): Promise<void> {
   if (!packages.length) return;
   const detected = await detect({ cwd });
   if (!detected || detected.name === 'deno')
@@ -43,7 +47,10 @@ export async function installDependencies(cwd: string, packages: string[]): Prom
   const command = resolveCommand(detected.agent, 'add', packages);
   if (!command) throw new Error(`Cannot construct an install command for ${detected.name}.`);
   await new Promise<void>((resolve, reject) => {
-    const child = spawn(command.command, command.args, { cwd, stdio: 'inherit' });
+    const child = spawn(command.command, command.args, {
+      cwd,
+      stdio: json ? ['inherit', 'ignore', 'inherit'] : 'inherit',
+    });
     child.once('error', reject);
     child.once('exit', (code) =>
       code === 0 ? resolve() : reject(new Error(`${detected.name} exited with code ${code}.`)),

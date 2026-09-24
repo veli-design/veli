@@ -214,7 +214,7 @@ function blockAtRevision(id, revision) {
  */
 export function getBlockVersions(current, provenance = getProvenance()) {
   const manifestPath = `packages/blocks/src/${current.manifest.id}/manifest.json`;
-  const revisions = execFileSync('git', ['log', '--format=%H', '--', manifestPath], {
+  const revisions = execFileSync('git', ['log', '--reverse', '--format=%H', '--', manifestPath], {
     cwd: repositoryRoot,
     encoding: 'utf8',
   })
@@ -222,14 +222,17 @@ export function getBlockVersions(current, provenance = getProvenance()) {
     .split('\n')
     .filter(Boolean);
   /** @type {VersionedBlock[]} */
-  const versions = [{ block: current, provenance }];
-  const seen = new Set([current.manifest.version]);
+  const versions = [];
+  const seen = new Set();
   for (const revision of revisions) {
     const block = blockAtRevision(current.manifest.id, revision);
     if (seen.has(block.manifest.version)) continue;
     seen.add(block.manifest.version);
     versions.push({ block, provenance: { sourceCommit: revision, dirty: false } });
   }
+  // A new local release has no Git revision yet. Production's clean checkout
+  // always uses the first committed snapshot for each versioned archive URL.
+  if (!seen.has(current.manifest.version)) versions.push({ block: current, provenance });
   return versions.sort((a, b) => {
     const av = a.block.manifest.version.split('.').map(Number);
     const bv = b.block.manifest.version.split('.').map(Number);
@@ -367,10 +370,12 @@ export function blocksCatalog(provenance = getProvenance()) {
   return {
     schemaVersion: 1,
     blocks: getBlocks().map((block) => {
+      const releases = getBlockVersions(block, provenance);
+      const latest = releases[0].block;
       return {
-        manifest: block.manifest,
-        documentationUrl: `/blocks/${block.manifest.id}/`,
-        versions: getBlockVersions(block, provenance).map(({ block: versioned, provenance }) => {
+        manifest: latest.manifest,
+        documentationUrl: `/blocks/${latest.manifest.id}/`,
+        versions: releases.map(({ block: versioned, provenance }) => {
           const bytes = sourceArchive(versioned, provenance);
           return {
             version: versioned.manifest.version,

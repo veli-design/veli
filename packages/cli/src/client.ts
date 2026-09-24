@@ -1,6 +1,4 @@
-import { execFile, spawn } from 'node:child_process';
 import { gunzipSync } from 'node:zlib';
-import { promisify } from 'node:util';
 import {
   BlocksCatalog,
   parseCatalog,
@@ -10,9 +8,9 @@ import {
   sha256,
 } from './contracts.js';
 
-const execFileAsync = promisify(execFile);
 const MAX_ARCHIVE_BYTES = 10 * 1024 * 1024;
 const MAX_UNPACKED_BYTES = 50 * 1024 * 1024;
+export const WFA_URL = 'https://wfa.mindco.mv/';
 
 export class AccessError extends Error {
   constructor(message: string) {
@@ -51,85 +49,28 @@ const isAccessChallenge = (response: Response) => {
 };
 
 export class VeliWebClient {
-  #userToken?: string;
-
   constructor(
     readonly webUrl: string,
     private readonly env: NodeJS.ProcessEnv = process.env,
-    private readonly interactive = Boolean(process.stdin.isTTY && !env.CI),
   ) {}
-
-  async login(): Promise<void> {
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const child = spawn('cloudflared', ['access', 'login', this.webUrl], {
-          env: this.env,
-          stdio: 'inherit',
-        });
-        child.once('error', reject);
-        child.once('exit', (code) =>
-          code === 0 ? resolve() : reject(new Error(`cloudflared exited with code ${code}.`)),
-        );
-      });
-      this.#userToken = undefined;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT')
-        throw new AccessError('Install `cloudflared`, then run `veli auth login`.');
-      throw new AccessError(
-        'Cloudflare Access login failed. Run `cloudflared access login <Veli Web URL>` and retry.',
-      );
-    }
-  }
-
-  async #token(): Promise<string> {
-    if (this.#userToken) return this.#userToken;
-    try {
-      const { stdout } = await execFileAsync(
-        'cloudflared',
-        ['access', 'token', '--app', this.webUrl],
-        { env: this.env },
-      );
-      const token = stdout.trim();
-      if (!token) throw new Error('empty token');
-      this.#userToken = token;
-      return token;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT')
-        throw new AccessError('Install `cloudflared`, then run `veli auth login`.');
-      throw new AccessError(
-        'Your Cloudflare Access session is missing or expired. Run `veli auth login` and retry.',
-      );
-    }
-  }
 
   async request(pathname: string): Promise<Response> {
     const url = new URL(pathname, this.webUrl + '/');
     if (url.origin !== new URL(this.webUrl).origin)
       throw new Error('Veli Web returned a cross-origin resource URL.');
     const service = serviceHeaders(this.env);
-    let response = await fetch(url, { headers: service, redirect: 'manual' });
+    const response = await fetch(url, { headers: service, redirect: 'manual' });
     if (service) {
       if (isAccessChallenge(response))
         throw new AccessError(
-          'Cloudflare Access rejected the configured service-token credentials.',
+          'Veli Web rejected the injected service-token credentials. Ask DevOps to verify its Cloudflare Access Service Auth policy.',
         );
       return response;
     }
     if (!isAccessChallenge(response)) return response;
-    if (!this.interactive)
-      throw new AccessError(
-        'Veli Web requires authentication. In CI, inject CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET.',
-      );
-    const token = await this.#token();
-    response = await fetch(url, {
-      headers: { 'cf-access-token': token },
-      redirect: 'manual',
-    });
-    if (isAccessChallenge(response))
-      throw new AccessError(
-        'Your Cloudflare Access session is expired or unauthorized. Run `veli auth login`.',
-      );
-    return response;
+    throw new AccessError(
+      `Veli Web access is missing or expired. Visit ${WFA_URL}, sign in, request access for an allowed duration (up to 24 hours), and provide a reason. Retry from the same network/IP after approval. In CI, inject CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET if DevOps has enabled Service Auth.`,
+    );
   }
 
   async catalog(): Promise<BlocksCatalog> {

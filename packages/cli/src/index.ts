@@ -18,7 +18,7 @@ import {
 } from '@clack/prompts';
 import { Command } from 'commander';
 import semver from 'semver';
-import { AccessError, VeliWebClient } from './client.js';
+import { AccessError, VeliWebClient, WFA_URL } from './client.js';
 import {
   defaultBlocksDir,
   normalizeBlocksDir,
@@ -99,6 +99,16 @@ async function authClientFor(command: Command) {
   return { cwd, webUrl: config.webUrl, client: new VeliWebClient(config.webUrl) };
 }
 
+async function requestWfaAccess(client: VeliWebClient): Promise<boolean> {
+  log.info(
+    `Open ${WFA_URL}, sign in, choose an allowed access duration (up to 24 hours), and enter the required reason. Complete the request from the network/IP you will use for Veli.`,
+  );
+  const answer = await confirm({ message: 'Has WFA granted access for this network/IP?' });
+  if (cancelled(answer) || !answer) return false;
+  await client.catalog();
+  return true;
+}
+
 async function ensurePackage(cwd: string) {
   try {
     await access(path.join(cwd, 'package.json'));
@@ -109,9 +119,9 @@ async function ensurePackage(cwd: string) {
 
 async function pickIds<
   T extends { manifest: { id: string; title: string; description: string; version: string } },
->(values: T[], message: string): Promise<string[]> {
-  if (!process.stdin.isTTY)
-    throw new Error('Specify one or more block IDs in non-interactive mode.');
+>(values: T[], message: string, json = false): Promise<string[]> {
+  if (!process.stdin.isTTY || json)
+    throw new Error('Specify one or more block IDs in non-interactive or JSON mode.');
   const selected = await multiselect({
     message,
     required: true,
@@ -134,7 +144,7 @@ program
     await ensurePackage(cwd);
     let webUrl = globalOptions(command).webUrl ?? process.env.VELI_WEB_URL;
     if (!webUrl) {
-      if (!process.stdin.isTTY)
+      if (!process.stdin.isTTY || globalOptions(command).json)
         throw new Error('Provide --web-url or VELI_WEB_URL in non-interactive mode.');
       const answer = await text({
         message: 'Veli Web URL',
@@ -145,7 +155,7 @@ program
     }
     const inferred = await defaultBlocksDir(cwd);
     let blocksDir = options.blocksDir as string | undefined;
-    if (!blocksDir && process.stdin.isTTY) {
+    if (!blocksDir && process.stdin.isTTY && !globalOptions(command).json) {
       const answer = await text({
         message: 'Where should Veli Blocks be installed?',
         initialValue: inferred,
@@ -163,11 +173,9 @@ program
     try {
       await client.catalog();
     } catch (error) {
-      if (!(error instanceof AccessError) || !process.stdin.isTTY) throw error;
-      const answer = await confirm({ message: 'Authenticate with Cloudflare Access now?' });
-      if (cancelled(answer) || !answer) return;
-      await client.login();
-      await client.catalog();
+      if (!(error instanceof AccessError) || !process.stdin.isTTY || globalOptions(command).json)
+        throw error;
+      if (!(await requestWfaAccess(client))) return;
     }
     await writeConfig(cwd, config);
     emit(
@@ -177,15 +185,20 @@ program
     );
   });
 
-const auth = program.command('auth').description('manage Cloudflare Access authentication');
+const auth = program.command('auth').description('check or request WFA access');
 auth
   .command('login')
-  .description('authenticate with Cloudflare Access')
+  .description('request WFA access and verify Veli Web')
   .action(async (_, command) => {
     const { client } = await authClientFor(command);
-    await client.login();
-    await client.catalog();
-    emit(command, { authenticated: true }, 'Authenticated with Veli Web.');
+    try {
+      await client.catalog();
+    } catch (error) {
+      if (!(error instanceof AccessError) || !process.stdin.isTTY || globalOptions(command).json)
+        throw error;
+      if (!(await requestWfaAccess(client))) return;
+    }
+    emit(command, { accessible: true }, 'Veli Web is accessible from this network/IP.');
   });
 auth
   .command('status')
@@ -248,7 +261,12 @@ program
     const { cwd, config, client } = await clientFor(command);
     await ensurePackage(cwd);
     const catalog = await client.catalog();
-    if (!ids.length) ids = await pickIds(catalog.blocks, 'Choose blocks to add');
+    if (!ids.length)
+      ids = await pickIds(
+        catalog.blocks,
+        'Choose blocks to add',
+        Boolean(globalOptions(command).json),
+      );
     const selected = ids.map((id) => {
       const block = catalog.blocks.find(({ manifest }) => manifest.id === id);
       if (!block) throw new Error(`Unknown block: ${id}`);
@@ -280,11 +298,11 @@ program
       );
       return;
     }
-    if (dependencies.incompatible.length)
+    if (dependencies.incompatible.length && !globalOptions(command).json)
       log.warn(
         `Existing dependency ranges need review:\n${dependencies.incompatible.map(({ name, current, required }) => `  ${name}: ${current} (block expects ${required})`).join('\n')}`,
       );
-    if (!options.yes && !process.stdin.isTTY)
+    if (!options.yes && (!process.stdin.isTTY || globalOptions(command).json))
       throw new Error('Use --yes for non-interactive installation.');
     if (!options.yes) {
       const answer = await confirm({ message: `Add ${ids.join(', ')} to ${config.blocksDir}?` });
@@ -299,7 +317,8 @@ program
         if (cancelled(answer)) return;
         install = Boolean(answer);
       }
-      if (install) await installDependencies(cwd, dependencies.missing);
+      if (install)
+        await installDependencies(cwd, dependencies.missing, Boolean(globalOptions(command).json));
     }
     emit(command, { added: ids, dependencies }, `Added ${ids.join(', ')}.`);
   });
@@ -387,7 +406,12 @@ program
       );
       return;
     }
-    if (!ids.length) ids = await pickIds(outdated, 'Choose blocks to update');
+    if (!ids.length)
+      ids = await pickIds(
+        outdated,
+        'Choose blocks to update',
+        Boolean(globalOptions(command).json),
+      );
     const results = [];
     for (const id of ids) {
       const installedBlock = findInstalled(id);
@@ -408,7 +432,8 @@ program
         continue;
       }
       if (!options.yes) {
-        if (!process.stdin.isTTY) throw new Error('Use --yes for non-interactive updates.');
+        if (!process.stdin.isTTY || globalOptions(command).json)
+          throw new Error('Use --yes for non-interactive updates.');
         const answer = await confirm({
           message: `Update ${id} from ${installedBlock.receipt.version} to ${archive.receipt.version}?`,
         });
@@ -431,9 +456,14 @@ program
           const answer = await confirm({ message: `Install ${dependencies.missing.join(', ')}?` });
           if (!cancelled(answer)) install = Boolean(answer);
         }
-        if (install) await installDependencies(cwd, dependencies.missing);
+        if (install)
+          await installDependencies(
+            cwd,
+            dependencies.missing,
+            Boolean(globalOptions(command).json),
+          );
       }
-      if (result.conflicts.length)
+      if (result.conflicts.length && !globalOptions(command).json)
         log.warn(
           `${id} has conflicts in ${result.conflicts.join(', ')}. Resolve them, then run veli update --continue ${id}; use --abort ${id} to roll back.`,
         );
@@ -455,6 +485,7 @@ program
           manifest: { ...block.manifest, description: block.targetDir },
         })),
         'Choose blocks to restore',
+        Boolean(globalOptions(command).json),
       );
     const selected = ids.map((id) => {
       const block = installed.find((item) => item.id === id);
@@ -471,7 +502,8 @@ program
       return;
     }
     if (!options.yes) {
-      if (!process.stdin.isTTY) throw new Error('Use --yes for non-interactive restore.');
+      if (!process.stdin.isTTY || globalOptions(command).json)
+        throw new Error('Use --yes for non-interactive restore.');
       const answer = await confirm({ message: `Discard customizations in ${ids.join(', ')}?` });
       if (cancelled(answer) || !answer) return;
     }
@@ -517,11 +549,13 @@ async function main() {
     process.argv.push(action as string);
   }
   await program.parseAsync(process.argv);
-  if (process.stdin.isTTY && process.argv.length > 2 && !process.exitCode) outro('Done');
+  if (process.stdin.isTTY && process.argv.length > 2 && !process.exitCode && !program.opts().json)
+    outro('Done');
 }
 
 main().catch((error) => {
   if (process.env.VELI_DEBUG) console.error(error);
+  else if (process.argv.includes('--json')) console.error((error as Error).message);
   else log.error(error instanceof AccessError ? error.message : (error as Error).message);
   process.exitCode = 1;
 });

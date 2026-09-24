@@ -12,17 +12,17 @@ corepack pnpm dlx @tradenetcorp/veli init
 
 The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Web URL and block destination in `.veli/config.json`.
 
-## Cloudflare Access
+## WFA access
 
-Install `cloudflared`, then authenticate with the same company identity used for Veli Web:
+Before using Veli Web, request access at [MINDCo WFA](https://wfa.mindco.mv/) with your company account. Choose one of the available durations (at most 24 hours) and enter the required reason. WFA grants access to your requesting IP, so run the CLI from the same network. To check access or get guided recovery instructions, run:
 
 ```sh
 corepack pnpm dlx @tradenetcorp/veli auth login
 ```
 
-The browser login is currently valid for the 24-hour WFA Access session. Veli asks `cloudflared` for the cached, short-lived token when an endpoint is protected; the CLI does not persist that token itself.
+The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared` login or Access token is required for developers. Request another WFA grant if it expires or your network/IP changes. The CLI stores no authentication secrets in the project.
 
-For CI, configure a Cloudflare Access **Service Auth** policy and inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. Browser authentication is disabled in non-interactive environments.
+For CI, DevOps must configure a Cloudflare Access **Service Auth** policy if service-token access is available, then inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. CI cannot use an interactive WFA approval.
 
 ## Commands
 

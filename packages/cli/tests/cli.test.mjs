@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { chmod, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { execFile, execFileSync } from 'node:child_process';
+import { createServer } from 'node:http';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import test from 'node:test';
 import { sourceArchive, getBlocks } from '../../blocks/scripts/catalog.mjs';
-import { parseSourceArchive, VeliWebClient } from '../dist/client.js';
+import { parseSourceArchive, VeliWebClient, WFA_URL } from '../dist/client.js';
 import { normalizeBlocksDir, normalizeWebUrl, readConfig, writeConfig } from '../dist/config.js';
 import { installBlock, blockState, installedBlocks, restoreBlock } from '../dist/project.js';
 import { abortUpdate, continueUpdate, hasPendingUpdate, updateBlock } from '../dist/update.js';
@@ -14,6 +16,7 @@ import { sha256 } from '../dist/contracts.js';
 
 const provenance = { sourceCommit: 'a'.repeat(40), dirty: false };
 const block = getBlocks()[0];
+const execFileAsync = promisify(execFile);
 
 async function fixture(run) {
   const cwd = await mkdtemp(path.join(tmpdir(), 'veli-cli-test-'));
@@ -48,6 +51,7 @@ test('configuration normalizes safe destinations and web origins', async () => {
     assert.equal(normalizeWebUrl('https://veli.example.test/'), 'https://veli.example.test');
     assert.equal(normalizeBlocksDir(cwd, './src/components/blocks/'), 'src/components/blocks');
     assert.throws(() => normalizeBlocksDir(cwd, '../elsewhere'));
+    assert.throws(() => normalizeBlocksDir(cwd, '.veli/blocks'), /reserved/);
     assert.throws(() => normalizeWebUrl('http://veli.example.test'));
     const config = {
       schemaVersion: 1,
@@ -92,6 +96,30 @@ test('restore discards managed customization while preserving unknown applicatio
       await readFile(path.join(installed.targetDir, 'application.ts'), 'utf8'),
       'keep\n',
     );
+  });
+});
+
+test('overwrite refuses to remove unknown application files', async () => {
+  await fixture(async (cwd) => {
+    const installed = await installBlock(
+      cwd,
+      'src/components/blocks',
+      release('0.1.0', 'one\n', 'a'),
+    );
+    await writeFile(path.join(installed.targetDir, 'application.ts'), 'keep\n');
+    await assert.rejects(
+      () => installBlock(cwd, 'src/components/blocks', release('0.2.0', 'two\n', 'b'), true),
+      /not managed by this block/,
+    );
+    assert.equal(
+      await readFile(path.join(installed.targetDir, 'application.ts'), 'utf8'),
+      'keep\n',
+    );
+    assert.equal(
+      await readFile(path.join(installed.targetDir, 'site-footer.tsx'), 'utf8'),
+      'one\n',
+    );
+    assert.equal((await installedBlocks(cwd))[0].receipt.version, '0.1.0');
   });
 });
 
@@ -191,37 +219,30 @@ test('service-token requests send credentials only as Access headers', async () 
   }
 });
 
-test('interactive requests reuse a cloudflared user token after an Access challenge', async () => {
-  await fixture(async (cwd) => {
-    const cloudflared = path.join(cwd, 'cloudflared');
-    await writeFile(cloudflared, '#!/bin/sh\nprintf cached-user-token\n');
-    await chmod(cloudflared, 0o755);
-    const previous = globalThis.fetch;
-    const requests = [];
-    globalThis.fetch = async (_url, init) => {
-      requests.push(init);
-      if (requests.length === 1)
-        return new Response('<html>Access</html>', {
-          status: 302,
-          headers: { 'content-type': 'text/html', location: '/cdn-cgi/access/login' },
-        });
-      return new Response(JSON.stringify({ schemaVersion: 1, blocks: [] }), {
-        headers: { 'content-type': 'application/json' },
-      });
-    };
-    try {
-      const client = new VeliWebClient(
-        'https://veli.example.test',
-        { PATH: `${cwd}:${process.env.PATH}` },
-        true,
-      );
-      await client.catalog();
-      assert.equal(requests.length, 2);
-      assert.deepEqual(requests[1].headers, { 'cf-access-token': 'cached-user-token' });
-    } finally {
-      globalThis.fetch = previous;
-    }
-  });
+test('WFA access challenge provides the IP-approval recovery path without token replay', async () => {
+  const previous = globalThis.fetch;
+  const requests = [];
+  globalThis.fetch = async (_url, init) => {
+    requests.push(init);
+    return new Response('<html>Access</html>', {
+      status: 403,
+      headers: { 'content-type': 'text/html' },
+    });
+  };
+  try {
+    const client = new VeliWebClient('https://veli.example.test', {});
+    await assert.rejects(
+      () => client.catalog(),
+      (error) =>
+        error.message.includes(WFA_URL) &&
+        error.message.includes('up to 24 hours') &&
+        error.message.includes('same network/IP'),
+    );
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].headers, undefined);
+  } finally {
+    globalThis.fetch = previous;
+  }
 });
 
 test('non-interactive Access challenges require service-token credentials', async () => {
@@ -232,7 +253,7 @@ test('non-interactive Access challenges require service-token credentials', asyn
       headers: { 'content-type': 'text/html', location: '/cdn-cgi/access/login' },
     });
   try {
-    const client = new VeliWebClient('https://veli.example.test', { CI: 'true' }, false);
+    const client = new VeliWebClient('https://veli.example.test', { CI: 'true' });
     await assert.rejects(() => client.catalog(), /CF_ACCESS_CLIENT_ID/);
   } finally {
     globalThis.fetch = previous;
@@ -255,6 +276,72 @@ test('authenticated requests reject cross-origin catalog URLs before sending sec
     assert.equal(called, false);
   } finally {
     globalThis.fetch = previous;
+  }
+});
+
+test('JSON add output remains parseable when dependency ranges need review', async () => {
+  const bytes = sourceArchive(block, provenance);
+  const server = createServer((request, response) => {
+    if (request.url === '/api/blocks/v1/catalog.json') {
+      response.setHeader('content-type', 'application/json');
+      response.end(
+        JSON.stringify({
+          schemaVersion: 1,
+          blocks: [
+            {
+              manifest: block.manifest,
+              documentationUrl: '/blocks/site-footer/',
+              versions: [
+                {
+                  version: block.manifest.version,
+                  sourceCommit: provenance.sourceCommit,
+                  archiveUrl: `/api/blocks/v1/${block.manifest.id}/${block.manifest.version}.tar.gz`,
+                  archiveSha256: sha256(bytes),
+                },
+              ],
+            },
+          ],
+        }),
+      );
+    } else {
+      response.setHeader('content-type', 'application/gzip');
+      response.end(bytes);
+    }
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    await fixture(async (cwd) => {
+      await writeFile(
+        path.join(cwd, 'package.json'),
+        JSON.stringify({ dependencies: { react: '^18.0.0' } }),
+      );
+      const webUrl = `http://127.0.0.1:${server.address().port}`;
+      const executable = fileURLToPath(new URL('../dist/index.js', import.meta.url));
+      await execFileAsync(process.execPath, [
+        executable,
+        '--cwd',
+        cwd,
+        '--web-url',
+        webUrl,
+        'init',
+      ]);
+      const { stdout } = await execFileAsync(process.execPath, [
+        executable,
+        '--cwd',
+        cwd,
+        '--json',
+        'add',
+        block.manifest.id,
+        '--yes',
+        '--no-install',
+      ]);
+      assert.deepEqual(JSON.parse(stdout).added, [block.manifest.id]);
+      assert.equal((await installedBlocks(cwd))[0].id, block.manifest.id);
+    });
+  } finally {
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
   }
 });
 

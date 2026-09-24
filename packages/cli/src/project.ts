@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   BlockManifest,
@@ -172,6 +172,31 @@ export async function preflightInstall(
   const baselineDir = path.join(cwd, '.veli', 'blocks', id);
   if ((await exists(baselineDir)) && !overwrite)
     throw new Error(`${id} is already installed. Use veli update.`);
+  if (overwrite && (await exists(targetDir))) {
+    const allowedFiles = new Set(archive.manifest.files);
+    const allowedDirs = new Set<string>();
+    for (const file of allowedFiles) {
+      let parent = path.posix.dirname(file);
+      while (parent !== '.') {
+        allowedDirs.add(parent);
+        parent = path.posix.dirname(parent);
+      }
+    }
+    if (!(await lstat(targetDir)).isDirectory())
+      throw new Error(`${path.relative(cwd, targetDir)} is not a block directory.`);
+    const inspect = async (directory: string, prefix = ''): Promise<void> => {
+      for (const entry of await readdir(directory, { withFileTypes: true })) {
+        const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+        if (entry.isDirectory() && allowedDirs.has(relative))
+          await inspect(path.join(directory, entry.name), relative);
+        else if (!entry.isFile() || !allowedFiles.has(relative))
+          throw new Error(
+            `${path.relative(cwd, path.join(directory, entry.name))} is not managed by this block; --overwrite would remove it. Move it out of the block directory first.`,
+          );
+      }
+    };
+    await inspect(targetDir);
+  }
   for (const file of archive.manifest.files) {
     const target = path.join(targetDir, file);
     if ((await exists(target)) && !overwrite)
