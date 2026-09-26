@@ -121,7 +121,7 @@ const buttonVariants = cva(
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(154_243_102_/_1)]',
+          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--color-accent-400)] dark:[--button-ripple-color:var(--color-accent-1100)]',
       },
       { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
       { size: 'sm', iconOnly: true, className: 'h-9 w-9' },
