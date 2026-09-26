@@ -27,6 +27,7 @@ import {
   fieldTriggerValueVariants,
 } from './field-shared';
 import { useVeliLanguage } from './provider';
+import { assignRef } from './ref';
 
 const popoverSurfaceClassName =
   'rounded-xl border border-base-subtle bg-calendar-bg p-2 shadow-md outline-none';
@@ -48,6 +49,8 @@ export interface DatePickerProps<T extends DateValue>
   inputClassName?: string;
   popoverClassName?: string;
   calendarClassName?: string;
+  /** Ref to the focusable trigger button, for form-library focus-on-error. */
+  triggerRef?: React.Ref<HTMLButtonElement>;
 }
 
 export function DatePicker<T extends DateValue>({
@@ -65,12 +68,21 @@ export function DatePicker<T extends DateValue>({
   size = 'md',
   granularity = 'day',
   hourCycle,
+  triggerRef: triggerRefProp,
   ...props
 }: DatePickerProps<T>) {
   const { locale } = useLocale();
   const languageConfig = useVeliLanguage();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const showRequired = showRequiredIndicator && Boolean(props.isRequired);
+
+  const setTriggerRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      triggerRef.current = node;
+      assignRef(triggerRefProp, node);
+    },
+    [triggerRefProp],
+  );
 
   return (
     <AriaDatePicker
@@ -107,7 +119,7 @@ export function DatePicker<T extends DateValue>({
             ) : null}
 
             <AriaButton
-              ref={triggerRef}
+              ref={setTriggerRef}
               slot="button"
               className={twMerge(
                 fieldTriggerButtonVariants({

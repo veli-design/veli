@@ -35,5 +35,5 @@ Thumbs.db
 .playwright-cli/
 .playwright-mcp/
 
-# Local temporary router playgrounds (do not commit)
+# Local temporary playgrounds
 playground/

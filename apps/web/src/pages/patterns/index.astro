@@ -1,6 +1,7 @@
 ---
 import { Path } from 'phosphor-react';
 import DocsLayout from '../../layouts/docs-layout.astro';
+import { patterns } from '../../lib/site';
 
 const headings = [{ depth: 2, slug: 'overview', text: 'Overview' }];
 ---
@@ -23,13 +24,27 @@ const headings = [{ depth: 2, slug: 'overview', text: 'Overview' }];
   </header>
 
   <div class="docs-overview-content">
-    <section class="docs-overview-copy docs-coming-soon" id="overview">
-      <p class="docs-kicker">Coming soon</p>
+    <section class="docs-overview-copy" id="overview">
       <h2>Overview</h2>
       <p>
-        Patterns will document how Veli components work together across common service journeys,
-        including validation, progressive disclosure, navigation, and feedback.
+        Patterns show how Veli components work together across common service journeys, including
+        forms, validation, and feedback.
       </p>
     </section>
+
+    <div class="docs-overview-directory">
+      <section class="docs-list-section">
+        <div class="docs-link-list">
+          {
+            patterns.map((item) => (
+              <a href={item.href}>
+                <span>{item.title}</span>
+                <p>{item.description}</p>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </div>
   </div>
 </DocsLayout>

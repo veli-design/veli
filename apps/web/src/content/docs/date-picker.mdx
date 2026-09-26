@@ -35,19 +35,20 @@ import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 
 ### Common
 
-| Prop                  | Type                | Description                                                              |
-| :-------------------- | :------------------ | :----------------------------------------------------------------------- |
-| `label`               | `ReactNode`         | Visible label for the field.                                             |
-| `description`         | `ReactNode`         | Helper text shown below the picker when not invalid.                     |
-| `errorMessage`        | `ReactNode`         | Validation content shown below the picker when invalid.                  |
-| `isRequired`          | `boolean`           | Marks the picker as required.                                            |
-| `isDisabled`          | `boolean`           | Disables both field editing and calendar trigger.                        |
-| `isReadOnly`          | `boolean`           | Prevents edits but keeps the value visible.                              |
-| `value`               | `DateValue \| null` | Controlled selected value.                                               |
-| `defaultValue`        | `DateValue`         | Uncontrolled initial value.                                              |
-| `onChange`            | `(value) => void`   | Called when the selected value changes.                                  |
-| `name`                | `string`            | Submits the value in forms as an ISO string.                             |
-| `calendarButtonLabel` | `string`            | Accessible name for the calendar trigger. Defaults to `"Open calendar"`. |
+| Prop                  | Type                     | Description                                                              |
+| :-------------------- | :----------------------- | :----------------------------------------------------------------------- |
+| `label`               | `ReactNode`              | Visible label for the field.                                             |
+| `description`         | `ReactNode`              | Helper text shown below the picker when not invalid.                     |
+| `errorMessage`        | `ReactNode`              | Validation content shown below the picker when invalid.                  |
+| `isRequired`          | `boolean`                | Marks the picker as required.                                            |
+| `isDisabled`          | `boolean`                | Disables both field editing and calendar trigger.                        |
+| `isReadOnly`          | `boolean`                | Prevents edits but keeps the value visible.                              |
+| `value`               | `DateValue \| null`      | Controlled selected value.                                               |
+| `defaultValue`        | `DateValue`              | Uncontrolled initial value.                                              |
+| `onChange`            | `(value) => void`        | Called when the selected value changes.                                  |
+| `name`                | `string`                 | Submits the value in forms as an ISO string.                             |
+| `calendarButtonLabel` | `string`                 | Accessible name for the calendar trigger. Defaults to `"Open calendar"`. |
+| `triggerRef`          | `Ref<HTMLButtonElement>` | Ref to the calendar trigger, so form libraries can focus it on errors.   |
 
 ### Formatting
 
@@ -76,3 +77,5 @@ import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 | `validate`  | `(value) => ValidationError \| true \| null` | Adds custom validation logic.                  |
 
 All remaining supported React Aria `DatePicker` props can still be passed through this wrapper.
+
+Hold dates as `DateValue` objects in form state (React Aria's recommendation). Set `name` when a native submit should send an ISO 8601 string. If a form must store ISO strings, convert with `parseDate` / `.toString()` from `@internationalized/date`; see [Forms](/patterns/forms/).

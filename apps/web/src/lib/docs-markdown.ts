@@ -5,15 +5,17 @@ import {
   externalResources,
   foundations,
   foundationsOverview,
+  patterns,
 } from './site';
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Foundations' | 'Components';
+export type DocsSection = 'Foundations' | 'Components' | 'Patterns';
 
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
-  | { kind: 'entry'; entry: CollectionEntry<'foundations'> };
+  | { kind: 'entry'; entry: CollectionEntry<'foundations'> }
+  | { kind: 'entry'; entry: CollectionEntry<'patterns'> };
 
 type OverviewSource = {
   kind: 'overview';
@@ -52,7 +54,7 @@ export function toMarkdownPath(htmlPath: string) {
   return `${htmlPath}index.md`;
 }
 
-function requireDescription(entry: CollectionEntry<'docs'> | CollectionEntry<'foundations'>) {
+function requireDescription(entry: CollectionEntry<'docs' | 'foundations' | 'patterns'>) {
   const description = entry.data.description?.trim();
   if (!description) {
     throw new Error(`[docs-markdown] ${entry.collection}/${entry.slug} is missing a description`);
@@ -61,7 +63,7 @@ function requireDescription(entry: CollectionEntry<'docs'> | CollectionEntry<'fo
   return description;
 }
 
-function orderCollectionEntries<T extends 'docs' | 'foundations'>(
+function orderCollectionEntries<T extends 'docs' | 'foundations' | 'patterns'>(
   collection: T,
   entries: CollectionEntry<T>[],
   navigationItems: readonly NavigationItem[],
@@ -113,13 +115,15 @@ function validateCatalog(pages: readonly DocsCatalogPage[]) {
 }
 
 export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
-  const [docsEntries, foundationEntries] = await Promise.all([
+  const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
+    getCollection('patterns'),
   ]);
   const componentItems = componentGroups.flatMap((group) => group.items);
   const orderedFoundations = orderCollectionEntries('foundations', foundationEntries, foundations);
   const orderedComponents = orderCollectionEntries('docs', docsEntries, componentItems);
+  const orderedPatterns = orderCollectionEntries('patterns', patternEntries, patterns);
   const componentGroupBySlug = new Map(
     componentGroups.flatMap((group) =>
       group.items.map((item) => [item.slug, group.title] as const),
@@ -168,6 +172,18 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         description: requireDescription(entry),
         htmlPath: `/docs/${entry.slug}/`,
         markdownPath: `/docs/${entry.slug}/index.md`,
+        source: { kind: 'entry', entry },
+      }),
+    ),
+    ...orderedPatterns.map(
+      (entry): DocsCatalogPage => ({
+        id: `patterns/${entry.slug}`,
+        section: 'Patterns',
+        label: entry.data.title,
+        title: entry.data.title,
+        description: requireDescription(entry),
+        htmlPath: `/patterns/${entry.slug}/`,
+        markdownPath: `/patterns/${entry.slug}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
@@ -258,6 +274,9 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
   const componentPages = pages.filter(
     (page) => page.section === 'Components' && page.source.kind === 'entry',
   );
+  const patternPages = pages.filter(
+    (page) => page.section === 'Patterns' && page.source.kind === 'entry',
+  );
   const foundationOverviewPage = pages.find((page) => page.id === 'foundations');
   const docsOverviewPage = pages.find((page) => page.id === 'docs');
 
@@ -307,6 +326,13 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
       ),
       '',
     );
+  }
+
+  const patternList = patternPages.map((page) =>
+    markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
+  );
+  if (patternList.length > 0) {
+    lines.push('## Patterns', '', ...patternList, '');
   }
 
   const optionalDescriptions = {

@@ -5,14 +5,15 @@ import {
   createOverviewSectionSearchItem,
   type DocsSearchItem,
 } from '../lib/docs-search';
-import { componentGroups, foundations } from '../lib/site';
+import { componentGroups, foundations, patterns } from '../lib/site';
 
 export const prerender = true;
 
 export async function GET() {
-  const [docsEntries, foundationEntries] = await Promise.all([
+  const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
+    getCollection('patterns'),
   ]);
   const componentItems = componentGroups.flatMap((group) => group.items);
   const foundationOverview = createOverviewSearchItem({
@@ -49,7 +50,7 @@ export async function GET() {
       order: 1 + index,
     });
   });
-  const [foundationItems, docsItems] = await Promise.all([
+  const [foundationItems, docsItems, patternItems] = await Promise.all([
     buildCollectionSearchItems({
       category: 'Foundations',
       basePath: '/foundations/',
@@ -64,6 +65,13 @@ export async function GET() {
       orderedSlugs: componentItems.map((item) => item.slug),
       orderOffset: 100,
     }),
+    buildCollectionSearchItems({
+      category: 'Patterns',
+      basePath: '/patterns/',
+      entries: patternEntries,
+      orderedSlugs: patterns.map((pattern) => pattern.slug),
+      orderOffset: 20_000,
+    }),
   ]);
   const index: DocsSearchItem[] = [
     componentOverview,
@@ -71,6 +79,7 @@ export async function GET() {
     ...docsItems,
     foundationOverview,
     ...foundationItems,
+    ...patternItems,
   ];
 
   return new Response(JSON.stringify(index), {

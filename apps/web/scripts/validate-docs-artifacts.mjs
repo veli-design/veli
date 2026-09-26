@@ -66,10 +66,11 @@ if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first'
 const markdownFiles = [
   ...collectFiles(resolve(distRoot, 'docs'), '.md'),
   ...collectFiles(resolve(distRoot, 'foundations'), '.md'),
+  ...collectFiles(resolve(distRoot, 'patterns'), '.md'),
 ].sort();
 
-if (markdownFiles.length !== 43) {
-  fail(`expected 43 Markdown pages, found ${markdownFiles.length}`);
+if (markdownFiles.length !== 44) {
+  fail(`expected 44 Markdown pages, found ${markdownFiles.length}`);
 }
 
 for (const filePath of markdownFiles) validateMarkdown(filePath);
@@ -84,8 +85,8 @@ const expectedLinks = markdownFiles.map(
   (filePath) => `/${relative(distRoot, filePath).split('\\').join('/')}`,
 );
 
-if (llmsLinks.length !== 43 || new Set(llmsLinks).size !== llmsLinks.length) {
-  fail('llms.txt must link to 43 unique Markdown pages');
+if (llmsLinks.length !== 44 || new Set(llmsLinks).size !== llmsLinks.length) {
+  fail('llms.txt must link to 44 unique Markdown pages');
 }
 for (const expectedLink of expectedLinks) {
   if (!llmsLinks.includes(expectedLink)) fail(`llms.txt is missing ${expectedLink}`);
@@ -113,4 +114,4 @@ if (
   fail('_headers does not declare the expected Markdown MIME types');
 }
 
-console.log('Validated 43 Markdown pages and llms.txt.');
+console.log('Validated 44 Markdown pages and llms.txt.');

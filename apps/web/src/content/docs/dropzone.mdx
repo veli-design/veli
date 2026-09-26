@@ -45,5 +45,7 @@ import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
 | `acceptedFileTypes` | `string[]`                          | MIME types passed to `FileTrigger`.  |
 | `getDropOperation`  | `DropZoneProps['getDropOperation']` | Control accepted drag types.         |
 | `onDrop`            | `DropZoneProps['onDrop']`           | Called when items are dropped.       |
+| `name`              | `string`                            | Form field name for the file input.  |
+| `required`          | `boolean`                           | Requires a file on native submit.    |
 
 All other React Aria `DropZone` props are supported, excluding `className` and `style` overrides on the root wrapper.
