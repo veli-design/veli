@@ -47,6 +47,9 @@ jobs:
         env:
           BLOCKS_BASE_REF: ${{ github.event.pull_request.base.sha }}
 
+      - name: Test Veli CLI
+        run: corepack pnpm test:cli
+
   blocks-consumer:
     name: Published-package block consumer
     runs-on: ubuntu-latest

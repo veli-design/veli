@@ -1,0 +1,47 @@
+{
+  "name": "@tradenetcorp/veli",
+  "version": "0.0.0",
+  "description": "Install and manage application-owned Veli Blocks.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "type": "module",
+  "bin": {
+    "veli": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "test": "corepack pnpm run build && node --test tests/*.test.mjs",
+    "prepublishOnly": "corepack pnpm run build"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "commander": "^14.0.1",
+    "node-diff3": "3.2.0",
+    "package-manager-detector": "^1.6.0",
+    "semver": "7.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/semver": "^7.7.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "@tradenetcorp:registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}
