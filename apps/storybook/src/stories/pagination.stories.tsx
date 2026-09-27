@@ -64,7 +64,7 @@ const meta = {
   component: Pagination,
   parameters: {
     layout: 'centered',
-    controls: { sort: 'none' },
+    controls: { sort: 'none', exclude: /^on[A-Z]/ },
     docs: {
       description: {
         component:
