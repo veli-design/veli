@@ -1,6 +1,6 @@
 {
   "name": "@tradenetcorp/veli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Install and manage application-owned Veli Blocks.",
   "repository": {
     "type": "git",
