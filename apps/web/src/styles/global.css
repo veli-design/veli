@@ -955,7 +955,7 @@ button {
 }
 
 @media (max-width: 767px) {
-  .docs-prose:has(> #accordion) > table {
+  .docs-prose:has(> #accordion, > #button) > table {
     display: block;
     overflow-x: auto;
   }
