@@ -32,6 +32,24 @@
   text-align: start;
 }
 
+.compact .main {
+  width: 130px;
+  min-width: 130px;
+}
+
+/* The rail action row owns the full utility-column width. Its controls retain
+   the Figma component dimensions and align with the rail's leading edge. */
+.fullWidth {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.fullWidth .main {
+  width: 130px;
+  min-width: 130px;
+}
+
 .trigger {
   width: 36px;
 }

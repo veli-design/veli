@@ -3,6 +3,12 @@ import { z, defineCollection } from 'astro:content';
 const pageSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
+  animation: z
+    .object({
+      src: z.string(),
+      label: z.string(),
+    })
+    .optional(),
 });
 
 const docsCollection = defineCollection({

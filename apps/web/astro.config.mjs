@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
+import { remarkComponentTabs } from './src/lib/remark-component-tabs.mjs';
 
 const site = process.env.PUBLIC_SITE_URL?.trim();
 
@@ -26,7 +27,7 @@ export default defineConfig({
         },
       ],
     },
-    remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch],
+    remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
     rehypePlugins: [rehypeCodeBlocks],
   },
   vite: {

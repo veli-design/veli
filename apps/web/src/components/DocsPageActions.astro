@@ -3,7 +3,7 @@ import { DocsPageActionButtons } from './DocsPageActionButtons';
 
 interface Props {
   markdownPath: string;
-  placement?: 'inline' | 'utility';
+  placement?: 'inline' | 'utility' | 'tabbar';
 }
 
 const { markdownPath, placement = 'inline' } = Astro.props;
@@ -14,7 +14,12 @@ const { markdownPath, placement = 'inline' } = Astro.props;
   data-docs-page-actions
   data-markdown-path={markdownPath}
 >
-  <DocsPageActionButtons client:load {markdownPath} />
+  <DocsPageActionButtons
+    client:load
+    {markdownPath}
+    compact={placement === 'tabbar'}
+    fullWidth={placement === 'utility'}
+  />
 </div>
 
 <style>
@@ -34,6 +39,11 @@ const { markdownPath, placement = 'inline' } = Astro.props;
 
   .docs-page-actions--inline {
     display: none;
+  }
+
+  .docs-page-actions--tabbar {
+    flex: none;
+    margin: 0 0 0 auto;
   }
 
   @media (max-width: 1180px) {

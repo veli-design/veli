@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   markdownPath: string;
+  compact?: boolean;
+  fullWidth?: boolean;
 }
 
 type CopyState = 'idle' | 'copied' | 'error';
@@ -48,7 +50,7 @@ async function copyText(value: string) {
   }
 }
 
-export function DocsPageActionButtons({ markdownPath }: Props) {
+export function DocsPageActionButtons({ markdownPath, compact = false, fullWidth = false }: Props) {
   const [copyState, setCopyState] = useState<CopyState>('idle');
   const [isCopying, setIsCopying] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
@@ -90,7 +92,11 @@ export function DocsPageActionButtons({ markdownPath }: Props) {
         : '';
 
   return (
-    <div className={styles.actions}>
+    <div
+      className={`${styles.actions} ${compact ? styles.compact : ''} ${
+        fullWidth ? styles.fullWidth : ''
+      }`}
+    >
       <Button
         className={styles.main}
         isDisabled={isCopying}
