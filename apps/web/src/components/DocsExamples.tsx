@@ -23,7 +23,7 @@ import {
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Search } from '@tradenetcorp/veli-ui/search';
 import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
@@ -73,10 +73,6 @@ import {
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {
   return <I18nProvider locale="en-GB">{children}</I18nProvider>;
-}
-
-export function ButtonUsageDemo() {
-  return <Button>Click me</Button>;
 }
 
 type BreadcrumbTrailItem = {
@@ -478,121 +474,6 @@ export function TagsVariantsDemo() {
     </div>
   );
 }
-export function ButtonVariantsDemo() {
-  return (
-    <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-      <div />
-      <div className="text-xs font-bold uppercase text-base-muted">Fill</div>
-      <div className="text-xs font-bold uppercase text-base-muted">Transparent</div>
-      <div className="text-xs font-bold uppercase text-base-muted">Ghost</div>
-
-      <div className="text-sm font-medium">Primary</div>
-      <Button intent="primary" appearance="fill">
-        Button
-      </Button>
-      <Button intent="primary" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="primary" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <Button intent="secondary" appearance="fill">
-        Button
-      </Button>
-      <Button intent="secondary" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="secondary" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Danger</div>
-      <Button intent="danger" appearance="fill">
-        Button
-      </Button>
-      <Button intent="danger" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="danger" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Accent</div>
-      <Button intent="accent" appearance="fill">
-        Button
-      </Button>
-      <div className="text-xs text-base-muted">Fill only</div>
-      <div className="text-xs text-base-muted">Fill only</div>
-    </div>
-  );
-}
-
-export function ButtonIconsDemo() {
-  return (
-    <div className="flex gap-4 flex-wrap items-center">
-      <Button size="xl">
-        <Plus size={20} weight="bold" />
-        XL Button
-      </Button>
-      <Button size="lg" intent="secondary" appearance="transparent">
-        <DownloadSimple size={20} weight="bold" />
-        LG Button
-      </Button>
-      <Button size="md" intent="danger" appearance="ghost">
-        <Trash size={16} weight="bold" />
-        MD Button
-      </Button>
-      <Button size="xs">
-        <ArrowRight size={12} weight="bold" />
-        XS Button
-      </Button>
-    </div>
-  );
-}
-
-export function ButtonIconOnlyDemo() {
-  return (
-    <div className="flex gap-4 flex-wrap items-center">
-      <Button size="xl" iconOnly aria-label="Add item">
-        <Plus size={24} weight="bold" />
-      </Button>
-      <Button
-        size="lg"
-        intent="secondary"
-        appearance="transparent"
-        iconOnly
-        aria-label="Download file"
-      >
-        <DownloadSimple size={20} weight="bold" />
-      </Button>
-      <Button size="md" intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
-        <Trash size={16} weight="bold" />
-      </Button>
-      <Button size="sm" iconOnly isLoading aria-label="Saving">
-        <Plus size={16} weight="bold" />
-      </Button>
-    </div>
-  );
-}
-
-export function ButtonSizesDemo() {
-  return (
-    <div className="flex gap-4 items-center flex-wrap">
-      <Button size="xs">Extra Small</Button>
-      <Button size="sm">Small</Button>
-      <Button size="md">Medium</Button>
-      <Button size="lg">Large</Button>
-      <Button size="xl">Extra Large</Button>
-    </div>
-  );
-}
-
-export function ButtonLoadingDemo() {
-  return <Button isLoading>Processing...</Button>;
-}
-
 export function CheckboxUsageDemo() {
   return (
     <div className="flex flex-col gap-[12px]">
@@ -2054,6 +1935,66 @@ export function PaginationVariantsDemo() {
   const [page, setPage] = useState(3);
   return (
     <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
+  );
+}
+
+export function PaginationLoadMoreDemo() {
+  const [loadedCount, setLoadedCount] = useState(12);
+  const [isLoading, setLoading] = useState(false);
+  return (
+    <Pagination
+      variant="loadmore"
+      loadedCount={loadedCount}
+      totalCount={42}
+      isLoading={isLoading}
+      onLoadMore={async () => {
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setLoadedCount((count) => Math.min(count + 12, 42));
+        setLoading(false);
+      }}
+    />
+  );
+}
+
+export function PaginationRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const [variant, setVariant] = useState('Explicit');
+
+  return (
+    <DocsPreview
+      controls={
+        <>
+          <DocsPreviewOption
+            label="Language"
+            value={language}
+            options={['English', 'Dhivehi']}
+            onChange={setLanguage}
+          />
+          <DocsPreviewOption
+            label="Variant"
+            value={variant}
+            options={['Button', 'Explicit', 'Load more']}
+            onChange={setVariant}
+          />
+        </>
+      }
+    >
+      <VeliProvider
+        language={language === 'Dhivehi' ? 'dv' : 'en'}
+        className="flex w-full min-w-0 justify-center"
+      >
+        {variant === 'Load more' ? (
+          <PaginationLoadMoreDemo />
+        ) : (
+          <Pagination
+            variant={variant === 'Explicit' ? 'explicit' : 'button'}
+            defaultValue={3}
+            maxValue={12}
+          />
+        )}
+      </VeliProvider>
+    </DocsPreview>
   );
 }
 

@@ -964,7 +964,7 @@ button {
 }
 
 @media (max-width: 767px) {
-  :is(.docs-prose, .docs-tab-panel, .foundation-prose):has(> #accordion) > table {
+  :is(.docs-prose, .docs-tab-panel, .foundation-prose):has(> #accordion, > #button) > table {
     display: block;
     overflow-x: auto;
   }

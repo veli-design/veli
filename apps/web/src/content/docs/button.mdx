@@ -1,113 +1,222 @@
 ---
 title: Button
-description: Accessible button component built with React Aria, aligned with Figma CDS Foundation.
+description: Accessible action button with semantic intents, sizes, icons, and loading states.
 ---
+
+import {
+  ButtonIconsDemo,
+  ButtonRtlDemo,
+  ButtonSizesDemo,
+  ButtonStatesDemo,
+  ButtonUsageDemo,
+  ButtonVariantsDemo,
+} from '../../components/ButtonExamples';
 
 # Button
 
-The Button component provides an accessible, keyboard-navigable button with multiple intents, appearances, and sizes.
+Use Button to perform an action, submit a form, or open a dialog. Use [Link](/docs/link/) to navigate to another page.
 
 ## Import
 
 ```tsx
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Plus, ArrowRight } from 'phosphor-react';
 ```
-
-import {
-  ButtonIconOnlyDemo,
-  ButtonIconsDemo,
-  ButtonLoadingDemo,
-  ButtonSizesDemo,
-  ButtonUsageDemo,
-  ButtonVariantsDemo,
-} from '../../components/DocsExamples';
 
 ## Usage
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
   <ButtonUsageDemo client:visible />
 </div>
 
 ```tsx
-<Button>Click me</Button>
+<Button onPress={handleContinue}>Continue</Button>
 ```
 
-## Intent And Appearance Matrix
+Use `onPress` for an action that works with pointer, touch, and keyboard input. Button defaults to `type="button"`; use `type="submit"` or `type="reset"` for native form actions.
 
-The button supports four intents (`primary`, `secondary`, `danger`, `accent`) and three appearances. Accent is fill-only.
+## Intent and Appearance
 
-<div className="preview p-6 border border-base-subtle rounded-lg bg-surface-raised mb-4 overflow-x-auto">
+Choose `primary`, `secondary`, or `danger` with a `fill`, `transparent`, or `ghost` appearance. `accent` always renders as `fill`; other appearance values are normalized at runtime.
+
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
   <ButtonVariantsDemo client:visible />
 </div>
 
+```tsx
+<Button>Save changes</Button>
+<Button intent="secondary" appearance="transparent">Cancel</Button>
+<Button intent="danger" appearance="ghost">Delete</Button>
+<Button intent="accent">Featured action</Button>
+```
+
 ## Icons
 
-To maintain design consistency, icons should follow these size guidelines:
+Place icons before or after the label as children. Mark decorative icons `aria-hidden="true"` so the label names the action once.
 
-- **XL Buttons**: 20px
-- **LG Buttons**: 20px
-- **MD/SM Buttons**: 16px
-- **XS Buttons**: 12px
-
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
   <ButtonIconsDemo client:visible />
 </div>
 
 ```tsx
-// Example of correctly sized icons
-<Button size="xl"><Plus size={20} /> Add item</Button>
-<Button size="lg"><Plus size={20} /> Add item</Button>
-<Button size="md"><Plus size={16} /> Add item</Button>
-<Button size="xs"><Plus size={12} /> Add item</Button>
-```
+import { ArrowRight, Plus, Trash } from 'phosphor-react';
 
-## Icon-Only
-
-Use `iconOnly` when the button should render as a square icon action while keeping the same intent, appearance, and size behavior as the standard button.
-
-Always provide an accessible label with `aria-label` or `aria-labelledby` when there is no visible text. In development, `iconOnly` buttons without a label fail fast.
-
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 flex-wrap items-center">
-  <ButtonIconOnlyDemo client:visible />
-</div>
-
-```tsx
-<Button size="md" iconOnly aria-label="Delete item">
-  <Trash size={16} />
+<Button>
+  <Plus size={16} aria-hidden="true" weight="bold" />
+  Add item
+</Button>
+<Button intent="secondary" appearance="transparent">
+  Continue
+  <ArrowRight size={16} aria-hidden="true" weight="bold" />
+</Button>
+<Button intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
+  <Trash size={16} aria-hidden="true" weight="bold" />
 </Button>
 ```
 
+Use `iconOnly` for a square icon action. Supply `aria-label` or `aria-labelledby`; an icon alone is not an accessible name. Development builds report icon-only buttons without a label.
+
 ## Sizes
 
-Heights range from 28px (XS) to 60px (XL) to accommodate various context requirements.
+Use `xs`, `sm`, `md`, `lg`, or `xl`. Text buttons size to their label plus padding and grow when their labels wrap; icon-only buttons stay square. Use short action labels and let the surrounding action group wrap when space is limited.
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center flex-wrap">
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
   <ButtonSizesDemo client:visible />
 </div>
 
-## Loading State
+| Size | Icon size |
+| :--- | :-------- |
+| `xs` | 12px      |
+| `sm` | 16px      |
+| `md` | 16px      |
+| `lg` | 20px      |
+| `xl` | 20px      |
 
-When `isLoading` is true, the button is disabled, marked busy, and displays a spinner while maintaining its dimensions. If a loading button has no visible children, provide `aria-label` or `aria-labelledby` so it is not announced as an unnamed control.
+```tsx
+<Button size="sm">Continue</Button>
+<Button size="xl" iconOnly aria-label="Add item">
+  <Plus size={20} aria-hidden="true" weight="bold" />
+</Button>
+```
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-4 items-center">
-  <ButtonLoadingDemo client:visible />
+## Disabled and Loading
+
+Use `isDisabled` for an unavailable action. Use `isLoading` while work is in progress: it displays a spinner, marks the button busy, and prevents repeat activation while retaining keyboard focus. React Aria's `isPending` uses the same loading behavior. Set either prop while the operation is pending, then clear it when the operation completes or fails.
+
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
+  <ButtonStatesDemo client:visible />
 </div>
 
 ```tsx
-<Button isLoading>Processing...</Button>
-<Button isLoading aria-label="Saving" />
+<Button isDisabled>Unavailable</Button>
+<Button isLoading={isSaving} onPress={handleSave}>Save changes</Button>
+<Button isPending={isUploading} onPress={handleUpload}>Upload file</Button>
+<Button isLoading aria-label="Saving changes" />
 ```
+
+Loading submit and reset buttons cancel their native action, including Enter from a form field. This does not block submission through another button or a programmatic form submission; guard the form handler too when the entire form must stay locked.
+
+Keep the existing children while loading to preserve the button's width and accessible name. A spinner-only button needs `aria-label` or `aria-labelledby`. Provide an accessible success or error message when the operation finishes.
+
+Spinner-only buttons use the design's standalone width, capped to fit their container. You can override it with a `w-*` class.
+
+## Upgrading existing buttons
+
+- Loading buttons now retain focus and use `aria-disabled` and `data-pending` instead of native `disabled`. Update any `:disabled` selectors used specifically for loading; use `isDisabled` when the action must leave the tab order.
+- `isPending` now shows the same spinner as `isLoading`, with the original label kept as the accessible name.
+- Spacing follows the Figma content and padding model. Check tightly sized action groups and translated labels. Explicit `h-*` and `size-*` classes still override the default dimensions.
+- `size={null}` resolves to `md`. Accent buttons always use the fill appearance.
 
 ## API Reference
 
-| Prop         | Type                                               | Default     | Description                                                                                                          |
-| :----------- | :------------------------------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------- |
-| `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent'` | `'primary'` | The semantic visual indication level of the button. Accent is fill-only.                                             |
-| `appearance` | `'fill' \| 'transparent' \| 'ghost'`               | `'fill'`    | The surface treatment of the button.                                                                                 |
-| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`             | `'md'`      | The vertical scale of the button.                                                                                    |
-| `iconOnly`   | `boolean`                                          | `false`     | Renders the button as a square icon action. Requires `aria-label` or `aria-labelledby`.                              |
-| `isLoading`  | `boolean`                                          | `false`     | Shows a loading spinner, disables interaction, and sets `aria-busy`. Spinner-only usage requires an accessible name. |
-| `isDisabled` | `boolean`                                          | `false`     | Standard disabled state.                                                                                             |
+Button is a Veli component on React Aria [`Button`](https://react-aria.adobe.com/Button), which wraps a native `<button>`. Props below follow that stack.
 
-_Note: All other `react-aria-components` Button props are supported, excluding `className` and `style` overrides._
+### Button
+
+Veli-specific props for the action surface and content.
+
+| Prop         | Type                                               | Default     | Description                                                                             |
+| :----------- | :------------------------------------------------- | :---------- | :-------------------------------------------------------------------------------------- |
+| `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent'` | `'primary'` | Semantic emphasis. Accent supports fill only.                                           |
+| `appearance` | `'fill' \| 'transparent' \| 'ghost'`               | `'fill'`    | Surface treatment.                                                                      |
+| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`             | `'md'`      | Text and icon-only size.                                                                |
+| `iconOnly`   | `boolean`                                          | `false`     | Square icon action. Requires `aria-label` or `aria-labelledby`.                         |
+| `isLoading`  | `boolean`                                          | `false`     | Shows a spinner, sets busy state, and prevents repeat activation while retaining focus. |
+| `children`   | `ReactNode`                                        | -           | Label and optional icons. Keep them mounted while loading to preserve width.            |
+| `className`  | `string`                                           | -           | Classes on the button root, such as width or margin.                                    |
+| `ref`        | `Ref<HTMLButtonElement>`                           | -           | Forwarded to the native button.                                                         |
+
+### React Aria Button
+
+Common React Aria props are listed below. Its [Button documentation](https://react-aria.adobe.com/Button) covers the remaining interaction props, subject to the exclusions below.
+
+| Prop                          | Type                           | Default | Description                                                                |
+| :---------------------------- | :----------------------------- | :------ | :------------------------------------------------------------------------- |
+| `isDisabled`                  | `boolean`                      | `false` | Disables interaction and removes the button from the tab order.            |
+| `isPending`                   | `boolean`                      | `false` | Uses the same spinner and focus-preserving behavior as `isLoading`.        |
+| `onPress`                     | `(event: PressEvent) => void`  | -       | Action callback for pointer, touch, and keyboard input.                    |
+| `onPressStart`                | `(event: PressEvent) => void`  | -       | Called when a press starts.                                                |
+| `onPressEnd`                  | `(event: PressEvent) => void`  | -       | Called when a press ends, including cancellation.                          |
+| `onPressChange`               | `(isPressed: boolean) => void` | -       | Called when the pressed state changes.                                     |
+| `onFocus` / `onBlur`          | `function`                     | -       | Native focus lifecycle callbacks.                                          |
+| `onHoverStart` / `onHoverEnd` | `function`                     | -       | Pointer hover callbacks.                                                   |
+| `autoFocus`                   | `boolean`                      | `false` | Focuses the button on mount.                                               |
+| `slot`                        | `string \| null`               | -       | Connects the button to a parent composition, such as Modal's close action. |
+
+Not forwarded unchanged from React Aria:
+
+| Prop        | Why                                                              |
+| :---------- | :--------------------------------------------------------------- |
+| `children`  | Accepts `ReactNode`; render-function children are not supported. |
+| `className` | Accepts a string; render-function classes are not supported.     |
+| `style`     | Not supported.                                                   |
+
+React Aria's advanced `render` callback remains available. Follow its [composition guidance](https://react-aria.adobe.com/customization) and preserve the supplied props, children, ref, and native button semantics when using it.
+
+### Native button
+
+These attributes apply to the native `<button>`. Prefer `isDisabled` and `onPress` for React Aria's interaction handling.
+
+| Prop                             | Type                              | Default    | Description                                              |
+| :------------------------------- | :-------------------------------- | :--------- | :------------------------------------------------------- |
+| `type`                           | `'button' \| 'submit' \| 'reset'` | `'button'` | Native button action.                                    |
+| `name` / `value`                 | `string`                          | -          | Submitter name and value included in form submission.    |
+| `form`                           | `string`                          | -          | ID of an associated form outside the button's ancestors. |
+| `formAction`                     | `string \| function`              | -          | Form submission destination or React action.             |
+| `formMethod` / `formEncType`     | `string`                          | -          | Submission method and encoding.                          |
+| `formNoValidate`                 | `boolean`                         | -          | Skips native validation for this submitter.              |
+| `formTarget`                     | `string`                          | -          | Browsing context used for form submission.               |
+| `id`                             | `string`                          | -          | Native element ID.                                       |
+| `aria-label` / `aria-labelledby` | `string`                          | -          | Accessible name when there is no visible text.           |
+| `aria-describedby`               | `string`                          | -          | IDs of supporting descriptions.                          |
+| `aria-pressed`                   | `boolean \| 'mixed'`              | -          | State for an application-managed toggle action.          |
+| `aria-busy`                      | `boolean`                         | -          | Busy state; set automatically while loading or pending.  |
+
+## Accessibility
+
+- Give each button a clear action label. Icon-only and spinner-only buttons require `aria-label` or `aria-labelledby`.
+- Decorative icons should be hidden from assistive technology with `aria-hidden="true"`.
+- Enter and Space activate a focused button. Use `onPress` so keyboard, touch, and pointer actions share one handler.
+- Keep focus on the action while asynchronous work is pending, and announce the outcome using an accessible status or error message.
+- The loading spinner stops rotating when reduced motion is requested. A spinner is not a substitute for a meaningful action name.
+
+## RTL and Language
+
+Use `VeliProvider language="dv"` to set Dhivehi language and RTL direction. Button typography follows the language, and the icon/label order follows `dir`. Load the fonts described in [Typography](/foundations/typography/).
+
+Button does not translate labels or mirror arbitrary children. Localize the label and accessible name, and use a left-facing forward arrow in RTL. Direction-neutral icons, such as Plus, stay unchanged.
+
+<div className="preview preview--options mb-4">
+  <ButtonRtlDemo client:load />
+</div>
+
+```tsx
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { ArrowLeft } from 'phosphor-react';
+
+<VeliProvider language="dv">
+  <Button>
+    ކުރިއަށް
+    <ArrowLeft size={16} aria-hidden="true" weight="bold" />
+  </Button>
+</VeliProvider>;
+```
