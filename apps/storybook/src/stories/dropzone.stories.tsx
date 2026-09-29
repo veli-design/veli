@@ -1,311 +1,500 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
+import { useArgs } from 'storybook/internal/preview-api';
 import {
   Dropzone,
-  DropzoneClear,
   DropzoneArea,
+  DropzoneClear,
+  DropzoneField,
   DropzoneItem,
   DropzoneItemDelete,
   DropzoneItemMetadata,
   DropzoneItemPreview,
   DropzoneItemProgress,
   DropzoneList,
-  DropzoneField,
+  DropzoneTrigger,
   useDropzone,
   type DropzoneProps,
 } from '@tradenetcorp/veli-ui/dropzone';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { CloudArrowUp } from 'phosphor-react';
 
-const meta = {
-  title: 'Components/Dropzone',
-  component: Dropzone,
-  parameters: { layout: 'centered' },
-  tags: ['autodocs'],
-} satisfies Meta<typeof Dropzone>;
+const collapsedControlGroups = ['Content', 'State'] as const;
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
 
-type Rejection = { id: string; fileName: string; message: string };
+  toggle?.click();
+};
 
-const dropzoneStoryText = {
+function DropzoneDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
+
+const storyText = {
   en: {
-    uploadAttachments: 'Upload attachments',
-    uploadDocuments: 'Upload documents',
-    dragDropFilesHere: 'Drag & drop files here',
-    pdfPngJpgOnly: 'PDF, PNG, or JPG only',
-    uploadWithSizeLimit: 'Upload with size limit',
-    eachFileMustBeSizeOrSmaller: (size: string) => `Each file must be ${size} or smaller`,
-    limitedAttachments: 'Limited attachments',
-    uploadUpTo2Files: 'Upload up to 2 files',
-    attachments: 'Attachments',
-    max2FilesUpToEach: (size: string) => `Max 2 files · PDF, PNG, or JPG · up to ${size} each`,
-    invoiceUpload: 'Invoice upload',
-    fileNameMustIncludeInvoice: 'File name must include "invoice"',
-    uploadInvoicePdf: 'Upload an invoice PDF',
-    pdfOnlyFilenameInvoice: 'PDF only · filename must contain "invoice"',
-    uploadImages: 'Upload images',
-    dragDropImagesHere: 'Drag & drop images here',
-    anyImageTypeUpTo4Mb: 'Any image type · up to 4 MB each',
-    demoFilesLoadAutomatically: 'Demo files load automatically for styling.',
-    directUpload: 'Direct upload',
-    supportedFormats10Mb: 'Supported formats: PDF, PNG, JPG up to 10 MB.',
-    smallDropzone: 'Small dropzone',
-    mediumDropzone: 'Medium dropzone',
-    largeDropzone: 'Large dropzone',
-    uploadsPaused: 'Uploads paused',
-    uploadProgressLabel: (variant: 'linear' | 'circular' | 'fill') => `${variant} upload progress`,
+    label: 'Attachment',
+    infoTooltip: 'Attach supporting documents for this request.',
+    description: 'PDF, PNG or JPG · up to 10 MB each',
+    errorMessage: 'File type not supported. Upload a PDF, PNG or JPG.',
+    secondaryText: 'Up to 10 MB',
+    rejected: (fileName: string, message: string) => `${fileName}: ${message}`,
+    imagesLabel: 'Photos',
+    imagesDescription: 'Any image type · up to 4 MB each',
     networkConnectionLost: 'Network connection lost',
+    customTitle: 'Upload your ID card',
+    customHint: 'Front and back, one file each',
+    choose: 'Choose files',
+    singleFile: 'Single file',
+    multipleFiles: 'Multiple files',
+    states: {
+      default: 'Default',
+      uploading: 'Uploading',
+      uploaded: 'Uploaded',
+      error: 'Error',
+      disabled: 'Disabled',
+    },
   },
   dv: {
-    uploadAttachments: 'އެޓޭޗްމަންޓްތައް އަޕްލޯޑްކުރޭ',
-    uploadDocuments: 'ލިޔެކިޔުންތައް އަޕްލޯޑްކުރޭ',
-    dragDropFilesHere: 'ފައިލްތައް މިތަނަށް ޑްރެގް އެންޑް ޑްރޮޕް ކުރައްވާ',
-    pdfPngJpgOnly: 'ހަމައެކަނި PDF، PNG، ނުވަތަ JPG',
-    uploadWithSizeLimit: 'ސައިޒު ލިމިޓާއެކު އަޕްލޯޑްކުރޭ',
-    eachFileMustBeSizeOrSmaller: (size: string) =>
-      `ކޮންމެ ފައިލެއް ${size} ނުވަތަ އެއަށްވުރެ ކުޑަވާންވާނެ`,
-    limitedAttachments: 'ލިމިޓްކުރެވިފައިވާ އެޓޭޗްމަންޓްތައް',
-    uploadUpTo2Files: 'ގިނަވެގެން 2 ފައިލް އަޕްލޯޑްކުރެވޭނެ',
-    attachments: 'އެޓޭޗްމަންޓްތައް',
-    max2FilesUpToEach: (size: string) =>
-      `ގިނަވެގެން 2 ފައިލް · PDF, PNG, ނުވަތަ JPG · ކޮންމެ ފައިލެއް ${size} އާ ހަމައަށް`,
-    invoiceUpload: 'އިންވޮއިސް އަޕްލޯޑް',
-    fileNameMustIncludeInvoice: 'ފައިލްގެ ނަމުގައި "invoice" ހިމެނެންވާނެ',
-    uploadInvoicePdf: 'އިންވޮއިސް PDF އެއް އަޕްލޯޑްކުރައްވާ',
-    pdfOnlyFilenameInvoice: 'ހަމައެކަނި PDF · ފައިލްގެ ނަމުގައި "invoice" ހިމެނެންވާނެ',
-    uploadImages: 'ފޮޓޯތައް އަޕްލޯޑްކުރޭ',
-    dragDropImagesHere: 'ފޮޓޯތައް މިތަނަށް ޑްރެގް އެންޑް ޑްރޮޕް ކުރައްވާ',
-    anyImageTypeUpTo4Mb: 'ކޮންމެ ވައްތަރެއްގެ ފޮޓޯއެއް · ކޮންމެ ފައިލެއް 4 MB އާ ހަމައަށް',
-    demoFilesLoadAutomatically: 'ސްޓައިލްކުރުމަށް ޑެމޯ ފައިލްތައް އަމިއްލައަށް ލޯޑުވާނެ.',
-    directUpload: 'ޑައިރެކްޓް އަޕްލޯޑް',
-    supportedFormats10Mb: 'ސަޕޯޓްކުރާ ފޯމެޓްތައް: 10 MB އާ ހަމައަށް PDF, PNG, JPG.',
-    smallDropzone: 'ކުޑަ ޑްރޮޕްޒޯން',
-    mediumDropzone: 'މެދު ޑްރޮޕްޒޯން',
-    largeDropzone: 'ބޮޑު ޑްރޮޕްޒޯން',
-    uploadsPaused: 'އަޕްލޯޑްތައް ޕޯޒްކުރެވިފައި',
-    uploadProgressLabel: (variant: 'linear' | 'circular' | 'fill') => {
-      const labels = {
-        linear: 'ލީނިއަރ',
-        circular: 'ސަރކިއުލަރ',
-        fill: 'ފިލް އޯވަރލޭ',
-      };
-
-      return `${labels[variant]} އަޕްލޯޑް ޕްރޮގްރެސް`;
-    },
+    label: 'އެޓޭޗްމަންޓް',
+    infoTooltip: 'މި ރިކުއެސްޓަށް ބޭނުންވާ ލިޔެކިޔުންތައް އެޓޭޗްކުރައްވާ.',
+    description: 'PDF، PNG ނުވަތަ JPG · ކޮންމެ ފައިލެއް 10 MB އާ ހަމައަށް',
+    errorMessage: 'މި ފައިލް ފޯމެޓް ސަޕޯޓެއް ނުކުރޭ. PDF، PNG ނުވަތަ JPG އެއް އަޕްލޯޑްކުރައްވާ.',
+    secondaryText: '10 MB އާ ހަމައަށް',
+    rejected: (fileName: string, message: string) => `${fileName}: ${message}`,
+    imagesLabel: 'ފޮޓޯ',
+    imagesDescription: 'ކޮންމެ ވައްތަރެއްގެ ފޮޓޯއެއް · ކޮންމެ ފައިލެއް 4 MB އާ ހަމައަށް',
     networkConnectionLost: 'ނެޓްވޯކް ކަނެކްޝަން ކެނޑިއްޖެ',
+    customTitle: 'އައިޑީ ކާޑު އަޕްލޯޑްކުރައްވާ',
+    customHint: 'ކުރިމަތި އަދި ފަހަތް، ކޮންމެ ފަރާތެއް ވަކި ފައިލެއްގައި',
+    choose: 'ފައިލް ހޮވާ',
+    singleFile: 'އެއް ފައިލް',
+    multipleFiles: 'ގިނަ ފައިލް',
+    states: {
+      default: 'އާދައިގެ',
+      uploading: 'އަޕްލޯޑްވަނީ',
+      uploaded: 'އަޕްލޯޑްކުރެވިއްޖެ',
+      error: 'އެރަރ',
+      disabled: 'ބޭނުންނުކުރެވޭ',
+    },
   },
 } as const;
 
-type DropzoneStoryLanguage = keyof typeof dropzoneStoryText;
-type DropzoneStoryText = (typeof dropzoneStoryText)[DropzoneStoryLanguage];
+type StoryLanguage = keyof typeof storyText;
+type StoryText = (typeof storyText)[StoryLanguage];
 
-const useDropzoneStoryText = (): DropzoneStoryText => {
+function useStoryLanguage(): StoryLanguage {
   const { direction } = useVeliLanguage();
-  const language: DropzoneStoryLanguage = direction === 'rtl' ? 'dv' : 'en';
+  return direction === 'rtl' ? 'dv' : 'en';
+}
 
-  return dropzoneStoryText[language];
+function useStoryText(): StoryText {
+  return storyText[useStoryLanguage()];
+}
+
+const localizedArgKeys = ['label', 'infoTooltip', 'description', 'secondaryText'] as const;
+type LocalizedArgKey = (typeof localizedArgKeys)[number];
+
+const getLocalizedArgText = (key: LocalizedArgKey, value: unknown, language: StoryLanguage) => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return storyText[language][key];
+  }
+
+  const localizedValues: readonly string[] = [storyText.en[key], storyText.dv[key]];
+
+  return localizedValues.includes(value) ? storyText[language][key] : value;
 };
 
-function formatBytes(bytes: number) {
-  if (bytes === 0) return '0 B';
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
+const MB = 1024 * 1024;
+
+function createDemoFile(name: string, type: string, size = 1.2 * MB) {
+  return new File([new Uint8Array(Math.round(size))], name, { type, lastModified: 0 });
 }
 
-function DropzoneListItems({ children }: { children?: React.ReactNode }) {
-  const files = useDropzone((state) =>
-    Array.from(state.files.values()).map((fileState) => fileState.file),
-  );
-
-  return (
-    <>
-      {files.map((file) => (
-        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
-          {children}
-        </DropzoneItem>
-      ))}
-    </>
-  );
+function createImageFile(name: string, color: string) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="${color}"/><circle cx="40" cy="40" r="18" fill="#fff" fill-opacity="0.6"/></svg>`;
+  return new File([svg], name, { type: 'image/svg+xml', lastModified: 0 });
 }
 
-function DropzoneStory({
-  children,
-  onFileReject: onFileRejectProp,
-  ...props
-}: DropzoneProps & { children?: ReactNode }) {
-  const [files, setFiles] = useState<File[]>([]);
-  const [rejections, setRejections] = useState<Rejection[]>([]);
+type UploadTarget = { progress: number; done?: boolean; error?: string };
 
-  return (
-    <div className="w-[480px] space-y-3">
-      <Dropzone
-        multiple
-        value={files}
-        onValueChange={setFiles}
-        onFileReject={(file, message) => {
-          setRejections((current) => [
-            ...current,
-            { id: `${file.name}-${Date.now()}`, fileName: file.name, message },
-          ]);
-          onFileRejectProp?.(file, message);
-        }}
-        {...props}
-      >
-        {children ?? <DropzoneArea />}
-        <DropzoneList>
-          <DropzoneListItems>
-            <DropzoneItemPreview />
-            <DropzoneItemMetadata />
-            <DropzoneItemProgress />
-            <DropzoneItemDelete />
-          </DropzoneListItems>
-        </DropzoneList>
-        <DropzoneClear />
-      </Dropzone>
-
-      {rejections.length > 0 ? (
-        <div
-          role="status"
-          className="rounded-xl border border-danger bg-button-danger-subtle-default px-4 py-3"
-        >
-          <p className="type-body-sm-medium text-text-danger-muted">Rejected files</p>
-          <ul className="mt-2 space-y-1">
-            {rejections.map((rejection) => (
-              <li key={rejection.id} className="type-caption-regular text-text-danger-muted">
-                <span className="font-medium">{rejection.fileName}</span> — {rejection.message}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function createDemoFile(name: string, type: string, content?: BlobPart) {
-  const payload = content ?? new Uint8Array(420 * 1024);
-  return new File([payload], name, { type, lastModified: Date.now() });
-}
-
-const DEMO_UPLOAD_FILES = [
-  createDemoFile('report-15.pdf', 'application/pdf'),
-  createDemoFile('design-45.pdf', 'application/pdf'),
-  createDemoFile('archive-72.zip', 'application/zip'),
-  createDemoFile(
-    'photo-62.svg',
-    'image/svg+xml',
-    '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#6366f1"/><circle cx="40" cy="40" r="18" fill="#c7d2fe"/></svg>',
-  ),
-  createDemoFile('failed-upload.pdf', 'application/pdf'),
-  createDemoFile('complete.pdf', 'application/pdf'),
-];
-
-type DemoUploadTarget = {
-  progress: number;
-  done?: boolean;
-  error?: 'networkConnectionLost';
-};
-
-const DEMO_UPLOAD_TARGETS: Record<string, DemoUploadTarget> = {
-  'report-15.pdf': { progress: 15 },
-  'design-45.pdf': { progress: 45 },
-  'archive-72.zip': { progress: 72 },
-  'photo-62.svg': { progress: 62 },
-  'failed-upload.pdf': { progress: 68, error: 'networkConnectionLost' },
-  'complete.pdf': { progress: 100, done: true },
-};
-
-function createDemoUploadHandler(text: DropzoneStoryText) {
-  return async (
-    files: File[],
-    {
-      onProgress,
-      onSuccess,
-      onError,
-    }: {
-      onProgress: (file: File, progress: number) => void;
-      onSuccess: (file: File) => void;
-      onError: (file: File, error: Error) => void;
-    },
+function createFixedUploadHandler(targets: Record<string, UploadTarget>) {
+  const onUpload: NonNullable<DropzoneProps['onUpload']> = async (
+    files,
+    { onProgress, onSuccess, onError },
   ) => {
     for (const file of files) {
-      const target = DEMO_UPLOAD_TARGETS[file.name];
-
-      if (!target) {
-        onProgress(file, 30);
-        continue;
-      }
-
-      onProgress(file, target.progress);
+      const target = targets[file.name];
+      if (!target) continue;
 
       if (target.error) {
-        onError(file, new Error(text[target.error]));
-        continue;
-      }
-
-      if (target.done) {
+        onError(file, new Error(target.error));
+      } else if (target.done) {
         onSuccess(file);
+      } else {
+        onProgress(file, target.progress);
       }
     }
   };
+
+  return onUpload;
 }
 
-function injectDemoFiles(container: HTMLElement) {
-  const dropzone = container.querySelector('[data-slot="dropzone-area"]');
-  if (!dropzone) {
-    return false;
-  }
-
-  const dataTransfer = new DataTransfer();
-  for (const file of DEMO_UPLOAD_FILES) {
-    dataTransfer.items.add(file);
-  }
-
-  dropzone.dispatchEvent(
-    new DragEvent('drop', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer,
+const simulatedUpload: NonNullable<DropzoneProps['onUpload']> = async (
+  files,
+  { onProgress, onSuccess },
+) => {
+  await Promise.all(
+    files.map(async (file) => {
+      for (let progress = 0; progress <= 100; progress += 10) {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        onProgress(file, progress);
+      }
+      onSuccess(file);
     }),
   );
+};
 
-  return true;
+/** Feeds files through the hidden file input so validation and `onUpload` run as for a real selection. */
+function Preloaded({ files, children }: { files: File[]; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const input = ref.current?.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!input || files.length === 0) return;
+
+    const dataTransfer = new DataTransfer();
+    for (const file of files) dataTransfer.items.add(file);
+    input.files = dataTransfer.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }, [files]);
+
+  return <div ref={ref}>{children}</div>;
 }
 
-function UploadProgressDemoPanel({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description: string;
-  children: ReactNode;
-}) {
+function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <section className="space-y-3">
-      <div>
-        <h3 className="type-body-md-medium text-text-default-default">{title}</h3>
-        <p className="type-body-sm-regular text-text-default-subtle">{description}</p>
-      </div>
-      {children}
-    </section>
+    <span className="text-xs font-bold uppercase tracking-wider text-base-muted">{children}</span>
   );
 }
 
-function UploadProgressFileList({
-  variant,
-  progressSize = 40,
-  showFillOverlay = false,
+type DropzoneFieldStoryArgs = ComponentProps<typeof DropzoneField> & {
+  showInfoTooltip: boolean;
+};
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [name, { ...argType, table: { category } }]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
+const hiddenArgTypes = {
+  'aria-label': { table: { disable: true } },
+  infoTooltipAriaLabel: { table: { disable: true } },
+  value: { table: { disable: true } },
+  defaultValue: { table: { disable: true } },
+  isInvalid: { table: { disable: true } },
+  isDisabled: { table: { disable: true } },
+  name: { table: { disable: true } },
+  acceptedFileTypes: { table: { disable: true } },
+  maxSize: { table: { disable: true } },
+  maxFiles: { table: { disable: true } },
+  onValueChange: { table: { disable: true } },
+  onAccept: { table: { disable: true } },
+  onFileAccept: { table: { disable: true } },
+  onFileReject: { table: { disable: true } },
+  onFileValidate: { table: { disable: true } },
+  onUpload: { table: { disable: true } },
+  className: { table: { disable: true } },
+  id: { table: { disable: true } },
+} as const;
+
+const meta = {
+  title: 'Components/Dropzone',
+  component: DropzoneField,
+  decorators: [
+    (Story, context) => {
+      const language: StoryLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
+      const [args, updateArgs] = useArgs();
+      const { label, infoTooltip, description, secondaryText } = args;
+
+      useEffect(() => {
+        const currentArgs = { label, infoTooltip, description, secondaryText };
+        const nextArgs: Partial<Record<LocalizedArgKey, string>> = {};
+
+        localizedArgKeys.forEach((key) => {
+          const localizedValue = getLocalizedArgText(key, currentArgs[key], language);
+
+          if (currentArgs[key] !== localizedValue) {
+            nextArgs[key] = localizedValue;
+          }
+        });
+
+        if (Object.keys(nextArgs).length > 0) {
+          updateArgs?.(nextArgs);
+        }
+      }, [label, infoTooltip, description, secondaryText, language, updateArgs]);
+
+      return <Story />;
+    },
+  ],
+  parameters: {
+    layout: 'centered',
+    controls: { sort: 'none' },
+    docs: { container: DropzoneDocsContainer },
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    ...withArgCategory('Appearance', {
+      multiple: { control: 'boolean' },
+    }),
+    ...withArgCategory('Label', {
+      label: { control: 'text' },
+      labelSize: { control: 'select', options: ['sm', 'md'] },
+      isOptional: { control: 'boolean' },
+      infoTooltip: { control: 'text' },
+      showInfoTooltip: { control: 'boolean' },
+    }),
+    ...withArgCategory('Content', {
+      title: { control: 'text' },
+      hint: { control: 'text' },
+      secondaryText: { control: 'text' },
+      showTrigger: { control: 'boolean' },
+      description: { control: 'text' },
+    }),
+    ...withArgCategory('State', {
+      isRequired: { control: 'boolean' },
+      showRequiredIndicator: { control: 'boolean' },
+      errorMessage: { control: 'text' },
+    }),
+    ...hiddenArgTypes,
+  },
+  args: {
+    multiple: false,
+    label: storyText.en.label,
+    labelSize: 'md',
+    isOptional: true,
+    infoTooltip: storyText.en.infoTooltip,
+    showInfoTooltip: true,
+    title: '',
+    hint: '',
+    secondaryText: storyText.en.secondaryText,
+    showTrigger: true,
+    description: storyText.en.description,
+    isRequired: false,
+    showRequiredIndicator: true,
+    errorMessage: '',
+  },
+} satisfies Meta<DropzoneFieldStoryArgs>;
+
+export default meta;
+type Story = StoryObj<DropzoneFieldStoryArgs>;
+
+export const Default: Story = {
+  render: function Render(args) {
+    const language = useStoryLanguage();
+    const { showInfoTooltip, title, hint, ...fieldArgs } = args;
+
+    return (
+      <div key={`${language}:${String(args.multiple)}`} className="w-[496px] max-w-full">
+        <DropzoneField
+          {...fieldArgs}
+          label={getLocalizedArgText('label', args.label, language)}
+          infoTooltip={
+            showInfoTooltip
+              ? getLocalizedArgText('infoTooltip', args.infoTooltip, language)
+              : undefined
+          }
+          title={title || undefined}
+          hint={hint || undefined}
+          description={getLocalizedArgText('description', args.description, language)}
+          secondaryText={getLocalizedArgText('secondaryText', args.secondaryText, language)}
+          acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+          maxSize={10 * MB}
+          onUpload={simulatedUpload}
+        />
+      </div>
+    );
+  },
+};
+
+export const Multiple: Story = {
+  args: { multiple: true },
+  render: Default.render,
+};
+
+type FieldState = keyof StoryText['states'];
+
+function FieldInState({
+  state,
+  multiple,
+  text,
 }: {
-  variant: 'linear' | 'circular' | 'fill';
-  progressSize?: number;
-  showFillOverlay?: boolean;
+  state: FieldState;
+  multiple: boolean;
+  text: StoryText;
 }) {
-  const files = useDropzone((state) =>
-    Array.from(state.files.values()).map((fileState) => fileState.file),
+  const { files, onUpload } = useMemo(() => {
+    const uploading = createDemoFile('design-system.pdf', 'application/pdf');
+    const uploadedA = createDemoFile('brand-guidelines.pdf', 'application/pdf');
+    const uploadedB = createDemoFile('annual-report.pdf', 'application/pdf');
+    const failed = createDemoFile('contract.pdf', 'application/pdf');
+
+    switch (state) {
+      case 'uploading':
+        return {
+          files: multiple ? [uploading, uploadedA, uploadedB] : [uploading],
+          onUpload: createFixedUploadHandler({
+            'design-system.pdf': { progress: 19 },
+            'brand-guidelines.pdf': { progress: 100, done: true },
+            'annual-report.pdf': { progress: 100, done: true },
+          }),
+        };
+      case 'uploaded':
+        return {
+          files: multiple ? [uploadedA, uploadedB] : [uploadedA],
+          onUpload: createFixedUploadHandler({
+            'brand-guidelines.pdf': { progress: 100, done: true },
+            'annual-report.pdf': { progress: 100, done: true },
+          }),
+        };
+      case 'error':
+        return {
+          files: multiple ? [failed, uploadedA, uploadedB] : [],
+          onUpload: createFixedUploadHandler({
+            'contract.pdf': { progress: 64, error: text.networkConnectionLost },
+            'brand-guidelines.pdf': { progress: 100, done: true },
+            'annual-report.pdf': { progress: 100, done: true },
+          }),
+        };
+      default:
+        return { files: [], onUpload: undefined };
+    }
+  }, [multiple, state, text]);
+
+  return (
+    <Preloaded files={files}>
+      <DropzoneField
+        multiple={multiple}
+        label={text.states[state]}
+        isOptional
+        description={text.description}
+        errorMessage={state === 'error' ? text.errorMessage : undefined}
+        secondaryText={text.secondaryText}
+        isDisabled={state === 'disabled'}
+        onUpload={onUpload}
+      />
+    </Preloaded>
   );
+}
+
+export const States: Story = {
+  parameters: { layout: 'padded' },
+  render: function Render() {
+    const language = useStoryLanguage();
+    const text = useStoryText();
+    const states = Object.keys(text.states) as FieldState[];
+
+    return (
+      <div key={language} className="grid w-full max-w-[1016px] gap-6 md:grid-cols-2">
+        {[false, true].map((multiple) => (
+          <div key={String(multiple)} className="flex flex-col gap-6">
+            <SectionLabel>{multiple ? text.multipleFiles : text.singleFile}</SectionLabel>
+            {states.map((state) => (
+              <FieldInState key={state} state={state} multiple={multiple} text={text} />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const Validation: Story = {
+  render: function Render() {
+    const language = useStoryLanguage();
+    const text = useStoryText();
+    const [error, setError] = useState<string>();
+
+    return (
+      <div key={language} className="w-[496px] max-w-full">
+        <DropzoneField
+          multiple
+          label={text.label}
+          description={text.description}
+          secondaryText={text.secondaryText}
+          errorMessage={error}
+          acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+          maxFiles={3}
+          maxSize={10 * MB}
+          onAccept={() => setError(undefined)}
+          onFileReject={(file, message) => setError(text.rejected(file.name, message))}
+        />
+      </div>
+    );
+  },
+};
+
+export const ImagePreviews: Story = {
+  render: function Render() {
+    const language = useStoryLanguage();
+    const text = useStoryText();
+    const files = useMemo(
+      () => [createImageFile('sunset.svg', '#f97316'), createImageFile('lagoon.svg', '#0ea5e9')],
+      [],
+    );
+
+    return (
+      <div key={language} className="w-[496px] max-w-full">
+        <Preloaded files={files}>
+          <DropzoneField
+            multiple
+            label={text.imagesLabel}
+            description={text.imagesDescription}
+            acceptedFileTypes={['image/*']}
+            maxSize={4 * MB}
+          />
+        </Preloaded>
+      </div>
+    );
+  },
+};
+
+function ComposedFileList() {
+  const files = useDropzone((state) => Array.from(state.files.keys()));
 
   return (
     <>
@@ -313,336 +502,35 @@ function UploadProgressFileList({
         <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
           <DropzoneItemPreview />
           <DropzoneItemMetadata />
-          {variant === 'circular' ? (
-            <DropzoneItemProgress variant="circular" size={progressSize} forceMount />
-          ) : null}
           <DropzoneItemDelete />
-          {variant === 'fill' || showFillOverlay ? (
-            <DropzoneItemProgress variant="fill" forceMount />
-          ) : null}
-          {variant === 'linear' ? <DropzoneItemProgress variant="linear" forceMount /> : null}
+          <DropzoneItemProgress />
         </DropzoneItem>
       ))}
     </>
   );
 }
 
-function UploadProgressShowcase({
-  variant = 'linear',
-  progressSize = 40,
-  showFillOverlay = false,
-}: {
-  variant?: 'linear' | 'circular' | 'fill';
-  progressSize?: number;
-  showFillOverlay?: boolean;
-}) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [seed, setSeed] = useState(0);
-  const text = useDropzoneStoryText();
-  const onUpload = useMemo(() => createDemoUploadHandler(text), [text]);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      if (rootRef.current) {
-        injectDemoFiles(rootRef.current);
-      }
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [seed]);
-
-  return (
-    <div ref={rootRef} className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <p className="type-caption-regular text-text-default-subtle">
-          Fixed demo states: 15%, 45%, 72%, 62%, failed, and complete.
-        </p>
-        <button
-          type="button"
-          className="rounded-full border border-base-subtle px-3 py-1.5 type-caption-medium text-text-default-default transition-colors hover:bg-button-secondary-subtle-hover"
-          onClick={() => setSeed((current) => current + 1)}
-        >
-          Reload demo
-        </button>
-      </div>
-
-      <Dropzone key={seed} label={text.uploadProgressLabel(variant)} multiple onUpload={onUpload}>
-        <DropzoneArea showTrigger={false}>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.demoFilesLoadAutomatically}
-          </span>
-        </DropzoneArea>
-        <DropzoneList>
-          <UploadProgressFileList
-            variant={variant}
-            progressSize={progressSize}
-            showFillOverlay={showFillOverlay}
-          />
-        </DropzoneList>
-      </Dropzone>
-    </div>
-  );
-}
-
-export const Default: Story = {
-  render: () => {
-    const text = useDropzoneStoryText();
+export const Composition: Story = {
+  render: function Render() {
+    const language = useStoryLanguage();
+    const text = useStoryText();
 
     return (
-      <DropzoneStory label={text.uploadAttachments}>
-        <DropzoneArea />
-      </DropzoneStory>
-    );
-  },
-};
-
-export const AcceptedFileTypes: Story = {
-  name: 'Accepted file types',
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory label={text.uploadDocuments} accept="application/pdf,image/png,image/jpeg">
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.dragDropFilesHere}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.pdfPngJpgOnly}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const MaxFileSize: Story = {
-  name: 'Max file size',
-  render: () => {
-    const maxSize = 1 * 1024 * 1024;
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory label={text.uploadWithSizeLimit} maxSize={maxSize}>
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.dragDropFilesHere}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.eachFileMustBeSizeOrSmaller(formatBytes(maxSize))}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const MaxFiles: Story = {
-  name: 'Max files',
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory label={text.limitedAttachments} maxFiles={2}>
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.dragDropFilesHere}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.uploadUpTo2Files}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const CombinedLimits: Story = {
-  name: 'Combined limits',
-  render: () => {
-    const maxSize = 5 * 1024 * 1024;
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory
-        label={text.attachments}
-        accept="application/pdf,image/png,image/jpeg"
-        maxFiles={2}
-        maxSize={maxSize}
-      >
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.dragDropFilesHere}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.max2FilesUpToEach(formatBytes(maxSize))}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const CustomValidation: Story = {
-  name: 'Custom validation',
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory
-        label={text.invoiceUpload}
-        accept="application/pdf"
-        onFileValidate={(file) => {
-          if (!file.name.toLowerCase().includes('invoice')) {
-            return text.fileNameMustIncludeInvoice;
-          }
-          return null;
-        }}
-      >
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.uploadInvoicePdf}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.pdfOnlyFilenameInvoice}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const ImageWildcard: Story = {
-  name: 'Image wildcard (image/*)',
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <DropzoneStory label={text.uploadImages} accept="image/*" maxSize={4 * 1024 * 1024}>
-        <DropzoneArea>
-          <span className="type-body-md-medium text-text-default-default">
-            {text.dragDropImagesHere}
-          </span>
-          <span className="type-body-sm-regular text-text-default-subtle">
-            {text.anyImageTypeUpTo4Mb}
-          </span>
-        </DropzoneArea>
-      </DropzoneStory>
-    );
-  },
-};
-
-export const UploadProgress: Story = {
-  name: 'Upload progress indicators',
-  parameters: {
-    layout: 'padded',
-  },
-  render: () => (
-    <div className="flex w-full max-w-[560px] flex-col gap-10">
-      <UploadProgressDemoPanel
-        title="Linear"
-        description="Default track and bar. Includes in-progress, failed, and complete (100%) states."
-      >
-        <UploadProgressShowcase variant="linear" />
-      </UploadProgressDemoPanel>
-
-      <UploadProgressDemoPanel
-        title="Circular"
-        description="Compact ring indicator for dense file rows."
-      >
-        <UploadProgressShowcase variant="circular" progressSize={44} />
-      </UploadProgressDemoPanel>
-
-      <UploadProgressDemoPanel
-        title="Fill overlay"
-        description="Full-row overlay clipped from the top. Useful while an item is uploading."
-      >
-        <UploadProgressShowcase variant="fill" />
-      </UploadProgressDemoPanel>
-    </div>
-  ),
-};
-
-export const DirectUpload: Story = {
-  render: () => {
-    const [files, setFiles] = useState<File[]>([]);
-    const text = useDropzoneStoryText();
-
-    return (
-      <div className="w-[480px] space-y-3">
-        <Dropzone
-          label={text.directUpload}
-          maxFiles={10}
-          maxSize={5 * 1024 * 1024}
-          multiple
-          value={files}
-          onValueChange={setFiles}
-          onUpload={async (uploadFiles, { onProgress, onSuccess }) => {
-            for (const file of uploadFiles) {
-              for (let progress = 0; progress <= 100; progress += 20) {
-                await new Promise((resolve) => setTimeout(resolve, 120));
-                onProgress(file, progress);
-              }
-              onSuccess(file);
-            }
-          }}
-        >
-          <DropzoneArea />
+      <div key={language} className="w-[496px] max-w-full">
+        <Dropzone multiple label={text.customTitle} onUpload={simulatedUpload}>
+          <DropzoneArea showTrigger={false}>
+            <CloudArrowUp size={32} aria-hidden className="text-icon-primary" />
+            <span className="type-body-sm-medium text-base-default">{text.customTitle}</span>
+            <span className="type-caption-regular text-base-subtle">{text.customHint}</span>
+            <DropzoneTrigger intent="primary" appearance="fill">
+              {text.choose}
+            </DropzoneTrigger>
+          </DropzoneArea>
           <DropzoneList>
-            <DropzoneListItems>
-              <DropzoneItemPreview />
-              <DropzoneItemMetadata />
-              <DropzoneItemProgress variant="circular" size={36} />
-              <DropzoneItemDelete />
-            </DropzoneListItems>
+            <ComposedFileList />
           </DropzoneList>
+          <DropzoneClear />
         </Dropzone>
-      </div>
-    );
-  },
-};
-
-export const ConvenienceWrapper: Story = {
-  name: 'Dropzone wrapper',
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <div className="w-[480px]">
-        <DropzoneField
-          label={text.attachments}
-          aria-label={text.uploadAttachments}
-          description={text.supportedFormats10Mb}
-          hint={text.pdfPngJpgOnly}
-          allowsBrowse
-          acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
-        />
-      </div>
-    );
-  },
-};
-
-export const Sizes: Story = {
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <div className="flex w-[520px] flex-col gap-4">
-        <DropzoneField size="sm" aria-label={text.smallDropzone} allowsBrowse />
-        <DropzoneField size="md" aria-label={text.mediumDropzone} allowsBrowse />
-        <DropzoneField size="lg" aria-label={text.largeDropzone} allowsBrowse />
-      </div>
-    );
-  },
-};
-
-export const Disabled: Story = {
-  render: () => {
-    const text = useDropzoneStoryText();
-
-    return (
-      <div className="w-[480px]">
-        <DropzoneField label={text.uploadsPaused} aria-label={text.uploadsPaused} isDisabled />
       </div>
     );
   },

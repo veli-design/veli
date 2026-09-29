@@ -43,16 +43,7 @@ import {
   TableRow,
 } from '@tradenetcorp/veli-ui/table';
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
-import {
-  Dropzone,
-  DropzoneArea,
-  DropzoneItem,
-  DropzoneItemDelete,
-  DropzoneItemMetadata,
-  DropzoneItemPreview,
-  DropzoneList,
-  useDropzone,
-} from '@tradenetcorp/veli-ui/dropzone';
+import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
   Bell,
@@ -1981,40 +1972,68 @@ export function PaginationVariantsDemo() {
   );
 }
 
-export function DropzoneUsageDemo() {
-  const [files, setFiles] = useState<File[]>([]);
+const simulateDropzoneUpload: NonNullable<DropzoneProps['onUpload']> = async (
+  files,
+  { onProgress, onSuccess },
+) => {
+  await Promise.all(
+    files.map(async (file) => {
+      for (let progress = 0; progress <= 100; progress += 10) {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        onProgress(file, progress);
+      }
+      onSuccess(file);
+    }),
+  );
+};
 
+export function DropzoneUsageDemo() {
   return (
-    <Dropzone
-      label="Upload attachments"
-      accept="application/pdf,image/png,image/jpeg"
-      maxFiles={2}
-      multiple
-      value={files}
-      onValueChange={setFiles}
-    >
-      <DropzoneArea />
-      <DropzoneList>
-        <DropzoneFileListItems />
-      </DropzoneList>
-    </Dropzone>
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        label="Attachment"
+        isOptional
+        description="PDF, PNG or JPG · up to 10 MB each"
+        secondaryText="Up to 10 MB"
+        acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+        maxSize={10 * 1024 * 1024}
+        onUpload={simulateDropzoneUpload}
+      />
+    </div>
   );
 }
 
-function DropzoneFileListItems() {
-  const files = useDropzone((state) =>
-    Array.from(state.files.values()).map((fileState) => fileState.file),
+export function DropzoneMultipleDemo() {
+  return (
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        multiple
+        label="Attachments"
+        description="Up to 5 files"
+        secondaryText="Up to 10 MB each"
+        maxFiles={5}
+        maxSize={10 * 1024 * 1024}
+        onUpload={simulateDropzoneUpload}
+      />
+    </div>
   );
+}
+
+export function DropzoneValidationDemo() {
+  const [error, setError] = useState<string>();
 
   return (
-    <>
-      {files.map((file) => (
-        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
-          <DropzoneItemPreview />
-          <DropzoneItemMetadata />
-          <DropzoneItemDelete />
-        </DropzoneItem>
-      ))}
-    </>
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        multiple
+        label="Documents"
+        description="PDF only · up to 2 MB each"
+        errorMessage={error}
+        acceptedFileTypes={['application/pdf']}
+        maxSize={2 * 1024 * 1024}
+        onAccept={() => setError(undefined)}
+        onFileReject={(file, message) => setError(`${file.name}: ${message}`)}
+      />
+    </div>
   );
 }
