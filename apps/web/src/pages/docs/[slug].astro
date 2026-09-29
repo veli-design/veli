@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import DocsPageActions from '../../components/DocsPageActions.astro';
+import DocsComponentTabs from '../../components/DocsComponentTabs.astro';
+import DocsStorybookLink from '../../components/DocsStorybookLink.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
 import { getComponentMeta } from '../../lib/site';
 
@@ -31,14 +32,17 @@ const markdownPath = `/docs/${doc.slug}/index.md`;
   activePath={`/docs/${doc.slug}/`}
   {markdownPath}
   headings={tocHeadings}
+  showPageActions={false}
+  contentLayout="component"
 >
   <header class="docs-page-header docs-page-header--article">
-    <h1>{doc.data.title}</h1>
+    <h1 class="type-display-2-medium">{doc.data.title}</h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
-    <DocsPageActions {markdownPath} placement="inline" />
   </header>
 
+  <DocsComponentTabs {markdownPath} />
+
   <article class="docs-prose">
-    <Content />
+    <Content components={{ DocsStorybookLink }} />
   </article>
 </DocsLayout>

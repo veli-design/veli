@@ -14,6 +14,8 @@ type Heading = {
   text: string;
 };
 
+type DocsContentLayout = 'overview' | 'foundation-article' | 'component' | 'article';
+
 interface Props {
   title: string;
   description?: string;
@@ -21,6 +23,8 @@ interface Props {
   markdownPath?: string;
   headings?: Heading[];
   fullBleedHeader?: boolean;
+  showPageActions?: boolean;
+  contentLayout: DocsContentLayout;
 }
 
 const {
@@ -30,6 +34,8 @@ const {
   markdownPath,
   headings = [],
   fullBleedHeader = false,
+  showPageActions = true,
+  contentLayout,
 } = Astro.props;
 
 function isActive(href: string) {
@@ -149,13 +155,24 @@ function isSectionActive(section: (typeof docsSections)[number]) {
       </details>
     </header>
 
-    <main id="main" class:list={['docs-main', fullBleedHeader && 'docs-main--full-bleed-header']}>
+    <main
+      id="main"
+      class:list={[
+        'docs-main',
+        fullBleedHeader && 'docs-main--full-bleed-header',
+        `docs-main--${contentLayout}`,
+      ]}
+    >
       <div class="docs-main__inner">
         <slot />
 
         <aside class="docs-utilities" aria-label="Page utilities">
           <div class="docs-utilities__sticky">
-            {markdownPath && <DocsPageActions {markdownPath} placement="utility" />}
+            {
+              markdownPath && showPageActions && (
+                <DocsPageActions {markdownPath} placement="utility" />
+              )
+            }
             <nav class="docs-contents" aria-label="On this page">
               <h2>On this page</h2>
               {
@@ -209,17 +226,20 @@ function isSectionActive(section: (typeof docsSections)[number]) {
             0,
             scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop,
           );
+          const visibleSections = sections.filter(
+            ({ link, heading }) => !link.hidden && !heading.closest('[hidden]'),
+          );
           const activeLine = Math.max(rootRect.top + 64, rootRect.bottom - 64 - remainingScroll);
-          let active = sections[0];
+          let active = visibleSections[0];
 
-          for (const section of sections) {
+          for (const section of visibleSections) {
             if (section.heading.getBoundingClientRect().top > activeLine) break;
             active = section;
           }
 
           const hashActive =
             remainingScroll <= 1 &&
-            sections.find(({ link, heading }) => {
+            visibleSections.find(({ link, heading }) => {
               const headingRect = heading.getBoundingClientRect();
               return (
                 link.getAttribute('href') === location.hash &&
@@ -255,6 +275,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
 
         scrollRoot.addEventListener('scroll', scheduleContentsUpdate, { passive: true });
         window.addEventListener('resize', scheduleContentsUpdate);
+        window.addEventListener('veli:docs-tab-change', scheduleContentsUpdate);
         scheduleContentsUpdate();
       }
     })();

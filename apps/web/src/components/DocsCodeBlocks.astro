@@ -148,6 +148,10 @@
     color: var(--color-text-base-strong);
   }
 
+  .docs-code-block:not(.docs-code-command):not(.docs-code-file) {
+    padding: var(--spacing-1);
+  }
+
   .docs-code-block .docs-code-block__toolbar {
     position: absolute;
     z-index: 1;
@@ -268,7 +272,7 @@
     max-height: 480px;
     overflow: auto;
     margin-top: 0;
-    border-radius: 0;
+    border-radius: var(--radius-md);
     padding: var(--spacing-4) 60px var(--spacing-4) var(--spacing-4);
     background: transparent !important;
     font-size: 13px;

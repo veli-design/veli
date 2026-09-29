@@ -21,6 +21,7 @@ const markdownPath = `/${page.id}/index.md`;
   activePath={`/${page.id}/`}
   {markdownPath}
   headings={rendered.metadata.headings.filter((h) => h.depth === 2 || h.depth === 3)}
+  contentLayout="article"
 >
   <header class="docs-page-header docs-page-header--article">
     <h1>{page.title}</h1><p>{page.description}</p><DocsPageActions

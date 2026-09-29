@@ -1,0 +1,20 @@
+---
+import { ArrowSquareOut } from 'phosphor-react';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const configuredBaseUrl = import.meta.env.PUBLIC_STORYBOOK_URL?.trim().replace(/\/$/, '');
+const storybookBaseUrl = configuredBaseUrl || 'http://localhost:6006';
+const href = `${storybookBaseUrl}/?path=/docs/components-${slug}--docs`;
+---
+
+<a class="docs-storybook-link" href={href} target="_blank" rel="noopener noreferrer">
+  <span>Explore in Storybook</span>
+  <span class="docs-storybook-link__icon" aria-hidden="true">
+    <ArrowSquareOut size={12} />
+  </span>
+  <span class="sr-only"> (opens in a new tab)</span>
+</a>
