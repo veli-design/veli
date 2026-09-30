@@ -68,3 +68,26 @@ export function SwitchStatesDemo() {
     </div>
   );
 }
+
+export function SwitchSizesDemo() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2">
+      {(['default', 'subtle'] as const).map((appearance) => (
+        <div key={appearance} className="flex flex-col gap-4">
+          <span className="type-body-sm-medium text-base-muted">
+            {appearance === 'default' ? 'Default' : 'Subtle'}
+          </span>
+          <Switch appearance={appearance} size="sm" defaultSelected>
+            Small
+          </Switch>
+          <Switch appearance={appearance} size="md" defaultSelected>
+            Medium
+          </Switch>
+          <Switch appearance={appearance} size="lg" defaultSelected>
+            Large
+          </Switch>
+        </div>
+      ))}
+    </div>
+  );
+}

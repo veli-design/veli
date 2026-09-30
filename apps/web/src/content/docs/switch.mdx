@@ -6,6 +6,7 @@ description: Accessible on/off setting with default and subtle appearances.
 import {
   SwitchAppearancesDemo,
   SwitchRtlDemo,
+  SwitchSizesDemo,
   SwitchStatesDemo,
   SwitchUsageDemo,
 } from '../../components/SwitchExamples';
@@ -42,7 +43,7 @@ const [selected, setSelected] = useState(false);
 
 ## Appearances
 
-`default` uses an outlined off track and a checkmark when on. `subtle` uses a filled off track without a checkmark. Size the switch with `sm`, `md`, or `lg`.
+`default` uses an outlined off track and a checkmark when on. `subtle` uses a filled off track without a checkmark.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <SwitchAppearancesDemo client:load />
@@ -53,7 +54,19 @@ const [selected, setSelected] = useState(false);
 <Switch appearance="subtle" defaultSelected>Subtle</Switch>
 ```
 
-Tracks measure 32 × 16, 40 × 20, and 48 × 24 pixels. The root label provides a minimum 24-pixel hit height. Long labels wrap without shrinking the track.
+## Sizes
+
+Use `sm`, `md`, or `lg`; `md` is the default. Tracks measure 32 × 16, 40 × 20, and 48 × 24 pixels. The root label provides a minimum 24-pixel hit height. Long labels wrap without shrinking the track.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SwitchSizesDemo client:load />
+</div>
+
+```tsx
+<Switch size="sm" defaultSelected>Small</Switch>
+<Switch size="md" defaultSelected>Medium</Switch>
+<Switch size="lg" defaultSelected>Large</Switch>
+```
 
 ## States
 
