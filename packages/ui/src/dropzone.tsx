@@ -1658,7 +1658,11 @@ export function DropzoneItemDelete({
       className={twMerge('shrink-0', className)}
       onPress={onPress}
     >
-      {isUploaded ? <Trash size={16} aria-hidden /> : <X size={16} aria-hidden />}
+      {isUploaded ? (
+        <Trash size={16} weight="bold" aria-hidden />
+      ) : (
+        <X size={16} weight="bold" aria-hidden />
+      )}
     </Button>
   );
 }
