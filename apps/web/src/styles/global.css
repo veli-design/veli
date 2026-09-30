@@ -913,7 +913,7 @@ button {
   margin-bottom: 0;
 }
 
-.docs-prose a {
+.docs-prose a:not(:where(.preview *)) {
   color: var(--color-text-links-default);
   font-weight: 600;
 }
