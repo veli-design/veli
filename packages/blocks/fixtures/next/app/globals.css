@@ -2,6 +2,12 @@
 @import '@tradenetcorp/veli-tokens/tailwind';
 @import '@tradenetcorp/veli-ui/tailwind';
 @source '../components';
+
+/* Consumer apps own font loading. This fixture works without a remote font service. */
+@theme {
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
 @font-face {
   font-family: 'MV Faseyha';
   src: url('/fonts/MV_Faseyha_Regular.ttf');
