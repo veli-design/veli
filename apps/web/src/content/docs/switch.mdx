@@ -1,11 +1,17 @@
 ---
 title: Switch
-description: A switch allows a user to turn a setting on or off.
+description: Accessible on/off setting with default and subtle appearances.
 ---
 
-import { Switch } from '@tradenetcorp/veli-ui/switch';
+import {
+  SwitchAppearancesDemo,
+  SwitchStatesDemo,
+  SwitchUsageDemo,
+} from '../../components/SwitchExamples';
 
-The `Switch` component is a toggleable input that allows users to choose between two mutually exclusive states (on and off).
+# Switch
+
+Use Switch for a setting that takes effect when toggled, such as notifications. Use [Checkbox](/docs/checkbox/) for consent, required agreement, or selections submitted together.
 
 ## Import
 
@@ -15,64 +21,149 @@ import { Switch } from '@tradenetcorp/veli-ui/switch';
 
 ## Usage
 
+<div className="preview mb-4 rounded-lg border p-4">
+  <SwitchUsageDemo client:load />
+</div>
+
 ```tsx
 <Switch>Notifications</Switch>
 ```
 
-### Sizes
-
-The switch comes in three sizes: `sm`, `md`, and `lg`.
-
-<div className="flex flex-col gap-4 not-prose" data-docs-markdown="interactive-example">
-  <Switch size="sm">Small</Switch>
-  <Switch size="md">Medium</Switch>
-  <Switch size="lg">Large</Switch>
-</div>
-
-```tsx
-<Switch size="sm">Small</Switch>
-<Switch size="md">Medium</Switch>
-<Switch size="lg">Large</Switch>
-```
-
-### Controlled
-
-You can control the state of the switch using the `isSelected` and `onChange` props.
+Use `defaultSelected` for the initial uncontrolled state, or `isSelected` with `onChange` for controlled state. Keep the label stable when the setting changes. The application owns persistence and feedback for failed saves.
 
 ```tsx
 const [selected, setSelected] = useState(false);
 
 <Switch isSelected={selected} onChange={setSelected}>
-  {selected ? 'On' : 'Off'}
+  Notifications
 </Switch>;
 ```
 
-### Disabled
+## Appearances
 
-The switch can be disabled using the `isDisabled` prop.
+`default` uses an outlined off track and a checkmark when on. `subtle` uses a filled off track without a checkmark. Size the switch with `sm`, `md`, or `lg`.
 
-<div className="flex gap-4 not-prose" data-docs-markdown="interactive-example">
-  <Switch isDisabled>Disabled Off</Switch>
-  <Switch isDisabled defaultSelected>
-    Disabled On
-  </Switch>
+<div className="preview mb-4 rounded-lg border p-4">
+  <SwitchAppearancesDemo client:load />
 </div>
 
 ```tsx
-<Switch isDisabled>Disabled Off</Switch>
-<Switch isDisabled defaultSelected>Disabled On</Switch>
+<Switch defaultSelected>Default</Switch>
+<Switch appearance="subtle" defaultSelected>Subtle</Switch>
+```
+
+Tracks measure 32 × 16, 40 × 20, and 48 × 24 pixels. The root label provides a minimum 24-pixel hit height. Long labels wrap without shrinking the track.
+
+## States
+
+Disabled switches cannot receive keyboard focus and are omitted from form data. Read-only switches retain focus and their selected form value, but cannot be toggled.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SwitchStatesDemo client:load />
+</div>
+
+```tsx
+<Switch isDisabled>Disabled off</Switch>
+<Switch isDisabled defaultSelected>Disabled on</Switch>
+<Switch isReadOnly defaultSelected>Read only</Switch>
 ```
 
 ## API Reference
 
-| Prop              | Type                            | Default | Description                                                        |
-| :---------------- | :------------------------------ | :------ | :----------------------------------------------------------------- |
-| `size`            | `'sm' \| 'md' \| 'lg'`          | `'md'`  | The size of the switch.                                            |
-| `isSelected`      | `boolean`                       | -       | Whether the switch is selected (controlled).                       |
-| `defaultSelected` | `boolean`                       | -       | Whether the switch is selected by default (uncontrolled).          |
-| `isDisabled`      | `boolean`                       | -       | Whether the switch is disabled.                                    |
-| `onChange`        | `(isSelected: boolean) => void` | -       | Callback triggered when the selection state changes.               |
-| `children`        | `ReactNode`                     | -       | The label for the switch.                                          |
-| `className`       | `string`                        | -       | Layout-only class override merged onto the outermost root element. |
+Switch is a Veli control on React Aria [`Switch`](https://react-spectrum.adobe.com/react-aria/Switch.html), which wraps a native checkbox with `role="switch"`. Props below follow that stack.
 
-`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The switch track and handle internals remain private to preserve focus, contrast, disabled, and selected states.
+### Switch
+
+Veli-specific props for the composed control.
+
+| Prop         | Type                    | Default     | Description                                         |
+| :----------- | :---------------------- | :---------- | :-------------------------------------------------- |
+| `appearance` | `'default' \| 'subtle'` | `'default'` | Outlined or filled off track; checkmark in default. |
+| `size`       | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Track size and label typography.                    |
+| `children`   | `ReactNode`             | -           | Visible inline label.                               |
+| `className`  | `string`                | -           | Layout class on the root (margin, flex/grid).       |
+| `ref`        | `Ref<HTMLLabelElement>` | -           | Forwarded to the outer label.                       |
+
+### React Aria Switch
+
+React Aria's headless Switch. These props pass through. The remaining DOM and ARIA attributes follow React Aria's API, except the exclusions below.
+
+| Prop               | Type                                  | Default | Description                                        |
+| :----------------- | :------------------------------------ | :------ | :------------------------------------------------- |
+| `isSelected`       | `boolean`                             | -       | Controlled on/off state.                           |
+| `defaultSelected`  | `boolean`                             | `false` | Initial uncontrolled on/off state.                 |
+| `onChange`         | `(isSelected: boolean) => void`       | -       | Called when selection changes.                     |
+| `isDisabled`       | `boolean`                             | `false` | Prevents interaction, focus, and form submission.  |
+| `isReadOnly`       | `boolean`                             | `false` | Prevents toggling while retaining focus and value. |
+| `autoFocus`        | `boolean`                             | `false` | Focuses the switch on mount.                       |
+| `inputRef`         | `RefObject<HTMLInputElement \| null>` | -       | Ref to the native input.                           |
+| `slot`             | `string \| null`                      | -       | Slot for React Aria context composition.           |
+| `render`           | `function`                            | -       | Custom root rendering with React Aria root props.  |
+| `aria-label`       | `string`                              | -       | Accessible name when the visible label is omitted. |
+| `aria-labelledby`  | `string`                              | -       | IDs of external label elements.                    |
+| `aria-describedby` | `string`                              | -       | IDs of external descriptions.                      |
+
+Focus, keyboard, and hover callbacks also pass through:
+
+| Prop            | Type                             | Description                         |
+| :-------------- | :------------------------------- | :---------------------------------- |
+| `onFocus`       | `(event: FocusEvent) => void`    | Called when the switch gains focus. |
+| `onBlur`        | `(event: FocusEvent) => void`    | Called when the switch loses focus. |
+| `onFocusChange` | `(isFocused: boolean) => void`   | Called when focus changes.          |
+| `onKeyDown`     | `(event: KeyboardEvent) => void` | Called on key press.                |
+| `onKeyUp`       | `(event: KeyboardEvent) => void` | Called on key release.              |
+| `onHoverStart`  | `(event: HoverEvent) => void`    | Called when pointer hover starts.   |
+| `onHoverEnd`    | `(event: HoverEvent) => void`    | Called when pointer hover ends.     |
+| `onHoverChange` | `(isHovered: boolean) => void`   | Called when hover changes.          |
+
+`FocusEvent` and `KeyboardEvent` are React event types. `HoverEvent` is the React Aria hover event type.
+
+Not forwarded from React Aria Switch:
+
+| Prop        | Why                                                               |
+| :---------- | :---------------------------------------------------------------- |
+| `children`  | Replaced by Veli's inline label content; no render function.      |
+| `className` | Replaced by Veli's layout string on the root; no render function. |
+| `style`     | Not supported.                                                    |
+
+The standalone Switch does not support `isRequired`, `isInvalid`, `validate`, indeterminate, or loading states. Descriptions and setting-row layouts belong to consumer composition. The track, handle, and checkmark are private.
+
+### Native checkbox
+
+The native `<input type="checkbox" role="switch">` that React Aria wraps. These attributes are applied to that element.
+
+| Prop    | Type     | Default | Description                    |
+| :------ | :------- | :------ | :----------------------------- |
+| `id`    | `string` | -       | Native input ID.               |
+| `name`  | `string` | -       | Native form field name.        |
+| `value` | `string` | `'on'`  | Value submitted when selected. |
+| `form`  | `string` | -       | ID of the associated form.     |
+
+Only selected, enabled switches submit `name=value`. Native form reset restores the uncontrolled initial selection. Changing `defaultSelected` after mounting does not reset it.
+
+## Accessibility
+
+- Give the switch visible `children`, or use `aria-label` / `aria-labelledby` when the label is external or hidden. Avoid interactive elements inside the label.
+- Tab focuses the switch; Space and pointer activation toggle on release.
+- Associate external helper text with `aria-describedby`, using unique IDs for each setting.
+- Reduced motion removes the press scaling and thumb animation. Forced-colors mode uses system colors and a visible keyboard focus outline.
+
+```tsx
+<div className="flex items-start gap-4">
+  <div className="min-w-0 flex-1">
+    <span id="email-label">Email notifications</span>
+    <p id="email-description">Receive alerts and updates via email</p>
+  </div>
+  <Switch aria-labelledby="email-label" aria-describedby="email-description" defaultSelected />
+</div>
+```
+
+## RTL and Language
+
+Switch inherits the VeliProvider theme and language. `language="dv"` uses the Dhivehi label typography and mirrors the label order, thumb travel, and checkmark placement. The check glyph retains its orientation. `colorScheme="system"` follows the system preference; `"light"` and `"dark"` select a theme explicitly.
+
+```tsx
+<VeliProvider language="dv">
+  <Switch>ނޯޓިފިކޭޝަންސް</Switch>
+</VeliProvider>
+```

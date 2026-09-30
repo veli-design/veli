@@ -1,402 +1,230 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useEffect, type ComponentProps, type ReactNode } from 'react';
+import { useEffect, type ComponentProps } from 'react';
+import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Switch } from '@tradenetcorp/veli-ui/switch';
 
-const englishSwitchText = {
-  notifications: 'Notifications',
-  default: 'Default',
-  subtle: 'Subtle',
-  off: 'Off',
-  on: 'On',
-  small: 'Small (sm)',
-  medium: 'Medium (md)',
-  large: 'Large (lg)',
-  indentedItem: 'Indented item',
-  gridItem: 'Grid item',
-  active: 'Active',
-  disabled: 'Disabled',
-  switch: 'Switch',
+const localizedText = {
+  en: {
+    notifications: 'Notifications',
+    default: 'Default',
+    subtle: 'Subtle',
+    off: 'Off',
+    on: 'On',
+    disabledOff: 'Disabled off',
+    disabledOn: 'Disabled on',
+    readOnlyOff: 'Read only off',
+    readOnlyOn: 'Read only on',
+  },
+  dv: {
+    notifications: 'ނޯޓިފިކޭޝަންސް',
+    default: 'އާދައިގެ',
+    subtle: 'ލުއި',
+    off: 'އޮފް',
+    on: 'އޮން',
+    disabledOff: 'ބޭނުންނުކުރެވޭ — އޮފް',
+    disabledOn: 'ބޭނުންނުކުރެވޭ — އޮން',
+    readOnlyOff: 'ކިޔަން އެކަނި — އޮފް',
+    readOnlyOn: 'ކިޔަން އެކަނި — އޮން',
+  },
 } as const;
 
-const dhivehiSwitchText = {
-  notifications: 'ނޯޓިފިކޭޝަންސް',
-  default: 'އާދައިގެ',
-  subtle: 'ލުއި',
-  off: 'އޮފް',
-  on: 'އޮން',
-  small: 'ކުޑަ (sm)',
-  medium: 'މެދު (md)',
-  large: 'ބޮޑު (lg)',
-  indentedItem: 'އިންޑެންޓްކުރެވިފައިވާ އައިޓަމް',
-  gridItem: 'ގްރިޑް އައިޓަމް',
-  active: 'އެކްޓިވް',
-  disabled: 'ބޭނުންނުކުރެވޭ',
-  switch: 'ސްވިޗް',
-} as const;
+function useSwitchText() {
+  const { direction } = useVeliLanguage();
+  return localizedText[direction === 'rtl' ? 'dv' : 'en'];
+}
 
-const localizedSwitchText = {
-  en: englishSwitchText,
-  dv: dhivehiSwitchText,
-} as const;
-
-type SwitchLanguage = keyof typeof localizedSwitchText;
-type SwitchTextKey = keyof typeof englishSwitchText;
 type SwitchStoryArgs = ComponentProps<typeof Switch>;
 
-const switchTextKeys = Object.keys(englishSwitchText) as SwitchTextKey[];
-
-const useSwitchLanguage = (): SwitchLanguage => {
-  const { direction } = useVeliLanguage();
-
-  return direction === 'rtl' ? 'dv' : 'en';
-};
-
-const useSwitchText = () => localizedSwitchText[useSwitchLanguage()];
-
-const getLocalizedSwitchText = (
-  value: ReactNode,
-  language: SwitchLanguage,
-  fallbackKey: SwitchTextKey,
-) => {
-  if (typeof value !== 'string' || value.trim().length === 0) {
-    return value ?? localizedSwitchText[language][fallbackKey];
-  }
-
-  const localizedKey = switchTextKeys.find(
-    (key) => localizedSwitchText.en[key] === value || localizedSwitchText.dv[key] === value,
-  );
-
-  return localizedKey ? localizedSwitchText[language][localizedKey] : value;
-};
-
-function SwitchPreview({ children, ...args }: SwitchStoryArgs) {
-  const language = useSwitchLanguage();
-
-  return <Switch {...args}>{getLocalizedSwitchText(children, language, 'notifications')}</Switch>;
+async function pressSwitch(input: HTMLElement) {
+  const label = input.closest('label')!;
+  const bounds = label.getBoundingClientRect();
+  // React Aria treats userEvent's zero-size pointers as virtual clicks.
+  const pointer = {
+    pointerId: 1,
+    pointerType: 'mouse',
+    button: 0,
+    width: 1,
+    height: 1,
+    pressure: 0.5,
+    clientX: bounds.x + bounds.width / 2,
+    clientY: bounds.y + bounds.height / 2,
+  };
+  fireEvent.pointerDown(label, pointer);
+  fireEvent.pointerUp(label, pointer);
+  fireEvent.click(label, { button: 0, detail: 1 });
 }
 
-type UpdateStoryArgs = ReturnType<typeof useArgs>[1];
-
-function SwitchArgsLanguageSync({
-  value,
-  updateArgs,
-}: {
-  value: ReactNode;
-  updateArgs: UpdateStoryArgs;
-}) {
-  const language = useSwitchLanguage();
-
-  useEffect(() => {
-    const localizedChildren = getLocalizedSwitchText(value, language, 'notifications');
-
-    if (value !== localizedChildren) {
-      updateArgs?.({ children: localizedChildren });
-    }
-  }, [language, updateArgs, value]);
-
-  return null;
-}
-
-/**
- * A switch allows a user to turn a setting on or off.
- * Built with `react-aria-components` for maximum accessibility.
- */
-const meta: Meta<typeof Switch> = {
+const meta = {
   title: 'Components/Switch',
   component: Switch,
-  render: (args) => <SwitchPreview {...args} />,
   decorators: [
     (Story) => {
-      const [args, updateArgs] = useArgs();
-
-      return (
-        <>
-          <SwitchArgsLanguageSync value={args.children} updateArgs={updateArgs} />
-          <Story />
-        </>
-      );
+      const text = useSwitchText();
+      const [args, updateArgs] = useArgs<SwitchStoryArgs>();
+      useEffect(() => {
+        if (
+          args.children === localizedText.en.notifications ||
+          args.children === localizedText.dv.notifications
+        ) {
+          if (args.children !== text.notifications) {
+            updateArgs({ children: text.notifications });
+          }
+        }
+      }, [args.children, text.notifications, updateArgs]);
+      return <Story />;
     },
   ],
+  parameters: {
+    layout: 'centered',
+    controls: {
+      sort: 'none',
+      include: ['appearance', 'size', 'children', 'isSelected', 'isDisabled', 'isReadOnly'],
+    },
+  },
   tags: ['autodocs'],
   argTypes: {
-    children: {
-      control: 'text',
-    },
     appearance: {
       control: 'select',
       options: ['default', 'subtle'],
+      table: { category: 'Appearance' },
     },
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
+      table: { category: 'Appearance' },
     },
-    isSelected: {
-      control: 'boolean',
-    },
-    isDisabled: {
-      control: 'boolean',
-    },
+    children: { control: 'text', table: { category: 'Label' } },
+    isSelected: { control: 'boolean', table: { category: 'State' } },
+    isDisabled: { control: 'boolean', table: { category: 'State' } },
+    isReadOnly: { control: 'boolean', table: { category: 'State' } },
   },
-};
+  args: {
+    appearance: 'default',
+    size: 'md',
+    children: localizedText.en.notifications,
+    isSelected: false,
+    isDisabled: false,
+    isReadOnly: false,
+  },
+} satisfies Meta<SwitchStoryArgs>;
 
 export default meta;
-type Story = StoryObj<typeof Switch>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    children: englishSwitchText.notifications,
+  render: (args) => {
+    const [, updateArgs] = useArgs<SwitchStoryArgs>();
+    return (
+      <Switch
+        {...args}
+        onChange={(selected) => {
+          updateArgs({ isSelected: selected });
+          args.onChange?.(selected);
+        }}
+      />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const input = within(canvasElement).getByRole('switch');
+    const label = input.closest('label')!;
+    const user = userEvent.setup();
+    await expect(input).toHaveAccessibleName();
+    await user.hover(label);
+    await expect(label).toHaveAttribute('data-hovered');
+    await user.unhover(label);
+    input.focus();
+    await user.keyboard('[Space>]');
+    await expect(label).toHaveAttribute('data-pressed');
+    await user.keyboard('[/Space]');
+    await waitFor(() => expect(label).not.toHaveAttribute('data-pressed'));
+    // Native keyboard activation is checked separately in browser QA.
+    const selected = (input as HTMLInputElement).checked;
+    await pressSwitch(input);
+    await waitFor(() => expect((input as HTMLInputElement).checked).toBe(!selected));
+    await pressSwitch(input);
+    await waitFor(() => expect((input as HTMLInputElement).checked).toBe(selected));
   },
 };
 
-/**
- * Default (outlined off) vs subtle (filled off) visual variants.
- */
-function SwitchVariantsExample() {
-  const text = useSwitchText();
-
-  return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          {text.default}
-        </span>
-        <div className="flex items-center gap-4">
-          <Switch appearance="default">{text.off}</Switch>
-          <Switch appearance="default" defaultSelected>
-            {text.on}
-          </Switch>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          {text.subtle}
-        </span>
-        <div className="flex items-center gap-4">
-          <Switch appearance="subtle">{text.off}</Switch>
-          <Switch appearance="subtle" defaultSelected>
-            {text.on}
-          </Switch>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export const Variants: Story = {
-  render: () => <SwitchVariantsExample />,
+export const Subtle: Story = {
+  args: { appearance: 'subtle' },
+  render: Default.render,
 };
-
-/**
- * Showcases all size variants of the Switch component.
- */
-function SwitchSizesExample() {
-  const text = useSwitchText();
-
-  return (
-    <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-      <div className="flex flex-col gap-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          {text.default}
-        </span>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.small}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch size="sm">{text.off}</Switch>
-            <Switch size="sm" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.medium}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch size="md">{text.off}</Switch>
-            <Switch size="md" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.large}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch size="lg">{text.off}</Switch>
-            <Switch size="lg" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col gap-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          {text.subtle}
-        </span>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.small}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch appearance="subtle" size="sm">
-              {text.off}
-            </Switch>
-            <Switch appearance="subtle" size="sm" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.medium}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch appearance="subtle" size="md">
-              {text.off}
-            </Switch>
-            <Switch appearance="subtle" size="md" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.large}
-          </span>
-          <div className="flex items-center gap-4">
-            <Switch appearance="subtle" size="lg">
-              {text.off}
-            </Switch>
-            <Switch appearance="subtle" size="lg" defaultSelected>
-              {text.on}
-            </Switch>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export const Sizes: Story = {
-  render: () => <SwitchSizesExample />,
+  parameters: { controls: { disable: true } },
+  render: function SwitchSizes() {
+    const text = useSwitchText();
+    return (
+      <div className="grid w-full max-w-2xl grid-cols-1 gap-8 sm:grid-cols-2">
+        {(['default', 'subtle'] as const).map((appearance) => (
+          <div key={appearance} className="flex flex-col gap-6">
+            <span className="type-body-sm-medium text-base-muted">{text[appearance]}</span>
+            {(['sm', 'md', 'lg'] as const).map((size) => (
+              <div key={size} className="flex flex-col gap-3">
+                <span className="type-caption-regular text-base-muted">{size}</span>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Switch appearance={appearance} size={size}>
+                    {text.off}
+                  </Switch>
+                  <Switch appearance={appearance} size={size} defaultSelected>
+                    {text.on}
+                  </Switch>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
 };
 
-function SwitchRootClassNameExample() {
-  const text = useSwitchText();
-
-  return (
-    <div className="grid gap-[12px]">
-      <Switch className="ml-[24px]">{text.indentedItem}</Switch>
-      <Switch className="justify-self-start" defaultSelected>
-        {text.gridItem}
-      </Switch>
-    </div>
-  );
-}
-
-export const RootClassName: Story = {
-  render: () => <SwitchRootClassNameExample />,
-};
-
-export const Directional: Story = {
-  render: () => (
-    <div className="grid grid-cols-2 gap-8">
-      <VeliProvider language="en">
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">LTR</span>
-          <div className="flex items-center gap-4">
-            <Switch>{englishSwitchText.off}</Switch>
-            <Switch defaultSelected>{englishSwitchText.on}</Switch>
+export const States: Story = {
+  parameters: { controls: { disable: true } },
+  render: function SwitchStates() {
+    const text = useSwitchText();
+    return (
+      <div className="grid w-full max-w-2xl grid-cols-1 gap-8 sm:grid-cols-2">
+        {(['default', 'subtle'] as const).map((appearance) => (
+          <div key={appearance} className="flex flex-col gap-4">
+            <span className="type-body-sm-medium text-base-muted">{text[appearance]}</span>
+            <Switch appearance={appearance}>{text.off}</Switch>
+            <Switch appearance={appearance} defaultSelected>
+              {text.on}
+            </Switch>
+            <Switch appearance={appearance} isDisabled>
+              {text.disabledOff}
+            </Switch>
+            <Switch appearance={appearance} isDisabled defaultSelected>
+              {text.disabledOn}
+            </Switch>
+            <Switch appearance={appearance} isReadOnly>
+              {text.readOnlyOff}
+            </Switch>
+            <Switch appearance={appearance} isReadOnly defaultSelected>
+              {text.readOnlyOn}
+            </Switch>
           </div>
-        </div>
-      </VeliProvider>
-      <VeliProvider language="dv">
-        <div className="flex flex-col gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">RTL</span>
-          <div className="flex items-center gap-4">
-            <Switch>{dhivehiSwitchText.off}</Switch>
-            <Switch defaultSelected>{dhivehiSwitchText.on}</Switch>
-          </div>
-        </div>
-      </VeliProvider>
-    </div>
-  ),
-};
-
-/**
- * Demonstrates the interactive and non-interactive states of the Switch component.
- */
-function SwitchStatesAuditExample() {
-  const text = useSwitchText();
-
-  return (
-    <div className="flex flex-col gap-8">
-      {(['default', 'subtle'] as const).map((appearance) => (
-        <div key={appearance} className="flex flex-col gap-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text[appearance]}
-          </span>
-          <div className="flex flex-col gap-4">
-            <span className="text-[10px] uppercase font-bold text-base-muted">{text.off}</span>
-            <div className="flex items-center gap-12">
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-base-muted">
-                  {text.active}
-                </span>
-                <Switch appearance={appearance}>{text.switch}</Switch>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-base-muted">
-                  {text.disabled}
-                </span>
-                <Switch appearance={appearance} isDisabled>
-                  {text.switch}
-                </Switch>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-[10px] uppercase font-bold text-base-muted">{text.on}</span>
-            <div className="flex items-center gap-12">
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-base-muted">
-                  {text.active}
-                </span>
-                <Switch appearance={appearance} defaultSelected>
-                  {text.switch}
-                </Switch>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase font-bold text-base-muted">
-                  {text.disabled}
-                </span>
-                <Switch appearance={appearance} defaultSelected isDisabled>
-                  {text.switch}
-                </Switch>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export const StatesAudit: Story = {
-  render: () => <SwitchStatesAuditExample />,
-};
-
-/**
- * A simple example showing how to use the Switch with a label.
- */
-export const WithLabel: Story = {
-  args: {
-    children: englishSwitchText.notifications,
-    defaultSelected: true,
+        ))}
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const inputs = within(canvasElement).getAllByRole('switch') as HTMLInputElement[];
+    for (const input of inputs) {
+      const selected = input.checked;
+      const readOnly = input.closest('label')?.hasAttribute('data-readonly');
+      await pressSwitch(input);
+      await waitFor(() =>
+        expect(input.checked).toBe(input.disabled || readOnly ? selected : !selected),
+      );
+      if (!input.disabled && !readOnly) {
+        await pressSwitch(input);
+        await waitFor(() => expect(input.checked).toBe(selected));
+      }
+    }
   },
 };
