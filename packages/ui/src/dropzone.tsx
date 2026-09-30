@@ -18,7 +18,6 @@ import {
   FileAudio,
   FileCode,
   FileImage,
-  FileText,
   FileVideo,
   GearSix,
   Info,
@@ -80,19 +79,19 @@ function getFileIcon(file: File) {
   const iconClass = 'size-5 text-icon-base-muted';
 
   if (type.startsWith('image/')) {
-    return <FileImage className={iconClass} aria-hidden />;
+    return <FileImage className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('video/')) {
-    return <FileVideo className={iconClass} aria-hidden />;
+    return <FileVideo className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('audio/')) {
-    return <FileAudio className={iconClass} aria-hidden />;
+    return <FileAudio className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('text/') || ['txt', 'md', 'rtf', 'pdf'].includes(extension)) {
-    return <FileText className={iconClass} aria-hidden />;
+    return <File className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
@@ -114,21 +113,21 @@ function getFileIcon(file: File) {
       'cs',
     ].includes(extension)
   ) {
-    return <FileCode className={iconClass} aria-hidden />;
+    return <FileCode className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension)) {
-    return <Archive className={iconClass} aria-hidden />;
+    return <Archive className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
     ['exe', 'msi', 'app', 'apk', 'deb', 'rpm'].includes(extension) ||
     type.startsWith('application/')
   ) {
-    return <GearSix className={iconClass} aria-hidden />;
+    return <GearSix className={iconClass} weight="bold" aria-hidden />;
   }
 
-  return <File className={iconClass} aria-hidden />;
+  return <File className={iconClass} weight="bold" aria-hidden />;
 }
 
 function matchesAcceptedType(file: File, acceptTypes: readonly string[]) {
