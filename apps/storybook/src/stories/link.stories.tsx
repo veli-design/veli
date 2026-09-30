@@ -1,10 +1,9 @@
-import { useEffect, useRef, type ComponentProps } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Link } from '@tradenetcorp/veli-ui/link';
-import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Plus } from 'phosphor-react';
 import { DirectionalArrow } from '../utils/directional-arrow';
@@ -27,10 +26,6 @@ const linkText = {
     prefix: 'Read the ',
     inline: 'guidance for completing your application and providing supporting information',
     suffix: ' before continuing.',
-    current: 'Current account',
-    unavailable: 'Unavailable account',
-    focusLink: 'Focus current link',
-    destination: 'Account destination',
   },
   dv: {
     label: 'ކުރިއަށް',
@@ -49,10 +44,6 @@ const linkText = {
     prefix: 'ކުރިއަށް ދިއުމުގެ ކުރިން ',
     inline: 'އެދުން ފުރިހަމަކުރުމާއި ބޭނުންވާ މަޢުލޫމާތު ހުށަހެޅުމުގެ އިރުޝާދު',
     suffix: ' ކިޔާލައްވާ.',
-    current: 'މިހާރުގެ އެކައުންޓު',
-    unavailable: 'ބޭނުންނުކުރެވޭ އެކައުންޓު',
-    focusLink: 'ލިންކަށް ފޯކަސް ކުރައްވާ',
-    destination: 'އެކައުންޓު',
   },
 } as const;
 
@@ -135,11 +126,6 @@ const meta = {
     controls: { sort: 'none', exclude: /^on[A-Z]/ },
     docs: {
       container: LinkDocsContainer,
-      description: {
-        component:
-          'A navigation link that inherits all surrounding typography when size is omitted. An explicit sm, md, or lg applies the corresponding medium body preset for English or Dhivehi. Icons are 16px by default and for sm/md, or 20px for lg. Compose icons through children; use render for compatible router links. className and style overrides are not supported.\n\n' +
-          'React Aria callbacks pass through: onPress, onPressStart, onPressEnd, onPressUp, onPressChange, onHoverStart, onHoverEnd, onHoverChange, onFocus, onBlur, onFocusChange, onKeyDown, and onKeyUp. States tests keyboard and pointer callbacks; Routing demonstrates refs, render, and function children. Callbacks and function-valued props are not editable controls.',
-      },
     },
   },
   argTypes: {
@@ -162,7 +148,7 @@ const meta = {
     },
     children: {
       control: 'text',
-      description: 'Content, or a function of React Aria link state (see Routing).',
+      description: 'Content, or a function of React Aria link state.',
       table: { category: 'Content' },
     },
     leadingIcon: {
@@ -224,7 +210,7 @@ const meta = {
     autoFocus: { control: 'boolean', table: { category: 'State' } },
     ref: {
       control: false,
-      description: 'Forwarded to React Aria. Demonstrated in Routing.',
+      description: 'Forwarded to the React Aria link element.',
       table: { category: 'Navigation' },
     },
     render: {
@@ -463,59 +449,5 @@ export const InheritedTypography: Story = {
       }
     }
     await expect(canvasElement.scrollWidth).toBeLessThanOrEqual(canvasElement.clientWidth);
-  },
-};
-
-function RoutingExample({ onPress }: Pick<LinkStoryArgs, 'onPress'>) {
-  const text = useLinkText();
-  const ref = useRef<HTMLAnchorElement>(null);
-  const render: ComponentProps<typeof Link>['render'] = (props, state) =>
-    state.isDisabled || !('href' in props) ? (
-      <span {...props} />
-    ) : (
-      <a {...props} data-router-link="true">
-        {props.children}
-      </a>
-    );
-  return (
-    <div className="flex max-w-sm flex-col items-start gap-6 type-body-md-medium">
-      <Link
-        ref={ref}
-        href="#link-destination"
-        aria-current="page"
-        render={render}
-        onPress={onPress}
-      >
-        {({ isCurrent }) => (isCurrent ? text.current : text.label)}
-      </Link>
-      <Link href="#link-destination" isDisabled render={render} onPress={onPress}>
-        {text.unavailable}
-      </Link>
-      <Button intent="secondary" onPress={() => ref.current?.focus()}>
-        {text.focusLink}
-      </Button>
-      <p id="link-destination" className="type-body-md-regular">
-        {text.destination}
-      </p>
-    </div>
-  );
-}
-
-export const Routing: Story = {
-  args: { onPress: fn() },
-  render: (args) => <RoutingExample onPress={args.onPress} />,
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    const [current, disabled] = canvas.getAllByRole('link');
-    await expect(current).toHaveAttribute('aria-current', 'page');
-    await expect(current).toHaveAttribute('data-router-link', 'true');
-    await expect(disabled.tagName).toBe('SPAN');
-    await expect(disabled).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(canvas.getByRole('button'));
-    await expect(current).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
-    await expect(args.onPress).toHaveBeenCalledTimes(1);
-    await userEvent.tab();
-    await expect(canvas.getByRole('button')).toHaveFocus();
   },
 };
