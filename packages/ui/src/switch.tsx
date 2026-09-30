@@ -14,7 +14,7 @@ const switchCheckIconSizes = {
 } as const;
 
 const switchVariants = cva(
-  'group inline-flex min-h-6 max-w-full items-center gap-2 font-sans antialiased focus-visible:outline-none',
+  'group relative inline-flex min-h-6 max-w-full items-center gap-2 font-sans antialiased focus-visible:outline-none',
   {
     variants: {
       isDisabled: {

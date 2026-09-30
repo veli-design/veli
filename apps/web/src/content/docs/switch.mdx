@@ -5,6 +5,7 @@ description: Accessible on/off setting with default and subtle appearances.
 
 import {
   SwitchAppearancesDemo,
+  SwitchRtlDemo,
   SwitchStatesDemo,
   SwitchUsageDemo,
 } from '../../components/SwitchExamples';
@@ -161,6 +162,10 @@ Only selected, enabled switches submit `name=value`. Native form reset restores 
 ## RTL and Language
 
 Switch inherits the VeliProvider theme and language. `language="dv"` uses the Dhivehi label typography and mirrors the label order, thumb travel, and checkmark placement. The check glyph retains its orientation. `colorScheme="system"` follows the system preference; `"light"` and `"dark"` select a theme explicitly.
+
+<div className="preview preview--options mb-4">
+  <SwitchRtlDemo client:load />
+</div>
 
 ```tsx
 <VeliProvider language="dv">

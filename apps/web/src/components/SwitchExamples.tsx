@@ -1,7 +1,34 @@
+import { useState } from 'react';
+import { I18nProvider } from 'react-aria-components';
 import { Switch } from '@tradenetcorp/veli-ui/switch';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 export function SwitchUsageDemo() {
   return <Switch>Notifications</Switch>;
+}
+
+export function SwitchRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+
+  return (
+    <DocsPreview
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
+        <div lang={isDhivehi ? 'dv' : 'en'} dir={isDhivehi ? 'rtl' : 'ltr'}>
+          <Switch>{isDhivehi ? 'ނޯޓިފިކޭޝަންސް' : 'Notifications'}</Switch>
+        </div>
+      </I18nProvider>
+    </DocsPreview>
+  );
 }
 
 export function SwitchAppearancesDemo() {
