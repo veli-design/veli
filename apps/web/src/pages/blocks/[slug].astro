@@ -4,6 +4,7 @@ import { blocks, blockPages } from '../../lib/blocks';
 import DocsLayout from '../../layouts/docs-layout.astro';
 import DocsPageActions from '../../components/DocsPageActions.astro';
 import { SiteFooterDemo } from '../../components/SiteFooterDemo';
+import { NotificationTrayDemo } from '../../components/NotificationTrayDemo';
 import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
 
 export function getStaticPaths() {
@@ -30,5 +31,6 @@ const markdownPath = `/${page.id}/index.md`;
     />
   </header>
   {Astro.params.slug === 'site-footer' && <SiteFooterDemo client:visible />}
+  {Astro.params.slug === 'notification-tray' && <NotificationTrayDemo client:visible />}
   <article class="docs-prose" set:html={rendered.code} />
 </DocsLayout>

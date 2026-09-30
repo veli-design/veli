@@ -1,0 +1,161 @@
+import { Canvas, Markdown, Meta } from '@storybook/blocks';
+import * as NotificationTrayStories from './notification-tray.stories';
+
+<Meta of={NotificationTrayStories} />
+
+# Notification tray
+
+**0.1.0 · Copied source block**
+
+The block provides the notification list, options menu, unread indicators, desktop popover and mobile sheet. Your application supplies display data and handles fetching, subscriptions, routes, filtering, pagination and mutations.
+
+All preview notifications are fictional. They use generic application, payment and document updates; no names, real application references or account data are included.
+
+The desktop surface is **fixed at 389px**, matching [Figma](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1636-31329). Its width stays the same for empty, loading, short and long content. Height follows the content and available viewport; the list scrolls while the header stays visible.
+
+## Preview
+
+The default story renders `NotificationTray` directly. Activate the bell to open it, then try **Show unread** and **Mark all as read**. Sample data and state belong to this Storybook preview.
+
+<Canvas of={NotificationTrayStories.Default} />
+
+At widths up to 1024px, the tray becomes an 85svh bottom sheet with a close button, backdrop dismissal and a downward dismissal gesture. Escape closes the innermost menu first and returns focus to its trigger. Use the Storybook theme and direction controls to inspect both themes and RTL; translated copy is supplied through `labels` and `items`.
+
+**Embedded content** shows `NotificationTrayContent` inside a fixed-width preview wrapper for apps that provide their own overlay. The wrapper can shrink inside a narrow canvas; the desktop popover remains 389px.
+
+<Canvas of={NotificationTrayStories.EmbeddedContent} />
+
+## How height works
+
+- **Desktop popover:** content-sized, capped by the space React Aria calculates in the viewport. It does not have a fixed height and does not deliberately fill the screen. The header stays visible while the list scrolls.
+- **Mobile sheet:** fixed at `85svh`, including its handle and content. The list fills the remaining space. Browser safe-area padding protects the bottom edge.
+- **Embedded preview:** content-sized with `max-h-screen`. It demonstrates the content component, not the popover's viewport positioning.
+- **Empty and initial loading:** the body reserves `min-h-80` (320px with the default Veli spacing). This is a minimum for those states, not a fixed tray height.
+
+## What pending means
+
+A **mutation** is a request that changes saved data. **Mark all as read pending** shows the time between starting that request and the app receiving its result. Open **Notification options** in that story: the action reads “Marking all as read…” and is disabled to prevent another submission. The current notifications stay visible and a live status announces the update.
+
+The app sets `isMarkingAllRead` while saving, updates `items` and `unreadCount` on success, and clears the flag when the request settles. On failure, keep or restore the previous data and pass an `error` message. The block does not perform the request or guess when it completes. The pending story deliberately stays pending so the state can be inspected.
+
+`isLoading` is for fetching notifications; `loadMore.isLoading` is for fetching another page. An item's `isPending` disables that row's link while its own update is in progress. Controls supplied through `actions` manage their pending state in the app.
+
+## Using the block
+
+Set up Veli's provider, fonts and Tailwind source scanning, then install the editable source through the same CLI as the footer:
+
+```sh
+corepack pnpm dlx @tradenetcorp/veli init
+corepack pnpm dlx @tradenetcorp/veli add notification-tray
+```
+
+Run `init` once per application, using your team's Veli Web URL. The CLI retains originals in `.veli/blocks/notification-tray/` and reports required dependencies. Review incompatible installed versions before adoption. Keep both copied source files together and commit the source with `.veli`.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import {
+  NotificationTray,
+  type NotificationFilter,
+  type NotificationItem,
+} from './components/blocks/notification-tray/notification-tray';
+
+export function Notifications({
+  items,
+  unreadCount,
+  onMarkAllRead,
+}: {
+  items: NotificationItem[];
+  unreadCount: number;
+  onMarkAllRead: () => void;
+}) {
+  const [filter, setFilter] = useState<NotificationFilter>('all');
+
+  return (
+    <NotificationTray
+      items={items.filter((item) => filter === 'all' || item.unread)}
+      unreadCount={unreadCount}
+      filter={filter}
+      onFilterChange={setFilter}
+      onMarkAllRead={onMarkAllRead}
+    />
+  );
+}
+```
+
+This example filters an already loaded list. For server filtering, send `filter` to your query and pass the returned items directly. **`unreadCount` is the total across all pages.** The mark-all callback must update every page, not just the visible rows. The app updates `items` and `unreadCount` after each mutation or subscription event; the block never changes them itself.
+
+## Props and ownership
+
+<Markdown>{`
+| Props                                   | What you supply                                                                                             |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| \`items\`                                 | Ordered display items for the selected filter.                                                              |
+| \`unreadCount\`                           | Total unread count, including unloaded pages.                                                               |
+| \`filter\`, \`onFilterChange\`              | Controlled \`all\` / \`unread\` selection.                                                                      |
+| \`onItemAction\`                          | Receives the activated row ID; the row's \`href\` handles navigation.                                         |
+| \`onMarkAllRead\`, \`isMarkingAllRead\`     | Optional mutation callback and its pending state.                                                           |
+| \`isLoading\`                             | Initial loading or refresh; existing rows stay visible.                                                     |
+| \`error\`, \`onRetry\`                      | Translated error text and optional retry callback.                                                          |
+| \`loadMore\`                              | \`{ onLoadMore, isLoading }\`; omit when the selected filter has no more pages.                               |
+| \`labels\`                                | Overrides for every visible and assistive label; English defaults are exported as \`notificationTrayLabels\`. |
+| \`renderLink\`                            | Veli Link router renderer; forward all supplied props and ref.                                              |
+| \`isOpen\`, \`defaultOpen\`, \`onOpenChange\` | Optional controlled or uncontrolled overlay state.                                                          |
+| \`trigger\`                               | Optional Veli/React Aria button replacing the default bell; give it an accessible name.                     |
+| \`className\`                             | Placement/sizing classes on the content root. The desktop overlay keeps its fixed width.                    |
+`}</Markdown>
+
+Each `NotificationItem` requires `id`, `content`, `timestamp` and `time`. Optional fields are `dateTime`, `unread`, `intent` (`neutral`, `success`, `warning`, `danger`), `href`, `isPending` and `actions`. Format timestamps and resolve destinations in the app. `content` accepts text or non-interactive markup; put buttons in `actions`, which renders outside the row link. Never inject raw API HTML.
+
+Use `NotificationTrayContent` when your shell already provides an accessible overlay. It fills that container, accepts the content props above and an optional `onClose`, and does not provide its own focus trap. Give your container the intended width, accessible name and height constraint.
+
+## State stories
+
+Activate the bell in each overlay story to inspect its state. **Embedded content** displays the list directly.
+
+<Markdown>{`
+| Story                | What it demonstrates                                                             |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Default              | Bell trigger, responsive overlay, local filtering and mark-all interaction.     |
+| Embedded content     | Content inside an app-owned container, with local filtering and mark-all interaction. |
+| Paginated            | A total unread count larger than the loaded page; its paging callback is a stub. |
+| Empty / Empty unread | Separate copy for a new inbox and a completed unread filter.                     |
+| Loading              | Initial loading without showing the empty message.                               |
+| Error                | An app-provided error; the retry callback is a stub.                             |
+| Mark all as read pending | Open Notification options to inspect the disabled saving action; this is a frozen preview. |
+| Load more pending    | Existing rows remain visible while paging.                                       |
+| Long content         | Wrapping of long messages, references and timestamps at the same width.          |
+`}</Markdown>
+
+## Using it in gov.mv
+
+The supplied [govmv-web snapshot](https://github.com/tradenetcorp/govmv-web/tree/e8a7dadd719ac60a05ced1a32f6215aae94404c4) uses Next.js 16, React 19 and Tailwind 4, and already wraps the site in Veli and React Aria `RouterProvider`. Reuse those providers. Veli row links can use the existing router; a separate `renderLink` adapter is only needed when choosing a different routing integration.
+
+1. **Check package compatibility.** That snapshot pins Veli UI `0.11.0`; this block is tested against UI `0.13.0` and tokens `0.7.1`. Upgrade and check the existing shell before adoption. React, Next.js and Tailwind versions match the independent consumer fixture.
+2. **Install the copied source.** This branch's new block is not published yet. For a local trial, copy `notification-tray.tsx` and `notification-tray-content.tsx` together and satisfy the manifest dependencies. Once released, use `veli add notification-tray`. Ensure Tailwind scans the destination.
+3. **Own data in an app adapter.** Map events to plain display text, formatted dates, read state, intent and resolved URLs. Pass the selected filter's results, the total unread count and app callbacks. Keep fetching, subscriptions, pagination and saved-state updates in gov.mv. Show account data only for the current signed-in session and clear it when that session changes.
+4. **Coordinate with the shell.** `src/components/site/site-shell.tsx` has the notification placeholder and existing menu/account overlays. Keep the tray mounted at a stable location and control it through `isOpen` / `onOpenChange`. Include it in the shell's overlay state so the header does not hide while it is open. Close the other overlays before opening the tray; close the tray on navigation. If opening from the mobile menu, restore focus to a control that remains mounted after that menu closes.
+5. **Use the existing locale.** Supply English/Dhivehi `labels`, translated item content and formatted dates from the app's copy layer. If gov.mv keeps its own accessible sheet, use `NotificationTrayContent` there and retain that shell's focus, height and dismissal handling.
+
+The independent Next.js fixture checks both a `NextLink` renderer and the same React Aria router approach used by gov.mv. Actual signed-in API delivery, account changes and shell overlay coordination still need acceptance testing in gov.mv; this block does not implement those application features.
+
+## Veli reuse and fixed values
+
+The block composes **Button, Badge, Link, Divider, Menu, Popover and Modal**. Typography, spacing, radius, shadows, colors and motion use Veli tokens. Icons use Veli's existing `phosphor-react` package. `warning-300` and `info-700` are the explicit brand-token choices in Figma; they are not raw colors. The block has no API client, date library or additional animation dependency.
+
+These concrete values remain because the current Veli APIs/tokens cannot express them directly:
+
+<Markdown>{`
+| Value                      | Reason                                                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| \`389px\`                    | Exact Figma tray width; no matching Veli size token.                                                                         |
+| \`1024px\`                   | Matches Veli's \`lg\` breakpoint. JavaScript \`matchMedia\` needs a concrete length; CSS variables cannot be used in that query. |
+| \`85svh\`                    | web2's mobile sheet height; no Veli sheet-height token or sheet primitive.                                                   |
+| \`12px\` / \`2px\`             | Popover/menu offsets, matching Veli spacing \`3\` / \`0.5\`; those APIs accept pixel numbers.                                    |
+| \`35%\`, \`40px\`, \`0.11px/ms\` | web2's drag-dismiss thresholds; Veli has no corresponding gesture tokens.                                                    |
+`}</Markdown>
+
+Safe-area insets come from the browser's `env(safe-area-inset-bottom)`. Height inheritance and text-wrapping utilities are layout rules, not hardcoded design values. The app can override all copy; the sample notification messages and timestamps exist only in the preview adapter.
+
+Verify your own routes, translated messages, query updates and mutation rollback before adoption.
