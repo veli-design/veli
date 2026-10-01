@@ -22,7 +22,24 @@ const config: StorybookConfig = {
     const { default: tailwindcss } = await import('@tailwindcss/vite');
     return {
       ...config,
-      plugins: [...(config.plugins || []), tailwindcss()],
+      plugins: [
+        ...(config.plugins || []),
+        tailwindcss(),
+        {
+          name: 'veli-preview-styles',
+          // preview-head.html is inserted too late for Vite to bundle CSS links.
+          transformIndexHtml: {
+            order: 'pre',
+            handler: () => [
+              {
+                tag: 'link',
+                attrs: { rel: 'stylesheet', href: '/src/global.css' },
+                injectTo: 'head',
+              },
+            ],
+          },
+        },
+      ],
       resolve: {
         ...config.resolve,
         alias: [

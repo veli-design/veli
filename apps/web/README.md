@@ -136,8 +136,10 @@ export function ButtonOptionsDemo() {
 }
 ```
 
-Place the demo in an MDX wrapper with
-`className="preview preview--options"`, followed by its source fence. Add
+Place the demo in an MDX wrapper with `className="preview"`, followed by its source
+fence. `DocsPreview` automatically applies the options layout to that wrapper,
+including before hydration; no extra styling prop or class is needed. The old
+`preview--options` class remains supported for compatibility. Add
 `preview--expanded` or `preview--collapsible` as needed. For multiple controls,
 pass a fragment of `DocsPreviewOption` components to `controls`, each with its
 own state. Changing controls updates the live demo, not the source fence.
