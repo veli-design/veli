@@ -12,7 +12,6 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
-import { Link } from '@tradenetcorp/veli-ui/link';
 import {
   Menu,
   MenuItem,
@@ -65,7 +64,6 @@ import {
   Info,
   MagnifyingGlass,
   PencilSimple,
-  Plus,
   Trash,
   WarningCircle,
 } from 'phosphor-react';
@@ -776,110 +774,6 @@ export function SelectValidationDemo() {
         <SelectItem id="active">Active</SelectItem>
         <SelectItem id="inactive">Inactive</SelectItem>
       </Select>
-    </div>
-  );
-}
-
-export function LinkUsageDemo() {
-  return <Link href="#">Link Label</Link>;
-}
-
-export function LinkVariantsDemo() {
-  return (
-    <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-      <div />
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Hover Underline</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">
-        Always Underline
-      </div>
-
-      <div className="text-sm font-medium">Default</div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="always">
-          Link
-        </Link>
-      </div>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="always">
-          Link
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-export function LinkIconsDemo() {
-  return (
-    <div className="flex gap-8 flex-wrap items-center">
-      <span className="type-subtitle-regular">
-        <Link>
-          <Plus size={20} weight="bold" />
-          Large Link
-        </Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link intent="secondary">
-          <DownloadSimple size={18} weight="bold" />
-          LG Link
-        </Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>
-          MD Link
-          <ArrowRight size={16} weight="bold" />
-        </Link>
-      </span>
-      <span className="type-caption-12-regular">
-        <Link>
-          <ArrowRight size={12} weight="bold" />
-          XS Link
-        </Link>
-      </span>
-    </div>
-  );
-}
-
-export function LinkSizesDemo() {
-  return (
-    <div className="flex gap-6 items-center flex-wrap">
-      <span className="type-caption-12-regular">
-        <Link>Extra Small</Link>
-      </span>
-      <span className="type-body-sm-regular">
-        <Link>Small</Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>Medium</Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link>Large</Link>
-      </span>
-      <span className="type-subtitle-regular">
-        <Link>Extra Large</Link>
-      </span>
     </div>
   );
 }
