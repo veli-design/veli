@@ -153,8 +153,9 @@ test('mobile sheet traps focus, closes with its button, backdrop and downward ge
   await page.mouse.click(10, 10);
   await expect(tray).toBeHidden();
   await openTray(page);
+  await expect(page.locator('[data-entering]')).toHaveCount(0);
   const handle = tray.locator('[data-notification-drag-handle]');
-  const handleBounds = await handle.boundingBox();
+  let handleBounds = await handle.boundingBox();
   const surface = handle.locator('..');
   const surfaceTop = (await surface.boundingBox())!.y;
   await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 10);
@@ -165,6 +166,7 @@ test('mobile sheet traps focus, closes with its button, backdrop and downward ge
   await page.mouse.up();
   await expect(tray).toBeVisible();
   await expect(surface).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  handleBounds = await handle.boundingBox();
   await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 10);
   await page.mouse.down();
   await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 310, {
@@ -173,6 +175,7 @@ test('mobile sheet traps focus, closes with its button, backdrop and downward ge
   await page.mouse.up();
   await expect(tray).toBeHidden();
   await openTray(page);
+  await expect(page.locator('[data-entering]')).toHaveCount(0);
   const headingBounds = await tray.getByRole('heading').boundingBox();
   await page.mouse.move(headingBounds!.x + 20, headingBounds!.y + 10);
   await page.mouse.down();
