@@ -1,15 +1,8 @@
 'use client';
 
 import { useId, type ReactNode } from 'react';
-import {
-  BellSimple,
-  CheckCircle,
-  Cursor,
-  DotsThree,
-  Spinner,
-  WarningCircle,
-  X,
-} from 'phosphor-react';
+import emptyIcon from './cursor-click.svg';
+import { BellSimple, CheckCircle, DotsThree, Spinner, WarningCircle, X } from 'phosphor-react';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
@@ -86,6 +79,8 @@ const intentStyles = {
   warning: 'bg-warning-300 text-icon-warning',
   danger: 'bg-bg-danger-subtle text-icon-danger',
 };
+
+const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
 
 function NotificationRow({
   item,
@@ -280,7 +275,7 @@ export function NotificationTrayContent({
               <Button
                 size="sm"
                 intent="secondary"
-                appearance="ghost"
+                appearance="fill"
                 onPress={onRetry}
                 isPending={isLoading}
               >
@@ -314,7 +309,10 @@ export function NotificationTrayContent({
             className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-muted"
           >
             <span aria-hidden className="flex size-8 items-center justify-center">
-              <Cursor className="size-6" />
+              <span
+                className="size-6 bg-current text-icon-base-inactive mask-size-contain mask-no-repeat"
+                style={{ maskImage: `url("${emptyIconUrl}")` }}
+              />
             </span>
             <div className="flex min-h-27 max-w-77 flex-col items-center gap-2">
               <p className="type-body-sm-semibold">
@@ -330,7 +328,7 @@ export function NotificationTrayContent({
           <div className="flex justify-center p-2">
             <Button
               intent="secondary"
-              appearance="ghost"
+              appearance="fill"
               size="sm"
               onPress={loadMore.onLoadMore}
               isPending={loadMore.isLoading}
