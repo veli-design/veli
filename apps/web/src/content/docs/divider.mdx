@@ -127,8 +127,12 @@ Standard ARIA attributes and DOM event attributes are forwarded to the rendered 
 
 ## Accessibility
 
-- Without `onClick`, Divider keeps separator semantics. Use the native horizontal or vertical orientation to describe the content boundary.
-- With `onClick`, the full horizontal row is a native button and supports pointer, Enter, and Space activation. Give it visible `text`, or an `aria-label` when it has no visible caption.
-- For expandable content, update `aria-expanded` with the caller's state and point `aria-controls` at the controlled content. Keep the controlled content in the DOM or use an appropriate hidden state.
-- Divider does not own the content panel or its animation. The caret rotation uses motion-safe Veli transition tokens; if the caller animates the content, respect `prefers-reduced-motion`.
-- The caption uses the muted text token; appearances use semantic border tokens and follow system, light, and dark themes. Layout follows the surrounding writing direction.
+Without `onClick`, Divider keeps separator semantics. Use the native horizontal or vertical orientation to describe the content boundary.
+
+With `onClick`, the full horizontal row is a native button and supports pointer, Enter, and Space activation. Give it visible `text`, or an `aria-label` when it has no visible caption.
+
+For expandable content, update `aria-expanded` with the caller's state and point `aria-controls` at the controlled content. Keep the controlled content in the DOM or use an appropriate hidden state.
+
+Divider does not own the content panel or its animation. The caret rotation uses motion-safe Veli transition tokens; if the caller animates the content, respect `prefers-reduced-motion`.
+
+The caption uses the muted text token; appearances use semantic border tokens and follow system, light, and dark themes. Layout follows the surrounding writing direction.
