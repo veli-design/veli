@@ -12,7 +12,6 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
-import { Link } from '@tradenetcorp/veli-ui/link';
 import {
   Menu,
   MenuItem,
@@ -65,7 +64,6 @@ import {
   Info,
   MagnifyingGlass,
   PencilSimple,
-  Plus,
   Trash,
   WarningCircle,
 } from 'phosphor-react';
@@ -558,52 +556,73 @@ export function InputValidationDemo() {
 
 export function DividerUsageDemo() {
   return (
-    <div className="w-[320px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-      <div className="space-y-[12px]">
-        <div>
-          <h3 className="type-body-sm-medium text-base-emphasis">Applicant details</h3>
-          <p className="type-caption-12-regular text-base-muted">
-            Review the information before continuing.
-          </p>
-        </div>
-        <Divider />
-        <div className="space-y-[8px] type-body-sm-regular text-base">
-          <p>Name: Aishath Mariyam</p>
-          <p>Island: Male&apos;</p>
-        </div>
+    <div className="w-full max-w-[480px] space-y-[12px]">
+      <div>
+        <h3 className="type-body-sm-medium text-base-emphasis">Applicant details</h3>
+        <p className="type-caption-12-regular text-base-muted">
+          Review the information before continuing.
+        </p>
+      </div>
+      <Divider />
+      <div className="space-y-[8px] type-body-sm-regular text-base">
+        <p>Name: Aishath Mariyam</p>
+        <p>Island: Male&apos;</p>
       </div>
     </div>
   );
 }
 
-export function DividerVariantsDemo() {
-  return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Horizontal divider</p>
-          <div className="space-y-[10px] type-body-sm-regular text-base">
-            <p>Passport number</p>
-            <Divider />
-            <p>National ID number</p>
-            <Divider className="bg-border-base-emphasis" />
-            <p>Driving license number</p>
-          </div>
-        </div>
-      </div>
+export function DividerExpandableDemo() {
+  const [expanded, setExpanded] = useState(false);
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Vertical divider</p>
-          <div className="flex items-center gap-[12px] type-body-sm-regular text-base">
-            <span>Overview</span>
-            <Divider orientation="vertical" />
-            <span>Documents</span>
-            <Divider orientation="vertical" className="bg-border-base-emphasis" />
-            <span>History</span>
-          </div>
-        </div>
+  return (
+    <div className="w-full max-w-[480px] space-y-[12px]">
+      <p className="type-body-sm-regular text-base">
+        Keep a long section concise, then let readers choose when to reveal the remaining details.
+      </p>
+      <div id="divider-expanded-guidance" hidden={!expanded}>
+        <p className="type-body-sm-regular text-base">
+          The caller owns the expanded content and state. Add motion to the content only when it
+          suits the experience, and respect reduced-motion preferences.
+        </p>
       </div>
+      <Divider
+        text={expanded ? 'Show less' : 'Show more'}
+        showIcon
+        appearance="muted"
+        aria-label={expanded ? 'Show less' : 'Show more'}
+        aria-expanded={expanded}
+        aria-controls="divider-expanded-guidance"
+        onClick={() => setExpanded((current) => !current)}
+      />
+    </div>
+  );
+}
+
+export function DividerAppearancesDemo() {
+  return (
+    <div className="w-full max-w-[480px] space-y-3 type-body-sm-regular text-base">
+      <p>Passport number</p>
+      <Divider />
+      <p>National ID number</p>
+      <Divider appearance="muted" />
+      <p>Driving license number</p>
+      <Divider appearance="strong" />
+      <p>Permit reference</p>
+      <Divider appearance="emphasis" />
+      <p>Supporting documents</p>
+    </div>
+  );
+}
+
+export function DividerVerticalOrientationDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-3 type-body-sm-regular text-base">
+      <span>Overview</span>
+      <Divider orientation="vertical" />
+      <span>Documents</span>
+      <Divider orientation="vertical" />
+      <span>History</span>
     </div>
   );
 }
@@ -756,110 +775,6 @@ export function SelectValidationDemo() {
         <SelectItem id="active">Active</SelectItem>
         <SelectItem id="inactive">Inactive</SelectItem>
       </Select>
-    </div>
-  );
-}
-
-export function LinkUsageDemo() {
-  return <Link href="#">Link Label</Link>;
-}
-
-export function LinkVariantsDemo() {
-  return (
-    <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-      <div />
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Hover Underline</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">
-        Always Underline
-      </div>
-
-      <div className="text-sm font-medium">Default</div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="always">
-          Link
-        </Link>
-      </div>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="always">
-          Link
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-export function LinkIconsDemo() {
-  return (
-    <div className="flex gap-8 flex-wrap items-center">
-      <span className="type-subtitle-regular">
-        <Link>
-          <Plus size={20} weight="bold" />
-          Large Link
-        </Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link intent="secondary">
-          <DownloadSimple size={18} weight="bold" />
-          LG Link
-        </Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>
-          MD Link
-          <ArrowRight size={16} weight="bold" />
-        </Link>
-      </span>
-      <span className="type-caption-12-regular">
-        <Link>
-          <ArrowRight size={12} weight="bold" />
-          XS Link
-        </Link>
-      </span>
-    </div>
-  );
-}
-
-export function LinkSizesDemo() {
-  return (
-    <div className="flex gap-6 items-center flex-wrap">
-      <span className="type-caption-12-regular">
-        <Link>Extra Small</Link>
-      </span>
-      <span className="type-body-sm-regular">
-        <Link>Small</Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>Medium</Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link>Large</Link>
-      </span>
-      <span className="type-subtitle-regular">
-        <Link>Extra Large</Link>
-      </span>
     </div>
   );
 }

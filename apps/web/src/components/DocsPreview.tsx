@@ -6,7 +6,7 @@ import styles from './DocsPreview.module.css';
 
 export function DocsPreview({ controls, children }: { controls: ReactNode; children: ReactNode }) {
   return (
-    <div className={styles.preview}>
+    <div className={styles.preview} data-docs-preview="options">
       <div className={styles.controls}>{controls}</div>
       <div className={styles.canvas}>{children}</div>
     </div>

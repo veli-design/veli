@@ -1,0 +1,19 @@
+<script>
+  (() => {
+    const params = new URLSearchParams(window.location.search);
+    const root = document.documentElement;
+    const theme = params.get('veli-theme');
+    const colorScheme = theme === 'light' || theme === 'dark' ? theme : 'system';
+    const isDark =
+      colorScheme === 'dark' ||
+      (colorScheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const surface = params.get('veli-surface');
+
+    root.classList.toggle('dark', isDark);
+    root.dataset.theme = isDark ? 'dark' : 'light';
+    root.dataset.colorScheme = colorScheme;
+    root.style.colorScheme = root.dataset.theme;
+    root.dataset.veliSurface = surface === 'raised' || surface === 'clear' ? surface : 'base';
+    root.dataset.veliViewMode = params.get('viewMode') === 'docs' ? 'docs' : 'story';
+  })();
+</script>
