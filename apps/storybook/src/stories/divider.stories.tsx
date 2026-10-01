@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
+import { expect, userEvent, within } from '@storybook/test';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const dividerVariants = ['subtle', 'muted', 'strong', 'emphasis'] as const;
 
-const storyPanelClassName = 'w-80 rounded-2xl border border-base-subtle bg-surface-raised p-4';
+const storyPanelClassName =
+  'w-[320px] max-w-[calc(100vw-2rem)] rounded-2xl border border-base-subtle bg-surface-raised p-4';
 
 const dividerText = {
   en: {
@@ -14,6 +16,10 @@ const dividerText = {
     text: 'text',
     or: 'Or',
     permitInformation: 'Permit information',
+    showMore: 'Show more information',
+    showLess: 'Show less information',
+    additionalInformation: 'Additional information about this section is now available.',
+    hiddenInformation: 'Expand to read additional information.',
     dividerDescription:
       'Use horizontal dividers to separate related content blocks without introducing extra hierarchy.',
     sections: {
@@ -32,6 +38,10 @@ const dividerText = {
     text: 'ލިޔުން',
     or: 'ނުވަތަ',
     permitInformation: 'ހުއްދައިގެ މަޢުލޫމާތު',
+    showMore: 'އިތުރު މަޢުލޫމާތު ދައްކާ',
+    showLess: 'މަޢުލޫމާތު ކުޑަކުރައްވާ',
+    additionalInformation: 'މި ބައިގެ އިތުރު މަޢުލޫމާތު މިހާރު ލިބިފައިވޭ.',
+    hiddenInformation: 'އިތުރު މަޢުލޫމާތު ކިޔުމަށް އެކްސްޕެންޑް ކުރައްވާ.',
     dividerDescription:
       'އިތުރު ހައިރާކީއެއް ނުގެނެސް ގުޅުންހުރި ބައިތައް ވަކިކުރުމަށް ހޮރިޒޮންޓަލް ޑިވައިޑަރ ބޭނުންކުރައްވާ.',
     sections: {
@@ -136,6 +146,9 @@ const meta = {
       control: 'text',
       if: { arg: 'orientation', eq: 'horizontal' },
     },
+    showIcon: {
+      control: 'boolean',
+    },
   },
 } satisfies Meta<typeof Divider>;
 
@@ -167,6 +180,10 @@ export const Default: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('separator')).toBeVisible();
+  },
 };
 
 export const WithText: Story = {
@@ -179,6 +196,71 @@ export const WithText: Story = {
       <Divider {...args} />
     </div>
   ),
+};
+
+export const WithIcon: Story = {
+  render: () => {
+    const text = useDividerText();
+
+    return (
+      <div className={`${storyPanelClassName} space-y-4`}>
+        <Divider text={text.orContinueWith} showIcon />
+        <Divider text={text.orContinueWith} showIcon appearance="emphasis" />
+      </div>
+    );
+  },
+};
+
+export const Expandable: Story = {
+  render: () => {
+    const text = useDividerText();
+    const [expanded, setExpanded] = useState(false);
+
+    return (
+      <div className={storyPanelClassName}>
+        <div className="space-y-3">
+          <p className="type-body-sm-medium text-base-emphasis">{text.permitInformation}</p>
+          <p className="type-body-sm-regular text-base">{text.hiddenInformation}</p>
+          <div id="divider-additional-information" hidden={!expanded}>
+            <p className="type-body-sm-regular text-base">{text.additionalInformation}</p>
+          </div>
+          <Divider
+            text={expanded ? text.showLess : text.showMore}
+            showIcon
+            appearance="muted"
+            aria-label={expanded ? text.showLess : text.showMore}
+            aria-expanded={expanded}
+            aria-controls="divider-additional-information"
+            onClick={() => setExpanded((current) => !current)}
+          />
+        </div>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button');
+    const additionalInformation = canvas.getByText(/Additional information|މި ބައިގެ އިތުރު/);
+
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await expect(additionalInformation).not.toBeVisible();
+    await expect(button.querySelector('svg')).toBeInTheDocument();
+    await userEvent.click(button);
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await expect(additionalInformation).toBeVisible();
+    await expect(button.querySelector('svg')).toHaveClass('rotate-180');
+
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await expect(additionalInformation).not.toBeVisible();
+    await expect(button.querySelector('svg')).not.toHaveClass('rotate-180');
+
+    await userEvent.keyboard(' ');
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await expect(additionalInformation).toBeVisible();
+    await expect(button.querySelector('svg')).toHaveClass('rotate-180');
+  },
 };
 
 export const TextVariants: Story = {

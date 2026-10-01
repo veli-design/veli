@@ -1,10 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 @import '@tradenetcorp/veli-tokens/tailwind';
 @import '@tradenetcorp/veli-ui/tailwind';
 
 @source "../../../../packages/ui";
+
+/* Self-hosted fonts are discovered with the initial stylesheet rather than
+   after a second request to Google Fonts. The Inter face is variable, so one
+   Latin subset covers every Veli text weight. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* Arial adjusted to Inter's metrics keeps the initial fallback's line boxes
+   and average character width aligned with the loaded face. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600.woff2') format('woff2');
+}
+
+:root {
+  --font-sans: 'Inter', 'Inter Fallback', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 
 @font-face {
   font-family: 'MV Aaamu FK';
@@ -2512,6 +2577,12 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 
 .docs-prose h2 {
   margin-top: 72px;
+  color: var(--color-text-base-emphasis);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.36;
+  letter-spacing: -0.01em;
 }
 
 /* The first article section begins at the prose frame's 80px inset. */
@@ -2537,6 +2608,34 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 .docs-prose ul,
 .docs-prose ol {
   margin-bottom: 0;
+}
+
+/* Component articles are moved into tab panels after MDX renders. Style the
+   nested prose explicitly so it retains the documented 32/16 type scale and
+   8/16px reading rhythm from the documentation site reference. */
+.docs-tab-panel > :is(p, ul, ol) {
+  max-width: 660px;
+  color: var(--color-text-base-strong);
+}
+
+.docs-tab-panel > :is(ul, ol) {
+  padding-inline-start: 24px;
+}
+
+.docs-tab-panel > ul {
+  list-style: disc;
+}
+
+.docs-tab-panel > ol {
+  list-style: decimal;
+}
+
+.docs-tab-panel > :is(ul, ol) > li {
+  margin: 0;
+}
+
+.docs-tab-panel > :is(ul, ol) > li + li {
+  margin-top: 16px;
 }
 
 .docs-prose [data-accordion-header] :is(h1, h2, h3, h4, h5, h6) {
