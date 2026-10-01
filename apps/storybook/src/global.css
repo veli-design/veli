@@ -44,6 +44,15 @@ html {
   @apply antialiased;
 }
 
+/* Keep the canvas surface in place while stories load or remount. */
+html[data-veli-view-mode='story'][data-veli-surface='base'] body {
+  background: var(--color-bg-surface-base) !important;
+}
+
+html[data-veli-view-mode='story'][data-veli-surface='raised'] body {
+  background: var(--color-bg-surface-raised) !important;
+}
+
 @source "../../../packages/ui";
 
 @source "../../../../packages/blocks/src";
