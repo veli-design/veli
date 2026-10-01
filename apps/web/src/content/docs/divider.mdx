@@ -103,6 +103,7 @@ function MoreDetails() {
         text={expanded ? 'Show less' : 'Show more'}
         showIcon
         appearance="muted"
+        aria-label={expanded ? 'Show less' : 'Show more'}
         aria-expanded={expanded}
         aria-controls="additional-details"
         onClick={() => setExpanded((current) => !current)}
@@ -114,22 +115,23 @@ function MoreDetails() {
 
 ## API Reference
 
-| Prop          | Type                                                   | Default        | Description                                                                                                    |
-| :------------ | :----------------------------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------------- |
-| `appearance`  | `'subtle' \| 'muted' \| 'strong' \| 'emphasis'`        | `'subtle'`     | Selects the semantic border color.                                                                             |
-| `orientation` | `'horizontal' \| 'vertical'`                           | `'horizontal'` | Sets the divider direction. Text and the optional icon are supported on horizontal dividers.                   |
-| `text`        | `React.ReactNode`                                      | —              | Optional caption displayed between the horizontal line segments.                                               |
-| `showIcon`    | `boolean`                                              | `false`        | Shows the 16px `CaretCircleDown` icon beside the caption.                                                      |
-| `onClick`     | `(event: React.MouseEvent<HTMLButtonElement>) => void` | —              | Makes a labeled horizontal divider a full-width native button. The caller owns the content and expanded state. |
-| `className`   | `string`                                               | —              | Adds layout or visual overrides.                                                                               |
+| Prop          | Type                                                   | Default        | Description                                                                                            |
+| :------------ | :----------------------------------------------------- | :------------- | :----------------------------------------------------------------------------------------------------- |
+| `appearance`  | `'subtle' \| 'muted' \| 'strong' \| 'emphasis'`        | `'subtle'`     | Selects the semantic border color.                                                                     |
+| `orientation` | `'horizontal' \| 'vertical'`                           | `'horizontal'` | Sets the divider direction. Text and the optional icon are supported on horizontal dividers.           |
+| `text`        | `React.ReactNode`                                      | —              | Optional caption displayed between the horizontal line segments.                                       |
+| `showIcon`    | `boolean`                                              | `false`        | Shows the 16px `CaretCircleDown` icon beside the caption.                                              |
+| `onClick`     | `(event: React.MouseEvent<HTMLButtonElement>) => void` | —              | Makes a horizontal divider a full-width native button. The caller owns the content and expanded state. |
+| `aria-label`  | `string`                                               | —              | Required with `onClick`; supplies a non-empty accessible name for the button.                          |
+| `className`   | `string`                                               | —              | Adds layout or visual overrides.                                                                       |
 
-Standard ARIA attributes and DOM event attributes are forwarded to the rendered separator or button. Use `appearance` to select a visual treatment; Divider does not expose generic `variant` or CSS `style` props.
+Standard ARIA attributes and DOM event attributes are forwarded to the rendered separator or button. Use `appearance` to select a visual treatment; Divider does not expose generic `variant` or CSS `style` props. `elementType`, `isDecorative`, `render`, and `slot` are not supported by Divider's public API.
 
 ## Accessibility
 
 Without `onClick`, Divider keeps separator semantics. Use the native horizontal or vertical orientation to describe the content boundary.
 
-With `onClick`, the full horizontal row is a native button and supports pointer, Enter, and Space activation. Give it visible `text`, or an `aria-label` when it has no visible caption.
+With `onClick`, the full horizontal row is a native button and supports pointer, Enter, and Space activation. A non-empty `aria-label` is required, including when it has visible `text`.
 
 For expandable content, update `aria-expanded` with the caller's state and point `aria-controls` at the controlled content. Keep the controlled content in the DOM or use an appropriate hidden state.
 

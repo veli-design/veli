@@ -228,6 +228,7 @@ export const Expandable: Story = {
             text={expanded ? text.showLess : text.showMore}
             showIcon
             appearance="muted"
+            aria-label={expanded ? text.showLess : text.showMore}
             aria-expanded={expanded}
             aria-controls="divider-additional-information"
             onClick={() => setExpanded((current) => !current)}

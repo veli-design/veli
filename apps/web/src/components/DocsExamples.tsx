@@ -590,6 +590,7 @@ export function DividerExpandableDemo() {
         text={expanded ? 'Show less' : 'Show more'}
         showIcon
         appearance="muted"
+        aria-label={expanded ? 'Show less' : 'Show more'}
         aria-expanded={expanded}
         aria-controls="divider-expanded-guidance"
         onClick={() => setExpanded((current) => !current)}

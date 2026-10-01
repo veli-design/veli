@@ -78,14 +78,12 @@ type StaticDividerProps = DividerSharedProps & {
   onClick?: undefined;
 };
 
-type InteractiveDividerProps = DividerSharedProps &
-  (
-    | { text: React.ReactNode; 'aria-label'?: string }
-    | { text?: undefined; 'aria-label': string }
-  ) & {
-    orientation?: 'horizontal';
-    onClick: React.MouseEventHandler<HTMLButtonElement>;
-  };
+type InteractiveDividerProps = DividerSharedProps & {
+  /** Accessible name required for the interactive divider button. */
+  'aria-label': string;
+  orientation?: 'horizontal';
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+};
 
 /**
  * A semantic separator with optional text and appearance treatments. When an
@@ -146,6 +144,11 @@ export function Divider(props: DividerProps) {
   const isExpanded = ariaExpanded === true || ariaExpanded === 'true';
 
   if (onClick) {
+    const ariaLabel = props['aria-label'];
+    if (typeof ariaLabel !== 'string' || !ariaLabel.trim()) {
+      throw new Error('Divider with onClick requires a non-empty aria-label.');
+    }
+
     return (
       <button
         {...elementProps}
