@@ -129,7 +129,14 @@ function usePreviewProps(args: NotificationTrayProps): NotificationTrayProps {
 const meta = {
   title: 'Blocks/Notification tray',
   component: NotificationTray,
-  parameters: { layout: 'centered' },
+  parameters: { layout: 'padded' },
+  decorators: [
+    (Story) => (
+      <div className="flex justify-center">
+        <Story />
+      </div>
+    ),
+  ],
   render: function Render(args) {
     const props = usePreviewProps(args);
     return <NotificationTray {...props} />;
