@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import {
   NotificationTray,
   NotificationTrayContent,
@@ -98,11 +99,113 @@ const notificationDemoItems: NotificationItem[] = [
   },
 ];
 
-function usePreviewProps(args: NotificationTrayProps): NotificationTrayProps {
-  const [, updateArgs] = useArgs<NotificationTrayProps>();
+const dhivehiLabels = {
+  title: 'ނޯޓިފިކޭޝަންތައް',
+  options: 'އިޚްތިޔާރުތައް',
+  close: 'ބަންދުކުރައްވާ',
+  markAllRead: 'ހުރިހާ ނޯޓިފިކޭޝަންތައް ކިޔާލައްވާ',
+  markingAllRead: 'ކިޔާލެވިފައި ކަމަށް ބަދަލުކުރަނީ…',
+  showAll: 'ހުރިހާ ނޯޓިފިކޭޝަންތައް',
+  showUnread: 'ނުކިޔާ ނޯޓިފިކޭޝަންތައް',
+  unread: 'ނުކިޔާ',
+  loading: 'ނޯޓިފިކޭޝަންތައް ލޯޑުވަނީ…',
+  pending: 'ނޯޓިފިކޭޝަން ބަދަލުކުރަނީ…',
+  emptyTitle: 'އަދި ނޯޓިފިކޭޝަނެއް ނެތް.',
+  emptyDescription: 'ޚިދުމަތްތަކުގެ އައު މަޢުލޫމާތު މިތާ ފެންނާނެ.',
+  emptyUnreadTitle: 'ނުކިޔާ ނޯޓިފިކޭޝަނެއް ނެތް.',
+  emptyUnreadDescription: 'ހުރިހާ ނޯޓިފިކޭޝަންތައް ކިޔާލެވިފައި.',
+  retry: 'އަލުން ބައްލަވާ',
+  loadMore: 'އިތުރަށް ބައްލަވާ',
+  loadingMore: 'އިތުރު ނޯޓިފިކޭޝަންތައް ލޯޑުވަނީ…',
+} satisfies Required<NonNullable<NotificationTrayProps['labels']>>;
+
+const dhivehiItems: Record<string, Pick<NotificationItem, 'content' | 'timestamp'>> = {
+  progress: {
+    content: (
+      <>
+        <strong>ތިޔަ ހުށަހެޅުއްވި ފޯމު ބަލަމުންދަނީ</strong>.
+      </>
+    ),
+    timestamp: '5 މިނެޓް ކުރިން',
+  },
+  review: {
+    content: (
+      <>
+        ތިޔަ ހުށަހެޅުއްވި ފޯމަށް <strong>އިތުރު މަޢުލޫމާތު ބޭނުންވެއްޖެ</strong>. އެދިފައިވާ
+        މަޢުލޫމާތު ބައްލަވާ.
+      </>
+    ),
+    timestamp: '30 މިނެޓް ކުރިން',
+  },
+  submitted: {
+    content: (
+      <>
+        ތިޔަ ފޯމު <strong>ހުށަހެޅިފައި</strong>. ފޯމުގެ ހާލަތު ބައްލަވާ.
+      </>
+    ),
+    timestamp: '1 ގަޑިއިރު ކުރިން',
+  },
+  action: {
+    content: (
+      <>
+        ތިޔަ ކުރެއްވި ފައިސާގެ މުޢާމަލާ <strong>ކާމިޔާބު ނުވި</strong>. އަލުން މަސައްކަތް ކުރައްވާ.
+      </>
+    ),
+    timestamp: '1 ދުވަސް ކުރިން',
+  },
+  completed: {
+    content: (
+      <>
+        ތިޔަ ހުށަހެޅުއްވި ފޯމުގެ މަސައްކަތް <strong>ނިމިފައި</strong>. ނަތީޖާ ބައްލަވާ.
+      </>
+    ),
+    timestamp: '3 ދުވަސް ކުރިން',
+  },
+  older: {
+    content: (
+      <>
+        ތިޔަ ހުށަހެޅުއްވި ފޯމު <strong>ވަގުތީގޮތުން ހުއްޓާލެވިފައި</strong>. އެންމެ ފަހުގެ
+        މަޢުލޫމާތު ބައްލަވާ.
+      </>
+    ),
+    timestamp: '2 ހަފްތާ ކުރިން',
+  },
+  'complete-month': {
+    content: (
+      <>
+        ތިޔަ ލިޔުން <strong>ތައްޔާރު</strong>. ލިޔުން ބައްލަވާ ނުވަތަ ޑައުންލޯޑު ކުރައްވާ.
+      </>
+    ),
+    timestamp: '1 މަސް ކުރިން',
+  },
+  long: {
+    content: (
+      <>
+        މި ނޯޓިފިކޭޝަންގެ ދިގު މެސެޖާއި މިސާލަށް ދެވިފައިވާ ރިފަރެންސް ނަންބަރު އެކަކަށްވުރެ ގިނަ
+        ސަފުތަކެއްގައި ފެންނާނެ:{' '}
+        <bdi>EXAMPLE12345678901234567890123456789012345678901234567890</bdi>.
+      </>
+    ),
+    timestamp: 'އެކަކަށްވުރެ ގިނަ ސަފުތަކެއް ބޭނުންވާ ދިގު ވަގުތުގެ މަޢުލޫމާތު',
+  },
+};
+
+function usePreviewProps(
+  args: NotificationTrayProps,
+  updateArgs: (args: Partial<NotificationTrayProps>) => void,
+): NotificationTrayProps {
+  const { direction } = useVeliLanguage();
+  const isDhivehi = direction === 'rtl';
   return {
     ...args,
-    items: args.items.filter((item) => args.filter === 'all' || item.unread),
+    items: args.items
+      .filter((item) => args.filter === 'all' || item.unread)
+      .map((item) => (isDhivehi ? { ...item, ...dhivehiItems[item.id] } : item)),
+    labels: isDhivehi ? { ...dhivehiLabels, ...args.labels } : args.labels,
+    error:
+      isDhivehi && args.error === 'Notifications could not be loaded.'
+        ? 'ނޯޓިފިކޭޝަންތައް ލޯޑު ނުކުރެވުނު.'
+        : args.error,
     onFilterChange: (filter) => {
       updateArgs({ filter });
       args.onFilterChange(filter);
@@ -126,9 +229,32 @@ function usePreviewProps(args: NotificationTrayProps): NotificationTrayProps {
   };
 }
 
+function Preview({
+  args,
+  updateArgs,
+  embedded = false,
+}: {
+  args: NotificationTrayProps;
+  updateArgs: (args: Partial<NotificationTrayProps>) => void;
+  embedded?: boolean;
+}) {
+  const props = usePreviewProps(args, updateArgs);
+  return embedded ? (
+    <div className="w-[389px] max-w-full shrink-0">
+      <NotificationTrayContent
+        {...props}
+        className={`max-h-screen rounded-4xl shadow-sm ${props.className ?? ''}`}
+      />
+    </div>
+  ) : (
+    <NotificationTray {...props} />
+  );
+}
+
 const meta = {
   title: 'Blocks/Notification tray',
   component: NotificationTray,
+  tags: ['!autodocs'],
   parameters: { layout: 'padded' },
   decorators: [
     (Story) => (
@@ -138,8 +264,8 @@ const meta = {
     ),
   ],
   render: function Render(args) {
-    const props = usePreviewProps(args);
-    return <NotificationTray {...props} />;
+    const [, updateArgs] = useArgs<NotificationTrayProps>();
+    return <Preview args={args} updateArgs={updateArgs} />;
   },
   args: {
     items: notificationDemoItems,
@@ -156,15 +282,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const EmbeddedContent: Story = {
   render: function Render(args) {
-    const props = usePreviewProps(args);
-    return (
-      <div className="w-[389px] max-w-full shrink-0">
-        <NotificationTrayContent
-          {...props}
-          className={`max-h-screen rounded-4xl shadow-sm ${props.className ?? ''}`}
-        />
-      </div>
-    );
+    const [, updateArgs] = useArgs<NotificationTrayProps>();
+    return <Preview args={args} updateArgs={updateArgs} embedded />;
   },
 };
 export const Paginated: Story = {
@@ -179,14 +298,6 @@ export const Error: Story = {
 export const MarkAllReadPending: Story = {
   name: 'Mark all as read pending',
   args: { isMarkingAllRead: true },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'The app is saving “Mark all as read”. Open Notification options to see the disabled “Marking all as read…” action. This story holds that state; no request is sent.',
-      },
-    },
-  },
 };
 export const LoadMorePending: Story = {
   args: { loadMore: { onLoadMore: () => {}, isLoading: true } },

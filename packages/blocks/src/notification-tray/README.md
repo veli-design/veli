@@ -1,70 +1,53 @@
-## Ownership and setup
+## Ownership and prerequisites
 
-A notification tray with a desktop popover and mobile bottom sheet. Applications supply notification data, translated copy, formatted dates, URLs and callbacks. The block owns presentation and interaction only. It does not fetch, subscribe, store read state, interpret API payloads or inject HTML.
+A notification tray with a desktop popover and mobile bottom sheet. This experimental block is editable source. Applications supply notification data, translations, formatted dates, URLs and callbacks, and own fetching, filtering, pagination and read state.
 
-Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and `VeliProvider`, then install the editable source:
+Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and primitives. Wrap your application in `VeliProvider` with `language="en"` or `language="dv"` and your chosen color scheme. See the [provider guide](/docs/provider/) for direction and theme setup.
+
+## Installation
+
+Initialize Veli Blocks once per application, using your team's Veli Web URL, then add the tray:
 
 ```sh
 corepack pnpm dlx @tradenetcorp/veli init
 corepack pnpm dlx @tradenetcorp/veli add notification-tray
 ```
 
-Run `init` once per application and supply your team's Veli Web URL. Package access uses the existing GitHub Packages configuration and catalog access uses WFA. The CLI reads this block's manifest, reports incompatible installed versions, and offers to install missing dependencies. Review any compatibility warning before adoption; `add` does not upgrade existing packages.
-
-Import `NotificationTray` from the copied `notification-tray.tsx`. Keep both source files together. Styling uses Tailwind and Veli tokens, with no additional stylesheet. Ensure Tailwind scans the copied directory (`@source` if it is outside your app's normal source tree). Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
-
-## Application boundary
-
-Pass display items, controlled state and callbacks through a client adapter. Supply items **already filtered for the selected filter**, including when filtering happens on the server. `unreadCount` is the total from the app, not a count inferred from a loaded page. The app owns optimistic updates, rollback, pagination cursors and retry policy.
-
-Resolve destinations and presentation intent in the app. The block does not interpret API event types or copy HTML from a notification payload. Data passed across a server/client boundary must be serializable; callbacks and router renderers belong in the client adapter.
+The CLI reports required dependencies and incompatible installed versions. Import `NotificationTray` from the copied `notification-tray.tsx` and keep its source files and `cursor-click.svg` together. Ensure Tailwind scans the copied directory, adding an `@source` path if needed. Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
 
 ## API
 
-| Prop                                    | Responsibility                                                                                                              |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `items`                                 | Ordered `NotificationItem[]` for the current filter. Stable unique IDs preserve row identity.                               |
-| `unreadCount`                           | Total unread count, including unloaded pages. Used by the bell badge and mark-all action.                                   |
-| `filter`, `onFilterChange`              | Controlled `all` / `unread` selection. Update the data alongside the filter.                                                |
-| `onItemAction`                          | Called with the ID when a row link is activated. Mark read in your adapter; the `href` handles navigation.                  |
-| `onMarkAllRead`, `isMarkingAllRead`     | Optional mark-all action and its app-owned pending state. Disabled at zero unread or while pending.                         |
-| `isLoading`                             | Initial loading or refreshing. Existing rows stay visible.                                                                  |
-| `error`, `onRetry`                      | A translated error message and optional retry action. Existing rows stay visible on failure.                                |
-| `loadMore`                              | Optional `{ onLoadMore, isLoading }`. Presence means another page is available for the current filter. Omit when exhausted. |
-| `labels`                                | Partial override of the exported English `notificationTrayLabels`. Supply translations for all visible and assistive copy.  |
-| `renderLink`                            | Veli Link's router renderer. Forward every supplied prop and ref. Anchors work without it.                                  |
-| `isOpen`, `defaultOpen`, `onOpenChange` | Optional controlled or uncontrolled overlay state. Use controlled state for app-shell coordination.                         |
-| `trigger`                               | Optional Veli/React Aria button element replacing the default bell. Supply its accessible name.                             |
-| `className`                             | Classes on the content root for placement and sizing.                                                                       |
+Supply `items` already filtered for the controlled `filter` (`all` or `unread`), and update them through `onFilterChange`. `unreadCount` is the total across all pages. The block does not change application data.
 
-Each item has `id`, `content`, `timestamp` and `time`; optional fields are `dateTime`, `unread`, `intent` (`neutral`, `success`, `warning`, `danger`), `href`, `isPending` and `actions`. `content` accepts text or non-interactive React markup such as `<strong>` and `<bdi>`. Supply timestamps already formatted for the user's locale and timezone. Include status meaning in the message; icons are decorative. Put app-specific buttons in `actions`, which renders outside the row link. Use Veli Button's `isPending` for individual action mutations. Do not put interactive elements in `content` or pass unsanitized API HTML.
+Each `NotificationItem` requires a stable `id`, `content`, `timestamp` and `time`. Optional fields are `dateTime`, `unread`, `intent` (`neutral`, `success`, `warning`, `danger`), `href`, `isPending` and `actions`. Format dates and resolve URLs in your application. Use text or non-interactive markup for `content`; place buttons in `actions` outside the row link.
 
-`NotificationTrayContent` accepts the same content props without the overlay props, plus optional `onClose` for a visible close button. Use it when the app shell already provides an accessible overlay. Name that dialog, constrain its height and retain focus management. Do not nest it inside a second dialog supplied by `NotificationTray`.
+| Props                                   | Use                                                                                                     |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `onItemAction`                          | Receives the activated row ID; `href` handles navigation.                                               |
+| `onMarkAllRead`, `isMarkingAllRead`     | Save read state and disable the action while saving. Update `items` and `unreadCount` when complete.    |
+| `isLoading`                             | Show initial loading or refresh progress. Existing rows stay visible.                                   |
+| `error`, `onRetry`                      | Show a translated error and optional retry action.                                                      |
+| `loadMore`                              | Supply `{ onLoadMore, isLoading }` when another page is available; omit when exhausted.                 |
+| `labels`                                | Translate visible and assistive copy. English defaults are exported as `notificationTrayLabels`.        |
+| `renderLink`                            | Integrate a router link by forwarding all supplied props and the ref. Ordinary anchors work without it. |
+| `isOpen`, `defaultOpen`, `onOpenChange` | Control the overlay or let it manage its own open state.                                                |
+| `trigger`, `className`                  | Replace the bell with an accessible Veli/React Aria button or customize the content root.               |
 
-## States and accessibility
+Use `NotificationTrayContent` inside an application-owned overlay. It accepts the content props and optional `onClose`. Give its container an accessible name, height constraint, focus management and dismissal behavior.
 
-Rows are a semantic list of ordinary links or static content, not a menu or listbox. Only the options control is a menu. Veli Popover, Modal and Menu provide the [React Aria dialog behavior](https://react-aria.adobe.com/Modal/useDialog): dismissal, focus containment and focus restoration. The list scrolls independently of its header. Link text supplies a meaningful accessible name; unread and pending states also have text equivalents.
+## Accessibility and responsive behavior
 
-The tray opens as a popover on desktop and a bottom sheet on smaller screens. Notification text wraps, and longer lists scroll beneath the header. Dismiss the mobile sheet with its close button, by pressing the backdrop, or by dragging downward from the handle or non-interactive header area. Short or cancelled drags return it to its resting position. The close button also provides a keyboard/single-pointer alternative to dragging. Escape closes the innermost menu first. Both directions, both themes, reduced motion and long text are supported.
+Notifications are a list of links or static content. The tray provides keyboard focus management, Escape dismissal and focus restoration. On mobile, close it with the close button, backdrop or a downward drag from the handle or non-interactive header. Longer lists scroll beneath the header; reduced motion is supported.
 
-Unread indicators collapse toward the inline start when the app changes `unread` to false. The timestamp moves with them; reduced-motion users get the final state immediately. Adjacent separators disappear on hover or keyboard focus. The all and unread filters have separate empty messages, which you can override through `labels`. Loading never appears as an empty inbox. Initial errors show a danger icon, message and optional retry button. Refresh errors remain compact above retained rows. Errors are announced; pending mutations do not change app data or close the tray. A live status announces background work.
+Supply translated labels, messages and timestamps for English/LTR and Dhivehi/RTL. Include status meaning in the message because icons are decorative. Loading, separate all/unread empty states, errors and pending updates have accessible text. Coordinate controlled overlays with your application shell and close them on navigation.
 
-### Height and pending states
+Validate your application's routes, translations, keyboard behavior, mobile gestures and mutation failures before adoption.
 
-Desktop height follows content and is limited by the available viewport space. The mobile sheet keeps a consistent height, with the list filling the area below the handle and header. Empty, initial-loading and initial-error states reserve space for their content. When embedding `NotificationTrayContent`, constrain its height so the notification list can scroll independently.
+## Updating your copy
 
-“Mark all as read pending” means the app is saving a change to read state. Set `isMarkingAllRead` during that request: the action becomes disabled, its label changes and a live status announces the update. Update `items` and the total `unreadCount` on success, preserve or restore data on failure, and clear the flag when the request settles. This is separate from initial fetching (`isLoading`), paging (`loadMore.isLoading`) and a single row update (`item.isPending`). App-provided `actions` own their own pending/disabled state.
+1. Run `veli status` and review the block changelog and dependency requirements.
+2. Run `veli update notification-tray` to merge the new source with your local changes.
+3. Resolve conflicts and run `veli update --continue notification-tray`, or use `--abort` to restore the previous copy.
+4. Check your application and commit the updated source and baseline together.
 
-## Styling and layout
-
-The tray uses Veli components, tokens and typography. Configure language and theme through your application's `VeliProvider`. Pass `className` to customize the content root's placement and sizing. `NotificationTrayContent` fills its parent, allowing an existing shell to provide its own layout and accessible overlay.
-
-## Updating and adoption
-
-Keep a notification adapter in your application's client layer. Map API events to display items and handle subscriptions, filtering, unread totals, pagination and mutation errors there. Keep notification data scoped to the signed-in account and clear it on account changes.
-
-For client-side routing, use the router configured through your React Aria provider or pass a compatible link renderer through `renderLink`. The Next.js example demonstrates a NextLink renderer and local filtering of an already loaded list. For server filtering, pass the returned items directly.
-
-Coordinate `isOpen` / `onOpenChange` with other overlays in your application shell. Close other overlays before opening the tray and close it on navigation. Keep the tray mounted outside a mobile menu that will unmount, and restore focus to a surviving control when opening from that menu. Alternatively, place `NotificationTrayContent` inside your own accessible overlay, retaining its focus management and dismissal behavior.
-
-Use `veli status` and `veli update notification-tray` to review and merge later source releases. Updating a Veli npm package does not update copied block source. Test your adapter's routes, translations, subscription updates, mutation rollback and paging before adoption.
+Updating a Veli npm package does not update copied block source.
