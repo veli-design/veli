@@ -39,6 +39,81 @@ function subscribeToViewport(callback: () => void) {
 const isMobileViewport = () => window.matchMedia(mobileQuery).matches;
 const serverViewport = () => false;
 
+function MobileNotificationSheet({
+  onClose,
+  ...contentProps
+}: NotificationTrayContentProps & { onClose: () => void }) {
+  const dragStart = useRef<{ y: number; time: number; pointerId: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  function cancelDrag() {
+    dragStart.current = null;
+    setIsDragging(false);
+    setDragOffset(0);
+  }
+
+  return (
+    <div
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-t-3xl bg-surface-raised shadow-sm transition-transform duration-normal ease-out data-[dragging=true]:transition-none motion-reduce:transition-none [&>.veli-notification-tray>.veli-notification-header]:touch-none"
+      style={{ transform: `translateY(${dragOffset}px)` }}
+      data-dragging={isDragging}
+      onPointerDown={(event) => {
+        const target = event.target as HTMLElement;
+        if (
+          !event.isPrimary ||
+          event.button !== 0 ||
+          target.closest('button, a, [role="button"]') ||
+          !target.closest('[data-notification-drag-handle], .veli-notification-header')
+        )
+          return;
+        dragStart.current = {
+          y: event.clientY,
+          time: event.timeStamp,
+          pointerId: event.pointerId,
+        };
+        setIsDragging(true);
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }}
+      onPointerMove={(event) => {
+        const start = dragStart.current;
+        if (start?.pointerId === event.pointerId)
+          setDragOffset(Math.max(0, event.clientY - start.y));
+      }}
+      onPointerUp={(event) => {
+        const start = dragStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        dragStart.current = null;
+        setIsDragging(false);
+        const distance = Math.max(0, event.clientY - start.y);
+        const height = event.currentTarget.clientHeight;
+        if (
+          distance > height * sheetDismissThreshold.heightRatio ||
+          (distance > sheetDismissThreshold.distance &&
+            distance / Math.max(1, event.timeStamp - start.time) > sheetDismissThreshold.velocity)
+        ) {
+          onClose();
+        } else {
+          setDragOffset(0);
+        }
+      }}
+      onPointerCancel={cancelDrag}
+      onLostPointerCapture={() => {
+        if (dragStart.current) cancelDrag();
+      }}
+    >
+      <div
+        aria-hidden
+        data-notification-drag-handle
+        className="flex shrink-0 touch-none justify-center py-3"
+      >
+        <span className="h-1 w-10 rounded-full bg-border-base-emphasis" />
+      </div>
+      <NotificationTrayContent {...contentProps} onClose={onClose} />
+    </div>
+  );
+}
+
 export function NotificationTray({
   isOpen,
   defaultOpen = false,
@@ -49,7 +124,6 @@ export function NotificationTray({
   const [localOpen, setLocalOpen] = useState(defaultOpen);
   const open = isOpen ?? localOpen;
   const mobile = useSyncExternalStore(subscribeToViewport, isMobileViewport, serverViewport);
-  const dragStart = useRef<{ y: number; time: number; pointerId: number } | null>(null);
   const labels = { ...notificationTrayLabels, ...contentProps.labels };
 
   function changeOpen(next: boolean) {
@@ -83,42 +157,14 @@ export function NotificationTray({
       {mobile ? (
         <Modal
           aria-label={labels.title}
-          overlayClassName="items-end p-0"
-          className="h-[85svh] max-h-[85svh] max-w-none overflow-hidden rounded-b-none rounded-t-3xl bg-surface-raised [&_[role=dialog]]:h-full [&_[role=dialog]]:min-h-0 [&_[role=dialog]]:p-0 [&_[role=dialog]]:pb-[env(safe-area-inset-bottom)]"
+          overlayClassName="items-end p-0 motion-safe:duration-slow motion-safe:ease-out-quad! motion-safe:data-[exiting]:duration-slow motion-safe:data-[exiting]:ease-in-out!"
+          className="h-[85svh] max-h-[85svh] max-w-none overflow-visible rounded-none bg-transparent shadow-none motion-safe:transition-[translate,opacity] motion-safe:duration-slow motion-safe:ease-out-quad! motion-safe:data-[entering]:translate-y-6 motion-safe:data-[entering]:scale-100 motion-safe:data-[entering]:opacity-0 motion-safe:data-[exiting]:translate-y-full motion-safe:data-[exiting]:scale-100 motion-safe:data-[exiting]:opacity-100 motion-safe:data-[exiting]:duration-slow motion-safe:data-[exiting]:ease-in-out! [&_[role=dialog]]:h-full [&_[role=dialog]]:min-h-0 [&_[role=dialog]]:p-0"
         >
-          <div
-            aria-hidden
-            className="flex shrink-0 touch-none justify-center py-3"
-            onPointerDown={(event) => {
-              if (!event.isPrimary || event.button !== 0) return;
-              dragStart.current = {
-                y: event.clientY,
-                time: event.timeStamp,
-                pointerId: event.pointerId,
-              };
-              event.currentTarget.setPointerCapture(event.pointerId);
-            }}
-            onPointerUp={(event) => {
-              const start = dragStart.current;
-              dragStart.current = null;
-              if (!start || start.pointerId !== event.pointerId) return;
-              const distance = event.clientY - start.y;
-              const height = event.currentTarget.closest('[role="dialog"]')?.clientHeight ?? 0;
-              if (
-                distance > height * sheetDismissThreshold.heightRatio ||
-                (distance > sheetDismissThreshold.distance &&
-                  distance / Math.max(1, event.timeStamp - start.time) >
-                    sheetDismissThreshold.velocity)
-              )
-                changeOpen(false);
-            }}
-            onPointerCancel={() => {
-              dragStart.current = null;
-            }}
-          >
-            <span className="h-1 w-10 rounded-full bg-border-base-emphasis" />
-          </div>
-          <NotificationTrayContent {...contentProps} onClose={() => changeOpen(false)} />
+          <MobileNotificationSheet
+            {...contentProps}
+            className={`${contentProps.items.length === 0 ? '[&>.veli-notification-scroll]:pb-[max(env(safe-area-inset-bottom),calc(var(--spacing)*4))]' : '[&>.veli-notification-scroll]:pb-[env(safe-area-inset-bottom)]'} ${contentProps.className ?? ''}`}
+            onClose={() => changeOpen(false)}
+          />
         </Modal>
       ) : (
         <Popover

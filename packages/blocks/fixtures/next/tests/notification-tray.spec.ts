@@ -153,8 +153,18 @@ test('mobile sheet traps focus, closes with its button, backdrop and downward ge
   await page.mouse.click(10, 10);
   await expect(tray).toBeHidden();
   await openTray(page);
-  const handle = tray.locator('div[aria-hidden]').first();
+  const handle = tray.locator('[data-notification-drag-handle]');
   const handleBounds = await handle.boundingBox();
+  const surface = handle.locator('..');
+  const surfaceTop = (await surface.boundingBox())!.y;
+  await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 10);
+  await page.mouse.down();
+  await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 30);
+  await expect(surface).toHaveAttribute('data-dragging', 'true');
+  expect((await surface.boundingBox())!.y).toBeGreaterThan(surfaceTop);
+  await page.mouse.up();
+  await expect(tray).toBeVisible();
+  await expect(surface).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
   await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 10);
   await page.mouse.down();
   await page.mouse.move(handleBounds!.x + handleBounds!.width / 2, handleBounds!.y + 310, {
@@ -162,6 +172,32 @@ test('mobile sheet traps focus, closes with its button, backdrop and downward ge
   });
   await page.mouse.up();
   await expect(tray).toBeHidden();
+  await openTray(page);
+  const headingBounds = await tray.getByRole('heading').boundingBox();
+  await page.mouse.move(headingBounds!.x + 20, headingBounds!.y + 10);
+  await page.mouse.down();
+  await page.mouse.move(headingBounds!.x + 20, headingBounds!.y + 210, { steps: 5 });
+  await page.mouse.up();
+  await expect(tray).toBeHidden();
+  await expect(page.getByRole('button', { name: /^Notifications/ })).toBeFocused();
+});
+
+test('desktop rows scroll to the tray edge without a fixed bottom gutter', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 500 });
+  await page.goto('/notifications');
+  await page.getByLabel('State').selectOption('long');
+  const tray = await openTray(page);
+  const scrollArea = tray.locator('.veli-notification-scroll');
+  const content = tray.locator('.veli-notification-tray');
+  await expect(content).toHaveCSS('padding-bottom', '0px');
+  const contentBounds = await content.boundingBox();
+  const scrollBounds = await scrollArea.boundingBox();
+  expect(scrollBounds!.y + scrollBounds!.height).toBeCloseTo(
+    contentBounds!.y + contentBounds!.height,
+    0,
+  );
+  await tray.getByRole('link').last().focus();
+  await expect(tray.getByRole('heading')).toBeVisible();
 });
 
 for (const width of [320, 1280])

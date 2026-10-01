@@ -195,9 +195,9 @@ export function NotificationTrayContent({
   return (
     <section
       aria-labelledby={titleId}
-      className={`veli-notification-tray flex min-h-0 w-full flex-1 flex-col gap-1 bg-surface-raised p-4 text-start text-base-strong [&:has(.veli-notification-row:first-child:focus-within)>.veli-notification-divider]:opacity-0 [@media(hover:hover)]:[&:has(.veli-notification-row:first-child:hover)>.veli-notification-divider]:opacity-0 ${className}`}
+      className={`veli-notification-tray flex min-h-0 w-full flex-1 flex-col gap-1 overflow-hidden bg-surface-raised px-4 pt-4 text-start text-base-strong [&:has(.veli-notification-row:first-child:focus-within)>.veli-notification-divider]:opacity-0 [@media(hover:hover)]:[&:has(.veli-notification-row:first-child:hover)>.veli-notification-divider]:opacity-0 ${className}`}
     >
-      <div className="flex min-h-11 shrink-0 items-center justify-between gap-2">
+      <div className="veli-notification-header flex min-h-11 shrink-0 items-center justify-between gap-2">
         <h2 id={titleId} className="type-body-md-semibold min-w-0 flex-1 wrap-anywhere">
           {labels.title}
         </h2>
@@ -257,17 +257,30 @@ export function NotificationTrayContent({
       <p role="status" className="sr-only">
         {status}
       </p>
-      <div className="veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div
+        className={`veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain ${items.length === 0 ? 'pb-4' : ''}`}
+      >
         {error ? (
-          <div className="flex flex-col items-center gap-3 p-4 text-center">
-            <p role="alert" className="type-body-sm-regular text-danger wrap-anywhere">
+          <div
+            className={`flex flex-col items-center justify-center gap-4 p-2 text-center ${items.length === 0 ? 'min-h-80' : 'py-4'}`}
+          >
+            <span
+              aria-hidden
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-bg-danger-subtle text-icon-danger"
+            >
+              <WarningCircle className="size-5" />
+            </span>
+            <p
+              role="alert"
+              className="type-body-sm-semibold max-w-77 text-base-strong wrap-anywhere"
+            >
               {error}
             </p>
             {onRetry ? (
               <Button
                 size="sm"
                 intent="secondary"
-                appearance="transparent"
+                appearance="ghost"
                 onPress={onRetry}
                 isPending={isLoading}
               >
@@ -300,8 +313,10 @@ export function NotificationTrayContent({
             role="status"
             className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-muted"
           >
-            <Cursor className="size-6" aria-hidden />
-            <div className="flex max-w-77 flex-col items-center gap-2">
+            <span aria-hidden className="flex size-8 items-center justify-center">
+              <Cursor className="size-6" />
+            </span>
+            <div className="flex min-h-27 max-w-77 flex-col items-center gap-2">
               <p className="type-body-sm-semibold">
                 {filter === 'unread' ? labels.emptyUnreadTitle : labels.emptyTitle}
               </p>
