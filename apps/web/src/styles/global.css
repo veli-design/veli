@@ -1170,12 +1170,6 @@ button {
   border-radius: 12px;
 }
 
-.docs-prose .preview--options {
-  display: block;
-  padding: 0;
-  background: transparent;
-}
-
 .docs-example > .docs-code-block {
   margin-top: 8px;
   border-radius: 12px;
@@ -2422,6 +2416,15 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 .docs-example > .preview {
   border-radius: 22px;
   background: var(--color-bg-surface-raised);
+}
+
+/* Detect the options layout through Astro islands, including before hydration.
+   Keep the legacy modifier working after the paired preview's surface rule. */
+.docs-prose .preview--options,
+.docs-prose .preview:has([data-docs-preview='options']) {
+  display: block;
+  padding: 0;
+  background: transparent;
 }
 
 .docs-example > .docs-code-block {
