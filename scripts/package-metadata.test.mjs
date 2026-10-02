@@ -13,6 +13,11 @@ const packages = [
     name: '@tradenetcorp/veli-tokens',
     directory: 'packages/tokens',
   },
+  {
+    manifest: new URL('../packages/cli/package.json', import.meta.url),
+    name: '@tradenetcorp/veli',
+    directory: 'packages/cli',
+  },
 ];
 
 test('published package metadata points to package-specific monorepo locations', async () => {

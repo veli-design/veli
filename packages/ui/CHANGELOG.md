@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.13.0
+
+_Released 2026-09-28._
+
+### Added
+
+- Add Pagination loadmore with item counts, progress, and Veli Button’s loading indicator.
+
+### Changed
+
+- Keep loading buttons focusable and expose `aria-busy`, `aria-disabled`, and `data-pending`. `isPending` now uses the same spinner as `isLoading`. Update loading-specific `:disabled` selectors to `[data-pending]`; use `isDisabled` when the action should leave the tab order.
+- Align Button padding, icon spacing, and spinner dimensions with the design system. Text buttons grow with translated or wrapped labels; review tightly sized action groups. `size={null}` now resolves to `md`, and accent buttons always use the fill appearance.
+- Make DatePicker an editable segmented date field with a calendar trigger and form submission; replace placeholder and labelSupplementary with isOptional and infoTooltip.
+- Model `PaginationProps` as a variant union. Page-only wrappers should extend `PaginationPageProps`; load-more wrappers can use `PaginationLoadMoreProps`.
+
+### Removed
+
+- Remove Accordion isDisabled support from groups, items, and data-driven entries.
+- Remove Pagination’s `isDisabled` prop. Boundary and completion controls disable automatically; use `isLoading` for pending load-more requests.
+
+### Fixed
+
+- Prevent pending submit and reset buttons from triggering native form actions, including implicit submission from a text field, while retaining focus.
+- Preserve inherited Button context classes and custom rendering, explicit height and square-size overrides, and React 19 callback-ref cleanup.
+- Keep spinner-only buttons within narrow containers and allow explicit width overrides.
+- Let button labels and icons scale with the button on press while preserving ripple expansion. Align the dark filled danger ripple opacity with the design specification and use the white and theme-specific accent design tokens for ripples. Respect reduced motion for the spinner and ripple, and retain a visible focus outline in forced-colors mode.
+- Center Accordion dividers on item boundaries so hovered headers have balanced spacing, including the last item.
+- Keep Pagination within narrow containers, restore numbered-button theme colors, make ellipsis menus work when `boundaryCount` is zero, and retain keyboard focus after selecting a hidden page.
+
 ## 0.12.0
 
 _Released 2026-09-20._

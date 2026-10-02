@@ -1,3 +1,4 @@
+import { blocks } from './blocks';
 export type ComponentItem = {
   title: string;
   slug: string;
@@ -38,7 +39,7 @@ export type DocsNavigationItem = {
 };
 
 export type DocsNavigationSection = {
-  id: 'foundations' | 'components' | 'patterns' | 'ui-blocks';
+  id: 'foundations' | 'components' | 'patterns' | 'blocks';
   title: string;
   href: string;
   items: readonly DocsNavigationItem[];
@@ -394,10 +395,17 @@ export const docsSections: readonly DocsNavigationSection[] = [
     ],
   },
   {
-    id: 'ui-blocks',
-    title: 'UI Blocks',
-    href: '/ui-blocks/',
-    items: [{ title: 'Overview', href: '/ui-blocks/' }],
+    id: 'blocks',
+    title: 'Blocks',
+    href: '/blocks/',
+    items: [
+      { title: 'Overview', href: '/blocks/' },
+      ...blocks.map(({ manifest }) => ({
+        title: manifest.title,
+        href: `/blocks/${manifest.id}/`,
+        description: manifest.description,
+      })),
+    ],
   },
 ];
 

@@ -1,3 +1,4 @@
+import { blockPages } from '../lib/blocks';
 import { getCollection } from 'astro:content';
 import {
   buildCollectionSearchItems,
@@ -80,6 +81,17 @@ export async function GET() {
     foundationOverview,
     ...foundationItems,
     ...patternItems,
+    ...blockPages.map((page, index) =>
+      createOverviewSearchItem({
+        id: page.id,
+        href: `/${page.id}/`,
+        category: 'Blocks',
+        title: page.title,
+        description: page.description,
+        content: page.markdown,
+        order: 30_000 + index,
+      }),
+    ),
   ];
 
   return new Response(JSON.stringify(index), {

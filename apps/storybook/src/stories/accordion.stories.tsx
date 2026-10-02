@@ -13,8 +13,7 @@ import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 const storyPanelClassName =
   'w-[calc(100vw-2rem)] max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4';
 
-const storyGridClassName =
-  'grid w-[calc(100vw-2rem)] max-w-[960px] grid-cols-1 gap-8 md:grid-cols-2';
+const storyGridClassName = 'grid w-full max-w-[960px] min-w-0 grid-cols-1 gap-8 md:grid-cols-2';
 
 const storyGridPanelClassName =
   'w-full rounded-2xl border border-base-subtle bg-surface-raised p-4';
@@ -33,7 +32,7 @@ type AccordionText = {
 };
 
 const enAccordionText = {
-  states: { expanded: 'Expanded', collapsed: 'Collapsed', disabled: 'Disabled' },
+  states: { expanded: 'Expanded', collapsed: 'Collapsed' },
   headings: {
     overview: 'Overview',
     documents: 'Documents',
@@ -49,7 +48,7 @@ const enAccordionText = {
 } as const;
 
 const dhivehiAccordionText = {
-  states: { expanded: 'ހުޅުވިފައި', collapsed: 'ލެއްޕިފައި', disabled: 'ބޭނުންނުކުރެވޭ' },
+  states: { expanded: 'ހުޅުވިފައި', collapsed: 'ލެއްޕިފައި' },
   headings: {
     overview: 'ޚުލާޞާ',
     documents: 'ލިޔެކިޔުންތައް',
@@ -128,7 +127,6 @@ const meta = {
     items: { table: { disable: true } },
     children: { table: { disable: true } },
     allowsMultipleExpanded: { control: 'boolean', table: { category: 'State' } },
-    isDisabled: { control: 'boolean', table: { category: 'State' } },
     defaultExpandedKeys: { control: 'object', table: { category: 'State' } },
     expandedKeys: { control: false, table: { category: 'State' } },
     onExpandedChange: { action: 'expandedChange', table: { category: 'State' } },
@@ -147,7 +145,6 @@ const meta = {
     size: 'md',
     alignment: 'left',
     flushed: false,
-    isDisabled: false,
     allowsMultipleExpanded: false,
     defaultExpandedKeys: ['overview'],
   },
@@ -236,7 +233,7 @@ export const States: Story = {
     return (
       <div className={storyPanelClassName}>
         <Accordion defaultExpandedKeys={['overview']}>
-          {accordionItems.slice(0, 2).map((item) => (
+          {accordionItems.map((item) => (
             <AccordionItem key={item.id} id={item.id}>
               {({ isExpanded }) => (
                 <>
@@ -248,10 +245,6 @@ export const States: Story = {
               )}
             </AccordionItem>
           ))}
-          <AccordionItem id="history" isDisabled>
-            <AccordionHeader>{text.states.disabled}</AccordionHeader>
-            <AccordionPanel>{accordionItems[2].content}</AccordionPanel>
-          </AccordionItem>
         </Accordion>
       </div>
     );
@@ -267,7 +260,10 @@ export const States: Story = {
     await expect(buttons[1]).toHaveFocus();
     await userEvent.keyboard(' ');
     await expect(buttons[1]).toHaveAttribute('aria-expanded', 'true');
-    await expect(buttons[2]).toBeDisabled();
+    await userEvent.tab();
+    await expect(buttons[2]).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(buttons[2]).toHaveAttribute('aria-expanded', 'true');
     await userEvent.click(buttons[0]);
     await expect(buttons[0]).toHaveAttribute('aria-expanded', 'true');
     await expect(buttons[1]).toHaveAttribute('aria-expanded', 'false');

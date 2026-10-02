@@ -10,7 +10,7 @@
     "lint:fix": "corepack pnpm lint --fix",
     "format": "prettier . --write --cache --cache-strategy content",
     "format:check": "prettier . --check --cache --cache-strategy content",
-    "check": "corepack pnpm changeset:check && corepack pnpm test:changesets && corepack pnpm test:ui && corepack pnpm format:check && corepack pnpm lint && corepack pnpm build",
+    "check": "corepack pnpm changeset:check && corepack pnpm test:changesets && corepack pnpm test:ui && corepack pnpm test:blocks && corepack pnpm test:cli && corepack pnpm format:check && corepack pnpm lint && corepack pnpm build",
     "changeset": "node scripts/create-changeset.mjs",
     "changeset:check": "node scripts/check-changesets.mjs",
     "changeset:raw": "changeset",
@@ -18,12 +18,15 @@
     "test:ui": "pnpm --filter @tradenetcorp/veli-ui test",
     "version-packages": "node scripts/version-packages.mjs",
     "release": "node scripts/publish-packages.mjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:blocks": "corepack pnpm --filter @tradenetcorp/veli-blocks test",
+    "test:blocks:consumer": "corepack pnpm --filter @tradenetcorp/veli-blocks test:consumer",
+    "test:cli": "corepack pnpm --filter @tradenetcorp/veli test"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,astro}": [
       "prettier --write",
-      "eslint --fix --max-warnings 0"
+      "eslint --fix --max-warnings 0 --no-warn-ignored"
     ],
     "*.{md,mdx,css,json,jsonc,yml,yaml}": [
       "prettier --write"

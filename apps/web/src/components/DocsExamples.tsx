@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -11,7 +12,6 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
-import { Link } from '@tradenetcorp/veli-ui/link';
 import {
   Menu,
   MenuItem,
@@ -22,7 +22,7 @@ import {
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Search } from '@tradenetcorp/veli-ui/search';
 import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
@@ -64,7 +64,6 @@ import {
   Info,
   MagnifyingGlass,
   PencilSimple,
-  Plus,
   Trash,
   WarningCircle,
 } from 'phosphor-react';
@@ -72,10 +71,6 @@ import {
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {
   return <I18nProvider locale="en-GB">{children}</I18nProvider>;
-}
-
-export function ButtonUsageDemo() {
-  return <Button>Click me</Button>;
 }
 
 type BreadcrumbTrailItem = {
@@ -477,121 +472,6 @@ export function TagsVariantsDemo() {
     </div>
   );
 }
-export function ButtonVariantsDemo() {
-  return (
-    <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-      <div />
-      <div className="text-xs font-bold uppercase text-base-muted">Fill</div>
-      <div className="text-xs font-bold uppercase text-base-muted">Transparent</div>
-      <div className="text-xs font-bold uppercase text-base-muted">Ghost</div>
-
-      <div className="text-sm font-medium">Primary</div>
-      <Button intent="primary" appearance="fill">
-        Button
-      </Button>
-      <Button intent="primary" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="primary" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <Button intent="secondary" appearance="fill">
-        Button
-      </Button>
-      <Button intent="secondary" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="secondary" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Danger</div>
-      <Button intent="danger" appearance="fill">
-        Button
-      </Button>
-      <Button intent="danger" appearance="transparent">
-        Button
-      </Button>
-      <Button intent="danger" appearance="ghost">
-        Button
-      </Button>
-
-      <div className="text-sm font-medium">Accent</div>
-      <Button intent="accent" appearance="fill">
-        Button
-      </Button>
-      <div className="text-xs text-base-muted">Fill only</div>
-      <div className="text-xs text-base-muted">Fill only</div>
-    </div>
-  );
-}
-
-export function ButtonIconsDemo() {
-  return (
-    <div className="flex gap-4 flex-wrap items-center">
-      <Button size="xl">
-        <Plus size={20} weight="bold" />
-        XL Button
-      </Button>
-      <Button size="lg" intent="secondary" appearance="transparent">
-        <DownloadSimple size={20} weight="bold" />
-        LG Button
-      </Button>
-      <Button size="md" intent="danger" appearance="ghost">
-        <Trash size={16} weight="bold" />
-        MD Button
-      </Button>
-      <Button size="xs">
-        <ArrowRight size={12} weight="bold" />
-        XS Button
-      </Button>
-    </div>
-  );
-}
-
-export function ButtonIconOnlyDemo() {
-  return (
-    <div className="flex gap-4 flex-wrap items-center">
-      <Button size="xl" iconOnly aria-label="Add item">
-        <Plus size={24} weight="bold" />
-      </Button>
-      <Button
-        size="lg"
-        intent="secondary"
-        appearance="transparent"
-        iconOnly
-        aria-label="Download file"
-      >
-        <DownloadSimple size={20} weight="bold" />
-      </Button>
-      <Button size="md" intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
-        <Trash size={16} weight="bold" />
-      </Button>
-      <Button size="sm" iconOnly isLoading aria-label="Saving">
-        <Plus size={16} weight="bold" />
-      </Button>
-    </div>
-  );
-}
-
-export function ButtonSizesDemo() {
-  return (
-    <div className="flex gap-4 items-center flex-wrap">
-      <Button size="xs">Extra Small</Button>
-      <Button size="sm">Small</Button>
-      <Button size="md">Medium</Button>
-      <Button size="lg">Large</Button>
-      <Button size="xl">Extra Large</Button>
-    </div>
-  );
-}
-
-export function ButtonLoadingDemo() {
-  return <Button isLoading>Processing...</Button>;
-}
-
 export function CheckboxUsageDemo() {
   return (
     <div className="flex flex-col gap-[12px]">
@@ -676,52 +556,73 @@ export function InputValidationDemo() {
 
 export function DividerUsageDemo() {
   return (
-    <div className="w-[320px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-      <div className="space-y-[12px]">
-        <div>
-          <h3 className="type-body-sm-medium text-base-emphasis">Applicant details</h3>
-          <p className="type-caption-12-regular text-base-muted">
-            Review the information before continuing.
-          </p>
-        </div>
-        <Divider />
-        <div className="space-y-[8px] type-body-sm-regular text-base">
-          <p>Name: Aishath Mariyam</p>
-          <p>Island: Male&apos;</p>
-        </div>
+    <div className="w-full max-w-[480px] space-y-[12px]">
+      <div>
+        <h3 className="type-body-sm-medium text-base-emphasis">Applicant details</h3>
+        <p className="type-caption-12-regular text-base-muted">
+          Review the information before continuing.
+        </p>
+      </div>
+      <Divider />
+      <div className="space-y-[8px] type-body-sm-regular text-base">
+        <p>Name: Aishath Mariyam</p>
+        <p>Island: Male&apos;</p>
       </div>
     </div>
   );
 }
 
-export function DividerVariantsDemo() {
-  return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Horizontal divider</p>
-          <div className="space-y-[10px] type-body-sm-regular text-base">
-            <p>Passport number</p>
-            <Divider />
-            <p>National ID number</p>
-            <Divider className="bg-border-base-emphasis" />
-            <p>Driving license number</p>
-          </div>
-        </div>
-      </div>
+export function DividerExpandableDemo() {
+  const [expanded, setExpanded] = useState(false);
 
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Vertical divider</p>
-          <div className="flex items-center gap-[12px] type-body-sm-regular text-base">
-            <span>Overview</span>
-            <Divider orientation="vertical" />
-            <span>Documents</span>
-            <Divider orientation="vertical" className="bg-border-base-emphasis" />
-            <span>History</span>
-          </div>
-        </div>
+  return (
+    <div className="w-full max-w-[480px] space-y-[12px]">
+      <p className="type-body-sm-regular text-base">
+        Keep a long section concise, then let readers choose when to reveal the remaining details.
+      </p>
+      <div id="divider-expanded-guidance" hidden={!expanded}>
+        <p className="type-body-sm-regular text-base">
+          The caller owns the expanded content and state. Add motion to the content only when it
+          suits the experience, and respect reduced-motion preferences.
+        </p>
       </div>
+      <Divider
+        text={expanded ? 'Show less' : 'Show more'}
+        showIcon
+        appearance="muted"
+        aria-label={expanded ? 'Show less' : 'Show more'}
+        aria-expanded={expanded}
+        aria-controls="divider-expanded-guidance"
+        onClick={() => setExpanded((current) => !current)}
+      />
+    </div>
+  );
+}
+
+export function DividerAppearancesDemo() {
+  return (
+    <div className="w-full max-w-[480px] space-y-3 type-body-sm-regular text-base">
+      <p>Passport number</p>
+      <Divider />
+      <p>National ID number</p>
+      <Divider appearance="muted" />
+      <p>Driving license number</p>
+      <Divider appearance="strong" />
+      <p>Permit reference</p>
+      <Divider appearance="emphasis" />
+      <p>Supporting documents</p>
+    </div>
+  );
+}
+
+export function DividerVerticalOrientationDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-3 type-body-sm-regular text-base">
+      <span>Overview</span>
+      <Divider orientation="vertical" />
+      <span>Documents</span>
+      <Divider orientation="vertical" />
+      <span>History</span>
     </div>
   );
 }
@@ -874,110 +775,6 @@ export function SelectValidationDemo() {
         <SelectItem id="active">Active</SelectItem>
         <SelectItem id="inactive">Inactive</SelectItem>
       </Select>
-    </div>
-  );
-}
-
-export function LinkUsageDemo() {
-  return <Link href="#">Link Label</Link>;
-}
-
-export function LinkVariantsDemo() {
-  return (
-    <div className="grid grid-cols-4 gap-x-8 gap-y-6 items-center min-w-[500px]">
-      <div />
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Plain</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">Hover Underline</div>
-      <div className="text-xs font-bold uppercase text-base-muted text-center">
-        Always Underline
-      </div>
-
-      <div className="text-sm font-medium">Default</div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="default" underline="always">
-          Link
-        </Link>
-      </div>
-
-      <div className="text-sm font-medium">Secondary</div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="none">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="hover">
-          Link
-        </Link>
-      </div>
-      <div className="flex justify-center">
-        <Link intent="secondary" underline="always">
-          Link
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-export function LinkIconsDemo() {
-  return (
-    <div className="flex gap-8 flex-wrap items-center">
-      <span className="type-subtitle-regular">
-        <Link>
-          <Plus size={20} weight="bold" />
-          Large Link
-        </Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link intent="secondary">
-          <DownloadSimple size={18} weight="bold" />
-          LG Link
-        </Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>
-          MD Link
-          <ArrowRight size={16} weight="bold" />
-        </Link>
-      </span>
-      <span className="type-caption-12-regular">
-        <Link>
-          <ArrowRight size={12} weight="bold" />
-          XS Link
-        </Link>
-      </span>
-    </div>
-  );
-}
-
-export function LinkSizesDemo() {
-  return (
-    <div className="flex gap-6 items-center flex-wrap">
-      <span className="type-caption-12-regular">
-        <Link>Extra Small</Link>
-      </span>
-      <span className="type-body-sm-regular">
-        <Link>Small</Link>
-      </span>
-      <span className="type-body-md-regular">
-        <Link>Medium</Link>
-      </span>
-      <span className="type-body-lg-regular">
-        <Link>Large</Link>
-      </span>
-      <span className="type-subtitle-regular">
-        <Link>Extra Large</Link>
-      </span>
     </div>
   );
 }
@@ -1396,9 +1193,84 @@ const ACCORDION_ITEMS = [
   },
 ] as const;
 
+const ACCORDION_RTL_ITEMS = [
+  {
+    id: 'overview',
+    label: 'ޚުލާޞާ',
+    content:
+      'ބަދަލެއް ގެނައުމުގެ ކުރިން، ހުއްދައިގެ ސްޓޭޓަސް، ހުށަހެޅި ތާރީޚު، އަދި މައްސަލަ ހަވާލުކުރެވިފައިވާ ރިވިއުވަރ ޗެކްކުރައްވާ.',
+  },
+  {
+    id: 'documents',
+    label: 'ލިޔެކިޔުންތައް',
+    content:
+      'ކާކުކަން އަންގައިދޭ ލިޔުމާއި، އެޑްރެސް އަންގައިދޭ ލިޔުން، އަދި ފައިސާ ދެއްކިކަމުގެ ރަސީދު ފަދަ ގުޅޭ ލިޔެކިޔުންތައް އަޕްލޯޑްކުރައްވާ.',
+  },
+  {
+    id: 'history',
+    label: 'ހިސްޓްރީ',
+    content:
+      'މި އެޕްލިކޭޝަނާ ގުޅިގެން ރެކޯޑުކުރެވިފައިވާ ކޮންމެ އަޕްޑޭޓަކާއި، ކޮމެންޓެއް އަދި ސްޓޭޓަސްއަށް އައިސްފައިވާ ބަދަލުތައް ބައްލަވާލައްވާ.',
+  },
+] as const;
+
+const ACCORDION_LTR_ITEMS = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    content:
+      'Review the permit status, submission date, and assigned reviewer before making changes.',
+  },
+  {
+    id: 'documents',
+    label: 'Documents',
+    content:
+      'Upload supporting files such as identification, proof of address, and payment receipts.',
+  },
+  {
+    id: 'history',
+    label: 'History',
+    content: 'Track every update, comment, and status change recorded for this application.',
+  },
+] as const;
+
+export function AccordionRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+
+  return (
+    <DocsPreview
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
+        <div
+          className="w-full max-w-[420px] min-w-0"
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+        >
+          <Accordion
+            key={language}
+            size="lg"
+            alignment="left"
+            defaultExpandedKeys={['overview']}
+            items={isDhivehi ? ACCORDION_RTL_ITEMS : ACCORDION_LTR_ITEMS}
+          />
+        </div>
+      </I18nProvider>
+    </DocsPreview>
+  );
+}
+
 export function AccordionUsageDemo() {
   return (
-    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
+    <div className="mx-auto w-full max-w-[640px]">
       <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
     </div>
   );
@@ -1406,17 +1278,17 @@ export function AccordionUsageDemo() {
 
 export function AccordionVariantsDemo() {
   return (
-    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Single expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Single expanded</span>
           <Accordion defaultExpandedKeys={['overview']} items={ACCORDION_ITEMS} />
         </div>
       </div>
 
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Multiple expanded</p>
+          <span className="block type-body-sm-medium text-base-emphasis">Multiple expanded</span>
           <Accordion
             allowsMultipleExpanded
             defaultExpandedKeys={['overview', 'documents']}
@@ -1431,7 +1303,7 @@ export function AccordionVariantsDemo() {
 export function AccordionControlledDemo() {
   const [expandedKeys, setExpandedKeys] = useState<Set<string | number>>(new Set(['overview']));
   return (
-    <div className="mx-auto w-full max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4">
+    <div className="mx-auto w-full max-w-[640px]">
       <Accordion
         items={ACCORDION_ITEMS}
         expandedKeys={expandedKeys}
@@ -1446,7 +1318,7 @@ export function AccordionControlledDemo() {
 
 export function AccordionAppearanceDemo() {
   return (
-    <div className="mx-auto grid w-full max-w-[960px] gap-6 lg:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-[640px] gap-6">
       {(
         [
           { label: 'Medium', size: 'md' },
@@ -1458,7 +1330,7 @@ export function AccordionAppearanceDemo() {
         ] as const
       ).map(({ label, ...props }) => (
         <div key={label} className="rounded-2xl border border-base-subtle bg-surface-raised p-4">
-          <p className="mb-3 type-body-sm-medium">{label}</p>
+          <span className="mb-3 block type-body-sm-medium">{label}</span>
           <Accordion {...props} items={ACCORDION_ITEMS} defaultExpandedKeys={['overview']} />
         </div>
       ))}
@@ -1978,6 +1850,66 @@ export function PaginationVariantsDemo() {
   const [page, setPage] = useState(3);
   return (
     <Pagination value={page} maxValue={12} onChange={setPage} variant="explicit" siblingCount={1} />
+  );
+}
+
+export function PaginationLoadMoreDemo() {
+  const [loadedCount, setLoadedCount] = useState(12);
+  const [isLoading, setLoading] = useState(false);
+  return (
+    <Pagination
+      variant="loadmore"
+      loadedCount={loadedCount}
+      totalCount={42}
+      isLoading={isLoading}
+      onLoadMore={async () => {
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setLoadedCount((count) => Math.min(count + 12, 42));
+        setLoading(false);
+      }}
+    />
+  );
+}
+
+export function PaginationRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const [variant, setVariant] = useState('Explicit');
+
+  return (
+    <DocsPreview
+      controls={
+        <>
+          <DocsPreviewOption
+            label="Language"
+            value={language}
+            options={['English', 'Dhivehi']}
+            onChange={setLanguage}
+          />
+          <DocsPreviewOption
+            label="Variant"
+            value={variant}
+            options={['Button', 'Explicit', 'Load more']}
+            onChange={setVariant}
+          />
+        </>
+      }
+    >
+      <VeliProvider
+        language={language === 'Dhivehi' ? 'dv' : 'en'}
+        className="flex w-full min-w-0 justify-center"
+      >
+        {variant === 'Load more' ? (
+          <PaginationLoadMoreDemo />
+        ) : (
+          <Pagination
+            variant={variant === 'Explicit' ? 'explicit' : 'button'}
+            defaultValue={3}
+            maxValue={12}
+          />
+        )}
+      </VeliProvider>
+    </DocsPreview>
   );
 }
 

@@ -153,5 +153,26 @@ const usesSharedLottie = !lottieDark;
 
   initAll();
   document.addEventListener('astro:page-load', initAll);
+  document.addEventListener('astro:after-swap', initAll);
   document.addEventListener('astro:before-swap', destroyAll);
+
+  // Astro's client-side page events do not fire for every Vite HMR DOM replacement.
+  // Keep the existing player lifecycle, but also mount any fresh header art that
+  // HMR inserts so it does not remain on the dotted fallback plate.
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (
+          node instanceof Element &&
+          (node.matches('[data-foundation-header-art]') ||
+            node.querySelector('[data-foundation-header-art]'))
+        ) {
+          initAll();
+          return;
+        }
+      }
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
 </script>

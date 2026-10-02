@@ -11,11 +11,15 @@ commit message on main. Example: feat(ui): add segmented control
 
 <!--
 Internal (Linear): a branch containing PD-### automatically links its primary
-issue. Link every additional Linear issue with a closing magic word, for
-example: Fixes PD-123
+issue. Choose the magic word by intent:
+- Completes the issue: Resolves PD-123
+- Relates without closing: Related to PD-123
+- Partial contribution without closing: Ref PD-123
+Do not use a closing keyword (Resolves, Fixes, Closes) unless this PR should
+close that issue.
 
-External (GitHub): link the issue with a closing keyword, for example:
-Closes #123
+External (GitHub): Closes #123 only when this PR should close the issue;
+otherwise mention #123 with no closing keyword.
 
 For untracked maintenance work, write: N/A — <brief reason>
 -->

@@ -13,7 +13,8 @@
     "@tradenetcorp/veli-ui": "workspace:*",
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@tradenetcorp/veli-blocks": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.18",

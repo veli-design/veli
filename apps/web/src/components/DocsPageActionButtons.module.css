@@ -1,0 +1,106 @@
+.actions {
+  display: inline-flex;
+  align-items: start;
+  gap: 2px;
+}
+
+.main,
+.trigger {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-alpha-200);
+  color: var(--color-text-base-strong);
+  cursor: pointer;
+}
+
+.main {
+  width: 182px;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.main span {
+  text-align: start;
+}
+
+.compact .main {
+  width: 130px;
+  min-width: 130px;
+}
+
+/* The rail action row owns the full utility-column width. Its controls retain
+   the Figma component dimensions and align with the rail's leading edge. */
+.fullWidth {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.fullWidth .main {
+  width: 130px;
+  min-width: 130px;
+}
+
+.trigger {
+  width: 36px;
+}
+
+.main[data-hovered],
+.trigger[data-hovered],
+.trigger[aria-expanded='true'] {
+  background: var(--color-menu-hover);
+}
+
+.main[data-pressed],
+.trigger[data-pressed] {
+  background: var(--color-menu-pressed);
+}
+
+.main[data-focus-visible],
+.trigger[data-focus-visible] {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.main[data-disabled],
+.trigger[data-disabled] {
+  cursor: default;
+  color: var(--color-text-disabled);
+}
+
+.popover {
+  width: 267px;
+  max-width: calc(100vw - 32px);
+  padding: 2px;
+  border-radius: 10px;
+  background: var(--color-bg-surface-raised);
+  color: var(--color-text-base-strong);
+  box-shadow:
+    0 6px 6px var(--color-effects-shadow-depth-100),
+    0 0 1.5px var(--color-effects-shadow-frame);
+  outline: none;
+}
+
+.menu {
+  outline: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  white-space: normal;
+  gap: 6px;
+}
+
+.description {
+  color: var(--color-text-base-muted);
+}

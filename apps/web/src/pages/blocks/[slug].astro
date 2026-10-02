@@ -1,0 +1,34 @@
+---
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import { blocks, blockPages } from '../../lib/blocks';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import DocsPageActions from '../../components/DocsPageActions.astro';
+import { SiteFooterDemo } from '../../components/SiteFooterDemo';
+import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
+
+export function getStaticPaths() {
+  return blocks.map(({ manifest }) => ({ params: { slug: manifest.id } }));
+}
+const page = blockPages.find((page) => page.id === `blocks/${Astro.params.slug}`)!;
+const processor = await createMarkdownProcessor({ rehypePlugins: [rehypeCodeBlocks] });
+const rendered = await processor.render(page.markdown.replace(/^# .*\n/, ''));
+const markdownPath = `/${page.id}/index.md`;
+---
+
+<DocsLayout
+  title={`${page.title} | Veli Design System`}
+  description={page.description}
+  activePath={`/${page.id}/`}
+  {markdownPath}
+  headings={rendered.metadata.headings.filter((h) => h.depth === 2 || h.depth === 3)}
+  contentLayout="article"
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1>{page.title}</h1><p>{page.description}</p><DocsPageActions
+      {markdownPath}
+      placement="inline"
+    />
+  </header>
+  {Astro.params.slug === 'site-footer' && <SiteFooterDemo client:visible />}
+  <article class="docs-prose" set:html={rendered.code} />
+</DocsLayout>

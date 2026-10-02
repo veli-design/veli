@@ -22,7 +22,8 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link data-veli-favicon rel="icon" type="image/svg+xml" href="/favicon-dark.svg" />
     {markdownPath && <link rel="alternate" type="text/markdown" href={markdownPath} />}
     <link rel="describedby" href="/llms.txt" />
     <meta name="description" content={description} />
@@ -46,6 +47,10 @@ const {
           root.dataset.theme = resolvedColorScheme;
           root.dataset.colorScheme = colorScheme;
           root.style.colorScheme = resolvedColorScheme;
+          const favicon = document.querySelector('[data-veli-favicon]');
+          if (favicon instanceof HTMLLinkElement) {
+            favicon.href = isDark ? '/favicon-light.svg' : '/favicon-dark.svg';
+          }
         } catch {
           root.dataset.theme = 'light';
           root.dataset.colorScheme = 'system';
@@ -92,6 +97,10 @@ const {
           root.dataset.theme = resolvedColorScheme;
           root.dataset.colorScheme = colorScheme;
           root.style.colorScheme = resolvedColorScheme;
+          const favicon = document.querySelector('[data-veli-favicon]');
+          if (favicon instanceof HTMLLinkElement) {
+            favicon.href = isDark ? '/favicon-light.svg' : '/favicon-dark.svg';
+          }
 
           window.dispatchEvent(
             new CustomEvent('veli:color-scheme-change', {
