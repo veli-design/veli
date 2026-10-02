@@ -1,69 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Button as AriaButton } from 'react-aria-components';
 import { CaretLeft, CaretRight } from 'phosphor-react';
-import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
 import { useVeliLanguage } from './provider';
 
-const paginationRootVariants = cva('inline-flex items-center gap-4 font-sans antialiased');
-
-const paginationPageButtonVariants = cva(
-  'inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3.5 type-body-sm-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
-  {
-    variants: {
-      isCurrent: {
-        true: 'bg-button-primary-default text-white',
-        false:
-          'bg-button-secondary-subtle-default text-text-default-strong hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
-      },
-      isDisabled: {
-        true: 'cursor-not-allowed bg-button-disabled-disabled text-text-disabled-disabled hover:bg-button-disabled-disabled active:bg-button-disabled-disabled',
-        false: '',
-      },
-    },
-    defaultVariants: {
-      isCurrent: false,
-      isDisabled: false,
-    },
-  },
-);
-
-const paginationEllipsisTriggerVariants = cva(
-  'inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full bg-button-secondary-subtle-default px-3.5 type-body-sm-medium text-text-default-strong outline-none transition-colors',
-  {
-    variants: {
-      isHovered: {
-        true: 'bg-button-secondary-subtle-hover text-text-default-strong',
-        false: '',
-      },
-      isPressed: {
-        true: 'bg-button-secondary-subtle-pressed text-text-default-strong',
-        false: '',
-      },
-      isFocusVisible: {
-        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
-        false: '',
-      },
-      isDisabled: {
-        true: 'cursor-not-allowed bg-button-disabled-disabled text-text-disabled-disabled hover:bg-button-disabled-disabled active:bg-button-disabled-disabled',
-        false: 'hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed',
-      },
-    },
-    defaultVariants: {
-      isHovered: false,
-      isPressed: false,
-      isFocusVisible: false,
-      isDisabled: false,
-    },
-  },
-);
-
-const paginationNumberClassName =
-  'type-body-sm-medium tabular-nums [font-variant-numeric:tabular-nums]';
+const secondaryButtonClassName = 'text-base-strong disabled:text-disabled';
+const paginationFocusClassName =
+  'forced-colors:[&_button:focus-visible]:[outline:2px_solid_Highlight] forced-colors:[&_button:focus-visible]:outline-offset-2';
 
 const paginationText = {
   en: {
@@ -77,26 +23,48 @@ const paginationText = {
     pageLabel: (page: number) => `Page ${page}`,
     ellipsisLabel: 'Show hidden pages',
     ellipsisMenuLabel: 'Hidden pages',
+    loadMore: 'Load more',
+    viewed: (loaded: React.ReactNode, total: React.ReactNode) => (
+      <>
+        You’ve viewed {loaded} of {total} items
+      </>
+    ),
   },
   dv: {
     label: 'ޕޭޖިނޭޝަން',
     first: 'ފުރަތަމަ',
-    previous: 'ފަހު',
-    next: 'ކުރީ',
+    previous: 'ފަހަތަށް',
+    next: 'ކުރިއަށް',
     last: 'ފަހުގެ',
     pagePrefix: 'ޞަފްޙާ',
     pageSeparator: '/',
     pageLabel: (page: number) => `ޞަފްޙާ ${page}`,
     ellipsisLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް ދައްކާ',
     ellipsisMenuLabel: 'ފޮރުވިފައިވާ ޞަފްޙާތައް',
+    loadMore: 'އިތުރަށް ދައްކާ',
+    viewed: (loaded: React.ReactNode, total: React.ReactNode) => (
+      <>
+        {total} ތަކެތިން {loaded} ތަކެތި ބަލާފައި
+      </>
+    ),
   },
 } as const;
 
 type PaginationLanguage = keyof typeof paginationText;
 
-function PaginationNumber({ children }: { children: React.ReactNode }) {
+function PaginationNumber({
+  children,
+  regular = false,
+}: {
+  children: React.ReactNode;
+  regular?: boolean;
+}) {
   return (
-    <bdi lang="en" dir="ltr" className={paginationNumberClassName}>
+    <bdi
+      lang="en"
+      dir="ltr"
+      className={twMerge(regular ? 'type-body-sm-regular' : 'type-body-sm-medium', 'tabular-nums')}
+    >
       {children}
     </bdi>
   );
@@ -179,9 +147,9 @@ function getPaginationRange(
   return itemList;
 }
 
-function getHiddenPages(pages: Array<number | 'ellipsis'>, ellipsisIndex: number) {
-  const previous = pages[ellipsisIndex - 1];
-  const next = pages[ellipsisIndex + 1];
+function getHiddenPages(pages: Array<number | 'ellipsis'>, ellipsisIndex: number, total: number) {
+  const previous = pages[ellipsisIndex - 1] ?? 0;
+  const next = pages[ellipsisIndex + 1] ?? total + 1;
 
   if (typeof previous !== 'number' || typeof next !== 'number') {
     return [];
@@ -192,7 +160,6 @@ function getHiddenPages(pages: Array<number | 'ellipsis'>, ellipsisIndex: number
 
 interface PaginationEllipsisProps {
   hiddenPages: number[];
-  isDisabled: boolean;
   label: string;
   menuLabel: string;
   pageLabel: (page: number) => string;
@@ -201,7 +168,6 @@ interface PaginationEllipsisProps {
 
 function PaginationEllipsis({
   hiddenPages,
-  isDisabled,
   label,
   menuLabel,
   pageLabel,
@@ -209,36 +175,19 @@ function PaginationEllipsis({
 }: PaginationEllipsisProps) {
   const { direction, lang } = useVeliLanguage();
 
-  if (hiddenPages.length === 0) {
-    return (
-      <span className={paginationEllipsisTriggerVariants({ isDisabled: true })} aria-hidden="true">
-        …
-      </span>
-    );
-  }
-
-  if (isDisabled) {
-    return (
-      <span className={paginationEllipsisTriggerVariants({ isDisabled: true })} aria-hidden="true">
-        …
-      </span>
-    );
-  }
-
   return (
     <MenuTrigger>
-      <AriaButton
+      <Button
+        type="button"
+        intent="secondary"
+        appearance="transparent"
+        size="sm"
+        className={twMerge('px-2', secondaryButtonClassName)}
+        isDisabled={hiddenPages.length === 0}
         aria-label={label}
-        className={(state) =>
-          paginationEllipsisTriggerVariants({
-            isHovered: state.isHovered && !state.isPressed,
-            isPressed: state.isPressed,
-            isFocusVisible: state.isFocusVisible,
-          })
-        }
       >
-        <span aria-hidden="true">…</span>
-      </AriaButton>
+        <span aria-hidden="true">...</span>
+      </Button>
       <MenuPopover>
         <Menu
           aria-label={menuLabel}
@@ -263,9 +212,14 @@ function PaginationEllipsis({
   );
 }
 
-export type PaginationVariant = 'button' | 'explicit';
+export type PaginationVariant = 'button' | 'explicit' | 'loadmore';
 
-export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange'> {
+type PaginationSharedProps = Omit<
+  React.HTMLAttributes<HTMLElement>,
+  'onChange' | 'children' | 'defaultValue'
+>;
+
+export interface PaginationPageProps extends PaginationSharedProps {
   value?: number;
   defaultValue?: number;
   maxValue: number;
@@ -274,31 +228,128 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   onPrevious?: (page: number) => void;
   onNext?: (page: number) => void;
   onLast?: (page: number) => void;
-  isDisabled?: boolean;
-  variant?: PaginationVariant;
+  variant?: Exclude<PaginationVariant, 'loadmore'>;
   siblingCount?: number;
   boundaryCount?: number;
-  'aria-label'?: string;
-  className?: string;
 }
 
-export function Pagination({
+export interface PaginationLoadMoreProps extends PaginationSharedProps {
+  variant: 'loadmore';
+  loadedCount: number;
+  totalCount: number;
+  onLoadMore: () => void;
+  isLoading?: boolean;
+}
+
+export type PaginationProps = PaginationPageProps | PaginationLoadMoreProps;
+
+function toCount(value: number, minimum = 0) {
+  return Number.isFinite(value) ? Math.max(minimum, Math.floor(value)) : minimum;
+}
+
+export function Pagination(props: PaginationProps) {
+  return props.variant === 'loadmore' ? (
+    <PaginationLoadMore {...props} />
+  ) : (
+    <PaginationPages {...props} />
+  );
+}
+
+function PaginationLoadMore({
+  variant,
+  loadedCount,
+  totalCount,
+  onLoadMore,
+  isLoading = false,
+  'aria-label': ariaLabel,
+  className,
+  ...props
+}: PaginationLoadMoreProps) {
+  const { language, direction, lang } = useVeliLanguage();
+  const copy = paginationText[language === 'dv' ? 'dv' : 'en'];
+  const statusId = React.useId();
+  const total = toCount(totalCount);
+  const loaded = Math.min(toCount(loadedCount), total);
+  const isComplete = loaded >= total;
+
+  return (
+    <div
+      {...props}
+      role="group"
+      aria-label={ariaLabel ?? copy.loadMore}
+      dir={direction}
+      lang={lang}
+      data-variant={variant}
+      aria-busy={isLoading || undefined}
+      className={twMerge(
+        'inline-flex w-66 max-w-full flex-col items-center gap-7 font-sans antialiased',
+        paginationFocusClassName,
+        className,
+      )}
+    >
+      <div className="flex w-full flex-col items-center gap-3 px-1">
+        <p
+          id={statusId}
+          role="status"
+          aria-atomic="true"
+          className="m-0 text-center type-body-sm-regular text-base-muted"
+        >
+          {copy.viewed(
+            <PaginationNumber regular>{loaded}</PaginationNumber>,
+            <PaginationNumber regular>{total}</PaginationNumber>,
+          )}
+        </p>
+        <div
+          role="progressbar"
+          aria-labelledby={statusId}
+          aria-valuemin={0}
+          aria-valuemax={total || 1}
+          aria-valuenow={loaded}
+          className="flex h-1 w-full overflow-hidden rounded-lg bg-neutral-alpha-400 forced-colors:bg-[Canvas] forced-colors:outline forced-colors:outline-1"
+        >
+          <div
+            className="h-full bg-primary-600 transition-[width] duration-normal ease-out motion-reduce:transition-none forced-colors:bg-[Highlight] forced-colors:forced-color-adjust-none"
+            style={{ width: `${total > 0 ? (loaded / total) * 100 : 0}%` }}
+          />
+        </div>
+      </div>
+      <Button
+        type="button"
+        intent="secondary"
+        appearance="transparent"
+        size="md"
+        className={twMerge('w-full', secondaryButtonClassName)}
+        isDisabled={isComplete}
+        isLoading={isLoading}
+        onPress={() => {
+          if (!isLoading && !isComplete) onLoadMore();
+        }}
+      >
+        {copy.loadMore}
+      </Button>
+    </div>
+  );
+}
+
+function PaginationPages({
   value: valueProp,
   defaultValue = 1,
-  maxValue,
+  maxValue: maxValueProp,
   onChange,
   onFirst,
   onPrevious,
   onNext,
   onLast,
-  isDisabled = false,
   variant = 'button',
-  siblingCount = 1,
-  boundaryCount = 1,
+  siblingCount: siblingCountProp = 1,
+  boundaryCount: boundaryCountProp = 1,
   'aria-label': ariaLabel,
   className,
   ...props
-}: PaginationProps) {
+}: PaginationPageProps) {
+  const maxValue = toCount(maxValueProp, 1);
+  const siblingCount = Math.min(toCount(siblingCountProp), maxValue);
+  const boundaryCount = Math.min(toCount(boundaryCountProp), maxValue);
   const { language: activeLanguage, direction, lang } = useVeliLanguage();
   const paginationLanguage: PaginationLanguage = activeLanguage === 'dv' ? 'dv' : 'en';
   const copy = paginationText[paginationLanguage];
@@ -307,7 +358,16 @@ export function Pagination({
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : uncontrolledValue;
-  const currentPage = Math.min(Math.max(value, 1), Math.max(maxValue, 1));
+  const currentPage = Math.min(toCount(value, 1), maxValue);
+
+  const currentPageRef = React.useRef<HTMLButtonElement>(null);
+  const focusSelectedPage = React.useRef(false);
+  React.useEffect(() => {
+    if (focusSelectedPage.current) {
+      currentPageRef.current?.focus();
+      focusSelectedPage.current = false;
+    }
+  }, [currentPage]);
 
   const setPage = React.useCallback(
     (nextPage: number) => {
@@ -323,7 +383,7 @@ export function Pagination({
   );
 
   const goFirst = () => {
-    if (currentPage <= 1 || isDisabled) {
+    if (currentPage <= 1) {
       return;
     }
     setPage(1);
@@ -331,7 +391,7 @@ export function Pagination({
   };
 
   const goPrevious = () => {
-    if (currentPage <= 1 || isDisabled) {
+    if (currentPage <= 1) {
       return;
     }
     const next = currentPage - 1;
@@ -340,7 +400,7 @@ export function Pagination({
   };
 
   const goNext = () => {
-    if (currentPage >= maxValue || isDisabled) {
+    if (currentPage >= maxValue) {
       return;
     }
     const next = currentPage + 1;
@@ -349,7 +409,7 @@ export function Pagination({
   };
 
   const goLast = () => {
-    if (currentPage >= maxValue || isDisabled) {
+    if (currentPage >= maxValue) {
       return;
     }
     setPage(maxValue);
@@ -370,13 +430,19 @@ export function Pagination({
       aria-label={ariaLabel ?? copy.label}
       dir={direction}
       lang={lang}
-      className={twMerge(paginationRootVariants(), className)}
+      className={twMerge(
+        'inline-flex max-w-full flex-wrap items-center justify-center gap-4 font-sans antialiased',
+        paginationFocusClassName,
+        className,
+      )}
     >
       <Button
+        type="button"
         intent="secondary"
         appearance="transparent"
         size="sm"
-        isDisabled={isDisabled || isAtStart}
+        isDisabled={isAtStart}
+        className={twMerge('px-2', secondaryButtonClassName)}
         aria-label={copy.first}
         onPress={goFirst}
       >
@@ -384,11 +450,13 @@ export function Pagination({
       </Button>
 
       <Button
+        type="button"
         intent="secondary"
         appearance="transparent"
         size="sm"
         iconOnly
-        isDisabled={isDisabled || isAtStart}
+        className={secondaryButtonClassName}
+        isDisabled={isAtStart}
         aria-label={copy.previous}
         onPress={goPrevious}
       >
@@ -396,7 +464,11 @@ export function Pagination({
       </Button>
 
       {variant === 'button' ? (
-        <span className="px-2 type-body-sm-medium text-text-default-muted" aria-live="polite">
+        <span
+          className="px-2 type-body-sm-medium text-base-muted"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <PaginationPageCount
             current={currentPage}
             language={paginationLanguage}
@@ -404,12 +476,12 @@ export function Pagination({
           />
         </span>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex max-w-full flex-wrap items-center justify-center gap-2">
           {pages.map((page, index) => {
             if (page === 'ellipsis') {
               const previousPage = pages[index - 1];
               const nextPage = pages[index + 1];
-              const hiddenPages = getHiddenPages(pages, index);
+              const hiddenPages = getHiddenPages(pages, index, maxValue);
               const previousKey = typeof previousPage === 'number' ? previousPage : 'start';
               const nextKey = typeof nextPage === 'number' ? nextPage : 'end';
 
@@ -417,41 +489,50 @@ export function Pagination({
                 <PaginationEllipsis
                   key={`ellipsis-${previousKey}-${nextKey}`}
                   hiddenPages={hiddenPages}
-                  isDisabled={isDisabled}
                   label={copy.ellipsisLabel}
                   menuLabel={copy.ellipsisMenuLabel}
                   pageLabel={copy.pageLabel}
-                  onSelectPage={setPage}
+                  onSelectPage={(page) => {
+                    focusSelectedPage.current = true;
+                    setPage(page);
+                  }}
                 />
               );
             }
 
             return (
-              <button
+              <Button
                 key={page}
+                ref={page === currentPage ? currentPageRef : undefined}
                 type="button"
+                size="sm"
+                intent={page === currentPage ? 'primary' : 'secondary'}
+                appearance={page === currentPage ? 'fill' : 'transparent'}
                 aria-label={copy.pageLabel(page)}
                 aria-current={page === currentPage ? 'page' : undefined}
-                disabled={isDisabled}
-                className={paginationPageButtonVariants({
-                  isCurrent: page === currentPage,
-                  isDisabled,
-                })}
-                onClick={() => setPage(page)}
+                className={twMerge(
+                  'px-2',
+                  page === currentPage
+                    ? 'forced-colors:outline forced-colors:outline-2'
+                    : secondaryButtonClassName,
+                )}
+                onPress={() => setPage(page)}
               >
                 <PaginationNumber>{page}</PaginationNumber>
-              </button>
+              </Button>
             );
           })}
         </div>
       )}
 
       <Button
+        type="button"
         intent="secondary"
         appearance="transparent"
         size="sm"
         iconOnly
-        isDisabled={isDisabled || isAtEnd}
+        className={secondaryButtonClassName}
+        isDisabled={isAtEnd}
         aria-label={copy.next}
         onPress={goNext}
       >
@@ -459,10 +540,12 @@ export function Pagination({
       </Button>
 
       <Button
+        type="button"
         intent="secondary"
         appearance="transparent"
         size="sm"
-        isDisabled={isDisabled || isAtEnd}
+        isDisabled={isAtEnd}
+        className={twMerge('px-2', secondaryButtonClassName)}
         aria-label={copy.last}
         onPress={goLast}
       >

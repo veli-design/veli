@@ -1,3 +1,4 @@
+import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
 import console from 'node:console';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
@@ -66,10 +67,15 @@ if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first'
 const markdownFiles = [
   ...collectFiles(resolve(distRoot, 'docs'), '.md'),
   ...collectFiles(resolve(distRoot, 'foundations'), '.md'),
+  ...collectFiles(resolve(distRoot, 'blocks'), '.md'),
 ].sort();
 
-if (markdownFiles.length !== 43) {
-  fail(`expected 43 Markdown pages, found ${markdownFiles.length}`);
+const catalogPaths = JSON.parse(readFileSync(resolve(distRoot, 'docs-catalog.json'), 'utf8'));
+const actualPaths = markdownFiles.map(
+  (file) => `/${relative(distRoot, file).split('\\').join('/')}`,
+);
+if (JSON.stringify([...catalogPaths].sort()) !== JSON.stringify(actualPaths.sort())) {
+  fail('Markdown artifacts differ from the documentation catalog');
 }
 
 for (const filePath of markdownFiles) validateMarkdown(filePath);
@@ -84,8 +90,8 @@ const expectedLinks = markdownFiles.map(
   (filePath) => `/${relative(distRoot, filePath).split('\\').join('/')}`,
 );
 
-if (llmsLinks.length !== 43 || new Set(llmsLinks).size !== llmsLinks.length) {
-  fail('llms.txt must link to 43 unique Markdown pages');
+if (llmsLinks.length !== catalogPaths.length || new Set(llmsLinks).size !== llmsLinks.length) {
+  fail('llms.txt must link to every catalog page exactly once');
 }
 for (const expectedLink of expectedLinks) {
   if (!llmsLinks.includes(expectedLink)) fail(`llms.txt is missing ${expectedLink}`);
@@ -113,4 +119,16 @@ if (
   fail('_headers does not declare the expected Markdown MIME types');
 }
 
-console.log('Validated 43 Markdown pages and llms.txt.');
+console.log(`Validated ${markdownFiles.length} Markdown pages and llms.txt.`);
+
+for (const block of getBlocks()) {
+  const directory = resolve(distRoot, 'blocks', block.manifest.id);
+  const downloaded = readFileSync(resolve(directory, 'source.tar.gz'));
+  if (!downloaded.equals(archive(block)))
+    fail(`${block.manifest.id}: archive differs from canonical source`);
+  const markdown = readFileSync(resolve(directory, 'index.md'), 'utf8');
+  for (const file of block.files) {
+    if (!markdown.includes(file.bytes.toString('utf8').trimEnd()))
+      fail(`${block.manifest.id}: Markdown source differs from download`);
+  }
+}

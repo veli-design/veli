@@ -1,10 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 @import '@tradenetcorp/veli-tokens/tailwind';
 @import '@tradenetcorp/veli-ui/tailwind';
 
 @source "../../../../packages/ui";
+
+/* Self-hosted fonts are discovered with the initial stylesheet rather than
+   after a second request to Google Fonts. The Inter face is variable, so one
+   Latin subset covers every Veli text weight. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* Arial adjusted to Inter's metrics keeps the initial fallback's line boxes
+   and average character width aligned with the loaded face. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600.woff2') format('woff2');
+}
+
+:root {
+  --font-sans: 'Inter', 'Inter Fallback', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 
 @font-face {
   font-family: 'MV Aaamu FK';
@@ -913,7 +978,7 @@ button {
   margin-bottom: 0;
 }
 
-.docs-prose a {
+.docs-prose a:not(:where(.preview *)) {
   color: var(--color-text-links-default);
   font-weight: 600;
 }
@@ -946,39 +1011,168 @@ button {
   font-size: inherit;
 }
 
-.docs-prose > table {
+/* Tables can be rendered directly by MDX or inside a component tab panel.
+   Keep the Figma table frame and row treatment shared across both paths. */
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table {
   width: 100%;
+  margin-top: 24px;
   margin-bottom: 32px;
-  border-collapse: collapse;
-  font-size: 13px;
-  line-height: 20px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-base-subtle);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  background: var(--color-bg-surface-raised);
+  color: var(--color-text-base-default);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 @media (max-width: 767px) {
-  .docs-prose:has(> #accordion) > table {
+  :is(.docs-prose, .docs-tab-panel, .foundation-prose):has(> #accordion, > #button) > table {
     display: block;
     overflow-x: auto;
   }
 }
 
-.docs-prose > table th,
-.docs-prose > table td {
-  border-bottom: 1px solid var(--color-border-base-subtle);
-  padding: 10px 12px;
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table th,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td {
+  min-width: 0;
+  padding: 0;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
-.docs-prose > table th {
-  color: var(--color-text-base-emphasis);
-  font-weight: 600;
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(thead, tbody) {
+  display: block;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tr {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 16px;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead {
+  background: var(--color-neutral-alpha-200);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead th {
+  color: var(--color-text-base-default);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead tr,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tbody tr:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-base-subtle);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td:not(:last-child) {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(th, td) code {
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* API tables use Figma's column tracks at the 1512px reference width. */
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(4)):not(:has(> :nth-child(5))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 160px) minmax(0, 64px) minmax(0, 1fr);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(3)):not(:has(> :nth-child(4))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 240px) minmax(0, 1fr);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(2)):not(:has(> :nth-child(3))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 1fr);
+}
+
+.docs-storybook-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -8px;
+  border-radius: var(--radius-full);
+  background: var(--color-button-secondary-subtle-default);
+  padding: 6px;
+  color: var(--color-text-base-strong);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.34;
+  letter-spacing: 0.015em;
+  text-decoration: none;
+}
+
+.docs-storybook-link > span:first-child {
+  padding-inline: 6px;
+}
+
+.docs-storybook-link__icon {
+  display: inline-flex;
+  padding: 2px;
+}
+
+.docs-storybook-link:hover {
+  background: var(--color-button-secondary-subtle-hover);
+}
+
+.docs-storybook-link:active {
+  background: var(--color-button-secondary-subtle-pressed);
+}
+
+.docs-storybook-link:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
 }
 
 .docs-prose .preview {
   margin-top: 18px;
-  border-color: var(--color-border-base-subtle);
-  border-radius: 6px;
+  display: grid;
+  min-height: 288px;
+  align-items: center;
+  justify-items: center;
+  border: 4px solid var(--color-bg-surface-base);
+  border-radius: 16px;
   background: var(--color-bg-surface-raised);
+  padding: 24px;
+}
+
+.docs-example {
+  min-width: 0;
+  margin-top: 18px;
+  border-radius: 16px;
+  background: var(--color-bg-surface-base);
+  padding: 4px;
+}
+
+.docs-example > .preview {
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+}
+
+.docs-example > .docs-code-block {
+  margin-top: 8px;
+  border-radius: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1539,13 +1733,13 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 .docs-main {
   position: relative;
   isolation: isolate;
-  height: calc(100svh - 16px);
+  height: calc(100svh - 12px);
   min-width: 0;
-  margin: 8px 8px 8px 0;
+  margin: 6px 6px 6px 0;
   align-self: start;
   overflow: hidden;
   border: 0;
-  border-radius: 24px 8px 8px 24px;
+  border-radius: 16px 8px 8px 16px;
   background: var(--color-bg-surface-raised);
 }
 
@@ -1561,8 +1755,34 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   margin: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 80px;
+  padding: 56px;
   scrollbar-gutter: stable;
+}
+
+.docs-main--component .docs-main__inner {
+  row-gap: 72px;
+}
+
+.docs-main--component {
+  /* Keep the rail's pinned position in step with the pinned tab row. The
+     values resolve to the same 80px gap as the normal grid layout. */
+  --docs-component-tabs-height: 52px;
+  --docs-component-tabs-sticky-offset: -56px;
+  --docs-component-tabs-to-rail-gap: 80px;
+}
+
+/*
+  Documentation pages deliberately opt into one content layout. Keep their
+  grid rows local to the layout so a new header pattern cannot displace a
+  different page type's sticky utility rail.
+*/
+.docs-main--overview .docs-overview-content,
+.docs-main--overview .docs-utilities,
+.docs-main--foundation-article .docs-prose,
+.docs-main--foundation-article .docs-utilities,
+.docs-main--article .docs-prose,
+.docs-main--article .docs-utilities {
+  grid-row: 2;
 }
 
 .docs-utilities {
@@ -1577,6 +1797,10 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   border-radius: 0;
   background: transparent;
   padding: 80px 0 0;
+}
+
+.docs-main--component .docs-utilities {
+  grid-row: 3;
 }
 
 .docs-main::before,
@@ -1614,9 +1838,17 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   position: sticky;
   top: 0;
   display: flex;
-  max-height: calc(100svh - 160px);
+  max-height: calc(100svh - 124px);
   flex-direction: column;
   overflow: hidden;
+}
+
+.docs-main--component .docs-utilities__sticky {
+  top: calc(
+    var(--docs-component-tabs-sticky-offset) + var(--docs-component-tabs-height) +
+      var(--docs-component-tabs-to-rail-gap)
+  );
+  max-height: calc(100svh - 200px);
 }
 
 .docs-contents {
@@ -1680,9 +1912,37 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 }
 
 .docs-page-header--overview .docs-page-header__content {
-  width: auto;
+  display: flex;
+  width: min(100%, 589px);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
   margin: 0;
   padding: 0;
+}
+
+.docs-page-header--overview .docs-page-header__content > h1 {
+  max-width: none;
+  font-size: 82px;
+  font-weight: 600;
+  line-height: 110px;
+  letter-spacing: -1.64px;
+}
+
+.docs-page-header--overview .docs-page-header__content > p {
+  width: 100%;
+  height: 48px;
+  flex: none;
+  max-width: none;
+  margin: 0;
+  color: var(--color-text-base-strong);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.53;
+}
+
+.docs-page-header--overview .docs-page-header__content > .docs-page-actions--inline {
+  margin-top: 0;
 }
 
 .docs-page-header h1 {
@@ -1877,22 +2137,315 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   padding-top: 80px;
 }
 
+.docs-main--component .docs-page-header--article {
+  /* Preserve the intrinsic title/description height; a zero minimum lets the
+     fixed-height docs grid collapse this row beneath the sticky tab bar. */
+  min-height: auto;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.docs-main--component .docs-page-header--article h1 {
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 76px;
+}
+
+.docs-main--component .docs-page-header--article > p:last-child,
+.docs-main--component .docs-page-header--article .docs-page-header__copy > p:last-child {
+  max-width: 511px;
+  margin-top: 16px;
+  line-height: 28px;
+}
+
+.docs-main--component .docs-prose {
+  grid-row: 3;
+}
+
+.docs-main--component :is(.docs-prose, .docs-utilities) {
+  padding-top: 8px;
+}
+
 .docs-page-header + .docs-prose {
   margin-top: 0;
 }
 
-.docs-prose > h2:first-child {
+.docs-tab-panel > h1:first-child {
+  display: none;
+}
+
+.docs-tab-panel > h1:first-child + p,
+.docs-tab-panel > .docs-tab-empty:first-child {
   margin-top: 0;
 }
 
-.docs-page-header--illustrated {
+.docs-tab-panel > h2:first-child {
+  margin-top: 0;
+}
+
+.docs-tab-panel > :is(p, ul, ol, table, blockquote, div) ~ h2 {
+  position: relative;
+  margin-top: 96px;
+}
+
+.docs-tab-panel > :is(p, ul, ol, table, blockquote, div) ~ h2::before {
+  position: absolute;
+  top: -48px;
+  right: 0;
+  left: 0;
+  border-top: 1px solid var(--color-border-base-subtle);
+  content: '';
+}
+
+.docs-tab-panel > h2 + :is(p, ul, ol) {
+  margin-top: 8px;
+}
+
+.docs-tab-panel
+  > :is(h2, p, ul, ol, blockquote)
+  + :is(.preview, .docs-example, .docs-code-block, table) {
+  margin-top: 24px;
+}
+
+.docs-page-tabs {
+  --docs-tab-indicator-left: 0px;
+  --docs-tab-indicator-width: 0px;
+
+  position: sticky;
+  z-index: 4;
+  top: var(--docs-component-tabs-sticky-offset, -56px);
+  display: flex;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--color-bg-surface-raised);
+  padding-top: 4px;
+}
+
+/* The tab row covers the main scroll fade once it sticks. Extend that fade
+   below the frame so the scrolling documentation recedes softly beneath it. */
+.docs-page-tabs::after {
+  position: absolute;
+  z-index: 0;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 44px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-surface-raised),
+    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+  content: '';
+  pointer-events: none;
+}
+
+.docs-page-tabs__row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.docs-page-tabs__list {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.docs-page-tabs__list::-webkit-scrollbar {
+  display: none;
+}
+
+.docs-page-tabs__tab {
+  position: relative;
+  display: inline-flex;
+  min-width: max-content;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  padding: 10px 16px;
+  color: var(--color-text-base-default);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  transition: background-color var(--duration-normal) var(--ease-in-out);
+  -webkit-font-smoothing: antialiased;
+}
+
+.docs-page-tabs__label {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.docs-page-tabs__label > span {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.docs-page-tabs__label-reserve {
+  visibility: hidden;
+  font-weight: 500;
+}
+
+.docs-page-tabs__tab:hover {
+  background: var(--color-tabs-hover);
+  color: var(--color-text-base-strong);
+}
+
+.docs-page-tabs__tab:active {
+  background: var(--color-tabs-pressed);
+}
+
+.docs-page-tabs__tab[aria-selected='true'] {
+  color: var(--color-text-base-strong);
+  font-weight: 500;
+}
+
+.docs-page-tabs__border {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+  background: var(--color-tabs-border-inactive);
+}
+
+.docs-page-tabs__indicator {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: var(--docs-tab-indicator-left);
+  width: var(--docs-tab-indicator-width);
+  height: 2px;
+  background: var(--color-tabs-border-active);
+  pointer-events: none;
+  transition:
+    left var(--duration-normal) var(--ease-in-out),
+    width var(--duration-normal) var(--ease-in-out);
+}
+
+.docs-page-tabs__tab:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-page-tabs__indicator {
+    transition: none;
+  }
+}
+
+.docs-tab-panel[hidden],
+.docs-contents a[hidden] {
+  display: none;
+}
+
+.docs-tab-empty {
+  min-height: 160px;
+  color: var(--color-text-base-muted);
+}
+
+.docs-component-animation {
+  position: relative;
+  width: 100%;
+  margin-top: 32px;
+  aspect-ratio: 805 / 364;
+  overflow: hidden;
+  border: 1px solid var(--color-border-base-muted);
+  border-radius: 24px;
+  background: var(--color-bg-surface-raised);
+}
+
+.docs-component-animation__frame,
+.docs-component-animation__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.docs-component-animation__placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 44%, var(--color-neutral-alpha-200), transparent 38%),
+    var(--color-bg-surface-raised);
+  color: var(--color-text-base-muted);
+}
+
+.docs-component-animation__placeholder p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.docs-component-animation__label {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border-radius: 999px;
+  background: var(--color-bg-surface-base);
+  padding: 6px 10px;
+  color: var(--color-text-base-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+
+.docs-example {
+  /* The paired code block is inset by 2px but its Shiki pre keeps a smaller
+     corner radius. Clip it to this 24px frame so it cannot show through at
+     the outer bottom corners. */
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--color-bg-surface-base);
+  padding: 2px;
+}
+
+.docs-example > .preview {
+  border-radius: 22px;
+  background: var(--color-bg-surface-raised);
+}
+
+/* Detect the options layout through Astro islands, including before hydration.
+   Keep the legacy modifier working after the paired preview's surface rule. */
+.docs-prose .preview--options,
+.docs-prose .preview:has([data-docs-preview='options']) {
+  display: block;
+  padding: 0;
+  background: transparent;
+}
+
+.docs-example > .docs-code-block {
+  margin-top: 2px;
+  border-radius: 8px;
+}
+
+.docs-code-block > pre {
+  border-radius: 8px;
+}
+
+.docs-main--foundation-article .docs-page-header--illustrated {
+  /* 195px illustration + 80px spacing before the header divider + 1px rule. */
+  min-height: 276px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 200px;
 }
 
-.docs-page-header__copy {
+.docs-main--foundation-article .docs-page-header__copy {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -1900,8 +2453,11 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   min-width: 0;
 }
 
-.docs-page-header--illustrated .docs-page-header__copy > p:last-child {
+.docs-main--foundation-article .docs-page-header--illustrated .docs-page-header__copy > p {
+  max-width: 511px;
   margin-top: 0;
+  font-size: 18px;
+  line-height: 1.53;
 }
 
 .docs-page-header__art {
@@ -2021,6 +2577,17 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 
 .docs-prose h2 {
   margin-top: 72px;
+  color: var(--color-text-base-emphasis);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.36;
+  letter-spacing: -0.01em;
+}
+
+/* The first article section begins at the prose frame's 80px inset. */
+.docs-prose > h2:first-child {
+  margin-top: 0;
 }
 
 .docs-prose h3 {
@@ -2043,6 +2610,42 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   margin-bottom: 0;
 }
 
+/* Component articles are moved into tab panels after MDX renders. Style the
+   nested prose explicitly so it retains the documented 32/16 type scale and
+   8/16px reading rhythm from the documentation site reference. */
+.docs-tab-panel > :is(p, ul, ol) {
+  max-width: 660px;
+  color: var(--color-text-base-strong);
+}
+
+.docs-tab-panel > :is(ul, ol) {
+  padding-inline-start: 24px;
+}
+
+.docs-tab-panel > ul {
+  list-style: disc;
+}
+
+.docs-tab-panel > ol {
+  list-style: decimal;
+}
+
+.docs-tab-panel > :is(ul, ol) > li {
+  margin: 0;
+}
+
+.docs-tab-panel > :is(ul, ol) > li + li {
+  margin-top: 16px;
+}
+
+.docs-prose [data-accordion-header] :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.docs-prose [data-accordion-header] button {
+  font: revert-layer;
+}
+
 .docs-prose table {
   margin-bottom: 32px;
 }
@@ -2061,8 +2664,8 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   }
 
   .docs-main {
-    margin-right: 8px;
-    border-radius: 24px 8px 8px 24px;
+    margin-right: 6px;
+    border-radius: 16px 8px 8px 16px;
   }
 
   .docs-main__inner,
@@ -2070,6 +2673,10 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
     grid-template-columns: minmax(0, 1fr);
     width: 100%;
     padding: 64px 48px 80px;
+  }
+
+  .docs-page-tabs {
+    top: -64px;
   }
 
   .docs-page-header--illustrated {
@@ -2130,10 +2737,26 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
     font-size: clamp(42px, 13vw, 58px);
   }
 
+  .docs-page-header--overview .docs-page-header__content > h1 {
+    font-size: clamp(42px, 13vw, 58px);
+    line-height: 1.34;
+    letter-spacing: -0.02em;
+  }
+
+  .docs-page-header--article h1 {
+    font-size: clamp(42px, 10vw, 56px);
+  }
+
   .docs-page-header--article > p:last-child,
   .docs-page-header__content > p:last-child,
   .docs-page-header__copy > p:last-child {
     font-size: 16px;
+  }
+
+  .docs-page-header--overview .docs-page-header__content > p {
+    height: auto;
+    font-size: 16px;
+    line-height: 1.5;
   }
 
   .docs-overview-header {
@@ -2178,4 +2801,27 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   .docs-page-header + .docs-prose {
     padding-top: 48px;
   }
+
+  .docs-page-tabs {
+    top: 72px;
+    margin-inline: -20px;
+    padding-inline: 20px;
+  }
+
+  .docs-page-tabs__row {
+    align-items: stretch;
+  }
+
+  .docs-page-tabs .docs-page-actions--tabbar {
+    margin-right: 0;
+  }
+
+  .docs-component-animation {
+    min-height: 220px;
+    aspect-ratio: auto;
+  }
 }
+
+@source "../../../../packages/blocks/src";
+
+@source "../../../../packages/blocks/src";

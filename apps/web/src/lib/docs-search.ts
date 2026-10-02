@@ -1,6 +1,6 @@
 import type { DocsSearchSource } from './remark-docs-search';
 
-export type DocsSearchCategory = 'Foundations' | 'Components';
+export type DocsSearchCategory = 'Foundations' | 'Components' | 'Blocks';
 
 export type DocsSearchItem = {
   id: string;
@@ -72,9 +72,18 @@ function getDocsSearchContent(
     (heading) => heading.depth >= 2 && heading.depth <= 3,
   );
 
+  const availableHeadings = [...relevantHeadings];
+  const matchedHeadings = source.sections.map((section) => {
+    const index = availableHeadings.findIndex(
+      (heading) => heading.depth === section.depth && heading.text === section.title,
+    );
+    if (index < 0) return undefined;
+    return availableHeadings.splice(index, 1)[0];
+  });
+
   if (
     relevantHeadings.length !== source.sections.length ||
-    relevantHeadings.some((heading, index) => heading.depth !== source.sections[index]?.depth)
+    matchedHeadings.some((heading) => !heading)
   ) {
     throw new Error(`Docs search heading mismatch for ${slug}`);
   }
@@ -83,7 +92,7 @@ function getDocsSearchContent(
     preamble: source.preamble,
     sections: source.sections.map(
       (section, index): ParsedSection => ({
-        heading: relevantHeadings[index]!,
+        heading: matchedHeadings[index]!,
         content: section.content,
       }),
     ),

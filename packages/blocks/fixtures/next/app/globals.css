@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+@import '@tradenetcorp/veli-tokens/tailwind';
+@import '@tradenetcorp/veli-ui/tailwind';
+@source '../components';
+@font-face {
+  font-family: 'MV Faseyha';
+  src: url('/fonts/MV_Faseyha_Regular.ttf');
+}
+[lang='dv'] {
+  font-family: 'MV Faseyha', sans-serif;
+}
