@@ -22,6 +22,9 @@ const breadcrumbsRootVariants = cva(
 
 const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5';
 
+const breadcrumbInteractiveTypographyClassName =
+  'type-body-sm-regular [&:lang(dv)]:type-body-sm-medium';
+
 const breadcrumbInteractiveTextClassName =
   'text-base-muted hover:text-base-default active:text-base-default focus-visible:text-base-default';
 
@@ -39,51 +42,41 @@ const breadcrumbItemVariants = cva(
 );
 
 const breadcrumbLinkVariants = cva(
-  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTextClassName} rounded-md type-body-sm-medium transition-colors duration-normal ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
+  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTypographyClassName} ${breadcrumbInteractiveTextClassName} rounded-md motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
   {
     variants: {
-      tone: {
-        accent: '',
-        muted: '',
-      },
       isDisabled: {
         true: 'cursor-default text-disabled hover:text-disabled active:text-disabled focus-visible:text-disabled',
         false: 'hover:bg-breadcrumbs-hover active:bg-breadcrumbs-pressed',
       },
     },
     defaultVariants: {
-      tone: 'muted',
       isDisabled: false,
     },
   },
 );
 
 const breadcrumbTextVariants = cva(
-  `${breadcrumbItemContentClassName} type-body-sm-medium text-base-muted`,
+  `${breadcrumbItemContentClassName} type-body-sm-regular text-base-muted`,
   {
     variants: {
-      tone: {
-        accent: '',
-        muted: '',
-      },
       isDisabled: {
         true: 'text-disabled',
         false: '',
       },
     },
     defaultVariants: {
-      tone: 'muted',
       isDisabled: false,
     },
   },
 );
 
 const breadcrumbCurrentVariants = cva(
-  `${breadcrumbItemContentClassName} type-body-sm-medium text-base-strong`,
+  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTypographyClassName} text-base-strong`,
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
-  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-semibold text-base-muted transition-colors duration-normal ease-out outline-none`,
+  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-regular text-base-muted motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none outline-none`,
   {
     variants: {
       isHovered: {
@@ -147,7 +140,6 @@ export interface BreadcrumbProps extends Omit<
   children?: BreadcrumbChild;
   className?: string;
   linkClassName?: string;
-  tone?: 'accent' | 'muted';
   href?: string;
   isDisabled?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
@@ -351,7 +343,6 @@ export function Breadcrumb({
   children,
   className,
   linkClassName,
-  tone = 'muted',
   href,
   isDisabled = false,
   target,
@@ -387,7 +378,6 @@ export function Breadcrumb({
               className={(linkState) =>
                 twMerge(
                   breadcrumbLinkVariants({
-                    tone,
                     isDisabled: linkState.isDisabled,
                   }),
                   linkClassName,
@@ -400,7 +390,10 @@ export function Breadcrumb({
         }
 
         return (
-          <span className={twMerge(breadcrumbTextVariants({ tone, isDisabled }), linkClassName)}>
+          <span
+            aria-disabled={isDisabled || undefined}
+            className={twMerge(breadcrumbTextVariants({ isDisabled }), linkClassName)}
+          >
             {content}
           </span>
         );

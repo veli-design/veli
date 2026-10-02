@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
+import { expect, userEvent, within } from '@storybook/test';
 import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
@@ -46,6 +47,7 @@ const enBreadcrumbText = {
     standardTrail: 'Standard trail',
     backLinkTreatment: 'Back link treatment',
     disabledCrumb: 'Disabled crumb',
+    wrappingTrail: 'Wrapping trail',
   },
 } as const;
 
@@ -73,6 +75,7 @@ const dhivehiBreadcrumbText = {
     standardTrail: 'އާދައިގެ ޓްރެއިލް',
     backLinkTreatment: 'ބެކް ލިންކް ޓްރީޓްމަންޓް',
     disabledCrumb: 'ބޭނުންނުކުރެވޭ ކްރަމް',
+    wrappingTrail: 'ރެޕިންގ ޓްރެއިލް',
   },
 } as const;
 
@@ -214,6 +217,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 type PlaygroundStory = StoryObj<BreadcrumbsPlaygroundArgs>;
 
+const storyPanelClassName =
+  'w-full max-w-[560px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]';
+
 export const Playground: PlaygroundStory = {
   args: {
     showBackLink: false,
@@ -274,7 +280,7 @@ export const Playground: PlaygroundStory = {
     const currentLabel = getLocalizedBreadcrumbArgText('currentLabel', args.currentLabel, language);
 
     return (
-      <div className="w-[560px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+      <div className={storyPanelClassName}>
         <Breadcrumbs
           aria-label="Breadcrumb playground"
           showBackLink={args.showBackLink}
@@ -313,6 +319,12 @@ export const Default: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible();
+    await expect(canvas.getByText('Fishing permit')).toHaveAttribute('aria-current', 'page');
+  },
 };
 
 export const Variations: Story = {
@@ -322,7 +334,7 @@ export const Variations: Story = {
 
     return (
       <div className="grid gap-[24px] lg:grid-cols-2">
-        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+        <div className={storyPanelClassName}>
           <div className="space-y-[12px]">
             <p className="type-body-sm-medium text-base-emphasis">{text.stories.standardTrail}</p>
             <Breadcrumbs aria-label="Permit breadcrumb">
@@ -334,7 +346,7 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+        <div className={storyPanelClassName}>
           <div className="space-y-[12px]">
             <p className="type-body-sm-medium text-base-emphasis">
               {text.stories.backLinkTreatment}
@@ -353,7 +365,7 @@ export const Variations: Story = {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px] lg:col-span-2">
+        <div className={`${storyPanelClassName} lg:col-span-2`}>
           <div className="space-y-[12px]">
             <p className="type-body-sm-medium text-base-emphasis">{text.stories.disabledCrumb}</p>
             <Breadcrumbs aria-label="Disabled breadcrumb">
@@ -370,6 +382,120 @@ export const Variations: Story = {
   },
 };
 
+export const BackLink: Story = {
+  render: () => {
+    const text = useBreadcrumbText();
+    const [pressCount, setPressCount] = useState(0);
+
+    return (
+      <div className={storyPanelClassName}>
+        <Breadcrumbs
+          aria-label="Back breadcrumb"
+          showBackLink
+          backLinkLabel={text.navigation.back}
+          backLinkOnPress={() => setPressCount((count) => count + 1)}
+        >
+          <Breadcrumb href="#">{text.navigation.services}</Breadcrumb>
+          <Breadcrumb>{text.navigation.fishingPermit}</Breadcrumb>
+        </Breadcrumbs>
+        <output className="mt-3 block type-body-sm-regular text-base-muted">
+          {pressCount} back-link activations
+        </output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const backLink = canvas.getByRole('button', { name: 'Back' });
+
+    await userEvent.click(backLink);
+    await expect(canvas.getByText('1 back-link activations')).toBeVisible();
+  },
+};
+
+export const Overflow: Story = {
+  render: () => {
+    const text = useBreadcrumbText();
+    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+    const hiddenItems = getHiddenBacklinkItems(text);
+
+    return (
+      <div className={storyPanelClassName}>
+        <Breadcrumbs aria-label="Overflow breadcrumb">
+          <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
+          <BreadcrumbOverflow
+            items={hiddenItems}
+            label="Show hidden breadcrumb pages"
+            menuLabel="Hidden breadcrumb pages"
+            onAction={(key) => setSelectedItem(String(key))}
+          />
+          <Breadcrumb href="#">{text.navigation.permits}</Breadcrumb>
+          <Breadcrumb>{text.navigation.fishingPermit}</Breadcrumb>
+        </Breadcrumbs>
+        {selectedItem && (
+          <output className="mt-3 block type-body-sm-regular text-base-muted">
+            Selected: {selectedItem}
+          </output>
+        )}
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const documentBody = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Show hidden breadcrumb pages' });
+
+    await userEvent.click(trigger);
+    const menu = await documentBody.findByRole('menu', { name: 'Hidden breadcrumb pages' });
+    await expect(menu).toBeVisible();
+    await userEvent.click(within(menu).getByRole('menuitem', { name: 'Menu Two' }));
+    await expect(canvas.getByText('Selected: menu-two')).toBeVisible();
+  },
+};
+
+export const Disabled: Story = {
+  render: () => {
+    const text = useBreadcrumbText();
+
+    return (
+      <div className={storyPanelClassName}>
+        <Breadcrumbs aria-label="Disabled breadcrumb">
+          <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
+          <Breadcrumb href="#" isDisabled>
+            {text.navigation.archivedServices}
+          </Breadcrumb>
+          <Breadcrumb>{text.navigation.permitDetails}</Breadcrumb>
+        </Breadcrumbs>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const disabledCrumb = canvas.getByText('Archived services');
+
+    await expect(disabledCrumb).toHaveAttribute('aria-disabled', 'true');
+    await expect(disabledCrumb).not.toHaveAttribute('href');
+  },
+};
+
+export const ResponsiveWrapping: Story = {
+  render: () => {
+    const text = useBreadcrumbText();
+
+    return (
+      <div className="w-[280px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+        <p className="mb-3 type-body-sm-medium text-base-emphasis">{text.stories.wrappingTrail}</p>
+        <Breadcrumbs aria-label="Wrapping breadcrumb">
+          <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
+          <Breadcrumb href="#">{text.navigation.archivedServices}</Breadcrumb>
+          <Breadcrumb href="#">{text.navigation.permitDetails}</Breadcrumb>
+          <Breadcrumb>{text.navigation.fishingPermit}</Breadcrumb>
+        </Breadcrumbs>
+      </div>
+    );
+  },
+};
+
 export const DataDrivenCollection: Story = {
   render: () => {
     const text = useBreadcrumbText();
@@ -378,7 +504,7 @@ export const DataDrivenCollection: Story = {
     const items = breadcrumbTrail.slice(0, currentIndex + 1);
 
     return (
-      <div className="w-[420px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+      <div className="w-full max-w-[420px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <Breadcrumbs
           aria-label="Application breadcrumb"
           items={items}
@@ -393,5 +519,12 @@ export const DataDrivenCollection: Story = {
         </Breadcrumbs>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Services' }));
+    await expect(canvas.getByText('Services')).toHaveAttribute('aria-current', 'page');
+    await expect(canvas.queryByText('Fishing permit')).not.toBeInTheDocument();
   },
 };

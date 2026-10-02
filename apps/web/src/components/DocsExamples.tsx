@@ -5,7 +5,7 @@ import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
+import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
@@ -57,7 +57,6 @@ import {
   ArrowRight,
   Bell,
   CalendarBlank,
-  CaretLeft,
   CaretDown,
   CheckCircle,
   DownloadSimple,
@@ -84,6 +83,11 @@ const BREADCRUMB_TRAIL: BreadcrumbTrailItem[] = [
   { id: 'services', label: 'Services', href: '#' },
   { id: 'permits', label: 'Permits', href: '#' },
   { id: 'fishing', label: 'Fishing permit' },
+];
+
+const BREADCRUMB_OVERFLOW_ITEMS = [
+  { id: 'applications', label: 'Applications', href: '#' },
+  { id: 'permits', label: 'Permits', href: '#' },
 ];
 
 type TagDemoItem = {
@@ -313,13 +317,14 @@ export function BreadcrumbsVariantsDemo() {
       <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
         <div className="space-y-[12px]">
           <p className="type-body-sm-medium text-base-emphasis">Back link treatment</p>
-          <Breadcrumbs aria-label="Back breadcrumb">
-            <Breadcrumb href="#" tone="accent">
-              <CaretLeft aria-hidden size={16} weight="bold" />
-              <span>Previous Page</span>
-            </Breadcrumb>
+          <Breadcrumbs
+            aria-label="Back breadcrumb"
+            showBackLink
+            backLinkHref="#"
+            backLinkLabel="Back"
+          >
             <Breadcrumb href="#">Menu One</Breadcrumb>
-            <Breadcrumb>...</Breadcrumb>
+            <BreadcrumbOverflow items={BREADCRUMB_OVERFLOW_ITEMS} />
             <Breadcrumb href="#">Menu Five</Breadcrumb>
             <Breadcrumb>Menu Active</Breadcrumb>
           </Breadcrumbs>
