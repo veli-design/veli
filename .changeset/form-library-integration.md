@@ -4,7 +4,7 @@
 
 ### Added
 
-- Add `@tradenetcorp/veli-ui/form` with a `Form` wrapper that defaults `validationBehavior` to `aria`, plus `toErrorMessage` and `getErrorMessages` to turn React Hook Form errors and Standard Schema issues (Zod, Valibot, ArkType) into field error messages.
+- Add `@tradenetcorp/veli-ui/form` with a `Form` wrapper that defaults `validationBehavior` to `aria`, `toErrorMessage` / `getErrorMessages` for React Hook Form and Standard Schema issues (Zod, Valibot, ArkType), and `isoDateToDateValue` / `dateValueToIsoDate` so forms can store dates as ISO strings without importing `@internationalized/date`.
 - Add `CheckboxGroup` for managing several checkboxes as one `string[]` value.
 - Add `description` and `errorMessage` to `RadioGroup`.
 - Add `triggerRef` on `Select` and `DatePicker` so form libraries can focus the trigger on validation errors.

@@ -5,26 +5,31 @@ description: Integrate Veli fields with React Hook Form, TanStack Form, and sche
 
 # Forms
 
-Veli field components are built on react-aria-components and already accept the controlled props form libraries need: `name`, `value` / `onChange`, `onBlur`, `isInvalid`, and `isRequired`. For most fields you spread the library's field object directly. The `@tradenetcorp/veli-ui/form` subpath adds a `Form` wrapper and helpers that turn library or schema errors into field messages.
+Veli field components are built on react-aria-components and already accept the controlled props form libraries need: `name`, `value` / `onChange`, `onBlur`, `isInvalid`, and `isRequired`. For most fields you spread the library's field object directly. The `@tradenetcorp/veli-ui/form` subpath adds a `Form` wrapper, helpers that turn library or schema errors into field messages, and ISO date codecs for forms that store dates as strings.
 
 ## Import
 
 ```tsx
-import { Form, getErrorMessages, toErrorMessage } from '@tradenetcorp/veli-ui/form';
+import {
+  Form,
+  dateValueToIsoDate,
+  getErrorMessages,
+  isoDateToDateValue,
+  toErrorMessage,
+} from '@tradenetcorp/veli-ui/form';
 ```
 
 ## React Hook Form
 
-`Controller`'s `field` object (`name`, `value`, `onChange`, `onBlur`, `ref`) spreads directly onto `Input`, `TextArea`, `Select`, `ComboBox`, `RadioGroup`, `CheckboxGroup`, `DateField`, and `DatePicker`. For `Select` and `DatePicker`, pass `ref` as `triggerRef` so focus-on-error reaches the trigger button.
+`Controller`'s `field` object (`name`, `value`, `onChange`, `onBlur`, `ref`) spreads directly onto `Input`, `TextArea`, `Select`, `ComboBox`, `RadioGroup`, and `CheckboxGroup`. For `Select` and `DatePicker`, pass `ref` as `triggerRef` so focus-on-error reaches the trigger button.
 
-`Select` and `ComboBox` infer their key type from `value` / `onChange`. A `string | null` field therefore type-checks with no conversion. Hold dates as `DateValue` objects in form state (React Aria's recommendation); set `name` when a native submit should send an ISO 8601 string.
+`Select` and `ComboBox` infer their key type from `value` / `onChange`. A `string | null` field therefore type-checks with no conversion. Date components use `DateValue` objects; when the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` so you do not need a direct `@internationalized/date` dependency.
 
 ```tsx
-import type { CalendarDate } from '@internationalized/date';
 import { Controller, useForm } from 'react-hook-form';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { Form } from '@tradenetcorp/veli-ui/form';
+import { Form, dateValueToIsoDate, isoDateToDateValue } from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
 
@@ -33,7 +38,7 @@ function ProfileForm() {
     defaultValues: {
       email: '',
       country: null as string | null,
-      startDate: null as CalendarDate | null,
+      startDate: null as string | null,
       terms: false,
     },
   });
@@ -73,7 +78,13 @@ function ProfileForm() {
         name="startDate"
         control={control}
         render={({ field: { ref, ...field } }) => (
-          <DatePicker {...field} triggerRef={ref} label="Start date" />
+          <DatePicker
+            {...field}
+            triggerRef={ref}
+            value={isoDateToDateValue(field.value)}
+            onChange={(date) => field.onChange(dateValueToIsoDate(date))}
+            label="Start date"
+          />
         )}
       />
       <Controller
@@ -95,7 +106,7 @@ function ProfileForm() {
 }
 ```
 
-If a form must store dates as ISO `yyyy-MM-dd` strings, convert with `parseDate` and `.toString()` from `@internationalized/date`.
+If the form holds `DateValue` objects instead, spread `field` onto `DateField` / `DatePicker` with no conversion. Set `name` when a native submit should send an ISO 8601 string.
 
 `TagGroup` accepts a `string[]` as `selectedKeys`. Write selections back with `onSelectionChange={(keys) => keys !== 'all' && field.onChange([...keys].map(String))}`.
 
@@ -276,7 +287,7 @@ When you keep field values in your own state (for example a schema-driven render
 | Text / number     | `string`                     | `value` + `onChange(string)` on `Input`                          |
 | Select / combobox | `string \| null`             | `value` + `onChange` (key type inferred as `string \| null`)     |
 | Boolean           | `"true"` / `"false"` strings | `isSelected={value === 'true'}`, write back `"true"` / `"false"` |
-| Date              | `yyyy-MM-dd` string          | `parseDate(value)` in, `date?.toString() ?? null` out            |
+| Date              | `yyyy-MM-dd` string          | `isoDateToDateValue(value)` in, `dateValueToIsoDate(date)` out   |
 | Validation        | your own error string        | `isInvalid={error != null}` and `errorMessage={error}`           |
 
 Example select wired from a string enum:
@@ -304,14 +315,14 @@ import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
 For dates stored as ISO strings:
 
 ```tsx
-import { parseDate } from '@internationalized/date';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { dateValueToIsoDate, isoDateToDateValue } from '@tradenetcorp/veli-ui/form';
 
 <DatePicker
   name={field.name}
   label={field.label}
-  value={field.value ? parseDate(field.value) : null}
-  onChange={(date) => updateValue(field.id, date?.toString() ?? null)}
+  value={isoDateToDateValue(field.value)}
+  onChange={(date) => updateValue(field.id, dateValueToIsoDate(date))}
 />;
 ```
 
@@ -319,9 +330,10 @@ For booleans stored as strings, read with `value === 'true'` and write `"true"` 
 
 ## Available helpers
 
-| Helper                                | Field value              | Maps to                              |
-| :------------------------------------ | :----------------------- | :----------------------------------- |
-| `toErrorMessage` / `getErrorMessages` | Library or schema errors | First message / every unique message |
+| Helper                                      | Field value              | Maps to                              |
+| :------------------------------------------ | :----------------------- | :----------------------------------- |
+| `toErrorMessage` / `getErrorMessages`       | Library or schema errors | First message / every unique message |
+| `isoDateToDateValue` / `dateValueToIsoDate` | ISO string ↔ `DateValue` | Date `value` / `onChange`            |
 
 ## Related components
 

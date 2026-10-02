@@ -3,7 +3,7 @@ import { Checkbox, CheckboxGroup } from './checkbox';
 import { ComboBox } from './combobox';
 import { DateField } from './date-field';
 import { DatePicker } from './date-picker';
-import { toErrorMessage } from './form';
+import { dateValueToIsoDate, isoDateToDateValue, toErrorMessage } from './form';
 import { Input } from './input';
 import { RadioGroup } from './radio';
 import { Select } from './select';
@@ -42,7 +42,7 @@ export function FormBindingTypeExpectations() {
   const tags = rhfField<readonly string[]>([]);
   const channels = rhfField<string[]>([]);
   const startDate = rhfField<CalendarDate | null>(null);
-  const { ref: endDateRef, ...endDate } = rhfField<CalendarDate | null>(null);
+  const { ref: endDateRef, ...endDate } = rhfField<string | null>(null);
 
   const title = tanstackField('');
   const tsCountry = tanstackField<string | null>(null);
@@ -77,7 +77,13 @@ export function FormBindingTypeExpectations() {
         onSelectionChange={(keys) => keys !== 'all' && tags.onChange([...keys].map(String))}
       />
       <DateField {...startDate} label="Start" />
-      <DatePicker {...endDate} triggerRef={endDateRef} label="End" />
+      <DatePicker
+        {...endDate}
+        triggerRef={endDateRef}
+        value={isoDateToDateValue(endDate.value)}
+        onChange={(date) => endDate.onChange(dateValueToIsoDate(date))}
+        label="End"
+      />
 
       <Input
         label="Title"

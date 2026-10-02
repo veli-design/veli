@@ -1,12 +1,16 @@
 import { useState, type FormEvent } from 'react';
-import type { CalendarDate } from '@internationalized/date';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useForm } from '@tanstack/react-form';
 import { Controller, useForm as useReactHookForm } from 'react-hook-form';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { Form, toErrorMessage } from '@tradenetcorp/veli-ui/form';
+import {
+  Form,
+  dateValueToIsoDate,
+  isoDateToDateValue,
+  toErrorMessage,
+} from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
@@ -26,7 +30,7 @@ type RhfValues = {
   country: string | null;
   plan: string;
   channels: string[];
-  startDate: CalendarDate | null;
+  startDate: string | null;
   terms: boolean;
 };
 
@@ -115,7 +119,13 @@ export const ReactHookForm: Story = {
           name="startDate"
           control={control}
           render={({ field: { ref, ...field } }) => (
-            <DatePicker {...field} triggerRef={ref} label="Start date" />
+            <DatePicker
+              {...field}
+              triggerRef={ref}
+              value={isoDateToDateValue(field.value)}
+              onChange={(date) => field.onChange(dateValueToIsoDate(date))}
+              label="Start date"
+            />
           )}
         />
         <Controller

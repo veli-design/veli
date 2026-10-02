@@ -78,4 +78,4 @@ import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 
 All remaining supported React Aria `DatePicker` props can still be passed through this wrapper.
 
-Hold dates as `DateValue` objects in form state (React Aria's recommendation). Set `name` when a native submit should send an ISO 8601 string. If a form must store ISO strings, convert with `parseDate` / `.toString()` from `@internationalized/date`; see [Forms](/patterns/forms/).
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state and spread them directly. Set `name` when a native submit should send an ISO 8601 string. See [Forms](/patterns/forms/).
