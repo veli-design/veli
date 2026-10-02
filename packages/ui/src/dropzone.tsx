@@ -522,6 +522,8 @@ export interface DropzoneProps extends Omit<
   label?: string;
   /** Submits the current files with a native form under this name. */
   name?: string;
+  /** Requires a file on native form submission. */
+  required?: boolean;
   disabled?: boolean;
   invalid?: boolean;
   /**
@@ -549,6 +551,7 @@ export function Dropzone(props: DropzoneProps) {
     lang: langProp,
     label,
     name,
+    required = false,
     disabled = false,
     invalid = false,
     multiple = false,
@@ -1059,6 +1062,7 @@ export function Dropzone(props: DropzoneProps) {
             hidden
             tabIndex={-1}
             name={name}
+            required={required}
             accept={accept}
             multiple={multiple}
             disabled={disabled}
@@ -1733,6 +1737,7 @@ export interface DropzoneFieldProps extends Pick<
   | 'maxSize'
   | 'multiple'
   | 'name'
+  | 'required'
   | 'id'
 > {
   /** Visible label. */
@@ -1843,6 +1848,7 @@ export function DropzoneField({
       label={ariaLabel ?? (typeof label === 'string' ? label : text.fileUpload)}
       accept={acceptedFileTypes?.join(',')}
       disabled={isDisabled}
+      required={isRequired || dropzoneProps.required}
       invalid={isInvalid}
       className={twMerge('gap-0', className)}
     >

@@ -117,6 +117,8 @@ DropzoneField is a Veli field on React Aria [`DropZone`](https://react-spectrum.
 | `onFileReject`          | `(file, message) => void`    | -                | Called for each rejected file with a localized reason.                 |
 | `onFileValidate`        | `(file) => string \| null`   | -                | Return a message to reject a file.                                     |
 | `onUpload`              | `(files, callbacks) => void` | -                | Upload handler. Report `onProgress`, `onSuccess`, and `onError`.       |
+| `name`                  | `string`                     | -                | Native form field name for the file input.                             |
+| `required`              | `boolean`                    | `false`          | Requires a file on native form submission.                             |
 | `aria-label`            | `string`                     | -                | Accessible name when there is no visible label.                        |
 | `className`             | `string`                     | -                | Layout class on the root (width, margin, flex/grid).                   |
 
@@ -147,6 +149,7 @@ The hidden `<input type="file">` that opens the picker and submits files.
 | Prop       | Type      | Description                                                         |
 | :--------- | :-------- | :------------------------------------------------------------------ |
 | `name`     | `string`  | Native form field name. The input stays in sync with dropped files. |
+| `required` | `boolean` | Requires a selected file on native form submission.                 |
 | `multiple` | `boolean` | Set from `multiple`.                                                |
 | `accept`   | `string`  | Set from `acceptedFileTypes`.                                       |
 
