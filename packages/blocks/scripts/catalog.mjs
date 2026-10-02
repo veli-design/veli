@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, realpathSync } from 'node:fs';
-import { dirname, resolve, relative, posix } from 'node:path';
+import { dirname, resolve, relative, posix, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import ts from 'typescript';
@@ -96,7 +96,8 @@ export function validateBlock(directory) {
   const files = manifest.files.map((path) => {
     safePath(path);
     const fullPath = realpathSync(resolve(directory, path));
-    if (relative(realpathSync(directory), fullPath).startsWith('..'))
+    const relativePath = relative(realpathSync(directory), fullPath);
+    if (relativePath.startsWith('..') || isAbsolute(relativePath))
       fail(`File escapes block: ${path}`);
     const bytes = readFileSync(fullPath);
     if (/\.[cm]?[jt]sx?$/.test(path)) {
