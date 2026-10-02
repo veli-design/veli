@@ -67,6 +67,7 @@ if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first'
 const markdownFiles = [
   ...collectFiles(resolve(distRoot, 'docs'), '.md'),
   ...collectFiles(resolve(distRoot, 'foundations'), '.md'),
+  ...collectFiles(resolve(distRoot, 'patterns'), '.md'),
   ...collectFiles(resolve(distRoot, 'blocks'), '.md'),
 ].sort();
 

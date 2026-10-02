@@ -983,6 +983,8 @@ export function DropzoneArea({
     fileInputRef,
     disabled,
     label,
+    name,
+    required,
     acceptedFileTypes,
     multiple,
     openFilePicker,
@@ -997,6 +999,21 @@ export function DropzoneArea({
     },
     [fileInputRef],
   );
+
+  // FileTrigger has no `name` / `required` props, so apply them to its input directly.
+  React.useEffect(() => {
+    const input = fileInputRef.current;
+    if (!input) {
+      return;
+    }
+
+    if (name) {
+      input.name = name;
+    } else {
+      input.removeAttribute('name');
+    }
+    input.required = Boolean(required);
+  }, [fileInputRef, name, required]);
 
   const onDrop = React.useCallback(
     async (event: DropEvent) => {
