@@ -20,7 +20,7 @@ import {
   getBlockVersions,
 } from '../scripts/catalog.mjs';
 
-const block = getBlocks()[0];
+const block = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
 const provenance = { sourceCommit: 'a'.repeat(40), dirty: false };
 function fixture(run) {
   const dir = mkdtempSync(resolve(tmpdir(), 'veli-block-test-'));
@@ -32,21 +32,22 @@ function fixture(run) {
   }
 }
 
-test('valid canonical source is used by markdown and both downloaded copies', () => {
-  const files = bundleFiles(block, provenance);
-  const receipt = JSON.parse(files.find((file) => file.path.endsWith('receipt.json')).bytes);
-  assert.equal(receipt.id, block.manifest.id);
-  for (const file of block.files) {
-    assert.ok(blockMarkdown(block).includes(file.bytes.toString('utf8').trimEnd()));
-    const copies = files.filter((entry) => entry.path.endsWith('/' + file.path));
-    assert.equal(copies.length, 2);
-    for (const copy of copies)
-      assert.equal(
-        sha256(copy.bytes),
-        receipt.files.find((entry) => entry.path === file.path).sha256,
-      );
-  }
-});
+for (const block of getBlocks())
+  test(`${block.manifest.id}: canonical source is used by markdown and both downloaded copies`, () => {
+    const files = bundleFiles(block, provenance);
+    const receipt = JSON.parse(files.find((file) => file.path.endsWith('receipt.json')).bytes);
+    assert.equal(receipt.id, block.manifest.id);
+    for (const file of block.files) {
+      assert.ok(blockMarkdown(block).includes(file.bytes.toString('utf8').trimEnd()));
+      const copies = files.filter((entry) => entry.path.endsWith('/' + file.path));
+      assert.equal(copies.length, 2);
+      for (const copy of copies)
+        assert.equal(
+          sha256(copy.bytes),
+          receipt.files.find((entry) => entry.path === file.path).sha256,
+        );
+    }
+  });
 
 test('archive is deterministic and its entries contain the exact advertised bytes', () => {
   const zipped = archive(block, provenance);
@@ -80,11 +81,30 @@ test('CLI source archive and catalog are deterministic and content-addressed', (
   assert.equal(entry.versions[0].archiveSha256, sha256(canonical));
   assert.equal(entry.versions[0].sourceCommit, releases[0].provenance.sourceCommit);
   const unrelatedDeploy = blocksCatalog({ sourceCommit: 'b'.repeat(40), dirty: false });
-  assert.equal(
-    unrelatedDeploy.blocks[0].versions[0].archiveSha256,
-    entry.versions[0].archiveSha256,
+  const unrelatedEntry = unrelatedDeploy.blocks.find(
+    ({ manifest }) => manifest.id === block.manifest.id,
   );
+  for (const release of releases) {
+    // New, uncommitted versions use the supplied checkout provenance. Already
+    // committed archives must stay unchanged across unrelated deployments.
+    if (release.provenance.sourceCommit === provenance.sourceCommit) continue;
+    const version = release.block.manifest.version;
+    assert.equal(
+      unrelatedEntry.versions.find((entry) => entry.version === version).archiveSha256,
+      entry.versions.find((entry) => entry.version === version).archiveSha256,
+    );
+  }
 });
+
+for (const block of getBlocks())
+  test(`${block.manifest.id}: latest CLI release contains the current source inventory and bytes`, () => {
+    const latest = getBlockVersions(block, provenance)[0].block;
+    assert.equal(latest.manifest.version, block.manifest.version);
+    assert.deepEqual(
+      latest.files.map(({ path, sha256 }) => ({ path, sha256 })),
+      block.files.map(({ path, sha256 }) => ({ path, sha256 })),
+    );
+  });
 
 test('unsafe destinations and missing inventory files are rejected', () => {
   for (const path of ['../secret', '/tmp/file', 'a/../b', 'a\\b', 'a//b', '.env'])

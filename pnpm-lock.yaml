@@ -229,6 +229,9 @@ importers:
       '@tradenetcorp/veli-ui':
         specifier: workspace:*
         version: link:../ui
+      phosphor-react:
+        specifier: 1.4.1
+        version: 1.4.1(react@19.2.8)
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
