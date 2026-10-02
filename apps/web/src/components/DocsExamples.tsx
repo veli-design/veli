@@ -1599,6 +1599,31 @@ export function AlertVariantsDemo() {
   );
 }
 
+export function AlertDismissibleDemo() {
+  const [visible, setVisible] = useState(true);
+
+  return visible ? (
+    <Alert
+      intent="warning"
+      leadingIcon={<WarningCircle size={20} weight="fill" />}
+      onDismiss={() => setVisible(false)}
+    >
+      <Alert.Title>System maintenance</Alert.Title>
+      <Alert.Description>Services may be unavailable tonight from 22:00–02:00.</Alert.Description>
+      <Alert.Actions>
+        <Button size="sm" intent="secondary" appearance="transparent">
+          View schedule
+        </Button>
+      </Alert.Actions>
+      <Alert.CloseButton />
+    </Alert>
+  ) : (
+    <Button size="sm" intent="secondary" appearance="transparent" onPress={() => setVisible(true)}>
+      Show maintenance alert
+    </Button>
+  );
+}
+
 export function ModalUsageDemo() {
   return (
     <div className="flex min-h-[180px] items-center justify-center">

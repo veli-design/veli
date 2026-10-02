@@ -12,12 +12,12 @@ export type AlertAppearance = 'emphasis' | 'outline' | 'subtle';
 const alertIntentClasses = {
   subtle: {
     neutral:
-      'border-status-neutral-subtle bg-status-neutral-subtle text-text-default-strong [&_svg]:text-icon-default-strong',
-    info: 'border-status-info-subtle bg-status-info-subtle text-text-primary-strong [&_svg]:text-icon-primary-strong',
+      'border-status-neutral-subtle bg-status-neutral-subtle text-base-strong [&_svg]:text-icon-base-strong',
+    info: 'border-status-info-subtle bg-status-info-subtle text-info-1000 [&_svg]:text-info-1000',
     positive:
       'border-status-success-subtle bg-status-success-subtle text-text-success-strong [&_svg]:text-icon-success-strong',
     cautious:
-      'border-status-cautious-subtle bg-status-cautious-subtle text-text-cautious-strong [&_svg]:text-icon-cautious-strong',
+      'border-status-cautious-subtle bg-status-cautious-subtle text-caution-strong [&_svg]:text-icon-caution-strong',
     warning:
       'border-status-warning-subtle bg-status-warning-subtle text-text-warning-strong [&_svg]:text-icon-warning-strong',
     danger:
@@ -25,12 +25,12 @@ const alertIntentClasses = {
   },
   emphasis: {
     neutral:
-      'border-status-neutral-emphasis bg-status-neutral-emphasis text-text-default-inverted [&_svg]:text-icon-default-inverted',
-    info: 'border-status-info-emphasis bg-status-info-emphasis text-text-primary-inverted [&_svg]:text-icon-primary-inverted',
+      'border-status-neutral-emphasis bg-status-neutral-emphasis text-base-inverted [&_svg]:text-icon-base-inverted',
+    info: 'border-status-info-emphasis bg-status-info-emphasis text-info-100 [&_svg]:text-info-100',
     positive:
       'border-status-success-emphasis bg-status-success-emphasis text-text-success-inverted [&_svg]:text-icon-success-inverted',
     cautious:
-      'border-status-cautious-emphasis bg-status-cautious-emphasis text-text-cautious-inverted [&_svg]:text-icon-cautious-inverted',
+      'border-status-cautious-emphasis bg-status-cautious-emphasis text-caution-inverted [&_svg]:text-icon-caution-inverted',
     warning:
       'border-status-warning-emphasis bg-status-warning-emphasis text-text-warning-inverted [&_svg]:text-icon-warning-inverted',
     danger:
@@ -38,12 +38,12 @@ const alertIntentClasses = {
   },
   outline: {
     neutral:
-      'border-status-neutral-subtle bg-bg-surface-raised text-text-default-default [&_svg]:text-icon-default-default',
-    info: 'border-status-info-subtle bg-bg-surface-raised text-text-primary-default [&_svg]:text-icon-primary-default',
+      'border-status-neutral-subtle bg-bg-surface-raised text-base-default [&_svg]:text-icon-base-default',
+    info: 'border-status-info-subtle bg-bg-surface-raised text-info-900 [&_svg]:text-info-900',
     positive:
       'border-status-success-subtle bg-bg-surface-raised text-text-success-default [&_svg]:text-icon-success-default',
     cautious:
-      'border-status-cautious-subtle bg-bg-surface-raised text-text-cautious-default [&_svg]:text-icon-cautious-default',
+      'border-status-cautious-subtle bg-bg-surface-raised text-caution [&_svg]:text-icon-caution',
     warning:
       'border-status-warning-subtle bg-bg-surface-raised text-text-warning-default [&_svg]:text-icon-warning-default',
     danger:
