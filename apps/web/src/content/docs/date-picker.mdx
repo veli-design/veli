@@ -71,24 +71,25 @@ DatePicker is a Veli field on React Aria [`DatePicker`](https://react-spectrum.a
 
 Veli-specific props for the composed field.
 
-| Prop                    | Type                     | Default          | Description                                                          |
-| :---------------------- | :----------------------- | :--------------- | :------------------------------------------------------------------- |
-| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                         |
-| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                          |
-| `label`                 | `ReactNode`              | -                | Visible label.                                                       |
-| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`. |
-| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                 |
-| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                        |
-| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                       |
-| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                   |
-| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                       |
-| `calendarButtonLabel`   | `string`                 | Localized string | Accessible name for the calendar trigger.                            |
-| `showTodayButton`       | `boolean`                | `true`           | Shows the Today action in the calendar.                              |
-| `todayButtonLabel`      | `string`                 | Localized string | Overrides the Today action text.                                     |
-| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                 |
-| `inputClassName`        | `string`                 | -                | Layout class on the input shell.                                     |
-| `popoverClassName`      | `string`                 | -                | Class on the calendar popover.                                       |
-| `calendarClassName`     | `string`                 | -                | Class on the calendar surface.                                       |
+| Prop                    | Type                     | Default          | Description                                                            |
+| :---------------------- | :----------------------- | :--------------- | :--------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                           |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                            |
+| `label`                 | `ReactNode`              | -                | Visible label.                                                         |
+| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`.   |
+| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                   |
+| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                          |
+| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                         |
+| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                     |
+| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                         |
+| `calendarButtonLabel`   | `string`                 | Localized string | Accessible name for the calendar trigger.                              |
+| `triggerRef`            | `Ref<HTMLButtonElement>` | -                | Ref to the calendar trigger, so form libraries can focus it on errors. |
+| `showTodayButton`       | `boolean`                | `true`           | Shows the Today action in the calendar.                                |
+| `todayButtonLabel`      | `string`                 | Localized string | Overrides the Today action text.                                       |
+| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                   |
+| `inputClassName`        | `string`                 | -                | Layout class on the input shell.                                       |
+| `popoverClassName`      | `string`                 | -                | Class on the calendar popover.                                         |
+| `calendarClassName`     | `string`                 | -                | Class on the calendar surface.                                         |
 
 ### React Aria DatePicker
 
@@ -131,3 +132,5 @@ Each date segment is individually editable and focusable. The calendar button is
 ## RTL and language
 
 Set `language` on `VeliProvider`. Segment order and calendar text follow the locale; Dhivehi uses the system's RTL font and direction. Calendar navigation mirrors in RTL, while date values remain semantic dates rather than formatted strings.
+
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state and spread them directly. Set `name` when a native submit should send an ISO 8601 string. See [Forms](/patterns/forms/).

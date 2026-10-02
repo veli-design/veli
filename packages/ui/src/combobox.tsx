@@ -39,6 +39,9 @@ import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 import { useVeliLanguage } from './provider';
 import { Tooltip, TooltipTrigger } from './tooltip';
 
+/** Selection key type used by react-aria (`string | number`). */
+type Key = string | number;
+
 const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
@@ -365,11 +368,20 @@ export function ComboBoxSection<T extends object>({
   );
 }
 
-export interface ComboBoxProps<T extends object>
+export interface ComboBoxProps<T extends object, K extends Key = Key>
   extends
     Omit<
       AriaComboBoxProps<T>,
-      'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
+      | 'children'
+      | 'className'
+      | 'style'
+      | 'placeholder'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'value'
+      | 'defaultValue'
+      | 'onChange'
     >,
     Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'>,
     RefProp<HTMLInputElement> {
@@ -391,9 +403,15 @@ export interface ComboBoxProps<T extends object>
   emptyState?: React.ReactNode;
   inputRef?: React.Ref<HTMLInputElement>;
   className?: string;
+  /** Controlled selected key. Inferred as `string | null` when the form stores strings. */
+  value?: K | null;
+  /** Uncontrolled initial selected key. */
+  defaultValue?: K | null;
+  /** Called with the selected key. Typed from `value` / `onChange` for form libraries. */
+  onChange?: (value: K | null) => void;
 }
 
-export function ComboBox<T extends object>({
+export function ComboBox<T extends object, K extends Key = Key>({
   children,
   label,
   infoTooltip,
@@ -416,8 +434,11 @@ export function ComboBox<T extends object>({
   appearance = 'default',
   size = 'md',
   menuTrigger = 'focus',
+  value,
+  defaultValue,
+  onChange,
   ...props
-}: ComboBoxProps<T>) {
+}: ComboBoxProps<T, K>) {
   const resolvedInputRef = inputRef ?? ref;
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
@@ -440,6 +461,9 @@ export function ComboBox<T extends object>({
   return (
     <AriaComboBox
       {...props}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange as AriaComboBoxProps<T>['onChange']}
       menuTrigger={menuTrigger}
       className={twMerge(comboboxRootVariants(), className)}
     >

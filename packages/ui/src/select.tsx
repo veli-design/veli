@@ -33,7 +33,11 @@ import {
 } from './field-shared';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
 import { useVeliLanguage } from './provider';
+import { assignRef } from './ref';
 import { Tooltip, TooltipTrigger } from './tooltip';
+
+/** Selection key type used by react-aria (`string | number`). */
+type Key = string | number;
 
 const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -319,11 +323,20 @@ function CheckIcon() {
   );
 }
 
-export interface SelectProps<T extends object>
+export interface SelectProps<T extends object, K extends Key = Key>
   extends
     Omit<
       AriaSelectProps<T>,
-      'children' | 'className' | 'style' | 'label' | 'description' | 'errorMessage' | 'items'
+      | 'children'
+      | 'className'
+      | 'style'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'items'
+      | 'value'
+      | 'defaultValue'
+      | 'onChange'
     >,
     Omit<
       VariantProps<typeof fieldButtonVariants>,
@@ -345,9 +358,17 @@ export interface SelectProps<T extends object>
   className?: string;
   items?: Iterable<T>;
   children?: React.ReactNode | ((item: T) => React.ReactNode);
+  /** Controlled selected key. Inferred as `string | null` when the form stores strings. */
+  value?: K | null;
+  /** Uncontrolled initial selected key. */
+  defaultValue?: K | null;
+  /** Called with the selected key. Typed from `value` / `onChange` for form libraries. */
+  onChange?: (value: K | null) => void;
+  /** Ref to the focusable trigger button, for form-library focus-on-error. */
+  triggerRef?: React.Ref<HTMLButtonElement>;
 }
 
-export function Select<T extends object>({
+export function Select<T extends object, K extends Key = Key>({
   label,
   infoTooltip,
   infoTooltipAriaLabel,
@@ -366,13 +387,25 @@ export function Select<T extends object>({
   size = 'md',
   items,
   children,
+  value,
+  defaultValue,
+  onChange,
+  triggerRef: triggerRefProp,
   ...props
-}: SelectProps<T>) {
+}: SelectProps<T, K>) {
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
   const languageConfig = useVeliLanguage();
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
+
+  const setTriggerRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      triggerRef.current = node;
+      assignRef(triggerRefProp, node);
+    },
+    [triggerRefProp],
+  );
 
   React.useLayoutEffect(() => {
     const trigger = triggerRef.current;
@@ -389,6 +422,9 @@ export function Select<T extends object>({
   return (
     <AriaSelect
       {...props}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange as AriaSelectProps<T>['onChange']}
       placeholder={placeholder}
       className={twMerge(selectRootVariants(), className)}
     >
@@ -441,7 +477,7 @@ export function Select<T extends object>({
           ) : null}
 
           <AriaButton
-            ref={triggerRef}
+            ref={setTriggerRef}
             className={fieldButtonVariants({
               appearance,
               size,
