@@ -309,52 +309,50 @@ function PanelContent(props: AccountPanelProps) {
           <PanelAction action={props.accountManagement} labels={labels} />
         )}
       </div>
-      {appearance && (
-        <div className="hidden shrink-0 flex-col sm:flex">
-          <Divider className="w-full" />
-          <RadioGroup
-            aria-label={appearance.label}
-            value={appearance.value}
-            onChange={appearance.onChange}
-            isDisabled={appearance.isDisabled}
-            className="flex flex-col pb-4"
-          >
-            <span className="type-body-sm-regular pt-4 pb-2 text-base-default">
-              {appearance.label}
-            </span>
-            <div className="relative isolate flex rounded-full bg-neutral-alpha-200 p-0.5 [--account-panel-direction:1] rtl:[--account-panel-direction:-1]">
-              {appearanceIndex >= 0 && (
-                <span
-                  aria-hidden="true"
-                  data-account-appearance-pill
-                  className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-[cubic-bezier(0.34,1.2,0.64,1)] motion-reduce:transition-none"
-                  style={{
-                    width: `calc((100% - var(--spacing)) / ${appearance.options.length})`,
-                    transform: `translateX(calc(${appearanceIndex} * 100% * var(--account-panel-direction)))`,
-                  }}
-                />
-              )}
-              {appearance.options.map((option) => (
-                <Radio
-                  key={option.id}
-                  value={option.id}
-                  isDisabled={option.isDisabled}
-                  className="type-body-sm-medium relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[disabled]:text-disabled motion-reduce:transition-none"
-                >
-                  {option.icon && (
-                    <span aria-hidden="true" className="flex shrink-0">
-                      {option.icon}
-                    </span>
-                  )}
-                  {option.label}
-                </Radio>
-              ))}
-            </div>
-          </RadioGroup>
-          <Divider className="w-full" />
-        </div>
-      )}
-      <div className="-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:mx-0 sm:border-0 sm:px-0 sm:pt-0">
+      <div className="-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:px-4">
+        {appearance && (
+          <div className="hidden shrink-0 flex-col sm:flex">
+            <RadioGroup
+              aria-label={appearance.label}
+              value={appearance.value}
+              onChange={appearance.onChange}
+              isDisabled={appearance.isDisabled}
+              className="flex flex-col pb-4"
+            >
+              <span className="type-body-sm-regular pb-4 text-base-default">
+                {appearance.label}
+              </span>
+              <div className="relative isolate flex rounded-full bg-neutral-alpha-200 p-0.5 [--account-panel-direction:1] rtl:[--account-panel-direction:-1]">
+                {appearanceIndex >= 0 && (
+                  <span
+                    aria-hidden="true"
+                    data-account-appearance-pill
+                    className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-[cubic-bezier(0.34,1.2,0.64,1)] motion-reduce:transition-none"
+                    style={{
+                      width: `calc((100% - var(--spacing)) / ${appearance.options.length})`,
+                      transform: `translateX(calc(${appearanceIndex} * 100% * var(--account-panel-direction)))`,
+                    }}
+                  />
+                )}
+                {appearance.options.map((option) => (
+                  <Radio
+                    key={option.id}
+                    value={option.id}
+                    isDisabled={option.isDisabled}
+                    className="type-body-sm-medium relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[disabled]:text-disabled motion-reduce:transition-none"
+                  >
+                    {option.icon && (
+                      <span aria-hidden="true" className="flex shrink-0">
+                        {option.icon}
+                      </span>
+                    )}
+                    {option.label}
+                  </Radio>
+                ))}
+              </div>
+            </RadioGroup>
+          </div>
+        )}
         <PanelAction action={props.signOut} labels={labels} danger />
       </div>
     </div>

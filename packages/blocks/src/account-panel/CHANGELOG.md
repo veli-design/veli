@@ -1,3 +1,9 @@
+## 0.1.3
+
+### Changed
+
+- Align the desktop footer with the corrected design: a full-width top border above the theme selector and sign-out action, with no divider between them.
+
 ## 0.1.2
 
 ### Changed
