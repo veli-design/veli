@@ -1,9 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { expect, userEvent, within } from '@storybook/test';
 import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+
+const collapsedControlGroups = ['Content', 'State'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function BreadcrumbsDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
 
 type BreadcrumbTrailItem = {
   id: string;
@@ -11,10 +57,11 @@ type BreadcrumbTrailItem = {
   href?: string;
 };
 
-type BreadcrumbsPlaygroundArgs = {
+type BreadcrumbsStoryArgs = ComponentProps<typeof Breadcrumbs> & {
   showBackLink: boolean;
+  backLinkIsDisabled: boolean;
   showOverflow: boolean;
-  disableSecondCrumb: boolean;
+  secondCrumbIsDisabled: boolean;
   backLinkLabel: string;
   homeLabel: string;
   secondLabel: string;
@@ -130,6 +177,22 @@ type BreadcrumbArgTextKey = keyof typeof breadcrumbArgText;
 
 const breadcrumbArgTextKeys = Object.keys(breadcrumbArgText) as BreadcrumbArgTextKey[];
 
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
 const getLocalizedBreadcrumbArgText = (
   key: BreadcrumbArgTextKey,
   value: unknown,
@@ -209,56 +272,144 @@ const meta = {
   ],
   parameters: {
     layout: 'centered',
+    controls: {
+      sort: 'none',
+    },
+    docs: {
+      container: BreadcrumbsDocsContainer,
+    },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Breadcrumbs>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-type PlaygroundStory = StoryObj<BreadcrumbsPlaygroundArgs>;
-
-const storyPanelClassName =
-  'w-full max-w-[560px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]';
-
-export const Playground: PlaygroundStory = {
+  argTypes: {
+    ...withArgCategory('Composition', {
+      showBackLink: {
+        control: 'boolean',
+      },
+      showOverflow: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Back link', {
+      backLinkLabel: {
+        control: 'text',
+      },
+      backLinkIsDisabled: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Content', {
+      homeLabel: {
+        control: 'text',
+      },
+      secondLabel: {
+        control: 'text',
+      },
+      thirdLabel: {
+        control: 'text',
+      },
+      menuFiveLabel: {
+        control: 'text',
+      },
+      currentLabel: {
+        control: 'text',
+      },
+    }),
+    ...withArgCategory('State', {
+      secondCrumbIsDisabled: {
+        control: 'boolean',
+      },
+    }),
+    className: { control: false, table: { disable: true } },
+    backLinkHref: { control: false, table: { disable: true } },
+    backLinkTarget: { control: false, table: { disable: true } },
+    backLinkRel: { control: false, table: { disable: true } },
+    backLinkOnPress: { control: false, table: { disable: true } },
+  },
   args: {
     showBackLink: false,
     showOverflow: true,
-    disableSecondCrumb: false,
     backLinkLabel: enBreadcrumbText.navigation.back,
+    backLinkIsDisabled: false,
     homeLabel: enBreadcrumbText.navigation.home,
     secondLabel: enBreadcrumbText.navigation.services,
     thirdLabel: enBreadcrumbText.navigation.permits,
     menuFiveLabel: enBreadcrumbText.menus.menuFive,
     currentLabel: enBreadcrumbText.navigation.fishingPermit,
+    secondCrumbIsDisabled: false,
   },
-  argTypes: {
-    showBackLink: {
-      control: 'boolean',
-    },
-    showOverflow: {
-      control: 'boolean',
-    },
-    disableSecondCrumb: {
-      control: 'boolean',
-    },
-    backLinkLabel: {
-      control: 'text',
-    },
-    homeLabel: {
-      control: 'text',
-    },
-    secondLabel: {
-      control: 'text',
-    },
-    thirdLabel: {
-      control: 'text',
-    },
-    menuFiveLabel: {
-      control: 'text',
-    },
-    currentLabel: {
-      control: 'text',
+} satisfies Meta<BreadcrumbsStoryArgs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const storyPanelClassName = 'w-full max-w-[560px]';
+
+const breadcrumbStoryCode = {
+  default: `const hiddenPages = [
+  { id: 'applications', label: 'Applications', href: '/applications' },
+  { id: 'permits', label: 'Permits', href: '/permits' },
+];
+
+<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/services">Services</Breadcrumb>
+  <BreadcrumbOverflow items={hiddenPages} />
+  <Breadcrumb href="/services/fishing">Fishing permits</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
+</Breadcrumbs>`,
+  backLink: `<Breadcrumbs
+  aria-label="Back breadcrumb"
+  showBackLink
+  backLinkLabel="Back"
+  backLinkHref="/services"
+>
+  <Breadcrumb href="/services">Services</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
+</Breadcrumbs>`,
+  overflow: `const hiddenPages = [
+  { id: 'applications', label: 'Applications', href: '/applications' },
+  { id: 'permits', label: 'Permits', href: '/permits' },
+];
+
+<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <BreadcrumbOverflow
+    items={hiddenPages}
+    label="Show hidden breadcrumb pages"
+    menuLabel="Hidden breadcrumb pages"
+  />
+  <Breadcrumb href="/permits">Permits</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
+</Breadcrumbs>`,
+  disabled: `<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/services/archived" isDisabled>
+    Archived services
+  </Breadcrumb>
+  <Breadcrumb>Permit details</Breadcrumb>
+</Breadcrumbs>`,
+  responsiveWrapping: `<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/services/archived">Archived services</Breadcrumb>
+  <Breadcrumb href="/services/archived/permit-details">Permit details</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
+</Breadcrumbs>`,
+  dataDrivenCollection: `function ApplicationBreadcrumb({ items, onAction }) {
+  return (
+    <Breadcrumbs items={items} aria-label="Application breadcrumb" onAction={onAction}>
+      {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
+    </Breadcrumbs>
+  );
+}`,
+} as const;
+
+export const Default: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.default,
+        language: 'tsx',
+      },
     },
   },
   render: (args) => {
@@ -286,9 +437,10 @@ export const Playground: PlaygroundStory = {
           showBackLink={args.showBackLink}
           backLinkHref="#"
           backLinkLabel={backLinkLabel}
+          backLinkIsDisabled={args.backLinkIsDisabled}
         >
-          {!args.showBackLink ? <Breadcrumb href="#">{homeLabel}</Breadcrumb> : null}
-          <Breadcrumb href="#" isDisabled={args.disableSecondCrumb}>
+          <Breadcrumb href="#">{homeLabel}</Breadcrumb>
+          <Breadcrumb href="#" isDisabled={args.secondCrumbIsDisabled}>
             {secondLabel}
           </Breadcrumb>
           {args.showOverflow ? (
@@ -302,93 +454,29 @@ export const Playground: PlaygroundStory = {
       </div>
     );
   },
-};
-
-export const Default: Story = {
-  render: () => {
-    const text = useBreadcrumbText();
-
-    return (
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <Breadcrumbs aria-label="Breadcrumb">
-          <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
-          <Breadcrumb href="#">{text.navigation.services}</Breadcrumb>
-          <Breadcrumb href="#">{text.navigation.permits}</Breadcrumb>
-          <Breadcrumb>{text.navigation.fishingPermit}</Breadcrumb>
-        </Breadcrumbs>
-      </div>
-    );
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible();
+    await expect(canvas.getByRole('navigation', { name: 'Breadcrumb playground' })).toBeVisible();
     await expect(canvas.getByText('Fishing permit')).toHaveAttribute('aria-current', 'page');
   },
 };
 
-export const Variations: Story = {
-  render: () => {
-    const text = useBreadcrumbText();
-    const hiddenBacklinkItems = getHiddenBacklinkItems(text);
-
-    return (
-      <div className="grid gap-[24px] lg:grid-cols-2">
-        <div className={storyPanelClassName}>
-          <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-base-emphasis">{text.stories.standardTrail}</p>
-            <Breadcrumbs aria-label="Permit breadcrumb">
-              <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
-              <Breadcrumb href="#">{text.navigation.applications}</Breadcrumb>
-              <Breadcrumb href="#">{text.navigation.permits}</Breadcrumb>
-              <Breadcrumb>{text.navigation.newSubmission}</Breadcrumb>
-            </Breadcrumbs>
-          </div>
-        </div>
-
-        <div className={storyPanelClassName}>
-          <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-base-emphasis">
-              {text.stories.backLinkTreatment}
-            </p>
-            <Breadcrumbs
-              aria-label="Back breadcrumb"
-              showBackLink
-              backLinkLabel={text.navigation.back}
-              backLinkOnPress={() => undefined}
-            >
-              <Breadcrumb href="#">{text.menus.menuOne}</Breadcrumb>
-              <BreadcrumbOverflow items={hiddenBacklinkItems} />
-              <Breadcrumb href="#">{text.menus.menuFive}</Breadcrumb>
-              <Breadcrumb>{text.menus.menuActive}</Breadcrumb>
-            </Breadcrumbs>
-          </div>
-        </div>
-
-        <div className={`${storyPanelClassName} lg:col-span-2`}>
-          <div className="space-y-[12px]">
-            <p className="type-body-sm-medium text-base-emphasis">{text.stories.disabledCrumb}</p>
-            <Breadcrumbs aria-label="Disabled breadcrumb">
-              <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
-              <Breadcrumb href="#" isDisabled>
-                {text.navigation.archivedServices}
-              </Breadcrumb>
-              <Breadcrumb>{text.navigation.permitDetails}</Breadcrumb>
-            </Breadcrumbs>
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
-
 export const BackLink: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.backLink,
+        language: 'tsx',
+      },
+    },
+  },
   render: () => {
     const text = useBreadcrumbText();
     const [pressCount, setPressCount] = useState(0);
 
     return (
-      <div className={storyPanelClassName}>
+      <div className={`${storyPanelClassName} flex flex-col items-start gap-3`}>
         <Breadcrumbs
           aria-label="Back breadcrumb"
           showBackLink
@@ -398,7 +486,7 @@ export const BackLink: Story = {
           <Breadcrumb href="#">{text.navigation.services}</Breadcrumb>
           <Breadcrumb>{text.navigation.fishingPermit}</Breadcrumb>
         </Breadcrumbs>
-        <output className="mt-3 block type-body-sm-regular text-base-muted">
+        <output className="ms-8 type-body-sm-regular text-base-muted">
           {pressCount} back-link activations
         </output>
       </div>
@@ -414,6 +502,14 @@ export const BackLink: Story = {
 };
 
 export const Overflow: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.overflow,
+        language: 'tsx',
+      },
+    },
+  },
   render: () => {
     const text = useBreadcrumbText();
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -454,6 +550,14 @@ export const Overflow: Story = {
 };
 
 export const Disabled: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.disabled,
+        language: 'tsx',
+      },
+    },
+  },
   render: () => {
     const text = useBreadcrumbText();
 
@@ -479,11 +583,19 @@ export const Disabled: Story = {
 };
 
 export const ResponsiveWrapping: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.responsiveWrapping,
+        language: 'tsx',
+      },
+    },
+  },
   render: () => {
     const text = useBreadcrumbText();
 
     return (
-      <div className="w-[280px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+      <div className="w-[280px]">
         <p className="mb-3 type-body-sm-medium text-base-emphasis">{text.stories.wrappingTrail}</p>
         <Breadcrumbs aria-label="Wrapping breadcrumb">
           <Breadcrumb href="#">{text.navigation.home}</Breadcrumb>
@@ -497,6 +609,14 @@ export const ResponsiveWrapping: Story = {
 };
 
 export const DataDrivenCollection: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: breadcrumbStoryCode.dataDrivenCollection,
+        language: 'tsx',
+      },
+    },
+  },
   render: () => {
     const text = useBreadcrumbText();
     const breadcrumbTrail = getBreadcrumbTrail(text);
@@ -504,7 +624,7 @@ export const DataDrivenCollection: Story = {
     const items = breadcrumbTrail.slice(0, currentIndex + 1);
 
     return (
-      <div className="w-full max-w-[420px] rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
+      <div className="w-full max-w-[420px]">
         <Breadcrumbs
           aria-label="Application breadcrumb"
           items={items}

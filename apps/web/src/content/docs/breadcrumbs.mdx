@@ -3,7 +3,13 @@ title: Breadcrumbs
 description: Accessible hierarchical navigation built with React Aria Breadcrumbs and Veli design tokens.
 ---
 
-import { BreadcrumbsUsageDemo, BreadcrumbsVariantsDemo } from '../../components/DocsExamples';
+import {
+  BreadcrumbsBackLinkDemo,
+  BreadcrumbsDataDrivenDemo,
+  BreadcrumbsDisabledDemo,
+  BreadcrumbsOverflowDemo,
+  BreadcrumbsUsageDemo,
+} from '../../components/DocsExamples';
 
 # Breadcrumbs
 
@@ -35,35 +41,72 @@ import {
 </Breadcrumbs>
 ```
 
-## Variations
+## Back link
+
+Use the separate back-link treatment when the screen needs a direct return action before the hierarchy trail.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <BreadcrumbsVariantsDemo client:visible />
+  <BreadcrumbsBackLinkDemo client:visible />
 </div>
-
-## Back links and overflow
-
-Use the separate back-link treatment when the screen needs a direct return action before the hierarchy trail. Collapse long trails deliberately: keep the first crumb and current page visible, and put middle levels in `BreadcrumbOverflow`.
 
 ```tsx
 <Breadcrumbs aria-label="Application breadcrumb" showBackLink backLinkHref="/services">
-  <Breadcrumb href="/">Home</Breadcrumb>
-  <BreadcrumbOverflow
-    items={[
-      { id: 'applications', label: 'Applications', href: '/applications' },
-      { id: 'permits', label: 'Permits', href: '/permits' },
-    ]}
-  />
-  <Breadcrumb href="/permits/fishing">Fishing permits</Breadcrumb>
-  <Breadcrumb>New application</Breadcrumb>
+  <Breadcrumb href="/services">Services</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
 </Breadcrumbs>
 ```
 
-For custom placement, compose `BreadcrumbBackLink` directly before the remaining crumbs. `BreadcrumbOverflow` is caller-managed; Breadcrumbs wraps on narrow screens and never scrolls horizontally.
+For custom placement, compose `BreadcrumbBackLink` directly before the remaining crumbs.
+
+## Overflow
+
+Collapse long trails deliberately: keep the first crumb and current page visible, and put middle levels in `BreadcrumbOverflow`.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsOverflowDemo client:visible />
+</div>
+
+```tsx
+const hiddenPages = [
+  { id: 'applications', label: 'Applications', href: '/applications' },
+  { id: 'permits', label: 'Permits', href: '/permits' },
+];
+
+<Breadcrumbs aria-label="Application breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <BreadcrumbOverflow items={hiddenPages} />
+  <Breadcrumb href="/permits/fishing">Fishing permits</Breadcrumb>
+  <Breadcrumb>New application</Breadcrumb>
+</Breadcrumbs>;
+```
+
+`BreadcrumbOverflow` is caller-managed; it opens a menu for hidden levels. Breadcrumbs wraps on narrow screens and never scrolls horizontally.
+
+## Disabled crumbs
+
+Use `isDisabled` when a previously visible level is unavailable. It keeps the label in the trail but removes navigation and the item from the tab order.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsDisabledDemo client:visible />
+</div>
+
+```tsx
+<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/services/archived" isDisabled>
+    Archived services
+  </Breadcrumb>
+  <Breadcrumb>Permit details</Breadcrumb>
+</Breadcrumbs>
+```
 
 ## Data-driven trails
 
 Pass `items`, `id`, and `onAction` when application state controls the visible path.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsDataDrivenDemo client:visible />
+</div>
 
 ```tsx
 <Breadcrumbs items={items} aria-label="Application breadcrumb" onAction={setCurrentLevel}>
@@ -75,7 +118,7 @@ Pass `items`, `id`, and `onAction` when application state controls the visible p
 
 Give every trail an `aria-label` unless an adjacent heading already names it. The final `Breadcrumb` is automatically marked as the current page and is not interactive; separators are decorative. Linked crumbs are keyboard reachable, disabled crumbs are skipped, and the interactive crumbs retain a visible focus ring.
 
-Use `VeliProvider language="dv"` for Dhivehi. The list, separators, and back-link caret mirror automatically for RTL, while the slash separator stays `/`. English crumbs use body-sm regular typography; Dhivehi links and the current page use body-sm medium for readability.
+Use `VeliProvider language="dv"` for Dhivehi. The list, separators, and back-link caret mirror automatically for RTL, while the slash separator stays `/`. English links use body-sm medium while the current page uses body-sm regular; Dhivehi links and the current page use body-sm medium for readability.
 
 Hover, pressed, and focus changes animate colors only with Veli's normal-duration easing. These transitions are disabled when the user prefers reduced motion.
 

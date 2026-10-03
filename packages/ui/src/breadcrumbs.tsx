@@ -22,7 +22,9 @@ const breadcrumbsRootVariants = cva(
 
 const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5 px-2 py-0.5';
 
-const breadcrumbInteractiveTypographyClassName =
+const breadcrumbInteractiveTypographyClassName = 'type-body-sm-medium';
+
+const breadcrumbCurrentTypographyClassName =
   'type-body-sm-regular [&:lang(dv)]:type-body-sm-medium';
 
 const breadcrumbInteractiveTextClassName =
@@ -42,11 +44,11 @@ const breadcrumbItemVariants = cva(
 );
 
 const breadcrumbLinkVariants = cva(
-  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTypographyClassName} ${breadcrumbInteractiveTextClassName} rounded-md motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base`,
+  `${breadcrumbItemContentClassName} cursor-pointer ${breadcrumbInteractiveTypographyClassName} ${breadcrumbInteractiveTextClassName} rounded-md motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-border-focus focus-visible:outline-offset-2`,
   {
     variants: {
       isDisabled: {
-        true: 'cursor-default text-disabled hover:text-disabled active:text-disabled focus-visible:text-disabled',
+        true: 'cursor-default text-base-inactive hover:text-base-inactive active:text-base-inactive focus-visible:text-base-inactive',
         false: 'hover:bg-breadcrumbs-hover active:bg-breadcrumbs-pressed',
       },
     },
@@ -56,49 +58,46 @@ const breadcrumbLinkVariants = cva(
   },
 );
 
-const breadcrumbTextVariants = cva(
-  `${breadcrumbItemContentClassName} type-body-sm-regular text-base-muted`,
-  {
-    variants: {
-      isDisabled: {
-        true: 'text-disabled',
-        false: '',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
+const breadcrumbTextVariants = cva(`${breadcrumbItemContentClassName} text-base-muted`, {
+  variants: {
+    isDisabled: {
+      true: 'type-body-sm-medium text-base-inactive',
+      false: 'type-body-sm-regular',
     },
   },
-);
+  defaultVariants: {
+    isDisabled: false,
+  },
+});
 
 const breadcrumbCurrentVariants = cva(
-  `${breadcrumbItemContentClassName} ${breadcrumbInteractiveTypographyClassName} text-base-strong`,
+  `${breadcrumbItemContentClassName} ${breadcrumbCurrentTypographyClassName} text-base-default`,
 );
 
 const breadcrumbOverflowTriggerVariants = cva(
-  `${breadcrumbItemContentClassName} min-w-6 cursor-pointer justify-center rounded-md type-body-sm-regular text-base-muted motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none outline-none`,
+  `${breadcrumbItemContentClassName} w-[29px] cursor-pointer justify-center rounded-md type-body-sm-regular text-base-default motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none aria-expanded:bg-breadcrumbs-pressed aria-expanded:type-body-sm-semibold aria-expanded:ring-1 aria-expanded:ring-inset aria-expanded:ring-border-focus outline-none focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-border-focus focus-visible:outline-offset-2`,
   {
     variants: {
       isHovered: {
-        true: 'bg-breadcrumbs-hover text-base-default',
+        true: 'bg-breadcrumbs-hover type-body-sm-semibold',
         false: '',
       },
       isPressed: {
-        true: 'bg-breadcrumbs-pressed text-base-default',
-        false: '',
-      },
-      isFocusVisible: {
-        true: 'text-base-default ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        true: 'bg-breadcrumbs-pressed type-body-sm-semibold',
         false: '',
       },
     },
     defaultVariants: {
       isHovered: false,
       isPressed: false,
-      isFocusVisible: false,
     },
   },
 );
+
+const breadcrumbOverflowItemClassName = 'inline-flex items-center gap-1.5 type-body-sm-regular';
+
+const breadcrumbOverflowDividerClassName =
+  'inline-flex shrink-0 py-0.5 type-body-sm-regular text-base-inactive';
 
 export interface BreadcrumbsProps<T extends object> extends Omit<
   AriaBreadcrumbsProps<T>,
@@ -215,7 +214,7 @@ export function BreadcrumbBackLink({
             breadcrumbLinkVariants({
               isDisabled: state.isDisabled,
             }),
-            breadcrumbBackLinkLinkClassName,
+            state.isDisabled ? undefined : breadcrumbBackLinkLinkClassName,
           )
         }
       >
@@ -231,7 +230,7 @@ export function BreadcrumbBackLink({
       target={target}
       rel={rel}
       onPress={onPress}
-      linkClassName={breadcrumbBackLinkLinkClassName}
+      linkClassName={isDisabled ? undefined : breadcrumbBackLinkLinkClassName}
     >
       {content}
     </Breadcrumb>
@@ -299,7 +298,7 @@ export function BreadcrumbOverflow({
   const { direction, lang } = useVeliLanguage();
 
   return (
-    <AriaBreadcrumb {...props} className={twMerge(breadcrumbItemVariants(), className)}>
+    <AriaBreadcrumb {...props} className={twMerge(breadcrumbOverflowItemClassName, className)}>
       <MenuTrigger>
         <AriaButton
           aria-label={label}
@@ -308,15 +307,20 @@ export function BreadcrumbOverflow({
               breadcrumbOverflowTriggerVariants({
                 isHovered: state.isHovered && !state.isPressed,
                 isPressed: state.isPressed,
-                isFocusVisible: state.isFocusVisible,
               }),
               triggerClassName,
             )
           }
         >
-          <span aria-hidden="true">…</span>
+          <span aria-hidden="true">...</span>
         </AriaButton>
-        <MenuPopover className={popoverClassName}>
+        <MenuPopover
+          offset={2}
+          className={twMerge(
+            'min-w-[155px] w-[155px] border-[0.5px] border-base-muted',
+            popoverClassName,
+          )}
+        >
           <Menu aria-label={menuLabel} dir={direction} lang={lang} onAction={onAction}>
             {items.map((item) => (
               <MenuItem
@@ -327,7 +331,7 @@ export function BreadcrumbOverflow({
                 rel={item.rel}
                 isDisabled={item.isDisabled}
                 size="sm"
-                className="cursor-pointer"
+                className="cursor-pointer px-4"
               >
                 {item.label}
               </MenuItem>
@@ -335,6 +339,9 @@ export function BreadcrumbOverflow({
           </Menu>
         </MenuPopover>
       </MenuTrigger>
+      <span aria-hidden="true" className={breadcrumbOverflowDividerClassName}>
+        /
+      </span>
     </AriaBreadcrumb>
   );
 }
