@@ -327,7 +327,7 @@ function PanelContent(props: AccountPanelProps) {
                 <span
                   aria-hidden="true"
                   data-account-appearance-pill
-                  className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-spring motion-reduce:transition-none"
+                  className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-[cubic-bezier(0.34,1.2,0.64,1)] motion-reduce:transition-none"
                   style={{
                     width: `calc((100% - var(--spacing)) / ${appearance.options.length})`,
                     transform: `translateX(calc(${appearanceIndex} * 100% * var(--account-panel-direction)))`,

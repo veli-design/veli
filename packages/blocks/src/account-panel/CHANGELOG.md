@@ -1,3 +1,9 @@
+## 0.1.2
+
+### Changed
+
+- Reduce the theme selection pill's spring overshoot, including the longer movement between Light and Auto.
+
 ## 0.1.1
 
 ### Changed

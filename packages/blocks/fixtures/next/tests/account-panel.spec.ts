@@ -272,39 +272,50 @@ for (const language of ['en', 'dv'])
         .click();
       const dialog = page.getByRole('dialog');
       const pill = dialog.locator('[data-account-appearance-pill]');
-      const start = await pill.boundingBox();
-      if (!start) throw new Error('Missing appearance pill');
       // Auto changes the preference while retaining the light theme, so the host's
       // disableTransitionOnChange does not suppress this independent movement.
-      const target = dialog.getByRole('radio').nth(2);
-      const targetBox = await target.evaluate((element) => {
-        const label = element.closest('label');
-        if (!label) throw new Error('Missing radio label');
-        const { x, width } = label.getBoundingClientRect();
-        return { x, width };
-      });
-      await target.focus();
-      await page.keyboard.press('Space');
-      await expect(target).toBeChecked();
-      if (reducedMotion === 'reduce') {
-        expect(await pill.evaluate((element) => element.getAnimations().length)).toBe(0);
-      } else {
-        const midway = await pill.evaluate((element) => {
-          const animation = element.getAnimations()[0];
-          if (!animation) throw new Error('Missing pill movement animation');
-          animation.pause();
-          animation.currentTime = Number(animation.effect?.getTiming().duration) * 0.1;
-          const x = element.getBoundingClientRect().x;
-          animation.finish();
-          return x;
+      for (const targetIndex of [2, 0]) {
+        const start = await pill.boundingBox();
+        if (!start) throw new Error('Missing appearance pill');
+        const target = dialog.getByRole('radio').nth(targetIndex);
+        const targetBox = await target.evaluate((element) => {
+          const label = element.closest('label');
+          if (!label) throw new Error('Missing radio label');
+          const { x, width } = label.getBoundingClientRect();
+          return { x, width };
         });
-        expect(midway).toBeGreaterThan(Math.min(start.x, targetBox.x));
-        expect(midway).toBeLessThan(Math.max(start.x, targetBox.x));
+        await target.focus();
+        await page.keyboard.press('Space');
+        await expect(target).toBeChecked();
+        if (reducedMotion === 'reduce') {
+          expect(await pill.evaluate((element) => element.getAnimations().length)).toBe(0);
+        } else {
+          const samples = await pill.evaluate((element) => {
+            const animation = element.getAnimations()[0];
+            if (!animation) throw new Error('Missing pill movement animation');
+            animation.pause();
+            const duration = Number(animation.effect?.getTiming().duration);
+            const positions = Array.from({ length: 21 }, (_, index) => {
+              animation.currentTime = (duration * index) / 20;
+              return element.getBoundingClientRect().x;
+            });
+            animation.finish();
+            return positions;
+          });
+          const min = Math.min(start.x, targetBox.x);
+          const max = Math.max(start.x, targetBox.x);
+          expect(samples[2]).toBeGreaterThan(min);
+          expect(samples[2]).toBeLessThan(max);
+          // Keep both end-to-end movements within a subtle 2% bounce.
+          const overshoot = (max - min) * 0.02;
+          expect(Math.min(...samples)).toBeGreaterThanOrEqual(min - overshoot);
+          expect(Math.max(...samples)).toBeLessThanOrEqual(max + overshoot);
+        }
+        const end = await pill.boundingBox();
+        if (!end) throw new Error('Missing selected appearance pill');
+        expect(Math.abs(end.x - targetBox.x)).toBeLessThan(1);
+        expect(Math.abs(end.width - targetBox.width)).toBeLessThan(1);
       }
-      const end = await pill.boundingBox();
-      if (!end) throw new Error('Missing selected appearance pill');
-      expect(Math.abs(end.x - targetBox.x)).toBeLessThan(1);
-      expect(Math.abs(end.width - targetBox.width)).toBeLessThan(1);
     });
   }
 
