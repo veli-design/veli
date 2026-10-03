@@ -1,8 +1,16 @@
 'use client';
+
 import { useState } from 'react';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { ApplicationFooter } from '../footer-adapter';
+import { ApplicationHeader } from '../header-adapter';
 import { SiteFooter } from '../components/blocks/site-footer/site-footer';
+
+const FLAG_SRC =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="12"><rect width="18" height="12" fill="#D21034"/><rect x="3" y="3" width="8" height="6" fill="#007E3A"/><circle cx="8" cy="6" r="2" fill="#fff"/></svg>',
+  );
 
 export default function Page() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');
@@ -15,13 +23,29 @@ export default function Page() {
         dir={language === 'dv' ? 'rtl' : 'ltr'}
         className="bg-surface-raised text-text-base min-h-screen"
       >
+        <ApplicationHeader
+          language={language}
+          onLanguageChange={(id) => setLanguage(id === 'dv' ? 'dv' : 'en')}
+          colorScheme={dark ? 'dark' : 'light'}
+          onColorSchemeChange={(scheme) => setDark(scheme === 'dark')}
+          flagSrc={FLAG_SRC}
+          actions={
+            <button
+              type="button"
+              className="bg-button-accent-fill type-body-sm-medium inline-flex h-11 items-center rounded-full px-4 text-white"
+            >
+              Sign In
+            </button>
+          }
+        />
         <main className="p-4">
-          <h1>Footer consumer fixture</h1>
+          <h1>Blocks consumer fixture</h1>
           <button onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}>
-            Change language
+            Fixture language
           </button>{' '}
-          <button onClick={() => setDark(!dark)}>Change theme</button>{' '}
+          <button onClick={() => setDark(!dark)}>Fixture theme</button>{' '}
           <button onClick={() => setLong(!long)}>Long labels</button>
+          <div className="h-[120vh]" aria-hidden />
         </main>
         {language === 'en' && !long ? (
           <ApplicationFooter />

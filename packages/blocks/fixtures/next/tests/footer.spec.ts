@@ -37,8 +37,8 @@ for (const width of [320, 1280])
       }, testInfo) => {
         await page.setViewportSize({ width, height: 800 });
         await page.goto('/');
-        if (language === 'dv') await page.getByRole('button', { name: 'Change language' }).click();
-        if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+        if (language === 'dv') await page.getByRole('button', { name: 'Fixture language' }).click();
+        if (theme === 'dark') await page.getByRole('button', { name: 'Fixture theme' }).click();
         const results = await new AxeBuilder({ page }).analyze();
         expect(results.violations).toEqual([]);
         expect(

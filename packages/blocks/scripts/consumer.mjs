@@ -1,7 +1,7 @@
 import process from 'node:process';
 import console from 'node:console';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
@@ -13,21 +13,29 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
   throw new Error('BLOCKS_CONSUMER_DIR must not exist');
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
-const siteFooter = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
-if (!siteFooter) throw new Error('Missing site-footer block');
-for (const file of bundleFiles(siteFooter)) {
-  const path = resolve(target, file.path);
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, file.bytes);
+
+for (const block of getBlocks()) {
+  for (const file of bundleFiles(block)) {
+    const path = resolve(target, file.path);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, file.bytes);
+  }
+  // Execute the same adapter displayed in the documentation; only its relative destination changes.
+  const exampleName = `${block.manifest.id}-next.tsx`;
+  const adapterName =
+    block.manifest.id === 'site-footer'
+      ? 'footer-adapter.tsx'
+      : block.manifest.id === 'site-header'
+        ? 'header-adapter.tsx'
+        : `${block.manifest.id}-adapter.tsx`;
+  cpSync(resolve(packageRoot, 'examples', exampleName), resolve(target, adapterName));
+  const adapter = resolve(target, adapterName);
+  writeFileSync(
+    adapter,
+    readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"),
+  );
 }
-// Execute the same adapter displayed in the documentation; only its relative destination changes.
-cpSync(
-  resolve(packageRoot, 'examples/site-footer-next.tsx'),
-  resolve(target, 'footer-adapter.tsx'),
-);
-const { readFileSync } = await import('node:fs');
-const adapter = resolve(target, 'footer-adapter.tsx');
-writeFileSync(adapter, readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"));
+
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),
