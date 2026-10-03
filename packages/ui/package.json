@@ -85,6 +85,11 @@
       "import": "./dist/dropzone.js",
       "default": "./dist/dropzone.js"
     },
+    "./form": {
+      "types": "./dist/form.d.ts",
+      "import": "./dist/form.js",
+      "default": "./dist/form.js"
+    },
     "./date-field": {
       "types": "./dist/date-field.d.ts",
       "import": "./dist/date-field.js",

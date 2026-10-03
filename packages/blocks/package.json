@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./notification-tray": "./src/notification-tray/notification-tray.tsx",
     "./site-footer": "./src/site-footer/site-footer.tsx",
     "./catalog": {
       "types": "./scripts/catalog.d.ts",
@@ -16,6 +17,7 @@
     "test:consumer": "node scripts/consumer.mjs"
   },
   "dependencies": {
+    "phosphor-react": "1.4.1",
     "@tradenetcorp/veli-ui": "workspace:*"
   },
   "devDependencies": {

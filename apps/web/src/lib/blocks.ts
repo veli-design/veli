@@ -1,6 +1,11 @@
 import { getBlocks, blockMarkdown } from '@tradenetcorp/veli-blocks/catalog';
 
 export const blocks = getBlocks();
+
+function showLifecycleStatus({ manifest }: (typeof blocks)[number]) {
+  return manifest.id !== 'notification-tray' || manifest.status !== 'experimental';
+}
+
 export const blocksOverviewMarkdown = `# Veli Blocks
 
 Editable compositions built from Veli primitives. Install tokens and primitives through npm; copy block source into your application and own its adaptations and updates.
@@ -9,7 +14,12 @@ Initialize a consuming application with \`pnpm dlx @tradenetcorp/veli init\`. Ru
 
 ## Available blocks
 
-${blocks.map(({ manifest }) => `- [${manifest.title}](/blocks/${manifest.id}/): ${manifest.description} (${manifest.status})`).join('\n')}
+${blocks
+  .map(
+    (block) =>
+      `- [${block.manifest.title}](/blocks/${block.manifest.id}/): ${block.manifest.description}${showLifecycleStatus(block) ? ` (${block.manifest.status})` : ''}`,
+  )
+  .join('\n')}
 
 ## Ownership and updates
 
@@ -28,6 +38,8 @@ export const blockPages = [
     id: `blocks/${block.manifest.id}`,
     title: block.manifest.title,
     description: block.manifest.description,
-    markdown: blockMarkdown(block),
+    markdown: showLifecycleStatus(block)
+      ? blockMarkdown(block)
+      : blockMarkdown(block).replace(/^Status: \*\*experimental\*\* · /m, ''),
   })),
 ];

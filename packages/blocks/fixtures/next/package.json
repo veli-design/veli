@@ -9,12 +9,13 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "@tradenetcorp/veli-ui": "0.11.0",
-    "@tradenetcorp/veli-tokens": "0.7.0",
+    "@tradenetcorp/veli-ui": "0.13.0",
+    "@tradenetcorp/veli-tokens": "0.7.1",
     "next": "16.2.11",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "react-aria-components": "1.19.0"
+    "react-aria-components": "1.19.0",
+    "phosphor-react": "1.4.1"
   },
   "devDependencies": {
     "tailwindcss": "4.3.2",

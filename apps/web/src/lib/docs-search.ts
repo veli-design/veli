@@ -1,6 +1,6 @@
 import type { DocsSearchSource } from './remark-docs-search';
 
-export type DocsSearchCategory = 'Foundations' | 'Components' | 'Blocks';
+export type DocsSearchCategory = 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
 
 export type DocsSearchItem = {
   id: string;
