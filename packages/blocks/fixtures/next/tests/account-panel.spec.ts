@@ -91,7 +91,7 @@ test('empty, loading, failed, display-only and disabled actions have distinct se
     await page.getByLabel('State').selectOption(state);
     const dialog = await openPanel(page);
     if (state === 'empty') {
-      await dialog.getByRole('button', { name: 'Set up delegation' }).click();
+      await dialog.getByRole('button', { name: 'Setup Delegation' }).click();
       await expect(dialog).toBeVisible();
     }
     if (state === 'loading' || state === 'error') {

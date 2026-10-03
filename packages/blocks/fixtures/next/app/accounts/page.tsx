@@ -12,7 +12,7 @@ const initial = {
   id: 'primary',
   displayName: 'Aisha Ahmed',
   secondaryText: 'aisha@example.test',
-  badge: 'Primary user',
+  badge: 'Primary User',
 };
 const others = [
   { id: 'other', displayName: 'Ali Hassan', secondaryText: 'ali@example.test' },
@@ -175,9 +175,9 @@ export default function AccountsPage() {
               title: dv ? 'އެހެން އެކައުންޓުތައް' : 'Add other accounts',
               description: dv
                 ? 'އެހެން އެކައުންޓަކަށް ވަދެވޭނެ.'
-                : 'Set up delegation to access another account.',
+                : 'Set up delegation to act on behalf of other users or businesses you own.',
               action: {
-                label: dv ? 'ޑެލިގޭޝަން' : 'Set up delegation',
+                label: dv ? 'ޑެލިގޭޝަން' : 'Setup Delegation',
                 onPress: () => setDelegationCalls((n) => n + 1),
               },
             }}
@@ -186,12 +186,20 @@ export default function AccountsPage() {
               onPress: () => setManagementCalls((n) => n + 1),
             }}
             appearance={{
-              label: dv ? 'ތީމް' : 'Appearance',
+              label: dv ? 'ތީމް' : 'Switch Theme',
               value: theme,
               options: [
-                { id: 'light', label: dv ? 'ލައިޓް' : 'Light', icon: <Sun size={16} /> },
-                { id: 'dark', label: dv ? 'ޑާކް' : 'Dark', icon: <Moon size={16} /> },
-                { id: 'system', label: dv ? 'ސިސްޓަމް' : 'Auto', icon: <Monitor size={16} /> },
+                {
+                  id: 'light',
+                  label: dv ? 'ލައިޓް' : 'Light',
+                  icon: <Sun size={16} weight="bold" />,
+                },
+                { id: 'dark', label: dv ? 'ޑާކް' : 'Dark', icon: <Moon size={16} weight="bold" /> },
+                {
+                  id: 'system',
+                  label: dv ? 'ސިސްޓަމް' : 'Auto',
+                  icon: <Monitor size={16} weight="bold" />,
+                },
               ],
               onChange: setTheme,
             }}

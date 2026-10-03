@@ -11,7 +11,7 @@ export function AccountPanelDemo() {
       id: 'personal',
       displayName: 'Aisha Ahmed',
       secondaryText: 'aisha@example.test',
-      badge: 'Primary user',
+      badge: 'Primary User',
     },
     { id: 'team', displayName: 'Example team', secondaryText: 'Team account' },
   ];

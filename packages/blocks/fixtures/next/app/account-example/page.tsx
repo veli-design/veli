@@ -20,7 +20,7 @@ export default function ExamplePage() {
             pending: 'Working…',
             disabled: 'Unavailable',
           }}
-          primaryLabel="Primary user"
+          primaryLabel="Primary User"
           signOutLabel="Sign out"
           failureLabel="Operation failed. Try again."
           logout={async () => {

@@ -18,7 +18,7 @@ const account = {
   id: 'personal',
   displayName: 'Aisha Ahmed',
   secondaryText: 'aisha@example.test',
-  badge: 'Primary user',
+  badge: 'Primary User',
 };
 const groups = [
   {
@@ -85,16 +85,16 @@ const meta = {
     signOut: { label: 'Sign out', onPress: () => {} },
     emptyState: {
       title: 'Add other accounts',
-      description: 'Set up delegation to access another account.',
-      action: { label: 'Set up delegation', onPress: () => {} },
+      description: 'Set up delegation to act on behalf of other users or businesses you own.',
+      action: { label: 'Setup Delegation', onPress: () => {} },
     },
     appearance: {
-      label: 'Appearance',
+      label: 'Switch Theme',
       value: 'system',
       options: [
-        { id: 'light', label: 'Light', icon: <Sun size={16} /> },
-        { id: 'dark', label: 'Dark', icon: <Moon size={16} /> },
-        { id: 'system', label: 'Auto', icon: <Monitor size={16} /> },
+        { id: 'light', label: 'Light', icon: <Sun size={16} weight="bold" /> },
+        { id: 'dark', label: 'Dark', icon: <Moon size={16} weight="bold" /> },
+        { id: 'system', label: 'Auto', icon: <Monitor size={16} weight="bold" /> },
       ],
       onChange: () => {},
     },
