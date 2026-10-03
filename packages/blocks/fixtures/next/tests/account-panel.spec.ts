@@ -256,6 +256,58 @@ test('image loading and failed image fallback preserve the profile name', async 
   }
 });
 
+for (const language of ['en', 'dv'])
+  for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+    test(`${language} ${reducedMotion}: appearance pill moves to the controlled selection`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion });
+      await page.goto('/accounts');
+      if (language === 'dv') await page.getByRole('button', { name: 'Change language' }).click();
+      await page
+        .getByRole('button', {
+          name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+          exact: true,
+        })
+        .click();
+      const dialog = page.getByRole('dialog');
+      const pill = dialog.locator('[data-account-appearance-pill]');
+      const start = await pill.boundingBox();
+      if (!start) throw new Error('Missing appearance pill');
+      // Auto changes the preference while retaining the light theme, so the host's
+      // disableTransitionOnChange does not suppress this independent movement.
+      const target = dialog.getByRole('radio').nth(2);
+      const targetBox = await target.evaluate((element) => {
+        const label = element.closest('label');
+        if (!label) throw new Error('Missing radio label');
+        const { x, width } = label.getBoundingClientRect();
+        return { x, width };
+      });
+      await target.focus();
+      await page.keyboard.press('Space');
+      await expect(target).toBeChecked();
+      if (reducedMotion === 'reduce') {
+        expect(await pill.evaluate((element) => element.getAnimations().length)).toBe(0);
+      } else {
+        const midway = await pill.evaluate((element) => {
+          const animation = element.getAnimations()[0];
+          if (!animation) throw new Error('Missing pill movement animation');
+          animation.pause();
+          animation.currentTime = Number(animation.effect?.getTiming().duration) * 0.1;
+          const x = element.getBoundingClientRect().x;
+          animation.finish();
+          return x;
+        });
+        expect(midway).toBeGreaterThan(Math.min(start.x, targetBox.x));
+        expect(midway).toBeLessThan(Math.max(start.x, targetBox.x));
+      }
+      const end = await pill.boundingBox();
+      if (!end) throw new Error('Missing selected appearance pill');
+      expect(Math.abs(end.x - targetBox.x)).toBeLessThan(1);
+      expect(Math.abs(end.width - targetBox.width)).toBeLessThan(1);
+    });
+  }
+
 test('documented adapter owns asynchronous errors and retry presentation', async ({ page }) => {
   await page.goto('/account-example');
   const dialog = await openPanel(page);

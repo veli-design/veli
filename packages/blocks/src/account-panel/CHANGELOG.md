@@ -1,3 +1,9 @@
+## 0.1.1
+
+### Changed
+
+- Animate the appearance selection pill with Veli spring easing and slow-duration motion tokens, including RTL movement and immediate reduced-motion updates.
+
 ## 0.1.0
 
 ### Added

@@ -111,6 +111,9 @@ export const Desktop: Story = {
     await userEvent.click(trigger);
     const dialog = await page.findByRole('dialog', { name: labels.dialog });
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.click(within(dialog).getByRole('radio', { name: 'Light' }));
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(within(dialog).getByRole('radio', { name: 'Dark' })).toBeChecked();
     await userEvent.click(within(dialog).getByRole('button', { name: /Ali Hassan/ }));
     await expect(within(dialog).getByText('Ali Hassan')).toBeVisible();
     await userEvent.click(within(dialog).getByRole('button', { name: 'Sign out' }));

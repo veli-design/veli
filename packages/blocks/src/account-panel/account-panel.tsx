@@ -224,6 +224,8 @@ function AccountRow({
 function PanelContent(props: AccountPanelProps) {
   const { selectedAccount, labels, accountGroups = [], appearance } = props;
   const groups = accountGroups.filter((group) => group.accounts.length > 0);
+  const appearanceIndex =
+    appearance?.options.findIndex((option) => option.id === appearance.value) ?? -1;
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 px-6 pb-6 sm:p-4">
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain">
@@ -320,13 +322,24 @@ function PanelContent(props: AccountPanelProps) {
             <span className="type-body-sm-regular pt-4 pb-2 text-base-default">
               {appearance.label}
             </span>
-            <div className="flex flex-wrap rounded-full bg-neutral-alpha-200 p-0.5">
+            <div className="relative isolate flex rounded-full bg-neutral-alpha-200 p-0.5 [--account-panel-direction:1] rtl:[--account-panel-direction:-1]">
+              {appearanceIndex >= 0 && (
+                <span
+                  aria-hidden="true"
+                  data-account-appearance-pill
+                  className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-spring motion-reduce:transition-none"
+                  style={{
+                    width: `calc((100% - var(--spacing)) / ${appearance.options.length})`,
+                    transform: `translateX(calc(${appearanceIndex} * 100% * var(--account-panel-direction)))`,
+                  }}
+                />
+              )}
               {appearance.options.map((option) => (
                 <Radio
                   key={option.id}
                   value={option.id}
                   isDisabled={option.isDisabled}
-                  className="type-body-sm-medium flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:bg-button-secondary-subtle data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[disabled]:text-disabled motion-reduce:transition-none"
+                  className="type-body-sm-medium relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[disabled]:text-disabled motion-reduce:transition-none"
                 >
                   {option.icon && (
                     <span aria-hidden="true" className="flex shrink-0">

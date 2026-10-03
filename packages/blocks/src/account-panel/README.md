@@ -70,6 +70,8 @@ Drag starts only on the grabber. A downward drag exceeding 35% of sheet height, 
 
 Names and secondary text truncate visually while retaining their full accessible text. Host-provided language/direction metadata and logical layout support mixed English/LTR and Dhivehi/RTL. Loading, pending, disabled, and error meanings include text rather than relying on color. Motion respects reduced-motion preferences. Keep the default `sm` breakpoint when adopting, or update both the media query and responsive utilities in your copy.
 
+The appearance control moves a single background pill between the selected options using Veli's `duration-slow` (350ms) and `ease-spring` curve. It follows logical RTL order and updates immediately when reduced motion is requested. Theme application still belongs to the host.
+
 Validate your surrounding header, routes, translations, fonts, screen readers and devices during adoption. Automated consumer checks cover keyboard/focus, dismissal, gestures, hydration, reflow, RTL, themes and reduced motion.
 
 ## Customization and updates
