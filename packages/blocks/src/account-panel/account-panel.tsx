@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useId, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { Radio, RadioGroup } from 'react-aria-components';
+import { Button as AriaButton, Radio, RadioGroup } from 'react-aria-components';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
@@ -173,7 +173,7 @@ function AccountRow({
           <span
             lang={account.lang}
             dir={account.dir ?? 'auto'}
-            className="type-body-sm-regular truncate text-base-muted"
+            className="type-body-sm-regular truncate text-base-default"
           >
             {account.secondaryText}
           </span>
@@ -194,10 +194,9 @@ function AccountRow({
   return (
     <li className="min-w-0">
       {onSelect ? (
-        <Button
-          intent="secondary"
-          appearance="ghost"
-          className="w-full justify-start rounded-2xl p-3 [&>span]:w-full [&>span]:justify-start [&>span]:gap-3 [&>span]:px-0"
+        <AriaButton
+          type="button"
+          className="flex w-full min-w-0 cursor-pointer items-center gap-3 rounded-2xl border-0 bg-transparent p-3 text-start font-sans text-base-strong outline-none data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-raised data-[disabled]:cursor-default data-[pending]:cursor-wait forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2"
           isDisabled={account.isDisabled}
           isPending={account.isPending}
           aria-describedby={
@@ -206,9 +205,17 @@ function AccountRow({
           onPress={() => {
             if (!account.isPending && !account.isDisabled) onSelect(account.id);
           }}
+          render={(domProps, { isPending }) => (
+            <button
+              {...domProps}
+              type="button"
+              aria-busy={isPending || undefined}
+              onClick={isPending ? (event) => event.preventDefault() : domProps.onClick}
+            />
+          )}
         >
           {content}
-        </Button>
+        </AriaButton>
       ) : (
         <div className="flex min-w-0 items-center gap-3 p-3">{content}</div>
       )}

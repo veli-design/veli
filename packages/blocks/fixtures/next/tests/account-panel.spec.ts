@@ -74,6 +74,71 @@ test('host callbacks retain the panel, account updates and theme changes are con
   );
 });
 
+for (const theme of ['light', 'dark']) {
+  test(`${theme}: account row press uses subtle colors without scaling or ripple`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    await page.goto('/accounts');
+    if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+    const dialog = await openPanel(page);
+    const row = dialog.getByRole('button', { name: /Ali Hassan/ });
+    const idleColor = await row.evaluate((element) => getComputedStyle(element).backgroundColor);
+    await row.hover();
+    await expect(row).toHaveAttribute('data-hovered', 'true');
+    const before = await row.boundingBox();
+    if (!before) throw new Error('Missing account row geometry');
+    const hoverColor = await row.evaluate((element) => getComputedStyle(element).backgroundColor);
+    expect(hoverColor).not.toBe(idleColor);
+    expect(
+      (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
+    ).toEqual([]);
+    await row.screenshot({ path: testInfo.outputPath('account-row-hover.png') });
+    await page.mouse.down();
+    await expect(row).toHaveAttribute('data-pressed', 'true');
+    expect(await row.boundingBox()).toEqual(before);
+    const pressed = await row.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const reference = document.createElement('span');
+      reference.style.backgroundColor = 'var(--color-button-secondary-subtle-hover)';
+      element.append(reference);
+      const tokenColor = getComputedStyle(reference).backgroundColor;
+      reference.remove();
+      return {
+        color: style.backgroundColor,
+        tokenColor,
+        scale: style.scale,
+        transform: style.transform,
+        ripple: getComputedStyle(element, '::after').content,
+        animations: element.getAnimations().length,
+      };
+    });
+    expect(pressed.color).toBe(pressed.tokenColor);
+    expect(pressed.color).not.toBe(hoverColor);
+    expect(pressed.scale).toBe('none');
+    expect(pressed.transform).toBe('none');
+    expect(pressed.ripple).toBe('none');
+    expect(pressed.animations).toBe(0);
+    expect(
+      (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
+    ).toEqual([]);
+    await row.screenshot({ path: testInfo.outputPath('account-row-pressed.png') });
+    await page.mouse.up();
+    await expect(dialog.getByRole('button', { name: /Ali Hassan/ })).toHaveCount(0);
+    await expect(dialog).toBeVisible();
+    const nextRow = dialog.getByRole('button', { name: /Example team/ });
+    await page.keyboard.press('Tab');
+    await nextRow.focus();
+    await expect(nextRow).toHaveAttribute('data-focus-visible', 'true');
+    expect(await nextRow.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe(
+      'none',
+    );
+    await page.keyboard.press('Space');
+    await expect(dialog.getByRole('button', { name: /Example team/ })).toHaveCount(0);
+    await expect(page.locator('[data-calls]')).toContainText('Selection: 2');
+  });
+}
+
 test('empty, loading, failed, display-only and disabled actions have distinct semantics', async ({
   page,
 }) => {
@@ -111,10 +176,12 @@ test('empty, loading, failed, display-only and disabled actions have distinct se
       );
       // Native click attempts must not invoke a blocked action.
       await signOut.evaluate((button: HTMLButtonElement) => button.click());
-      await expect(dialog.getByRole('button', { name: /Ali Hassan/ })).toHaveAttribute(
+      const row = dialog.getByRole('button', { name: /Ali Hassan/ });
+      await expect(row).toHaveAttribute(
         state === 'pending' ? 'aria-busy' : 'disabled',
         state === 'pending' ? 'true' : '',
       );
+      await row.evaluate((button: HTMLButtonElement) => button.click());
     }
     if (state === 'action-error') {
       await expect(dialog.getByRole('alert')).toHaveCount(3);

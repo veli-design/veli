@@ -1,3 +1,10 @@
+## 0.1.5
+
+### Changed
+
+- Use a custom React Aria account-row button with subtle Veli hover/pressed colors and visible keyboard focus, preserving pending/disabled behavior without primitive layout overrides, press scaling, or ripple animation.
+- Improve secondary-text contrast against the row's interaction backgrounds in light and dark themes.
+
 ## 0.1.4
 
 ### Changed

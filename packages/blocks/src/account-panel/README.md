@@ -70,6 +70,8 @@ Drag starts only on the grabber. A downward drag exceeding 35% of sheet height, 
 
 Names and secondary text truncate visually while retaining their full accessible text. Host-provided language/direction metadata and logical layout support mixed English/LTR and Dhivehi/RTL. Loading, pending, disabled, and error meanings include text rather than relying on color. Motion respects reduced-motion preferences. Keep the default `sm` breakpoint when adopting, or update both the media query and responsive utilities in your copy.
 
+Account rows use a custom React Aria button for their avatar/text layout, rather than overriding Veli Button's internal structure. Hover uses `bg-button-secondary-subtle`; pressing darkens slightly to `bg-button-secondary-subtle-hover`, with no scaling or ripple. Secondary text uses `text-base-default` to maintain contrast against both interaction backgrounds in light and dark themes. Keyboard focus remains visible, and pending rows retain their names and cannot invoke selection again. Other actions continue to use the public Veli Button.
+
 The appearance control moves a single background pill between the selected options using Veli's `duration-slow` (350ms) and a damped variant of `ease-spring`: `cubic-bezier(0.34, 1.2, 0.64, 1)`. This retains a small bounce while limiting overshoot on the longer Light/Auto movement. It follows logical RTL order and updates immediately when reduced motion is requested. Theme application still belongs to the host.
 
 Validate your surrounding header, routes, translations, fonts, screen readers and devices during adoption. Automated consumer checks cover keyboard/focus, dismissal, gestures, hydration, reflow, RTL, themes and reduced motion.
