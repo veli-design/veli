@@ -220,6 +220,19 @@ for (const width of [320, 1280])
           .click();
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
+        if (width >= 640) {
+          const scrollArea = dialog.locator('.overflow-y-auto');
+          const scrollBox = await scrollArea.boundingBox();
+          const footerBox = await dialog
+            .getByRole('button', { name: language === 'dv' ? 'ސައިން އައުޓް' : 'Sign out' })
+            .locator('../..')
+            .boundingBox();
+          if (!scrollBox || !footerBox) throw new Error('Missing scroll area or footer geometry');
+          expect(
+            await scrollArea.evaluate((element) => element.scrollHeight > element.clientHeight),
+          ).toBe(true);
+          expect(Math.abs(scrollBox.y + scrollBox.height - footerBox.y)).toBeLessThan(1);
+        }
         expect(
           (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
         ).toEqual([]);

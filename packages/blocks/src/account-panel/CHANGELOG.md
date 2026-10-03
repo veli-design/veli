@@ -1,3 +1,9 @@
+## 0.1.4
+
+### Changed
+
+- Extend the desktop scroll area to the footer border, keeping content spacing inside the scroll area so overflowing accounts clip at the divider.
+
 ## 0.1.3
 
 ### Changed

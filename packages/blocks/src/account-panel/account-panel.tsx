@@ -227,8 +227,8 @@ function PanelContent(props: AccountPanelProps) {
   const appearanceIndex =
     appearance?.options.findIndex((option) => option.id === appearance.value) ?? -1;
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 px-6 pb-6 sm:p-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 px-6 pb-6 sm:gap-0 sm:p-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain sm:pb-4">
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-neutral-alpha-200 px-2 pt-7 pb-8 text-center">
           <AccountAvatar account={selectedAccount} size="60" />
           <div
