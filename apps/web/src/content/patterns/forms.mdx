@@ -211,13 +211,14 @@ Both accept strings, `{ message }` objects (React Hook Form's `fieldState.error`
 
 ## Checkbox groups
 
-`CheckboxGroup` holds a `string[]` value, so it takes a form field directly in both libraries. Give each `Checkbox` a `value`. `RadioGroup` and `CheckboxGroup` show `description` and `errorMessage` below the group.
+`CheckboxGroup` holds a `string[]` value, so it takes a form field directly in both libraries. Give each `Checkbox` a `value`. For a visible group label, compose [Field](/docs/field/) children inside the group, or keep `aria-label` with the group's `description` / `errorMessage` props — not both styles at once.
 
 ```tsx
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+
 <form.Field name="channels">
   {(field) => (
     <CheckboxGroup
-      aria-label="Notification channels"
       name={field.name}
       value={field.state.value}
       onChange={field.handleChange}
@@ -225,11 +226,12 @@ Both accept strings, `{ message }` objects (React Hook Form's `fieldState.error`
       isInvalid={field.state.meta.isTouched && !field.state.meta.isValid}
       errorMessage={toErrorMessage(field.state.meta.errors)}
     >
+      <FieldLabel>Notification channels</FieldLabel>
       <Checkbox value="email">Email</Checkbox>
       <Checkbox value="sms">SMS</Checkbox>
     </CheckboxGroup>
   )}
-</form.Field>
+</form.Field>;
 ```
 
 With React Hook Form, spread `{...field}` and pass `isInvalid` / `errorMessage` from `fieldState`.
@@ -337,4 +339,4 @@ For booleans stored as strings, read with `value === 'true'` and write `"true"` 
 
 ## Related components
 
-Individual field APIs remain on their component pages: [Input](/docs/input/), [Select](/docs/select/), [Checkbox](/docs/checkbox/), [DatePicker](/docs/date-picker/), and the rest of the Forms group under Components.
+Individual field APIs remain on their component pages: [Field](/docs/field/), [Input](/docs/input/), [Select](/docs/select/), [Checkbox](/docs/checkbox/), [DatePicker](/docs/date-picker/), and the rest of the Forms group under Components.

@@ -6,10 +6,11 @@ import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
@@ -1963,5 +1964,38 @@ export function DropzoneValidationDemo() {
         onFileReject={(file, message) => setError(`${file.name}: ${message}`)}
       />
     </div>
+  );
+}
+
+export function FieldUsageDemo() {
+  return (
+    <RadioGroup className="max-w-md gap-3" defaultValue="pro">
+      <FieldLabel>Plan</FieldLabel>
+      <FieldDescription>You can change this later.</FieldDescription>
+      <Radio value="basic">Basic</Radio>
+      <Radio value="pro">Pro</Radio>
+    </RadioGroup>
+  );
+}
+
+export function FieldCheckboxGroupDemo() {
+  return (
+    <CheckboxGroup className="max-w-md gap-3" defaultValue={['email']}>
+      <FieldLabel>Notification channels</FieldLabel>
+      <FieldDescription>Where should we send updates?</FieldDescription>
+      <Checkbox value="email">Email</Checkbox>
+      <Checkbox value="sms">SMS</Checkbox>
+    </CheckboxGroup>
+  );
+}
+
+export function FieldValidationDemo() {
+  return (
+    <RadioGroup className="max-w-md gap-3" isInvalid>
+      <FieldLabel>Plan</FieldLabel>
+      <Radio value="basic">Basic</Radio>
+      <Radio value="pro">Pro</Radio>
+      <FieldError>Choose a plan to continue.</FieldError>
+    </RadioGroup>
   );
 }
