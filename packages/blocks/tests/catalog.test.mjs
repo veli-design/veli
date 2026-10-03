@@ -63,38 +63,39 @@ test('archive is deterministic and its entries contain the exact advertised byte
   }
 });
 
-test('CLI source archive and catalog are deterministic and content-addressed', () => {
-  const zipped = sourceArchive(block, provenance);
-  assert.deepEqual(zipped, sourceArchive(block, provenance));
-  const files = sourceBundleFiles(block, provenance);
-  assert.ok(files.some((file) => file.path === 'manifest.json'));
-  assert.ok(files.some((file) => file.path === 'receipt.json'));
-  for (const file of block.files)
-    assert.ok(files.some((entry) => entry.path === `source/${file.path}`));
+for (const block of getBlocks())
+  test(`${block.manifest.id}: CLI source archive and catalog are deterministic and content-addressed`, () => {
+    const zipped = sourceArchive(block, provenance);
+    assert.deepEqual(zipped, sourceArchive(block, provenance));
+    const files = sourceBundleFiles(block, provenance);
+    assert.ok(files.some((file) => file.path === 'manifest.json'));
+    assert.ok(files.some((file) => file.path === 'receipt.json'));
+    for (const file of block.files)
+      assert.ok(files.some((entry) => entry.path === `source/${file.path}`));
 
-  const releases = getBlockVersions(block, provenance);
-  const canonical = sourceArchive(releases[0].block, releases[0].provenance);
-  const catalog = blocksCatalog(provenance);
-  const entry = catalog.blocks.find(({ manifest }) => manifest.id === block.manifest.id);
-  assert.equal(catalog.schemaVersion, 1);
-  assert.equal(entry.versions[0].version, block.manifest.version);
-  assert.equal(entry.versions[0].archiveSha256, sha256(canonical));
-  assert.equal(entry.versions[0].sourceCommit, releases[0].provenance.sourceCommit);
-  const unrelatedDeploy = blocksCatalog({ sourceCommit: 'b'.repeat(40), dirty: false });
-  const unrelatedEntry = unrelatedDeploy.blocks.find(
-    ({ manifest }) => manifest.id === block.manifest.id,
-  );
-  for (const release of releases) {
-    // New, uncommitted versions use the supplied checkout provenance. Already
-    // committed archives must stay unchanged across unrelated deployments.
-    if (release.provenance.sourceCommit === provenance.sourceCommit) continue;
-    const version = release.block.manifest.version;
-    assert.equal(
-      unrelatedEntry.versions.find((entry) => entry.version === version).archiveSha256,
-      entry.versions.find((entry) => entry.version === version).archiveSha256,
+    const releases = getBlockVersions(block, provenance);
+    const canonical = sourceArchive(releases[0].block, releases[0].provenance);
+    const catalog = blocksCatalog(provenance);
+    const entry = catalog.blocks.find(({ manifest }) => manifest.id === block.manifest.id);
+    assert.equal(catalog.schemaVersion, 1);
+    assert.equal(entry.versions[0].version, block.manifest.version);
+    assert.equal(entry.versions[0].archiveSha256, sha256(canonical));
+    assert.equal(entry.versions[0].sourceCommit, releases[0].provenance.sourceCommit);
+    const unrelatedDeploy = blocksCatalog({ sourceCommit: 'b'.repeat(40), dirty: false });
+    const unrelatedEntry = unrelatedDeploy.blocks.find(
+      ({ manifest }) => manifest.id === block.manifest.id,
     );
-  }
-});
+    for (const release of releases) {
+      // New, uncommitted versions use the supplied checkout provenance. Already
+      // committed archives must stay unchanged across unrelated deployments.
+      if (release.provenance.sourceCommit === provenance.sourceCommit) continue;
+      const version = release.block.manifest.version;
+      assert.equal(
+        unrelatedEntry.versions.find((entry) => entry.version === version).archiveSha256,
+        entry.versions.find((entry) => entry.version === version).archiveSha256,
+      );
+    }
+  });
 
 for (const block of getBlocks())
   test(`${block.manifest.id}: latest CLI release contains the current source inventory and bytes`, () => {

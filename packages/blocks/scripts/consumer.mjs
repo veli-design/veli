@@ -13,6 +13,22 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
   throw new Error('BLOCKS_CONSUMER_DIR must not exist');
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
+// Exercise Storybook play functions against the same canonical imports in a real browser.
+const storybookBuild = spawnSync(
+  'corepack',
+  ['pnpm', '--filter', '@tradenetcorp/veli-storybook', 'build'],
+  {
+    cwd: resolve(packageRoot, '../..'),
+    stdio: 'inherit',
+  },
+);
+if (storybookBuild.status !== 0) throw new Error('Storybook build failed');
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/storybook-static'),
+  resolve(target, 'public/storybook'),
+  { recursive: true },
+);
+
 for (const block of getBlocks()) {
   for (const file of bundleFiles(block)) {
     const path = resolve(target, file.path);
@@ -31,6 +47,13 @@ writeFileSync(adapter, readFileSync(adapter, 'utf8').replace("'../components/", 
 writeFileSync(
   resolve(target, 'notification-adapter.tsx'),
   readFileSync(resolve(packageRoot, 'examples/notification-tray-next.tsx'), 'utf8').replace(
+    "'../components/",
+    "'./components/",
+  ),
+);
+writeFileSync(
+  resolve(target, 'account-adapter.tsx'),
+  readFileSync(resolve(packageRoot, 'examples/account-panel-next.tsx'), 'utf8').replace(
     "'../components/",
     "'./components/",
   ),
