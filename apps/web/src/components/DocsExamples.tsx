@@ -5,7 +5,7 @@ import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
+import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
@@ -48,7 +48,6 @@ import {
   ArrowRight,
   Bell,
   CalendarBlank,
-  CaretLeft,
   CaretDown,
   CheckCircle,
   DownloadSimple,
@@ -75,6 +74,11 @@ const BREADCRUMB_TRAIL: BreadcrumbTrailItem[] = [
   { id: 'services', label: 'Services', href: '#' },
   { id: 'permits', label: 'Permits', href: '#' },
   { id: 'fishing', label: 'Fishing permit' },
+];
+
+const BREADCRUMB_OVERFLOW_ITEMS = [
+  { id: 'applications', label: 'Applications', href: '#' },
+  { id: 'permits', label: 'Permits', href: '#' },
 ];
 
 type TagDemoItem = {
@@ -281,63 +285,55 @@ export function BreadcrumbsUsageDemo() {
   );
 }
 
-export function BreadcrumbsVariantsDemo() {
+export function BreadcrumbsBackLinkDemo() {
+  return (
+    <Breadcrumbs aria-label="Back breadcrumb" showBackLink backLinkHref="#" backLinkLabel="Back">
+      <Breadcrumb href="#">Services</Breadcrumb>
+      <Breadcrumb>Fishing permit</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsOverflowDemo() {
+  return (
+    <Breadcrumbs aria-label="Overflow breadcrumb">
+      <Breadcrumb href="#">Home</Breadcrumb>
+      <BreadcrumbOverflow items={BREADCRUMB_OVERFLOW_ITEMS} />
+      <Breadcrumb href="#">Permits</Breadcrumb>
+      <Breadcrumb>Fishing permit</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsDisabledDemo() {
+  return (
+    <Breadcrumbs aria-label="Disabled breadcrumb">
+      <Breadcrumb href="#">Home</Breadcrumb>
+      <Breadcrumb href="#" isDisabled>
+        Archived services
+      </Breadcrumb>
+      <Breadcrumb>Permit details</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsDataDrivenDemo() {
   const [currentIndex, setCurrentIndex] = useState(BREADCRUMB_TRAIL.length - 1);
   const items = BREADCRUMB_TRAIL.slice(0, currentIndex + 1);
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Static breadcrumb trail</p>
-          <Breadcrumbs aria-label="Site navigation breadcrumb">
-            <Breadcrumb href="#">Home</Breadcrumb>
-            <Breadcrumb href="#">Departments</Breadcrumb>
-            <Breadcrumb href="#" isDisabled>
-              Fisheries
-            </Breadcrumb>
-            <Breadcrumb>Licensing</Breadcrumb>
-          </Breadcrumbs>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Back link treatment</p>
-          <Breadcrumbs aria-label="Back breadcrumb">
-            <Breadcrumb href="#" tone="accent">
-              <CaretLeft aria-hidden size={16} weight="bold" />
-              <span>Previous Page</span>
-            </Breadcrumb>
-            <Breadcrumb href="#">Menu One</Breadcrumb>
-            <Breadcrumb>...</Breadcrumb>
-            <Breadcrumb href="#">Menu Five</Breadcrumb>
-            <Breadcrumb>Menu Active</Breadcrumb>
-          </Breadcrumbs>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px] lg:col-span-2">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Data-driven breadcrumb trail</p>
-          <Breadcrumbs
-            aria-label="Application breadcrumb"
-            items={items}
-            onAction={(key) => {
-              const nextIndex = BREADCRUMB_TRAIL.findIndex((item) => item.id === key);
-              if (nextIndex >= 0) {
-                setCurrentIndex(nextIndex);
-              }
-            }}
-          >
-            {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
-          </Breadcrumbs>
-          <p className="type-caption-12-regular text-base-muted">
-            Activate an earlier crumb to collapse the trail to that level.
-          </p>
-        </div>
-      </div>
-    </div>
+    <Breadcrumbs
+      aria-label="Application breadcrumb"
+      items={items}
+      onAction={(key) => {
+        const nextIndex = BREADCRUMB_TRAIL.findIndex((item) => item.id === key);
+        if (nextIndex >= 0) {
+          setCurrentIndex(nextIndex);
+        }
+      }}
+    >
+      {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
+    </Breadcrumbs>
   );
 }
 
