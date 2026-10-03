@@ -25,7 +25,12 @@ test('Field exports the composable public API', () => {
     'FieldControl',
     'useFieldControlProps',
   ]) {
-    assert.match(source, new RegExp(`export (function|const|type|interface) ${component}\\b|export function ${component}\\b`));
+    assert.match(
+      source,
+      new RegExp(
+        `export (function|const|type|interface) ${component}\\b|export function ${component}\\b`,
+      ),
+    );
   }
 
   assert.ok(manifest.exports['./field']);
