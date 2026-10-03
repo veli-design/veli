@@ -14,9 +14,10 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
 // Exercise Storybook play functions against the same canonical imports in a real browser.
+// Build its workspace dependencies first: fresh checkouts have no generated token CSS or UI dist.
 const storybookBuild = spawnSync(
   'corepack',
-  ['pnpm', '--filter', '@tradenetcorp/veli-storybook', 'build'],
+  ['pnpm', 'exec', 'turbo', 'build', '--filter=@tradenetcorp/veli-storybook'],
   {
     cwd: resolve(packageRoot, '../..'),
     stdio: 'inherit',
