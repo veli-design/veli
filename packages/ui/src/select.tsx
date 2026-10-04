@@ -19,7 +19,6 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { CaretDownIcon, InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorPressed,
   defaultFieldUnderlinePressed,
@@ -30,6 +29,10 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  getFieldOptionalLabel,
+  outlineFieldStrokeErrorPressed,
+  outlineFieldStrokePressed,
+  shouldShowFieldOptional,
 } from './field-shared.js';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
 import { useVeliLanguage } from './provider.js';
@@ -39,7 +42,13 @@ import { Tooltip, TooltipTrigger } from './tooltip.js';
 /** Selection key type used by react-aria (`string | number`). */
 type Key = string | number;
 
-const selectRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
+const selectRootVariants = cva('flex w-full flex-col font-sans antialiased');
+
+const outlineTriggerStrokeRest =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] hover:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)]';
+
+const outlineTriggerStrokeError =
+  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] hover:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)]';
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -54,12 +63,12 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
+  'relative flex w-full items-center gap-2 rounded-md text-start outline-none transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       appearance: {
         default: '',
-        outline: 'border hover:border-[1.5px]',
+        outline: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -75,7 +84,7 @@ const fieldButtonVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
         false: '',
       },
       isOpen: {
@@ -108,11 +117,6 @@ const fieldButtonVariants = cva(
       },
       {
         appearance: 'default',
-        isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
-      },
-      {
-        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         isFocusVisible: false,
@@ -134,71 +138,54 @@ const fieldButtonVariants = cva(
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        appearance: 'default',
-        isDisabled: true,
-        isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
-      },
-      {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: false,
         isOpen: false,
-        className:
-          'border-text-input-stroke bg-text-input-bg hover:border-text-input-stroke-hover hover:bg-text-input-bg-hover',
+        className: `${outlineTriggerStrokeRest} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isFocusVisible: true,
+        className: 'bg-text-input-bg-pressed hover:bg-text-input-bg-pressed',
+      },
+      {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isFocusVisible: false,
+        isOpen: true,
+        className: `${outlineFieldStrokePressed} bg-text-input-bg-pressed hover:bg-text-input-bg-pressed`,
+      },
+      {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: true,
+        isFocusVisible: false,
         isOpen: false,
-        className: 'border-transparent hover:border-transparent',
+        className: `${outlineTriggerStrokeError} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
         appearance: 'outline',
         isDisabled: false,
-        isInvalid: false,
+        isInvalid: true,
+        isFocusVisible: false,
+        isOpen: true,
+        className: `${outlineFieldStrokeErrorPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
+      },
+      {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: true,
         isFocusVisible: true,
-        isOpen: true,
-        className: 'border-transparent hover:border-transparent',
+        className: `${outlineFieldStrokeErrorPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        appearance: 'outline',
-        isDisabled: false,
-        isInvalid: false,
-        isFocusVisible: false,
-        isOpen: true,
-        className:
-          'border-2 border-text-input-stroke-pressed bg-text-input-bg-pressed hover:border-2 hover:border-text-input-stroke-pressed hover:bg-text-input-bg-pressed',
-      },
-      {
-        appearance: 'outline',
-        isDisabled: false,
-        isInvalid: true,
-        isFocusVisible: false,
-        isOpen: true,
-        className:
-          'border-2 border-text-input-stroke-error bg-text-input-bg hover:border-2 hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
-      },
-      {
-        appearance: 'outline',
         isDisabled: true,
-        className: 'border-text-input-stroke-disabled bg-ash-alpha-200',
-      },
-      {
-        appearance: 'outline',
-        isInvalid: true,
-        isDisabled: false,
-        className:
-          'border-text-input-stroke-error bg-text-input-bg hover:border-text-input-stroke-error hover:bg-text-input-bg-hover',
-      },
-      {
-        appearance: 'outline',
-        isDisabled: true,
-        isInvalid: true,
-        className: 'border-text-input-stroke-disabled',
+        className: 'bg-text-input-bg-hover',
       },
     ],
     defaultVariants: {
@@ -227,10 +214,12 @@ const selectValueVariants = cva('box-border block min-w-0 flex-1 truncate', {
 
 const selectItemLabelVariants = cva('truncate type-body-sm-regular');
 
-const selectItemDescriptionVariants = cva('truncate type-caption-regular text-base-subtle');
+const selectItemDescriptionVariants = cva(
+  'truncate type-body-sm-regular text-base-muted group-data-[disabled]:text-disabled',
+);
 
 const selectItemSelectionIndicatorVariants = cva(
-  'shrink-0 text-primary-muted [&:lang(dv)]:-translate-y-1',
+  'shrink-0 text-icon-base group-data-[disabled]:text-icon-disabled [&:lang(dv)]:-translate-y-1',
 );
 
 const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
@@ -246,12 +235,12 @@ const inlineSlotVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const indicatorVariants = cva(
-  'flex shrink-0 items-center justify-center rounded-xs transition-transform duration-normal ease-in-out',
+  'flex shrink-0 items-center justify-center rounded-xs transition-transform duration-normal ease-in-out motion-reduce:transition-none',
   {
     variants: {
       isDisabled: {
-        true: 'text-disabled',
-        false: 'text-base-subtle',
+        true: 'text-icon-disabled',
+        false: 'text-icon-base',
       },
       isOpen: {
         true: 'rotate-180',
@@ -266,21 +255,21 @@ const indicatorVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-70 overflow-auto outline-none');
 
 const selectItemVariants = cva(
-  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-2 py-2 text-start outline-none transition-colors duration-normal ease-out',
+  'group flex min-h-9 w-full cursor-default items-center gap-2 rounded-lg px-4 py-2 text-start text-base-strong outline-none transition-colors duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
-      isSelected: {
-        true: 'bg-button-primary-subtle text-base-strong',
-        false: 'text-base-strong',
-      },
       isFocused: {
-        true: 'bg-button-primary-subtle-hover',
+        true: 'bg-menu-hover',
+        false: '',
+      },
+      isPressed: {
+        true: 'bg-menu-pressed',
         false: '',
       },
       isDisabled: {
@@ -289,14 +278,18 @@ const selectItemVariants = cva(
       },
     },
     defaultVariants: {
-      isSelected: false,
       isFocused: false,
+      isPressed: false,
       isDisabled: false,
     },
   },
 );
 
-const selectSectionVariants = cva('py-1 first:pt-0 last:pb-0');
+const selectSectionVariants = cva(
+  "not-first:before:mx-3 not-first:before:block not-first:before:h-px not-first:before:bg-border-base-subtle not-first:before:content-['']",
+);
+
+const selectSectionHeaderVariants = cva('px-4 py-2 type-body-sm-medium text-base-emphasis');
 
 const infoTooltipDefaultAriaLabels = {
   en: 'More information',
@@ -345,7 +338,8 @@ export interface SelectProps<T extends object, K extends Key = Key>
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
-  labelSupplementary?: React.ReactNode;
+  /** Shows a localized Optional caption beside the label. Hidden when `isRequired` is set. */
+  isOptional?: boolean;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
   description?: React.ReactNode;
@@ -372,7 +366,7 @@ export function Select<T extends object, K extends Key = Key>({
   label,
   infoTooltip,
   infoTooltipAriaLabel,
-  labelSupplementary,
+  isOptional = false,
   labelIcon,
   action,
   description,
@@ -428,114 +422,124 @@ export function Select<T extends object, K extends Key = Key>({
       placeholder={placeholder}
       className={twMerge(selectRootVariants(), className)}
     >
-      {({ isDisabled, isInvalid, isOpen, isFocusVisible, isRequired }) => (
-        <>
-          {label ||
-          infoTooltip ||
-          labelSupplementary ||
-          labelIcon ||
-          action ||
-          (showRequiredIndicator && isRequired) ? (
-            <div className="flex w-full items-center gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                {label ? (
-                  <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>{label}</Label>
-                ) : null}
-                {infoTooltip ? (
-                  <TooltipTrigger>
-                    <AriaButton
-                      type="button"
-                      aria-label={resolvedInfoTooltipAriaLabel}
-                      className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
-                      isDisabled={isDisabled}
-                    >
-                      <InfoIcon size={16} aria-hidden />
-                    </AriaButton>
-                    <Tooltip
-                      placement="top"
-                      lang={languageConfig.lang}
-                      dir={languageConfig.direction}
-                    >
-                      {infoTooltip}
-                    </Tooltip>
-                  </TooltipTrigger>
-                ) : null}
-                {labelSupplementary ? (
-                  <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                    {labelSupplementary}
-                  </span>
-                ) : null}
-                {showRequiredIndicator && isRequired ? (
-                  <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
-                ) : null}
-                {labelIcon ? (
-                  <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
-                ) : null}
+      {({ isDisabled, isInvalid, isOpen, isFocusVisible, isRequired }) => {
+        const showOptionalLabel = shouldShowFieldOptional(isOptional, isRequired);
+
+        return (
+          <>
+            {label ||
+            infoTooltip ||
+            showOptionalLabel ||
+            labelIcon ||
+            action ||
+            (showRequiredIndicator && isRequired) ? (
+              <div className="flex w-full items-center gap-2 pb-2">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {label ? (
+                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                      {label}
+                    </Label>
+                  ) : null}
+                  {infoTooltip ? (
+                    <TooltipTrigger>
+                      <AriaButton
+                        type="button"
+                        aria-label={resolvedInfoTooltipAriaLabel}
+                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
+                        isDisabled={isDisabled}
+                      >
+                        <InfoIcon size={16} aria-hidden />
+                      </AriaButton>
+                      <Tooltip
+                        placement="top"
+                        lang={languageConfig.lang}
+                        dir={languageConfig.direction}
+                      >
+                        {infoTooltip}
+                      </Tooltip>
+                    </TooltipTrigger>
+                  ) : null}
+                  {showOptionalLabel ? (
+                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
+                      {getFieldOptionalLabel(languageConfig.language)}
+                    </span>
+                  ) : null}
+                  {showRequiredIndicator && isRequired ? (
+                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
+                  ) : null}
+                  {labelIcon ? (
+                    <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
+                  ) : null}
+                </div>
+                {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
               </div>
-              {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
-            </div>
-          ) : null}
-
-          <AriaButton
-            ref={setTriggerRef}
-            className={fieldButtonVariants({
-              appearance,
-              size,
-              isDisabled,
-              isInvalid,
-              isOpen,
-              isFocusVisible,
-            })}
-          >
-            {startContent ? (
-              <span className={inlineSlotVariants({ isDisabled })}>{startContent}</span>
             ) : null}
-            <SelectValue
-              className={({ isPlaceholder }) =>
-                twMerge(
-                  selectValueVariants({ size }),
-                  isPlaceholder
-                    ? 'text-base-inactive'
-                    : isDisabled
-                      ? 'text-disabled'
-                      : 'text-base-strong',
-                )
+
+            <AriaButton
+              ref={setTriggerRef}
+              className={fieldButtonVariants({
+                appearance,
+                size,
+                isDisabled,
+                isInvalid,
+                isOpen,
+                isFocusVisible,
+              })}
+            >
+              {startContent ? (
+                <span className={inlineSlotVariants({ isDisabled })}>{startContent}</span>
+              ) : null}
+              <SelectValue
+                className={({ isPlaceholder }) =>
+                  twMerge(
+                    selectValueVariants({ size }),
+                    isPlaceholder
+                      ? 'text-base-inactive'
+                      : isDisabled
+                        ? 'text-disabled'
+                        : 'text-base-strong',
+                  )
+                }
+              >
+                {({ defaultChildren, isPlaceholder, selectedText }) =>
+                  isPlaceholder ? defaultChildren : selectedText
+                }
+              </SelectValue>
+              {endContent ? (
+                <span className={inlineSlotVariants({ isDisabled })}>{endContent}</span>
+              ) : null}
+              <span className={indicatorVariants({ isDisabled, isOpen })}>
+                {indicator ?? <CaretDownIcon aria-hidden size={20} weight="regular" />}
+              </span>
+            </AriaButton>
+
+            <AriaPopover
+              offset={4}
+              placement="bottom start"
+              triggerRef={triggerRef}
+              lang={languageConfig.lang}
+              dir={languageConfig.direction}
+              style={
+                triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
               }
-            />
-            {endContent ? (
-              <span className={inlineSlotVariants({ isDisabled })}>{endContent}</span>
-            ) : null}
-            <span className={indicatorVariants({ isDisabled, isOpen })}>
-              {indicator ?? (
-                <CaretDownIcon aria-hidden size={20} weight="regular" className="text-icon-base" />
-              )}
-            </span>
-          </AriaButton>
+              className={popoverVariants()}
+            >
+              <ListBox items={items} className={listBoxVariants()}>
+                {children as React.ReactNode}
+              </ListBox>
+            </AriaPopover>
 
-          <AriaPopover
-            offset={4}
-            placement="bottom start"
-            triggerRef={triggerRef}
-            lang={languageConfig.lang}
-            dir={languageConfig.direction}
-            style={
-              triggerWidth != null ? { width: triggerWidth, minWidth: triggerWidth } : undefined
-            }
-            className={popoverVariants()}
-          >
-            <ListBox items={items} className={listBoxVariants()}>
-              {children as React.ReactNode}
-            </ListBox>
-          </AriaPopover>
-
-          <FieldMessage
-            isInvalid={isInvalid}
-            size={size ?? 'md'}
-            description={description}
-            errorMessage={errorMessage}
-          />
-        </>
-      )}
+            <div className="empty:hidden [&:not(:empty)]:pt-1">
+              <FieldMessage
+                isInvalid={isInvalid}
+                size={size ?? 'md'}
+                description={description}
+                errorMessage={errorMessage}
+              />
+            </div>
+          </>
+        );
+      }}
     </AriaSelect>
   );
 }
@@ -557,11 +561,7 @@ export function SelectSection<T extends object>({
 }: SelectSectionProps<T>) {
   return (
     <AriaSection {...props} className={twMerge(selectSectionVariants(), className)}>
-      {title ? (
-        <Header className="px-2 py-1 type-caption-semibold uppercase text-base-muted">
-          {title}
-        </Header>
-      ) : null}
+      {title ? <Header className={selectSectionHeaderVariants()}>{title}</Header> : null}
       {children}
     </AriaSection>
   );
@@ -596,7 +596,7 @@ export function SelectItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Coral UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
+    'Veli UI: SelectItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (
@@ -604,14 +604,18 @@ export function SelectItem<T extends object = object>({
       {...props}
       aria-label={resolvedAriaLabel}
       textValue={resolvedTextValue}
-      className={({ isSelected, isFocused, isDisabled }) =>
-        twMerge(selectItemVariants({ isSelected, isFocused, isDisabled }), className)
+      className={({ isFocused, isPressed, isDisabled }) =>
+        twMerge(selectItemVariants({ isFocused, isPressed, isDisabled }), className)
       }
     >
       {({ isSelected }) => (
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          {startContent ? <span className="shrink-0 text-base-subtle">{startContent}</span> : null}
-          <div className="min-w-0 flex-1">
+          {startContent ? (
+            <span className="shrink-0 text-icon-base group-data-[disabled]:text-icon-disabled">
+              {startContent}
+            </span>
+          ) : null}
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             {children ? <div className={selectItemLabelVariants()}>{children}</div> : null}
             {description ? (
               <div className={selectItemDescriptionVariants()}>{description}</div>
