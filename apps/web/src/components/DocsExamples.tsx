@@ -45,12 +45,12 @@ import {
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
-  ArrowRightIcon,
   BellIcon,
   CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
   InfoIcon,
+  LinkSimpleIcon,
   MagnifyingGlassIcon,
   PencilSimpleIcon,
   TrashIcon,
@@ -168,8 +168,6 @@ const tagsDocsText = {
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
 
-const inputExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
-const inputExplorationEndAddon = <ArrowRightIcon size={16} />;
 const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
@@ -495,46 +493,35 @@ export function CheckboxDisabledDemo() {
 export function InputUsageDemo() {
   return (
     <div className="w-[320px]">
-      <Input label="Email" placeholder="name@example.com" description="Helper text" />
+      <Input
+        label="Email"
+        type="email"
+        isOptional
+        placeholder="name@example.com"
+        description="Helper text"
+      />
     </div>
   );
 }
 
-export function InputExplorationDemo() {
+export function InputAppearancesDemo() {
   return (
-    <div className="w-[320px]">
-      <Input
-        label="Label"
-        labelSupplementary="(Optional)"
-        isRequired
-        labelIcon={<InfoIcon size={12} />}
-        action="Action"
-        placeholder="Placeholder"
-        description="Helper text"
-        startAddon={inputExplorationStartAddon}
-        startContent={<CalendarBlankIcon size={16} />}
-        endContent={
-          <span className="flex items-center gap-[4px]">
-            <WarningCircleIcon size={16} />
-            <CaretDownIcon size={16} />
-          </span>
-        }
-        endAddon={inputExplorationEndAddon}
-      />
+    <div className="grid gap-4 md:grid-cols-2">
+      <Input label="Default" placeholder="Enter value" />
+      <Input appearance="outline" label="Outline" placeholder="Enter value" />
     </div>
   );
 }
 
 export function InputValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
-      <Input label="Required" placeholder="Enter value" isRequired description="Helper text" />
+    <div className="w-[320px]">
       <Input
-        label="Invalid"
-        placeholder="Enter value"
+        label="Email"
+        type="email"
         isInvalid
-        errorMessage="This field needs attention."
-        endContent={<WarningCircleIcon size={16} />}
+        errorMessage="Enter a valid email address."
+        endContent={<LinkSimpleIcon size={20} />}
       />
     </div>
   );
