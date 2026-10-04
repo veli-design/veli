@@ -77,6 +77,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.2
         version: 3.12.2
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tradenetcorp/veli-blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
@@ -86,6 +89,9 @@ importers:
       '@tradenetcorp/veli-ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      motion:
+        specifier: ^12.42.2
+        version: 12.43.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       phosphor-react:
         specifier: ^1.4.1
         version: 1.4.1(react@19.2.8)
@@ -156,6 +162,9 @@ importers:
       '@lottiefiles/dotlottie-web':
         specifier: ^0.80.0
         version: 0.80.0
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tradenetcorp/veli-blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
