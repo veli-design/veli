@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { ApplicationFooter } from '../footer-adapter';
 import { ApplicationHeader } from '../header-adapter';
@@ -30,12 +31,9 @@ export default function Page() {
           onColorSchemeChange={(scheme) => setDark(scheme === 'dark')}
           flagSrc={FLAG_SRC}
           actions={
-            <button
-              type="button"
-              className="bg-button-accent-fill type-body-sm-medium inline-flex h-11 items-center rounded-full px-4 text-white"
-            >
+            <Button intent="accent" appearance="fill" size="md">
               Sign In
-            </button>
+            </Button>
           }
         />
         <main className="p-4">

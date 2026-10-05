@@ -16,12 +16,14 @@ import { Search } from '@tradenetcorp/veli-ui/search';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
 
 import {
+  INFO_PANEL_GLOW_DARK_FALLBACK,
+  INFO_PANEL_GLOW_FALLBACK,
   ItemTile,
+  SwitcherLargeIcon,
   TileGrid,
   tileGridClass,
   type SiteHeaderSwitcherItem,
 } from './app-switcher-tiles';
-import { SwitcherLargeIcon } from './app-switcher-tiles';
 import {
   EASE_DRAWER_CSS,
   expandTilesTransition,
@@ -682,45 +684,62 @@ export function AppSwitcher({
       </div>
 
       <aside className="hidden min-h-0 w-[424px] shrink-0 flex-col xl:flex xl:pt-[76px]">
-        <div
-          className="flex h-full min-h-[320px] flex-col overflow-auto rounded-[32px] p-10"
-          style={{
-            backgroundImage:
-              'var(--veli-header-info-panel-glow, radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%))',
-          }}
-        >
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={selected.id}
-              initial={prefersReducedMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-              transition={prefersReducedMotion ? { duration: 0 } : infoPanelFadeTransition}
-              className="flex flex-col gap-12"
-            >
-              <div className="flex flex-col gap-6">
-                <SwitcherLargeIcon item={selected} />
-                <div className="flex flex-col gap-2 ps-1 pb-6">
-                  <h3 className="type-subtitle-semibold text-text-base-strong">{selected.name}</h3>
-                  <p className="type-body-sm-regular text-text-base">{selected.description}</p>
+        <div className="relative flex h-full min-h-[320px] flex-col overflow-auto rounded-[32px] p-10">
+          {/*
+            Theme via `.dark` (not React context) so Storybook/document theme switches
+            always paint the correct glow. Hosts may override with --veli-header-info-panel-glow
+            on :root / .dark.
+          */}
+          <span
+            className="pointer-events-none absolute inset-0 rounded-[32px] dark:hidden"
+            style={{
+              backgroundImage: `var(--veli-header-info-panel-glow, ${INFO_PANEL_GLOW_FALLBACK})`,
+            }}
+            aria-hidden
+          />
+          <span
+            className="pointer-events-none absolute inset-0 hidden rounded-[32px] dark:block"
+            style={{
+              backgroundImage: `var(--veli-header-info-panel-glow, ${INFO_PANEL_GLOW_DARK_FALLBACK})`,
+            }}
+            aria-hidden
+          />
+          <div className="relative flex h-full min-h-0 flex-col">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={selected.id}
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={prefersReducedMotion ? { duration: 0 } : infoPanelFadeTransition}
+                className="flex flex-col gap-12"
+              >
+                <div className="flex flex-col gap-6">
+                  <SwitcherLargeIcon item={selected} />
+                  <div className="flex flex-col gap-2 ps-1 pb-6">
+                    <h3 className="type-subtitle-semibold text-text-base-strong">
+                      {selected.name}
+                    </h3>
+                    <p className="type-body-sm-regular text-text-base">{selected.description}</p>
+                  </div>
                 </div>
-              </div>
 
-              {selected.sections?.length ? (
-                <div className="flex flex-col gap-6 px-1">
-                  {selected.sections.map((section) => (
-                    <div key={section.title} className="flex flex-col gap-2">
-                      <Divider appearance="muted" className="w-full" />
-                      <div className="text-text-base flex flex-col gap-2">
-                        <p className="type-body-md-medium">{section.title}</p>
-                        <p className="type-body-sm-regular whitespace-pre-wrap">{section.body}</p>
+                {selected.sections?.length ? (
+                  <div className="flex flex-col gap-6 px-1">
+                    {selected.sections.map((section) => (
+                      <div key={section.title} className="flex flex-col gap-2">
+                        <Divider appearance="muted" className="w-full" />
+                        <div className="text-text-base flex flex-col gap-2">
+                          <p className="type-body-md-medium">{section.title}</p>
+                          <p className="type-body-sm-regular whitespace-pre-wrap">{section.body}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </motion.div>
-          </AnimatePresence>
+                    ))}
+                  </div>
+                ) : null}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </aside>
     </div>

@@ -95,6 +95,24 @@ const apps: SiteHeaderSwitcherItem[] = [
     href: '/about',
     description: 'Track and continue government service applications.',
   },
+  {
+    id: 'locker',
+    name: 'Locker',
+    kind: 'app',
+    href: '/privacy',
+    description: 'Secure storage for government documents.',
+  },
+];
+
+const sites: SiteHeaderSwitcherItem[] = [
+  {
+    id: 'tourism',
+    name: 'Ministry of Tourism',
+    kind: 'site',
+    href: 'https://tourism.gov.mv',
+    external: true,
+    description: 'Official site for the Ministry of Tourism.',
+  },
 ];
 
 export function ApplicationHeader({
@@ -103,14 +121,15 @@ export function ApplicationHeader({
   language = 'en',
   onLanguageChange,
   actions,
-  flagSrc = '/flag.svg',
+  /** Banner flag image URL owned by the application. */
+  flagSrc,
 }: {
   colorScheme?: SiteHeaderColorScheme;
   onColorSchemeChange?: (scheme: SiteHeaderColorScheme) => void;
   language?: string;
   onLanguageChange?: (id: string) => void;
   actions?: ReactNode;
-  flagSrc?: string;
+  flagSrc: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -131,6 +150,7 @@ export function ApplicationHeader({
   return (
     <SiteHeader
       logo={
+        // Replace with your brand mark (light/dark SVGs). The block does not ship assets.
         <span className="type-body-md-semibold text-text-base-strong inline-flex h-[31px] items-center px-1">
           Gov.mv
         </span>
@@ -139,7 +159,7 @@ export function ApplicationHeader({
       desktopNavItems={desktopNavItems}
       mobileNavItems={desktopNavItems}
       apps={apps}
-      sites={[]}
+      sites={sites}
       labels={labels}
       languages={languages}
       language={language}

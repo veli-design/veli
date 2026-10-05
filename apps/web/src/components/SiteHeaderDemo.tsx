@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import {
   SiteHeader,
@@ -6,12 +7,6 @@ import {
   type SiteHeaderLabels,
   type SiteHeaderSwitcherItem,
 } from '@tradenetcorp/veli-blocks/site-header';
-
-const FLAG_SRC =
-  'data:image/svg+xml,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="12"><rect width="18" height="12" fill="#D21034"/><rect x="3" y="3" width="8" height="6" fill="#007E3A"/><circle cx="8" cy="6" r="2" fill="#fff"/></svg>',
-  );
 
 const labels: SiteHeaderLabels = {
   openAppSwitcher: 'Open app switcher',
@@ -70,7 +65,45 @@ const apps: SiteHeaderSwitcherItem[] = [
     href: '#api',
     description: 'Track and continue government service applications.',
   },
+  {
+    id: 'locker',
+    name: 'Locker',
+    kind: 'app',
+    href: '#changelog',
+    description: 'Secure storage for government documents.',
+  },
 ];
+
+const sites: SiteHeaderSwitcherItem[] = [
+  {
+    id: 'tourism',
+    name: 'Ministry of Tourism',
+    kind: 'site',
+    href: '#accessibility-and-responsive-behavior',
+    description: 'Official site for the Ministry of Tourism.',
+  },
+];
+
+function GovmvLogo() {
+  return (
+    <span className="relative block h-[31px] w-[118px] shrink-0" aria-hidden>
+      <img
+        src="/blocks/govmv-logo.svg"
+        alt=""
+        width={118}
+        height={31}
+        className="block size-full dark:hidden"
+      />
+      <img
+        src="/blocks/govmv-logo-dark.svg"
+        alt=""
+        width={118}
+        height={31}
+        className="hidden size-full dark:block"
+      />
+    </span>
+  );
+}
 
 export function SiteHeaderDemo() {
   const [scheme, setScheme] = useState<SiteHeaderColorScheme>('light');
@@ -84,11 +117,7 @@ export function SiteHeaderDemo() {
         style={{ transform: 'translateZ(0)' }}
       >
         <SiteHeader
-          logo={
-            <span className="type-body-md-semibold text-text-base-strong inline-flex h-[31px] items-center px-1">
-              Gov.mv
-            </span>
-          }
+          logo={<GovmvLogo />}
           pathname="/"
           desktopNavItems={[
             { href: '#ownership-and-prerequisites', label: 'Home', current: true },
@@ -101,7 +130,7 @@ export function SiteHeaderDemo() {
             { href: '#changelog', label: 'Changelog' },
           ]}
           apps={apps}
-          sites={[]}
+          sites={sites}
           labels={labels}
           languages={[
             { id: 'en', label: 'English', dir: 'ltr' },
@@ -112,14 +141,11 @@ export function SiteHeaderDemo() {
           colorScheme={scheme}
           onColorSchemeChange={setScheme}
           onNavigate={() => undefined}
-          flagSrc={FLAG_SRC}
+          flagSrc="/blocks/maldives-flag.svg"
           actions={
-            <button
-              type="button"
-              className="bg-button-accent-fill type-body-sm-medium text-text-on-accent inline-flex h-11 items-center rounded-full px-4"
-            >
+            <Button intent="accent" appearance="fill" size="md">
               Sign In
-            </button>
+            </Button>
           }
         />
         <div className="px-4 py-6">

@@ -614,7 +614,7 @@ export function SiteHeader({
               : 'pointer-events-none'
             : 'opacity-100',
           !isOpen && !isRendered && floatingLayout && floatingMotion
-            ? 'transition-[transform,opacity] duration-[160ms] ease-[var(--ease-out)]'
+            ? 'transition-[transform,opacity] duration-[160ms] ease-[cubic-bezier(0.23,1,0.32,1)]'
             : '',
         ]
           .filter(Boolean)

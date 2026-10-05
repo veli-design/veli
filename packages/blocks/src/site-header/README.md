@@ -18,7 +18,7 @@ Use Tailwind 4 with your framework's integration. In your global stylesheet:
 @import '@tradenetcorp/veli-ui/tailwind';
 ```
 
-Optional host CSS variables (fallbacks match the gov.mv reference):
+Optional host CSS variables (built-in fallbacks match the gov.mv reference, including dark mode):
 
 ```css
 :root {
@@ -36,6 +36,21 @@ Optional host CSS variables (fallbacks match the gov.mv reference):
     ellipse 100% 80% at 50% 0%,
     rgb(213 255 211) 0%,
     rgb(255 255 255 / 0%) 63%
+  );
+}
+
+.dark {
+  --veli-header-site-tile-gradient: radial-gradient(
+    circle at 50% 0%,
+    #0e0e0d 0%,
+    #191a18 50%,
+    #252624 100%
+  );
+  --veli-header-info-panel-glow: radial-gradient(
+    ellipse 236.72% 100% at 50% 0%,
+    rgb(35 115 10) 0%,
+    rgb(18 57 5 / 50%) 31.478%,
+    transparent 62.957%
   );
 }
 ```

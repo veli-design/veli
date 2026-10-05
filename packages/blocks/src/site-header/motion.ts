@@ -2,6 +2,8 @@ export const EASE_DRAWER = [0.32, 0.72, 0, 1] as const;
 export const EASE_DRAWER_CSS = 'cubic-bezier(0.32, 0.72, 0, 1)';
 
 export const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+/** CSS form of EASE_OUT — do not use Veli `--ease-out` (different curve). */
+export const EASE_OUT_CSS = 'cubic-bezier(0.23, 1, 0.32, 1)';
 
 /** Strong ease-out for surfaces that appear in place (menu panel, popovers). */
 export const EASE_SPEC = [0.19, 1, 0.22, 1] as const;

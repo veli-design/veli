@@ -19,7 +19,7 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
   await search.fill('Locker');
-  // Locker is not in the fixture apps list — expect empty or no match messaging for missing terms.
+  await expect(page.getByText('Locker')).toBeVisible();
   await search.fill('Applications');
   await expect(page.getByText('My Applications')).toBeVisible();
 
