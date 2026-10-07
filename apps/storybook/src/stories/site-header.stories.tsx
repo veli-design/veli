@@ -238,12 +238,10 @@ function HeaderStory({
   title,
   language = 'en',
   emptySites = false,
-  longLabels = false,
 }: {
   title?: string;
   language?: string;
   emptySites?: boolean;
-  longLabels?: boolean;
 }) {
   const { colorScheme } = useVeliColorScheme();
   const { language: providerLanguage } = useVeliLanguage();
@@ -260,13 +258,7 @@ function HeaderStory({
   const labels = isDv ? labelsDv : labelsEn;
   const apps = isDv ? appsDv : appsEn;
   const sites = isDv ? sitesDv : sitesEn;
-  const navHome = longLabels
-    ? isDv
-      ? 'މި ޚިދުމަތާއި ގުޅޭ އިދާރާގެ މަޢުލޫމާތު'
-      : 'Information about this public service and the organization responsible'
-    : isDv
-      ? 'ފުރަތަމަ ޞަފުޙާ'
-      : 'Home';
+  const navHome = isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home';
   const navAbout = isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About';
   const navContact = isDv ? 'ގުޅުއްވުމަށް' : 'Contact';
   const signIn = isDv ? 'ސައިންއިން' : 'Sign In';
@@ -338,4 +330,3 @@ export const Default: Story = {};
 export const Ministry: Story = { args: { title: 'Ministry of Tourism' } };
 export const Rtl: Story = { args: { language: 'dv' } };
 export const EmptySites: Story = { args: { emptySites: true } };
-export const LongLabels: Story = { args: { longLabels: true } };
