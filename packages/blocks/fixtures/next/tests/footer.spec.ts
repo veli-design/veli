@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { waitForMotion } from './wait-for-motion';
 
 test('copied footer renders, hydrates, preserves keyboard focus and Next navigation', async ({
   page,
@@ -39,6 +40,7 @@ for (const width of [320, 1280])
         await page.goto('/');
         if (language === 'dv') await page.getByRole('button', { name: 'Change language' }).click();
         if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+        await waitForMotion(page);
         const results = await new AxeBuilder({ page }).analyze();
         expect(results.violations).toEqual([]);
         expect(

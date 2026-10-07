@@ -198,6 +198,12 @@ export const componentGroups: ComponentGroup[] = [
     title: 'Forms',
     items: [
       {
+        title: 'Field',
+        slug: 'field',
+        description:
+          'Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.',
+      },
+      {
         title: 'Input',
         slug: 'input',
         description: 'Text fields with description, validation, and token styling.',
@@ -336,6 +342,15 @@ export const componentGroups: ComponentGroup[] = [
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
 
+export const patterns = [
+  {
+    title: 'Forms',
+    slug: 'forms',
+    href: '/patterns/forms/',
+    description: 'Recipes for React Hook Form, TanStack Form, and schema-driven renderers.',
+  },
+] as const;
+
 export function getComponentGroupSlug(title: string) {
   return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
 }
@@ -376,7 +391,14 @@ export const docsSections: readonly DocsNavigationSection[] = [
     id: 'patterns',
     title: 'Patterns',
     href: '/patterns/',
-    items: [{ title: 'Overview', href: '/patterns/' }],
+    items: [
+      { title: 'Overview', href: '/patterns/' },
+      ...patterns.map((item) => ({
+        title: item.title,
+        href: item.href,
+        description: item.description,
+      })),
+    ],
   },
   {
     id: 'blocks',

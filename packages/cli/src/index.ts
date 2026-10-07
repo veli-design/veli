@@ -27,7 +27,11 @@ import {
   writeConfig,
   type VeliConfig,
 } from './config.js';
-import { dependencyPlan, installDependencies } from './dependencies.js';
+import {
+  dependencyPlan,
+  installDependencies,
+  mergeDependencyRequirements,
+} from './dependencies.js';
 import {
   blockState,
   installBlock,
@@ -280,12 +284,8 @@ program
       archives.push(await client.archive(version.archiveUrl, version.archiveSha256));
     }
     if (!globalOptions(command).json) task.stop('Verified canonical source');
-    const required = Object.assign(
-      {},
-      ...archives.map(({ manifest }) => ({
-        ...manifest.dependencies,
-        ...manifest.setupDependencies,
-      })),
+    const required = mergeDependencyRequirements(
+      archives.flatMap(({ manifest }) => [manifest.dependencies, manifest.setupDependencies]),
     );
     const dependencies = await dependencyPlan(cwd, required);
     for (const archive of archives)

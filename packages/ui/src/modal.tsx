@@ -23,7 +23,7 @@ import { hasRenderableMessage } from './field-shared';
 import { useVeliLanguage } from './provider';
 
 const overlayVariants = cva([
-  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-ash-alpha-900 p-4 backdrop-blur-xs',
+  'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-black/60 p-4 backdrop-blur-[6px]',
   'motion-safe:transition-opacity motion-safe:duration-normal motion-safe:ease-out',
   'motion-safe:data-[entering]:opacity-0 motion-safe:data-[exiting]:opacity-0',
   'motion-safe:data-[exiting]:duration-fast motion-safe:data-[exiting]:ease-in',

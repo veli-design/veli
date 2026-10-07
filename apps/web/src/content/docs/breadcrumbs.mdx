@@ -3,16 +3,27 @@ title: Breadcrumbs
 description: Accessible hierarchical navigation built with React Aria Breadcrumbs and Veli design tokens.
 ---
 
-import { BreadcrumbsUsageDemo, BreadcrumbsVariantsDemo } from '../../components/DocsExamples';
+import {
+  BreadcrumbsBackLinkDemo,
+  BreadcrumbsDataDrivenDemo,
+  BreadcrumbsDisabledDemo,
+  BreadcrumbsOverflowDemo,
+  BreadcrumbsUsageDemo,
+} from '../../components/DocsExamples';
 
 # Breadcrumbs
 
-`Breadcrumbs` communicates hierarchy and lets people move back up through nested pages or workflows. This Veli wrapper follows the React Aria breadcrumb example model, with a styled `Breadcrumbs` list and ergonomic `Breadcrumb` items. By default, the first breadcrumb link receives the Veli blue emphasis, intermediate links use a quieter inactive text treatment, the current page uses a subtle neutral tone, and placeholder crumbs like `...` can be rendered as plain text by omitting `href`.
+`Breadcrumbs` communicates hierarchy and lets people move through nested pages or workflows. A trail contains linked earlier levels, a final current page, and optionally an overflow control for collapsed middle levels. It follows the [Breadcrumb Figma specification](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=713-10978).
 
 ## Import
 
 ```tsx
-import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
+import {
+  Breadcrumb,
+  BreadcrumbBackLink,
+  BreadcrumbOverflow,
+  Breadcrumbs,
+} from '@tradenetcorp/veli-ui/breadcrumbs';
 ```
 
 ## Usage
@@ -30,33 +41,123 @@ import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
 </Breadcrumbs>
 ```
 
-## Variations
+## Back link
+
+Use the separate back-link treatment when the screen needs a direct return action before the hierarchy trail.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <BreadcrumbsVariantsDemo client:visible />
+  <BreadcrumbsBackLinkDemo client:visible />
 </div>
+
+```tsx
+<Breadcrumbs aria-label="Application breadcrumb" showBackLink backLinkHref="/services">
+  <Breadcrumb href="/services">Services</Breadcrumb>
+  <Breadcrumb>Fishing permit</Breadcrumb>
+</Breadcrumbs>
+```
+
+For custom placement, compose `BreadcrumbBackLink` directly before the remaining crumbs.
+
+## Overflow
+
+Collapse long trails deliberately: keep the first crumb and current page visible, and put middle levels in `BreadcrumbOverflow`.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsOverflowDemo client:visible />
+</div>
+
+```tsx
+const hiddenPages = [
+  { id: 'applications', label: 'Applications', href: '/applications' },
+  { id: 'permits', label: 'Permits', href: '/permits' },
+];
+
+<Breadcrumbs aria-label="Application breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <BreadcrumbOverflow items={hiddenPages} />
+  <Breadcrumb href="/permits/fishing">Fishing permits</Breadcrumb>
+  <Breadcrumb>New application</Breadcrumb>
+</Breadcrumbs>;
+```
+
+`BreadcrumbOverflow` is caller-managed; it opens a menu for hidden levels. Breadcrumbs wraps on narrow screens and never scrolls horizontally.
+
+## Disabled crumbs
+
+Use `isDisabled` when a previously visible level is unavailable. It keeps the label in the trail but removes navigation and the item from the tab order.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsDisabledDemo client:visible />
+</div>
+
+```tsx
+<Breadcrumbs aria-label="Breadcrumb">
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/services/archived" isDisabled>
+    Archived services
+  </Breadcrumb>
+  <Breadcrumb>Permit details</Breadcrumb>
+</Breadcrumbs>
+```
+
+## Data-driven trails
+
+Pass `items`, `id`, and `onAction` when application state controls the visible path.
+
+<div className="preview preview--collapsible mb-4 rounded-lg border p-4">
+  <BreadcrumbsDataDrivenDemo client:visible />
+</div>
+
+```tsx
+<Breadcrumbs items={items} aria-label="Application breadcrumb" onAction={setCurrentLevel}>
+  {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
+</Breadcrumbs>
+```
+
+## Accessibility, RTL, and motion
+
+Give every trail an `aria-label` unless an adjacent heading already names it. The final `Breadcrumb` is automatically marked as the current page and is not interactive; separators are decorative. Linked crumbs are keyboard reachable, disabled crumbs are skipped, and the interactive crumbs retain a visible focus ring.
+
+Use `VeliProvider language="dv"` for Dhivehi. The list, separators, and back-link caret mirror automatically for RTL, while the slash separator stays `/`. English links use body-sm medium while the current page uses body-sm regular; Dhivehi links and the current page use body-sm medium for readability.
+
+Hover, pressed, and focus changes animate colors only with Veli's normal-duration easing. These transitions are disabled when the user prefers reduced motion.
 
 ## API Reference
 
 ### `Breadcrumbs`
 
-| Prop         | Type            | Description                                                                                  |
-| :----------- | :-------------- | :------------------------------------------------------------------------------------------- |
-| `items`      | `Iterable<T>`   | Supplies a collection for data-driven breadcrumb rendering.                                  |
-| `onAction`   | `(key) => void` | Called when a non-current breadcrumb is activated.                                           |
-| `aria-label` | `string`        | Gives the breadcrumb trail an accessible name when there is no surrounding heading or label. |
-| `className`  | `string`        | Adds local layout overrides to the root breadcrumb list.                                     |
+| Prop              | Type              | Description                                                                                  |
+| :---------------- | :---------------- | :------------------------------------------------------------------------------------------- |
+| `items`           | `Iterable<T>`     | Supplies a collection for data-driven breadcrumb rendering.                                  |
+| `onAction`        | `(key) => void`   | Called when a non-current breadcrumb is activated.                                           |
+| `showBackLink`    | `boolean`         | Adds the separated back-link treatment for static child breadcrumbs.                         |
+| `backLinkHref`    | `string`          | Navigates the generated back link.                                                           |
+| `backLinkLabel`   | `ReactNode`       | Labels the generated back link. Defaults to `Back`.                                          |
+| `backLinkOnPress` | `(event) => void` | Handles generated back-link activation without an `href`.                                    |
+| `aria-label`      | `string`          | Gives the breadcrumb trail an accessible name when there is no surrounding heading or label. |
+| `className`       | `string`          | Adds local layout overrides to the root breadcrumb list.                                     |
 
 ### `Breadcrumb`
 
-| Prop            | Type                  | Description                                                                                              |
-| :-------------- | :-------------------- | :------------------------------------------------------------------------------------------------------- |
-| `href`          | `string`              | Navigates to the linked hierarchy level when activated.                                                  |
-| `tone`          | `'accent' \| 'muted'` | Chooses between the Veli blue accent treatment and the muted neutral breadcrumb style.                   |
-| `isDisabled`    | `boolean`             | Shows the crumb as unavailable and removes interaction.                                                  |
-| `onPress`       | `(event) => void`     | Handles breadcrumb activation when the trail is used for app-state changes instead of normal navigation. |
-| `id`            | `Key`                 | Useful in collection-driven breadcrumb trails so `onAction` can identify the selected crumb.             |
-| `className`     | `string`              | Adds local overrides to the list item wrapper.                                                           |
-| `linkClassName` | `string`              | Adds local overrides to the interactive link element.                                                    |
+| Prop            | Type              | Description                                                                                              |
+| :-------------- | :---------------- | :------------------------------------------------------------------------------------------------------- |
+| `href`          | `string`          | Navigates to the linked hierarchy level when activated.                                                  |
+| `isDisabled`    | `boolean`         | Shows the crumb as unavailable, removes interaction, and skips it in the tab order.                      |
+| `onPress`       | `(event) => void` | Handles breadcrumb activation when the trail is used for app-state changes instead of normal navigation. |
+| `id`            | `Key`             | Useful in collection-driven breadcrumb trails so `onAction` can identify the selected crumb.             |
+| `className`     | `string`          | Adds local overrides to the list item wrapper.                                                           |
+| `linkClassName` | `string`          | Adds local overrides to the interactive link or plain-text element.                                      |
+
+### `BreadcrumbBackLink`
+
+`BreadcrumbBackLink` is the composable equivalent of `showBackLink`. Use `label`, `href`, `onPress`, `isDisabled`, `target`, and `rel` to configure it, or supply custom children while retaining its separator and RTL-aware caret treatment.
+
+### `BreadcrumbOverflow`
+
+Pass `items` with an `id`, `label`, optional `href`, `target`, `rel`, and `isDisabled` for each hidden level. `label` names the overflow trigger and `menuLabel` names its menu for assistive technology; `onAction` receives the selected item key.
 
 All remaining supported React Aria `Breadcrumbs` and `Breadcrumb` props can still be passed through these wrappers.
+
+## Migration from `tone`
+
+`Breadcrumb` no longer accepts the `tone` prop. It did not change rendered styles. Remove it from existing breadcrumbs; use `BreadcrumbBackLink` or `showBackLink` for the dedicated blue back-link treatment.

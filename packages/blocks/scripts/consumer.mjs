@@ -13,12 +13,29 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
   throw new Error('BLOCKS_CONSUMER_DIR must not exist');
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
-const siteFooter = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
-if (!siteFooter) throw new Error('Missing site-footer block');
-for (const file of bundleFiles(siteFooter)) {
-  const path = resolve(target, file.path);
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, file.bytes);
+// Exercise Storybook play functions against the same canonical imports in a real browser.
+// Build its workspace dependencies first: fresh checkouts have no generated token CSS or UI dist.
+const storybookBuild = spawnSync(
+  'corepack',
+  ['pnpm', 'exec', 'turbo', 'build', '--filter=@tradenetcorp/veli-storybook'],
+  {
+    cwd: resolve(packageRoot, '../..'),
+    stdio: 'inherit',
+  },
+);
+if (storybookBuild.status !== 0) throw new Error('Storybook build failed');
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/storybook-static'),
+  resolve(target, 'public/storybook'),
+  { recursive: true },
+);
+
+for (const block of getBlocks()) {
+  for (const file of bundleFiles(block)) {
+    const path = resolve(target, file.path);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, file.bytes);
+  }
 }
 // Execute the same adapter displayed in the documentation; only its relative destination changes.
 cpSync(
@@ -28,6 +45,20 @@ cpSync(
 const { readFileSync } = await import('node:fs');
 const adapter = resolve(target, 'footer-adapter.tsx');
 writeFileSync(adapter, readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"));
+writeFileSync(
+  resolve(target, 'notification-adapter.tsx'),
+  readFileSync(resolve(packageRoot, 'examples/notification-tray-next.tsx'), 'utf8').replace(
+    "'../components/",
+    "'./components/",
+  ),
+);
+writeFileSync(
+  resolve(target, 'account-adapter.tsx'),
+  readFileSync(resolve(packageRoot, 'examples/account-panel-next.tsx'), 'utf8').replace(
+    "'../components/",
+    "'./components/",
+  ),
+);
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),

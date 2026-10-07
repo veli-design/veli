@@ -10,6 +10,33 @@ export interface DependencyPlan {
   incompatible: { name: string; current: string; required: string }[];
 }
 
+export function mergeDependencyRequirements(requirements: readonly DependencyMap[]): DependencyMap {
+  const ranges = new Map<string, Set<string>>();
+  for (const dependencies of requirements) {
+    for (const [name, range] of Object.entries(dependencies)) {
+      const entries = ranges.get(name) ?? new Set<string>();
+      entries.add(range);
+      ranges.set(name, entries);
+    }
+  }
+
+  return Object.fromEntries(
+    [...ranges]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, entries]) => {
+        // Manifest ranges are exact, caret or tilde ranges. Joining them forms
+        // their intersection, so every selected block's requirement is retained.
+        const range = [...entries].sort().join(' ');
+        const minimum = semver.minVersion(range);
+        if (!minimum || !semver.satisfies(minimum, range))
+          throw new Error(
+            `Conflicting block requirements for ${name}: ${[...entries].sort().join(', ')}`,
+          );
+        return [name, range];
+      }),
+  );
+}
+
 export async function dependencyPlan(
   cwd: string,
   required: DependencyMap,

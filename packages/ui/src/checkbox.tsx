@@ -3,10 +3,13 @@
 import * as React from 'react';
 import {
   Checkbox as AriaCheckbox,
+  CheckboxGroup as AriaCheckboxGroup,
+  CheckboxGroupProps as AriaCheckboxGroupProps,
   CheckboxProps as AriaCheckboxProps,
   Text,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { FieldMessage } from './field-message';
 import { hasRenderableMessage } from './field-shared';
 import { webkitDhivehiTextBaselineClassName } from './typography-shared';
 import { twMerge } from 'tailwind-merge';
@@ -22,7 +25,9 @@ const checkboxIndicatorSizes = {
   },
 } as const;
 
-const checkboxRootVariants = cva('group font-sans antialiased', {
+const checkboxGroupVariants = cva('inline-flex flex-col gap-3');
+
+const checkboxRootVariants = cva('group relative font-sans antialiased', {
   variants: {
     size: {
       md: 'type-body-sm-regular',
@@ -254,6 +259,36 @@ const indicatorVariants = cva(
     },
   },
 );
+
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style'> {
+  description?: React.ReactNode;
+  errorMessage?: React.ReactNode;
+  className?: string;
+}
+
+/** Groups checkboxes under one `string[]` value; each `Checkbox` needs a `value`. */
+export function CheckboxGroup({
+  description,
+  errorMessage,
+  className,
+  children,
+  ...props
+}: CheckboxGroupProps) {
+  return (
+    <AriaCheckboxGroup {...props} className={twMerge(checkboxGroupVariants(), className)}>
+      {(renderProps) => (
+        <>
+          {typeof children === 'function' ? children(renderProps) : children}
+          <FieldMessage
+            isInvalid={renderProps.isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
+        </>
+      )}
+    </AriaCheckboxGroup>
+  );
+}
 
 export interface CheckboxProps
   extends

@@ -5,11 +5,12 @@ import { Accordion } from '@tradenetcorp/veli-ui/accordion';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Breadcrumb, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
@@ -43,21 +44,11 @@ import {
   TableRow,
 } from '@tradenetcorp/veli-ui/table';
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
-import {
-  Dropzone,
-  DropzoneArea,
-  DropzoneItem,
-  DropzoneItemDelete,
-  DropzoneItemMetadata,
-  DropzoneItemPreview,
-  DropzoneList,
-  useDropzone,
-} from '@tradenetcorp/veli-ui/dropzone';
+import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   ArrowRight,
   Bell,
   CalendarBlank,
-  CaretLeft,
   CaretDown,
   CheckCircle,
   DownloadSimple,
@@ -84,6 +75,11 @@ const BREADCRUMB_TRAIL: BreadcrumbTrailItem[] = [
   { id: 'services', label: 'Services', href: '#' },
   { id: 'permits', label: 'Permits', href: '#' },
   { id: 'fishing', label: 'Fishing permit' },
+];
+
+const BREADCRUMB_OVERFLOW_ITEMS = [
+  { id: 'applications', label: 'Applications', href: '#' },
+  { id: 'permits', label: 'Permits', href: '#' },
 ];
 
 type TagDemoItem = {
@@ -290,63 +286,55 @@ export function BreadcrumbsUsageDemo() {
   );
 }
 
-export function BreadcrumbsVariantsDemo() {
+export function BreadcrumbsBackLinkDemo() {
+  return (
+    <Breadcrumbs aria-label="Back breadcrumb" showBackLink backLinkHref="#" backLinkLabel="Back">
+      <Breadcrumb href="#">Services</Breadcrumb>
+      <Breadcrumb>Fishing permit</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsOverflowDemo() {
+  return (
+    <Breadcrumbs aria-label="Overflow breadcrumb">
+      <Breadcrumb href="#">Home</Breadcrumb>
+      <BreadcrumbOverflow items={BREADCRUMB_OVERFLOW_ITEMS} />
+      <Breadcrumb href="#">Permits</Breadcrumb>
+      <Breadcrumb>Fishing permit</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsDisabledDemo() {
+  return (
+    <Breadcrumbs aria-label="Disabled breadcrumb">
+      <Breadcrumb href="#">Home</Breadcrumb>
+      <Breadcrumb href="#" isDisabled>
+        Archived services
+      </Breadcrumb>
+      <Breadcrumb>Permit details</Breadcrumb>
+    </Breadcrumbs>
+  );
+}
+
+export function BreadcrumbsDataDrivenDemo() {
   const [currentIndex, setCurrentIndex] = useState(BREADCRUMB_TRAIL.length - 1);
   const items = BREADCRUMB_TRAIL.slice(0, currentIndex + 1);
 
   return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Static breadcrumb trail</p>
-          <Breadcrumbs aria-label="Site navigation breadcrumb">
-            <Breadcrumb href="#">Home</Breadcrumb>
-            <Breadcrumb href="#">Departments</Breadcrumb>
-            <Breadcrumb href="#" isDisabled>
-              Fisheries
-            </Breadcrumb>
-            <Breadcrumb>Licensing</Breadcrumb>
-          </Breadcrumbs>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Back link treatment</p>
-          <Breadcrumbs aria-label="Back breadcrumb">
-            <Breadcrumb href="#" tone="accent">
-              <CaretLeft aria-hidden size={16} weight="bold" />
-              <span>Previous Page</span>
-            </Breadcrumb>
-            <Breadcrumb href="#">Menu One</Breadcrumb>
-            <Breadcrumb>...</Breadcrumb>
-            <Breadcrumb href="#">Menu Five</Breadcrumb>
-            <Breadcrumb>Menu Active</Breadcrumb>
-          </Breadcrumbs>
-        </div>
-      </div>
-
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px] lg:col-span-2">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Data-driven breadcrumb trail</p>
-          <Breadcrumbs
-            aria-label="Application breadcrumb"
-            items={items}
-            onAction={(key) => {
-              const nextIndex = BREADCRUMB_TRAIL.findIndex((item) => item.id === key);
-              if (nextIndex >= 0) {
-                setCurrentIndex(nextIndex);
-              }
-            }}
-          >
-            {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
-          </Breadcrumbs>
-          <p className="type-caption-12-regular text-base-muted">
-            Activate an earlier crumb to collapse the trail to that level.
-          </p>
-        </div>
-      </div>
-    </div>
+    <Breadcrumbs
+      aria-label="Application breadcrumb"
+      items={items}
+      onAction={(key) => {
+        const nextIndex = BREADCRUMB_TRAIL.findIndex((item) => item.id === key);
+        if (nextIndex >= 0) {
+          setCurrentIndex(nextIndex);
+        }
+      }}
+    >
+      {(item) => <Breadcrumb href={item.href}>{item.label}</Breadcrumb>}
+    </Breadcrumbs>
   );
 }
 
@@ -1938,40 +1926,101 @@ export function PaginationRtlDemo() {
   );
 }
 
-export function DropzoneUsageDemo() {
-  const [files, setFiles] = useState<File[]>([]);
+const simulateDropzoneUpload: NonNullable<DropzoneProps['onUpload']> = async (
+  files,
+  { onProgress, onSuccess },
+) => {
+  await Promise.all(
+    files.map(async (file) => {
+      for (let progress = 0; progress <= 100; progress += 10) {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        onProgress(file, progress);
+      }
+      onSuccess(file);
+    }),
+  );
+};
 
+export function DropzoneUsageDemo() {
   return (
-    <Dropzone
-      label="Upload attachments"
-      accept="application/pdf,image/png,image/jpeg"
-      maxFiles={2}
-      multiple
-      value={files}
-      onValueChange={setFiles}
-    >
-      <DropzoneArea />
-      <DropzoneList>
-        <DropzoneFileListItems />
-      </DropzoneList>
-    </Dropzone>
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        label="Attachment"
+        isOptional
+        description="PDF, PNG or JPG · up to 10 MB each"
+        secondaryText="Up to 10 MB"
+        acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
+        maxSize={10 * 1024 * 1024}
+        onUpload={simulateDropzoneUpload}
+      />
+    </div>
   );
 }
 
-function DropzoneFileListItems() {
-  const files = useDropzone((state) =>
-    Array.from(state.files.values()).map((fileState) => fileState.file),
+export function DropzoneMultipleDemo() {
+  return (
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        multiple
+        label="Attachments"
+        description="Up to 5 files"
+        secondaryText="Up to 10 MB each"
+        maxFiles={5}
+        maxSize={10 * 1024 * 1024}
+        onUpload={simulateDropzoneUpload}
+      />
+    </div>
   );
+}
+
+export function DropzoneValidationDemo() {
+  const [error, setError] = useState<string>();
 
   return (
-    <>
-      {files.map((file) => (
-        <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
-          <DropzoneItemPreview />
-          <DropzoneItemMetadata />
-          <DropzoneItemDelete />
-        </DropzoneItem>
-      ))}
-    </>
+    <div className="w-full max-w-[496px]">
+      <DropzoneField
+        multiple
+        label="Documents"
+        description="PDF only · up to 2 MB each"
+        errorMessage={error}
+        acceptedFileTypes={['application/pdf']}
+        maxSize={2 * 1024 * 1024}
+        onAccept={() => setError(undefined)}
+        onFileReject={(file, message) => setError(`${file.name}: ${message}`)}
+      />
+    </div>
+  );
+}
+
+export function FieldUsageDemo() {
+  return (
+    <RadioGroup className="max-w-md gap-3" defaultValue="pro">
+      <FieldLabel>Plan</FieldLabel>
+      <FieldDescription>You can change this later.</FieldDescription>
+      <Radio value="basic">Basic</Radio>
+      <Radio value="pro">Pro</Radio>
+    </RadioGroup>
+  );
+}
+
+export function FieldCheckboxGroupDemo() {
+  return (
+    <CheckboxGroup className="max-w-md gap-3" defaultValue={['email']}>
+      <FieldLabel>Notification channels</FieldLabel>
+      <FieldDescription>Where should we send updates?</FieldDescription>
+      <Checkbox value="email">Email</Checkbox>
+      <Checkbox value="sms">SMS</Checkbox>
+    </CheckboxGroup>
+  );
+}
+
+export function FieldValidationDemo() {
+  return (
+    <RadioGroup className="max-w-md gap-3" isInvalid>
+      <FieldLabel>Plan</FieldLabel>
+      <Radio value="basic">Basic</Radio>
+      <Radio value="pro">Pro</Radio>
+      <FieldError>Choose a plan to continue.</FieldError>
+    </RadioGroup>
   );
 }
