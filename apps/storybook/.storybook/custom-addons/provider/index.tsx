@@ -17,15 +17,16 @@ import {
   type VeliProviderSwitcherValues,
 } from './shared';
 
-function readProviderSwitcherValues() {
+function readProviderSwitcherValues(defaults: Partial<VeliProviderSwitcherValues> = {}) {
   const params = new URLSearchParams(document.location.search);
   const root = document.documentElement;
 
   return normalizeProviderSwitcherValues({
-    language: params.get(providerSwitcherLanguageQueryParam) ?? undefined,
-    // The iframe URL can lag behind toolbar changes when a story remounts.
-    theme: root.dataset.colorScheme ?? params.get(providerSwitcherThemeQueryParam) ?? undefined,
-    surface: root.dataset.veliSurface ?? params.get(providerSwitcherSurfaceQueryParam) ?? undefined,
+    language: params.get(providerSwitcherLanguageQueryParam) ?? defaults.language,
+    theme:
+      params.get(providerSwitcherThemeQueryParam) ?? defaults.theme ?? root.dataset.colorScheme,
+    surface:
+      params.get(providerSwitcherSurfaceQueryParam) ?? defaults.surface ?? root.dataset.veliSurface,
   });
 }
 
@@ -36,7 +37,9 @@ function ProviderSwitcher({
   children: React.ReactNode;
   context: StoryContext;
 }) {
-  const [values, setValues] = React.useState(readProviderSwitcherValues);
+  const [values, setValues] = React.useState(() =>
+    readProviderSwitcherValues(context.parameters.veliProvider),
+  );
 
   /*
    * Keep existing story decorators that read context.globals.language working,
@@ -57,12 +60,15 @@ function ProviderSwitcher({
     };
 
     channel.on(providerSwitcherUpdatedEvent, updateProvider);
-    channel.emit(providerSwitcherReadyEvent);
+    channel.emit(
+      providerSwitcherReadyEvent,
+      readProviderSwitcherValues(context.parameters.veliProvider),
+    );
 
     return () => {
       channel.removeListener(providerSwitcherUpdatedEvent, updateProvider);
     };
-  }, []);
+  }, [context.parameters.veliProvider]);
 
   return (
     <StorybookThemeRoot
@@ -181,7 +187,7 @@ function useResolvedStorybookColorScheme(colorScheme: VeliColorScheme): VeliReso
 
 export const withProviderSwitcher: Decorator = (Story, context) => {
   return (
-    <ProviderSwitcher context={context}>
+    <ProviderSwitcher key={context.id} context={context}>
       <Story />
     </ProviderSwitcher>
   );

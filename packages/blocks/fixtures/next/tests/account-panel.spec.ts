@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { waitForMotion } from './wait-for-motion';
 
 async function openPanel(page: Page) {
   const trigger = page.getByRole('button', { name: 'Open account panel' });
@@ -75,7 +76,7 @@ test('host callbacks retain the panel, account updates and theme changes are con
 });
 
 for (const theme of ['light', 'dark']) {
-  test(`${theme}: account row press uses subtle colors without scaling or ripple`, async ({
+  test(`${theme}: account row press matches notification colors without scaling or ripple`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
@@ -90,6 +91,7 @@ for (const theme of ['light', 'dark']) {
     if (!before) throw new Error('Missing account row geometry');
     const hoverColor = await row.evaluate((element) => getComputedStyle(element).backgroundColor);
     expect(hoverColor).not.toBe(idleColor);
+    await waitForMotion(page);
     expect(
       (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
     ).toEqual([]);
@@ -100,7 +102,7 @@ for (const theme of ['light', 'dark']) {
     const pressed = await row.evaluate((element) => {
       const style = getComputedStyle(element);
       const reference = document.createElement('span');
-      reference.style.backgroundColor = 'var(--color-button-secondary-subtle-hover)';
+      reference.style.backgroundColor = 'var(--color-neutral-alpha-200)';
       element.append(reference);
       const tokenColor = getComputedStyle(reference).backgroundColor;
       reference.remove();
@@ -114,7 +116,7 @@ for (const theme of ['light', 'dark']) {
       };
     });
     expect(pressed.color).toBe(pressed.tokenColor);
-    expect(pressed.color).not.toBe(hoverColor);
+    expect(pressed.color).toBe(hoverColor);
     expect(pressed.scale).toBe('none');
     expect(pressed.transform).toBe('none');
     expect(pressed.ripple).toBe('none');
@@ -139,20 +141,11 @@ for (const theme of ['light', 'dark']) {
   });
 }
 
-test('empty, loading, failed, display-only and disabled actions have distinct semantics', async ({
+test('empty, skeleton loading, errors and pending actions have distinct semantics', async ({
   page,
 }) => {
   await page.goto('/accounts');
-  for (const state of [
-    'empty',
-    'loading',
-    'error',
-    'pending',
-    'disabled',
-    'action-error',
-    'display-only',
-    'one',
-  ]) {
+  for (const state of ['empty', 'loading', 'error', 'pending', 'one']) {
     await page.getByLabel('State').selectOption(state);
     const dialog = await openPanel(page);
     if (state === 'empty') {
@@ -165,33 +158,43 @@ test('empty, loading, failed, display-only and disabled actions have distinct se
         state === 'loading' ? 'Loading accounts' : 'Could not load',
       );
     }
-    if (state === 'pending' || state === 'disabled') {
+    if (state === 'loading') {
+      await expect(dialog.locator('[data-account-skeleton]')).toHaveCount(3);
+      await expect(dialog.getByRole('button', { name: /Ali Hassan/ })).toHaveCount(0);
+      await expect(dialog.getByText('Aisha Ahmed')).toBeVisible();
+      await expect(dialog.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    }
+    if (state === 'error') {
+      await waitForMotion(page);
+      expect(
+        (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
+      ).toEqual([]);
+    }
+    if (state === 'pending') {
       const signOut = dialog.getByRole('button', { name: 'Sign out' });
-      await expect(
-        dialog.getByText(state === 'pending' ? 'Working…' : 'Unavailable').first(),
-      ).toBeVisible();
-      await expect(signOut).toHaveAttribute(
-        state === 'pending' ? 'aria-busy' : 'disabled',
-        state === 'pending' ? 'true' : '',
+      await expect(signOut).toHaveAttribute('aria-busy', 'true');
+      await expect(signOut.getByRole('progressbar', { name: 'Loading' })).toBeVisible();
+      await expect(signOut).toHaveAccessibleDescription('Working…');
+      const actionStatus = signOut.locator('..').getByRole('status');
+      expect(await actionStatus.evaluate((element) => element.getBoundingClientRect().height)).toBe(
+        1,
       );
+      expect(
+        await actionStatus.locator('..').evaluate((element) => getComputedStyle(element).position),
+      ).toBe('absolute');
       // Native click attempts must not invoke a blocked action.
       await signOut.evaluate((button: HTMLButtonElement) => button.click());
       const row = dialog.getByRole('button', { name: /Ali Hassan/ });
-      await expect(row).toHaveAttribute(
-        state === 'pending' ? 'aria-busy' : 'disabled',
-        state === 'pending' ? 'true' : '',
-      );
+      await expect(row).toHaveAttribute('aria-busy', 'true');
+      await expect(row.locator('[data-account-pending-avatar] svg')).toBeVisible();
+      await expect(row.locator('img')).toHaveCount(0);
+      await expect(row).toHaveAccessibleDescription('Working…');
+      const rowStatus = row.locator('..').getByRole('status');
+      expect(await rowStatus.evaluate((element) => element.getBoundingClientRect().height)).toBe(1);
+      expect(
+        await rowStatus.locator('..').evaluate((element) => getComputedStyle(element).position),
+      ).toBe('absolute');
       await row.evaluate((button: HTMLButtonElement) => button.click());
-    }
-    if (state === 'action-error') {
-      await expect(dialog.getByRole('alert')).toHaveCount(3);
-      await expect(dialog.getByRole('button', { name: 'Sign out' })).toHaveAccessibleDescription(
-        'Sign out failed.',
-      );
-    }
-    if (state === 'display-only') {
-      await expect(dialog.getByRole('button', { name: /Ali Hassan/ })).toHaveCount(0);
-      await expect(dialog.getByRole('listitem')).toHaveCount(2);
     }
     if (state === 'one') await expect(dialog.getByRole('listitem')).toHaveCount(1);
     await page.keyboard.press('Escape');
@@ -203,9 +206,72 @@ test('empty, loading, failed, display-only and disabled actions have distinct se
   await expect(page.getByRole('button', { name: 'Open account panel' })).toBeDisabled();
 });
 
-test('mobile sheet portals out of the header, drag cancellation resets and downward drag dismisses', async ({
+for (const [width, theme, reducedMotion] of [
+  [390, 'dark', 'reduce'],
+  [1280, 'light', 'no-preference'],
+] as const) {
+  test(`${width}px ${theme}: pending replaces the avatar without changing row geometry`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion });
+    await page.goto('/accounts');
+    if (theme === 'dark') {
+      await page.getByRole('button', { name: 'Change theme' }).click();
+      await page.getByRole('button', { name: 'Change language' }).click();
+    }
+    const trigger = page.getByRole('button', {
+      name: theme === 'dark' ? 'އެކައުންޓު' : 'Open account panel',
+    });
+    await trigger.click();
+    const dialog = page.getByRole('dialog');
+    const row = dialog.getByRole('button', { name: /Ali Hassan/ });
+    await expect(row.locator('img')).toHaveCount(1);
+    await waitForMotion(page);
+    const before = await row.boundingBox();
+    if (!before) throw new Error('Missing account row geometry');
+    const avatarColor = await row
+      .locator(':scope > span > div')
+      .evaluate((element) => getComputedStyle(element).backgroundColor);
+    await page.keyboard.press('Escape');
+    await page.getByLabel('State').selectOption('pending');
+    await trigger.click();
+    await waitForMotion(page);
+    const pending = row.locator('[data-account-pending-avatar]');
+    await expect(pending.locator('svg')).toBeVisible();
+    await expect(row.locator('img')).toHaveCount(0);
+    await expect(row.getByText('Ali Hassan')).toBeVisible();
+    await expect(row.getByText('ali@example.test')).toBeVisible();
+    expect(await pending.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+      avatarColor,
+    );
+    const slot = await pending.boundingBox();
+    expect(slot?.width).toBe(44);
+    expect(slot?.height).toBe(44);
+    const during = await row.boundingBox();
+    expect(during?.width).toBe(before.width);
+    expect(during?.height).toBe(before.height);
+    expect(
+      await pending.locator('svg').evaluate((element) => getComputedStyle(element).animationName),
+    ).toBe(reducedMotion === 'reduce' ? 'none' : 'spin');
+    await expect(row).toHaveAccessibleDescription(theme === 'dark' ? 'ބަދަލުކުރަނީ…' : 'Working…');
+    await row.evaluate((button: HTMLButtonElement) => button.click());
+    await expect(page.locator('[data-calls]')).toContainText('Selection: 0');
+    await page.keyboard.press('Escape');
+    await page.getByLabel('State').selectOption('ready');
+    await trigger.click();
+    await waitForMotion(page);
+    await expect(pending).toHaveCount(0);
+    await expect(row.locator('img')).toHaveCount(1);
+    const after = await row.boundingBox();
+    expect(after?.width).toBe(before.width);
+    expect(after?.height).toBe(before.height);
+  });
+}
+
+test('mobile sheet moves its surface and content together, cancellation resets and downward drag dismisses', async ({
   page,
-}) => {
+}, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/accounts');
@@ -231,15 +297,39 @@ test('mobile sheet portals out of the header, drag cancellation resets and downw
   );
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
   const handle = page.locator('[data-account-drag-handle]');
+  const sheet = page.locator('[data-account-sheet]');
+  const profile = dialog.locator('[data-account-profile]');
+  const surfaceBefore = await sheet.boundingBox();
+  const profileBefore = await profile.boundingBox();
   const startBox = await handle.boundingBox();
-  if (!startBox) throw new Error('Missing drag handle');
+  if (!startBox || !surfaceBefore || !profileBefore) throw new Error('Missing sheet geometry');
   await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2);
   await page.mouse.down();
   await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2 + 40);
+  const surfaceDuring = await sheet.boundingBox();
+  const profileDuring = await profile.boundingBox();
+  if (!surfaceDuring || !profileDuring) throw new Error('Missing dragged sheet geometry');
+  expect(surfaceDuring.y - surfaceBefore.y).toBe(40);
+  expect(profileDuring.y - profileBefore.y).toBe(40);
+  expect(profileDuring.y - surfaceDuring.y).toBe(36);
+  expect(await sheet.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  expect(
+    await page.evaluate(
+      ({ x, y }) => document.elementFromPoint(x, y)?.hasAttribute('data-account-sheet-overlay'),
+      {
+        x: surfaceDuring.x + surfaceDuring.width / 2,
+        y: surfaceDuring.y - 10,
+      },
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath('sheet-during-drag.png') });
   await handle.dispatchEvent('pointercancel', { pointerId: 1 });
   await page.mouse.up();
   await expect(dialog).toBeVisible();
-  await expect(handle.locator('..')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  await expect(sheet).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  expect(await sheet.boundingBox()).toEqual(surfaceBefore);
   const box = await handle.boundingBox();
   if (!box) throw new Error('Missing drag handle');
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -287,7 +377,7 @@ for (const width of [320, 1280])
           .click();
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
-        if (width >= 640) {
+        {
           const scrollArea = dialog.locator('.overflow-y-auto');
           const scrollBox = await scrollArea.boundingBox();
           const footerBox = await dialog
@@ -299,6 +389,16 @@ for (const width of [320, 1280])
             await scrollArea.evaluate((element) => element.scrollHeight > element.clientHeight),
           ).toBe(true);
           expect(Math.abs(scrollBox.y + scrollBox.height - footerBox.y)).toBeLessThan(1);
+          const beforeScroll = footerBox;
+          await scrollArea.evaluate((element) => {
+            element.scrollTop = element.scrollHeight;
+          });
+          expect(
+            await dialog
+              .getByRole('button', { name: language === 'dv' ? 'ސައިން އައުޓް' : 'Sign out' })
+              .locator('../..')
+              .boundingBox(),
+          ).toEqual(beforeScroll);
         }
         expect(
           (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
@@ -399,12 +499,191 @@ for (const language of ['en', 'dv'])
     });
   }
 
-test('documented adapter owns asynchronous errors and retry presentation', async ({ page }) => {
-  await page.goto('/account-example');
+for (const width of [390, 1280]) {
+  test(`${width}px: documented adapter presents action failures in consumer toasts`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/account-example');
+    const dialog = await openPanel(page);
+    const account = dialog.getByRole('button', { name: 'Ali Hassan' });
+    await account.click();
+    const toasts = page.getByRole('alertdialog', { name: 'Operation failed. Try again.' });
+    await expect(toasts).toHaveCount(1);
+    await expect(toasts.first()).toBeVisible();
+    await expect(account).not.toHaveAttribute('aria-busy', 'true');
+    await dialog.getByRole('button', { name: 'Sign out' }).click();
+    await expect(toasts).toHaveCount(2);
+    await expect(dialog.getByRole('alert')).toHaveCount(0);
+    await expect(dialog.getByText('Operation failed. Try again.')).toHaveCount(0);
+    await expect(dialog).toBeVisible();
+    await account.click();
+    await expect(toasts).toHaveCount(3);
+  });
+}
+
+for (const state of ['ready', 'empty']) {
+  test(`mobile ${state}: Figma notch spacing and close focus do not shift the profile`, async ({
+    page,
+  }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 440, height: 956 });
+    await page.goto('/accounts');
+    await page.getByLabel('State').selectOption(state);
+    const dialog = await openPanel(page);
+    const sheet = page.locator('[data-account-sheet]');
+    const profile = dialog.locator('[data-account-profile]');
+    const sheetBox = await sheet.boundingBox();
+    const notchBox = await dialog.locator('[data-account-drag-handle] > span').boundingBox();
+    const profileBox = await profile.boundingBox();
+    if (!sheetBox || !notchBox || !profileBox) throw new Error('Missing mobile geometry');
+    expect(notchBox.y - sheetBox.y).toBeCloseTo(8, 1);
+    expect(notchBox.height).toBeCloseTo(4, 1);
+    expect(profileBox.y - notchBox.y - notchBox.height).toBeCloseTo(24, 1);
+    expect(profileBox.y - sheetBox.y).toBeCloseTo(36, 1);
+    await expect(sheet).toHaveCSS('border-top-left-radius', '32px');
+    await expect(sheet).toHaveCSS('border-top-right-radius', '32px');
+    const close = dialog.getByRole('button', { name: 'Close', exact: true });
+    expect((await close.boundingBox())?.width).toBe(1);
+    await page.keyboard.press('Tab');
+    await expect(close).toBeFocused();
+    await expect(close).toHaveAttribute('data-focus-visible', 'true');
+    expect((await close.boundingBox())?.width).toBeGreaterThan(1);
+    expect(await profile.boundingBox()).toEqual(profileBox);
+    await page.screenshot({ path: testInfo.outputPath(`mobile-${state}.png`) });
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('button', { name: 'Open account panel' })).toBeFocused();
+  });
+}
+
+for (const width of [440, 1280]) {
+  for (const theme of ['light', 'dark']) {
+    test(`${width}px ${theme}: raised surface and open avatar ring use Veli tokens`, async ({
+      page,
+    }, testInfo) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.setViewportSize({ width, height: 956 });
+      await page.goto('/accounts');
+      if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+      const dialog = await openPanel(page);
+      const colors = await dialog.evaluate((element) => {
+        let surface: Element | null = element;
+        while (surface && getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)')
+          surface = surface.parentElement;
+        const reference = document.createElement('span');
+        reference.style.backgroundColor = 'var(--color-bg-surface-raised)';
+        element.append(reference);
+        const expected = getComputedStyle(reference).backgroundColor;
+        reference.remove();
+        return { actual: surface ? getComputedStyle(surface).backgroundColor : '', expected };
+      });
+      expect(colors.actual).toBe(colors.expected);
+      if (width < 640) {
+        const scrim = await page.locator('[data-account-sheet-overlay]').evaluate((element) => {
+          const style = getComputedStyle(element);
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = 1;
+          const context = canvas.getContext('2d')!;
+          context.fillStyle = style.backgroundColor;
+          context.fillRect(0, 0, 1, 1);
+          return {
+            rgba: Array.from(context.getImageData(0, 0, 1, 1).data),
+            blur: style.backdropFilter,
+          };
+        });
+        expect(scrim.rgba).toEqual([0, 0, 0, 153]);
+        expect(scrim.blur).toBe('blur(6px)');
+      }
+      const trigger = page.getByRole('button', { name: 'Open account panel' });
+      expect(await trigger.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe(
+        'none',
+      );
+      await page.screenshot({ path: testInfo.outputPath(`panel-${width}-${theme}.png`) });
+    });
+  }
+}
+
+test('reduced-motion skeletons are decorative and do not pulse', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/accounts');
+  await page.getByLabel('State').selectOption('loading');
   const dialog = await openPanel(page);
-  await dialog.getByRole('button', { name: 'Ali Hassan' }).click();
-  await expect(dialog.getByRole('alert')).toHaveText('Operation failed. Try again.');
-  await dialog.getByRole('button', { name: 'Sign out' }).click();
-  await expect(dialog.getByRole('alert')).toHaveCount(2);
-  await expect(dialog).toBeVisible();
+  const rows = dialog.locator('[data-account-skeleton]');
+  await expect(rows).toHaveCount(3);
+  await expect(dialog.getByRole('status')).toHaveCount(1);
+  // A busy ancestor can defer the loading announcement until after it has disappeared.
+  expect(
+    await dialog.getByRole('status').evaluate((element) => element.closest('[aria-busy="true"]')),
+  ).toBeNull();
+  const avatar = rows.first().locator(':scope > .rounded-full');
+  await expect(avatar).toHaveCSS('width', '44px');
+  await expect(avatar).toHaveCSS('height', '44px');
+  await expect(rows.locator('.animate-pulse')).toHaveCount(9);
+  expect(
+    await rows.evaluateAll((elements) =>
+      elements.every(
+        (row) =>
+          row.getAttribute('aria-hidden') === 'true' &&
+          row.getAnimations({ subtree: true }).length === 0,
+      ),
+    ),
+  ).toBe(true);
+});
+
+test('mobile sheet uses token durations and monotonic ease-out motion without drag snap-back', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 440, height: 956 });
+  await page.goto('/accounts');
+  await page.getByRole('button', { name: 'Open account panel' }).click();
+  const sheet = page.locator('[data-account-sheet]');
+  async function sampleSheetTransition() {
+    return sheet.evaluate((element) => {
+      const animation = document
+        .getAnimations()
+        .find(
+          (candidate) =>
+            candidate instanceof CSSTransition &&
+            candidate.transitionProperty === 'translate' &&
+            (candidate.effect as KeyframeEffect).target?.contains(element),
+        );
+      if (!animation?.effect) throw new Error('Missing sheet translation');
+      animation.pause();
+      const timing = animation.effect.getTiming();
+      const positions = Array.from({ length: 21 }, (_, index) => {
+        animation.currentTime = (Number(timing.duration) * index) / 20;
+        return element.getBoundingClientRect().y;
+      });
+      animation.finish();
+      return { duration: timing.duration, easing: timing.easing, positions };
+    });
+  }
+  const entry = await sampleSheetTransition();
+  expect(entry.duration).toBe(350);
+  expect(entry.easing).toBe('cubic-bezier(0, 0, 0.2, 1)');
+  for (let index = 1; index < entry.positions.length; index++)
+    expect(entry.positions[index]).toBeLessThanOrEqual(entry.positions[index - 1]);
+  await waitForMotion(page);
+  await page.keyboard.press('Escape');
+  const exit = await sampleSheetTransition();
+  expect(exit.duration).toBe(200);
+  expect(exit.easing).toBe(entry.easing);
+  for (let index = 1; index < exit.positions.length; index++)
+    expect(exit.positions[index]).toBeGreaterThanOrEqual(exit.positions[index - 1]);
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await openPanel(page);
+  await waitForMotion(page);
+  const handle = page.locator('[data-account-drag-handle]');
+  const box = await handle.boundingBox();
+  if (!box) throw new Error('Missing drag handle');
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 + 280, { steps: 5 });
+  await page.mouse.up();
+  expect(
+    await sheet.evaluate((element) => new DOMMatrix(getComputedStyle(element).transform).m42),
+  ).toBe(280);
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Open account panel' })).toBeFocused();
 });

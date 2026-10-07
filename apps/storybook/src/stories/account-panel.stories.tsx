@@ -3,7 +3,7 @@ import { Sun, Moon, Monitor } from 'phosphor-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { AccountPanel, type AccountPanelProps } from '@tradenetcorp/veli-blocks/account-panel';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const labels = {
   trigger: 'Open account panel',
@@ -12,18 +12,27 @@ const labels = {
   otherAccounts: 'Other accounts',
   loading: 'Loading accounts…',
   pending: 'Working…',
-  disabled: 'Unavailable',
 };
 const account = {
   id: 'personal',
   displayName: 'Aisha Ahmed',
   secondaryText: 'aisha@example.test',
+  secondaryTextLang: 'en',
+  secondaryTextDir: 'ltr' as const,
   badge: 'Primary User',
 };
 const groups = [
   {
     id: 'personal',
-    accounts: [{ id: 'other', displayName: 'Ali Hassan', secondaryText: 'ali@example.test' }],
+    accounts: [
+      {
+        id: 'other',
+        displayName: 'Ali Hassan',
+        secondaryText: 'ali@example.test',
+        secondaryTextLang: 'en',
+        secondaryTextDir: 'ltr' as const,
+      },
+    ],
   },
   {
     id: 'organizations',
@@ -31,38 +40,137 @@ const groups = [
   },
 ];
 
+const dhivehiText: Record<string, string> = {
+  'Open account panel': 'އެކައުންޓު',
+  'Your account': 'ތިޔަ އެކައުންޓު',
+  Close: 'ބަންދުކުރައްވާ',
+  'Other accounts': 'އެހެން އެކައުންޓުތައް',
+  'Loading accounts…': 'އެކައުންޓުތައް ލޯޑުވަނީ…',
+  'Working…': 'ބަދަލުކުރަނީ…',
+  'Aisha Ahmed': 'އާއިޝާ އަޙްމަދު',
+  'Ali Hassan': 'އަލީ ޙަސަން',
+  'Primary User': 'މައި ޔޫޒަރު',
+  'Delegate user': 'ނާއިބު ޔޫޒަރު',
+  'Primary account': 'މައި އެކައުންޓު',
+  'Example team': 'މިސާލު ޓީމް',
+  'Team account': 'ޓީމްގެ އެކައުންޓު',
+  'Sign out': 'ސައިން އައުޓް',
+  'Switch Theme': 'ތީމް ބަދަލުކުރައްވާ',
+  Light: 'އަލި',
+  Dark: 'އަނދިރި',
+  Auto: 'އޮޓޯ',
+  'Add other accounts': 'އެހެން އެކައުންޓުތައް އިތުރުކުރައްވާ',
+  'Set up delegation to act on behalf of other users or businesses you own.':
+    'އެހެން ޔޫޒަރުންނާއި ތިޔަ ފަރާތުގެ ވިޔަފާރިތަކުގެ ނާއިބަކުގެ ގޮތުގައި ކަންތައްކުރުމަށް ޑެލިގޭޝަން ސެޓްއަޕް ކުރައްވާ.',
+  'Setup Delegation': 'ޑެލިގޭޝަން ސެޓްއަޕް ކުރައްވާ',
+  'Could not load additional accounts.': 'އެހެން އެކައުންޓުތައް ލޯޑު ނުކުރެވުނު.',
+  'Sign-out callback received': 'ސައިން އައުޓް ކުރުމުގެ ދަންނަވާލުން ލިބިއްޖެ.',
+  ['A very long account holder name '.repeat(5)]:
+    'އެކައުންޓުގެ ވެރިފަރާތުގެ ވަރަށް ދިގު ނަމެއް '.repeat(5),
+  ['long-secondary-text-'.repeat(8)]: 'ވަރަށް ދިގު އިތުރު މަޢުލޫމާތު '.repeat(8),
+  ...Object.fromEntries(
+    Array.from({ length: 20 }, (_, index) => [
+      `Account ${index} with a very long name`,
+      `ވަރަށް ދިގު ނަމެއްގެ އެކައުންޓު ${index}`,
+    ]),
+  ),
+};
+
+const translate = (text: string, dhivehi: boolean) =>
+  dhivehi ? (dhivehiText[text] ?? text) : text;
+
+function playText(canvasElement: HTMLElement, text: string) {
+  return translate(text, canvasElement.querySelector('[lang]')?.getAttribute('lang') === 'dv');
+}
+
 function Playground(args: AccountPanelProps) {
-  const [open, setOpen] = useState(false);
+  const { language, lang, direction } = useVeliLanguage();
+  const dhivehi = language === 'dv';
+  const text = (value: string) => translate(value, dhivehi);
+  const localizeAccount = (item: AccountPanelProps['selectedAccount']) => ({
+    ...item,
+    displayName: text(item.displayName),
+    secondaryText: item.secondaryText && text(item.secondaryText),
+    badge: item.badge && text(item.badge),
+    avatar: item.avatar && {
+      ...item.avatar,
+      initials: dhivehi ? text(item.displayName) : item.avatar.initials,
+    },
+    lang,
+    dir: direction,
+  });
+  const [open, setOpen] = useState(args.isOpen);
   const [selected, setSelected] = useState(args.selectedAccount);
   const [message, setMessage] = useState('');
-  const [appearance, setAppearance] = useState('system');
+  const [appearance, setAppearance] = useState(args.appearance?.value ?? 'system');
   return (
-    <div className="flex min-h-96 items-start justify-between gap-4 p-6">
-      <p role="status">{message}</p>
+    <div
+      lang={lang}
+      dir={direction}
+      className="flex min-h-96 items-start justify-between gap-4 p-6"
+    >
+      <p role="status">
+        {message.startsWith('Selected ') && dhivehi
+          ? 'އެކައުންޓު ބަދަލުކުރެވިއްޖެ.'
+          : text(message)}
+      </p>
       <AccountPanel
         {...args}
-        selectedAccount={selected}
+        selectedAccount={localizeAccount(selected)}
+        labels={
+          Object.fromEntries(
+            Object.entries(args.labels).map(([key, value]) => [key, text(value)]),
+          ) as AccountPanelProps['labels']
+        }
+        error={args.error && text(args.error)}
+        emptyState={
+          args.emptyState && {
+            ...args.emptyState,
+            title: text(args.emptyState.title),
+            description: args.emptyState.description && text(args.emptyState.description),
+            action: args.emptyState.action && {
+              ...args.emptyState.action,
+              label: text(args.emptyState.action.label),
+            },
+          }
+        }
+        accountManagement={
+          args.accountManagement && {
+            ...args.accountManagement,
+            label: text(args.accountManagement.label),
+          }
+        }
         accountGroups={args.accountGroups?.map((group) => ({
           ...group,
-          accounts: group.accounts.filter((item) => item.id !== selected.id),
+          label: group.label && text(group.label),
+          accounts: group.accounts.filter((item) => item.id !== selected.id).map(localizeAccount),
         }))}
         isOpen={open}
         onOpenChange={setOpen}
-        onAccountSelect={
-          args.onAccountSelect
-            ? (id) => {
-                const item = args.accountGroups
-                  ?.flatMap((group) => group.accounts)
-                  .find((item) => item.id === id);
-                if (item) setSelected(item);
-                setMessage(`Selected ${id}`);
-              }
-            : undefined
-        }
-        signOut={{ ...args.signOut, onPress: () => setMessage('Sign-out callback received') }}
+        onAccountSelect={(id) => {
+          const item = args.accountGroups
+            ?.flatMap((group) => group.accounts)
+            .find((item) => item.id === id);
+          if (item) setSelected(item);
+          setMessage(`Selected ${id}`);
+        }}
+        signOut={{
+          ...args.signOut,
+          label: text(args.signOut.label),
+          onPress: () => setMessage('Sign-out callback received'),
+        }}
         appearance={
           args.appearance
-            ? { ...args.appearance, value: appearance, onChange: setAppearance }
+            ? {
+                ...args.appearance,
+                label: text(args.appearance.label),
+                options: args.appearance.options.map((option) => ({
+                  ...option,
+                  label: text(option.label),
+                })),
+                value: appearance,
+                onChange: setAppearance,
+              }
             : undefined
         }
       />
@@ -107,17 +215,26 @@ export const Desktop: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: labels.trigger });
+    const text = (value: string) => playText(canvasElement, value);
+    const trigger = canvas.getByRole('button', { name: text(labels.trigger) });
     await userEvent.click(trigger);
-    const dialog = await page.findByRole('dialog', { name: labels.dialog });
+    const dialog = await page.findByRole('dialog', { name: text(labels.dialog) });
+    await waitFor(() => expect(dialog).toBeVisible());
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(within(dialog).getByRole('radio', { name: 'Light' }));
-    await userEvent.keyboard('{ArrowRight}');
-    await expect(within(dialog).getByRole('radio', { name: 'Dark' })).toBeChecked();
-    await userEvent.click(within(dialog).getByRole('button', { name: /Ali Hassan/ }));
-    await expect(within(dialog).getByText('Ali Hassan')).toBeVisible();
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Sign out' }));
-    await expect(canvas.getByRole('status')).toHaveTextContent('Sign-out callback received');
+    const mobile = canvasElement.ownerDocument.defaultView?.matchMedia('(width < 640px)').matches;
+    if (mobile) {
+      await expect(within(dialog).queryByRole('radiogroup')).not.toBeInTheDocument();
+    } else {
+      await userEvent.click(within(dialog).getByRole('radio', { name: text('Light') }));
+      await userEvent.keyboard(text('Light') === 'Light' ? '{ArrowRight}' : '{ArrowLeft}');
+      await expect(within(dialog).getByRole('radio', { name: text('Dark') })).toBeChecked();
+    }
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: new RegExp(text('Ali Hassan')) }),
+    );
+    await waitFor(() => expect(within(dialog).getByText(text('Ali Hassan'))).toBeVisible());
+    await userEvent.click(within(dialog).getByRole('button', { name: text('Sign out') }));
+    await expect(canvas.getByRole('status')).toHaveTextContent(text('Sign-out callback received'));
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).toHaveFocus());
   },
@@ -127,9 +244,11 @@ export const Mobile: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: labels.trigger });
+    const trigger = canvas.getByRole('button', { name: playText(canvasElement, labels.trigger) });
     await userEvent.click(trigger);
-    const dialog = await page.findByRole('dialog', { name: labels.dialog });
+    const dialog = await page.findByRole('dialog', {
+      name: playText(canvasElement, labels.dialog),
+    });
     await userEvent.keyboard('{Tab}');
     await expect(dialog.contains(canvasElement.ownerDocument.activeElement)).toBe(true);
     await userEvent.keyboard('{Escape}');
@@ -138,7 +257,6 @@ export const Mobile: Story = {
 };
 export const OneAdditionalAccount: Story = { args: { accountGroups: [groups[0]] } };
 export const NoAdditionalAccounts: Story = { args: { accountGroups: [] } };
-export const DisplayOnly: Story = { args: { onAccountSelect: undefined } };
 export const Image: Story = {
   args: {
     selectedAccount: {
@@ -187,62 +305,7 @@ export const Pending: Story = {
     accountGroups: [{ id: 'pending', accounts: [{ ...groups[0].accounts[0], isPending: true }] }],
   },
 };
-export const Disabled: Story = {
-  args: {
-    signOut: { label: 'Sign out', onPress: () => {}, isDisabled: true },
-    accountGroups: [{ id: 'disabled', accounts: [{ ...groups[0].accounts[0], isDisabled: true }] }],
-  },
-};
-export const ActionErrors: Story = {
-  args: {
-    signOut: { label: 'Sign out', onPress: () => {}, error: 'Sign out failed. Try again.' },
-    accountGroups: [
-      {
-        id: 'failed',
-        accounts: [{ ...groups[0].accounts[0], error: 'Selection failed. Try again.' }],
-      },
-    ],
-  },
-};
-export const Dhivehi: Story = {
-  decorators: [
-    (Story) => (
-      <VeliProvider language="dv" colorScheme="light">
-        <Story />
-      </VeliProvider>
-    ),
-  ],
-  args: {
-    labels: {
-      trigger: 'އެކައުންޓު',
-      dialog: 'ތިޔަ އެކައުންޓު',
-      close: 'ބަންދުކުރައްވާ',
-      otherAccounts: 'އެހެން އެކައުންޓުތައް',
-      loading: 'ލޯޑުވަނީ…',
-      pending: 'ބަދަލުކުރަނީ…',
-      disabled: 'ނުލިބެން',
-    },
-    selectedAccount: {
-      id: 'dv',
-      displayName: 'އާއިޝާ އަޙްމަދު',
-      secondaryText: 'aisha@example.test',
-      badge: 'މައި ޔޫޒަރު',
-      lang: 'dv',
-      dir: 'rtl',
-    },
-    signOut: { label: 'ސައިން އައުޓް', onPress: () => {} },
-    appearance: undefined,
-  },
-};
-export const Dark: Story = {
-  decorators: [
-    (Story) => (
-      <VeliProvider language="en" colorScheme="dark">
-        <Story />
-      </VeliProvider>
-    ),
-  ],
-};
+export const TriggerDisabled: Story = { args: { isDisabled: true } };
 export const ReducedMotion: Story = {
   parameters: {
     docs: {

@@ -22,6 +22,7 @@ export function ApplicationAccountPanel({
   signOutLabel,
   primaryLabel,
   failureLabel,
+  onActionError,
   selectAccount,
   logout,
 }: {
@@ -31,19 +32,21 @@ export function ApplicationAccountPanel({
   signOutLabel: string;
   primaryLabel: string;
   failureLabel: string;
+  // Present failures through the application's toast or notification UI.
+  onActionError: (message: string) => void;
   // The host updates selected/session props after these operations succeed.
-  selectAccount?: (id: string) => Promise<void>;
+  selectAccount: (id: string) => Promise<void>;
   logout: () => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string>();
-  const [selectionError, setSelectionError] = useState<{ id: string; message: string }>();
   const [signingOut, setSigningOut] = useState(false);
-  const [logoutError, setLogoutError] = useState<string>();
   const mapAccount = (record: IdentityRecord) => ({
     id: record.id,
     displayName: record.name,
     secondaryText: record.email,
+    secondaryTextLang: 'en',
+    secondaryTextDir: 'ltr' as const,
     avatar: { src: record.photo, initials: record.name },
     badge: record.primary ? primaryLabel : undefined,
   });
@@ -56,35 +59,27 @@ export function ApplicationAccountPanel({
         accounts: group.accounts.map((record) => ({
           ...mapAccount(record),
           isPending: record.id === pendingId,
-          isDisabled: pendingId !== undefined && record.id !== pendingId,
-          error: selectionError?.id === record.id ? selectionError.message : undefined,
         })),
       }))}
       labels={labels}
       isOpen={open}
       onOpenChange={setOpen}
-      onAccountSelect={
-        selectAccount
-          ? (id) => {
-              setPendingId(id);
-              setSelectionError(undefined);
-              void selectAccount(id)
-                .then(() => setOpen(false))
-                .catch(() => setSelectionError({ id, message: failureLabel }))
-                .finally(() => setPendingId(undefined));
-            }
-          : undefined
-      }
+      onAccountSelect={(id) => {
+        if (pendingId !== undefined) return;
+        setPendingId(id);
+        void selectAccount(id)
+          .then(() => setOpen(false))
+          .catch(() => onActionError(failureLabel))
+          .finally(() => setPendingId(undefined));
+      }}
       signOut={{
         label: signOutLabel,
         isPending: signingOut,
-        error: logoutError,
         onPress: () => {
           setSigningOut(true);
-          setLogoutError(undefined);
           void logout()
             .then(() => setOpen(false))
-            .catch(() => setLogoutError(failureLabel))
+            .catch(() => onActionError(failureLabel))
             .finally(() => setSigningOut(false));
         },
       }}
