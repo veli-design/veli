@@ -198,6 +198,12 @@ export const componentGroups: ComponentGroup[] = [
     title: 'Forms',
     items: [
       {
+        title: 'Field',
+        slug: 'field',
+        description:
+          'Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.',
+      },
+      {
         title: 'Input',
         slug: 'input',
         description: 'Text fields with description, validation, and token styling.',

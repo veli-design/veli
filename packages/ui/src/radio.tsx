@@ -16,7 +16,7 @@ import { twMerge } from 'tailwind-merge';
 const radioGroupVariants = cva('inline-flex flex-col gap-3');
 
 const radioRootVariants = cva(
-  'group inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
+  'group relative inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
   {
     variants: {
       size: {
