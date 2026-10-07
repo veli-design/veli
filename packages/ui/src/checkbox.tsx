@@ -27,7 +27,7 @@ const checkboxIndicatorSizes = {
 
 const checkboxGroupVariants = cva('inline-flex flex-col gap-3');
 
-const checkboxRootVariants = cva('group font-sans antialiased', {
+const checkboxRootVariants = cva('group relative font-sans antialiased', {
   variants: {
     size: {
       md: 'type-body-sm-regular',

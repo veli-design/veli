@@ -1,0 +1,131 @@
+---
+title: Field
+description: Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.
+---
+
+import {
+  FieldCheckboxGroupDemo,
+  FieldUsageDemo,
+  FieldValidationDemo,
+} from '../../components/DocsExamples';
+
+# Field
+
+Use Field when a control has no built-in label slot. Today that means labelling [RadioGroup](/docs/radio/) and [CheckboxGroup](/docs/checkbox/). Place `FieldLabel` inside the group — not beside it.
+
+Controls such as [Input](/docs/input/) already ship label, description, and error props. Keep using those.
+
+## Import
+
+```tsx
+import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <FieldUsageDemo client:visible />
+</div>
+
+```tsx
+import { FieldDescription, FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+
+<RadioGroup defaultValue="pro">
+  <FieldLabel>Plan</FieldLabel>
+  <FieldDescription>You can change this later.</FieldDescription>
+  <Radio value="basic">Basic</Radio>
+  <Radio value="pro">Pro</Radio>
+</RadioGroup>;
+```
+
+## CheckboxGroup
+
+Same composition: label and helper as children of the group.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <FieldCheckboxGroupDemo client:visible />
+</div>
+
+```tsx
+import { FieldDescription, FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
+
+<CheckboxGroup defaultValue={['email']}>
+  <FieldLabel>Notification channels</FieldLabel>
+  <FieldDescription>Where should we send updates?</FieldDescription>
+  <Checkbox value="email">Email</Checkbox>
+  <Checkbox value="sms">SMS</Checkbox>
+</CheckboxGroup>;
+```
+
+## Validation
+
+When the group is invalid, render `FieldError` inside it. Do not also pass `errorMessage` on the group, or the text shows twice. The same rule applies to `description` vs `FieldDescription`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <FieldValidationDemo client:visible />
+</div>
+
+```tsx
+<RadioGroup isInvalid>
+  <FieldLabel>Plan</FieldLabel>
+  <Radio value="basic">Basic</Radio>
+  <Radio value="pro">Pro</Radio>
+  <FieldError>Choose a plan to continue.</FieldError>
+</RadioGroup>
+```
+
+`FieldError` also accepts an `errors` value from React Hook Form, TanStack Form, or Standard Schema issues. See [Forms](/patterns/forms/).
+
+## API Reference
+
+Field primitives are thin wrappers over React Aria [`Label`](https://react-spectrum.adobe.com/react-aria/Label.html) and [`Text`](https://react-spectrum.adobe.com/react-aria/Text.html). Inside `RadioGroup` / `CheckboxGroup`, those slots wire `aria-labelledby` and `aria-describedby` on the group.
+
+### FieldLabel
+
+| Prop                    | Type                   | Default | Description                                                  |
+| :---------------------- | :--------------------- | :------ | :----------------------------------------------------------- |
+| `size`                  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Label typography size.                                       |
+| `isOptional`            | `boolean`              | `false` | Shows localized Optional. Hidden when the field is required. |
+| `showRequiredIndicator` | `boolean`              | `true`  | Shows `*` when a surrounding `Field` is required.            |
+| `htmlFor`               | `string`               | -       | Optional override for standalone label association.          |
+
+React Aria [`Label`](https://react-spectrum.adobe.com/react-aria/Label.html#props) props pass through except:
+
+| Prop        | Why                             |
+| :---------- | :------------------------------ |
+| `className` | Replaced by Veli label classes. |
+| `style`     | Not supported.                  |
+
+### FieldDescription
+
+| Prop   | Type                   | Default | Description             |
+| :----- | :--------------------- | :------ | :---------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Helper typography size. |
+
+Renders React Aria `Text` with `slot="description"`.
+
+### FieldError
+
+| Prop     | Type                   | Default | Description                                                             |
+| :------- | :--------------------- | :------ | :---------------------------------------------------------------------- |
+| `errors` | `unknown`              | -       | Form-library or Standard Schema errors. Ignored when `children` is set. |
+| `size`   | `'sm' \| 'md' \| 'lg'` | `'md'`  | Error typography size.                                                  |
+
+Renders React Aria `Text` with `slot="errorMessage"`. Multiple `errors` messages render as a list. Renders nothing when there is no message.
+
+### Other exports
+
+`Field`, `FieldSet`, `FieldLegend`, `FieldGroup`, `FieldContent`, `FieldTitle`, `FieldSeparator`, `FieldControl`, and `useFieldControlProps` support native or custom controls.
+
+## Accessibility
+
+- Put `FieldLabel` inside the group. A label beside the group cannot name it.
+- Prefer a visible `FieldLabel` over `aria-label` when the label is shown.
+- Use either group `description` / `errorMessage` props or `FieldDescription` / `FieldError` children — not both.
+- Do not wrap a single radio or checkbox group in `FieldSet` / `FieldLegend` only to name it.
+
+## RTL and Language
+
+Label, description, and error follow the page `dir`. With `isOptional`, FieldLabel shows the localized Optional string from the Veli language (`en` / `dv`).
