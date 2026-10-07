@@ -216,11 +216,7 @@ export const Desktop: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     const text = (value: string) => playText(canvasElement, value);
-    await waitFor(() => {
-      expect(canvasElement.ownerDocument.body.querySelector('.sb-preparing-story')).toBeNull();
-      expect(canvas.getByRole('button', { name: text(labels.trigger) })).toBeInTheDocument();
-    });
-    const trigger = canvas.getByRole('button', { name: text(labels.trigger) });
+    const trigger = await canvas.findByRole('button', { name: text(labels.trigger) });
     await userEvent.click(trigger);
     const dialog = await page.findByRole('dialog', { name: text(labels.dialog) });
     await waitFor(() => expect(dialog).toBeVisible());
@@ -248,12 +244,9 @@ export const Mobile: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    const triggerName = playText(canvasElement, labels.trigger);
-    await waitFor(() => {
-      expect(canvasElement.ownerDocument.body.querySelector('.sb-preparing-story')).toBeNull();
-      expect(canvas.getByRole('button', { name: triggerName })).toBeInTheDocument();
+    const trigger = await canvas.findByRole('button', {
+      name: playText(canvasElement, labels.trigger),
     });
-    const trigger = canvas.getByRole('button', { name: triggerName });
     await userEvent.click(trigger);
     const dialog = await page.findByRole('dialog', {
       name: playText(canvasElement, labels.dialog),
