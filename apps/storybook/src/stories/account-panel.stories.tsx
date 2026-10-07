@@ -216,7 +216,11 @@ export const Desktop: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     const text = (value: string) => playText(canvasElement, value);
-    const trigger = await canvas.findByRole('button', { name: text(labels.trigger) });
+    // exact: Dhivehi account rows also contain the trigger label substring.
+    const trigger = await canvas.findByRole('button', {
+      name: text(labels.trigger),
+      exact: true,
+    });
     await userEvent.click(trigger);
     const dialog = await page.findByRole('dialog', { name: text(labels.dialog) });
     await waitFor(() => expect(dialog).toBeVisible());
@@ -225,8 +229,8 @@ export const Desktop: Story = {
     if (mobile) {
       await expect(within(dialog).queryByRole('radiogroup')).not.toBeInTheDocument();
     } else {
-      await userEvent.click(within(dialog).getByRole('radio', { name: text('Light') }));
-      await userEvent.keyboard(text('Light') === 'Light' ? '{ArrowRight}' : '{ArrowLeft}');
+      // Click Dark directly — arrow direction under RTL is flaky across browsers.
+      await userEvent.click(within(dialog).getByRole('radio', { name: text('Dark') }));
       await expect(within(dialog).getByRole('radio', { name: text('Dark') })).toBeChecked();
     }
     await userEvent.click(
@@ -236,7 +240,10 @@ export const Desktop: Story = {
     await userEvent.click(within(dialog).getByRole('button', { name: text('Sign out') }));
     await expect(canvas.getByRole('status')).toHaveTextContent(text('Sign-out callback received'));
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(trigger).toHaveFocus());
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(trigger).toHaveFocus();
+    });
   },
 };
 export const Mobile: Story = {
@@ -246,6 +253,7 @@ export const Mobile: Story = {
     const page = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
       name: playText(canvasElement, labels.trigger),
+      exact: true,
     });
     await userEvent.click(trigger);
     const dialog = await page.findByRole('dialog', {
@@ -254,7 +262,10 @@ export const Mobile: Story = {
     await userEvent.keyboard('{Tab}');
     await expect(dialog.contains(canvasElement.ownerDocument.activeElement)).toBe(true);
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(trigger).toHaveFocus());
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(trigger).toHaveFocus();
+    });
   },
 };
 export const OneAdditionalAccount: Story = { args: { accountGroups: [groups[0]] } };

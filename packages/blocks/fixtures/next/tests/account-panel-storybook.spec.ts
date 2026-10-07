@@ -1,7 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { waitForMotion } from './wait-for-motion';
 
-type StorybookWindow = Window & { __STORYBOOK_PREVIEW__?: { storyRenders: { phase: string }[] } };
+type StoryFinishedPayload = { status: 'success' | 'error'; storyId: string };
+type StorybookWindow = Window & {
+  __STORYBOOK_ADDONS_CHANNEL__?: {
+    on: (event: string, cb: (payload: StoryFinishedPayload) => void) => void;
+  };
+  __veliStoryFinished?: Promise<StoryFinishedPayload>;
+};
+
+/** Storybook still ends in phase `finished` after a failed play — use storyFinished.status. */
+async function listenForStoryFinished(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as StorybookWindow;
+    w.__veliStoryFinished = new Promise((resolve) => {
+      const attach = () => {
+        const channel = w.__STORYBOOK_ADDONS_CHANNEL__;
+        if (!channel) return false;
+        channel.on('storyFinished', resolve);
+        return true;
+      };
+      if (attach()) return;
+      const id = window.setInterval(() => {
+        if (attach()) window.clearInterval(id);
+      }, 5);
+    });
+  });
+}
+
+async function storyPlayResult(page: Page) {
+  return page.evaluate(async () => {
+    const pending = (window as StorybookWindow).__veliStoryFinished;
+    if (!pending) throw new Error('storyFinished listener was not installed');
+    return await Promise.race([
+      pending,
+      new Promise<never>((_, reject) => {
+        window.setTimeout(() => reject(new Error('storyFinished timed out')), 120_000);
+      }),
+    ]);
+  });
+}
 
 for (const [story, width, reducedMotion, language = 'en'] of [
   ['desktop', 1280, 'no-preference'],
@@ -23,6 +61,7 @@ for (const [story, width, reducedMotion, language = 'en'] of [
     page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion });
+    await listenForStoryFinished(page);
     await page.goto(
       `/storybook/iframe.html?id=blocks-account-panel--${story}&viewMode=story&veli-language=${language}`,
     );
@@ -31,21 +70,7 @@ for (const [story, width, reducedMotion, language = 'en'] of [
       name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
       exact: true,
     });
-    // Wait for play to finish — do not assert mid-play UI (dialog still open, status timing).
-    await page.waitForFunction(
-      () => {
-        const renders = (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders ?? [];
-        const phase = renders[renders.length - 1]?.phase ?? '';
-        return ['finished', 'errored'].includes(phase);
-      },
-      { timeout: 120_000 },
-    );
-    expect(
-      await page.evaluate(() => {
-        const renders = (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders ?? [];
-        return renders[renders.length - 1]?.phase;
-      }),
-    ).toBe('finished');
+    expect((await storyPlayResult(page)).status).toBe('success');
     expect(pageErrors).toEqual([]);
     await expect(trigger).toBeFocused();
     await expect(page.getByRole('dialog')).toHaveCount(0);
