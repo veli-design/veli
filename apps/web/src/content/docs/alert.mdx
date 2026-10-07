@@ -1,17 +1,19 @@
 ---
 title: Alert
-description: Inline status banners with semantic intents, optional icons, actions, and dismiss controls.
+description: Persistent inline messages with six intents, two appearances, three layouts, and optional actions.
 ---
 
 import {
   AlertDismissibleDemo,
+  AlertLayoutsDemo,
+  AlertRtlDemo,
   AlertUsageDemo,
   AlertVariantsDemo,
-} from '../../components/DocsExamples';
+} from '../../components/AlertExamples';
 
 # Alert
 
-Alerts communicate important contextual information on the current page. Use an Alert for content that remains relevant while someone works; use [Toast](/docs/toast/) for temporary notifications in a landmark region.
+Use Alert for important information about the current page or section. Alerts persist until dismissed or resolved; use [Toast](/docs/toast/) for temporary notifications.
 
 ## Import
 
@@ -22,7 +24,7 @@ import { Alert } from '@tradenetcorp/veli-ui/alert';
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AlertUsageDemo client:visible />
+  <AlertUsageDemo client:load />
 </div>
 
 ```tsx
@@ -30,58 +32,109 @@ import { Info } from 'phosphor-react';
 
 <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
   <Alert.Title>Permit review in progress</Alert.Title>
-  <Alert.Description>You will receive an email when processing completes.</Alert.Description>
+  <Alert.Description>
+    You will receive an email when your application has been processed.
+  </Alert.Description>
 </Alert>;
 ```
 
-Use the compound parts to control the content. `Alert.Title` is the only required part; omit `Alert.Description` for a concise title-only banner. Use `Alert.Actions` for one or more Veli Buttons and `Alert.CloseButton` only when the message can be dismissed.
+Use `Alert.Title` for a concise message. Omit `Alert.Description` for a title-only alert. The icon is optional and decorative; its meaning must also be expressed in the title.
 
-## Intent and appearance
+## Intents and appearances
 
-Choose an `intent` that communicates the message meaning: `neutral`, `info`, `positive`, `cautious`, `warning`, or `danger`. Combine it with `subtle`, `outline`, or `emphasis` appearance. The same semantic token roles resolve in light, dark, and system color schemes.
+Choose `neutral` for general information, `info` for contextual guidance, `positive` for success, `cautious` for attention before continuing, `warning` for a developing problem, and `danger` for failure or urgent risk.
+
+`light` uses a tinted background with neutral title and description colours. `highContrast` uses a solid background with contrasting text and icons. Appearance is independent of the page's light, dark, or system theme; both follow the page theme automatically.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <AlertVariantsDemo client:visible />
+  <AlertVariantsDemo client:load />
 </div>
 
 ```tsx
-<Alert intent="positive" appearance="subtle">
+<Alert intent="positive" appearance="light">
   <Alert.Title>Payment received</Alert.Title>
-  <Alert.Description>Your transaction was completed successfully.</Alert.Description>
 </Alert>
 
-<Alert intent="danger" appearance="outline">
+<Alert intent="danger" appearance="highContrast">
   <Alert.Title>Submission failed</Alert.Title>
-  <Alert.Description>Check the required fields and try again.</Alert.Description>
+  <Alert.Description>Review the required fields and try again.</Alert.Description>
 </Alert>
 ```
 
-The component fills its parent width. Keep ordinary page banners within a readable container; at the 480px Figma reference width, the shell uses 16px padding, an 8px icon/content gap, and a 12px radius. Actions wrap when space is constrained.
+Use 20px Phosphor icons in the Fill weight: Info for neutral/info, CheckCircle for positive, WarningCircle for cautious, Warning for warning, and WarningOctagon for danger. Pass a custom `leadingIcon` when another icon better describes the message.
+
+## Layouts
+
+The alert fills its container. Select its layout explicitly for the available space:
+
+| Layout    | Content and actions                                                                              |
+| :-------- | :----------------------------------------------------------------------------------------------- |
+| `default` | Title, optional description, and up to two actions on one row.                                   |
+| `stacked` | The same content with full-width actions stacked vertically. Use in narrow columns or on mobile. |
+| `compact` | Title and one optional inline action. Omit the description and secondary action.                 |
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <AlertLayoutsDemo client:load />
+</div>
+
+```tsx
+<Alert layout="compact" intent="info">
+  <Alert.Title>Permit review in progress</Alert.Title>
+  <Alert.Actions>
+    <Button type="button" size="sm" intent="secondary" appearance="fill">
+      Track application
+    </Button>
+  </Alert.Actions>
+</Alert>
+```
+
+Default actions do not wrap. Choose `stacked` when two labels cannot fit on one row; compact messages should remain short. Alert does not truncate or silently discard supplied content. All layouts use 24px corners and a 12px icon/content gap; default and stacked use 16px padding, while compact uses 10px vertical and 16px horizontal padding.
 
 ## Actions and dismissal
 
-`Alert.Actions` does not own navigation or submission. Pass the application’s existing Button, Link, or other appropriate control. `Alert.CloseButton` uses the localized “Dismiss alert” name by default and calls `onDismiss`.
+Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `appearance="fill"` for the primary action on a light alert, or `appearance="transparent"` on highContrast. An optional secondary action uses `appearance="ghost"`.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <AlertDismissibleDemo client:load />
 </div>
 
 ```tsx
-function MaintenanceAlert() {
+import { useState } from 'react';
+import { Info } from 'phosphor-react';
+import { Button } from '@tradenetcorp/veli-ui/button';
+
+function PermitAlert({ onTrack }: { onTrack: () => void }) {
   const [visible, setVisible] = useState(true);
 
   return (
     <Alert
+      intent="info"
+      appearance="highContrast"
+      layout="stacked"
+      leadingIcon={<Info size={20} weight="fill" />}
       isVisible={visible}
-      intent="warning"
-      leadingIcon={<WarningCircle size={20} weight="fill" />}
       onDismiss={() => setVisible(false)}
     >
-      <Alert.Title>System maintenance</Alert.Title>
-      <Alert.Description>Services may be unavailable tonight from 22:00–02:00.</Alert.Description>
+      <Alert.Title>Permit review in progress</Alert.Title>
+      <Alert.Description>You will receive an email when processing completes.</Alert.Description>
       <Alert.Actions>
-        <Button size="sm" intent="secondary" appearance="transparent">
-          View schedule
+        <Button
+          type="button"
+          size="sm"
+          intent="secondary"
+          appearance="transparent"
+          onPress={onTrack}
+        >
+          Track application
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          intent="secondary"
+          appearance="ghost"
+          onPress={() => setVisible(false)}
+        >
+          Remind me later
         </Button>
       </Alert.Actions>
       <Alert.CloseButton />
@@ -90,16 +143,17 @@ function MaintenanceAlert() {
 }
 ```
 
-Pass `isVisible` to control visibility. A controlled Alert calls `onDismiss` but stays mounted until its parent changes `isVisible`. Without `isVisible`, `defaultVisible` initializes internal state and dismissal hides the Alert automatically.
+Actions retain their application callbacks and do not dismiss automatically. On highContrast, direct Veli ghost Buttons inside `Alert.Actions` (including fragments) receive the alert foreground at rest. Hover and pressed states use normal Veli Button foreground and surfaces to preserve contrast. Other controls keep their own styling.
+
+With `isVisible`, the parent owns visibility: `onDismiss` requests dismissal, but the alert remains until the parent updates the prop. Without `isVisible`, `defaultVisible` initializes internal state and the close button hides the alert automatically. Changing `defaultVisible` after mount does not reset it; remount an uncontrolled alert to show it again. Alerts never time out.
 
 ## Announcements
 
-Use `live="status"` (the default) for banners already present when the page loads. Use `live="alert"` only when new or changed content must interruptively announce to assistive technology. Pass `role` to deliberately override either role.
+The default `live="status"` uses a polite status role. Use `live="alert"` for newly inserted urgent feedback that needs an assertive announcement. `role` deliberately overrides the role selected by `live`. These choices do not change the visual appearance.
 
 ```tsx
 <Alert live="alert" intent="danger">
   <Alert.Title>Unable to submit your application</Alert.Title>
-  <Alert.Description>Review the highlighted fields and try again.</Alert.Description>
 </Alert>
 ```
 
@@ -107,39 +161,59 @@ Use `live="status"` (the default) for banners already present when the page load
 
 ### Alert
 
-| Prop             | Type                                                                       | Default     | Description                                             |
-| :--------------- | :------------------------------------------------------------------------- | :---------- | :------------------------------------------------------ |
-| `intent`         | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic message treatment.                             |
-| `appearance`     | `'subtle' \| 'outline' \| 'emphasis'`                                      | `'subtle'`  | Surface treatment.                                      |
-| `leadingIcon`    | `ReactNode`                                                                | -           | Decorative 20px icon before the content.                |
-| `isVisible`      | `boolean`                                                                  | -           | Controlled visibility.                                  |
-| `defaultVisible` | `boolean`                                                                  | `true`      | Initial uncontrolled visibility.                        |
-| `onDismiss`      | `() => void`                                                               | -           | Called when `Alert.CloseButton` is pressed.             |
-| `live`           | `'alert' \| 'status'`                                                      | `'status'`  | Chooses the live-region role unless `role` is supplied. |
-| `role`           | `AriaRole`                                                                 | -           | Overrides the role selected by `live`.                  |
-| `className`      | `string`                                                                   | -           | Adds layout or visual overrides to the root.            |
+| Prop             | Type                                                                       | Default     | Description                                                  |
+| :--------------- | :------------------------------------------------------------------------- | :---------- | :----------------------------------------------------------- |
+| `intent`         | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic message treatment.                                  |
+| `appearance`     | `'light' \| 'highContrast'`                                                | `'light'`   | Surface and foreground treatment, independent of page theme. |
+| `layout`         | `'default' \| 'stacked' \| 'compact'`                                      | `'default'` | Explicit content and action arrangement.                     |
+| `leadingIcon`    | `ReactNode`                                                                | -           | Optional decorative 20px icon.                               |
+| `children`       | `ReactNode`                                                                | -           | Compound parts and application content.                      |
+| `isVisible`      | `boolean`                                                                  | -           | Controlled visibility.                                       |
+| `defaultVisible` | `boolean`                                                                  | `true`      | Initial uncontrolled visibility.                             |
+| `onDismiss`      | `() => void`                                                               | -           | Called when the close button is pressed.                     |
+| `live`           | `'alert' \| 'status'`                                                      | `'status'`  | Chooses the live-region role.                                |
+| `role`           | `AriaRole`                                                                 | -           | Overrides the role selected by `live`.                       |
+| `className`      | `string`                                                                   | -           | Root layout or visual overrides.                             |
 
-Standard `div` attributes such as `id`, `aria-label`, `aria-describedby`, and event handlers pass through to the root. `title` is reserved for `Alert.Title` composition and is not a root prop.
+Standard `div` attributes, including `id`, `dir`, `lang`, `aria-label`, `aria-describedby`, and event handlers, pass through to the root. The native `title` attribute is excluded; compose the message with `Alert.Title`.
 
 ### Compound parts
 
-| Part                | Props                     | Description                                                               |
-| :------------------ | :------------------------ | :------------------------------------------------------------------------ |
-| `Alert.Title`       | `children`, `className`   | Medium body title.                                                        |
-| `Alert.Description` | `children`, `className`   | Regular body copy at 90% of the inherited Alert color.                    |
-| `Alert.Actions`     | `children`, `className`   | Wrapping action row with an 8px top margin and gap.                       |
-| `Alert.CloseButton` | `aria-label`, `className` | 36px Button-based dismiss control; localizes its default accessible name. |
+| Part                | Props                                       | Description                                                                      |
+| :------------------ | :------------------------------------------ | :------------------------------------------------------------------------------- |
+| `Alert.Title`       | `children: ReactNode`, `className?: string` | English semibold title; Dhivehi medium title.                                    |
+| `Alert.Description` | `children: ReactNode`, `className?: string` | Regular description with its own colour token. Omit for compact.                 |
+| `Alert.Actions`     | `children: ReactNode`, `className?: string` | Layout-aware row or stack. Consumers configure Button semantics and appearances. |
+| `Alert.CloseButton` | `aria-label?: string`, `className?: string` | Optional 36px dismiss Button with a localized accessible name.                   |
 
 ## Accessibility
 
-- Use an intent and icon that reinforce the copy, but do not rely on color or the icon alone.
-- Keep `Alert.Title` concise and place the resolution or next step in `Alert.Description` or an action.
-- The close control is a native Button: it receives visible keyboard focus and supports Enter and Space. Do not render it unless dismissal is meaningful.
-- `leadingIcon` is decorative (`aria-hidden`). Give all actionable controls inside `Alert.Actions` an accessible name.
-- Use `live="alert"` sparingly. It is intended for dynamically inserted urgent feedback, not ordinary persistent page content.
+- Give every alert a clear title; colour and icons supplement the message.
+- The alert itself is not focusable and never moves focus automatically. Its actions and close button participate in the normal tab order.
+- Icons are hidden from assistive technology. Buttons need accessible names and retain visible keyboard focus.
+- The close button supports Enter and Space. Its default name is “Dismiss alert” in English and “އެލާޓް ލައްޕާ” in Dhivehi; override `aria-label` when needed.
+- Include a close button only when dismissal is meaningful. The application owns any necessary focus destination after a focused alert is removed.
 
 ## RTL, language, and motion
 
-Alert inherits `VeliProvider` language and direction. In Dhivehi, text uses the configured Veli font, content flows right-to-left, and the close control moves to the logical end edge. The close icon remains an X because it has no directional meaning.
+Use `VeliProvider language="dv"` for Dhivehi typography and RTL direction. The icon moves to the right, the close button to the left, and the primary action appears to the right of the secondary action. English content can also inherit `dir="rtl"` without switching fonts.
 
-Alert has no container animation. Its action and close controls use Veli Button motion; Button press feedback and ripple behavior respect `prefers-reduced-motion` automatically.
+<div className="preview mb-4 rounded-lg border p-4">
+  <AlertRtlDemo client:load />
+</div>
+
+```tsx
+<VeliProvider language="dv">
+  <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
+    <Alert.Title>ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ</Alert.Title>
+    <Alert.Description>އެޕްލިކޭޝަން ޕްރޮސެސްކުރުމުން އީމެއިލް ލިބޭނެއެވެ.</Alert.Description>
+    <Alert.CloseButton />
+  </Alert>
+</VeliProvider>
+```
+
+Dhivehi titles use MV A Waheed at 17px and descriptions use MV Faseyha at 16px, with approximately 28px lines. Icon and close alignment follows that taller row. The X and status icons keep their shape in RTL. Alert has no container animation; its Buttons retain Veli's reduced-motion press and ripple behavior.
+
+## Migration
+
+The revised appearances replace `subtle`, `outline`, and `emphasis`. Change `subtle` to `light` and `emphasis` to `highContrast`. `outline` has no direct equivalent; choose the new treatment appropriate to the message. Update action Buttons to the appearance pairing above, and select `stacked` where the previous wrapping row was relied upon.

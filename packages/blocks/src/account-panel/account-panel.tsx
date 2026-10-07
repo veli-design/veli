@@ -305,7 +305,7 @@ function PanelContent(props: AccountPanelProps) {
           </>
         )}
         {props.error && (
-          <Alert intent="danger" appearance="subtle" live="alert">
+          <Alert intent="danger" live="alert">
             <Alert.Title>{props.error}</Alert.Title>
           </Alert>
         )}

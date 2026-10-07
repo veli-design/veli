@@ -1,3 +1,9 @@
+## 0.2.1
+
+### Changed
+
+- Use the revised Alert light appearance for account-list failures. Require Veli UI 0.14 and tokens 0.8 for the new Alert API and colours.
+
 ## 0.2.0
 
 ### Added

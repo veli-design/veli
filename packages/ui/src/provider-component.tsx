@@ -12,8 +12,8 @@ import {
   type VeliProviderProps,
   type VeliResolvedColorScheme,
   type VeliRouterConfig,
-} from './provider-shared';
-import { getVeliThemeScript, VELI_COLOR_SCHEME_STORAGE_KEY } from './theme-script';
+} from './provider-shared.js';
+import { getVeliThemeScript, VELI_COLOR_SCHEME_STORAGE_KEY } from './theme-script.js';
 
 export function VeliProvider({
   language = 'en',

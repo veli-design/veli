@@ -1,0 +1,88 @@
+{
+  "ease": {
+    "out": {
+      "$type": "cubicBezier",
+      "$value": [0, 0, 0.2, 1],
+      "$description": "Motion primitive: ease-out."
+    },
+    "out-quad": {
+      "$type": "cubicBezier",
+      "$value": [0.25, 0.46, 0.45, 0.94],
+      "$description": "Motion primitive: ease-out-quad."
+    },
+    "in": {
+      "$type": "cubicBezier",
+      "$value": [0.4, 0, 1, 1],
+      "$description": "Motion primitive: ease-in."
+    },
+    "in-out": {
+      "$type": "cubicBezier",
+      "$value": [0.4, 0, 0.2, 1],
+      "$description": "Motion primitive: ease-in-out."
+    },
+    "spring": {
+      "$type": "cubicBezier",
+      "$value": [0.34, 1.56, 0.64, 1],
+      "$description": "Motion primitive: ease-spring."
+    },
+    "linear": {
+      "$type": "string",
+      "$value": "linear",
+      "$description": "Motion primitive: linear."
+    }
+  },
+  "duration": {
+    "instant": {
+      "$type": "duration",
+      "$value": "0ms",
+      "$description": "Motion primitive: duration-instant."
+    },
+    "fast": {
+      "$type": "duration",
+      "$value": "80ms",
+      "$description": "Motion primitive: duration-fast."
+    },
+    "normal": {
+      "$type": "duration",
+      "$value": "200ms",
+      "$description": "Motion primitive: duration-normal."
+    },
+    "slow": {
+      "$type": "duration",
+      "$value": "350ms",
+      "$description": "Motion primitive: duration-slow."
+    },
+    "slower": {
+      "$type": "duration",
+      "$value": "500ms",
+      "$description": "Motion primitive: duration-slower."
+    },
+    "slowest": {
+      "$type": "duration",
+      "$value": "1200ms",
+      "$description": "Motion primitive: duration-slowest."
+    }
+  },
+  "delay": {
+    "none": {
+      "$type": "duration",
+      "$value": "0ms",
+      "$description": "Motion primitive: delay-none."
+    },
+    "fast": {
+      "$type": "duration",
+      "$value": "40ms",
+      "$description": "Motion primitive: delay-fast."
+    },
+    "normal": {
+      "$type": "duration",
+      "$value": "80ms",
+      "$description": "Motion primitive: delay-normal."
+    },
+    "slow": {
+      "$type": "duration",
+      "$value": "120ms",
+      "$description": "Motion primitive: delay-slow."
+    }
+  }
+}

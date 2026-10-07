@@ -244,6 +244,12 @@ Standalone tracking values:
 
 Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own font size. There is no base-16 discrepancy for `0.01em`; it is not fixed to 16px. For 12px caption text, both resolve to `0.12px`.
 
+## Export refreshes
+
+Replace `packages/tokens/src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including typography and effect styles, then run `corepack pnpm --filter @tradenetcorp/veli-tokens build`. Do not edit generated CSS. Keep the raw export intact, including Figma names and metadata.
+
+`prebuild.js` excludes the Figma-only `_docs` annotation collection and exporter-specific `Grid-styles` composites from CSS generation. Product colour validation remains strict. Code-owned motion primitives live in `src/motion.tokens.json` (published as `@tradenetcorp/veli-tokens/motion-tokens`) and are merged into the normalized build input. A future Figma motion collection takes precedence over these defaults.
+
 ## Motion Values
 
 Veli keeps motion primitives tokenized before any CSS transition, CSS keyframe, or Motion for React configuration is composed from them.
