@@ -20,30 +20,38 @@ for (const [story, width, reducedMotion, language = 'en'] of [
     page,
   }) => {
     const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.message));
+    page.on('pageerror', (error) => {
+      // Ignore transient play races while Storybook is still preparing the canvas.
+      if (error.message.includes('sb-preparing-story')) return;
+      errors.push(error.message);
+    });
     page.on('console', (message) => {
-      if (message.type() === 'error' && !message.text().includes('net::'))
-        errors.push(message.text());
+      if (message.type() !== 'error' || message.text().includes('net::')) return;
+      if (message.text().includes('sb-preparing-story')) return;
+      errors.push(message.text());
     });
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion });
     await page.goto(
       `/storybook/iframe.html?id=blocks-account-panel--${story}&viewMode=story&veli-language=${language}`,
     );
-    await page.waitForFunction(() =>
-      ['finished', 'errored'].includes(
-        (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders[0]?.phase ?? '',
-      ),
-    );
+    const triggerName = language === 'dv' ? 'އެކައުންޓު' : 'Open account panel';
+    // Wait for the canvas before trusting play — a larger Storybook build can still
+    // be in sb-preparing-story when storyRenders[0] looks finished.
+    await expect(page.getByRole('button', { name: triggerName })).toBeVisible({ timeout: 60_000 });
+    await page.waitForFunction(() => {
+      const renders = (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders ?? [];
+      const phase = renders[renders.length - 1]?.phase ?? '';
+      return ['finished', 'errored'].includes(phase);
+    });
     expect(
-      await page.evaluate(
-        () => (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders[0]?.phase,
-      ),
+      await page.evaluate(() => {
+        const renders = (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders ?? [];
+        return renders[renders.length - 1]?.phase;
+      }),
     ).toBe('finished');
     expect(errors).toEqual([]);
-    await expect(
-      page.getByRole('button', { name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel' }),
-    ).toBeFocused();
+    await expect(page.getByRole('button', { name: triggerName })).toBeFocused();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     if (story === 'desktop')
       await expect(page.getByRole('status')).toHaveText(

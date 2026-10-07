@@ -19,9 +19,9 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
   await search.fill('Locker');
-  await expect(page.getByText('Locker')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Locker' })).toBeVisible();
   await search.fill('Applications');
-  await expect(page.getByText('My Applications')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'My Applications' })).toBeVisible();
 
   await page.keyboard.press('Escape');
   await expect(
@@ -61,7 +61,8 @@ test('RTL layout does not overflow and passes axe', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Fixture language' }).click();
-  await expect(page.locator('[dir="rtl"]')).toHaveCount(1);
+  // Fixture shell + VeliProvider both set dir; assert the page shell is RTL.
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'rtl');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
