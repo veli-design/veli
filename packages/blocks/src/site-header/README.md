@@ -18,12 +18,15 @@ Use Tailwind 4 with your framework's integration. In your global stylesheet:
 @import '@tradenetcorp/veli-ui/tailwind';
 ```
 
-Optional host CSS variables (built-in fallbacks match the gov.mv reference, including dark mode):
+Optional host CSS variables (built-in fallbacks match the gov.mv reference, including dark mode). Prefer the `--veli-header-*` names. If you already ship the older gov.mv names (`--ease-drawer`, `--site-tile-gradient`, `--info-panel-glow`), alias them:
 
 ```css
 :root {
-  --veli-header-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --veli-header-site-tile-gradient: radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%);
+  --veli-header-ease-drawer: var(--ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
+  --veli-header-site-tile-gradient: var(
+    --site-tile-gradient,
+    radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%)
+  );
   --veli-header-govmv-tile-gradient: radial-gradient(
     circle at 50% 2%,
     #5bccca 0%,
@@ -32,25 +35,25 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
     #205f68 75%,
     #0c3a47 100%
   );
-  --veli-header-info-panel-glow: radial-gradient(
-    ellipse 100% 80% at 50% 0%,
-    rgb(213 255 211) 0%,
-    rgb(255 255 255 / 0%) 63%
+  --veli-header-info-panel-glow: var(
+    --info-panel-glow,
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%)
   );
 }
 
 .dark {
-  --veli-header-site-tile-gradient: radial-gradient(
-    circle at 50% 0%,
-    #0e0e0d 0%,
-    #191a18 50%,
-    #252624 100%
+  --veli-header-site-tile-gradient: var(
+    --site-tile-gradient,
+    radial-gradient(circle at 50% 0%, #0e0e0d 0%, #191a18 50%, #252624 100%)
   );
-  --veli-header-info-panel-glow: radial-gradient(
-    ellipse 236.72% 100% at 50% 0%,
-    rgb(35 115 10) 0%,
-    rgb(18 57 5 / 50%) 31.478%,
-    transparent 62.957%
+  --veli-header-info-panel-glow: var(
+    --info-panel-glow,
+    radial-gradient(
+      ellipse 236.72% 100% at 50% 0%,
+      rgb(35 115 10) 0%,
+      rgb(18 57 5 / 50%) 31.478%,
+      transparent 62.957%
+    )
   );
 }
 ```
@@ -73,7 +76,7 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 - `logo` (ReactNode) and optional `title` for ministry mode.
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
-- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `external`, and `sections`.
+- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
 - `labels`: every user-facing string, including `searchSummary`, `noAppsMatch`, `noSitesMatch`, and `noAppsOrSitesMatch` functions.
 - `languages`, `language`, `onLanguageChange`.
 - `colorScheme`, `onColorSchemeChange` (`light` | `dark` | `system`).

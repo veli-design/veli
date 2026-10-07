@@ -113,6 +113,15 @@ const sites: SiteHeaderSwitcherItem[] = [
     external: true,
     description: 'Official site for the Ministry of Tourism.',
   },
+  {
+    id: 'secure-inbox',
+    name: 'Secure Inbox',
+    kind: 'site',
+    href: 'https://inbox.gov.mv',
+    external: true,
+    badge: 'signin',
+    description: 'Sign in required to open messages from government services.',
+  },
 ];
 
 export function ApplicationHeader({

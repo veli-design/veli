@@ -82,6 +82,14 @@ const sites: SiteHeaderSwitcherItem[] = [
     href: '#accessibility-and-responsive-behavior',
     description: 'Official site for the Ministry of Tourism.',
   },
+  {
+    id: 'secure-inbox',
+    name: 'Secure Inbox',
+    kind: 'site',
+    href: '#updating-your-copy',
+    badge: 'signin',
+    description: 'Sign in required to open messages from government services.',
+  },
 ];
 
 function GovmvLogo() {

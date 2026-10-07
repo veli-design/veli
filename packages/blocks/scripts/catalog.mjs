@@ -400,7 +400,7 @@ export function blockMarkdown(block) {
     .map(([name, version]) => `- ${name}: ${version}`)
     .join(
       '\n',
-    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`\n\n## Source\n\n${files.map(({ path, bytes }) => `### ${path}\n\n\`\`\`${path.endsWith('tsx') ? 'tsx' : 'text'}\n${bytes.toString('utf8').trimEnd()}\n\`\`\``).join('\n\n')}\n\n## Changelog\n\n${changelog
+    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`\n\n## Source\n\n${files.map(({ path, bytes }) => `### ${path}\n\n\`\`\`text\n${bytes.toString('utf8').trimEnd()}\n\`\`\``).join('\n\n')}\n\n## Changelog\n\n${changelog
     .replace(/^## /gm, '### ')
     .replace(/^### (Added|Changed|Fixed|Removed)/gm, '#### $1')
     .trim()}\n`;

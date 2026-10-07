@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { SignInIcon } from '@phosphor-icons/react';
 import { Button as AriaButton } from 'react-aria-components';
 
 /** Fallback when the host has not set --veli-header-site-tile-gradient. */
@@ -35,6 +36,12 @@ export type SiteHeaderSwitcherItem = {
   external?: boolean;
   /** Marks the tile the user is currently on ("You are here"). */
   current?: boolean;
+  /**
+   * Optional corner badge on the tile icon. Use `signin` when the destination
+   * requires authentication (matches gov.mv Site Directory). Independent of
+   * `current` — do not set both for the same tile in normal product data.
+   */
+  badge?: 'signin';
   /** Light-mode tile artwork URL. */
   iconSrc?: string;
   /** Dark-mode tile artwork URL; falls back to iconSrc. */
@@ -48,6 +55,31 @@ export type SiteHeaderSwitcherItem = {
   emblemSrc?: string;
   sections?: SiteHeaderSwitcherSection[];
 };
+
+function SignInBadge() {
+  return (
+    <span className="bg-status-neutral-emphasis col-start-1 row-start-1 ms-9 mt-0 flex rounded-xl p-1 text-white shadow-sm">
+      <SignInIcon size={12} weight="bold" aria-hidden />
+    </span>
+  );
+}
+
+function TileIconWithBadge({
+  item,
+  selected,
+}: {
+  item: SiteHeaderSwitcherItem;
+  selected?: boolean;
+}) {
+  const icon = <SwitcherTileIcon item={item} selected={selected} />;
+  if (item.badge !== 'signin') return icon;
+  return (
+    <span className="relative inline-grid size-14 place-items-start">
+      <span className="col-start-1 row-start-1">{icon}</span>
+      <SignInBadge />
+    </span>
+  );
+}
 
 function AppIconShell({
   children = null,
@@ -222,7 +254,7 @@ export function ItemTile({
 
   const body = (
     <>
-      <SwitcherTileIcon item={item} selected={isCurrent} />
+      <TileIconWithBadge item={item} selected={isCurrent} />
       <p
         className={`type-body-sm-medium text-text-base w-full max-w-28 ${
           item.kind === 'site' ? 'line-clamp-2' : 'truncate'

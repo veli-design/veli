@@ -161,6 +161,14 @@ const sitesEn: SiteHeaderSwitcherItem[] = [
     href: '/tourism',
     description: 'Official site for the Ministry of Tourism.',
   },
+  {
+    id: 'secure-inbox',
+    name: 'Secure Inbox',
+    kind: 'site',
+    href: '/inbox',
+    badge: 'signin',
+    description: 'Sign in required to open messages from government services.',
+  },
 ];
 
 const sitesDv: SiteHeaderSwitcherItem[] = [
@@ -170,6 +178,14 @@ const sitesDv: SiteHeaderSwitcherItem[] = [
     kind: 'site',
     href: '/tourism',
     description: 'ޓޫރިޒަމް މިނިސްޓްރީގެ ރަސްމީ ވެބްސައިޓް.',
+  },
+  {
+    id: 'secure-inbox',
+    name: 'ސެކިއަރ އިންބޮކްސް',
+    kind: 'site',
+    href: '/inbox',
+    badge: 'signin',
+    description: 'ސަރުކާރުގެ ޚިދުމަތްތަކުން ލިބޭ މެސެޖު ހުޅުވުމަށް ސައިންއިން ކުރަން ޖެހޭ.',
   },
 ];
 
