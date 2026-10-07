@@ -11,6 +11,8 @@ export function AccountPanelDemo() {
       id: 'personal',
       displayName: 'Aisha Ahmed',
       secondaryText: 'aisha@example.test',
+      secondaryTextLang: 'en',
+      secondaryTextDir: 'ltr' as const,
       badge: 'Primary User',
     },
     { id: 'team', displayName: 'Example team', secondaryText: 'Team account' },
@@ -33,7 +35,6 @@ export function AccountPanelDemo() {
             otherAccounts: 'Other accounts',
             loading: 'Loading accounts…',
             pending: 'Working…',
-            disabled: 'Unavailable',
           }}
           isOpen={open}
           onOpenChange={setOpen}

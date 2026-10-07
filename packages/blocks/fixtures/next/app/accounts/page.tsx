@@ -12,10 +12,18 @@ const initial = {
   id: 'primary',
   displayName: 'Aisha Ahmed',
   secondaryText: 'aisha@example.test',
+  secondaryTextLang: 'en',
+  secondaryTextDir: 'ltr' as const,
   badge: 'Primary User',
 };
 const others = [
-  { id: 'other', displayName: 'Ali Hassan', secondaryText: 'ali@example.test' },
+  {
+    id: 'other',
+    displayName: 'Ali Hassan',
+    secondaryText: 'ali@example.test',
+    secondaryTextLang: 'en',
+    secondaryTextDir: 'ltr' as const,
+  },
   { id: 'team', displayName: 'Example team', secondaryText: 'Team account' },
 ];
 
@@ -38,7 +46,6 @@ export default function AccountsPage() {
         otherAccounts: 'އެހެން އެކައުންޓުތައް',
         loading: 'ލޯޑުވަނީ…',
         pending: 'ބަދަލުކުރަނީ…',
-        disabled: 'ނުލިބެން',
       }
     : {
         trigger: 'Open account panel',
@@ -47,7 +54,6 @@ export default function AccountsPage() {
         otherAccounts: 'Other accounts',
         loading: 'Loading accounts…',
         pending: 'Working…',
-        disabled: 'Unavailable',
       };
   let rows: AccountPanelAccount[] =
     state === 'long'
@@ -55,6 +61,8 @@ export default function AccountsPage() {
           id: String(index),
           displayName: `Account ${index} with a very long name `.repeat(3),
           secondaryText: 'secondary-'.repeat(25) + '@example.test',
+          secondaryTextLang: 'en',
+          secondaryTextDir: 'ltr' as const,
         }))
       : others;
   rows = rows
@@ -62,8 +70,6 @@ export default function AccountsPage() {
     .map((account) => ({
       ...account,
       isPending: state === 'pending',
-      isDisabled: state === 'disabled',
-      error: state === 'action-error' ? 'Account selection failed.' : undefined,
     }));
   if (['empty', 'loading', 'error'].includes(state)) rows = [];
   if (state === 'one') rows = rows.slice(0, 1);
@@ -110,9 +116,6 @@ export default function AccountsPage() {
                 'loading',
                 'error',
                 'pending',
-                'disabled',
-                'action-error',
-                'display-only',
                 'long',
                 'image',
                 'broken-image',
@@ -155,21 +158,15 @@ export default function AccountsPage() {
             isDisabled={state === 'trigger-disabled'}
             isLoading={state === 'loading'}
             error={state === 'error' ? 'Could not load accounts.' : undefined}
-            onAccountSelect={
-              state === 'display-only'
-                ? undefined
-                : (id) => {
-                    setSelectionCalls((n) => n + 1);
-                    const next = rows.find((account) => account.id === id);
-                    if (next) setSelected(next);
-                  }
-            }
+            onAccountSelect={(id) => {
+              setSelectionCalls((n) => n + 1);
+              const next = rows.find((account) => account.id === id);
+              if (next) setSelected(next);
+            }}
             signOut={{
               label: dv ? 'ސައިން އައުޓް' : 'Sign out',
               onPress: () => setLogoutCalls((n) => n + 1),
               isPending: state === 'pending',
-              isDisabled: state === 'disabled',
-              error: state === 'action-error' ? 'Sign out failed.' : undefined,
             }}
             emptyState={{
               title: dv ? 'އެހެން އެކައުންޓުތައް' : 'Add other accounts',

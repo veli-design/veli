@@ -1,25 +1,35 @@
 'use client';
 
 import { useCallback, useId, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { Button as AriaButton, Radio, RadioGroup } from 'react-aria-components';
+import { CircleNotch } from 'phosphor-react';
+import {
+  Button as AriaButton,
+  Dialog,
+  Modal as AriaModal,
+  ModalOverlay,
+  Radio,
+  RadioGroup,
+} from 'react-aria-components';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { Modal } from '@tradenetcorp/veli-ui/modal';
+import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Popover, PopoverDialog, PopoverTrigger } from '@tradenetcorp/veli-ui/popover';
 
 export type AccountPanelState = {
-  isDisabled?: boolean;
   isPending?: boolean;
-  /** Localized failure text; the host owns retry and error clearing. */
-  error?: string;
 };
 
 export type AccountPanelAccount = AccountPanelState & {
   id: string;
   displayName: string;
   secondaryText?: string;
+  /** Override the secondary text's language independently, e.g. 'en' for an email. */
+  secondaryTextLang?: string;
+  secondaryTextDir?: 'ltr' | 'rtl' | 'auto';
   avatar?: { src?: string; initials?: string };
   /** Host-provided presentation, e.g. a translated primary-user badge. */
   badge?: string;
@@ -46,7 +56,6 @@ export type AccountPanelLabels = {
   otherAccounts: string;
   loading: string;
   pending: string;
-  disabled: string;
 };
 
 export type AccountPanelProps = {
@@ -58,9 +67,10 @@ export type AccountPanelProps = {
   onOpenChange: (isOpen: boolean) => void;
   isDisabled?: boolean;
   isLoading?: boolean;
+  /** Account-list retrieval failure. Action failures are presented by the host. */
   error?: string;
-  /** Omit to present additional accounts as non-interactive list items. */
-  onAccountSelect?: (id: string) => void;
+  /** The host owns account switching and updates selectedAccount after success. */
+  onAccountSelect: (id: string) => void;
   signOut: AccountPanelAction;
   accountManagement?: AccountPanelAction;
   emptyState?: { title: string; description?: string; action?: AccountPanelAction };
@@ -68,9 +78,8 @@ export type AccountPanelProps = {
   appearance?: {
     label: string;
     value: string;
-    options: readonly { id: string; label: string; icon?: ReactNode; isDisabled?: boolean }[];
+    options: readonly { id: string; label: string; icon?: ReactNode }[];
     onChange: (value: string) => void;
-    isDisabled?: boolean;
   };
   className?: string;
   panelClassName?: string;
@@ -97,16 +106,14 @@ function AccountAvatar({ account, size }: { account: AccountPanelAccount; size: 
   );
 }
 
-function hasState(state: AccountPanelState) {
-  return Boolean(state.isPending || state.isDisabled || state.error);
-}
-
 function StateMessage({ state, labels }: { state: AccountPanelState; labels: AccountPanelLabels }) {
   return (
     <>
-      {state.isPending && <span role="status">{labels.pending}</span>}
-      {state.isDisabled && !state.isPending && <span>{labels.disabled}</span>}
-      {state.error && <span role="alert">{state.error}</span>}
+      {state.isPending && (
+        <span role="status" className="sr-only">
+          {labels.pending}
+        </span>
+      )}
     </>
   );
 }
@@ -122,25 +129,22 @@ function PanelAction({
 }) {
   const stateId = useId();
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex shrink-0 flex-col gap-1">
       <Button
         intent={danger ? 'danger' : 'secondary'}
         appearance={danger ? 'fill' : 'transparent'}
         size="md"
         className={danger ? 'w-full' : undefined}
-        isDisabled={action.isDisabled}
         isPending={action.isPending}
-        aria-describedby={
-          action.isPending || action.isDisabled || action.error ? stateId : undefined
-        }
+        aria-describedby={action.isPending ? stateId : undefined}
         onPress={() => {
-          if (!action.isPending && !action.isDisabled) action.onPress();
+          if (!action.isPending) action.onPress();
         }}
       >
         {action.label}
       </Button>
-      {hasState(action) && (
-        <div id={stateId} className="type-body-sm-regular text-base-muted">
+      {action.isPending && (
+        <div id={stateId} className="sr-only">
           <StateMessage state={action} labels={labels} />
         </div>
       )}
@@ -154,26 +158,36 @@ function AccountRow({
   labels,
 }: {
   account: AccountPanelAccount;
-  onSelect?: (id: string) => void;
+  onSelect: (id: string) => void;
   labels: AccountPanelLabels;
 }) {
   const stateId = useId();
   const content = (
     <>
-      <AccountAvatar account={account} size="44" />
+      {account.isPending ? (
+        <span
+          aria-hidden="true"
+          data-account-pending-avatar
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-avatar-neutral text-base-default"
+        >
+          <CircleNotch weight="bold" className="size-4 motion-safe:animate-spin" />
+        </span>
+      ) : (
+        <AccountAvatar account={account} size="44" />
+      )}
       <span className="flex min-w-0 flex-1 flex-col gap-1 text-start">
         <span
           lang={account.lang}
           dir={account.dir ?? 'auto'}
-          className="type-body-md-semibold truncate text-base-strong"
+          className="type-body-md-semibold truncate text-base-strong rtl:text-right"
         >
           {account.displayName}
         </span>
         {account.secondaryText && (
           <span
-            lang={account.lang}
-            dir={account.dir ?? 'auto'}
-            className="type-body-sm-regular truncate text-base-default"
+            lang={account.secondaryTextLang ?? account.lang}
+            dir={account.secondaryTextDir ?? account.dir ?? 'auto'}
+            className="type-body-sm-regular truncate text-base-muted rtl:text-right"
           >
             {account.secondaryText}
           </span>
@@ -193,34 +207,27 @@ function AccountRow({
   );
   return (
     <li className="min-w-0">
-      {onSelect ? (
-        <AriaButton
-          type="button"
-          className="flex w-full min-w-0 cursor-pointer items-center gap-3 rounded-2xl border-0 bg-transparent p-3 text-start font-sans text-base-strong outline-none data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-raised data-[disabled]:cursor-default data-[pending]:cursor-wait forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2"
-          isDisabled={account.isDisabled}
-          isPending={account.isPending}
-          aria-describedby={
-            account.isPending || account.isDisabled || account.error ? stateId : undefined
-          }
-          onPress={() => {
-            if (!account.isPending && !account.isDisabled) onSelect(account.id);
-          }}
-          render={(domProps, { isPending }) => (
-            <button
-              {...domProps}
-              type="button"
-              aria-busy={isPending || undefined}
-              onClick={isPending ? (event) => event.preventDefault() : domProps.onClick}
-            />
-          )}
-        >
-          {content}
-        </AriaButton>
-      ) : (
-        <div className="flex min-w-0 items-center gap-3 p-3">{content}</div>
-      )}
-      {hasState(account) && (
-        <div id={stateId} className="type-body-sm-regular px-3 text-base-muted">
+      <AriaButton
+        type="button"
+        className="flex w-full min-w-0 cursor-pointer items-center gap-3 rounded-2xl border-0 bg-transparent p-3 text-start font-sans text-base-strong outline-none data-[hovered]:bg-neutral-alpha-200 data-[pressed]:bg-neutral-alpha-200 data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-raised data-[pending]:cursor-wait forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2"
+        isPending={account.isPending}
+        aria-describedby={account.isPending ? stateId : undefined}
+        onPress={() => {
+          if (!account.isPending) onSelect(account.id);
+        }}
+        render={(domProps, { isPending }) => (
+          <button
+            {...domProps}
+            type="button"
+            aria-busy={isPending || undefined}
+            onClick={isPending ? (event) => event.preventDefault() : domProps.onClick}
+          />
+        )}
+      >
+        {content}
+      </AriaButton>
+      {account.isPending && (
+        <div id={stateId} className="sr-only">
           <StateMessage state={account} labels={labels} />
         </div>
       )}
@@ -230,13 +237,17 @@ function AccountRow({
 
 function PanelContent(props: AccountPanelProps) {
   const { selectedAccount, labels, accountGroups = [], appearance } = props;
+  const { language } = useVeliLanguage();
   const groups = accountGroups.filter((group) => group.accounts.length > 0);
   const appearanceIndex =
     appearance?.options.findIndex((option) => option.id === appearance.value) ?? -1;
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 px-6 pb-6 sm:gap-0 sm:p-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain sm:pb-4">
-        <div className="flex flex-col items-center gap-3 rounded-2xl bg-neutral-alpha-200 px-2 pt-7 pb-8 text-center">
+    <div className="flex min-h-0 flex-1 flex-col px-6 pb-6 sm:p-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [&>*]:shrink-0">
+        <div
+          data-account-profile
+          className="flex shrink-0 flex-col items-center gap-3 rounded-2xl bg-neutral-alpha-200 px-2 pt-7 pb-8 text-center"
+        >
           <AccountAvatar account={selectedAccount} size="60" />
           <div
             lang={selectedAccount.lang}
@@ -247,7 +258,11 @@ function PanelContent(props: AccountPanelProps) {
               {selectedAccount.displayName}
             </p>
             {selectedAccount.secondaryText && (
-              <p className="type-body-md-regular truncate text-base-default">
+              <p
+                lang={selectedAccount.secondaryTextLang}
+                dir={selectedAccount.secondaryTextDir}
+                className="type-body-md-regular truncate text-base-muted"
+              >
                 {selectedAccount.secondaryText}
               </p>
             )}
@@ -257,23 +272,44 @@ function PanelContent(props: AccountPanelProps) {
               {selectedAccount.badge}
             </Badge>
           )}
-          {hasState(selectedAccount) && (
-            <div className="type-body-sm-regular text-base-muted">
+          {selectedAccount.isPending && (
+            <div className="sr-only">
               <StateMessage state={selectedAccount} labels={labels} />
             </div>
           )}
         </div>
         {props.isLoading && (
-          <p role="status" className="type-body-sm-regular text-base-muted">
-            {labels.loading}
-          </p>
+          <>
+            <p role="status" className="sr-only">
+              {labels.loading}
+            </p>
+            <section aria-label={labels.otherAccounts} aria-busy="true">
+              <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
+                {labels.otherAccounts}
+              </p>
+              {Array.from({ length: 3 }, (_, index) => (
+                <div
+                  key={index}
+                  data-account-skeleton
+                  className="flex items-center gap-3 p-3"
+                  aria-hidden="true"
+                >
+                  <Skeleton className="size-11 shrink-0 rounded-full motion-reduce:animate-none" />
+                  <div className="flex flex-1 flex-col gap-1">
+                    <Skeleton className="h-6 w-3/4 motion-reduce:animate-none" />
+                    <Skeleton className="h-5 w-1/2 motion-reduce:animate-none" />
+                  </div>
+                </div>
+              ))}
+            </section>
+          </>
         )}
         {props.error && (
-          <p role="alert" className="type-body-sm-regular text-base-strong">
-            {props.error}
-          </p>
+          <Alert intent="danger" appearance="subtle" live="alert">
+            <Alert.Title>{props.error}</Alert.Title>
+          </Alert>
         )}
-        {groups.length > 0 ? (
+        {!props.isLoading && groups.length > 0 ? (
           <section aria-label={labels.otherAccounts}>
             <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
               {labels.otherAccounts}
@@ -321,9 +357,9 @@ function PanelContent(props: AccountPanelProps) {
           <div className="hidden shrink-0 flex-col sm:flex">
             <RadioGroup
               aria-label={appearance.label}
+              orientation="horizontal"
               value={appearance.value}
               onChange={appearance.onChange}
-              isDisabled={appearance.isDisabled}
               className="flex flex-col pb-4"
             >
               <span className="type-body-sm-regular pb-4 text-base-default">
@@ -345,8 +381,7 @@ function PanelContent(props: AccountPanelProps) {
                   <Radio
                     key={option.id}
                     value={option.id}
-                    isDisabled={option.isDisabled}
-                    className="type-body-sm-medium relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[disabled]:text-disabled motion-reduce:transition-none"
+                    className={`${language === 'dv' ? 'type-body-sm-regular' : 'type-body-sm-medium'} relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-center text-base-default outline-none transition-colors duration-normal data-[selected]:text-base-strong data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus motion-reduce:transition-none`}
                   >
                     {option.icon && (
                       <span aria-hidden="true" className="flex shrink-0">
@@ -367,63 +402,97 @@ function PanelContent(props: AccountPanelProps) {
 }
 
 function MobileSheet({ props }: { props: AccountPanelProps }) {
+  const { lang, direction } = useVeliLanguage();
+  return (
+    <ModalOverlay
+      data-account-sheet-overlay
+      isDismissable
+      lang={lang}
+      dir={direction}
+      className="fixed inset-0 z-50 flex min-h-dvh items-end justify-center bg-black/60 backdrop-blur-[6px] transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 motion-reduce:transition-none"
+    >
+      <MobileSheetSurface props={props} />
+    </ModalOverlay>
+  );
+}
+
+// The headless Modal is the one physical sheet: its background, notch, content and
+// footer share both the drag transform and entry/exit translation.
+function MobileSheetSurface({ props }: { props: AccountPanelProps }) {
+  const { lang, direction } = useVeliLanguage();
   const drag = useRef<{ id: number; y: number; time: number } | null>(null);
   const [offset, setOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
   function cancel() {
+    if (!drag.current) return;
     drag.current = null;
     setDragging(false);
     setOffset(0);
   }
   return (
-    <div
-      className="flex min-h-0 flex-1 flex-col rounded-t-4xl bg-surface-raised pb-[env(safe-area-inset-bottom)] transition-transform duration-normal ease-out data-[dragging=true]:transition-none motion-reduce:transition-none"
+    <AriaModal
+      data-account-sheet
+      lang={lang}
+      dir={direction}
+      className={`relative flex max-h-[85svh] w-full flex-col overflow-hidden rounded-t-4xl bg-surface-raised text-base-default shadow-sm outline-none transition-[translate,transform,opacity] [transition-duration:var(--duration-slow),var(--duration-normal),var(--duration-slow)] ease-out data-[entering]:translate-y-full data-[entering]:opacity-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0 data-[exiting]:[transition-duration:var(--duration-normal)] data-[dragging=true]:transition-none motion-reduce:transition-none ${props.panelClassName ?? ''}`}
       style={{ transform: `translateY(${offset}px)` }}
       data-dragging={dragging}
     >
-      <div
-        data-account-drag-handle
-        aria-hidden="true"
-        className="flex shrink-0 touch-none justify-center pt-2 pb-6"
-        onPointerDown={(event) => {
-          if (!event.isPrimary || event.button !== 0 || drag.current) return;
-          drag.current = { id: event.pointerId, y: event.clientY, time: event.timeStamp };
-          setDragging(true);
-          setOffset(0);
-          event.currentTarget.setPointerCapture(event.pointerId);
-        }}
-        onPointerMove={(event) => {
-          if (drag.current?.id === event.pointerId)
-            setOffset(Math.max(0, event.clientY - drag.current.y));
-        }}
-        onPointerUp={(event) => {
-          const start = drag.current;
-          if (!start || start.id !== event.pointerId) return;
-          const distance = Math.max(0, event.clientY - start.y);
-          const height = event.currentTarget.parentElement?.clientHeight ?? Infinity;
-          cancel();
-          if (
-            distance > height * 0.35 ||
-            (distance > 40 && distance / Math.max(1, event.timeStamp - start.time) > 0.11)
-          )
-            props.onOpenChange(false);
-        }}
-        onPointerCancel={cancel}
-        onLostPointerCapture={cancel}
+      <Dialog
+        aria-label={props.labels.dialog}
+        lang={lang}
+        dir={direction}
+        className="relative flex min-h-0 max-h-[inherit] w-full flex-1 flex-col pb-[env(safe-area-inset-bottom)] outline-none"
       >
-        <span className="h-1 w-15 rounded-full bg-border-base-emphasis" />
-      </div>
-      <Button
-        intent="secondary"
-        appearance="ghost"
-        size="sm"
-        className="sr-only focus:not-sr-only focus:absolute focus:end-6 focus:top-2"
-        onPress={() => props.onOpenChange(false)}
-      >
-        {props.labels.close}
-      </Button>
-      <PanelContent {...props} />
-    </div>
+        <div
+          data-account-drag-handle
+          aria-hidden="true"
+          className="flex shrink-0 touch-none justify-center pt-2 pb-6"
+          onPointerDown={(event) => {
+            if (!event.isPrimary || event.button !== 0 || drag.current) return;
+            drag.current = { id: event.pointerId, y: event.clientY, time: event.timeStamp };
+            setDragging(true);
+            setOffset(0);
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            if (drag.current?.id === event.pointerId)
+              setOffset(Math.max(0, event.clientY - drag.current.y));
+          }}
+          onPointerUp={(event) => {
+            const start = drag.current;
+            if (!start || start.id !== event.pointerId) return;
+            const distance = Math.max(0, event.clientY - start.y);
+            const height = event.currentTarget.parentElement?.clientHeight ?? Infinity;
+            if (
+              distance > height * 0.35 ||
+              (distance > 40 && distance / Math.max(1, event.timeStamp - start.time) > 0.11)
+            ) {
+              // Keep the released offset during the overlay's exit; do not snap home first.
+              drag.current = null;
+              setOffset(distance);
+              setDragging(false);
+              props.onOpenChange(false);
+            } else {
+              cancel();
+            }
+          }}
+          onPointerCancel={cancel}
+          onLostPointerCapture={cancel}
+        >
+          <span className="h-1 w-15 rounded-full bg-neutral-400" />
+        </div>
+        <div className="absolute end-6 top-2 z-10">
+          <AriaButton
+            className="type-body-sm-medium sr-only cursor-pointer rounded-full border-0 bg-button-secondary-subtle font-sans text-base-strong outline-none data-[focus-visible]:not-sr-only data-[focus-visible]:px-2 data-[focus-visible]:py-1 data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2"
+            onPress={() => props.onOpenChange(false)}
+          >
+            {props.labels.close}
+          </AriaButton>
+        </div>
+        <PanelContent {...props} />
+      </Dialog>
+    </AriaModal>
   );
 }
 
@@ -459,23 +528,22 @@ export function AccountPanel(props: AccountPanelProps) {
           iconOnly
           aria-label={props.labels.trigger}
           isDisabled={props.isDisabled}
+          className={
+            props.isOpen
+              ? 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised'
+              : undefined
+          }
         >
           <AccountAvatar account={props.selectedAccount} size="44" />
         </Button>
         {mobile ? (
-          <Modal
-            aria-label={props.labels.dialog}
-            overlayClassName="items-end p-0 backdrop-blur-[calc(var(--spacing)/2)]"
-            className={`flex max-h-[85svh] max-w-none overflow-hidden rounded-t-4xl rounded-b-none p-0 motion-safe:transition-[translate,opacity] motion-safe:duration-slow motion-safe:data-[entering]:translate-y-full motion-safe:data-[entering]:scale-100 motion-safe:data-[exiting]:translate-y-full motion-safe:data-[exiting]:scale-100 motion-reduce:transition-none [&_[role=dialog]]:max-h-[85svh] [&_[role=dialog]]:min-h-0 [&_[role=dialog]]:w-full [&_[role=dialog]]:p-0 ${props.panelClassName ?? ''}`}
-          >
-            <MobileSheet props={props} />
-          </Modal>
+          <MobileSheet props={props} />
         ) : (
           <Popover
             placement="bottom end"
             showArrow={false}
             offset={8}
-            className={`w-[389px] max-w-[calc(100vw-2rem)] motion-reduce:transition-none max-h-[80vh] [&>div]:max-h-[inherit] [&>div]:rounded-4xl [&>div]:shadow-sm [&>div>div]:max-h-[inherit] motion-reduce:[&>div]:transition-none ${props.panelClassName ?? ''}`}
+            className={`w-[389px] max-w-[calc(100vw-2rem)] motion-reduce:transition-none max-h-[80vh] [&>div]:max-h-[inherit] [&>div]:rounded-4xl [&>div]:bg-surface-raised [&>div]:shadow-sm [&>div>div]:max-h-[inherit] motion-reduce:[&>div]:transition-none ${props.panelClassName ?? ''}`}
           >
             <PopoverDialog aria-label={props.labels.dialog} className="max-h-[inherit]">
               <PanelContent {...props} />

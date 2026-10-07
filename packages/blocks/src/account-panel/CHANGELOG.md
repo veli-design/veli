@@ -1,3 +1,29 @@
+## 0.2.0
+
+### Added
+
+- Show three accessible skeleton account rows during loading, retaining the selected profile and sign-out action and respecting reduced motion.
+- Keep an avatar ring visible while the panel is open.
+- Replace pending account-row avatars with a spinner in the same 44px footprint, retaining names and accessible status and respecting reduced motion without changing the Avatar primitive.
+
+### Changed
+
+- Match notification hover/pressed colors and Figma muted secondary text, raised panel surfaces, mobile notch color, and 24px notch-to-profile spacing.
+- Build the mobile sheet directly with headless React Aria primitives, moving the surface and content together during dragging without Veli Modal overrides. Use non-spring transitions, retain the released drag position during dismissal, and reveal the close control only on keyboard-visible focus. Keep profile content naturally sized above the pinned footer.
+- Require `onAccountSelect` and render every additional account as an action. Hosts must supply switching and omit accounts they cannot select.
+- Remove visible pending captions from account rows and action buttons, retaining buttons' built-in spinner and accessible status announcements.
+- Present account-list retrieval failures with Veli Alert's subtle danger variant.
+- Keep profile names and email centered beneath the avatar in both directions, and right-align account-row text in RTL layouts. Storybook's toolbar translates all sample content to Dhivehi except email addresses; use the toolbar instead of separate Dark/Dhivehi stories.
+- Allow independent secondary-text language/direction metadata so Latin emails retain English font size and line height in Dhivehi layouts while translated subtitles retain Dhivehi typography.
+- Declare the desktop theme selector horizontal so arrow-key navigation follows the visual order in both LTR and RTL.
+- Use the regular Dhivehi body style for theme option labels, retaining the medium English style and shared typography tokens.
+- Match Veli Modal's designer-approved scrim: hard black at 60% with 6px backdrop blur in both light and dark modes, without adding tokens.
+
+### Removed
+
+- Remove display-only accounts, account/action and appearance disabled props, and `labels.disabled`. Keep the top-level avatar trigger `isDisabled` for shell coordination and pending state for actions.
+- Remove account/action `error` props and inline action errors. Consumers present action failures through toasts or notifications; panel-level account-list retrieval errors remain supported.
+
 ## 0.1.5
 
 ### Changed
