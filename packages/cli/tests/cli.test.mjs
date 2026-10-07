@@ -15,7 +15,7 @@ import { abortUpdate, continueUpdate, hasPendingUpdate, updateBlock } from '../d
 import { sha256 } from '../dist/contracts.js';
 
 const provenance = { sourceCommit: 'a'.repeat(40), dirty: false };
-const block = getBlocks()[0];
+const block = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
 const execFileAsync = promisify(execFile);
 
 async function fixture(run) {
@@ -63,20 +63,22 @@ test('configuration normalizes safe destinations and web origins', async () => {
   });
 });
 
-test('canonical source archives verify and install exact working and baseline bytes', async () => {
-  const parsed = parseSourceArchive(sourceArchive(block, provenance));
-  await fixture(async (cwd) => {
-    const installed = await installBlock(cwd, 'src/components/blocks', parsed);
-    const source = parsed.source.get('site-footer.tsx');
-    assert.deepEqual(await readFile(path.join(installed.targetDir, 'site-footer.tsx')), source);
-    assert.deepEqual(await readFile(path.join(installed.baselineDir, 'site-footer.tsx')), source);
-    assert.deepEqual(await blockState(installed), {
-      baselineValid: true,
-      customized: [],
-      missing: [],
+for (const block of getBlocks())
+  test(`${block.manifest.id}: canonical source archives verify and install exact working and baseline bytes`, async () => {
+    const parsed = parseSourceArchive(sourceArchive(block, provenance));
+    await fixture(async (cwd) => {
+      const installed = await installBlock(cwd, 'src/components/blocks', parsed);
+      for (const [file, source] of parsed.source) {
+        assert.deepEqual(await readFile(path.join(installed.targetDir, file)), source);
+        assert.deepEqual(await readFile(path.join(installed.baselineDir, file)), source);
+      }
+      assert.deepEqual(await blockState(installed), {
+        baselineValid: true,
+        customized: [],
+        missing: [],
+      });
     });
   });
-});
 
 test('restore discards managed customization while preserving unknown application files', async () => {
   await fixture(async (cwd) => {
@@ -279,71 +281,84 @@ test('authenticated requests reject cross-origin catalog URLs before sending sec
   }
 });
 
-test('JSON add output remains parseable when dependency ranges need review', async () => {
-  const bytes = sourceArchive(block, provenance);
-  const server = createServer((request, response) => {
-    if (request.url === '/api/blocks/v1/catalog.json') {
-      response.setHeader('content-type', 'application/json');
-      response.end(
-        JSON.stringify({
-          schemaVersion: 1,
-          blocks: [
-            {
-              manifest: block.manifest,
-              documentationUrl: '/blocks/site-footer/',
-              versions: [
-                {
-                  version: block.manifest.version,
-                  sourceCommit: provenance.sourceCommit,
-                  archiveUrl: `/api/blocks/v1/${block.manifest.id}/${block.manifest.version}.tar.gz`,
-                  archiveSha256: sha256(bytes),
-                },
-              ],
-            },
-          ],
-        }),
+for (const block of getBlocks())
+  test(`${block.manifest.id}: CLI add from canonical catalog retains exact source and receipt`, async () => {
+    const bytes = sourceArchive(block, provenance);
+    const server = createServer((request, response) => {
+      if (request.url === '/api/blocks/v1/catalog.json') {
+        response.setHeader('content-type', 'application/json');
+        response.end(
+          JSON.stringify({
+            schemaVersion: 1,
+            blocks: [
+              {
+                manifest: block.manifest,
+                documentationUrl: `/blocks/${block.manifest.id}/`,
+                versions: [
+                  {
+                    version: block.manifest.version,
+                    sourceCommit: provenance.sourceCommit,
+                    archiveUrl: `/api/blocks/v1/${block.manifest.id}/${block.manifest.version}.tar.gz`,
+                    archiveSha256: sha256(bytes),
+                  },
+                ],
+              },
+            ],
+          }),
+        );
+      } else {
+        response.setHeader('content-type', 'application/gzip');
+        response.end(bytes);
+      }
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      await fixture(async (cwd) => {
+        await writeFile(
+          path.join(cwd, 'package.json'),
+          JSON.stringify({ dependencies: { react: '^18.0.0' } }),
+        );
+        const webUrl = `http://127.0.0.1:${server.address().port}`;
+        const executable = fileURLToPath(new URL('../dist/index.js', import.meta.url));
+        await execFileAsync(process.execPath, [
+          executable,
+          '--cwd',
+          cwd,
+          '--web-url',
+          webUrl,
+          'init',
+        ]);
+        const { stdout } = await execFileAsync(process.execPath, [
+          executable,
+          '--cwd',
+          cwd,
+          '--json',
+          'add',
+          block.manifest.id,
+          '--yes',
+          '--no-install',
+        ]);
+        assert.deepEqual(JSON.parse(stdout).added, [block.manifest.id]);
+        const installed = (await installedBlocks(cwd))[0];
+        assert.equal(installed.id, block.manifest.id);
+        assert.equal(installed.receipt.sourceCommit, provenance.sourceCommit);
+        for (const file of block.files) {
+          const working = await readFile(path.join(installed.targetDir, file.path));
+          const baseline = await readFile(path.join(installed.baselineDir, file.path));
+          assert.deepEqual(working, file.bytes);
+          assert.deepEqual(baseline, file.bytes);
+          assert.equal(
+            installed.receipt.files.find((entry) => entry.path === file.path).sha256,
+            sha256(working),
+          );
+        }
+      });
+    } finally {
+      await new Promise((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
       );
-    } else {
-      response.setHeader('content-type', 'application/gzip');
-      response.end(bytes);
     }
   });
-  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-  try {
-    await fixture(async (cwd) => {
-      await writeFile(
-        path.join(cwd, 'package.json'),
-        JSON.stringify({ dependencies: { react: '^18.0.0' } }),
-      );
-      const webUrl = `http://127.0.0.1:${server.address().port}`;
-      const executable = fileURLToPath(new URL('../dist/index.js', import.meta.url));
-      await execFileAsync(process.execPath, [
-        executable,
-        '--cwd',
-        cwd,
-        '--web-url',
-        webUrl,
-        'init',
-      ]);
-      const { stdout } = await execFileAsync(process.execPath, [
-        executable,
-        '--cwd',
-        cwd,
-        '--json',
-        'add',
-        block.manifest.id,
-        '--yes',
-        '--no-install',
-      ]);
-      assert.deepEqual(JSON.parse(stdout).added, [block.manifest.id]);
-      assert.equal((await installedBlocks(cwd))[0].id, block.manifest.id);
-    });
-  } finally {
-    await new Promise((resolve, reject) =>
-      server.close((error) => (error ? reject(error) : resolve())),
-    );
-  }
-});
 
 test('the packaged executable exposes command help', () => {
   const output = execFileSync(
@@ -356,3 +371,107 @@ test('the packaged executable exposes command help', () => {
   for (const command of ['init', 'add', 'status', 'update', 'restore', 'doctor'])
     assert.match(output, new RegExp(`\\b${command}\\b`));
 });
+
+for (const conflicting of [false, true])
+  test(`multi-block add ${conflicting ? 'rejects conflicts before writing' : 'retains shared requirements'} in either order`, async () => {
+    const blocks = getBlocks().map((entry) => ({
+      ...entry,
+      manifest: {
+        ...entry.manifest,
+        dependencies: {
+          ...entry.manifest.dependencies,
+          '@tradenetcorp/veli-ui':
+            conflicting && entry.manifest.id === 'site-footer' ? '^0.10.0' : '^0.13.0',
+        },
+        setupDependencies: {
+          ...entry.manifest.setupDependencies,
+          '@tradenetcorp/veli-tokens': '^0.7.1',
+        },
+      },
+    }));
+    const archives = new Map(
+      blocks.map((entry) => [
+        `/api/blocks/v1/${entry.manifest.id}/${entry.manifest.version}.tar.gz`,
+        sourceArchive(entry, provenance),
+      ]),
+    );
+    const catalog = {
+      schemaVersion: 1,
+      blocks: blocks.map(({ manifest }) => {
+        const archiveUrl = `/api/blocks/v1/${manifest.id}/${manifest.version}.tar.gz`;
+        return {
+          manifest,
+          documentationUrl: `/blocks/${manifest.id}/`,
+          versions: [
+            {
+              version: manifest.version,
+              sourceCommit: provenance.sourceCommit,
+              archiveUrl,
+              archiveSha256: sha256(archives.get(archiveUrl)),
+            },
+          ],
+        };
+      }),
+    };
+    const server = createServer((request, response) => {
+      if (request.url === '/api/blocks/v1/catalog.json') {
+        response.setHeader('content-type', 'application/json');
+        response.end(JSON.stringify(catalog));
+      } else {
+        response.setHeader('content-type', 'application/gzip');
+        response.end(archives.get(request.url));
+      }
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const executable = fileURLToPath(new URL('../dist/index.js', import.meta.url));
+      const ids = blocks.map(({ manifest }) => manifest.id);
+      for (const order of [ids, [...ids].reverse()])
+        await fixture(async (cwd) => {
+          await writeFile(
+            path.join(cwd, 'package.json'),
+            JSON.stringify({ dependencies: { '@tradenetcorp/veli-ui': '0.10.0' } }),
+          );
+          await execFileAsync(process.execPath, [
+            executable,
+            '--cwd',
+            cwd,
+            '--web-url',
+            `http://127.0.0.1:${server.address().port}`,
+            'init',
+          ]);
+          const args = [
+            executable,
+            '--cwd',
+            cwd,
+            '--json',
+            'add',
+            ...order,
+            '--yes',
+            '--no-install',
+          ];
+          if (conflicting) {
+            await assert.rejects(
+              () => execFileAsync(process.execPath, args),
+              /Conflicting block requirements/,
+            );
+            assert.deepEqual(await installedBlocks(cwd), []);
+          } else {
+            const { stdout } = await execFileAsync(process.execPath, args);
+            const result = JSON.parse(stdout);
+            assert.deepEqual(result.added, order);
+            assert.deepEqual(result.dependencies.incompatible, [
+              { name: '@tradenetcorp/veli-ui', current: '0.10.0', required: '^0.13.0' },
+            ]);
+            assert.deepEqual(
+              (await installedBlocks(cwd)).map(({ id }) => id).sort(),
+              [...ids].sort(),
+            );
+          }
+        });
+    } finally {
+      await new Promise((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });

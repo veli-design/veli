@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { waitForMotion } from './wait-for-motion';
 
 test('copied footer renders, hydrates, preserves keyboard focus and Next navigation', async ({
   page,
@@ -37,8 +38,10 @@ for (const width of [320, 1280])
       }, testInfo) => {
         await page.setViewportSize({ width, height: 800 });
         await page.goto('/');
+        // Root fixture uses Fixture* labels so they do not collide with site-header controls.
         if (language === 'dv') await page.getByRole('button', { name: 'Fixture language' }).click();
         if (theme === 'dark') await page.getByRole('button', { name: 'Fixture theme' }).click();
+        await waitForMotion(page);
         const results = await new AxeBuilder({ page }).analyze();
         expect(results.violations).toEqual([]);
         expect(

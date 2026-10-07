@@ -13,6 +13,31 @@ if (process.env.BLOCKS_CONSUMER_DIR && existsSync(target))
   throw new Error('BLOCKS_CONSUMER_DIR must not exist');
 mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
+// Exercise Storybook play functions against the same canonical imports in a real browser.
+// Build its workspace dependencies first: fresh checkouts have no generated token CSS or UI dist.
+const storybookBuild = spawnSync(
+  'corepack',
+  ['pnpm', 'exec', 'turbo', 'build', '--filter=@tradenetcorp/veli-storybook'],
+  {
+    cwd: resolve(packageRoot, '../..'),
+    stdio: 'inherit',
+  },
+);
+if (storybookBuild.status !== 0) throw new Error('Storybook build failed');
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/storybook-static'),
+  resolve(target, 'public/storybook'),
+  { recursive: true },
+);
+
+/** @param {string} id */
+function adapterFileName(id) {
+  if (id === 'site-footer') return 'footer-adapter.tsx';
+  if (id === 'site-header') return 'header-adapter.tsx';
+  if (id === 'notification-tray') return 'notification-adapter.tsx';
+  if (id === 'account-panel') return 'account-adapter.tsx';
+  return `${id}-adapter.tsx`;
+}
 
 for (const block of getBlocks()) {
   for (const file of bundleFiles(block)) {
@@ -22,14 +47,8 @@ for (const block of getBlocks()) {
   }
   // Execute the same adapter displayed in the documentation; only its relative destination changes.
   const exampleName = `${block.manifest.id}-next.tsx`;
-  const adapterName =
-    block.manifest.id === 'site-footer'
-      ? 'footer-adapter.tsx'
-      : block.manifest.id === 'site-header'
-        ? 'header-adapter.tsx'
-        : `${block.manifest.id}-adapter.tsx`;
-  cpSync(resolve(packageRoot, 'examples', exampleName), resolve(target, adapterName));
-  const adapter = resolve(target, adapterName);
+  const adapter = resolve(target, adapterFileName(block.manifest.id));
+  cpSync(resolve(packageRoot, 'examples', exampleName), adapter);
   writeFileSync(
     adapter,
     readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"),

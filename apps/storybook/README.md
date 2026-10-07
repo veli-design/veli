@@ -24,6 +24,12 @@ Stories live in [`src/stories`](./src/stories). Shared Storybook configuration
 is in [`.storybook`](./.storybook), and global styles are in
 [`src/global.css`](./src/global.css).
 
+Stories can provide optional `parameters.veliProvider` defaults for `theme`
+(`system`, `light`, `dark`), `language` (`en`, `dv`), and `surface`
+(`base`, `raised`, `clear`). Use these instead of nesting another provider.
+Explicit `veli-theme`, `veli-language`, and `veli-surface` URL settings override
+the corresponding defaults; live toolbar choices continue to apply across stories.
+
 ## Build
 
 Create the static Storybook site:

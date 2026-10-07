@@ -70,6 +70,8 @@ import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 | `value`        | `string`                  | -       | Controlled selected value.                                                |
 | `onChange`     | `(value: string) => void` | -       | Callback when selection changes.                                          |
 | `isDisabled`   | `boolean`                 | `false` | Disables all radios in the group.                                         |
+| `description`  | `ReactNode`               | -       | Helper text below the group.                                              |
+| `errorMessage` | `ReactNode`               | -       | Error text shown below the group when `isInvalid` is set.                 |
 | `className`    | `string`                  | -       | Layout-only class override merged onto the outermost radio group element. |
 
 _Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `style` overrides._

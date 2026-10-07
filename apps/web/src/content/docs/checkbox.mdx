@@ -16,7 +16,7 @@ The Checkbox component supports checked, unchecked, and indeterminate states wit
 ## Import
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 ```
 
 ## Usage
@@ -49,14 +49,45 @@ import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
   <CheckboxDisabledDemo client:visible />
 </div>
 
+## Group
+
+`CheckboxGroup` manages several checkboxes as one `string[]` value. Give each `Checkbox` a `value`. The group's `value` / `onChange` accept a form library field directly (see [Forms](/patterns/forms/)).
+
+```tsx
+<CheckboxGroup
+  aria-label="Notification channels"
+  defaultValue={['email']}
+  description="Where should we send updates?"
+>
+  <Checkbox value="email">Email</Checkbox>
+  <Checkbox value="sms">SMS</Checkbox>
+  <Checkbox value="push">Push</Checkbox>
+</CheckboxGroup>
+```
+
 ## API Reference
+
+### `Checkbox`
 
 | Prop              | Type      | Default | Description                                                        |
 | :---------------- | :-------- | :------ | :----------------------------------------------------------------- |
 | `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state.                                   |
 | `isDisabled`      | `boolean` | `false` | Disables interaction and applies disabled styling.                 |
+| `value`           | `string`  | -       | Value added to the parent `CheckboxGroup` when selected.           |
 | `className`       | `string`  | -       | Layout-only class override merged onto the outermost root element. |
 
-_Note: All other `react-aria-components` Checkbox props are supported, excluding `style` overrides._
+### `CheckboxGroup`
+
+| Prop           | Type                        | Default | Description                                               |
+| :------------- | :-------------------------- | :------ | :-------------------------------------------------------- |
+| `defaultValue` | `string[]`                  | -       | Uncontrolled initial selected values.                     |
+| `value`        | `string[]`                  | -       | Controlled selected values.                               |
+| `onChange`     | `(value: string[]) => void` | -       | Callback when the selection changes.                      |
+| `isDisabled`   | `boolean`                   | `false` | Disables every checkbox in the group.                     |
+| `description`  | `ReactNode`                 | -       | Helper text below the group.                              |
+| `errorMessage` | `ReactNode`                 | -       | Error text shown below the group when `isInvalid` is set. |
+| `className`    | `string`                    | -       | Layout-only class override merged onto the group element. |
+
+_Note: All other `react-aria-components` Checkbox and CheckboxGroup props are supported, excluding `style` overrides._
 
 `className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The checkbox control and indicator internals remain private to preserve focus, contrast, disabled, checked, and indeterminate states.

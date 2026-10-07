@@ -1,18 +1,22 @@
 ---
 title: Dropzone
-description: Drag-and-drop upload target built on React Aria DropZone with optional file browsing.
+description: File upload field with drag and drop, browsing, validation, and upload progress.
 ---
 
-import { DropzoneUsageDemo } from '../../components/DocsExamples';
+import {
+  DropzoneMultipleDemo,
+  DropzoneUsageDemo,
+  DropzoneValidationDemo,
+} from '../../components/DocsExamples';
 
 # Dropzone
 
-Dropzone provides an accessible target for drag-and-drop uploads. Enable `allowsBrowse` to open the system file picker on click via React Aria `FileTrigger`.
+Use Dropzone when people attach files to a form, by dropping them or with **Browse files**. It lists each file with its upload status.
 
 ## Import
 
 ```tsx
-import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
+import { DropzoneField } from '@tradenetcorp/veli-ui/dropzone';
 ```
 
 ## Usage
@@ -22,28 +26,181 @@ import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
 </div>
 
 ```tsx
-<Dropzone
-  label="Attachments"
-  aria-label="Upload attachments"
-  allowsBrowse
+<DropzoneField
+  label="Attachment"
+  isOptional
+  description="PDF, PNG or JPG · up to 10 MB each"
+  secondaryText="Up to 10 MB"
   acceptedFileTypes={['application/pdf', 'image/png', 'image/jpeg']}
-  onDrop={(event) => {
-    // handle dropped items
-  }}
+  maxSize={10 * 1024 * 1024}
+  onUpload={upload}
 />
+```
+
+A single-file field is one row. The chosen file replaces it until the file is removed. With `onUpload`, each file shows its progress, then Uploaded or the error message.
+
+## Multiple files
+
+`multiple` stacks the drop area above a list of files.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DropzoneMultipleDemo client:visible />
+</div>
+
+```tsx
+<DropzoneField
+  multiple
+  label="Attachments"
+  description="Up to 5 files"
+  secondaryText="Up to 10 MB each"
+  maxFiles={5}
+  maxSize={10 * 1024 * 1024}
+  onUpload={upload}
+/>
+```
+
+## Validation
+
+Files that fail `acceptedFileTypes`, `maxSize`, `maxFiles`, or `onFileValidate` are not added. `onFileReject` receives the file and a localized reason; pass it to `errorMessage` to show it under the field.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DropzoneValidationDemo client:visible />
+</div>
+
+```tsx
+const [error, setError] = useState<string>();
+
+<DropzoneField
+  multiple
+  label="Documents"
+  description="PDF only · up to 2 MB each"
+  errorMessage={error}
+  acceptedFileTypes={['application/pdf']}
+  maxSize={2 * 1024 * 1024}
+  onAccept={() => setError(undefined)}
+  onFileReject={(file, message) => setError(`${file.name}: ${message}`)}
+/>;
 ```
 
 ## API Reference
 
-| Prop                | Type                                | Description                          |
-| :------------------ | :---------------------------------- | :----------------------------------- |
-| `label`             | `ReactNode`                         | Visible field label.                 |
-| `description`       | `ReactNode`                         | Helper text below the dropzone.      |
-| `errorMessage`      | `ReactNode`                         | Validation message.                  |
-| `size`              | `'sm' \| 'md' \| 'lg'`              | Minimum height and typography scale. |
-| `allowsBrowse`      | `boolean`                           | Wraps the zone with `FileTrigger`.   |
-| `acceptedFileTypes` | `string[]`                          | MIME types passed to `FileTrigger`.  |
-| `getDropOperation`  | `DropZoneProps['getDropOperation']` | Control accepted drag types.         |
-| `onDrop`            | `DropZoneProps['onDrop']`           | Called when items are dropped.       |
+DropzoneField is a Veli field on React Aria [`DropZone`](https://react-spectrum.adobe.com/react-aria/DropZone.html), with a hidden native `<input type="file">` for browsing and form submission.
 
-All other React Aria `DropZone` props are supported, excluding `className` and `style` overrides on the root wrapper.
+### DropzoneField
+
+| Prop                    | Type                         | Default          | Description                                                            |
+| :---------------------- | :--------------------------- | :--------------- | :--------------------------------------------------------------------- |
+| `label`                 | `ReactNode`                  | -                | Visible label.                                                         |
+| `labelSize`             | `'sm' \| 'md'`               | `'md'`           | Label type scale.                                                      |
+| `isOptional`            | `boolean`                    | `false`          | Shows localized Optional. Hidden when `isRequired`.                    |
+| `isRequired`            | `boolean`                    | `false`          | Shows the required asterisk.                                           |
+| `showRequiredIndicator` | `boolean`                    | `true`           | Shows the asterisk when `isRequired`.                                  |
+| `infoTooltip`           | `ReactNode`                  | -                | Content for the header info tooltip.                                   |
+| `infoTooltipAriaLabel`  | `string`                     | Localized string | Accessible name for the info tooltip trigger.                          |
+| `multiple`              | `boolean`                    | `false`          | Accepts several files and stacks the area above the list.              |
+| `title`                 | `ReactNode`                  | Localized string | Drop area title.                                                       |
+| `hint`                  | `ReactNode`                  | Localized string | Drop area hint under the title.                                        |
+| `secondaryText`         | `ReactNode`                  | -                | Text after the divider, such as upload limits.                         |
+| `showTrigger`           | `boolean`                    | `true`           | Shows the Browse files button.                                         |
+| `description`           | `ReactNode`                  | -                | Helper text beneath the field.                                         |
+| `errorMessage`          | `ReactNode`                  | -                | Replaces the description when invalid.                                 |
+| `isInvalid`             | `boolean`                    | with message     | Shows the invalid border and `errorMessage`.                           |
+| `isDisabled`            | `boolean`                    | `false`          | Disables dropping, browsing, and removing files.                       |
+| `acceptedFileTypes`     | `string[]`                   | -                | MIME types, wildcards such as `image/*`, or extensions such as `.pdf`. |
+| `maxFiles`              | `number`                     | -                | Maximum number of files when `multiple`.                               |
+| `maxSize`               | `number`                     | -                | Maximum size per file, in bytes.                                       |
+| `value`                 | `File[]`                     | -                | Controlled files.                                                      |
+| `defaultValue`          | `File[]`                     | -                | Uncontrolled initial files.                                            |
+| `onValueChange`         | `(files: File[]) => void`    | -                | Called when files are added or removed.                                |
+| `onAccept`              | `(files: File[]) => void`    | -                | Called with each batch of accepted files.                              |
+| `onFileAccept`          | `(file: File) => void`       | -                | Called for each accepted file.                                         |
+| `onFileReject`          | `(file, message) => void`    | -                | Called for each rejected file with a localized reason.                 |
+| `onFileValidate`        | `(file) => string \| null`   | -                | Return a message to reject a file.                                     |
+| `onUpload`              | `(files, callbacks) => void` | -                | Upload handler. Report `onProgress`, `onSuccess`, and `onError`.       |
+| `name`                  | `string`                     | -                | Native form field name for the file input.                             |
+| `required`              | `boolean`                    | `false`          | Requires a file on native form submission.                             |
+| `aria-label`            | `string`                     | -                | Accessible name when there is no visible label.                        |
+| `className`             | `string`                     | -                | Layout class on the root (width, margin, flex/grid).                   |
+
+### DropZone
+
+`DropzoneField` renders React Aria’s [`DropZone`](https://react-spectrum.adobe.com/react-aria/DropZone.html#props) but does not forward its props. Compose `DropzoneArea` to reach them; it passes these through:
+
+| Prop               | Type                            | Description                                                 |
+| :----------------- | :------------------------------ | :---------------------------------------------------------- |
+| `onDrop`           | `(event: DropEvent) => void`    | Called before dropped files are added.                      |
+| `getDropOperation` | `(types, operations) => string` | Drop operation to allow. Veli defaults to `copy`.           |
+| `onDropEnter`      | `(event) => void`               | Called when a drag enters the area.                         |
+| `onDropExit`       | `(event) => void`               | Called when a drag leaves the area.                         |
+| `onDropActivate`   | `(event) => void`               | Called when a drag hovers the area long enough to activate. |
+
+Not forwarded from `DropZone`:
+
+| Prop         | Why                                                           |
+| :----------- | :------------------------------------------------------------ |
+| `children`   | Replaced by Veli content; custom `children` replace it.       |
+| `className`  | Replaced by a string `className` on the area.                 |
+| `isDisabled` | Set from the root `disabled` or `DropzoneField` `isDisabled`. |
+
+### Native file input
+
+The hidden `<input type="file">` that opens the picker and submits files.
+
+| Prop       | Type      | Description                                                         |
+| :--------- | :-------- | :------------------------------------------------------------------ |
+| `name`     | `string`  | Native form field name. The input stays in sync with dropped files. |
+| `required` | `boolean` | Requires a selected file on native form submission.                 |
+| `multiple` | `boolean` | Set from `multiple`.                                                |
+| `accept`   | `string`  | Set from `acceptedFileTypes`.                                       |
+
+### Composition
+
+Build a custom layout from the parts `DropzoneField` uses. `Dropzone` takes the same file, validation, and callback props, plus `accept` (comma-separated), `label` (accessible name), `disabled`, `invalid`, `dir`, and `lang`.
+
+```tsx
+<Dropzone multiple label="Upload files" onUpload={upload}>
+  <DropzoneArea title="Drop files to upload" />
+  <DropzoneList>
+    <Items />
+  </DropzoneList>
+  <DropzoneClear />
+</Dropzone>;
+
+function Items() {
+  const files = useDropzone((state) => Array.from(state.files.keys()));
+
+  return files.map((file) => (
+    <DropzoneItem key={file.name} value={file}>
+      <DropzoneItemPreview />
+      <DropzoneItemMetadata />
+      <DropzoneItemDelete />
+      <DropzoneItemProgress />
+    </DropzoneItem>
+  ));
+}
+```
+
+| Part                   | Description                                                                                            |
+| :--------------------- | :----------------------------------------------------------------------------------------------------- |
+| `DropzoneArea`         | Drop target. Takes `title`, `hint`, `secondaryText`, `showTrigger`, `isInvalid`, or custom `children`. |
+| `DropzoneTrigger`      | Button that opens the file picker. Accepts Veli `Button` props.                                        |
+| `DropzoneList`         | Vertical list of items. `forceMount` renders it while empty.                                           |
+| `DropzoneItem`         | One file row. Takes `value: File`.                                                                     |
+| `DropzoneItemPreview`  | Image thumbnail or file icon. `render(file, fallback)` replaces it.                                    |
+| `DropzoneItemMetadata` | File name, size, and status.                                                                           |
+| `DropzoneItemProgress` | Progress bar while uploading and after success. `forceMount` keeps it visible.                         |
+| `DropzoneItemDelete`   | Removes the file.                                                                                      |
+| `DropzoneClear`        | Removes every file. Accepts Veli `Button` props.                                                       |
+| `useDropzone`          | Selects from the file store.                                                                           |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label`. `description` or `errorMessage` describes the drop area.
+- The drop area is focusable. Enter or Space opens the file picker, and pasting files adds them. **Browse files** is a separate button.
+- Each file is a list item that announces its name, size, and status. Remove buttons are named “Remove _file name_”.
+- In single-file mode, focus moves to the remove button when a file is chosen, and back to **Browse files** when it is removed.
+- Border and progress transitions honor reduced motion.
+
+## RTL and Language
+
+On `lang="dv"` pages, built-in strings — title, hint, Browse files, Optional, Uploaded, and rejection reasons — are Dhivehi. In RTL the single-file row mirrors and progress fills from the inline start. File sizes and percentages stay left-to-right, and file names keep their own direction.

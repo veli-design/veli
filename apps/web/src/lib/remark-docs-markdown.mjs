@@ -101,7 +101,7 @@ function isInteractivePreview(node, importedNames, file) {
 
 function getDocumentPath(file) {
   const path = documentName(file).replaceAll('\\', '/');
-  const match = path.match(/(?:^|\/)src\/content\/(docs|foundations)\/(.+)\.mdx?$/);
+  const match = path.match(/(?:^|\/)src\/content\/(docs|foundations|patterns)\/(.+)\.mdx?$/);
 
   if (!match) {
     throw markdownError(file, 'could not derive the rendered documentation URL');

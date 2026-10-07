@@ -21,7 +21,13 @@ const foundationsCollection = defineCollection({
   schema: pageSchema,
 });
 
+const patternsCollection = defineCollection({
+  type: 'content',
+  schema: pageSchema,
+});
+
 export const collections = {
   docs: docsCollection,
   foundations: foundationsCollection,
+  patterns: patternsCollection,
 };
