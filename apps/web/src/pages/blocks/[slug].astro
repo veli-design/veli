@@ -5,16 +5,23 @@ import DocsLayout from '../../layouts/docs-layout.astro';
 import DocsPageActions from '../../components/DocsPageActions.astro';
 import { AccountPanelDemo } from '../../components/AccountPanelDemo';
 import { SiteFooterDemo } from '../../components/SiteFooterDemo';
+import { SiteHeaderDemo } from '../../components/SiteHeaderDemo';
 import { NotificationTrayDemo } from '../../components/NotificationTrayDemo';
 import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
+
+// Cache one processor/highlighter for all block pages — Shiki is a singleton and
+// creating a new instance per request leaks and can fail on large block markdown.
+const blockMarkdownProcessor = await createMarkdownProcessor({
+  rehypePlugins: [rehypeCodeBlocks],
+});
 
 export function getStaticPaths() {
   return blocks.map(({ manifest }) => ({ params: { slug: manifest.id } }));
 }
 const page = blockPages.find((page) => page.id === `blocks/${Astro.params.slug}`)!;
-const processor = await createMarkdownProcessor({ rehypePlugins: [rehypeCodeBlocks] });
-const rendered = await processor.render(page.markdown.replace(/^# .*\n/, ''));
+const rendered = await blockMarkdownProcessor.render(page.markdown.replace(/^# .*\n/, ''));
 const markdownPath = `/${page.id}/index.md`;
+const slug = Astro.params.slug;
 ---
 
 <DocsLayout
@@ -31,8 +38,9 @@ const markdownPath = `/${page.id}/index.md`;
       placement="inline"
     />
   </header>
-  {Astro.params.slug === 'site-footer' && <SiteFooterDemo client:visible />}
-  {Astro.params.slug === 'notification-tray' && <NotificationTrayDemo client:visible />}
-  {Astro.params.slug === 'account-panel' && <AccountPanelDemo client:visible />}
+  {slug === 'site-footer' && <SiteFooterDemo client:visible />}
+  {slug === 'site-header' && <SiteHeaderDemo client:visible />}
+  {slug === 'notification-tray' && <NotificationTrayDemo client:visible />}
+  {slug === 'account-panel' && <AccountPanelDemo client:visible />}
   <article class="docs-prose" set:html={rendered.code} />
 </DocsLayout>

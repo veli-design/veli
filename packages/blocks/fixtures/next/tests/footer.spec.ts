@@ -11,14 +11,14 @@ test('copied footer renders, hydrates, preserves keyboard focus and Next navigat
     if (message.type() === 'error') errors.push(message.text());
   });
   await page.goto('/');
-  await expect(page.getByRole('contentinfo')).toHaveCount(1);
+  const footer = page.getByRole('contentinfo');
+  await expect(footer).toHaveCount(1);
+  // Scope to the footer — site-header also exposes an About nav link.
+  const about = footer.getByRole('link', { name: 'About', exact: true });
   await page.getByRole('button', { name: 'Long labels' }).focus();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('link', { name: 'About', exact: true })).toBeFocused();
-  await expect(page.getByRole('link', { name: 'About', exact: true })).toHaveAttribute(
-    'data-focus-visible',
-    'true',
-  );
+  await expect(about).toBeFocused();
+  await expect(about).toHaveAttribute('data-focus-visible', 'true');
   await page.evaluate(() => {
     (window as Window & { navigationMarker?: string }).navigationMarker = 'retained';
   });
@@ -38,8 +38,9 @@ for (const width of [320, 1280])
       }, testInfo) => {
         await page.setViewportSize({ width, height: 800 });
         await page.goto('/');
-        if (language === 'dv') await page.getByRole('button', { name: 'Change language' }).click();
-        if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+        // Root fixture uses Fixture* labels so they do not collide with site-header controls.
+        if (language === 'dv') await page.getByRole('button', { name: 'Fixture language' }).click();
+        if (theme === 'dark') await page.getByRole('button', { name: 'Fixture theme' }).click();
         await waitForMotion(page);
         const results = await new AxeBuilder({ page }).analyze();
         expect(results.violations).toEqual([]);

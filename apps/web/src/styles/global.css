@@ -110,13 +110,17 @@ body {
   font-family: var(--font-sans, 'Inter', sans-serif);
 }
 
-button,
-input {
-  font: inherit;
-}
+/* Keep in @layer base so Tailwind utilities (e.g. type-caption-*) can override.
+   Unlayered `font: inherit` beats @layer utilities and blows up caption buttons. */
+@layer base {
+  button,
+  input {
+    font: inherit;
+  }
 
-button {
-  border: 0;
+  button {
+    border: 0;
+  }
 }
 
 :target {

@@ -9,12 +9,14 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
+    "@phosphor-icons/react": "^2.1.10",
+    "@tradenetcorp/veli-blocks": "workspace:*",
     "@tradenetcorp/veli-tokens": "workspace:*",
     "@tradenetcorp/veli-ui": "workspace:*",
+    "motion": "^12.42.2",
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@tradenetcorp/veli-blocks": "workspace:*"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.18",
