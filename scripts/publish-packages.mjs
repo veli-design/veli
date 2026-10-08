@@ -20,6 +20,9 @@ function run(command, args, cwd) {
 const cwd = process.cwd();
 const { packages } = await getPackages(cwd);
 
+await run('corepack', ['pnpm', '--filter', '@tradenetcorp/veli-ui', 'build'], cwd);
+await run('corepack', ['pnpm', '--filter', '@tradenetcorp/veli-ui', 'package:check'], cwd);
+
 await withReleaseReadmes(packages, () =>
   run('corepack', ['pnpm', 'exec', 'changeset', 'publish', ...process.argv.slice(2)], cwd),
 );

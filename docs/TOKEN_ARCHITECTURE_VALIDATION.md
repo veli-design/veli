@@ -42,3 +42,10 @@ The validation run captured 576 screenshots: 36 component/foundation titles × t
 Canonical CSS grows because it now exposes the complete graph and composites in both modes; the adapter becomes smaller through shared references. Sizes are raw artifacts, before application bundling/minification.
 
 No packages or sites were published during validation. Candidate tarballs validate upcoming package contents; registry authentication and Cloudflare deployment execute in the release workflow. The two Cloudflare deployments are independent and cannot be atomic; see [release-site operations](RELEASE_SITES.md).
+
+## PD-1041 consumer compatibility follow-up
+
+- All 74 UI tests pass, including eight new all-output ESM guard tests and the existing 38 native Node public-entry imports.
+- Fixed packed UI passes Next 15.5.18 and 16.2.6 Pages production builds and HTTP SSR, plus Vitest 4.1.11/jsdom 30.0.1 unmocked rendering, without Veli transpilation or inlining.
+- Old UI 0.13.0 fails both Pages/webpack controls and Vitest as expected, but passes Next 15/16 App/webpack and Next 16 App/Turbopack builds. Both real consumers' installed old UI packages fail native Node Modal imports.
+- The [consumer compatibility investigation](ESM_CONSUMER_COMPATIBILITY.md) records exact configurations, reproduction scope and migration advice. The release command and UI prepublish hook enforce the ESM guard; packed Pages/Vitest fixtures run in CI.

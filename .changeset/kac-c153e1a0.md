@@ -13,4 +13,4 @@
 
 ### Fixed
 
-- Make all UI entry points importable during Node server rendering.
+- Make all UI entry points importable during Node server rendering and reject invalid relative ESM imports before publishing. Veli no longer requires Next.js `transpilePackages` or Vitest dependency inlining to resolve its JavaScript.

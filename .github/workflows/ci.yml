@@ -74,6 +74,10 @@ jobs:
           corepack pnpm exec turbo build --filter=@tradenetcorp/veli-ui --filter=@tradenetcorp/veli-tokens
           corepack pnpm --filter @tradenetcorp/veli-ui pack --out "$RUNNER_TEMP/ui.tgz"
           corepack pnpm --filter @tradenetcorp/veli-tokens pack --out "$RUNNER_TEMP/tokens.tgz"
+      - name: Verify Pages Router and Vitest without ESM workarounds
+        run: |
+          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next15" "$RUNNER_TEMP/ui.tgz" 15.5.18
+          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next16" "$RUNNER_TEMP/ui.tgz" 16.2.6
       - run: corepack pnpm test:blocks:consumer
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

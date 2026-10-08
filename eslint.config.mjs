@@ -26,6 +26,7 @@ export default [
       'pnpm-lock.yaml',
       'packages/blocks/examples/**',
       'packages/blocks/fixtures/**',
+      'packages/ui/fixtures/**',
       'packages/blocks/examples/**',
       'packages/blocks/fixtures/**',
     ],
@@ -51,6 +52,7 @@ export default [
     files: [
       'scripts/**/*.mjs',
       'packages/tokens/**/*.mjs',
+      'packages/ui/**/*.mjs',
       'packages/blocks/**/*.mjs',
       'packages/cli/**/*.mjs',
     ],

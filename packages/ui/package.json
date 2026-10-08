@@ -215,7 +215,8 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
     "test": "corepack pnpm run build && node --test tests/*.test.mjs",
-    "prepublishOnly": "corepack pnpm run build"
+    "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
+    "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
   },
   "peerDependencies": {
     "react": "^19.0.0",
