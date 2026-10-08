@@ -248,7 +248,7 @@ Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own 
 
 Replace `packages/tokens/src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including typography and effect styles, then run `corepack pnpm --filter @tradenetcorp/veli-tokens build`. Do not edit generated CSS. Keep the raw export intact, including Figma names and metadata.
 
-`prebuild.js` excludes the Figma-only `_docs` annotation collection and exporter-specific `Grid-styles` composites from CSS generation. Product colour validation remains strict. Code-owned motion primitives live in `src/motion.tokens.json` (published as `@tradenetcorp/veli-tokens/motion-tokens`) and are merged into the normalized build input. A future Figma motion collection takes precedence over these defaults.
+`prebuild.js` excludes the Figma-only `_docs` annotation collection and exporter-specific `Grid-styles` composites from CSS generation. Product colour validation remains strict. Code-owned motion primitives live in `src/motion.tokens.json` (published as `@tradenetcorp/veli-tokens/motion-tokens`) and are merged into the normalized build input. The public `@tradenetcorp/veli-tokens/tokens` entry point resolves to `dist/tokens.json`, generated from the untouched Figma export plus these motion defaults before CSS-specific normalization. This preserves existing JSON paths as well as CSS utilities. A future Figma motion collection takes precedence over these defaults.
 
 ## Motion Values
 

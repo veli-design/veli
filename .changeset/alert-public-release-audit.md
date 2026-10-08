@@ -9,7 +9,7 @@
 
 ### Changed
 
-- Refresh the Figma variable and style export. Move code-owned motion primitives from the raw export to the separate `@tradenetcorp/veli-tokens/motion-tokens` DTCG entry point while retaining their generated CSS utilities.
+- Refresh the Figma variable and style export while preserving existing motion paths in the public DTCG JSON bundle and generated CSS utilities. Motion primitives are also available separately from `@tradenetcorp/veli-tokens/motion-tokens`.
 
 - Align Alert spacing, typography, icon placement, and action treatments with the revised design. Default actions stay on one row; choose `stacked` for vertically arranged full-width actions. For `compact`, omit the description and use at most one action.
 

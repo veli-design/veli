@@ -15,11 +15,6 @@ const motionTokens = JSON.parse(
   readFileSync(join(__dirname, 'src', 'motion.tokens.json'), 'utf-8'),
 );
 
-// Keep the Tokens Bruecke export intact. These Figma annotation colours and
-// exporter-specific grid composites are not product tokens or DTCG CSS types.
-delete tokens._docs;
-delete tokens['Grid-styles'];
-
 // Motion primitives are maintained in code until Figma owns their variables.
 // A fresh variable/style export must not erase the existing motion contract.
 for (const [group, values] of Object.entries(motionTokens)) {
@@ -27,6 +22,14 @@ for (const [group, values] of Object.entries(motionTokens)) {
 }
 
 rmSync(distDir, { recursive: true, force: true });
+mkdirSync(distDir, { recursive: true });
+// Preserve the public DTCG paths before applying CSS-specific normalization.
+writeFileSync(join(distDir, 'tokens.json'), JSON.stringify(tokens, null, 2), 'utf-8');
+
+// Keep the Tokens Bruecke export intact. These Figma annotation colours and
+// exporter-specific grid composites are not product tokens or DTCG CSS types.
+delete tokens._docs;
+delete tokens['Grid-styles'];
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);

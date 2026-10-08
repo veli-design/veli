@@ -17,7 +17,7 @@
     ".": {
       "import": "./dist/tailwind-theme.css"
     },
-    "./tokens": "./src/design.tokens.json",
+    "./tokens": "./dist/tokens.json",
     "./css": "./dist/tokens.css",
     "./tailwind": "./dist/tailwind-theme.css",
     "./motion-tokens": "./src/motion.tokens.json"

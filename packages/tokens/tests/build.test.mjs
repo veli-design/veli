@@ -49,3 +49,23 @@ test('fresh Figma exports retain the existing code-owned motion contract', () =>
   assert.ok(theme.includes('@utility duration-fast'));
   assert.ok(theme.includes('@utility delay-slow'));
 });
+
+test('the public DTCG entry point preserves Figma values and existing motion paths', async () => {
+  const { default: published } = await import('@tradenetcorp/veli-tokens/tokens', {
+    with: { type: 'json' },
+  });
+  const motion = JSON.parse(readFileSync(new URL('src/motion.tokens.json', root)));
+  for (const [group, values] of Object.entries(source)) {
+    if (motion[group]) {
+      for (const [name, token] of Object.entries(values)) {
+        assert.deepEqual(published[group][name], token, `${group}.${name}`);
+      }
+    } else assert.deepEqual(published[group], values, group);
+  }
+  for (const [group, values] of Object.entries(motion)) {
+    for (const [name, token] of Object.entries(values)) {
+      assert.deepEqual(published[group][name], source[group]?.[name] ?? token, `${group}.${name}`);
+    }
+  }
+  assert.deepEqual(readFileSync(sourcePath), sourceBytes);
+});
