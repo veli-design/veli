@@ -176,6 +176,7 @@ export function LinkRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`link-language-${language === 'Dhivehi' ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"

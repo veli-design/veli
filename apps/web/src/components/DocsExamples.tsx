@@ -1226,6 +1226,7 @@ export function AccordionRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`accordion-language-${isDhivehi ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"
@@ -1833,6 +1834,7 @@ export function PaginationRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`pagination-${language === 'Dhivehi' ? 'dv' : 'en'}-${variant === 'Load more' ? 'loadmore' : variant === 'Explicit' ? 'explicit' : 'button'}`}
       controls={
         <>
           <DocsPreviewOption

@@ -100,8 +100,8 @@ function enhanceCodeBlocks(tree) {
       const wrapperClasses = ['docs-code-block'];
       if (lineCount > 1) wrapperClasses.push('is-multiline');
 
-      if (isCollapsible) {
-        wrapperClasses.push('is-collapsible');
+      if (isCollapsible || node.data?.previewCodes) {
+        if (isCollapsible) wrapperClasses.push('is-collapsible');
         node.properties = { ...node.properties, id: preId };
       }
 
@@ -170,13 +170,17 @@ function enhanceCodeBlocks(tree) {
           ),
         );
       }
-      if (isCollapsible) {
+      if (isCollapsible || node.data?.previewCodes) {
         children.push(
           element('div', {
             className: ['docs-code-block__expand'],
             dataLineCount: lineCount,
           }),
         );
+      }
+
+      for (const { key, pre } of node.data?.previewCodes ?? []) {
+        children.push(element('template', { dataDocsPreviewCode: key }, [pre]));
       }
 
       return element(

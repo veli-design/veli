@@ -11,7 +11,7 @@ import {
   type AlertLayout,
 } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider, useVeliColorScheme, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const intents: AlertIntent[] = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];
 const appearances: AlertAppearance[] = ['light', 'highContrast'];
@@ -24,7 +24,10 @@ const text = {
     secondaryActionLabel: 'Remind me later',
     reset: 'Reset alert',
     dismissed: 'Alert dismissed.',
-    hidden: 'Starts hidden. Reset to show the alert.',
+    dismissRequested: 'Dismiss requested. The parent keeps the alert visible.',
+    show: 'Show alert',
+    hide: 'Hide alert',
+    hidden: 'The alert is hidden.',
   },
   dv: {
     title: 'ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ',
@@ -33,7 +36,10 @@ const text = {
     secondaryActionLabel: 'ކުރިއަށް',
     reset: 'އެލާޓް އަލުން ދައްކާ',
     dismissed: 'އެލާޓް ލެއްޕިއްޖެ.',
-    hidden: 'އެލާޓް ފެށެނީ ފޮރުވިފައި. އަލުން ދައްކާ.',
+    dismissRequested: 'ލައްޕާލަން އެދިއްޖެ. އެލާޓް އަދިވެސް ފެންނަނީ.',
+    show: 'އެލާޓް ދައްކާ',
+    hide: 'އެލާޓް ފޮރުވާ',
+    hidden: 'އެލާޓް ފޮރުވިފައި.',
   },
 } as const;
 type Language = keyof typeof text;
@@ -327,12 +333,12 @@ export const LongContent: Story = {
 export const AllVariants: Story = {
   parameters: { layout: 'padded' },
   render: (args) => (
-    <div className="flex flex-col items-start gap-8">
+    <div className="flex w-full flex-col items-center gap-8">
       {layouts.map((layout) => (
-        <section key={layout} className="flex max-w-full flex-col gap-4">
+        <section key={layout} className="flex w-full max-w-full flex-col items-center gap-4">
           <h2 className="type-body-md-medium text-base-emphasis">{layout}</h2>
           {appearances.map((appearance) => (
-            <div key={appearance} className="flex max-w-full flex-col gap-4">
+            <div key={appearance} className="flex w-full max-w-full flex-col items-center gap-4">
               <h3 className="type-body-sm-medium text-base-strong">{appearance}</h3>
               {intents.map((intent) => (
                 <div
@@ -351,17 +357,79 @@ export const AllVariants: Story = {
   ),
 };
 
+const dismissalInstructions = {
+  dismissible: {
+    title: 'Dismissible',
+    demonstrates: 'The Alert manages its own visibility. Closing it hides it and calls onDismiss.',
+    steps: [
+      'Click the close icon. The Alert disappears and “Alert dismissed” appears below.',
+      'Select “Reset alert” to restore it, then use Tab to focus the close button and press Enter or Space. It should dismiss again.',
+    ],
+  },
+  controlledDismissal: {
+    title: 'Controlled dismissal',
+    demonstrates:
+      'The parent owns isVisible. The close button calls onDismiss, and this example’s parent responds by setting isVisible to false.',
+    steps: [
+      'Click the close icon. The parent hides the Alert after receiving the dismissal callback.',
+      'Select “Reset alert” to set the parent’s visibility back to true. Focus the close button with Tab and press Enter or Space to repeat.',
+    ],
+  },
+  controlledVisibility: {
+    title: 'Controlled visibility',
+    demonstrates:
+      'The parent keeps isVisible true. A dismissal callback alone cannot hide a controlled Alert.',
+    steps: [
+      'Click the close icon, or focus it with Tab and press Enter or Space.',
+      '“Dismiss requested” appears below, but the Alert stays visible because the parent has not changed isVisible.',
+      'Select “Reset alert” to clear the callback feedback and try again.',
+    ],
+  },
+  initiallyHidden: {
+    title: 'Initially hidden',
+    demonstrates:
+      'The parent starts with isVisible false. The Alert is absent until the parent reveals it.',
+    steps: [
+      'Select “Show alert”. The parent sets isVisible to true and the Alert appears.',
+      'Select “Hide alert” to return to the starting state, or close the Alert to test its dismissal callback.',
+      'Select “Show alert” again to repeat. You can also reach these buttons with Tab and activate them with Enter or Space.',
+    ],
+  },
+} as const;
+
 function DismissalExample({
-  controlled = false,
-  keepVisible = false,
+  scenario,
   ...args
-}: AlertStoryArgs & { controlled?: boolean; keepVisible?: boolean }) {
+}: AlertStoryArgs & { scenario: keyof typeof dismissalInstructions }) {
   const copy = text[useLanguage()];
+  const instructions = dismissalInstructions[scenario];
+  const controlled = scenario !== 'dismissible';
+  const keepVisible = scenario === 'controlledVisibility';
+  const initiallyHidden = scenario === 'initiallyHidden';
   const [visible, setVisible] = useState(args.defaultVisible ?? true);
   const [generation, setGeneration] = useState(0);
   const [dismissed, setDismissed] = useState(false);
   return (
     <div className="flex w-140 max-w-full flex-col items-start gap-4">
+      <aside
+        aria-label="Story instructions"
+        lang="en"
+        dir="ltr"
+        className="w-full space-y-2 text-start"
+      >
+        <h2 className="type-body-md-semibold">{instructions.title}</h2>
+        <p className="type-body-sm-regular">{instructions.demonstrates}</p>
+        <p className="type-body-sm-semibold">Try it</p>
+        <ol className="type-body-sm-regular list-decimal space-y-1 ps-5">
+          {instructions.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p className="type-caption-regular text-base-muted">
+          The controls and feedback below the Alert belong to this story, not the Alert API.
+          Automated interaction checks run when this story opens and restore its starting state.
+        </p>
+      </aside>
       <AlertExample
         key={generation}
         {...args}
@@ -372,8 +440,12 @@ function DismissalExample({
           if (controlled && !keepVisible) setVisible(false);
         }}
       />
-      {dismissed ? <p className="type-body-sm-regular text-base-strong">{copy.dismissed}</p> : null}
-      {!args.defaultVisible && !visible ? (
+      {dismissed ? (
+        <p className="type-body-sm-regular text-base-strong">
+          {keepVisible ? copy.dismissRequested : copy.dismissed}
+        </p>
+      ) : null}
+      {initiallyHidden && !visible && !dismissed ? (
         <p className="type-body-sm-regular text-base-strong">{copy.hidden}</p>
       ) : null}
       <Button
@@ -383,11 +455,11 @@ function DismissalExample({
         appearance="ghost"
         onPress={() => {
           setGeneration((value) => value + 1);
-          setVisible(true);
+          setVisible(initiallyHidden ? !visible : true);
           setDismissed(false);
         }}
       >
-        {copy.reset}
+        {initiallyHidden ? (visible ? copy.hide : copy.show) : copy.reset}
       </Button>
     </div>
   );
@@ -411,33 +483,40 @@ async function dismissAndReset({
   await userEvent.keyboard(' ');
   await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
   await expect(args.onDismiss).toHaveBeenCalledTimes(2);
+  await userEvent.click(canvas.getByRole('button'));
+  await expect(canvas.getByRole('status')).toBeVisible();
 }
 export const Dismissible: Story = {
-  render: (args) => <DismissalExample {...args} />,
+  render: (args) => <DismissalExample {...args} scenario="dismissible" />,
   play: dismissAndReset,
 };
 export const ControlledDismissal: Story = {
-  render: (args) => <DismissalExample {...args} controlled />,
+  render: (args) => <DismissalExample {...args} scenario="controlledDismissal" />,
   play: dismissAndReset,
 };
 export const ControlledVisibility: Story = {
-  render: (args) => <DismissalExample {...args} controlled keepVisible />,
+  render: (args) => <DismissalExample {...args} scenario="controlledVisibility" />,
   play: async ({ canvasElement, args }) => {
     await userEvent.click(
       canvasElement.querySelector<HTMLButtonElement>('[data-slot="alert-close"]')!,
     );
     await expect(args.onDismiss).toHaveBeenCalledOnce();
-    await expect(within(canvasElement).getByRole('status')).toBeVisible();
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status')).toBeVisible();
+    await userEvent.click(canvas.getAllByRole('button').at(-1)!);
+    await expect(canvas.getByRole('status')).toBeVisible();
   },
 };
 export const InitiallyHidden: Story = {
   args: { defaultVisible: false },
-  render: (args) => <DismissalExample {...args} controlled />,
+  render: (args) => <DismissalExample {...args} scenario="initiallyHidden" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button'));
     await expect(canvas.getByRole('status')).toBeVisible();
+    await userEvent.click(canvas.getAllByRole('button').at(-1)!);
+    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
   },
 };
 export const Announcements: Story = {
@@ -454,17 +533,4 @@ export const Announcements: Story = {
       </Alert>
     </div>
   ),
-};
-function EnglishRtlExample(args: AlertStoryArgs) {
-  const { colorScheme } = useVeliColorScheme();
-  return (
-    <VeliProvider language="en" colorScheme={colorScheme}>
-      <div dir="rtl" className="w-140 max-w-full">
-        <AlertExample {...args} />
-      </div>
-    </VeliProvider>
-  );
-}
-export const EnglishRTL: Story = {
-  render: (args) => <EnglishRtlExample {...args} />,
 };

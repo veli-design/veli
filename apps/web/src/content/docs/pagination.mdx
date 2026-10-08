@@ -110,11 +110,16 @@ Use `VeliProvider` to switch between English and Dhivehi. Labels, fonts, control
 </div>
 
 ```tsx
+import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
-<VeliProvider language="dv">
-  <Pagination variant="explicit" defaultValue={3} maxValue={12} />
-</VeliProvider>;
+export default function PaginationLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Pagination variant="explicit" defaultValue={3} maxValue={12} />
+    </VeliProvider>
+  );
+}
 ```
 
 ## Accessibility and themes

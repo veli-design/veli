@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 
 export function DocsCodeExpandButton({
@@ -11,6 +11,15 @@ export function DocsCodeExpandButton({
   lineCount: number;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [currentLineCount, setCurrentLineCount] = useState(lineCount);
+
+  useEffect(() => {
+    const updateLineCount = (event: Event) => {
+      setCurrentLineCount((event as CustomEvent<{ lineCount: number }>).detail.lineCount);
+    };
+    wrapper.addEventListener('docs:code-change', updateLineCount);
+    return () => wrapper.removeEventListener('docs:code-change', updateLineCount);
+  }, [wrapper]);
 
   function toggle() {
     const nextExpanded = !expanded;
@@ -33,7 +42,7 @@ export function DocsCodeExpandButton({
       onPress={toggle}
     >
       <span className="docs-code-block__expand-icon" aria-hidden="true" />
-      {expanded ? 'Collapse' : `Expand (${lineCount} lines)`}
+      {expanded ? 'Collapse' : `Expand (${currentLineCount} lines)`}
     </Button>
   );
 }

@@ -15,12 +15,6 @@ import {
 
 Use Alert for important information about the current page or section. Alerts persist until dismissed or resolved; use [Toast](/docs/toast/) for temporary notifications.
 
-## Import
-
-```tsx
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-```
-
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
@@ -29,13 +23,18 @@ import { Alert } from '@tradenetcorp/veli-ui/alert';
 
 ```tsx
 import { Info } from 'phosphor-react';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
 
-<Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
-  <Alert.Title>Permit review in progress</Alert.Title>
-  <Alert.Description>
-    You will receive an email when your application has been processed.
-  </Alert.Description>
-</Alert>;
+export default function AlertUsageDemo() {
+  return (
+    <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
+      <Alert.Title>Permit review in progress</Alert.Title>
+      <Alert.Description>
+        You will receive an email when your application has been processed.
+      </Alert.Description>
+    </Alert>
+  );
+}
 ```
 
 Use `Alert.Title` for a concise message. Omit `Alert.Description` for a title-only alert. The icon is optional and decorative; its meaning must also be expressed in the title.
@@ -51,14 +50,35 @@ Choose `neutral` for general information, `info` for contextual guidance, `posit
 </div>
 
 ```tsx
-<Alert intent="positive" appearance="light">
-  <Alert.Title>Payment received</Alert.Title>
-</Alert>
+import { CheckCircle, Info, Warning, WarningCircle, WarningOctagon } from 'phosphor-react';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
 
-<Alert intent="danger" appearance="highContrast">
-  <Alert.Title>Submission failed</Alert.Title>
-  <Alert.Description>Review the required fields and try again.</Alert.Description>
-</Alert>
+export default function AlertAppearancesDemo() {
+  return (
+    <div className="flex flex-col gap-4">
+      {[
+        { intent: 'neutral' as const, Icon: Info },
+        { intent: 'info' as const, Icon: Info },
+        { intent: 'positive' as const, Icon: CheckCircle },
+        { intent: 'cautious' as const, Icon: WarningCircle },
+        { intent: 'warning' as const, Icon: Warning },
+        { intent: 'danger' as const, Icon: WarningOctagon },
+      ].map(({ intent, Icon }) => (
+        <Alert
+          key={intent}
+          intent={intent}
+          appearance="light"
+          leadingIcon={<Icon size={20} weight="fill" />}
+        >
+          <Alert.Title>Permit review in progress</Alert.Title>
+          <Alert.Description>
+            You will receive an email when your application has been processed.
+          </Alert.Description>
+        </Alert>
+      ))}
+    </div>
+  );
+}
 ```
 
 Use 20px Phosphor icons in the Fill weight: Info for neutral/info, CheckCircle for positive, WarningCircle for cautious, Warning for warning, and WarningOctagon for danger. Pass a custom `leadingIcon` when another icon better describes the message.
@@ -78,14 +98,35 @@ The alert fills its container. Select its layout explicitly for the available sp
 </div>
 
 ```tsx
-<Alert layout="compact" intent="info">
-  <Alert.Title>Permit review in progress</Alert.Title>
-  <Alert.Actions>
-    <Button type="button" size="sm" intent="secondary" appearance="fill">
-      Track application
-    </Button>
-  </Alert.Actions>
-</Alert>
+import { Info } from 'phosphor-react';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { Button } from '@tradenetcorp/veli-ui/button';
+
+export default function AlertLayoutDemo() {
+  return (
+    <div className="w-full">
+      <Alert
+        intent="info"
+        appearance="light"
+        layout="default"
+        leadingIcon={<Info size={20} weight="fill" />}
+      >
+        <Alert.Title>Permit review in progress</Alert.Title>
+        <Alert.Description>
+          You will receive an email when your application has been processed.
+        </Alert.Description>
+        <Alert.Actions>
+          <Button type="button" size="sm" intent="secondary" appearance="fill">
+            Track application
+          </Button>
+          <Button type="button" size="sm" intent="secondary" appearance="ghost">
+            Remind me later
+          </Button>
+        </Alert.Actions>
+      </Alert>
+    </div>
+  );
+}
 ```
 
 Default actions do not wrap. Choose `stacked` when two labels cannot fit on one row; compact messages should remain short. Alert does not truncate or silently discard supplied content. All layouts use 24px corners and a 12px icon/content gap; default and stacked use 16px padding, while compact uses 10px vertical and 16px horizontal padding.
@@ -99,11 +140,14 @@ Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `a
 </div>
 
 ```tsx
+'use client';
+
 import { useState } from 'react';
 import { Info } from 'phosphor-react';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';
 
-function PermitAlert({ onTrack }: { onTrack: () => void }) {
+export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
   const [visible, setVisible] = useState(true);
 
   return (
@@ -152,9 +196,15 @@ With `isVisible`, the parent owns visibility: `onDismiss` requests dismissal, bu
 The default `live="status"` uses a polite status role. Use `live="alert"` for newly inserted urgent feedback that needs an assertive announcement. `role` deliberately overrides the role selected by `live`. These choices do not change the visual appearance.
 
 ```tsx
-<Alert live="alert" intent="danger">
-  <Alert.Title>Unable to submit your application</Alert.Title>
-</Alert>
+import { Alert } from '@tradenetcorp/veli-ui/alert';
+
+export default function AlertAnnouncementDemo() {
+  return (
+    <Alert live="alert" intent="danger">
+      <Alert.Title>Unable to submit your application</Alert.Title>
+    </Alert>
+  );
+}
 ```
 
 ## API Reference
@@ -203,13 +253,34 @@ Use `VeliProvider language="dv"` for Dhivehi typography and RTL direction. The i
 </div>
 
 ```tsx
-<VeliProvider language="dv">
-  <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
-    <Alert.Title>ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ</Alert.Title>
-    <Alert.Description>އެޕްލިކޭޝަން ޕްރޮސެސްކުރުމުން އީމެއިލް ލިބޭނެއެވެ.</Alert.Description>
-    <Alert.CloseButton />
-  </Alert>
-</VeliProvider>
+import { Info } from 'phosphor-react';
+import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { Button } from '@tradenetcorp/veli-ui/button';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function AlertLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Alert
+        intent="info"
+        appearance="light"
+        layout="stacked"
+        leadingIcon={<Info size={20} weight="fill" />}
+      >
+        <Alert.Title>ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ</Alert.Title>
+        <Alert.Description>އެޕްލިކޭޝަން ޕްރޮސެސްކުރުމުން އީމެއިލް ލިބޭނެއެވެ.</Alert.Description>
+        <Alert.Actions>
+          <Button type="button" size="sm" intent="secondary" appearance="fill">
+            ޝެޑިއުލް ބައްލަވާ
+          </Button>
+          <Button type="button" size="sm" intent="secondary" appearance="ghost">
+            ކުރިއަށް
+          </Button>
+        </Alert.Actions>
+      </Alert>
+    </VeliProvider>
+  );
+}
 ```
 
 Dhivehi titles use MV A Waheed at 17px and descriptions use MV Faseyha at 16px, with approximately 28px lines. Icon and close alignment follows that taller row. The X and status icons keep their shape in RTL. Alert has no container animation; its Buttons retain Veli's reduced-motion press and ripple behavior.

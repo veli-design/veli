@@ -89,6 +89,7 @@ export function AlertVariantsDemo() {
   const [appearance, setAppearance] = useState<AlertAppearance>('light');
   return (
     <DocsPreview
+      codeKey={`alert-appearance-${appearance}`}
       controls={
         <DocsPreviewOption
           label="Appearance"
@@ -113,6 +114,7 @@ export function AlertLayoutsDemo() {
   const [layout, setLayout] = useState<AlertLayout>('default');
   return (
     <DocsPreview
+      codeKey={`alert-layout-${layout}`}
       controls={
         <DocsPreviewOption
           label="Layout"
@@ -205,6 +207,7 @@ export function AlertRtlDemo() {
   );
   return (
     <DocsPreview
+      codeKey={`alert-language-${language === 'Dhivehi' ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"

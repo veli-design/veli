@@ -210,13 +210,23 @@ Button does not translate labels or mirror arbitrary children. Localize the labe
 </div>
 
 ```tsx
+import { ArrowLeft, Plus } from 'phosphor-react';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { ArrowLeft } from 'phosphor-react';
 
-<VeliProvider language="dv">
-  <Button>
-    ކުރިއަށް
-    <ArrowLeft size={16} aria-hidden="true" weight="bold" />
-  </Button>
-</VeliProvider>;
+export default function ButtonLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button>
+          ކުރިއަށް
+          <ArrowLeft size={16} aria-hidden="true" weight="bold" />
+        </Button>
+        <Button intent="secondary" appearance="transparent" iconOnly aria-label="އިތުރުކުރޭ">
+          <Plus size={16} aria-hidden="true" weight="bold" />
+        </Button>
+      </div>
+    </VeliProvider>
+  );
+}
 ```
