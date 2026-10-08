@@ -102,7 +102,16 @@ for (const args of [
   // The fixture is intentionally materialized in a temporary directory and has no lockfile.
   ['pnpm', 'install', '--no-frozen-lockfile'],
   ['pnpm', 'build'],
-  ['pnpm', 'exec', 'playwright', 'install', 'chromium', 'firefox', 'webkit'],
+  [
+    'pnpm',
+    'exec',
+    'playwright',
+    'install',
+    ...(process.platform === 'linux' ? ['--with-deps'] : []),
+    'chromium',
+    'firefox',
+    'webkit',
+  ],
   ['pnpm', 'test'],
 ]) {
   if (args[1] === 'test') await tokenFixture(target);
