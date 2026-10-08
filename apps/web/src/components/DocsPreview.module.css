@@ -53,6 +53,9 @@
 
 .trigger > svg {
   flex-shrink: 0;
+}
+
+.trigger[aria-expanded='true'] > svg {
   transform: rotate(180deg);
 }
 
