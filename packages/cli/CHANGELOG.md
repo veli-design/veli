@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.1.1
+
+_Released 2026-10-08._
+
+### Fixed
+
+- Preserve every selected block's dependency requirements and reject conflicting ranges before installing source.
+
 ## 0.1.0
 
 _Released 2026-09-28._

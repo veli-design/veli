@@ -6,6 +6,75 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.14.0
+
+_Released 2026-10-08._
+
+### Added
+
+- Add explicit `default`, `stacked`, and `compact` Alert layouts and semantic Alert colour tokens for Light and Dark modes.
+- Add `@tradenetcorp/veli-ui/field` with composable `Field`, `FieldSet`, `FieldLegend`, `FieldGroup`, `FieldContent`, `FieldLabel`, `FieldTitle`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldControl`, and `useFieldControlProps` for labeling and validating native or custom controls that do not ship with built-in label and error slots.
+- Add a `multiple` prop to `DropzoneField` (Figma `mode`). Single-file fields lay the area out as one row and replace it with the chosen file; multiple-file fields stack the area above a file list.
+- Add `infoTooltip`, `infoTooltipAriaLabel`, `isOptional`, `isRequired`, `showRequiredIndicator`, and `isInvalid` to `DropzoneField` for the Figma field header and validation states.
+- Add `title`, `hint`, and `secondaryText` to `DropzoneField` and `DropzoneArea` for customizing the drop area copy, and `isInvalid` to `DropzoneArea`.
+- Add `value`, `defaultValue`, `onValueChange`, `onAccept`, `onFileAccept`, `onFileReject`, `onFileValidate`, `onUpload`, `maxFiles`, `maxSize`, and `name` pass-through props to `DropzoneField`.
+- Submit the selected files with native forms when `Dropzone` or `DropzoneField` has a `name`, including files that were dropped.
+- Export the `DropzoneState`, `DropzoneFileState`, and `DropzoneFileStatus` types for `useDropzone` selectors.
+- Move focus to the file's remove button when a single-file dropzone receives a file, and back to Browse files when the file is removed.
+- Add `@tradenetcorp/veli-ui/form` with a `Form` wrapper that defaults `validationBehavior` to `aria`, `toErrorMessage` / `getErrorMessages` for React Hook Form and Standard Schema issues (Zod, Valibot, ArkType), and `isoDateToDateValue` / `dateValueToIsoDate` so forms can store dates as ISO strings without importing `@internationalized/date`.
+- Add `CheckboxGroup` for managing several checkboxes as one `string[]` value.
+- Add `description` and `errorMessage` to `RadioGroup`.
+- Add `triggerRef` on `Select` and `DatePicker` so form libraries can focus the trigger on validation errors.
+- Infer `Select` and `ComboBox` `value` / `onChange` key types from the value you pass, so `string | null` form fields wire without conversion.
+- Add an optional CaretCircleDown icon and callback-driven expandable mode to Divider.
+- Add typed Link refs and `aria-current` support for current-page navigation.
+
+### Changed
+
+- Refresh the Figma variable and style export while preserving existing motion paths in the public DTCG JSON bundle and generated CSS utilities. Motion primitives are also available separately from `@tradenetcorp/veli-tokens/motion-tokens`.
+- Align Alert spacing, typography, icon placement, and action treatments with the revised design. Default actions stay on one row; choose `stacked` for vertically arranged full-width actions. For `compact`, omit the description and use at most one action.
+- Restyle Dropzone to match the current Veli Figma component: a single dashed drop area with 2px hover, drop-target, and invalid borders; file items with a linear progress bar along the bottom; and uploaded and error statuses in the item metadata.
+- Rename `DropzoneField` `size` to `labelSize`. It sets the label type scale only (`md` for Body/md, `sm` for Body/sm). The drop area is the same at both sizes.
+- Replace the `DropzoneField` `allowsBrowse` prop with `showTrigger`.
+- `DropzoneTrigger` and `DropzoneItemDelete` now render Veli `Button`s. The remove button shows a danger Trash icon once a file is uploaded.
+- A single-file dropzone now rejects a batch of more than one file with the localized “Only one file allowed” message instead of adding every file.
+- Use a consistent black backdrop at 60% opacity with 6px blur for Modal in both light and dark themes.
+- Link now inherits all surrounding typography when `size` is omitted, including weight. For standalone links, pass `size="sm"`, `"md"`, or `"lg"` to apply the matching medium body typography preset for English or Dhivehi. Icons remain 16px without a size or with `sm`/`md`, and 20px with `lg`.
+- **Migration:** Previously, Link always applied medium weight and `size` only changed icons. Remove `size` from inline links that should follow their surrounding text; add an explicit size to standalone links that should retain medium typography. Review existing sizes: English `sm`/`md`/`lg` now set 14px/16px/18px text. For example, change `size="sm"` to `size="md"` to keep an existing 16px standalone label and 16px icons. To retain custom typography or weight, omit `size` and style the surrounding element. Text-only links can now wrap across lines, so review constrained navigation and table layouts.
+- Align Breadcrumbs typography and motion with the design specification, including reduced-motion support and Dhivehi-specific type weight.
+
+### Removed
+
+- Replace the legacy Alert appearances: migrate `subtle` to `light` and `emphasis` to `highContrast`. Replace `outline` by choosing either new treatment; it has no direct equivalent.
+- Remove the `lg` value from `DropzoneField` `size`. Use `labelSize="md"`.
+- Remove `DropzoneField` `onSelect`. Use `onValueChange` or `onAccept`.
+- Remove the `variant` (`circular` and `fill`) and `size` props from `DropzoneItemProgress`. Progress is always the linear bar along the bottom of the item.
+- Remove the `size` prop from `DropzoneItemMetadata` and the `orientation` prop from `DropzoneList`. Lists are always vertical.
+- Remove the `Dropzone` `required` prop, which had no effect.
+- Remove `isDisabled` from `DropzoneArea`. Disable the whole dropzone with `disabled` on `Dropzone` or `isDisabled` on `DropzoneField`.
+- Remove Divider's `elementType`, `isDecorative`, `render`, and `slot` props. Use the documented separator and callback-driven button APIs instead.
+- Remove the unused `Breadcrumb` `tone` prop. Remove the prop from existing trails; use `BreadcrumbBackLink` or `showBackLink` for the dedicated back-link treatment.
+
+### Fixed
+
+- Mirror Alert layouts for RTL and use Dhivehi typography and localized dismissal names. Reserve space around the close control and keep high-contrast ghost actions readable on hover and press.
+- Keep Checkbox and Radio visually-hidden inputs positioned against their own control so focus and clicks no longer jump the page inside nested scroll containers such as the docs site.
+- Fix Dropzone text, background, and border colors that referenced undefined theme tokens and rendered unstyled.
+- Fix `onValueChange` firing twice for each change in controlled mode.
+- Fix upload progress updates being dropped or moving backwards after a file finished uploading.
+- Fix overlapping invalid-state timers leaving the drop area stuck in its invalid style.
+- Match file extensions in `accept` case-insensitively, so `.pdf` accepts `REPORT.PDF`.
+- Fix nested interactive controls inside the drop area and a focusable element hidden with `aria-hidden`.
+- Keep right-to-left layouts aligned when file names or error messages are in a left-to-right script.
+- Respect reduced-motion preferences for drop area and progress transitions.
+- Apply `Dropzone`'s `name` and `required` props to the underlying file input so native form submission and required validation work.
+- Align Divider caption typography, spacing, and semantic border colors with the design specification.
+- Fix Switch checkmark geometry and disabled visibility, match instant hover and spring press motion, respect reduced motion and forced colors, and provide a 24-pixel hit height with wrapping labels.
+- Include the existing root-label ref in Switch's public TypeScript props.
+- Keep Switch's hidden input within its label so focusing or toggling it does not jump a scrolling page.
+- Keep keyboard focus visible even when a visual override is false, show a system-color focus outline in forced-colors mode, and disable color transitions under reduced motion.
+- Mark disabled breadcrumb text as unavailable to assistive technologies while keeping it out of the tab order.
+
 ## 0.13.0
 
 _Released 2026-09-28._
