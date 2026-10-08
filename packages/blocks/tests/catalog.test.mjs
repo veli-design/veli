@@ -21,6 +21,7 @@ import {
 } from '../scripts/catalog.mjs';
 
 const block = getBlocks().find(({ manifest }) => manifest.id === 'site-footer');
+if (!block) throw new Error('Missing site-footer block');
 const provenance = { sourceCommit: 'a'.repeat(40), dirty: false };
 function fixture(run) {
   const dir = mkdtempSync(resolve(tmpdir(), 'veli-block-test-'));

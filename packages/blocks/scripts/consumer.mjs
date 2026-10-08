@@ -1,7 +1,7 @@
 import process from 'node:process';
 import console from 'node:console';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
@@ -30,35 +30,31 @@ cpSync(
   { recursive: true },
 );
 
+/** @param {string} id */
+function adapterFileName(id) {
+  if (id === 'site-footer') return 'footer-adapter.tsx';
+  if (id === 'site-header') return 'header-adapter.tsx';
+  if (id === 'notification-tray') return 'notification-adapter.tsx';
+  if (id === 'account-panel') return 'account-adapter.tsx';
+  return `${id}-adapter.tsx`;
+}
+
 for (const block of getBlocks()) {
   for (const file of bundleFiles(block)) {
     const path = resolve(target, file.path);
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, file.bytes);
   }
+  // Execute the same adapter displayed in the documentation; only its relative destination changes.
+  const exampleName = `${block.manifest.id}-next.tsx`;
+  const adapter = resolve(target, adapterFileName(block.manifest.id));
+  cpSync(resolve(packageRoot, 'examples', exampleName), adapter);
+  writeFileSync(
+    adapter,
+    readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"),
+  );
 }
-// Execute the same adapter displayed in the documentation; only its relative destination changes.
-cpSync(
-  resolve(packageRoot, 'examples/site-footer-next.tsx'),
-  resolve(target, 'footer-adapter.tsx'),
-);
-const { readFileSync } = await import('node:fs');
-const adapter = resolve(target, 'footer-adapter.tsx');
-writeFileSync(adapter, readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"));
-writeFileSync(
-  resolve(target, 'notification-adapter.tsx'),
-  readFileSync(resolve(packageRoot, 'examples/notification-tray-next.tsx'), 'utf8').replace(
-    "'../components/",
-    "'./components/",
-  ),
-);
-writeFileSync(
-  resolve(target, 'account-adapter.tsx'),
-  readFileSync(resolve(packageRoot, 'examples/account-panel-next.tsx'), 'utf8').replace(
-    "'../components/",
-    "'./components/",
-  ),
-);
+
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),

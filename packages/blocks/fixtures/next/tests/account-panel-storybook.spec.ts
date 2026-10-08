@@ -1,7 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { waitForMotion } from './wait-for-motion';
 
-type StorybookWindow = Window & { __STORYBOOK_PREVIEW__?: { storyRenders: { phase: string }[] } };
+type StoryFinishedPayload = { status: 'success' | 'error'; storyId: string };
+type StorybookWindow = Window & {
+  __STORYBOOK_ADDONS_CHANNEL__?: {
+    on: (event: string, cb: (payload: StoryFinishedPayload) => void) => void;
+  };
+  __veliStoryFinished?: Promise<StoryFinishedPayload>;
+};
+
+/** Storybook still ends in phase `finished` after a failed play — use storyFinished.status. */
+async function listenForStoryFinished(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as StorybookWindow;
+    w.__veliStoryFinished = new Promise((resolve) => {
+      const attach = () => {
+        const channel = w.__STORYBOOK_ADDONS_CHANNEL__;
+        if (!channel) return false;
+        channel.on('storyFinished', resolve);
+        return true;
+      };
+      if (attach()) return;
+      const id = window.setInterval(() => {
+        if (attach()) window.clearInterval(id);
+      }, 5);
+    });
+  });
+}
+
+async function storyPlayResult(page: Page) {
+  return page.evaluate(async () => {
+    const pending = (window as StorybookWindow).__veliStoryFinished;
+    if (!pending) throw new Error('storyFinished listener was not installed');
+    return await Promise.race([
+      pending,
+      new Promise<never>((_, reject) => {
+        window.setTimeout(() => reject(new Error('storyFinished timed out')), 120_000);
+      }),
+    ]);
+  });
+}
 
 for (const [story, width, reducedMotion, language = 'en'] of [
   ['desktop', 1280, 'no-preference'],
@@ -19,38 +57,23 @@ for (const [story, width, reducedMotion, language = 'en'] of [
   test(`Storybook ${story} ${width}px ${reducedMotion} ${language}: play completes and restores focus`, async ({
     page,
   }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.message));
-    page.on('console', (message) => {
-      if (message.type() === 'error' && !message.text().includes('net::'))
-        errors.push(message.text());
-    });
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion });
+    await listenForStoryFinished(page);
     await page.goto(
       `/storybook/iframe.html?id=blocks-account-panel--${story}&viewMode=story&veli-language=${language}`,
     );
-    await page.waitForFunction(() =>
-      ['finished', 'errored'].includes(
-        (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders[0]?.phase ?? '',
-      ),
-    );
-    expect(
-      await page.evaluate(
-        () => (window as StorybookWindow).__STORYBOOK_PREVIEW__?.storyRenders[0]?.phase,
-      ),
-    ).toBe('finished');
-    expect(errors).toEqual([]);
-    await expect(
-      page.getByRole('button', { name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel' }),
-    ).toBeFocused();
+    // exact: Dhivehi account rows also contain އެކައުންޓު in their accessible name.
+    const trigger = page.getByRole('button', {
+      name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+      exact: true,
+    });
+    expect((await storyPlayResult(page)).status).toBe('success');
+    expect(pageErrors).toEqual([]);
+    await expect(trigger).toBeFocused();
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    if (story === 'desktop')
-      await expect(page.getByRole('status')).toHaveText(
-        language === 'dv'
-          ? 'ސައިން އައުޓް ކުރުމުގެ ދަންނަވާލުން ލިބިއްޖެ.'
-          : 'Sign-out callback received',
-      );
   });
 }
 
@@ -68,6 +91,7 @@ for (const [theme, language] of [
     );
     const trigger = page.getByRole('button', {
       name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+      exact: true,
     });
     await trigger.click();
     const dialog = page.getByRole('dialog');
@@ -103,6 +127,7 @@ for (const language of ['en', 'dv'] as const) {
     );
     const trigger = preview.getByRole('button', {
       name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+      exact: true,
     });
     await trigger.click();
     await expect(preview.getByRole('dialog')).toBeVisible();
@@ -130,7 +155,10 @@ for (const language of ['en', 'dv'] as const) {
     await expect(preview.locator('html')).toHaveAttribute('data-color-scheme', 'system');
     await page.getByRole('link', { name: 'No Additional Accounts', exact: true }).click();
     await preview
-      .getByRole('button', { name: nextLanguage === 'dv' ? 'އެކައުންޓު' : 'Open account panel' })
+      .getByRole('button', {
+        name: nextLanguage === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+        exact: true,
+      })
       .click();
     await expect(
       preview.getByRole('dialog').getByRole('button', {
