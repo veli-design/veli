@@ -209,3 +209,53 @@ test('Color styles normalize into the shared graph and ambiguous CSS names fail'
     /CSS naming collision/,
   );
 });
+
+test('generic Tailwind text sizes compile with exact English style companions', async () => {
+  const mapping = {
+    xs: 'caption-regular',
+    sm: 'body-sm-regular',
+    base: 'body-md-regular',
+    lg: 'body-lg-regular',
+    xl: 'subtitle-regular',
+    '2xl': 'title-2-regular',
+    '3xl': 'title-1-regular',
+    '4xl': 'heading-4-regular',
+    '5xl': 'heading-3-regular',
+    '6xl': 'heading-2-regular',
+    '7xl': 'heading-1-regular',
+    '8xl': 'display-md-regular',
+    '9xl': 'display-lg-regular',
+  };
+  const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
+  const { compile } = require('tailwindcss');
+  const compiler = await compile(
+    files['tailwind-theme.css'].replace("@import './tokens.css';", '') + '\n@tailwind utilities;',
+  );
+  const result = compiler.build([
+    ...Object.keys(mapping).map((size) => `text-${size}`),
+    'text-sm/6',
+    'tracking-wide',
+    'font-medium',
+    'type-body-sm-regular',
+  ]);
+  for (const [size, style] of Object.entries(mapping)) {
+    const rule = [...result.matchAll(new RegExp(`\\.text-${size} \\{([^}]+)\\}`, 'g'))]
+      .map((match) => match[1])
+      .find((body) => body.includes('font-size:'));
+    assert.ok(rule, `Missing size utility: ${size}`);
+    for (const field of ['font-size', 'line-height', 'letter-spacing'])
+      assert.ok(rule.includes(`--veli-typography-en-${style}-${field}`), `${size}: ${field}`);
+    assert.ok(!rule.includes('font-family:') && !rule.includes('font-weight:'));
+    assert.ok(!rule.includes('typography-dv-'));
+  }
+  assert.ok(result.includes('--tw-leading'));
+  assert.ok(result.includes('--tw-tracking'));
+  assert.ok(result.includes('.font-medium'));
+  assert.ok(result.includes('&:lang(dv)'));
+  assert.ok(
+    files['tokens.css'].includes('--veli-typography-en-caption-regular-letter-spacing: 0.015em;'),
+  );
+  assert.ok(
+    files['tokens.css'].includes('--veli-typography-en-body-sm-regular-line-height: 1.45;'),
+  );
+});

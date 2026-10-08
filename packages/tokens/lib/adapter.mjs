@@ -16,6 +16,22 @@ const namespaces = {
   duration: 'duration',
   delay: 'delay',
 };
+// Generic text sizes use English regular styles; type-* owns language switching.
+const textStyles = {
+  xs: 'caption.regular',
+  sm: 'body.sm.regular',
+  base: 'body.md.regular',
+  lg: 'body.lg.regular',
+  xl: 'subtitle.regular',
+  '2xl': 'title.2.regular',
+  '3xl': 'title.1.regular',
+  '4xl': 'heading.4.regular',
+  '5xl': 'heading.3.regular',
+  '6xl': 'heading.2.regular',
+  '7xl': 'heading.1.regular',
+  '8xl': 'display.md.regular',
+  '9xl': 'display.lg.regular',
+};
 const fields = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing'];
 function typographyDeclarations(token) {
   return fields
@@ -74,10 +90,26 @@ export default function veliAdapter(canonical) {
           for (const property of properties) {
             const name = path.slice(1).join('-');
             add(`--${property}-${name}`, reference);
-            if (name.endsWith('-default')) add(`--${property}-${name.slice(0, -8)}`, reference);
+            const shorthand = name.endsWith('-default') ? name.slice(0, -8) : undefined;
+            // Reserve text size names: legacy text-color aliases win Tailwind resolution.
+            if (shorthand && !(property === 'text-color' && textStyles[shorthand]))
+              add(`--${property}-${shorthand}`, reference);
           }
         } else if (group === 'text') {
-          add(`--text-${path[0]}${path[1] === 'line-height' ? '--line-height' : ''}`, reference);
+          const styleId = `typography.en.${textStyles[path[0]]}`;
+          const style = tokens[styleId];
+          if (!style || !['font-size', 'line-height'].includes(path[1]))
+            throw new Error(`Missing English text counterpart for ${token.id}: ${styleId}`);
+          const styleVariable = variableName(style);
+          add(
+            `--text-${path[0]}${path[1] === 'line-height' ? '--line-height' : ''}`,
+            `var(${subVariableName(styleVariable, path[1])})`,
+          );
+          if (path[1] === 'font-size')
+            add(
+              `--text-${path[0]}--letter-spacing`,
+              `var(${subVariableName(styleVariable, 'letter-spacing')})`,
+            );
         } else if (namespaces[group]) {
           const name = `--${namespaces[group]}-${suffix}`;
           add(name, ['breakpoints', 'container'].includes(group) ? css.value : reference);

@@ -23,6 +23,8 @@ Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come
 
 The Tailwind adapter imports `tokens.css` and references its variables. Existing Tailwind utility names remain available, including `text-base-default`, `type-body-sm-regular`, `duration-fast`, and property-specific background/border/ring aliases. `grid-style-xs` through `grid-style-2xl` reproduce Figma columns, gaps and inner margins; responsive variants such as `md:grid-style-md` work normally.
 
+Generic font-size utilities `text-xs` through `text-9xl` reference canonical English regular typography for size, line height and letter spacing. Their mappings are: xs → caption, sm/base/lg → body sm/md/lg, xl → subtitle, 2xl/3xl → title 2/1, 4xl/5xl/6xl/7xl → heading 4/3/2/1, and 8xl/9xl → display md/lg. Font family and weight remain independently composable; explicit leading and tracking utilities override the companions. These generic utilities do not switch typography with language. Use `type-*` for complete bilingual Figma styles, which switch all five properties under `:lang(dv)` (set `lang="dv"`, not only `dir="rtl"`).
+
 Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind share this contract. A host that offers system preference should resolve that preference to one of these classes; `VeliProvider` handles this for React applications. Tokens use native OKLCH without gamut clipping or legacy fallbacks, matching Tailwind v4's modern browser baseline: Chrome 111+, Safari 16.4+, Firefox 128+.
 
 `@tradenetcorp/veli-tokens/tokens` exports normalized DTCG JSON. `/motion-tokens` exports its duration, delay and easing subset. Aliases reference canonical paths; consumers can resolve them with a DTCG parser. `$extensions.mode.Dark` provides the alternate value; the default `$value` is Light. `org.veli` extensions retain source/style provenance and relative CSS intent that cannot be expressed with DTCG's px/rem dimensions.
@@ -41,8 +43,12 @@ Storybook and Astro development use the shared Vite playground plugin. It regene
 
 ## Migration from tokens 0.8
 
-Plain CSS variables now use the `--veli-*` namespace. Tailwind's own `--color-*`, `--text-*` and other theme variables remain adapter interfaces; use canonical variables in authored CSS. For example, `--color-text-base-default` becomes `--veli-color-text-base-default`, and `--text-sm--line-height` becomes `--veli-text-sm-line-height`.
+Plain CSS variables now use the `--veli-*` namespace. Tailwind's own `--color-*`, `--text-*` and other theme variables remain adapter interfaces; use canonical variables in authored CSS. For example, `--color-text-base-default` becomes `--veli-color-text-base-default`, and `--text-sm--line-height` now references `--veli-typography-en-body-sm-regular-line-height` (a unitless ratio).
 
 Public JSON now contains normalized DTCG rather than the raw exporter file. Color tiers are flattened (`color.primitives.blue.800` becomes `color.blue.800`); case twins become one lowercase `default`; hybrid value/group nodes become explicit `default` leaves. Typography lives under `typography.en`, `typography.dv` and auxiliary groups. Grids use standard number/dimension leaves under `grid`; effects include all shadows and focus rings. Exporter-only typography details are retained as namespaced metadata, not invalid composite properties. Documentation-only `_docs` colors are excluded explicitly.
 
 Type utilities now follow Figma composite line heights and letter spacing rather than approximating them through the text ramp. These are intentional visual corrections: review wrapping and alignment when upgrading.
+
+Generic `text-*` leading and tracking now use the exact English regular style values too: `text-sm` uses 1.45 leading, and `text-xs` uses 1.34 leading and 0.015em tracking. Review generic text wrapping when upgrading.
+
+The conflicting shorthand color alias `text-base` is reserved for font size. Use `text-base-default` for the default text color.
