@@ -1,103 +1,126 @@
 'use client';
 
 import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { X } from 'phosphor-react';
+import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
-import { useVeliLanguage } from './provider';
+import { Button, type ButtonProps } from './button.js';
+import { useVeliLanguage } from './provider-shared.js';
 
 export type AlertIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
-export type AlertAppearance = 'emphasis' | 'outline' | 'subtle';
+export type AlertAppearance = 'light' | 'highContrast';
+export type AlertLayout = 'default' | 'stacked' | 'compact';
 
 const alertIntentClasses = {
-  subtle: {
-    neutral:
-      'border-status-neutral-subtle bg-status-neutral-subtle text-text-default-strong [&_svg]:text-icon-default-strong',
-    info: 'border-status-info-subtle bg-status-info-subtle text-text-primary-strong [&_svg]:text-icon-primary-strong',
-    positive:
-      'border-status-success-subtle bg-status-success-subtle text-text-success-strong [&_svg]:text-icon-success-strong',
-    cautious:
-      'border-status-cautious-subtle bg-status-cautious-subtle text-text-cautious-strong [&_svg]:text-icon-cautious-strong',
-    warning:
-      'border-status-warning-subtle bg-status-warning-subtle text-text-warning-strong [&_svg]:text-icon-warning-strong',
-    danger:
-      'border-status-danger-subtle bg-status-danger-subtle text-text-danger-strong [&_svg]:text-icon-danger-strong',
+  neutral: {
+    light: 'bg-alert-light-neutral-bg',
+    highContrast: 'bg-alert-high-contrast-neutral-bg',
+    icon: 'text-alert-light-neutral-icon',
+    foreground: 'text-alert-high-contrast-neutral-foreground',
+    description: 'text-alert-high-contrast-neutral-description',
   },
-  emphasis: {
-    neutral:
-      'border-status-neutral-emphasis bg-status-neutral-emphasis text-text-default-inverted [&_svg]:text-icon-default-inverted',
-    info: 'border-status-info-emphasis bg-status-info-emphasis text-text-primary-inverted [&_svg]:text-icon-primary-inverted',
-    positive:
-      'border-status-success-emphasis bg-status-success-emphasis text-text-success-inverted [&_svg]:text-icon-success-inverted',
-    cautious:
-      'border-status-cautious-emphasis bg-status-cautious-emphasis text-text-cautious-inverted [&_svg]:text-icon-cautious-inverted',
-    warning:
-      'border-status-warning-emphasis bg-status-warning-emphasis text-text-warning-inverted [&_svg]:text-icon-warning-inverted',
-    danger:
-      'border-status-danger-emphasis bg-status-danger-emphasis text-text-danger-inverted [&_svg]:text-icon-danger-inverted',
+  info: {
+    light: 'bg-alert-light-info-bg',
+    highContrast: 'bg-alert-high-contrast-info-bg',
+    icon: 'text-alert-light-info-icon',
+    foreground: 'text-alert-high-contrast-info-foreground',
+    description: 'text-alert-high-contrast-info-description',
   },
-  outline: {
-    neutral:
-      'border-status-neutral-subtle bg-bg-surface-raised text-text-default-default [&_svg]:text-icon-default-default',
-    info: 'border-status-info-subtle bg-bg-surface-raised text-text-primary-default [&_svg]:text-icon-primary-default',
-    positive:
-      'border-status-success-subtle bg-bg-surface-raised text-text-success-default [&_svg]:text-icon-success-default',
-    cautious:
-      'border-status-cautious-subtle bg-bg-surface-raised text-text-cautious-default [&_svg]:text-icon-cautious-default',
-    warning:
-      'border-status-warning-subtle bg-bg-surface-raised text-text-warning-default [&_svg]:text-icon-warning-default',
-    danger:
-      'border-status-danger-subtle bg-bg-surface-raised text-text-danger-default [&_svg]:text-icon-danger-default',
+  positive: {
+    light: 'bg-alert-light-positive-bg',
+    highContrast: 'bg-alert-high-contrast-positive-bg',
+    icon: 'text-alert-light-positive-icon',
+    foreground: 'text-alert-high-contrast-positive-foreground',
+    description: 'text-alert-high-contrast-positive-description',
   },
-} satisfies Record<AlertAppearance, Record<AlertIntent, string>>;
+  cautious: {
+    light: 'bg-alert-light-cautious-bg',
+    highContrast: 'bg-alert-high-contrast-cautious-bg',
+    icon: 'text-alert-light-cautious-icon',
+    foreground: 'text-alert-high-contrast-cautious-foreground',
+    description: 'text-alert-high-contrast-cautious-description',
+  },
+  warning: {
+    light: 'bg-alert-light-warning-bg',
+    highContrast: 'bg-alert-high-contrast-warning-bg',
+    icon: 'text-alert-light-warning-icon',
+    foreground: 'text-alert-high-contrast-warning-foreground',
+    description: 'text-alert-high-contrast-warning-description',
+  },
+  danger: {
+    light: 'bg-alert-light-danger-bg',
+    highContrast: 'bg-alert-high-contrast-danger-bg',
+    icon: 'text-alert-light-danger-icon',
+    foreground: 'text-alert-high-contrast-danger-foreground',
+    description: 'text-alert-high-contrast-danger-description',
+  },
+} satisfies Record<
+  AlertIntent,
+  Record<'light' | 'highContrast' | 'icon' | 'foreground' | 'description', string>
+>;
 
 const alertVariants = cva(
-  'relative flex w-full items-start gap-2 rounded-xl border p-4 font-sans antialiased',
+  'relative flex w-full gap-3 rounded-3xl font-sans antialiased text-start [&:has(>[data-slot=alert-body]>[data-slot=alert-close])>[data-slot=alert-body]]:pe-8',
   {
     variants: {
-      live: {
-        alert: '',
-        status: '',
+      appearance: { light: 'border border-base-subtle', highContrast: '' },
+      layout: {
+        default: 'items-start p-4',
+        stacked: 'items-start p-4',
+        compact: 'items-center px-4 py-2.5',
       },
-    },
-    defaultVariants: {
-      live: 'status',
     },
   },
 );
+const alertBodyVariants = cva('flex min-w-0 flex-1', {
+  variants: {
+    layout: {
+      default: 'flex-col gap-1',
+      stacked: 'flex-col gap-1',
+      compact: 'flex-row items-center gap-3',
+    },
+  },
+});
+const alertActionsVariants = cva('flex max-w-full gap-2', {
+  variants: {
+    layout: {
+      default: 'flex-nowrap items-start self-start pt-3',
+      stacked: 'w-full flex-col items-stretch pt-3 [&>button]:w-full',
+      compact: 'shrink-0 items-center',
+    },
+  },
+});
 
-const alertBodyVariants = cva('flex min-w-0 flex-1 flex-col gap-1');
+interface AlertContextValue {
+  appearance: AlertAppearance;
+  intent: AlertIntent;
+  layout: AlertLayout;
+  dismiss?: () => void;
+}
+const AlertContext = React.createContext<AlertContextValue>({
+  appearance: 'light',
+  intent: 'neutral',
+  layout: 'default',
+});
 
-const alertLeadingIconVariants = cva(
-  'inline-flex h-5 shrink-0 items-center justify-center [&_svg]:size-5 [&:lang(dv)]:h-7',
-);
-
-const alertTitleVariants = cva('type-body-sm-medium');
-
-const alertDescriptionVariants = cva('type-body-sm-regular text-current/90');
-
-const alertActionsVariants = cva('mt-2 flex flex-wrap items-center gap-2');
-
-const AlertDismissContext = React.createContext<(() => void) | null>(null);
-
-export interface AlertProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>, VariantProps<typeof alertVariants> {
+export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   intent?: AlertIntent;
   appearance?: AlertAppearance;
+  layout?: AlertLayout;
   leadingIcon?: React.ReactNode;
   isVisible?: boolean;
   defaultVisible?: boolean;
   onDismiss?: () => void;
-  /** Use `alert` when content is inserted or updated dynamically; `status` for always-visible banners. */
+  /** Use `alert` for urgent dynamic messages; `status` for ordinary persistent banners. */
   live?: 'alert' | 'status';
-  className?: string;
 }
 
 export function Alert({
   children,
   className,
   intent = 'neutral',
-  appearance = 'subtle',
+  appearance = 'light',
+  layout = 'default',
   leadingIcon,
   isVisible: isVisibleProp,
   defaultVisible = true,
@@ -109,39 +132,37 @@ export function Alert({
   const [uncontrolledVisible, setUncontrolledVisible] = React.useState(defaultVisible);
   const isControlled = isVisibleProp !== undefined;
   const isVisible = isControlled ? isVisibleProp : uncontrolledVisible;
-
   const handleDismiss = React.useCallback(() => {
-    if (!isControlled) {
-      setUncontrolledVisible(false);
-    }
+    if (!isControlled) setUncontrolledVisible(false);
     onDismiss?.();
   }, [isControlled, onDismiss]);
-
-  if (!isVisible) {
-    return null;
-  }
-
-  const resolvedRole = role ?? (live === 'alert' ? 'alert' : 'status');
-
+  if (!isVisible) return null;
+  const colors = alertIntentClasses[intent];
   return (
-    <AlertDismissContext.Provider value={handleDismiss}>
+    <AlertContext.Provider value={{ appearance, intent, layout, dismiss: handleDismiss }}>
       <div
         {...props}
-        role={resolvedRole}
-        className={twMerge(
-          alertVariants({ live }),
-          alertIntentClasses[appearance][intent],
-          className,
-        )}
+        role={role ?? live}
+        data-slot="alert"
+        className={twMerge(alertVariants({ appearance, layout }), colors[appearance], className)}
       >
         {leadingIcon ? (
-          <span aria-hidden="true" className={alertLeadingIconVariants()}>
+          <span
+            aria-hidden="true"
+            data-slot="alert-icon"
+            className={twMerge(
+              'inline-flex h-5 w-5 shrink-0 items-center justify-center [&_svg]:size-5 [&:lang(dv)]:h-7',
+              appearance === 'light' ? colors.icon : colors.foreground,
+            )}
+          >
             {leadingIcon}
           </span>
         ) : null}
-        <div className={alertBodyVariants()}>{children}</div>
+        <div data-slot="alert-body" className={alertBodyVariants({ layout })}>
+          {children}
+        </div>
       </div>
-    </AlertDismissContext.Provider>
+    </AlertContext.Provider>
   );
 }
 
@@ -149,40 +170,87 @@ export interface AlertTitleProps {
   children: React.ReactNode;
   className?: string;
 }
-
 export function AlertTitle({ children, className }: AlertTitleProps) {
-  return <div className={twMerge(alertTitleVariants(), className)}>{children}</div>;
+  const { appearance, intent, layout } = React.useContext(AlertContext);
+  return (
+    <div
+      data-slot="alert-title"
+      className={twMerge(
+        'min-w-0 wrap-anywhere type-body-sm-semibold [&:lang(dv)]:type-body-sm-medium',
+        layout === 'compact' ? 'flex-1' : 'w-full',
+        appearance === 'light' ? 'text-base-emphasis' : alertIntentClasses[intent].foreground,
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
-
 export interface AlertDescriptionProps {
   children: React.ReactNode;
   className?: string;
 }
-
 export function AlertDescription({ children, className }: AlertDescriptionProps) {
-  return <div className={twMerge(alertDescriptionVariants(), className)}>{children}</div>;
+  const { appearance, intent } = React.useContext(AlertContext);
+  return (
+    <div
+      data-slot="alert-description"
+      className={twMerge(
+        'w-full min-w-0 wrap-anywhere type-body-sm-regular',
+        appearance === 'light' ? 'text-base-strong' : alertIntentClasses[intent].description,
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
-
 export interface AlertActionsProps {
   children: React.ReactNode;
   className?: string;
 }
 
+// Only direct Veli ghost Buttons (including fragments) receive Alert's foreground.
+// Other actions retain their own colour, event handlers, and application semantics.
+function styleGhostActions(children: React.ReactNode, foreground: string): React.ReactNode {
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement(child)) return child;
+    if (child.type === React.Fragment) {
+      const fragment = child as React.ReactElement<{ children?: React.ReactNode }>;
+      return React.cloneElement(fragment, {
+        children: styleGhostActions(fragment.props.children, foreground),
+      });
+    }
+    if (child.type !== Button) return child;
+    const button = child as React.ReactElement<ButtonProps>;
+    if (button.props.appearance !== 'ghost') return child;
+    return React.cloneElement(button, {
+      className: twMerge(
+        foreground,
+        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
+        button.props.className,
+      ),
+    });
+  });
+}
 export function AlertActions({ children, className }: AlertActionsProps) {
-  return <div className={twMerge(alertActionsVariants(), className)}>{children}</div>;
+  const { appearance, intent, layout } = React.useContext(AlertContext);
+  return (
+    <div data-slot="alert-actions" className={twMerge(alertActionsVariants({ layout }), className)}>
+      {appearance === 'highContrast'
+        ? styleGhostActions(children, alertIntentClasses[intent].foreground)
+        : children}
+    </div>
+  );
 }
 
 export interface AlertCloseButtonProps {
   'aria-label'?: string;
   className?: string;
 }
-
 export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCloseButtonProps) {
-  const onDismiss = React.useContext(AlertDismissContext);
-  const languageConfig = useVeliLanguage();
-  const resolvedAriaLabel =
-    ariaLabel ?? (languageConfig.language === 'dv' ? 'އެލާޓް ލައްޕާ' : 'Dismiss alert');
-
+  const { appearance, intent, layout, dismiss } = React.useContext(AlertContext);
+  const { language } = useVeliLanguage();
   return (
     <Button
       type="button"
@@ -190,26 +258,21 @@ export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCl
       appearance="ghost"
       size="sm"
       iconOnly
-      aria-label={resolvedAriaLabel}
-      className={twMerge('absolute end-3 top-3 shrink-0', className)}
-      onPress={() => onDismiss?.()}
+      data-slot="alert-close"
+      aria-label={ariaLabel ?? (language === 'dv' ? 'އެލާޓް ލައްޕާ' : 'Dismiss alert')}
+      className={twMerge(
+        'absolute end-2 shrink-0',
+        layout === 'compact' ? 'top-1/2 -translate-y-1/2' : 'top-2 [&:lang(dv)]:top-3',
+        appearance === 'highContrast' && alertIntentClasses[intent].foreground,
+        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
+        className,
+      )}
+      onPress={() => dismiss?.()}
     >
-      <svg
-        aria-hidden="true"
-        className="size-4"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      >
-        <path d="M4 4 12 12" />
-        <path d="M12 4 4 12" />
-      </svg>
+      <X aria-hidden="true" size={16} />
     </Button>
   );
 }
-
 Alert.Title = AlertTitle;
 Alert.Description = AlertDescription;
 Alert.Actions = AlertActions;

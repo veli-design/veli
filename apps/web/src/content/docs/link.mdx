@@ -341,14 +341,18 @@ In RTL, leading and trailing icon positions follow direction. Choose the appropr
 Switch the preview between English and Dhivehi to compare text direction, typography, and arrows. The surrounding documentation stays in English, and the preview follows the site's theme.
 
 ```tsx
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { Link } from '@tradenetcorp/veli-ui/link';
 import { ArrowLeft } from 'phosphor-react';
+import { Link } from '@tradenetcorp/veli-ui/link';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
-<VeliProvider language="dv">
-  <Link href="/account" size="md">
-    ކުރިއަށް
-    <ArrowLeft aria-hidden="true" weight="bold" />
-  </Link>
-</VeliProvider>;
+export default function LinkLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Link href="/account" size="md">
+        ކުރިއަށް
+        <ArrowLeft aria-hidden="true" weight="bold" />
+      </Link>
+    </VeliProvider>
+  );
+}
 ```

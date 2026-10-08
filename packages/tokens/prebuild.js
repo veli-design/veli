@@ -11,8 +11,25 @@ const normalizedTokensPath = join(normalizedDir, 'design.tokens.normalized.json'
 const distDir = join(__dirname, 'dist');
 
 const tokens = JSON.parse(readFileSync(sourceTokensPath, 'utf-8'));
+const motionTokens = JSON.parse(
+  readFileSync(join(__dirname, 'src', 'motion.tokens.json'), 'utf-8'),
+);
+
+// Motion primitives are maintained in code until Figma owns their variables.
+// A fresh variable/style export must not erase the existing motion contract.
+for (const [group, values] of Object.entries(motionTokens)) {
+  tokens[group] = { ...values, ...tokens[group] };
+}
 
 rmSync(distDir, { recursive: true, force: true });
+mkdirSync(distDir, { recursive: true });
+// Preserve the public DTCG paths before applying CSS-specific normalization.
+writeFileSync(join(distDir, 'tokens.json'), JSON.stringify(tokens, null, 2), 'utf-8');
+
+// Keep the Tokens Bruecke export intact. These Figma annotation colours and
+// exporter-specific grid composites are not product tokens or DTCG CSS types.
+delete tokens._docs;
+delete tokens['Grid-styles'];
 
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
@@ -39,7 +56,7 @@ function normalizeColorPathSegments(path) {
     segments.shift();
   }
 
-  return segments;
+  return segments.map((segment) => (segment === 'highContrast' ? 'high-contrast' : segment));
 }
 
 function normalizeColorAlias(value) {
@@ -285,7 +302,11 @@ function normalizeColorOutputKeys(value) {
   const normalized = {};
   for (const [key, child] of Object.entries(value)) {
     const normalizedKey =
-      key === 'default' && isPlainObject(child) && child.$type === 'color' ? 'DEFAULT' : key;
+      key === 'default' && isPlainObject(child) && child.$type === 'color'
+        ? 'DEFAULT'
+        : key === 'highContrast'
+          ? 'high-contrast'
+          : key;
     normalized[normalizedKey] = normalizeColorOutputKeys(child);
   }
 

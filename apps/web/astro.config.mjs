@@ -6,6 +6,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
+import rehypePreviewCode from './src/lib/rehype-preview-code.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
 import { remarkComponentTabs } from './src/lib/remark-component-tabs.mjs';
 
@@ -28,7 +29,7 @@ export default defineConfig({
       ],
     },
     remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
-    rehypePlugins: [rehypeCodeBlocks],
+    rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks],
   },
   vite: {
     ssr: { external: ['@tradenetcorp/veli-blocks/catalog'] },

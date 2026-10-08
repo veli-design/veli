@@ -181,7 +181,14 @@ Switch inherits the VeliProvider theme and language. `language="dv"` uses the Dh
 </div>
 
 ```tsx
-<VeliProvider language="dv">
-  <Switch>ނޯޓިފިކޭޝަންސް</Switch>
-</VeliProvider>
+import { Switch } from '@tradenetcorp/veli-ui/switch';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function SwitchLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Switch>ނޯޓިފިކޭޝަންސް</Switch>
+    </VeliProvider>
+  );
+}
 ```

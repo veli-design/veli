@@ -31,7 +31,6 @@ import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Card } from '@tradenetcorp/veli-ui/card';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
 import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
@@ -50,7 +49,6 @@ import {
   Bell,
   CalendarBlank,
   CaretDown,
-  CheckCircle,
   DownloadSimple,
   Info,
   MagnifyingGlass,
@@ -1228,6 +1226,7 @@ export function AccordionRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`accordion-language-${isDhivehi ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"
@@ -1556,37 +1555,6 @@ export function CardFormDemo() {
   );
 }
 
-export function AlertUsageDemo() {
-  return (
-    <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
-      <Alert.Title>Permit review in progress</Alert.Title>
-      <Alert.Description>
-        You will receive an email when your application has been processed.
-      </Alert.Description>
-    </Alert>
-  );
-}
-
-export function AlertVariantsDemo() {
-  return (
-    <div className="flex flex-col gap-3">
-      <Alert intent="positive" leadingIcon={<CheckCircle size={20} weight="fill" />}>
-        <Alert.Title>Payment received</Alert.Title>
-        <Alert.Description>Your transaction was completed successfully.</Alert.Description>
-      </Alert>
-      <Alert
-        intent="danger"
-        appearance="outline"
-        leadingIcon={<WarningCircle size={20} weight="fill" />}
-      >
-        <Alert.Title>Submission failed</Alert.Title>
-        <Alert.Description>Check the required fields and try again.</Alert.Description>
-        <Alert.CloseButton />
-      </Alert>
-    </div>
-  );
-}
-
 export function ModalUsageDemo() {
   return (
     <div className="flex min-h-[180px] items-center justify-center">
@@ -1866,6 +1834,7 @@ export function PaginationRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`pagination-${language === 'Dhivehi' ? 'dv' : 'en'}-${variant === 'Load more' ? 'loadmore' : variant === 'Explicit' ? 'explicit' : 'button'}`}
       controls={
         <>
           <DocsPreviewOption

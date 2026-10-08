@@ -13,6 +13,7 @@ export function SwitchRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`switch-language-${isDhivehi ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"

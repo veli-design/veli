@@ -17,17 +17,20 @@
     ".": {
       "import": "./dist/tailwind-theme.css"
     },
-    "./tokens": "./src/design.tokens.json",
+    "./tokens": "./dist/tokens.json",
     "./css": "./dist/tokens.css",
-    "./tailwind": "./dist/tailwind-theme.css"
+    "./tailwind": "./dist/tailwind-theme.css",
+    "./motion-tokens": "./src/motion.tokens.json"
   },
   "files": [
     "dist",
-    "src/design.tokens.json"
+    "src/design.tokens.json",
+    "src/motion.tokens.json"
   ],
   "scripts": {
     "build": "node prebuild.js && terrazzo build && node postbuild.js",
-    "prepublishOnly": "corepack pnpm run build"
+    "prepublishOnly": "corepack pnpm run build",
+    "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "@terrazzo/cli": "^0.10.4",

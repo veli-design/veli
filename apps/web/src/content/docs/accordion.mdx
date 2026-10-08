@@ -97,9 +97,40 @@ Set the language and direction on the Accordion's container. The indicator, text
 </div>
 
 ```tsx
-<div lang="dv" dir="rtl">
-  <Accordion size="lg" alignment="left" defaultExpandedKeys={['overview']} items={dhivehiItems} />
-</div>
+import { Accordion } from '@tradenetcorp/veli-ui/accordion';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function AccordionLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Accordion
+        size="lg"
+        alignment="left"
+        defaultExpandedKeys={['overview']}
+        items={[
+          {
+            id: 'overview',
+            label: 'ޚުލާޞާ',
+            content:
+              'ބަދަލެއް ގެނައުމުގެ ކުރިން، ހުއްދައިގެ ސްޓޭޓަސް، ހުށަހެޅި ތާރީޚު، އަދި މައްސަލަ ހަވާލުކުރެވިފައިވާ ރިވިއުވަރ ޗެކްކުރައްވާ.',
+          },
+          {
+            id: 'documents',
+            label: 'ލިޔެކިޔުންތައް',
+            content:
+              'ކާކުކަން އަންގައިދޭ ލިޔުމާއި، އެޑްރެސް އަންގައިދޭ ލިޔުން، އަދި ފައިސާ ދެއްކިކަމުގެ ރަސީދު ފަދަ ގުޅޭ ލިޔެކިޔުންތައް އަޕްލޯޑްކުރައްވާ.',
+          },
+          {
+            id: 'history',
+            label: 'ހިސްޓްރީ',
+            content:
+              'މި އެޕްލިކޭޝަނާ ގުޅިގެން ރެކޯޑުކުރެވިފައިވާ ކޮންމެ އަޕްޑޭޓަކާއި، ކޮމެންޓެއް އަދި ސްޓޭޓަސްއަށް އައިސްފައިވާ ބަދަލުތައް ބައްލަވާލައްވާ.',
+          },
+        ]}
+      />
+    </VeliProvider>
+  );
+}
 ```
 
 ## Custom indicator

@@ -104,6 +104,7 @@ export function ButtonRtlDemo() {
 
   return (
     <DocsPreview
+      codeKey={`button-language-${isDhivehi ? 'dv' : 'en'}`}
       controls={
         <DocsPreviewOption
           label="Language"

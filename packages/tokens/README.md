@@ -88,6 +88,12 @@ pnpm build
 pnpm dev
 \`\`\`
 
+## Refreshing from Figma
+
+Replace `src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including styles. Run `corepack pnpm --filter @tradenetcorp/veli-tokens build` from the repository root. Generated CSS must not be edited manually.
+
+The build keeps the export intact, excludes Figma-only annotations and grid composites from CSS, and normalizes `highContrast` to `high-contrast` in generated Alert utility names. Existing code-owned motion primitives are supplied by `src/motion.tokens.json`. The public `@tradenetcorp/veli-tokens/tokens` entry point uses a generated DTCG bundle that combines the unchanged Figma export with these primitives, preserving existing JSON paths. A future Figma motion collection takes precedence over the code-owned defaults. The primitives are also available separately from `@tradenetcorp/veli-tokens/motion-tokens`.
+
 ## Token Source
 
 The source of truth is \`src/design.tokens.json\` in DTCG format, exported from Figma.
