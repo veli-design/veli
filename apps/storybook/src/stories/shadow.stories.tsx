@@ -35,7 +35,7 @@ export const Scale: Story = {
           <h1 className="type-heading-3-medium text-base">Shadow scale</h1>
           <p className="type-body-md-regular text-base-muted">
             Use the theme toolbar to toggle light and dark — shadow colors follow
-            `--color-effects-shadow-frame` and depth tokens.
+            `--veli-color-effects-shadow-frame` and depth tokens.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export const Scale: Story = {
               <div className="w-full space-y-1 text-center">
                 <p className="type-body-sm-medium font-mono text-base">{className}</p>
                 <p className="type-caption-medium font-mono text-base-muted">
-                  var(--shadow-{name})
+                  var(--veli-shadow-{name})
                 </p>
               </div>
             </div>

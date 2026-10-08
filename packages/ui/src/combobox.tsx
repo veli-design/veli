@@ -19,7 +19,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CaretDown, Info } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { type RefProp } from './ref';
+import { type RefProp } from './ref.js';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -34,10 +34,10 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
-} from './field-shared';
-import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 /** Selection key type used by react-aria (`string | number`). */
 type Key = string | number;
@@ -186,7 +186,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
   {
     variants: {
       size: {

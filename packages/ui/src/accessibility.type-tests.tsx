@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Button } from './button';
-import { ComboBox } from './combobox';
-import { Input } from './input';
-import { Link } from './link';
-import { Modal } from './modal';
-import { PasswordInput } from './password-input-component';
-import { Search } from './search';
-import { TextArea } from './textarea';
+import { Button } from './button.js';
+import { ComboBox } from './combobox.js';
+import { Input } from './input.js';
+import { Link } from './link.js';
+import { Modal } from './modal.js';
+import { PasswordInput } from './password-input-component.js';
+import { Search } from './search.js';
+import { TextArea } from './textarea.js';
 
 export function AccessibilityTypeExpectations() {
   const buttonRef = React.useRef<HTMLButtonElement>(null);

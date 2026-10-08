@@ -15,9 +15,9 @@ import {
 } from 'react-aria-components';
 import { CaretDown } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
-import { useVeliLanguage, useVeliRouter } from './provider-shared';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
+import { useVeliLanguage, useVeliRouter } from './provider-shared.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 
 export type TabsSize = 'sm' | 'md' | 'lg';
 

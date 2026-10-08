@@ -15,7 +15,7 @@ import {
   arePasswordRequirementsMet,
   resolvePasswordRequirements,
   type PasswordRequirement,
-} from './password-input-shared';
+} from './password-input-shared.js';
 import {
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
@@ -26,11 +26,11 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   hasRenderableMessage,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
-import { type RefProp } from './ref';
+import { type RefProp } from './ref.js';
 
 const underlineActiveTransform = 'after:[transform:translateZ(0)_scaleY(1)]';
 const underlineFocusActiveTransform =
@@ -45,13 +45,13 @@ const defaultFieldUnderlineSuccessFocus = `focus-within:after:bg-border-success-
  * Hide the inner stroke when the keyboard focus ring is shown.
  */
 const outlineFieldStrokeRest =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(input[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] [&:focus-within:not(:has(input[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]';
 
 const outlineFieldStrokeError =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)]';
 
 const outlineFieldStrokeSuccess =
-  'shadow-[inset_0_0_0_1px_var(--color-border-success-emphasis)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-border-success-emphasis)] focus-within:shadow-[inset_0_0_0_2px_var(--color-border-success-emphasis)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-border-success-emphasis)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-border-success-emphasis)] focus-within:shadow-[inset_0_0_0_2px_var(--veli-color-border-success-emphasis)]';
 
 const outlineFieldStrokeFocusVisibleHide =
   'has-[input[data-focus-visible]]:shadow-none has-[input[data-focus-visible]]:hover:shadow-none';

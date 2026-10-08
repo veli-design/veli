@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { CaretLeft, CaretRight } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
-import { useVeliLanguage } from './provider';
+import { Button } from './button.js';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
+import { useVeliLanguage } from './provider.js';
 
 const secondaryButtonClassName = 'text-base-strong disabled:text-disabled';
 const paginationFocusClassName =

@@ -33,7 +33,7 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     <div class="scale" aria-label="Teal 12-step scale">
       {steps.map((step) => (
         <div>
-          <span style={`background: var(--color-teal-${step})`} aria-hidden="true" />
+          <span style={`background: var(--veli-color-teal-${step})`} aria-hidden="true" />
           <small>{step}</small>
         </div>
       ))}
@@ -65,9 +65,9 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     margin: 24px 0 8px;
     padding: 0;
     overflow: hidden;
-    border: 1px solid var(--color-border-base-subtle);
+    border: 1px solid var(--veli-color-border-base-subtle);
     border-radius: 8px;
-    background: var(--color-border-base-subtle);
+    background: var(--veli-color-border-base-subtle);
     list-style: none;
   }
 
@@ -77,7 +77,7 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     min-height: 112px;
     align-content: center;
     gap: 7px;
-    background: var(--color-bg-surface-raised);
+    background: var(--veli-color-bg-surface-raised);
     padding: 18px;
   }
 
@@ -89,15 +89,15 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     width: 12px;
     height: 12px;
     transform: translateY(-50%) rotate(45deg);
-    border-top: 1px solid var(--color-border-base-subtle);
-    border-right: 1px solid var(--color-border-base-subtle);
-    background: var(--color-bg-surface-raised);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
+    border-right: 1px solid var(--veli-color-border-base-subtle);
+    background: var(--veli-color-bg-surface-raised);
     content: '';
   }
 
   .architecture span,
   .contrast figcaption > span {
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     font-size: 10px;
     font-weight: 600;
     line-height: 15px;
@@ -107,8 +107,8 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
 
   .architecture strong {
     overflow-wrap: anywhere;
-    color: var(--color-text-base-emphasis);
-    font-family: var(--font-mono), ui-monospace, monospace;
+    color: var(--veli-color-text-base-emphasis);
+    font-family: var(--veli-font-mono), ui-monospace, monospace;
     font-size: 12px;
     line-height: 19px;
   }
@@ -128,15 +128,15 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     display: block;
     width: 100%;
     aspect-ratio: 1;
-    border: 1px solid color-mix(in srgb, var(--color-border-base-strong) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--veli-color-border-base-strong) 45%, transparent);
     border-radius: 4px;
   }
 
   .scale small {
     display: block;
     margin-top: 5px;
-    color: var(--color-text-base-muted);
-    font-family: var(--font-mono), ui-monospace, monospace;
+    color: var(--veli-color-text-base-muted);
+    font-family: var(--veli-font-mono), ui-monospace, monospace;
     font-size: 9px;
     line-height: 14px;
     text-align: center;
@@ -147,7 +147,7 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     grid-template-columns: minmax(0, 1fr) 156px;
     margin: 24px 0 8px;
     overflow: hidden;
-    border: 1px solid var(--color-border-base-subtle);
+    border: 1px solid var(--veli-color-border-base-subtle);
     border-radius: 8px;
   }
 
@@ -156,8 +156,8 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     min-height: 180px;
     align-content: center;
     gap: 12px;
-    background: var(--color-teal-200);
-    color: var(--color-teal-800);
+    background: var(--veli-color-teal-200);
+    color: var(--veli-color-teal-800);
     padding: 32px;
   }
 
@@ -177,19 +177,19 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     display: grid;
     align-content: center;
     gap: 8px;
-    border-inline-start: 1px solid var(--color-border-base-subtle);
-    background: var(--color-bg-surface-raised);
+    border-inline-start: 1px solid var(--veli-color-border-base-subtle);
+    background: var(--veli-color-bg-surface-raised);
     padding: 22px;
   }
 
   .contrast figcaption strong {
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
     font-size: 19px;
     line-height: 26px;
   }
 
   .contrast figcaption small {
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     font-size: 12px;
     line-height: 18px;
   }
@@ -220,7 +220,7 @@ const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
     }
 
     .contrast figcaption {
-      border-top: 1px solid var(--color-border-base-subtle);
+      border-top: 1px solid var(--veli-color-border-base-subtle);
       border-inline-start: 0;
     }
   }

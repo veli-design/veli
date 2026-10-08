@@ -24,7 +24,7 @@ import {
 import { cva } from 'class-variance-authority';
 import { CaretDown, CaretUp, DotsSixVertical } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Checkbox } from './checkbox';
+import { Checkbox } from './checkbox.js';
 
 const TableFrameContext = React.createContext(false);
 

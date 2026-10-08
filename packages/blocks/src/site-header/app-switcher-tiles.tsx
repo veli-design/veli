@@ -99,12 +99,12 @@ function AppIconShell({
     <div
       className={`relative size-14 shrink-0 rounded-[20px] ${
         selected
-          ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--color-primary-700)]'
+          ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-primary-700)]'
           : ''
       } ${className}`}
     >
       <div
-        className={`absolute inset-0 overflow-hidden shadow-[inset_0_0_8px_0_var(--color-effects-shadow-depth-100)] ${shellRadius}`}
+        className={`absolute inset-0 overflow-hidden shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)] ${shellRadius}`}
       >
         {gradient && darkGradient ? (
           <>

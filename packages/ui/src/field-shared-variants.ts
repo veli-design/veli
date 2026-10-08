@@ -35,24 +35,24 @@ export const defaultFieldUnderlineErrorFocusPressed = `focus-within:after:bg-tex
  * Class strings must stay complete literals so Tailwind can detect them.
  */
 export const outlineFieldStrokeError =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)]';
 
 export const outlineFieldStrokeSuccess =
-  'shadow-[inset_0_0_0_1px_var(--color-border-success-emphasis)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-border-success-emphasis)] focus-within:shadow-[inset_0_0_0_2px_var(--color-border-success-emphasis)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-border-success-emphasis)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-border-success-emphasis)] focus-within:shadow-[inset_0_0_0_2px_var(--veli-color-border-success-emphasis)]';
 
 export const outlineFieldStrokePressed =
-  'shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)] hover:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+  'shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)] hover:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]';
 
 export const outlineFieldStrokeErrorPressed =
-  'shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)] hover:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+  'shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)] hover:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)]';
 
 export const outlineFieldStrokeRest = {
   input:
-    'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(input[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]',
+    'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] [&:focus-within:not(:has(input[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]',
   textarea:
-    'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]',
+    'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]',
   dateField:
-    'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(span[data-focus-visible])):not(:has(button[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]',
+    'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] [&:focus-within:not(:has(span[data-focus-visible])):not(:has(button[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]',
 } as const;
 
 export const outlineFieldStrokeFocusVisibleHide = {

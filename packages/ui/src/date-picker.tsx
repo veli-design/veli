@@ -14,9 +14,9 @@ import {
   type DateValue,
 } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
-import { Calendar } from './calendar';
-import { fieldRootVariants, fieldShellVariants } from './date-shared';
-import { DateSegments } from './date-segments';
+import { Calendar } from './calendar.js';
+import { fieldRootVariants, fieldShellVariants } from './date-shared.js';
+import { DateSegments } from './date-segments.js';
 import {
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
@@ -25,10 +25,10 @@ import {
   fieldHeaderSupplementaryVariants,
   getFieldOptionalLabel,
   shouldShowFieldOptional,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { assignRef } from './ref';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { assignRef } from './ref.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 type DatePickerSize = 'sm' | 'md' | 'lg';
 type DatePickerAppearance = 'default' | 'outline';

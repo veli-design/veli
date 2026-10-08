@@ -36,8 +36,8 @@ export const surfaceOptions: Array<{
   value: VeliProviderSurface;
   background?: string;
 }> = [
-  { label: 'Veli surface', value: 'base', background: 'var(--color-bg-surface-base)' },
-  { label: 'Veli raised', value: 'raised', background: 'var(--color-bg-surface-raised)' },
+  { label: 'Veli surface', value: 'base', background: 'var(--veli-color-bg-surface-base)' },
+  { label: 'Veli raised', value: 'raised', background: 'var(--veli-color-bg-surface-raised)' },
   { label: 'Clear background', value: 'clear' },
 ];
 

@@ -22,7 +22,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
-import { useVeliLanguage } from './provider';
+import { useVeliLanguage } from './provider.js';
 
 const menuPopoverClassName =
   'min-w-56 w-max rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none';

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Buildings, User } from 'phosphor-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { type VeliLanguage, useVeliLanguage } from './provider';
+import { type VeliLanguage, useVeliLanguage } from './provider.js';
 
 const avatarAppearances = {
   blue: {

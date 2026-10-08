@@ -67,8 +67,9 @@
 }
 
 :root {
-  --font-sans: 'Inter', 'Inter Fallback', Arial, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --veli-font-sans: 'Inter', 'Inter Fallback', Arial, sans-serif;
+  --veli-font-mono:
+    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 @font-face {
@@ -107,7 +108,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: var(--veli-font-sans, 'Inter', sans-serif);
 }
 
 /* Keep in @layer base so Tailwind utilities (e.g. type-caption-*) can override.
@@ -146,7 +147,7 @@ body {
   z-index: 100;
   transform: translateY(-160%);
   border-radius: 5px;
-  background: var(--color-bg-primary-default);
+  background: var(--veli-color-bg-primary-default);
   color: #fff;
   padding: 9px 12px;
   font-size: 13px;
@@ -167,8 +168,8 @@ body {
   height: 100svh;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--color-bg-surface-base);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .home-frame {
@@ -196,22 +197,22 @@ body {
   width: 40px;
   height: 40px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--color-text-base-emphasis) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--veli-color-text-base-emphasis) 18%, transparent);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-bg-surface-base) 72%, transparent);
-  box-shadow: var(--shadow-sm);
-  color: var(--color-text-base-emphasis);
+  background: color-mix(in srgb, var(--veli-color-bg-surface-base) 72%, transparent);
+  box-shadow: var(--veli-shadow-sm);
+  color: var(--veli-color-text-base-emphasis);
   cursor: pointer;
   backdrop-filter: blur(12px);
 }
 
 .home-theme-cycle:hover,
 .home-theme-cycle:focus-visible {
-  background: color-mix(in srgb, var(--color-bg-surface-base) 90%, transparent);
+  background: color-mix(in srgb, var(--veli-color-bg-surface-base) 90%, transparent);
 }
 
 .home-theme-cycle:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--veli-color-border-focus);
   outline-offset: 2px;
 }
 
@@ -221,9 +222,9 @@ body {
   left: 0;
   width: max-content;
   border-radius: 8px;
-  background: var(--color-tooltip-bg-small);
-  box-shadow: var(--shadow-md);
-  color: var(--color-text-base-default);
+  background: var(--veli-color-tooltip-bg-small);
+  box-shadow: var(--veli-shadow-md);
+  color: var(--veli-color-text-base-default);
   opacity: 0;
   padding: 2px 12px;
   font-size: 12px;
@@ -260,8 +261,12 @@ body {
 .shader-bg__fallback {
   opacity: 1;
   transition: opacity 600ms ease;
-  background-color: var(--color-bg-surface-base);
-  background-image: linear-gradient(145deg, var(--color-neutral-100), var(--color-neutral-300));
+  background-color: var(--veli-color-bg-surface-base);
+  background-image: linear-gradient(
+    145deg,
+    var(--veli-color-neutral-100),
+    var(--veli-color-neutral-300)
+  );
 }
 
 .shader-bg[data-shader-active] .shader-bg__fallback {
@@ -319,8 +324,8 @@ body {
 
 /* Documentation shell */
 .docs-page {
-  background: var(--color-bg-surface-base);
-  color: var(--color-text-base-default);
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-default);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -337,14 +342,14 @@ body {
   top: 0;
   height: 100svh;
   align-self: start;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
 }
 
 .docs-navigation {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border-right: 1px solid var(--color-border-base-subtle);
+  border-right: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-navigation__scroll {
@@ -358,7 +363,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 23px;
   font-weight: 600;
   line-height: 30px;
@@ -381,7 +386,7 @@ body {
 .docs-contents h2,
 .docs-mobile-menu h2 {
   margin: 0 0 9px;
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   font-size: 11px;
   font-weight: 600;
   line-height: 16px;
@@ -391,7 +396,7 @@ body {
 .docs-nav-link {
   display: block;
   border-radius: 5px;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   padding: 6px 9px;
   font-size: 13px;
   font-weight: 500;
@@ -401,8 +406,8 @@ body {
 
 .docs-nav-link:hover,
 .docs-nav-link.is-active {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-nav-link.is-active {
@@ -411,7 +416,7 @@ body {
 
 .docs-main {
   min-width: 0;
-  border-right: 1px solid var(--color-border-base-subtle);
+  border-right: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-main__inner {
@@ -435,8 +440,8 @@ body {
   justify-content: flex-start;
   border: 0;
   border-radius: 8px;
-  background: var(--color-bg-surface-raised);
-  color: var(--color-text-base-strong);
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-strong);
   padding: 8px 12px;
   font-size: 16px;
   line-height: 24px;
@@ -447,8 +452,8 @@ body {
 }
 
 .docs-search-trigger:hover {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-search-trigger > span {
@@ -481,7 +486,7 @@ body {
   height: min(424px, calc(100dvh - 32px));
   max-height: calc(100dvh - 32px);
   overflow: hidden;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
 }
 
 .docs-search-modal > [role='dialog'] {
@@ -513,7 +518,7 @@ body {
   gap: 24px;
   overflow-x: auto;
   padding: 12px 16px;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
   scrollbar-width: none;
 }
 
@@ -526,7 +531,7 @@ body {
   flex: 0 0 auto;
   align-items: center;
   gap: 8px;
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.18px;
@@ -544,7 +549,7 @@ body {
 .docs-search-suggestions {
   margin: 0;
   padding: 20px 16px 8px;
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
@@ -592,13 +597,13 @@ body {
 }
 
 .docs-search-result__label {
-  color: var(--color-text-base-strong, var(--color-text-base-default));
+  color: var(--veli-color-text-base-strong, var(--veli-color-text-base-default));
   font-size: 14px;
   line-height: 20px;
 }
 
 .docs-search-result__description {
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 14px;
   line-height: 20px;
 }
@@ -606,7 +611,7 @@ body {
 .docs-search-result__content > svg {
   flex: 0 0 auto;
   margin: 2px 4px 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
 }
 
 .docs-search-state,
@@ -618,7 +623,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   text-align: center;
 }
 
@@ -630,7 +635,7 @@ body {
 
 .docs-search-state p,
 .docs-search-empty p {
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
@@ -657,8 +662,8 @@ body {
 }
 
 .docs-contents a {
-  border-left: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-muted);
+  border-left: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-muted);
   padding: 5px 0 5px 12px;
   font-size: 12px;
   font-weight: 500;
@@ -667,8 +672,8 @@ body {
 }
 
 .docs-contents a:hover {
-  border-left-color: var(--color-border-primary-emphasis);
-  color: var(--color-text-base-emphasis);
+  border-left-color: var(--veli-color-border-primary-emphasis);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-contents a.is-nested {
@@ -686,15 +691,15 @@ body {
   justify-content: space-between;
   border-radius: 5px;
   background: transparent;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   padding: 7px 9px;
   font-size: 12px;
   cursor: pointer;
 }
 
 .theme-cycle:hover {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-mobile-header {
@@ -704,7 +709,7 @@ body {
 /* Documentation content */
 .docs-page-header {
   padding-bottom: 48px;
-  border-bottom: 1px solid var(--color-border-base-subtle);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-overview-hero {
@@ -727,7 +732,7 @@ body {
 
 .docs-kicker {
   margin: 0 0 14px;
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
@@ -736,7 +741,7 @@ body {
 .docs-page-header h1 {
   max-width: 680px;
   margin: 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 48px;
   font-weight: 600;
   line-height: 1.14;
@@ -745,7 +750,7 @@ body {
 .docs-page-description {
   max-width: 650px;
   margin: 20px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 17px;
   line-height: 28px;
 }
@@ -761,8 +766,8 @@ body {
 .docs-intro-links a,
 .docs-link-list a {
   display: grid;
-  border-bottom: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-emphasis);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-emphasis);
   text-decoration: none;
 }
 
@@ -780,7 +785,7 @@ body {
 .docs-intro-links small,
 .docs-link-list p {
   margin: 5px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 13px;
   font-weight: 400;
   line-height: 21px;
@@ -788,7 +793,7 @@ body {
 
 .docs-intro-links a:hover span,
 .docs-link-list a:hover span {
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
 }
 
 .docs-list-section,
@@ -801,11 +806,11 @@ body {
 }
 
 .foundation-directory section {
-  border-bottom: 1px solid var(--color-border-base-subtle);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .foundation-directory section:first-child {
-  border-top: 1px solid var(--color-border-base-subtle);
+  border-top: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .foundation-directory a {
@@ -814,7 +819,7 @@ body {
   grid-template-columns: 76px minmax(0, 1fr) auto;
   align-items: center;
   gap: 24px;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   padding: 26px 0;
   text-decoration: none;
 }
@@ -849,13 +854,13 @@ body {
 .foundation-directory p {
   max-width: 610px;
   margin: 7px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 14px;
   line-height: 23px;
 }
 
 .foundation-directory__arrow {
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   font-size: 20px;
   transition:
     color 140ms ease,
@@ -864,7 +869,7 @@ body {
 
 .foundation-directory a:hover h2,
 .foundation-directory a:hover .foundation-directory__arrow {
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
 }
 
 .foundation-directory a:hover .foundation-directory__icon img {
@@ -879,7 +884,7 @@ body {
 .foundation-section h2,
 .docs-prose > h2 {
   margin: 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 25px;
   font-weight: 600;
   line-height: 34px;
@@ -900,7 +905,7 @@ body {
 .foundation-section > p {
   max-width: 680px;
   margin: 14px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 15px;
   line-height: 26px;
 }
@@ -912,15 +917,15 @@ body {
 }
 
 .principle-list li {
-  border-top: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-muted);
+  border-top: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-muted);
   padding: 14px 0;
   font-size: 14px;
   line-height: 22px;
 }
 
 .principle-list strong {
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-weight: 600;
 }
 
@@ -933,7 +938,7 @@ body {
 
 .foundation-colors span {
   min-height: 82px;
-  border: 1px solid var(--color-border-base-subtle);
+  border: 1px solid var(--veli-color-border-base-subtle);
   border-radius: 5px;
 }
 
@@ -943,7 +948,7 @@ body {
 
 /* MDX component articles */
 .docs-prose {
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 15px;
   line-height: 1.75;
 }
@@ -962,7 +967,7 @@ body {
 
 .docs-prose > h3 {
   margin: 34px 0 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 18px;
   font-weight: 600;
   line-height: 26px;
@@ -983,16 +988,17 @@ body {
 }
 
 .docs-prose a:not(:where(.preview *)) {
-  color: var(--color-text-links-default);
+  color: var(--veli-color-text-links-default);
   font-weight: 600;
 }
 
 .docs-prose code {
   border-radius: 4px;
-  background: var(--color-bg-secondary-subtle-default);
+  background: var(--veli-color-bg-secondary-subtle-default);
   padding: 2px 5px;
-  color: var(--color-text-base-emphasis);
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--veli-color-text-base-emphasis);
+  font-family:
+    var(--veli-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.92em;
   letter-spacing: 0;
 }
@@ -1000,8 +1006,8 @@ body {
 .docs-prose pre {
   overflow-x: auto;
   border-radius: 6px;
-  background: var(--color-slate-1200);
-  color: var(--color-slate-100);
+  background: var(--veli-color-slate-1200);
+  color: var(--veli-color-slate-100);
   padding: 20px;
   font-size: 13px;
   line-height: 1.7;
@@ -1022,12 +1028,12 @@ body {
   margin-top: 24px;
   margin-bottom: 32px;
   overflow: hidden;
-  border: 1px solid var(--color-border-base-subtle);
+  border: 1px solid var(--veli-color-border-base-subtle);
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 12px;
-  background: var(--color-bg-surface-raised);
-  color: var(--color-text-base-default);
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-default);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -1061,11 +1067,11 @@ body {
 }
 
 :is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead {
-  background: var(--color-neutral-alpha-200);
+  background: var(--veli-color-neutral-alpha-200);
 }
 
 :is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead th {
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.45;
@@ -1073,11 +1079,12 @@ body {
 
 :is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead tr,
 :is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tbody tr:not(:last-child) {
-  border-bottom: 1px solid var(--color-border-base-subtle);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
 :is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td:not(:last-child) {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family:
+    var(--veli-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -1115,10 +1122,10 @@ body {
   align-items: center;
   justify-content: center;
   margin-top: -8px;
-  border-radius: var(--radius-full);
-  background: var(--color-button-secondary-subtle-default);
+  border-radius: var(--veli-radius-full);
+  background: var(--veli-color-button-secondary-subtle-default);
   padding: 6px;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.34;
@@ -1136,15 +1143,15 @@ body {
 }
 
 .docs-storybook-link:hover {
-  background: var(--color-button-secondary-subtle-hover);
+  background: var(--veli-color-button-secondary-subtle-hover);
 }
 
 .docs-storybook-link:active {
-  background: var(--color-button-secondary-subtle-pressed);
+  background: var(--veli-color-button-secondary-subtle-pressed);
 }
 
 .docs-storybook-link:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--veli-color-border-focus);
   outline-offset: 2px;
 }
 
@@ -1154,9 +1161,9 @@ body {
   min-height: 288px;
   align-items: center;
   justify-items: center;
-  border: 4px solid var(--color-bg-surface-base);
+  border: 4px solid var(--veli-color-bg-surface-base);
   border-radius: 16px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
   padding: 24px;
 }
 
@@ -1164,7 +1171,7 @@ body {
   min-width: 0;
   margin-top: 18px;
   border-radius: 16px;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
   padding: 4px;
 }
 
@@ -1298,8 +1305,8 @@ body {
     min-height: 64px;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--color-border-base-subtle);
-    background: color-mix(in srgb, var(--color-bg-surface-base) 92%, transparent);
+    border-bottom: 1px solid var(--veli-color-border-base-subtle);
+    background: color-mix(in srgb, var(--veli-color-bg-surface-base) 92%, transparent);
     padding: 0 18px;
     backdrop-filter: blur(14px);
   }
@@ -1331,7 +1338,7 @@ body {
     list-style: none;
     place-items: center;
     border-radius: 5px;
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
   }
 
   .docs-mobile-menu summary::-webkit-details-marker {
@@ -1339,7 +1346,7 @@ body {
   }
 
   .docs-mobile-menu summary:hover {
-    background: var(--color-bg-secondary-subtle-default);
+    background: var(--veli-color-bg-secondary-subtle-default);
   }
 
   .docs-mobile-menu:not([open]) .docs-mobile-menu__panel {
@@ -1355,8 +1362,8 @@ body {
     height: calc(100dvh - 64px);
     overscroll-behavior: contain;
     overflow-y: auto;
-    border-top: 1px solid var(--color-border-base-subtle);
-    background: var(--color-bg-surface-base);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
+    background: var(--veli-color-bg-surface-base);
     padding: 24px 20px 48px;
   }
 
@@ -1374,15 +1381,15 @@ body {
 
   .docs-mobile-menu a {
     border-radius: 5px;
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     padding: 9px 10px;
     font-size: 14px;
     text-decoration: none;
   }
 
   .docs-mobile-menu a:hover {
-    background: var(--color-bg-secondary-subtle-default);
-    color: var(--color-text-base-emphasis);
+    background: var(--veli-color-bg-secondary-subtle-default);
+    color: var(--veli-color-text-base-emphasis);
   }
 
   .docs-main__inner {
@@ -1459,7 +1466,7 @@ body {
 
 /* PD-784 documentation workspace */
 .docs-page {
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
 }
 
 .docs-workspace {
@@ -1488,7 +1495,7 @@ body {
   gap: 10px;
   border: 0;
   border-radius: 8px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
   padding: 0 12px;
 }
 
@@ -1502,7 +1509,7 @@ body {
   flex: none;
   align-items: center;
   gap: 2px;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
 }
 
 .docs-search__shortcut > * {
@@ -1511,7 +1518,7 @@ body {
   height: 20px;
   place-items: center;
   border-radius: 4px;
-  background: var(--color-bg-secondary-subtle-default);
+  background: var(--veli-color-bg-secondary-subtle-default);
   font-size: 11px;
 }
 
@@ -1532,7 +1539,7 @@ body {
   min-height: 36px;
   align-items: center;
   justify-content: space-between;
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   padding-block: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -1567,7 +1574,7 @@ body {
 
 .docs-nav-link:hover,
 .docs-nav-link.is-active {
-  background: var(--color-bg-secondary-subtle-default);
+  background: var(--veli-color-bg-secondary-subtle-default);
 }
 
 .docs-navigation__footer {
@@ -1582,7 +1589,7 @@ body {
   bottom: 100%;
   left: 0;
   height: 56px;
-  background: linear-gradient(to top, var(--color-bg-surface-base), transparent);
+  background: linear-gradient(to top, var(--veli-color-bg-surface-base), transparent);
   content: '';
   pointer-events: none;
 }
@@ -1594,7 +1601,7 @@ body {
   height: 40px;
   align-items: center;
   border-radius: 999px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
   padding: 4px;
 }
 
@@ -1615,7 +1622,7 @@ body {
   place-items: center;
   border-radius: 16px;
   background: transparent;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
   text-decoration: none;
   cursor: pointer;
 }
@@ -1631,8 +1638,8 @@ body {
 
 .docs-footer-control:hover,
 .docs-footer-control:focus-visible {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-control-tooltip {
@@ -1644,9 +1651,9 @@ body {
   max-width: 180px;
   transform: translate(-50%, 2px);
   border-radius: 8px;
-  background: var(--color-tooltip-bg-small);
-  box-shadow: var(--shadow-md);
-  color: var(--color-text-base-default);
+  background: var(--veli-color-tooltip-bg-small);
+  box-shadow: var(--veli-shadow-md);
+  color: var(--veli-color-text-base-default);
   opacity: 0;
   padding: 2px 12px;
   font-size: 12px;
@@ -1696,7 +1703,7 @@ body {
 .docs-resource.is-disabled:hover,
 .docs-resource.is-disabled:focus-visible {
   background: transparent;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
 }
 
 .docs-resource:first-child .docs-control-tooltip {
@@ -1713,7 +1720,7 @@ body {
   width: 1px;
   height: 12px;
   flex: none;
-  background: var(--color-border-base-strong);
+  background: var(--veli-color-border-base-strong);
 }
 
 .docs-theme-cycle {
@@ -1744,7 +1751,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   overflow: hidden;
   border: 0;
   border-radius: 16px 8px 8px 16px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
 }
 
 .docs-main__inner,
@@ -1822,8 +1829,8 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   top: 0;
   background: linear-gradient(
     to bottom,
-    var(--color-bg-surface-raised),
-    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
     transparent
   );
 }
@@ -1832,8 +1839,8 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   bottom: 0;
   background: linear-gradient(
     to top,
-    var(--color-bg-surface-raised),
-    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
     transparent
   );
 }
@@ -1872,7 +1879,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   bottom: 8px;
   left: 0;
   width: 1px;
-  background: var(--color-border-base-muted);
+  background: var(--veli-color-border-base-muted);
   content: '';
   pointer-events: none;
 }
@@ -1900,8 +1907,8 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 }
 
 .docs-contents a.is-active {
-  border-left: 3px solid var(--color-border-focus);
-  color: var(--color-text-base-strong);
+  border-left: 3px solid var(--veli-color-border-focus);
+  color: var(--veli-color-text-base-strong);
 }
 
 .docs-page-header {
@@ -1939,7 +1946,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   flex: none;
   max-width: none;
   margin: 0;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
   font-size: 18px;
   font-weight: 400;
   line-height: 1.53;
@@ -1962,7 +1969,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 .docs-page-header__copy > p:last-child {
   max-width: 680px;
   margin-top: 24px;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
   font-size: 18px;
   line-height: 1.53;
 }
@@ -1980,9 +1987,13 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 68% 30%, var(--color-bg-primary-subtle-hover), transparent 36%),
-    linear-gradient(145deg, var(--color-bg-secondary-subtle-default), var(--color-bg-surface-base));
-  color: var(--color-text-primary-default);
+    radial-gradient(circle at 68% 30%, var(--veli-color-bg-primary-subtle-hover), transparent 36%),
+    linear-gradient(
+      145deg,
+      var(--veli-color-bg-secondary-subtle-default),
+      var(--veli-color-bg-surface-base)
+    );
+  color: var(--veli-color-text-primary-default);
 }
 
 .docs-overview-content {
@@ -2004,7 +2015,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 
 .docs-overview-copy p {
   margin: 20px 0 0;
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 16px;
   line-height: 1.5;
 }
@@ -2041,7 +2052,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   border-radius: 32px;
   background: rgb(155 180 155 / 4%);
   padding: 24px;
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   text-decoration: none;
 }
 
@@ -2109,19 +2120,19 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   min-height: 112px;
   border: 0;
   border-radius: 24px;
-  background: var(--color-bg-secondary-subtle-default);
+  background: var(--veli-color-bg-secondary-subtle-default);
   padding: 20px;
 }
 
 .docs-page-header--article {
   min-height: 258px;
   padding-bottom: 80px;
-  border-bottom: 1px solid var(--color-border-base-muted);
+  border-bottom: 1px solid var(--veli-color-border-base-muted);
 }
 
 .docs-page-header--article h1 {
   max-width: 680px;
-  font-family: var(--font-sans);
+  font-family: var(--veli-font-sans);
   font-size: clamp(52px, 6vw, 82px);
   font-weight: 400;
   line-height: 1.34;
@@ -2197,7 +2208,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   top: -48px;
   right: 0;
   left: 0;
-  border-top: 1px solid var(--color-border-base-subtle);
+  border-top: 1px solid var(--veli-color-border-base-subtle);
   content: '';
 }
 
@@ -2224,7 +2235,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   min-width: 0;
   flex-direction: column;
   gap: 2px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
   padding-top: 4px;
 }
 
@@ -2239,8 +2250,8 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   height: 44px;
   background: linear-gradient(
     to bottom,
-    var(--color-bg-surface-raised),
-    color-mix(in srgb, var(--color-bg-surface-raised) 72%, transparent),
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
     transparent
   );
   content: '';
@@ -2276,13 +2287,13 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   border-radius: 8px;
   background: transparent;
   padding: 10px 16px;
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   cursor: pointer;
-  font-family: var(--font-sans);
+  font-family: var(--veli-font-sans);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  transition: background-color var(--duration-normal) var(--ease-in-out);
+  transition: background-color var(--veli-duration-normal) var(--veli-ease-in-out);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -2302,16 +2313,16 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 }
 
 .docs-page-tabs__tab:hover {
-  background: var(--color-tabs-hover);
-  color: var(--color-text-base-strong);
+  background: var(--veli-color-tabs-hover);
+  color: var(--veli-color-text-base-strong);
 }
 
 .docs-page-tabs__tab:active {
-  background: var(--color-tabs-pressed);
+  background: var(--veli-color-tabs-pressed);
 }
 
 .docs-page-tabs__tab[aria-selected='true'] {
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
   font-weight: 500;
 }
 
@@ -2322,7 +2333,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   width: 100%;
   height: 2px;
   overflow: hidden;
-  background: var(--color-tabs-border-inactive);
+  background: var(--veli-color-tabs-border-inactive);
 }
 
 .docs-page-tabs__indicator {
@@ -2332,16 +2343,16 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   left: var(--docs-tab-indicator-left);
   width: var(--docs-tab-indicator-width);
   height: 2px;
-  background: var(--color-tabs-border-active);
+  background: var(--veli-color-tabs-border-active);
   pointer-events: none;
   transition:
-    left var(--duration-normal) var(--ease-in-out),
-    width var(--duration-normal) var(--ease-in-out);
+    left var(--veli-duration-normal) var(--veli-ease-in-out),
+    width var(--veli-duration-normal) var(--veli-ease-in-out);
 }
 
 .docs-page-tabs__tab:focus-visible {
   z-index: 1;
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--veli-color-border-focus);
   outline-offset: -2px;
 }
 
@@ -2358,7 +2369,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 
 .docs-tab-empty {
   min-height: 160px;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
 }
 
 .docs-component-animation {
@@ -2367,9 +2378,9 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   margin-top: 32px;
   aspect-ratio: 805 / 364;
   overflow: hidden;
-  border: 1px solid var(--color-border-base-muted);
+  border: 1px solid var(--veli-color-border-base-muted);
   border-radius: 24px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
 }
 
 .docs-component-animation__frame,
@@ -2384,9 +2395,9 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 50% 44%, var(--color-neutral-alpha-200), transparent 38%),
-    var(--color-bg-surface-raised);
-  color: var(--color-text-base-muted);
+    radial-gradient(circle at 50% 44%, var(--veli-color-neutral-alpha-200), transparent 38%),
+    var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-muted);
 }
 
 .docs-component-animation__placeholder p {
@@ -2399,9 +2410,9 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
   top: 16px;
   right: 16px;
   border-radius: 999px;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
   padding: 6px 10px;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 12px;
   line-height: 1.45;
   pointer-events: none;
@@ -2413,13 +2424,13 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
      the outer bottom corners. */
   overflow: hidden;
   border-radius: 24px;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
   padding: 2px;
 }
 
 .docs-example > .preview {
   border-radius: 22px;
-  background: var(--color-bg-surface-raised);
+  background: var(--veli-color-bg-surface-raised);
 }
 
 /* Detect the options layout through Astro islands, including before hydration.
@@ -2581,8 +2592,8 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 
 .docs-prose h2 {
   margin-top: 72px;
-  color: var(--color-text-base-emphasis);
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  color: var(--veli-color-text-base-emphasis);
+  font-family: var(--veli-font-sans, 'Inter', sans-serif);
   font-size: 32px;
   font-weight: 600;
   line-height: 1.36;
@@ -2619,7 +2630,7 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
    8/16px reading rhythm from the documentation site reference. */
 .docs-tab-panel > :is(p, ul, ol) {
   max-width: 660px;
-  color: var(--color-text-base-strong);
+  color: var(--veli-color-text-base-strong);
 }
 
 .docs-tab-panel > :is(ul, ol) {

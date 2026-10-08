@@ -1,3 +1,9 @@
+## 0.3.0
+
+### Changed
+
+- Reference canonical Veli CSS variables. Require tokens 0.9 and UI 0.15 for the unified token architecture. Keep appearance options aligned when typography metrics change.
+
 ## 0.2.1
 
 ### Changed

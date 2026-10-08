@@ -13,8 +13,8 @@ import {
 import { cva } from 'class-variance-authority';
 import { CaretLeft, CaretRight } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
-import { useVeliLanguage } from './provider';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
+import { useVeliLanguage } from './provider.js';
 
 const breadcrumbsRootVariants = cva(
   'm-0 flex flex-wrap items-center gap-1.5 list-none p-0 antialiased',

@@ -16,11 +16,11 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { invariantDev, normalizeAccessibleText } from './a11y';
-import { Button, type ButtonProps } from './button';
-import { Divider } from './divider';
-import { hasRenderableMessage } from './field-shared';
-import { useVeliLanguage } from './provider';
+import { invariantDev, normalizeAccessibleText } from './a11y.js';
+import { Button, type ButtonProps } from './button.js';
+import { Divider } from './divider.js';
+import { hasRenderableMessage } from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
 
 const overlayVariants = cva([
   'fixed inset-0 z-50 flex min-h-dvh items-center justify-center bg-black/60 p-4 backdrop-blur-[6px]',

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FieldError, Text } from 'react-aria-components';
-import { getRenderableMessage, messageVariants } from './field-shared-variants';
+import { getRenderableMessage, messageVariants } from './field-shared-variants.js';
 
 export interface FieldMessageProps {
   isInvalid: boolean;

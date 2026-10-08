@@ -7,7 +7,7 @@ import {
   useFieldControlProps,
   type FieldControlProps,
   type FieldProps,
-} from './field';
+} from './field.js';
 
 declare function expectType<T>(value: T): void;
 

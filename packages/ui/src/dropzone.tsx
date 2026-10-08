@@ -27,7 +27,7 @@ import {
   X,
 } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Button, type ButtonProps } from './button';
+import { Button, type ButtonProps } from './button.js';
 import {
   fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderRequiredIndicatorVariants,
@@ -35,9 +35,9 @@ import {
   getRenderableMessage,
   messageVariants,
   shouldShowFieldOptional,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 const ROOT_NAME = 'Dropzone';
 const DROPZONE_NAME = 'DropzoneArea';

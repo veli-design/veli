@@ -195,13 +195,13 @@ test('menu showcase consumes resolved Veli theme tokens instead of fixed present
   );
 
   for (const token of [
-    '--color-bg-surface-base',
-    '--color-menu-bg',
-    '--color-menu-hover',
-    '--color-border-base-subtle',
-    '--color-text-base-strong',
-    '--color-icon-base-muted',
-    '--color-text-danger-muted',
+    '--veli-color-bg-surface-base',
+    '--veli-color-menu-bg',
+    '--veli-color-menu-hover',
+    '--veli-color-border-base-subtle',
+    '--veli-color-text-base-strong',
+    '--veli-color-icon-base-muted',
+    '--veli-color-text-danger-muted',
   ]) {
     assert.match(showcase, new RegExp(token));
   }

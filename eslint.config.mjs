@@ -48,7 +48,12 @@ export default [
     },
   },
   {
-    files: ['scripts/**/*.mjs', 'packages/blocks/**/*.mjs', 'packages/cli/**/*.mjs'],
+    files: [
+      'scripts/**/*.mjs',
+      'packages/tokens/**/*.mjs',
+      'packages/blocks/**/*.mjs',
+      'packages/cli/**/*.mjs',
+    ],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

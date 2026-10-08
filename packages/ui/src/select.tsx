@@ -30,11 +30,11 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
-} from './field-shared';
-import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
-import { useVeliLanguage } from './provider';
-import { assignRef } from './ref';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
+import { useVeliLanguage } from './provider.js';
+import { assignRef } from './ref.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 /** Selection key type used by react-aria (`string | number`). */
 type Key = string | number;

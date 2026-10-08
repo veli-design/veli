@@ -29,13 +29,13 @@ import {
 import { cva } from 'class-variance-authority';
 import { CaretDown, CaretLeft, CaretRight, WarningCircle } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
+import { Button } from './button.js';
 import {
   getCalendarTodayLabel,
   getDhivehiMonthName,
   getDhivehiWeekdayLabel,
-} from './calendar-localization';
-import { useVeliLanguage } from './provider';
+} from './calendar-localization.js';
+import { useVeliLanguage } from './provider.js';
 
 type CalendarPickerItem = {
   id: number;

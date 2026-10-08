@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Divider } from './divider';
-import { hasRenderableMessage } from './field-shared';
+import { Divider } from './divider.js';
+import { hasRenderableMessage } from './field-shared.js';
 
 const cardVariants = cva(
   'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-base-subtle bg-bg-surface-raised text-text-default-default',

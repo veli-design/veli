@@ -58,9 +58,9 @@ test('UI internals do not use ambiguous bare text-base color utilities', () => {
 
 test('UI semantic border utilities reference canonical DTCG tokens', () => {
   const designTokens = JSON.parse(readFileSync(designTokensPath, 'utf8'));
-  const semanticBorderNames = collectTokenNames(designTokens.color.semantics.border);
+  const semanticBorderNames = collectTokenNames(designTokens.color.border);
   const semanticBorderRoots = new Set(
-    Object.keys(designTokens.color.semantics.border).filter((key) => !key.startsWith('$')),
+    Object.keys(designTokens.color.border).filter((key) => !key.startsWith('$')),
   );
   semanticBorderRoots.add('default');
   const findings = [];

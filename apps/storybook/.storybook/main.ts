@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import tokenPlayground from '../../../packages/tokens/lib/playground.mjs';
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(dirname, '../../..');
 const localAddon = (relativePath: string) => path.resolve(dirname, relativePath);
 
 const config: StorybookConfig = {
@@ -24,6 +24,7 @@ const config: StorybookConfig = {
       ...config,
       plugins: [
         ...(config.plugins || []),
+        tokenPlayground(),
         tailwindcss(),
         {
           name: 'veli-preview-styles',
@@ -40,16 +41,6 @@ const config: StorybookConfig = {
           },
         },
       ],
-      resolve: {
-        ...config.resolve,
-        alias: [
-          ...(Array.isArray(config.resolve?.alias) ? config.resolve.alias : []),
-          {
-            find: /^@tradenetcorp\/veli-ui\/(?!tailwind$)(.+)$/,
-            replacement: path.resolve(repoRoot, 'packages/ui/src/$1'),
-          },
-        ],
-      },
     };
   },
 };

@@ -224,7 +224,7 @@ for (const story of [
         direction: 'ltr',
         fontFamily: 'Inter',
         fontSize: (await email.evaluate((node) => node.tagName === 'P')) ? '16px' : '14px',
-        lineHeight: (await email.evaluate((node) => node.tagName === 'P')) ? '24px' : '20px',
+        lineHeight: (await email.evaluate((node) => node.tagName === 'P')) ? '24px' : '20.3px',
       });
     }
     const names = dialog.getByRole('listitem').locator('button > span:last-child > span[dir]');

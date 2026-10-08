@@ -1,4 +1,8 @@
-import { Pagination, type PaginationPageProps, type PaginationLoadMoreProps } from './pagination';
+import {
+  Pagination,
+  type PaginationPageProps,
+  type PaginationLoadMoreProps,
+} from './pagination.js';
 
 export function PaginationTypeExpectations() {
   const pageProps: PaginationPageProps = { maxValue: 12 };

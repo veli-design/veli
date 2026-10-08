@@ -15,10 +15,10 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { StaticFieldMessage } from './field-shared';
-import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants';
-import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
-import { useVeliLanguage } from './provider';
+import { StaticFieldMessage } from './field-shared.js';
+import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants.js';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
+import { useVeliLanguage } from './provider.js';
 
 const TagGroupDisabledContext = React.createContext(false);
 const TagGroupSizeContext = React.createContext<TagSize | undefined>(undefined);

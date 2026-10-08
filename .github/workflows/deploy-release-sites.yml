@@ -1,0 +1,76 @@
+name: Deploy release sites
+on:
+  workflow_call:
+    inputs:
+      source-ref:
+        required: true
+        type: string
+      manifest-run-id:
+        required: false
+        default: ''
+        type: string
+      release-tag:
+        required: false
+        default: ''
+        type: string
+permissions:
+  contents: read
+  packages: read
+  actions: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: veli-public-release-sites
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source-ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@tradenetcorp'
+      - uses: actions/download-artifact@v4
+        if: inputs.manifest-run-id != ''
+        with:
+          name: release-manifest
+          path: ${{ runner.temp }}/release-manifest
+          run-id: ${{ inputs.manifest-run-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download durable release manifest
+        if: inputs.release-tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: gh release download "$RELEASE_TAG" --pattern release-manifest.json --dir "$RUNNER_TEMP/release-manifest"
+      - name: Verify release snapshot
+        env:
+          SOURCE_REF: ${{ inputs.source-ref }}
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; const m=JSON.parse(fs.readFileSync('${{ runner.temp }}/release-manifest/release-manifest.json')); if(m.sourceCommit!==process.env.SOURCE_REF) throw new Error('Release snapshot mismatch');"
+      - name: Install locked staging tools
+        run: corepack pnpm install --frozen-lockfile
+      - name: Stage isolated released-package consumers
+        run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/release-manifest/release-manifest.json"
+      - name: Build against published packages
+        run: node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-release-sites"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy web docs
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/web
+          environment: production
+          command: deploy
+      - name: Deploy Storybook
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/storybook
+          environment: production
+          command: deploy

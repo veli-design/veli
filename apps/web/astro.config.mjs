@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import tokenPlayground from '../../packages/tokens/lib/playground.mjs';
 import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
 import rehypePreviewCode from './src/lib/rehype-preview-code.mjs';
@@ -33,7 +34,7 @@ export default defineConfig({
   },
   vite: {
     ssr: { external: ['@tradenetcorp/veli-blocks/catalog'] },
-    plugins: [tailwindcss()],
+    plugins: [tokenPlayground(), tailwindcss()],
   },
   output: 'static',
 });

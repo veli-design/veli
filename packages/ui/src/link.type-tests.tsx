@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { Link } from './link';
+import { Link } from './link.js';
 
 export function LinkTypeExpectations() {
   const ref = createRef<HTMLAnchorElement>();

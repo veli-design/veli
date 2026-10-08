@@ -35,11 +35,13 @@ test('all 30 Alert aliases match the revised Figma Light/Dark bindings', () => {
       },
     })) {
       for (const [slot, [light, dark]] of Object.entries(expected)) {
-        const token = tokens.color.components.alert[appearance][intent][slot];
-        assert.equal(token.$value, `{color.primitives.${hue}.${light}}`);
+        const token =
+          tokens.color.alert[appearance === 'highContrast' ? 'high-contrast' : appearance][intent][
+            slot
+          ];
+        assert.equal(token.$value, `{color.${hue}.${light}}`);
         assert.deepEqual(token.$extensions.mode, {
-          Light: `{color.primitives.${hue}.${light}}`,
-          Dark: `{color.primitives.${hue}.${dark}}`,
+          Dark: `{color.${hue}.${dark}}`,
         });
         assert.ok(
           theme.includes(

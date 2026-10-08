@@ -26,62 +26,92 @@
       "$description": "Motion primitive: ease-spring."
     },
     "linear": {
-      "$type": "string",
-      "$value": "linear",
+      "$type": "cubicBezier",
+      "$value": [0, 0, 1, 1],
       "$description": "Motion primitive: linear."
     }
   },
   "duration": {
     "instant": {
       "$type": "duration",
-      "$value": "0ms",
+      "$value": {
+        "value": 0,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-instant."
     },
     "fast": {
       "$type": "duration",
-      "$value": "80ms",
+      "$value": {
+        "value": 80,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-fast."
     },
     "normal": {
       "$type": "duration",
-      "$value": "200ms",
+      "$value": {
+        "value": 200,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-normal."
     },
     "slow": {
       "$type": "duration",
-      "$value": "350ms",
+      "$value": {
+        "value": 350,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-slow."
     },
     "slower": {
       "$type": "duration",
-      "$value": "500ms",
+      "$value": {
+        "value": 500,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-slower."
     },
     "slowest": {
       "$type": "duration",
-      "$value": "1200ms",
+      "$value": {
+        "value": 1200,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: duration-slowest."
     }
   },
   "delay": {
     "none": {
       "$type": "duration",
-      "$value": "0ms",
+      "$value": {
+        "value": 0,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: delay-none."
     },
     "fast": {
       "$type": "duration",
-      "$value": "40ms",
+      "$value": {
+        "value": 40,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: delay-fast."
     },
     "normal": {
       "$type": "duration",
-      "$value": "80ms",
+      "$value": {
+        "value": 80,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: delay-normal."
     },
     "slow": {
       "$type": "duration",
-      "$value": "120ms",
+      "$value": {
+        "value": 120,
+        "unit": "ms"
+      },
       "$description": "Motion primitive: delay-slow."
     }
   }
