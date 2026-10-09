@@ -1,6 +1,6 @@
 import { type DateSegmentRenderProps, type DateValue } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { getDhivehiMonthName } from './calendar-localization';
+import { getDhivehiMonthName } from './calendar-localization.js';
 import {
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
@@ -13,10 +13,10 @@ import {
   outlineFieldStrokeFocusVisibleHide,
   outlineFieldStrokePressed,
   outlineFieldStrokeRest,
-} from './field-shared-variants';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+} from './field-shared-variants.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 
-export { fieldRootVariants } from './field-shared-variants';
+export { fieldRootVariants } from './field-shared-variants.js';
 
 const fieldShellFocusRingClassName =
   'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised';

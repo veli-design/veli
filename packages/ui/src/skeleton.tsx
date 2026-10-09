@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { twMerge } from 'tailwind-merge';
-import { type RefProp } from './ref';
+import { type RefProp } from './ref.js';
 
 export interface SkeletonProps
   extends RefProp<HTMLDivElement>, Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {}

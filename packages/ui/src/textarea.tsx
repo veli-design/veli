@@ -24,12 +24,12 @@ import {
   fieldHeaderSupplementaryVariants,
   getFieldOptionalLabel,
   shouldShowFieldOptional,
-} from './field-shared';
-import { type VeliDirection, useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+} from './field-shared.js';
+import { type VeliDirection, useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
-import { type RefProp } from './ref';
+import { type RefProp } from './ref.js';
 
 const textareaRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -72,10 +72,10 @@ const shellMinHeights = {
  * Hide the inner stroke when the keyboard focus ring is shown.
  */
 const outlineFieldStrokeRest =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-pressed)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] [&:focus-within:not(:has(textarea[data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]';
 
 const outlineFieldStrokeError =
-  'shadow-[inset_0_0_0_1px_var(--color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--color-text-input-stroke-error)]';
+  'shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-error)] focus-within:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)]';
 
 const outlineFieldStrokeFocusVisibleHide =
   'has-[textarea[data-focus-visible]]:shadow-none has-[textarea[data-focus-visible]]:hover:shadow-none';
@@ -196,7 +196,7 @@ type TextAreaAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type TextAreaSize = VariantProps<typeof fieldShellVariants>['size'];
 
 const textareaElementVariants = cva(
-  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {

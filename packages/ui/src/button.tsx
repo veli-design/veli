@@ -21,8 +21,8 @@ const buttonVariants = cva(
     'relative isolate inline-flex min-w-0 max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased',
     // Colors use duration-normal/ease-out; press scale uses duration-fast/ease-out-quad in both directions.
     '[transition-property:background-color,color,scale]',
-    '[transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)]',
-    '[transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+    '[transition-duration:var(--veli-duration-normal),var(--veli-duration-normal),var(--veli-duration-fast)]',
+    '[transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
     'focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
     'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
     'disabled:pointer-events-none data-[pending]:cursor-wait',
@@ -70,32 +70,32 @@ const buttonVariants = cva(
         intent: 'primary',
         appearance: 'transparent',
         className:
-          'bg-button-primary-subtle text-primary data-[hovered]:bg-button-primary-subtle-hover data-[pressed]:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-button-primary-subtle text-primary data-[hovered]:bg-button-primary-subtle-hover data-[pressed]:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       {
         intent: 'primary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       // Secondary
       {
         intent: 'secondary',
         appearance: 'fill',
         className:
-          'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--color-white)_98%,transparent)]',
+          'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--color-white)_15%,transparent)]',
+          'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--color-white)_15%,transparent)]',
+          'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       // Danger
       {
@@ -108,20 +108,20 @@ const buttonVariants = cva(
         intent: 'danger',
         appearance: 'transparent',
         className:
-          'bg-button-danger-subtle text-danger data-[hovered]:bg-button-danger-subtle-hover data-[pressed]:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-button-danger-subtle text-danger data-[hovered]:bg-button-danger-subtle-hover data-[pressed]:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       {
         intent: 'danger',
         appearance: 'ghost',
         className:
-          'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       // Accent (fill only in Figma)
       {
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--color-accent-400)] dark:[--button-ripple-color:var(--color-accent-1100)]',
+          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
       },
       { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
       { size: 'sm', iconOnly: true, className: 'h-9 w-9' },

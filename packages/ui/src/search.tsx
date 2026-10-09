@@ -18,10 +18,10 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
 import { twMerge } from 'tailwind-merge';
-import { assignRef, type RefProp } from './ref';
+import { assignRef, type RefProp } from './ref.js';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
@@ -185,7 +185,7 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
   {
     variants: {
       size: {

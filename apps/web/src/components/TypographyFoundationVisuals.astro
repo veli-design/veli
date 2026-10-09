@@ -27,28 +27,28 @@ const families = [
     detail: 'Regular · Medium · Semibold · Bold',
     sample: 'Aa Bb Cc 123',
     lang: 'en',
-    family: 'var(--font-sans)',
+    family: 'var(--veli-font-sans)',
   },
   {
     name: 'MV Aaamu FK',
     detail: 'Bold · Display',
     sample: 'އެމްވީ އާންމު',
     lang: 'dv',
-    family: 'var(--font-dhivehi-aaamu)',
+    family: 'var(--veli-font-dhivehi-aaamu)',
   },
   {
     name: 'MV A Waheed',
     detail: 'Bold · Headings and labels',
     sample: 'އެމްވީ އޭ ވަހީދު',
     lang: 'dv',
-    family: 'var(--font-dhivehi-waheed)',
+    family: 'var(--veli-font-dhivehi-waheed)',
   },
   {
     name: 'MV Faseyha',
     detail: 'Regular · Body and caption',
     sample: 'އެމްވީ ފަސޭހަ',
     lang: 'dv',
-    family: 'var(--font-dhivehi-faseyha)',
+    family: 'var(--veli-font-dhivehi-faseyha)',
   },
 ];
 
@@ -121,7 +121,7 @@ const rhythm = [
             class="type-scale__dhivehi"
             lang="dv"
             dir="rtl"
-            style={`font-family: var(--font-dhivehi-${role.family}); font-size: ${role.dhivehi[0]}px; line-height: ${role.dhivehi[1]}%`}
+            style={`font-family: var(--veli-font-dhivehi-${role.family}); font-size: ${role.dhivehi[0]}px; line-height: ${role.dhivehi[1]}%`}
           >
             ބޮޑު ބާޒާރުގައި ހުންނަ މޮޅު އެއްޗެއް
           </p>
@@ -173,7 +173,7 @@ const rhythm = [
   }
 
   .families {
-    border-top: 1px solid var(--color-border-base-subtle);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .families article {
@@ -182,7 +182,7 @@ const rhythm = [
     grid-template-columns: minmax(170px, 0.55fr) minmax(0, 1fr);
     align-items: center;
     gap: 28px;
-    border-bottom: 1px solid var(--color-border-base-subtle);
+    border-bottom: 1px solid var(--veli-color-border-base-subtle);
     padding-block: 22px;
   }
 
@@ -194,7 +194,7 @@ const rhythm = [
   }
 
   .families h3 {
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
     font-size: 15px;
     font-weight: 600;
     line-height: 22px;
@@ -204,14 +204,14 @@ const rhythm = [
   .type-scale header span,
   .weights span {
     margin-top: 5px;
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     font-size: 12px;
     line-height: 18px;
   }
 
   .families__sample {
     overflow: hidden;
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
     font-size: 34px;
     line-height: 1.5;
     text-overflow: ellipsis;
@@ -220,7 +220,7 @@ const rhythm = [
 
   .type-scale {
     overflow: hidden;
-    border: 1px solid var(--color-border-base-subtle);
+    border: 1px solid var(--veli-color-border-base-subtle);
     border-radius: 8px;
   }
 
@@ -231,11 +231,11 @@ const rhythm = [
   }
 
   .type-scale__header {
-    background: var(--color-bg-secondary-subtle-default);
+    background: var(--veli-color-bg-secondary-subtle-default);
   }
 
   .type-scale__header span {
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     padding: 10px 14px;
     font-size: 11px;
     font-weight: 600;
@@ -245,7 +245,7 @@ const rhythm = [
   }
 
   .type-scale article {
-    border-top: 1px solid var(--color-border-base-subtle);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .type-scale header,
@@ -255,12 +255,12 @@ const rhythm = [
   }
 
   .type-scale header {
-    background: color-mix(in srgb, var(--color-bg-secondary-subtle-default) 66%, transparent);
+    background: color-mix(in srgb, var(--veli-color-bg-secondary-subtle-default) 66%, transparent);
   }
 
   .type-scale header strong {
     display: block;
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
     font-size: 13px;
     line-height: 20px;
   }
@@ -272,20 +272,20 @@ const rhythm = [
   .type-scale article > p {
     overflow: hidden;
     align-self: center;
-    color: var(--color-text-base-default);
+    color: var(--veli-color-text-base-default);
     font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .type-scale__dhivehi {
-    border-inline-start: 1px solid var(--color-border-base-subtle);
+    border-inline-start: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .weights {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-block: 1px solid var(--color-border-base-subtle);
+    border-block: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .weights div {
@@ -293,11 +293,11 @@ const rhythm = [
   }
 
   .weights div + div {
-    border-inline-start: 1px solid var(--color-border-base-subtle);
+    border-inline-start: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .weights p {
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
     font-size: 25px;
     line-height: 34px;
   }
@@ -307,7 +307,7 @@ const rhythm = [
   }
 
   .rhythm {
-    border-top: 1px solid var(--color-border-base-subtle);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
   }
 
   .rhythm div {
@@ -315,7 +315,7 @@ const rhythm = [
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 20px;
-    border-bottom: 1px solid var(--color-border-base-subtle);
+    border-bottom: 1px solid var(--veli-color-border-base-subtle);
     padding-block: 13px;
   }
 
@@ -327,7 +327,7 @@ const rhythm = [
 
   .rhythm dt > span {
     min-width: 56px;
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     font-size: 11px;
     font-weight: 600;
     line-height: 16px;
@@ -335,15 +335,15 @@ const rhythm = [
   }
 
   .rhythm code {
-    color: var(--color-text-base-emphasis);
-    font-family: var(--font-mono), ui-monospace, monospace;
+    color: var(--veli-color-text-base-emphasis);
+    font-family: var(--veli-font-mono), ui-monospace, monospace;
     font-size: 12px;
   }
 
   .rhythm dd {
     margin: 0;
-    color: var(--color-text-base-muted);
-    font-family: var(--font-mono), ui-monospace, monospace;
+    color: var(--veli-color-text-base-muted);
+    font-family: var(--veli-font-mono), ui-monospace, monospace;
     font-size: 12px;
   }
 
@@ -362,7 +362,7 @@ const rhythm = [
     }
 
     .type-scale__dhivehi {
-      border-top: 1px solid var(--color-border-base-subtle);
+      border-top: 1px solid var(--veli-color-border-base-subtle);
       border-inline-start: 0;
     }
 
@@ -371,12 +371,12 @@ const rhythm = [
     }
 
     .weights div:nth-child(3) {
-      border-top: 1px solid var(--color-border-base-subtle);
+      border-top: 1px solid var(--veli-color-border-base-subtle);
       border-inline-start: 0;
     }
 
     .weights div:nth-child(4) {
-      border-top: 1px solid var(--color-border-base-subtle);
+      border-top: 1px solid var(--veli-color-border-base-subtle);
     }
   }
 </style>

@@ -22,7 +22,7 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
 
 ```css
 :root {
-  --veli-header-ease-drawer: var(--ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
+  --veli-header-ease-drawer: var(--veli-ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
   --veli-header-site-tile-gradient: var(
     --site-tile-gradient,
     radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%)

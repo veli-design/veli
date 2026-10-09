@@ -365,14 +365,19 @@ function PanelContent(props: AccountPanelProps) {
               <span className="type-body-sm-regular pb-4 text-base-default">
                 {appearance.label}
               </span>
-              <div className="relative isolate flex rounded-full bg-neutral-alpha-200 p-0.5 [--account-panel-direction:1] rtl:[--account-panel-direction:-1]">
+              <div
+                className="relative isolate grid rounded-full bg-neutral-alpha-200 p-0.5 [--account-panel-direction:1] rtl:[--account-panel-direction:-1]"
+                style={{
+                  gridTemplateColumns: `repeat(${appearance.options.length}, minmax(0, 1fr))`,
+                }}
+              >
                 {appearanceIndex >= 0 && (
                   <span
                     aria-hidden="true"
                     data-account-appearance-pill
                     className="pointer-events-none absolute inset-y-0.5 start-0.5 rounded-full bg-button-secondary-subtle transition-transform duration-slow ease-[cubic-bezier(0.34,1.2,0.64,1)] motion-reduce:transition-none"
                     style={{
-                      width: `calc((100% - var(--spacing)) / ${appearance.options.length})`,
+                      width: `calc((100% - var(--veli-spacing-1)) / ${appearance.options.length})`,
                       transform: `translateX(calc(${appearanceIndex} * 100% * var(--account-panel-direction)))`,
                     }}
                   />
@@ -434,7 +439,7 @@ function MobileSheetSurface({ props }: { props: AccountPanelProps }) {
       data-account-sheet
       lang={lang}
       dir={direction}
-      className={`relative flex max-h-[85svh] w-full flex-col overflow-hidden rounded-t-4xl bg-surface-raised text-base-default shadow-sm outline-none transition-[translate,transform,opacity] [transition-duration:var(--duration-slow),var(--duration-normal),var(--duration-slow)] ease-out data-[entering]:translate-y-full data-[entering]:opacity-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0 data-[exiting]:[transition-duration:var(--duration-normal)] data-[dragging=true]:transition-none motion-reduce:transition-none ${props.panelClassName ?? ''}`}
+      className={`relative flex max-h-[85svh] w-full flex-col overflow-hidden rounded-t-4xl bg-surface-raised text-base-default shadow-sm outline-none transition-[translate,transform,opacity] [transition-duration:var(--veli-duration-slow),var(--veli-duration-normal),var(--veli-duration-slow)] ease-out data-[entering]:translate-y-full data-[entering]:opacity-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0 data-[exiting]:[transition-duration:var(--veli-duration-normal)] data-[dragging=true]:transition-none motion-reduce:transition-none ${props.panelClassName ?? ''}`}
       style={{ transform: `translateY(${offset}px)` }}
       data-dragging={dragging}
     >

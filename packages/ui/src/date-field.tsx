@@ -12,7 +12,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { DateSegments, fieldRootVariants, fieldShellVariants } from './date-shared';
+import { DateSegments, fieldRootVariants, fieldShellVariants } from './date-shared.js';
 import {
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
@@ -21,9 +21,9 @@ import {
   fieldHeaderSupplementaryVariants,
   getFieldOptionalLabel,
   shouldShowFieldOptional,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 type DateFieldAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type DateFieldSize = VariantProps<typeof fieldShellVariants>['size'];

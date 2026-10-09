@@ -1,111 +1,56 @@
 # @tradenetcorp/veli-tokens
 
-Design tokens package for the Veli Design System, built with Terrazo and DTCG specification.
+Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come from one normalized graph.
 
-## Structure
+## Consumption
 
-\`\`\`
-packages/tokens/
-├── src/
-│ └── design.tokens.json # Source of truth (DTCG tokens from Figma)
-├── dist/ # Generated outputs (built automatically)
-│ ├── tokens.css # CSS variables
-│ └── tailwind-theme.css # Tailwind v4 theme with dark mode support
-├── terrazzo.config.js
-└── package.json
-\`\`\`
+```css
+/* Plain CSS */
+@import '@tradenetcorp/veli-tokens/css';
 
-## Usage
+.card {
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-default);
+  border-radius: var(--veli-radius-default);
+}
+```
 
-### In a Tailwind v4 Project
+```css
+/* Tailwind v4: import Tailwind first. */
+@import 'tailwindcss';
+@import '@tradenetcorp/veli-tokens/tailwind';
+```
 
-\`\`\`bash
-npm install @tradenetcorp/veli-tokens
+The Tailwind adapter imports `tokens.css` and references its variables. Existing Tailwind utility names remain available, including `text-base-default`, `type-body-sm-regular`, `duration-fast`, and property-specific background/border/ring aliases. `grid-style-xs` through `grid-style-2xl` reproduce Figma columns, gaps and inner margins; responsive variants such as `md:grid-style-md` work normally.
 
-# or
+Generic font-size utilities `text-xs` through `text-9xl` reference canonical English regular typography for size, line height and letter spacing. Their mappings are: xs → caption, sm/base/lg → body sm/md/lg, xl → subtitle, 2xl/3xl → title 2/1, 4xl/5xl/6xl/7xl → heading 4/3/2/1, and 8xl/9xl → display md/lg. Font family and weight remain independently composable; explicit leading and tracking utilities override the companions. These generic utilities do not switch typography with language. Use `type-*` for complete bilingual Figma styles, which switch all five properties under `:lang(dv)` (set `lang="dv"`, not only `dir="rtl"`).
 
-pnpm add @tradenetcorp/veli-tokens
-\`\`\`
+Fractional spacing classes such as `gap-1.5` and `p-1.5` remain available. In plain CSS, use `var(--veli-spacing-1-5)` (6px); canonical variable names use dashes instead of decimal points or underscores.
 
-Import the Tailwind theme in your CSS:
+Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind share this contract. A host that offers system preference should resolve that preference to one of these classes; `VeliProvider` handles this for React applications. Tokens use native OKLCH without gamut clipping or legacy fallbacks, matching Tailwind v4's modern browser baseline: Chrome 111+, Safari 16.4+, Firefox 128+.
 
-\`\`\`css
-@import "@tradenetcorp/veli-tokens/tailwind";
+`@tradenetcorp/veli-tokens/tokens` exports normalized DTCG JSON. `/motion-tokens` exports its duration, delay and easing subset. Aliases reference canonical paths; consumers can resolve them with a DTCG parser. `$extensions.mode.Dark` provides the alternate value; the default `$value` is Light. `org.veli` extensions retain source/style provenance and relative CSS intent that cannot be expressed with DTCG's px/rem dimensions.
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-\`\`\`
+## Authoring and build
 
-This automatically includes:
+1. Export Variables and Typography/Grid/Effect/Color Styles with TokensBruecke into `src/figma.tokens.json`.
+2. Keep authored `OKLCH light: oklch(...)` and `OKLCH dark: oklch(...)` descriptions in Figma. The pipeline promotes these values, validates their fallback colors and preserves their exact CSS spelling. It rejects missing chromatic descriptions; achromatic fallback values use a proper color-space conversion.
+3. Maintain code-owned motion primitives in `src/motion.tokens.json` using typed duration values and cubic Bézier arrays. Figma wins if it later supplies the same motion key.
+4. Run `corepack pnpm --filter @tradenetcorp/veli-tokens tokens:sync` and review both input and canonical `src/design.tokens.json` changes.
+5. Run `tokens:check`, `test` and `build` through the same package filter.
 
-- ✅ All color tokens (gray, blue, green, orange, red, bg, fg)
-- ✅ Typography tokens (font families, type scale)
-- ✅ Dark mode support via \`dark:\` variant
+Normal package builds read committed canonical data and never rewrite source. Terrazzo 2.7.1 validates the graph and its CSS plugin generates canonical declarations. The Veli adapter plugin generates Tailwind mappings, utilities, JSON exports and coverage. There are no prebuild/postbuild hooks or generated CSS rewrites. Query thresholds are the deliberate exception to variable references: viewport/container conditions use literals generated from the same graph because CSS variables cannot supply their query values.
 
-Or use specific exports:
+Storybook and Astro development use the shared Vite playground plugin. It regenerates ignored CSS automatically and watches token inputs; UI changes use source modules. No manual package build or release is necessary. Invalid input produces a Vite error overlay while retaining the last successful output.
 
-\`\`\`javascript
-// Import the Tailwind theme CSS
-import '@tradenetcorp/veli-tokens/tailwind';
+## Migration from tokens 0.8
 
-// Import CSS variables
-import '@tradenetcorp/veli-tokens/css';
+Plain CSS variables now use the `--veli-*` namespace. Tailwind's own `--color-*`, `--text-*` and other theme variables remain adapter interfaces; use canonical variables in authored CSS. For example, `--color-text-base-default` becomes `--veli-color-text-base-default`, and `--text-sm--line-height` now references `--veli-typography-en-body-sm-regular-line-height` (a unitless ratio).
 
-// Access raw DTCG tokens
-import tokens from '@tradenetcorp/veli-tokens/tokens';
-\`\`\`
+Public JSON now contains normalized DTCG rather than the raw exporter file. Color tiers are flattened (`color.primitives.blue.800` becomes `color.blue.800`); case twins become one lowercase `default`; hybrid value/group nodes become explicit `default` leaves. Typography lives under `typography.en`, `typography.dv` and auxiliary groups. Grids use standard number/dimension leaves under `grid`; effects include all shadows and focus rings. Exporter-only typography details are retained as namespaced metadata, not invalid composite properties. Documentation-only `_docs` colors are excluded explicitly.
 
-### Available Tokens
+Type utilities now follow Figma composite line heights and letter spacing rather than approximating them through the text ramp. These are intentional visual corrections: review wrapping and alignment when upgrading.
 
-Your design tokens include:
+Generic `text-*` leading and tracking now use the exact English regular style values too: `text-sm` uses 1.45 leading, and `text-xs` uses 1.34 leading and 0.015em tracking. Review generic text wrapping when upgrading.
 
-**Colors:**
-
-- Base colors: \`gray\`, \`blue\`, \`green\`, \`orange\`, \`red\` (100-1200 scale + alpha variants)
-- Semantic colors: \`bg\` (surface, button, status, input, primary, secondary, danger, success)
-- Text/Icon colors: \`fg\` (text, icons, border with multiple contrast levels)
-
-**Typography:**
-
-- Font families: \`Sans-serif\` (Inter), \`Monospace\` (IBM Plex Mono), \`Dhivehi\` (MV Typewriter plus generated Dhivehi family stacks)
-- Type scale: Display, Heading, Body, etc.
-- Semantic \`type-\*\` utilities with \`:lang(dv)\` overrides for exported Dhivehi typography styles
-
-**Dark Mode:**
-All tokens include Light and Dark mode values, automatically handled via \`dark:\` variant.
-
-## Development
-
-\`\`\`bash
-
-# Build tokens
-
-pnpm build
-
-# Watch mode (rebuilds on changes)
-
-pnpm dev
-\`\`\`
-
-## Refreshing from Figma
-
-Replace `src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including styles. Run `corepack pnpm --filter @tradenetcorp/veli-tokens build` from the repository root. Generated CSS must not be edited manually.
-
-The build keeps the export intact, excludes Figma-only annotations and grid composites from CSS, and normalizes `highContrast` to `high-contrast` in generated Alert utility names. Existing code-owned motion primitives are supplied by `src/motion.tokens.json`. The public `@tradenetcorp/veli-tokens/tokens` entry point uses a generated DTCG bundle that combines the unchanged Figma export with these primitives, preserving existing JSON paths. A future Figma motion collection takes precedence over the code-owned defaults. The primitives are also available separately from `@tradenetcorp/veli-tokens/motion-tokens`.
-
-## Token Source
-
-The source of truth is \`src/design.tokens.json\` in DTCG format, exported from Figma.
-
-Generated files in \`dist/\` are automatically built on publish via the \`prepublishOnly\` hook.
-
-## Configuration
-
-The \`terrazzo.config.js\` maps your DTCG tokens to Tailwind v4 theme CSS. The current configuration:
-
-- Maps \`color.\*\` tokens to Tailwind color variables
-- Maps \`font.\*\`, \`font-weight.\*\`, \`text.\*\`, \`leading.\*\`, and \`tracking.\*\` to typography theme variables
-- Maps \`shadow.\*\`, \`ease.\*\`, \`duration.\*\`, and \`delay.\*\` to effect and motion theme variables
-- Maps \`spacing.\*\`, \`radius.\*\`, \`blur.\*\`, \`breakpoints.\*\` (as \`breakpoint\`), and \`container.\*\` to layout and shape theme variables
-- Generates dark mode variants from your token's \`Dark\` mode values
+The conflicting shorthand color alias `text-base` is reserved for font size. Use `text-base-default` for the default text color.

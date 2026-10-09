@@ -15,6 +15,8 @@ jobs:
       contents: write
       packages: write
       pull-requests: write
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -48,3 +50,40 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Record published release snapshot
+        if: steps.changesets.outputs.published == 'true'
+        run: node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.changesets.outputs.published == 'true'
+        with:
+          name: release-manifest
+          path: ${{ runner.temp }}/release-manifest.json
+          retention-days: 90
+
+      - name: Retain snapshot with the published release
+        if: steps.changesets.outputs.published == 'true'
+        uses: actions/github-script@v7
+        env:
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const published = JSON.parse(process.env.PUBLISHED_PACKAGES);
+            const { name, version } = published[0];
+            const { data: release } = await github.rest.repos.getReleaseByTag({ ...context.repo, tag: `${name}@${version}` });
+            await github.rest.repos.uploadReleaseAsset({ ...context.repo, release_id: release.id, name: 'release-manifest.json', data: fs.readFileSync(`${process.env.RUNNER_TEMP}/release-manifest.json`) });
+
+  deploy-sites:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+      packages: read
+      actions: read
+    uses: ./.github/workflows/deploy-release-sites.yml
+    with:
+      source-ref: ${{ github.sha }}
+      manifest-run-id: ${{ github.run_id }}
+    secrets: inherit

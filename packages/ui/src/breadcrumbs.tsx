@@ -13,8 +13,8 @@ import {
 import { cva } from 'class-variance-authority';
 import { CaretLeft, CaretRight } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
-import { useVeliLanguage } from './provider';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
+import { useVeliLanguage } from './provider.js';
 
 const breadcrumbsRootVariants = cva(
   'm-0 flex flex-wrap items-center gap-1.5 list-none p-0 antialiased',
@@ -24,8 +24,7 @@ const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5
 
 const breadcrumbInteractiveTypographyClassName = 'type-body-sm-medium';
 
-const breadcrumbCurrentTypographyClassName =
-  'type-body-sm-regular [&:lang(dv)]:type-body-sm-medium';
+const breadcrumbCurrentTypographyClassName = 'type-body-sm-medium';
 
 const breadcrumbInteractiveTextClassName =
   'text-base-muted hover:text-base-default active:text-base-default focus-visible:text-base-default';

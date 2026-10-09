@@ -52,6 +52,14 @@ export function CreateAction() {
 }
 ```
 
+## Next.js and Vitest
+
+The release containing the ESM packaging fix (planned UI **0.15.0**) ships explicit `.js` relative imports. After upgrading, remove `@tradenetcorp/veli-ui` from Next.js `transpilePackages` and Vitest `test.server.deps.inline` if those entries were added to work around Veli module resolution. Keep entries required by other packages.
+
+Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
+
+See the [consumer investigation and reproduction matrix](../../docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
+
 ## Troubleshooting
 
 | Problem                               | Fix                                                                                      |

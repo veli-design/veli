@@ -9,8 +9,8 @@ import {
   Text,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { FieldMessage } from './field-message';
-import { hasRenderableMessage } from './field-shared';
+import { FieldMessage } from './field-message.js';
+import { hasRenderableMessage } from './field-shared.js';
 import { twMerge } from 'tailwind-merge';
 
 const radioGroupVariants = cva('inline-flex flex-col gap-3');

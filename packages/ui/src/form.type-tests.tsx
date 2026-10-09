@@ -1,14 +1,14 @@
 import type { CalendarDate } from '@internationalized/date';
-import { Checkbox, CheckboxGroup } from './checkbox';
-import { ComboBox } from './combobox';
-import { DateField } from './date-field';
-import { DatePicker } from './date-picker';
-import { dateValueToIsoDate, isoDateToDateValue, toErrorMessage } from './form';
-import { Input } from './input';
-import { RadioGroup } from './radio';
-import { Select } from './select';
-import { TagGroup } from './tags';
-import { TextArea } from './textarea';
+import { Checkbox, CheckboxGroup } from './checkbox.js';
+import { ComboBox } from './combobox.js';
+import { DateField } from './date-field.js';
+import { DatePicker } from './date-picker.js';
+import { dateValueToIsoDate, isoDateToDateValue, toErrorMessage } from './form.js';
+import { Input } from './input.js';
+import { RadioGroup } from './radio.js';
+import { Select } from './select.js';
+import { TagGroup } from './tags.js';
+import { TextArea } from './textarea.js';
 
 /** Mirrors React Hook Form's `ControllerRenderProps`. */
 interface RhfField<TValue> {

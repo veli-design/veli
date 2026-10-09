@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
+import { tokenFixture } from './token-fixture.mjs';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
 
 const target = process.env.BLOCKS_CONSUMER_DIR
@@ -71,7 +72,20 @@ const env = {
   NEXT_TELEMETRY_DISABLED: '1',
   NPM_CONFIG_USERCONFIG: undefined,
 };
-if (!env.NODE_AUTH_TOKEN)
+const tarballs = process.env.VELI_TARBALLS ? JSON.parse(process.env.VELI_TARBALLS) : null;
+if (tarballs) {
+  const filename = resolve(target, 'package.json');
+  const manifest = JSON.parse(readFileSync(filename, 'utf8'));
+  for (const [name, path] of Object.entries(tarballs))
+    manifest.dependencies[name] = `file:${resolve(path)}`;
+  manifest.pnpm = {
+    overrides: Object.fromEntries(
+      Object.entries(tarballs).map(([name, path]) => [name, `file:${resolve(path)}`]),
+    ),
+  };
+  writeFileSync(filename, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+if (!env.NODE_AUTH_TOKEN && !tarballs)
   throw new Error(`Set NODE_AUTH_TOKEN with package-read access. Fixture retained at ${target}`);
 const npmConfigDirectory = mkdtempSync(resolve(tmpdir(), 'veli-blocks-npmrc-'));
 const npmConfigPath = resolve(npmConfigDirectory, 'npmrc');
@@ -88,9 +102,19 @@ for (const args of [
   // The fixture is intentionally materialized in a temporary directory and has no lockfile.
   ['pnpm', 'install', '--no-frozen-lockfile'],
   ['pnpm', 'build'],
-  ['pnpm', 'exec', 'playwright', 'install', 'chromium'],
+  [
+    'pnpm',
+    'exec',
+    'playwright',
+    'install',
+    ...(process.platform === 'linux' ? ['--with-deps'] : []),
+    'chromium',
+    'firefox',
+    'webkit',
+  ],
   ['pnpm', 'test'],
 ]) {
+  if (args[1] === 'test') await tokenFixture(target);
   const result = spawnSync('corepack', args, { cwd: target, env, stdio: 'inherit' });
   if (result.status !== 0)
     throw new Error(`Consumer check failed: ${args.join(' ')}. Fixture retained at ${target}`);

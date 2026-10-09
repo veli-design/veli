@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Switch, type SwitchProps } from './switch';
+import { Switch, type SwitchProps } from './switch.js';
 
 export function SwitchTypeExpectations() {
   const rootRef = useRef<HTMLLabelElement>(null);

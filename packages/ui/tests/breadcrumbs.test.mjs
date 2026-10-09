@@ -45,7 +45,7 @@ test('Breadcrumbs use the Figma typography and reduced-motion contracts', () => 
     source,
     /focus-visible:outline-2 focus-visible:outline-border-focus focus-visible:outline-offset-2/,
   );
-  assert.match(source, /type-body-sm-regular \[&:lang\(dv\)\]:type-body-sm-medium/);
+  assert.match(source, /const breadcrumbCurrentTypographyClassName = 'type-body-sm-medium';/);
   assert.match(source, /breadcrumbCurrentTypographyClassName} text-base-default/);
   assert.match(
     source,

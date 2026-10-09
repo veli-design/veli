@@ -11,8 +11,8 @@ import {
 import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
-import { useVeliLanguage } from './provider';
+import { Button } from './button.js';
+import { useVeliLanguage } from './provider.js';
 
 /** Minimum inset of the arrow from the popover edge (keeps it off rounded corners). */
 const POPOVER_ARROW_BOUNDARY_OFFSET = 20;
@@ -48,11 +48,11 @@ function popoverArrowFillClass(intent: PopoverIntent | null | undefined) {
 
   switch (resolvedIntent) {
     case 'primary':
-      return 'fill-[var(--color-popover-bg-primary)]';
+      return 'fill-[var(--veli-color-popover-bg-primary)]';
     case 'secondary':
-      return 'fill-[var(--color-popover-bg-secondary)]';
+      return 'fill-[var(--veli-color-popover-bg-secondary)]';
     default:
-      return 'fill-[var(--color-popover-bg-tertiary)]';
+      return 'fill-[var(--veli-color-popover-bg-tertiary)]';
   }
 }
 

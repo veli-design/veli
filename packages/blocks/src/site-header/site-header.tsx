@@ -458,6 +458,12 @@ export function SiteHeader({
   }, [floatingLayout]);
 
   const closeMenu = useCallback(() => {
+    const active = document.activeElement;
+    if (!active || active === document.body || surfaceRef.current?.contains(active)) {
+      surfaceRef.current
+        ?.querySelector<HTMLElement>('[data-header-logo]')
+        ?.focus({ preventScroll: true });
+    }
     setIsExpanded(false);
     setIsOpen(false);
     if (prefersReducedMotion) {
@@ -602,7 +608,7 @@ export function SiteHeader({
               : 'top-0 h-[72px] w-full max-w-[100vw]',
           isExpanded ? 'rounded-[24px]' : floatingLayout ? 'rounded-[36px]' : 'rounded-none',
           isExpanded || showFloatingChrome
-            ? 'shadow-[0_24px_64px_var(--color-effects-shadow-depth-200)]'
+            ? 'shadow-[0_24px_64px_var(--veli-color-effects-shadow-depth-200)]'
             : 'shadow-none',
           showFloatingChrome && !isExpanded
             ? 'bg-surface-raised/90 shadow-lg backdrop-blur-[18px]'

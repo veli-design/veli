@@ -23,12 +23,12 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
-import { type RefProp } from './ref';
+import { type RefProp } from './ref.js';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 

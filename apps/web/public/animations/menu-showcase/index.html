@@ -7,23 +7,23 @@
     <style>
       :root {
         color-scheme: light;
-        --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-        --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-        --color-bg-surface-base: #efefef;
-        --color-bg-surface-raised: #ffffff;
-        --color-menu-bg: #ffffff;
-        --color-menu-hover: rgb(17 32 0 / 0.05);
-        --color-menu-pressed: rgb(17 32 0 / 0.07);
-        --color-border-base-subtle: rgb(17 32 0 / 0.13);
-        --color-border-focus: #008f8d;
-        --color-text-base-strong: #353633;
-        --color-text-base-inverted: #fbfcfb;
-        --color-icon-base-muted: #50514d;
-        --color-text-danger-muted: #d5110e;
-        --color-status-info-emphasis: #0782cf;
-        --color-status-indigo-emphasis: #7950d8;
-        --color-effects-shadow-depth-100: rgb(0 0 0 / 0.08);
-        --color-effects-shadow-frame: rgb(0 0 0 / 0.05);
+        --veli-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        --veli-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+        --veli-color-bg-surface-base: #efefef;
+        --veli-color-bg-surface-raised: #ffffff;
+        --veli-color-menu-bg: #ffffff;
+        --veli-color-menu-hover: rgb(17 32 0 / 0.05);
+        --veli-color-menu-pressed: rgb(17 32 0 / 0.07);
+        --veli-color-border-base-subtle: rgb(17 32 0 / 0.13);
+        --veli-color-border-focus: #008f8d;
+        --veli-color-text-base-strong: #353633;
+        --veli-color-text-base-inverted: #fbfcfb;
+        --veli-color-icon-base-muted: #50514d;
+        --veli-color-text-danger-muted: #d5110e;
+        --veli-color-status-info-emphasis: #0782cf;
+        --veli-color-status-indigo-emphasis: #7950d8;
+        --veli-color-effects-shadow-depth-100: rgb(0 0 0 / 0.08);
+        --veli-color-effects-shadow-frame: rgb(0 0 0 / 0.05);
       }
       * {
         box-sizing: border-box;
@@ -36,14 +36,14 @@
       body {
         margin: 0;
         overflow: hidden;
-        background: var(--color-bg-surface-base);
+        background: var(--veli-color-bg-surface-base);
         font-family: Inter, Arial, sans-serif;
       }
       .viewport {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: var(--color-bg-surface-base);
+        background: var(--veli-color-bg-surface-base);
         position: relative;
       }
       .canvas {
@@ -53,7 +53,7 @@
         left: 50%;
         top: 50%;
         transform-origin: center;
-        background: var(--color-bg-surface-base);
+        background: var(--veli-color-bg-surface-base);
         overflow: hidden;
       }
       /* The panel itself (x=12..238, y=6..274) is centered at 960,540. */
@@ -81,19 +81,19 @@
         overflow: visible;
       }
       .source [fill='white'] {
-        fill: var(--color-menu-bg);
+        fill: var(--veli-color-menu-bg);
       }
       .source [fill='#50514D'] {
-        fill: var(--color-icon-base-muted);
+        fill: var(--veli-color-icon-base-muted);
       }
       .source [fill='#353633'] {
-        fill: var(--color-text-base-strong);
+        fill: var(--veli-color-text-base-strong);
       }
       .source [fill='#D5110E'] {
-        fill: var(--color-text-danger-muted);
+        fill: var(--veli-color-text-danger-muted);
       }
       .source [stroke='#112000'] {
-        stroke: var(--color-border-base-subtle);
+        stroke: var(--veli-color-border-base-subtle);
         stroke-opacity: 1;
       }
       .spec {
@@ -106,12 +106,12 @@
         pointer-events: none;
       }
       .spec .ink {
-        stroke: var(--color-status-info-emphasis);
+        stroke: var(--veli-color-status-info-emphasis);
         stroke-width: 0.65;
         fill: none;
       }
       .spec .guide {
-        stroke: var(--color-status-info-emphasis);
+        stroke: var(--veli-color-status-info-emphasis);
         stroke-width: 0.5;
         stroke-dasharray: 2 2;
         opacity: 0.65;
@@ -119,41 +119,41 @@
       .spec text {
         font-family: Arial, sans-serif;
         font-size: 7px;
-        fill: var(--color-text-base-inverted);
+        fill: var(--veli-color-text-base-inverted);
         text-anchor: middle;
         dominant-baseline: central;
       }
       .spec .tag {
-        fill: var(--color-status-info-emphasis);
+        fill: var(--veli-color-status-info-emphasis);
       }
       .spec .note {
-        fill: var(--color-status-info-emphasis);
+        fill: var(--veli-color-status-info-emphasis);
         font-size: 7px;
       }
       .spec .measure {
         opacity: 0;
       }
       .spec .radius-inner {
-        stroke: var(--color-status-indigo-emphasis);
+        stroke: var(--veli-color-status-indigo-emphasis);
       }
       .spec .radius-label {
         font-size: 7.5px;
       }
       .spec .radius-tag {
-        fill: var(--color-status-indigo-emphasis);
+        fill: var(--veli-color-status-indigo-emphasis);
       }
       .spec .ink {
         stroke-linecap: round;
         stroke-linejoin: round;
       }
       .spec [stroke='#0796ee'] {
-        stroke: var(--color-status-info-emphasis);
+        stroke: var(--veli-color-status-info-emphasis);
       }
       .spec [fill='#0796ee'] {
-        fill: var(--color-status-info-emphasis);
+        fill: var(--veli-color-status-info-emphasis);
       }
       .hover-fill {
-        fill: var(--color-menu-hover);
+        fill: var(--veli-color-menu-hover);
         opacity: 0;
       }
       .controls {
@@ -171,22 +171,22 @@
           sans-serif;
         min-height: 36px;
         padding: 0 14px;
-        border: 1px solid var(--color-border-base-subtle);
+        border: 1px solid var(--veli-color-border-base-subtle);
         border-radius: 7px;
-        background: var(--color-bg-surface-raised);
-        color: var(--color-text-base-strong);
+        background: var(--veli-color-bg-surface-raised);
+        color: var(--veli-color-text-base-strong);
         cursor: pointer;
         box-shadow:
-          0 2px 8px var(--color-effects-shadow-depth-100),
-          0 0 1px var(--color-effects-shadow-frame);
+          0 2px 8px var(--veli-color-effects-shadow-depth-100),
+          0 0 1px var(--veli-color-effects-shadow-frame);
       }
       button[aria-pressed='true'] {
-        background: var(--color-menu-pressed);
-        color: var(--color-text-base-strong);
-        border-color: var(--color-border-base-subtle);
+        background: var(--veli-color-menu-pressed);
+        color: var(--veli-color-text-base-strong);
+        border-color: var(--veli-color-border-base-subtle);
       }
       button:focus-visible {
-        outline: 2px solid var(--color-border-focus);
+        outline: 2px solid var(--veli-color-border-focus);
         outline-offset: 3px;
       }
       button:active {
@@ -194,7 +194,7 @@
       }
       @media (hover: hover) and (pointer: fine) {
         button:hover {
-          background: var(--color-menu-hover);
+          background: var(--veli-color-menu-hover);
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -500,24 +500,24 @@
         specs = [...document.querySelectorAll('.measure')];
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');
       const computedStyles = getComputedStyle(document.documentElement),
-        out = computedStyles.getPropertyValue('--ease-out').trim(),
-        move = computedStyles.getPropertyValue('--ease-in-out').trim();
+        out = computedStyles.getPropertyValue('--veli-ease-out').trim(),
+        move = computedStyles.getPropertyValue('--veli-ease-in-out').trim();
       const themeTokenNames = [
-        '--color-bg-surface-base',
-        '--color-bg-surface-raised',
-        '--color-menu-bg',
-        '--color-menu-hover',
-        '--color-menu-pressed',
-        '--color-border-base-subtle',
-        '--color-border-focus',
-        '--color-text-base-strong',
-        '--color-text-base-inverted',
-        '--color-icon-base-muted',
-        '--color-text-danger-muted',
-        '--color-status-info-emphasis',
-        '--color-status-indigo-emphasis',
-        '--color-effects-shadow-depth-100',
-        '--color-effects-shadow-frame',
+        '--veli-color-bg-surface-base',
+        '--veli-color-bg-surface-raised',
+        '--veli-color-menu-bg',
+        '--veli-color-menu-hover',
+        '--veli-color-menu-pressed',
+        '--veli-color-border-base-subtle',
+        '--veli-color-border-focus',
+        '--veli-color-text-base-strong',
+        '--veli-color-text-base-inverted',
+        '--veli-color-icon-base-muted',
+        '--veli-color-text-danger-muted',
+        '--veli-color-status-info-emphasis',
+        '--veli-color-status-indigo-emphasis',
+        '--veli-color-effects-shadow-depth-100',
+        '--veli-color-effects-shadow-frame',
       ];
       window.addEventListener('message', (event) => {
         const message = event.data;
@@ -543,7 +543,7 @@
         width: 218,
         height: 52,
         rx: 8,
-        fill: 'var(--color-menu-hover)',
+        fill: 'var(--veli-color-menu-hover)',
         class: 'hover-fill',
       }).forEach(([k, v]) => hover.setAttribute(k, v));
       rows[0].before(hover);

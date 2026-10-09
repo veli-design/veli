@@ -1,2 +1,2 @@
-export * from './date-shared-variants';
-export { DateSegments } from './date-segments';
+export * from './date-shared-variants.js';
+export { DateSegments } from './date-segments.js';

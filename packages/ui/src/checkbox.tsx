@@ -9,9 +9,9 @@ import {
   Text,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { FieldMessage } from './field-message';
-import { hasRenderableMessage } from './field-shared';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+import { FieldMessage } from './field-message.js';
+import { hasRenderableMessage } from './field-shared.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
 
 const checkboxIndicatorSizes = {

@@ -1,5 +1,6 @@
 // @ts-check
 
+import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, realpathSync } from 'node:fs';
@@ -148,7 +149,9 @@ export function validateBlock(directory) {
           if (!manifest.dependencies[name] || /^(next|astro)(\/|$)/.test(specifier))
             fail(`Undeclared/framework import ${specifier}`);
           if (name === '@tradenetcorp/veli-ui') {
-            const uiPackage = json(resolve(packageRoot, '../ui/package.json'));
+            const uiPackage = json(
+              createRequire(import.meta.url).resolve('@tradenetcorp/veli-ui/package.json'),
+            );
             if (!isRecord(uiPackage) || !isRecord(uiPackage.exports))
               fail('Invalid Veli UI export map');
             const exports = uiPackage.exports;

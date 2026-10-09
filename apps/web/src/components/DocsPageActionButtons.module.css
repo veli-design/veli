@@ -11,9 +11,9 @@
   align-items: center;
   justify-content: center;
   height: 36px;
-  border-radius: var(--radius-md);
-  background: var(--color-neutral-alpha-200);
-  color: var(--color-text-base-strong);
+  border-radius: var(--veli-radius-default);
+  background: var(--veli-color-neutral-alpha-200);
+  color: var(--veli-color-text-base-strong);
   cursor: pointer;
 }
 
@@ -23,7 +23,7 @@
   gap: 6px;
   padding: 8px 10px;
   font-size: 14px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--veli-font-weight-medium);
   line-height: 1.45;
   white-space: nowrap;
 }
@@ -57,24 +57,24 @@
 .main[data-hovered],
 .trigger[data-hovered],
 .trigger[aria-expanded='true'] {
-  background: var(--color-menu-hover);
+  background: var(--veli-color-menu-hover);
 }
 
 .main[data-pressed],
 .trigger[data-pressed] {
-  background: var(--color-menu-pressed);
+  background: var(--veli-color-menu-pressed);
 }
 
 .main[data-focus-visible],
 .trigger[data-focus-visible] {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--veli-color-border-focus);
   outline-offset: 2px;
 }
 
 .main[data-disabled],
 .trigger[data-disabled] {
   cursor: default;
-  color: var(--color-text-disabled);
+  color: var(--veli-color-text-disabled);
 }
 
 .popover {
@@ -82,11 +82,11 @@
   max-width: calc(100vw - 32px);
   padding: 2px;
   border-radius: 10px;
-  background: var(--color-bg-surface-raised);
-  color: var(--color-text-base-strong);
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-strong);
   box-shadow:
-    0 6px 6px var(--color-effects-shadow-depth-100),
-    0 0 1.5px var(--color-effects-shadow-frame);
+    0 6px 6px var(--veli-color-effects-shadow-depth-100),
+    0 0 1.5px var(--veli-color-effects-shadow-frame);
   outline: none;
 }
 
@@ -102,5 +102,5 @@
 }
 
 .description {
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
 }

@@ -9,7 +9,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Divider } from './divider';
+import { Divider } from './divider.js';
 import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
@@ -18,9 +18,9 @@ import {
   hasRenderableMessage,
   messageVariants,
   shouldShowFieldOptional,
-} from './field-shared';
-import { getErrorMessages } from './form-shared';
-import { useVeliLanguage } from './provider';
+} from './field-shared.js';
+import { getErrorMessages } from './form-shared.js';
+import { useVeliLanguage } from './provider.js';
 
 type FieldSize = 'sm' | 'md' | 'lg';
 type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';

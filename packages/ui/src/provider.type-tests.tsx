@@ -3,7 +3,7 @@ import {
   getVeliLanguageConfig,
   useVeliColorScheme,
   useVeliLanguage,
-} from './provider';
+} from './provider.js';
 
 export function ProviderTypeExpectations() {
   const currentLanguage = useVeliLanguage();

@@ -28,7 +28,7 @@ function tokenName(
   step: (typeof STEPS)[number],
   variant: Variant,
 ) {
-  return `--color-${palette}-${variant === 'alpha' ? 'alpha-' : ''}${step}`;
+  return `--veli-color-${palette}-${variant === 'alpha' ? 'alpha-' : ''}${step}`;
 }
 
 export function PaletteExplorer() {

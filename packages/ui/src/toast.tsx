@@ -17,8 +17,8 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './button';
-import { useVeliLanguage } from './provider';
+import { Button } from './button.js';
+import { useVeliLanguage } from './provider.js';
 
 export type ToastAppearance = 'outline' | 'subtle' | 'emphasis';
 export type ToastIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
