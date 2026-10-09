@@ -69,6 +69,11 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
   await cp(resolve(root, 'pnpm-lock.yaml'), resolve(target, 'pnpm-lock.yaml'));
   const workspace = parseYAML(await readFile(resolve(root, 'pnpm-workspace.yaml'), 'utf8'));
   workspace.packages = ['apps/*', 'packages/blocks'];
+  // Deployment immediately follows publication; exempt only this release snapshot.
+  workspace.minimumReleaseAgeExclude = [
+    ...(workspace.minimumReleaseAgeExclude ?? []),
+    ...packages.map((name) => `${name}@${manifest.packages[name]}`),
+  ];
   const lock = parseYAML(await readFile(resolve(root, 'pnpm-lock.yaml'), 'utf8'));
   if (Object.keys(tarballs).length)
     for (const name of packages) workspace.overrides[name] = `file:${resolve(tarballs[name])}`;

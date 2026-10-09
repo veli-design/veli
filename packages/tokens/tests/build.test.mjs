@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { before, test } from 'node:test';
 import { parse } from '@terrazzo/parser';
@@ -258,4 +258,43 @@ test('generic Tailwind text sizes compile with exact English style companions', 
   assert.ok(
     files['tokens.css'].includes('--veli-typography-en-body-sm-regular-line-height: 1.45;'),
   );
+});
+
+test('fractional gap utilities reference valid canonical CSS variables', async () => {
+  const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
+  const { compile } = require('tailwindcss');
+  const compiler = await compile(
+    files['tailwind-theme.css'].replace("@import './tokens.css';", '') + '\n@tailwind utilities;',
+  );
+  const result = compiler.build(['gap-0.5', 'gap-1.5', 'gap-2.5', 'p-1.5']);
+  for (const [fraction, pixels] of [
+    ['0.5', 2],
+    ['1.5', 6],
+    ['2.5', 10],
+  ]) {
+    const name = `--veli-spacing-${fraction.replace('.', '-')}`;
+    assert.ok(result.includes(`.gap-${fraction.replace('.', '\\.')}`));
+    assert.ok(result.includes(`gap: var(${name});`));
+    assert.ok(files['tokens.css'].includes(`${name}: ${pixels}px;`));
+  }
+  assert.ok(result.includes('padding: var(--veli-spacing-1-5);'));
+  for (const [, name] of result.matchAll(/var\((--veli-spacing-[^),\s]+)/g))
+    assert.match(name, /^--veli-spacing-[\w-]+$/, `Invalid CSS identifier: ${name}`);
+});
+
+test('authored web spacing references resolve against canonical CSS', () => {
+  const source = new URL('../../apps/web/src/', root);
+  const declared = new Set(
+    [...files['tokens.css'].matchAll(/(--veli-spacing-[\w-]+):/g)].map((match) => match[1]),
+  );
+  let references = 0;
+  for (const file of readdirSync(source, { recursive: true })) {
+    if (!/\.(?:css|astro|tsx?)$/.test(file)) continue;
+    const contents = readFileSync(new URL(file, source), 'utf8');
+    for (const [, name] of contents.matchAll(/var\((--veli-spacing-[^),\s]+)\s*[,)]/g)) {
+      references++;
+      assert.ok(declared.has(name), `${file}: Dangling spacing reference ${name}`);
+    }
+  }
+  assert.ok(references > 0);
 });

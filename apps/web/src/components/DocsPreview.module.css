@@ -1,6 +1,6 @@
 .preview {
   width: 100%;
-  border-radius: calc(var(--veli-radius-3xl) - var(--veli-spacing-0_5));
+  border-radius: calc(var(--veli-radius-3xl) - var(--veli-spacing-0-5));
 }
 
 .canvas {
@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--veli-spacing-2);
-  padding: var(--veli-spacing-1_5) var(--veli-spacing-2_5) var(--veli-spacing-1_5)
+  padding: var(--veli-spacing-1-5) var(--veli-spacing-2-5) var(--veli-spacing-1-5)
     var(--veli-spacing-3);
   border-radius: var(--veli-radius-default);
   background: var(--veli-color-bg-surface-base);

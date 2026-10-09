@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
+import { createServer } from 'node:http';
 import test from 'node:test';
-import { parse } from 'yaml';
+import { parse, stringify } from 'yaml';
 import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -41,6 +42,10 @@ test('staged sites use registry versions, locked tools and no source fallbacks',
   assert.deepEqual(workspace.packages, ['apps/*', 'packages/blocks']);
   assert.equal(workspace.blockExoticSubdeps, true);
   assert.equal(workspace.minimumReleaseAge, 1440);
+  assert.deepEqual(
+    workspace.minimumReleaseAgeExclude,
+    Object.entries(manifest.packages).map(([name, version]) => `${name}@${version}`),
+  );
   assert.ok(
     execFileSync('git', ['log', '-1', '--format=%H'], { cwd: target, encoding: 'utf8' }).includes(
       sourceCommit,
@@ -68,3 +73,99 @@ test('release deployment only follows successful publication and has durable red
     reusable.indexOf('Build against published packages') < reusable.indexOf('Deploy web docs'),
   );
 });
+
+test(
+  'fresh release versions install while other versions and dependencies retain the age gate',
+  { timeout: 30000 },
+  async () => {
+    const target = await mkdtemp(join(tmpdir(), 'veli-release-age-test-'));
+    const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    const manifest = await createManifest(sourceCommit);
+    await stageConsumer(join(target, 'staged'), manifest);
+    const workspace = parse(await readFile(join(target, 'staged/pnpm-workspace.yaml'), 'utf8'));
+    const packageManager = JSON.parse(
+      await readFile(new URL('../package.json', import.meta.url), 'utf8'),
+    ).packageManager;
+    const publishedAt = new Date().toISOString();
+    const server = createServer((request, response) => {
+      const name = decodeURIComponent(request.url.slice(1));
+      const versions = [manifest.packages[name] ?? '1.0.0', '99.0.0'];
+      response.setHeader('Content-Type', 'application/json');
+      response.end(
+        JSON.stringify({
+          name,
+          'dist-tags': { latest: versions[0] },
+          versions: Object.fromEntries(
+            versions.map((version) => [
+              version,
+              {
+                name,
+                version,
+                dist: {
+                  tarball: `http://127.0.0.1:${server.address().port}/unused.tgz`,
+                  integrity: `sha512-${Buffer.alloc(64).toString('base64')}`,
+                },
+              },
+            ]),
+          ),
+          time: Object.fromEntries(versions.map((version) => [version, publishedAt])),
+        }),
+      );
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const registry = `http://127.0.0.1:${server.address().port}/`;
+      for (const [label, dependencies, expected] of [
+        ['release', manifest.packages, 0],
+        ['other-veli-version', { '@tradenetcorp/veli-tokens': '99.0.0' }, 1],
+        ['external', { 'veli-test-external': '1.0.0' }, 1],
+      ]) {
+        const consumer = await mkdtemp(join(target, `${label}-`));
+        await writeFile(
+          join(consumer, 'package.json'),
+          JSON.stringify({ private: true, packageManager, dependencies }),
+        );
+        await writeFile(
+          join(consumer, 'pnpm-workspace.yaml'),
+          stringify({ ...workspace, packages: [] }),
+        );
+        const userconfig = join(consumer, '.npmrc');
+        await writeFile(
+          userconfig,
+          `registry=${registry}\n@tradenetcorp:registry=${registry}\nfetch-retries=0\n`,
+        );
+        const child = spawn(
+          'corepack',
+          ['pnpm', 'install', '--lockfile-only', '--ignore-scripts', '--no-frozen-lockfile'],
+          {
+            cwd: consumer,
+            env: {
+              ...process.env,
+              CI: 'true',
+              npm_config_userconfig: userconfig,
+              NPM_CONFIG_USERCONFIG: userconfig,
+            },
+            stdio: ['ignore', 'pipe', 'pipe'],
+            timeout: 10000,
+          },
+        );
+        let output = '';
+        child.stdout.on('data', (data) => {
+          output += data;
+        });
+        child.stderr.on('data', (data) => {
+          output += data;
+        });
+        const code = await new Promise((resolve, reject) => {
+          child.on('error', reject);
+          child.on('close', resolve);
+        });
+        assert.equal(code, expected, `${label}: ${output}`);
+        if (expected !== 0) assert.match(output, /ERR_PNPM_NO_MATURE_MATCHING_VERSION/);
+      }
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+      await rm(target, { recursive: true, force: true });
+    }
+  },
+);

@@ -25,6 +25,8 @@ The Tailwind adapter imports `tokens.css` and references its variables. Existing
 
 Generic font-size utilities `text-xs` through `text-9xl` reference canonical English regular typography for size, line height and letter spacing. Their mappings are: xs → caption, sm/base/lg → body sm/md/lg, xl → subtitle, 2xl/3xl → title 2/1, 4xl/5xl/6xl/7xl → heading 4/3/2/1, and 8xl/9xl → display md/lg. Font family and weight remain independently composable; explicit leading and tracking utilities override the companions. These generic utilities do not switch typography with language. Use `type-*` for complete bilingual Figma styles, which switch all five properties under `:lang(dv)` (set `lang="dv"`, not only `dir="rtl"`).
 
+Fractional spacing classes such as `gap-1.5` and `p-1.5` remain available. In plain CSS, use `var(--veli-spacing-1-5)` (6px); canonical variable names use dashes instead of decimal points or underscores.
+
 Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind share this contract. A host that offers system preference should resolve that preference to one of these classes; `VeliProvider` handles this for React applications. Tokens use native OKLCH without gamut clipping or legacy fallbacks, matching Tailwind v4's modern browser baseline: Chrome 111+, Safari 16.4+, Firefox 128+.
 
 `@tradenetcorp/veli-tokens/tokens` exports normalized DTCG JSON. `/motion-tokens` exports its duration, delay and easing subset. Aliases reference canonical paths; consumers can resolve them with a DTCG parser. `$extensions.mode.Dark` provides the alternate value; the default `$value` is Light. `org.veli` extensions retain source/style provenance and relative CSS intent that cannot be expressed with DTCG's px/rem dimensions.
