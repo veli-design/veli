@@ -118,7 +118,7 @@ Pass `items`, `id`, and `onAction` when application state controls the visible p
 
 Give every trail an `aria-label` unless an adjacent heading already names it. The final `Breadcrumb` is automatically marked as the current page and is not interactive; separators are decorative. Linked crumbs are keyboard reachable, disabled crumbs are skipped, and the interactive crumbs retain a visible focus ring.
 
-Use `VeliProvider language="dv"` for Dhivehi. The list, separators, and back-link caret mirror automatically for RTL, while the slash separator stays `/`. English links use body-sm medium while the current page uses body-sm regular; Dhivehi links and the current page use body-sm medium for readability.
+Use `VeliProvider language="dv"` for Dhivehi. The list, separators, and back-link caret mirror automatically for RTL, while the slash separator stays `/`. Links and the current page use body-sm medium in both English and Dhivehi. The default “…” overflow crumb uses body-sm regular.
 
 Hover, pressed, and focus changes animate colors only with Veli's normal-duration easing. These transitions are disabled when the user prefers reduced motion.
 

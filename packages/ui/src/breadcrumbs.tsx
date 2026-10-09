@@ -24,8 +24,7 @@ const breadcrumbItemContentClassName = 'inline-flex min-h-6 items-center gap-1.5
 
 const breadcrumbInteractiveTypographyClassName = 'type-body-sm-medium';
 
-const breadcrumbCurrentTypographyClassName =
-  'type-body-sm-regular [&:lang(dv)]:type-body-sm-medium';
+const breadcrumbCurrentTypographyClassName = 'type-body-sm-medium';
 
 const breadcrumbInteractiveTextClassName =
   'text-base-muted hover:text-base-default active:text-base-default focus-visible:text-base-default';
