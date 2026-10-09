@@ -11,6 +11,78 @@ async function openPanel(page: Page) {
   return dialog;
 }
 
+// Reproduce the host's flex-centered navigation, including typography-dependent baseline spacing.
+for (const width of [390, 1280]) {
+  for (const theme of ['light', 'dark']) {
+    for (const language of ['en', 'dv']) {
+      test(`${width}px ${theme} ${language}: avatar wrappers fit and header controls align`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 844 });
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.goto('/accounts');
+        if (theme === 'dark') await page.getByRole('button', { name: 'Change theme' }).click();
+        if (language === 'dv') await page.getByRole('button', { name: 'Change language' }).click();
+        const trigger = page.locator('header').getByRole('button', {
+          name: language === 'dv' ? 'އެކައުންޓު' : 'Open account panel',
+          exact: true,
+        });
+        for (const state of ['ready', 'image', 'broken-image']) {
+          await page.getByLabel('State').selectOption(state);
+          if (state === 'image')
+            await expect(trigger.locator('img')).toHaveJSProperty('naturalWidth', 60);
+          if (state === 'broken-image') await expect(trigger.locator('img')).toHaveClass(/sr-only/);
+          const geometry = await trigger.evaluate((button) => {
+            const avatar = button.querySelector('span[aria-hidden="true"] > div')!;
+            const rect = (node: Element) => {
+              const box = node.getBoundingClientRect();
+              return { top: box.top, height: box.height, width: box.width };
+            };
+            return {
+              button: rect(button),
+              outer: rect(button.parentElement!),
+              content: rect(avatar.parentElement!.parentElement!),
+              wrapper: rect(avatar.parentElement!),
+              avatar: rect(avatar),
+            };
+          });
+          expect(geometry.button.width).toBe(44);
+          expect(geometry.button.height).toBe(44);
+          for (const box of [geometry.outer, geometry.content, geometry.wrapper, geometry.avatar]) {
+            expect(box.height).toBe(44);
+            expect(box.top).toBeCloseTo(geometry.button.top, 2);
+          }
+          for (const name of ['Menu', 'Search']) {
+            const adjacent = await page.getByRole('button', { name, exact: true }).boundingBox();
+            expect(adjacent?.width).toBe(44);
+            expect(adjacent?.height).toBe(44);
+            expect(adjacent?.y).toBeCloseTo(geometry.button.top, 2);
+          }
+          await trigger.click();
+          const dialog = page.getByRole('dialog');
+          await expect(dialog).toBeVisible();
+          await waitForMotion(page);
+          const avatarSizes = await dialog
+            .locator('span[aria-hidden="true"] > div:has(img)')
+            .evaluateAll((avatars) =>
+              avatars.map((avatar) => ({
+                avatar: avatar.getBoundingClientRect().height,
+                wrapper: avatar.parentElement!.getBoundingClientRect().height,
+              })),
+            );
+          expect(avatarSizes.map(({ avatar }) => avatar)).toEqual([60, 44, 44]);
+          for (const { avatar, wrapper } of avatarSizes) expect(wrapper).toBe(avatar);
+          if (width >= 640) expect((await dialog.boundingBox())?.width).toBe(389);
+          await expect(trigger).toHaveClass(/ring-2/);
+          await page.keyboard.press('Escape');
+          await expect(dialog).toBeHidden();
+          await expect(trigger).toBeFocused();
+        }
+      });
+    }
+  }
+}
+
 for (const width of [320, 639, 640, 1280]) {
   test(`${width}px: keyboard containment, dismissal and focus restoration`, async ({ page }) => {
     const errors: string[] = [];
