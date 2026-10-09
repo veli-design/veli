@@ -1,5 +1,5 @@
 import { expect, userEvent, within } from '@storybook/test';
-import { Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   Accordion,
@@ -319,7 +319,7 @@ export const CustomIndicator: Story = {
                 <>
                   <AccordionHeader
                     level={2}
-                    icon={<Plus size={16} className={isExpanded ? 'rotate-45' : undefined} />}
+                    icon={<PlusIcon size={16} className={isExpanded ? 'rotate-45' : undefined} />}
                   >
                     {item.label}
                   </AccordionHeader>

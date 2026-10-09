@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { Command, MagnifyingGlass } from 'phosphor-react';
+import { CommandIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Kbd } from '@tradenetcorp/veli-ui/kbd';
 
@@ -68,11 +68,11 @@ export function DocsSearch({ enableShortcut = true }: DocsSearchProps) {
         onMouseEnter={() => void loadDocsSearchDialog()}
         onFocus={() => void loadDocsSearchDialog()}
       >
-        <MagnifyingGlass size={20} aria-hidden="true" />
+        <MagnifyingGlassIcon size={20} aria-hidden="true" />
         <span className="docs-search-trigger__label">Search</span>
         <span className="docs-search-trigger__shortcut" aria-hidden="true">
           <Kbd>
-            <Command size={12} aria-hidden="true" />
+            <CommandIcon size={12} aria-hidden="true" />
           </Kbd>
           <Kbd>K</Kbd>
         </span>

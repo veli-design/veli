@@ -5,7 +5,7 @@ import {
   useVeliLanguage,
   type VeliColorScheme,
 } from '@tradenetcorp/veli-ui/provider';
-import { ArrowLeft, ArrowRight, Plus } from 'phosphor-react';
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@phosphor-icons/react';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const copy = {
@@ -47,7 +47,7 @@ function useLinkExample() {
   const { language, direction } = useVeliLanguage();
   return {
     text: copy[language === 'dv' ? 'dv' : 'en'],
-    Arrow: direction === 'rtl' ? ArrowLeft : ArrowRight,
+    Arrow: direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon,
   };
 }
 
@@ -91,7 +91,7 @@ export function LinkSizesDemo() {
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <div key={size}>
           <Link href="#api-reference" size={size}>
-            <Plus aria-hidden="true" weight="bold" />
+            <PlusIcon aria-hidden="true" weight="bold" />
             {text[size]}
             <Arrow aria-hidden="true" weight="bold" />
           </Link>

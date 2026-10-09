@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 import { verifyButtonRegressions } from '../tests/button';
 
@@ -49,14 +49,14 @@ function PlaygroundButton({ leadingIcon, trailingIcon, children, ...props }: Pre
   if (props.iconOnly) {
     return (
       <Button {...props} aria-label={props['aria-label'] || text.add}>
-        <Plus aria-hidden="true" size={iconSize} weight="bold" />
+        <PlusIcon aria-hidden="true" size={iconSize} weight="bold" />
       </Button>
     );
   }
 
   return (
     <Button {...props}>
-      {leadingIcon && <Plus aria-hidden="true" size={iconSize} weight="bold" />}
+      {leadingIcon && <PlusIcon aria-hidden="true" size={iconSize} weight="bold" />}
       {label}
       {trailingIcon && <DirectionalArrow aria-hidden="true" size={iconSize} weight="bold" />}
     </Button>
@@ -201,12 +201,12 @@ export const SizesAndIcons: Story = {
             <span className="w-6 text-sm text-base-muted">{size}</span>
             <Button size={size}>{text.label}</Button>
             <Button size={size} intent="secondary">
-              <Plus aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
+              <PlusIcon aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
               {text.label}
               <DirectionalArrow aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
             </Button>
             <Button size={size} iconOnly aria-label={text.add}>
-              <Plus aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
+              <PlusIcon aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
             </Button>
           </div>
         ))}
@@ -231,7 +231,7 @@ function ButtonStates({ onPress }: Pick<ButtonProps, 'onPress'>) {
         {text.pending}
       </Button>
       <Button iconOnly isLoading aria-label={text.add} onPress={onPress}>
-        <Plus aria-hidden="true" size={16} weight="bold" />
+        <PlusIcon aria-hidden="true" size={16} weight="bold" />
       </Button>
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import {
   Button as AriaButton,
   DateField as AriaDateField,
@@ -122,7 +122,7 @@ export function DateField<T extends DateValue>({
                         className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                         isDisabled={isDisabled}
                       >
-                        <Info size={16} aria-hidden />
+                        <InfoIcon size={16} aria-hidden />
                       </AriaButton>
                       <Tooltip
                         placement="top"
@@ -161,7 +161,7 @@ export function DateField<T extends DateValue>({
               <DateSegments size={size ?? 'md'} />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <Info size={size === 'lg' ? 20 : 16} weight="fill" />
+                  <InfoIcon size={size === 'lg' ? 20 : 16} weight="fill" />
                 </div>
               ) : null}
             </Group>

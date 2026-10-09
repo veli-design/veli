@@ -101,6 +101,8 @@ Edit your installed source and adapter to fit the host. Keep authentication and 
 3. Resolve labelled conflicts and run `veli update --continue account-panel`, or `veli update --abort account-panel` to restore your copy.
 4. Re-run application validation and commit the working source and updated `.veli` baseline together.
 
+Version 0.4.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/react@^2.1.10` as a direct dependency when upgrading the copied source. Review whether your application still needs its legacy icon dependency before removing it.
+
 Receipts contain source commit and SHA-256 hashes. A `dirty` receipt identifies a local preview rather than a released source snapshot. Updating a Veli npm package does not update copied block source.
 
 ## Non-goals

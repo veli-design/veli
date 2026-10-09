@@ -5,7 +5,13 @@ import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Bell, CheckCircle, Clock, FlagBanner, XCircle } from 'phosphor-react';
+import {
+  BellIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  FlagBannerIcon,
+  XCircleIcon,
+} from '@phosphor-icons/react';
 
 const statusIntents = [
   'neutral',
@@ -139,7 +145,7 @@ const getLocalizedBadgeArgText = (
 };
 
 function BadgeIcon({ size }: { size: 'sm' | 'md' }) {
-  return <FlagBanner aria-hidden size={size === 'sm' ? 12 : 16} weight="regular" />;
+  return <FlagBannerIcon aria-hidden size={size === 'sm' ? 12 : 16} weight="regular" />;
 }
 
 const meta = {
@@ -355,21 +361,21 @@ export const WithLeadingIcon: Story = {
         <Badge
           appearance="subtle"
           intent="positive"
-          leadingIcon={<CheckCircle aria-hidden size={16} weight="regular" />}
+          leadingIcon={<CheckCircleIcon aria-hidden size={16} weight="regular" />}
         >
           {text.approved}
         </Badge>
         <Badge
           appearance="emphasis"
           intent="danger"
-          leadingIcon={<XCircle aria-hidden size={16} weight="regular" />}
+          leadingIcon={<XCircleIcon aria-hidden size={16} weight="regular" />}
         >
           {text.rejected}
         </Badge>
         <Badge
           appearance="outline"
           intent="warning"
-          leadingIcon={<Clock aria-hidden size={16} weight="regular" />}
+          leadingIcon={<ClockIcon aria-hidden size={16} weight="regular" />}
         >
           {text.pending}
         </Badge>
@@ -391,7 +397,7 @@ export const CounterOnIcon: Story = {
           size="md"
           aria-label={text.notificationAriaLabel}
         >
-          <Bell aria-hidden size={20} weight="regular" />
+          <BellIcon aria-hidden size={20} weight="regular" />
         </Button>
         <Badge
           counter

@@ -22,7 +22,7 @@ import {
   type TableProps as AriaTableProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { CaretDown, CaretUp, DotsSixVertical } from 'phosphor-react';
+import { CaretDownIcon, CaretUpIcon, DotsSixVerticalIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Checkbox } from './checkbox.js';
 
@@ -104,10 +104,10 @@ const tableResizerVariants = cva(
 
 function SortIndicator({ direction }: { direction?: 'ascending' | 'descending' }) {
   if (direction === 'ascending') {
-    return <CaretUp aria-hidden="true" className="size-3.5 shrink-0" weight="bold" />;
+    return <CaretUpIcon aria-hidden="true" className="size-3.5 shrink-0" weight="bold" />;
   }
   if (direction === 'descending') {
-    return <CaretDown aria-hidden="true" className="size-3.5 shrink-0" weight="bold" />;
+    return <CaretDownIcon aria-hidden="true" className="size-3.5 shrink-0" weight="bold" />;
   }
   return (
     <svg
@@ -344,7 +344,7 @@ export function TableRow<T = unknown>({
             slot="drag"
             className="inline-flex rounded-md p-1 outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
           >
-            <DotsSixVertical aria-hidden="true" className="size-4 text-icon-default-muted" />
+            <DotsSixVerticalIcon aria-hidden="true" className="size-4 text-icon-default-muted" />
           </AriaButton>
         </AriaCell>
       ) : null}

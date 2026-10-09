@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Buildings, User } from 'phosphor-react';
+import { BuildingsIcon, UserIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { type VeliLanguage, useVeliLanguage } from './provider.js';
@@ -360,7 +360,7 @@ export function Avatar({
       ) : null}
 
       {contentType === 'icon' ? (
-        <User
+        <UserIcon
           aria-hidden="true"
           size={iconSize}
           weight="fill"
@@ -369,7 +369,7 @@ export function Avatar({
       ) : null}
 
       {contentType === 'agencyIcon' ? (
-        <Buildings
+        <BuildingsIcon
           aria-hidden="true"
           size={iconSize}
           weight="fill"

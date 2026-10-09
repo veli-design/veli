@@ -1,10 +1,10 @@
 import type { ComponentProps } from 'react';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { ArrowLeft, ArrowRight } from 'phosphor-react';
+import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react';
 
-export function DirectionalArrow(props: ComponentProps<typeof ArrowRight>) {
+export function DirectionalArrow(props: ComponentProps<typeof ArrowRightIcon>) {
   const { direction } = useVeliLanguage();
-  const ArrowIcon = direction === 'rtl' ? ArrowLeft : ArrowRight;
+  const ArrowIcon = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
 
   return <ArrowIcon {...props} />;
 }

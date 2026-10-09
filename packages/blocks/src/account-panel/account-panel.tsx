@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useId, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { CircleNotch } from 'phosphor-react';
+import { CircleNotchIcon } from '@phosphor-icons/react';
 import {
   Button as AriaButton,
   Dialog,
@@ -170,7 +170,7 @@ function AccountRow({
           data-account-pending-avatar
           className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-avatar-neutral text-base-default"
         >
-          <CircleNotch weight="bold" className="size-4 motion-safe:animate-spin" />
+          <CircleNotchIcon weight="bold" className="size-4 motion-safe:animate-spin" />
         </span>
       ) : (
         <AccountAvatar account={account} size="44" />

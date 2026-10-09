@@ -12,20 +12,20 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import {
-  Archive,
-  CheckCircle,
-  File,
-  FileAudio,
-  FileCode,
-  FileImage,
-  FileVideo,
-  GearSix,
-  Info,
-  Trash,
-  UploadSimple,
-  WarningCircle,
-  X,
-} from 'phosphor-react';
+  ArchiveIcon,
+  CheckCircleIcon,
+  FileIcon,
+  FileAudioIcon,
+  FileCodeIcon,
+  FileImageIcon,
+  FileVideoIcon,
+  GearSixIcon,
+  InfoIcon,
+  TrashIcon,
+  UploadSimpleIcon,
+  WarningCircleIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Button, type ButtonProps } from './button.js';
 import {
@@ -79,19 +79,19 @@ function getFileIcon(file: File) {
   const iconClass = 'size-5 text-icon-base-muted';
 
   if (type.startsWith('image/')) {
-    return <FileImage className={iconClass} weight="bold" aria-hidden />;
+    return <FileImageIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('video/')) {
-    return <FileVideo className={iconClass} weight="bold" aria-hidden />;
+    return <FileVideoIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('audio/')) {
-    return <FileAudio className={iconClass} weight="bold" aria-hidden />;
+    return <FileAudioIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('text/') || ['txt', 'md', 'rtf', 'pdf'].includes(extension)) {
-    return <File className={iconClass} weight="bold" aria-hidden />;
+    return <FileIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
@@ -113,21 +113,21 @@ function getFileIcon(file: File) {
       'cs',
     ].includes(extension)
   ) {
-    return <FileCode className={iconClass} weight="bold" aria-hidden />;
+    return <FileCodeIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension)) {
-    return <Archive className={iconClass} weight="bold" aria-hidden />;
+    return <ArchiveIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
     ['exe', 'msi', 'app', 'apk', 'deb', 'rpm'].includes(extension) ||
     type.startsWith('application/')
   ) {
-    return <GearSix className={iconClass} weight="bold" aria-hidden />;
+    return <GearSixIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
-  return <File className={iconClass} weight="bold" aria-hidden />;
+  return <FileIcon className={iconClass} weight="bold" aria-hidden />;
 }
 
 function matchesAcceptedType(file: File, acceptTypes: readonly string[]) {
@@ -1141,7 +1141,7 @@ function DropzoneAreaContent({
       {content ?? (
         <>
           <span className={areaIconVariants({ isDisabled })}>
-            <UploadSimple size={24} aria-hidden />
+            <UploadSimpleIcon size={24} aria-hidden />
           </span>
           <span className={areaTextVariants({ layout })}>
             <Text slot="label" className={areaTitleVariants({ state: areaState })}>
@@ -1500,14 +1500,14 @@ function DropzoneItemStatus({
     case 'success':
       return (
         <span className={metadataStatusVariants({ status: 'success' })}>
-          <CheckCircle size={12} weight="fill" aria-hidden className="shrink-0" />
+          <CheckCircleIcon size={12} weight="fill" aria-hidden className="shrink-0" />
           {text.uploaded}
         </span>
       );
     case 'error':
       return (
         <span className={metadataStatusVariants({ status: 'error' })}>
-          <WarningCircle size={12} weight="fill" aria-hidden className="shrink-0" />
+          <WarningCircleIcon size={12} weight="fill" aria-hidden className="shrink-0" />
           <bdi className="min-w-0">{fileState.error}</bdi>
         </span>
       );
@@ -1662,9 +1662,9 @@ export function DropzoneItemDelete({
       onPress={onPress}
     >
       {isUploaded ? (
-        <Trash size={16} weight="bold" aria-hidden />
+        <TrashIcon size={16} weight="bold" aria-hidden />
       ) : (
-        <X size={16} weight="bold" aria-hidden />
+        <XIcon size={16} weight="bold" aria-hidden />
       )}
     </Button>
   );
@@ -1867,7 +1867,7 @@ export function DropzoneField({
                 className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                 isDisabled={isDisabled}
               >
-                <Info size={16} aria-hidden />
+                <InfoIcon size={16} aria-hidden />
               </AriaButton>
               <Tooltip placement="top" lang={languageConfig.lang} dir={languageConfig.direction}>
                 {infoTooltip}

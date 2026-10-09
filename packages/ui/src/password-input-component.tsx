@@ -10,7 +10,13 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckCircle, Circle, Eye, EyeSlash, Info } from 'phosphor-react';
+import {
+  CheckCircleIcon,
+  CircleIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  InfoIcon,
+} from '@phosphor-icons/react';
 import {
   arePasswordRequirementsMet,
   resolvePasswordRequirements,
@@ -437,11 +443,11 @@ interface PasswordRequirementIndicatorProps {
 function PasswordRequirementIndicator({ isMet, isDisabled }: PasswordRequirementIndicatorProps) {
   return (
     <span className={requirementIndicatorShellVariants()} aria-hidden>
-      <Circle
+      <CircleIcon
         size={PASSWORD_REQUIREMENT_ICON_SIZE}
         className={requirementIndicatorEmptyVariants({ isMet, isDisabled })}
       />
-      <CheckCircle
+      <CheckCircleIcon
         size={PASSWORD_REQUIREMENT_ICON_SIZE}
         weight="fill"
         className={requirementIndicatorCheckedVariants({ isMet, isDisabled })}
@@ -497,14 +503,14 @@ function PasswordFeedbackMessage({
   return (
     <div className="flex items-center gap-2">
       {tone === 'success' ? (
-        <CheckCircle
+        <CheckCircleIcon
           size={16}
           weight="fill"
           aria-hidden
           className={isDisabled ? 'text-disabled' : 'text-icon-success-subtle'}
         />
       ) : (
-        <Circle
+        <CircleIcon
           size={16}
           aria-hidden
           className={isDisabled ? 'text-disabled' : 'text-icon-danger-subtle'}
@@ -716,7 +722,7 @@ export function PasswordInput({
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <Info size={iconSize} weight="fill" />
+                  <InfoIcon size={iconSize} weight="fill" />
                 </div>
               ) : showVisibilityToggle ? (
                 <AriaButton
@@ -728,9 +734,9 @@ export function PasswordInput({
                   onPress={() => setRevealed(!revealed)}
                 >
                   {revealed ? (
-                    <EyeSlash size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
+                    <EyeSlashIcon size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
                   ) : (
-                    <Eye size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
+                    <EyeIcon size={PASSWORD_VISIBILITY_ICON_SIZE} aria-hidden />
                   )}
                 </AriaButton>
               ) : null}

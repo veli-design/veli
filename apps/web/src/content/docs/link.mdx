@@ -70,16 +70,16 @@ English medium presets use Inter at weight 500. Dhivehi medium presets use MV A 
 </div>
 
 ```tsx
-import { ArrowLeft, ArrowRight, Plus } from 'phosphor-react';
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@phosphor-icons/react';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 function ContinueLink() {
   const { direction, language } = useVeliLanguage();
-  const Arrow = direction === 'rtl' ? ArrowLeft : ArrowRight;
+  const Arrow = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
 
   return (
     <Link href="/account" size="lg">
-      <Plus aria-hidden="true" weight="bold" />
+      <PlusIcon aria-hidden="true" weight="bold" />
       {language === 'dv' ? 'ކުރިއަށް' : 'Continue'}
       <Arrow aria-hidden="true" weight="bold" />
     </Link>
@@ -341,7 +341,7 @@ In RTL, leading and trailing icon positions follow direction. Choose the appropr
 Switch the preview between English and Dhivehi to compare text direction, typography, and arrows. The surrounding documentation stays in English, and the preview follows the site's theme.
 
 ```tsx
-import { ArrowLeft } from 'phosphor-react';
+import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { Link } from '@tradenetcorp/veli-ui/link';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
@@ -350,7 +350,7 @@ export default function LinkLanguageDemo() {
     <VeliProvider language="dv">
       <Link href="/account" size="md">
         ކުރިއަށް
-        <ArrowLeft aria-hidden="true" weight="bold" />
+        <ArrowLeftIcon aria-hidden="true" weight="bold" />
       </Link>
     </VeliProvider>
   );

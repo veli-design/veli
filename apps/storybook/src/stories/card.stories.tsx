@@ -2,7 +2,7 @@ import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { DotsThree, Info } from 'phosphor-react';
+import { DotsThreeIcon, InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
@@ -385,7 +385,7 @@ export const Default: Story = {
                 iconOnly
                 aria-label={text.openMenu}
               >
-                <DotsThree size={16} weight="bold" />
+                <DotsThreeIcon size={16} weight="bold" />
               </Button>
             ) : undefined
           }
@@ -518,7 +518,7 @@ export const Composition: Story = {
                 iconOnly
                 aria-label={text.openMenu}
               >
-                <DotsThree size={16} weight="bold" />
+                <DotsThreeIcon size={16} weight="bold" />
               </Button>
             </div>
           </Card.Header>
@@ -558,7 +558,7 @@ export const Composition: Story = {
             <Card.Description>{text.documentsDescription}</Card.Description>
           </Card.Header>
           <Card.Content>
-            <Alert intent="cautious" leadingIcon={<Info size={20} weight="fill" />}>
+            <Alert intent="cautious" leadingIcon={<InfoIcon size={20} weight="fill" />}>
               <Alert.Title>{text.alertTitle}</Alert.Title>
               <Alert.Description>{text.alertDescription}</Alert.Description>
             </Alert>

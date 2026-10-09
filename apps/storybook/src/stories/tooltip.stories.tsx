@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import type { ComponentProps } from 'react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Copy, Trash } from 'phosphor-react';
+import { CopyIcon, TrashIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
@@ -250,13 +250,13 @@ export const IconButtons: Story = {
       <div className="flex min-h-[280px] items-center justify-center gap-4 bg-surface-base p-8">
         <TooltipTrigger delay={0}>
           <Button aria-label={text.copyAriaLabel} intent="secondary" size="sm" iconOnly={true}>
-            <Copy size={16} weight="bold" />
+            <CopyIcon size={16} weight="bold" />
           </Button>
           <Tooltip>{text.copy}</Tooltip>
         </TooltipTrigger>
         <TooltipTrigger delay={0}>
           <Button aria-label={text.deleteAriaLabel} intent="secondary" size="sm" iconOnly={true}>
-            <Trash size={16} weight="bold" />
+            <TrashIcon size={16} weight="bold" />
           </Button>
           <Tooltip>{text.delete}</Tooltip>
         </TooltipTrigger>

@@ -5,7 +5,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Link } from '@tradenetcorp/veli-ui/link';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 
 const linkText = {
@@ -90,7 +90,7 @@ function LinkDefault({ leadingIcon, trailingIcon, children, ...args }: LinkStory
       <Link {...args}>
         {(state) => (
           <>
-            {leadingIcon && <Plus weight="bold" aria-hidden="true" />}
+            {leadingIcon && <PlusIcon weight="bold" aria-hidden="true" />}
             {typeof children === 'function' ? children(state) : children}
             {trailingIcon && <DirectionalArrow weight="bold" aria-hidden="true" />}
           </>
@@ -282,7 +282,7 @@ export const SizesAndIcons: Story = {
                 {text.label}
               </Link>
               <Link href="#link-destination" size={size}>
-                <Plus weight="bold" aria-hidden="true" />
+                <PlusIcon weight="bold" aria-hidden="true" />
                 {text.label}
               </Link>
               <Link href="#link-destination" size={size}>
@@ -290,7 +290,7 @@ export const SizesAndIcons: Story = {
                 <DirectionalArrow weight="bold" aria-hidden="true" />
               </Link>
               <Link href="#link-destination" size={size}>
-                <Plus weight="bold" aria-hidden="true" />
+                <PlusIcon weight="bold" aria-hidden="true" />
                 {text.label}
                 <DirectionalArrow weight="bold" aria-hidden="true" />
               </Link>
@@ -424,7 +424,7 @@ export const InheritedTypography: Story = {
         ))}
         <p className="type-body-md-medium">
           <Link href="#link-destination" underline="always">
-            <Plus aria-hidden="true" weight="bold" />
+            <PlusIcon aria-hidden="true" weight="bold" />
             {text.inline}
             <DirectionalArrow aria-hidden="true" weight="bold" />
           </Link>

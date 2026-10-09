@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
-import { Funnel, Info, Sparkle, User } from 'phosphor-react';
+import { FunnelIcon, InfoIcon, SparkleIcon, UserIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
@@ -204,7 +204,7 @@ function FigmaPopover({
           <>
             <PopoverHeader
               title={text.playground.title}
-              icon={<User size={16} aria-hidden />}
+              icon={<UserIcon size={16} aria-hidden />}
               onClose={close}
               closeButtonLabel={text.closePopover}
             />
@@ -346,7 +346,7 @@ export const Playground: Story = {
                 <>
                   <PopoverHeader
                     title={text.playground.title}
-                    icon={<User aria-hidden />}
+                    icon={<UserIcon aria-hidden />}
                     onClose={close}
                     closeButtonLabel={text.closePopover}
                   />
@@ -406,7 +406,7 @@ export const OnboardingTip: Story = {
                   <>
                     <PopoverHeader
                       title={text.onboardingTip.title}
-                      icon={<Sparkle size={16} aria-hidden />}
+                      icon={<SparkleIcon size={16} aria-hidden />}
                       onClose={close}
                       closeButtonLabel={text.closePopover}
                     />
@@ -454,7 +454,7 @@ function FilterPanelExample() {
         <p className="type-body-sm-medium text-base-strong">{text.teamRequests}</p>
         <PopoverTrigger>
           <Button intent="secondary" size="sm" aria-label={text.filterPanel.triggerAriaLabel}>
-            <Funnel size={16} aria-hidden />
+            <FunnelIcon size={16} aria-hidden />
             {text.filterPanel.trigger}
             {activeCount > 0 ? (
               <Badge counter appearance="emphasis" intent="magenta" size="sm" count={activeCount} />
@@ -466,7 +466,7 @@ function FilterPanelExample() {
                 <>
                   <PopoverHeader
                     title={text.filterPanel.title}
-                    icon={<Funnel size={16} aria-hidden />}
+                    icon={<FunnelIcon size={16} aria-hidden />}
                     onClose={close}
                     closeButtonLabel={text.closePopover}
                   />
@@ -532,7 +532,7 @@ export const ContextualHelp: Story = {
                 iconOnly
                 aria-label={text.contextualHelp.triggerAriaLabel}
               >
-                <Info size={16} aria-hidden />
+                <InfoIcon size={16} aria-hidden />
               </Button>
               <Popover intent="secondary" placement="left top" className="w-[260px]">
                 <PopoverDialog>
@@ -540,7 +540,7 @@ export const ContextualHelp: Story = {
                     <>
                       <PopoverHeader
                         title={text.contextualHelp.title}
-                        icon={<Info size={16} aria-hidden />}
+                        icon={<InfoIcon size={16} aria-hidden />}
                         onClose={close}
                         closeButtonLabel={text.closePopover}
                       />

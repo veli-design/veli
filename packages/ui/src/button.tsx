@@ -9,7 +9,7 @@ import {
   ProgressBarContext,
   useSlottedContext,
 } from 'react-aria-components';
-import { CircleNotch } from 'phosphor-react';
+import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y.js';
@@ -269,7 +269,7 @@ function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
       aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
       className="inline-flex shrink-0 items-center justify-center"
     >
-      <CircleNotch
+      <CircleNotchIcon
         aria-hidden="true"
         weight="bold"
         className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}

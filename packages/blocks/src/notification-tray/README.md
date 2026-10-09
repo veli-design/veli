@@ -45,6 +45,8 @@ Validate your application's routes, translations, keyboard behavior, mobile gest
 
 ## Updating your copy
 
+Version 0.2.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/react@^2.1.10` as a direct dependency when upgrading the copied source. Review whether your application still needs its legacy icon dependency before removing it.
+
 1. Run `veli status` and review the block changelog and dependency requirements.
 2. Run `veli update notification-tray` to merge the new source with your local changes.
 3. Resolve conflicts and run `veli update --continue notification-tray`, or use `--abort` to restore the previous copy.

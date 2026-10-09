@@ -17,7 +17,7 @@ import {
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CaretDown, Info } from 'phosphor-react';
+import { CaretDownIcon, InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref.js';
 import {
@@ -488,7 +488,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
                       className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
-                      <Info size={16} aria-hidden />
+                      <InfoIcon size={16} aria-hidden />
                     </AriaButton>
                     <Tooltip
                       placement="top"
@@ -542,7 +542,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
             ) : null}
             <AriaButton className={triggerButtonVariants({ isDisabled })}>
               {menuTriggerIcon ?? (
-                <CaretDown
+                <CaretDownIcon
                   aria-hidden
                   size={20}
                   weight="regular"

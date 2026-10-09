@@ -14,7 +14,6 @@
     "@tradenetcorp/veli-tokens": "workspace:*",
     "@tradenetcorp/veli-ui": "workspace:*",
     "motion": "^12.42.2",
-    "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

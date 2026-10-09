@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import {
-  CaretLeft,
-  CaretRight,
-  DotsThree,
-  DownloadSimple,
-  Gear,
-  PencilSimple,
-  Trash,
-} from 'phosphor-react';
+  CaretLeftIcon,
+  CaretRightIcon,
+  DotsThreeIcon,
+  DownloadSimpleIcon,
+  GearIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import {
   Menu,
@@ -346,7 +346,7 @@ const formatPlaygroundSelection = (
 
 function SubmenuCaret() {
   const { direction } = useVeliLanguage();
-  const CaretIcon = direction === 'rtl' ? CaretLeft : CaretRight;
+  const CaretIcon = direction === 'rtl' ? CaretLeftIcon : CaretRightIcon;
 
   return <CaretIcon size={14} />;
 }
@@ -423,14 +423,14 @@ export const Basic: Story = {
       <MenuTrigger>
         <Button intent="secondary" appearance="transparent" size="sm">
           {text.actions}
-          <DotsThree size={16} weight="bold" />
+          <DotsThreeIcon size={16} weight="bold" />
         </Button>
         <MenuPopover>
           <Menu>
-            <MenuItem startIcon={<PencilSimple size={16} />}>{text.edit}</MenuItem>
-            <MenuItem startIcon={<DownloadSimple size={16} />}>{text.export}</MenuItem>
+            <MenuItem startIcon={<PencilSimpleIcon size={16} />}>{text.edit}</MenuItem>
+            <MenuItem startIcon={<DownloadSimpleIcon size={16} />}>{text.export}</MenuItem>
             <MenuSeparator />
-            <MenuItem intent="danger" startIcon={<Trash size={16} />}>
+            <MenuItem intent="danger" startIcon={<TrashIcon size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -489,7 +489,7 @@ export const Default: Story = {
         <MenuTrigger>
           <Button intent="secondary" appearance="transparent" size="sm">
             {getLocalizedMenuArgText('triggerLabel', args.triggerLabel, language)}
-            <DotsThree size={16} weight="bold" />
+            <DotsThreeIcon size={16} weight="bold" />
           </Button>
           <MenuPopover>
             <Menu
@@ -546,13 +546,13 @@ export const Sections: Story = {
         <MenuPopover>
           <Menu>
             <MenuSection title={text.file}>
-              <MenuItem startIcon={<PencilSimple size={16} />}>{text.rename}</MenuItem>
-              <MenuItem startIcon={<DownloadSimple size={16} />}>{text.download}</MenuItem>
+              <MenuItem startIcon={<PencilSimpleIcon size={16} />}>{text.rename}</MenuItem>
+              <MenuItem startIcon={<DownloadSimpleIcon size={16} />}>{text.download}</MenuItem>
             </MenuSection>
             <MenuSeparator />
             <MenuSection title={text.settings}>
-              <MenuItem startIcon={<Gear size={16} />}>{text.preferences}</MenuItem>
-              <MenuItem intent="danger" startIcon={<Trash size={16} />}>
+              <MenuItem startIcon={<GearIcon size={16} />}>{text.preferences}</MenuItem>
+              <MenuItem intent="danger" startIcon={<TrashIcon size={16} />}>
                 {text.removeFile}
               </MenuItem>
             </MenuSection>
@@ -604,7 +604,7 @@ export const WithSubitems: Story = {
             </MenuSubmenuTrigger>
 
             <MenuSeparator />
-            <MenuItem id="delete" intent="danger" startIcon={<Trash size={16} />}>
+            <MenuItem id="delete" intent="danger" startIcon={<TrashIcon size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -628,14 +628,14 @@ export const Sentiment: Story = {
         </Button>
         <MenuPopover>
           <Menu>
-            <MenuItem id="rename" startIcon={<PencilSimple size={16} />}>
+            <MenuItem id="rename" startIcon={<PencilSimpleIcon size={16} />}>
               {text.rename}
             </MenuItem>
-            <MenuItem id="download" startIcon={<DownloadSimple size={16} />}>
+            <MenuItem id="download" startIcon={<DownloadSimpleIcon size={16} />}>
               {text.download}
             </MenuItem>
             <MenuSeparator />
-            <MenuItem id="delete" intent="danger" startIcon={<Trash size={16} />}>
+            <MenuItem id="delete" intent="danger" startIcon={<TrashIcon size={16} />}>
               {text.delete}
             </MenuItem>
           </Menu>
@@ -855,7 +855,7 @@ export const RichItems: Story = {
               <Menu>
                 <MenuItem
                   size={size}
-                  startIcon={<PencilSimple size={16} />}
+                  startIcon={<PencilSimpleIcon size={16} />}
                   description={text.updateLabels}
                   shortcut="E"
                 >
@@ -863,7 +863,7 @@ export const RichItems: Story = {
                 </MenuItem>
                 <MenuItem
                   size={size}
-                  startIcon={<DownloadSimple size={16} />}
+                  startIcon={<DownloadSimpleIcon size={16} />}
                   description={text.createLocalCopy}
                   shortcut="D"
                 >
@@ -872,7 +872,7 @@ export const RichItems: Story = {
                 <MenuItem
                   size={size}
                   isDisabled
-                  startIcon={<Gear size={16} />}
+                  startIcon={<GearIcon size={16} />}
                   description={text.requiresAdmin}
                   shortcut="S"
                 >
@@ -882,7 +882,7 @@ export const RichItems: Story = {
                 <MenuItem
                   size={size}
                   intent="danger"
-                  startIcon={<Trash size={16} />}
+                  startIcon={<TrashIcon size={16} />}
                   description={text.permanentAction}
                   shortcut="Del"
                 >

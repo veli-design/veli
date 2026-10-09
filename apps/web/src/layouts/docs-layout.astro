@@ -1,5 +1,5 @@
 ---
-import { CaretDown, List } from 'phosphor-react';
+import { CaretDownIcon, ListIcon } from '@phosphor-icons/react';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
 import DocsFooterControls from '../components/DocsFooterControls.astro';
 import DocsPageActions from '../components/DocsPageActions.astro';
@@ -71,7 +71,11 @@ function isSectionActive(section: (typeof docsSections)[number]) {
                   >
                     <summary>
                       <span>{section.title}</span>
-                      <CaretDown className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                      <CaretDownIcon
+                        className="docs-nav-group__caret"
+                        size={16}
+                        aria-hidden="true"
+                      />
                     </summary>
                     <div class="docs-nav-group__links">
                       {section.items.map((item) => {
@@ -107,7 +111,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
       </a>
       <details class="docs-mobile-menu">
         <summary aria-label="Open documentation navigation">
-          <List size={22} aria-hidden="true" />
+          <ListIcon size={22} aria-hidden="true" />
         </summary>
         <div class="docs-mobile-menu__panel">
           <DocsSearch client:load enableShortcut={false} />
@@ -125,7 +129,11 @@ function isSectionActive(section: (typeof docsSections)[number]) {
                   >
                     <summary>
                       <span>{section.title}</span>
-                      <CaretDown className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                      <CaretDownIcon
+                        className="docs-nav-group__caret"
+                        size={16}
+                        aria-hidden="true"
+                      />
                     </summary>
                     <div class="docs-nav-group__links">
                       {section.items.map((item) => {

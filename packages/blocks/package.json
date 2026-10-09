@@ -21,8 +21,7 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@tradenetcorp/veli-ui": "workspace:*",
-    "motion": "^12.42.2",
-    "phosphor-react": "1.4.1"
+    "motion": "^12.42.2"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

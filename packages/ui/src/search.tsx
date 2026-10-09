@@ -9,7 +9,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info, MagnifyingGlass, X } from 'phosphor-react';
+import { InfoIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -331,7 +331,7 @@ export function Search({
               onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
             >
               <div className={leadingIconVariants({ isDisabled })} aria-hidden>
-                <MagnifyingGlass size={iconSize} />
+                <MagnifyingGlassIcon size={iconSize} />
               </div>
               <AriaInput
                 ref={setInputRef}
@@ -355,12 +355,12 @@ export function Search({
                   className={clearButtonVariants({ size, isDisabled })}
                   onPress={clearSearch}
                 >
-                  <X size={iconSize} aria-hidden />
+                  <XIcon size={iconSize} aria-hidden />
                 </AriaButton>
               ) : null}
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <Info size={iconSize} weight="fill" />
+                  <InfoIcon size={iconSize} weight="fill" />
                 </div>
               ) : null}
             </Group>
