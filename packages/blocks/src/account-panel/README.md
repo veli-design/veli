@@ -103,6 +103,10 @@ Edit your installed source and adapter to fit the host. Keep authentication and 
 
 Version 0.4.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/react@^2.1.10` as a direct dependency when upgrading the copied source. Review whether your application still needs its legacy icon dependency before removing it.
 
+Version 0.4.1 removes inline baseline spacing from the outer panel and shared avatar wrappers. The 44px trigger fits headers using `flex items-center` alongside 44px menu and search controls; profile and account-row avatars also retain their exact footprint. No adapter API changes or positional offsets are needed.
+
+For the GOV.MV follow-up (PD-1045 / PD-988), publish the canonical block snapshot first, then run `veli update account-panel` in govmv-web and commit the updated editable source and `.veli/blocks/account-panel/` receipt together. Review the intervening dependency and API changes when upgrading from 0.2.1. Recheck the real authenticated header at 390 × 844 and desktop sizes, including themes, RTL, focus/dismissal and avatar image/fallback behavior. Keep identity and preference handling in the host adapter; the Veli consumer fixture does not replace that integration acceptance.
+
 Receipts contain source commit and SHA-256 hashes. A `dirty` receipt identifies a local preview rather than a released source snapshot. Updating a Veli npm package does not update copied block source.
 
 ## Non-goals

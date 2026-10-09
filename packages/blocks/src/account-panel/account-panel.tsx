@@ -93,7 +93,7 @@ const serverViewport = () => false;
 function AccountAvatar({ account, size }: { account: AccountPanelAccount; size: '44' | '60' }) {
   // The name is already adjacent or supplied by the trigger. Avoid duplicate announcements.
   return (
-    <span aria-hidden="true" className="shrink-0">
+    <span aria-hidden="true" className="flex shrink-0">
       <Avatar
         size={size}
         appearance="neutral"
@@ -523,7 +523,7 @@ export function AccountPanel(props: AccountPanelProps) {
   const mobile = useSyncExternalStore(subscribe, isMobileViewport, serverViewport);
 
   return (
-    <div className={props.className}>
+    <div className={`flex ${props.className ?? ''}`}>
       <PopoverTrigger isOpen={props.isOpen} onOpenChange={props.onOpenChange}>
         <Button
           ref={trigger}

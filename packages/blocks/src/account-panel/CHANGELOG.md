@@ -1,3 +1,9 @@
+## 0.4.1
+
+### Fixed
+
+- Align the 44px avatar trigger with adjacent navigation controls and prevent avatar clipping by removing baseline spacing from the panel and shared avatar wrappers. The public API, avatar sizes and 389px desktop panel width are unchanged.
+
 ## 0.4.0
 
 ### Changed

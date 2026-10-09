@@ -6,6 +6,7 @@ import {
   AccountPanel,
   type AccountPanelAccount,
 } from '../../components/blocks/account-panel/account-panel';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
 const initial = {
@@ -132,10 +133,17 @@ export default function AccountsPage() {
         </p>
         {/* A transformed header catches overlays incorrectly trapped by fixed-position ancestors. */}
         <header
-          className="mt-4 flex justify-end rounded-xl bg-surface-raised p-2"
+          className="mt-4 flex items-center justify-end gap-2 rounded-xl bg-surface-raised p-2"
           style={{ transform: 'translateY(1px)' }}
         >
+          <Button aria-label="Menu" intent="secondary" appearance="ghost" size="md" iconOnly>
+            <span aria-hidden="true">M</span>
+          </Button>
+          <Button aria-label="Search" intent="secondary" appearance="ghost" size="md" iconOnly>
+            <span aria-hidden="true">S</span>
+          </Button>
           <AccountPanel
+            className="shrink-0"
             selectedAccount={{
               ...profile,
               avatar:
