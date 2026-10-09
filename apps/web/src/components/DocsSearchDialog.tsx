@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Autocomplete } from 'react-aria-components';
 import {
-  ArrowDown,
-  ArrowElbowDownLeft,
-  ArrowUp,
-  CaretRight,
-  CircleNotch,
-  MagnifyingGlass,
-} from 'phosphor-react';
+  ArrowDownIcon,
+  ArrowElbowDownLeftIcon,
+  ArrowUpIcon,
+  CaretRightIcon,
+  CircleNotchIcon,
+  MagnifyingGlassIcon,
+} from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Kbd } from '@tradenetcorp/veli-ui/kbd';
@@ -208,7 +208,7 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
             <div className="docs-search-results">
               {loadState === 'loading' || loadState === 'idle' ? (
                 <div className="docs-search-state" role="status">
-                  <CircleNotch
+                  <CircleNotchIcon
                     className="docs-search-state__spinner"
                     size={20}
                     aria-hidden="true"
@@ -237,7 +237,7 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
                     dependencies={[results]}
                     renderEmptyState={() => (
                       <div className="docs-search-empty">
-                        <MagnifyingGlass size={24} aria-hidden="true" />
+                        <MagnifyingGlassIcon size={24} aria-hidden="true" />
                         <p>No documentation found.</p>
                         <span>Try a component, foundation, prop, or phrase.</span>
                       </div>
@@ -267,7 +267,7 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
                                   {description}
                                 </span>
                               </div>
-                              <CaretRight size={16} aria-hidden="true" />
+                              <CaretRightIcon size={16} aria-hidden="true" />
                             </div>
                           )}
                         </MenuItem>
@@ -283,19 +283,19 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
         <div className="docs-search-shortcuts" aria-label="Search keyboard shortcuts">
           <span className="docs-search-shortcut">
             <Kbd aria-label="Down arrow">
-              <ArrowDown aria-hidden="true" />
+              <ArrowDownIcon aria-hidden="true" />
             </Kbd>
             <span>Move down</span>
           </span>
           <span className="docs-search-shortcut">
             <Kbd aria-label="Up arrow">
-              <ArrowUp aria-hidden="true" />
+              <ArrowUpIcon aria-hidden="true" />
             </Kbd>
             <span>Move up</span>
           </span>
           <span className="docs-search-shortcut">
             <Kbd aria-label="Enter">
-              <ArrowElbowDownLeft aria-hidden="true" />
+              <ArrowElbowDownLeftIcon aria-hidden="true" />
             </Kbd>
             <span>Go to page</span>
           </span>

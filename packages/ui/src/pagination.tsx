@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CaretLeft, CaretRight } from 'phosphor-react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button.js';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
@@ -353,8 +353,8 @@ function PaginationPages({
   const { language: activeLanguage, direction, lang } = useVeliLanguage();
   const paginationLanguage: PaginationLanguage = activeLanguage === 'dv' ? 'dv' : 'en';
   const copy = paginationText[paginationLanguage];
-  const PreviousIcon = direction === 'rtl' ? CaretRight : CaretLeft;
-  const NextIcon = direction === 'rtl' ? CaretLeft : CaretRight;
+  const PreviousIcon = direction === 'rtl' ? CaretRightIcon : CaretLeftIcon;
+  const NextIcon = direction === 'rtl' ? CaretLeftIcon : CaretRightIcon;
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : uncontrolledValue;

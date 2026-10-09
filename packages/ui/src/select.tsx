@@ -16,7 +16,7 @@ import {
   type SelectProps as AriaSelectProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CaretDown, Info } from 'phosphor-react';
+import { CaretDownIcon, InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import {
   defaultFieldUnderlineDisabled,
@@ -449,7 +449,7 @@ export function Select<T extends object, K extends Key = Key>({
                       className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
-                      <Info size={16} aria-hidden />
+                      <InfoIcon size={16} aria-hidden />
                     </AriaButton>
                     <Tooltip
                       placement="top"
@@ -507,7 +507,7 @@ export function Select<T extends object, K extends Key = Key>({
             ) : null}
             <span className={indicatorVariants({ isDisabled, isOpen })}>
               {indicator ?? (
-                <CaretDown aria-hidden size={20} weight="regular" className="text-icon-base" />
+                <CaretDownIcon aria-hidden size={20} weight="regular" className="text-icon-base" />
               )}
             </span>
           </AriaButton>

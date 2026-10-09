@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { X } from 'phosphor-react';
+import { XIcon } from '@phosphor-icons/react';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button, type ButtonProps } from './button.js';
@@ -269,7 +269,7 @@ export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCl
       )}
       onPress={() => dismiss?.()}
     >
-      <X aria-hidden="true" size={16} />
+      <XIcon aria-hidden="true" size={16} />
     </Button>
   );
 }

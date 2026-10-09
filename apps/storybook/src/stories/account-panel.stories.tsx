@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sun, Moon, Monitor } from 'phosphor-react';
+import { SunIcon, MoonIcon, MonitorIcon } from '@phosphor-icons/react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { AccountPanel, type AccountPanelProps } from '@tradenetcorp/veli-blocks/account-panel';
@@ -200,9 +200,9 @@ const meta = {
       label: 'Switch Theme',
       value: 'system',
       options: [
-        { id: 'light', label: 'Light', icon: <Sun size={16} weight="bold" /> },
-        { id: 'dark', label: 'Dark', icon: <Moon size={16} weight="bold" /> },
-        { id: 'system', label: 'Auto', icon: <Monitor size={16} weight="bold" /> },
+        { id: 'light', label: 'Light', icon: <SunIcon size={16} weight="bold" /> },
+        { id: 'dark', label: 'Dark', icon: <MoonIcon size={16} weight="bold" /> },
+        { id: 'system', label: 'Auto', icon: <MonitorIcon size={16} weight="bold" /> },
       ],
       onChange: () => {},
     },

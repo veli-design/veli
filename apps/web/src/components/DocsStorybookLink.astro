@@ -1,5 +1,5 @@
 ---
-import { ArrowSquareOut } from 'phosphor-react';
+import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 
 interface Props {
   slug: string;
@@ -14,7 +14,7 @@ const href = `${storybookBaseUrl}/?path=/docs/components-${slug}--docs`;
 <a class="docs-storybook-link" href={href} target="_blank" rel="noopener noreferrer">
   <span>Explore in Storybook</span>
   <span class="docs-storybook-link__icon" aria-hidden="true">
-    <ArrowSquareOut size={12} />
+    <ArrowSquareOutIcon size={12} />
   </span>
   <span class="sr-only"> (opens in a new tab)</span>
 </a>

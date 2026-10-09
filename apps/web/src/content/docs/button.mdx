@@ -58,18 +58,18 @@ Place icons before or after the label as children. Mark decorative icons `aria-h
 </div>
 
 ```tsx
-import { ArrowRight, Plus, Trash } from 'phosphor-react';
+import { ArrowRightIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 
 <Button>
-  <Plus size={16} aria-hidden="true" weight="bold" />
+  <PlusIcon size={16} aria-hidden="true" weight="bold" />
   Add item
 </Button>
 <Button intent="secondary" appearance="transparent">
   Continue
-  <ArrowRight size={16} aria-hidden="true" weight="bold" />
+  <ArrowRightIcon size={16} aria-hidden="true" weight="bold" />
 </Button>
 <Button intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
-  <Trash size={16} aria-hidden="true" weight="bold" />
+  <TrashIcon size={16} aria-hidden="true" weight="bold" />
 </Button>
 ```
 
@@ -210,7 +210,7 @@ Button does not translate labels or mirror arbitrary children. Localize the labe
 </div>
 
 ```tsx
-import { ArrowLeft, Plus } from 'phosphor-react';
+import { ArrowLeftIcon, PlusIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
@@ -220,10 +220,10 @@ export default function ButtonLanguageDemo() {
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button>
           ކުރިއަށް
-          <ArrowLeft size={16} aria-hidden="true" weight="bold" />
+          <ArrowLeftIcon size={16} aria-hidden="true" weight="bold" />
         </Button>
         <Button intent="secondary" appearance="transparent" iconOnly aria-label="އިތުރުކުރޭ">
-          <Plus size={16} aria-hidden="true" weight="bold" />
+          <PlusIcon size={16} aria-hidden="true" weight="bold" />
         </Button>
       </div>
     </VeliProvider>

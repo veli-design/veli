@@ -13,7 +13,7 @@ import {
   type TabProps as AriaTabProps,
   type TabsProps as AriaTabsProps,
 } from 'react-aria-components';
-import { CaretDown } from 'phosphor-react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
 import { useVeliLanguage, useVeliRouter } from './provider-shared.js';
@@ -401,7 +401,7 @@ export function TabsOverflow({
           <TabLabel isSelected={isSelected} size={size}>
             {triggerLabel}
           </TabLabel>
-          <CaretDown aria-hidden="true" size={16} />
+          <CaretDownIcon aria-hidden="true" size={16} />
         </AriaButton>
         <MenuPopover className={popoverClassName}>
           <Menu

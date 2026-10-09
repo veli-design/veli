@@ -4,7 +4,7 @@ import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { WarningCircle } from 'phosphor-react';
+import { WarningCircleIcon } from '@phosphor-icons/react';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 
@@ -555,7 +555,7 @@ export const LabelIcon: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
-          labelIcon={<WarningCircle size={16} />}
+          labelIcon={<WarningCircleIcon size={16} />}
           placeholder={getLocalizedTextAreaArgText('placeholder', args.placeholder, language)}
           description={getLocalizedTextAreaArgText('description', args.description, language)}
           errorMessage={getLocalizedTextAreaArgText('errorMessage', args.errorMessage, language)}

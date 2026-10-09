@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { MenuItem } from '@tradenetcorp/veli-ui/menu';
 import { Button, Menu, MenuTrigger, Popover } from 'react-aria-components';
-import { CaretDown } from 'phosphor-react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import styles from './DocsPreview.module.css';
 
 export function DocsPreview({
@@ -38,7 +38,7 @@ export function DocsPreviewOption({
     <MenuTrigger>
       <Button className={styles.trigger} aria-label={`${label}: ${value}`}>
         {value}
-        <CaretDown size={16} aria-hidden="true" />
+        <CaretDownIcon size={16} aria-hidden="true" />
       </Button>
       <Popover className={styles.popover} placement="bottom end" offset={4}>
         <Menu aria-label={label} className="outline-none" onAction={(key) => onChange(String(key))}>

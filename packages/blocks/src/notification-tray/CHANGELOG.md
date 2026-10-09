@@ -1,3 +1,9 @@
+## 0.2.0
+
+### Changed
+
+- Use the maintained `@phosphor-icons/react` package for icons. When upgrading a copied block, install `@phosphor-icons/react@^2.1.10` as a direct dependency. Icon size, color, weight and behavior are retained with the maintained artwork.
+
 ## 0.1.2
 
 ### Fixed

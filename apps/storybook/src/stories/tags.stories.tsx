@@ -4,7 +4,7 @@ import { useArgs } from 'storybook/internal/preview-api';
 import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Tag, TagGroup, type TagSize } from '@tradenetcorp/veli-ui/tags';
-import { User } from 'phosphor-react';
+import { UserIcon } from '@phosphor-icons/react';
 
 type TagItem = {
   id: string;
@@ -339,7 +339,7 @@ const tagBadgeSizes: Record<TagSize, 'sm' | 'md'> = {
 };
 
 function TagUserIcon({ size = 'sm' }: { size?: TagSize }) {
-  return <User aria-hidden size={tagIconSizes[size]} weight="regular" />;
+  return <UserIcon aria-hidden size={tagIconSizes[size]} weight="regular" />;
 }
 
 function TagCountBadge({

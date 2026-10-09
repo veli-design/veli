@@ -19,7 +19,11 @@ Accessible React primitives for the Veli Design System. Built on [React Aria Com
 pnpm add @tradenetcorp/veli-ui
 ```
 
-Peers (`react`, `react-dom`, `react-aria-components`) are required. `phosphor-react` is optional but used in docs/examples.
+Peers (`react`, `react-dom`, `react-aria-components`) are required. Veli UI installs `@phosphor-icons/react` automatically for its internal icons. If your app imports icons directly, add the package as a direct dependency:
+
+```bash
+pnpm add @phosphor-icons/react@^2.1.10
+```
 
 ## Tailwind setup
 
@@ -40,12 +44,12 @@ import { Tabs, TabList, Tab, TabPanel } from '@tradenetcorp/veli-ui/tabs';
 
 ```tsx
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 
 export function CreateAction() {
   return (
     <Button intent="primary" appearance="fill" size="md" onPress={() => {}}>
-      <Plus size={16} weight="bold" />
+      <PlusIcon size={16} weight="bold" />
       <span>Create</span>
     </Button>
   );

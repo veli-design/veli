@@ -27,7 +27,12 @@ import {
   type RangeCalendarProps as AriaRangeCalendarProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { CaretDown, CaretLeft, CaretRight, WarningCircle } from 'phosphor-react';
+import {
+  CaretDownIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from './button.js';
 import {
@@ -115,7 +120,7 @@ const calendarPickerItemVariants = cva(
 function CalendarErrorMessage({ children }: { children: string }) {
   return (
     <Text slot="errorMessage" elementType="div" className={calendarErrorMessageClassName}>
-      <WarningCircle aria-hidden weight="fill" className="size-4 shrink-0" />
+      <WarningCircleIcon aria-hidden weight="fill" className="size-4 shrink-0" />
       <span>{children}</span>
     </Text>
   );
@@ -153,7 +158,7 @@ function CalendarPickerSelect({
         aria-label={ariaLabel}
         className={calendarHeaderIconButtonClassName}
       >
-        <CaretDown aria-hidden weight="regular" className="size-4 shrink-0" />
+        <CaretDownIcon aria-hidden weight="regular" className="size-4 shrink-0" />
       </Button>
       <Popover
         offset={4}
@@ -519,9 +524,9 @@ export function CalendarHeader() {
           className={calendarHeaderIconButtonClassName}
         >
           {direction === 'rtl' ? (
-            <CaretRight aria-hidden weight="regular" className="size-4 shrink-0" />
+            <CaretRightIcon aria-hidden weight="regular" className="size-4 shrink-0" />
           ) : (
-            <CaretLeft aria-hidden weight="regular" className="size-4 shrink-0" />
+            <CaretLeftIcon aria-hidden weight="regular" className="size-4 shrink-0" />
           )}
         </Button>
         <CalendarMonthLabel className={calendarHeaderMonthLabelClassName} />
@@ -535,9 +540,9 @@ export function CalendarHeader() {
           className={calendarHeaderIconButtonClassName}
         >
           {direction === 'rtl' ? (
-            <CaretLeft aria-hidden weight="regular" className="size-4 shrink-0" />
+            <CaretLeftIcon aria-hidden weight="regular" className="size-4 shrink-0" />
           ) : (
-            <CaretRight aria-hidden weight="regular" className="size-4 shrink-0" />
+            <CaretRightIcon aria-hidden weight="regular" className="size-4 shrink-0" />
           )}
         </Button>
       </div>

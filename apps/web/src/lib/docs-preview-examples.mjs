@@ -19,7 +19,7 @@ function alertContent({ layout = 'default', appearance = 'light', language = 'en
   intent="info"
   appearance="${appearance}"
   layout="${layout}"
-  leadingIcon={<Info size={20} weight="fill" />}
+  leadingIcon={<InfoIcon size={20} weight="fill" />}
 >
   <Alert.Title>${text.title}</Alert.Title>${
     layout === 'compact'
@@ -55,7 +55,7 @@ ${content
 }`;
 }
 
-const alertImports = `import { Info } from 'phosphor-react';
+const alertImports = `import { InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';`;
 const providerImport = `import { VeliProvider } from '@tradenetcorp/veli-ui/provider';`;
@@ -63,16 +63,16 @@ const providerImport = `import { VeliProvider } from '@tradenetcorp/veli-ui/prov
 function alertAppearances(appearance) {
   return component(
     'AlertAppearancesDemo',
-    `import { CheckCircle, Info, Warning, WarningCircle, WarningOctagon } from 'phosphor-react';
+    `import { CheckCircleIcon, InfoIcon, WarningIcon, WarningCircleIcon, WarningOctagonIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';`,
     `<div className="flex flex-col gap-4">
   {[
-    { intent: 'neutral', Icon: Info },
-    { intent: 'info', Icon: Info },
-    { intent: 'positive', Icon: CheckCircle },
-    { intent: 'cautious', Icon: WarningCircle },
-    { intent: 'warning', Icon: Warning },
-    { intent: 'danger', Icon: WarningOctagon },
+    { intent: 'neutral', Icon: InfoIcon },
+    { intent: 'info', Icon: InfoIcon },
+    { intent: 'positive', Icon: CheckCircleIcon },
+    { intent: 'cautious', Icon: WarningCircleIcon },
+    { intent: 'warning', Icon: WarningIcon },
+    { intent: 'danger', Icon: WarningOctagonIcon },
   ].map(({ intent, Icon }) => (
     <Alert
       key={intent}
@@ -86,7 +86,10 @@ import { Alert } from '@tradenetcorp/veli-ui/alert';`,
   ))}
 </div>`,
   )
-    .replace("{ intent: 'neutral', Icon: Info },", "{ intent: 'neutral' as const, Icon: Info },")
+    .replace(
+      "{ intent: 'neutral', Icon: InfoIcon },",
+      "{ intent: 'neutral' as const, Icon: InfoIcon },",
+    )
     .replace(/intent: '(info|positive|cautious|warning|danger)'/g, "intent: '$1' as const");
 }
 
@@ -114,10 +117,10 @@ function alertLanguage(language) {
 }
 function buttonLanguage(language) {
   const dv = language === 'dv';
-  const Arrow = dv ? 'ArrowLeft' : 'ArrowRight';
+  const Arrow = dv ? 'ArrowLeftIcon' : 'ArrowRightIcon';
   return component(
     'ButtonLanguageDemo',
-    `import { ${Arrow}, Plus } from 'phosphor-react';
+    `import { ${Arrow}, PlusIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 ${providerImport}`,
     `<VeliProvider language="${language}">
@@ -127,7 +130,7 @@ ${providerImport}`,
       <${Arrow} size={16} aria-hidden="true" weight="bold" />
     </Button>
     <Button intent="secondary" appearance="transparent" iconOnly aria-label="${dv ? 'އިތުރުކުރޭ' : 'Add item'}">
-      <Plus size={16} aria-hidden="true" weight="bold" />
+      <PlusIcon size={16} aria-hidden="true" weight="bold" />
     </Button>
   </div>
 </VeliProvider>`,
@@ -135,10 +138,10 @@ ${providerImport}`,
 }
 function linkLanguage(language) {
   const dv = language === 'dv';
-  const Arrow = dv ? 'ArrowLeft' : 'ArrowRight';
+  const Arrow = dv ? 'ArrowLeftIcon' : 'ArrowRightIcon';
   return component(
     'LinkLanguageDemo',
-    `import { ${Arrow} } from 'phosphor-react';
+    `import { ${Arrow} } from '@phosphor-icons/react';
 import { Link } from '@tradenetcorp/veli-ui/link';
 ${providerImport}`,
     `<VeliProvider language="${language}">

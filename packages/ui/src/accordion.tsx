@@ -14,7 +14,7 @@ import {
   type DisclosureProps as AriaDisclosureProps,
   type HeadingProps,
 } from 'react-aria-components';
-import { CaretDown, CaretRight } from 'phosphor-react';
+import { CaretDownIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
@@ -216,9 +216,9 @@ export function AccordionHeader({
                 })}
               >
                 {resolvedAlignment === 'right' ? (
-                  <CaretRight aria-hidden size={16} weight="regular" />
+                  <CaretRightIcon aria-hidden size={16} weight="regular" />
                 ) : (
-                  <CaretDown aria-hidden size={16} weight="regular" />
+                  <CaretDownIcon aria-hidden size={16} weight="regular" />
                 )}
               </span>
             )}

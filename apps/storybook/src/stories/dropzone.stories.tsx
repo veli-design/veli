@@ -18,7 +18,7 @@ import {
   type DropzoneProps,
 } from '@tradenetcorp/veli-ui/dropzone';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { CloudArrowUp } from 'phosphor-react';
+import { CloudArrowUpIcon } from '@phosphor-icons/react';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 
@@ -519,7 +519,7 @@ export const Composition: Story = {
       <div key={language} className="w-[496px] max-w-full">
         <Dropzone multiple label={text.customTitle} onUpload={simulatedUpload}>
           <DropzoneArea showTrigger={false}>
-            <CloudArrowUp size={32} aria-hidden className="text-icon-primary" />
+            <CloudArrowUpIcon size={32} aria-hidden className="text-icon-primary" />
             <span className="type-body-sm-medium text-base-default">{text.customTitle}</span>
             <span className="type-caption-regular text-base-subtle">{text.customHint}</span>
             <DropzoneTrigger intent="primary" appearance="fill">

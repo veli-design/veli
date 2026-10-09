@@ -45,17 +45,17 @@ import {
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
-  ArrowRight,
-  Bell,
-  CalendarBlank,
-  CaretDown,
-  DownloadSimple,
-  Info,
-  MagnifyingGlass,
-  PencilSimple,
-  Trash,
-  WarningCircle,
-} from 'phosphor-react';
+  ArrowRightIcon,
+  BellIcon,
+  CalendarBlankIcon,
+  CaretDownIcon,
+  DownloadSimpleIcon,
+  InfoIcon,
+  MagnifyingGlassIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {
@@ -168,9 +168,9 @@ const tagsDocsText = {
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
 
-const inputExplorationStartAddon = <MagnifyingGlass size={16} />;
-const inputExplorationEndAddon = <ArrowRight size={16} />;
-const comboBoxExplorationStartAddon = <MagnifyingGlass size={16} />;
+const inputExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
+const inputExplorationEndAddon = <ArrowRightIcon size={16} />;
+const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
   en: {
@@ -507,16 +507,16 @@ export function InputExplorationDemo() {
         label="Label"
         labelSupplementary="(Optional)"
         isRequired
-        labelIcon={<Info size={12} />}
+        labelIcon={<InfoIcon size={12} />}
         action="Action"
         placeholder="Placeholder"
         description="Helper text"
         startAddon={inputExplorationStartAddon}
-        startContent={<CalendarBlank size={16} />}
+        startContent={<CalendarBlankIcon size={16} />}
         endContent={
           <span className="flex items-center gap-[4px]">
-            <WarningCircle size={16} />
-            <CaretDown size={16} />
+            <WarningCircleIcon size={16} />
+            <CaretDownIcon size={16} />
           </span>
         }
         endAddon={inputExplorationEndAddon}
@@ -534,7 +534,7 @@ export function InputValidationDemo() {
         placeholder="Enter value"
         isInvalid
         errorMessage="This field needs attention."
-        endContent={<WarningCircle size={16} />}
+        endContent={<WarningCircleIcon size={16} />}
       />
     </div>
   );
@@ -648,8 +648,8 @@ export function ComboBoxExplorationDemo() {
         placeholder="Search location"
         allowsCustomValue
         startAddon={comboBoxExplorationStartAddon}
-        startContent={<CalendarBlank size={16} />}
-        endContent={<WarningCircle size={16} />}
+        startContent={<CalendarBlankIcon size={16} />}
+        endContent={<WarningCircleIcon size={16} />}
       >
         <ComboBoxSection title="Popular">
           <ComboBoxItem id="male">
@@ -716,12 +716,12 @@ export function SelectExplorationDemo() {
         labelSupplementary="(Optional)"
         infoTooltip="Use this select to choose the requested market."
         infoTooltipAriaLabel="More information"
-        labelIcon={<Info size={12} />}
+        labelIcon={<InfoIcon size={12} />}
         action="Action"
         placeholder="Choose a market"
         description="Helper text"
-        startContent={<MagnifyingGlass size={16} />}
-        endContent={<WarningCircle size={16} />}
+        startContent={<MagnifyingGlassIcon size={16} />}
+        endContent={<WarningCircleIcon size={16} />}
       >
         <SelectSection title="ASEAN">
           <SelectItem id="my" description="Bursa-linked products">
@@ -924,7 +924,7 @@ export function BadgeCounterOnIconDemo() {
         size="md"
         aria-label="5 notifications"
       >
-        <Bell aria-hidden size={20} weight="regular" />
+        <BellIcon aria-hidden size={20} weight="regular" />
       </Button>
       <Badge
         counter
@@ -1330,16 +1330,16 @@ export function MenuUsageDemo() {
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Actions
-        <CaretDown size={16} />
+        <CaretDownIcon size={16} />
       </Button>
       <MenuPopover>
         <Menu>
-          <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
-          <MenuItem startIcon={<DownloadSimple size={16} />} shortcut="⌘E">
+          <MenuItem startIcon={<PencilSimpleIcon size={16} />}>Edit</MenuItem>
+          <MenuItem startIcon={<DownloadSimpleIcon size={16} />} shortcut="⌘E">
             Export
           </MenuItem>
           <MenuSeparator />
-          <MenuItem intent="danger" startIcon={<Trash size={16} />}>
+          <MenuItem intent="danger" startIcon={<TrashIcon size={16} />}>
             Delete
           </MenuItem>
         </Menu>
@@ -1353,18 +1353,18 @@ export function MenuVariantsDemo() {
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Open menu
-        <CaretDown size={16} />
+        <CaretDownIcon size={16} />
       </Button>
       <MenuPopover>
         <Menu>
           <MenuItem
-            startIcon={<PencilSimple size={16} />}
+            startIcon={<PencilSimpleIcon size={16} />}
             description="Update labels, metadata, and visibility."
           >
             Edit details
           </MenuItem>
           <MenuItem
-            startIcon={<DownloadSimple size={16} />}
+            startIcon={<DownloadSimpleIcon size={16} />}
             description="Create a local copy for offline work."
           >
             Download
@@ -1372,7 +1372,7 @@ export function MenuVariantsDemo() {
           <MenuSeparator />
           <MenuItem
             intent="danger"
-            startIcon={<Trash size={16} />}
+            startIcon={<TrashIcon size={16} />}
             description="This action is permanent."
           >
             Remove file

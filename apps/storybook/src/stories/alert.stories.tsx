@@ -3,7 +3,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { CheckCircle, Clock, Info, Warning, WarningCircle, WarningOctagon } from 'phosphor-react';
+import {
+  CheckCircleIcon,
+  ClockIcon,
+  InfoIcon,
+  WarningIcon,
+  WarningCircleIcon,
+  WarningOctagonIcon,
+} from '@phosphor-icons/react';
 import {
   Alert,
   type AlertAppearance,
@@ -86,15 +93,15 @@ function AlertDocsContainer(props: DocsContainerProps) {
 }
 
 const icons = {
-  neutral: Info,
-  info: Info,
-  positive: CheckCircle,
-  cautious: WarningCircle,
-  warning: Warning,
-  danger: WarningOctagon,
+  neutral: InfoIcon,
+  info: InfoIcon,
+  positive: CheckCircleIcon,
+  cautious: WarningCircleIcon,
+  warning: WarningIcon,
+  danger: WarningOctagonIcon,
 };
 function AlertIcon({ intent, custom = false }: { intent: AlertIntent; custom?: boolean }) {
-  const Icon = custom ? Clock : icons[intent];
+  const Icon = custom ? ClockIcon : icons[intent];
   return <Icon size={20} weight="fill" />;
 }
 

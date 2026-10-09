@@ -2,7 +2,14 @@
 
 import { useId, type ReactNode } from 'react';
 import emptyIcon from './cursor-click.svg';
-import { BellSimple, CheckCircle, DotsThree, Spinner, WarningCircle, X } from 'phosphor-react';
+import {
+  BellSimpleIcon,
+  CheckCircleIcon,
+  DotsThreeIcon,
+  SpinnerIcon,
+  WarningCircleIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
@@ -96,7 +103,11 @@ function NotificationRow({
   const statusId = useId();
   const intent = item.intent ?? 'neutral';
   const Icon =
-    intent === 'success' ? CheckCircle : intent === 'neutral' ? BellSimple : WarningCircle;
+    intent === 'success'
+      ? CheckCircleIcon
+      : intent === 'neutral'
+        ? BellSimpleIcon
+        : WarningCircleIcon;
   const content = (
     <>
       <span
@@ -204,7 +215,7 @@ export function NotificationTrayContent({
             iconOnly
             size="md"
           >
-            <DotsThree className="size-5" />
+            <DotsThreeIcon className="size-5" />
           </Button>
           <MenuPopover placement="bottom end" offset={2} className="z-50 min-w-50">
             <Menu
@@ -244,7 +255,7 @@ export function NotificationTrayContent({
             size="md"
             onPress={onClose}
           >
-            <X className="size-5" />
+            <XIcon className="size-5" />
           </Button>
         ) : null}
       </div>
@@ -263,7 +274,7 @@ export function NotificationTrayContent({
               aria-hidden
               className="flex size-8 shrink-0 items-center justify-center rounded-full bg-bg-danger-subtle text-icon-danger"
             >
-              <WarningCircle className="size-5" />
+              <WarningCircleIcon className="size-5" />
             </span>
             <p
               role="alert"
@@ -301,7 +312,7 @@ export function NotificationTrayContent({
           </ul>
         ) : isLoading ? (
           <div aria-hidden className="flex min-h-80 items-center justify-center">
-            <Spinner className="size-8 text-icon-base-muted motion-safe:animate-spin" />
+            <SpinnerIcon className="size-8 text-icon-base-muted motion-safe:animate-spin" />
           </div>
         ) : !error ? (
           <div

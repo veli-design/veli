@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
-import { Gear, House, SquaresFour, User } from 'phosphor-react';
+import { GearIcon, HouseIcon, SquaresFourIcon, UserIcon } from '@phosphor-icons/react';
 import { useVeliLanguage, VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 
@@ -228,19 +228,19 @@ export const WithLeadingSlot: Story = {
           {
             id: 'home',
             label: text.labels.home,
-            leading: <House size={16} />,
+            leading: <HouseIcon size={16} />,
             panel: text.panels.home,
           },
           {
             id: 'dashboard',
             label: text.labels.dashboard,
-            leading: <SquaresFour size={16} />,
+            leading: <SquaresFourIcon size={16} />,
             panel: text.panels.dashboard,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            leading: <Gear size={16} />,
+            leading: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}
@@ -263,13 +263,13 @@ export const WithTrailingSlot: Story = {
           {
             id: 'profile',
             label: text.labels.profile,
-            trailing: <User size={16} />,
+            trailing: <UserIcon size={16} />,
             panel: text.panels.profile,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            trailing: <Gear size={16} />,
+            trailing: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}
@@ -355,21 +355,21 @@ export const WithLeadingAndTrailingSlots: Story = {
           {
             id: 'overview',
             label: text.labels.overview,
-            leading: <House size={16} />,
-            trailing: <SquaresFour size={16} />,
+            leading: <HouseIcon size={16} />,
+            trailing: <SquaresFourIcon size={16} />,
             panel: text.panels.overview,
           },
           {
             id: 'members',
             label: text.labels.members,
-            leading: <User size={16} />,
-            trailing: <Gear size={16} />,
+            leading: <UserIcon size={16} />,
+            trailing: <GearIcon size={16} />,
             panel: text.panels.members,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            leading: <Gear size={16} />,
+            leading: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}

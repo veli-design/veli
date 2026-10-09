@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from 'react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
-import { ArrowLeft, ArrowRight, Plus, Trash } from 'phosphor-react';
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const buttonSizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
@@ -49,15 +49,15 @@ export function ButtonIconsDemo() {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Button>
-        <Plus size={16} aria-hidden="true" weight="bold" />
+        <PlusIcon size={16} aria-hidden="true" weight="bold" />
         Add item
       </Button>
       <Button intent="secondary" appearance="transparent">
         Continue
-        <ArrowRight size={16} aria-hidden="true" weight="bold" />
+        <ArrowRightIcon size={16} aria-hidden="true" weight="bold" />
       </Button>
       <Button intent="danger" appearance="ghost" iconOnly aria-label="Delete item">
-        <Trash size={16} aria-hidden="true" weight="bold" />
+        <TrashIcon size={16} aria-hidden="true" weight="bold" />
       </Button>
     </div>
   );
@@ -71,7 +71,7 @@ export function ButtonSizesDemo() {
           <span className="w-8 type-body-sm-medium text-base-strong uppercase">{size}</span>
           <Button size={size}>Continue</Button>
           <Button size={size} iconOnly aria-label="Add item">
-            <Plus size={buttonIconSizes[size]} aria-hidden="true" weight="bold" />
+            <PlusIcon size={buttonIconSizes[size]} aria-hidden="true" weight="bold" />
           </Button>
         </div>
       ))}
@@ -100,7 +100,7 @@ export function ButtonRtlDemo() {
     () => 'system' as const,
   );
   const isDhivehi = localLanguage === 'Dhivehi';
-  const ForwardArrow = isDhivehi ? ArrowLeft : ArrowRight;
+  const ForwardArrow = isDhivehi ? ArrowLeftIcon : ArrowRightIcon;
 
   return (
     <DocsPreview
@@ -130,7 +130,7 @@ export function ButtonRtlDemo() {
             iconOnly
             aria-label={isDhivehi ? 'އިތުރުކުރޭ' : 'Add item'}
           >
-            <Plus size={16} aria-hidden="true" weight="bold" />
+            <PlusIcon size={16} aria-hidden="true" weight="bold" />
           </Button>
         </div>
       </VeliProvider>

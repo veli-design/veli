@@ -10,7 +10,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import {
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
@@ -535,7 +535,7 @@ export function TextArea({
                         className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                         isDisabled={isDisabled}
                       >
-                        <Info size={16} aria-hidden />
+                        <InfoIcon size={16} aria-hidden />
                       </AriaButton>
                       <Tooltip
                         placement="top"

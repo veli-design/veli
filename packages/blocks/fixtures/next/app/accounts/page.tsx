@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sun, Moon, Monitor } from 'phosphor-react';
+import { SunIcon, MoonIcon, MonitorIcon } from '@phosphor-icons/react';
 import {
   AccountPanel,
   type AccountPanelAccount,
@@ -189,13 +189,17 @@ export default function AccountsPage() {
                 {
                   id: 'light',
                   label: dv ? 'ލައިޓް' : 'Light',
-                  icon: <Sun size={16} weight="bold" />,
+                  icon: <SunIcon size={16} weight="bold" />,
                 },
-                { id: 'dark', label: dv ? 'ޑާކް' : 'Dark', icon: <Moon size={16} weight="bold" /> },
+                {
+                  id: 'dark',
+                  label: dv ? 'ޑާކް' : 'Dark',
+                  icon: <MoonIcon size={16} weight="bold" />,
+                },
                 {
                   id: 'system',
                   label: dv ? 'ސިސްޓަމް' : 'Auto',
-                  icon: <Monitor size={16} weight="bold" />,
+                  icon: <MonitorIcon size={16} weight="bold" />,
                 },
               ],
               onChange: setTheme,

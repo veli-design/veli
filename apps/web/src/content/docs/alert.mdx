@@ -22,12 +22,12 @@ Use Alert for important information about the current page or section. Alerts pe
 </div>
 
 ```tsx
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 
 export default function AlertUsageDemo() {
   return (
-    <Alert intent="info" leadingIcon={<Info size={20} weight="fill" />}>
+    <Alert intent="info" leadingIcon={<InfoIcon size={20} weight="fill" />}>
       <Alert.Title>Permit review in progress</Alert.Title>
       <Alert.Description>
         You will receive an email when your application has been processed.
@@ -50,19 +50,25 @@ Choose `neutral` for general information, `info` for contextual guidance, `posit
 </div>
 
 ```tsx
-import { CheckCircle, Info, Warning, WarningCircle, WarningOctagon } from 'phosphor-react';
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  WarningIcon,
+  WarningCircleIcon,
+  WarningOctagonIcon,
+} from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 
 export default function AlertAppearancesDemo() {
   return (
     <div className="flex flex-col gap-4">
       {[
-        { intent: 'neutral' as const, Icon: Info },
-        { intent: 'info' as const, Icon: Info },
-        { intent: 'positive' as const, Icon: CheckCircle },
-        { intent: 'cautious' as const, Icon: WarningCircle },
-        { intent: 'warning' as const, Icon: Warning },
-        { intent: 'danger' as const, Icon: WarningOctagon },
+        { intent: 'neutral' as const, Icon: InfoIcon },
+        { intent: 'info' as const, Icon: InfoIcon },
+        { intent: 'positive' as const, Icon: CheckCircleIcon },
+        { intent: 'cautious' as const, Icon: WarningCircleIcon },
+        { intent: 'warning' as const, Icon: WarningIcon },
+        { intent: 'danger' as const, Icon: WarningOctagonIcon },
       ].map(({ intent, Icon }) => (
         <Alert
           key={intent}
@@ -98,7 +104,7 @@ The alert fills its container. Select its layout explicitly for the available sp
 </div>
 
 ```tsx
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';
 
@@ -109,7 +115,7 @@ export default function AlertLayoutDemo() {
         intent="info"
         appearance="light"
         layout="default"
-        leadingIcon={<Info size={20} weight="fill" />}
+        leadingIcon={<InfoIcon size={20} weight="fill" />}
       >
         <Alert.Title>Permit review in progress</Alert.Title>
         <Alert.Description>
@@ -143,7 +149,7 @@ Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `a
 'use client';
 
 import { useState } from 'react';
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';
 
@@ -155,7 +161,7 @@ export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
       intent="info"
       appearance="highContrast"
       layout="stacked"
-      leadingIcon={<Info size={20} weight="fill" />}
+      leadingIcon={<InfoIcon size={20} weight="fill" />}
       isVisible={visible}
       onDismiss={() => setVisible(false)}
     >
@@ -253,7 +259,7 @@ Use `VeliProvider language="dv"` for Dhivehi typography and RTL direction. The i
 </div>
 
 ```tsx
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import { Alert } from '@tradenetcorp/veli-ui/alert';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
@@ -265,7 +271,7 @@ export default function AlertLanguageDemo() {
         intent="info"
         appearance="light"
         layout="stacked"
-        leadingIcon={<Info size={20} weight="fill" />}
+        leadingIcon={<InfoIcon size={20} weight="fill" />}
       >
         <Alert.Title>ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ</Alert.Title>
         <Alert.Description>އެޕްލިކޭޝަން ޕްރޮސެސްކުރުމުން އީމެއިލް ލިބޭނެއެވެ.</Alert.Description>

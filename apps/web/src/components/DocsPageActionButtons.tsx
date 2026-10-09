@@ -1,7 +1,7 @@
 import { MenuItem } from '@tradenetcorp/veli-ui/menu';
 import { Button, Menu, MenuTrigger, Popover, Text } from 'react-aria-components';
 import styles from './DocsPageActionButtons.module.css';
-import { ArrowSquareOut, CaretDown, Copy } from 'phosphor-react';
+import { ArrowSquareOutIcon, CaretDownIcon, CopyIcon } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
@@ -104,12 +104,12 @@ export function DocsPageActionButtons({ markdownPath, compact = false, fullWidth
         data-state={copyState}
         onPress={copyPage}
       >
-        <Copy size={16} aria-hidden="true" />
+        <CopyIcon size={16} aria-hidden="true" />
         <span>{copyLabel}</span>
       </Button>
       <MenuTrigger>
         <Button className={styles.trigger} aria-label="Choose page action" isDisabled={isCopying}>
-          <CaretDown size={16} aria-hidden="true" />
+          <CaretDownIcon size={16} aria-hidden="true" />
         </Button>
         <Popover className={styles.popover} placement="bottom end" offset={2}>
           <Menu aria-label="Page actions" className={styles.menu}>
@@ -137,7 +137,7 @@ export function DocsPageActionButtons({ markdownPath, compact = false, fullWidth
               href={markdownPath}
               target="_blank"
               rel="noopener noreferrer"
-              endIcon={<ArrowSquareOut size={16} aria-hidden="true" />}
+              endIcon={<ArrowSquareOutIcon size={16} aria-hidden="true" />}
             >
               <div className={styles.item}>
                 <Text slot="label">View as Markdown</Text>

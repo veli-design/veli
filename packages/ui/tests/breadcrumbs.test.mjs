@@ -61,5 +61,5 @@ test('Breadcrumbs use the Figma typography and reduced-motion contracts', () => 
   assert.match(source, /min-w-\[155px\] w-\[155px\]/);
   assert.match(source, /motion-safe:transition-colors/);
   assert.match(source, /motion-reduce:transition-none/);
-  assert.match(source, /direction === 'rtl' \? CaretRight : CaretLeft/);
+  assert.match(source, /direction === 'rtl' \? CaretRightIcon : CaretLeftIcon/);
 });

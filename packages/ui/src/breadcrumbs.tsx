@@ -11,7 +11,7 @@ import {
   type BreadcrumbsProps as AriaBreadcrumbsProps,
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
-import { CaretLeft, CaretRight } from 'phosphor-react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
 import { useVeliLanguage } from './provider.js';
@@ -191,7 +191,7 @@ export function BreadcrumbBackLink({
   ...props
 }: BreadcrumbBackLinkProps) {
   const { direction } = useVeliLanguage();
-  const CaretIcon = direction === 'rtl' ? CaretRight : CaretLeft;
+  const CaretIcon = direction === 'rtl' ? CaretRightIcon : CaretLeftIcon;
   const content = children ?? (
     <>
       <CaretIcon aria-hidden size={16} weight="bold" />

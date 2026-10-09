@@ -5,7 +5,7 @@ import {
   Separator as AriaSeparator,
   type SeparatorProps as AriaSeparatorProps,
 } from 'react-aria-components';
-import { CaretCircleDown } from 'phosphor-react';
+import { CaretCircleDownIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
@@ -114,7 +114,7 @@ function DividerContent({
     <>
       <span aria-hidden="true" className={dividerLineVariants({ appearance })} />
       {showIcon && (
-        <CaretCircleDown
+        <CaretCircleDownIcon
           aria-hidden="true"
           focusable="false"
           size={16}

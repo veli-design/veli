@@ -10,7 +10,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -342,7 +342,7 @@ export function Input({
                       className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
-                      <Info size={16} aria-hidden />
+                      <InfoIcon size={16} aria-hidden />
                     </AriaButton>
                     <Tooltip
                       placement="top"
@@ -406,7 +406,7 @@ export function Input({
             ) : null}
             {isInvalid ? (
               <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                <Info size={size === 'lg' ? 20 : 16} weight="fill" />
+                <InfoIcon size={size === 'lg' ? 20 : 16} weight="fill" />
               </div>
             ) : null}
             {endAddon ? <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div> : null}

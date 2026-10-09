@@ -11,16 +11,22 @@ import {
   useVeliLanguage,
   type VeliColorScheme,
 } from '@tradenetcorp/veli-ui/provider';
-import { CheckCircle, Info, Warning, WarningCircle, WarningOctagon } from 'phosphor-react';
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  WarningIcon,
+  WarningCircleIcon,
+  WarningOctagonIcon,
+} from '@phosphor-icons/react';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const icons = {
-  neutral: Info,
-  info: Info,
-  positive: CheckCircle,
-  cautious: WarningCircle,
-  warning: Warning,
-  danger: WarningOctagon,
+  neutral: InfoIcon,
+  info: InfoIcon,
+  positive: CheckCircleIcon,
+  cautious: WarningCircleIcon,
+  warning: WarningIcon,
+  danger: WarningOctagonIcon,
 };
 const copy = {
   en: {
@@ -142,7 +148,7 @@ export function AlertDismissibleDemo() {
         intent="info"
         appearance="highContrast"
         layout="stacked"
-        leadingIcon={<Info size={20} weight="fill" />}
+        leadingIcon={<InfoIcon size={20} weight="fill" />}
       >
         <Alert.Title>{text.title}</Alert.Title>
         <Alert.Description>{text.description}</Alert.Description>

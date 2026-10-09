@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useSyncExternalStore, type ReactElement } from 'react';
-import { BellSimple } from 'phosphor-react';
+import { BellSimpleIcon } from '@phosphor-icons/react';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
@@ -142,7 +142,7 @@ export function NotificationTray({
           iconOnly
           className="relative overflow-visible"
         >
-          <BellSimple className="size-5" />
+          <BellSimpleIcon className="size-5" />
           {contentProps.unreadCount > 0 ? (
             <Badge
               size="xs"

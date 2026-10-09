@@ -4,12 +4,12 @@ import { useArgs } from 'storybook/internal/preview-api';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import {
-  ArrowRight,
-  CalendarBlank,
-  CaretDown,
-  MagnifyingGlass,
-  WarningCircle,
-} from 'phosphor-react';
+  ArrowRightIcon,
+  CalendarBlankIcon,
+  CaretDownIcon,
+  MagnifyingGlassIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 
 const dhivehiFormText = {
   core: {
@@ -158,15 +158,15 @@ const hiddenNativeInputArgTypes = {
 const renderInputIcon = (icon: InputIconOption) => {
   switch (icon) {
     case 'search':
-      return <MagnifyingGlass size={16} />;
+      return <MagnifyingGlassIcon size={16} />;
     case 'calendar':
-      return <CalendarBlank size={16} />;
+      return <CalendarBlankIcon size={16} />;
     case 'caretDown':
-      return <CaretDown size={16} />;
+      return <CaretDownIcon size={16} />;
     case 'arrowRight':
-      return <ArrowRight size={16} />;
+      return <ArrowRightIcon size={16} />;
     case 'warning':
-      return <WarningCircle size={16} />;
+      return <WarningCircleIcon size={16} />;
     case 'none':
       return undefined;
   }
@@ -412,7 +412,7 @@ export const Default: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
-          labelIcon={showLabelIcon ? <WarningCircle size={16} /> : undefined}
+          labelIcon={showLabelIcon ? <WarningCircleIcon size={16} /> : undefined}
           action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
@@ -465,7 +465,7 @@ export const Outline: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
-          labelIcon={showLabelIcon ? <WarningCircle size={16} /> : undefined}
+          labelIcon={showLabelIcon ? <WarningCircleIcon size={16} /> : undefined}
           action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
@@ -611,15 +611,15 @@ export const FigmaExploration: Story = {
           action="Action"
           placeholder={text.core.placeholder}
           description={text.core.helperText}
-          startAddon={<MagnifyingGlass size={16} />}
-          startContent={<CalendarBlank size={16} />}
+          startAddon={<MagnifyingGlassIcon size={16} />}
+          startContent={<CalendarBlankIcon size={16} />}
           endContent={
             <span className="flex items-center gap-[4px]">
-              <WarningCircle size={16} />
-              <CaretDown size={16} />
+              <WarningCircleIcon size={16} />
+              <CaretDownIcon size={16} />
             </span>
           }
-          endAddon={<ArrowRight size={16} />}
+          endAddon={<ArrowRightIcon size={16} />}
         />
       </div>
     );
@@ -657,13 +657,13 @@ export const ValidationStates: Story = {
             label={text.core.disabled}
             placeholder={text.input.disabledValue}
             isDisabled
-            endAddon={<ArrowRight size={16} />}
+            endAddon={<ArrowRightIcon size={16} />}
           />
           <Input
             label={text.core.readOnly}
             defaultValue={text.input.lockedValue}
             isReadOnly
-            endContent={<CaretDown size={16} />}
+            endContent={<CaretDownIcon size={16} />}
           />
         </div>
         <div className="flex flex-col gap-8">
@@ -695,14 +695,14 @@ export const ValidationStates: Story = {
             label={text.core.disabled}
             placeholder={text.input.disabledValue}
             isDisabled
-            endAddon={<ArrowRight size={16} />}
+            endAddon={<ArrowRightIcon size={16} />}
           />
           <Input
             appearance="outline"
             label={text.core.readOnly}
             defaultValue={text.input.lockedValue}
             isReadOnly
-            endContent={<CaretDown size={16} />}
+            endContent={<CaretDownIcon size={16} />}
           />
         </div>
       </div>

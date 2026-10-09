@@ -225,8 +225,8 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
+    "@phosphor-icons/react": "^2.1.10",
     "class-variance-authority": "^0.7.1",
-    "phosphor-react": "^1.4.1",
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {

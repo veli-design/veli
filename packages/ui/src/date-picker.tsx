@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CalendarBlank, Info } from 'phosphor-react';
+import { CalendarBlankIcon, InfoIcon } from '@phosphor-icons/react';
 import {
   Button as AriaButton,
   ButtonContext,
@@ -153,7 +153,7 @@ export function DatePicker<T extends DateValue>({
                           className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                           isDisabled={isDisabled}
                         >
-                          <Info size={16} aria-hidden />
+                          <InfoIcon size={16} aria-hidden />
                         </AriaButton>
                         <Tooltip
                           placement="top"
@@ -194,7 +194,7 @@ export function DatePicker<T extends DateValue>({
                 isDisabled={isDisabled || isReadOnly}
                 className={calendarButtonClassName}
               >
-                <CalendarBlank aria-hidden size={20} weight="regular" />
+                <CalendarBlankIcon aria-hidden size={20} weight="regular" />
               </AriaButton>
             </Group>
 
