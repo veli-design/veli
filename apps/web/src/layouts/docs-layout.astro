@@ -1,16 +1,12 @@
 ---
-import {
-  ArrowUpRight,
-  FigmaLogo,
-  GithubLogo,
-  List,
-  MagnifyingGlass,
-  Package,
-} from 'phosphor-react';
-import Layout from './layout.astro';
-import { componentGroups, externalResources, foundations } from '../lib/site';
+import { CaretDownIcon, ListIcon } from '@phosphor-icons/react';
 import DocsCodeBlocks from '../components/DocsCodeBlocks.astro';
+import DocsFooterControls from '../components/DocsFooterControls.astro';
+import DocsPageActions from '../components/DocsPageActions.astro';
+import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
+import { docsSections } from '../lib/site';
+import Layout from './layout.astro';
 
 type Heading = {
   depth: number;
@@ -18,29 +14,40 @@ type Heading = {
   text: string;
 };
 
+type DocsContentLayout = 'overview' | 'foundation-article' | 'component' | 'article';
+
 interface Props {
   title: string;
   description?: string;
   activePath: string;
+  markdownPath?: string;
   headings?: Heading[];
   fullBleedHeader?: boolean;
+  showPageActions?: boolean;
+  contentLayout: DocsContentLayout;
 }
 
-const { title, description, activePath, headings = [], fullBleedHeader = false } = Astro.props;
-
-const resourceIcons = {
-  figma: FigmaLogo,
-  github: GithubLogo,
-  package: Package,
-};
+const {
+  title,
+  description,
+  activePath,
+  markdownPath,
+  headings = [],
+  fullBleedHeader = false,
+  showPageActions = true,
+  contentLayout,
+} = Astro.props;
 
 function isActive(href: string) {
-  if (href === '/docs/') return activePath === href;
-  return activePath === href || activePath.startsWith(`${href}#`);
+  return activePath === href;
+}
+
+function isSectionActive(section: (typeof docsSections)[number]) {
+  return section.items.some((item) => isActive(item.href));
 }
 ---
 
-<Layout title={title} description={description} pageClass="docs-page">
+<Layout title={title} description={description} pageClass="docs-page" {markdownPath}>
   <div class="docs-workspace">
     <aside class="docs-navigation" aria-label="Documentation navigation">
       <div class="docs-navigation__scroll">
@@ -48,72 +55,54 @@ function isActive(href: string) {
           <VeliLogo class="veli-logo" clipId="veli-logo-desktop" />
         </a>
 
-        <nav class="docs-nav" aria-label="Veli documentation">
-          <section class="docs-nav-group" data-doc-group>
-            <h2>Foundations</h2>
-            <a
-              class:list={['docs-nav-link', isActive('/foundations/') && 'is-active']}
-              href="/foundations/"
-              data-doc-link
-            >
-              Overview
-            </a>
-            {
-              foundations.map((item) => (
-                <a
-                  class:list={['docs-nav-link', isActive(item.href) && 'is-active']}
-                  href={item.href}
-                  data-doc-link
-                >
-                  {item.title}
-                </a>
-              ))
-            }
-          </section>
+        <div class="docs-nav-filter">
+          <DocsSearch client:load />
 
-          <section class="docs-nav-group" data-doc-group>
-            <h2>Components</h2>
-            <a
-              class:list={['docs-nav-link', isActive('/docs/') && 'is-active']}
-              href="/docs/"
-              data-doc-link
-            >
-              Overview
-            </a>
+          <nav class="docs-nav" aria-label="Veli documentation">
             {
-              componentGroups.flatMap((group) =>
-                group.items.map((item) => (
-                  <a
-                    class:list={[
-                      'docs-nav-link',
-                      activePath === `/docs/${item.slug}/` && 'is-active',
-                    ]}
-                    href={`/docs/${item.slug}/`}
-                    data-doc-link
+              docsSections.map((section) => {
+                const sectionActive = isSectionActive(section);
+                return (
+                  <details
+                    class="docs-nav-group"
+                    data-doc-group
+                    data-default-open={sectionActive ? 'true' : undefined}
+                    open={sectionActive}
                   >
-                    {item.title}
-                  </a>
-                )),
-              )
+                    <summary>
+                      <span>{section.title}</span>
+                      <CaretDownIcon
+                        className="docs-nav-group__caret"
+                        size={16}
+                        aria-hidden="true"
+                      />
+                    </summary>
+                    <div class="docs-nav-group__links">
+                      {section.items.map((item) => {
+                        const itemActive = isActive(item.href);
+                        return (
+                          <a
+                            class:list={['docs-nav-link', itemActive && 'is-active']}
+                            href={item.href}
+                            aria-current={itemActive ? 'page' : undefined}
+                            data-doc-link
+                          >
+                            {item.title}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </details>
+                );
+              })
             }
-          </section>
-        </nav>
+          </nav>
+        </div>
       </div>
 
-      <nav class="docs-resources" aria-label="Veli resources">
-        {
-          externalResources.map((item) => {
-            const Icon = resourceIcons[item.icon];
-            return (
-              <a href={item.href} target="_blank" rel="noreferrer">
-                <Icon size={18} weight="regular" aria-hidden="true" />
-                <span>{item.label}</span>
-                <ArrowUpRight className="external-arrow" size={13} aria-hidden="true" />
-              </a>
-            );
-          })
-        }
-      </nav>
+      <div class="docs-navigation__footer">
+        <DocsFooterControls />
+      </div>
     </aside>
 
     <header class="docs-mobile-header">
@@ -122,102 +111,181 @@ function isActive(href: string) {
       </a>
       <details class="docs-mobile-menu">
         <summary aria-label="Open documentation navigation">
-          <List size={22} aria-hidden="true" />
+          <ListIcon size={22} aria-hidden="true" />
         </summary>
         <div class="docs-mobile-menu__panel">
-          <nav aria-label="Mobile documentation navigation">
-            <h2>Foundations</h2>
-            <a href="/foundations/">Overview</a>
-            {foundations.map((item) => <a href={item.href}>{item.title}</a>)}
-            <h2>Components</h2>
-            <a href="/docs/">Overview</a>
+          <DocsSearch client:load enableShortcut={false} />
+
+          <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">
             {
-              componentGroups.flatMap((group) =>
-                group.items.map((item) => <a href={`/docs/${item.slug}/`}>{item.title}</a>),
-              )
+              docsSections.map((section) => {
+                const sectionActive = isSectionActive(section);
+                return (
+                  <details
+                    class="docs-nav-group"
+                    data-doc-group
+                    data-default-open={sectionActive ? 'true' : undefined}
+                    open={sectionActive}
+                  >
+                    <summary>
+                      <span>{section.title}</span>
+                      <CaretDownIcon
+                        className="docs-nav-group__caret"
+                        size={16}
+                        aria-hidden="true"
+                      />
+                    </summary>
+                    <div class="docs-nav-group__links">
+                      {section.items.map((item) => {
+                        const itemActive = isActive(item.href);
+                        return (
+                          <a
+                            class:list={['docs-nav-link', itemActive && 'is-active']}
+                            href={item.href}
+                            aria-current={itemActive ? 'page' : undefined}
+                            data-doc-link
+                          >
+                            {item.title}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </details>
+                );
+              })
             }
           </nav>
+
+          <div class="docs-mobile-menu__footer">
+            <DocsFooterControls />
+          </div>
         </div>
       </details>
     </header>
 
-    <main id="main" class:list={['docs-main', fullBleedHeader && 'docs-main--full-bleed-header']}>
+    <main
+      id="main"
+      class:list={[
+        'docs-main',
+        fullBleedHeader && 'docs-main--full-bleed-header',
+        `docs-main--${contentLayout}`,
+      ]}
+    >
       <div class="docs-main__inner">
         <slot />
+
+        <aside class="docs-utilities" aria-label="Page utilities">
+          <div class="docs-utilities__sticky">
+            {
+              markdownPath && showPageActions && (
+                <DocsPageActions {markdownPath} placement="utility" />
+              )
+            }
+            <nav class="docs-contents" aria-label="On this page">
+              <h2>On this page</h2>
+              {
+                headings.length > 0 ? (
+                  headings.map((heading) => (
+                    <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
+                      {heading.text}
+                    </a>
+                  ))
+                ) : (
+                  <a href="#main">Overview</a>
+                )
+              }
+            </nav>
+          </div>
+        </aside>
       </div>
     </main>
-
-    <aside class="docs-utilities" aria-label="Page utilities">
-      <label class="docs-search">
-        <MagnifyingGlass size={17} aria-hidden="true" />
-        <span class="sr-only">Search documentation</span>
-        <input type="search" placeholder="Search" data-doc-search />
-      </label>
-      <p class="docs-search-status" aria-live="polite" data-search-status></p>
-
-      <nav class="docs-contents" aria-label="On this page">
-        <h2>On this page</h2>
-        {
-          headings.length > 0 ? (
-            headings.map((heading) => (
-              <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
-                {heading.text}
-              </a>
-            ))
-          ) : (
-            <a href="#main">Overview</a>
-          )
-        }
-      </nav>
-
-      <button class="theme-cycle" type="button" data-theme-cycle>
-        <span>Theme</span>
-        <span data-theme-label>System</span>
-      </button>
-    </aside>
   </div>
 
   <script is:inline>
     (() => {
-      const input = document.querySelector('[data-doc-search]');
-      const links = Array.from(document.querySelectorAll('[data-doc-link]'));
-      const groups = Array.from(document.querySelectorAll('[data-doc-group]'));
-      const status = document.querySelector('[data-search-status]');
       const mobileMenu = document.querySelector('.docs-mobile-menu');
-      const mobileMenuLinks = document.querySelectorAll('.docs-mobile-menu a');
       const mobileMenuPanel = document.querySelector('.docs-mobile-menu__panel');
 
-      function resetMobileMenuScroll() {
+      mobileMenu?.addEventListener('toggle', () => {
         const isOpen = mobileMenu instanceof HTMLDetailsElement && mobileMenu.open;
         if (isOpen && mobileMenuPanel instanceof HTMLElement) mobileMenuPanel.scrollTop = 0;
-      }
+      });
 
-      mobileMenu?.addEventListener('toggle', resetMobileMenuScroll);
-
-      for (const link of mobileMenuLinks) {
+      for (const link of document.querySelectorAll('.docs-mobile-menu a')) {
         link.addEventListener('click', () => mobileMenu?.removeAttribute('open'));
       }
 
-      if (!(input instanceof HTMLInputElement)) return;
+      const contents = document.querySelector('.docs-contents');
+      const scrollRoot = document.querySelector('.docs-main__inner');
 
-      input.addEventListener('input', () => {
-        const query = input.value.trim().toLowerCase();
-        let visible = 0;
+      if (contents && scrollRoot instanceof HTMLElement) {
+        const sections = [...contents.querySelectorAll('a[href^="#"]')].flatMap((link) => {
+          const id = link.getAttribute('href')?.slice(1);
+          const heading = id ? document.getElementById(id) : null;
+          return heading ? [{ link, heading }] : [];
+        });
+        let activeLink;
+        let updateFrame;
 
-        for (const link of links) {
-          const matches = !query || link.textContent?.toLowerCase().includes(query);
-          link.toggleAttribute('hidden', !matches);
-          if (matches) visible += 1;
-        }
+        const updateContents = () => {
+          updateFrame = undefined;
+          const rootRect = scrollRoot.getBoundingClientRect();
+          const remainingScroll = Math.max(
+            0,
+            scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop,
+          );
+          const visibleSections = sections.filter(
+            ({ link, heading }) => !link.hidden && !heading.closest('[hidden]'),
+          );
+          const activeLine = Math.max(rootRect.top + 64, rootRect.bottom - 64 - remainingScroll);
+          let active = visibleSections[0];
 
-        for (const group of groups) {
-          const hasMatch = group.querySelector('[data-doc-link]:not([hidden])');
-          group.toggleAttribute('hidden', !hasMatch);
-        }
+          for (const section of visibleSections) {
+            if (section.heading.getBoundingClientRect().top > activeLine) break;
+            active = section;
+          }
 
-        if (status)
-          status.textContent = query ? `${visible} result${visible === 1 ? '' : 's'}` : '';
-      });
+          const hashActive =
+            remainingScroll <= 1 &&
+            visibleSections.find(({ link, heading }) => {
+              const headingRect = heading.getBoundingClientRect();
+              return (
+                link.getAttribute('href') === location.hash &&
+                headingRect.top < rootRect.bottom &&
+                headingRect.bottom > rootRect.top
+              );
+            });
+          if (hashActive) active = hashActive;
+
+          if (!active || active.link === activeLink) return;
+          activeLink = active.link;
+
+          for (const { link } of sections) {
+            const isActive = link === activeLink;
+            link.classList.toggle('is-active', isActive);
+            if (isActive) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          }
+
+          const rail = contents;
+          if (rail.clientHeight === 0) return;
+          const linkRect = activeLink.getBoundingClientRect();
+          const railRect = rail.getBoundingClientRect();
+          if (linkRect.top < railRect.top + 8) rail.scrollTop += linkRect.top - railRect.top - 8;
+          else if (linkRect.bottom > railRect.bottom - 8)
+            rail.scrollTop += linkRect.bottom - railRect.bottom + 8;
+        };
+
+        const scheduleContentsUpdate = () => {
+          if (updateFrame) return;
+          updateFrame = requestAnimationFrame(updateContents);
+        };
+
+        scrollRoot.addEventListener('scroll', scheduleContentsUpdate, { passive: true });
+        window.addEventListener('resize', scheduleContentsUpdate);
+        window.addEventListener('veli:docs-tab-change', scheduleContentsUpdate);
+        scheduleContentsUpdate();
+      }
     })();
   </script>
   <DocsCodeBlocks />

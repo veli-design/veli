@@ -37,3 +37,11 @@ Thumbs.db
 # Lyse local cache (baseline.json is tracked)
 .lyse/*
 !.lyse/baseline.json
+
+# Local editor and browser-agent artifacts
+.cursor/settings.json
+.playwright-cli/
+.playwright-mcp/
+
+# Local temporary playgrounds
+playground/

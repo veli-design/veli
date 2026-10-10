@@ -1,0 +1,43 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "field",
+  "apiPattern": "compound",
+  "purpose": "Compose labels, descriptions, and errors for grouped controls that do not ship built-in field chrome.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Use VeliProvider when FieldLabel needs localized optional labeling."]
+  },
+  "useWhen": [
+    "A RadioGroup or CheckboxGroup needs a visible label, description, or error message.",
+    "Form library validation errors should render through FieldError inside the group."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The control already exposes label, description, and error props.",
+      "guidance": "Use the built-in field props on Input, Select, and similar controls.",
+      "useInstead": ["input", "textarea", "select", "combobox", "password-input", "search"]
+    }
+  ],
+  "supportedInteractions": [
+    "Label association through React Aria LabelContext",
+    "Validation messaging via FieldError"
+  ],
+  "approvedPatterns": [
+    "Place FieldLabel, FieldDescription, and FieldError inside RadioGroup or CheckboxGroup.",
+    "Do not also pass description or errorMessage on the group when using FieldDescription or FieldError.",
+    "Pass form-library errors into FieldError.errors when integrating React Hook Form or TanStack Form."
+  ],
+  "limitations": [
+    "Field does not wrap every control; prefer built-in props when a component already provides them.",
+    "Duplicating group-level description or errorMessage with Field parts shows the text twice."
+  ],
+  "accessibility": [
+    "FieldLabel uses React Aria Label semantics and LabelContext.",
+    "FieldError exposes invalid feedback for the associated group."
+  ],
+  "responsive": ["Field parts follow the surrounding group layout and orientation."],
+  "rtl": ["Label and message layout follow the active reading direction."],
+  "relatedComponents": ["radio", "checkbox", "input", "textarea"]
+}

@@ -9,20 +9,35 @@ import {
   Tabs as AriaTabs,
   SelectionIndicator,
   TabListStateContext,
+  RouterProvider,
+  type TabProps as AriaTabProps,
   type TabsProps as AriaTabsProps,
 } from 'react-aria-components';
-import { CaretDown } from 'phosphor-react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu';
-import { useVeliLanguage } from './provider';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from './menu.js';
+import { useVeliLanguage, useVeliRouter } from './provider-shared.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 
 export type TabsSize = 'sm' | 'md' | 'lg';
 
-export type TabsItem = {
+export type TabsItemLinkProps = Pick<
+  AriaTabProps,
+  | 'href'
+  | 'hrefLang'
+  | 'target'
+  | 'rel'
+  | 'download'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'routerOptions'
+  | 'render'
+>;
+
+export type TabsItem = TabsItemLinkProps & {
   id: string | number;
   label: React.ReactNode;
-  panel: React.ReactNode;
+  panel?: React.ReactNode;
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
   isDisabled?: boolean;
@@ -30,8 +45,35 @@ export type TabsItem = {
 
 export type TabsOverflowItem = Pick<
   TabsItem,
-  'id' | 'label' | 'leading' | 'trailing' | 'isDisabled'
+  | 'id'
+  | 'label'
+  | 'leading'
+  | 'trailing'
+  | 'isDisabled'
+  | 'href'
+  | 'hrefLang'
+  | 'target'
+  | 'rel'
+  | 'download'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'routerOptions'
+  | 'render'
 >;
+
+function getTabsItemLinkProps(item: TabsItem | TabsOverflowItem): TabsItemLinkProps {
+  return {
+    href: item.href,
+    hrefLang: item.hrefLang,
+    target: item.target,
+    rel: item.rel,
+    download: item.download,
+    ping: item.ping,
+    referrerPolicy: item.referrerPolicy,
+    routerOptions: item.routerOptions,
+    render: item.render,
+  };
+}
 
 export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'> {
   items: readonly [TabsItem, TabsItem, ...TabsItem[]];
@@ -359,7 +401,7 @@ export function TabsOverflow({
           <TabLabel isSelected={isSelected} size={size}>
             {triggerLabel}
           </TabLabel>
-          <CaretDown aria-hidden="true" size={16} />
+          <CaretDownIcon aria-hidden="true" size={16} />
         </AriaButton>
         <MenuPopover className={popoverClassName}>
           <Menu
@@ -381,6 +423,7 @@ export function TabsOverflow({
                 className="cursor-pointer"
                 startIcon={item.leading}
                 endIcon={item.trailing}
+                {...getTabsItemLinkProps(item)}
               >
                 {item.label}
               </MenuItem>
@@ -417,6 +460,7 @@ function TabItem({
       ref={tabElementRef}
       id={item.id}
       isDisabled={item.isDisabled}
+      {...getTabsItemLinkProps(item)}
       className={(state) =>
         getTabClassName(state.isSelected, {
           size,
@@ -466,21 +510,30 @@ export function Tabs({
   selectedKey: selectedKeyProp,
   defaultSelectedKey,
   onSelectionChange,
+  keyboardActivation,
   ...props
 }: TabsProps) {
+  const veliRouter = useVeliRouter();
   const [uncontrolledKey, setUncontrolledKey] = React.useState(defaultSelectedKey ?? items[0].id);
   const isControlled = selectedKeyProp !== undefined;
   const currentSelectedKey = isControlled ? selectedKeyProp : uncontrolledKey;
 
-  const handleSelectionChange = (key: React.Key) => {
-    const nextKey = key as string | number;
-    if (!isControlled) {
-      setUncontrolledKey(nextKey);
-    }
-    onSelectionChange?.(nextKey);
-  };
+  const handleSelectionChange = React.useCallback(
+    (key: React.Key) => {
+      const nextKey = key as string | number;
+      if (!isControlled) {
+        setUncontrolledKey(nextKey);
+      }
+      onSelectionChange?.(nextKey);
+    },
+    [isControlled, onSelectionChange],
+  );
 
-  const allPanelItems = overflowItems ? [...items, ...overflowItems] : items;
+  const allPanelItems = React.useMemo(
+    () => (overflowItems ? [...items, ...overflowItems] : items),
+    [items, overflowItems],
+  );
+  const hasLinkItems = allPanelItems.some((item) => item.href != null);
 
   const hasOverflow = overflowItems != null && overflowItems.length > 0;
   const overflowItemIds = React.useMemo(
@@ -509,6 +562,22 @@ export function Tabs({
     setIndicatorVersion((version) => version + 1);
   }, []);
 
+  const navigateLinkTab = React.useCallback(
+    (href: string, routerOptions: Parameters<NonNullable<typeof veliRouter>['navigate']>[1]) => {
+      veliRouter?.navigate(href, routerOptions);
+      // React Aria's linkBehavior:'selection' calls router.open then restores the
+      // previous selectedKeys. Re-apply the link tab selection after that reset.
+      const match = allPanelItems.find((item) => item.href === href);
+      if (match == null) {
+        return;
+      }
+      void Promise.resolve().then(() => {
+        handleSelectionChange(match.id);
+      });
+    },
+    [allPanelItems, handleSelectionChange, veliRouter],
+  );
+
   const tabList = (
     <AriaTabList
       aria-label={listAriaLabel}
@@ -530,6 +599,7 @@ export function Tabs({
           id={item.id}
           isDisabled={item.isDisabled}
           className={hiddenTabClassName}
+          {...getTabsItemLinkProps(item)}
         >
           {item.label}
         </AriaTab>
@@ -537,42 +607,45 @@ export function Tabs({
     </AriaTabList>
   );
 
-  const panels = allPanelItems.map((item) => (
-    <AriaTabPanel
-      key={item.id}
-      id={item.id}
-      className={twMerge(
-        'block w-full pt-4 type-body-md-regular text-base-default',
-        panelClassName,
-      )}
-    >
-      {item.panel}
-    </AriaTabPanel>
-  ));
+  const panels = allPanelItems.map((item) => {
+    const hasPanel = item.panel !== undefined;
+
+    return (
+      <AriaTabPanel
+        key={item.id}
+        id={item.id}
+        className={twMerge(
+          hasPanel
+            ? 'block w-full pt-4 type-body-md-regular text-base-default'
+            : hiddenTabClassName,
+          hasPanel ? panelClassName : undefined,
+        )}
+      >
+        {item.panel}
+      </AriaTabPanel>
+    );
+  });
 
   const tabsProps = {
     ...props,
+    keyboardActivation: keyboardActivation ?? (hasLinkItems ? 'manual' : undefined),
     selectedKey: currentSelectedKey,
     onSelectionChange: handleSelectionChange,
   };
 
-  if (!hasOverflow) {
-    return (
-      <AriaTabs {...tabsProps} className={twMerge('w-full', className)}>
-        <AriaTabList
-          aria-label={listAriaLabel}
-          className={twMerge('flex border-b-2 border-tabs-border-inactive', tabListClassName)}
-        >
-          {items.map((item) => (
-            <TabItem key={item.id} item={item} size={size} tabClassName={tabClassName} />
-          ))}
-        </AriaTabList>
-        {panels}
-      </AriaTabs>
-    );
-  }
-
-  return (
+  const tree = !hasOverflow ? (
+    <AriaTabs {...tabsProps} className={twMerge('w-full', className)}>
+      <AriaTabList
+        aria-label={listAriaLabel}
+        className={twMerge('flex border-b-2 border-tabs-border-inactive', tabListClassName)}
+      >
+        {items.map((item) => (
+          <TabItem key={item.id} item={item} size={size} tabClassName={tabClassName} />
+        ))}
+      </AriaTabList>
+      {panels}
+    </AriaTabs>
+  ) : (
     <div className={twMerge('flex w-full flex-col', className)}>
       <div
         ref={tabBarRef}
@@ -603,7 +676,12 @@ export function Tabs({
       <AriaTabs {...tabsProps} className="w-full">
         <AriaTabList aria-label={listAriaLabel} className={hiddenTabClassName}>
           {allPanelItems.map((item) => (
-            <AriaTab key={item.id} id={item.id} isDisabled={item.isDisabled}>
+            <AriaTab
+              key={item.id}
+              id={item.id}
+              isDisabled={item.isDisabled}
+              {...getTabsItemLinkProps(item)}
+            >
               {item.label}
             </AriaTab>
           ))}
@@ -611,5 +689,17 @@ export function Tabs({
         {panels}
       </AriaTabs>
     </div>
+  );
+
+  // React Aria resets selection for href tabs; wrap with a router that re-applies
+  // selection and forwards to VeliProvider.navigate when configured.
+  if (!hasLinkItems || veliRouter == null) {
+    return tree;
+  }
+
+  return (
+    <RouterProvider navigate={navigateLinkTab} useHref={veliRouter.useHref}>
+      {tree}
+    </RouterProvider>
   );
 }

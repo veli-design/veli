@@ -1,7 +1,7 @@
 import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Info, MagnifyingGlass, WarningCircle } from 'phosphor-react';
+import { InfoIcon, MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
 
@@ -516,12 +516,12 @@ export const FigmaExploration: Story = {
           infoTooltip={text.infoTip}
           infoTooltipAriaLabel={text.infoTipLabel}
           isRequired
-          labelIcon={<Info size={12} />}
+          labelIcon={<InfoIcon size={12} />}
           action={text.action}
           placeholder={text.chooseAnOption}
           description={text.helperText}
-          startContent={<MagnifyingGlass size={16} />}
-          endContent={<WarningCircle size={16} />}
+          startContent={<MagnifyingGlassIcon size={16} />}
+          endContent={<WarningCircleIcon size={16} />}
         >
           <SelectSection title={text.sections.popular}>
             <SelectItem id="cash" description={text.descriptions.immediateSettlement}>

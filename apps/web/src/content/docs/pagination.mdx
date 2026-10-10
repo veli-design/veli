@@ -1,47 +1,171 @@
 ---
 title: Pagination
-description: Accessible page navigation with compact and explicit page-list variants.
+description: Accessible compact and numbered page navigation, with an item-based load-more variant.
 ---
 
-import { PaginationUsageDemo, PaginationVariantsDemo } from '../../components/DocsExamples';
+import {
+  PaginationUsageDemo,
+  PaginationVariantsDemo,
+  PaginationLoadMoreDemo,
+  PaginationRtlDemo,
+} from '../../components/DocsExamples';
 
 # Pagination
 
-Pagination helps users move through paged data sets. Pair it with table or list views by slicing items client-side or fetching the requested page from an API.
+Use Pagination to navigate pages of data or reveal more items in an existing list. The component manages navigation controls; your application owns the data, requests, and result focus.
 
 ## Import
 
 ```tsx
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
+import type {
+  PaginationProps,
+  PaginationPageProps,
+  PaginationLoadMoreProps,
+  PaginationVariant,
+} from '@tradenetcorp/veli-ui/pagination';
 ```
 
 ## Usage
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <PaginationUsageDemo client:visible />
+<div className="preview mb-4 grid-cols-1 rounded-lg border p-4">
+  <PaginationUsageDemo client:load />
 </div>
 
 ```tsx
 const [page, setPage] = useState(1);
 
-<Pagination value={page} maxValue={12} onChange={setPage} variant="button" />;
+<Pagination value={page} maxValue={8} onChange={setPage} />;
 ```
+
+The default `button` variant shows First, Previous, the page count, Next, and Last. Omit `value` and pass `defaultValue` for uncontrolled navigation. Changing `defaultValue` after mounting does not reset the page.
 
 ## Explicit page list
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <PaginationVariantsDemo client:visible />
+<div className="preview mb-4 grid-cols-1 rounded-lg border p-4">
+  <PaginationVariantsDemo client:load />
 </div>
 
-## Props
+```tsx
+<Pagination
+  variant="explicit"
+  value={page}
+  maxValue={12}
+  onChange={setPage}
+  siblingCount={1}
+  boundaryCount={1}
+/>
+```
 
-| Prop            | Type                     | Default    | Description                               |
-| :-------------- | :----------------------- | :--------- | :---------------------------------------- |
-| `value`         | `number`                 | -          | Current page (controlled).                |
-| `defaultValue`  | `number`                 | `1`        | Initial page (uncontrolled).              |
-| `maxValue`      | `number`                 | -          | Total number of pages.                    |
-| `onChange`      | `(page: number) => void` | -          | Called when the page changes.             |
-| `variant`       | `'button' \| 'explicit'` | `'button'` | Compact or numbered page list.            |
-| `siblingCount`  | `number`                 | `1`        | Pages shown on each side (explicit).      |
-| `boundaryCount` | `number`                 | `1`        | Pages pinned at the start/end (explicit). |
-| `isDisabled`    | `boolean`                | `false`    | Disables navigation controls.             |
+Ellipsis buttons open a keyboard-accessible menu of omitted pages. `siblingCount` sets the number of adjacent pages and `boundaryCount` pins pages at each end; both accept zero. Controls wrap within narrow containers. Page controls use the small Button size; Pagination has no separate size or slot API.
+
+## Load more
+
+<div className="preview mb-4 grid-cols-1 rounded-lg border p-4">
+  <PaginationLoadMoreDemo client:load />
+</div>
+
+```tsx
+const [items, setItems] = useState(initialItems);
+const [isLoading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+async function loadMore() {
+  setLoading(true);
+  setError(null);
+  try {
+    const nextItems = await fetchNextItems();
+    setItems((current) => [...current, ...nextItems]);
+  } catch {
+    setError('Could not load more items. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Render items in your list above these controls.
+<>
+  {error && <p role="alert">{error}</p>}
+  <Pagination
+    variant="loadmore"
+    loadedCount={items.length}
+    totalCount={totalItems}
+    onLoadMore={loadMore}
+    isLoading={isLoading}
+    aria-controls="results"
+  />
+</>;
+```
+
+Load more uses item counts, without `value`, `maxValue`, or page callbacks. Update `loadedCount` only after items are successfully appended. `isLoading` uses Veli Button’s loading indicator and disables repeat requests while keeping its label and dimensions stable. The status announces the displayed count; the progress bar reflects its proportion of the known total.
+
+The button is disabled when every item is loaded or `totalCount` is zero. Counts are rounded down and clamped to nonnegative integers; `loadedCount` cannot exceed `totalCount`. The layout is 264px wide by default and shrinks to its container. Override its width with `className` if needed.
+
+## Right-to-left languages
+
+Use `VeliProvider` to switch between English and Dhivehi. Labels, fonts, control order, and directional icons follow the provider; numeric values remain LTR. Load-more progress fills from the reading start edge.
+
+<div className="preview mb-4">
+  <PaginationRtlDemo client:load />
+</div>
+
+```tsx
+import { Pagination } from '@tradenetcorp/veli-ui/pagination';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function PaginationLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Pagination variant="explicit" defaultValue={3} maxValue={12} />
+    </VeliProvider>
+  );
+}
+```
+
+## Accessibility and themes
+
+Page variants render a named navigation landmark; load more renders a named group. Use a unique `aria-label` when displaying multiple controls. Numbered navigation marks the selected button with `aria-current="page"`. Tab moves between controls, Enter or Space activates a button, arrow keys move through ellipsis menus, and Escape closes the menu.
+
+All buttons use `type="button"`, so embedding Pagination in a form does not submit it. Pass `aria-controls` on the root to reference your results region. Keep appended items in reading order and announce fetch errors in your application. For page replacement, manage result focus in the application when needed.
+
+Use [VeliProvider](/docs/provider) for system, light, or dark themes. The load-more progress width transition and Button press scaling are disabled under reduced motion; the loading indicator follows the shared Button behavior.
+
+## API Reference
+
+`PaginationProps` is a discriminated union: choose the props for your `variant`. Standard root HTML and ARIA attributes are also accepted, except `children` and the native `onChange`. Pagination owns its internal composition.
+
+| Shared prop  | Type                                   | Default    | Description                                     |
+| :----------- | :------------------------------------- | :--------- | :---------------------------------------------- |
+| `variant`    | `'button' \| 'explicit' \| 'loadmore'` | `'button'` | Chooses page navigation or incremental loading. |
+| `aria-label` | `string`                               | Localized  | Accessible name of the navigation or group.     |
+| `className`  | `string`                               | —          | Additional classes on the root.                 |
+
+### Page navigation props
+
+Used by `button` and `explicit` (`PaginationPageProps`).
+
+| Prop            | Type                     | Default  | Description                                          |
+| :-------------- | :----------------------- | :------- | :--------------------------------------------------- |
+| `value`         | `number`                 | —        | Controlled current page, starting at 1.              |
+| `defaultValue`  | `number`                 | `1`      | Initial uncontrolled page.                           |
+| `maxValue`      | `number`                 | Required | Total pages, normalized to an integer of at least 1. |
+| `onChange`      | `(page: number) => void` | —        | Called only when a different page is requested.      |
+| `onFirst`       | `(page: number) => void` | —        | Called after `onChange` for the First button.        |
+| `onPrevious`    | `(page: number) => void` | —        | Called after `onChange` for the Previous button.     |
+| `onNext`        | `(page: number) => void` | —        | Called after `onChange` for the Next button.         |
+| `onLast`        | `(page: number) => void` | —        | Called after `onChange` for the Last button.         |
+| `siblingCount`  | `number`                 | `1`      | Adjacent visible pages in explicit mode.             |
+| `boundaryCount` | `number`                 | `1`      | Visible pages at each end in explicit mode.          |
+
+`value` is clamped to the available pages without firing callbacks. Range counts are normalized to nonnegative integers. Boundary buttons do not fire callbacks when disabled.
+
+### Load-more props
+
+Required when `variant="loadmore"` (`PaginationLoadMoreProps`).
+
+| Prop          | Type         | Default  | Description                                                    |
+| :------------ | :----------- | :------- | :------------------------------------------------------------- |
+| `loadedCount` | `number`     | Required | Number of items currently displayed.                           |
+| `totalCount`  | `number`     | Required | Known total number of available items.                         |
+| `onLoadMore`  | `() => void` | Required | Requests the next batch; does not change counts automatically. |
+| `isLoading`   | `boolean`    | `false`  | Pending request state that prevents repeat activation.         |

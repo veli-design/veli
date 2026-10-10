@@ -1,0 +1,2335 @@
+<style>
+  :root {
+    --bg: #08090a;
+    --dot: #f5f5f0;
+    --panel-bg: #111214;
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --label: rgba(245, 245, 240, 0.55);
+    --accent: #f5f5f0;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  #app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+  }
+
+  /* the video field lives here, fully clear of the control panel */
+  #stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas {
+    display: block;
+    background: var(--bg);
+  }
+
+  /* control panel is a docked sidebar, not an overlay on the canvas */
+  #panel {
+    flex: 0 0 260px;
+    width: 260px;
+    height: 100%;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--panel-border);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: var(--dot);
+    user-select: none;
+    overflow-y: auto;
+    padding: 20px 20px 24px;
+    transition: margin-right 0.25s ease;
+  }
+  #panel.hidden {
+    margin-right: -260px;
+  }
+  #panel h1 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--dot);
+  }
+  #panel .sub {
+    margin: 0 0 18px;
+    font-size: 10.5px;
+    color: var(--label);
+  }
+  .group-title {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--label);
+    margin: 20px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--panel-border);
+  }
+  .group-title:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .row {
+    margin-bottom: 12px;
+  }
+  .row .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .row label {
+    font-size: 11px;
+    color: var(--label);
+  }
+  .row .val {
+    font-size: 11px;
+    color: var(--dot);
+    font-variant-numeric: tabular-nums;
+  }
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+    outline: none;
+    margin: 0;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--dot);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(245, 245, 240, 0.12);
+  }
+  input[type='range']::-moz-range-thumb {
+    width: 11px;
+    height: 11px;
+    border: none;
+    border-radius: 50%;
+    background: var(--dot);
+    cursor: pointer;
+  }
+
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .toggle-row label {
+    font-size: 11px;
+    color: var(--label);
+  }
+  .switch {
+    position: relative;
+    width: 34px;
+    height: 19px;
+    flex: 0 0 auto;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .switch .track {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .switch .track:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--dot);
+    transition: transform 0.15s ease;
+  }
+  .switch input:checked + .track {
+    background: rgba(245, 245, 240, 0.35);
+  }
+  .switch input:checked + .track:before {
+    transform: translateX(15px);
+  }
+
+  .seg {
+    display: flex;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .seg button {
+    flex: 1;
+    padding: 6px 0;
+    background: transparent;
+    border: none;
+    color: var(--label);
+    font-size: 11px;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  .seg button.active {
+    background: rgba(245, 245, 240, 0.12);
+    color: var(--dot);
+  }
+  .seg button:not(:last-child) {
+    border-right: 1px solid var(--panel-border);
+  }
+
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .chip {
+    padding: 6px 11px;
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--label);
+    font-size: 11px;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .chip.active {
+    background: rgba(245, 245, 240, 0.12);
+    color: var(--dot);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .chip:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .chip:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .chip:disabled:hover {
+    border-color: var(--panel-border);
+  }
+
+  .upload-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    margin-bottom: 10px;
+    background: rgba(245, 245, 240, 0.08);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--dot);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .upload-btn:hover {
+    background: rgba(245, 245, 240, 0.14);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .thumb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: -2px 0 12px;
+  }
+  .thumb-row img,
+  .thumb-row video {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--panel-border);
+  }
+  .thumb-row .clear-img {
+    font-size: 10.5px;
+    color: var(--label);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .thumb-row .clear-img:hover {
+    color: var(--dot);
+  }
+  .hint {
+    font-size: 10px;
+    color: var(--label);
+    margin: -4px 0 12px;
+    line-height: 1.4;
+  }
+
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  input[type='color'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  input[type='color']::-webkit-color-swatch-wrapper {
+    padding: 2px;
+  }
+  input[type='color']::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+  }
+
+  .swatches {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+  .swatch.active {
+    border-color: rgba(245, 245, 240, 0.7);
+  }
+
+  #reset {
+    margin-top: 16px;
+    width: 100%;
+    padding: 8px 0;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    color: var(--label);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  #reset:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--dot);
+  }
+
+  #toggle {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(17, 18, 20, 0.75);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dot);
+  }
+
+  /* The production embed renders only the field. DialKit owns the controls. */
+  #app {
+    position: relative;
+    display: block;
+  }
+  #stage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #panel,
+  #toggle {
+    display: none !important;
+  }
+</style>
+
+<div id="app">
+  <div id="stage">
+    <canvas id="c"></canvas>
+    <div id="toggle" title="Hide/show controls">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="3"></circle>
+        <path
+          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+        ></path>
+      </svg>
+    </div>
+  </div>
+
+  <div id="panel">
+    <h1>Field controls</h1>
+    <p class="sub">Docked panel — sits beside the field, not over it.</p>
+
+    <div class="group-title">Particles</div>
+
+    <div class="row">
+      <div class="top"><label>Particle count</label><span class="val" id="v-count">700</span></div>
+      <input type="range" id="count" min="100" max="6000" step="100" value="700" />
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Ball size</label><span class="val" id="v-size">1.6</span></div>
+      <input type="range" id="size" min="0.5" max="20" step="0.1" value="1.6" />
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Size variance</label><span class="val" id="v-sizevar">0</span></div>
+      <input type="range" id="sizevar" min="0" max="1" step="0.05" value="0" />
+    </div>
+
+    <div class="seg" id="sizevarstyle-seg">
+      <button data-v="uniform" class="active">Uniform</button>
+      <button data-v="bimodal">Bimodal</button>
+      <button data-v="gaussian">Gaussian</button>
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Drift speed</label><span class="val" id="v-speed">0.4</span></div>
+      <input type="range" id="speed" min="0" max="20" step="0.1" value="0.4" />
+    </div>
+
+    <div class="group-title">Mouse</div>
+
+    <div class="seg" id="mousemode-seg">
+      <button data-v="repel" class="active">Repel</button>
+      <button data-v="attract">Attract</button>
+      <button data-v="off">Off</button>
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Cursor radius</label><span class="val" id="v-radius">110</span></div>
+      <input type="range" id="radius" min="0" max="300" step="5" value="110" />
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Cursor force</label><span class="val" id="v-force">2.2</span></div>
+      <input type="range" id="force" min="0" max="8" step="0.1" value="2.2" />
+    </div>
+
+    <div class="group-title">Ball to ball</div>
+
+    <div class="row">
+      <div class="top">
+        <label>Repel force</label><span class="val" id="v-interforce">1.2</span>
+      </div>
+      <input type="range" id="interforce" min="0" max="4" step="0.1" value="1.2" />
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Repel range</label><span class="val" id="v-interradius">18</span>
+      </div>
+      <input type="range" id="interradius" min="0" max="60" step="1" value="18" />
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Repel range variance</label><span class="val" id="v-rangevar">0</span>
+      </div>
+      <input type="range" id="rangevar" min="0" max="1" step="0.05" value="0" />
+    </div>
+
+    <div class="seg" id="rangevarstyle-seg">
+      <button data-v="uniform" class="active">Uniform</button>
+      <button data-v="bimodal">Bimodal</button>
+      <button data-v="gaussian">Gaussian</button>
+    </div>
+
+    <div class="toggle-row">
+      <label>Connect nearby balls</label>
+      <label class="switch">
+        <input type="checkbox" id="connections" />
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Connection range</label><span class="val" id="v-connectdist">80</span>
+      </div>
+      <input type="range" id="connectdist" min="10" max="220" step="5" value="80" />
+    </div>
+
+    <div class="group-title">Formation</div>
+    <p class="hint">
+      Arrange the field into a shape, or recreate an uploaded image or video with the stipples.
+    </p>
+
+    <div class="chip-group" id="formation-chips">
+      <button class="chip active" data-v="free">Free</button>
+      <button class="chip" data-v="wave">Wave</button>
+      <button class="chip" data-v="lines">Lines</button>
+      <button class="chip" data-v="grid">Grid</button>
+      <button class="chip" data-v="circle">Circle</button>
+      <button class="chip" data-v="rings">Rings</button>
+      <button class="chip" data-v="spiral">Spiral</button>
+      <button class="chip" data-v="radial">Radial</button>
+      <button class="chip" data-v="hex">Hex grid</button>
+      <button class="chip" id="chip-image" data-v="image" disabled>Image</button>
+      <button class="chip" id="chip-video" data-v="video" disabled>Video</button>
+    </div>
+
+    <label class="upload-btn" for="image-upload" id="upload-label">Upload image or video</label>
+    <input type="file" id="image-upload" accept="image/*,video/*" style="display: none" />
+
+    <div class="thumb-row" id="image-thumb-row" style="display: none">
+      <img id="image-thumb" alt="Uploaded image preview" />
+      <button class="clear-img" id="image-clear">Remove image</button>
+    </div>
+
+    <div id="sprite-controls" style="display: none">
+      <div class="toggle-row">
+        <label>Animate as frame sheet</label>
+        <label class="switch">
+          <input type="checkbox" id="spriteenabled" />
+          <span class="track"></span>
+        </label>
+      </div>
+      <p class="hint" id="sprite-hint" style="display: none">
+        Treats the uploaded image as a grid of video frames and plays through them.
+      </p>
+      <div class="row" id="sprite-cols-row" style="display: none">
+        <div class="top">
+          <label>Sheet columns</label><span class="val" id="v-spritecols">6</span>
+        </div>
+        <input type="range" id="spritecols" min="1" max="12" step="1" value="6" />
+      </div>
+      <div class="row" id="sprite-rows-row" style="display: none">
+        <div class="top">
+          <label>Sheet rows</label><span class="val" id="v-spriterows">10</span>
+        </div>
+        <input type="range" id="spriterows" min="1" max="12" step="1" value="10" />
+      </div>
+      <div class="row" id="sprite-fps-row" style="display: none">
+        <div class="top"><label>Frame rate</label><span class="val" id="v-spritefps">6</span></div>
+        <input type="range" id="spritefps" min="1" max="24" step="1" value="6" />
+      </div>
+    </div>
+
+    <div class="thumb-row" id="video-thumb-row" style="display: none">
+      <video id="video-thumb" muted loop autoplay playsinline></video>
+      <button class="clear-img" id="video-clear">Remove video</button>
+    </div>
+
+    <p class="hint" id="upload-error" style="display: none; color: #f5a3a3"></p>
+
+    <div class="row">
+      <div class="top">
+        <label>Formation strength</label><span class="val" id="v-formationstrength">0.75</span>
+      </div>
+      <input type="range" id="formationstrength" min="0" max="1" step="0.05" value="0.75" />
+    </div>
+
+    <div class="group-title" id="wave-group-title" style="display: none">Wave</div>
+
+    <div class="chip-group" id="wavedir-chips" style="display: none">
+      <button class="chip active" data-v="horizontal">Horizontal</button>
+      <button class="chip" data-v="vertical">Vertical</button>
+    </div>
+
+    <div class="row" id="wave-amp-row" style="display: none">
+      <div class="top">
+        <label>Wave amplitude</label><span class="val" id="v-waveamp">1.00</span>
+      </div>
+      <input type="range" id="waveamp" min="0" max="3" step="0.05" value="1" />
+    </div>
+
+    <div class="row" id="wave-freq-row" style="display: none">
+      <div class="top">
+        <label>Wave wavelength</label><span class="val" id="v-wavefreq">1.00</span>
+      </div>
+      <input type="range" id="wavefreq" min="0.2" max="3" step="0.05" value="1" />
+    </div>
+
+    <div class="row" id="wave-density-row" style="display: none">
+      <div class="top">
+        <label>Wave density (lines)</label><span class="val" id="v-wavedensity">1.00</span>
+      </div>
+      <input type="range" id="wavedensity" min="0.3" max="3" step="0.05" value="1" />
+    </div>
+
+    <div class="row" id="wave-speed-row" style="display: none">
+      <div class="top"><label>Wave speed</label><span class="val" id="v-wavespeed">1.00</span></div>
+      <input type="range" id="wavespeed" min="0" max="5" step="0.05" value="1" />
+    </div>
+
+    <div class="chip-group" id="waveshape-chips" style="display: none">
+      <button class="chip active" data-v="sine">Sine</button>
+      <button class="chip" data-v="triangle">Triangle</button>
+      <button class="chip" data-v="square">Square</button>
+    </div>
+
+    <div class="row" id="wave-variation-row" style="display: none">
+      <div class="top">
+        <label>Line variation</label><span class="val" id="v-wavevariation">1.00</span>
+      </div>
+      <input type="range" id="wavevariation" min="0" max="2" step="0.05" value="1" />
+    </div>
+
+    <div class="row" id="wave-complexity-row" style="display: none">
+      <div class="top">
+        <label>Wave complexity</label><span class="val" id="v-wavecomplexity">0.00</span>
+      </div>
+      <input type="range" id="wavecomplexity" min="0" max="1" step="0.05" value="0" />
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Formation scale</label><span class="val" id="v-formationscale">1.00</span>
+      </div>
+      <input type="range" id="formationscale" min="0.3" max="2.5" step="0.05" value="1" />
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Formation rotation</label><span class="val" id="v-formationrotation">0</span>
+      </div>
+      <input type="range" id="formationrotation" min="0" max="360" step="1" value="0" />
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Offset X</label><span class="val" id="v-formationoffsetx">0</span>
+      </div>
+      <input type="range" id="formationoffsetx" min="-400" max="400" step="5" value="0" />
+    </div>
+
+    <div class="toggle-row">
+      <label>Loop Offset X (sway side to side)</label>
+      <label class="switch">
+        <input type="checkbox" id="offsetxloop" />
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Offset Y</label><span class="val" id="v-formationoffsety">0</span>
+      </div>
+      <input type="range" id="formationoffsety" min="-300" max="300" step="5" value="0" />
+    </div>
+
+    <div class="toggle-row" style="margin-bottom: 6px">
+      <label>Loop the formation</label>
+    </div>
+    <div class="chip-group" id="loopdir-chips">
+      <button class="chip active" data-v="off">Off</button>
+      <button class="chip" data-v="right">Left → Right</button>
+      <button class="chip" data-v="left">Right → Left</button>
+      <button class="chip" data-v="down">Up → Down</button>
+      <button class="chip" data-v="up">Down → Up</button>
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Loop speed</label><span class="val" id="v-loopspeed">40</span></div>
+      <input type="range" id="loopspeed" min="5" max="250" step="5" value="40" />
+    </div>
+
+    <div class="toggle-row">
+      <label>Seamless loop</label>
+      <label class="switch">
+        <input type="checkbox" id="seamless" />
+        <span class="track"></span>
+      </label>
+    </div>
+    <p class="hint" id="seamless-hint" style="display: none">
+      Motion repeats exactly every cycle, so a screen recording of one cycle loops cleanly. Turn
+      ball-to-ball repel down for the tightest loop.
+    </p>
+
+    <div class="row" id="loopduration-row" style="display: none">
+      <div class="top">
+        <label>Loop length (sec)</label><span class="val" id="v-loopduration">8</span>
+      </div>
+      <input type="range" id="loopduration" min="2" max="20" step="1" value="8" />
+    </div>
+
+    <div class="group-title">Field forces</div>
+
+    <div class="row">
+      <div class="top"><label>Center pull</label><span class="val" id="v-gravity">0</span></div>
+      <input type="range" id="gravity" min="0" max="3" step="0.05" value="0" />
+    </div>
+
+    <div class="row">
+      <div class="top"><label>Trail / fade</label><span class="val" id="v-trail">1</span></div>
+      <input type="range" id="trail" min="0.02" max="1" step="0.02" value="1" />
+    </div>
+
+    <div class="group-title">Appearance</div>
+
+    <div class="row">
+      <div class="top">
+        <label>Ball color</label><span class="val" id="v-dotcolor-hex">#f5f5f0</span>
+      </div>
+      <div class="color-row">
+        <input type="color" id="dotcolor-picker" value="#f5f5f0" />
+        <div class="swatches" id="dot-swatches">
+          <div class="swatch active" data-c="#f5f5f0" style="background: #f5f5f0"></div>
+          <div class="swatch" data-c="#7dd3fc" style="background: #7dd3fc"></div>
+          <div class="swatch" data-c="#f5a3a3" style="background: #f5a3a3"></div>
+          <div class="swatch" data-c="#a3f5c1" style="background: #a3f5c1"></div>
+          <div class="swatch" data-c="#e0b3f5" style="background: #e0b3f5"></div>
+          <div class="swatch" data-c="#f5d76e" style="background: #f5d76e"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="top">
+        <label>Background color</label><span class="val" id="v-bgcolor-hex">#08090a</span>
+      </div>
+      <div class="color-row">
+        <input type="color" id="bgcolor-picker" value="#08090a" />
+        <div class="swatches" id="bg-swatches">
+          <div class="swatch active" data-c="#08090a" style="background: #08090a"></div>
+          <div class="swatch" data-c="#0a1128" style="background: #0a1128"></div>
+          <div class="swatch" data-c="#1a0a1f" style="background: #1a0a1f"></div>
+          <div class="swatch" data-c="#0a1f14" style="background: #0a1f14"></div>
+          <div class="swatch" data-c="#1f1a0a" style="background: #1f1a0a"></div>
+          <div class="swatch" data-c="#f5f5f0" style="background: #f5f5f0"></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="reset">Reset defaults</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const stage = document.getElementById('stage');
+    const panel = document.getElementById('panel');
+    const toggle = document.getElementById('toggle');
+    const embedded = new URLSearchParams(window.location.search).get('embedded') === '1';
+
+    const defaults = {
+      canvasw: 1920,
+      canvash: 1080,
+      count: 700,
+      size: 1.6,
+      sizevar: 0,
+      sizevarstyle: 'uniform',
+      speed: 0.4,
+      radius: 110,
+      force: 2.2,
+      mousemode: 'repel',
+      interforce: 1.2,
+      interradius: 18,
+      rangevar: 0,
+      rangevarstyle: 'uniform',
+      connections: false,
+      connectdist: 80,
+      gravity: 0,
+      trail: 1,
+      dotColor: '#f5f5f0',
+      bgColor: '#08090a',
+      bgmode: 'solid',
+      bgColor2: '#1a3a5c',
+      bgangle: 180,
+      bgspread: 1,
+      formation: 'free',
+      formationstrength: 0.75,
+      spriteenabled: false,
+      spritecols: 6,
+      spriterows: 10,
+      spritefps: 6,
+      wavedirection: 'horizontal',
+      waveamp: 1,
+      wavefreq: 1,
+      wavedensity: 1,
+      wavespeed: 1,
+      waveshape: 'sine',
+      wavevariation: 1,
+      wavecomplexity: 0,
+      formationscale: 1,
+      formationrotation: 0,
+      formationoffsetx: 0,
+      formationoffsety: 0,
+      offsetxloop: false,
+      loopdir: 'off',
+      loopspeed: 135,
+      seamless: false,
+      loopduration: 8,
+    };
+    const state = Object.assign({}, defaults);
+    stage.style.background = state.bgColor;
+    canvas.style.background = state.bgColor;
+
+    let W = defaults.canvasw,
+      H = defaults.canvash,
+      DPR,
+      displayScale = 1;
+
+    function setCanvasSize(newW, newH) {
+      newW = Math.max(320, Math.min(3840, Math.round(newW)));
+      newH = Math.max(320, Math.min(2160, Math.round(newH)));
+      const scaleX = newW / W;
+      const scaleY = newH / H;
+      W = newW;
+      H = newH;
+      for (const particle of particles) {
+        particle.x *= scaleX;
+        particle.y *= scaleY;
+        particle.homeX *= scaleX;
+        particle.homeY *= scaleY;
+      }
+      resize();
+      assignTargets();
+    }
+
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      // Cover the entire stage while preserving the internal canvas aspect ratio.
+      const availW = stage.clientWidth;
+      const availH = stage.clientHeight;
+      displayScale = Math.max(availW / W, availH / H);
+      canvas.style.width = W * displayScale + 'px';
+      canvas.style.height = H * displayScale + 'px';
+    }
+    window.addEventListener('resize', resize);
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(stage);
+
+    function waveShape(phase, style) {
+      if (style === 'triangle') {
+        // standard triangle wave via asin(sin(x)), normalized to [-1,1]
+        return (2 / Math.PI) * Math.asin(Math.sin(phase));
+      }
+      if (style === 'square') {
+        return Math.sin(phase) >= 0 ? 1 : -1;
+      }
+      return Math.sin(phase); // sine (default)
+    }
+
+    function computeVarianceMul(style, variance) {
+      if (variance <= 0) return 1;
+      if (style === 'bimodal') {
+        // clusters near the small end or the large end, rarely near the mean —
+        // a visibly two-tier mix of small and large balls
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const mag = 0.55 + Math.random() * 0.45;
+        return 1 + sign * mag * variance;
+      }
+      if (style === 'gaussian') {
+        // sum of 3 uniforms approximates a bell curve — most balls stay near
+        // the base size, with a few larger/smaller outliers
+        let g = (Math.random() + Math.random() + Math.random()) / 3;
+        g = (g - 0.5) * 2;
+        return 1 + g * variance;
+      }
+      // uniform: flat random spread across the full range
+      return 1 + (Math.random() * 2 - 1) * variance;
+    }
+
+    function recomputeSizeMuls() {
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].sizeMul = computeVarianceMul(state.sizevarstyle, state.sizevar);
+      }
+    }
+
+    function recomputeRangeMuls() {
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].rangeMul = computeVarianceMul(state.rangevarstyle, state.rangevar);
+      }
+    }
+
+    let particles = [];
+    function makeParticles(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) {
+        arr.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: Math.random() - 0.5,
+          vy: Math.random() - 0.5,
+          ph: Math.random() * Math.PI * 2,
+          sp: 0.3 + Math.random() * 0.7,
+          // integer harmonic (1-3): used instead of `sp` in seamless mode so every
+          // particle's oscillation completes a whole number of cycles per loop
+          spInt: 1 + Math.floor(Math.random() * 3),
+          homeX: 0,
+          homeY: 0, // filled in just below; anchor for seamless positional drift
+          sizeMul: computeVarianceMul(state.sizevarstyle, state.sizevar),
+          rangeMul: computeVarianceMul(state.rangevarstyle, state.rangevar),
+        });
+      }
+      for (const q of arr) {
+        q.homeX = q.x;
+        q.homeY = q.y;
+      }
+      return arr;
+    }
+
+    function syncParticleCount() {
+      const n = state.count;
+      if (particles.length < n) {
+        particles = particles.concat(makeParticles(n - particles.length));
+      } else if (particles.length > n) {
+        particles.length = n;
+      }
+      assignTargets();
+    }
+
+    // ---- Formations: precomputed target positions for each particle ----
+    let targets = [];
+    let panX = 0,
+      panY = 0; // accumulated loop/pan offset for the formation
+    let sweepX = 0,
+      sweepY = 0; // dedicated always-forward accumulators for the rigid-body sweep below
+    let oscT = 0; // drives the optional "Loop Offset X" side-to-side sway
+    let waveT = 0; // dedicated clock for the Wave formation's undulation — deliberately NOT
+    // tied to the global drift-speed-driven `t`, so cranking ambient Drift
+    // speed doesn't also warp/jitter the wave motion (this was the actual bug)
+    let formationTileable = true; // wave/lines/grid repeat edge-to-edge so per-particle wrap looks seamless;
+    // circle/image are a single shape and need to move as one rigid piece instead
+    let targetBoundsX = { min: 0, max: 0 },
+      targetBoundsY = { min: 0, max: 0 };
+    let imagePoints = []; // sampled bright points from an uploaded image, in field coordinates
+
+    function assignTargets() {
+      const n = particles.length;
+      targets = new Array(n);
+      const f = state.formation;
+
+      if ((f === 'image' || f === 'video') && imagePoints.length) {
+        for (let i = 0; i < n; i++) {
+          const pt = imagePoints[i % imagePoints.length];
+          const reused = i >= imagePoints.length;
+          targets[i] = {
+            x: pt.x + (reused ? (Math.random() - 0.5) * 3 : 0),
+            y: pt.y + (reused ? (Math.random() - 0.5) * 3 : 0),
+          };
+        }
+      } else if (f === 'grid') {
+        const cols = Math.max(1, Math.round(Math.sqrt(n * (W / H))));
+        const rows = Math.max(1, Math.ceil(n / cols));
+        const cellW = W / cols,
+          cellH = H / rows;
+        for (let i = 0; i < n; i++) {
+          const cx = i % cols,
+            cy = Math.floor(i / cols);
+          targets[i] = { x: cellW * (cx + 0.5), y: cellH * (cy + 0.5) };
+        }
+      } else if (f === 'lines') {
+        const rows = Math.max(3, Math.round(Math.sqrt(n / 10)));
+        const perRow = Math.ceil(n / rows);
+        const rowH = H / rows;
+        for (let i = 0; i < n; i++) {
+          const r = Math.floor(i / perRow),
+            c = i % perRow;
+          targets[i] = { x: ((c + 0.5) / perRow) * W, y: rowH * (r + 0.5) };
+        }
+      } else if (f === 'wave') {
+        // many thin flowing bands with per-line randomized amplitude/frequency/phase,
+        // closely-spaced dots along each line so it reads as a continuous curve.
+        // 'horizontal' = rows that undulate vertically (flow left-right).
+        // 'vertical' = columns that undulate horizontally (flow top-bottom).
+        const vertical = state.wavedirection === 'vertical';
+        const mainAxisLen = vertical ? H : W; // the axis dots are spread evenly along
+        const crossAxisLen = vertical ? W : H; // the axis lines are stacked along, and undulate across
+
+        const perLine = Math.max(60, Math.round(mainAxisLen / 16)); // ~16px between dots along a line
+        const baseNumLines = Math.max(4, Math.min(70, Math.round(n / perLine)));
+        const numLines = Math.max(2, Math.min(120, Math.round(baseNumLines * state.wavedensity)));
+        const lineSpacing = crossAxisLen / numLines;
+        const variation = state.wavevariation;
+        const lineParams = [];
+        for (let L = 0; L < numLines; L++) {
+          lineParams.push({
+            // variation=0 -> every line shares the same amplitude/frequency/phase/speed
+            // (a single coherent wave moving as one piece). variation=1 is the original
+            // per-line randomness; up to 2 exaggerates it further for a choppier field.
+            base: (L + 0.5) * lineSpacing + (Math.random() - 0.5) * lineSpacing * 0.3 * variation,
+            amp: lineSpacing * 0.5 + (Math.random() - 0.5) * lineSpacing * 0.5 * variation,
+            freq: 0.008 + (Math.random() - 0.5) * 0.008 * variation,
+            phase: Math.random() * Math.PI * 2 * variation,
+            speedMul: 1 + (Math.random() - 0.5) * 0.9 * variation,
+            harmonicPhase: Math.random() * Math.PI * 2,
+            mainOffset: Math.random() * (mainAxisLen / perLine), // stagger so lines don't stack into columns — always randomized, independent of variation
+          });
+        }
+        for (let i = 0; i < n; i++) {
+          const L = Math.floor(i / perLine) % numLines;
+          const c = i % perLine;
+          const lp = lineParams[L];
+          let main = ((c + 0.5) / perLine) * mainAxisLen + lp.mainOffset;
+          if (main > mainAxisLen) main -= mainAxisLen;
+          if (vertical) {
+            // main travels along y; the undulation moves x across
+            targets[i] = {
+              x: lp.base,
+              y: main,
+              waveMain: main,
+              waveBase: lp.base,
+              amp: lp.amp,
+              freq: lp.freq,
+              phase: lp.phase,
+              speedMul: lp.speedMul,
+              harmonicPhase: lp.harmonicPhase,
+            };
+          } else {
+            targets[i] = {
+              x: main,
+              y: lp.base,
+              waveMain: main,
+              waveBase: lp.base,
+              amp: lp.amp,
+              freq: lp.freq,
+              phase: lp.phase,
+              speedMul: lp.speedMul,
+              harmonicPhase: lp.harmonicPhase,
+            };
+          }
+        }
+      } else if (f === 'rings') {
+        // concentric rings, evenly spaced, dot count per ring scaled to its circumference
+        const cx = W / 2,
+          cy = H / 2;
+        const maxR = Math.min(W, H) * 0.45;
+        const ringCount = Math.max(3, Math.round(Math.sqrt(n) / 3));
+        // total circumference weight so denser outer rings get proportionally more dots
+        let weights = [],
+          wsum = 0;
+        for (let r = 1; r <= ringCount; r++) {
+          const w = r;
+          weights.push(w);
+          wsum += w;
+        }
+        let idx = 0;
+        for (let r = 1; r <= ringCount; r++) {
+          const radius = maxR * (r / ringCount);
+          const share = Math.max(1, Math.round(n * (weights[r - 1] / wsum)));
+          for (let k = 0; k < share && idx < n; k++, idx++) {
+            const a = (k / share) * Math.PI * 2;
+            targets[idx] = { x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius };
+          }
+        }
+        for (; idx < n; idx++) {
+          const a = Math.random() * Math.PI * 2;
+          targets[idx] = { x: cx + Math.cos(a) * maxR, y: cy + Math.sin(a) * maxR };
+        }
+      } else if (f === 'spiral') {
+        // multi-arm archimedean spiral
+        const cx = W / 2,
+          cy = H / 2;
+        const maxR = Math.min(W, H) * 0.46;
+        const arms = 3;
+        const turns = 2.6;
+        for (let i = 0; i < n; i++) {
+          const arm = i % arms;
+          const tt = Math.floor(i / arms) / Math.max(1, Math.floor(n / arms));
+          const radius = maxR * Math.sqrt(tt);
+          const a = tt * Math.PI * 2 * turns + (arm / arms) * Math.PI * 2;
+          targets[i] = { x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius };
+        }
+      } else if (f === 'radial') {
+        // straight rays fanning out from the centre
+        const cx = W / 2,
+          cy = H / 2;
+        const maxR = Math.min(W, H) * 0.47;
+        const rays = Math.max(6, Math.round(Math.sqrt(n) * 1.2));
+        const perRay = Math.max(2, Math.ceil(n / rays));
+        for (let i = 0; i < n; i++) {
+          const ray = Math.floor(i / perRay) % rays;
+          const k = i % perRay;
+          const a = (ray / rays) * Math.PI * 2;
+          // push dots away from the exact centre so the hub doesn't clog
+          const radius = maxR * (0.12 + 0.88 * (k / perRay));
+          targets[i] = { x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius };
+        }
+      } else if (f === 'hex') {
+        // hexagonal (offset-row) packing — tiles seamlessly like the square grid
+        const approxCols = Math.max(2, Math.round(Math.sqrt(n * (W / H))));
+        const colW = W / approxCols;
+        const rowH = colW * 0.866; // sqrt(3)/2 for regular hex packing
+        const rows = Math.max(1, Math.ceil(H / rowH));
+        for (let i = 0; i < n; i++) {
+          const row = Math.floor(i / approxCols) % rows;
+          const col = i % approxCols;
+          const stagger = row % 2 ? colW / 2 : 0;
+          let x = col * colW + stagger + colW / 2;
+          if (x > W) x -= W;
+          targets[i] = { x, y: row * rowH + rowH / 2 };
+        }
+      } else if (f === 'circle') {
+        const cx = W / 2,
+          cy = H / 2;
+        const R = Math.min(W, H) * 0.42;
+        const golden = Math.PI * (3 - Math.sqrt(5)); // golden angle, gives an even filled-disk spiral
+        for (let i = 0; i < n; i++) {
+          const r = R * Math.sqrt(i / n);
+          const theta = i * golden;
+          targets[i] = { x: cx + r * Math.cos(theta), y: cy + r * Math.sin(theta) };
+        }
+      }
+      // 'free' needs no targets array contents; loop below just skips formation pull
+
+      formationTileable = f === 'wave' || f === 'lines' || f === 'grid' || f === 'hex';
+      if (f !== 'free' && !formationTileable && targets.length) {
+        let minX = Infinity,
+          maxX = -Infinity,
+          minY = Infinity,
+          maxY = -Infinity;
+        for (let i = 0; i < targets.length; i++) {
+          const tgt = targets[i];
+          if (!tgt) continue;
+          if (tgt.x < minX) minX = tgt.x;
+          if (tgt.x > maxX) maxX = tgt.x;
+          if (tgt.y < minY) minY = tgt.y;
+          if (tgt.y > maxY) maxY = tgt.y;
+        }
+        if (minX <= maxX) {
+          targetBoundsX = { min: minX, max: maxX };
+          targetBoundsY = { min: minY, max: maxY };
+        }
+      }
+      sweepX = 0;
+      sweepY = 0; // restart the rigid sweep cleanly whenever the shape changes
+    }
+
+    function sampleImagePoints(source, srcRect) {
+      // works for <img> (naturalWidth/Height) and <video> (videoWidth/Height) sources.
+      // srcRect (optional) crops a sub-region — used for sprite-sheet frame playback.
+      const fullW = source.videoWidth || source.naturalWidth || source.width;
+      const fullH = source.videoHeight || source.naturalHeight || source.height;
+      if (!fullW || !fullH) return; // not decoded/ready yet — caller should retry later
+
+      const sx = srcRect ? srcRect.x : 0;
+      const sy = srcRect ? srcRect.y : 0;
+      const srcW = srcRect ? srcRect.w : fullW;
+      const srcH = srcRect ? srcRect.h : fullH;
+      if (!srcW || !srcH) return;
+
+      const sampleW = 320;
+      const sampleH = Math.max(1, Math.round(sampleW * (H / W)));
+      const off = document.createElement('canvas');
+      off.width = sampleW;
+      off.height = sampleH;
+      const octx = off.getContext('2d');
+      octx.fillStyle = '#000';
+      octx.fillRect(0, 0, sampleW, sampleH);
+      // cover-fit the (possibly cropped) source region into the sample canvas, centered
+      const scale = Math.max(sampleW / srcW, sampleH / srcH);
+      const iw = srcW * scale,
+        ih = srcH * scale;
+      octx.drawImage(source, sx, sy, srcW, srcH, (sampleW - iw) / 2, (sampleH - ih) / 2, iw, ih);
+
+      const data = octx.getImageData(0, 0, sampleW, sampleH).data;
+      const total = sampleW * sampleH;
+      const lums = new Float32Array(total);
+      for (let p = 0; p < total; p++) {
+        const idx = p * 4;
+        lums[p] = (data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114) / 255;
+      }
+      // adaptive threshold: take the brightest ~35% of pixels, whatever their
+      // absolute brightness is. A fixed cutoff (e.g. "> 0.32") produces zero
+      // points — and used to crash the formation — on darker photos where
+      // nothing crosses that bar; a percentile always finds *something*.
+      const sorted = Array.from(lums).sort((a, b) => a - b);
+      const threshold = sorted[Math.floor(total * 0.65)];
+
+      const pts = [];
+      for (let y = 0; y < sampleH; y++) {
+        for (let x = 0; x < sampleW; x++) {
+          if (lums[y * sampleW + x] >= threshold) {
+            pts.push({ x: (x / sampleW) * W, y: (y / sampleH) * H });
+          }
+        }
+      }
+      // shuffle so truncation/reuse later stays evenly spread across the shape, not clipped to one region
+      for (let i = pts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = pts[i];
+        pts[i] = pts[j];
+        pts[j] = tmp;
+      }
+      imagePoints = pts;
+      assignTargets();
+    }
+
+    const mouse = { x: -9999, y: -9999, active: false };
+    function updateMouse(clientX, clientY) {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = (clientX - r.left) / displayScale;
+      mouse.y = (clientY - r.top) / displayScale;
+      mouse.active = true;
+    }
+    stage.addEventListener('mousemove', (e) => updateMouse(e.clientX, e.clientY));
+    stage.addEventListener('mouseleave', () => {
+      mouse.active = false;
+    });
+    stage.addEventListener(
+      'touchmove',
+      (e) => {
+        if (e.touches.length) updateMouse(e.touches[0].clientX, e.touches[0].clientY);
+      },
+      { passive: true },
+    );
+    stage.addEventListener('touchend', () => {
+      mouse.active = false;
+    });
+
+    // spatial grid for cheap neighbor lookups
+    let grid = new Map();
+    let cellSize = 40;
+    function cellKey(cx, cy) {
+      return cx + '_' + cy;
+    }
+    function rebuildGrid(cell) {
+      grid.clear();
+      cellSize = cell;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const cx = Math.floor(p.x / cellSize);
+        const cy = Math.floor(p.y / cellSize);
+        const key = cellKey(cx, cy);
+        let arr = grid.get(key);
+        if (!arr) {
+          arr = [];
+          grid.set(key, arr);
+        }
+        arr.push(i);
+      }
+    }
+    function forEachNeighbor(p, range, cb) {
+      const cx = Math.floor(p.x / cellSize);
+      const cy = Math.floor(p.y / cellSize);
+      for (let gx = -1; gx <= 1; gx++) {
+        for (let gy = -1; gy <= 1; gy++) {
+          const arr = grid.get(cellKey(cx + gx, cy + gy));
+          if (!arr) continue;
+          for (let k = 0; k < arr.length; k++) cb(arr[k]);
+        }
+      }
+    }
+
+    let t = 0;
+    let backgroundCache = { key: '', style: null };
+
+    function makeBackgroundStyle(alpha) {
+      const key = [
+        state.bgmode,
+        state.bgColor,
+        state.bgColor2,
+        state.bgangle,
+        state.bgspread,
+        alpha,
+        W,
+        H,
+      ].join('|');
+      if (backgroundCache.key === key) return backgroundCache.style;
+
+      let style;
+      if (state.bgmode === 'solid') {
+        style = alpha >= 1 ? state.bgColor : hexToRgba(state.bgColor, alpha);
+      } else if (state.bgmode === 'radial') {
+        const cx = W / 2;
+        const cy = H / 2;
+        const radius = Math.max(W, H) * 0.75 * state.bgspread;
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, radius));
+        gradient.addColorStop(0, hexToRgba(state.bgColor, alpha));
+        gradient.addColorStop(1, hexToRgba(state.bgColor2, alpha));
+        style = gradient;
+      } else {
+        const angle = (state.bgangle * Math.PI) / 180;
+        const cx = W / 2;
+        const cy = H / 2;
+        const length =
+          ((Math.abs(Math.cos(angle)) * W + Math.abs(Math.sin(angle)) * H) / 2) * state.bgspread;
+        const dx = Math.cos(angle) * length;
+        const dy = Math.sin(angle) * length;
+        const gradient = ctx.createLinearGradient(cx - dx, cy - dy, cx + dx, cy + dy);
+        gradient.addColorStop(0, hexToRgba(state.bgColor, alpha));
+        gradient.addColorStop(1, hexToRgba(state.bgColor2, alpha));
+        style = gradient;
+      }
+
+      backgroundCache = { key, style };
+      return style;
+    }
+
+    function step() {
+      // one bad frame should never permanently freeze the whole background —
+      // catch here, log once, and keep the animation loop alive regardless
+      try {
+        stepFrame();
+      } catch (err) {
+        console.error('Stipple field: recovered from a render error —', err);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function stepFrame() {
+      // Seamless mode drives every oscillator from a phase that wraps exactly once per
+      // loop, and uses integer harmonics, so the motion returns to its starting state.
+      // (Ball-to-ball repulsion and mouse interaction are non-periodic by nature, so
+      // keep those low for the cleanest loop.)
+      const seamless = state.seamless;
+      if (seamless) {
+        const nowSec = performance.now() / 1000;
+        const phase = (nowSec % state.loopduration) / state.loopduration; // 0..1
+        t = phase * Math.PI * 2;
+        waveT = phase * Math.PI * 2;
+      } else {
+        t += 0.01 * (0.5 + state.speed);
+      }
+      if (!seamless) waveT += 0.01 * (0.5 + state.wavespeed);
+
+      // Trail alpha is baked into each gradient stop so fading works in every mode.
+      ctx.fillStyle = makeBackgroundStyle(state.trail >= 0.999 ? 1 : state.trail);
+      ctx.fillRect(0, 0, W, H);
+
+      const radius = state.radius;
+      const radius2 = radius * radius;
+      const force = state.force;
+      const interR = state.interradius + state.size * 2;
+      const interRMax = interR * (1 + state.rangevar); // largest possible per-particle range, for grid sizing
+      const interF = state.interforce;
+      const connectR = state.connectdist;
+      const connectR2 = connectR * connectR;
+      const needsGrid = (interR > 0 && interF > 0) || state.connections;
+      const cell = Math.max(20, Math.max(interRMax, state.connections ? connectR : 0) * 1.1);
+
+      if (needsGrid) rebuildGrid(cell);
+
+      const cx0 = W / 2,
+        cy0 = H / 2;
+
+      // draw connections first (under the dots)
+      if (state.connections) {
+        ctx.lineWidth = 1;
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const gcx = Math.floor(p.x / cellSize);
+          const gcy = Math.floor(p.y / cellSize);
+          for (let gx = -1; gx <= 1; gx++) {
+            for (let gy = -1; gy <= 1; gy++) {
+              const arr = grid.get(cellKey(gcx + gx, gcy + gy));
+              if (!arr) continue;
+              for (let k = 0; k < arr.length; k++) {
+                const j = arr[k];
+                if (j <= i) continue;
+                const o = particles[j];
+                const dx = p.x - o.x,
+                  dy = p.y - o.y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < connectR2) {
+                  const d = Math.sqrt(d2);
+                  const a = (1 - d / connectR) * 0.35;
+                  ctx.strokeStyle = hexToRgba(state.dotColor, a);
+                  ctx.beginPath();
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(o.x, o.y);
+                  ctx.stroke();
+                }
+              }
+            }
+          }
+        }
+      }
+
+      ctx.fillStyle = state.dotColor;
+
+      const inFormation = state.formation !== 'free' && targets.length === particles.length;
+      const fStrength = state.formationstrength;
+      const driftDamp = inFormation ? 1 - fStrength * 0.85 : 1;
+
+      // "Loop Offset X" sways the whole formation side to side using the Offset X
+      // slider as the amplitude, independent of the marquee-style Loop feature below
+      oscT += 0.015;
+      const effOffsetX = state.offsetxloop
+        ? Math.sin(oscT) * state.formationoffsetx
+        : state.formationoffsetx;
+
+      let hSweepCenter = null,
+        hShapeOrigCenter = 0;
+      let vSweepCenter = null,
+        vShapeOrigCenter = 0;
+
+      if (inFormation && state.loopdir !== 'off') {
+        // seamless: cover exactly one full field width/height per loop so the pan
+        // wraps precisely on the cycle boundary instead of landing mid-scroll
+        const horiz = state.loopdir === 'right' || state.loopdir === 'left';
+        const step_ = seamless ? (horiz ? W : H) / (state.loopduration * 60) : state.loopspeed / 60; // px per frame, ~independent of monitor refresh assumptions
+        if (formationTileable) {
+          // wave/lines/grid repeat edge-to-edge, so shifting every particle's
+          // x/y independently (with wraparound) looks like a seamless conveyor
+          if (state.loopdir === 'right') panX += step_;
+          else if (state.loopdir === 'left') panX -= step_;
+          else if (state.loopdir === 'down') panY += step_;
+          else if (state.loopdir === 'up') panY -= step_;
+          panX = ((panX % W) + W) % W;
+          panY = ((panY % H) + H) % H;
+        } else {
+          // circle/image are a single shape, not a repeating pattern — wrapping
+          // each particle independently used to split the shape apart at the
+          // edge. Instead we sweep the WHOLE shape as one rigid piece: it enters
+          // fully off-screen, crosses the field, and only resets once it's
+          // completely out of view again (so the reset is invisible).
+          if (state.loopdir === 'right' || state.loopdir === 'left') sweepX += step_;
+          if (state.loopdir === 'down' || state.loopdir === 'up') sweepY += step_;
+
+          if (state.loopdir === 'right' || state.loopdir === 'left') {
+            const spanX = Math.max(1, targetBoundsX.max - targetBoundsX.min) * state.formationscale;
+            const halfX = spanX / 2;
+            const cycleX = W + spanX;
+            const progress = (((sweepX % cycleX) + cycleX) % cycleX) / cycleX;
+            hShapeOrigCenter = (targetBoundsX.min + targetBoundsX.max) / 2;
+            hSweepCenter =
+              state.loopdir === 'right'
+                ? -halfX + progress * cycleX
+                : W + halfX - progress * cycleX;
+          }
+          if (state.loopdir === 'down' || state.loopdir === 'up') {
+            const spanY = Math.max(1, targetBoundsY.max - targetBoundsY.min) * state.formationscale;
+            const halfY = spanY / 2;
+            const cycleY = H + spanY;
+            const progress = (((sweepY % cycleY) + cycleY) % cycleY) / cycleY;
+            vShapeOrigCenter = (targetBoundsY.min + targetBoundsY.max) / 2;
+            vSweepCenter =
+              state.loopdir === 'down' ? -halfY + progress * cycleY : H + halfY - progress * cycleY;
+          }
+        }
+      }
+
+      // batch every dot into a single path and one fill() call — far cheaper
+      // than beginPath/arc/fill per particle at high particle counts
+      ctx.beginPath();
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        if (seamless) {
+          // positional (not accumulated) drift: each particle orbits a fixed home
+          // point, so after one full loop it is exactly where it started. The
+          // constant-velocity term is intentionally skipped here — it never
+          // returns to its origin and would break the loop.
+          const amp = 18 * (0.4 + state.speed) * driftDamp;
+          p.x = p.homeX + Math.sin(t * p.spInt + p.ph) * amp;
+          p.y = p.homeY + Math.cos(t * p.spInt + p.ph) * amp;
+        } else {
+          p.x += Math.sin(t * p.sp + p.ph) * 0.15 * (0.4 + state.speed) * driftDamp;
+          p.y += Math.cos(t * p.sp * 0.8 + p.ph) * 0.15 * (0.4 + state.speed) * driftDamp;
+          p.x += p.vx * 0.05 * state.speed * driftDamp;
+          p.y += p.vy * 0.05 * state.speed * driftDamp;
+        }
+
+        if (mouse.active && radius > 0 && state.mousemode !== 'off') {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < radius2 && d2 > 0.001) {
+            const d = Math.sqrt(d2);
+            const strength = (1 - d / radius) * force;
+            const dir = state.mousemode === 'attract' ? -1 : 1;
+            p.x += (dx / d) * strength * dir;
+            p.y += (dy / d) * strength * dir;
+          }
+        }
+
+        if (state.gravity > 0) {
+          const dx = cx0 - p.x,
+            dy = cy0 - p.y;
+          p.x += dx * 0.0006 * state.gravity;
+          p.y += dy * 0.0006 * state.gravity;
+        }
+
+        if (interR > 0 && interF > 0) {
+          // inlined (no per-particle closure) — this loop runs for every
+          // particle every frame, so avoiding a fresh callback allocation
+          // each time keeps things smooth at high particle counts
+          const interRi = interR * p.rangeMul; // this particle's own repel reach
+          const interRi2 = interRi * interRi;
+          const gcx = Math.floor(p.x / cellSize);
+          const gcy = Math.floor(p.y / cellSize);
+          for (let gx = -1; gx <= 1; gx++) {
+            for (let gy = -1; gy <= 1; gy++) {
+              const arr = grid.get(cellKey(gcx + gx, gcy + gy));
+              if (!arr) continue;
+              for (let k = 0; k < arr.length; k++) {
+                const j = arr[k];
+                if (j === i) continue;
+                const o = particles[j];
+                const dx = p.x - o.x,
+                  dy = p.y - o.y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < interRi2 && d2 > 0.0001) {
+                  const d = Math.sqrt(d2);
+                  const strength = (1 - d / interRi) * interF * 0.5;
+                  p.x += (dx / d) * strength;
+                  p.y += (dy / d) * strength;
+                }
+              }
+            }
+          }
+        }
+
+        // formation pull: ease each particle toward its assigned target position
+        if (inFormation && targets[i]) {
+          const tgt = targets[i];
+          let bx = tgt.x,
+            by = tgt.y;
+          if (state.formation === 'wave') {
+            const primaryPhase =
+              waveT * (seamless ? Math.max(1, Math.round(tgt.speedMul)) : tgt.speedMul) +
+              tgt.waveMain * tgt.freq * state.wavefreq +
+              tgt.phase;
+            let osc = waveShape(primaryPhase, state.waveshape) * tgt.amp * state.waveamp;
+            if (state.wavecomplexity > 0) {
+              // a faster, smaller secondary ripple layered on top for a more organic/choppy look
+              const harmonicPhase = primaryPhase * 2.7 + tgt.harmonicPhase;
+              osc +=
+                waveShape(harmonicPhase, 'sine') *
+                tgt.amp *
+                state.waveamp *
+                0.4 *
+                state.wavecomplexity;
+            }
+            if (state.wavedirection === 'vertical') bx = tgt.waveBase + osc;
+            else by = tgt.waveBase + osc;
+          }
+
+          // scale + rotate around the field center
+          let rx = (bx - cx0) * state.formationscale;
+          let ry = (by - cy0) * state.formationscale;
+          if (state.formationrotation !== 0) {
+            const rad = (state.formationrotation * Math.PI) / 180;
+            const cosR = Math.cos(rad),
+              sinR = Math.sin(rad);
+            const rx2 = rx * cosR - ry * sinR;
+            const ry2 = rx * sinR + ry * cosR;
+            rx = rx2;
+            ry = ry2;
+          }
+
+          let tx, ty;
+
+          if (hSweepCenter !== null) {
+            // rigid sweep on X: whole shape moves together as one piece, referenced from its own center
+            tx = hSweepCenter + (bx - hShapeOrigCenter) * state.formationscale + effOffsetX;
+          } else {
+            tx = cx0 + rx + effOffsetX + panX;
+            if (state.loopdir === 'right' || state.loopdir === 'left') {
+              tx = ((tx % W) + W) % W;
+            }
+          }
+
+          if (vSweepCenter !== null) {
+            ty =
+              vSweepCenter +
+              (by - vShapeOrigCenter) * state.formationscale +
+              state.formationoffsety;
+          } else {
+            ty = cy0 + ry + state.formationoffsety + panY;
+            if (state.loopdir === 'down' || state.loopdir === 'up') {
+              ty = ((ty % H) + H) % H;
+            }
+          }
+
+          p.x += (tx - p.x) * fStrength * 0.06;
+          p.y += (ty - p.y) * fStrength * 0.06;
+        }
+
+        if (!inFormation || !targets[i]) {
+          if (p.x < -10) p.x = W + 10;
+          if (p.x > W + 10) p.x = -10;
+          if (p.y < -10) p.y = H + 10;
+          if (p.y > H + 10) p.y = -10;
+        }
+
+        const r = Math.max(0.3, state.size * p.sizeMul);
+        ctx.moveTo(p.x + r, p.y);
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      }
+
+      ctx.fill();
+    }
+
+    function hexToRgba(hex, a) {
+      const v = hex.replace('#', '');
+      const r = parseInt(v.substring(0, 2), 16);
+      const g = parseInt(v.substring(2, 4), 16);
+      const b = parseInt(v.substring(4, 6), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    // sliders
+    const ids = [
+      'count',
+      'size',
+      'sizevar',
+      'speed',
+      'radius',
+      'force',
+      'interforce',
+      'interradius',
+      'rangevar',
+      'connectdist',
+      'gravity',
+      'trail',
+      'formationstrength',
+      'formationscale',
+      'formationrotation',
+      'formationoffsetx',
+      'formationoffsety',
+      'loopspeed',
+      'waveamp',
+      'wavefreq',
+      'wavedensity',
+      'wavespeed',
+      'wavevariation',
+      'wavecomplexity',
+      'spritecols',
+      'spriterows',
+      'spritefps',
+      'loopduration',
+    ];
+    const decimals = {
+      count: 0,
+      size: 1,
+      sizevar: 2,
+      speed: 1,
+      radius: 0,
+      force: 1,
+      interforce: 1,
+      interradius: 0,
+      rangevar: 2,
+      connectdist: 0,
+      gravity: 2,
+      trail: 2,
+      formationstrength: 2,
+      formationscale: 2,
+      formationrotation: 0,
+      formationoffsetx: 0,
+      formationoffsety: 0,
+      loopspeed: 0,
+      waveamp: 2,
+      wavefreq: 2,
+      wavedensity: 2,
+      wavespeed: 2,
+      wavevariation: 2,
+      wavecomplexity: 2,
+      spritecols: 0,
+      spriterows: 0,
+      spritefps: 0,
+      loopduration: 0,
+    };
+    ids.forEach((id) => {
+      const input = document.getElementById(id);
+      const label = document.getElementById('v-' + id);
+      input.addEventListener('input', () => {
+        const v = parseFloat(input.value);
+        state[id] = v;
+        label.textContent = id === 'count' ? Math.round(v) : v.toFixed(decimals[id]);
+        if (id === 'count') syncParticleCount();
+        if (id === 'sizevar') recomputeSizeMuls();
+        if (id === 'rangevar') recomputeRangeMuls();
+        if (id === 'wavedensity' && state.formation === 'wave') assignTargets();
+        if (id === 'wavevariation' && state.formation === 'wave') assignTargets();
+        if (id === 'spritecols' || id === 'spriterows' || id === 'spritefps') refreshSpriteMode();
+      });
+    });
+
+    // wave direction (horizontal rows / vertical columns)
+    const wavedirChips = document.getElementById('wavedir-chips');
+    wavedirChips.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        wavedirChips.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.wavedirection = chip.dataset.v;
+        if (state.formation === 'wave') assignTargets();
+      });
+    });
+
+    // wave shape (sine / triangle / square)
+    const waveshapeChips = document.getElementById('waveshape-chips');
+    waveshapeChips.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        waveshapeChips.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.waveshape = chip.dataset.v;
+        // no assignTargets() needed — waveShape() is applied live in the render loop
+      });
+    });
+
+    // show/hide the Wave-specific controls only when Wave is the active formation
+    const waveGroupTitle = document.getElementById('wave-group-title');
+    const waveControlEls = [
+      document.getElementById('wavedir-chips'),
+      document.getElementById('wave-amp-row'),
+      document.getElementById('wave-freq-row'),
+      document.getElementById('wave-density-row'),
+      document.getElementById('wave-speed-row'),
+      document.getElementById('waveshape-chips'),
+      document.getElementById('wave-variation-row'),
+      document.getElementById('wave-complexity-row'),
+    ];
+    function updateWaveControlsVisibility() {
+      const show = state.formation === 'wave';
+      waveGroupTitle.style.display = show ? 'block' : 'none';
+      waveControlEls.forEach((el) => {
+        el.style.display = show ? (el.classList.contains('chip-group') ? 'flex' : 'block') : 'none';
+      });
+    }
+
+    // size variance style (uniform / bimodal / gaussian)
+    const sizevarStyleSeg = document.getElementById('sizevarstyle-seg');
+    sizevarStyleSeg.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        sizevarStyleSeg.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.sizevarstyle = btn.dataset.v;
+        recomputeSizeMuls();
+      });
+    });
+
+    // repel range variance style (uniform / bimodal / gaussian)
+    const rangevarStyleSeg = document.getElementById('rangevarstyle-seg');
+    rangevarStyleSeg.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        rangevarStyleSeg.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.rangevarstyle = btn.dataset.v;
+        recomputeRangeMuls();
+      });
+    });
+
+    // connections toggle
+    const connToggle = document.getElementById('connections');
+    connToggle.addEventListener('change', () => {
+      state.connections = connToggle.checked;
+    });
+
+    // offset X loop (sway) toggle
+    const offsetxLoopToggle = document.getElementById('offsetxloop');
+    offsetxLoopToggle.addEventListener('change', () => {
+      state.offsetxloop = offsetxLoopToggle.checked;
+    });
+
+    // seamless loop toggle
+    const seamlessToggle = document.getElementById('seamless');
+    function refreshSeamlessUI() {
+      const show = state.seamless;
+      document.getElementById('loopduration-row').style.display = show ? 'block' : 'none';
+      document.getElementById('seamless-hint').style.display = show ? 'block' : 'none';
+    }
+    seamlessToggle.addEventListener('change', () => {
+      state.seamless = seamlessToggle.checked;
+      refreshSeamlessUI();
+    });
+
+    // sprite-sheet ("frame sheet") toggle
+    const spriteToggle = document.getElementById('spriteenabled');
+    spriteToggle.addEventListener('change', () => {
+      state.spriteenabled = spriteToggle.checked;
+      refreshSpriteMode();
+    });
+
+    // mouse mode segmented control
+    const seg = document.getElementById('mousemode-seg');
+    seg.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        seg.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.mousemode = btn.dataset.v;
+      });
+    });
+
+    // dot color: picker + swatches
+    const dotPicker = document.getElementById('dotcolor-picker');
+    const dotHexLabel = document.getElementById('v-dotcolor-hex');
+    const dotSwatchWrap = document.getElementById('dot-swatches');
+    function setDotColor(hex, fromSwatch) {
+      state.dotColor = hex;
+      dotPicker.value = hex;
+      dotHexLabel.textContent = hex;
+      dotSwatchWrap.querySelectorAll('.swatch').forEach((s) => {
+        s.classList.toggle(
+          'active',
+          fromSwatch ? s.dataset.c.toLowerCase() === hex.toLowerCase() : false,
+        );
+      });
+    }
+    dotPicker.addEventListener('input', () => setDotColor(dotPicker.value, false));
+    dotSwatchWrap.querySelectorAll('.swatch').forEach((sw) => {
+      sw.addEventListener('click', () => setDotColor(sw.dataset.c, true));
+    });
+
+    // background color: picker + swatches
+    const bgPicker = document.getElementById('bgcolor-picker');
+    const bgHexLabel = document.getElementById('v-bgcolor-hex');
+    const bgSwatchWrap = document.getElementById('bg-swatches');
+    function setBgColor(hex, fromSwatch) {
+      state.bgColor = hex;
+      document.documentElement.style.setProperty('--bg', hex);
+      bgPicker.value = hex;
+      bgHexLabel.textContent = hex;
+      stage.style.background = hex;
+      canvas.style.background = hex;
+      bgSwatchWrap.querySelectorAll('.swatch').forEach((s) => {
+        s.classList.toggle(
+          'active',
+          fromSwatch ? s.dataset.c.toLowerCase() === hex.toLowerCase() : false,
+        );
+      });
+    }
+    bgPicker.addEventListener('input', () => setBgColor(bgPicker.value, false));
+    bgSwatchWrap.querySelectorAll('.swatch').forEach((sw) => {
+      sw.addEventListener('click', () => setBgColor(sw.dataset.c, true));
+    });
+
+    // formation chips
+    const formationChips = document.getElementById('formation-chips');
+    const chipImage = document.getElementById('chip-image');
+    const chipVideo = document.getElementById('chip-video');
+    const imageInput = document.getElementById('image-upload');
+    const imageThumbRow = document.getElementById('image-thumb-row');
+    const imageThumb = document.getElementById('image-thumb');
+    const imageClearBtn = document.getElementById('image-clear');
+    const videoThumbRow = document.getElementById('video-thumb-row');
+    const videoThumb = document.getElementById('video-thumb'); // doubles as the sampling source
+    const videoClearBtn = document.getElementById('video-clear');
+    let videoResampleTimer = null;
+
+    function setFormation(f) {
+      state.formation = f;
+      formationChips
+        .querySelectorAll('.chip')
+        .forEach((c) => c.classList.toggle('active', c.dataset.v === f));
+      assignTargets();
+      updateWaveControlsVisibility();
+    }
+
+    formationChips.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        if (chip.disabled) return;
+        setFormation(chip.dataset.v);
+      });
+    });
+
+    function setBgColor2(hex, fromSwatch) {
+      state.bgColor2 = hex;
+      const picker = document.getElementById('bgcolor2-picker');
+      const label = document.getElementById('v-bgcolor2-hex');
+      const swatches = document.getElementById('bg2-swatches');
+      if (picker) picker.value = hex;
+      if (label) label.textContent = hex;
+      swatches?.querySelectorAll('.swatch').forEach((swatch) => {
+        swatch.classList.toggle(
+          'active',
+          fromSwatch ? swatch.dataset.c?.toLowerCase() === hex.toLowerCase() : false,
+        );
+      });
+    }
+
+    // loop / pan direction
+    const loopdirChips = document.getElementById('loopdir-chips');
+    loopdirChips.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        loopdirChips.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.loopdir = chip.dataset.v;
+        sweepX = 0;
+        sweepY = 0; // avoid a jump if a rigid-sweep shape was mid-cycle
+      });
+    });
+
+    function stopVideoResampling() {
+      if (videoResampleTimer) {
+        clearInterval(videoResampleTimer);
+        videoResampleTimer = null;
+      }
+    }
+
+    function startVideoResampling() {
+      stopVideoResampling();
+      // re-sample the current video frame a few times a second — enough to track
+      // motion without doing a full getImageData() readback every animation frame
+      videoResampleTimer = setInterval(() => {
+        if (state.formation !== 'video') return;
+        if (videoThumb.readyState < 2) return; // HAVE_CURRENT_DATA — frame not decoded yet
+        sampleImagePoints(videoThumb);
+      }, 150);
+    }
+
+    // ---- Sprite-sheet ("frame sheet") playback ----
+    // Plays through a grid of video frames packed into a single image. This exists
+    // because some sandboxed embeds block <video> loading outright (the browser
+    // reports "Media load rejected by URL safety check"), while plain images load
+    // fine — so a frame grid gives video-like animation without a <video> element.
+    let spriteTimer = null;
+    let spriteFrame = 0;
+    const spriteSourceImg = new Image(); // full-resolution copy used for sampling
+
+    function stopSpritePlayback() {
+      if (spriteTimer) {
+        clearInterval(spriteTimer);
+        spriteTimer = null;
+      }
+    }
+
+    function sampleSpriteFrame() {
+      const cols = Math.max(1, Math.round(state.spritecols));
+      const rows = Math.max(1, Math.round(state.spriterows));
+      const iw = spriteSourceImg.naturalWidth,
+        ih = spriteSourceImg.naturalHeight;
+      if (!iw || !ih) return;
+      const fw = iw / cols,
+        fh = ih / rows;
+      const total = cols * rows;
+      const idx = spriteFrame % total;
+      const cx = idx % cols,
+        cy = Math.floor(idx / cols);
+      sampleImagePoints(spriteSourceImg, { x: cx * fw, y: cy * fh, w: fw, h: fh });
+    }
+
+    function startSpritePlayback() {
+      stopSpritePlayback();
+      if (!state.spriteenabled) return;
+      spriteFrame = 0;
+      sampleSpriteFrame();
+      spriteTimer = setInterval(
+        () => {
+          if (state.formation !== 'image') return;
+          if (!state.spriteenabled) return;
+          spriteFrame++;
+          sampleSpriteFrame();
+        },
+        Math.max(20, 1000 / Math.max(1, state.spritefps)),
+      );
+    }
+
+    function refreshSpriteMode() {
+      // when the toggle is off, fall back to sampling the whole image as one still frame
+      stopSpritePlayback();
+      if (state.spriteenabled && state.formation === 'image') {
+        startSpritePlayback();
+      } else if (state.formation === 'image' && spriteSourceImg.naturalWidth) {
+        sampleImagePoints(spriteSourceImg);
+      }
+      const show = state.spriteenabled;
+      ['sprite-cols-row', 'sprite-rows-row', 'sprite-fps-row', 'sprite-hint'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = show ? 'block' : 'none';
+      });
+    }
+
+    const uploadError = document.getElementById('upload-error');
+    function showUploadError(msg) {
+      uploadError.textContent = msg;
+      uploadError.style.display = 'block';
+    }
+    function clearUploadError() {
+      uploadError.style.display = 'none';
+    }
+
+    const MEDIA_ERROR_NAMES = {
+      1: 'MEDIA_ERR_ABORTED',
+      2: 'MEDIA_ERR_NETWORK',
+      3: 'MEDIA_ERR_DECODE',
+      4: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
+    };
+
+    // the hidden file input is triggered natively via the <label for="image-upload">
+    // element above — no synthetic .click() call, which is more reliable across
+    // sandboxed embeds than JS-triggered file pickers. Accepts image OR video;
+    // we branch on MIME type below.
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files && imageInput.files[0];
+      if (!file) return;
+      clearUploadError();
+
+      // use FileReader -> data: URL rather than URL.createObjectURL -> blob: URL.
+      // Some sandboxed embeds (this preview included) apply a CSP that allows
+      // data: URIs but blocks blob: URIs, which silently fails the load — this
+      // avoids that, for both images and video.
+      const reader = new FileReader();
+      reader.onerror = () => {
+        console.error('Could not read the selected file.');
+        showUploadError('Could not read that file - please try again.');
+      };
+
+      if (file.type.startsWith('video/')) {
+        const sizeMB = file.size / (1024 * 1024);
+        if (sizeMB > 25) {
+          showUploadError(
+            `That video is ${sizeMB.toFixed(1)}MB - large files can fail to load this way. Try a shorter clip or a smaller export (under ~20MB works best).`,
+          );
+        }
+
+        // Check up front whether THIS browser/embed can even play this codec at
+        // all, rather than waiting for a load failure. Many sandboxed preview
+        // environments (including this one) lack H.264/MP4 decoding but do
+        // support WebM (VP8/VP9) — canPlayType lets us say so immediately.
+        const canPlayThisType = videoThumb.canPlayType(file.type);
+        const canPlayWebm =
+          videoThumb.canPlayType('video/webm; codecs="vp9"') ||
+          videoThumb.canPlayType('video/webm');
+        if (canPlayThisType === '') {
+          const webmNote = canPlayWebm
+            ? ' This preview can play WebM, so try converting to that instead.'
+            : '';
+          showUploadError(
+            `This preview's browser can't play "${file.type || 'that format'}" video.${webmNote} (Detected via canPlayType - the real browser your site visitors use will very likely support MP4 fine; this limit is specific to previewing it here.)`,
+          );
+          return;
+        }
+
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          // stop any previous video's resampling before swapping sources
+          stopVideoResampling();
+          // attach handlers BEFORE assigning src, so a fast/synchronous
+          // error can't fire before we're listening for it
+          videoThumb.onloadeddata = () => {
+            clearUploadError();
+            videoThumb.muted = true; // belt-and-suspenders for autoplay policies
+            videoThumb.play().catch((err) => {
+              console.error('Video loaded but autoplay was blocked:', err);
+            });
+            sampleImagePoints(videoThumb);
+            chipVideo.disabled = false;
+            setFormation('video');
+            videoThumbRow.style.display = 'flex';
+            imageThumbRow.style.display = 'none';
+            startVideoResampling();
+          };
+          videoThumb.onerror = () => {
+            const err = videoThumb.error;
+            const detail = err
+              ? `${MEDIA_ERROR_NAMES[err.code] || 'code ' + err.code}`
+              : 'unknown error';
+            console.error('Could not decode the selected video —', detail, err && err.message);
+            const webmNote = canPlayWebm
+              ? ' Try converting it to WebM (VP9) - this preview environment supports that even where MP4/H.264 sometimes fails.'
+              : '';
+            showUploadError(`Couldn't load that video (${detail}).${webmNote}`);
+          };
+          videoThumb.src = dataUrl;
+          videoThumb.load();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          const img = new Image();
+          img.onload = () => {
+            clearUploadError();
+            sampleImagePoints(img);
+            chipImage.disabled = false;
+            setFormation('image');
+            imageThumb.src = dataUrl;
+            imageThumbRow.style.display = 'flex';
+            videoThumbRow.style.display = 'none';
+            stopVideoResampling();
+            // keep a full-res copy for sprite-sheet frame cropping, then apply
+            // whatever sprite mode is currently set
+            spriteSourceImg.onload = () => {
+              refreshSpriteMode();
+            };
+            spriteSourceImg.src = dataUrl;
+            document.getElementById('sprite-controls').style.display = 'block';
+          };
+          img.onerror = () => {
+            console.error('Could not decode the selected image.');
+            showUploadError("Couldn't load that image - try a standard JPG, PNG, or WebP file.");
+          };
+          img.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    imageClearBtn.addEventListener('click', () => {
+      imagePoints = [];
+      imageInput.value = '';
+      imageThumbRow.style.display = 'none';
+      chipImage.disabled = true;
+      stopSpritePlayback();
+      document.getElementById('sprite-controls').style.display = 'none';
+      clearUploadError();
+      setFormation('free');
+    });
+
+    videoClearBtn.addEventListener('click', () => {
+      stopVideoResampling();
+      videoThumb.pause();
+      videoThumb.removeAttribute('src');
+      videoThumb.load();
+      imagePoints = [];
+      imageInput.value = '';
+      videoThumbRow.style.display = 'none';
+      chipVideo.disabled = true;
+      clearUploadError();
+      setFormation('free');
+    });
+
+    // reset
+    document.getElementById('reset').addEventListener('click', () => {
+      Object.assign(state, defaults);
+      ids.forEach((id) => {
+        const input = document.getElementById(id);
+        const label = document.getElementById('v-' + id);
+        input.value = defaults[id];
+        label.textContent = id === 'count' ? defaults[id] : defaults[id].toFixed(decimals[id]);
+      });
+      connToggle.checked = defaults.connections;
+      seamlessToggle.checked = defaults.seamless;
+      refreshSeamlessUI();
+      offsetxLoopToggle.checked = defaults.offsetxloop;
+      seg
+        .querySelectorAll('button')
+        .forEach((b) => b.classList.toggle('active', b.dataset.v === defaults.mousemode));
+      sizevarStyleSeg
+        .querySelectorAll('button')
+        .forEach((b) => b.classList.toggle('active', b.dataset.v === defaults.sizevarstyle));
+      rangevarStyleSeg
+        .querySelectorAll('button')
+        .forEach((b) => b.classList.toggle('active', b.dataset.v === defaults.rangevarstyle));
+      wavedirChips
+        .querySelectorAll('.chip')
+        .forEach((c) => c.classList.toggle('active', c.dataset.v === defaults.wavedirection));
+      waveshapeChips
+        .querySelectorAll('.chip')
+        .forEach((c) => c.classList.toggle('active', c.dataset.v === defaults.waveshape));
+      loopdirChips
+        .querySelectorAll('.chip')
+        .forEach((c) => c.classList.toggle('active', c.dataset.v === defaults.loopdir));
+      panX = 0;
+      panY = 0;
+      setDotColor(defaults.dotColor, true);
+      setBgColor(defaults.bgColor, true);
+      imagePoints = [];
+      imageInput.value = '';
+      imageThumbRow.style.display = 'none';
+      chipImage.disabled = true;
+      stopSpritePlayback();
+      spriteToggle.checked = defaults.spriteenabled;
+      document.getElementById('sprite-controls').style.display = 'none';
+      stopVideoResampling();
+      videoThumb.pause();
+      videoThumb.removeAttribute('src');
+      videoThumb.load();
+      videoThumbRow.style.display = 'none';
+      chipVideo.disabled = true;
+      clearUploadError();
+      setFormation(defaults.formation);
+      syncParticleCount();
+      recomputeSizeMuls();
+      recomputeRangeMuls();
+    });
+
+    // panel show/hide (panel is docked beside the stage, never over it)
+    toggle.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+      setTimeout(resize, 260); // stage width changes as panel slides, so recompute canvas size
+    });
+
+    if (embedded) {
+      panel.remove();
+      toggle.remove();
+    }
+
+    resize();
+    particles = makeParticles(state.count);
+    // build formation targets + sync panel visibility for whatever the starting
+    // formation is (previously skipped, which silently broke any non-'free' default)
+    assignTargets();
+    updateWaveControlsVisibility();
+    step();
+
+    const BRIDGE_VERSION = 2;
+    const numericBounds = {
+      canvasw: [320, 3840],
+      canvash: [320, 2160],
+      count: [100, 6000],
+      size: [0.5, 20],
+      sizevar: [0, 1],
+      speed: [0, 20],
+      radius: [0, 300],
+      force: [0, 8],
+      interforce: [0, 4],
+      interradius: [0, 60],
+      rangevar: [0, 1],
+      connectdist: [10, 220],
+      gravity: [0, 3],
+      trail: [0.02, 1],
+      formationstrength: [0, 1],
+      formationscale: [0.3, 2.5],
+      formationrotation: [0, 360],
+      formationoffsetx: [-400, 400],
+      formationoffsety: [-300, 300],
+      loopspeed: [5, 250],
+      waveamp: [0, 3],
+      wavefreq: [0.2, 3],
+      wavedensity: [0.3, 3],
+      wavespeed: [0, 5],
+      wavevariation: [0, 2],
+      wavecomplexity: [0, 1],
+      loopduration: [2, 20],
+      bgangle: [0, 360],
+      bgspread: [0.2, 2],
+    };
+    const enumValues = {
+      sizevarstyle: ['uniform', 'bimodal', 'gaussian'],
+      mousemode: ['repel', 'attract', 'off'],
+      rangevarstyle: ['uniform', 'bimodal', 'gaussian'],
+      formation: ['free', 'wave', 'lines', 'grid', 'circle', 'rings', 'spiral', 'radial', 'hex'],
+      wavedirection: ['horizontal', 'vertical'],
+      waveshape: ['sine', 'triangle', 'square'],
+      loopdir: ['off', 'right', 'left', 'down', 'up'],
+      bgmode: ['solid', 'linear', 'radial'],
+    };
+
+    function sanitiseExternalState(incoming) {
+      if (!incoming || typeof incoming !== 'object') return {};
+      const next = {};
+      for (const key of Object.keys(defaults)) {
+        if (!(key in incoming)) continue;
+        const value = incoming[key];
+        if (numericBounds[key]) {
+          const [min, max] = numericBounds[key];
+          if (typeof value === 'number' && Number.isFinite(value)) {
+            next[key] = Math.min(max, Math.max(min, value));
+          }
+        } else if (enumValues[key]) {
+          if (enumValues[key].includes(value)) next[key] = value;
+        } else if (typeof defaults[key] === 'boolean' && typeof value === 'boolean') {
+          next[key] = value;
+        } else if (
+          (key === 'dotColor' || key === 'bgColor' || key === 'bgColor2') &&
+          typeof value === 'string' &&
+          /^#[0-9a-f]{6}$/i.test(value)
+        ) {
+          next[key] = value;
+        }
+      }
+      return next;
+    }
+
+    function applyExternalState(incoming) {
+      const next = sanitiseExternalState(incoming);
+      const previous = { ...state };
+      Object.assign(state, next);
+
+      if (state.canvasw !== previous.canvasw || state.canvash !== previous.canvash) {
+        setCanvasSize(state.canvasw, state.canvash);
+      }
+      if (state.count !== previous.count) syncParticleCount();
+      if (state.sizevar !== previous.sizevar || state.sizevarstyle !== previous.sizevarstyle) {
+        recomputeSizeMuls();
+      }
+      if (state.rangevar !== previous.rangevar || state.rangevarstyle !== previous.rangevarstyle) {
+        recomputeRangeMuls();
+      }
+      if (state.formation !== previous.formation) {
+        setFormation(state.formation);
+      } else if (
+        state.wavedirection !== previous.wavedirection ||
+        state.wavedensity !== previous.wavedensity ||
+        state.wavevariation !== previous.wavevariation
+      ) {
+        assignTargets();
+      }
+      if (state.dotColor !== previous.dotColor) setDotColor(state.dotColor, false);
+      if (state.bgColor !== previous.bgColor) setBgColor(state.bgColor, false);
+      if (state.bgColor2 !== previous.bgColor2) setBgColor2(state.bgColor2, false);
+      if (
+        state.bgmode !== previous.bgmode ||
+        state.bgangle !== previous.bgangle ||
+        state.bgspread !== previous.bgspread
+      ) {
+        backgroundCache.key = '';
+      }
+      if (state.seamless !== previous.seamless) refreshSeamlessUI();
+    }
+
+    if (embedded) {
+      function postReady() {
+        window.parent.postMessage(
+          { type: 'veli:wave-formation:ready', version: BRIDGE_VERSION, state: { ...state } },
+          window.location.origin,
+        );
+      }
+
+      window.addEventListener('message', (event) => {
+        if (event.origin !== window.location.origin || event.source !== window.parent) return;
+        const message = event.data;
+        if (message?.version !== BRIDGE_VERSION) return;
+        if (message.type === 'veli:wave-formation:request-ready') {
+          postReady();
+          return;
+        }
+        if (message.type !== 'veli:wave-formation:apply-state') return;
+        applyExternalState(message.state);
+      });
+      postReady();
+    }
+  })();
+</script>

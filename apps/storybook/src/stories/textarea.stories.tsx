@@ -1,8 +1,55 @@
 import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { TextArea } from '@tradenetcorp/veli-ui/textarea';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { WarningCircleIcon } from '@phosphor-icons/react';
+
+const collapsedControlGroups = ['Content', 'State'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function TextAreaDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
 
 const dhivehiFormText = {
   core: {
@@ -20,9 +67,6 @@ const dhivehiFormText = {
     infoTip: 'މި ފީލްޑަށް ބޭނުންވާ މަޢުލޫމާތު ބަލާ ލިޔުއްވާ.',
     infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
     errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
-    filledValue: 'ލިޔުވި ލިޔުން',
-    disabledValue: 'ބޭނުންނުކުރެވޭ ލިޔުން',
-    lockedValue: 'ލޮކްޑް ލިޔުން',
   },
 } as const;
 
@@ -42,9 +86,6 @@ const enFormText = {
     infoTip: 'Use this field for the requested supporting information.',
     infoTipLabel: 'More information',
     errorMessage: 'This field needs attention.',
-    filledValue: 'Entered text',
-    disabledValue: 'Disabled text',
-    lockedValue: 'Locked text',
   },
 } as const;
 
@@ -72,10 +113,6 @@ const textareaArgText = {
     en: enFormText.core.label,
     dv: dhivehiFormText.core.label,
   },
-  labelSupplementary: {
-    en: enFormText.core.optional,
-    dv: dhivehiFormText.core.optional,
-  },
   infoTooltip: {
     en: enFormText.textarea.infoTip,
     dv: dhivehiFormText.textarea.infoTip,
@@ -96,19 +133,19 @@ const textareaArgText = {
     en: enFormText.textarea.errorMessage,
     dv: dhivehiFormText.textarea.errorMessage,
   },
-  defaultValue: {
-    en: enFormText.textarea.filledValue,
-    dv: dhivehiFormText.textarea.filledValue,
-  },
 } as const;
 
 type TextAreaArgTextKey = keyof typeof textareaArgText;
 type TextAreaStoryArgs = ComponentProps<typeof TextArea> & {
-  showOptional: boolean;
   showInfoTooltip: boolean;
 };
 
 const textareaArgTextKeys = Object.keys(textareaArgText) as TextAreaArgTextKey[];
+
+const getTextAreaPreviewKey = (
+  language: TextAreaLanguage,
+  defaultValue: TextAreaStoryArgs['defaultValue'],
+) => `${language}:${typeof defaultValue === 'string' ? defaultValue : ''}`;
 
 const hiddenNativeTextAreaArgTypes = {
   autoCapitalize: { control: false, table: { disable: true } },
@@ -121,6 +158,22 @@ const hiddenNativeTextAreaArgTypes = {
   spellCheck: { control: false, table: { disable: true } },
   wrap: { control: false, table: { disable: true } },
 } as const;
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
 
 const getLocalizedTextAreaArgText = (
   key: TextAreaArgTextKey,
@@ -147,16 +200,8 @@ const meta = {
     (Story, context) => {
       const language: TextAreaLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const {
-        description,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-        errorMessage,
-        defaultValue,
-      } = args;
+      const { description, infoTooltip, infoTooltipAriaLabel, label, placeholder, errorMessage } =
+        args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<TextAreaArgTextKey, string>> = {};
@@ -165,10 +210,8 @@ const meta = {
           infoTooltip,
           infoTooltipAriaLabel,
           label,
-          labelSupplementary,
           placeholder,
           errorMessage,
-          defaultValue,
         };
 
         textareaArgTextKeys.forEach((key) => {
@@ -187,10 +230,8 @@ const meta = {
         infoTooltip,
         infoTooltipAriaLabel,
         label,
-        labelSupplementary,
         placeholder,
         errorMessage,
-        defaultValue,
         language,
         updateArgs,
       ]);
@@ -200,98 +241,113 @@ const meta = {
   ],
   parameters: {
     layout: 'centered',
+    controls: {
+      sort: 'none',
+    },
+    docs: {
+      container: TextAreaDocsContainer,
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    label: {
-      control: 'text',
-    },
-    labelSupplementary: {
-      control: 'text',
-    },
-    infoTooltip: {
-      control: 'text',
-    },
-    infoTooltipAriaLabel: {
-      control: 'text',
-    },
-    showOptional: {
-      control: 'boolean',
-    },
-    showInfoTooltip: {
-      control: 'boolean',
-    },
-    showCharacterCounter: {
-      control: 'boolean',
-    },
-    placeholder: {
-      control: 'text',
-    },
-    defaultValue: {
-      control: 'text',
-    },
-    description: {
-      control: 'text',
-    },
-    errorMessage: {
-      control: 'text',
-    },
-    variant: {
-      control: 'select',
-      options: ['default', 'outline', 'skeleton'],
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
-    maxLength: {
-      control: 'number',
-    },
-    isDisabled: {
-      control: 'boolean',
-    },
-    isInvalid: {
-      control: 'boolean',
-    },
-    isReadOnly: {
-      control: 'boolean',
-    },
-    isRequired: {
-      control: 'boolean',
-    },
-    showRequiredIndicator: {
-      control: 'boolean',
-    },
-    isResizable: {
-      control: 'boolean',
-    },
-    minHeight: {
-      control: 'number',
-    },
-    maxHeight: {
-      control: 'number',
-    },
+    ...withArgCategory('Appearance', {
+      appearance: {
+        control: 'select',
+        options: ['default', 'outline'],
+      },
+      size: {
+        control: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
+    }),
+    ...withArgCategory('Label', {
+      label: {
+        control: 'text',
+      },
+      isOptional: {
+        control: 'boolean',
+      },
+      infoTooltip: {
+        control: 'text',
+      },
+      infoTooltipAriaLabel: {
+        control: 'text',
+      },
+      showInfoTooltip: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Content', {
+      placeholder: {
+        control: 'text',
+      },
+      defaultValue: {
+        control: 'text',
+      },
+      description: {
+        control: 'text',
+      },
+      maxLength: {
+        control: 'number',
+      },
+      showCharacterCounter: {
+        control: 'boolean',
+      },
+      isResizable: {
+        control: 'boolean',
+      },
+      minHeight: {
+        control: 'number',
+      },
+      maxHeight: {
+        control: 'number',
+      },
+    }),
+    ...withArgCategory('State', {
+      isRequired: {
+        control: 'boolean',
+      },
+      showRequiredIndicator: {
+        control: 'boolean',
+      },
+      isInvalid: {
+        control: 'boolean',
+      },
+      errorMessage: {
+        control: 'text',
+      },
+      isDisabled: {
+        control: 'boolean',
+      },
+      isReadOnly: {
+        control: 'boolean',
+      },
+    }),
+    ref: { table: { disable: true } },
+    className: { table: { disable: true } },
+    labelIcon: { control: false, table: { disable: true } },
     ...hiddenNativeTextAreaArgTypes,
   },
   args: {
+    appearance: 'default',
+    size: 'md',
     label: enFormText.core.label,
-    labelSupplementary: enFormText.core.optional,
+    isOptional: true,
     infoTooltip: enFormText.textarea.infoTip,
     infoTooltipAriaLabel: enFormText.textarea.infoTipLabel,
-    showOptional: true,
     showInfoTooltip: true,
-    showCharacterCounter: true,
     placeholder: enFormText.core.placeholder,
+    defaultValue: '',
     description: enFormText.core.helperText,
-    errorMessage: enFormText.textarea.errorMessage,
     maxLength: 100,
-    defaultValue: enFormText.textarea.filledValue,
-    isInvalid: false,
-    isDisabled: false,
-    isReadOnly: false,
+    showCharacterCounter: true,
+    isResizable: true,
     isRequired: false,
     showRequiredIndicator: true,
-    isResizable: true,
+    isInvalid: false,
+    errorMessage: enFormText.textarea.errorMessage,
+    isDisabled: false,
+    isReadOnly: false,
   },
 } satisfies Meta<TextAreaStoryArgs>;
 
@@ -301,18 +357,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const language = useTextAreaLanguage();
-    const { showInfoTooltip, showOptional, ...textareaArgs } = args;
+    const { showInfoTooltip, ...textareaArgs } = args;
 
     return (
-      <div key={language} className="w-[320px]">
+      <div key={getTextAreaPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <TextArea
           {...textareaArgs}
           label={getLocalizedTextAreaArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedTextAreaArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedTextAreaArgText('infoTooltip', args.infoTooltip, language)
@@ -324,7 +375,6 @@ export const Default: Story = {
             language,
           )}
           placeholder={getLocalizedTextAreaArgText('placeholder', args.placeholder, language)}
-          defaultValue={getLocalizedTextAreaArgText('defaultValue', args.defaultValue, language)}
           description={getLocalizedTextAreaArgText('description', args.description, language)}
           errorMessage={getLocalizedTextAreaArgText('errorMessage', args.errorMessage, language)}
         />
@@ -335,52 +385,9 @@ export const Default: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
+    appearance: 'outline',
   },
   render: Default.render,
-};
-
-export const Resizable: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Drag the corner grip to resize vertically. The native browser handle is hidden; only the design-system grip is shown.',
-      },
-    },
-  },
-  render: (args) => {
-    const language = useTextAreaLanguage();
-    const { showInfoTooltip, showOptional, ...textareaArgs } = args;
-
-    return (
-      <div key={language} className="w-[320px]">
-        <TextArea
-          {...textareaArgs}
-          label={getLocalizedTextAreaArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedTextAreaArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
-          infoTooltip={
-            showInfoTooltip
-              ? getLocalizedTextAreaArgText('infoTooltip', args.infoTooltip, language)
-              : undefined
-          }
-          infoTooltipAriaLabel={getLocalizedTextAreaArgText(
-            'infoTooltipAriaLabel',
-            args.infoTooltipAriaLabel,
-            language,
-          )}
-          placeholder={getLocalizedTextAreaArgText('placeholder', args.placeholder, language)}
-          description={getLocalizedTextAreaArgText('description', args.description, language)}
-          maxHeight={320}
-          defaultValue=""
-        />
-      </div>
-    );
-  },
 };
 
 export const Sizes: Story = {
@@ -402,11 +409,10 @@ export const Sizes: Story = {
               <TextArea
                 size={size}
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
+                isOptional
                 placeholder={text.core.placeholder}
                 description={text.core.helperText}
                 maxLength={100}
-                defaultValue={text.textarea.filledValue}
               />
             </div>
           ))}
@@ -422,13 +428,12 @@ export const Sizes: Story = {
               </span>
               <TextArea
                 size={size}
-                variant="outline"
+                appearance="outline"
                 label={text.core.label}
-                labelSupplementary={text.core.optional}
+                isOptional
                 placeholder={text.core.placeholder}
                 description={text.core.helperText}
                 maxLength={100}
-                defaultValue={text.textarea.filledValue}
               />
             </div>
           ))}
@@ -447,75 +452,71 @@ export const States: Story = {
       <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
         <div className="flex flex-col gap-4">
           <TextArea
-            label={text.core.label}
-            labelSupplementary={text.core.optional}
+            label={text.core.default}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.filledValue}
           />
           <TextArea
             label={text.core.invalid}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             errorMessage={text.textarea.errorMessage}
             maxLength={100}
-            defaultValue={text.textarea.filledValue}
             isInvalid
           />
           <TextArea
             label={text.core.disabled}
-            labelSupplementary={text.core.optional}
+            isOptional
+            placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.disabledValue}
             isDisabled
           />
           <TextArea
             label={text.core.readOnly}
-            labelSupplementary={text.core.optional}
+            isOptional
+            placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.lockedValue}
             isReadOnly
           />
         </div>
         <div className="flex flex-col gap-4">
           <TextArea
-            variant="outline"
-            label={text.core.label}
-            labelSupplementary={text.core.optional}
+            appearance="outline"
+            label={text.core.default}
+            isOptional
             placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.filledValue}
           />
           <TextArea
-            variant="outline"
+            appearance="outline"
             label={text.core.invalid}
-            labelSupplementary={text.core.optional}
+            isOptional
             placeholder={text.core.placeholder}
             errorMessage={text.textarea.errorMessage}
             maxLength={100}
-            defaultValue={text.textarea.filledValue}
             isInvalid
           />
           <TextArea
-            variant="outline"
+            appearance="outline"
             label={text.core.disabled}
-            labelSupplementary={text.core.optional}
+            isOptional
+            placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.disabledValue}
             isDisabled
           />
           <TextArea
-            variant="outline"
+            appearance="outline"
             label={text.core.readOnly}
-            labelSupplementary={text.core.optional}
+            isOptional
+            placeholder={text.core.placeholder}
             description={text.core.helperText}
             maxLength={100}
-            defaultValue={text.textarea.lockedValue}
             isReadOnly
           />
         </div>
@@ -524,30 +525,49 @@ export const States: Story = {
   },
 };
 
-export const Skeleton: Story = {
-  render: () => (
-    <div className="flex w-[320px] flex-col gap-8">
-      <TextArea
-        variant="skeleton"
-        size="sm"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-      <TextArea
-        variant="skeleton"
-        size="md"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-      <TextArea
-        variant="skeleton"
-        size="lg"
-        label="Label"
-        description="Helper text"
-        maxLength={100}
-      />
-    </div>
-  ),
+export const Required: Story = {
+  args: {
+    isRequired: true,
+    isOptional: false,
+    showCharacterCounter: false,
+    maxLength: undefined,
+  },
+  render: Default.render,
+};
+
+export const LabelIcon: Story = {
+  render: (args) => {
+    const language = useTextAreaLanguage();
+    const { showInfoTooltip, ...textareaArgs } = args;
+
+    return (
+      <div key={getTextAreaPreviewKey(language, args.defaultValue)} className="w-[320px]">
+        <TextArea
+          {...textareaArgs}
+          label={getLocalizedTextAreaArgText('label', args.label, language)}
+          infoTooltip={
+            showInfoTooltip
+              ? getLocalizedTextAreaArgText('infoTooltip', args.infoTooltip, language)
+              : undefined
+          }
+          infoTooltipAriaLabel={getLocalizedTextAreaArgText(
+            'infoTooltipAriaLabel',
+            args.infoTooltipAriaLabel,
+            language,
+          )}
+          labelIcon={<WarningCircleIcon size={16} />}
+          placeholder={getLocalizedTextAreaArgText('placeholder', args.placeholder, language)}
+          description={getLocalizedTextAreaArgText('description', args.description, language)}
+          errorMessage={getLocalizedTextAreaArgText('errorMessage', args.errorMessage, language)}
+        />
+      </div>
+    );
+  },
+};
+
+export const NotResizable: Story = {
+  args: {
+    isResizable: false,
+  },
+  render: Default.render,
 };

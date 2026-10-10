@@ -6,6 +6,213 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.14.0
+
+_Released 2026-10-08._
+
+### Added
+
+- Add explicit `default`, `stacked`, and `compact` Alert layouts and semantic Alert colour tokens for Light and Dark modes.
+- Add `@tradenetcorp/veli-ui/field` with composable `Field`, `FieldSet`, `FieldLegend`, `FieldGroup`, `FieldContent`, `FieldLabel`, `FieldTitle`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldControl`, and `useFieldControlProps` for labeling and validating native or custom controls that do not ship with built-in label and error slots.
+- Add a `multiple` prop to `DropzoneField` (Figma `mode`). Single-file fields lay the area out as one row and replace it with the chosen file; multiple-file fields stack the area above a file list.
+- Add `infoTooltip`, `infoTooltipAriaLabel`, `isOptional`, `isRequired`, `showRequiredIndicator`, and `isInvalid` to `DropzoneField` for the Figma field header and validation states.
+- Add `title`, `hint`, and `secondaryText` to `DropzoneField` and `DropzoneArea` for customizing the drop area copy, and `isInvalid` to `DropzoneArea`.
+- Add `value`, `defaultValue`, `onValueChange`, `onAccept`, `onFileAccept`, `onFileReject`, `onFileValidate`, `onUpload`, `maxFiles`, `maxSize`, and `name` pass-through props to `DropzoneField`.
+- Submit the selected files with native forms when `Dropzone` or `DropzoneField` has a `name`, including files that were dropped.
+- Export the `DropzoneState`, `DropzoneFileState`, and `DropzoneFileStatus` types for `useDropzone` selectors.
+- Move focus to the file's remove button when a single-file dropzone receives a file, and back to Browse files when the file is removed.
+- Add `@tradenetcorp/veli-ui/form` with a `Form` wrapper that defaults `validationBehavior` to `aria`, `toErrorMessage` / `getErrorMessages` for React Hook Form and Standard Schema issues (Zod, Valibot, ArkType), and `isoDateToDateValue` / `dateValueToIsoDate` so forms can store dates as ISO strings without importing `@internationalized/date`.
+- Add `CheckboxGroup` for managing several checkboxes as one `string[]` value.
+- Add `description` and `errorMessage` to `RadioGroup`.
+- Add `triggerRef` on `Select` and `DatePicker` so form libraries can focus the trigger on validation errors.
+- Infer `Select` and `ComboBox` `value` / `onChange` key types from the value you pass, so `string | null` form fields wire without conversion.
+- Add an optional CaretCircleDown icon and callback-driven expandable mode to Divider.
+- Add typed Link refs and `aria-current` support for current-page navigation.
+
+### Changed
+
+- Refresh the Figma variable and style export while preserving existing motion paths in the public DTCG JSON bundle and generated CSS utilities. Motion primitives are also available separately from `@tradenetcorp/veli-tokens/motion-tokens`.
+- Align Alert spacing, typography, icon placement, and action treatments with the revised design. Default actions stay on one row; choose `stacked` for vertically arranged full-width actions. For `compact`, omit the description and use at most one action.
+- Restyle Dropzone to match the current Veli Figma component: a single dashed drop area with 2px hover, drop-target, and invalid borders; file items with a linear progress bar along the bottom; and uploaded and error statuses in the item metadata.
+- Rename `DropzoneField` `size` to `labelSize`. It sets the label type scale only (`md` for Body/md, `sm` for Body/sm). The drop area is the same at both sizes.
+- Replace the `DropzoneField` `allowsBrowse` prop with `showTrigger`.
+- `DropzoneTrigger` and `DropzoneItemDelete` now render Veli `Button`s. The remove button shows a danger Trash icon once a file is uploaded.
+- A single-file dropzone now rejects a batch of more than one file with the localized “Only one file allowed” message instead of adding every file.
+- Use a consistent black backdrop at 60% opacity with 6px blur for Modal in both light and dark themes.
+- Link now inherits all surrounding typography when `size` is omitted, including weight. For standalone links, pass `size="sm"`, `"md"`, or `"lg"` to apply the matching medium body typography preset for English or Dhivehi. Icons remain 16px without a size or with `sm`/`md`, and 20px with `lg`.
+- **Migration:** Previously, Link always applied medium weight and `size` only changed icons. Remove `size` from inline links that should follow their surrounding text; add an explicit size to standalone links that should retain medium typography. Review existing sizes: English `sm`/`md`/`lg` now set 14px/16px/18px text. For example, change `size="sm"` to `size="md"` to keep an existing 16px standalone label and 16px icons. To retain custom typography or weight, omit `size` and style the surrounding element. Text-only links can now wrap across lines, so review constrained navigation and table layouts.
+- Align Breadcrumbs typography and motion with the design specification, including reduced-motion support and Dhivehi-specific type weight.
+
+### Removed
+
+- Replace the legacy Alert appearances: migrate `subtle` to `light` and `emphasis` to `highContrast`. Replace `outline` by choosing either new treatment; it has no direct equivalent.
+- Remove the `lg` value from `DropzoneField` `size`. Use `labelSize="md"`.
+- Remove `DropzoneField` `onSelect`. Use `onValueChange` or `onAccept`.
+- Remove the `variant` (`circular` and `fill`) and `size` props from `DropzoneItemProgress`. Progress is always the linear bar along the bottom of the item.
+- Remove the `size` prop from `DropzoneItemMetadata` and the `orientation` prop from `DropzoneList`. Lists are always vertical.
+- Remove the `Dropzone` `required` prop, which had no effect.
+- Remove `isDisabled` from `DropzoneArea`. Disable the whole dropzone with `disabled` on `Dropzone` or `isDisabled` on `DropzoneField`.
+- Remove Divider's `elementType`, `isDecorative`, `render`, and `slot` props. Use the documented separator and callback-driven button APIs instead.
+- Remove the unused `Breadcrumb` `tone` prop. Remove the prop from existing trails; use `BreadcrumbBackLink` or `showBackLink` for the dedicated back-link treatment.
+
+### Fixed
+
+- Mirror Alert layouts for RTL and use Dhivehi typography and localized dismissal names. Reserve space around the close control and keep high-contrast ghost actions readable on hover and press.
+- Keep Checkbox and Radio visually-hidden inputs positioned against their own control so focus and clicks no longer jump the page inside nested scroll containers such as the docs site.
+- Fix Dropzone text, background, and border colors that referenced undefined theme tokens and rendered unstyled.
+- Fix `onValueChange` firing twice for each change in controlled mode.
+- Fix upload progress updates being dropped or moving backwards after a file finished uploading.
+- Fix overlapping invalid-state timers leaving the drop area stuck in its invalid style.
+- Match file extensions in `accept` case-insensitively, so `.pdf` accepts `REPORT.PDF`.
+- Fix nested interactive controls inside the drop area and a focusable element hidden with `aria-hidden`.
+- Keep right-to-left layouts aligned when file names or error messages are in a left-to-right script.
+- Respect reduced-motion preferences for drop area and progress transitions.
+- Apply `Dropzone`'s `name` and `required` props to the underlying file input so native form submission and required validation work.
+- Align Divider caption typography, spacing, and semantic border colors with the design specification.
+- Fix Switch checkmark geometry and disabled visibility, match instant hover and spring press motion, respect reduced motion and forced colors, and provide a 24-pixel hit height with wrapping labels.
+- Include the existing root-label ref in Switch's public TypeScript props.
+- Keep Switch's hidden input within its label so focusing or toggling it does not jump a scrolling page.
+- Keep keyboard focus visible even when a visual override is false, show a system-color focus outline in forced-colors mode, and disable color transitions under reduced motion.
+- Mark disabled breadcrumb text as unavailable to assistive technologies while keeping it out of the tab order.
+
+## 0.13.0
+
+_Released 2026-09-28._
+
+### Added
+
+- Add Pagination loadmore with item counts, progress, and Veli Button’s loading indicator.
+
+### Changed
+
+- Keep loading buttons focusable and expose `aria-busy`, `aria-disabled`, and `data-pending`. `isPending` now uses the same spinner as `isLoading`. Update loading-specific `:disabled` selectors to `[data-pending]`; use `isDisabled` when the action should leave the tab order.
+- Align Button padding, icon spacing, and spinner dimensions with the design system. Text buttons grow with translated or wrapped labels; review tightly sized action groups. `size={null}` now resolves to `md`, and accent buttons always use the fill appearance.
+- Make DatePicker an editable segmented date field with a calendar trigger and form submission; replace placeholder and labelSupplementary with isOptional and infoTooltip.
+- Model `PaginationProps` as a variant union. Page-only wrappers should extend `PaginationPageProps`; load-more wrappers can use `PaginationLoadMoreProps`.
+
+### Removed
+
+- Remove Accordion isDisabled support from groups, items, and data-driven entries.
+- Remove Pagination’s `isDisabled` prop. Boundary and completion controls disable automatically; use `isLoading` for pending load-more requests.
+
+### Fixed
+
+- Prevent pending submit and reset buttons from triggering native form actions, including implicit submission from a text field, while retaining focus.
+- Preserve inherited Button context classes and custom rendering, explicit height and square-size overrides, and React 19 callback-ref cleanup.
+- Keep spinner-only buttons within narrow containers and allow explicit width overrides.
+- Let button labels and icons scale with the button on press while preserving ripple expansion. Align the dark filled danger ripple opacity with the design specification and use the white and theme-specific accent design tokens for ripples. Respect reduced motion for the spinner and ripple, and retain a visible focus outline in forced-colors mode.
+- Center Accordion dividers on item boundaries so hovered headers have balanced spacing, including the last item.
+- Keep Pagination within narrow containers, restore numbered-button theme colors, make ellipsis menus work when `boundaryCount` is zero, and retain keyboard focus after selecting a hidden page.
+
+## 0.12.0
+
+_Released 2026-09-20._
+
+### Added
+
+- Align `DateField` with Input `appearance` (`default` | `outline`) and `size` (`sm` | `md` | `lg`) for segment-based date entry.
+- Add `isOptional`, `infoTooltip`, and `infoTooltipAriaLabel` to `DateField`, matching the TextArea label pattern.
+- Add TextArea `isOptional` to show localized Optional beside the label. Required fields hide that caption.
+- Support `href`, link DOM props, `routerOptions`, and a `render` escape hatch on Tabs items so individual tabs can navigate with Next.js or TanStack Router links.
+- Accept optional `navigate` and `useHref` on `VeliProvider` to wire React Aria's `RouterProvider` for app-wide client-side navigation.
+
+### Changed
+
+- Change Avatar's default size from 60px to 44px.
+- Lay out `Modal.Footer` actions with `justify-between` so start-edge and end-edge action groups match the Figma Modal footer. Cluster right-only actions with `ms-auto` when you do not need a start group.
+- Rename the PasswordInput `variant` prop to `appearance` so Default and Outline match Input, Select, ComboBox, and TextArea. Replace `variant="outline"` with `appearance="outline"`.
+- Default PasswordInput `isRequired` to `true`. Pass `isRequired={false}` to opt out, or `showRequiredIndicator={false}` to keep the field required without a visible asterisk.
+- Make `TabsItem.panel` optional so route-driven tabs can omit in-component panel content; Tabs still renders a visually hidden panel so `aria-controls` resolves.
+- Rename the TextArea `variant` prop to `appearance` so Default and Outline match Input, Select, and ComboBox. Replace `variant="outline"` with `appearance="outline"`.
+
+### Removed
+
+- Remove the deprecated Badge `intent="teal"` alias. Use `intent="brand"` instead.
+- Remove TextArea `labelSupplementary`. Replace `labelSupplementary="Optional"` with `isOptional`.
+- Remove PasswordInput `infoTooltip`, `infoTooltipAriaLabel`, and `labelSupplementary`. Password fields do not show an info icon or Optional caption.
+
+### Fixed
+
+- Align Card footer actions to the inline end with `ms-auto` so the action row follows LTR and RTL correctly.
+- Restore interactive Card hover and pressed feedback with an `ash-alpha` overlay (replacing invalid `gray-alpha` utilities) and opacity transitions that respect `prefers-reduced-motion`.
+- Stop outline `DateField` shells from shifting layout on hover and focus by painting the stroke with an inset box-shadow.
+- Use `bg-text-input-bg-hover` for disabled and read-only `DateField` shells so they match Figma and TextArea in light and dark.
+- Correct Accordion spacing and dividers between expanded sections, mirror panel insets and leading chevrons in RTL, honor reduced motion, and align decorative custom indicators. Public props and imports are unchanged; review custom spacing overrides when upgrading.
+- Honor `prefers-reduced-motion` on Modal overlay and panel enter/exit transitions.
+- Draw the PasswordInput outline stroke inside the shell so hover (1.5px) and active (2px) do not shift the field or its value.
+- Drop the muted PasswordInput disabled stroke and underline so Default and Outline match Figma (fill only).
+- Use the text-input hover fill for disabled PasswordInput shells so they match Figma `components/text-input/bg-hover`.
+- Honor reduced-motion preferences on PasswordInput color transitions.
+- Keep link tab selection in sync with `selectedKey` / `onSelectionChange` after React Aria resets selection on href tab presses.
+- Set the large TextArea shell minimum height to 173px to match the Figma specification.
+- Apply the shared Dhivehi Safari baseline offset to TextArea so Thaana glyphs sit on the same line box as Input.
+- Honor reduced-motion preferences on TextArea color transitions.
+- Use `type-body-sm-regular` for the TextArea character counter at every size instead of hardcoded 14px type.
+- Color field-header info tooltip triggers with `icon/base/default` (and `icon/disabled` when disabled) to match Figma. This applies to Input, TextArea, Select, ComboBox, and PasswordInput.
+- Draw the TextArea outline stroke inside the shell so hover (1.5px) and active (2px) do not shift the field or its label.
+- Drop the muted TextArea disabled stroke and underline so Default and Outline match Figma (fill only).
+- Use the text-input hover fill for disabled TextArea shells so they match read-only and Figma `components/text-input/bg-hover`.
+- Keep the TextArea resize handle out of the tab order. Resize stays pointer-drag only, matching a native textarea.
+
+## 0.11.1
+
+_Released 2026-09-05._
+
+### Added
+
+- Add `color.status.*-stroke` tokens for badge outline borders, including `cautious-stroke` compatibility aliases.
+
+### Changed
+
+- Refresh Badge status subtle fills to alpha-200 tokens and map the Brand accent intent from the deprecated `teal` name.
+- Point Badge info colors at the blue primitive scale instead of brand primary.
+
+### Deprecated
+
+- Badge `intent="teal"` now aliases to `intent="brand"`.
+
+### Fixed
+
+- Align Badge outline borders with Figma stroke tokens instead of subtle fill tokens.
+- Remove visible borders from Badge subtle and emphasis appearances to match the design spec.
+
+## 0.11.0
+
+_Released 2026-09-01._
+
+### Added
+
+- Add a generic `Skeleton` placeholder primitive exported from `@tradenetcorp/veli-ui/skeleton` for composing loading state skeletons.
+
+### Changed
+
+- Require React 19 and React DOM 19, eliminating peer dependency warnings for React 19 applications.
+
+### Removed
+
+- Remove embedded skeleton loading modes from `Input`, `TextArea`, `PasswordInput`, `Search`, and `Accordion`. Compose `Skeleton` placeholders instead of using `appearance="skeleton"`, `variant="skeleton"`, or `isSkeleton`.
+
+### Fixed
+
+- Allow `Link` children to use React Aria's state render function alongside router link rendering.
+- Standardize interactive component refs as React 19 ref props while preserving access to their underlying controls.
+- Add default ESM export conditions so bundlers can resolve every public component subpath consistently.
+
+## 0.10.0
+
+_Released 2026-08-19._
+
+### Added
+
+- `VeliProvider` accepts a `disableTransitionOnChange` prop (default `false`) that suppresses CSS transitions for one frame while the theme changes.
+- `getVeliThemeScript(storageKey?)` and `VELI_COLOR_SCHEME_STORAGE_KEY` are exported from `@tradenetcorp/veli-ui/theme-script` for apps that need the blocking script in `<head>` because `VeliProvider` is not the first body child.
+
+### Fixed
+
+- Align form field typography across sizes with the Coral design specifications.
+- `VeliProvider` syncs the resolved color scheme (`.dark` class, `data-theme`, `color-scheme`) to `document.documentElement` so portaled components — modals, popovers, tooltips, menus — inherit dark mode tokens.
+- Stored and system dark preferences no longer flash white on load. A parser-blocking inline script applies the theme before first paint, and document sync reads `localStorage` / `matchMedia` in `useLayoutEffect` instead of the SSR `light` snapshot.
+
 ## 0.9.0
 
 _Released 2026-08-13._

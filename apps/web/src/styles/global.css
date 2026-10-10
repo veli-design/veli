@@ -1,10 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 @import '@tradenetcorp/veli-tokens/tailwind';
 @import '@tradenetcorp/veli-ui/tailwind';
 
 @source "../../../../packages/ui";
+
+/* Self-hosted fonts are discovered with the initial stylesheet rather than
+   after a second request to Google Fonts. The Inter face is variable, so one
+   Latin subset covers every Veli text weight. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* Arial adjusted to Inter's metrics keeps the initial fallback's line boxes
+   and average character width aligned with the loaded face. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600.woff2') format('woff2');
+}
+
+:root {
+  --veli-font-sans: 'Inter', 'Inter Fallback', Arial, sans-serif;
+  --veli-font-mono:
+    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@font-face {
+  font-family: 'MV Aaamu FK';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/MV_Aaamu_FK_Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MV A Waheed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/MV_A_Waheed_Bold_2.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MV Faseyha';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/MV_Faseyha_Regular.ttf') format('truetype');
+}
 
 *,
 *::before,
@@ -18,16 +108,20 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: var(--veli-font-sans, 'Inter', sans-serif);
 }
 
-button,
-input {
-  font: inherit;
-}
+/* Keep in @layer base so Tailwind utilities (e.g. type-caption-*) can override.
+   Unlayered `font: inherit` beats @layer utilities and blows up caption buttons. */
+@layer base {
+  button,
+  input {
+    font: inherit;
+  }
 
-button {
-  border: 0;
+  button {
+    border: 0;
+  }
 }
 
 :target {
@@ -53,7 +147,7 @@ button {
   z-index: 100;
   transform: translateY(-160%);
   border-radius: 5px;
-  background: var(--color-bg-primary-default);
+  background: var(--veli-color-bg-primary-default);
   color: #fff;
   padding: 9px 12px;
   font-size: 13px;
@@ -71,11 +165,83 @@ button {
 
 .home-hero {
   position: relative;
-  display: grid;
+  height: 100svh;
   min-height: 100svh;
-  place-items: center;
   overflow: hidden;
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-emphasis);
+}
+
+.home-frame {
+  position: absolute;
+  inset: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.home-shader-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.home-utility-controls {
+  position: absolute;
+  z-index: 3;
+  bottom: 20px;
+  left: 20px;
+}
+
+.home-theme-cycle {
+  position: relative;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--veli-color-text-base-emphasis) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--veli-color-bg-surface-base) 72%, transparent);
+  box-shadow: var(--veli-shadow-sm);
+  color: var(--veli-color-text-base-emphasis);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.home-theme-cycle:hover,
+.home-theme-cycle:focus-visible {
+  background: color-mix(in srgb, var(--veli-color-bg-surface-base) 90%, transparent);
+}
+
+.home-theme-cycle:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 2px;
+}
+
+.home-theme-cycle__tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  border-radius: 8px;
+  background: var(--veli-color-tooltip-bg-small);
+  box-shadow: var(--veli-shadow-md);
+  color: var(--veli-color-text-base-default);
+  opacity: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateY(2px);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+.home-theme-cycle:hover .home-theme-cycle__tooltip,
+.home-theme-cycle:focus-visible .home-theme-cycle__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .home-hero__background {
@@ -84,7 +250,6 @@ button {
   overflow: hidden;
 }
 
-.shader-bg__canvas,
 .shader-bg__fallback {
   position: absolute;
   inset: 0;
@@ -93,35 +258,33 @@ button {
   object-fit: cover;
 }
 
-/* The canvas fades in over the fallback image once the renderer starts; if it
-   never starts (no JS / no WebGL) the image simply stays. */
-.shader-bg__canvas {
-  opacity: 0;
-  transition: opacity 600ms ease;
-}
-
 .shader-bg__fallback {
   opacity: 1;
   transition: opacity 600ms ease;
-  animation: home-background-breathe 18s ease-in-out infinite alternate;
-}
-
-.shader-bg[data-shader-active] .shader-bg__canvas {
-  opacity: 1;
+  background-color: var(--veli-color-bg-surface-base);
+  background-image: linear-gradient(
+    145deg,
+    var(--veli-color-neutral-100),
+    var(--veli-color-neutral-300)
+  );
 }
 
 .shader-bg[data-shader-active] .shader-bg__fallback {
   opacity: 0;
+  pointer-events: none;
 }
 
 .home-hero__content {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
   display: flex;
   width: min(696px, calc(100% - 48px));
+  transform: translate(-50%, -50%);
   flex-direction: column;
   align-items: flex-start;
-  gap: 48px;
+  gap: 40px;
 }
 
 .home-wordmark {
@@ -129,14 +292,14 @@ button {
   align-items: center;
 }
 
-.veli-logo {
-  display: block;
-  aspect-ratio: 1383 / 242;
-  flex: none;
+.home-wordmark__logo {
+  width: 194px;
 }
 
 .home-wordmark .veli-logo {
-  width: min(320px, 100%);
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .home-copy {
@@ -144,65 +307,27 @@ button {
 }
 
 .home-copy h1 {
+  max-width: 660px;
   margin: 0;
   color: inherit;
-  font-size: 48px;
-  font-weight: 500;
-  line-height: 1.34;
+}
+
+.home-copy h1 span:last-child {
+  display: block;
 }
 
 .home-copy p {
-  max-width: 560px;
+  max-width: 599px;
   margin: 20px 0 0;
   color: inherit;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.53;
-}
-
-.home-cta {
-  display: inline-flex;
-  min-width: 177px;
-  min-height: 60px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: rgba(12, 26, 69, 0.07);
-  color: inherit;
-  padding: 16px 24px;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.4;
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    transform 160ms ease;
-}
-
-.home-cta:hover {
-  background: rgba(12, 26, 69, 0.13);
-  transform: translateY(-2px);
-}
-
-.home-cta:focus-visible {
-  outline: 3px solid rgba(0, 59, 130, 0.7);
-  outline-offset: 3px;
-}
-
-@keyframes home-background-breathe {
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.025) translate3d(-0.4%, 0.3%, 0);
-  }
 }
 
 /* Documentation shell */
 .docs-page {
-  background: var(--color-bg-surface-base);
-  color: var(--color-text-base-default);
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .docs-workspace {
@@ -217,14 +342,14 @@ button {
   top: 0;
   height: 100svh;
   align-self: start;
-  background: var(--color-bg-surface-base);
+  background: var(--veli-color-bg-surface-base);
 }
 
 .docs-navigation {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border-right: 1px solid var(--color-border-base-subtle);
+  border-right: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-navigation__scroll {
@@ -238,7 +363,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 23px;
   font-weight: 600;
   line-height: 30px;
@@ -261,7 +386,7 @@ button {
 .docs-contents h2,
 .docs-mobile-menu h2 {
   margin: 0 0 9px;
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   font-size: 11px;
   font-weight: 600;
   line-height: 16px;
@@ -271,7 +396,7 @@ button {
 .docs-nav-link {
   display: block;
   border-radius: 5px;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   padding: 6px 9px;
   font-size: 13px;
   font-weight: 500;
@@ -281,51 +406,17 @@ button {
 
 .docs-nav-link:hover,
 .docs-nav-link.is-active {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-nav-link.is-active {
   font-weight: 600;
 }
 
-.docs-resources {
-  flex: none;
-  border-top: 1px solid var(--color-border-base-subtle);
-  padding: 14px 20px 18px;
-}
-
-.docs-resources a {
-  display: grid;
-  min-height: 38px;
-  grid-template-columns: 20px 1fr auto;
-  align-items: center;
-  gap: 9px;
-  border-radius: 5px;
-  color: var(--color-text-base-muted);
-  padding: 7px 8px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.docs-resources a:hover {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
-}
-
-.external-arrow {
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.docs-resources a:hover .external-arrow {
-  opacity: 1;
-}
-
 .docs-main {
   min-width: 0;
-  border-right: 1px solid var(--color-border-base-subtle);
+  border-right: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-main__inner {
@@ -343,42 +434,226 @@ button {
   padding: 28px 20px;
 }
 
-.docs-search {
+.docs-search-trigger {
+  width: 100%;
+  height: 40px;
+  justify-content: flex-start;
+  border: 0;
+  border-radius: 8px;
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-strong);
+  padding: 8px 12px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.docs-search-root {
+  width: 100%;
+}
+
+.docs-search-trigger:hover {
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
+}
+
+.docs-search-trigger > span {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0;
+}
+
+.docs-search-trigger__label {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.docs-search-trigger__shortcut {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.docs-search-overlay {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.docs-search-modal {
+  width: min(673px, calc(100vw - 32px));
+  height: min(424px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  background: var(--veli-color-bg-surface-raised);
+}
+
+.docs-search-modal > [role='dialog'] {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+}
+
+.docs-search-command {
   display: flex;
-  min-height: 38px;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding-block: 0;
+}
+
+.docs-search-command__body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.docs-search-shortcuts {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  background: var(--veli-color-bg-surface-base);
+  scrollbar-width: none;
+}
+
+.docs-search-shortcuts::-webkit-scrollbar {
+  display: none;
+}
+
+.docs-search-shortcut {
+  display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--color-border-base-subtle);
-  border-radius: 6px;
-  background: var(--color-bg-surface-raised);
-  color: var(--color-text-base-subtle);
-  padding: 0 10px;
+  color: var(--veli-color-text-base-default);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.18px;
+  white-space: nowrap;
 }
 
-.docs-search:focus-within {
-  border-color: var(--color-border-primary-emphasis);
-  box-shadow: 0 0 0 2px var(--color-bg-primary-subtle-default);
+.docs-search-results {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.docs-search input {
-  width: 100%;
+.docs-search-suggestions {
+  margin: 0;
+  padding: 20px 16px 8px;
+  color: var(--veli-color-text-base-subtle);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.18px;
+}
+
+.docs-search-divider {
+  margin-inline: 12px;
+}
+
+.docs-search-results__menu {
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: 8px;
+}
+
+.docs-search-result {
+  padding: 12px;
+}
+
+.docs-search-result__content {
+  display: flex;
   min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--color-text-base-emphasis);
-  font-size: 13px;
+  flex: 1;
+  align-items: flex-start;
 }
 
-.docs-search input::placeholder {
-  color: var(--color-text-base-subtle);
+.docs-search-result__text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding-inline: 4px;
 }
 
-.docs-search-status {
-  min-height: 16px;
-  margin: 6px 2px 0;
-  color: var(--color-text-base-subtle);
-  font-size: 11px;
+.docs-search-result__label,
+.docs-search-result__description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docs-search-result__label {
+  color: var(--veli-color-text-base-strong, var(--veli-color-text-base-default));
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.docs-search-result__description {
+  color: var(--veli-color-text-base-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.docs-search-result__content > svg {
+  flex: 0 0 auto;
+  margin: 2px 4px 0;
+  color: var(--veli-color-text-base-muted);
+}
+
+.docs-search-state,
+.docs-search-empty {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--veli-color-text-base-subtle);
+  text-align: center;
+}
+
+.docs-search-state p,
+.docs-search-empty p,
+.docs-search-empty span {
+  margin: 0;
+}
+
+.docs-search-state p,
+.docs-search-empty p {
+  color: var(--veli-color-text-base-default);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.docs-search-empty span {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.docs-search-state__spinner {
+  animation: docs-search-spin 800ms linear infinite;
+}
+
+@keyframes docs-search-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .docs-contents {
@@ -387,8 +662,8 @@ button {
 }
 
 .docs-contents a {
-  border-left: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-muted);
+  border-left: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-muted);
   padding: 5px 0 5px 12px;
   font-size: 12px;
   font-weight: 500;
@@ -397,8 +672,8 @@ button {
 }
 
 .docs-contents a:hover {
-  border-left-color: var(--color-border-primary-emphasis);
-  color: var(--color-text-base-emphasis);
+  border-left-color: var(--veli-color-border-primary-emphasis);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-contents a.is-nested {
@@ -416,15 +691,15 @@ button {
   justify-content: space-between;
   border-radius: 5px;
   background: transparent;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   padding: 7px 9px;
   font-size: 12px;
   cursor: pointer;
 }
 
 .theme-cycle:hover {
-  background: var(--color-bg-secondary-subtle-default);
-  color: var(--color-text-base-emphasis);
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
 }
 
 .docs-mobile-header {
@@ -434,7 +709,7 @@ button {
 /* Documentation content */
 .docs-page-header {
   padding-bottom: 48px;
-  border-bottom: 1px solid var(--color-border-base-subtle);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .docs-overview-hero {
@@ -457,7 +732,7 @@ button {
 
 .docs-kicker {
   margin: 0 0 14px;
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
@@ -466,17 +741,16 @@ button {
 .docs-page-header h1 {
   max-width: 680px;
   margin: 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 48px;
   font-weight: 600;
   line-height: 1.14;
 }
 
-.docs-page-header > p:last-child,
-.docs-page-header__content > p:last-child {
+.docs-page-description {
   max-width: 650px;
   margin: 20px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 17px;
   line-height: 28px;
 }
@@ -492,8 +766,8 @@ button {
 .docs-intro-links a,
 .docs-link-list a {
   display: grid;
-  border-bottom: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-emphasis);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-emphasis);
   text-decoration: none;
 }
 
@@ -511,7 +785,7 @@ button {
 .docs-intro-links small,
 .docs-link-list p {
   margin: 5px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 13px;
   font-weight: 400;
   line-height: 21px;
@@ -519,7 +793,7 @@ button {
 
 .docs-intro-links a:hover span,
 .docs-link-list a:hover span {
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
 }
 
 .docs-list-section,
@@ -532,11 +806,11 @@ button {
 }
 
 .foundation-directory section {
-  border-bottom: 1px solid var(--color-border-base-subtle);
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .foundation-directory section:first-child {
-  border-top: 1px solid var(--color-border-base-subtle);
+  border-top: 1px solid var(--veli-color-border-base-subtle);
 }
 
 .foundation-directory a {
@@ -545,7 +819,7 @@ button {
   grid-template-columns: 76px minmax(0, 1fr) auto;
   align-items: center;
   gap: 24px;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   padding: 26px 0;
   text-decoration: none;
 }
@@ -580,13 +854,13 @@ button {
 .foundation-directory p {
   max-width: 610px;
   margin: 7px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 14px;
   line-height: 23px;
 }
 
 .foundation-directory__arrow {
-  color: var(--color-text-base-subtle);
+  color: var(--veli-color-text-base-subtle);
   font-size: 20px;
   transition:
     color 140ms ease,
@@ -595,7 +869,7 @@ button {
 
 .foundation-directory a:hover h2,
 .foundation-directory a:hover .foundation-directory__arrow {
-  color: var(--color-text-primary-default);
+  color: var(--veli-color-text-primary-default);
 }
 
 .foundation-directory a:hover .foundation-directory__icon img {
@@ -608,9 +882,9 @@ button {
 
 .docs-list-section h2,
 .foundation-section h2,
-.docs-prose h2 {
+.docs-prose > h2 {
   margin: 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 25px;
   font-weight: 600;
   line-height: 34px;
@@ -631,7 +905,7 @@ button {
 .foundation-section > p {
   max-width: 680px;
   margin: 14px 0 0;
-  color: var(--color-text-base-muted);
+  color: var(--veli-color-text-base-muted);
   font-size: 15px;
   line-height: 26px;
 }
@@ -643,15 +917,15 @@ button {
 }
 
 .principle-list li {
-  border-top: 1px solid var(--color-border-base-subtle);
-  color: var(--color-text-base-muted);
+  border-top: 1px solid var(--veli-color-border-base-subtle);
+  color: var(--veli-color-text-base-muted);
   padding: 14px 0;
   font-size: 14px;
   line-height: 22px;
 }
 
 .principle-list strong {
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-weight: 600;
 }
 
@@ -664,7 +938,7 @@ button {
 
 .foundation-colors span {
   min-height: 82px;
-  border: 1px solid var(--color-border-base-subtle);
+  border: 1px solid var(--veli-color-border-base-subtle);
   border-radius: 5px;
 }
 
@@ -674,7 +948,7 @@ button {
 
 /* MDX component articles */
 .docs-prose {
-  color: var(--color-text-base-default);
+  color: var(--veli-color-text-base-default);
   font-size: 15px;
   line-height: 1.75;
 }
@@ -687,13 +961,13 @@ button {
   display: none;
 }
 
-.docs-prose h2 {
+.docs-prose > h2 {
   margin-top: 48px;
 }
 
-.docs-prose h3 {
+.docs-prose > h3 {
   margin: 34px 0 0;
-  color: var(--color-text-base-emphasis);
+  color: var(--veli-color-text-base-emphasis);
   font-size: 18px;
   font-weight: 600;
   line-height: 26px;
@@ -702,22 +976,29 @@ button {
 .docs-prose p,
 .docs-prose ul,
 .docs-prose ol,
-.docs-prose table,
+.docs-prose > table,
 .docs-prose pre {
   margin-top: 15px;
 }
 
-.docs-prose a {
-  color: var(--color-text-links-default);
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol {
+  margin-bottom: 0;
+}
+
+.docs-prose a:not(:where(.preview *)) {
+  color: var(--veli-color-text-links-default);
   font-weight: 600;
 }
 
 .docs-prose code {
   border-radius: 4px;
-  background: var(--color-bg-secondary-subtle-default);
+  background: var(--veli-color-bg-secondary-subtle-default);
   padding: 2px 5px;
-  color: var(--color-text-base-emphasis);
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--veli-color-text-base-emphasis);
+  font-family:
+    var(--veli-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.92em;
   letter-spacing: 0;
 }
@@ -725,8 +1006,8 @@ button {
 .docs-prose pre {
   overflow-x: auto;
   border-radius: 6px;
-  background: var(--color-slate-1200);
-  color: var(--color-slate-100);
+  background: var(--veli-color-slate-1200);
+  color: var(--veli-color-slate-100);
   padding: 20px;
   font-size: 13px;
   line-height: 1.7;
@@ -740,33 +1021,169 @@ button {
   font-size: inherit;
 }
 
-.docs-prose table {
-  display: block;
+/* Tables can be rendered directly by MDX or inside a component tab panel.
+   Keep the Figma table frame and row treatment shared across both paths. */
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table {
   width: 100%;
-  overflow-x: auto;
-  border-collapse: collapse;
-  font-size: 13px;
-  line-height: 20px;
+  margin-top: 24px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  border: 1px solid var(--veli-color-border-base-subtle);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  background: var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-default);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
-.docs-prose th,
-.docs-prose td {
-  border-bottom: 1px solid var(--color-border-base-subtle);
-  padding: 10px 12px;
+@media (max-width: 767px) {
+  :is(.docs-prose, .docs-tab-panel, .foundation-prose):has(> #accordion, > #button) > table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table th,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td {
+  min-width: 0;
+  padding: 0;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
-.docs-prose th {
-  color: var(--color-text-base-emphasis);
-  font-weight: 600;
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(thead, tbody) {
+  display: block;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tr {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 16px;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead {
+  background: var(--veli-color-neutral-alpha-200);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead th {
+  color: var(--veli-color-text-base-default);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead tr,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tbody tr:not(:last-child) {
+  border-bottom: 1px solid var(--veli-color-border-base-subtle);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td:not(:last-child) {
+  font-family:
+    var(--veli-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(th, td) code {
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* API tables use Figma's column tracks at the 1512px reference width. */
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(4)):not(:has(> :nth-child(5))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 160px) minmax(0, 64px) minmax(0, 1fr);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(3)):not(:has(> :nth-child(4))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 240px) minmax(0, 1fr);
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table
+  tr:has(> :nth-child(2)):not(:has(> :nth-child(3))) {
+  grid-template-columns: minmax(0, 176px) minmax(0, 1fr);
+}
+
+.docs-storybook-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -8px;
+  border-radius: var(--veli-radius-full);
+  background: var(--veli-color-button-secondary-subtle-default);
+  padding: 6px;
+  color: var(--veli-color-text-base-strong);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.34;
+  letter-spacing: 0.015em;
+  text-decoration: none;
+}
+
+.docs-storybook-link > span:first-child {
+  padding-inline: 6px;
+}
+
+.docs-storybook-link__icon {
+  display: inline-flex;
+  padding: 2px;
+}
+
+.docs-storybook-link:hover {
+  background: var(--veli-color-button-secondary-subtle-hover);
+}
+
+.docs-storybook-link:active {
+  background: var(--veli-color-button-secondary-subtle-pressed);
+}
+
+.docs-storybook-link:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 2px;
 }
 
 .docs-prose .preview {
   margin-top: 18px;
-  border-color: var(--color-border-base-subtle);
-  border-radius: 6px;
-  background: var(--color-bg-surface-raised);
+  display: grid;
+  min-height: 288px;
+  align-items: center;
+  justify-items: center;
+  border: 4px solid var(--veli-color-bg-surface-base);
+  border-radius: 16px;
+  background: var(--veli-color-bg-surface-raised);
+  padding: 24px;
+}
+
+.docs-example {
+  min-width: 0;
+  margin-top: 18px;
+  border-radius: 16px;
+  background: var(--veli-color-bg-surface-base);
+  padding: 4px;
+}
+
+.docs-example > .preview {
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+}
+
+.docs-example > .docs-code-block {
+  margin-top: 8px;
+  border-radius: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -777,6 +1194,15 @@ button {
   .shader-bg__fallback {
     animation: none;
   }
+
+  .docs-search-state__spinner {
+    animation: none;
+  }
+
+  .docs-page-header__art-lottie {
+    display: none !important;
+    transition: none;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -785,6 +1211,19 @@ button {
   }
 
   .docs-utilities {
+    position: fixed;
+    z-index: 19;
+    top: 20px;
+    right: 20px;
+    display: block;
+    width: 184px;
+    height: auto;
+    padding: 0;
+    background: transparent;
+  }
+
+  .docs-utilities .docs-contents,
+  .docs-utilities .theme-cycle {
     display: none;
   }
 
@@ -795,42 +1234,59 @@ button {
 
 @media (max-width: 760px) {
   .home-hero__content {
-    width: min(100% - 40px, 520px);
-    gap: 34px;
+    width: min(278px, calc(100% - 48px));
+    gap: 56px;
   }
 
   .home-wordmark {
     width: 100%;
   }
 
+  .home-wordmark__logo {
+    width: 104px;
+    height: 28px;
+    overflow: hidden;
+  }
+
   .home-wordmark .veli-logo {
-    width: 230px;
+    width: 160px;
+    max-width: none;
+    height: 28px;
+    transform: scaleX(1.3);
+    transform-origin: left center;
   }
 
   .home-copy {
-    padding-inline: 0;
+    width: 100%;
+    padding-inline: 4px;
   }
 
   .home-copy h1 {
-    font-size: 38px;
-    line-height: 1.18;
+    max-width: none;
+    font-size: 28px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .home-copy h1 span {
+    display: block;
   }
 
   .home-copy p {
-    margin-top: 18px;
+    max-width: none;
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  [data-home-cta] {
+    height: 44px;
+    padding-inline: 12px;
+  }
+
+  [data-home-cta] > span {
     font-size: 16px;
     line-height: 1.5;
-  }
-
-  .home-copy br:last-of-type {
-    display: none;
-  }
-
-  .home-cta {
-    min-width: 152px;
-    min-height: 52px;
-    padding: 12px 20px;
-    font-size: 17px;
   }
 
   .docs-workspace {
@@ -849,8 +1305,8 @@ button {
     min-height: 64px;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--color-border-base-subtle);
-    background: color-mix(in srgb, var(--color-bg-surface-base) 92%, transparent);
+    border-bottom: 1px solid var(--veli-color-border-base-subtle);
+    background: color-mix(in srgb, var(--veli-color-bg-surface-base) 92%, transparent);
     padding: 0 18px;
     backdrop-filter: blur(14px);
   }
@@ -861,6 +1317,13 @@ button {
 
   .docs-mobile-header .docs-brand .veli-logo {
     width: 118px;
+  }
+
+  .docs-utilities {
+    z-index: 21;
+    top: 12px;
+    right: 66px;
+    width: 40px;
   }
 
   .docs-mobile-menu {
@@ -875,7 +1338,7 @@ button {
     list-style: none;
     place-items: center;
     border-radius: 5px;
-    color: var(--color-text-base-emphasis);
+    color: var(--veli-color-text-base-emphasis);
   }
 
   .docs-mobile-menu summary::-webkit-details-marker {
@@ -883,7 +1346,7 @@ button {
   }
 
   .docs-mobile-menu summary:hover {
-    background: var(--color-bg-secondary-subtle-default);
+    background: var(--veli-color-bg-secondary-subtle-default);
   }
 
   .docs-mobile-menu:not([open]) .docs-mobile-menu__panel {
@@ -899,12 +1362,12 @@ button {
     height: calc(100dvh - 64px);
     overscroll-behavior: contain;
     overflow-y: auto;
-    border-top: 1px solid var(--color-border-base-subtle);
-    background: var(--color-bg-surface-base);
+    border-top: 1px solid var(--veli-color-border-base-subtle);
+    background: var(--veli-color-bg-surface-base);
     padding: 24px 20px 48px;
   }
 
-  .docs-mobile-menu nav {
+  .docs-mobile-menu .docs-mobile-nav {
     display: grid;
   }
 
@@ -918,15 +1381,15 @@ button {
 
   .docs-mobile-menu a {
     border-radius: 5px;
-    color: var(--color-text-base-muted);
+    color: var(--veli-color-text-base-muted);
     padding: 9px 10px;
     font-size: 14px;
     text-decoration: none;
   }
 
   .docs-mobile-menu a:hover {
-    background: var(--color-bg-secondary-subtle-default);
-    color: var(--color-text-base-emphasis);
+    background: var(--veli-color-bg-secondary-subtle-default);
+    color: var(--veli-color-text-base-emphasis);
   }
 
   .docs-main__inner {
@@ -983,3 +1446,1395 @@ button {
     overflow-x: auto;
   }
 }
+
+@media (max-width: 600px) {
+  .docs-search-modal {
+    width: calc(100vw - 24px);
+    height: min(424px, calc(100dvh - 24px));
+    max-height: calc(100dvh - 24px);
+  }
+
+  .docs-search-results {
+    min-height: 0;
+  }
+
+  .docs-search-shortcuts {
+    gap: 16px;
+    padding-inline: 12px;
+  }
+}
+
+/* PD-784 documentation workspace */
+.docs-page {
+  background: var(--veli-color-bg-surface-base);
+}
+
+.docs-workspace {
+  grid-template-columns: 280px minmax(0, 1fr);
+}
+
+.docs-navigation {
+  z-index: 20;
+  border: 0;
+}
+
+.docs-navigation__scroll {
+  padding: 40px 24px 16px;
+}
+
+.docs-brand .veli-logo {
+  width: 184px;
+}
+
+.docs-nav-filter {
+  margin-top: 40px;
+}
+
+.docs-search {
+  min-height: 40px;
+  gap: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--veli-color-bg-surface-raised);
+  padding: 0 12px;
+}
+
+.docs-search input {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.docs-search__shortcut {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  color: var(--veli-color-text-base-muted);
+}
+
+.docs-search__shortcut > * {
+  display: grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 4px;
+  background: var(--veli-color-bg-secondary-subtle-default);
+  font-size: 11px;
+}
+
+.docs-search-status {
+  margin-inline: 12px;
+}
+
+.docs-nav {
+  margin-top: 8px;
+}
+
+.docs-nav-group + .docs-nav-group {
+  margin-top: 0;
+}
+
+.docs-nav-group > summary {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--veli-color-text-base-default);
+  padding-block: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  cursor: pointer;
+  list-style: none;
+}
+
+.docs-nav-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.docs-nav-group__caret {
+  transition: transform 160ms ease;
+}
+
+.docs-nav-group[open] .docs-nav-group__caret {
+  transform: rotate(180deg);
+}
+
+.docs-nav-group__links {
+  display: grid;
+}
+
+.docs-nav-link {
+  min-height: 36px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.docs-nav-link:hover,
+.docs-nav-link.is-active {
+  background: var(--veli-color-bg-secondary-subtle-default);
+}
+
+.docs-navigation__footer {
+  position: relative;
+  flex: none;
+  padding: 8px;
+}
+
+.docs-navigation__footer::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 56px;
+  background: linear-gradient(to top, var(--veli-color-bg-surface-base), transparent);
+  content: '';
+  pointer-events: none;
+}
+
+.docs-footer-controls {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 40px;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--veli-color-bg-surface-raised);
+  padding: 4px;
+}
+
+.docs-resources {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0;
+  border: 0;
+  padding: 0;
+}
+
+.docs-footer-control {
+  position: relative;
+  display: grid;
+  height: 32px;
+  place-items: center;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--veli-color-text-base-strong);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.docs-control-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: var(--docs-control-icon) center / contain no-repeat;
+  mask: var(--docs-control-icon) center / contain no-repeat;
+}
+
+.docs-footer-control:hover,
+.docs-footer-control:focus-visible {
+  background: var(--veli-color-bg-secondary-subtle-default);
+  color: var(--veli-color-text-base-emphasis);
+}
+
+.docs-control-tooltip {
+  position: absolute;
+  z-index: 30;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  max-width: 180px;
+  transform: translate(-50%, 2px);
+  border-radius: 8px;
+  background: var(--veli-color-tooltip-bg-small);
+  box-shadow: var(--veli-shadow-md);
+  color: var(--veli-color-text-base-default);
+  opacity: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+.docs-footer-control:hover .docs-control-tooltip,
+.docs-footer-control:focus-visible .docs-control-tooltip {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.docs-resources .docs-resource {
+  box-sizing: border-box;
+  width: 50px;
+  height: 32px;
+  min-height: 0;
+  flex: none;
+  grid-template-columns: none;
+  gap: 0;
+  border-radius: 16px;
+  padding: 0 17px;
+}
+
+.docs-resources .docs-resource:last-child {
+  width: auto;
+  flex: 1;
+  justify-items: start;
+}
+
+.docs-resources .docs-resource:hover,
+.docs-resources .docs-resource:focus-visible {
+  background: transparent;
+}
+
+.docs-resource.is-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.docs-resource.is-disabled:hover,
+.docs-resource.is-disabled:focus-visible {
+  background: transparent;
+  color: var(--veli-color-text-base-strong);
+}
+
+.docs-resource:first-child .docs-control-tooltip {
+  left: 0;
+  transform: translateY(2px);
+}
+
+.docs-resource:first-child:hover .docs-control-tooltip,
+.docs-resource:first-child:focus-visible .docs-control-tooltip {
+  transform: translateY(0);
+}
+
+.docs-footer-controls__divider {
+  width: 1px;
+  height: 12px;
+  flex: none;
+  background: var(--veli-color-border-base-strong);
+}
+
+.docs-theme-cycle {
+  box-sizing: border-box;
+  width: 50px;
+  min-height: 0;
+  flex: none;
+  padding: 0 17px;
+}
+
+[data-theme-icon] {
+  display: none;
+}
+
+html[data-color-scheme='light'] [data-theme-icon='light'],
+html[data-color-scheme='dark'] [data-theme-icon='dark'],
+html[data-color-scheme='system'] [data-theme-icon='system'] {
+  display: block;
+}
+
+.docs-main {
+  position: relative;
+  isolation: isolate;
+  height: calc(100svh - 12px);
+  min-width: 0;
+  margin: 6px 6px 6px 0;
+  align-self: start;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px 8px 8px 16px;
+  background: var(--veli-color-bg-surface-raised);
+}
+
+.docs-main__inner,
+.docs-main--full-bleed-header .docs-main__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  column-gap: 96px;
+  align-content: start;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 56px;
+  scrollbar-gutter: stable;
+}
+
+.docs-main--component .docs-main__inner {
+  row-gap: 72px;
+}
+
+.docs-main--component {
+  /* Keep the rail's pinned position in step with the pinned tab row. The
+     values resolve to the same 80px gap as the normal grid layout. */
+  --docs-component-tabs-height: 52px;
+  --docs-component-tabs-sticky-offset: -56px;
+  --docs-component-tabs-to-rail-gap: 80px;
+}
+
+/*
+  Documentation pages deliberately opt into one content layout. Keep their
+  grid rows local to the layout so a new header pattern cannot displace a
+  different page type's sticky utility rail.
+*/
+.docs-main--overview .docs-overview-content,
+.docs-main--overview .docs-utilities,
+.docs-main--foundation-article .docs-prose,
+.docs-main--foundation-article .docs-utilities,
+.docs-main--article .docs-prose,
+.docs-main--article .docs-utilities {
+  grid-row: 2;
+}
+
+.docs-utilities {
+  position: static;
+  top: auto;
+  grid-column: 2;
+  grid-row: 2;
+  height: auto;
+  min-width: 0;
+  align-self: stretch;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  padding: 80px 0 0;
+}
+
+.docs-main--component .docs-utilities {
+  grid-row: 3;
+}
+
+.docs-main::before,
+.docs-main::after {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  left: 0;
+  height: 44px;
+  content: '';
+  pointer-events: none;
+}
+
+.docs-main::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+}
+
+.docs-main::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+}
+
+.docs-utilities__sticky {
+  position: sticky;
+  top: 0;
+  display: flex;
+  max-height: calc(100svh - 124px);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.docs-main--component .docs-utilities__sticky {
+  top: calc(
+    var(--docs-component-tabs-sticky-offset) + var(--docs-component-tabs-height) +
+      var(--docs-component-tabs-to-rail-gap)
+  );
+  max-height: calc(100svh - 200px);
+}
+
+.docs-contents {
+  position: relative;
+  max-height: none;
+  margin: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 8px;
+  scrollbar-gutter: stable;
+}
+
+.docs-contents::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 1px;
+  background: var(--veli-color-border-base-muted);
+  content: '';
+  pointer-events: none;
+}
+
+.docs-page-header {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.docs-overview-content,
+.docs-prose {
+  grid-column: 1;
+  min-width: 0;
+}
+
+.docs-contents h2 {
+  display: none;
+}
+
+.docs-contents a {
+  border-left: 0;
+  padding: 8px 16px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.docs-contents a.is-active {
+  border-left: 3px solid var(--veli-color-border-focus);
+  color: var(--veli-color-text-base-strong);
+}
+
+.docs-page-header {
+  border: 0;
+}
+
+.docs-overview-header {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding-bottom: 0;
+}
+
+.docs-page-header--overview .docs-page-header__content {
+  display: flex;
+  width: min(100%, 589px);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.docs-page-header--overview .docs-page-header__content > h1 {
+  max-width: none;
+  font-size: 82px;
+  font-weight: 600;
+  line-height: 110px;
+  letter-spacing: -1.64px;
+}
+
+.docs-page-header--overview .docs-page-header__content > p {
+  width: 100%;
+  height: 48px;
+  flex: none;
+  max-width: none;
+  margin: 0;
+  color: var(--veli-color-text-base-strong);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.53;
+}
+
+.docs-page-header--overview .docs-page-header__content > .docs-page-actions--inline {
+  margin-top: 0;
+}
+
+.docs-page-header h1 {
+  max-width: 900px;
+  font-size: clamp(52px, 6vw, 82px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.docs-page-header > p:last-child,
+.docs-page-header__content > p:last-child,
+.docs-page-header__copy > p:last-child {
+  max-width: 680px;
+  margin-top: 24px;
+  color: var(--veli-color-text-base-strong);
+  font-size: 18px;
+  line-height: 1.53;
+}
+
+.docs-overview-hero {
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 1001 / 400;
+  border-radius: clamp(28px, 4vw, 59px);
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.docs-overview-hero--placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 68% 30%, var(--veli-color-bg-primary-subtle-hover), transparent 36%),
+    linear-gradient(
+      145deg,
+      var(--veli-color-bg-secondary-subtle-default),
+      var(--veli-color-bg-surface-base)
+    );
+  color: var(--veli-color-text-primary-default);
+}
+
+.docs-overview-content {
+  padding-top: 80px;
+}
+
+.docs-overview-copy {
+  max-width: 760px;
+}
+
+.docs-overview-copy h2,
+.docs-list-section h2,
+.foundation-section h2,
+.docs-prose h2 {
+  font-size: 32px;
+  line-height: 1.36;
+  letter-spacing: -0.01em;
+}
+
+.docs-overview-copy p {
+  margin: 20px 0 0;
+  color: var(--veli-color-text-base-default);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.docs-overview-directory,
+.foundation-directory {
+  margin-top: 64px;
+}
+
+.foundation-directory {
+  display: grid;
+  width: 100%;
+  margin-inline: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.docs-main--full-bleed-header .foundation-directory {
+  width: 100%;
+  margin-inline: 0;
+}
+
+.foundation-directory section,
+.foundation-directory section:first-child {
+  border: 0;
+}
+
+.foundation-directory a {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  border-radius: 32px;
+  background: rgb(155 180 155 / 4%);
+  padding: 24px;
+  color: var(--veli-color-text-base-default);
+  text-decoration: none;
+}
+
+.foundation-directory__icon {
+  width: 48px;
+  height: 48px;
+}
+
+.foundation-directory__icon img {
+  grid-area: 1 / 1;
+  width: 48px;
+  height: 48px;
+}
+
+.foundation-directory__icon img.foundation-directory__icon-dark {
+  display: none;
+}
+
+[data-theme='dark'] .foundation-directory__icon img.foundation-directory__icon-light {
+  display: none;
+}
+
+[data-theme='dark'] .foundation-directory__icon img.foundation-directory__icon-dark {
+  display: block;
+}
+
+.foundation-directory h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.foundation-directory__content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.foundation-directory p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.foundation-directory__arrow {
+  display: none;
+}
+
+.docs-list-section {
+  padding-top: 56px;
+}
+
+.docs-list-section:first-child {
+  padding-top: 0;
+}
+
+.docs-link-list {
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.docs-link-list a {
+  min-height: 112px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--veli-color-bg-secondary-subtle-default);
+  padding: 20px;
+}
+
+.docs-page-header--article {
+  min-height: 258px;
+  padding-bottom: 80px;
+  border-bottom: 1px solid var(--veli-color-border-base-muted);
+}
+
+.docs-page-header--article h1 {
+  max-width: 680px;
+  font-family: var(--veli-font-sans);
+  font-size: clamp(52px, 6vw, 82px);
+  font-weight: 400;
+  line-height: 1.34;
+  letter-spacing: -0.02em;
+}
+
+.docs-page-header--article > p:last-child,
+.docs-page-header--article .docs-page-header__copy > p:last-child {
+  max-width: 680px;
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.53;
+}
+
+.docs-prose {
+  padding-top: 80px;
+}
+
+.docs-main--component .docs-page-header--article {
+  /* Preserve the intrinsic title/description height; a zero minimum lets the
+     fixed-height docs grid collapse this row beneath the sticky tab bar. */
+  min-height: auto;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.docs-main--component .docs-page-header--article h1 {
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 76px;
+}
+
+.docs-main--component .docs-page-header--article > p:last-child,
+.docs-main--component .docs-page-header--article .docs-page-header__copy > p:last-child {
+  max-width: 511px;
+  margin-top: 16px;
+  line-height: 28px;
+}
+
+.docs-main--component .docs-prose {
+  grid-row: 3;
+}
+
+.docs-main--component :is(.docs-prose, .docs-utilities) {
+  padding-top: 8px;
+}
+
+.docs-page-header + .docs-prose {
+  margin-top: 0;
+}
+
+.docs-tab-panel > h1:first-child {
+  display: none;
+}
+
+.docs-tab-panel > h1:first-child + p,
+.docs-tab-panel > .docs-tab-empty:first-child {
+  margin-top: 0;
+}
+
+.docs-tab-panel > h2:first-child {
+  margin-top: 0;
+}
+
+.docs-tab-panel > :is(p, ul, ol, table, blockquote, div) ~ h2 {
+  position: relative;
+  margin-top: 96px;
+}
+
+.docs-tab-panel > :is(p, ul, ol, table, blockquote, div) ~ h2::before {
+  position: absolute;
+  top: -48px;
+  right: 0;
+  left: 0;
+  border-top: 1px solid var(--veli-color-border-base-subtle);
+  content: '';
+}
+
+.docs-tab-panel > h2 + :is(p, ul, ol) {
+  margin-top: 8px;
+}
+
+.docs-tab-panel
+  > :is(h2, p, ul, ol, blockquote)
+  + :is(.preview, .docs-example, .docs-code-block, table) {
+  margin-top: 24px;
+}
+
+.docs-page-tabs {
+  --docs-tab-indicator-left: 0px;
+  --docs-tab-indicator-width: 0px;
+
+  position: sticky;
+  z-index: 4;
+  top: var(--docs-component-tabs-sticky-offset, -56px);
+  display: flex;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--veli-color-bg-surface-raised);
+  padding-top: 4px;
+}
+
+/* The tab row covers the main scroll fade once it sticks. Extend that fade
+   below the frame so the scrolling documentation recedes softly beneath it. */
+.docs-page-tabs::after {
+  position: absolute;
+  z-index: 0;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 44px;
+  background: linear-gradient(
+    to bottom,
+    var(--veli-color-bg-surface-raised),
+    color-mix(in srgb, var(--veli-color-bg-surface-raised) 72%, transparent),
+    transparent
+  );
+  content: '';
+  pointer-events: none;
+}
+
+.docs-page-tabs__row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.docs-page-tabs__list {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.docs-page-tabs__list::-webkit-scrollbar {
+  display: none;
+}
+
+.docs-page-tabs__tab {
+  position: relative;
+  display: inline-flex;
+  min-width: max-content;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  padding: 10px 16px;
+  color: var(--veli-color-text-base-default);
+  cursor: pointer;
+  font-family: var(--veli-font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  transition: background-color var(--veli-duration-normal) var(--veli-ease-in-out);
+  -webkit-font-smoothing: antialiased;
+}
+
+.docs-page-tabs__label {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.docs-page-tabs__label > span {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.docs-page-tabs__label-reserve {
+  visibility: hidden;
+  font-weight: 500;
+}
+
+.docs-page-tabs__tab:hover {
+  background: var(--veli-color-tabs-hover);
+  color: var(--veli-color-text-base-strong);
+}
+
+.docs-page-tabs__tab:active {
+  background: var(--veli-color-tabs-pressed);
+}
+
+.docs-page-tabs__tab[aria-selected='true'] {
+  color: var(--veli-color-text-base-strong);
+  font-weight: 500;
+}
+
+.docs-page-tabs__border {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+  background: var(--veli-color-tabs-border-inactive);
+}
+
+.docs-page-tabs__indicator {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: var(--docs-tab-indicator-left);
+  width: var(--docs-tab-indicator-width);
+  height: 2px;
+  background: var(--veli-color-tabs-border-active);
+  pointer-events: none;
+  transition:
+    left var(--veli-duration-normal) var(--veli-ease-in-out),
+    width var(--veli-duration-normal) var(--veli-ease-in-out);
+}
+
+.docs-page-tabs__tab:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-page-tabs__indicator {
+    transition: none;
+  }
+}
+
+.docs-tab-panel[hidden],
+.docs-contents a[hidden] {
+  display: none;
+}
+
+.docs-tab-empty {
+  min-height: 160px;
+  color: var(--veli-color-text-base-muted);
+}
+
+.docs-component-animation {
+  position: relative;
+  width: 100%;
+  margin-top: 32px;
+  aspect-ratio: 805 / 364;
+  overflow: hidden;
+  border: 1px solid var(--veli-color-border-base-muted);
+  border-radius: 24px;
+  background: var(--veli-color-bg-surface-raised);
+}
+
+.docs-component-animation__frame,
+.docs-component-animation__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.docs-component-animation__placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 44%, var(--veli-color-neutral-alpha-200), transparent 38%),
+    var(--veli-color-bg-surface-raised);
+  color: var(--veli-color-text-base-muted);
+}
+
+.docs-component-animation__placeholder p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.docs-component-animation__label {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border-radius: 999px;
+  background: var(--veli-color-bg-surface-base);
+  padding: 6px 10px;
+  color: var(--veli-color-text-base-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+
+.docs-example {
+  /* The paired code block is inset by 2px but its Shiki pre keeps a smaller
+     corner radius. Clip it to this 24px frame so it cannot show through at
+     the outer bottom corners. */
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--veli-color-bg-surface-base);
+  padding: 2px;
+}
+
+.docs-example > .preview {
+  border-radius: 22px;
+  background: var(--veli-color-bg-surface-raised);
+}
+
+/* Detect the options layout through Astro islands, including before hydration.
+   Keep the legacy modifier working after the paired preview's surface rule. */
+.docs-prose .preview--options,
+.docs-prose .preview:has([data-docs-preview='options']) {
+  display: block;
+  padding: 0;
+  background: transparent;
+}
+
+.docs-example > .docs-code-block {
+  margin-top: 2px;
+  border-radius: 8px;
+}
+
+.docs-code-block > pre {
+  border-radius: 8px;
+}
+
+.docs-main--foundation-article .docs-page-header--illustrated {
+  /* 195px illustration + 80px spacing before the header divider + 1px rule. */
+  min-height: 276px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 200px;
+}
+
+.docs-main--foundation-article .docs-page-header__copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.docs-main--foundation-article .docs-page-header--illustrated .docs-page-header__copy > p {
+  max-width: 511px;
+  margin-top: 0;
+  font-size: 18px;
+  line-height: 1.53;
+}
+
+.docs-page-header__art {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 195px;
+  max-width: 24%;
+  aspect-ratio: 1;
+  container-type: size;
+  /*
+    Lottie BG lattice (800-comp × 76% layer scale):
+    pitch 27.702, radius 3.1236, origin (10.21, 11.88), ink #008F8D.
+  */
+  --foundation-art-comp: 800;
+  --foundation-art-pitch: 27.702;
+  --foundation-art-radius: 3.1236;
+  --foundation-art-origin-x: 10.21;
+  --foundation-art-origin-y: 11.88;
+  --foundation-art-dot: #008f8d;
+  --foundation-art-dot-opacity: 0.65;
+  --foundation-art-plate: #ffffff;
+}
+
+html[data-color-scheme='dark'] .docs-page-header__art {
+  --foundation-art-plate: #161614;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-scheme='system'] .docs-page-header__art {
+    --foundation-art-plate: #161614;
+  }
+}
+
+.docs-page-header__art-bg,
+.docs-page-header__art-lottie {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/*
+  CSS hex lattice: each gradient layer tiles 1×2 pitches so odd rows are
+  only painted by the half-pitch-shifted second layer.
+  Always visible — also the load / reduced-motion fallback.
+*/
+.docs-page-header__art-bg {
+  --s: calc(100cqw / var(--foundation-art-comp));
+  --cell: calc(var(--foundation-art-pitch) * var(--s));
+  --r: calc(var(--foundation-art-radius) * var(--s));
+  --ox: calc(var(--foundation-art-origin-x) * var(--s));
+  --oy: calc(var(--foundation-art-origin-y) * var(--s));
+  --half: calc(var(--cell) / 2);
+  --ink: color-mix(
+    in srgb,
+    var(--foundation-art-dot) calc(var(--foundation-art-dot-opacity) * 100%),
+    transparent
+  );
+  z-index: 0;
+  background-color: var(--foundation-art-plate);
+  background-image:
+    radial-gradient(circle var(--r) at var(--ox) var(--oy), var(--ink) 99%, transparent 100%),
+    radial-gradient(circle var(--r) at var(--ox) var(--oy), var(--ink) 99%, transparent 100%);
+  background-size:
+    var(--cell) calc(var(--cell) * 2),
+    var(--cell) calc(var(--cell) * 2);
+  background-position:
+    0 0,
+    var(--half) var(--cell);
+  background-repeat: repeat;
+}
+
+.docs-page-header__art-lottie {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.docs-page-header__art-lottie.is-ready {
+  opacity: 1;
+}
+
+.docs-page-header__art-lottie--dark,
+html[data-color-scheme='dark'] .docs-page-header__art-lottie--light {
+  display: none;
+}
+
+html[data-color-scheme='dark'] .docs-page-header__art-lottie--dark,
+html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-scheme='system'] .docs-page-header__art-lottie--light {
+    display: none;
+  }
+
+  html[data-color-scheme='system'] .docs-page-header__art-lottie--dark,
+  html[data-color-scheme='system'] .docs-page-header__art-lottie--shared {
+    display: block;
+  }
+}
+
+.docs-prose,
+.foundation-prose {
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.docs-page-header + .docs-prose {
+  margin-top: 0;
+}
+
+.docs-prose h2 {
+  margin-top: 72px;
+  color: var(--veli-color-text-base-emphasis);
+  font-family: var(--veli-font-sans, 'Inter', sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.36;
+  letter-spacing: -0.01em;
+}
+
+/* The first article section begins at the prose frame's 80px inset. */
+.docs-prose > h2:first-child {
+  margin-top: 0;
+}
+
+.docs-prose h3 {
+  margin-top: 32px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol,
+.docs-prose table,
+.docs-prose pre {
+  margin-top: 16px;
+}
+
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol {
+  margin-bottom: 0;
+}
+
+/* Component articles are moved into tab panels after MDX renders. Style the
+   nested prose explicitly so it retains the documented 32/16 type scale and
+   8/16px reading rhythm from the documentation site reference. */
+.docs-tab-panel > :is(p, ul, ol) {
+  max-width: 660px;
+  color: var(--veli-color-text-base-strong);
+}
+
+.docs-tab-panel > :is(ul, ol) {
+  padding-inline-start: 24px;
+}
+
+.docs-tab-panel > ul {
+  list-style: disc;
+}
+
+.docs-tab-panel > ol {
+  list-style: decimal;
+}
+
+.docs-tab-panel > :is(ul, ol) > li {
+  margin: 0;
+}
+
+.docs-tab-panel > :is(ul, ol) > li + li {
+  margin-top: 16px;
+}
+
+.docs-prose [data-accordion-header] :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.docs-prose [data-accordion-header] button {
+  font: revert-layer;
+}
+
+.docs-prose table {
+  margin-bottom: 32px;
+}
+
+.docs-coming-soon {
+  min-height: 260px;
+}
+
+@media (max-width: 1180px) {
+  .docs-workspace {
+    grid-template-columns: 252px minmax(0, 1fr);
+  }
+
+  .docs-utilities {
+    display: none;
+  }
+
+  .docs-main {
+    margin-right: 6px;
+    border-radius: 16px 8px 8px 16px;
+  }
+
+  .docs-main__inner,
+  .docs-main--full-bleed-header .docs-main__inner {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    padding: 64px 48px 80px;
+  }
+
+  .docs-page-tabs {
+    top: -64px;
+  }
+
+  .docs-page-header--illustrated {
+    gap: 64px;
+  }
+}
+
+@media (max-width: 760px) {
+  .docs-workspace {
+    display: block;
+  }
+
+  .docs-mobile-header {
+    min-height: 72px;
+  }
+
+  .docs-mobile-header .docs-brand .veli-logo {
+    width: 142px;
+  }
+
+  .docs-mobile-menu__panel {
+    top: 72px;
+    height: calc(100dvh - 72px);
+  }
+
+  .docs-mobile-nav {
+    margin-top: 16px;
+  }
+
+  .docs-mobile-menu__footer {
+    margin-top: 32px;
+  }
+
+  .docs-main {
+    margin: 0;
+    display: block;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .docs-main__inner,
+  .docs-main--full-bleed-header .docs-main__inner {
+    display: block;
+    height: auto;
+    width: 100%;
+    margin: 0;
+    overflow: visible;
+    padding: 48px 20px 80px;
+  }
+
+  .docs-main::before,
+  .docs-main::after {
+    display: none;
+  }
+
+  .docs-page-header h1 {
+    font-size: clamp(42px, 13vw, 58px);
+  }
+
+  .docs-page-header--overview .docs-page-header__content > h1 {
+    font-size: clamp(42px, 13vw, 58px);
+    line-height: 1.34;
+    letter-spacing: -0.02em;
+  }
+
+  .docs-page-header--article h1 {
+    font-size: clamp(42px, 10vw, 56px);
+  }
+
+  .docs-page-header--article > p:last-child,
+  .docs-page-header__content > p:last-child,
+  .docs-page-header__copy > p:last-child {
+    font-size: 16px;
+  }
+
+  .docs-page-header--overview .docs-page-header__content > p {
+    height: auto;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .docs-overview-header {
+    gap: 40px;
+  }
+
+  .docs-overview-content {
+    padding-top: 52px;
+  }
+
+  .foundation-directory,
+  .docs-link-list {
+    grid-template-columns: 1fr;
+  }
+
+  .foundation-directory {
+    gap: 16px;
+  }
+
+  .foundation-directory a {
+    min-height: 0;
+  }
+
+  .docs-page-header--illustrated {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding-bottom: 40px;
+  }
+
+  .docs-page-header--illustrated .docs-page-header__copy {
+    display: contents;
+  }
+
+  .docs-page-header__art {
+    order: 1;
+    align-self: center;
+    width: min(46vw, 160px);
+    max-width: 100%;
+  }
+
+  .docs-page-header + .docs-prose {
+    padding-top: 48px;
+  }
+
+  .docs-page-tabs {
+    top: 72px;
+    margin-inline: -20px;
+    padding-inline: 20px;
+  }
+
+  .docs-page-tabs__row {
+    align-items: stretch;
+  }
+
+  .docs-page-tabs .docs-page-actions--tabbar {
+    margin-right: 0;
+  }
+
+  .docs-component-animation {
+    min-height: 220px;
+    aspect-ratio: auto;
+  }
+}
+
+@source "../../../../packages/blocks/src";

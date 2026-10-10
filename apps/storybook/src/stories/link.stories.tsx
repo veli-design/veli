@@ -1,439 +1,453 @@
-import { useEffect } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
+import { expect, fn, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import type { ComponentProps } from 'react';
 import { Link } from '@tradenetcorp/veli-ui/link';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { DownloadSimple, Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 
 const linkText = {
   en: {
-    argsChildren: 'Link Label',
-    defaultLink: 'Default Link',
-    extraSmall: 'Extra Small',
-    small: 'Small',
-    medium: 'Medium',
-    large: 'Large',
-    extraLarge: 'Extra Large',
-    plain: 'Plain',
-    hoverUnderline: 'Hover Underline',
-    alwaysUnderline: 'Always Underline',
-    defaultHeader: 'Default',
-    secondaryHeader: 'Secondary',
-    linkLabel: 'Link',
-    stateDefaultLabel: 'Default',
-    stateHoverLabel: 'Hover',
-    statePressedLabel: 'Pressed',
-    stateDisabledLabel: 'Disabled',
-    disabledIconLabel: 'Disabled Icon',
-    stateDefaultLink: 'Default Link',
-    stateHoverLink: 'Hover State',
-    statePressedLink: 'Pressed State',
-    stateDisabledLink: 'Disabled Link',
-    stateDisabledText: 'Disabled',
-    leadingIcon: 'Leading Icon',
-    trailingIcon: 'Trailing Icon',
-    bothIcons: 'Both Icons',
-    smallPrefix: 'Small text with an ',
-    bodyPrefix: 'Body text with an ',
-    largePrefix: 'Large text with an ',
-    inheritedLink: 'inherited link',
-    iconsLabel: (value: number) => `${value}px icons`,
-    labelIcons: (value: string) => `${value} icons`,
+    label: 'Continue',
+    default: 'Default',
+    secondary: 'Secondary',
+    none: 'None',
+    hover: 'On hover',
+    always: 'Always',
+    sm: 'Small',
+    md: 'Medium',
+    lg: 'Large',
+    hovered: 'Hovered',
+    pressed: 'Pressed',
+    focus: 'Keyboard focus',
+    disabled: 'Disabled',
+    prefix: 'Read the ',
+    inline: 'guidance for completing your application and providing supporting information',
+    suffix: ' before continuing.',
   },
   dv: {
-    argsChildren: 'ލިންކުގެ ލިޔުން',
-    defaultLink: 'އާދައިގެ ލިންކް',
-    extraSmall: 'ވަރަށް ކުޑަ',
-    small: 'ކުޑަ',
-    medium: 'މެދު',
-    large: 'ބޮޑު',
-    extraLarge: 'ވަރަށް ބޮޑު',
-    plain: 'ސާދާ',
-    hoverUnderline: 'ހޯވަރ',
-    alwaysUnderline: 'އަބަދުވެސް ރޮނގުދަމާފައި',
-    defaultHeader: 'އާދައިގެ',
-    secondaryHeader: 'ދެވަނަ',
-    linkLabel: 'ލިންކް',
-    stateDefaultLabel: 'އާދައިގެ',
-    stateHoverLabel: 'ހޯވަރ',
-    statePressedLabel: 'ފިތާލާފައި',
-    stateDisabledLabel: 'ބޭނުންނުކުރެވޭ',
-    disabledIconLabel: 'ބޭނުންނުކުރެވޭ އައިކަން',
-    stateDefaultLink: 'އާދައިގެ ލިންކް',
-    stateHoverLink: 'ހޯވަރ',
-    statePressedLink: 'ފިތާލާފައި',
-    stateDisabledLink: 'ބޭނުންނުކުރެވޭ ލިންކް',
-    stateDisabledText: 'ބޭނުންނުކުރެވޭ',
-    leadingIcon: 'ކުރީގައި އައިކަން',
-    trailingIcon: 'ފަހަތުގައި އައިކަން',
-    bothIcons: 'ދެކޮޅުގައި އައިކަން',
-    smallPrefix: 'ވާރުތަވާ ލިންކަކާއެކު އިންނަ ކުޑަ ލިޔުމެއް ',
-    bodyPrefix: 'ވާރުތަވާ ލިންކަކާއެކު އިންނަ މައިގަނޑު ލިޔުމެއް ',
-    largePrefix: 'ވާރުތަވާ ލިންކަކާއެކު އިންނަ ބޮޑު ލިޔުމެއް ',
-    inheritedLink: 'ވާރުތަވާ ލިންކް',
-    iconsLabel: (value: number) => `${value} އައިކޮން`,
-    labelIcons: (value: string) => `${value} އައިކޮން`,
+    label: 'ކުރިއަށް',
+    default: 'އާދައިގެ',
+    secondary: 'ދެވަނަ',
+    none: 'ރޮނގެއް ނެތް',
+    hover: 'ހޯވަރ',
+    always: 'އަބަދުވެސް',
+    sm: 'ކުޑަ',
+    md: 'މެދު',
+    lg: 'ބޮޑު',
+    hovered: 'ހޯވަރ',
+    pressed: 'ފިތާލާފައި',
+    focus: 'ކީބޯޑު ފޯކަސް',
+    disabled: 'ބޭނުންނުކުރެވޭ',
+    prefix: 'ކުރިއަށް ދިއުމުގެ ކުރިން ',
+    inline: 'އެދުން ފުރިހަމަކުރުމާއި ބޭނުންވާ މަޢުލޫމާތު ހުށަހެޅުމުގެ އިރުޝާދު',
+    suffix: ' ކިޔާލައްވާ.',
   },
 } as const;
 
-type LinkText = (typeof linkText)[keyof typeof linkText];
+function useLinkText() {
+  const { language } = useVeliLanguage();
+  return linkText[language === 'dv' ? 'dv' : 'en'];
+}
 
-const useLinkText = () => {
-  const { direction } = useVeliLanguage();
+function LinkDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let frame = 0;
+    let attempts = 0;
+    const groups = ['Content', 'State'];
+    const collapseGroups = () => {
+      const rows = groups.map((group) =>
+        document.querySelector(
+          'tr[title^="Hide ' + group + ' item"], tr[title^="Show ' + group + ' item"]',
+        ),
+      );
+      if (rows.some((row) => !row) && attempts++ < 40) {
+        frame = requestAnimationFrame(collapseGroups);
+        return;
+      }
+      rows.forEach((row) => {
+        if (row?.getAttribute('title')?.startsWith('Hide ')) {
+          row.querySelector<HTMLElement>('[tabindex="0"]')?.click();
+        }
+      });
+    };
+    collapseGroups();
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return <DocsContainer {...props} />;
+}
 
-  return direction === 'rtl' ? linkText.dv : linkText.en;
+type LinkStoryArgs = ComponentProps<typeof Link> & {
+  leadingIcon: boolean;
+  trailingIcon: boolean;
 };
 
-const linkSizeExamples = (text: LinkText) =>
-  [
-    { className: 'type-caption-12-regular', label: text.extraSmall, size: 'sm' },
-    { className: 'type-body-sm-regular', label: text.small, size: 'sm' },
-    { className: 'type-body-md-regular', label: text.medium, size: 'md' },
-    { className: 'type-body-lg-regular', label: text.large, size: 'lg' },
-    { className: 'type-subtitle-regular', label: text.extraLarge, size: 'lg' },
-  ] as const;
+function LinkDefault({ leadingIcon, trailingIcon, children, ...args }: LinkStoryArgs) {
+  return (
+    <span className="type-body-md-regular">
+      <Link {...args}>
+        {(state) => (
+          <>
+            {leadingIcon && <PlusIcon weight="bold" aria-hidden="true" />}
+            {typeof children === 'function' ? children(state) : children}
+            {trailingIcon && <DirectionalArrow weight="bold" aria-hidden="true" />}
+          </>
+        )}
+      </Link>
+    </span>
+  );
+}
 
 const meta = {
   title: 'Components/Link',
   component: Link,
+  tags: ['autodocs'],
   decorators: [
     (Story, context) => {
       const language = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const children = typeof args.children === 'string' ? args.children : '';
-      const localizedChildren =
-        language === 'dv' ? linkText.dv.argsChildren : linkText.en.argsChildren;
-      const previousLocalizedChildren =
-        language === 'dv' ? linkText.en.argsChildren : linkText.dv.argsChildren;
-
+      const children = args.children;
       useEffect(() => {
-        if (children.trim() === '' || children === previousLocalizedChildren) {
-          updateArgs?.({ children: localizedChildren });
+        if (
+          typeof children === 'string' &&
+          (children === linkText.en.label || children === linkText.dv.label)
+        ) {
+          const localized = linkText[language].label;
+          if (children !== localized) updateArgs({ children: localized });
         }
-      }, [children, language, localizedChildren, previousLocalizedChildren, updateArgs]);
-
-      return (
-        <div className="type-body-md-regular">
-          <Story />
-        </div>
-      );
+      }, [children, language, updateArgs]);
+      return <Story />;
     },
   ],
   parameters: {
     layout: 'centered',
+    controls: { sort: 'none', exclude: /^on[A-Z]/ },
+    docs: {
+      container: LinkDocsContainer,
+    },
   },
-  tags: ['autodocs'],
   argTypes: {
     intent: {
       control: 'select',
       options: ['default', 'secondary'],
+      table: { category: 'Appearance' },
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: { type: 'select', labels: { undefined: 'Inherit (no size)' } },
+      options: [undefined, 'sm', 'md', 'lg'],
+      description:
+        'Omit to inherit typography. sm/md/lg apply medium body presets and 16/16/20px icons.',
+      table: { category: 'Appearance', defaultValue: { summary: 'Omitted (inherit)' } },
     },
     underline: {
       control: 'select',
       options: ['none', 'hover', 'always'],
-    },
-    isDisabled: {
-      control: 'boolean',
+      table: { category: 'Appearance' },
     },
     children: {
       control: 'text',
+      description: 'Content, or a function of React Aria link state.',
+      table: { category: 'Content' },
+    },
+    leadingIcon: {
+      control: 'boolean',
+      description: 'Story-only icon composition control.',
+      table: { category: 'Content' },
+    },
+    trailingIcon: {
+      control: 'boolean',
+      description: 'Story-only icon composition control.',
+      table: { category: 'Content' },
+    },
+    href: { control: 'text', table: { category: 'Navigation' } },
+    target: { control: 'select', options: ['_self', '_blank'], table: { category: 'Navigation' } },
+    rel: { control: 'text', table: { category: 'Navigation' } },
+    hrefLang: { control: 'text', table: { category: 'Navigation' } },
+    ping: { control: 'text', table: { category: 'Navigation' } },
+    referrerPolicy: {
+      control: 'select',
+      options: [undefined, 'no-referrer', 'same-origin', 'strict-origin-when-cross-origin'],
+      table: { category: 'Navigation' },
+    },
+    'aria-label': { control: 'text', table: { category: 'Content' } },
+    'aria-labelledby': { control: 'text', table: { category: 'Content' } },
+    'aria-describedby': { control: 'text', table: { category: 'Content' } },
+    id: { control: 'text', table: { category: 'Content' } },
+    slot: { control: 'text', table: { category: 'Content' } },
+    routerOptions: {
+      control: false,
+      description: 'Options for a configured React Aria router provider.',
+      table: { category: 'Navigation' },
+    },
+    download: {
+      control: 'boolean',
+      description: 'Also accepts a suggested filename.',
+      table: { category: 'Navigation' },
+    },
+    'aria-current': {
+      control: 'select',
+      options: [undefined, 'page', 'step', 'location', 'date', 'time', true, false],
+      table: { category: 'Navigation' },
+    },
+    isDisabled: { control: 'boolean', table: { category: 'State' } },
+    isHovered: {
+      control: 'boolean',
+      description: 'Visual override; render-prop state still reflects real interaction.',
+      table: { category: 'State' },
+    },
+    isPressed: {
+      control: 'boolean',
+      description: 'Visual override; does not trigger onPress.',
+      table: { category: 'State' },
+    },
+    isFocusVisible: {
+      control: 'boolean',
+      description: 'Adds the focus indicator; false never hides keyboard focus.',
+      table: { category: 'State' },
+    },
+    autoFocus: { control: 'boolean', table: { category: 'State' } },
+    ref: {
+      control: false,
+      description: 'Forwarded to the React Aria link element.',
+      table: { category: 'Navigation' },
+    },
+    render: {
+      control: false,
+      description: 'Custom renderer; preserve disabled fallback and supplied props.',
+      table: { category: 'Navigation' },
     },
   },
   args: {
-    children: linkText.en.argsChildren,
+    children: linkText.en.label,
+    href: '#link-destination',
     intent: 'default',
-    size: 'md',
-    underline: 'hover',
-    href: '#',
+    size: undefined,
+    underline: 'none',
+    isDisabled: false,
+    leadingIcon: false,
+    trailingIcon: false,
   },
-} satisfies Meta<typeof Link>;
+} satisfies Meta<LinkStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const resolveLinkChildren = (
-  args: Partial<Pick<ComponentProps<typeof Link>, 'children'>>,
-  fallback: string,
-) => {
-  if (typeof args.children === 'string') {
-    const childText = args.children.trim();
+export const Default: Story = { render: (args) => <LinkDefault {...args} /> };
+export const Secondary: Story = { args: { intent: 'secondary' }, render: Default.render };
 
-    if (childText.length === 0) {
-      return fallback;
-    }
-
-    if (childText === linkText.en.argsChildren && childText !== fallback) {
-      return fallback;
-    }
-
-    if (childText === linkText.dv.argsChildren && childText !== fallback) {
-      return fallback;
-    }
-
-    return childText;
-  }
-
-  return fallback;
-};
-
-/**
- * The default link style, typically used for navigation and inline references.
- */
-export const Default: Story = {
-  render: (args) => {
-    const text = useLinkText();
-    const linkTextValue = resolveLinkChildren(args, text.argsChildren);
-
-    return <Link {...args}>{linkTextValue}</Link>;
-  },
-};
-
-/**
- * A comprehensive view of all link variants and underlining options.
- * Useful for auditing visual consistency across the design system.
- */
-export const AllVariants: Story = {
-  render: (args) => {
-    const text = useLinkText();
-    const linkTextValue = resolveLinkChildren(args, text.linkLabel);
-
-    return (
-      <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
-        <div />
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
-          {text.plain}
-        </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
-          {text.hoverUnderline}
-        </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted text-center">
-          {text.alwaysUnderline}
-        </div>
-
-        <div className="text-sm font-medium">{text.defaultHeader}</div>
-        <div className="flex justify-center">
-          <Link intent="default" underline="none">
-            {linkTextValue}
-          </Link>
-        </div>
-        <div className="flex justify-center">
-          <Link intent="default" underline="hover">
-            {linkTextValue}
-          </Link>
-        </div>
-        <div className="flex justify-center">
-          <Link intent="default" underline="always">
-            {linkTextValue}
-          </Link>
-        </div>
-
-        <div className="text-sm font-medium">{text.secondaryHeader}</div>
-        <div className="flex justify-center">
-          <Link intent="secondary" underline="none">
-            {linkTextValue}
-          </Link>
-        </div>
-        <div className="flex justify-center">
-          <Link intent="secondary" underline="hover">
-            {linkTextValue}
-          </Link>
-        </div>
-        <div className="flex justify-center">
-          <Link intent="secondary" underline="always">
-            {linkTextValue}
-          </Link>
-        </div>
-      </div>
-    );
-  },
-};
-
-/**
- * Demonstrates the interactive and non-interactive states of the Link component.
- * Uses forced state props to visually audit designs without manual interaction.
- */
-export const StatesAudit: Story = {
+export const Underlines: Story = {
   render: () => {
     const text = useLinkText();
-
     return (
-      <div className="flex items-center gap-16">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
-            {text.stateDefaultLabel}
-          </span>
-          <Link href="#">{text.stateDefaultLink}</Link>
-        </div>
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
-            {text.stateHoverLabel}
-          </span>
-          <Link href="#" isHovered={true}>
-            {text.stateHoverLink}
-          </Link>
-        </div>
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
-            {text.statePressedLabel}
-          </span>
-          <Link href="#" isPressed={true}>
-            {text.statePressedLink}
-          </Link>
-        </div>
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
-            {text.stateDisabledLabel}
-          </span>
-          <Link href="#" isDisabled={true}>
-            {text.stateDisabledLink}
-          </Link>
-        </div>
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-base-muted">
-            {text.disabledIconLabel}
-          </span>
-          <Link href="#" isDisabled={true}>
-            {text.stateDisabledText}
-            <DirectionalArrow weight="bold" />
-          </Link>
-        </div>
-      </div>
-    );
-  },
-};
-
-/**
- * Demonstrates common icon placement patterns. Icons inherit their size from the link's `size` prop.
- */
-export const WithIcons: Story = {
-  render: (args) => {
-    const text = useLinkText();
-    const leadingIconText = resolveLinkChildren(args, text.leadingIcon);
-    const trailingIconText = resolveLinkChildren(args, text.trailingIcon);
-    const bothIconsText = resolveLinkChildren(args, text.bothIcons);
-
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-16">
-          <Link {...args}>
-            <Plus weight="bold" />
-            {leadingIconText}
-          </Link>
-          <Link {...args}>
-            {trailingIconText}
-            <DirectionalArrow weight="bold" />
-          </Link>
-          <Link {...args}>
-            <DownloadSimple weight="bold" />
-            {bothIconsText}
-            <DirectionalArrow weight="bold" />
-          </Link>
-        </div>
-      </div>
-    );
-  },
-};
-
-/**
- * The `size` prop sets default icon dimensions via `[&_svg]` classes.
- * Typography still inherits from the surrounding context.
- */
-export const ComponentSizes: Story = {
-  render: (args) => {
-    const text = useLinkText();
-    const linkTextValue = resolveLinkChildren(args, text.linkLabel);
-
-    return (
-      <div className="flex flex-col gap-6 type-body-md-regular">
-        {(
-          [
-            { size: 'sm', label: text.small, iconSize: 16 },
-            { size: 'md', label: text.medium, iconSize: 16 },
-            { size: 'lg', label: text.large, iconSize: 20 },
-          ] as const
-        ).map(({ size, label, iconSize }) => (
-          <div key={size} className="flex items-center gap-6">
-            <span className="w-20 text-base-muted">{label}</span>
-            <Link {...args} size={size}>
-              <Plus weight="bold" />
-              {label} {linkTextValue}
-              <DirectionalArrow weight="bold" />
-            </Link>
-            <span className="text-xs text-base-muted italic">{text.iconsLabel(iconSize)}</span>
-          </div>
-        ))}
-      </div>
-    );
-  },
-};
-
-/**
- * Links inherit typography from their surrounding context.
- * Icon sizes should match the parent typography scale.
- */
-export const Sizes: Story = {
-  render: (args) => {
-    const text = useLinkText();
-    const linkTextValue = resolveLinkChildren(args, text.linkLabel);
-
-    return (
-      <div className="flex flex-col gap-6">
-        {linkSizeExamples(text).map(({ className, label, size }) => (
-          <div key={label} className="flex items-center gap-6">
-            <span className={`${className} w-28 text-base-muted`}>{label}</span>
-            <span className={className}>
-              <Link {...args} size={size}>
-                <Plus weight="bold" />
-                {label} {linkTextValue}
-                <DirectionalArrow weight="bold" />
+      <div className="grid max-w-full gap-6 sm:grid-cols-2 type-body-md-medium">
+        {(['default', 'secondary'] as const).map((intent) => (
+          <div key={intent} className="flex flex-col items-start gap-4">
+            <span className="text-xs uppercase tracking-wider text-base-muted">{text[intent]}</span>
+            {(['none', 'hover', 'always'] as const).map((underline) => (
+              <Link key={underline} href="#link-destination" intent={intent} underline={underline}>
+                {text[underline]}
               </Link>
-            </span>
-            <span className="text-xs text-base-muted italic">{text.labelIcons(size)}</span>
+            ))}
           </div>
         ))}
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const links = within(canvasElement).getAllByRole('link');
+    const hoverLink = links[1];
+    await userEvent.hover(hoverLink);
+    await expect(hoverLink).toHaveAttribute('data-hovered');
+    await expect(getComputedStyle(hoverLink).textDecorationLine).toBe('underline');
+    await userEvent.unhover(hoverLink);
+    await expect(getComputedStyle(hoverLink).textDecorationLine).toBe('none');
+    await expect(getComputedStyle(links[2]).textDecorationLine).toBe('underline');
+  },
 };
 
-/**
- * Links inherit typography when embedded inline within body copy.
- */
-export const InheritedTypography: Story = {
-  render: (args) => {
+export const SizesAndIcons: Story = {
+  render: () => {
     const text = useLinkText();
-    const linkTextValue = resolveLinkChildren(args, text.inheritedLink);
-
     return (
-      <div className="flex flex-col gap-4">
-        <p className="type-caption-12-regular">
-          {text.smallPrefix}
-          <Link {...args} size="sm">
-            <Plus weight="bold" />
-            {linkTextValue}
-          </Link>
-        </p>
-        <p className="type-body-md-regular">
-          {text.bodyPrefix}
-          <Link {...args} size="md">
-            {linkTextValue}
-            <DirectionalArrow weight="bold" />
-          </Link>
-        </p>
-        <p className="type-subtitle-regular">
-          {text.largePrefix}
-          <Link {...args} size="lg">
-            <Plus weight="bold" />
-            {linkTextValue}
+      <div className="flex max-w-full flex-col gap-8">
+        {(['sm', 'md', 'lg'] as const).map((size) => (
+          <div key={size} className="flex flex-col gap-3">
+            <span className="text-xs uppercase tracking-wider text-base-muted">
+              {text[size]} ({size})
+            </span>
+            <div className="flex flex-wrap items-center gap-6 type-body-lg-bold">
+              <Link href="#link-destination" size={size}>
+                {text.label}
+              </Link>
+              <Link href="#link-destination" size={size}>
+                <PlusIcon weight="bold" aria-hidden="true" />
+                {text.label}
+              </Link>
+              <Link href="#link-destination" size={size}>
+                {text.label}
+                <DirectionalArrow weight="bold" aria-hidden="true" />
+              </Link>
+              <Link href="#link-destination" size={size}>
+                <PlusIcon weight="bold" aria-hidden="true" />
+                {text.label}
+                <DirectionalArrow weight="bold" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
+  play: async ({ canvasElement, globals }) => {
+    await document.fonts.ready;
+    const isDhivehi = globals.language === 'dv';
+    const links = within(canvasElement).getAllByRole('link');
+    for (const [index, link] of links.entries()) {
+      const sizeIndex = Math.floor(index / 4);
+      const style = getComputedStyle(link);
+      await expect(style.fontSize).toBe(
+        `${(isDhivehi ? [17, 19, 21] : [14, 16, 18])[sizeIndex]}px`,
+      );
+      await expect(style.fontWeight).toBe(isDhivehi ? '700' : '500');
+      await expect(style.fontFamily).toContain(isDhivehi ? 'MV A Waheed' : 'Inter');
+      for (const icon of link.querySelectorAll('svg')) {
+        await expect(getComputedStyle(icon).width).toBe(sizeIndex === 2 ? '20px' : '16px');
+      }
+    }
+  },
+};
+
+export const States: Story = {
+  args: { onPress: fn(), onFocus: fn() },
+  render: ({ onPress, onFocus }) => {
+    const text = useLinkText();
+    return (
+      <div className="grid max-w-full gap-6 sm:grid-cols-2 type-body-md-medium">
+        {(['default', 'secondary'] as const).map((intent) => (
+          <div key={intent} className="flex flex-col items-start gap-4">
+            <span className="text-xs uppercase tracking-wider text-base-muted">{text[intent]}</span>
+            <Link
+              href="#link-destination"
+              intent={intent}
+              isFocusVisible={false}
+              onPress={onPress}
+              onFocus={onFocus}
+            >
+              {text.label}
+            </Link>
+            <Link href="#link-destination" intent={intent} isHovered>
+              {text.hovered}
+            </Link>
+            <Link href="#link-destination" intent={intent} isPressed>
+              {text.pressed}
+            </Link>
+            <Link href="#link-destination" intent={intent} isFocusVisible>
+              {text.focus}
+            </Link>
+            <Link
+              href="#link-destination"
+              intent={intent}
+              isDisabled
+              isHovered
+              isPressed
+              onPress={onPress}
+            >
+              {text.disabled}
+              <DirectionalArrow weight="bold" aria-hidden="true" />
+            </Link>
+          </div>
+        ))}
+      </div>
+    );
+  },
+  play: async ({ args, canvasElement }) => {
+    await document.fonts.ready;
+    const user = userEvent.setup();
+    const links = within(canvasElement).getAllByRole('link');
+    const first = links[0];
+    const initialBounds = first.getBoundingClientRect();
+    await user.tab();
+    first.focus();
+    await expect(first).toHaveAttribute('data-focus-visible');
+    await expect(first.getBoundingClientRect().width).toBe(initialBounds.width);
+    await expect(first.getBoundingClientRect().height).toBe(initialBounds.height);
+    if (window.matchMedia('(forced-colors: active)').matches) {
+      await expect(getComputedStyle(first).outlineStyle).toBe('solid');
+    } else {
+      await expect(getComputedStyle(first).boxShadow).not.toBe('none');
+    }
+    await user.keyboard('[Enter>]');
+    await expect(first).toHaveAttribute('data-pressed');
+    await expect(first).toHaveAttribute('data-focus-visible');
+    await user.keyboard('[/Enter]');
+    await expect(args.onPress).toHaveBeenCalledTimes(1);
+    await expect(args.onFocus).toHaveBeenCalled();
+    const bounds = first.getBoundingClientRect();
+    await user.pointer({
+      target: first,
+      keys: '[MouseLeft>]',
+      coords: { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
+    });
+    await expect(first).toHaveAttribute('data-pressed');
+    await user.pointer({ keys: '[/MouseLeft]' });
+    await expect(args.onPress).toHaveBeenCalledTimes(2);
+    for (const disabled of [links[4], links[9]]) {
+      await expect(disabled).toHaveAttribute('aria-disabled', 'true');
+      await expect(disabled.tagName).toBe('SPAN');
+      await expect(disabled).not.toHaveAttribute('data-hovered');
+      await expect(disabled.tabIndex).toBe(-1);
+      disabled.click();
+    }
+    await expect(args.onPress).toHaveBeenCalledTimes(2);
+    links[3].focus();
+    await user.tab();
+    await expect(links[5]).toHaveFocus();
+    links[5].blur();
+  },
+};
+
+export const InheritedTypography: Story = {
+  render: () => {
+    const text = useLinkText();
+    return (
+      <div className="w-full max-w-sm space-y-6">
+        {['type-caption-regular', 'type-body-md-regular', 'type-body-lg-bold'].map((type) => (
+          <p key={type} className={type}>
+            {text.prefix}
+            <Link href="#link-destination" underline="always">
+              {text.inline}
+            </Link>
+            {text.suffix}
+          </p>
+        ))}
+        <p className="type-body-md-medium">
+          <Link href="#link-destination" underline="always">
+            <PlusIcon aria-hidden="true" weight="bold" />
+            {text.inline}
+            <DirectionalArrow aria-hidden="true" weight="bold" />
           </Link>
         </p>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const links = within(canvasElement).getAllByRole('link');
+    for (const link of links.slice(0, 3)) {
+      await expect(getComputedStyle(link).display).toBe('inline');
+      const actual = getComputedStyle(link);
+      const parent = getComputedStyle(link.parentElement!);
+      for (const property of [
+        'fontFamily',
+        'fontSize',
+        'fontWeight',
+        'lineHeight',
+        'letterSpacing',
+      ] as const) {
+        await expect(actual[property]).toBe(parent[property]);
+      }
+    }
+    await expect(canvasElement.scrollWidth).toBeLessThanOrEqual(canvasElement.clientWidth);
   },
 };

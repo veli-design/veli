@@ -19,8 +19,16 @@ const manifest = await readJson(path.join(agentDir, 'manifest.json'));
 const manifestComponents = manifest.groups.flatMap((group) => group.components);
 const manifestIds = manifestComponents.map((component) => component.id);
 const manifestIdSet = new Set(manifestIds);
+const nonComponentExports = new Set([
+  './package.json',
+  './tailwind',
+  './manifest',
+  './theme-script',
+  // Form helpers are documented under patterns/forms, not the component catalog.
+  './form',
+]);
 const componentExportSlugs = Object.keys(packageJson.exports)
-  .filter((exportPath) => !['./tailwind', './manifest'].includes(exportPath))
+  .filter((exportPath) => !nonComponentExports.has(exportPath))
   .map((exportPath) => exportPath.slice(2));
 
 test('agent manifest is a complete index of public component exports', () => {

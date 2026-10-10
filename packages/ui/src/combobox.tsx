@@ -17,8 +17,9 @@ import {
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CaretDown, Info } from 'phosphor-react';
+import { CaretDownIcon, InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref.js';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -29,30 +30,19 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
-} from './field-shared';
-import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
+} from './field-shared.js';
+import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
+
+/** Selection key type used by react-aria (`string | number`). */
+type Key = string | number;
 
 const comboboxRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -196,7 +186,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -378,13 +368,23 @@ export function ComboBoxSection<T extends object>({
   );
 }
 
-export interface ComboBoxProps<T extends object>
+export interface ComboBoxProps<T extends object, K extends Key = Key>
   extends
     Omit<
       AriaComboBoxProps<T>,
-      'children' | 'className' | 'style' | 'placeholder' | 'label' | 'description' | 'errorMessage'
+      | 'children'
+      | 'className'
+      | 'style'
+      | 'placeholder'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'value'
+      | 'defaultValue'
+      | 'onChange'
     >,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'> {
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isOpen'>,
+    RefProp<HTMLInputElement> {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
@@ -403,36 +403,43 @@ export interface ComboBoxProps<T extends object>
   emptyState?: React.ReactNode;
   inputRef?: React.Ref<HTMLInputElement>;
   className?: string;
+  /** Controlled selected key. Inferred as `string | null` when the form stores strings. */
+  value?: K | null;
+  /** Uncontrolled initial selected key. */
+  defaultValue?: K | null;
+  /** Called with the selected key. Typed from `value` / `onChange` for form libraries. */
+  onChange?: (value: K | null) => void;
 }
 
-function ComboBoxInner<T extends object>(
-  {
-    children,
-    label,
-    infoTooltip,
-    infoTooltipAriaLabel,
-    labelSupplementary,
-    labelIcon,
-    action,
-    description,
-    errorMessage,
-    showRequiredIndicator = true,
-    startAddon,
-    startContent,
-    endContent,
-    placeholder,
-    menuTriggerIcon,
-    emptyState = 'No matches found.',
-    inputRef,
-    className,
-    appearance = 'default',
-    size = 'md',
-    menuTrigger = 'focus',
-    ...props
-  }: ComboBoxProps<T>,
-  forwardedRef: React.ForwardedRef<HTMLInputElement>,
-) {
-  const resolvedInputRef = inputRef ?? forwardedRef;
+export function ComboBox<T extends object, K extends Key = Key>({
+  children,
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  action,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  startAddon,
+  startContent,
+  endContent,
+  placeholder,
+  menuTriggerIcon,
+  emptyState = 'No matches found.',
+  inputRef,
+  ref,
+  className,
+  appearance = 'default',
+  size = 'md',
+  menuTrigger = 'focus',
+  value,
+  defaultValue,
+  onChange,
+  ...props
+}: ComboBoxProps<T, K>) {
+  const resolvedInputRef = inputRef ?? ref;
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
   const languageConfig = useVeliLanguage();
@@ -454,6 +461,9 @@ function ComboBoxInner<T extends object>(
   return (
     <AriaComboBox
       {...props}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange as AriaComboBoxProps<T>['onChange']}
       menuTrigger={menuTrigger}
       className={twMerge(comboboxRootVariants(), className)}
     >
@@ -475,10 +485,10 @@ function ComboBoxInner<T extends object>(
                     <AriaButton
                       type="button"
                       aria-label={resolvedInfoTooltipAriaLabel}
-                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
-                      <Info size={16} aria-hidden />
+                      <InfoIcon size={16} aria-hidden />
                     </AriaButton>
                     <Tooltip
                       placement="top"
@@ -532,7 +542,7 @@ function ComboBoxInner<T extends object>(
             ) : null}
             <AriaButton className={triggerButtonVariants({ isDisabled })}>
               {menuTriggerIcon ?? (
-                <CaretDown
+                <CaretDownIcon
                   aria-hidden
                   size={20}
                   weight="regular"
@@ -575,7 +585,3 @@ function ComboBoxInner<T extends object>(
     </AriaComboBox>
   );
 }
-
-export const ComboBox = React.forwardRef(ComboBoxInner) as <T extends object>(
-  props: ComboBoxProps<T> & React.RefAttributes<HTMLInputElement>,
-) => React.ReactElement | null;

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Gear, House, SquaresFour, User } from 'phosphor-react';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import * as React from 'react';
+import { GearIcon, HouseIcon, SquaresFourIcon, UserIcon } from '@phosphor-icons/react';
+import { useVeliLanguage, VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 
 const tabsText = {
@@ -227,19 +228,19 @@ export const WithLeadingSlot: Story = {
           {
             id: 'home',
             label: text.labels.home,
-            leading: <House size={16} />,
+            leading: <HouseIcon size={16} />,
             panel: text.panels.home,
           },
           {
             id: 'dashboard',
             label: text.labels.dashboard,
-            leading: <SquaresFour size={16} />,
+            leading: <SquaresFourIcon size={16} />,
             panel: text.panels.dashboard,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            leading: <Gear size={16} />,
+            leading: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}
@@ -262,13 +263,13 @@ export const WithTrailingSlot: Story = {
           {
             id: 'profile',
             label: text.labels.profile,
-            trailing: <User size={16} />,
+            trailing: <UserIcon size={16} />,
             panel: text.panels.profile,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            trailing: <Gear size={16} />,
+            trailing: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}
@@ -354,25 +355,76 @@ export const WithLeadingAndTrailingSlots: Story = {
           {
             id: 'overview',
             label: text.labels.overview,
-            leading: <House size={16} />,
-            trailing: <SquaresFour size={16} />,
+            leading: <HouseIcon size={16} />,
+            trailing: <SquaresFourIcon size={16} />,
             panel: text.panels.overview,
           },
           {
             id: 'members',
             label: text.labels.members,
-            leading: <User size={16} />,
-            trailing: <Gear size={16} />,
+            leading: <UserIcon size={16} />,
+            trailing: <GearIcon size={16} />,
             panel: text.panels.members,
           },
           {
             id: 'settings',
             label: text.labels.settings,
-            leading: <Gear size={16} />,
+            leading: <GearIcon size={16} />,
             panel: text.panels.settings,
           },
         ]}
       />
+    );
+  },
+};
+
+/**
+ * Route-style tabs with hrefs. Selection is controlled in story state; the
+ * provider navigate callback intercepts navigation so Storybook does not leave
+ * the page.
+ */
+export const NavigationTabs: Story = {
+  render: () => {
+    const text = useTabsText();
+    const [selectedKey, setSelectedKey] = React.useState<string | number>('/overview');
+    const navigate = React.useCallback((href: string) => {
+      setSelectedKey(href);
+    }, []);
+
+    return (
+      <VeliProvider navigate={navigate}>
+        <div className="flex flex-col gap-4">
+          <Tabs
+            listAriaLabel="Section navigation"
+            selectedKey={selectedKey}
+            onSelectionChange={setSelectedKey}
+            items={[
+              {
+                id: '/overview',
+                label: text.labels.overview,
+                href: '/overview',
+              },
+              {
+                id: '/services',
+                label: text.labels.services,
+                href: '/services',
+              },
+              {
+                id: '/pricing',
+                label: text.labels.pricing,
+                href: '/pricing',
+              },
+            ]}
+          />
+          <p className="type-body-md-regular text-base-default">
+            {selectedKey === '/overview'
+              ? text.panels.overview
+              : selectedKey === '/services'
+                ? text.panels.services
+                : text.panels.pricing}
+          </p>
+        </div>
+      </VeliProvider>
     );
   },
 };

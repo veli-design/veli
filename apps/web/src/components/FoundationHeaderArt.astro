@@ -1,0 +1,178 @@
+---
+interface Props {
+  lottie: string;
+  lottieDark?: string;
+}
+
+const { lottie, lottieDark } = Astro.props;
+const usesSharedLottie = !lottieDark;
+---
+
+<span
+  class="docs-page-header__art"
+  aria-hidden="true"
+  data-foundation-header-art
+  data-lottie-src={lottie}
+  data-lottie-src-dark={lottieDark}
+>
+  {/* Native dotted plate — always present; doubles as load / reduced-motion fallback. */}
+  <span class="docs-page-header__art-bg"></span>
+  {
+    usesSharedLottie ? (
+      <canvas
+        class="docs-page-header__art-lottie docs-page-header__art-lottie--shared"
+        data-foundation-lottie="shared"
+      />
+    ) : (
+      <>
+        <canvas
+          class="docs-page-header__art-lottie docs-page-header__art-lottie--light"
+          data-foundation-lottie="light"
+        />
+        <canvas
+          class="docs-page-header__art-lottie docs-page-header__art-lottie--dark"
+          data-foundation-lottie="dark"
+        />
+      </>
+    )
+  }
+</span>
+
+<script>
+  import { DotLottie } from '@lottiefiles/dotlottie-web';
+  import wasmUrl from '@lottiefiles/dotlottie-web/dotlottie-player.wasm?url';
+
+  type HeaderArtRoot = HTMLElement & {
+    dataset: DOMStringMap & {
+      lottieSrc?: string;
+      lottieSrcDark?: string;
+      lottieMounted?: string;
+    };
+  };
+
+  const players = new WeakMap<HTMLCanvasElement, DotLottie>();
+  let wasmConfigured = false;
+
+  function ensureWasm() {
+    if (wasmConfigured) return;
+    DotLottie.setWasmUrl(wasmUrl);
+    wasmConfigured = true;
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function destroyPlayer(canvas: HTMLCanvasElement) {
+    const player = players.get(canvas);
+    if (!player) return;
+    player.destroy();
+    players.delete(canvas);
+    canvas.classList.remove('is-ready');
+  }
+
+  function observeCanvasSize(canvas: HTMLCanvasElement, player: DotLottie) {
+    if (typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(() => {
+      if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+        player.resize();
+      }
+    });
+    observer.observe(canvas);
+    player.addEventListener('destroy', () => observer.disconnect());
+  }
+
+  function mountPlayer(canvas: HTMLCanvasElement, src: string) {
+    if (!src || players.has(canvas)) return;
+
+    const player = new DotLottie({
+      canvas,
+      src,
+      autoplay: true,
+      loop: false,
+      layout: { fit: 'contain', align: [0.5, 0.5] },
+    });
+
+    players.set(canvas, player);
+    observeCanvasSize(canvas, player);
+
+    const markReady = () => {
+      canvas.classList.add('is-ready');
+    };
+
+    player.addEventListener('ready', markReady);
+    player.addEventListener('load', markReady);
+    player.addEventListener('loadError', (event) => {
+      console.error('[FoundationHeaderArt] Failed to load Lottie', src, event);
+      destroyPlayer(canvas);
+    });
+  }
+
+  function initHeaderArt(root: HeaderArtRoot) {
+    if (root.dataset.lottieMounted === 'true') return;
+    root.dataset.lottieMounted = 'true';
+
+    // CSS dotted plate stays visible; skip animation when motion is reduced.
+    if (prefersReducedMotion()) return;
+
+    const lightSrc = root.dataset.lottieSrc;
+    if (!lightSrc) return;
+
+    ensureWasm();
+
+    const sharedCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="shared"]');
+    if (sharedCanvas) {
+      mountPlayer(sharedCanvas, lightSrc);
+      return;
+    }
+
+    const lightCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="light"]');
+    const darkCanvas = root.querySelector<HTMLCanvasElement>('[data-foundation-lottie="dark"]');
+    const darkSrc = root.dataset.lottieSrcDark;
+
+    if (lightCanvas) mountPlayer(lightCanvas, lightSrc);
+    if (darkCanvas && darkSrc) mountPlayer(darkCanvas, darkSrc);
+  }
+
+  function initAll() {
+    for (const root of document.querySelectorAll<HeaderArtRoot>('[data-foundation-header-art]')) {
+      initHeaderArt(root);
+    }
+  }
+
+  function destroyAll() {
+    for (const canvas of document.querySelectorAll<HTMLCanvasElement>('[data-foundation-lottie]')) {
+      destroyPlayer(canvas);
+      const root = canvas.closest<HeaderArtRoot>('[data-foundation-header-art]');
+      if (root) {
+        delete root.dataset.lottieMounted;
+      }
+    }
+  }
+
+  initAll();
+  document.addEventListener('astro:page-load', initAll);
+  document.addEventListener('astro:after-swap', initAll);
+  document.addEventListener('astro:before-swap', destroyAll);
+
+  // Astro's client-side page events do not fire for every Vite HMR DOM replacement.
+  // Keep the existing player lifecycle, but also mount any fresh header art that
+  // HMR inserts so it does not remain on the dotted fallback plate.
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (
+          node instanceof Element &&
+          (node.matches('[data-foundation-header-art]') ||
+            node.querySelector('[data-foundation-header-art]'))
+        ) {
+          initAll();
+          return;
+        }
+      }
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+</script>

@@ -17,13 +17,16 @@ import {
   type VeliProviderSwitcherValues,
 } from './shared';
 
-function readProviderSwitcherValues() {
+function readProviderSwitcherValues(defaults: Partial<VeliProviderSwitcherValues> = {}) {
   const params = new URLSearchParams(document.location.search);
+  const root = document.documentElement;
 
   return normalizeProviderSwitcherValues({
-    language: params.get(providerSwitcherLanguageQueryParam) ?? undefined,
-    theme: params.get(providerSwitcherThemeQueryParam) ?? undefined,
-    surface: params.get(providerSwitcherSurfaceQueryParam) ?? undefined,
+    language: params.get(providerSwitcherLanguageQueryParam) ?? defaults.language,
+    theme:
+      params.get(providerSwitcherThemeQueryParam) ?? defaults.theme ?? root.dataset.colorScheme,
+    surface:
+      params.get(providerSwitcherSurfaceQueryParam) ?? defaults.surface ?? root.dataset.veliSurface,
   });
 }
 
@@ -34,7 +37,9 @@ function ProviderSwitcher({
   children: React.ReactNode;
   context: StoryContext;
 }) {
-  const [values, setValues] = React.useState(readProviderSwitcherValues);
+  const [values, setValues] = React.useState(() =>
+    readProviderSwitcherValues(context.parameters.veliProvider),
+  );
 
   /*
    * Keep existing story decorators that read context.globals.language working,
@@ -55,12 +60,15 @@ function ProviderSwitcher({
     };
 
     channel.on(providerSwitcherUpdatedEvent, updateProvider);
-    channel.emit(providerSwitcherReadyEvent);
+    channel.emit(
+      providerSwitcherReadyEvent,
+      readProviderSwitcherValues(context.parameters.veliProvider),
+    );
 
     return () => {
       channel.removeListener(providerSwitcherUpdatedEvent, updateProvider);
     };
-  }, []);
+  }, [context.parameters.veliProvider]);
 
   return (
     <StorybookThemeRoot
@@ -91,20 +99,26 @@ function StorybookThemeRoot({
 }) {
   const resolvedColorScheme = useResolvedStorybookColorScheme(colorScheme);
   const surfaceBackground = surfaceOptions.find((option) => option.value === surface)?.background;
-  const surfaceSelector = viewMode === 'docs' ? `#anchor--${storyId} .docs-story` : '.sb-show-main';
-  const surfaceStyleId = viewMode === 'docs' ? `veli-surface-docs-${storyId}` : 'veli-surface';
+  const surfaceStyleId = `veli-surface-docs-${storyId}`;
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.toggle('dark', resolvedColorScheme === 'dark');
     root.dataset.theme = resolvedColorScheme;
     root.dataset.colorScheme = colorScheme;
     root.style.colorScheme = resolvedColorScheme;
+    root.dataset.veliSurface = surface;
+    root.dataset.veliViewMode = viewMode;
+  }, [colorScheme, resolvedColorScheme, surface, viewMode]);
+
+  React.useLayoutEffect(() => {
+    if (viewMode !== 'docs') return;
+
     if (surfaceBackground) {
       setStyle(
         surfaceStyleId,
         `
-          ${surfaceSelector} {
+          #anchor--${storyId} .docs-story {
             background: ${surfaceBackground} !important;
           }
         `,
@@ -114,13 +128,9 @@ function StorybookThemeRoot({
     }
 
     return () => {
-      root.classList.remove('dark');
-      delete root.dataset.theme;
-      delete root.dataset.colorScheme;
-      root.style.removeProperty('color-scheme');
       removeStyle(surfaceStyleId);
     };
-  }, [colorScheme, resolvedColorScheme, surfaceBackground, surfaceSelector, surfaceStyleId]);
+  }, [storyId, surfaceBackground, surfaceStyleId, viewMode]);
 
   return (
     <div
@@ -154,12 +164,11 @@ function removeStyle(id: string) {
 }
 
 function useResolvedStorybookColorScheme(colorScheme: VeliColorScheme): VeliResolvedColorScheme {
-  const [systemColorScheme, setSystemColorScheme] =
-    React.useState<VeliResolvedColorScheme>('light');
+  const [systemColorScheme, setSystemColorScheme] = React.useState<VeliResolvedColorScheme>(() =>
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+  );
 
   React.useEffect(() => {
-    if (colorScheme !== 'system') return;
-
     const query = window.matchMedia('(prefers-color-scheme: dark)');
     const updateSystemColorScheme = () => {
       setSystemColorScheme(query.matches ? 'dark' : 'light');
@@ -171,14 +180,14 @@ function useResolvedStorybookColorScheme(colorScheme: VeliColorScheme): VeliReso
     return () => {
       query.removeEventListener('change', updateSystemColorScheme);
     };
-  }, [colorScheme]);
+  }, []);
 
   return colorScheme === 'system' ? systemColorScheme : colorScheme;
 }
 
 export const withProviderSwitcher: Decorator = (Story, context) => {
   return (
-    <ProviderSwitcher context={context}>
+    <ProviderSwitcher key={context.id} context={context}>
       <Story />
     </ProviderSwitcher>
   );

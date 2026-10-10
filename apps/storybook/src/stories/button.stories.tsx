@@ -1,96 +1,36 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import * as React from 'react';
-import { useArgs } from 'storybook/internal/preview-api';
+import { expect, fn, userEvent, within } from '@storybook/test';
 import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Plus, Trash, DownloadSimple } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
+import { verifyButtonRegressions } from '../tests/button';
 
-const iconSizeMap = {
-  xl: 20,
-  lg: 20,
-  md: 16,
-  sm: 16,
-  xs: 12,
-} as const;
+const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
+const iconSizeMap = { xs: 12, sm: 16, md: 16, lg: 20, xl: 20 } as const;
+const appearances = ['fill', 'transparent', 'ghost'] as const;
+const intents = ['primary', 'secondary', 'danger', 'accent'] as const;
 
 const buttonText = {
   en: {
-    argsChildren: 'Button',
-    primaryButton: 'Primary Button',
-    leadingIcon: 'Leading Icon',
-    trailingIcon: 'Trailing Icon',
-    bothIcons: 'Both Icons',
-    extraLargeButton: 'XL Button',
-    largeButton: 'LG Button',
-    mediumButton: 'MD Button',
-    smallButton: 'SM Button',
-    extraSmallButton: 'XS Button',
-    savingChanges: 'Saving changes...',
-    disabledAction: 'Disabled Action',
+    label: 'Continue',
+    add: 'Add item',
+    disabled: 'Unavailable',
+    loading: 'Loading',
+    pending: 'Pending',
   },
   dv: {
-    argsChildren: 'ބަޓަން',
-    primaryButton: 'މައިގަނޑު ބަޓަން',
-    leadingIcon: 'ކުރީގައި އައިކަން',
-    trailingIcon: 'ފަހަތުގައި އައިކަން',
-    bothIcons: 'ދެކޮޅުގައި އައިކަން',
-    extraLargeButton: 'ވަރަށް ބޮޑު ބަޓަން',
-    largeButton: 'ބޮޑު ބަޓަން',
-    mediumButton: 'މެދު ބަޓަން',
-    smallButton: 'ކުޑަ ބަޓަން',
-    extraSmallButton: 'ވަރަށް ކުޑަ ބަޓަން',
-    savingChanges: '...ބަދަލުތައް ސޭވްކުރަނީ',
-    disabledAction: 'ބޭނުންނުކުރެވޭ އެކްޝަން',
+    label: 'ކުރިއަށް',
+    add: 'އެއްކުރޭ',
+    disabled: 'ބޭނުންނުކުރެވޭ',
+    loading: 'ލޯޑުވަނީ',
+    pending: 'އިންތިޒާރުކުރަނީ',
   },
 } as const;
 
-const localizedButtonTextValues = Object.values(buttonText).flatMap((text) =>
-  Object.values(text),
-) as readonly string[];
-
-const buttonTextKeys = Object.keys(buttonText.en) as Array<keyof typeof buttonText.en>;
-
-const useButtonText = () => {
+function useButtonText() {
   const { direction } = useVeliLanguage();
-
-  return direction === 'rtl' ? buttonText.dv : buttonText.en;
-};
-
-function getLocalizedButtonText(value: string, language: keyof typeof buttonText) {
-  const trimmedValue = value.trim();
-
-  if (trimmedValue.length === 0) {
-    return buttonText[language].argsChildren;
-  }
-
-  const localizedKey = buttonTextKeys.find(
-    (key) => buttonText.en[key] === value || buttonText.dv[key] === value,
-  );
-
-  if (!localizedKey) {
-    return value;
-  }
-
-  return buttonText[language][localizedKey];
-}
-
-function resolveButtonText(children: React.ReactNode, fallback: string) {
-  if (typeof children !== 'string') {
-    return children ?? fallback;
-  }
-
-  const childText = children.trim();
-
-  if (childText.length === 0) {
-    return fallback;
-  }
-
-  if (localizedButtonTextValues.includes(childText) && childText !== fallback) {
-    return fallback;
-  }
-
-  return children;
+  return buttonText[direction === 'rtl' ? 'dv' : 'en'];
 }
 
 type PreviewArgs = ButtonProps & {
@@ -98,318 +38,241 @@ type PreviewArgs = ButtonProps & {
   trailingIcon?: boolean;
 };
 
-function renderPreviewButton(args: PreviewArgs, fallback?: string) {
-  const { leadingIcon, trailingIcon, children, ...buttonProps } = args;
+function PlaygroundButton({ leadingIcon, trailingIcon, children, ...props }: PreviewArgs) {
   const text = useButtonText();
-  const size = buttonProps.size ?? 'md';
-  const iconSize = iconSizeMap[size];
-  const buttonChildren = resolveButtonText(children, fallback ?? text.argsChildren);
-  const content = buttonProps.iconOnly ? (
-    <Plus size={iconSize} weight="bold" />
-  ) : (
-    <>
-      {leadingIcon ? <Plus size={iconSize} weight="bold" /> : null}
-      {buttonChildren}
-      {trailingIcon ? <DirectionalArrow size={iconSize} weight="bold" /> : null}
-    </>
-  );
-  const derivedAriaLabel =
-    buttonProps['aria-label'] ??
-    (typeof buttonChildren === 'string' ? buttonChildren : text.argsChildren);
+  const iconSize = iconSizeMap[props.size ?? 'md'];
+  const label =
+    children === buttonText.en.label || children === buttonText.dv.label
+      ? text.label
+      : (children ?? text.label);
 
-  if (buttonProps.iconOnly) {
+  if (props.iconOnly) {
     return (
-      <Button {...buttonProps} aria-label={derivedAriaLabel}>
-        {content}
+      <Button {...props} aria-label={props['aria-label'] || text.add}>
+        <PlusIcon aria-hidden="true" size={iconSize} weight="bold" />
       </Button>
     );
   }
 
   return (
-    <Button {...buttonProps} aria-label={buttonProps['aria-label']}>
-      {content}
+    <Button {...props}>
+      {leadingIcon && <PlusIcon aria-hidden="true" size={iconSize} weight="bold" />}
+      {label}
+      {trailingIcon && <DirectionalArrow aria-hidden="true" size={iconSize} weight="bold" />}
     </Button>
   );
 }
 
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [name, { ...argType, table: { category } }]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
 const meta = {
   title: 'Components/Button',
   component: Button,
-  render: (args: PreviewArgs) => renderPreviewButton(args),
-  decorators: [
-    (Story, context) => {
-      const language = context.globals.language === 'dv' ? 'dv' : 'en';
-      const [args, updateArgs] = useArgs();
-      const children = typeof args.children === 'string' ? args.children : '';
-      const localizedChildren = getLocalizedButtonText(children, language);
-
-      React.useEffect(() => {
-        if (children !== localizedChildren) {
-          updateArgs?.({ children: localizedChildren });
-        }
-      }, [children, localizedChildren, updateArgs]);
-
-      return <Story />;
-    },
-  ],
+  render: (args) => <PlaygroundButton {...args} />,
   parameters: {
     layout: 'centered',
+    controls: {
+      sort: 'none',
+      include: [
+        'intent',
+        'appearance',
+        'size',
+        'iconOnly',
+        'children',
+        'isDisabled',
+        'isLoading',
+        'isPending',
+        'aria-label',
+        'aria-describedby',
+        'aria-busy',
+        'onPress',
+        'onFocus',
+        'onBlur',
+        'leadingIcon',
+        'trailingIcon',
+      ],
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    intent: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger', 'accent'],
-    },
-    appearance: {
-      control: 'select',
-      options: ['fill', 'transparent', 'ghost'],
-    },
-    size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
-    },
-    isLoading: {
-      control: 'boolean',
-    },
-    iconOnly: {
-      control: 'boolean',
-    },
-    leadingIcon: {
-      control: 'boolean',
-    },
-    trailingIcon: {
-      control: 'boolean',
-    },
-    isDisabled: {
-      control: 'boolean',
-    },
+    ...withArgCategory('Appearance', {
+      intent: { control: 'select', options: intents },
+      appearance: {
+        control: 'select',
+        options: appearances,
+        if: { arg: 'intent', neq: 'accent' },
+        description: 'Accent supports fill only.',
+      },
+      size: { control: 'select', options: sizes },
+      iconOnly: { control: 'boolean' },
+    }),
+    ...withArgCategory('Content', {
+      children: { control: 'text', description: 'A label and optional icon elements.' },
+    }),
+    ...withArgCategory('State', {
+      isDisabled: { control: 'boolean' },
+      isLoading: { control: 'boolean' },
+      isPending: { control: 'boolean', description: 'Uses the same loading treatment.' },
+    }),
+    ...withArgCategory('Accessibility', {
+      'aria-label': { control: 'text' },
+      'aria-describedby': { control: 'text' },
+      'aria-busy': { control: 'boolean' },
+    }),
+    ...withArgCategory('Events', {
+      onPress: { action: 'pressed', control: false },
+      onFocus: { action: 'focused', control: false },
+      onBlur: { action: 'blurred', control: false },
+    }),
+    ...withArgCategory('Demo icons', {
+      leadingIcon: { control: 'boolean', description: 'Story control, not a Button prop.' },
+      trailingIcon: { control: 'boolean', description: 'Story control, not a Button prop.' },
+    }),
+    className: { control: false, table: { disable: true } },
+    ref: { control: false, table: { disable: true } },
+    render: { control: false, table: { disable: true } },
+    slot: { control: false, table: { disable: true } },
+    type: { control: false, table: { disable: true } },
+    name: { control: false, table: { disable: true } },
+    value: { control: false, table: { disable: true } },
   },
   args: {
-    children: buttonText.en.argsChildren,
+    children: buttonText.en.label,
     intent: 'primary',
     appearance: 'fill',
     size: 'md',
     iconOnly: false,
+    isDisabled: false,
+    isLoading: false,
+    isPending: false,
     leadingIcon: false,
     trailingIcon: false,
   },
 } satisfies Meta<PreviewArgs>;
 
 export default meta;
-type Story = StoryObj<PreviewArgs>;
+type Story = StoryObj<typeof meta>;
 
-/**
- * The default button style used for most actions.
- */
-export const Primary: Story = {
-  render: (args: PreviewArgs) => {
+// These examples own their props; changing playground controls must not imply otherwise.
+const exampleParameters = { controls: { disable: true }, actions: { disable: true } };
+
+export const Playground: Story = {};
+
+export const Variants: Story = {
+  parameters: exampleParameters,
+  render: function Variants() {
     const text = useButtonText();
-
-    return renderPreviewButton(args, text.primaryButton);
-  },
-  args: {
-    children: buttonText.en.primaryButton,
-  },
-};
-
-/**
- * A comprehensive view of all button variants and styles.
- * Useful for auditing visual consistency across the design system.
- */
-export const AllVariants: Story = {
-  render: () => {
-    const text = useButtonText();
-
     return (
-      <div className="grid grid-cols-4 gap-x-12 gap-y-8 items-center">
-        <div />
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Fill</div>
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">
-          Transparent
-        </div>
-        <div className="text-xs font-bold uppercase tracking-wider text-base-muted">Ghost</div>
-
-        <div className="text-sm font-medium">Primary</div>
-        <Button intent="primary" appearance="fill">
-          {text.argsChildren}
-        </Button>
-        <Button intent="primary" appearance="transparent">
-          {text.argsChildren}
-        </Button>
-        <Button intent="primary" appearance="ghost">
-          {text.argsChildren}
-        </Button>
-
-        <div className="text-sm font-medium">Secondary</div>
-        <Button intent="secondary" appearance="fill">
-          {text.argsChildren}
-        </Button>
-        <Button intent="secondary" appearance="transparent">
-          {text.argsChildren}
-        </Button>
-        <Button intent="secondary" appearance="ghost">
-          {text.argsChildren}
-        </Button>
-
-        <div className="text-sm font-medium">Danger</div>
-        <Button intent="danger" appearance="fill">
-          {text.argsChildren}
-        </Button>
-        <Button intent="danger" appearance="transparent">
-          {text.argsChildren}
-        </Button>
-        <Button intent="danger" appearance="ghost">
-          {text.argsChildren}
-        </Button>
-
-        <div className="text-sm font-medium">Accent</div>
-        <Button intent="accent" appearance="fill">
-          {text.argsChildren}
-        </Button>
-        <div className="text-xs text-base-muted">Fill only</div>
-        <div className="text-xs text-base-muted">Fill only</div>
+      <div className="grid w-full max-w-3xl gap-6 sm:grid-cols-2">
+        {intents.map((intent) => (
+          <div key={intent} className="flex flex-col items-start gap-3">
+            <span className="text-sm font-medium text-base-muted">{intent}</span>
+            <div className="flex flex-wrap items-center gap-3">
+              {intent === 'accent' ? (
+                <Button intent="accent" appearance="fill">
+                  {text.label}
+                </Button>
+              ) : (
+                appearances.map((appearance) => (
+                  <Button key={appearance} intent={intent} appearance={appearance}>
+                    {text.label}
+                  </Button>
+                ))
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     );
   },
 };
 
-/**
- * Demonstrates common icon placement patterns with correct Figma sizing:
- * XL/LG: 20px, MD/SM: 16px, XS: 12px.
- */
-export const WithIcons: Story = {
-  render: (args: PreviewArgs) => {
+export const SizesAndIcons: Story = {
+  parameters: exampleParameters,
+  render: function SizesAndIcons() {
     const text = useButtonText();
-    const size = iconSizeMap[args.size as keyof typeof iconSizeMap] || 16;
-
     return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-4">
-          <Button {...args}>
-            <Plus size={size} weight="bold" />
-            {text.leadingIcon}
-          </Button>
-          <Button {...args}>
-            {text.trailingIcon}
-            <DirectionalArrow size={size} weight="bold" />
-          </Button>
-          <Button {...args}>
-            <DownloadSimple size={size} weight="bold" />
-            {text.bothIcons}
-            <DirectionalArrow size={size} weight="bold" />
-          </Button>
-        </div>
-        <div className="text-xs text-base-muted italic">
-          Icon size for current {args.size} scale: {size}px
-        </div>
+      <div className="flex w-full max-w-3xl flex-col gap-6">
+        {sizes.map((size) => (
+          <div key={size} className="flex flex-wrap items-center gap-3">
+            <span className="w-6 text-sm text-base-muted">{size}</span>
+            <Button size={size}>{text.label}</Button>
+            <Button size={size} intent="secondary">
+              <PlusIcon aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
+              {text.label}
+              <DirectionalArrow aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
+            </Button>
+            <Button size={size} iconOnly aria-label={text.add}>
+              <PlusIcon aria-hidden="true" size={iconSizeMap[size]} weight="bold" />
+            </Button>
+          </div>
+        ))}
       </div>
     );
   },
 };
 
-/**
- * Icon-only buttons keep the existing intent, appearance, and size system,
- * while switching to a square footprint. Provide an accessible label.
- */
-export const IconOnly: Story = {
-  render: (args: PreviewArgs) => (
-    <div className="flex items-center gap-4 flex-wrap">
-      <Button {...args} size="xl" iconOnly aria-label="Add item">
-        <Plus size={24} weight="bold" />
+function ButtonStates({ onPress }: Pick<ButtonProps, 'onPress'>) {
+  const text = useButtonText();
+
+  return (
+    <div className="flex max-w-2xl flex-wrap items-center gap-3">
+      <Button onPress={onPress}>{text.label}</Button>
+      <Button isDisabled onPress={onPress}>
+        {text.disabled}
       </Button>
-      <Button
-        {...args}
-        intent="secondary"
-        appearance="transparent"
-        size="lg"
-        iconOnly
-        aria-label="Download file"
-      >
-        <DownloadSimple size={20} weight="bold" />
+      <Button isLoading onPress={onPress}>
+        {text.loading}
       </Button>
-      <Button
-        {...args}
-        intent="danger"
-        appearance="ghost"
-        size="md"
-        iconOnly
-        aria-label="Delete item"
-      >
-        <Trash size={16} weight="bold" />
+      <Button isPending onPress={onPress}>
+        {text.pending}
       </Button>
-      <Button
-        {...args}
-        intent="primary"
-        appearance="fill"
-        size="sm"
-        iconOnly
-        isLoading
-        aria-label="Saving"
-      >
-        <Plus size={16} weight="bold" />
+      <Button iconOnly isLoading aria-label={text.add} onPress={onPress}>
+        <PlusIcon aria-hidden="true" size={16} weight="bold" />
       </Button>
     </div>
-  ),
-};
+  );
+}
 
-/**
- * All supported sizes shown side-by-side with correctly sized icons.
- */
-export const Sizes: Story = {
-  render: (args: PreviewArgs) => {
-    const text = useButtonText();
+export const States: Story = {
+  parameters: exampleParameters,
+  args: { onPress: fn() },
+  render: ({ onPress }) => <ButtonStates onPress={onPress} />,
+  play: async ({ args, canvasElement, globals }) => {
+    const user = userEvent.setup();
+    const canvas = within(canvasElement);
+    const text = buttonText[globals.language === 'dv' ? 'dv' : 'en'];
+    const action = canvas.getByRole('button', { name: text.label });
+    const disabled = canvas.getByRole('button', { name: text.disabled });
+    const loading = canvas.getByRole('button', { name: text.loading });
+    const pending = canvas.getByRole('button', { name: text.pending });
 
-    return (
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-4 flex-wrap">
-          <Button {...args} size="xl">
-            <Plus size={20} weight="bold" /> {text.extraLargeButton}
-          </Button>
-          <Button {...args} size="lg">
-            <Plus size={20} weight="bold" /> {text.largeButton}
-          </Button>
-          <Button {...args} size="md">
-            <Plus size={16} weight="bold" /> {text.mediumButton}
-          </Button>
-          <Button {...args} size="sm">
-            <Plus size={16} weight="bold" /> {text.smallButton}
-          </Button>
-          <Button {...args} size="xs">
-            <Plus size={12} weight="bold" /> {text.extraSmallButton}
-          </Button>
-        </div>
-      </div>
+    action.focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard('[Space>]');
+    await expect(action).toHaveAttribute('data-pressed');
+    // The label inherits the button's scale instead of cancelling it with an inverse scale.
+    await expect(getComputedStyle(canvas.getByText(text.label, { exact: true })).scale).toBe(
+      'none',
     );
-  },
-};
+    await user.keyboard('[/Space]');
+    await expect(args.onPress).toHaveBeenCalledTimes(2);
+    await expect(disabled).toBeDisabled();
+    action.focus();
+    await user.tab();
+    await expect(loading).toHaveFocus();
 
-/**
- * Displays a loading spinner while preserving the button's dimensions.
- */
-export const Loading: Story = {
-  render: (args: PreviewArgs) => {
-    const text = useButtonText();
-
-    return renderPreviewButton(args, text.savingChanges);
-  },
-  args: {
-    isLoading: true,
-    children: buttonText.en.savingChanges,
-  },
-};
-
-/**
- * Standard disabled state. Prevents all user interaction.
- */
-export const Disabled: Story = {
-  render: (args: PreviewArgs) => {
-    const text = useButtonText();
-
-    return renderPreviewButton(args, text.disabledAction);
-  },
-  args: {
-    isDisabled: true,
-    children: buttonText.en.disabledAction,
+    for (const button of [loading, pending]) {
+      await expect(button).toHaveAttribute('aria-busy', 'true');
+      await expect(button).toHaveAttribute('aria-disabled', 'true');
+      await user.click(button);
+      await user.keyboard('{Enter}');
+    }
+    await expect(args.onPress).toHaveBeenCalledTimes(2);
+    pending.blur();
+    await verifyButtonRegressions(canvasElement);
   },
 };

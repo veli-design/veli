@@ -1,10 +1,11 @@
-export { VeliProvider } from './provider-component';
+export { VeliProvider } from './provider-component.js';
 export {
   getVeliLanguageConfig,
   useVeliColorScheme,
   useVeliLanguage,
+  useVeliRouter,
   veliLanguageConfigs,
-} from './provider-shared';
+} from './provider-shared.js';
 export type {
   VeliColorScheme,
   VeliDirection,
@@ -12,4 +13,5 @@ export type {
   VeliLanguageConfig,
   VeliProviderProps,
   VeliResolvedColorScheme,
-} from './provider-shared';
+  VeliRouterConfig,
+} from './provider-shared.js';

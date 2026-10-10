@@ -27,19 +27,51 @@ Veli is Tailwind-aligned, not Tailwind-default-valued. We use Tailwind v4's nati
 
 Dark mode is class-driven. Token CSS emits light variables by default and dark overrides under `:where(.dark, .dark *)`, and consuming apps should apply `.dark` to the document root or the relevant provider boundary. Veli supports `system`, `light`, and `dark` color scheme intents; `system` resolves from `prefers-color-scheme`.
 
-Frameworks should own their own app-shell theme runtime. In Next.js, prefer `next-themes` with `attribute="class"` so Veli's Tailwind theme CSS responds to `<html class="dark">`. For React Router, TanStack Router, TanStack Start, Astro, and Vite-based apps, any runtime is compatible as long as it applies the same `.dark` contract before or during first paint.
+`VeliProvider` injects a parser-blocking inline script and syncs `.dark`, `data-theme`, and `color-scheme` to `document.documentElement`. Portaled components (modals, popovers, tooltips, menus) then match `:where(.dark, .dark *)` even though they render under `document.body`.
+
+Put `suppressHydrationWarning` on `<html>`. Key canvas colours off `html` / `html.dark` — do not transition `body { background: white }` or the first paint will flash.
+
+```tsx
+// Next.js App Router: app/layout.tsx
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <VeliProvider>{children}</VeliProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+If `VeliProvider` is not the first node in `<body>`, inline the script in `<head>` with `getVeliThemeScript()` from `@tradenetcorp/veli-ui/theme-script`.
+
+```astro
+---
+import { getVeliThemeScript } from '@tradenetcorp/veli-ui/theme-script';
+---
+
+<head>
+  <script is:inline set:html={getVeliThemeScript()} />
+</head>
+```
+
+Frameworks that manage their own theme persistence (e.g. `next-themes`) can continue to do so. When using `next-themes`, set `attribute="class"` and `storageKey="veli-color-scheme"` so that Veli's Tailwind theme CSS responds to `<html class="dark">` and the storage key stays consistent.
 
 ## Current State
 
 The typography alignment work was implemented on 2026-05-07.
 
-- Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, and `tracking`.
+- Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, `tracking`, `spacing`, `radius`, `blur`, `breakpoint`, and `container`.
 - Semantic Figma text styles are canonical for designer usage: `Type/Heading/1/Semibold`, `Type/Body/md/Regular`, `Type/Caption/12/Regular`, etc.
 - Generated semantic utilities bridge Figma and code: `type-heading-1-semibold`, `type-body-md-regular`, `type-caption-12-regular`, etc.
 - Dhivehi text styles are emitted as `:lang(dv)` overrides for the same `type-*` utilities, so consumers switch typography by changing the inherited `lang` value through `VeliProvider`.
 - `text-*` remains Tailwind's primitive font-size namespace.
 - `type-*` is Veli's composite typography utility namespace.
 - Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
+- Foundation groups `radius`, `spacing`, `blur`, `breakpoints`, and `container` map into the Tailwind theme so utilities use Veli tokens instead of Tailwind defaults. The DTCG `breakpoints` collection remaps to Tailwind's singular `--breakpoint-*` namespace.
 - The old Figma `typography` collection is legacy. It may remain for one migration cycle, but it is excluded from canonical typography output.
 
 Build verification completed after a fresh Figma DTCG export:
@@ -212,6 +244,12 @@ Standalone tracking values:
 
 Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own font size. There is no base-16 discrepancy for `0.01em`; it is not fixed to 16px. For 12px caption text, both resolve to `0.12px`.
 
+## Export refreshes
+
+Replace `packages/tokens/src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including typography and effect styles, then run `corepack pnpm --filter @tradenetcorp/veli-tokens build`. Do not edit generated CSS. Keep the raw export intact, including Figma names and metadata.
+
+`prebuild.js` excludes the Figma-only `_docs` annotation collection and exporter-specific `Grid-styles` composites from CSS generation. Product colour validation remains strict. Code-owned motion primitives live in `src/motion.tokens.json` (published as `@tradenetcorp/veli-tokens/motion-tokens`) and are merged into the normalized build input. The public `@tradenetcorp/veli-tokens/tokens` entry point resolves to `dist/tokens.json`, generated from the untouched Figma export plus these motion defaults before CSS-specific normalization. This preserves existing JSON paths as well as CSS utilities. A future Figma motion collection takes precedence over these defaults.
+
 ## Motion Values
 
 Veli keeps motion primitives tokenized before any CSS transition, CSS keyframe, or Motion for React configuration is composed from them.
@@ -310,6 +348,8 @@ Current prebuild responsibilities:
 - Keeps `packages/tokens/src/design.tokens.json` as the untouched raw Figma export.
 - Rewrites stale aliases such as `{typography.font.sans}` to the canonical namespace.
 - Resolves typography composite `fontFamily` aliases to literal font family values before Terrazzo, because current `font/*` tokens export as `$type: "string"` rather than `$type: "fontFamily"`.
+- Renames Figma fractional spacing keys that use commas (`0,5`) to Tailwind dotted form (`0.5`) so CSS custom properties stay valid.
+- Hoists `Effect-styles.Shadow` into a top-level `shadow` group for the Tailwind theme map.
 
 `packages/tokens/postbuild.js` normalizes final CSS output.
 
@@ -317,7 +357,9 @@ Current postbuild responsibilities:
 
 - Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
 - Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
-- Adds `--spacing: 4px;` inside `@theme`.
+- Adds `--spacing: 4px;` inside `@theme` as the Tailwind spacing multiplier (named `--spacing-*` tokens still override matching utilities).
+- Rewrites Terrazzo fractional spacing hyphens (`--spacing-0-5`) to Tailwind underscore form (`--spacing-0_5`); unescaped dots are invalid in CSS custom-property names.
+- Aliases `radius.DEFAULT` to bare `--radius` (`rounded`) and `--radius-md` (`rounded-md`), because Veli has no separate `radius.md` token.
 - Emits motion primitives from the designer-approved values.
 - Generates Veli `@utility duration-*` and `@utility delay-*` classes from token CSS variables.
 - Converts grouped text variables to Tailwind's paired font-size and line-height syntax.

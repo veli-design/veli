@@ -4,9 +4,7 @@ import * as React from 'react';
 import {
   Button as AriaButton,
   DropZone as AriaDropZone,
-  FileTrigger,
   isFileDropItem,
-  Label,
   ProgressBar,
   Text,
   type DropZoneProps as AriaDropZoneProps,
@@ -14,21 +12,32 @@ import {
 } from 'react-aria-components';
 import { cva } from 'class-variance-authority';
 import {
-  File,
-  Archive,
-  FileAudio,
-  FileCode,
-  FileImage,
-  FileText,
-  FileVideo,
-  GearSix,
-  UploadSimple,
-  X,
-} from 'phosphor-react';
+  ArchiveIcon,
+  CheckCircleIcon,
+  FileIcon,
+  FileAudioIcon,
+  FileCodeIcon,
+  FileImageIcon,
+  FileVideoIcon,
+  GearSixIcon,
+  InfoIcon,
+  TrashIcon,
+  UploadSimpleIcon,
+  WarningCircleIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
-import { Button, type ButtonProps } from './button';
-import { StaticFieldMessage } from './field-shared';
-import { useVeliLanguage } from './provider';
+import { Button, type ButtonProps } from './button.js';
+import {
+  fieldHeaderInfoTooltipTriggerVariants,
+  fieldHeaderRequiredIndicatorVariants,
+  getFieldOptionalLabel,
+  getRenderableMessage,
+  messageVariants,
+  shouldShowFieldOptional,
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
 
 const ROOT_NAME = 'Dropzone';
 const DROPZONE_NAME = 'DropzoneArea';
@@ -41,6 +50,9 @@ const ITEM_PROGRESS_NAME = 'DropzoneItemProgress';
 const ITEM_DELETE_NAME = 'DropzoneItemDelete';
 const CLEAR_NAME = 'DropzoneClear';
 
+const FILE_PICKER_SUPPRESS_MS = 500;
+const TRANSIENT_INVALID_MS = 2000;
+
 function useAsRef<T>(value: T): React.MutableRefObject<T> {
   const ref = React.useRef(value);
   React.useLayoutEffect(() => {
@@ -52,29 +64,34 @@ function useAsRef<T>(value: T): React.MutableRefObject<T> {
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 B';
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
   return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
+}
+
+function getFileExtension(file: File) {
+  const parts = file.name.split('.');
+  return parts.length > 1 ? (parts.pop()?.toLowerCase() ?? '') : '';
 }
 
 function getFileIcon(file: File) {
   const type = file.type;
-  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
-  const iconClass = 'h-5 w-5 text-text-default-muted';
+  const extension = getFileExtension(file);
+  const iconClass = 'size-5 text-icon-base-muted';
 
   if (type.startsWith('image/')) {
-    return <FileImage className={iconClass} aria-hidden />;
+    return <FileImageIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('video/')) {
-    return <FileVideo className={iconClass} aria-hidden />;
+    return <FileVideoIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('audio/')) {
-    return <FileAudio className={iconClass} aria-hidden />;
+    return <FileAudioIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (type.startsWith('text/') || ['txt', 'md', 'rtf', 'pdf'].includes(extension)) {
-    return <FileText className={iconClass} aria-hidden />;
+    return <FileIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
@@ -96,21 +113,40 @@ function getFileIcon(file: File) {
       'cs',
     ].includes(extension)
   ) {
-    return <FileCode className={iconClass} aria-hidden />;
+    return <FileCodeIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension)) {
-    return <Archive className={iconClass} aria-hidden />;
+    return <ArchiveIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
   if (
     ['exe', 'msi', 'app', 'apk', 'deb', 'rpm'].includes(extension) ||
     type.startsWith('application/')
   ) {
-    return <GearSix className={iconClass} aria-hidden />;
+    return <GearSixIcon className={iconClass} weight="bold" aria-hidden />;
   }
 
-  return <File className={iconClass} aria-hidden />;
+  return <FileIcon className={iconClass} weight="bold" aria-hidden />;
+}
+
+function matchesAcceptedType(file: File, acceptTypes: readonly string[]) {
+  const fileType = file.type.toLowerCase();
+  const extension = getFileExtension(file);
+
+  return acceptTypes.some((acceptType) => {
+    const type = acceptType.toLowerCase();
+
+    if (type.startsWith('.')) {
+      return type === `.${extension}`;
+    }
+
+    if (type.endsWith('/*')) {
+      return fileType.startsWith(type.slice(0, -1));
+    }
+
+    return type === fileType;
+  });
 }
 
 type Direction = 'ltr' | 'rtl';
@@ -120,12 +156,13 @@ const dropzoneText = {
     fileUpload: 'File upload',
     uploadFailed: 'Upload failed',
     maxFilesAllowed: (maxFiles: number) => `Maximum ${maxFiles} files allowed`,
+    singleFileOnly: 'Only one file allowed',
     fileTypeNotAccepted: 'File type not accepted',
     fileTooLarge: 'File too large',
-    releaseToUpload: 'Release to upload',
     dragDropFilesHere: 'Drag & drop files here',
     orClickToBrowse: 'Or click to browse',
     browseFiles: 'Browse files',
+    uploaded: 'Uploaded',
     statusError: (error: string) => `Error: ${error}`,
     statusUploading: (progress: number) => `Uploading: ${progress}% complete`,
     uploadComplete: 'Upload complete',
@@ -133,17 +170,19 @@ const dropzoneText = {
     uploadProgressFor: (fileName: string) => `Upload progress for ${fileName}`,
     removeFile: (fileName: string) => `Remove ${fileName}`,
     clearAll: 'Clear all',
+    moreInformation: 'More information',
   },
   dv: {
     fileUpload: 'ފައިލް އަޕްލޯޑް',
     uploadFailed: 'އަޕްލޯޑެއް ނުކުރެވުނު',
     maxFilesAllowed: (maxFiles: number) => `ފައިލް ${maxFiles} ގިނަވެގެން އަޕްލޯޑް ކުރެވޭނީ`,
+    singleFileOnly: 'ހަމައެކަނި އެއް ފައިލް އަޕްލޯޑް ކުރެވޭނެ',
     fileTypeNotAccepted: 'މި ފައިލް ފޯމެޓްގެ ސަޕޯޓެއް ނުކުރޭ',
     fileTooLarge: 'ފައިލްގެ ސައިޒު މާ ބޮޑު',
-    releaseToUpload: 'އަޕްލޯޑްކުރަން ދޫކޮށްލާ',
     dragDropFilesHere: 'ފައިލްތައް މިތަނަށް ޑްރެގްކޮށް ދޫކޮށްލާ',
     orClickToBrowse: 'ނުވަތަ ފައިލް ހޯދަން ފިތާލާ',
     browseFiles: 'ފައިލްތައް ހޯދާ',
+    uploaded: 'އަޕްލޯޑްކުރެވިއްޖެ',
     statusError: (error: string) => `އެރަރ: ${error}`,
     statusUploading: (progress: number) => `އަޕްލޯޑްވަނީ: ${progress}%`,
     uploadComplete: 'އަޕްލޯޑްކޮށް ނިމިއްޖެ',
@@ -151,20 +190,23 @@ const dropzoneText = {
     uploadProgressFor: (fileName: string) => `${fileName} އަޕްލޯޑްވަމުންދާ މިންވަރު`,
     removeFile: (fileName: string) => `${fileName} ރިމޫވް ކުރޭ`,
     clearAll: 'ހުރިހާ ފައިލެއް ރިމޫވް ކުރޭ',
+    moreInformation: 'އިތުރު މަޢުލޫމާތު',
   },
 } as const;
 
 type DropzoneText = (typeof dropzoneText)[keyof typeof dropzoneText];
 
-interface FileState {
+export type DropzoneFileStatus = 'idle' | 'uploading' | 'error' | 'success';
+
+export interface DropzoneFileState {
   file: File;
   progress: number;
   error?: string;
-  status: 'idle' | 'uploading' | 'error' | 'success';
+  status: DropzoneFileStatus;
 }
 
-interface StoreState {
-  files: Map<File, FileState>;
+export interface DropzoneState {
+  files: Map<File, DropzoneFileState>;
   invalid: boolean;
 }
 
@@ -182,7 +224,7 @@ type DropEvent =
   NonNullable<AriaDropZoneProps['onDrop']> extends (event: infer E) => unknown ? E : never;
 
 type Store = {
-  getState: () => StoreState;
+  getState: () => DropzoneState;
   dispatch: (action: StoreAction) => void;
   subscribe: (listener: () => void) => () => void;
 };
@@ -197,9 +239,9 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
+function useStore<T>(selector: (state: DropzoneState) => T): T {
   const store = useStoreContext('useStore');
-  const lastValueRef = React.useRef<{ value: T; state: StoreState } | null>(null);
+  const lastValueRef = React.useRef<{ value: T; state: DropzoneState } | null>(null);
 
   const getSnapshot = React.useCallback(() => {
     const state = store.getState();
@@ -217,26 +259,25 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-const FILE_PICKER_SUPPRESS_MS = 500;
+type PendingFocus = 'item' | 'area' | null;
 
 interface DropzoneContextValue {
   dropzoneId: string;
   listId: string;
   disabled: boolean;
+  invalid: boolean;
   lang: string;
   dir: Direction;
   text: DropzoneText;
   urlCache: WeakMap<File, string>;
-  acceptedFileTypes: readonly string[] | undefined;
   multiple: boolean;
   label?: string;
-  name?: string;
-  required?: boolean;
-  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  rootRef: React.RefObject<HTMLDivElement | null>;
+  pendingFocusRef: React.MutableRefObject<PendingFocus>;
   openFilePicker: () => void;
-  suppressFilePicker: () => void;
-  isFilePickerSuppressed: () => boolean;
   onFilesChange: (files: File[]) => void;
+  removeFile: (file: File) => void;
+  clearFiles: () => void;
 }
 
 async function filesFromDropEvent(event: DropEvent) {
@@ -249,39 +290,18 @@ async function filesFromDropEvent(event: DropEvent) {
   return Promise.all(filePromises);
 }
 
-function getDropOperationForAccept(
-  types: Parameters<NonNullable<AriaDropZoneProps['getDropOperation']>>[0],
-  acceptTypes: readonly string[] | null | undefined,
-) {
-  // File upload dropzones should show drop-target feedback for OS file drags.
-  // Browsers often expose only "Files" during dragover — not specific mime types.
-  // File type/size rules are enforced after drop in onFilesChange.
-  if (types.has('Files')) {
-    return 'copy' as const;
-  }
-
-  if (!acceptTypes?.length) {
-    return 'copy' as const;
-  }
-
-  const matchesAccept = acceptTypes.some((acceptType) => {
-    if (acceptType.includes('/*')) {
-      return true;
-    }
-
-    if (acceptType.startsWith('.')) {
-      return types.has(acceptType);
-    }
-
-    return types.has(acceptType);
-  });
-
-  if (matchesAccept) {
-    return 'copy' as const;
-  }
-
-  // Unknown file payloads (e.g. extension-only types) — still show feedback.
+/**
+ * Browsers expose only "Files" during an OS file drag, not per-file MIME types,
+ * so every drag gets drop feedback. Type and size rules run after the drop.
+ */
+function getFileDropOperation() {
   return 'copy' as const;
+}
+
+function canMoveFocusWithin(root: HTMLElement | null) {
+  if (typeof document === 'undefined' || !root) return false;
+  const active = document.activeElement;
+  return !active || active === document.body || root.contains(active);
 }
 
 const DropzoneContext = React.createContext<DropzoneContextValue | null>(null);
@@ -294,110 +314,176 @@ function useDropzoneContext(consumerName: string) {
   return context;
 }
 
-const rootVariants = cva('flex w-full flex-col gap-2 font-sans antialiased');
+const rootVariants = cva('flex w-full flex-col gap-1 font-sans antialiased');
 
-function isDropzoneTriggerElement(target: EventTarget | null) {
-  return target instanceof HTMLElement && Boolean(target.closest('[data-slot="dropzone-trigger"]'));
-}
-
-const dropzoneVariants = cva(
-  'flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-center outline-none transition-colors data-[drop-target]:border-focus data-[drop-target]:bg-button-primary-subtle-default data-[drop-target]:text-text-primary-muted',
+/**
+ * Borders grow from 1px to 2px on hover, drop target, and invalid, so padding
+ * shrinks by 1px to keep the outer box fixed.
+ */
+const areaVariants = cva(
+  'relative flex w-full rounded-2xl border border-dashed bg-text-input-bg-default px-[15px] py-[19px] outline-none transition-[background-color,border-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed border-base-subtle bg-text-input-bg-default text-text-disabled-disabled',
-        false: 'border-base-subtle bg-text-input-bg-default text-text-default-muted',
+      layout: {
+        horizontal: 'flex-row flex-wrap items-center gap-3 text-start',
+        vertical: 'flex-col items-center justify-center gap-3 text-center',
       },
-      isDragging: {
-        true: 'border-focus bg-button-primary-subtle-default text-text-primary-muted',
-        false: '',
+      state: {
+        default: 'border-base-subtle',
+        hover: 'border-2 border-base-strong px-[14px] py-[18px]',
+        dropTarget: 'border-2 border-focus bg-button-primary-subtle-default px-[14px] py-[18px]',
+        invalid: 'border-2 border-danger px-[14px] py-[18px]',
+        disabled: 'cursor-not-allowed border-base-subtle',
       },
-      isInvalid: {
-        true: 'border-danger',
-        false: '',
-      },
-      isFocused: {
-        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-base',
+      isFocusVisible: {
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
         false: '',
       },
     },
     defaultVariants: {
-      isDisabled: false,
-      isDragging: false,
-      isInvalid: false,
-      isFocused: false,
+      layout: 'horizontal',
+      state: 'default',
+      isFocusVisible: false,
     },
   },
 );
 
-const dropzoneTitleVariants = cva('type-body-md-medium text-text-default-default');
+type AreaState = 'default' | 'hover' | 'dropTarget' | 'invalid' | 'disabled';
 
-const dropzoneHintVariants = cva('type-body-sm-regular text-text-default-subtle');
-
-const listVariants = cva('flex gap-2', {
+const areaIconVariants = cva('flex size-10 shrink-0 items-center justify-center', {
   variants: {
-    orientation: {
-      horizontal: 'flex-row flex-wrap',
-      vertical: 'flex-col',
+    isDisabled: {
+      true: 'text-icon-base-inactive',
+      false: 'text-icon-base-muted',
     },
   },
   defaultVariants: {
-    orientation: 'vertical',
+    isDisabled: false,
   },
 });
 
+const areaTextVariants = cva('flex flex-col gap-1.5', {
+  variants: {
+    layout: {
+      horizontal: 'min-w-40 flex-1 items-start',
+      vertical: 'items-center',
+    },
+  },
+  defaultVariants: {
+    layout: 'horizontal',
+  },
+});
+
+const areaTitleVariants = cva('break-words type-body-sm-medium', {
+  variants: {
+    state: {
+      default: 'text-base-default',
+      hover: 'text-base-default',
+      dropTarget: 'text-base-strong',
+      invalid: 'text-base-default',
+      disabled: 'text-base-inactive',
+    },
+  },
+  defaultVariants: {
+    state: 'default',
+  },
+});
+
+const areaMetaVariants = cva('flex flex-wrap items-center gap-x-2.5 gap-y-1', {
+  variants: {
+    layout: {
+      horizontal: 'justify-start',
+      vertical: 'justify-center',
+    },
+  },
+  defaultVariants: {
+    layout: 'horizontal',
+  },
+});
+
+const areaHintVariants = cva('type-caption-regular', {
+  variants: {
+    isDisabled: {
+      true: 'text-base-inactive',
+      false: 'text-base-subtle',
+    },
+  },
+  defaultVariants: {
+    isDisabled: false,
+  },
+});
+
+const areaSecondaryVariants = cva('type-caption-regular', {
+  variants: {
+    isDisabled: {
+      true: 'text-base-inactive',
+      false: 'text-base-muted',
+    },
+  },
+  defaultVariants: {
+    isDisabled: false,
+  },
+});
+
+const metaDividerVariants = cva('h-1.5 w-px shrink-0 bg-border-base-strong');
+
+const listVariants = cva('flex flex-col gap-1');
+
+/**
+ * Items keep one outer height across statuses: bordered statuses trade 1px of
+ * padding for the stroke, and statuses with a progress bar reserve 4px below.
+ */
 const itemVariants = cva(
-  'relative flex flex-wrap items-center gap-x-3 gap-y-2 overflow-hidden rounded-xl border border-base-subtle bg-text-input-bg-default p-3',
+  'relative flex items-center gap-3 overflow-hidden rounded-2xl bg-text-input-bg-default transition-[border-color] duration-normal ease-out motion-reduce:transition-none',
+  {
+    variants: {
+      status: {
+        idle: 'px-4 py-[18px]',
+        uploading: 'border border-dashed border-base-subtle px-[15px] pt-[17px] pb-[19px]',
+        success: 'px-4 pt-[18px] pb-5',
+        error: 'border border-danger px-[15px] py-[17px]',
+      },
+    },
+    defaultVariants: {
+      status: 'idle',
+    },
+  },
 );
 
 const previewVariants = cva(
-  'flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-button-secondary-subtle-default',
+  'relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-button-secondary-subtle-default',
 );
 
-const previewImageVariants = cva('h-full w-full object-cover');
+const previewImageVariants = cva('absolute inset-0 size-full object-cover');
 
-const metadataVariants = cva('flex min-w-0 flex-1 flex-col gap-0.5 text-start', {
+const metadataVariants = cva('flex min-w-0 flex-1 flex-col gap-1.5 text-start');
+
+const metadataNameVariants = cva('truncate type-body-sm-medium text-base-default');
+
+const metadataRowVariants = cva('flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1');
+
+const metadataSizeVariants = cva('type-caption-regular text-base-subtle');
+
+const metadataStatusVariants = cva('inline-flex min-w-0 items-center gap-1 type-caption-regular', {
   variants: {
-    size: {
-      default: '',
-      sm: 'gap-0',
+    status: {
+      idle: 'text-base-muted',
+      uploading: 'text-base-muted tabular-nums',
+      success: 'text-success-subtle',
+      error: 'text-danger-muted',
     },
   },
   defaultVariants: {
-    size: 'default',
+    status: 'idle',
   },
 });
-
-const metadataNameVariants = cva('truncate type-body-sm-medium text-text-default-default', {
-  variants: {
-    size: {
-      default: 'type-body-sm-medium',
-      sm: 'type-caption-medium',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
-
-const metadataSizeVariants = cva('type-caption-regular text-text-default-subtle');
-
-const metadataErrorVariants = cva('type-caption-regular text-text-danger-muted');
 
 const progressTrackVariants = cva(
-  'relative h-1 w-full overflow-hidden rounded-full bg-border-base-subtle',
+  'pointer-events-none absolute inset-x-0 bottom-0 h-1 overflow-hidden bg-border-base-subtle',
 );
 
 const progressBarVariants = cva(
-  'absolute inset-y-0 [inset-inline-start:0] h-full rounded-full bg-button-primary-default transition-[inline-size]',
-);
-
-const deleteButtonVariants = cva(
-  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-default-muted outline-none transition-colors hover:bg-button-secondary-subtle-hover hover:text-text-default-default focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
-);
-
-const fillProgressVariants = cva(
-  'pointer-events-none absolute inset-0 bg-button-primary-subtle-default transition-[clip-path]',
+  'absolute inset-y-0 start-0 bg-icon-success-subtle transition-[inline-size] duration-slow ease-out motion-reduce:transition-none',
 );
 
 const srOnlyVariants = cva('sr-only');
@@ -406,12 +492,16 @@ export interface DropzoneProps extends Omit<
   React.ComponentProps<'div'>,
   'defaultValue' | 'onChange'
 > {
+  /** Controlled list of files. */
   value?: File[];
+  /** Uncontrolled initial list of files. */
   defaultValue?: File[];
   onValueChange?: (files: File[]) => void;
+  /** Called with every batch of files that passes validation. */
   onAccept?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
   onFileReject?: (file: File, message: string) => void;
+  /** Return a message to reject the file, or `null` to accept it. */
   onFileValidate?: (file: File) => string | null | undefined;
   onUpload?: (
     files: File[],
@@ -421,16 +511,27 @@ export interface DropzoneProps extends Omit<
       onError: (file: File, error: Error) => void;
     },
   ) => Promise<void> | void;
+  /** Comma-separated MIME types, wildcards, or extensions, as in `<input accept>`. */
   accept?: string;
+  /** Maximum number of files. Ignored when `multiple` is false (one file). */
   maxFiles?: number;
+  /** Maximum file size in bytes. */
   maxSize?: number;
   dir?: Direction;
+  /** Accessible name for the drop area when no visible label references it. */
   label?: string;
+  /** Submits the current files with a native form under this name. */
   name?: string;
+  /** Requires a file on native form submission. */
+  required?: boolean;
   disabled?: boolean;
   invalid?: boolean;
+  /**
+   * Allow multiple files. When `false`, the area lays out as a row and swaps for the
+   * file item once a file is chosen. When `true`, the area stacks above the file list.
+   * @default false
+   */
   multiple?: boolean;
-  required?: boolean;
 }
 
 export function Dropzone(props: DropzoneProps) {
@@ -450,10 +551,10 @@ export function Dropzone(props: DropzoneProps) {
     lang: langProp,
     label,
     name,
+    required = false,
     disabled = false,
     invalid = false,
     multiple = false,
-    required = false,
     children,
     className,
     ...rootProps
@@ -466,9 +567,12 @@ export function Dropzone(props: DropzoneProps) {
 
   const dropzoneId = React.useId();
   const listId = React.useId();
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const pendingFocusRef = React.useRef<PendingFocus>(null);
 
   const [listeners] = React.useState(() => new Set<() => void>());
-  const [files] = React.useState(() => new Map<File, FileState>());
+  const [files] = React.useState(() => new Map<File, DropzoneFileState>());
   const [urlCache] = React.useState(() => new WeakMap<File, string>());
 
   const isControlled = value !== undefined;
@@ -492,14 +596,28 @@ export function Dropzone(props: DropzoneProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    const stateRef: { current: StoreState } = {
+    const stateRef: { current: DropzoneState } = {
       current: {
         files,
-        invalid,
+        invalid: false,
       },
     };
 
-    function reducer(currentState: StoreState, action: StoreAction): StoreState {
+    function emitValueChange() {
+      propsRef.current.onValueChange?.(
+        Array.from(files.values()).map((fileState) => fileState.file),
+      );
+    }
+
+    function revokePreview(file: File) {
+      const cachedUrl = urlCache.get(file);
+      if (cachedUrl) {
+        URL.revokeObjectURL(cachedUrl);
+        urlCache.delete(file);
+      }
+    }
+
+    function reducer(currentState: DropzoneState, action: StoreAction): DropzoneState {
       switch (action.type) {
         case 'ADD_FILES': {
           for (const file of action.files) {
@@ -510,10 +628,7 @@ export function Dropzone(props: DropzoneProps) {
             });
           }
 
-          if (propsRef.current.onValueChange) {
-            const fileList = Array.from(files.values()).map((fileState) => fileState.file);
-            propsRef.current.onValueChange(fileList);
-          }
+          emitValueChange();
           return { ...currentState, files };
         }
 
@@ -521,13 +636,13 @@ export function Dropzone(props: DropzoneProps) {
           const newFileSet = new Set(action.files);
           for (const existingFile of files.keys()) {
             if (!newFileSet.has(existingFile)) {
+              revokePreview(existingFile);
               files.delete(existingFile);
             }
           }
 
           for (const file of action.files) {
-            const existingState = files.get(file);
-            if (!existingState) {
+            if (!files.has(file)) {
               files.set(file, {
                 file,
                 progress: 0,
@@ -540,53 +655,50 @@ export function Dropzone(props: DropzoneProps) {
 
         case 'SET_PROGRESS': {
           const fileState = files.get(action.file);
-          if (fileState) {
-            files.set(action.file, {
-              ...fileState,
-              progress: action.progress,
-              status: 'uploading',
-            });
+          if (!fileState || fileState.status === 'success') {
+            return currentState;
           }
+
+          files.set(action.file, {
+            ...fileState,
+            progress: action.progress,
+            error: undefined,
+            status: 'uploading',
+          });
           return { ...currentState, files };
         }
 
         case 'SET_SUCCESS': {
           const fileState = files.get(action.file);
-          if (fileState) {
-            files.set(action.file, {
-              ...fileState,
-              progress: 100,
-              status: 'success',
-            });
-          }
+          if (!fileState) return currentState;
+
+          files.set(action.file, {
+            ...fileState,
+            progress: 100,
+            error: undefined,
+            status: 'success',
+          });
           return { ...currentState, files };
         }
 
         case 'SET_ERROR': {
           const fileState = files.get(action.file);
-          if (fileState) {
-            files.set(action.file, {
-              ...fileState,
-              error: action.error,
-              status: 'error',
-            });
-          }
+          if (!fileState) return currentState;
+
+          files.set(action.file, {
+            ...fileState,
+            error: action.error,
+            status: 'error',
+          });
           return { ...currentState, files };
         }
 
         case 'REMOVE_FILE': {
-          const cachedUrl = urlCache.get(action.file);
-          if (cachedUrl) {
-            URL.revokeObjectURL(cachedUrl);
-            urlCache.delete(action.file);
-          }
+          if (!files.has(action.file)) return currentState;
 
+          revokePreview(action.file);
           files.delete(action.file);
-
-          if (propsRef.current.onValueChange) {
-            const fileList = Array.from(files.values()).map((fileState) => fileState.file);
-            propsRef.current.onValueChange(fileList);
-          }
+          emitValueChange();
           return { ...currentState, files };
         }
 
@@ -596,17 +708,11 @@ export function Dropzone(props: DropzoneProps) {
 
         case 'CLEAR': {
           for (const file of files.keys()) {
-            const cachedUrl = urlCache.get(file);
-            if (cachedUrl) {
-              URL.revokeObjectURL(cachedUrl);
-              urlCache.delete(file);
-            }
+            revokePreview(file);
           }
 
           files.clear();
-          if (propsRef.current.onValueChange) {
-            propsRef.current.onValueChange([]);
-          }
+          emitValueChange();
           return { ...currentState, files, invalid: false };
         }
 
@@ -628,25 +734,40 @@ export function Dropzone(props: DropzoneProps) {
         return () => listeners.delete(listener);
       },
     };
-  }, [listeners, files, invalid, propsRef, urlCache]);
+  }, [listeners, files, propsRef, urlCache]);
 
-  const acceptTypes = acceptedFileTypes ?? null;
-
+  const pendingProgressRef = React.useRef(new Map<File, number>());
   const progressFrameRef = React.useRef(0);
+
   const onProgress = React.useCallback(
     (file: File, progress: number) => {
+      pendingProgressRef.current.set(file, Math.round(Math.min(Math.max(0, progress), 100)));
       if (progressFrameRef.current) return;
+
       progressFrameRef.current = requestAnimationFrame(() => {
         progressFrameRef.current = 0;
-        store.dispatch({
-          type: 'SET_PROGRESS',
-          file,
-          progress: Math.min(Math.max(0, progress), 100),
-        });
+        const pending = Array.from(pendingProgressRef.current);
+        pendingProgressRef.current.clear();
+
+        for (const [pendingFile, pendingProgress] of pending) {
+          store.dispatch({ type: 'SET_PROGRESS', file: pendingFile, progress: pendingProgress });
+        }
       });
     },
     [store],
   );
+
+  const invalidTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  React.useEffect(() => {
+    const pendingProgress = pendingProgressRef.current;
+
+    return () => {
+      if (progressFrameRef.current) cancelAnimationFrame(progressFrameRef.current);
+      pendingProgress.clear();
+      clearTimeout(invalidTimerRef.current);
+    };
+  }, []);
 
   React.useEffect(() => {
     if (isControlled) {
@@ -667,35 +788,66 @@ export function Dropzone(props: DropzoneProps) {
     };
   }, [files, urlCache]);
 
+  const syncFileInput = React.useCallback(() => {
+    const input = fileInputRef.current;
+    if (!input || !name || typeof DataTransfer === 'undefined') return;
+
+    try {
+      const dataTransfer = new DataTransfer();
+      for (const file of store.getState().files.keys()) {
+        dataTransfer.items.add(file);
+      }
+      input.files = dataTransfer.files;
+    } catch {
+      // Some environments (older WebKit, jsdom) cannot assign FileList.
+    }
+  }, [name, store]);
+
+  React.useEffect(() => {
+    syncFileInput();
+    return store.subscribe(syncFileInput);
+  }, [store, syncFileInput]);
+
+  React.useEffect(() => {
+    const input = fileInputRef.current;
+    if (!input) return;
+
+    input.addEventListener('cancel', syncFileInput);
+    return () => input.removeEventListener('cancel', syncFileInput);
+  }, [syncFileInput]);
+
   const onFilesUpload = React.useCallback(
     async (uploadFiles: File[]) => {
+      const upload = propsRef.current.onUpload;
+      if (!upload) return;
+
+      const settle = (file: File) => pendingProgressRef.current.delete(file);
+
       try {
         for (const file of uploadFiles) {
           store.dispatch({ type: 'SET_PROGRESS', file, progress: 0 });
         }
 
-        if (propsRef.current.onUpload) {
-          await propsRef.current.onUpload(uploadFiles, {
-            onProgress,
-            onSuccess: (file) => {
-              store.dispatch({ type: 'SET_SUCCESS', file });
-            },
-            onError: (file, error) => {
-              store.dispatch({
-                type: 'SET_ERROR',
-                file,
-                error: error.message ?? text.uploadFailed,
-              });
-            },
-          });
-        } else {
-          for (const file of uploadFiles) {
+        await upload(uploadFiles, {
+          onProgress,
+          onSuccess: (file) => {
+            settle(file);
             store.dispatch({ type: 'SET_SUCCESS', file });
-          }
-        }
+          },
+          onError: (file, error) => {
+            settle(file);
+            store.dispatch({
+              type: 'SET_ERROR',
+              file,
+              error: error.message || text.uploadFailed,
+            });
+          },
+        });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : text.uploadFailed;
+        const errorMessage =
+          error instanceof Error && error.message ? error.message : text.uploadFailed;
         for (const file of uploadFiles) {
+          settle(file);
           store.dispatch({
             type: 'SET_ERROR',
             file,
@@ -713,10 +865,11 @@ export function Dropzone(props: DropzoneProps) {
 
       let filesToProcess = [...originalFiles];
       let nextInvalid = false;
+      const fileLimit = multiple ? maxFiles : 1;
 
-      if (maxFiles) {
+      if (fileLimit) {
         const currentCount = store.getState().files.size;
-        const remainingSlotCount = Math.max(0, maxFiles - currentCount);
+        const remainingSlotCount = Math.max(0, fileLimit - currentCount);
 
         if (remainingSlotCount < filesToProcess.length) {
           const rejectedFiles = filesToProcess.slice(remainingSlotCount);
@@ -724,14 +877,9 @@ export function Dropzone(props: DropzoneProps) {
           filesToProcess = filesToProcess.slice(0, remainingSlotCount);
 
           for (const file of rejectedFiles) {
-            let rejectionMessage = text.maxFilesAllowed(maxFiles);
-
-            if (propsRef.current.onFileValidate) {
-              const validationMessage = propsRef.current.onFileValidate(file);
-              if (validationMessage) {
-                rejectionMessage = validationMessage;
-              }
-            }
+            const rejectionMessage =
+              propsRef.current.onFileValidate?.(file) ||
+              (multiple ? text.maxFilesAllowed(fileLimit) : text.singleFileOnly);
 
             propsRef.current.onFileReject?.(file, rejectionMessage);
           }
@@ -741,84 +889,67 @@ export function Dropzone(props: DropzoneProps) {
       const acceptedFiles: File[] = [];
 
       for (const file of filesToProcess) {
-        let rejected = false;
-        let rejectionMessage = '';
+        let rejectionMessage = propsRef.current.onFileValidate?.(file) || '';
 
-        if (propsRef.current.onFileValidate) {
-          const validationMessage = propsRef.current.onFileValidate(file);
-          if (validationMessage) {
-            rejectionMessage = validationMessage;
-            propsRef.current.onFileReject?.(file, rejectionMessage);
-            rejected = true;
-            nextInvalid = true;
-            continue;
-          }
+        if (
+          !rejectionMessage &&
+          acceptedFileTypes &&
+          !matchesAcceptedType(file, acceptedFileTypes)
+        ) {
+          rejectionMessage = text.fileTypeNotAccepted;
         }
 
-        if (acceptTypes) {
-          const fileType = file.type;
-          const fileExtension = `.${file.name.split('.').pop()}`;
-
-          if (
-            !acceptTypes.some(
-              (type) =>
-                type === fileType ||
-                type === fileExtension ||
-                (type.includes('/*') && fileType.startsWith(type.replace('/*', '/'))),
-            )
-          ) {
-            rejectionMessage = text.fileTypeNotAccepted;
-            propsRef.current.onFileReject?.(file, rejectionMessage);
-            rejected = true;
-            nextInvalid = true;
-          }
-        }
-
-        if (maxSize && file.size > maxSize) {
+        if (!rejectionMessage && maxSize && file.size > maxSize) {
           rejectionMessage = text.fileTooLarge;
-          propsRef.current.onFileReject?.(file, rejectionMessage);
-          rejected = true;
-          nextInvalid = true;
         }
 
-        if (!rejected) {
-          acceptedFiles.push(file);
+        if (rejectionMessage) {
+          propsRef.current.onFileReject?.(file, rejectionMessage);
+          nextInvalid = true;
+          continue;
         }
+
+        acceptedFiles.push(file);
       }
 
       if (nextInvalid) {
+        clearTimeout(invalidTimerRef.current);
         store.dispatch({ type: 'SET_INVALID', invalid: true });
-        setTimeout(() => {
+        invalidTimerRef.current = setTimeout(() => {
           store.dispatch({ type: 'SET_INVALID', invalid: false });
-        }, 2000);
+        }, TRANSIENT_INVALID_MS);
       }
 
-      if (acceptedFiles.length > 0) {
-        store.dispatch({ type: 'ADD_FILES', files: acceptedFiles });
+      if (acceptedFiles.length === 0) return;
 
-        if (isControlled && propsRef.current.onValueChange) {
-          const currentFiles = Array.from(store.getState().files.values()).map(
-            (fileState) => fileState.file,
-          );
-          propsRef.current.onValueChange([...currentFiles]);
-        }
+      if (!multiple && canMoveFocusWithin(rootRef.current)) {
+        pendingFocusRef.current = 'item';
+      }
 
-        if (propsRef.current.onAccept) {
-          propsRef.current.onAccept(acceptedFiles);
-        }
+      store.dispatch({ type: 'ADD_FILES', files: acceptedFiles });
+      propsRef.current.onAccept?.(acceptedFiles);
 
-        for (const file of acceptedFiles) {
-          propsRef.current.onFileAccept?.(file);
-        }
+      for (const file of acceptedFiles) {
+        propsRef.current.onFileAccept?.(file);
+      }
 
-        if (propsRef.current.onUpload) {
-          requestAnimationFrame(() => {
-            void onFilesUpload(acceptedFiles);
-          });
-        }
+      if (propsRef.current.onUpload) {
+        requestAnimationFrame(() => {
+          void onFilesUpload(acceptedFiles);
+        });
       }
     },
-    [store, isControlled, propsRef, onFilesUpload, maxFiles, acceptTypes, maxSize, disabled, text],
+    [
+      store,
+      propsRef,
+      onFilesUpload,
+      maxFiles,
+      acceptedFileTypes,
+      maxSize,
+      disabled,
+      multiple,
+      text,
+    ],
   );
 
   const onFilesChangeRef = useAsRef(onFilesChange);
@@ -830,20 +961,10 @@ export function Dropzone(props: DropzoneProps) {
     [onFilesChangeRef],
   );
 
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const pickerSuppressUntilRef = React.useRef(0);
 
-  const suppressFilePicker = React.useCallback(() => {
-    pickerSuppressUntilRef.current = Date.now() + FILE_PICKER_SUPPRESS_MS;
-  }, []);
-
-  const isFilePickerSuppressed = React.useCallback(
-    () => Date.now() < pickerSuppressUntilRef.current,
-    [],
-  );
-
   const openFilePicker = React.useCallback(() => {
-    if (isFilePickerSuppressed()) {
+    if (disabled || Date.now() < pickerSuppressUntilRef.current) {
       return;
     }
 
@@ -854,7 +975,37 @@ export function Dropzone(props: DropzoneProps) {
 
     input.value = '';
     input.click();
-  }, [isFilePickerSuppressed]);
+  }, [disabled]);
+
+  const onInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      pickerSuppressUntilRef.current = Date.now() + FILE_PICKER_SUPPRESS_MS;
+      handleFilesChange(Array.from(event.currentTarget.files ?? []));
+      syncFileInput();
+    },
+    [handleFilesChange, syncFileInput],
+  );
+
+  const moveFocusAfterRemoval = React.useCallback(() => {
+    if (!multiple && canMoveFocusWithin(rootRef.current)) {
+      pendingFocusRef.current = 'area';
+    }
+  }, [multiple]);
+
+  const removeFile = React.useCallback(
+    (file: File) => {
+      moveFocusAfterRemoval();
+      pendingProgressRef.current.delete(file);
+      store.dispatch({ type: 'REMOVE_FILE', file });
+    },
+    [moveFocusAfterRemoval, store],
+  );
+
+  const clearFiles = React.useCallback(() => {
+    moveFocusAfterRemoval();
+    pendingProgressRef.current.clear();
+    store.dispatch({ type: 'CLEAR' });
+  }, [moveFocusAfterRemoval, store]);
 
   const contextValue = React.useMemo<DropzoneContextValue>(
     () => ({
@@ -864,17 +1015,16 @@ export function Dropzone(props: DropzoneProps) {
       dir,
       text,
       disabled,
+      invalid,
       urlCache,
-      acceptedFileTypes,
       multiple,
       label: label ?? text.fileUpload,
-      name,
-      required,
-      fileInputRef,
+      rootRef,
+      pendingFocusRef,
       openFilePicker,
-      suppressFilePicker,
-      isFilePickerSuppressed,
       onFilesChange: handleFilesChange,
+      removeFile,
+      clearFiles,
     }),
     [
       dropzoneId,
@@ -883,16 +1033,14 @@ export function Dropzone(props: DropzoneProps) {
       dir,
       text,
       disabled,
+      invalid,
       urlCache,
-      acceptedFileTypes,
       multiple,
       label,
-      name,
-      required,
       openFilePicker,
-      suppressFilePicker,
-      isFilePickerSuppressed,
       handleFilesChange,
+      removeFile,
+      clearFiles,
     ],
   );
 
@@ -900,12 +1048,26 @@ export function Dropzone(props: DropzoneProps) {
     <StoreContext.Provider value={store}>
       <DropzoneContext.Provider value={contextValue}>
         <div
+          ref={rootRef}
           data-slot="dropzone"
+          data-disabled={disabled ? '' : undefined}
           lang={lang}
           dir={dir}
           className={twMerge(rootVariants(), className)}
           {...rootProps}
         >
+          <input
+            ref={fileInputRef}
+            type="file"
+            hidden
+            tabIndex={-1}
+            name={name}
+            required={required}
+            accept={accept}
+            multiple={multiple}
+            disabled={disabled}
+            onChange={onInputChange}
+          />
           {children}
         </div>
       </DropzoneContext.Provider>
@@ -913,90 +1075,127 @@ export function Dropzone(props: DropzoneProps) {
   );
 }
 
-export interface DropzoneAreaProps extends Omit<AriaDropZoneProps, 'className' | 'children'> {
+function getAreaState({
+  isDisabled,
+  isDropTarget,
+  isHovered,
+  isInvalid,
+}: {
+  isDisabled: boolean;
+  isDropTarget: boolean;
+  isHovered: boolean;
+  isInvalid: boolean;
+}): AreaState {
+  if (isDisabled) return 'disabled';
+  if (isDropTarget) return 'dropTarget';
+  if (isInvalid) return 'invalid';
+  if (isHovered) return 'hover';
+  return 'default';
+}
+
+export interface DropzoneAreaProps extends Omit<
+  AriaDropZoneProps,
+  'className' | 'children' | 'isDisabled'
+> {
   className?: string;
+  /** Replaces the default icon, title, and hint. The trigger still renders when `showTrigger`. */
   children?: React.ReactNode | ((props: DropZoneRenderProps) => React.ReactNode);
-  /** Show the browse button inside the dropzone. @default true */
+  /** @default localized "Drag & drop files here" */
+  title?: React.ReactNode;
+  /** Hint under the title. @default localized "Or click to browse" */
+  hint?: React.ReactNode;
+  /** Trailing text after the divider, such as upload limits. Hidden when empty. */
+  secondaryText?: React.ReactNode;
+  /** Show the Browse files button. @default true */
   showTrigger?: boolean;
+  /** Mark the area invalid, in addition to the transient state after a rejection. */
+  isInvalid?: boolean;
 }
 
 function DropzoneAreaContent({
   children,
   state,
+  areaState,
+  layout,
+  title,
+  hint,
+  secondaryText,
   showTrigger,
 }: {
   children?: DropzoneAreaProps['children'];
   state: DropZoneRenderProps;
+  areaState: AreaState;
+  layout: 'horizontal' | 'vertical';
+  title?: React.ReactNode;
+  hint?: React.ReactNode;
+  secondaryText?: React.ReactNode;
   showTrigger: boolean;
 }) {
   const context = useDropzoneContext(DROPZONE_NAME);
   const content = typeof children === 'function' ? children(state) : children;
-
-  if (content) {
-    return (
-      <>
-        {content}
-        {showTrigger ? <DropzoneTrigger /> : null}
-      </>
-    );
-  }
+  const isDisabled = areaState === 'disabled';
+  const renderedSecondary = getRenderableMessage(secondaryText);
 
   return (
     <>
-      <UploadSimple
-        size={24}
-        aria-hidden
-        className={twMerge(
-          'text-text-default-muted',
-          state.isDropTarget && 'text-text-primary-muted',
-        )}
-      />
-      <Text
-        slot="label"
-        className={twMerge(
-          dropzoneTitleVariants(),
-          state.isDropTarget && 'text-text-primary-muted',
-        )}
-      >
-        {state.isDropTarget ? context.text.releaseToUpload : context.text.dragDropFilesHere}
-      </Text>
-      <span
-        className={twMerge(dropzoneHintVariants(), state.isDropTarget && 'text-text-primary-muted')}
-      >
-        {context.text.orClickToBrowse}
-      </span>
+      {content ?? (
+        <>
+          <span className={areaIconVariants({ isDisabled })}>
+            <UploadSimpleIcon size={24} aria-hidden />
+          </span>
+          <span className={areaTextVariants({ layout })}>
+            <Text slot="label" className={areaTitleVariants({ state: areaState })}>
+              {title ?? context.text.dragDropFilesHere}
+            </Text>
+            <span className={areaMetaVariants({ layout })}>
+              <span className={areaHintVariants({ isDisabled })}>
+                {hint ?? context.text.orClickToBrowse}
+              </span>
+              {renderedSecondary !== undefined ? (
+                <>
+                  <span aria-hidden className={metaDividerVariants()} />
+                  <span className={areaSecondaryVariants({ isDisabled })}>{renderedSecondary}</span>
+                </>
+              ) : null}
+            </span>
+          </span>
+        </>
+      )}
       {showTrigger ? <DropzoneTrigger /> : null}
     </>
   );
 }
 
-export function DropzoneArea({
+function DropzoneAreaSurface({
   className,
   children,
+  title,
+  hint,
+  secondaryText,
   showTrigger = true,
+  isInvalid: isInvalidProp,
   onDrop: onDropProp,
-  getDropOperation: getDropOperationProp,
+  onClick: onClickProp,
+  getDropOperation,
   ...dropzoneProps
 }: DropzoneAreaProps) {
   const context = useDropzoneContext(DROPZONE_NAME);
-  const {
-    fileInputRef,
-    disabled,
-    label,
-    acceptedFileTypes,
-    multiple,
-    openFilePicker,
-    suppressFilePicker,
-    onFilesChange,
-  } = context;
-  const invalid = useStore((state) => state.invalid);
+  const { disabled, label, multiple, openFilePicker, onFilesChange, pendingFocusRef } = context;
+  const transientInvalid = useStore((state) => state.invalid);
+  const isInvalid = Boolean(isInvalidProp) || context.invalid || transientInvalid;
+  const layout = multiple ? 'vertical' : 'horizontal';
+  const surfaceRef = React.useRef<HTMLDivElement>(null);
 
-  const setFileInputRef = React.useCallback(
-    (node: HTMLInputElement | null) => {
-      fileInputRef.current = node;
-    },
-    [fileInputRef],
-  );
+  React.useEffect(() => {
+    if (pendingFocusRef.current !== 'area') return;
+    pendingFocusRef.current = null;
+
+    const surface = surfaceRef.current;
+    const focusTarget =
+      surface?.querySelector<HTMLElement>('[data-slot="dropzone-trigger"]:not([disabled])') ??
+      surface?.querySelector<HTMLElement>('button, [tabindex]');
+    focusTarget?.focus();
+  }, [pendingFocusRef]);
 
   const onDrop = React.useCallback(
     async (event: DropEvent) => {
@@ -1011,98 +1210,87 @@ export function DropzoneArea({
     [onFilesChange, onDropProp],
   );
 
-  const getDropOperation = React.useCallback<NonNullable<AriaDropZoneProps['getDropOperation']>>(
-    (types, ...rest) => {
-      if (getDropOperationProp) {
-        return getDropOperationProp(types, ...rest);
-      }
+  const onSurfaceKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled || (event.key !== 'Enter' && event.key !== ' ')) return;
 
-      return getDropOperationForAccept(types, acceptedFileTypes);
-    },
-    [acceptedFileTypes, getDropOperationProp],
-  );
-
-  const onSelect = React.useCallback(
-    (files: FileList | null) => {
-      suppressFilePicker();
-      onFilesChange(Array.from(files ?? []));
-    },
-    [suppressFilePicker, onFilesChange],
-  );
-
-  const onSurfaceClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (disabled || isDropzoneTriggerElement(event.target)) {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target.closest('[data-slot="dropzone-trigger"], a[href], input, select, textarea')
+      ) {
         return;
       }
 
+      event.preventDefault();
       openFilePicker();
     },
     [disabled, openFilePicker],
   );
 
-  const onSurfaceKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (disabled || isDropzoneTriggerElement(event.target)) {
-        return;
-      }
-
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openFilePicker();
-      }
-    },
-    [disabled, openFilePicker],
-  );
-
   return (
-    <>
-      <FileTrigger
-        ref={setFileInputRef}
-        acceptedFileTypes={acceptedFileTypes}
-        allowsMultiple={multiple}
-        onSelect={onSelect}
-      >
-        <AriaButton className={srOnlyVariants()} aria-hidden>
-          {label}
-        </AriaButton>
-      </FileTrigger>
-      <div
-        role="button"
-        tabIndex={disabled ? -1 : 0}
-        className="w-full"
-        onClick={onSurfaceClick}
-        onKeyDown={onSurfaceKeyDown}
-      >
-        <AriaDropZone
-          data-slot="dropzone-area"
-          aria-label={label}
-          isDisabled={disabled}
-          data-invalid={invalid ? '' : undefined}
-          getDropOperation={getDropOperation}
-          onDrop={onDrop}
-          className={(state) =>
-            twMerge(
-              dropzoneVariants({
+    // Captures Enter/Space bubbling from React Aria's visually hidden drop button,
+    // which DropZone does not expose keyboard props for.
+    <div ref={surfaceRef} role="presentation" className="w-full" onKeyDown={onSurfaceKeyDown}>
+      <AriaDropZone
+        data-slot="dropzone-area"
+        data-layout={layout}
+        data-invalid={isInvalid ? '' : undefined}
+        aria-label={label}
+        isDisabled={disabled}
+        getDropOperation={getDropOperation ?? getFileDropOperation}
+        onDrop={onDrop}
+        onClick={onClickProp}
+        className={(state) =>
+          twMerge(
+            areaVariants({
+              layout,
+              state: getAreaState({
                 isDisabled: state.isDisabled,
-                isDragging: state.isDropTarget,
-                isInvalid: invalid,
-                isFocused: state.isFocusVisible,
+                isDropTarget: state.isDropTarget,
+                isHovered: state.isHovered,
+                isInvalid,
               }),
-              className,
-            )
-          }
-          {...dropzoneProps}
-        >
-          {(state) => (
-            <DropzoneAreaContent state={state} showTrigger={showTrigger}>
-              {children}
-            </DropzoneAreaContent>
-          )}
-        </AriaDropZone>
-      </div>
-    </>
+              isFocusVisible: state.isFocusVisible,
+            }),
+            className,
+          )
+        }
+        {...dropzoneProps}
+      >
+        {(state) => (
+          <DropzoneAreaContent
+            state={state}
+            areaState={getAreaState({
+              isDisabled: state.isDisabled,
+              isDropTarget: state.isDropTarget,
+              isHovered: state.isHovered,
+              isInvalid,
+            })}
+            layout={layout}
+            title={title}
+            hint={hint}
+            secondaryText={secondaryText}
+            showTrigger={showTrigger}
+          >
+            {children}
+          </DropzoneAreaContent>
+        )}
+      </AriaDropZone>
+    </div>
   );
+}
+
+/**
+ * In single-file mode the area is replaced by the file item once a file is chosen.
+ */
+export function DropzoneArea(props: DropzoneAreaProps) {
+  const context = useDropzoneContext(DROPZONE_NAME);
+  const fileCount = useStore((state) => state.files.size);
+
+  if (!context.multiple && fileCount > 0) return null;
+
+  return <DropzoneAreaSurface {...props} />;
 }
 
 export interface DropzoneTriggerProps extends Omit<ButtonProps, 'iconOnly'> {}
@@ -1111,9 +1299,11 @@ export function DropzoneTrigger({
   className,
   children,
   onPress: onPressProp,
+  isDisabled,
   ...triggerProps
 }: DropzoneTriggerProps) {
   const context = useDropzoneContext(TRIGGER_NAME);
+  const resolvedDisabled = Boolean(isDisabled) || context.disabled;
 
   const onPress = React.useCallback(
     (event: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
@@ -1130,9 +1320,8 @@ export function DropzoneTrigger({
       intent="secondary"
       appearance="transparent"
       size="sm"
-      isDisabled={context.disabled}
-      data-disabled={context.disabled ? '' : undefined}
-      className={className}
+      isDisabled={resolvedDisabled}
+      className={twMerge('shrink-0', className)}
       onPress={onPress}
       {...triggerProps}
     >
@@ -1142,17 +1331,10 @@ export function DropzoneTrigger({
 }
 
 export interface DropzoneListProps extends React.ComponentProps<'div'> {
-  orientation?: 'horizontal' | 'vertical';
   forceMount?: boolean;
 }
 
-export function DropzoneList({
-  className,
-  orientation = 'vertical',
-  forceMount,
-  children,
-  ...listProps
-}: DropzoneListProps) {
+export function DropzoneList({ className, forceMount, children, ...listProps }: DropzoneListProps) {
   const context = useDropzoneContext(LIST_NAME);
   const fileCount = useStore((state) => state.files.size);
   const shouldRender = forceMount || fileCount > 0;
@@ -1164,9 +1346,8 @@ export function DropzoneList({
       data-slot="dropzone-list"
       id={context.listId}
       role="list"
-      data-orientation={orientation}
       data-state={fileCount > 0 ? 'active' : 'inactive'}
-      className={twMerge(listVariants({ orientation }), className)}
+      className={twMerge(listVariants(), className)}
       {...listProps}
     >
       {children}
@@ -1176,11 +1357,10 @@ export function DropzoneList({
 
 interface DropzoneItemContextValue {
   id: string;
-  fileState: FileState | undefined;
+  fileState: DropzoneFileState | undefined;
   nameId: string;
   sizeId: string;
   statusId: string;
-  messageId: string;
 }
 
 const DropzoneItemContext = React.createContext<DropzoneItemContextValue | null>(null);
@@ -1203,7 +1383,6 @@ export function DropzoneItem({ value, className, children, ...itemProps }: Dropz
   const statusId = `${id}-status`;
   const nameId = `${id}-name`;
   const sizeId = `${id}-size`;
-  const messageId = `${id}-message`;
 
   const fileState = useStore((state) => state.files.get(value));
   const fileCount = useStore((state) => state.files.size);
@@ -1219,9 +1398,8 @@ export function DropzoneItem({ value, className, children, ...itemProps }: Dropz
       nameId,
       sizeId,
       statusId,
-      messageId,
     }),
-    [id, fileState, statusId, nameId, sizeId, messageId],
+    [id, fileState, statusId, nameId, sizeId],
   );
 
   if (!fileState) return null;
@@ -1238,12 +1416,13 @@ export function DropzoneItem({ value, className, children, ...itemProps }: Dropz
     <DropzoneItemContext.Provider value={itemContext}>
       <div
         data-slot="dropzone-item"
+        data-status={fileState.status}
         role="listitem"
         aria-setsize={fileCount}
         aria-posinset={fileIndex}
-        aria-describedby={`${nameId} ${sizeId} ${statusId}`}
         aria-labelledby={nameId}
-        className={twMerge(itemVariants(), className)}
+        aria-describedby={`${sizeId} ${statusId}`}
+        className={twMerge(itemVariants({ status: fileState.status }), className)}
         {...itemProps}
       >
         {children}
@@ -1270,84 +1449,109 @@ export function DropzoneItemPreview({
 
   const getDefaultRender = React.useCallback(
     (file: File) => {
-      if (itemContext.fileState?.file.type.startsWith('image/')) {
+      if (file.type.startsWith('image/')) {
         let url = context.urlCache.get(file);
         if (!url) {
           url = URL.createObjectURL(file);
           context.urlCache.set(file, url);
         }
 
-        return <img src={url} alt={file.name} className={previewImageVariants()} />;
+        return <img src={url} alt="" className={previewImageVariants()} />;
       }
 
       return getFileIcon(file);
     },
-    [itemContext.fileState?.file.type, context.urlCache],
-  );
-
-  const onPreviewRender = React.useCallback(
-    (file: File) => {
-      if (render) {
-        return render(file, () => getDefaultRender(file));
-      }
-
-      return getDefaultRender(file);
-    },
-    [render, getDefaultRender],
+    [context.urlCache],
   );
 
   if (!itemContext.fileState) return null;
 
+  const file = itemContext.fileState.file;
+
   return (
     <div
       data-slot="dropzone-item-preview"
+      aria-hidden
       className={twMerge(previewVariants(), className)}
       {...previewProps}
     >
-      {onPreviewRender(itemContext.fileState.file)}
+      {render ? render(file, () => getDefaultRender(file)) : getDefaultRender(file)}
       {children}
     </div>
   );
 }
 
-export interface DropzoneItemMetadataProps extends React.ComponentProps<'div'> {
-  size?: 'default' | 'sm';
+export interface DropzoneItemMetadataProps extends React.ComponentProps<'div'> {}
+
+function DropzoneItemStatus({
+  fileState,
+  text,
+}: {
+  fileState: DropzoneFileState;
+  text: DropzoneText;
+}) {
+  switch (fileState.status) {
+    case 'uploading':
+      return (
+        <span dir="ltr" className={metadataStatusVariants({ status: 'uploading' })}>
+          {fileState.progress}%
+        </span>
+      );
+    case 'success':
+      return (
+        <span className={metadataStatusVariants({ status: 'success' })}>
+          <CheckCircleIcon size={12} weight="fill" aria-hidden className="shrink-0" />
+          {text.uploaded}
+        </span>
+      );
+    case 'error':
+      return (
+        <span className={metadataStatusVariants({ status: 'error' })}>
+          <WarningCircleIcon size={12} weight="fill" aria-hidden className="shrink-0" />
+          <bdi className="min-w-0">{fileState.error}</bdi>
+        </span>
+      );
+    default:
+      return null;
+  }
 }
 
 export function DropzoneItemMetadata({
-  size = 'default',
   children,
   className,
   ...metadataProps
 }: DropzoneItemMetadataProps) {
   const itemContext = useDropzoneItemContext(ITEM_METADATA_NAME);
+  const context = useDropzoneContext(ITEM_METADATA_NAME);
+  const fileState = itemContext.fileState;
 
-  if (!itemContext.fileState) return null;
+  if (!fileState) return null;
+
+  const hasStatus = fileState.status !== 'idle';
 
   return (
     <div
       data-slot="dropzone-item-metadata"
-      className={twMerge(metadataVariants({ size }), className)}
+      className={twMerge(metadataVariants(), className)}
       {...metadataProps}
     >
       {children ?? (
         <>
-          <span
-            id={itemContext.nameId}
-            lang="en"
-            dir="auto"
-            className={metadataNameVariants({ size })}
-          >
-            {itemContext.fileState.file.name}
+          <span id={itemContext.nameId} className={metadataNameVariants()}>
+            <bdi>{fileState.file.name}</bdi>
           </span>
-          <span id={itemContext.sizeId} lang="en" dir="ltr" className={metadataSizeVariants()}>
-            {formatBytes(itemContext.fileState.file.size)}
-          </span>
-          {itemContext.fileState.error ? (
-            <span id={itemContext.messageId} dir="auto" className={metadataErrorVariants()}>
-              {itemContext.fileState.error}
+          <span className={metadataRowVariants()}>
+            <span id={itemContext.sizeId} lang="en" dir="ltr" className={metadataSizeVariants()}>
+              {formatBytes(fileState.file.size)}
             </span>
-          ) : null}
+            {hasStatus ? (
+              // The item's screen reader status already announces this text.
+              <span aria-hidden className="contents">
+                <span className={metaDividerVariants()} />
+                <DropzoneItemStatus fileState={fileState} text={context.text} />
+              </span>
+            ) : null}
+          </span>
         </>
       )}
     </div>
@@ -1355,119 +1559,59 @@ export function DropzoneItemMetadata({
 }
 
 export interface DropzoneItemProgressProps extends React.ComponentProps<'div'> {
-  variant?: 'linear' | 'circular' | 'fill';
-  size?: number;
+  /** Render the bar even when the file is idle or failed. */
   forceMount?: boolean;
 }
 
 export function DropzoneItemProgress({
-  variant = 'linear',
-  size = 40,
   forceMount,
   className,
   ...progressProps
 }: DropzoneItemProgressProps) {
   const itemContext = useDropzoneItemContext(ITEM_PROGRESS_NAME);
   const context = useDropzoneContext(ITEM_PROGRESS_NAME);
+  const fileState = itemContext.fileState;
 
-  if (!itemContext.fileState) return null;
+  if (!fileState) return null;
 
-  const shouldRender =
-    forceMount ||
-    itemContext.fileState.status === 'uploading' ||
-    (itemContext.fileState.status === 'error' && itemContext.fileState.progress < 100);
+  const isUploading = fileState.status === 'uploading';
+  const shouldRender = forceMount || isUploading || fileState.status === 'success';
 
   if (!shouldRender) return null;
 
-  switch (variant) {
-    case 'circular': {
-      const circumference = 2 * Math.PI * ((size - 4) / 2);
-      const strokeDashoffset =
-        circumference - (itemContext.fileState.progress / 100) * circumference;
-
-      return (
-        <div
-          data-slot="dropzone-item-progress"
-          className={twMerge('relative shrink-0', className)}
-          style={{ width: size, height: size }}
-          {...progressProps}
-        >
-          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={(size - 4) / 2}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="text-border-base-subtle"
-            />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={(size - 4) / 2}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              className="text-button-primary-default"
-              transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            />
-          </svg>
-          <span
-            className="absolute inset-0 flex items-center justify-center type-caption-regular text-text-default-default"
-            lang="en"
-            dir="ltr"
-          >
-            {itemContext.fileState.progress}%
-          </span>
-        </div>
-      );
-    }
-
-    case 'fill': {
-      const progressPercentage = itemContext.fileState.progress;
-      const topInset = 100 - progressPercentage;
-
-      return (
-        <div
-          data-slot="dropzone-item-progress"
-          className={twMerge(fillProgressVariants(), className)}
-          style={{ clipPath: `inset(${topInset}% 0% 0% 0%)` }}
-          {...progressProps}
-        />
-      );
-    }
-
-    default:
-      return (
-        <ProgressBar
-          data-slot="dropzone-item-progress"
-          aria-label={context.text.uploadProgressFor(itemContext.fileState.file.name)}
-          value={itemContext.fileState.progress}
-          minValue={0}
-          maxValue={100}
-          className={twMerge('h-1 min-w-0 basis-full', className)}
-          {...progressProps}
-        >
-          {({ percentage }) => (
-            <div className={progressTrackVariants()}>
-              <div
-                className={progressBarVariants()}
-                style={{ inlineSize: `${percentage ?? 0}%` }}
-              />
-            </div>
-          )}
-        </ProgressBar>
-      );
+  if (!isUploading) {
+    return (
+      <div
+        data-slot="dropzone-item-progress"
+        aria-hidden
+        className={twMerge(progressTrackVariants(), className)}
+        {...progressProps}
+      >
+        <div className={progressBarVariants()} style={{ inlineSize: `${fileState.progress}%` }} />
+      </div>
+    );
   }
+
+  return (
+    <ProgressBar
+      data-slot="dropzone-item-progress"
+      aria-label={context.text.uploadProgressFor(fileState.file.name)}
+      value={fileState.progress}
+      minValue={0}
+      maxValue={100}
+      className={twMerge(progressTrackVariants(), className)}
+      {...progressProps}
+    >
+      {({ percentage }) => (
+        <div className={progressBarVariants()} style={{ inlineSize: `${percentage ?? 0}%` }} />
+      )}
+    </ProgressBar>
+  );
 }
 
 export interface DropzoneItemDeleteProps extends Omit<
   React.ComponentProps<typeof AriaButton>,
-  'children' | 'className'
+  'children' | 'className' | 'style' | 'ref'
 > {
   className?: string;
 }
@@ -1475,39 +1619,54 @@ export interface DropzoneItemDeleteProps extends Omit<
 export function DropzoneItemDelete({
   onPress: onPressProp,
   className,
+  isDisabled,
   ...deleteProps
 }: DropzoneItemDeleteProps) {
-  const store = useStoreContext(ITEM_DELETE_NAME);
   const itemContext = useDropzoneItemContext(ITEM_DELETE_NAME);
   const context = useDropzoneContext(ITEM_DELETE_NAME);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const { pendingFocusRef } = context;
+  const fileState = itemContext.fileState;
+
+  React.useEffect(() => {
+    if (pendingFocusRef.current !== 'item') return;
+    pendingFocusRef.current = null;
+    buttonRef.current?.focus();
+  }, [pendingFocusRef]);
 
   const onPress = React.useCallback(
-    (event: Parameters<NonNullable<React.ComponentProps<typeof AriaButton>['onPress']>>[0]) => {
+    (event: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
       onPressProp?.(event);
-
-      if (!itemContext.fileState) return;
-
-      store.dispatch({
-        type: 'REMOVE_FILE',
-        file: itemContext.fileState.file,
-      });
+      if (fileState) context.removeFile(fileState.file);
     },
-    [store, itemContext.fileState, onPressProp],
+    [context, fileState, onPressProp],
   );
 
-  if (!itemContext.fileState) return null;
+  if (!fileState) return null;
+
+  const isUploaded = fileState.status === 'success';
 
   return (
-    <AriaButton
+    <Button
+      {...deleteProps}
+      ref={buttonRef}
       type="button"
       data-slot="dropzone-item-delete"
-      aria-label={context.text.removeFile(itemContext.fileState.file.name)}
-      className={twMerge(deleteButtonVariants(), className)}
+      iconOnly
+      size="sm"
+      intent={isUploaded ? 'danger' : 'secondary'}
+      appearance="transparent"
+      aria-label={context.text.removeFile(fileState.file.name)}
+      isDisabled={Boolean(isDisabled) || context.disabled}
+      className={twMerge('shrink-0', className)}
       onPress={onPress}
-      {...deleteProps}
     >
-      <X size={16} aria-hidden />
-    </AriaButton>
+      {isUploaded ? (
+        <TrashIcon size={16} weight="bold" aria-hidden />
+      ) : (
+        <XIcon size={16} weight="bold" aria-hidden />
+      )}
+    </Button>
   );
 }
 
@@ -1525,17 +1684,16 @@ export function DropzoneClear({
   ...clearProps
 }: DropzoneClearProps) {
   const context = useDropzoneContext(CLEAR_NAME);
-  const store = useStoreContext(CLEAR_NAME);
   const fileCount = useStore((state) => state.files.size);
 
-  const isDisabled = disabled || context.disabled;
+  const isDisabled = Boolean(disabled) || context.disabled;
 
   const onPress = React.useCallback(
     (event: Parameters<NonNullable<ButtonProps['onPress']>>[0]) => {
       onPressProp?.(event);
-      store.dispatch({ type: 'CLEAR' });
+      context.clearFiles();
     },
-    [store, onPressProp],
+    [context, onPressProp],
   );
 
   const shouldRender = forceMount || fileCount > 0;
@@ -1550,8 +1708,7 @@ export function DropzoneClear({
       appearance="ghost"
       size="sm"
       isDisabled={isDisabled}
-      data-disabled={isDisabled ? '' : undefined}
-      className={className}
+      className={twMerge('self-start', className)}
       onPress={onPress}
       {...clearProps}
     >
@@ -1560,90 +1717,197 @@ export function DropzoneClear({
   );
 }
 
-export function useDropzone<T>(selector: (state: StoreState) => T): T {
+export function useDropzone<T>(selector: (state: DropzoneState) => T): T {
   return useStore(selector);
 }
 
-export type DropzoneSize = 'sm' | 'md' | 'lg';
+export type DropzoneLabelSize = 'sm' | 'md';
 
-export interface DropzoneFieldProps {
+export interface DropzoneFieldProps extends Pick<
+  DropzoneProps,
+  | 'value'
+  | 'defaultValue'
+  | 'onValueChange'
+  | 'onAccept'
+  | 'onFileAccept'
+  | 'onFileReject'
+  | 'onFileValidate'
+  | 'onUpload'
+  | 'maxFiles'
+  | 'maxSize'
+  | 'multiple'
+  | 'name'
+  | 'required'
+  | 'id'
+> {
+  /** Visible label. */
   label?: React.ReactNode;
+  /** Content for the header info tooltip. */
+  infoTooltip?: React.ReactNode;
+  infoTooltipAriaLabel?: string;
+  /** Shows localized Optional. Hidden when `isRequired`. */
+  isOptional?: boolean;
+  /** Marks the field required and shows the asterisk. */
+  isRequired?: boolean;
+  /** @default true */
+  showRequiredIndicator?: boolean;
+  /** Helper text beneath the field. */
   description?: React.ReactNode;
+  /** Replaces the description when the field is invalid. */
   errorMessage?: React.ReactNode;
-  hint?: React.ReactNode;
-  className?: string;
-  size?: DropzoneSize;
+  /** Label type scale: `md` uses Body/md, `sm` uses Body/sm. @default 'md' */
+  labelSize?: DropzoneLabelSize;
   isDisabled?: boolean;
-  allowsBrowse?: boolean;
+  /** @default true when `errorMessage` has content */
+  isInvalid?: boolean;
+  /** Drop area title. */
+  title?: React.ReactNode;
+  /** Drop area hint under the title. */
+  hint?: React.ReactNode;
+  /** Trailing drop area text after the divider, such as upload limits. */
+  secondaryText?: React.ReactNode;
+  /** Show the Browse files button. @default true */
+  showTrigger?: boolean;
+  /** Accepted MIME types, wildcards, or extensions. */
   acceptedFileTypes?: string[];
-  onSelect?: (files: FileList | null) => void;
+  /** Layout class on the root (width, margin, flex/grid). */
+  className?: string;
+  /** Accessible name when there is no visible `label`. */
   'aria-label'?: string;
 }
 
-const dropzoneRootVariants = cva('flex w-full flex-col gap-[6px] font-sans antialiased');
+const fieldLabelVariants = cva('text-base-default', {
+  variants: {
+    size: {
+      sm: 'type-body-sm-regular',
+      md: 'type-body-md-regular',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
-const labelVariants = cva('type-body-sm-regular text-text-default-default');
+const fieldOptionalVariants = cva('type-body-sm-regular text-base-subtle');
 
-/** Convenience field wrapper around the Dropzone compound components. */
+function DropzoneFieldItems() {
+  const files = useStore((state) => Array.from(state.files.keys()));
+
+  return (
+    <>
+      {files.map((file) => (
+        <DropzoneItem key={`${file.name}-${file.size}-${file.lastModified}`} value={file}>
+          <DropzoneItemPreview />
+          <DropzoneItemMetadata />
+          <DropzoneItemDelete />
+          <DropzoneItemProgress />
+        </DropzoneItem>
+      ))}
+    </>
+  );
+}
+
+/** Form field composing the Dropzone parts with a label, helper, and error message. */
 export function DropzoneField({
   label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  isOptional = false,
+  isRequired = false,
+  showRequiredIndicator = true,
   description,
   errorMessage,
-  hint,
-  className,
-  size = 'md',
+  labelSize = 'md',
   isDisabled = false,
-  allowsBrowse = true,
+  isInvalid: isInvalidProp,
+  title,
+  hint,
+  secondaryText,
+  showTrigger = true,
   acceptedFileTypes,
-  onSelect,
+  className,
   'aria-label': ariaLabel,
+  ...dropzoneProps
 }: DropzoneFieldProps) {
   const languageConfig = useVeliLanguage();
   const text = dropzoneText[languageConfig.language];
-  const [files, setFiles] = React.useState<File[]>([]);
+  const labelId = React.useId();
+  const messageId = React.useId();
 
-  const dropzoneSizeClass =
-    size === 'sm' ? 'min-h-[80px] py-4' : size === 'lg' ? 'min-h-[128px] py-8' : 'min-h-[96px]';
+  const renderedError = getRenderableMessage(errorMessage);
+  const renderedDescription = getRenderableMessage(description);
+  const isInvalid = isInvalidProp ?? renderedError !== undefined;
+  const message = isInvalid && renderedError !== undefined ? renderedError : renderedDescription;
+  const showOptionalLabel = shouldShowFieldOptional(isOptional, isRequired);
+  const showRequired = showRequiredIndicator && isRequired;
+  const hasHeader = Boolean(label || infoTooltip || showOptionalLabel || showRequired);
 
   return (
-    <div className={dropzoneRootVariants()}>
-      {label ? <Label className={labelVariants()}>{label}</Label> : null}
-      <Dropzone
-        label={ariaLabel ?? (typeof label === 'string' ? label : text.fileUpload)}
-        accept={acceptedFileTypes?.join(',')}
-        disabled={isDisabled}
-        multiple
-        value={files}
-        onValueChange={(nextFiles) => {
-          setFiles(nextFiles);
-          if (onSelect) {
-            const dataTransfer = new DataTransfer();
-            for (const file of nextFiles) {
-              dataTransfer.items.add(file);
-            }
-            onSelect(dataTransfer.files);
-          }
-        }}
-        className={className}
-      >
-        <DropzoneArea className={dropzoneSizeClass} showTrigger={allowsBrowse}>
-          <UploadSimple size={24} aria-hidden className="text-text-default-muted" />
-          <Text slot="label" className={dropzoneTitleVariants()}>
-            {text.dragDropFilesHere}
-          </Text>
-          <span className={dropzoneHintVariants()}>{hint ?? text.orClickToBrowse}</span>
-        </DropzoneArea>
-        <DropzoneList>
-          {files.map((file) => (
-            <DropzoneItem key={`${file.name}-${file.lastModified}`} value={file}>
-              <DropzoneItemPreview />
-              <DropzoneItemMetadata />
-              <DropzoneItemDelete />
-            </DropzoneItem>
-          ))}
+    <Dropzone
+      {...dropzoneProps}
+      label={ariaLabel ?? (typeof label === 'string' ? label : text.fileUpload)}
+      accept={acceptedFileTypes?.join(',')}
+      disabled={isDisabled}
+      required={isRequired || dropzoneProps.required}
+      invalid={isInvalid}
+      className={twMerge('gap-0', className)}
+    >
+      {hasHeader ? (
+        <div className="flex w-full items-center gap-2 pb-2">
+          {label ? (
+            <span id={labelId} className={fieldLabelVariants({ size: labelSize })}>
+              {label}
+            </span>
+          ) : null}
+          {infoTooltip ? (
+            <TooltipTrigger>
+              <AriaButton
+                type="button"
+                aria-label={infoTooltipAriaLabel ?? text.moreInformation}
+                className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
+                isDisabled={isDisabled}
+              >
+                <InfoIcon size={16} aria-hidden />
+              </AriaButton>
+              <Tooltip placement="top" lang={languageConfig.lang} dir={languageConfig.direction}>
+                {infoTooltip}
+              </Tooltip>
+            </TooltipTrigger>
+          ) : null}
+          {showOptionalLabel ? (
+            <span className={fieldOptionalVariants()}>
+              {getFieldOptionalLabel(languageConfig.language)}
+            </span>
+          ) : null}
+          {showRequired ? <span className={fieldHeaderRequiredIndicatorVariants()}>*</span> : null}
+        </div>
+      ) : null}
+      <div className="flex w-full flex-col gap-1">
+        <DropzoneArea
+          aria-labelledby={label && !ariaLabel ? labelId : undefined}
+          aria-describedby={message !== undefined ? messageId : undefined}
+          title={title}
+          hint={hint}
+          secondaryText={secondaryText}
+          showTrigger={showTrigger}
+        />
+        <DropzoneList aria-labelledby={label && !ariaLabel ? labelId : undefined}>
+          <DropzoneFieldItems />
         </DropzoneList>
-      </Dropzone>
-      <StaticFieldMessage description={description} errorMessage={errorMessage} />
-    </div>
+      </div>
+      {message !== undefined ? (
+        <div className="pt-1.5">
+          <span
+            id={messageId}
+            className={messageVariants({
+              size: 'md',
+              tone: isInvalid && renderedError !== undefined ? 'danger' : 'subtle',
+            })}
+          >
+            {message}
+          </span>
+        </div>
+      ) : null}
+    </Dropzone>
   );
 }

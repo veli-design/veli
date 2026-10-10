@@ -4,7 +4,7 @@ import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { CalendarBlank, MagnifyingGlass, WarningCircle } from 'phosphor-react';
+import { CalendarBlankIcon, MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
 type Option = {
   id: string;
@@ -413,7 +413,7 @@ export const Default: Story = {
           onInputChange={handleInputChange}
           selectedKey={selectedKey}
           onSelectionChange={handleSelectionChange}
-          startAddon={<MagnifyingGlass size={16} />}
+          startAddon={<MagnifyingGlassIcon size={16} />}
         >
           {renderComboBoxItems}
         </ComboBox>
@@ -466,7 +466,7 @@ export const Outline: Story = {
           onInputChange={handleInputChange}
           selectedKey={selectedKey}
           onSelectionChange={handleSelectionChange}
-          startAddon={<MagnifyingGlass size={16} />}
+          startAddon={<MagnifyingGlassIcon size={16} />}
         >
           {renderComboBoxItems}
         </ComboBox>
@@ -629,7 +629,7 @@ export const GroupedSections: Story = {
           description={text.groupedDescription}
           selectedKey={selectedKey}
           onSelectionChange={setSelectedKey}
-          startAddon={<MagnifyingGlass size={16} />}
+          startAddon={<MagnifyingGlassIcon size={16} />}
         >
           <ComboBoxSection title={text.sections.popular}>
             <ComboBoxItem id="male">{text.locations.male}</ComboBoxItem>
@@ -697,9 +697,9 @@ export const FigmaExploration: Story = {
           placeholder={text.placeholder}
           description={text.figmaDescription}
           allowsCustomValue
-          startAddon={<MagnifyingGlass size={16} />}
-          startContent={<CalendarBlank size={16} />}
-          endContent={<WarningCircle size={16} />}
+          startAddon={<MagnifyingGlassIcon size={16} />}
+          startContent={<CalendarBlankIcon size={16} />}
+          endContent={<WarningCircleIcon size={16} />}
         >
           <ComboBoxSection title={text.sections.popular}>
             <ComboBoxItem id="male">

@@ -8,6 +8,7 @@ A modern, accessible design system monorepo built with Turbo, React Aria, and Ta
 | -------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------- |
 | [`@tradenetcorp/veli-ui`](packages/ui/README.md)         | Accessible React primitives styled with Tailwind CSS.                | `pnpm add @tradenetcorp/veli-ui`     | [Changelog](packages/ui/CHANGELOG.md)     |
 | [`@tradenetcorp/veli-tokens`](packages/tokens/README.md) | Veli design tokens exported as CSS, Tailwind theme, and DTCG source. | `pnpm add @tradenetcorp/veli-tokens` | [Changelog](packages/tokens/CHANGELOG.md) |
+| [`@tradenetcorp/veli`](packages/cli/README.md)           | CLI for installing and managing application-owned Veli Blocks.       | `pnpm dlx @tradenetcorp/veli`        | [Changelog](packages/cli/CHANGELOG.md)    |
 
 GitHub shows this repository README on each connected package's landing page. Follow the
 package links above for package-specific installation and usage documentation. Under a
@@ -23,7 +24,9 @@ veli/
 │   └── storybook/        # Component development (Storybook)
 ├── packages/
 │   ├── ui/               # React component library (React Aria)
-│   └── tokens/           # Design tokens (DTCG format)
+│   ├── tokens/           # Design tokens (DTCG format)
+│   ├── blocks/           # Canonical application-owned block source
+│   └── cli/              # Veli Blocks CLI
 ```
 
 ## Getting Started
@@ -31,7 +34,8 @@ veli/
 ### Prerequisites
 
 - Node.js >= 24
-- pnpm 11.10.0 (managed by Corepack)
+- pnpm, managed by Corepack, matching the `packageManager` field in `package.json`
+  (currently `pnpm@11.18.0`)
 
 ### Installation
 
@@ -109,7 +113,8 @@ This monorepo uses [Changesets](https://github.com/changesets/changesets) for au
 
 **Documentation:**
 
-- [Contributing Guide](CONTRIBUTING.md) - Contributor workflow and pull request format
+- [Contributing Guide](CONTRIBUTING.md) - Development setup, changesets, commit convention, and pull request format
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards and reporting
 - [Release Setup Guide](docs/RELEASE_SETUP.md) - Architecture, workflow, and troubleshooting
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
 - [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and trunk-based development conventions

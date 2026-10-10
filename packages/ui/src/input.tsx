@@ -10,7 +10,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info } from 'phosphor-react';
+import { InfoIcon } from '@phosphor-icons/react';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -19,36 +19,21 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHeaderInfoTooltipTriggerVariants,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
-import { Tooltip, TooltipTrigger } from './tooltip';
-import { webkitDhivehiTextBaselineClassName } from './typography-shared';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
+import { Tooltip, TooltipTrigger } from './tooltip.js';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
+import { type RefProp } from './ref.js';
 
 const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
-const inputSkeletonRootVariants = cva('flex w-full flex-col items-start font-sans antialiased');
-
 type InputAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type InputSize = VariantProps<typeof fieldShellVariants>['size'];
-
-const infoTooltipTriggerVariants = cva(
-  'inline-flex size-4 shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
-  {
-    variants: {
-      isDisabled: {
-        true: 'cursor-not-allowed text-disabled',
-        false: 'cursor-help text-base-subtle hover:text-base-default',
-      },
-    },
-    defaultVariants: {
-      isDisabled: false,
-    },
-  },
-);
 
 const actionVariants = cva('shrink-0 type-body-sm-medium', {
   variants: {
@@ -62,32 +47,6 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
   },
 });
 
-const skeletonLineVariants = cva('h-2 w-[76px] shrink-0 rounded-[3px] bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-2',
-      md: 'h-2',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-const skeletonFieldVariants = cva('w-full shrink-0 rounded-md bg-skeleton', {
-  variants: {
-    size: {
-      sm: 'h-9',
-      md: 'h-11',
-      lg: 'h-13',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
 const fieldShellVariants = cva(
   'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
@@ -95,7 +54,6 @@ const fieldShellVariants = cva(
       appearance: {
         default: '',
         outline: '',
-        skeleton: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -295,7 +253,8 @@ export interface InputProps
     Omit<
       VariantProps<typeof fieldShellVariants>,
       'appearance' | 'isDisabled' | 'isInvalid' | 'isReadOnly' | 'size'
-    > {
+    >,
+    RefProp<HTMLInputElement> {
   appearance?: InputAppearance;
   size?: InputSize;
   defaultValue?: string;
@@ -325,71 +284,41 @@ export interface InputProps
   spellCheck?: React.InputHTMLAttributes<HTMLInputElement>['spellCheck'];
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(
-  {
-    label,
-    infoTooltip,
-    infoTooltipAriaLabel,
-    labelSupplementary,
-    labelIcon,
-    action,
-    description,
-    errorMessage,
-    showRequiredIndicator = true,
-    startAddon,
-    startContent,
-    endContent,
-    endAddon,
-    className,
-    appearance = 'default',
-    size = 'md',
-    autoCapitalize,
-    autoComplete,
-    autoCorrect,
-    enterKeyHint,
-    inputMode,
-    maxLength,
-    minLength,
-    pattern,
-    placeholder,
-    spellCheck,
-    type = 'text',
-    ...props
-  },
+export function Input({
+  label,
+  infoTooltip,
+  infoTooltipAriaLabel,
+  labelSupplementary,
+  labelIcon,
+  action,
+  description,
+  errorMessage,
+  showRequiredIndicator = true,
+  startAddon,
+  startContent,
+  endContent,
+  endAddon,
+  className,
+  appearance = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  enterKeyHint,
+  inputMode,
+  maxLength,
+  minLength,
+  pattern,
+  placeholder,
+  spellCheck,
+  type = 'text',
   ref,
-) {
+  ...props
+}: InputProps) {
   const languageConfig = useVeliLanguage();
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
   const inputValueDirection = getInputValueDirection(type);
-  const hasSkeletonHeader = Boolean(
-    label ||
-    infoTooltip ||
-    labelSupplementary ||
-    labelIcon ||
-    action ||
-    (showRequiredIndicator && props.isRequired),
-  );
-  const hasSkeletonFooter = Boolean(description || errorMessage);
-
-  if (appearance === 'skeleton') {
-    return (
-      <div className={twMerge(inputSkeletonRootVariants(), className)} aria-hidden="true">
-        {hasSkeletonHeader ? (
-          <div className="flex w-full items-center pb-2">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-        <div className={skeletonFieldVariants({ size })} />
-        {hasSkeletonFooter ? (
-          <div className="flex w-full items-center pt-1">
-            <div className={skeletonLineVariants({ size })} />
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
   return (
     <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
@@ -410,10 +339,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
                     <AriaButton
                       type="button"
                       aria-label={resolvedInfoTooltipAriaLabel}
-                      className={infoTooltipTriggerVariants({ isDisabled })}
+                      className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
                       isDisabled={isDisabled}
                     >
-                      <Info size={16} aria-hidden />
+                      <InfoIcon size={16} aria-hidden />
                     </AriaButton>
                     <Tooltip
                       placement="top"
@@ -477,7 +406,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
             ) : null}
             {isInvalid ? (
               <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                <Info size={size === 'lg' ? 20 : 16} weight="fill" />
+                <InfoIcon size={size === 'lg' ? 20 : 16} weight="fill" />
               </div>
             ) : null}
             {endAddon ? <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div> : null}
@@ -493,4 +422,4 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       )}
     </AriaTextField>
   );
-});
+}

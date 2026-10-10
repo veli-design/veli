@@ -1,39 +1,97 @@
-import { useEffect, type ComponentProps, type ReactNode } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
+import { Avatar } from '@tradenetcorp/veli-ui/avatar';
 import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Bell, FlagBanner } from 'phosphor-react';
+import {
+  BellIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  FlagBannerIcon,
+  XCircleIcon,
+} from '@phosphor-icons/react';
 
-const statusIntents: BadgeIntent[] = [
+const statusIntents = [
   'neutral',
   'info',
   'positive',
   'cautious',
   'warning',
   'danger',
-];
+] as const satisfies readonly BadgeIntent[];
 
-const accentIntents: BadgeIntent[] = ['magenta', 'indigo', 'teal', 'green', 'lime'];
+const accentIntents = [
+  'magenta',
+  'indigo',
+  'brand',
+  'green',
+  'lime',
+] as const satisfies readonly BadgeIntent[];
+
+const allIntents = [...statusIntents, ...accentIntents];
 
 const appearances: BadgeAppearance[] = ['outline', 'subtle', 'emphasis'];
 
 const enBadgeText = {
-  label: 'Label',
+  children: 'Label',
   approved: 'Approved',
   rejected: 'Rejected',
   pending: 'Pending',
   statusAriaLabel: 'Status',
   notificationAriaLabel: '5 notifications',
+  onlineStatusLabel: 'Online',
+  awayStatusLabel: 'Away',
+  busyStatusLabel: 'Busy',
+  offlineStatusLabel: 'Offline',
+  johnDoe: 'John Doe',
+  aishaHassan: 'Aisha Hassan',
+  michaelChen: 'Michael Chen',
+  saraIbrahim: 'Sara Ibrahim',
+  intentLabels: {
+    neutral: 'Neutral',
+    info: 'Info',
+    positive: 'Positive',
+    cautious: 'Cautious',
+    warning: 'Warning',
+    danger: 'Danger',
+    magenta: 'Magenta',
+    indigo: 'Indigo',
+    brand: 'Brand',
+    green: 'Green',
+    lime: 'Lime',
+  },
 } as const;
 
 const dhivehiBadgeText = {
-  label: 'ލޭބަލް',
+  children: 'ލޭބަލް',
   approved: 'ފާސްކޮށްފައި',
   rejected: 'ބާތިލްކޮށްފައި',
   pending: 'މަޑުކުރެވިފައި',
   statusAriaLabel: 'ހާލަތު',
   notificationAriaLabel: '5 ނޯޓިފިކޭޝަން',
+  onlineStatusLabel: 'އޮންލައިން',
+  awayStatusLabel: 'އެވޭ',
+  busyStatusLabel: 'ބިޒީ',
+  offlineStatusLabel: 'އޮފްލައިން',
+  johnDoe: 'ޖޯން ޑޯ',
+  aishaHassan: 'އާއިޝަތު ޙަސަން',
+  michaelChen: 'މައިކަލް ޗެން',
+  saraIbrahim: 'ސާރާ އިބްރާހީމް',
+  intentLabels: {
+    neutral: 'ނިއުޓްރަލް',
+    info: 'އިންފޯ',
+    positive: 'ޕޮޒިޓިވް',
+    cautious: 'ކޯޝަސް',
+    warning: 'ވޯނިންގ',
+    danger: 'ޑޭންޖަރ',
+    magenta: 'މެޖެންޓާ',
+    indigo: 'އިންޑިގޯ',
+    brand: 'ބްރޭންޑް',
+    green: 'ގްރީން',
+    lime: 'ލައިމް',
+  },
 } as const;
 
 const localizedBadgeText = {
@@ -43,8 +101,8 @@ const localizedBadgeText = {
 
 const badgeArgText = {
   children: {
-    en: enBadgeText.label,
-    dv: dhivehiBadgeText.label,
+    en: enBadgeText.children,
+    dv: dhivehiBadgeText.children,
   },
 } as const;
 
@@ -70,9 +128,9 @@ const useBadgeText = () => {
 
 const getLocalizedBadgeArgText = (
   key: BadgeArgTextKey,
-  value: ReactNode,
+  value: unknown,
   language: BadgeLanguage,
-): ReactNode => {
+) => {
   if (typeof value !== 'string' || value.trim().length === 0) {
     return badgeArgText[key][language];
   }
@@ -86,13 +144,13 @@ const getLocalizedBadgeArgText = (
   return value;
 };
 
+function BadgeIcon({ size }: { size: 'sm' | 'md' }) {
+  return <FlagBannerIcon aria-hidden size={size === 'sm' ? 12 : 16} weight="regular" />;
+}
+
 const meta = {
   title: 'Components/Badge',
   component: Badge,
-  parameters: {
-    layout: 'centered',
-  },
-  tags: ['autodocs'],
   decorators: [
     (Story, context) => {
       const language: BadgeLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
@@ -106,7 +164,7 @@ const meta = {
         badgeArgTextKeys.forEach((key) => {
           const localizedValue = getLocalizedBadgeArgText(key, currentArgs[key], language);
 
-          if (typeof localizedValue === 'string' && currentArgs[key] !== localizedValue) {
+          if (currentArgs[key] !== localizedValue) {
             nextArgs[key] = localizedValue;
           }
         });
@@ -119,16 +177,10 @@ const meta = {
       return <Story />;
     },
   ],
-  args: {
-    children: enBadgeText.label,
-    appearance: 'outline',
-    intent: 'neutral',
-    size: 'md',
-    showIcon: true,
-    counter: false,
-    count: undefined,
-    max: 99,
+  parameters: {
+    layout: 'centered',
   },
+  tags: ['autodocs'],
   argTypes: {
     appearance: {
       control: 'select',
@@ -136,11 +188,14 @@ const meta = {
     },
     intent: {
       control: 'select',
-      options: [...statusIntents, ...accentIntents],
+      options: allIntents,
     },
     size: {
       control: 'select',
       options: ['xs', 'sm', 'md'],
+    },
+    children: {
+      control: 'text',
     },
     showIcon: {
       control: 'boolean',
@@ -154,28 +209,39 @@ const meta = {
     max: {
       control: 'number',
     },
-    children: {
-      control: 'text',
-    },
+    leadingIcon: { control: false, table: { disable: true } },
+    className: { table: { disable: true } },
+    style: { table: { disable: true } },
+    id: { table: { disable: true } },
+    role: { table: { disable: true } },
+    title: { table: { disable: true } },
+  },
+  args: {
+    appearance: 'outline',
+    intent: 'neutral',
+    size: 'md',
+    children: enBadgeText.children,
+    showIcon: false,
+    counter: false,
+    count: undefined,
+    max: 99,
   },
 } satisfies Meta<BadgeStoryArgs>;
 
 export default meta;
 type Story = StoryObj<BadgeStoryArgs>;
 
-function BadgeIcon({ size }: { size: 'sm' | 'md' }) {
-  return <FlagBanner aria-hidden size={size === 'sm' ? 12 : 16} weight="regular" />;
-}
-
-export const Playground: Story = {
-  render: ({ showIcon, size = 'md', children, counter, count, ...args }) => {
+export const Default: Story = {
+  render: ({ showIcon, size = 'md', intent = 'neutral', counter, count, children, ...args }) => {
     const language = useBadgeLanguage();
-    const text = localizedBadgeText[language];
+    const text = useBadgeText();
     const isCounter = counter || count != null;
+    const localizedChildren = getLocalizedBadgeArgText('children', children, language);
 
     return (
       <Badge
         {...args}
+        intent={intent}
         size={size}
         counter={counter}
         count={count}
@@ -186,74 +252,38 @@ export const Playground: Story = {
           )
         }
       >
-        {size === 'xs' ? undefined : getLocalizedBadgeArgText('children', children, language)}
+        {size === 'xs' ? undefined : localizedChildren}
       </Badge>
     );
   },
 };
 
-export const Default: Story = {
+export const Appearances: Story = {
   render: () => {
     const text = useBadgeText();
 
     return (
-      <Badge appearance="outline" intent="neutral" leadingIcon={<BadgeIcon size="md" />}>
-        {text.label}
-      </Badge>
-    );
-  },
-};
-
-export const StatusColors: Story = {
-  render: () => {
-    const text = useBadgeText();
-
-    return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-2">
         {appearances.map((appearance) => (
-          <div key={appearance} className="space-y-2">
-            <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
-            <div className="flex flex-wrap gap-2">
-              {statusIntents.map((intent) => (
-                <Badge
-                  key={`${appearance}-${intent}`}
-                  appearance={appearance}
-                  intent={intent}
-                  leadingIcon={<BadgeIcon size="md" />}
-                >
-                  {text.label}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <Badge key={appearance} appearance={appearance} intent="info">
+            {text.children}
+          </Badge>
         ))}
       </div>
     );
   },
 };
 
-export const AccentColors: Story = {
+export const Intents: Story = {
   render: () => {
     const text = useBadgeText();
 
     return (
-      <div className="flex flex-col gap-6">
-        {appearances.map((appearance) => (
-          <div key={appearance} className="space-y-2">
-            <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
-            <div className="flex flex-wrap gap-2">
-              {accentIntents.map((intent) => (
-                <Badge
-                  key={`${appearance}-${intent}`}
-                  appearance={appearance}
-                  intent={intent}
-                  leadingIcon={<BadgeIcon size="md" />}
-                >
-                  {text.label}
-                </Badge>
-              ))}
-            </div>
-          </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {allIntents.map((intent) => (
+          <Badge key={intent} appearance="outline" intent={intent}>
+            {text.intentLabels[intent]}
+          </Badge>
         ))}
       </div>
     );
@@ -266,52 +296,92 @@ export const Sizes: Story = {
 
     return (
       <div className="flex flex-col gap-3">
-        <Badge appearance="outline" intent="info" size="sm" leadingIcon={<BadgeIcon size="sm" />}>
-          {text.label}
-        </Badge>
-        <Badge appearance="outline" intent="info" size="md" leadingIcon={<BadgeIcon size="md" />}>
-          {text.label}
-        </Badge>
+        {(['sm', 'md'] as const).map((size) => (
+          <div key={size} className="flex items-center gap-3">
+            <span className="type-body-sm-regular w-8 text-base-muted">{size}</span>
+            <Badge appearance="emphasis" intent="info" size={size}>
+              {text.children}
+            </Badge>
+            <Badge appearance="subtle" intent="danger" size={size}>
+              {text.children}
+            </Badge>
+          </div>
+        ))}
       </div>
     );
   },
 };
 
 export const Counter: Story = {
-  render: () => (
-    <div className="flex flex-col gap-6">
-      {appearances.map((appearance) => (
-        <div key={appearance} className="space-y-2">
-          <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
-          <div className="flex flex-wrap items-center gap-2">
-            {statusIntents.map((intent) => (
-              <Badge
-                key={`${appearance}-${intent}-sm`}
-                counter
-                appearance={appearance}
-                intent={intent}
-                size="sm"
-              >
-                3
-              </Badge>
-            ))}
-            {statusIntents.map((intent) => (
-              <Badge
-                key={`${appearance}-${intent}-md`}
-                counter
-                appearance={appearance}
-                intent={intent}
-                size="md"
-              >
-                12
-              </Badge>
-            ))}
-            <Badge counter appearance={appearance} intent="danger" size="md" count={128} max={99} />
-          </div>
-        </div>
-      ))}
-    </div>
-  ),
+  render: () => {
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge intent="danger" counter count={5} />
+        <Badge intent="info" counter count={42} size="sm" />
+        <Badge intent="neutral" counter count={128} max={99} />
+        <Badge count={7} appearance="emphasis" intent="danger" size="sm" />
+      </div>
+    );
+  },
+};
+
+export const StatusDots: Story = {
+  render: () => {
+    const text = useBadgeText();
+    const labels = [
+      text.onlineStatusLabel,
+      text.awayStatusLabel,
+      text.busyStatusLabel,
+      text.offlineStatusLabel,
+    ] as const;
+    const intents = ['positive', 'cautious', 'danger', 'neutral'] as const;
+
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        {intents.map((intent, index) => (
+          <Badge
+            key={intent}
+            appearance="emphasis"
+            intent={intent}
+            size="xs"
+            aria-label={labels[index]}
+          />
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithLeadingIcon: Story = {
+  render: () => {
+    const text = useBadgeText();
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        <Badge
+          appearance="subtle"
+          intent="positive"
+          leadingIcon={<CheckCircleIcon aria-hidden size={16} weight="regular" />}
+        >
+          {text.approved}
+        </Badge>
+        <Badge
+          appearance="emphasis"
+          intent="danger"
+          leadingIcon={<XCircleIcon aria-hidden size={16} weight="regular" />}
+        >
+          {text.rejected}
+        </Badge>
+        <Badge
+          appearance="outline"
+          intent="warning"
+          leadingIcon={<ClockIcon aria-hidden size={16} weight="regular" />}
+        >
+          {text.pending}
+        </Badge>
+      </div>
+    );
+  },
 };
 
 export const CounterOnIcon: Story = {
@@ -320,60 +390,81 @@ export const CounterOnIcon: Story = {
 
     return (
       <div className="relative inline-flex">
-        <Bell aria-hidden size={24} className="text-icon-base" />
+        <Button
+          iconOnly
+          intent="secondary"
+          appearance="transparent"
+          size="md"
+          aria-label={text.notificationAriaLabel}
+        >
+          <BellIcon aria-hidden size={20} weight="regular" />
+        </Button>
         <Badge
           counter
           count={5}
           appearance="emphasis"
           intent="danger"
           size="sm"
-          className="absolute -top-1 -end-1"
-          aria-label={text.notificationAriaLabel}
+          className="absolute -top-0.5 -end-0.5"
+          aria-hidden
         />
       </div>
     );
   },
 };
 
-export const StatusDots: Story = {
-  render: () => (
-    <div className="flex flex-col gap-6">
-      {(['subtle', 'emphasis'] as const).map((appearance) => (
-        <div key={appearance} className="space-y-2">
-          <p className="type-body-sm-medium text-base-emphasis capitalize">{appearance}</p>
-          <div className="flex flex-wrap items-center gap-2">
-            {[...statusIntents, ...accentIntents].map((intent) => (
-              <Badge
-                key={`${appearance}-${intent}`}
-                appearance={appearance}
-                intent={intent}
-                size="xs"
-                aria-label={`${appearance} ${intent} status`}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  ),
-};
-
-export const WithoutIcon: Story = {
+export const OnlineStatusExample: Story = {
   render: () => {
     const text = useBadgeText();
 
+    const presenceUsers = [
+      {
+        name: text.johnDoe,
+        src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'positive' as const,
+        statusLabel: text.onlineStatusLabel,
+      },
+      {
+        name: text.aishaHassan,
+        src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'cautious' as const,
+        statusLabel: text.awayStatusLabel,
+      },
+      {
+        name: text.michaelChen,
+        src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'danger' as const,
+        statusLabel: text.busyStatusLabel,
+      },
+      {
+        name: text.saraIbrahim,
+        src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=128&h=128&q=80',
+        intent: 'neutral' as const,
+        statusLabel: text.offlineStatusLabel,
+      },
+    ];
+
     return (
-      <div className="flex flex-wrap gap-2">
-        <Badge appearance="subtle" intent="positive">
-          {text.approved}
-        </Badge>
-        <Badge appearance="emphasis" intent="danger">
-          {text.rejected}
-        </Badge>
-        <Badge appearance="outline" intent="warning">
-          {text.pending}
-        </Badge>
-      </div>
+      <ul className="flex w-64 flex-col gap-3">
+        {presenceUsers.map(({ name, src, intent, statusLabel }) => (
+          <li key={name} className="flex items-center gap-3">
+            <div className="relative inline-flex shrink-0">
+              <Avatar type="image" src={src} initials={name} alt={name} size="44" />
+              <Badge
+                appearance="emphasis"
+                intent={intent}
+                size="xs"
+                className="absolute bottom-0.5 end-0.5 ring-2 ring-bg-surface-base"
+                aria-label={statusLabel}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="type-body-sm-medium truncate text-base">{name}</p>
+              <p className="type-caption-regular text-base-muted">{statusLabel}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     );
   },
 };

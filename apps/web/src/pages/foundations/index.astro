@@ -1,63 +1,98 @@
 ---
+import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { foundations } from '../../lib/site';
+import { foundations, foundationsOverview } from '../../lib/site';
 
-const headings = foundations.map((foundation) => ({
-  depth: 2,
-  slug: foundation.slug,
-  text: foundation.title,
-}));
+const headings = [
+  { depth: 2, slug: 'overview', text: 'Overview' },
+  ...foundations.map((foundation) => ({
+    depth: 2,
+    slug: foundation.slug,
+    text: foundation.title === 'Color' ? 'Colors' : foundation.title,
+  })),
+];
+const markdownPath = foundationsOverview.markdownPath;
 ---
 
 <DocsLayout
-  title="Foundations | Veli Design System"
-  description="Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli."
-  activePath="/foundations/"
+  title={foundationsOverview.documentTitle}
+  description={foundationsOverview.documentDescription}
+  activePath={foundationsOverview.htmlPath}
+  {markdownPath}
   {headings}
   fullBleedHeader
+  contentLayout="overview"
 >
-  <header class="docs-page-header docs-page-header--overview">
+  <header class="docs-page-header docs-page-header--overview docs-overview-header">
+    <div class="docs-page-header__content">
+      <h1>Veli Foundation</h1>
+      <p>
+        The operating beliefs behind Veli—clarity, access, local context, and shared foundations.
+      </p>
+      <DocsPageActions {markdownPath} placement="inline" />
+    </div>
     <img
       class="docs-overview-hero"
-      src="/images/foundations-overview.webp"
+      src="/images/foundations-overview-figma.png"
       alt=""
-      width="2048"
-      height="1152"
+      width="1001"
+      height="400"
     />
-    <div class="docs-page-header__content">
-      <p class="docs-kicker">Foundations</p>
-      <h1>The decisions beneath every service</h1>
-      <p>
-        Veli connects shared tokens, accessible components, and government service requirements into
-        one design language.
-      </p>
-    </div>
   </header>
 
-  <div class="foundation-directory">
-    {
-      foundations.map((foundation) => (
-        <section id={foundation.slug}>
-          <a href={foundation.href}>
-            <div class="foundation-directory__icon" aria-hidden="true">
-              <img
-                src={foundation.icon}
-                alt=""
-                width={foundation.iconWidth}
-                height={foundation.iconHeight}
-                loading="lazy"
-              />
-            </div>
-            <div class="foundation-directory__content">
-              <h2>{foundation.title}</h2>
-              <p>{foundation.description}</p>
-            </div>
-            <span class="foundation-directory__arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
-        </section>
-      ))
-    }
+  <div class="docs-overview-content">
+    <section class="docs-overview-copy" id="overview">
+      <h2 class="type-heading-4-semibold">Overview</h2>
+      <p>
+        The Veli Design System font stack defines the core typefaces used across all interfaces to
+        ensure clarity, accessibility, and visual consistency across languages and contexts.
+      </p>
+      <p>
+        Inter serves as the primary typeface for English and Latin scripts. It was chosen for its
+        modern geometric form, excellent screen legibility, and balanced rhythm, making it ideal for
+        both interface text and long-form content.
+      </p>
+      <p>
+        IBM Plex Mono is used for monospaced content such as code snippets, data tables, and
+        identifiers. Its precise letter alignment improves readability in technical and numerical
+        contexts.
+      </p>
+    </section>
+
+    <div class="foundation-directory docs-overview-directory">
+      {
+        foundations.map((foundation) => (
+          <section id={foundation.slug}>
+            <a href={foundation.href}>
+              <div class="foundation-directory__icon" aria-hidden="true">
+                <img
+                  class="foundation-directory__icon-light"
+                  src={foundation.icon}
+                  alt=""
+                  width={foundation.iconWidth}
+                  height={foundation.iconHeight}
+                  loading="lazy"
+                />
+                <img
+                  class="foundation-directory__icon-dark"
+                  src={foundation.iconDark}
+                  alt=""
+                  width={foundation.iconWidth}
+                  height={foundation.iconHeight}
+                  loading="lazy"
+                />
+              </div>
+              <div class="foundation-directory__content">
+                <h2>{foundation.title === 'Color' ? 'Colors' : foundation.title}</h2>
+                <p>{foundation.description}</p>
+              </div>
+              <span class="foundation-directory__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </section>
+        ))
+      }
+    </div>
   </div>
 </DocsLayout>

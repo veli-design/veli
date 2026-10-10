@@ -1,13 +1,17 @@
 ---
 title: DateField
-description: Segment-based date input built with React Aria.
+description: Segment-based date input for typing dates directly.
 ---
 
-import { DateFieldUsageDemo } from '../../components/DateExamples';
+import {
+  DateFieldAppearancesDemo,
+  DateFieldUsageDemo,
+  DateFieldValidationDemo,
+} from '../../components/DocsExamples';
 
 # DateField
 
-`DateField` is the low-level editable date input. It is best when users should type a date directly, and it is also the text-entry foundation for `DatePicker`.
+Use DateField when users should type a date segment by segment. Prefer [DatePicker](/docs/date-picker/) when they also need a calendar popover. For a standalone calendar surface, see [Calendar](/docs/calendar/).
 
 ## Import
 
@@ -22,43 +26,94 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 </div>
 
 ```tsx
-<DateField label="Appointment date" description="Type a date segment by segment." />
+<DateField label="Appointment date" isOptional description="Type a date segment by segment." />
 ```
 
-## Key Props
+## Appearances
 
-### Common
+`default` uses the underline shell. `outline` draws a bordered field. Size the field with `sm`, `md`, or `lg`.
 
-| Prop               | Type                | Description                                                        |
-| :----------------- | :------------------ | :----------------------------------------------------------------- |
-| `label`            | `ReactNode`         | Visible field label.                                               |
-| `description`      | `ReactNode`         | Helper text shown below the field when not invalid.                |
-| `errorMessage`     | `ReactNode`         | Validation content shown below the field when invalid.             |
-| `isRequired`       | `boolean`           | Marks the field as required.                                       |
-| `isDisabled`       | `boolean`           | Disables editing and focus.                                        |
-| `isReadOnly`       | `boolean`           | Prevents editing while keeping the value readable.                 |
-| `value`            | `DateValue \| null` | Controlled value.                                                  |
-| `defaultValue`     | `DateValue`         | Uncontrolled initial value.                                        |
-| `onChange`         | `(value) => void`   | Called when the value changes.                                     |
-| `name`             | `string`            | Submits the value in forms as an ISO string.                       |
-| `placeholderValue` | `DateValue`         | Sets the placeholder shape and default calendar/time zone context. |
+<div className="preview mb-4 rounded-lg border p-4">
+  <DateFieldAppearancesDemo client:visible />
+</div>
 
-### Formatting
+```tsx
+<DateField label="Default" />
+<DateField appearance="outline" label="Outline" />
+```
 
-| Prop                      | Type                                      | Description                                                          |
-| :------------------------ | :---------------------------------------- | :------------------------------------------------------------------- |
-| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest segment that is editable and displayed.                     |
-| `hourCycle`               | `12 \| 24`                                | Forces 12-hour or 24-hour time display when time segments are shown. |
-| `hideTimeZone`            | `boolean`                                 | Hides the time zone segment for zoned date values.                   |
-| `shouldForceLeadingZeros` | `boolean`                                 | Keeps segment values zero-padded where applicable.                   |
+## Validation
 
-### Validation and Availability
+When `isInvalid` is set, `errorMessage` replaces the helper text.
 
-| Prop        | Type                                         | Description                                    |
-| :---------- | :------------------------------------------- | :--------------------------------------------- |
-| `minValue`  | `DateValue`                                  | Lowest allowed date/time.                      |
-| `maxValue`  | `DateValue`                                  | Highest allowed date/time.                     |
-| `isInvalid` | `boolean`                                    | Forces invalid styling and error presentation. |
-| `validate`  | `(value) => ValidationError \| true \| null` | Adds custom client-side validation logic.      |
+<div className="preview mb-4 rounded-lg border p-4">
+  <DateFieldValidationDemo client:visible />
+</div>
 
-All remaining supported React Aria `DateField` props can still be passed through this wrapper.
+```tsx
+<DateField label="Service date" isInvalid errorMessage="Enter a valid service date." />
+```
+
+## API Reference
+
+DateField is a Veli field on React Aria [`DateField`](https://react-spectrum.adobe.com/react-aria/DateField.html). Props below follow that stack.
+
+### DateField
+
+Veli-specific props for the composed field.
+
+| Prop                    | Type                     | Default          | Description                                                          |
+| :---------------------- | :----------------------- | :--------------- | :------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                         |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                          |
+| `label`                 | `ReactNode`              | -                | Visible label.                                                       |
+| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`. |
+| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                 |
+| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                        |
+| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                       |
+| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                   |
+| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                       |
+| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                 |
+| `inputClassName`        | `string`                 | -                | Layout class on the input shell.                                     |
+
+### React Aria DateField
+
+React Aria’s headless [`DateField`](https://react-spectrum.adobe.com/react-aria/DateField.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop                      | Type                                      | Default | Description                                        |
+| :------------------------ | :---------------------------------------- | :------ | :------------------------------------------------- |
+| `value`                   | `DateValue \| null`                       | -       | Controlled value.                                  |
+| `defaultValue`            | `DateValue`                               | -       | Uncontrolled initial value.                        |
+| `onChange`                | `(value: DateValue \| null) => void`      | -       | Called when the value changes.                     |
+| `placeholderValue`        | `DateValue`                               | -       | Placeholder shape and default calendar context.    |
+| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | -       | Smallest editable segment.                         |
+| `hourCycle`               | `12 \| 24`                                | -       | Forces 12-hour or 24-hour time when time is shown. |
+| `hideTimeZone`            | `boolean`                                 | -       | Hides the time zone segment for zoned values.      |
+| `shouldForceLeadingZeros` | `boolean`                                 | -       | Keeps segment values zero-padded where applicable. |
+| `minValue`                | `DateValue`                               | -       | Lowest allowed date/time.                          |
+| `maxValue`                | `DateValue`                               | -       | Highest allowed date/time.                         |
+| `isDisabled`              | `boolean`                                 | `false` | Disables the field.                                |
+| `isInvalid`               | `boolean`                                 | `false` | Marks the field invalid.                           |
+| `isReadOnly`              | `boolean`                                 | `false` | Prevents editing.                                  |
+| `isRequired`              | `boolean`                                 | `false` | Marks the field required.                          |
+| `name`                    | `string`                                  | -       | Submits the value in forms as an ISO string.       |
+| `validate`                | `function`                                | -       | Custom validation.                                 |
+| `autoFocus`               | `boolean`                                 | `false` | Focuses the field on mount.                        |
+
+Not forwarded from React Aria `DateField`:
+
+| Prop        | Why                                                |
+| :---------- | :------------------------------------------------- |
+| `children`  | Veli owns the field composition.                   |
+| `style`     | Not supported.                                     |
+| `className` | Replaced by Veli’s layout `className` on the root. |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- `description` is the accessible helper. On error, `errorMessage` replaces it.
+- Date segments are individually focusable; arrow keys and typing edit each segment in place.
+
+## RTL and Language
+
+Date segment order and formatting follow the locale from `VeliProvider`. Set `language` on the provider rather than passing a separate locale prop. See [VeliProvider](/docs/provider/). In RTL, the label row follows `dir`.

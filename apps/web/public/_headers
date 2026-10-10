@@ -1,0 +1,15 @@
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/docs/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/foundations/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/blocks/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/blocks/*/source.tar.gz
+  Content-Type: application/gzip
+  Content-Disposition: attachment

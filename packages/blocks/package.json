@@ -1,0 +1,35 @@
+{
+  "name": "@tradenetcorp/veli-blocks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./notification-tray": "./src/notification-tray/notification-tray.tsx",
+    "./site-footer": "./src/site-footer/site-footer.tsx",
+    "./site-header": "./src/site-header/site-header.tsx",
+    "./catalog": {
+      "types": "./scripts/catalog.d.ts",
+      "import": "./scripts/catalog.mjs"
+    },
+    "./account-panel": "./src/account-panel/account-panel.tsx"
+  },
+  "scripts": {
+    "build": "node scripts/check.mjs && tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "test:consumer": "node scripts/consumer.mjs"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@tradenetcorp/veli-ui": "workspace:*",
+    "motion": "^12.42.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-aria-components": "^1.19.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.9.3"
+  }
+}

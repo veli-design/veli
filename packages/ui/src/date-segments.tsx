@@ -1,6 +1,6 @@
 import { DateInput, DateSegment } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
-import { dateInputVariants, getDateSegmentClassName } from './date-shared-variants';
+import { dateInputVariants, getDateSegmentClassName } from './date-shared-variants.js';
 
 export function DateSegments({
   className,

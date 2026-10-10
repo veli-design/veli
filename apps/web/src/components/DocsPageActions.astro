@@ -1,0 +1,64 @@
+---
+import { DocsPageActionButtons } from './DocsPageActionButtons';
+
+interface Props {
+  markdownPath: string;
+  placement?: 'inline' | 'utility' | 'tabbar';
+}
+
+const { markdownPath, placement = 'inline' } = Astro.props;
+---
+
+<div
+  class:list={['docs-page-actions', `docs-page-actions--${placement}`]}
+  data-docs-page-actions
+  data-markdown-path={markdownPath}
+>
+  <DocsPageActionButtons
+    client:load
+    {markdownPath}
+    compact={placement === 'tabbar'}
+    fullWidth={placement === 'utility'}
+  />
+</div>
+
+<style>
+  .docs-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .docs-page-actions--utility {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 28px;
+  }
+
+  .docs-page-actions--inline {
+    display: none;
+  }
+
+  .docs-page-actions--tabbar {
+    flex: none;
+    margin: 0 0 0 auto;
+  }
+
+  @media (max-width: 1180px) {
+    .docs-page-actions--inline {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .docs-page-actions--inline {
+      display: grid;
+      grid-template-columns: 1fr;
+      order: 2;
+      width: 100%;
+      margin-top: 0;
+    }
+  }
+</style>

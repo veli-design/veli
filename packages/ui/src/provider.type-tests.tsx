@@ -3,7 +3,7 @@ import {
   getVeliLanguageConfig,
   useVeliColorScheme,
   useVeliLanguage,
-} from './provider';
+} from './provider.js';
 
 export function ProviderTypeExpectations() {
   const currentLanguage = useVeliLanguage();
@@ -30,6 +30,14 @@ export function ProviderTypeExpectations() {
         <div />
       </VeliProvider>
       <VeliProvider colorScheme="dark">
+        <div />
+      </VeliProvider>
+
+      <VeliProvider navigate={(href) => href}>
+        <div />
+      </VeliProvider>
+
+      <VeliProvider navigate={(href) => href} useHref={(href) => href}>
         <div />
       </VeliProvider>
 

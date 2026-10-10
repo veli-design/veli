@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ArrowFatUp, Command, Option } from 'phosphor-react';
+import { ArrowFatUpIcon, CommandIcon, OptionIcon } from '@phosphor-icons/react';
 import { Kbd, KbdGroup, type KbdVariant } from '@tradenetcorp/veli-ui/kbd';
 
 const variants: KbdVariant[] = ['default', 'inverted'];
@@ -35,13 +35,13 @@ export const Default: Story = {
   render: () => (
     <KbdGroup>
       <Kbd>
-        <Command aria-hidden weight="regular" />
+        <CommandIcon aria-hidden weight="regular" />
       </Kbd>
       <Kbd>
-        <ArrowFatUp aria-hidden weight="regular" />
+        <ArrowFatUpIcon aria-hidden weight="regular" />
       </Kbd>
       <Kbd>
-        <Option aria-hidden weight="regular" />
+        <OptionIcon aria-hidden weight="regular" />
       </Kbd>
       <Kbd>A</Kbd>
       <Kbd>B</Kbd>
@@ -56,13 +56,13 @@ export const Variants: Story = {
       {variants.map((variant) => (
         <KbdGroup key={variant} variant={variant}>
           <Kbd>
-            <Command aria-hidden weight="regular" />
+            <CommandIcon aria-hidden weight="regular" />
           </Kbd>
           <Kbd>
-            <ArrowFatUp aria-hidden weight="regular" />
+            <ArrowFatUpIcon aria-hidden weight="regular" />
           </Kbd>
           <Kbd>
-            <Option aria-hidden weight="regular" />
+            <OptionIcon aria-hidden weight="regular" />
           </Kbd>
           <Kbd>A</Kbd>
           <Kbd>B</Kbd>
@@ -95,7 +95,7 @@ export const SingleKey: Story = {
     <div className="flex flex-wrap items-center gap-3">
       <Kbd>Enter</Kbd>
       <Kbd>
-        <Command aria-hidden weight="regular" />
+        <CommandIcon aria-hidden weight="regular" />
       </Kbd>
     </div>
   ),

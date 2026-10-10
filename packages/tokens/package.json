@@ -1,6 +1,6 @@
 {
   "name": "@tradenetcorp/veli-tokens",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "description": "Design tokens for the Veli Design System in CSS, Tailwind, and DTCG formats.",
   "repository": {
     "type": "git",
@@ -17,22 +17,28 @@
     ".": {
       "import": "./dist/tailwind-theme.css"
     },
-    "./tokens": "./src/design.tokens.json",
+    "./tokens": "./dist/tokens.json",
     "./css": "./dist/tokens.css",
-    "./tailwind": "./dist/tailwind-theme.css"
+    "./tailwind": "./dist/tailwind-theme.css",
+    "./motion-tokens": "./dist/motion.tokens.json"
   },
   "files": [
-    "dist",
-    "src/design.tokens.json"
+    "dist"
   ],
   "scripts": {
-    "build": "node prebuild.js && terrazzo build && node postbuild.js",
-    "prepublishOnly": "corepack pnpm run build"
+    "build": "node build.mjs",
+    "prepublishOnly": "corepack pnpm run build",
+    "test": "node --test tests/*.test.mjs",
+    "tokens:sync": "node build.mjs sync",
+    "tokens:check": "node build.mjs check"
   },
   "devDependencies": {
-    "@terrazzo/cli": "^0.10.4",
-    "@terrazzo/plugin-css": "^0.10.4",
-    "@terrazzo/plugin-tailwind": "^0.3.3"
+    "@terrazzo/cli": "^2.7.1",
+    "@terrazzo/parser": "2.7.1",
+    "@terrazzo/plugin-css": "^2.7.1",
+    "@terrazzo/token-tools": "2.7.1",
+    "colorjs.io": "0.7.1",
+    "prettier": "3.8.3"
   },
   "publishConfig": {
     "@tradenetcorp:registry": "https://npm.pkg.github.com",

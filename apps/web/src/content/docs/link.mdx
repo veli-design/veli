@@ -1,77 +1,358 @@
 ---
 title: Link
-description: Accessible navigation component built with React Aria and Veli design tokens.
+description: Accessible navigation links with inherited or standalone typography and optional icons.
 ---
+
+import {
+  LinkRtlDemo,
+  LinkSizesDemo,
+  LinkStatesDemo,
+  LinkTypographyDemo,
+  LinkUsageDemo,
+  LinkVariantsDemo,
+} from '../../components/LinkExamples';
 
 # Link
 
-The Link component provides an accessible, keyboard-navigable link with multiple variants that inherit typography from the surrounding context.
+Use Link to navigate to another page, a resource, or a section of the current page. Omit `size` to match the surrounding text, or choose a size for a standalone medium-weight label. It supports icons, two intents, and three underline options. Use [Button](/docs/button/) for actions such as saving or submitting.
 
 ## Import
 
 ```tsx
 import { Link } from '@tradenetcorp/veli-ui/link';
-import { Plus } from 'phosphor-react';
 ```
-
-import {
-  LinkIconsDemo,
-  LinkSizesDemo,
-  LinkUsageDemo,
-  LinkVariantsDemo,
-} from '../../components/DocsExamples';
 
 ## Usage
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
+<div className="preview mb-4 rounded-lg border p-4">
   <LinkUsageDemo client:visible />
 </div>
 
 ```tsx
-<Link href="#">Link Label</Link>
+<Link href="/account" size="md">
+  Continue
+</Link>
 ```
 
-## Variants Matrix
+Give navigation links an `href`. A disabled link, or one without `href`, renders as a non-anchor element with link semantics. Use `onPress` for activation callbacks.
 
-The link supports two variants and various underlining options.
+## Intents and underlines
 
-<div className="preview p-6 border border-base-subtle rounded-lg bg-surface-raised mb-4 overflow-x-auto">
+`default` uses the link color. `secondary` uses the normal text color. Underlines can be `none`, `hover`, or `always`; the default is `none`.
+
+<div className="preview mb-4 rounded-lg border p-4">
   <LinkVariantsDemo client:visible />
 </div>
 
-## Icons
-
-To maintain design consistency, icons should be sized to match the surrounding typography.
-
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-8 flex-wrap items-center">
-  <LinkIconsDemo client:visible />
-</div>
-
 ```tsx
-// Example of inherited typography with matching icons
-<span className="type-subtitle-regular">
-  <Link><Plus size={20} />Large Link</Link>
-</span>
-
-<span className="type-body-md-regular">
-  <Link><Plus size={16} />MD Link</Link>
-</span>
+<Link href="/account">Account</Link>
+<Link href="/account" intent="secondary" underline="always">Account</Link>
+<Link href="/account" underline="hover">Account</Link>
 ```
 
-## Typography Inheritance
+Use `underline="always"` for links within prose so readers can distinguish them without relying on color. Unadorned links suit navigation where position and context identify them as interactive.
 
-Links inherit font size and line height from their parent context.
+## Sizes and icons
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4 flex gap-6 items-center flex-wrap">
+An explicit `size` applies the corresponding medium body typography preset, including font family, size, weight, line height, and letter spacing. The preset follows the language of the surrounding content. Without `size`, all typography inherits and icons use 16px. Compose leading and trailing icons through `children`; the gap is 8px.
+
+| `size`  | Typography preset     | English text     | Dhivehi text     | Icons |
+| :------ | :-------------------- | :--------------- | :--------------- | :---- |
+| Omitted | Inherited             | Surrounding text | Surrounding text | 16px  |
+| `sm`    | `type-body-sm-medium` | 14px             | 17px             | 16px  |
+| `md`    | `type-body-md-medium` | 16px             | 19px             | 16px  |
+| `lg`    | `type-body-lg-medium` | 18px             | 21px             | 20px  |
+
+English medium presets use Inter at weight 500. Dhivehi medium presets use MV A Waheed at weight 700, as defined by the shared typography tokens.
+
+<div className="preview mb-4 rounded-lg border p-4">
   <LinkSizesDemo client:visible />
 </div>
 
-## Props
+```tsx
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@phosphor-icons/react';
+import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-| Prop         | Type                            | Default     | Description                      |
-| :----------- | :------------------------------ | :---------- | :------------------------------- |
-| `intent`     | `'default' \| 'secondary'`      | `'default'` | The visual category of the link. |
-| `underline`  | `'none' \| 'hover' \| 'always'` | `'none'`    | Underline behavior.              |
-| `isDisabled` | `boolean`                       | `false`     | Standard disabled state.         |
+function ContinueLink() {
+  const { direction, language } = useVeliLanguage();
+  const Arrow = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
 
-_Note: All other `react-aria-components` Link props are supported, excluding `className` and `style` overrides._
+  return (
+    <Link href="/account" size="lg">
+      <PlusIcon aria-hidden="true" weight="bold" />
+      {language === 'dv' ? 'ކުރިއަށް' : 'Continue'}
+      <Arrow aria-hidden="true" weight="bold" />
+    </Link>
+  );
+}
+```
+
+Mark decorative icons `aria-hidden="true"`. Pass the icon size to Link rather than setting individual SVG dimensions. Link does not automatically mirror supplied icons.
+
+## Typography inheritance
+
+Without `size`, Link matches the surrounding font family, size, weight, line height, and letter spacing. It stays regular in a regular paragraph and bold in a bold heading. Text-only links wrap naturally within sentences. Links with icons keep the icons aligned while the label wraps. Link adds no outer padding.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <LinkTypographyDemo client:visible />
+</div>
+
+```tsx
+<p className="type-body-md-regular">
+  Read the{' '}
+  <Link href="/guidance" underline="always">
+    application guidance
+  </Link>{' '}
+  before continuing.
+</p>
+```
+
+For a standalone medium-weight label, set `size="sm"`, `"md"`, or `"lg"` directly on Link. To use a custom weight or text style, omit `size` and apply typography to a surrounding element. There is no separate `weight` prop. Selecting a size intentionally overrides inherited typography.
+
+## Disabled and current states
+
+`isDisabled` removes navigation and excludes the link from the tab order. `aria-current="page"` identifies the current destination to assistive technology and sets the render-prop `isCurrent` value; it does not compare URLs automatically or apply a separate visual variant.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <LinkStatesDemo client:visible />
+</div>
+
+```tsx
+<Link href="/account" aria-current="page">
+  {({ isCurrent }) => isCurrent ? 'Current account' : 'Account'}
+</Link>
+<Link href="/account" isDisabled>Unavailable account</Link>
+```
+
+## Client-side routing
+
+Use React Aria's `render` prop to compose a compatible router link. Keep `href` on Veli Link and forward the supplied props, including its ref, children, events, and accessibility attributes. Handle `state.isDisabled` explicitly: the presence of `href` alone does not mean navigation is enabled.
+
+### Next.js (App Router)
+
+```tsx
+'use client';
+
+import NextLink from 'next/link';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+export function AccountLink() {
+  return (
+    <Link
+      href="/account"
+      render={(props, state) => {
+        if (state.isDisabled || !('href' in props)) return <span {...props} />;
+        return <NextLink {...props} />;
+      }}
+    >
+      Account
+    </Link>
+  );
+}
+```
+
+### React Router
+
+React Router uses `to` for the destination. Put router-specific options on the rendered router link.
+
+```tsx
+import { Link as RouterLink } from 'react-router';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+<Link
+  href="/account"
+  render={(props, state) => {
+    if (state.isDisabled || !('href' in props)) return <span {...props} />;
+    const { href, ...linkProps } = props;
+    return <RouterLink {...linkProps} to={href} prefetch="intent" />;
+  }}
+>
+  Account
+</Link>;
+```
+
+### TanStack Start
+
+TanStack Start uses TanStack Router's Link. Keep typed route options on that component and use the corresponding resolved URL for Veli's `href`.
+
+```tsx
+import { Link as TanStackLink } from '@tanstack/react-router';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+<Link
+  href="/account"
+  render={(props, state) => {
+    if (state.isDisabled || !('href' in props)) return <span {...props} />;
+    const { href: _href, ...linkProps } = props;
+    return <TanStackLink {...linkProps} to="/account" preload="intent" />;
+  }}
+>
+  Account
+</Link>;
+```
+
+## API Reference
+
+Link is a Veli component on React Aria [`Link`](https://react-spectrum.adobe.com/react-aria/Link.html), which renders a native `<a>` when enabled with an `href`, or a `<span role="link">` otherwise. Props below follow that stack.
+
+### Veli Link
+
+Veli-specific appearance props and the forwarded ref. Typography inherits unless an explicit `size` selects a medium body preset.
+
+| Prop             | Type                            | Default               | Description                                                                                                                                    |
+| :--------------- | :------------------------------ | :-------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `intent`         | `'default' \| 'secondary'`      | `'default'`           | Uses the link color or normal text color, including the corresponding hover and pressed colors.                                                |
+| `size`           | `'sm' \| 'md' \| 'lg'`          | Omitted (inherit)     | Applies the corresponding medium body typography preset and 16px, 16px, or 20px icons. Without a size, typography inherits and icons use 16px. |
+| `underline`      | `'none' \| 'hover' \| 'always'` | `'none'`              | Hides the underline, shows it while hovered, or keeps it visible. Use `always` in prose.                                                       |
+| `isHovered`      | `boolean`                       | Actual hover state    | Overrides hover styling for previews. Ignored when disabled. Does not trigger hover callbacks.                                                 |
+| `isPressed`      | `boolean`                       | Actual pressed state  | Overrides pressed styling for previews. Ignored when disabled. Does not activate the link or trigger press callbacks.                          |
+| `isFocusVisible` | `boolean`                       | Actual keyboard focus | Adds the focus indicator. Passing `false` cannot hide real keyboard focus or move focus.                                                       |
+| `ref`            | `Ref<HTMLAnchorElement>`        | -                     | Forwarded through React Aria to the rendered element. Enabled navigation links are anchors; disabled/no-href links are spans.                  |
+
+Omit visual overrides during normal use so React Aria controls the interaction styling. Overrides do not change the state received by `children` or `render`. In contrast, `isDisabled` changes both behavior and appearance.
+
+For imperative focus, use a ref on an enabled link:
+
+```tsx
+import { useRef } from 'react';
+import { Link } from '@tradenetcorp/veli-ui/link';
+
+function AccountLink() {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
+  // From an event handler, call linkRef.current?.focus().
+  return (
+    <Link ref={linkRef} href="/account">
+      Account
+    </Link>
+  );
+}
+```
+
+The ref follows React Aria's anchor type contract. If a link can become disabled or lose its `href`, do not assume the rendered element still has anchor-only properties.
+
+### React Aria Link
+
+React Aria's headless [`Link`](https://react-spectrum.adobe.com/react-aria/Link.html#props). These props pass through. Its documentation covers the remaining supported DOM events, subject to the exclusions below.
+
+| Prop            | Type                                            | Default        | Description                                                                                                                                    |
+| :-------------- | :---------------------------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `children`      | `ReactNode \| (state) => ReactNode`             | -              | Visible content, or a function of link state. Compose decorative leading/trailing icons alongside the label.                                   |
+| `render`        | `(props, state) => ReactElement`                | Native element | Replaces the rendered element, for example with a router link. Forward the supplied props and retain the disabled fallback.                    |
+| `isDisabled`    | `boolean`                                       | `false`        | Prevents activation, removes the link from the tab order, and sets `aria-disabled`. Renders a span by default, even if `href` is provided.     |
+| `autoFocus`     | `boolean`                                       | `false`        | Focuses the link when it mounts. Avoid moving focus unexpectedly.                                                                              |
+| `onPress`       | `(event: PressEvent) => void`                   | -              | Called on activation with pointer, touch, keyboard, or assistive technology. Does not replace `href` navigation.                               |
+| `onPressStart`  | `(event: PressEvent) => void`                   | -              | Called when a press starts.                                                                                                                    |
+| `onPressEnd`    | `(event: PressEvent) => void`                   | -              | Called when a press ends, including when the pointer leaves the target. This does not always mean activation.                                  |
+| `onPressUp`     | `(event: PressEvent) => void`                   | -              | Called when a press is released over the link, even if it started elsewhere.                                                                   |
+| `onPressChange` | `(isPressed: boolean) => void`                  | -              | Called when the actual pressed state changes.                                                                                                  |
+| `onHoverStart`  | `(event: HoverEvent) => void`                   | -              | Called when a mouse or pen starts hovering. Touch input does not count as hover.                                                               |
+| `onHoverEnd`    | `(event: HoverEvent) => void`                   | -              | Called when the hover interaction ends.                                                                                                        |
+| `onHoverChange` | `(isHovered: boolean) => void`                  | -              | Called when the actual hover state changes.                                                                                                    |
+| `onFocus`       | `(event: FocusEvent<Element>) => void`          | -              | Called when the link receives focus.                                                                                                           |
+| `onBlur`        | `(event: FocusEvent<Element>) => void`          | -              | Called when focus leaves the link.                                                                                                             |
+| `onFocusChange` | `(isFocused: boolean) => void`                  | -              | Called when the focus state changes.                                                                                                           |
+| `onKeyDown`     | `(event: KeyboardEvent) => void`                | -              | Called when a key is pressed while focused.                                                                                                    |
+| `onKeyUp`       | `(event: KeyboardEvent) => void`                | -              | Called when a key is released while focused.                                                                                                   |
+| `onClick`       | `(event: MouseEvent<FocusableElement>) => void` | -              | React Aria compatibility callback. Prefer `onPress` for normalized activation across input methods.                                            |
+| `slot`          | `string \| null`                                | -              | Receives props from a named React Aria context slot. `null` opts out of the parent context.                                                    |
+| `routerOptions` | `RouterOptions`                                 | -              | Navigation options for a configured React Aria router provider. For `render` composition, put router-specific options on the router component. |
+
+`PressEvent`, `HoverEvent`, and `KeyboardEvent` above are React Aria event types. `FocusEvent` and `MouseEvent` are React event types. `RouterOptions` depends on the application's router configuration.
+
+#### Composition and render state
+
+Both `children` and `render` receive the following state. These are observed values, not additional props for forcing behavior.
+
+| State            | Type      | Meaning                                                                                   |
+| :--------------- | :-------- | :---------------------------------------------------------------------------------------- |
+| `isCurrent`      | `boolean` | Whether `aria-current` marks this as the current destination. Link does not compare URLs. |
+| `isHovered`      | `boolean` | A mouse or pen is hovering over the link.                                                 |
+| `isPressed`      | `boolean` | A pointer or keyboard press is in progress.                                               |
+| `isFocused`      | `boolean` | The link has focus, including pointer focus.                                              |
+| `isFocusVisible` | `boolean` | The link should show its keyboard focus indicator.                                        |
+| `isDisabled`     | `boolean` | Interaction is disabled.                                                                  |
+
+A function-valued `children` also receives React Aria's `defaultChildren` fallback, which is `undefined` for a standalone Link. A `render` function receives the generated element props separately, including `children`, `ref`, events, and accessibility attributes. Spread those props onto the resulting element; check `state.isDisabled` before rendering a router link.
+
+```tsx
+<Link href="/account" aria-current={isAccountPage ? 'page' : undefined}>
+  {({ isCurrent }) => (isCurrent ? 'Current account' : 'Account')}
+</Link>
+```
+
+For inactive links, omit `aria-current` or pass boolean `false`. To change the accessible current-page state, set `aria-current`; `isCurrent` is a render-state value.
+
+Not supported as Link props:
+
+| Prop                     | Why                                                                                                                                |
+| :----------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `className`              | Veli owns Link styling. Apply surrounding layout and typography to a wrapper. React Aria's string and function forms are excluded. |
+| `style`                  | Inline style overrides, including React Aria's function form, are excluded.                                                        |
+| `elementType`, `as`      | Link chooses its native element. Use `render` for custom element or router composition.                                            |
+| `disabled`               | Native anchors have no disabled behavior. Use `isDisabled`.                                                                        |
+| `isCurrent`, `isFocused` | Derived render state. Use `aria-current` for the current destination and a ref or `autoFocus` to move focus.                       |
+
+### Native navigation attributes
+
+The native `<a>` that React Aria wraps. Navigation attributes take effect on enabled anchors; they do not make a disabled span navigate. Link exposes the supported React Aria attribute set, rather than every attribute in `AnchorHTMLAttributes`.
+
+| Prop               | Type                                                                                 | Description                                                                                                                            |
+| :----------------- | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `href`             | `string`                                                                             | Destination URL or fragment. Omit only when link semantics without native navigation are intentional.                                  |
+| `target`           | `HTMLAttributeAnchorTarget`                                                          | Browsing context, such as `_self`, `_blank`, or a named window.                                                                        |
+| `rel`              | `string`                                                                             | Relationship to the destination, such as `noreferrer`.                                                                                 |
+| `download`         | `boolean \| string`                                                                  | Requests a download; a string suggests the filename. Browser and origin restrictions still apply.                                      |
+| `hrefLang`         | `string`                                                                             | Language of the linked resource; does not change this link's label or direction.                                                       |
+| `ping`             | `string`                                                                             | Space-separated URLs for hyperlink auditing.                                                                                           |
+| `referrerPolicy`   | `HTMLAttributeReferrerPolicy`                                                        | Controls referrer information sent during navigation.                                                                                  |
+| `id`               | `string`                                                                             | Unique identifier on the rendered element.                                                                                             |
+| `lang`             | `string`                                                                             | Language of this link's content. Normally inherited from its surrounding element or `VeliProvider`.                                    |
+| `dir`              | `string`                                                                             | Text direction, usually `ltr`, `rtl`, or `auto`. Normally inherited. Supplied arrows are not automatically mirrored.                   |
+| `hidden`           | `boolean`                                                                            | Hides the element using the native hidden attribute.                                                                                   |
+| `inert`            | `boolean`                                                                            | Makes the element and its descendants unavailable for interaction. Use `isDisabled` for Veli's disabled appearance and semantics.      |
+| `translate`        | `'yes' \| 'no'`                                                                      | Indicates whether the browser should translate the content.                                                                            |
+| `aria-current`     | `boolean \| 'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false'` | Identifies the current destination to assistive technology and drives `isCurrent`. It does not add a separate visual variant.          |
+| `aria-label`       | `string`                                                                             | Accessible name when visible content is insufficient, for example an icon-only link.                                                   |
+| `aria-labelledby`  | `string`                                                                             | Space-separated IDs of elements that provide the accessible name.                                                                      |
+| `aria-describedby` | `string`                                                                             | Space-separated IDs of elements with an accessible description, such as a new-tab notice.                                              |
+| `aria-details`     | `string`                                                                             | ID of an element with a longer, structured description.                                                                                |
+| `data-*`           | `string`                                                                             | Custom data attributes on the rendered element. React Aria also sets interaction attributes such as `data-hovered` and `data-current`. |
+
+## Accessibility
+
+- Use descriptive link text. Give icon-only links an accessible name with `aria-label` or `aria-labelledby`.
+- Use `underline="always"` within prose. Do not rely on color alone to identify inline links.
+- Tab moves between enabled links; Enter activates them. Disabled links remain identifiable to assistive technology and are skipped in the tab order.
+- The keyboard focus indicator remains visible in forced-colors mode. Visual overrides cannot hide keyboard focus.
+- Announce a new tab or a download in the visible text or accessible description when that behavior is not obvious.
+- The color transition is disabled when reduced motion is requested.
+
+## RTL and Language
+
+Link inherits `lang` and direction from its surrounding content. With an explicit `size`, its typography preset selects Inter for English and MV A Waheed for `lang="dv"`. Without `size`, typography inherits from the surrounding content. Load the fonts as described in [Typography](/foundations/typography/).
+
+In RTL, leading and trailing icon positions follow direction. Choose the appropriate arrow for the direction, as in the example above. Keep nondirectional icons such as Plus unchanged.
+
+<div className="preview preview--options mb-4">
+  <LinkRtlDemo client:visible />
+</div>
+
+Switch the preview between English and Dhivehi to compare text direction, typography, and arrows. The surrounding documentation stays in English, and the preview follows the site's theme.
+
+```tsx
+import { ArrowLeftIcon } from '@phosphor-icons/react';
+import { Link } from '@tradenetcorp/veli-ui/link';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function LinkLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <Link href="/account" size="md">
+        ކުރިއަށް
+        <ArrowLeftIcon aria-hidden="true" weight="bold" />
+      </Link>
+    </VeliProvider>
+  );
+}
+```

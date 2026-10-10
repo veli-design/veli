@@ -1,24 +1,32 @@
 'use client';
 
 import * as React from 'react';
-import { Button as AriaButton, ButtonProps as AriaButtonProps } from 'react-aria-components';
+import {
+  Button as AriaButton,
+  type ButtonProps as AriaButtonProps,
+  ButtonContext,
+  DEFAULT_SLOT,
+  ProgressBarContext,
+  useSlottedContext,
+} from 'react-aria-components';
+import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { hasAccessibleName, invariantDev } from './a11y';
+import { hasAccessibleName, invariantDev } from './a11y.js';
+import type { RefProp } from './ref.js';
+import { useVeliLanguage } from './provider-shared.js';
 
 const buttonVariants = cva(
   [
-    'relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased',
+    'relative isolate inline-flex min-w-0 max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-full border-transparent font-sans antialiased',
     // Colors use duration-normal/ease-out; press scale uses duration-fast/ease-out-quad in both directions.
     '[transition-property:background-color,color,scale]',
-    '[transition-duration:var(--duration-normal),var(--duration-normal),var(--duration-fast)]',
-    '[transition-timing-function:var(--ease-out),var(--ease-out),var(--ease-out-quad)]',
+    '[transition-duration:var(--veli-duration-normal),var(--veli-duration-normal),var(--veli-duration-fast)]',
+    '[transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
     'focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
-    'disabled:pointer-events-none',
+    'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
+    'disabled:pointer-events-none data-[pending]:cursor-wait',
     'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
-    // Keep label/icons optically fixed while the chrome scales.
-    '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--duration-fast)] [&>*]:[transition-timing-function:var(--ease-out-quad)]',
-    'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
     "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
     'after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)]',
     'after:opacity-0 after:transition-opacity after:duration-normal after:ease-out',
@@ -38,15 +46,15 @@ const buttonVariants = cva(
         ghost: 'bg-transparent',
       },
       size: {
-        // Includes visual compensation for Figma's internal "Label" horizontal inset.
-        xs: 'h-7 px-2 gap-2',
-        sm: 'h-9 px-2.5 gap-2',
-        md: 'h-11 px-3.5 gap-2',
-        lg: 'h-13 px-4 gap-2',
-        xl: 'h-15 px-5 gap-2',
+        // Figma hugs the content plus padding, including translated or wrapped labels.
+        xs: 'px-1.5 py-1.5',
+        sm: 'px-2 py-2',
+        md: 'px-3 py-2.5',
+        lg: 'px-3.5 py-3',
+        xl: 'px-4.5 py-4',
       },
       iconOnly: {
-        true: 'shrink-0 px-0',
+        true: 'shrink-0 p-0',
         false: '',
       },
     },
@@ -56,70 +64,70 @@ const buttonVariants = cva(
         intent: 'primary',
         appearance: 'fill',
         className:
-          'bg-button-primary text-white hover:bg-button-primary-hover active:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)] dark:[--button-ripple-color:rgb(0_175_172_/_0.75)]',
+          'bg-button-primary text-white data-[hovered]:bg-button-primary-hover data-[pressed]:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)]',
       },
       {
         intent: 'primary',
         appearance: 'transparent',
         className:
-          'bg-button-primary-subtle text-primary-muted hover:bg-button-primary-subtle-hover active:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-button-primary-subtle text-primary data-[hovered]:bg-button-primary-subtle-hover data-[pressed]:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       {
         intent: 'primary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-primary hover:bg-button-primary-subtle active:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       // Secondary
       {
         intent: 'secondary',
         appearance: 'fill',
         className:
-          'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
+          'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'bg-button-secondary-subtle text-base-default hover:bg-button-secondary-subtle-hover active:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_255_255_/_0.15)]',
+          'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base-default hover:bg-button-secondary-subtle active:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_255_255_/_0.15)]',
+          'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       // Danger
       {
         intent: 'danger',
         appearance: 'fill',
         className:
-          'bg-button-danger text-white hover:bg-button-danger-hover active:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.9)]',
+          'bg-button-danger text-white data-[hovered]:bg-button-danger-hover data-[pressed]:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.95)]',
       },
       {
         intent: 'danger',
         appearance: 'transparent',
         className:
-          'bg-button-danger-subtle text-danger-muted hover:bg-button-danger-subtle-hover active:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-button-danger-subtle text-danger data-[hovered]:bg-button-danger-subtle-hover data-[pressed]:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       {
         intent: 'danger',
         appearance: 'ghost',
         className:
-          'bg-transparent text-danger-muted hover:bg-button-danger-subtle active:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:rgb(255_255_255_/_0.61)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       // Accent (fill only in Figma)
       {
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light hover:bg-button-accent-hover active:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(154_243_102_/_1)] dark:[--button-ripple-color:rgb(154_243_102_/_1)]',
+          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
       },
-      { size: 'xs', iconOnly: true, className: 'w-7' },
-      { size: 'sm', iconOnly: true, className: 'w-9' },
-      { size: 'md', iconOnly: true, className: 'w-11' },
-      { size: 'lg', iconOnly: true, className: 'w-13' },
-      { size: 'xl', iconOnly: true, className: 'w-15' },
+      { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
+      { size: 'sm', iconOnly: true, className: 'h-9 w-9' },
+      { size: 'md', iconOnly: true, className: 'h-11 w-11' },
+      { size: 'lg', iconOnly: true, className: 'h-13 w-13' },
+      { size: 'xl', iconOnly: true, className: 'h-15 w-15' },
     ],
     defaultVariants: {
       intent: 'primary',
@@ -130,14 +138,14 @@ const buttonVariants = cva(
   },
 );
 
-const loadingOnlyMinWidthVariants = cva('', {
+const loadingOnlyWidthVariants = cva('', {
   variants: {
     size: {
-      xs: 'min-w-21',
-      sm: 'min-w-26.25',
-      md: 'min-w-29.5',
-      lg: 'min-w-33.75',
-      xl: 'min-w-37',
+      xs: 'w-28.5',
+      sm: 'w-32.25',
+      md: 'w-37.5',
+      lg: 'w-41.75',
+      xl: 'w-41.75',
     },
   },
   defaultVariants: {
@@ -149,10 +157,10 @@ const loadingIndicatorVariants = cva('', {
   variants: {
     size: {
       xs: 'size-3',
-      sm: 'size-4.5',
-      md: 'size-5',
+      sm: 'size-4',
+      md: 'size-4',
       lg: 'size-5',
-      xl: 'size-5.5',
+      xl: 'size-5',
     },
   },
   defaultVariants: {
@@ -161,28 +169,24 @@ const loadingIndicatorVariants = cva('', {
 });
 
 const buttonContentVariants = cva(
-  'relative z-[1] inline-flex items-center justify-center font-sans antialiased',
+  'relative z-10 inline-flex min-w-0 max-w-full items-center justify-center gap-2 whitespace-normal wrap-anywhere font-sans antialiased [&>svg]:shrink-0',
   {
     variants: {
       size: {
-        xs: 'gap-2 type-caption-medium',
-        sm: 'gap-2 type-body-sm-medium',
-        md: 'gap-2 type-body-md-medium',
-        lg: 'gap-2 type-body-lg-medium',
-        xl: 'gap-2 type-subtitle-medium',
-      },
-      hasChildren: {
-        true: '',
-        false: 'gap-0',
+        xs: 'type-caption-medium',
+        sm: 'type-body-sm-medium',
+        md: 'type-body-md-medium',
+        lg: 'min-h-7 type-body-lg-medium',
+        xl: 'type-subtitle-medium',
       },
       iconOnly: {
         true: 'gap-0 px-0',
-        false: 'px-1.5',
+        // Compensate the icon margins in the gap: label inset 6px, icon inset 2px, gap 8px.
+        false: 'px-1.5 [&:has(>svg)]:gap-3 [&>svg]:-mx-1',
       },
     },
     defaultVariants: {
       size: 'md',
-      hasChildren: true,
       iconOnly: false,
     },
   },
@@ -195,7 +199,8 @@ type AccessibleButtonName =
 interface ButtonSharedProps
   extends
     Omit<AriaButtonProps, 'style' | 'children'>,
-    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'> {
+    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'>,
+    RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
   className?: string;
@@ -254,74 +259,62 @@ function cancelAnimationFrameRef(frameRef: React.MutableRefObject<number | null>
 }
 
 function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
+  const { language } = useVeliLanguage();
+  const progressProps = useSlottedContext(ProgressBarContext);
+
   return (
-    <svg
-      aria-hidden="true"
-      className={twMerge(loadingIndicatorVariants({ size }), 'animate-spin text-current')}
-      focusable="false"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
+    <span
+      id={progressProps?.id}
+      role="progressbar"
+      aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
+      className="inline-flex shrink-0 items-center justify-center"
     >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      <CircleNotchIcon
+        aria-hidden="true"
+        weight="bold"
+        className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}
       />
-    </svg>
+    </span>
   );
 }
 
 function ButtonContent({
   children,
+  hasChildren,
   isIconOnly,
   isLoading,
   size,
 }: {
   children: React.ReactNode;
+  hasChildren: boolean;
   isIconOnly: boolean;
-  isLoading?: boolean;
+  isLoading: boolean;
   size: ButtonProps['size'];
 }) {
-  const loadingIndicator = <ButtonLoadingIndicator size={size} />;
-
-  if (isLoading) {
-    if (children) {
-      return (
-        <>
-          <span
-            className={twMerge(buttonContentVariants({ size, iconOnly: isIconOnly }), 'opacity-0')}
-          >
-            {children}
-          </span>
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-[1] inline-flex items-center justify-center"
-          >
-            {loadingIndicator}
-          </span>
-        </>
-      );
-    }
-
-    return (
-      <span
-        className={buttonContentVariants({
-          size,
-          hasChildren: false,
-          iconOnly: isIconOnly,
-        })}
-      >
-        {loadingIndicator}
-      </span>
-    );
-  }
-
-  return children ? (
-    <span className={buttonContentVariants({ size, iconOnly: isIconOnly })}>{children}</span>
-  ) : (
-    children
+  return (
+    <>
+      {hasChildren ? (
+        <span
+          className={twMerge(
+            buttonContentVariants({ size, iconOnly: isIconOnly }),
+            isLoading && 'opacity-0',
+          )}
+        >
+          {children}
+        </span>
+      ) : null}
+      {isLoading ? (
+        <span
+          className={twMerge(
+            buttonContentVariants({ size, iconOnly: isIconOnly }),
+            'pointer-events-none',
+            hasChildren ? 'absolute inset-0' : 'h-lh',
+          )}
+        >
+          <ButtonLoadingIndicator size={size} />
+        </span>
+      ) : null}
+    </>
   );
 }
 
@@ -335,7 +328,7 @@ function useButtonRipple({
   onPressEnd,
 }: UseButtonRippleOptions) {
   const canRipple = !isDisabled && !isLoading;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const expandFrameRef = React.useRef<number | null>(null);
   const pointerFrameRef = React.useRef<number | null>(null);
   const isPressingRef = React.useRef(false);
@@ -366,7 +359,7 @@ function useButtonRipple({
 
   const trackRippleFromPointer = React.useCallback(
     (target: HTMLButtonElement, clientX: number, clientY: number) => {
-      if (!isPressingRef.current || !canRipple) {
+      if (!isPressingRef.current || !canRipple || prefersReducedMotion()) {
         return;
       }
 
@@ -402,6 +395,7 @@ function useButtonRipple({
 
   const animatePressRipple = React.useCallback(
     (width: number, height: number, x: number, y: number) => {
+      cancelAnimationFrameRef(expandFrameRef);
       const endSize = getPressRippleEndSize(width, height, x, y);
       rippleRef.current = { x, y, size: endSize };
       writeRipple();
@@ -410,13 +404,18 @@ function useButtonRipple({
         return;
       }
 
-      cancelAnimationFrameRef(expandFrameRef);
       rippleRef.current.size = pressRippleStartSizePx;
       writeRipple();
 
       const startTime = window.performance.now();
 
       const tick = (time: number) => {
+        if (prefersReducedMotion()) {
+          rippleRef.current.size = endSize;
+          writeRipple();
+          expandFrameRef.current = null;
+          return;
+        }
         const progress = Math.min((time - startTime) / pressRippleAnimationDuration, 1);
         rippleRef.current.size =
           pressRippleStartSizePx + (endSize - pressRippleStartSizePx) * easeOutCubic(progress);
@@ -435,12 +434,20 @@ function useButtonRipple({
     [writeRipple],
   );
 
-  React.useEffect(() => {
-    return () => {
-      cancelAnimationFrameRef(expandFrameRef);
-      cancelAnimationFrameRef(pointerFrameRef);
-    };
+  const stopTrackingRipple = React.useCallback(() => {
+    isPressingRef.current = false;
+    pendingPointerRef.current = null;
+    cancelAnimationFrameRef(pointerFrameRef);
   }, []);
+
+  React.useEffect(() => {
+    const stopRipple = () => {
+      stopTrackingRipple();
+      cancelAnimationFrameRef(expandFrameRef);
+    };
+    if (!canRipple) stopRipple();
+    return stopRipple;
+  }, [canRipple, stopTrackingRipple]);
 
   const handlePointerMove: NonNullable<ButtonProps['onPointerMove']> = (event) => {
     trackRippleFromPointer(event.currentTarget, event.clientX, event.clientY);
@@ -449,14 +456,14 @@ function useButtonRipple({
 
   const handlePointerUp: NonNullable<ButtonProps['onPointerUp']> = (event) => {
     if (event.buttons === 0) {
-      isPressingRef.current = false;
+      stopTrackingRipple();
     }
 
     onPointerUp?.(event);
   };
 
   const handlePointerCancel: NonNullable<ButtonProps['onPointerCancel']> = (event) => {
-    isPressingRef.current = false;
+    stopTrackingRipple();
     onPointerCancel?.(event);
   };
 
@@ -476,7 +483,8 @@ function useButtonRipple({
   };
 
   const handlePressEnd: NonNullable<ButtonProps['onPressEnd']> = (event) => {
-    isPressingRef.current = false;
+    // Let expansion finish during the opacity fade, including after a quick click.
+    stopTrackingRipple();
     onPressEnd?.(event);
   };
 
@@ -499,6 +507,7 @@ export function Button({
   children,
   iconOnly,
   isLoading,
+  isPending,
   isDisabled,
   className,
   onPointerMove,
@@ -507,56 +516,111 @@ export function Button({
   onPressStart,
   onPressEnd,
   'aria-busy': ariaBusy,
+  render,
+  ref,
   ...props
 }: ButtonProps) {
-  const isLoadingOnly = Boolean(isLoading && !children);
+  const buttonContext = React.useContext(ButtonContext);
+  // Collection-building passes may omit slots. AriaButton validates the visible render.
+  const context =
+    props.slot === null
+      ? undefined
+      : buttonContext && 'slots' in buttonContext
+        ? buttonContext.slots?.[props.slot || DEFAULT_SLOT]
+        : (buttonContext as AriaButtonProps | null);
+  const hasChildren = React.Children.toArray(children).some(
+    (child) => typeof child !== 'string' || child.trim().length > 0,
+  );
   const isIconOnly = Boolean(iconOnly);
-  const hasButtonAccessibleName = hasAccessibleName(props);
+  const hasButtonAccessibleName = hasAccessibleName({ ...context, ...props });
+  const resolvedPending = isLoading || (isPending ?? context?.isPending);
+  const resolvedDisabled = isDisabled ?? context?.isDisabled;
+  const resolvedRender = render ?? context?.render;
   const resolvedIntent = intent ?? 'primary';
-  const resolvedAppearance: ButtonAppearance = appearance ?? 'fill';
+  const resolvedAppearance: ButtonAppearance =
+    resolvedIntent === 'accent' ? 'fill' : (appearance ?? 'fill');
+  const resolvedSize = size ?? 'md';
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
     'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
-    !isLoadingOnly || hasButtonAccessibleName,
-    'Veli UI: Button with isLoading and no children requires a non-empty aria-label or aria-labelledby.',
+    !resolvedPending || hasChildren || hasButtonAccessibleName,
+    'Veli UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
-  const resolvedClassName = twMerge(
-    buttonVariants({
-      intent: resolvedIntent,
-      appearance: resolvedAppearance,
-      size,
-      iconOnly: isIconOnly,
-    }),
-    isLoadingOnly && !isIconOnly ? loadingOnlyMinWidthVariants({ size }) : undefined,
-    className,
-  );
   const { buttonRef, buttonEventHandlers } = useButtonRipple({
-    isDisabled,
-    isLoading,
+    isDisabled: resolvedDisabled,
+    isLoading: resolvedPending,
     onPointerMove,
     onPointerUp,
     onPointerCancel,
     onPressStart,
     onPressEnd,
   });
+  const setButtonRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      buttonRef.current = node;
+      const cleanup = typeof ref === 'function' ? ref(node) : undefined;
+      if (ref && typeof ref !== 'function') ref.current = node;
+
+      return () => {
+        buttonRef.current = null;
+        if (typeof cleanup === 'function') cleanup();
+        else if (typeof ref === 'function') ref(null);
+        else if (ref) ref.current = null;
+      };
+    },
+    [buttonRef, ref],
+  );
 
   return (
     <AriaButton
       {...props}
-      aria-busy={isLoading ? true : ariaBusy}
-      aria-label={isLoadingOnly && !hasButtonAccessibleName ? 'Loading' : props['aria-label']}
-      ref={buttonRef}
-      isDisabled={isDisabled || isLoading}
+      ref={setButtonRef}
+      isDisabled={isDisabled}
+      isPending={resolvedPending}
       {...buttonEventHandlers}
-      className={resolvedClassName}
+      className={(state) =>
+        twMerge(
+          typeof context?.className === 'function' ? context.className(state) : context?.className,
+          buttonVariants({
+            intent: resolvedIntent,
+            appearance: resolvedAppearance,
+            size: resolvedSize,
+            iconOnly: isIconOnly,
+          }),
+          state.isPending && !hasChildren && !isIconOnly
+            ? loadingOnlyWidthVariants({ size: resolvedSize })
+            : undefined,
+          className,
+        )
+      }
+      // React Aria drops aria-busy, so set it on the element.
+      render={(domProps, state) => {
+        const buttonProps = {
+          ...domProps,
+          'aria-busy': state.isPending ? true : ariaBusy,
+          // Preserve the submit target for Enter and cancel native form actions.
+          ...(state.isPending && {
+            type: props.type ?? context?.type ?? 'button',
+            onClick: (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault(),
+          }),
+        };
+        return resolvedRender ? resolvedRender(buttonProps, state) : <button {...buttonProps} />;
+      }}
     >
-      <ButtonContent isLoading={isLoading} isIconOnly={isIconOnly} size={size}>
-        {children}
-      </ButtonContent>
+      {({ isPending: pending }) => (
+        <ButtonContent
+          hasChildren={hasChildren}
+          isLoading={pending}
+          isIconOnly={isIconOnly}
+          size={resolvedSize}
+        >
+          {children}
+        </ButtonContent>
+      )}
     </AriaButton>
   );
 }

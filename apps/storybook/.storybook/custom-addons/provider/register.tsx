@@ -33,6 +33,17 @@ function readProviderSwitcherValues(
 function ProviderSwitcherToolbar({ api }: ProviderSwitcherToolbarProps) {
   const [values, setValues] = React.useState(() => readProviderSwitcherValues(api));
   const channel = addons.getChannel();
+  const explicitValues = React.useRef(
+    Object.fromEntries(
+      [
+        ['language', providerSwitcherLanguageQueryParam],
+        ['theme', providerSwitcherThemeQueryParam],
+        ['surface', providerSwitcherSurfaceQueryParam],
+      ]
+        .map(([key, param]) => [key, api.getQueryParam(param)])
+        .filter(([, value]) => value != null),
+    ),
+  );
 
   const updateValues = React.useCallback(
     (nextValues: Partial<VeliProviderSwitcherValues>) => {
@@ -41,31 +52,34 @@ function ProviderSwitcherToolbar({ api }: ProviderSwitcherToolbarProps) {
           ...currentValues,
           ...nextValues,
         });
+        explicitValues.current = valuesToEmit;
+        api.setQueryParams({
+          [providerSwitcherLanguageQueryParam]: valuesToEmit.language,
+          [providerSwitcherThemeQueryParam]: valuesToEmit.theme,
+          [providerSwitcherSurfaceQueryParam]: valuesToEmit.surface,
+        });
         channel.emit(providerSwitcherUpdatedEvent, valuesToEmit);
         return valuesToEmit;
       });
     },
-    [channel],
+    [api, channel],
   );
 
   React.useEffect(() => {
-    const syncPreview = () => {
-      channel.emit(providerSwitcherUpdatedEvent, values);
+    const syncPreview = (defaults?: VeliProviderSwitcherValues) => {
+      const nextValues = normalizeProviderSwitcherValues({
+        ...defaults,
+        ...explicitValues.current,
+      });
+      setValues(nextValues);
+      channel.emit(providerSwitcherUpdatedEvent, nextValues);
     };
 
     channel.on(providerSwitcherReadyEvent, syncPreview);
     return () => {
       channel.removeListener(providerSwitcherReadyEvent, syncPreview);
     };
-  }, [channel, values]);
-
-  React.useEffect(() => {
-    api.setQueryParams({
-      [providerSwitcherLanguageQueryParam]: values.language,
-      [providerSwitcherThemeQueryParam]: values.theme,
-      [providerSwitcherSurfaceQueryParam]: values.surface,
-    });
-  }, [api, values.language, values.surface, values.theme]);
+  }, [channel]);
 
   return (
     <>

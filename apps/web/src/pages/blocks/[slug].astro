@@ -1,0 +1,46 @@
+---
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import { blocks, blockPages } from '../../lib/blocks';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import DocsPageActions from '../../components/DocsPageActions.astro';
+import { AccountPanelDemo } from '../../components/AccountPanelDemo';
+import { SiteFooterDemo } from '../../components/SiteFooterDemo';
+import { SiteHeaderDemo } from '../../components/SiteHeaderDemo';
+import { NotificationTrayDemo } from '../../components/NotificationTrayDemo';
+import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
+
+// Cache one processor/highlighter for all block pages — Shiki is a singleton and
+// creating a new instance per request leaks and can fail on large block markdown.
+const blockMarkdownProcessor = await createMarkdownProcessor({
+  rehypePlugins: [rehypeCodeBlocks],
+});
+
+export function getStaticPaths() {
+  return blocks.map(({ manifest }) => ({ params: { slug: manifest.id } }));
+}
+const page = blockPages.find((page) => page.id === `blocks/${Astro.params.slug}`)!;
+const rendered = await blockMarkdownProcessor.render(page.markdown.replace(/^# .*\n/, ''));
+const markdownPath = `/${page.id}/index.md`;
+const slug = Astro.params.slug;
+---
+
+<DocsLayout
+  title={`${page.title} | Veli Design System`}
+  description={page.description}
+  activePath={`/${page.id}/`}
+  {markdownPath}
+  headings={rendered.metadata.headings.filter((h) => h.depth === 2 || h.depth === 3)}
+  contentLayout="article"
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1>{page.title}</h1><p>{page.description}</p><DocsPageActions
+      {markdownPath}
+      placement="inline"
+    />
+  </header>
+  {slug === 'site-footer' && <SiteFooterDemo client:visible />}
+  {slug === 'site-header' && <SiteHeaderDemo client:visible />}
+  {slug === 'notification-tray' && <NotificationTrayDemo client:visible />}
+  {slug === 'account-panel' && <AccountPanelDemo client:visible />}
+  <article class="docs-prose" set:html={rendered.code} />
+</DocsLayout>

@@ -1,45 +1,38 @@
-name: Deploy Web App
-
+name: Redeploy public release sites
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/web/**'
-      - 'packages/**'
-      - 'package.json'
-      - 'pnpm-workspace.yaml'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-web.yml'
   workflow_dispatch:
-
+permissions:
+  contents: read
+  packages: read
+  actions: read
 jobs:
-  deploy:
+  snapshot:
     runs-on: ubuntu-latest
+    outputs:
+      source-ref: ${{ steps.manifest.outputs.source-ref }}
+      release-tag: ${{ steps.release.outputs.release-tag }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - uses: actions/github-script@v7
+        id: release
         with:
-          node-version: 24
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build web app
-        run: pnpm turbo build --filter @tradenetcorp/veli-web
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: 'apps/web'
-          environment: 'production'
-          command: deploy
+          script: |
+            const releases = await github.paginate(github.rest.repos.listReleases, { ...context.repo, per_page: 100 });
+            const release = releases.filter(r => !r.draft && r.assets.some(a => a.name === 'release-manifest.json')).sort((a,b) => b.published_at.localeCompare(a.published_at))[0];
+            if (!release) throw new Error('No published release snapshot exists.');
+            core.setOutput('release-tag', release.tag_name);
+      - name: Read snapshot source commit
+        id: manifest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.release-tag }}
+        run: |
+          gh release download "$RELEASE_TAG" --pattern release-manifest.json --dir "$RUNNER_TEMP/release-manifest"
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+'/release-manifest/release-manifest.json'));if(!/^[a-f0-9]{40}$/.test(m.sourceCommit))throw new Error('Invalid source commit');fs.appendFileSync(process.env.GITHUB_OUTPUT,'source-ref='+m.sourceCommit+'\n');"
+  deploy:
+    needs: snapshot
+    uses: ./.github/workflows/deploy-release-sites.yml
+    with:
+      source-ref: ${{ needs.snapshot.outputs.source-ref }}
+      release-tag: ${{ needs.snapshot.outputs.release-tag }}
+    secrets: inherit

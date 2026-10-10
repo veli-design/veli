@@ -85,6 +85,14 @@
       "title": "Forms",
       "components": [
         {
+          "id": "field",
+          "name": "Field",
+          "summary": "Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.",
+          "importPath": "@tradenetcorp/veli-ui/field",
+          "declaration": "../dist/field.d.ts",
+          "metadata": "./components/field.json"
+        },
+        {
           "id": "input",
           "name": "Input",
           "summary": "Text fields with description, validation, and token styling.",
@@ -247,6 +255,14 @@
           "importPath": "@tradenetcorp/veli-ui/divider",
           "declaration": "../dist/divider.d.ts",
           "metadata": "./components/divider.json"
+        },
+        {
+          "id": "skeleton",
+          "name": "Skeleton",
+          "summary": "Generic loading placeholder for composing loading states.",
+          "importPath": "@tradenetcorp/veli-ui/skeleton",
+          "declaration": "../dist/skeleton.d.ts",
+          "metadata": "./components/skeleton.json"
         },
         {
           "id": "kbd",

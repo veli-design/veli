@@ -1,0 +1,46 @@
+name: Component proposal
+description: Propose a new Veli component or a substantial extension to an existing one.
+title: '[Component]: '
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user or product problem this component would address.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed component or behavior
+      description: Describe the component, its purpose, and the behavior it should provide.
+    validations:
+      required: true
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Intended users and use cases
+      description: Identify who will use it and provide representative scenarios.
+    validations:
+      required: true
+  - type: textarea
+    id: api-design
+    attributes:
+      label: API and design considerations
+      description: Share suggested props, states, accessibility requirements, visual behavior, or related patterns.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain current workarounds, existing components, or other approaches and why they are insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or references
+      description: Add mockups, links, code samples, or examples from other design systems.

@@ -1,15 +1,17 @@
 ---
 title: DatePicker
-description: Formatted date trigger plus calendar popover built with React Aria.
+description: Editable date segments with a calendar popover for date selection.
 ---
 
-import { DatePickerUsageDemo, DatePickerVariantsDemo } from '../../components/DateExamples';
+import {
+  DatePickerAppearancesDemo,
+  DatePickerUsageDemo,
+  DatePickerValidationDemo,
+} from '../../components/DateExamples';
 
 # DatePicker
 
-`DatePicker` is the full input control most product teams will use. It combines a formatted trigger
-with a `Calendar` popover for mouse, touch, and keyboard selection. Use
-[DateField](/docs/date-field/) when users need segment-based keyboard entry.
+Use DatePicker when people need to type a date or choose one from a calendar. Its date segments and calendar share one value. Use [DateField](/docs/date-field/) when a calendar is unnecessary, or [Calendar](/docs/calendar/) for an embedded date selector.
 
 ## Import
 
@@ -20,60 +22,115 @@ import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <DatePickerUsageDemo client:visible />
+  <DatePickerUsageDemo client:load />
 </div>
 
 ```tsx
-<DatePicker label="Appointment date" description="Choose a date from the field or the calendar." />
+<DatePicker
+  label="Appointment date"
+  isOptional
+  infoTooltip="Type a date or choose one from the calendar."
+  description="Type a date or choose one from the calendar."
+/>
 ```
 
-## Variants
+Type into the date segments, use the arrow keys to change a segment, or open the calendar button. The calendar's Today action is shown by default.
+
+## Appearances
+
+`default` uses the underline shell. `outline` draws a bordered field. Size the field with `sm`, `md`, or `lg`. Like DateField, width follows its container; apply a layout class to the root when a fixed width is needed.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <DatePickerVariantsDemo client:visible />
+  <DatePickerAppearancesDemo client:visible />
 </div>
 
-## Key Props
+```tsx
+<DatePicker label="Default" />
+<DatePicker appearance="outline" label="Outline" />
+```
 
-### Common
+## Validation
 
-| Prop           | Type                | Description                                             |
-| :------------- | :------------------ | :------------------------------------------------------ |
-| `label`        | `ReactNode`         | Visible label for the field.                            |
-| `description`  | `ReactNode`         | Helper text shown below the picker when not invalid.    |
-| `errorMessage` | `ReactNode`         | Validation content shown below the picker when invalid. |
-| `isRequired`   | `boolean`           | Marks the picker as required.                           |
-| `isDisabled`   | `boolean`           | Disables the calendar trigger.                          |
-| `isReadOnly`   | `boolean`           | Prevents edits but keeps the value visible.             |
-| `value`        | `DateValue \| null` | Controlled selected value.                              |
-| `defaultValue` | `DateValue`         | Uncontrolled initial value.                             |
-| `onChange`     | `(value) => void`   | Called when the selected value changes.                 |
-| `name`         | `string`            | Submits the value in forms as an ISO string.            |
+When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `maxValue`, and `isDateUnavailable` limit selectable dates.
 
-### Formatting
+<div className="preview mb-4 rounded-lg border p-4">
+  <DatePickerValidationDemo client:visible />
+</div>
 
-| Prop                      | Type                                      | Description                                    |
-| :------------------------ | :---------------------------------------- | :--------------------------------------------- |
-| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | Smallest unit included in the formatted value. |
-| `hourCycle`               | `12 \| 24`                                | Forces 12-hour or 24-hour time display.        |
-| `hideTimeZone`            | `boolean`                                 | Hides time zone text when using zoned values.  |
-| `shouldForceLeadingZeros` | `boolean`                                 | Keeps numeric segments zero-padded.            |
-| `placeholderValue`        | `DateValue`                               | Sets the default calendar context.             |
+```tsx
+<DatePicker label="Service date" isInvalid errorMessage="Enter a valid service date." />
+```
 
-### Calendar Behavior
+Give the field a `name` to submit its completed value as an ISO string. Use `value` and `onChange` for a controlled value, or `defaultValue` for an initial value. `granularity` adds editable time segments for date-time values.
 
-| Prop                  | Type                | Description                                                      |
-| :-------------------- | :------------------ | :--------------------------------------------------------------- |
-| `shouldCloseOnSelect` | `boolean`           | Controls whether the popover closes immediately after selection. |
-| `minValue`            | `DateValue`         | Lowest selectable value.                                         |
-| `maxValue`            | `DateValue`         | Highest selectable value.                                        |
-| `isDateUnavailable`   | `(date) => boolean` | Marks dates as unavailable in the calendar.                      |
+## API Reference
 
-### Validation
+DatePicker is a Veli field on React Aria [`DatePicker`](https://react-spectrum.adobe.com/react-aria/DatePicker.html). Props below follow that stack.
 
-| Prop        | Type                                         | Description                                    |
-| :---------- | :------------------------------------------- | :--------------------------------------------- |
-| `isInvalid` | `boolean`                                    | Forces invalid styling and error presentation. |
-| `validate`  | `(value) => ValidationError \| true \| null` | Adds custom validation logic.                  |
+### DatePicker
 
-All remaining supported React Aria `DatePicker` props can still be passed through this wrapper.
+Veli-specific props for the composed field.
+
+| Prop                    | Type                     | Default          | Description                                                            |
+| :---------------------- | :----------------------- | :--------------- | :--------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                           |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                            |
+| `label`                 | `ReactNode`              | -                | Visible label.                                                         |
+| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`.   |
+| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                   |
+| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                          |
+| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                         |
+| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                     |
+| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                         |
+| `calendarButtonLabel`   | `string`                 | Localized string | Accessible name for the calendar trigger.                              |
+| `triggerRef`            | `Ref<HTMLButtonElement>` | -                | Ref to the calendar trigger, so form libraries can focus it on errors. |
+| `showTodayButton`       | `boolean`                | `true`           | Shows the Today action in the calendar.                                |
+| `todayButtonLabel`      | `string`                 | Localized string | Overrides the Today action text.                                       |
+| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                   |
+| `inputClassName`        | `string`                 | -                | Layout class on the input shell.                                       |
+| `popoverClassName`      | `string`                 | -                | Class on the calendar popover.                                         |
+| `calendarClassName`     | `string`                 | -                | Class on the calendar surface.                                         |
+
+### React Aria DatePicker
+
+React Aria’s headless [`DatePicker`](https://react-spectrum.adobe.com/react-aria/DatePicker.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop                      | Type                                      | Default | Description                                        |
+| :------------------------ | :---------------------------------------- | :------ | :------------------------------------------------- |
+| `value`                   | `DateValue \| null`                       | -       | Controlled value.                                  |
+| `defaultValue`            | `DateValue`                               | -       | Uncontrolled initial value.                        |
+| `onChange`                | `(value: DateValue \| null) => void`      | -       | Called when the value changes.                     |
+| `placeholderValue`        | `DateValue`                               | -       | Placeholder shape and initial calendar view.       |
+| `granularity`             | `'day' \| 'hour' \| 'minute' \| 'second'` | -       | Smallest editable segment.                         |
+| `hourCycle`               | `12 \| 24`                                | -       | Forces 12-hour or 24-hour time when time is shown. |
+| `hideTimeZone`            | `boolean`                                 | -       | Hides the time zone segment for zoned values.      |
+| `shouldForceLeadingZeros` | `boolean`                                 | -       | Keeps segment values zero-padded where applicable. |
+| `minValue`                | `DateValue`                               | -       | Lowest allowed date/time.                          |
+| `maxValue`                | `DateValue`                               | -       | Highest allowed date/time.                         |
+| `isDateUnavailable`       | `(date: DateValue) => boolean`            | -       | Blocks unavailable calendar dates.                 |
+| `isDisabled`              | `boolean`                                 | `false` | Disables editing and calendar opening.             |
+| `isInvalid`               | `boolean`                                 | `false` | Marks the field invalid.                           |
+| `isReadOnly`              | `boolean`                                 | `false` | Prevents editing and calendar opening.             |
+| `isRequired`              | `boolean`                                 | `false` | Marks the field required.                          |
+| `name`                    | `string`                                  | -       | Submits the value in forms as an ISO string.       |
+| `validate`                | `function`                                | -       | Custom validation.                                 |
+| `autoFocus`               | `boolean`                                 | `false` | Focuses the field on mount.                        |
+| `shouldCloseOnSelect`     | `boolean`                                 | -       | Controls calendar closing after selection.         |
+
+Not forwarded from React Aria `DatePicker`:
+
+| Prop        | Why                                                |
+| :---------- | :------------------------------------------------- |
+| `children`  | Veli owns the field composition.                   |
+| `style`     | Not supported.                                     |
+| `className` | Replaced by Veli’s layout `className` on the root. |
+
+## Accessibility
+
+Each date segment is individually editable and focusable. The calendar button is a separate control. Tab reaches the field and button; arrow keys and typing edit segments; Escape closes the calendar and returns focus. Helper and error content are linked to the picker. The Today action remains disabled when today's date is unavailable.
+
+## RTL and language
+
+Set `language` on `VeliProvider`. Segment order and calendar text follow the locale; Dhivehi uses the system's RTL font and direction. Calendar navigation mirrors in RTL, while date values remain semantic dates rather than formatted strings.
+
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state and spread them directly. Set `name` when a native submit should send an ISO 8601 string. See [Forms](/patterns/forms/).

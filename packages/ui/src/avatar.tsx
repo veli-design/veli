@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Buildings, User } from 'phosphor-react';
+import { BuildingsIcon, UserIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { type VeliLanguage, useVeliLanguage } from './provider';
+import { type VeliLanguage, useVeliLanguage } from './provider.js';
 
 const avatarAppearances = {
   blue: {
@@ -153,7 +153,7 @@ const avatarVariants = cva(
     },
     defaultVariants: {
       appearance: 'blue',
-      size: '60',
+      size: '44',
       contentType: 'icon',
     },
   },
@@ -297,7 +297,7 @@ function getAccessibleLabel({
 export function Avatar({
   className,
   appearance = 'blue',
-  size = '60',
+  size = '44',
   type,
   src,
   alt,
@@ -307,7 +307,7 @@ export function Avatar({
   const [failedSrc, setFailedSrc] = React.useState<string | null>(null);
   const { language } = useVeliLanguage();
   const imageError = Boolean(src && failedSrc === src);
-  const resolvedSize = size ?? '60';
+  const resolvedSize = size ?? '44';
   const resolvedAppearance = appearance ?? 'blue';
   const contentType = resolveContentType({ type, src, initials, imageError });
   const appearanceTokens = avatarAppearances[resolvedAppearance];
@@ -360,7 +360,7 @@ export function Avatar({
       ) : null}
 
       {contentType === 'icon' ? (
-        <User
+        <UserIcon
           aria-hidden="true"
           size={iconSize}
           weight="fill"
@@ -369,7 +369,7 @@ export function Avatar({
       ) : null}
 
       {contentType === 'agencyIcon' ? (
-        <Buildings
+        <BuildingsIcon
           aria-hidden="true"
           size={iconSize}
           weight="fill"

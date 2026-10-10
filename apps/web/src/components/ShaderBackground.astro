@@ -1,58 +1,100 @@
 ---
-/**
- * Animated WebGL shader background with a static-image fallback.
- *
- * Renders a `<canvas>` driven by a shader from the registry, layered over the
- * provided fallback image. The image is what shows for users without
- * JavaScript or WebGL; once the renderer starts successfully the canvas fades
- * in over it. Pointer movement anywhere in the parent element drives the
- * shader's interactive layers (e.g. Liquify).
- *
- * Swap backgrounds by passing a different registered `shader` id.
- */
-import { DEFAULT_SHADER } from '../shaders/registry';
-
 interface Props {
-  /** Registered shader id (see shaders/registry.ts). */
-  shader?: string;
-  /** Static image shown before/instead of the canvas. */
-  fallbackSrc: string;
+  fallbackSrc?: string;
   class?: string;
 }
 
-const { shader = DEFAULT_SHADER, fallbackSrc, class: className = '' } = Astro.props;
+const { fallbackSrc, class: className = '' } = Astro.props;
 ---
 
-<div class:list={['shader-bg', className]} data-shader-bg data-shader={shader}>
-  <canvas class="shader-bg__canvas" data-shader-canvas aria-hidden="true"></canvas>
-  <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+<div class:list={['shader-bg', className]} data-wave-formation-bg data-shader="veli-wave-formation">
+  <iframe
+    class="shader-bg__iframe"
+    data-wave-formation-frame
+    src="/wave-formation.html?embedded=1"
+    title="Veli WaveFormation background"
+    tabindex="-1"></iframe>
+  {
+    fallbackSrc ? (
+      <img class="shader-bg__fallback" src={fallbackSrc} alt="" aria-hidden="true" />
+    ) : (
+      <div class="shader-bg__fallback" aria-hidden="true" />
+    )
+  }
 </div>
 
 <script>
-  import { createRenderer } from '../shaders/runtime/renderer';
-  import { getShader } from '../shaders/registry';
+  type EngineState = Record<string, unknown>;
+  const BRIDGE_VERSION = 2;
 
-  // A `?shader=<id>` query param overrides the configured shader, so
-  // alternative backgrounds can be previewed without editing the page
-  // (e.g. `/?shader=veli-dunes`). Falls back to the component's prop.
-  const shaderOverride = new URLSearchParams(window.location.search).get('shader');
+  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-wave-formation-bg]')) {
+    const frame = wrapper.querySelector<HTMLIFrameElement>('[data-wave-formation-frame]');
+    if (!frame) continue;
+    const waveFormationFrame = frame;
+    let latestState: EngineState | null = null;
 
-  for (const wrapper of document.querySelectorAll<HTMLElement>('[data-shader-bg]')) {
-    const canvas = wrapper.querySelector<HTMLCanvasElement>('[data-shader-canvas]');
-    const id = shaderOverride ?? wrapper.dataset.shader;
-    if (!canvas || !id) continue;
-
-    const definition = getShader(id);
-    if (!definition) continue;
-
-    const renderer = createRenderer(canvas, definition, {
-      // Track the pointer across the whole hero, not just the canvas (which
-      // sits behind the foreground content).
-      pointerTarget: wrapper.parentElement ?? wrapper,
-    });
-
-    if (renderer) {
-      wrapper.dataset.shaderActive = 'true';
+    function postState() {
+      if (!latestState) return;
+      waveFormationFrame.contentWindow?.postMessage(
+        {
+          type: 'veli:wave-formation:apply-state',
+          version: BRIDGE_VERSION,
+          state: latestState,
+        },
+        window.location.origin,
+      );
     }
+
+    function requestReady() {
+      waveFormationFrame.contentWindow?.postMessage(
+        { type: 'veli:wave-formation:request-ready', version: BRIDGE_VERSION },
+        window.location.origin,
+      );
+    }
+
+    const onDialChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ state?: EngineState }>).detail;
+      if (!detail?.state) return;
+      latestState = detail.state;
+      postState();
+    };
+
+    const onFrameMessage = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin ||
+        event.source !== waveFormationFrame.contentWindow ||
+        event.data?.type !== 'veli:wave-formation:ready' ||
+        event.data?.version !== BRIDGE_VERSION
+      ) {
+        return;
+      }
+      wrapper.dataset.shaderActive = 'true';
+      postState();
+    };
+
+    window.addEventListener('veli:wave-formation-dial-change', onDialChange);
+    window.addEventListener('message', onFrameMessage);
+    waveFormationFrame.addEventListener('load', requestReady);
+    requestReady();
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        window.removeEventListener('veli:wave-formation-dial-change', onDialChange);
+        window.removeEventListener('message', onFrameMessage);
+        waveFormationFrame.removeEventListener('load', requestReady);
+      },
+      { once: true },
+    );
   }
 </script>
+
+<style>
+  .shader-bg__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--veli-color-bg-surface-base);
+  }
+</style>

@@ -23,7 +23,13 @@ export default [
       '**/out/**',
       '**/storybook-static/**',
       'evals/agent/runs/**',
+      'playground/**',
       'pnpm-lock.yaml',
+      'packages/blocks/examples/**',
+      'packages/blocks/fixtures/**',
+      'packages/ui/fixtures/**',
+      'packages/blocks/examples/**',
+      'packages/blocks/fixtures/**',
     ],
   },
   {
@@ -44,7 +50,14 @@ export default [
     },
   },
   {
-    files: ['scripts/**/*.mjs', 'evals/**/*.mjs'],
+    files: [
+      'scripts/**/*.mjs',
+      'evals/**/*.mjs',
+      'packages/tokens/**/*.mjs',
+      'packages/ui/**/*.mjs',
+      'packages/blocks/**/*.mjs',
+      'packages/cli/**/*.mjs',
+    ],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

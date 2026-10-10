@@ -1,13 +1,14 @@
 ---
 title: Divider
-description: Accessible content separator built with React Aria Separator and Veli design tokens.
+description: Accessible content separators and callback-driven expandable dividers for the Veli design system.
 ---
 
-import { DividerUsageDemo, DividerVariantsDemo } from '../../components/DocsExamples';
-
-# Divider
-
-`Divider` is a small structural primitive for separating related content. It wraps React Aria's `Separator` and applies Veli border tokens for horizontal and vertical layouts.
+import {
+  DividerAppearancesDemo,
+  DividerExpandableDemo,
+  DividerUsageDemo,
+  DividerVerticalOrientationDemo,
+} from '../../components/DocsExamples';
 
 ## Import
 
@@ -24,23 +25,116 @@ import { Divider } from '@tradenetcorp/veli-ui/divider';
 ```tsx
 <div>
   <p>Applicant details</p>
-  <Divider />
-  <p>Review the submitted information.</p>
+  <Divider appearance="subtle" />
+  <p>Review the information before continuing.</p>
 </div>
 ```
 
-## Variants
+## Appearance
+
+`appearance` controls the semantic border color. Use the least prominent line that still separates the content clearly.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <DividerVariantsDemo client:visible />
+  <DividerAppearancesDemo client:visible />
 </div>
 
-## Key Props
+```tsx
+function DividerAppearances() {
+  return (
+    <div className="w-full max-w-[480px] space-y-3 type-body-sm-regular text-base-default">
+      <p>Passport number</p>
+      <Divider />
+      <p>National ID number</p>
+      <Divider appearance="muted" />
+      <p>Driving license number</p>
+      <Divider appearance="strong" />
+      <p>Permit reference</p>
+      <Divider appearance="emphasis" />
+      <p>Supporting documents</p>
+    </div>
+  );
+}
+```
 
-| Prop          | Type                         | Description                                                                                         |
-| :------------ | :--------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `orientation` | `'horizontal' \| 'vertical'` | Controls whether the divider runs across rows or between inline items.                              |
-| `elementType` | `string`                     | Changes the rendered HTML element when you need something other than the default separator element. |
-| `className`   | `string`                     | Adds local visual overrides on top of the Veli base styling.                                        |
+## Vertical orientation
 
-All remaining supported React Aria `Separator` props can still be passed through this wrapper.
+Use `orientation="vertical"` between inline items. The divider stretches to the height provided by its parent layout.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DividerVerticalOrientationDemo client:visible />
+</div>
+
+```tsx
+function DividerVerticalOrientation() {
+  return (
+    <div className="flex flex-wrap items-center gap-3 type-body-sm-regular text-base-default">
+      <span>Overview</span>
+      <Divider orientation="vertical" />
+      <span>Documents</span>
+      <Divider orientation="vertical" />
+      <span>History</span>
+    </div>
+  );
+}
+```
+
+## Expandable content
+
+Use `onClick` when a long section should start collapsed and let the reader reveal more. The Divider renders a button only when `onClick` is supplied. The caller controls the content, state, `aria-expanded`, and `aria-controls`; the component rotates its caret to point upward when `aria-expanded` is true, but does not render or animate the content panel.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <DividerExpandableDemo client:visible />
+</div>
+
+```tsx
+import * as React from 'react';
+import { Divider } from '@tradenetcorp/veli-ui/divider';
+
+function MoreDetails() {
+  const [expanded, setExpanded] = React.useState(false);
+
+  return (
+    <>
+      <p>Short summary of the section.</p>
+      <div id="additional-details" hidden={!expanded}>
+        <p>Additional details are shown here.</p>
+      </div>
+      <Divider
+        text={expanded ? 'Show less' : 'Show more'}
+        showIcon
+        appearance="muted"
+        aria-label={expanded ? 'Show less' : 'Show more'}
+        aria-expanded={expanded}
+        aria-controls="additional-details"
+        onClick={() => setExpanded((current) => !current)}
+      />
+    </>
+  );
+}
+```
+
+## API Reference
+
+| Prop          | Type                                                   | Default        | Description                                                                                            |
+| :------------ | :----------------------------------------------------- | :------------- | :----------------------------------------------------------------------------------------------------- |
+| `appearance`  | `'subtle' \| 'muted' \| 'strong' \| 'emphasis'`        | `'subtle'`     | Selects the semantic border color.                                                                     |
+| `orientation` | `'horizontal' \| 'vertical'`                           | `'horizontal'` | Sets the divider direction. Text and the optional icon are supported on horizontal dividers.           |
+| `text`        | `React.ReactNode`                                      | —              | Optional caption displayed between the horizontal line segments.                                       |
+| `showIcon`    | `boolean`                                              | `false`        | Shows the 16px `CaretCircleDown` icon beside the caption.                                              |
+| `onClick`     | `(event: React.MouseEvent<HTMLButtonElement>) => void` | —              | Makes a horizontal divider a full-width native button. The caller owns the content and expanded state. |
+| `aria-label`  | `string`                                               | —              | Required with `onClick`; supplies a non-empty accessible name for the button.                          |
+| `className`   | `string`                                               | —              | Adds layout or visual overrides.                                                                       |
+
+Standard ARIA attributes and DOM event attributes are forwarded to the rendered separator or button. Use `appearance` to select a visual treatment; Divider does not expose generic `variant` or CSS `style` props. `elementType`, `isDecorative`, `render`, and `slot` are not supported by Divider's public API.
+
+## Accessibility
+
+Without `onClick`, Divider keeps separator semantics. Use the native horizontal or vertical orientation to describe the content boundary.
+
+With `onClick`, the full horizontal row is a native button and supports pointer, Enter, and Space activation. A non-empty `aria-label` is required, including when it has visible `text`.
+
+For expandable content, update `aria-expanded` with the caller's state and point `aria-controls` at the controlled content. Keep the controlled content in the DOM or use an appropriate hidden state.
+
+Divider does not own the content panel or its animation. The caret rotation uses motion-safe Veli transition tokens; if the caller animates the content, respect `prefers-reduced-motion`.
+
+The caption uses the muted text token; appearances use semantic border tokens and follow system, light, and dark themes. Layout follows the surrounding writing direction.

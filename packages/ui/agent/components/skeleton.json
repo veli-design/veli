@@ -1,0 +1,37 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "skeleton",
+  "apiPattern": "flat",
+  "purpose": "Generic animated loading placeholder for composing field, list, and content skeleton layouts.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Content is loading and the layout should reserve space with a placeholder shape.",
+    "Multiple skeleton pieces need to compose a page or component loading state."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A component already exposes an isLoading or skeleton mode.",
+      "guidance": "Prefer the component's built-in loading presentation when it matches the surface.",
+      "useInstead": ["button", "input", "avatar"]
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Compose Skeleton elements to mirror the loaded layout's geometry.",
+    "Size skeletons with layout classes rather than inventing one-off loading components."
+  ],
+  "limitations": [
+    "Skeleton is decorative only and does not announce loading status by itself.",
+    "Pair skeletons with an appropriate live-region or busy state on the real content container when needed."
+  ],
+  "accessibility": [
+    "Renders with aria-hidden so assistive technology skips decorative placeholders."
+  ],
+  "responsive": ["Fill the intended slot; constrain width and height in the surrounding layout."],
+  "rtl": ["Geometry is direction-neutral."],
+  "relatedComponents": ["avatar", "card", "input"]
+}

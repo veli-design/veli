@@ -1,0 +1,214 @@
+---
+import DocsPageActions from './DocsPageActions.astro';
+
+interface Props {
+  markdownPath: string;
+}
+
+const { markdownPath } = Astro.props;
+const tabs = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'design', label: 'Design' },
+  { id: 'code', label: 'Code' },
+  { id: 'accessibility', label: 'Accessibility' },
+] as const;
+---
+
+<div class="docs-page-tabs" data-doc-tabs>
+  <div class="docs-page-tabs__row">
+    <div class="docs-page-tabs__list" role="tablist" aria-label="Component documentation">
+      {
+        tabs.map((tab, index) => (
+          <button
+            class="docs-page-tabs__tab"
+            id={`tab-${tab.id}`}
+            type="button"
+            role="tab"
+            aria-controls={`tabpanel-${tab.id}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            data-doc-tab={tab.id}
+          >
+            <span class="docs-page-tabs__label">
+              <span class="docs-page-tabs__label-reserve" aria-hidden="true">
+                {tab.label}
+              </span>
+              <span class="docs-page-tabs__label-visible">{tab.label}</span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+    <DocsPageActions {markdownPath} placement="tabbar" />
+  </div>
+  <div class="docs-page-tabs__border" aria-hidden="true">
+    <span class="docs-page-tabs__indicator"></span>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const init = () => {
+      const root = document.querySelector('[data-doc-tabs]');
+      if (!(root instanceof HTMLElement)) return;
+
+      const tabs = Array.from(root.querySelectorAll('[role="tab"][data-doc-tab]'));
+      const tabList = root.querySelector('.docs-page-tabs__list');
+      const panels = Array.from(document.querySelectorAll('[data-doc-tab-panel]'));
+      const contentsLinks = Array.from(document.querySelectorAll('.docs-contents a[href^="#"]'));
+      const animationFrames = Array.from(
+        document.querySelectorAll('.docs-component-animation__frame'),
+      );
+      const animationTokenNames = [
+        '--veli-color-bg-surface-base',
+        '--veli-color-bg-surface-raised',
+        '--veli-color-menu-bg',
+        '--veli-color-menu-hover',
+        '--veli-color-menu-pressed',
+        '--veli-color-border-base-subtle',
+        '--veli-color-border-focus',
+        '--veli-color-text-base-strong',
+        '--veli-color-text-base-inverted',
+        '--veli-color-icon-base-muted',
+        '--veli-color-text-danger-muted',
+        '--veli-color-status-info-emphasis',
+        '--veli-color-status-indigo-emphasis',
+        '--veli-color-effects-shadow-depth-100',
+        '--veli-color-effects-shadow-frame',
+      ];
+
+      const sendAnimationTheme = (frame) => {
+        if (!(frame instanceof HTMLIFrameElement)) return;
+        const tokenProbe = document.createElement('span');
+        tokenProbe.hidden = true;
+        document.body.append(tokenProbe);
+        const tokens = Object.fromEntries(
+          animationTokenNames.map((name) => {
+            tokenProbe.style.color = `var(${name})`;
+            return [name, getComputedStyle(tokenProbe).color];
+          }),
+        );
+        tokenProbe.remove();
+        frame.contentWindow?.postMessage(
+          {
+            type: 'veli:animation-theme',
+            theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+            tokens,
+          },
+          '*',
+        );
+      };
+
+      const syncAnimationTheme = () => {
+        for (const frame of animationFrames) sendAnimationTheme(frame);
+      };
+
+      for (const frame of animationFrames) {
+        frame.addEventListener('load', () => sendAnimationTheme(frame));
+      }
+      window.addEventListener('message', (event) => {
+        if (event.data?.type !== 'veli:animation-ready') return;
+        const frame = animationFrames.find((item) => item.contentWindow === event.source);
+        if (frame) sendAnimationTheme(frame);
+      });
+      window.addEventListener('veli:color-scheme-change', syncAnimationTheme);
+      syncAnimationTheme();
+
+      const tabForHash = (hash) => {
+        const id = decodeURIComponent(hash.replace(/^#/, ''));
+        if (id.startsWith('tab-')) return id.slice(4);
+        const target = id ? document.getElementById(id) : null;
+        return target?.closest('[data-doc-tab-panel]')?.getAttribute('data-doc-tab-panel') ?? null;
+      };
+
+      const updateTabIndicator = (selected) => {
+        if (!(selected instanceof HTMLElement)) return;
+        const rootRect = root.getBoundingClientRect();
+        const selectedRect = selected.getBoundingClientRect();
+        root.style.setProperty(
+          '--docs-tab-indicator-left',
+          `${selectedRect.left - rootRect.left}px`,
+        );
+        root.style.setProperty('--docs-tab-indicator-width', `${selectedRect.width}px`);
+      };
+
+      const updateSelectedTabIndicator = () => {
+        updateTabIndicator(tabs.find((tab) => tab.getAttribute('aria-selected') === 'true'));
+      };
+
+      const selectTab = (tabId, { updateHash = false, focus = false } = {}) => {
+        const selected = tabs.find((tab) => tab.getAttribute('data-doc-tab') === tabId);
+        if (!(selected instanceof HTMLElement)) return;
+
+        for (const tab of tabs) {
+          const isSelected = tab === selected;
+          tab.setAttribute('aria-selected', String(isSelected));
+          tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+        }
+
+        for (const panel of panels) {
+          const isSelected = panel.getAttribute('data-doc-tab-panel') === tabId;
+          panel.toggleAttribute('hidden', !isSelected);
+        }
+
+        for (const link of contentsLinks) {
+          const id = link.getAttribute('href')?.slice(1);
+          const heading = id ? document.getElementById(id) : null;
+          const panel = heading?.closest('[data-doc-tab-panel]');
+          link.toggleAttribute('hidden', panel?.getAttribute('data-doc-tab-panel') !== tabId);
+          if (link.hidden) {
+            link.classList.remove('is-active');
+            link.removeAttribute('aria-current');
+          }
+        }
+
+        updateTabIndicator(selected);
+        if (focus) selected.focus();
+        if (updateHash) history.pushState(null, '', `#tab-${tabId}`);
+        window.dispatchEvent(new CustomEvent('veli:docs-tab-change', { detail: { tabId } }));
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          selectTab(tab.getAttribute('data-doc-tab'), { updateHash: true });
+        });
+
+        tab.addEventListener('keydown', (event) => {
+          let nextIndex = index;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') nextIndex = 0;
+          else if (event.key === 'End') nextIndex = tabs.length - 1;
+          else return;
+
+          event.preventDefault();
+          const nextTab = tabs[nextIndex];
+          selectTab(nextTab.getAttribute('data-doc-tab'), { updateHash: true, focus: true });
+        });
+      });
+
+      const syncHash = () => {
+        selectTab(tabForHash(location.hash) ?? 'overview');
+        const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+        const target = id && !id.startsWith('tab-') ? document.getElementById(id) : null;
+        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+      };
+      window.addEventListener('hashchange', syncHash);
+      window.addEventListener('popstate', syncHash);
+      window.addEventListener('resize', updateSelectedTabIndicator);
+      tabList?.addEventListener('scroll', updateSelectedTabIndicator);
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(updateSelectedTabIndicator);
+        resizeObserver.observe(root);
+        for (const tab of tabs) resizeObserver.observe(tab);
+      }
+      syncHash();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>

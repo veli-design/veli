@@ -14,22 +14,22 @@ import {
   type DisclosureProps as AriaDisclosureProps,
   type HeadingProps,
 } from 'react-aria-components';
-import { CaretDown, CaretRight } from 'phosphor-react';
+import { CaretDownIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const accordionVariants = cva('w-full font-sans antialiased');
 
-const accordionItemVariants = cva('last:[&_[data-accordion-header]]:border-b-0');
-
-const accordionHeaderWrapperVariants = cva('border-b border-base-subtle pb-0.5');
+const accordionItemVariants = cva(
+  'relative pb-0.5 pt-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:translate-y-1/2 after:border-b after:border-base-subtle',
+);
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-2 rounded-xl text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {
-        md: 'py-3 type-body-sm-medium',
+        md: 'py-2.5 type-body-sm-medium',
         lg: 'py-4 type-body-md-medium',
       },
       alignment: {
@@ -37,10 +37,11 @@ const accordionTriggerVariants = cva(
         right: 'justify-start text-start',
       },
       flushed: {
-        true: 'px-1.5',
+        true: 'ps-0 pe-1.5',
         false: 'px-4',
       },
     },
+    compoundVariants: [{ alignment: 'right', flushed: true, className: 'ps-1.5' }],
     defaultVariants: {
       size: 'md',
       alignment: 'left',
@@ -54,12 +55,12 @@ const AccordionAlignmentContext = React.createContext<'left' | 'right'>('left');
 const AccordionFlushedContext = React.createContext(false);
 
 const accordionChevronWrapperVariants = cva(
-  'inline-flex shrink-0 transition-transform duration-normal ease-in-out',
+  'inline-flex size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-in-out',
   {
     variants: {
       alignment: {
         left: '',
-        right: 'p-1',
+        right: '',
       },
       isExpanded: {
         true: '',
@@ -68,6 +69,7 @@ const accordionChevronWrapperVariants = cva(
     },
     compoundVariants: [
       { alignment: 'left', isExpanded: true, className: '-rotate-180' },
+      { alignment: 'right', isExpanded: false, className: 'rtl:rotate-180' },
       { alignment: 'right', isExpanded: true, className: 'rotate-90' },
     ],
     defaultVariants: {
@@ -77,75 +79,53 @@ const accordionChevronWrapperVariants = cva(
   },
 );
 
-const accordionChevronIconVariants = cva('text-icon-base', {
-  variants: {
-    isDisabled: {
-      true: 'text-icon-disabled',
-      false: '',
-    },
-  },
-  defaultVariants: {
-    isDisabled: false,
-  },
-});
-
 const accordionPanelVariants = cva(
   'h-(--disclosure-panel-height) overflow-clip motion-safe:transition-[height] motion-safe:duration-normal motion-safe:ease-in-out',
 );
 
-const accordionPanelContentVariants = cva('pb-4 pt-1 text-base-default', {
-  variants: {
-    size: {
-      md: 'type-body-sm-regular',
-      lg: 'type-body-md-regular',
+const accordionPanelContentVariants = cva(
+  'pb-4.5 pt-0.5 text-start text-base-default [overflow-wrap:anywhere]',
+  {
+    variants: {
+      size: {
+        md: 'type-body-sm-regular',
+        lg: 'type-body-md-regular',
+      },
+      flushed: {
+        true: '',
+        false: '',
+      },
     },
-    flushed: {
-      true: 'px-1.5',
-      false: 'px-4',
+    defaultVariants: {
+      size: 'md',
+      flushed: false,
     },
   },
-  defaultVariants: {
-    size: 'md',
-    flushed: false,
-  },
-});
+);
 
 const accordionPanelIndentVariants = cva('', {
   variants: {
-    alignment: {
-      left: '',
-      right: 'pl-8',
-    },
+    alignment: { left: 'pe-10.5', right: 'pe-5.5' },
+    flushed: { true: '', false: '' },
   },
-  defaultVariants: {
-    alignment: 'left',
-  },
+  compoundVariants: [
+    { alignment: 'left', flushed: false, className: 'ps-5.5' },
+    { alignment: 'left', flushed: true, className: 'ps-1.5' },
+    { alignment: 'right', flushed: false, className: 'ps-10.5' },
+    { alignment: 'right', flushed: true, className: 'ps-8' },
+  ],
+  defaultVariants: { alignment: 'left', flushed: false },
 });
-
-const accordionSkeletonBarVariants = cva('bg-skeleton animate-pulse', {
-  variants: {
-    size: {
-      md: 'h-2.5',
-      lg: 'h-3',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-const skeletonLabelWidths = ['max-w-2/5', 'max-w-1/3', 'max-w-1/2'] as const;
 
 export type AccordionItemData = {
   id: string | number;
   label: React.ReactNode;
   content: React.ReactNode;
-  isDisabled?: boolean;
 };
 
 export interface AccordionProps
   extends
-    Omit<AriaDisclosureGroupProps, 'children' | 'className'>,
+    Omit<AriaDisclosureGroupProps, 'children' | 'className' | 'isDisabled'>,
     VariantProps<typeof accordionTriggerVariants> {
   items?: readonly AccordionItemData[];
   children?: React.ReactNode;
@@ -153,11 +133,9 @@ export interface AccordionProps
   itemClassName?: string;
   triggerClassName?: string;
   panelClassName?: string;
-  isSkeleton?: boolean;
-  skeletonItemCount?: number;
 }
 
-export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className'> {
+export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'className' | 'isDisabled'> {
   className?: string;
 }
 
@@ -181,97 +159,11 @@ export interface AccordionPanelProps
 }
 
 export function AccordionItem({ className, ...props }: AccordionItemProps) {
-  return <AriaDisclosure {...props} className={twMerge(accordionItemVariants(), className)} />;
-}
-
-type AccordionSkeletonItemProps = VariantProps<typeof accordionTriggerVariants> & {
-  index: number;
-  showContent?: boolean;
-};
-
-function AccordionSkeletonItem({
-  index,
-  size = 'md',
-  alignment = 'left',
-  flushed = false,
-  showContent = false,
-}: AccordionSkeletonItemProps) {
-  const labelWidth = skeletonLabelWidths[index % skeletonLabelWidths.length];
-  const labelSkeleton = (
-    <span
-      aria-hidden
-      className={twMerge(
-        accordionSkeletonBarVariants({ size }),
-        'flex-1',
-        labelWidth,
-        alignment === 'right' && 'text-start',
-      )}
-    />
-  );
-  const chevron = (
-    <span
-      className={accordionChevronWrapperVariants({
-        alignment: alignment ?? 'left',
-        isExpanded: showContent,
-      })}
-    >
-      {alignment === 'right' ? (
-        <CaretRight aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
-      ) : (
-        <CaretDown aria-hidden size={16} weight="regular" className="text-icon-base-inactive" />
-      )}
-    </span>
-  );
+  const disclosureProps = { ...props } as AriaDisclosureProps;
+  delete disclosureProps.isDisabled;
 
   return (
-    <div className={accordionItemVariants()}>
-      <div
-        data-accordion-header
-        className={twMerge(accordionHeaderWrapperVariants(), showContent && 'border-b-0 pb-0')}
-      >
-        <div
-          aria-hidden
-          className={accordionTriggerVariants({
-            size,
-            alignment,
-            flushed,
-          })}
-        >
-          {alignment === 'right' ? (
-            <>
-              {chevron}
-              {labelSkeleton}
-            </>
-          ) : (
-            <>
-              {labelSkeleton}
-              {chevron}
-            </>
-          )}
-        </div>
-      </div>
-      {showContent ? (
-        <div
-          className={accordionPanelContentVariants({
-            size,
-            flushed,
-          })}
-        >
-          <div
-            className={accordionPanelIndentVariants({
-              alignment: alignment ?? 'left',
-            })}
-            aria-hidden
-          >
-            <div className="flex flex-col gap-2">
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-full')} />
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-11/12')} />
-              <span className={twMerge(accordionSkeletonBarVariants({ size }), 'w-3/4')} />
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
+    <AriaDisclosure {...disclosureProps} className={twMerge(accordionItemVariants(), className)} />
   );
 }
 
@@ -296,10 +188,7 @@ export function AccordionHeader({
   const isExpanded = state?.isExpanded ?? false;
 
   return (
-    <div
-      data-accordion-header
-      className={twMerge(accordionHeaderWrapperVariants(), isExpanded && 'border-b-0 pb-0')}
-    >
+    <div data-accordion-header>
       <Heading {...props} level={level} className="m-0">
         <AriaButton
           slot="trigger"
@@ -312,47 +201,31 @@ export function AccordionHeader({
             className,
           )}
         >
-          {({ isDisabled }) =>
-            resolvedAlignment === 'right' ? (
-              <>
-                {icon ?? (
-                  <span
-                    className={accordionChevronWrapperVariants({
-                      alignment: resolvedAlignment,
-                      isExpanded,
-                    })}
-                  >
-                    <CaretRight
-                      aria-hidden
-                      size={16}
-                      weight="regular"
-                      className={accordionChevronIconVariants({ isDisabled })}
-                    />
-                  </span>
+          <span
+            aria-hidden
+            className={twMerge(
+              'inline-flex h-6 w-5 shrink-0 items-center justify-center text-icon-base',
+              resolvedAlignment === 'left' && 'order-1',
+            )}
+          >
+            {icon ?? (
+              <span
+                className={accordionChevronWrapperVariants({
+                  alignment: resolvedAlignment,
+                  isExpanded,
+                })}
+              >
+                {resolvedAlignment === 'right' ? (
+                  <CaretRightIcon aria-hidden size={16} weight="regular" />
+                ) : (
+                  <CaretDownIcon aria-hidden size={16} weight="regular" />
                 )}
-                <span className="min-w-0 flex-1 text-start">{children}</span>
-              </>
-            ) : (
-              <>
-                <span className="min-w-0 flex-1">{children}</span>
-                {icon ?? (
-                  <span
-                    className={accordionChevronWrapperVariants({
-                      alignment: resolvedAlignment,
-                      isExpanded,
-                    })}
-                  >
-                    <CaretDown
-                      aria-hidden
-                      size={16}
-                      weight="regular"
-                      className={accordionChevronIconVariants({ isDisabled })}
-                    />
-                  </span>
-                )}
-              </>
-            )
-          }
+              </span>
+            )}
+          </span>
+          <span className="min-w-0 flex-1 px-1.5 text-start [overflow-wrap:anywhere]">
+            {children}
+          </span>
         </AriaButton>
       </Heading>
     </div>
@@ -386,7 +259,12 @@ export function AccordionPanel({
           contentClassName,
         )}
       >
-        <div className={accordionPanelIndentVariants({ alignment: resolvedAlignment })}>
+        <div
+          className={accordionPanelIndentVariants({
+            alignment: resolvedAlignment,
+            flushed: resolvedFlushed,
+          })}
+        >
           {children}
         </div>
       </div>
@@ -404,54 +282,19 @@ export function Accordion({
   size = 'md',
   alignment = 'left',
   flushed = false,
-  isSkeleton = false,
-  skeletonItemCount = 3,
   ...props
 }: AccordionProps) {
-  const resolvedSize = size ?? 'md';
-  const resolvedAlignment = alignment ?? 'left';
-  const resolvedFlushed = flushed ?? false;
-
-  if (isSkeleton) {
-    return (
-      <AccordionSizeContext.Provider value={resolvedSize}>
-        <AccordionAlignmentContext.Provider value={resolvedAlignment}>
-          <AccordionFlushedContext.Provider value={resolvedFlushed}>
-            <output
-              aria-busy="true"
-              aria-label="Loading accordion"
-              className={twMerge(accordionVariants(), className)}
-            >
-              {Array.from({ length: skeletonItemCount }, (_, index) => (
-                <AccordionSkeletonItem
-                  key={index}
-                  index={index}
-                  size={resolvedSize}
-                  alignment={resolvedAlignment}
-                  flushed={resolvedFlushed}
-                  showContent={index === 0}
-                />
-              ))}
-            </output>
-          </AccordionFlushedContext.Provider>
-        </AccordionAlignmentContext.Provider>
-      </AccordionSizeContext.Provider>
-    );
-  }
+  const groupProps = { ...props } as AriaDisclosureGroupProps;
+  delete groupProps.isDisabled;
 
   return (
     <AccordionSizeContext.Provider value={size ?? 'md'}>
       <AccordionAlignmentContext.Provider value={alignment ?? 'left'}>
         <AccordionFlushedContext.Provider value={flushed ?? false}>
-          <AriaDisclosureGroup {...props} className={twMerge(accordionVariants(), className)}>
+          <AriaDisclosureGroup {...groupProps} className={twMerge(accordionVariants(), className)}>
             {items
               ? items.map((item) => (
-                  <AccordionItem
-                    key={item.id}
-                    id={item.id}
-                    isDisabled={item.isDisabled}
-                    className={itemClassName}
-                  >
+                  <AccordionItem key={item.id} id={item.id} className={itemClassName}>
                     <AccordionHeader
                       size={size}
                       alignment={alignment}

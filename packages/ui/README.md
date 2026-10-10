@@ -20,7 +20,11 @@ pnpm add @tradenetcorp/veli-ui @tradenetcorp/veli-tokens
 ```
 
 Peers (`@tradenetcorp/veli-tokens`, `react`, `react-dom`, `react-aria-components`) are
-required. `phosphor-react` is optional but used in docs/examples.
+required. Veli UI installs `@phosphor-icons/react` automatically for its internal icons. If your app imports icons directly, add the package as a direct dependency:
+
+```bash
+pnpm add @phosphor-icons/react@^2.1.10
+```
 
 ## Tailwind setup
 
@@ -41,12 +45,12 @@ import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 
 ```tsx
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Plus } from 'phosphor-react';
+import { PlusIcon } from '@phosphor-icons/react';
 
 export function CreateAction() {
   return (
     <Button intent="primary" appearance="fill" size="md" onPress={() => {}}>
-      <Plus size={16} weight="bold" />
+      <PlusIcon size={16} weight="bold" />
       <span>Create</span>
     </Button>
   );
@@ -77,6 +81,14 @@ npx @tanstack/intent@latest install
 
 Intent discovers the version-matched skill from installed dependencies and adds loading
 guidance to the consuming project.
+
+## Next.js and Vitest
+
+The release containing the ESM packaging fix (planned UI **0.15.0**) ships explicit `.js` relative imports. After upgrading, remove `@tradenetcorp/veli-ui` from Next.js `transpilePackages` and Vitest `test.server.deps.inline` if those entries were added to work around Veli module resolution. Keep entries required by other packages.
+
+Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
+
+See the [consumer investigation and reproduction matrix](../../docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
 
 ## Troubleshooting
 

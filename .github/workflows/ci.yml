@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -48,3 +50,60 @@ jobs:
 
       - name: Build Packages
         run: pnpm build
+
+      - name: Test canonical tokens and public UI entry points
+        run: corepack pnpm test:tokens && corepack pnpm test:ui
+
+      - name: Validate block source and versions
+        run: corepack pnpm test:blocks && corepack pnpm --filter @tradenetcorp/veli-blocks build
+        env:
+          BLOCKS_BASE_REF: ${{ github.event.pull_request.base.sha }}
+
+      - name: Test Veli CLI
+        run: corepack pnpm test:cli
+
+  blocks-consumer:
+    name: Published-package block consumer
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: corepack pnpm install --frozen-lockfile
+      - name: Pack candidate packages
+        run: |
+          corepack pnpm exec turbo build --filter=@tradenetcorp/veli-ui --filter=@tradenetcorp/veli-tokens
+          corepack pnpm --filter @tradenetcorp/veli-ui pack --out "$RUNNER_TEMP/ui.tgz"
+          corepack pnpm --filter @tradenetcorp/veli-tokens pack --out "$RUNNER_TEMP/tokens.tgz"
+      - name: Verify Pages Router and Vitest without ESM workarounds
+        run: |
+          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next15" "$RUNNER_TEMP/ui.tgz" 15.5.18
+          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next16" "$RUNNER_TEMP/ui.tgz" 16.2.6
+      - run: corepack pnpm test:blocks:consumer
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOCKS_CONSUMER_DIR: ${{ runner.temp }}/veli-blocks-consumer
+          VELI_TARBALLS: '{"@tradenetcorp/veli-ui":"${{ runner.temp }}/ui.tgz","@tradenetcorp/veli-tokens":"${{ runner.temp }}/tokens.tgz"}'
+      - name: Build isolated packaged documentation sites
+        run: |
+          node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
+          node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-sites" "$RUNNER_TEMP/release-manifest.json"
+          node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-sites"
+        env:
+          VELI_TARBALLS: '{"@tradenetcorp/veli-ui":"${{ runner.temp }}/ui.tgz","@tradenetcorp/veli-tokens":"${{ runner.temp }}/tokens.tgz"}'
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify cold local playground hot reload
+        run: node scripts/check-playground.mjs "$RUNNER_TEMP/veli-blocks-consumer"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blocks-consumer-evidence
+          path: ${{ runner.temp }}/veli-blocks-consumer/test-results

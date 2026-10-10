@@ -9,7 +9,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Info, MagnifyingGlass, X } from 'phosphor-react';
+import { InfoIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import {
   defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
@@ -18,29 +18,12 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
-} from './field-shared';
-import { useVeliLanguage } from './provider';
+} from './field-shared.js';
+import { useVeliLanguage } from './provider.js';
 import { twMerge } from 'tailwind-merge';
+import { assignRef, type RefProp } from './ref.js';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
-
-const skeletonFieldVariants = cva('w-full shrink-0 bg-skeleton', {
-  variants: {
-    variant: {
-      default: 'rounded-md',
-      outline: 'rounded-full',
-    },
-    size: {
-      sm: 'h-9',
-      md: 'h-11',
-      lg: 'h-13',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-    size: 'md',
-  },
-});
 
 const fieldShellVariants = cva(
   'relative flex w-full items-center gap-2 transition-[background-color,border-color] duration-normal ease-out has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
@@ -49,7 +32,6 @@ const fieldShellVariants = cva(
       variant: {
         default: 'rounded-md',
         outline: 'rounded-full',
-        skeleton: '',
       },
       size: {
         sm: 'h-9 py-2 px-3',
@@ -203,7 +185,7 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -255,12 +237,11 @@ function getSearchIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
 export interface SearchProps
   extends
     Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck' | 'type'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'> {
+    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    RefProp<HTMLInputElement> {
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   className?: string;
-  /** Shape used when `variant="skeleton"`. Defaults to `default`. */
-  skeletonVariant?: 'default' | 'outline';
   autoCapitalize?: React.InputHTMLAttributes<HTMLInputElement>['autoCapitalize'];
   autoComplete?: React.InputHTMLAttributes<HTMLInputElement>['autoComplete'];
   autoCorrect?: React.InputHTMLAttributes<HTMLInputElement>['autoCorrect'];
@@ -273,31 +254,28 @@ export interface SearchProps
   spellCheck?: React.InputHTMLAttributes<HTMLInputElement>['spellCheck'];
 }
 
-export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function Search(
-  {
-    description,
-    errorMessage,
-    className,
-    variant = 'default',
-    skeletonVariant = 'default',
-    size = 'md',
-    autoCapitalize,
-    autoComplete = 'off',
-    autoCorrect,
-    enterKeyHint = 'search',
-    inputMode,
-    maxLength,
-    minLength,
-    pattern,
-    placeholder,
-    spellCheck,
-    onChange,
-    value,
-    defaultValue,
-    ...props
-  },
+export function Search({
+  description,
+  errorMessage,
+  className,
+  variant = 'default',
+  size = 'md',
+  autoCapitalize,
+  autoComplete = 'off',
+  autoCorrect,
+  enterKeyHint = 'search',
+  inputMode,
+  maxLength,
+  minLength,
+  pattern,
+  placeholder,
+  spellCheck,
+  onChange,
+  value,
+  defaultValue,
   ref,
-) {
+  ...props
+}: SearchProps) {
   const languageConfig = useVeliLanguage();
   const resolvedPlaceholder = placeholder ?? searchPlaceholderDefaults[languageConfig.language];
   const iconSize = getSearchIconSize(size);
@@ -309,14 +287,7 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
 
-      if (typeof ref === 'function') {
-        ref(node);
-        return;
-      }
-
-      if (ref) {
-        ref.current = node;
-      }
+      assignRef(ref, node);
     },
     [ref],
   );
@@ -336,14 +307,6 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
     handleChange('');
     inputRef.current?.focus();
   }, [handleChange]);
-
-  if (variant === 'skeleton') {
-    return (
-      <div className={twMerge(searchRootVariants(), className)} aria-hidden="true">
-        <div className={skeletonFieldVariants({ variant: skeletonVariant, size })} />
-      </div>
-    );
-  }
 
   return (
     <AriaTextField
@@ -368,7 +331,7 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
               onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
             >
               <div className={leadingIconVariants({ isDisabled })} aria-hidden>
-                <MagnifyingGlass size={iconSize} />
+                <MagnifyingGlassIcon size={iconSize} />
               </div>
               <AriaInput
                 ref={setInputRef}
@@ -392,12 +355,12 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
                   className={clearButtonVariants({ size, isDisabled })}
                   onPress={clearSearch}
                 >
-                  <X size={iconSize} aria-hidden />
+                  <XIcon size={iconSize} aria-hidden />
                 </AriaButton>
               ) : null}
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <Info size={iconSize} weight="fill" />
+                  <InfoIcon size={iconSize} weight="fill" />
                 </div>
               ) : null}
             </Group>
@@ -413,4 +376,4 @@ export const Search = React.forwardRef<HTMLInputElement, SearchProps>(function S
       }}
     </AriaTextField>
   );
-});
+}

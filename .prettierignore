@@ -11,6 +11,7 @@ dist
 out
 storybook-static
 coverage
+apps/web/public/gradient-stipple.html
 
 # Environment
 .env
@@ -26,3 +27,7 @@ pnpm-debug.log*
 Thumbs.db
 .vscode
 .idea
+
+# Local browser-tool output (not repository source)
+.playwright-cli
+.playwright-mcp

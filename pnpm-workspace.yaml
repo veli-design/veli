@@ -3,6 +3,10 @@ packages:
   - 'packages/*'
 
 overrides:
+  # Keep Astro and Tailwind on one Vite 6 optional-peer graph.
+  'vite@6>lightningcss': 1.30.2
+  '@types/react': ^19.0.0
+  '@types/react-dom': ^19.0.0
   '@internationalized/date': ^3.12.2
   'hono@^4': ^4.12.32
   'immutable@^5': ^5.1.9

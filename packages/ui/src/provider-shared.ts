@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { RouterProvider } from 'react-aria-components';
 
 export const veliLanguageConfigs = {
   en: {
@@ -21,9 +22,25 @@ export type VeliDirection = VeliLanguageConfig['direction'];
 export type VeliColorScheme = 'light' | 'dark' | 'system';
 export type VeliResolvedColorScheme = Exclude<VeliColorScheme, 'system'>;
 
+type VeliRouterProviderProps = React.ComponentProps<typeof RouterProvider>;
+
+export type VeliRouterConfig = {
+  navigate: NonNullable<VeliRouterProviderProps['navigate']>;
+  useHref?: VeliRouterProviderProps['useHref'];
+};
+
 export interface VeliProviderProps {
   language?: VeliLanguage;
   colorScheme?: VeliColorScheme;
+  /** Suppress CSS transitions for one frame while the theme changes. */
+  disableTransitionOnChange?: boolean;
+  /**
+   * Client-side navigate function for React Aria link components.
+   * When set, Veli wraps the subtree in React Aria's `RouterProvider`.
+   */
+  navigate?: VeliRouterProviderProps['navigate'];
+  /** Optional href resolver for the configured client-side router. */
+  useHref?: VeliRouterProviderProps['useHref'];
   children: React.ReactNode;
   className?: string;
 }
@@ -36,6 +53,7 @@ export const VeliColorSchemeContext = React.createContext<{
   colorScheme: 'system',
   resolvedColorScheme: 'light',
 });
+export const VeliRouterContext = React.createContext<VeliRouterConfig | null>(null);
 
 export function getVeliLanguageConfig(): typeof veliLanguageConfigs.en;
 export function getVeliLanguageConfig<TLanguage extends VeliLanguage>(
@@ -51,4 +69,8 @@ export function useVeliLanguage() {
 
 export function useVeliColorScheme() {
   return React.useContext(VeliColorSchemeContext);
+}
+
+export function useVeliRouter() {
+  return React.useContext(VeliRouterContext);
 }

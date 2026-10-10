@@ -1,0 +1,62 @@
+name: Bug report
+description: Report unexpected behavior in Veli.
+title: '[Bug]: '
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Briefly describe the problem and its impact.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest set of steps that consistently reproduces the issue.
+      placeholder: |
+        1. Go to …
+        2. Interact with …
+        3. Observe …
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Explain what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: Explain what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: affected-area
+    attributes:
+      label: Affected package or component
+      description: For example, @tradenetcorp/veli-ui Button, tokens, documentation website, or Storybook.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Veli version, browser or runtime, operating system, and any relevant framework version.
+      placeholder: |
+        Veli version:
+        Browser/runtime:
+        Operating system:
+        Framework version:
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional context
+      description: Add screenshots, recordings, logs, stack traces, or any other useful context.

@@ -9,13 +9,14 @@ import {
   Text,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { hasRenderableMessage } from './field-shared';
+import { FieldMessage } from './field-message.js';
+import { hasRenderableMessage } from './field-shared.js';
 import { twMerge } from 'tailwind-merge';
 
 const radioGroupVariants = cva('inline-flex flex-col gap-3');
 
 const radioRootVariants = cva(
-  'group inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
+  'group relative inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
   {
     variants: {
       size: {
@@ -279,11 +280,32 @@ const indicatorVariants = cva(
 );
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style'> {
+  description?: React.ReactNode;
+  errorMessage?: React.ReactNode;
   className?: string;
 }
 
-export function RadioGroup({ className, ...props }: RadioGroupProps) {
-  return <AriaRadioGroup {...props} className={twMerge(radioGroupVariants(), className)} />;
+export function RadioGroup({
+  description,
+  errorMessage,
+  className,
+  children,
+  ...props
+}: RadioGroupProps) {
+  return (
+    <AriaRadioGroup {...props} className={twMerge(radioGroupVariants(), className)}>
+      {(renderProps) => (
+        <>
+          {typeof children === 'function' ? children(renderProps) : children}
+          <FieldMessage
+            isInvalid={renderProps.isInvalid}
+            description={description}
+            errorMessage={errorMessage}
+          />
+        </>
+      )}
+    </AriaRadioGroup>
+  );
 }
 
 export interface RadioProps

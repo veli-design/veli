@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { Divider } from './divider';
-import { hasRenderableMessage } from './field-shared';
+import { Divider } from './divider.js';
+import { hasRenderableMessage } from './field-shared.js';
 
 const cardVariants = cva(
   'flex w-full flex-col font-sans antialiased type-body-md-regular rounded-2xl border border-base-subtle bg-bg-surface-raised text-text-default-default',
@@ -18,7 +18,12 @@ const cardVariants = cva(
         lg: 'shadow-lg',
       },
       interactive: {
-        true: 'cursor-pointer transition-colors hover:bg-gray-alpha-100 active:bg-gray-alpha-200',
+        true: [
+          'relative isolate cursor-pointer',
+          'before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-ash-alpha-100 before:opacity-0',
+          'before:transition-opacity before:duration-normal before:ease-out motion-reduce:before:transition-none',
+          'hover:before:opacity-100 active:before:bg-ash-alpha-200 active:before:opacity-100',
+        ].join(' '),
         false: '',
       },
       spacing: {
@@ -171,7 +176,9 @@ export function CardFooter({ children, className }: CardFooterProps) {
   return (
     <div className={twMerge('flex shrink-0 flex-col gap-2', className)}>
       <CardSectionDivider />
-      <div className="flex w-full items-center justify-end gap-2 pt-2">{children}</div>
+      <div className="flex w-full items-center gap-2 pt-2">
+        <div className="ms-auto flex items-center gap-2">{children}</div>
+      </div>
     </div>
   );
 }

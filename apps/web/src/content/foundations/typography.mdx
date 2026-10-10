@@ -1,27 +1,143 @@
 ---
 title: Typography
-description: Type foundations for readable English and Dhivehi government service interfaces.
+description: Readable Latin and Thaana type roles for every government service interface.
 ---
 
-## Typeface roles
+import TypographyFoundationVisuals from '../../components/TypographyFoundationVisuals.astro';
 
-Inter supports Latin interface text. Veli's tokenized Dhivehi stacks provide appropriate Thaana rendering without requiring each service to rebuild its typography rules.
+## Overview
 
-Use the shared sans token for interface text and the mono token only for code, identifiers, or fixed-width technical content.
+Veli's type scale has thirteen roles, from Display lg to Caption. Each role is defined separately for Latin and Dhivehi because Thaana needs different sizes and line heights to carry the same level of emphasis. Choosing a role provides the correct values for the script in use.
 
-## Build a clear hierarchy
+This page covers the typefaces, both script scales, the four Latin weights and two Dhivehi weight treatments, and the leading and tracking tokens available when a layout must depart from a role's defaults.
 
-- Use page titles to orient people, not to repeat navigation labels.
-- Keep body text at a comfortable line length and line height.
-- Prefer weight and spacing over many different font sizes.
-- Use sentence case for headings, labels, and actions.
+## Typefaces
 
-## Write for scanning
+Four families cover the two scripts and their different reading roles.
 
-Lead with the information needed to make a decision. Break long guidance into descriptive headings and short paragraphs, and keep labels consistent across related tasks.
+<TypographyFoundationVisuals kind="families" data-docs-markdown="omit" />
 
-Avoid all caps for long text. It reduces word-shape recognition and can create awkward results across scripts.
+Latin uses Inter throughout. Dhivehi is split across three families by purpose: MV Aaamu FK carries Display, MV A Waheed carries headings and weighted interface text, and MV Faseyha handles regular body and caption text.
 
-## Test both scripts
+## The type scale
 
-Review real English and Dhivehi content at narrow and wide widths. Check glyph clarity, line height, wrapping, alignment, and truncation rather than assuming the Latin layout will transfer unchanged.
+Thirteen roles are organised into six groups. Display carries page-level statements; Heading and Title structure content; Subtitle introduces sections; Body sets running text; and Caption handles labels and supporting detail.
+
+<TypographyFoundationVisuals kind="scale" data-docs-markdown="omit" />
+
+### Latin and Dhivehi
+
+Thaana sits taller than Latin at the same nominal size, and its marks need more vertical room. Every Dhivehi role therefore runs larger. Body roles also use substantially looser leading, while Display roles can run tighter because large Thaana already has enough visual space.
+
+| Role       | Latin size / leading | Dhivehi size / leading | Difference        |
+| :--------- | :------------------- | :--------------------- | :---------------- |
+| Display lg | 64px / 132%          | 69px / 128%            | +5px / −4 points  |
+| Display md | 56px / 135%          | 62px / 129%            | +6px / −6 points  |
+| Heading 1  | 48px / 134%          | 52px / 138%            | +4px / +4 points  |
+| Heading 2  | 40px / 130%          | 46px / 135%            | +6px / +5 points  |
+| Heading 3  | 36px / 134%          | 39px / 134%            | +3px / no change  |
+| Heading 4  | 32px / 136%          | 35px / 136%            | +3px / no change  |
+| Title 1    | 28px / 130%          | 32px / 149%            | +4px / +19 points |
+| Title 2    | 24px / 135%          | 27px / 147%            | +3px / +12 points |
+| Subtitle   | 20px / 142%          | 24px / 135%            | +4px / −7 points  |
+| Body lg    | 18px / 153%          | 19px / 187%            | +1px / +34 points |
+| Body md    | 16px / 150%          | 17px / 186%            | +1px / +36 points |
+| Body sm    | 14px / 145%          | 16px / 178%            | +2px / +33 points |
+| Caption    | 12px / 134%          | 14px / 170%            | +2px / +36 points |
+
+When a layout contains both scripts, size the container for the Dhivehi values. A block that fits in Latin can overflow in Thaana, especially across several lines of body text.
+
+## Weights
+
+Inter ships four weights, and every Latin role is available in each of them.
+
+<TypographyFoundationVisuals kind="weights" data-docs-markdown="omit" />
+
+Regular sets running text. Medium marks labels or local emphasis without changing the role. Semibold and Bold carry headings and the strongest emphasis.
+
+Dhivehi has two practical weight treatments supplied by different families rather than a single family with a weight axis:
+
+| Weight          | Family                              | Available at                           |
+| :-------------- | :---------------------------------- | :------------------------------------- |
+| Regular         | MV Faseyha                          | Body lg, Body md, Body sm, and Caption |
+| Medium and Bold | MV A Waheed; MV Aaamu FK at Display | All weighted roles                     |
+
+Dhivehi headings do not have a regular treatment, so hierarchy in Thaana relies more on size than weight contrast. When both scripts appear together, choose a role and treatment that exists for each.
+
+## Leading and tracking
+
+Each role already includes tuned line height and letter spacing. Override tokens exist for cases the defaults do not cover, such as a heading in a constrained panel or a caption that must stand alone.
+
+<TypographyFoundationVisuals kind="rhythm" data-docs-markdown="omit" />
+
+The Caption typography style includes its own letter spacing: the English regular style uses 0.015em. Standalone `tracking-*` utilities are explicit overrides; `tracking-caption` is a separate primitive and is not a substitute for the complete Caption style.
+
+Standalone tracking overrides are tuned for Latin. Thaana is a connected script where letter spacing can separate joined forms, so retain the Dhivehi role's authored tracking unless an override has been reviewed by a designer and a fluent reader.
+
+## Development: bilingual typography
+
+Use Veli's `type-*` utilities for component text and bilingual service interfaces. Each utility applies the complete Figma typography style: font family, size, weight, line height and letter spacing. It selects the mapped Dhivehi style when the element inherits `lang="dv"`.
+
+```tsx
+<div lang="en" dir="ltr">
+  <p className="type-body-sm-regular">Application status</p>
+</div>
+<div lang="dv" dir="rtl">
+  <p className="type-body-sm-regular">އެޕްލިކޭޝަންގެ ހާލަތު</p>
+</div>
+```
+
+The same class produces Inter at 14px with 1.45 leading for English, and MV Faseyha at 16px with 1.78 leading for Dhivehi. Weighted styles can also change family: `type-body-sm-medium` uses Inter at 14px/500 for English and MV A Waheed at 17px/700 for Dhivehi. Use the complete utility instead of assembling a role with `text-sm font-medium`.
+
+Set both language and direction. `lang` selects typography; `dir` controls direction and layout. `dir="rtl"` alone does not activate Dhivehi typography, and loading a Dhivehi font does not change the font size. In React applications, [VeliProvider](/docs/provider/) can set both through `language="dv"`. Ensure the required fonts are loaded by the host application; typography utilities select families but do not download font files.
+
+### Generic Tailwind font-size utilities
+
+`text-xs` through `text-9xl` remain available for custom composition. Their size, default line height and letter spacing reference the canonical **English regular** typography tokens. They do not set font family or weight, and they do not switch to the Dhivehi style when language or direction changes.
+
+| Utility                                           | English style used for defaults |
+| :------------------------------------------------ | :------------------------------ |
+| `text-xs`                                         | Caption regular                 |
+| `text-sm`                                         | Body sm regular                 |
+| `text-base`                                       | Body md regular                 |
+| `text-lg`                                         | Body lg regular                 |
+| `text-xl`                                         | Subtitle regular                |
+| `text-2xl` / `text-3xl`                           | Title 2 / Title 1 regular       |
+| `text-4xl` / `text-5xl` / `text-6xl` / `text-7xl` | Heading 4 / 3 / 2 / 1 regular   |
+| `text-8xl` / `text-9xl`                           | Display md / lg regular         |
+
+For example, `text-sm` uses 14px with 1.45 leading and zero tracking; `text-xs` uses 12px with 1.34 leading and 0.015em tracking. These defaults are generated from `tokens.css`, rather than maintained as a separate typography scale. Tailwind slash modifiers such as `text-sm/6`, and explicit `leading-*`, `tracking-*` and `font-*` utilities remain available for deliberate overrides.
+
+Prefer `type-*` whenever text must follow Veli's bilingual type roles. Avoid combining a role utility with a generic font-size utility on the same element: that can override the role's size, leading or tracking. Review intentional overrides in both English and Dhivehi.
+
+Text-color utilities remain separate. Use `text-base-default` for the default text color; `text-base` is the generic font-size utility.
+
+## Best practices
+
+### Pick a role, not a size
+
+Choose Body md rather than `16px`. The role resolves to the correct size, line height, weight, and family for the active script. A hardcoded size loses that relationship when the same component renders in Thaana.
+
+### Follow the hierarchy down, not around
+
+Move one role at a time when reducing emphasis: Heading 2 to Heading 3, not Heading 2 to Body lg with a heavier weight. Skipping roles flattens the structure used by both scanning readers and assistive technology.
+
+### Keep line length readable
+
+Aim for 45–75 characters per line in Latin body text. Long lines make the return sweep difficult, and line-height changes do not solve it. Constrain the container rather than reducing the type size.
+
+### Size bilingual layouts for Dhivehi
+
+Dhivehi runs larger at every role and much looser in body text. Build containers for the Thaana version and the Latin version will fit inside them; the reverse often causes clipping or broken fixed heights.
+
+### Use real weights
+
+Set weight through the token. Browser-synthesised bold or italic distorts letterforms, especially in Thaana where precise strokes and marks carry meaning. If a weight does not exist, choose another supported role instead of forcing it.
+
+### Override leading and tracking only with a reason
+
+The defaults are tuned for each role and script. Use a leading or tracking token only when a specific layout constraint requires it, then reset to the role default outside that case rather than carrying the override through an entire page.
+
+### Do not let weight or size carry meaning alone
+
+Visual emphasis is not announced by assistive technology. Express importance in the content or with a clear label, then use the type treatment to reinforce that meaning instead of replacing it.

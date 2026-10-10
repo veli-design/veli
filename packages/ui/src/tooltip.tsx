@@ -10,7 +10,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { useVeliLanguage } from './provider';
+import { useVeliLanguage } from './provider.js';
 
 /** Minimum inset of the arrow from the tooltip edge (keeps it off rounded corners). */
 const TOOLTIP_ARROW_BOUNDARY_OFFSET = 20;
@@ -42,12 +42,12 @@ function tooltipArrowFillClass(
   const resolvedTone = tone ?? 'primary';
 
   if (resolvedSize === 'sm') {
-    return 'fill-[var(--color-tooltip-bg-small)]';
+    return 'fill-[var(--veli-color-tooltip-bg-small)]';
   }
 
   return resolvedTone === 'secondary'
-    ? 'fill-[var(--color-tooltip-bg-large-secondary)]'
-    : 'fill-[var(--color-tooltip-bg-large-primary)]';
+    ? 'fill-[var(--veli-color-tooltip-bg-large-secondary)]'
+    : 'fill-[var(--veli-color-tooltip-bg-large-primary)]';
 }
 
 function tooltipArrowProps(size: 'sm' | 'lg' | null | undefined, placement: string | null) {
