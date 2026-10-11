@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, useVeliLanguage, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
 import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
-import { verifyButtonRegressions } from '../tests/button';
+import { verifyButtonRegressions, verifyButtonLinkRegressions } from '../tests/button';
 
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
 const iconSizeMap = { xs: 12, sm: 16, md: 16, lg: 20, xl: 20 } as const;
@@ -274,5 +275,155 @@ export const States: Story = {
     await expect(args.onPress).toHaveBeenCalledTimes(2);
     pending.blur();
     await verifyButtonRegressions(canvasElement);
+    await verifyButtonLinkRegressions(canvasElement);
   },
+};
+
+const navigationText = {
+  en: {
+    title: 'Link buttons',
+    available: 'Available',
+    disabled: 'Disabled',
+    loading: 'Loading',
+    iconOnly: 'Icon only',
+    openLink: 'Open Link',
+    account: 'Account',
+    routingTitle: 'Client routing',
+    currentRoute: 'Current route',
+    home: 'Home',
+    settings: 'Settings',
+  },
+  dv: {
+    title: 'ލިންކް ބަޓަންތައް',
+    available: 'ބޭނުންކުރެވޭ',
+    disabled: 'ބޭނުންނުކުރެވޭ',
+    loading: 'ލޯޑުވަނީ',
+    iconOnly: 'އައިކަން އެކަނި',
+    openLink: 'ލިންކް ހުޅުވާ',
+    account: 'އެކައުންޓު',
+    routingTitle: 'ޞަފްޙާތަކާ ދެމެދު ދިއުން',
+    currentRoute: 'މިހާރުގެ ރޫޓު',
+    home: 'މައި ޞަފްޙާ',
+    settings: 'ސެޓިންގްސް',
+  },
+} as const;
+
+function ButtonNavigation() {
+  const { language } = useVeliLanguage();
+  const text = navigationText[language];
+  const examples = [
+    { id: 'available', title: text.available },
+    { id: 'disabled', title: text.disabled },
+    { id: 'loading', title: text.loading },
+    { id: 'icon-only', title: text.iconOnly },
+  ];
+
+  return (
+    <div className="w-[min(42rem,calc(100vw-2rem))] space-y-6">
+      <header className="space-y-2">
+        <h2 className="type-subtitle-medium">{text.title}</h2>
+      </header>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {examples.map(({ id, title }) => (
+          <section
+            key={id}
+            aria-labelledby={`button-link-${id}`}
+            className="space-y-3 rounded-xl border border-base-subtle p-4"
+          >
+            <h3 id={`button-link-${id}`} className="type-body-md-medium">
+              {title}
+            </h3>
+            {id === 'icon-only' ? (
+              <Button
+                as="a"
+                href="https://www.mindco.mv/"
+                target="_blank"
+                rel="noopener noreferrer"
+                iconOnly
+                aria-label={text.openLink}
+              >
+                <DirectionalArrow aria-hidden="true" size={16} />
+              </Button>
+            ) : (
+              <Button
+                as="a"
+                href="https://www.mindco.mv/"
+                target="_blank"
+                rel="noopener noreferrer"
+                isDisabled={id === 'disabled'}
+                isLoading={id === 'loading'}
+              >
+                {text.openLink}
+              </Button>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export const Navigation: Story = {
+  name: 'Link buttons',
+  parameters: exampleParameters,
+  render: () => <ButtonNavigation />,
+};
+
+function ButtonClientRouting() {
+  const { language } = useVeliLanguage();
+  const { colorScheme } = useVeliColorScheme();
+  const text = navigationText[language];
+  const routes = [
+    { href: '#home', label: text.home },
+    { href: '#account', label: text.account },
+    { href: '#settings', label: text.settings },
+  ];
+  const [route, setRoute] = useState(() => {
+    const hash = window.location.hash;
+    return routes.some(({ href }) => href === hash) ? hash : '#home';
+  });
+  const currentPage = routes.find(({ href }) => href === route)?.label;
+
+  return (
+    <div className="w-[min(42rem,calc(100vw-2rem))] space-y-6">
+      <header className="space-y-2">
+        <h2 className="type-subtitle-medium">{text.routingTitle}</h2>
+      </header>
+      <VeliProvider language={language} colorScheme={colorScheme} navigate={setRoute}>
+        <nav aria-label={text.routingTitle} className="flex flex-wrap gap-3">
+          {routes.map(({ href, label }) => (
+            <Button
+              key={href}
+              as="a"
+              href={href}
+              appearance={route === href ? 'fill' : 'ghost'}
+              aria-current={route === href ? 'page' : undefined}
+            >
+              {label}
+            </Button>
+          ))}
+        </nav>
+        <section
+          id={route.slice(1)}
+          aria-labelledby="button-route-heading"
+          className="mt-4 space-y-3 rounded-xl border border-base-subtle p-4"
+        >
+          <h3 id="button-route-heading" className="type-subtitle-medium">
+            {currentPage}
+          </h3>
+          <p role="status" className="type-body-sm-regular">
+            {text.currentRoute}:{' '}
+            <code dir="ltr" className="inline-block">
+              {route}
+            </code>
+          </p>
+        </section>
+      </VeliProvider>
+    </div>
+  );
+}
+
+export const ClientRouting: Story = {
+  parameters: exampleParameters,
+  render: () => <ButtonClientRouting />,
 };
