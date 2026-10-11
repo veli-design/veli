@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useEffect } from 'react';
+import { expect, userEvent, within, waitFor } from '@storybook/test';
+import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
+import { useEffect, useRef } from 'react';
 import type { ComponentProps } from 'react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { CopyIcon, TrashIcon } from '@phosphor-icons/react';
@@ -53,7 +55,8 @@ const englishTooltipText = {
     end: 'End',
   },
   variants: {
-    small: 'Small',
+    smallPrimary: 'Small — Primary',
+    smallSecondary: 'Small — Secondary',
     largePrimary: 'Large — Primary',
     largeSecondary: 'Large — Secondary',
   },
@@ -138,6 +141,9 @@ const PLACEMENT_GROUPS = [
 type TooltipStoryArgs = ComponentProps<typeof Tooltip> & {
   /** Hover delay before the tooltip opens; passed to `TooltipTrigger`. */
   delay?: number;
+  closeDelay?: number;
+  trigger?: 'focus';
+  isDisabled?: boolean;
 };
 
 const meta = {
@@ -180,6 +186,24 @@ const meta = {
     },
   },
   argTypes: {
+    className: { control: false, table: { category: 'Composition' } },
+    style: { control: false, table: { category: 'Composition' } },
+    ref: { control: false, table: { category: 'Composition' } },
+    lang: { control: 'text', table: { category: 'Localization' } },
+    dir: { control: 'select', options: ['ltr', 'rtl'], table: { category: 'Localization' } },
+    closeDelay: { control: { type: 'number', min: 0 }, table: { category: 'Trigger' } },
+    isDisabled: { control: 'boolean', table: { category: 'Trigger' } },
+    trigger: { control: 'select', options: [undefined, 'focus'], table: { category: 'Trigger' } },
+    offset: {
+      control: 'number',
+      description: 'Distance from the trigger (8px small, 12px large by default).',
+    },
+    crossOffset: { control: 'number' },
+    arrowBoundaryOffset: {
+      control: 'number',
+      description: 'Minimum large-arrow inset from a tooltip edge (20px).',
+    },
+    containerPadding: { control: 'number' },
     placement: {
       control: 'select',
       options: [...TOOLTIP_PLACEMENTS],
@@ -197,22 +221,25 @@ const meta = {
     size: {
       control: 'select',
       options: ['sm', 'lg'],
-      description: 'Surface size. Large tooltips use the primary or secondary tone tokens.',
+      description: 'Surface size. Both sizes use the primary or secondary tone tokens.',
     },
     tone: {
       control: 'select',
       options: ['primary', 'secondary'],
-      description: 'Color tone for large tooltips (`size="lg"`). Ignored when `size="sm"`.',
+      description: 'Primary or secondary color tone for both small and large tooltips.',
     },
     children: {
       control: 'text',
-      description: 'Tooltip label (the component always uses a fixed 10px offset from the anchor).',
+      description:
+        'Brief non-interactive help. Small tooltips have no arrow; large tooltips include one.',
     },
   },
   args: {
     placement: 'top',
     shouldFlip: true,
     delay: 0,
+    closeDelay: 0,
+    isDisabled: false,
     size: 'sm',
     tone: 'primary',
     children: englishTooltipText.shortHelp,
@@ -223,14 +250,39 @@ export default meta;
 type Story = StoryObj<TooltipStoryArgs>;
 
 export const Playground: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button');
+    const user = userEvent.setup();
+    trigger.blur();
+    await user.tab();
+    if (args.isDisabled) {
+      await expect(within(document.body).queryByRole('tooltip')).not.toBeInTheDocument();
+      return;
+    }
+    await waitFor(() => expect(within(document.body).getByRole('tooltip')).toBeInTheDocument());
+    const tooltip = within(document.body).getByRole('tooltip');
+    await expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+    await expect(tooltip.querySelector('svg') !== null).toBe(args.size === 'lg');
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(within(document.body).queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+    await expect(trigger).toHaveFocus();
+  },
   render: (args) => {
-    const { delay, children, ...tooltipProps } = args;
+    const { delay, closeDelay, trigger, isDisabled, children, ...tooltipProps } = args;
     const language = useTooltipLanguage();
     const text = localizedTooltipText[language];
 
     return (
       <div className="flex min-h-[280px] items-center justify-center bg-surface-base p-8">
-        <TooltipTrigger delay={delay}>
+        <TooltipTrigger
+          delay={delay}
+          closeDelay={closeDelay}
+          trigger={trigger}
+          isDisabled={isDisabled}
+        >
           <Button intent="secondary">{text.triggerHoverFocus}</Button>
           <Tooltip {...tooltipProps}>
             {getLocalizedTooltipArgText('children', children, language)}
@@ -286,7 +338,7 @@ export const Placements: Story = {
                     <Button intent="secondary" size="sm" className="w-full justify-center">
                       {placement}
                     </Button>
-                    <Tooltip placement={placement} size="lg" tone="primary" shouldFlip={false}>
+                    <Tooltip placement={placement} size="lg" tone="primary">
                       {text.largeTooltip}
                     </Tooltip>
                   </TooltipTrigger>
@@ -301,7 +353,7 @@ export const Placements: Story = {
 };
 
 /**
- * Size and tone variants: small for brief hints, large with primary or secondary surfaces for richer guidance.
+ * Size and tone variants: both sizes support primary and secondary surfaces.
  */
 export const Variants: Story = {
   render: () => {
@@ -311,11 +363,24 @@ export const Variants: Story = {
       <div className="flex min-h-[280px] flex-col items-center justify-center gap-10 bg-surface-base p-8">
         <div className="flex flex-col items-center gap-4">
           <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.variants.small}
+            {text.variants.smallPrimary}
           </span>
           <TooltipTrigger delay={0}>
             <Button intent="secondary">{text.triggerHover}</Button>
-            <Tooltip size="sm">{text.copyAriaLabel}</Tooltip>
+            <Tooltip size="sm" tone="primary">
+              {text.copyAriaLabel}
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+            {text.variants.smallSecondary}
+          </span>
+          <TooltipTrigger delay={0}>
+            <Button intent="secondary">{text.triggerHover}</Button>
+            <Tooltip size="sm" tone="secondary">
+              {text.copyAriaLabel}
+            </Tooltip>
           </TooltipTrigger>
         </div>
         <div className="flex flex-col items-center gap-4">
@@ -341,6 +406,136 @@ export const Variants: Story = {
           </TooltipTrigger>
         </div>
       </div>
+    );
+  },
+};
+
+export const Shortcuts: Story = {
+  play: async ({ canvasElement }) => {
+    within(canvasElement).getByRole('button').blur();
+    await userEvent.tab();
+    await waitFor(() => expect(within(document.body).getByRole('tooltip')).toBeInTheDocument());
+    const tooltip = within(document.body).getByRole('tooltip');
+    const [label, shortcut] = Array.from(tooltip.children);
+    const labelBounds = label.getBoundingClientRect();
+    const shortcutBounds = shortcut.getBoundingClientRect();
+    const gap = Math.min(
+      Math.abs(shortcutBounds.left - labelBounds.right),
+      Math.abs(labelBounds.left - shortcutBounds.right),
+    );
+    await expect(gap).toBeCloseTo(8, 0);
+    await userEvent.keyboard('{Escape}');
+  },
+  render: () => {
+    const text = useTooltipText();
+    return (
+      <TooltipTrigger delay={0}>
+        <Button intent="secondary">{text.copy}</Button>
+        <Tooltip className="flex items-center gap-2">
+          <span>{text.copy}</span>
+          <KbdGroup>
+            <Kbd>⌘</Kbd>
+            <Kbd>C</Kbd>
+          </KbdGroup>
+        </Tooltip>
+      </TooltipTrigger>
+    );
+  },
+};
+
+/** Inline emphasis and punctuation keep normal text flow. */
+export const InlineContent: Story = {
+  render: () => {
+    const text = useTooltipText();
+    return (
+      <TooltipTrigger delay={0} closeDelay={0}>
+        <Button intent="secondary">{text.copy}</Button>
+        <Tooltip>
+          <span>{text.copy}</span>
+          <strong>.</strong>
+        </Tooltip>
+      </TooltipTrigger>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    within(canvasElement).getByRole('button').blur();
+    await userEvent.tab();
+    await waitFor(() => expect(within(document.body).getByRole('tooltip')).toBeInTheDocument());
+    const tooltip = within(document.body).getByRole('tooltip');
+    const [label, punctuation] = Array.from(tooltip.children);
+    const labelBounds = label.getBoundingClientRect();
+    const punctuationBounds = punctuation.getBoundingClientRect();
+    const gap = Math.min(
+      Math.abs(punctuationBounds.left - labelBounds.right),
+      Math.abs(labelBounds.left - punctuationBounds.right),
+    );
+    await expect(gap).toBeLessThan(1);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const Offset: Story = {
+  render: () => (
+    <div className="flex min-h-72 items-center justify-center gap-8">
+      {[0, 32].map((offset) => (
+        <TooltipTrigger key={offset} delay={0} closeDelay={0}>
+          <Button intent="secondary">{offset}px</Button>
+          <Tooltip placement="bottom" shouldFlip={false} offset={offset}>
+            {offset}px gap
+          </Tooltip>
+        </TooltipTrigger>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const triggers = within(canvasElement).getAllByRole('button');
+    const gaps: number[] = [];
+    const user = userEvent.setup();
+    for (const [index, trigger] of triggers.entries()) {
+      await user.tab();
+      await waitFor(() => {
+        const tooltip = document.querySelector<HTMLElement>('[role="tooltip"]:not([data-exiting])');
+        expect(tooltip).toHaveTextContent(`${index === 0 ? 0 : 32}px gap`);
+        expect(getComputedStyle(tooltip!).opacity).toBe('1');
+      });
+      const tooltip = document.querySelector<HTMLElement>('[role="tooltip"]:not([data-exiting])')!;
+      gaps.push(tooltip.getBoundingClientRect().top - trigger.getBoundingClientRect().bottom);
+    }
+    await expect(Math.abs(gaps[1] - gaps[0] - 32)).toBeLessThan(1);
+    await user.keyboard('{Escape}');
+  },
+};
+
+/** Forwarded surface props and initial open state without restyling the component. */
+export const Composition: Story = {
+  render: () => {
+    const ref = useRef<HTMLDivElement>(null);
+    const text = useTooltipText();
+    return (
+      <TooltipTrigger defaultOpen delay={0} closeDelay={0}>
+        <Button intent="secondary">{text.triggerHoverFocus}</Button>
+        <Tooltip
+          ref={ref}
+          size="lg"
+          placement="bottom start"
+          crossOffset={4}
+          containerPadding={16}
+          arrowBoundaryOffset={24}
+          shouldFlip
+          className={({ placement }) => `tooltip-composition-${placement}`}
+          style={() => ({ textAlign: 'start' })}
+        >
+          {text.largeTooltip}
+        </Tooltip>
+      </TooltipTrigger>
+    );
+  },
+  play: async () => {
+    await waitFor(() =>
+      expect(document.querySelector('[role="tooltip"]')).toHaveAttribute('role', 'tooltip'),
+    );
+    await expect(document.querySelector('[role="tooltip"]')?.className).toContain(
+      'tooltip-composition-',
     );
   },
 };
