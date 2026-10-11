@@ -1,5 +1,6 @@
-import { useEffect, type ComponentProps } from 'react';
+import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -7,65 +8,99 @@ import {
   ArrowRightIcon,
   CalendarBlankIcon,
   CaretDownIcon,
+  LinkSimpleIcon,
   MagnifyingGlassIcon,
   WarningCircleIcon,
 } from '@phosphor-icons/react';
 
+const collapsedControlGroups = ['Content', 'State'] as const;
+
+const collapseControlGroup = (group: string) => {
+  const row = document.querySelector(`tr[title^="Hide ${group} item"]`);
+  const toggle = row?.querySelector<HTMLElement>('[tabindex="0"]');
+
+  toggle?.click();
+};
+
+function InputDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryCollapse = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const tableReady = collapsedControlGroups.every(
+        (group) =>
+          document.querySelector(
+            `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+          ) != null,
+      );
+
+      if (!tableReady && attempts < 40) {
+        attempts += 1;
+        requestAnimationFrame(tryCollapse);
+        return;
+      }
+
+      collapsedControlGroups.forEach(collapseControlGroup);
+    };
+
+    tryCollapse();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <DocsContainer {...props} />;
+}
+
 const dhivehiFormText = {
   core: {
     label: 'ލޭބަލް',
-    optional: 'އިޚްތިޔާރީ',
     placeholder: 'ޕްލޭސްހޯލްޑަރ',
     helperText: 'އެހީތެރިވެދޭ ލިޔުން',
     default: 'އާދައިގެ',
     invalid: 'ސައްޙަނޫން',
-    invalidWithoutMessage: 'މެސެޖަކާ ނުލައި ސައްޙަނޫން',
     disabled: 'ބޭނުންނުކުރެވޭ',
     readOnly: 'ކިޔަން އެކަނި',
-    required: 'ފުރިހަމަކުރަންޖެހޭ',
-    gridColumn: 'ގްރިޑް ކޮލަމް',
-    constrained: 'ހަނިކުރެވިފައިވާ',
   },
   input: {
-    enterValue: 'ވެލިއުއެއް ލިޔުއްވާ',
-    disabledValue: 'ބޭނުންނުކުރެވޭ ވެލިއު',
     lockedValue: 'ލޮކްޑް ވެލިއު',
-    helperTextHidden: 'ސައްޙަނޫން ހާލަތެއްގައި މި އެހީތެރިވެދޭ ލިޔުން ނުފެންނާނެއެވެ.',
     errorMessage: 'މި ފީލްޑަށް ސަމާލުކަމެއް ބޭނުންވެއެވެ.',
     infoTip: 'މި ފީލްޑަށް ބޭނުންވާ މަޢުލޫމާތު ބަލާ ލިޔުއްވާ.',
     infoTipLabel: 'އިތުރު މަޢުލޫމާތު',
-    usesRootWidth: 'ރޫޓް ވިޑްތު ބޭނުންކުރޭ',
-    maxWidth: 'އެންމެ ފުޅާމިން',
     action: 'އެކްޝަން',
+    email: 'އީމެއިލް',
+    password: 'ޕާސްވޯޑް',
+    phone: 'ފޯނު ނަންބަރު',
+    website: 'ވެބްސައިޓް',
   },
 } as const;
 
 const enFormText = {
   core: {
     label: 'Label',
-    optional: 'Optional',
     placeholder: 'Placeholder',
     helperText: 'Helper text',
     default: 'Default',
     invalid: 'Invalid',
-    invalidWithoutMessage: 'Invalid without message',
     disabled: 'Disabled',
     readOnly: 'Read only',
-    required: 'Required',
-    gridColumn: 'Grid column',
-    constrained: 'Constrained',
   },
   input: {
-    enterValue: 'Enter value',
-    disabledValue: 'Disabled value',
     lockedValue: 'Locked value',
-    helperTextHidden: 'This helper text is hidden while invalid.',
     errorMessage: 'This field needs attention.',
     infoTip: 'Use this field for the requested supporting information.',
     infoTipLabel: 'More information',
-    usesRootWidth: 'Uses the root width',
-    maxWidth: 'Max width',
     action: 'Action',
+    email: 'Email',
+    password: 'Password',
+    phone: 'Phone number',
+    website: 'Website',
   },
 } as const;
 
@@ -82,20 +117,12 @@ const useInputLanguage = (): InputLanguage => {
   return direction === 'rtl' ? 'dv' : 'en';
 };
 
-const useInputText = () => {
-  const language = useInputLanguage();
-
-  return localizedInputText[language];
-};
+const useInputText = () => localizedInputText[useInputLanguage()];
 
 const inputArgText = {
   label: {
     en: enFormText.core.label,
     dv: dhivehiFormText.core.label,
-  },
-  labelSupplementary: {
-    en: enFormText.core.optional,
-    dv: dhivehiFormText.core.optional,
   },
   infoTooltip: {
     en: enFormText.input.infoTip,
@@ -121,6 +148,7 @@ const inputArgText = {
 
 const inputIconOptions = [
   'none',
+  'link',
   'search',
   'calendar',
   'caretDown',
@@ -131,7 +159,6 @@ const inputIconOptions = [
 type InputIconOption = (typeof inputIconOptions)[number];
 type InputArgTextKey = keyof typeof inputArgText;
 type InputStoryArgs = ComponentProps<typeof Input> & {
-  showOptional: boolean;
   showInfoTooltip: boolean;
   showAction: boolean;
   showLabelIcon: boolean;
@@ -143,30 +170,52 @@ type InputStoryArgs = ComponentProps<typeof Input> & {
 
 const inputArgTextKeys = Object.keys(inputArgText) as InputArgTextKey[];
 
+const getInputPreviewKey = (
+  language: InputLanguage,
+  defaultValue: InputStoryArgs['defaultValue'],
+) => `${language}:${typeof defaultValue === 'string' ? defaultValue : ''}`;
+
 const hiddenNativeInputArgTypes = {
   autoCapitalize: { control: false, table: { disable: true } },
   autoComplete: { control: false, table: { disable: true } },
   autoCorrect: { control: false, table: { disable: true } },
   enterKeyHint: { control: false, table: { disable: true } },
   inputMode: { control: false, table: { disable: true } },
-  maxLength: { control: false, table: { disable: true } },
   minLength: { control: false, table: { disable: true } },
   pattern: { control: false, table: { disable: true } },
   spellCheck: { control: false, table: { disable: true } },
 } as const;
 
-const renderInputIcon = (icon: InputIconOption) => {
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
+const renderInputIcon = (icon: InputIconOption, size = 20): ReactNode => {
   switch (icon) {
+    case 'link':
+      return <LinkSimpleIcon size={size} />;
     case 'search':
-      return <MagnifyingGlassIcon size={16} />;
+      return <MagnifyingGlassIcon size={size} />;
     case 'calendar':
-      return <CalendarBlankIcon size={16} />;
+      return <CalendarBlankIcon size={size} />;
     case 'caretDown':
-      return <CaretDownIcon size={16} />;
+      return <CaretDownIcon size={size} />;
     case 'arrowRight':
-      return <ArrowRightIcon size={16} />;
+      return <ArrowRightIcon size={size} />;
     case 'warning':
-      return <WarningCircleIcon size={16} />;
+      return <WarningCircleIcon size={size} />;
     case 'none':
       return undefined;
   }
@@ -197,15 +246,8 @@ const meta = {
     (Story, context) => {
       const language: InputLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const {
-        description,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-        errorMessage,
-      } = args;
+      const { description, infoTooltip, infoTooltipAriaLabel, label, placeholder, errorMessage } =
+        args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<InputArgTextKey, string>> = {};
@@ -214,7 +256,6 @@ const meta = {
           infoTooltip,
           infoTooltipAriaLabel,
           label,
-          labelSupplementary,
           placeholder,
           errorMessage,
         };
@@ -235,7 +276,6 @@ const meta = {
         infoTooltip,
         infoTooltipAriaLabel,
         label,
-        labelSupplementary,
         placeholder,
         errorMessage,
         language,
@@ -247,130 +287,136 @@ const meta = {
   ],
   parameters: {
     layout: 'centered',
+    controls: {
+      sort: 'none',
+    },
+    docs: {
+      container: InputDocsContainer,
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    appearance: {
-      control: 'select',
-      options: ['default', 'outline'],
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
-    defaultValue: {
-      control: 'text',
-    },
-    label: {
-      control: 'text',
-    },
-    labelSupplementary: {
-      control: 'text',
-    },
-    infoTooltip: {
-      control: 'text',
-    },
-    infoTooltipAriaLabel: {
-      control: 'text',
-    },
-    showOptional: {
-      control: 'boolean',
-    },
-    showInfoTooltip: {
-      control: 'boolean',
-    },
-    showLabelIcon: {
-      control: 'boolean',
-    },
-    showAction: {
-      control: 'boolean',
-    },
-    placeholder: {
-      control: 'text',
-    },
-    description: {
-      control: 'text',
-    },
-    errorMessage: {
-      control: 'text',
-    },
-    type: {
-      control: 'select',
-      options: ['text', 'email', 'password', 'search', 'url', 'tel'],
-    },
-    isDisabled: {
-      control: 'boolean',
-    },
-    isInvalid: {
-      control: 'boolean',
-    },
-    isReadOnly: {
-      control: 'boolean',
-    },
-    isRequired: {
-      control: 'boolean',
-    },
-    showRequiredIndicator: {
-      control: 'boolean',
-    },
-    startAddonIcon: {
-      control: 'select',
-      options: inputIconOptions,
-    },
-    startContentIcon: {
-      control: 'select',
-      options: inputIconOptions,
-    },
-    endContentIcon: {
-      control: 'select',
-      options: inputIconOptions,
-    },
-    endAddonIcon: {
-      control: 'select',
-      options: inputIconOptions,
-    },
-    action: {
-      control: false,
-    },
-    labelIcon: {
-      control: false,
-    },
-    startAddon: {
-      control: false,
-    },
-    startContent: {
-      control: false,
-    },
-    endContent: {
-      control: false,
-    },
-    endAddon: {
-      control: false,
-    },
+    ...withArgCategory('Appearance', {
+      appearance: {
+        control: 'select',
+        options: ['default', 'outline'],
+      },
+      size: {
+        control: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
+    }),
+    ...withArgCategory('Label', {
+      label: {
+        control: 'text',
+      },
+      isOptional: {
+        control: 'boolean',
+      },
+      infoTooltip: {
+        control: 'text',
+      },
+      infoTooltipAriaLabel: {
+        control: 'text',
+      },
+      showInfoTooltip: {
+        control: 'boolean',
+      },
+      showLabelIcon: {
+        control: 'boolean',
+      },
+      showAction: {
+        control: 'boolean',
+      },
+    }),
+    ...withArgCategory('Content', {
+      type: {
+        control: 'select',
+        options: ['text', 'email', 'password', 'search', 'url', 'tel'],
+      },
+      placeholder: {
+        control: 'text',
+      },
+      defaultValue: {
+        control: 'text',
+      },
+      description: {
+        control: 'text',
+      },
+      maxLength: {
+        control: 'number',
+      },
+      startAddonIcon: {
+        control: 'select',
+        options: inputIconOptions,
+      },
+      startContentIcon: {
+        control: 'select',
+        options: inputIconOptions,
+      },
+      endContentIcon: {
+        control: 'select',
+        options: inputIconOptions,
+      },
+      endAddonIcon: {
+        control: 'select',
+        options: inputIconOptions,
+      },
+    }),
+    ...withArgCategory('State', {
+      isRequired: {
+        control: 'boolean',
+      },
+      showRequiredIndicator: {
+        control: 'boolean',
+      },
+      isInvalid: {
+        control: 'boolean',
+      },
+      errorMessage: {
+        control: 'text',
+      },
+      isDisabled: {
+        control: 'boolean',
+      },
+      isReadOnly: {
+        control: 'boolean',
+      },
+    }),
+    ref: { table: { disable: true } },
+    className: { table: { disable: true } },
+    action: { control: false, table: { disable: true } },
+    labelIcon: { control: false, table: { disable: true } },
+    startAddon: { control: false, table: { disable: true } },
+    startContent: { control: false, table: { disable: true } },
+    endContent: { control: false, table: { disable: true } },
+    endAddon: { control: false, table: { disable: true } },
     ...hiddenNativeInputArgTypes,
   },
   args: {
+    appearance: 'default',
+    size: 'md',
     label: enFormText.core.label,
-    labelSupplementary: enFormText.core.optional,
+    isOptional: true,
     infoTooltip: enFormText.input.infoTip,
     infoTooltipAriaLabel: enFormText.input.infoTipLabel,
-    showOptional: true,
     showInfoTooltip: true,
     showLabelIcon: false,
     showAction: false,
-    placeholder: enFormText.core.placeholder,
-    description: enFormText.core.helperText,
-    errorMessage: enFormText.input.errorMessage,
     type: 'text',
-    isInvalid: false,
-    isDisabled: false,
-    isReadOnly: false,
-    isRequired: false,
-    showRequiredIndicator: true,
+    placeholder: enFormText.core.placeholder,
+    defaultValue: '',
+    description: enFormText.core.helperText,
     startAddonIcon: 'none',
     startContentIcon: 'none',
     endContentIcon: 'none',
     endAddonIcon: 'none',
+    isRequired: false,
+    showRequiredIndicator: true,
+    isInvalid: false,
+    errorMessage: enFormText.input.errorMessage,
+    isDisabled: false,
+    isReadOnly: false,
   },
 } satisfies Meta<InputStoryArgs>;
 
@@ -386,22 +432,16 @@ export const Default: Story = {
       showAction,
       showInfoTooltip,
       showLabelIcon,
-      showOptional,
       startAddonIcon,
       startContentIcon,
       ...inputArgs
     } = args;
 
     return (
-      <div className="w-[320px]">
+      <div key={getInputPreviewKey(language, args.defaultValue)} className="w-[320px]">
         <Input
           {...inputArgs}
           label={getLocalizedInputArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedInputArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedInputArgText('infoTooltip', args.infoTooltip, language)
@@ -413,14 +453,14 @@ export const Default: Story = {
             language,
           )}
           labelIcon={showLabelIcon ? <WarningCircleIcon size={16} /> : undefined}
-          action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
+          action={showAction ? localizedInputText[language].input.action : undefined}
           placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
           description={getLocalizedInputArgText('description', args.description, language)}
           errorMessage={getLocalizedInputArgText('errorMessage', args.errorMessage, language)}
-          startAddon={renderInputIcon(startAddonIcon)}
+          startAddon={renderInputIcon(startAddonIcon, 16)}
           startContent={renderInputIcon(startContentIcon)}
           endContent={renderInputIcon(endContentIcon)}
-          endAddon={renderInputIcon(endAddonIcon)}
+          endAddon={renderInputIcon(endAddonIcon, 16)}
         />
       </div>
     );
@@ -431,280 +471,121 @@ export const Outline: Story = {
   args: {
     appearance: 'outline',
   },
-  render: (args) => {
-    const language = useInputLanguage();
-    const {
-      endAddonIcon,
-      endContentIcon,
-      showAction,
-      showInfoTooltip,
-      showLabelIcon,
-      showOptional,
-      startAddonIcon,
-      startContentIcon,
-      ...inputArgs
-    } = args;
-
-    return (
-      <div className="w-[320px]">
-        <Input
-          {...inputArgs}
-          label={getLocalizedInputArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedInputArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
-          infoTooltip={
-            showInfoTooltip
-              ? getLocalizedInputArgText('infoTooltip', args.infoTooltip, language)
-              : undefined
-          }
-          infoTooltipAriaLabel={getLocalizedInputArgText(
-            'infoTooltipAriaLabel',
-            args.infoTooltipAriaLabel,
-            language,
-          )}
-          labelIcon={showLabelIcon ? <WarningCircleIcon size={16} /> : undefined}
-          action={showAction ? <span>{localizedInputText[language].input.action}</span> : undefined}
-          placeholder={getLocalizedInputArgText('placeholder', args.placeholder, language)}
-          description={getLocalizedInputArgText('description', args.description, language)}
-          errorMessage={getLocalizedInputArgText('errorMessage', args.errorMessage, language)}
-          startAddon={renderInputIcon(startAddonIcon)}
-          startContent={renderInputIcon(startContentIcon)}
-          endContent={renderInputIcon(endContentIcon)}
-          endAddon={renderInputIcon(endAddonIcon)}
-        />
-      </div>
-    );
-  },
+  render: Default.render,
 };
 
-/**
- * Showcases all size variants of the Input component.
- */
 export const Sizes: Story = {
   render: () => {
+    const language = useInputLanguage();
     const text = useInputText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-        <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            Default
-          </span>
-          <div className="flex flex-col gap-4">
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        {(['default', 'outline'] as const).map((appearance) => (
+          <div key={appearance} className="flex flex-col gap-8">
             <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Small (sm)
+              {appearance === 'default' ? 'Default' : 'Outline'}
             </span>
-            <Input
-              size="sm"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
+            {(['sm', 'md', 'lg'] as const).map((size) => (
+              <div key={size} className="flex flex-col gap-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+                  {size === 'sm' ? 'Small (sm)' : size === 'md' ? 'Medium (md)' : 'Large (lg)'}
+                </span>
+                <Input
+                  size={size}
+                  appearance={appearance}
+                  label={text.core.label}
+                  isOptional
+                  placeholder={text.core.placeholder}
+                  description={text.core.helperText}
+                />
+              </div>
+            ))}
           </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Medium (md)
-            </span>
-            <Input
-              size="md"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Large (lg)
-            </span>
-            <Input
-              size="lg"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            Outline
-          </span>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Small (sm)
-            </span>
-            <Input
-              size="sm"
-              appearance="outline"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Medium (md)
-            </span>
-            <Input
-              size="md"
-              appearance="outline"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-              Large (lg)
-            </span>
-            <Input
-              size="lg"
-              appearance="outline"
-              label={text.core.label}
-              placeholder={text.core.placeholder}
-              description={text.core.helperText}
-            />
-          </div>
-        </div>
+        ))}
       </div>
     );
   },
 };
 
-export const RootClassName: Story = {
+export const States: Story = {
   render: () => {
+    const language = useInputLanguage();
     const text = useInputText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-        <Input
-          className="w-full"
-          label={text.core.gridColumn}
-          placeholder={text.input.usesRootWidth}
-          description={text.core.helperText}
-        />
-        <Input
-          className="max-w-[240px]"
-          label={text.core.constrained}
-          placeholder={text.input.maxWidth}
-          description={text.core.helperText}
-        />
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        {(['default', 'outline'] as const).map((appearance) => (
+          <div key={appearance} className="flex flex-col gap-4">
+            <Input
+              appearance={appearance}
+              label={text.core.default}
+              isOptional
+              placeholder={text.core.placeholder}
+              description={text.core.helperText}
+            />
+            <Input
+              appearance={appearance}
+              label={text.core.invalid}
+              isOptional
+              placeholder={text.core.placeholder}
+              errorMessage={text.input.errorMessage}
+              isInvalid
+            />
+            <Input
+              appearance={appearance}
+              label={text.core.disabled}
+              isOptional
+              placeholder={text.core.placeholder}
+              description={text.core.helperText}
+              isDisabled
+            />
+            <Input
+              appearance={appearance}
+              label={text.core.readOnly}
+              isOptional
+              defaultValue={text.input.lockedValue}
+              description={text.core.helperText}
+              isReadOnly
+            />
+          </div>
+        ))}
       </div>
     );
   },
 };
 
-export const FigmaExploration: Story = {
-  render: () => {
-    const text = useInputText();
-
-    return (
-      <div className="w-[320px]">
-        <Input
-          label={text.core.label}
-          labelSupplementary={text.core.optional}
-          infoTooltip={text.input.infoTip}
-          infoTooltipAriaLabel={text.input.infoTipLabel}
-          isRequired
-          action="Action"
-          placeholder={text.core.placeholder}
-          description={text.core.helperText}
-          startAddon={<MagnifyingGlassIcon size={16} />}
-          startContent={<CalendarBlankIcon size={16} />}
-          endContent={
-            <span className="flex items-center gap-[4px]">
-              <WarningCircleIcon size={16} />
-              <CaretDownIcon size={16} />
-            </span>
-          }
-          endAddon={<ArrowRightIcon size={16} />}
-        />
-      </div>
-    );
+export const Required: Story = {
+  args: {
+    isRequired: true,
+    isOptional: false,
   },
+  render: Default.render,
 };
 
-export const ValidationStates: Story = {
+export const Slots: Story = {
+  args: {
+    showLabelIcon: true,
+    showAction: true,
+    startAddonIcon: 'search',
+    startContentIcon: 'calendar',
+    endContentIcon: 'caretDown',
+    endAddonIcon: 'arrowRight',
+  },
+  render: Default.render,
+};
+
+export const InputTypes: Story = {
   render: () => {
+    const language = useInputLanguage();
     const text = useInputText();
 
     return (
-      <div className="grid w-[680px] grid-cols-2 gap-[24px]">
-        <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            Default
-          </span>
-          <Input
-            label={text.core.default}
-            placeholder={text.input.enterValue}
-            description={text.core.helperText}
-          />
-          <Input
-            label={text.core.invalid}
-            placeholder={text.input.enterValue}
-            isInvalid
-            errorMessage={text.input.errorMessage}
-          />
-          <Input
-            label={text.core.invalidWithoutMessage}
-            placeholder={text.input.enterValue}
-            isInvalid
-            description={text.input.helperTextHidden}
-          />
-          <Input
-            label={text.core.disabled}
-            placeholder={text.input.disabledValue}
-            isDisabled
-            endAddon={<ArrowRightIcon size={16} />}
-          />
-          <Input
-            label={text.core.readOnly}
-            defaultValue={text.input.lockedValue}
-            isReadOnly
-            endContent={<CaretDownIcon size={16} />}
-          />
-        </div>
-        <div className="flex flex-col gap-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            Outline
-          </span>
-          <Input
-            appearance="outline"
-            label={text.core.default}
-            placeholder={text.input.enterValue}
-            description={text.core.helperText}
-          />
-          <Input
-            appearance="outline"
-            label={text.core.invalid}
-            placeholder={text.input.enterValue}
-            isInvalid
-            errorMessage={text.input.errorMessage}
-          />
-          <Input
-            appearance="outline"
-            label={text.core.invalidWithoutMessage}
-            placeholder={text.input.enterValue}
-            isInvalid
-            description={text.input.helperTextHidden}
-          />
-          <Input
-            appearance="outline"
-            label={text.core.disabled}
-            placeholder={text.input.disabledValue}
-            isDisabled
-            endAddon={<ArrowRightIcon size={16} />}
-          />
-          <Input
-            appearance="outline"
-            label={text.core.readOnly}
-            defaultValue={text.input.lockedValue}
-            isReadOnly
-            endContent={<CaretDownIcon size={16} />}
-          />
-        </div>
+      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+        <Input label={text.input.email} type="email" placeholder={text.core.placeholder} />
+        <Input label={text.input.password} type="password" placeholder={text.core.placeholder} />
+        <Input label={text.input.website} type="url" placeholder={text.core.placeholder} />
+        <Input label={text.input.phone} type="tel" placeholder={text.core.placeholder} />
       </div>
     );
   },

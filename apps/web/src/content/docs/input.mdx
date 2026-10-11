@@ -1,17 +1,17 @@
 ---
 title: Input
-description: Accessible text input built with React Aria TextField primitives and Veli token styling.
+description: Single-line text field with label, helper text, validation, and accessory slots.
 ---
 
 import {
-  InputExplorationDemo,
+  InputAppearancesDemo,
   InputUsageDemo,
   InputValidationDemo,
 } from '../../components/DocsExamples';
 
 # Input
 
-The Input component wraps React Aria's `TextField` and `Input` primitives in a Figma-aligned shell with support for labels, helper text, validation messaging, and accessory slots.
+Use Input for short, single-line values such as names, email addresses, and reference numbers. For longer copy, use [TextArea](/docs/textarea/). For passwords, use [PasswordInput](/docs/password-input/).
 
 ## Import
 
@@ -26,45 +26,125 @@ import { Input } from '@tradenetcorp/veli-ui/input';
 </div>
 
 ```tsx
-<Input label="Email" placeholder="name@example.com" description="Helper text" />
+<Input
+  label="Email"
+  type="email"
+  isOptional
+  placeholder="name@example.com"
+  description="Helper text"
+/>
 ```
 
-## Figma Exploration
+## Appearances
+
+`default` uses the underline shell. `outline` draws a bordered field. Size the field with `sm`, `md`, or `lg`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <InputExplorationDemo client:visible />
+  <InputAppearancesDemo client:visible />
 </div>
 
+```tsx
+<Input label="Default" placeholder="Enter value" />
+<Input appearance="outline" label="Outline" placeholder="Enter value" />
+```
+
 ## Validation
+
+When `isInvalid` is set, `errorMessage` replaces the helper text and a warning icon replaces `endContent`.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <InputValidationDemo client:visible />
 </div>
 
+```tsx
+<Input
+  label="Email"
+  type="email"
+  isInvalid
+  errorMessage="Enter a valid email address."
+  endContent={<LinkSimple size={20} />}
+/>
+```
+
 ## API Reference
 
-| Prop                    | Type                     | Default          | Description                                                                  |
-| :---------------------- | :----------------------- | :--------------- | :--------------------------------------------------------------------------- |
-| `appearance`            | `'default' \| 'outline'` | `'default'`      | Visual appearance of the input field.                                        |
-| `label`                 | `ReactNode`              | -                | Visible label content rendered with React Aria's `Label`.                    |
-| `labelSupplementary`    | `ReactNode`              | -                | Inline helper copy beside the label, for cases like `Optional`.              |
-| `infoTooltip`           | `ReactNode`              | -                | Optional tooltip content displayed from a small info icon in the header.     |
-| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible label for the tooltip trigger button.                             |
-| `labelIcon`             | `ReactNode`              | -                | Small icon placed after the label content.                                   |
-| `action`                | `ReactNode`              | -                | Right-aligned header content, suitable for an inline action.                 |
-| `description`           | `ReactNode`              | -                | Helper text shown beneath the field when not invalid.                        |
-| `errorMessage`          | `ReactNode`              | -                | Validation content shown beneath the field when `isInvalid` is true.         |
-| `startAddon`            | `ReactNode`              | -                | Leading content rendered inside the inset 24px accessory container.          |
-| `startContent`          | `ReactNode`              | -                | Leading inline content rendered directly inside the field shell.             |
-| `endContent`            | `ReactNode`              | -                | Trailing inline content rendered directly inside the field shell.            |
-| `endAddon`              | `ReactNode`              | -                | Trailing content rendered inside the inset 24px accessory container.         |
-| `showRequiredIndicator` | `boolean`                | `true`           | Controls whether the required asterisk is rendered when `isRequired` is set. |
-| `className`             | `string`                 | -                | Layout-only class override merged onto the outermost root element.           |
+Input is a Veli field on React Aria [`TextField`](https://react-spectrum.adobe.com/react-aria/TextField.html), which wraps a native `<input>`. Props below follow that stack.
 
-All other `react-aria-components` `TextField` props are supported, excluding `style` and direct child composition overrides.
+### Input
 
-`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Use it to identify repeated layout needs during internal adoption; repeated patterns should become explicit props before public release.
+Veli-specific props for the composed field.
 
-For Dhivehi (`lang="dv"`) fields, the input text uses the `MV_Faseyha` font and size, height, line-height, and padding tuning so glyphs stay visually centered and inside the field container.
+| Prop                    | Type                     | Default          | Description                                                          |
+| :---------------------- | :----------------------- | :--------------- | :------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'`      | Underline or bordered field.                                         |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`           | Field size.                                                          |
+| `label`                 | `ReactNode`              | -                | Visible label.                                                       |
+| `isOptional`            | `boolean`                | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`. |
+| `infoTooltip`           | `ReactNode`              | -                | Content for the header info tooltip.                                 |
+| `infoTooltipAriaLabel`  | `string`                 | Localized string | Accessible name for the info tooltip trigger.                        |
+| `labelIcon`             | `ReactNode`              | -                | Small icon after the label.                                          |
+| `action`                | `ReactNode`              | -                | Trailing header content, such as an inline link.                     |
+| `description`           | `ReactNode`              | -                | Helper text beneath the field.                                       |
+| `errorMessage`          | `ReactNode`              | -                | Error text shown when `isInvalid`.                                   |
+| `showRequiredIndicator` | `boolean`                | `true`           | Shows the required asterisk when `isRequired`.                       |
+| `startAddon`            | `ReactNode`              | -                | Leading content in an inset container.                               |
+| `startContent`          | `ReactNode`              | -                | Leading inline content.                                              |
+| `endContent`            | `ReactNode`              | -                | Trailing inline content. Replaced by the error icon when invalid.    |
+| `endAddon`              | `ReactNode`              | -                | Trailing content in an inset container.                              |
+| `className`             | `string`                 | -                | Layout class on the root (width, margin, flex/grid).                 |
+| `ref`                   | `Ref<HTMLInputElement>`  | -                | Forwarded to the inner input.                                        |
 
-In RTL layouts, `type="email"`, `type="url"`, `type="tel"`, and `type="password"` keep the surrounding field UI RTL while rendering entered values LTR with English typography metrics, so credentials, addresses, URLs, dial codes, and phone number punctuation remain in their expected order. Empty Dhivehi placeholders stay right-aligned until a value is entered.
+### TextField
+
+React Aria’s headless [`TextField`](https://react-spectrum.adobe.com/react-aria/TextField.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop           | Type                      | Default  | Description                    |
+| :------------- | :------------------------ | :------- | :----------------------------- |
+| `type`         | `string`                  | `'text'` | Native input type.             |
+| `value`        | `string`                  | -        | Controlled value.              |
+| `defaultValue` | `string`                  | -        | Uncontrolled initial value.    |
+| `onChange`     | `(value: string) => void` | -        | Called when the value changes. |
+| `isDisabled`   | `boolean`                 | `false`  | Disables the field.            |
+| `isInvalid`    | `boolean`                 | `false`  | Marks the field invalid.       |
+| `isReadOnly`   | `boolean`                 | `false`  | Prevents editing.              |
+| `isRequired`   | `boolean`                 | `false`  | Marks the field required.      |
+| `name`         | `string`                  | -        | Native form field name.        |
+| `validate`     | `function`                | -        | Custom validation.             |
+| `autoFocus`    | `boolean`                 | `false`  | Focuses the field on mount.    |
+
+Not forwarded from `TextField`:
+
+| Prop         | Why                                                              |
+| :----------- | :--------------------------------------------------------------- |
+| `children`   | Veli owns the field composition.                                 |
+| `style`      | Not supported.                                                   |
+| `className`  | Replaced by Veli’s layout `className` on the root.               |
+| `spellCheck` | Omitted from `TextField` and applied to the inner input instead. |
+
+### Native input
+
+The native `<input>` that React Aria wraps. These attributes are applied to that element.
+
+| Prop             | Type      | Description                       |
+| :--------------- | :-------- | :-------------------------------- |
+| `placeholder`    | `string`  | Placeholder for an empty field.   |
+| `maxLength`      | `number`  | Maximum length.                   |
+| `minLength`      | `number`  | Minimum length.                   |
+| `pattern`        | `string`  | Native validation pattern.        |
+| `autoComplete`   | `string`  | Browser autocomplete token.       |
+| `autoCapitalize` | `string`  | Virtual-keyboard capitalization.  |
+| `autoCorrect`    | `string`  | iOS autocorrect.                  |
+| `enterKeyHint`   | `string`  | Virtual-keyboard enter-key label. |
+| `inputMode`      | `string`  | Virtual-keyboard type.            |
+| `spellCheck`     | `boolean` | Spellcheck on the inner input.    |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- `description` is the accessible helper. On error, `errorMessage` replaces it.
+- The error icon and slot icons are decorative. Put any meaning they carry in `errorMessage` or `description`.
+- If `action` is interactive, render a button or link so it has its own accessible name.
+
+## RTL and Language
+
+On `lang="dv"` pages, entered text uses `MV_Faseyha`. In RTL, the label row, slots, and error icon follow `dir`. Values for `type="email"`, `"url"`, `"tel"`, and `"password"` stay left-to-right in the Latin font so addresses and numbers keep their order. Their Dhivehi placeholders stay right-aligned.
