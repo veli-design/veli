@@ -5,10 +5,16 @@ import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
   ButtonContext,
+  type LinkProps as AriaLinkProps,
+  type LinkRenderProps,
+  LinkContext,
+  useContextProps,
   DEFAULT_SLOT,
   ProgressBarContext,
   useSlottedContext,
 } from 'react-aria-components';
+import { useLink, useHover, useFocusRing, mergeProps } from 'react-aria';
+import { filterDOMProps } from 'react-aria/filterDOMProps';
 import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
@@ -64,64 +70,64 @@ const buttonVariants = cva(
         intent: 'primary',
         appearance: 'fill',
         className:
-          'bg-button-primary text-white data-[hovered]:bg-button-primary-hover data-[pressed]:bg-button-primary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)]',
+          'bg-button-primary text-white data-[hovered]:bg-button-primary-hover data-[pressed]:bg-button-primary-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:rgb(0_175_172_/_0.75)]',
       },
       {
         intent: 'primary',
         appearance: 'transparent',
         className:
-          'bg-button-primary-subtle text-primary data-[hovered]:bg-button-primary-subtle-hover data-[pressed]:bg-button-primary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-button-primary-subtle text-primary data-[hovered]:bg-button-primary-subtle-hover data-[pressed]:bg-button-primary-subtle-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       {
         intent: 'primary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
+          'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
       // Secondary
       {
         intent: 'secondary',
         appearance: 'fill',
         className:
-          'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
+          'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
         className:
-          'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
+          'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
         className:
-          'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
+          'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       // Danger
       {
         intent: 'danger',
         appearance: 'fill',
         className:
-          'bg-button-danger text-white data-[hovered]:bg-button-danger-hover data-[pressed]:bg-button-danger-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.95)]',
+          'bg-button-danger text-white data-[hovered]:bg-button-danger-hover data-[pressed]:bg-button-danger-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:rgb(255_2_0_/_0.9)] dark:[--button-ripple-color:rgb(255_2_0_/_0.95)]',
       },
       {
         intent: 'danger',
         appearance: 'transparent',
         className:
-          'bg-button-danger-subtle text-danger data-[hovered]:bg-button-danger-subtle-hover data-[pressed]:bg-button-danger-subtle-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-button-danger-subtle text-danger data-[hovered]:bg-button-danger-subtle-hover data-[pressed]:bg-button-danger-subtle-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       {
         intent: 'danger',
         appearance: 'ghost',
         className:
-          'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover disabled:bg-transparent disabled:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
+          'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
       // Accent (fill only in Figma)
       {
         intent: 'accent',
         appearance: 'fill',
         className:
-          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed disabled:bg-button-disabled disabled:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
+          'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
       },
       { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
       { size: 'sm', iconOnly: true, className: 'h-9 w-9' },
@@ -217,19 +223,51 @@ type StandardButtonProps = ButtonSharedProps & {
   iconOnly?: false | undefined;
 };
 
-export type ButtonProps = IconOnlyButtonProps | StandardButtonProps;
+type ActionButtonProps = (IconOnlyButtonProps | StandardButtonProps) & {
+  as?: 'button';
+  href?: never;
+};
+
+type ButtonLinkState = LinkRenderProps & { isPending: boolean };
+
+interface ButtonLinkSharedProps
+  extends
+    Omit<AriaLinkProps, 'style' | 'children' | 'className' | 'render' | 'href'>,
+    Omit<VariantProps<typeof buttonVariants>, 'iconOnly'>,
+    RefProp<HTMLAnchorElement> {
+  as: 'a';
+  href: string;
+  excludeFromTabOrder?: boolean;
+  isLoading?: boolean;
+  isPending?: boolean;
+  'aria-busy'?: React.AriaAttributes['aria-busy'];
+  'aria-current'?: React.AriaAttributes['aria-current'];
+  className?: string;
+  render?: (props: React.ComponentPropsWithRef<'a'>, state: ButtonLinkState) => React.ReactElement;
+}
+
+type NavigationButtonProps = ButtonLinkSharedProps &
+  (
+    | (AccessibleButtonName & { children?: React.ReactNode; iconOnly: true })
+    | { children?: React.ReactNode; iconOnly?: false | undefined }
+  );
+
+export type ButtonProps<Element extends 'button' | 'a' = 'button'> = Element extends 'a'
+  ? NavigationButtonProps
+  : ActionButtonProps;
 
 type ButtonAppearance = NonNullable<ButtonProps['appearance']>;
 
 const pressRippleAnimationDuration = 420;
 const pressRippleStartSizePx = 12;
 
-interface UseButtonRippleOptions {
+interface UseButtonRippleOptions<T extends HTMLButtonElement | HTMLAnchorElement> {
+  ref?: React.RefObject<T | null>;
   isDisabled?: boolean;
   isLoading?: boolean;
-  onPointerMove?: ButtonProps['onPointerMove'];
-  onPointerUp?: ButtonProps['onPointerUp'];
-  onPointerCancel?: ButtonProps['onPointerCancel'];
+  onPointerMove?: React.PointerEventHandler<T>;
+  onPointerUp?: React.PointerEventHandler<T>;
+  onPointerCancel?: React.PointerEventHandler<T>;
   onPressStart?: ButtonProps['onPressStart'];
   onPressEnd?: ButtonProps['onPressEnd'];
 }
@@ -318,7 +356,8 @@ function ButtonContent({
   );
 }
 
-function useButtonRipple({
+function useButtonRipple<T extends HTMLButtonElement | HTMLAnchorElement = HTMLButtonElement>({
+  ref,
   isDisabled,
   isLoading,
   onPointerMove,
@@ -326,9 +365,10 @@ function useButtonRipple({
   onPointerCancel,
   onPressStart,
   onPressEnd,
-}: UseButtonRippleOptions) {
+}: UseButtonRippleOptions<T>) {
   const canRipple = !isDisabled && !isLoading;
-  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+  const internalRef = React.useRef<T | null>(null);
+  const buttonRef = ref ?? internalRef;
   const expandFrameRef = React.useRef<number | null>(null);
   const pointerFrameRef = React.useRef<number | null>(null);
   const isPressingRef = React.useRef(false);
@@ -346,7 +386,7 @@ function useButtonRipple({
     button.style.setProperty('--button-ripple-x', `${x}px`);
     button.style.setProperty('--button-ripple-y', `${y}px`);
     button.style.setProperty('--button-ripple-size', `${size}px`);
-  }, []);
+  }, [buttonRef]);
 
   const setRipplePosition = React.useCallback(
     (x: number, y: number) => {
@@ -358,7 +398,7 @@ function useButtonRipple({
   );
 
   const trackRippleFromPointer = React.useCallback(
-    (target: HTMLButtonElement, clientX: number, clientY: number) => {
+    (target: T, clientX: number, clientY: number) => {
       if (!isPressingRef.current || !canRipple || prefersReducedMotion()) {
         return;
       }
@@ -449,12 +489,12 @@ function useButtonRipple({
     return stopRipple;
   }, [canRipple, stopTrackingRipple]);
 
-  const handlePointerMove: NonNullable<ButtonProps['onPointerMove']> = (event) => {
+  const handlePointerMove: React.PointerEventHandler<T> = (event) => {
     trackRippleFromPointer(event.currentTarget, event.clientX, event.clientY);
     onPointerMove?.(event);
   };
 
-  const handlePointerUp: NonNullable<ButtonProps['onPointerUp']> = (event) => {
+  const handlePointerUp: React.PointerEventHandler<T> = (event) => {
     if (event.buttons === 0) {
       stopTrackingRipple();
     }
@@ -462,7 +502,7 @@ function useButtonRipple({
     onPointerUp?.(event);
   };
 
-  const handlePointerCancel: NonNullable<ButtonProps['onPointerCancel']> = (event) => {
+  const handlePointerCancel: React.PointerEventHandler<T> = (event) => {
     stopTrackingRipple();
     onPointerCancel?.(event);
   };
@@ -500,7 +540,8 @@ function useButtonRipple({
   };
 }
 
-export function Button({
+function ActionButton({
+  as: elementType = 'button',
   intent,
   appearance,
   size,
@@ -519,7 +560,7 @@ export function Button({
   render,
   ref,
   ...props
-}: ButtonProps) {
+}: ActionButtonProps) {
   const buttonContext = React.useContext(ButtonContext);
   // Collection-building passes may omit slots. AriaButton validates the visible render.
   const context =
@@ -584,7 +625,9 @@ export function Button({
       {...buttonEventHandlers}
       className={(state) =>
         twMerge(
-          typeof context?.className === 'function' ? context.className(state) : context?.className,
+          typeof context?.className === 'function'
+            ? context.className({ ...state, defaultClassName: undefined })
+            : context?.className,
           buttonVariants({
             intent: resolvedIntent,
             appearance: resolvedAppearance,
@@ -608,7 +651,9 @@ export function Button({
             onClick: (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault(),
           }),
         };
-        return resolvedRender ? resolvedRender(buttonProps, state) : <button {...buttonProps} />;
+        return resolvedRender
+          ? resolvedRender(buttonProps, state)
+          : React.createElement(elementType, buttonProps);
       }}
     >
       {({ isPending: pending }) => (
@@ -623,4 +668,152 @@ export function Button({
       )}
     </AriaButton>
   );
+}
+
+function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButtonProps) {
+  const context = useSlottedContext(LinkContext, inputProps.slot);
+  const [mergedProps, ref] = useContextProps(inputProps, forwardedRef, LinkContext);
+  const {
+    as: elementType,
+    intent,
+    appearance,
+    size,
+    children,
+    iconOnly,
+    isLoading,
+    isPending,
+    isDisabled,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onPressStart,
+    onPressEnd,
+    'aria-busy': ariaBusy,
+    render,
+    ...props
+  } = mergedProps;
+  const resolvedIntent = intent ?? 'primary';
+  const resolvedSize = size ?? 'md';
+  const resolvedAppearance = resolvedIntent === 'accent' ? 'fill' : (appearance ?? 'fill');
+  const pending = Boolean(isLoading || isPending);
+  const inactive = Boolean(isDisabled || pending);
+  const hasChildren = React.Children.toArray(children).some(
+    (child) => typeof child !== 'string' || child.trim().length > 0,
+  );
+  const isIconOnly = Boolean(iconOnly);
+  const hasName = hasAccessibleName(props);
+  invariantDev(
+    !isIconOnly || hasName,
+    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+  );
+  invariantDev(
+    !pending || hasChildren || hasName,
+    'Coral UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
+  );
+  const { buttonEventHandlers } = useButtonRipple<HTMLAnchorElement>({
+    ref,
+    isDisabled,
+    isLoading: pending,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onPressStart,
+    onPressEnd,
+  });
+  const { linkProps, isPressed } = useLink(
+    {
+      ...props,
+      elementType,
+      isDisabled: inactive,
+      onPressStart: buttonEventHandlers.onPressStart,
+      onPressEnd: buttonEventHandlers.onPressEnd,
+    },
+    ref,
+  );
+  const { hoverProps, isHovered } = useHover({ ...props, isDisabled: inactive });
+  const { focusProps, isFocused, isFocusVisible } = useFocusRing({ autoFocus: props.autoFocus });
+  const state: ButtonLinkState = {
+    isDisabled: inactive,
+    isPending: pending,
+    isCurrent: Boolean(props['aria-current'] && props['aria-current'] !== 'false'),
+    isPressed,
+    isHovered,
+    isFocused,
+    isFocusVisible,
+  };
+  const blockActivation = (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  const nativeProps = filterDOMProps(props, { global: true });
+  delete nativeProps.onClick;
+  const domProps = mergeProps(nativeProps, linkProps, hoverProps, focusProps, {
+    onPointerMove: buttonEventHandlers.onPointerMove,
+    onPointerUp: buttonEventHandlers.onPointerUp,
+    onPointerCancel: buttonEventHandlers.onPointerCancel,
+  }) as React.ComponentPropsWithoutRef<'a'>;
+  const anchorProps: React.ComponentPropsWithRef<'a'> & Record<string, unknown> = {
+    ...domProps,
+    ref,
+    style:
+      typeof context?.style === 'function'
+        ? context.style({ ...state, defaultStyle: {} })
+        : context?.style,
+    href: inactive ? undefined : domProps.href,
+    role: inactive ? 'link' : domProps.role,
+    slot: props.slot ?? undefined,
+    tabIndex: isDisabled ? -1 : pending ? (props.excludeFromTabOrder ? -1 : 0) : domProps.tabIndex,
+    'aria-busy': pending ? true : ariaBusy,
+    'data-disabled': isDisabled || undefined,
+    'data-pending': pending || undefined,
+    'data-pressed': isPressed || undefined,
+    'data-hovered': isHovered || undefined,
+    'data-focused': isFocused || undefined,
+    'data-focus-visible': isFocusVisible || undefined,
+    'data-current': state.isCurrent || undefined,
+    onClickCapture: inactive ? blockActivation : domProps.onClickCapture,
+    onAuxClickCapture: inactive ? blockActivation : domProps.onAuxClickCapture,
+    onKeyDownCapture: inactive
+      ? (event) => {
+          if (event.key === 'Enter' || event.key === ' ') blockActivation(event);
+          else domProps.onKeyDownCapture?.(event);
+        }
+      : domProps.onKeyDownCapture,
+    className: twMerge(
+      typeof context?.className === 'function'
+        ? context.className({ ...state, defaultClassName: undefined })
+        : context?.className,
+      buttonVariants({
+        intent: resolvedIntent,
+        appearance: resolvedAppearance,
+        size: resolvedSize,
+        iconOnly: isIconOnly,
+      }),
+      'no-underline',
+      pending && !hasChildren && !isIconOnly
+        ? loadingOnlyWidthVariants({ size: resolvedSize })
+        : undefined,
+      inputProps.className,
+    ),
+    children: (
+      <ButtonContent
+        hasChildren={hasChildren}
+        isLoading={pending}
+        isIconOnly={isIconOnly}
+        size={resolvedSize}
+      >
+        {children}
+      </ButtonContent>
+    ),
+  };
+  const resolvedRender = render ?? (context?.render as ButtonLinkSharedProps['render']);
+  return resolvedRender ? (
+    resolvedRender(anchorProps, state)
+  ) : (
+    <a {...anchorProps}>{anchorProps.children}</a>
+  );
+}
+
+export function Button(props: ButtonProps<'button' | 'a'>) {
+  return props.as === 'a' ? <NavigationButton {...props} /> : <ActionButton {...props} />;
 }
