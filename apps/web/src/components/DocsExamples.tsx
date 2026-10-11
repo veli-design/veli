@@ -49,7 +49,6 @@ import {
   CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
-  InfoIcon,
   LinkSimpleIcon,
   MagnifyingGlassIcon,
   PencilSimpleIcon,
