@@ -1,25 +1,31 @@
 ---
 title: Checkbox
-description: Accessible checkbox component with square geometry and semantic state styling.
+description: Accessible checkboxes in three sizes, with indeterminate state, validation, and groups.
 ---
 
 import {
   CheckboxDisabledDemo,
+  CheckboxGroupDemo,
+  CheckboxMessagesDemo,
+  CheckboxSizesDemo,
   CheckboxStatesDemo,
   CheckboxUsageDemo,
 } from '../../components/DocsExamples';
 
 # Checkbox
 
-The Checkbox component supports checked, unchecked, and indeterminate states with a single square control style.
+Use `Checkbox` for an independent choice and `CheckboxGroup` for several choices held as one `string[]` value. The [current Figma spec](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=305-8759) includes English and Dhivehi variants.
 
 ## Import
 
 ```tsx
 import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
 ```
 
 ## Usage
+
+Give each checkbox visible label text. If it cannot have visible text, provide `aria-label` or `aria-labelledby`.
 
 <div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
   <CheckboxUsageDemo client:visible />
@@ -43,7 +49,43 @@ import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 <Checkbox isIndeterminate>Indeterminate</Checkbox>
 ```
 
+## Sizes
+
+`md` (the default) has a 16px box, `lg` has a 20px box, and `xl` has a 24px box. The box-to-label gap is 12px at every size. The focus ring appears only for keyboard focus and does not shift the layout.
+
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
+  <CheckboxSizesDemo client:visible />
+</div>
+
+```tsx
+<Checkbox size="md">Medium</Checkbox>
+<Checkbox size="lg">Large</Checkbox>
+<Checkbox size="xl">Extra large</Checkbox>
+```
+
+`isIndeterminate` shows the mixed dash state until your application clears the prop. Clicking it does not clear that prop automatically.
+
+## Descriptions and validation
+
+`description` sits below the label. `errorMessage` appears when `isInvalid` is true. Both describe the input without becoming part of its accessible name. A newly shown error is announced.
+
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
+  <CheckboxMessagesDemo client:visible />
+</div>
+
+```tsx
+<Checkbox
+  isInvalid
+  description="Review this option."
+  errorMessage="You must accept the terms to continue."
+>
+  Accept terms and conditions
+</Checkbox>
+```
+
 ## Disabled
+
+Disabled checkboxes cannot be focused or changed. `isReadOnly` keeps a checkbox focusable but prevents changes; it has no separate visual state in the current spec.
 
 <div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
   <CheckboxDisabledDemo client:visible />
@@ -51,42 +93,66 @@ import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 
 ## Group
 
-`CheckboxGroup` manages several checkboxes as one `string[]` value. Give each `Checkbox` a `value`. The group's `value` / `onChange` accept a form library field directly (see [Forms](/patterns/forms/)).
+`CheckboxGroup` manages several checkboxes as one `string[]` value. Give each `Checkbox` a unique `value`. Put `FieldLabel` inside the group for a visible group name, or use `aria-label` or `aria-labelledby`. Group `description` provides shared guidance; an invalid group's `errorMessage` replaces that description. The group's `value` / `onChange` accept a form library field directly (see [Forms](/patterns/forms/)).
+
+<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
+  <CheckboxGroupDemo client:visible />
+</div>
 
 ```tsx
-<CheckboxGroup
-  aria-label="Notification channels"
-  defaultValue={['email']}
-  description="Where should we send updates?"
->
+<CheckboxGroup name="channels" defaultValue={['email']} description="Where should we send updates?">
+  <FieldLabel>Notification channels</FieldLabel>
   <Checkbox value="email">Email</Checkbox>
   <Checkbox value="sms">SMS</Checkbox>
   <Checkbox value="push">Push</Checkbox>
 </CheckboxGroup>
 ```
 
+For one controlled checkbox, pass `isSelected` and `onChange`. For an uncontrolled checkbox, use `defaultSelected`.
+
+## Language, direction, and motion
+
+Use `VeliProvider language="dv"` for Dhivehi. It places the box at the right in RTL and applies Dhivehi text styles; the check and dash keep their direction. Labels and messages wrap in narrow layouts. Color and indicator transitions are disabled when the user requests reduced motion.
+
 ## API Reference
 
 ### `Checkbox`
 
-| Prop              | Type      | Default | Description                                                        |
-| :---------------- | :-------- | :------ | :----------------------------------------------------------------- |
-| `isIndeterminate` | `boolean` | `false` | Displays a dash indicator state.                                   |
-| `isDisabled`      | `boolean` | `false` | Disables interaction and applies disabled styling.                 |
-| `value`           | `string`  | -       | Value added to the parent `CheckboxGroup` when selected.           |
-| `className`       | `string`  | -       | Layout-only class override merged onto the outermost root element. |
+| Prop              | Type                          | Default | Description                                              |
+| :---------------- | :---------------------------- | :------ | :------------------------------------------------------- |
+| `children`        | `ReactNode`                   | -       | Visible label and accessible name.                       |
+| `size`            | `'md' \| 'lg' \| 'xl'`        | `'md'`  | Control and text size.                                   |
+| `isSelected`      | `boolean`                     | -       | Controlled checked state.                                |
+| `defaultSelected` | `boolean`                     | `false` | Initial uncontrolled checked state.                      |
+| `onChange`        | `(selected: boolean) => void` | -       | Called when selection changes.                           |
+| `isIndeterminate` | `boolean`                     | `false` | Displays a dash indicator state.                         |
+| `isDisabled`      | `boolean`                     | `false` | Prevents focus and interaction.                          |
+| `isReadOnly`      | `boolean`                     | `false` | Allows focus but prevents changes.                       |
+| `isRequired`      | `boolean`                     | `false` | Marks the input as required.                             |
+| `isInvalid`       | `boolean`                     | `false` | Marks the input invalid and shows `errorMessage`.        |
+| `description`     | `ReactNode`                   | -       | Helper text linked to the input.                         |
+| `errorMessage`    | `ReactNode`                   | -       | Error text linked to the input when invalid.             |
+| `value`           | `string`                      | -       | Value added to the parent `CheckboxGroup` when selected. |
+| `name`            | `string`                      | -       | Native form field name outside a group.                  |
+| `aria-label`      | `string`                      | -       | Accessible name when no visible `children` are provided. |
+| `className`       | `string`                      | -       | Layout classes merged onto the outer label.              |
 
 ### `CheckboxGroup`
 
-| Prop           | Type                        | Default | Description                                               |
-| :------------- | :-------------------------- | :------ | :-------------------------------------------------------- |
-| `defaultValue` | `string[]`                  | -       | Uncontrolled initial selected values.                     |
-| `value`        | `string[]`                  | -       | Controlled selected values.                               |
-| `onChange`     | `(value: string[]) => void` | -       | Callback when the selection changes.                      |
-| `isDisabled`   | `boolean`                   | `false` | Disables every checkbox in the group.                     |
-| `description`  | `ReactNode`                 | -       | Helper text below the group.                              |
-| `errorMessage` | `ReactNode`                 | -       | Error text shown below the group when `isInvalid` is set. |
-| `className`    | `string`                    | -       | Layout-only class override merged onto the group element. |
+| Prop           | Type                           | Default | Description                                               |
+| :------------- | :----------------------------- | :------ | :-------------------------------------------------------- |
+| `children`     | `ReactNode` or render function | -       | `FieldLabel` and checkboxes, or a render function.        |
+| `defaultValue` | `string[]`                     | -       | Uncontrolled initial selected values.                     |
+| `value`        | `string[]`                     | -       | Controlled selected values.                               |
+| `onChange`     | `(value: string[]) => void`    | -       | Callback when the selection changes.                      |
+| `isDisabled`   | `boolean`                      | `false` | Disables every checkbox in the group.                     |
+| `isReadOnly`   | `boolean`                      | `false` | Allows focus but prevents changes.                        |
+| `isRequired`   | `boolean`                      | `false` | Requires a selection.                                     |
+| `isInvalid`    | `boolean`                      | `false` | Marks the group invalid and shows its error.              |
+| `description`  | `ReactNode`                    | -       | Helper text below the group.                              |
+| `errorMessage` | `ReactNode`                    | -       | Error text shown below the group when `isInvalid` is set. |
+| `name`         | `string`                       | -       | Native form field name for the group.                     |
+| `className`    | `string`                       | -       | Layout-only class override merged onto the group element. |
 
 _Note: All other `react-aria-components` Checkbox and CheckboxGroup props are supported, excluding `style` overrides._
 

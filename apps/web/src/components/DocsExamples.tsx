@@ -489,6 +489,56 @@ export function CheckboxDisabledDemo() {
   );
 }
 
+export function CheckboxSizesDemo() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Checkbox size="md" description="16px box">
+        Medium
+      </Checkbox>
+      <Checkbox size="lg" description="20px box">
+        Large
+      </Checkbox>
+      <Checkbox size="xl" description="24px box">
+        Extra large
+      </Checkbox>
+    </div>
+  );
+}
+
+export function CheckboxMessagesDemo() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Checkbox description="We send it to the address on your account.">
+        Email me a receipt
+      </Checkbox>
+      <Checkbox
+        isInvalid
+        description="Review this option before continuing."
+        errorMessage="You must accept the terms to continue."
+      >
+        Accept terms and conditions
+      </Checkbox>
+    </div>
+  );
+}
+
+export function CheckboxGroupDemo() {
+  const [channels, setChannels] = useState<string[]>(['email']);
+
+  return (
+    <CheckboxGroup
+      value={channels}
+      onChange={setChannels}
+      description="Where should we send updates?"
+    >
+      <FieldLabel>Notification channels</FieldLabel>
+      <Checkbox value="email">Email</Checkbox>
+      <Checkbox value="sms">SMS</Checkbox>
+      <Checkbox value="push">Push notifications</Checkbox>
+    </CheckboxGroup>
+  );
+}
+
 export function InputUsageDemo() {
   return (
     <div className="w-[320px]">

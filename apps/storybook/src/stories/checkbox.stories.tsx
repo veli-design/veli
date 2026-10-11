@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useEffect, type ComponentProps, type ReactNode } from 'react';
+import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const englishCheckboxText = {
@@ -12,6 +14,10 @@ const englishCheckboxText = {
   labelText: 'Label text',
   indentedItem: 'Indented item',
   gridItem: 'Grid item',
+  channels: 'Notification channels',
+  email: 'Email',
+  sms: 'SMS',
+  push: 'Push notifications',
 } as const;
 
 const englishValidationText = {
@@ -29,6 +35,10 @@ const dhivehiCheckboxText = {
   labelText: 'ލޭބަލްގެ ލިޔުން',
   indentedItem: 'އިންޑެންޓްކުރެވިފައިވާ އައިޓަމް',
   gridItem: 'ގްރިޑް އައިޓަމް',
+  channels: 'އެންގުމުގެ ވަސީލަތްތައް',
+  email: 'އީމެއިލް',
+  sms: 'އެސް އެމް އެސް',
+  push: 'ޕުޝް އެންގުން',
 } as const;
 
 const dhivehiValidationText = {
@@ -145,7 +155,7 @@ const meta: Meta<typeof Checkbox> = {
     },
     size: {
       control: 'select',
-      options: ['md', 'lg'],
+      options: ['md', 'lg', 'xl'],
     },
     isIndeterminate: {
       control: 'boolean',
@@ -183,6 +193,20 @@ function CheckboxStatesExample() {
 
 export const States: Story = {
   render: () => <CheckboxStatesExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    await expect(boxes[0]).not.toBeChecked();
+    boxes[0].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[0]).toBeChecked();
+    const checkedLabel = boxes[1].closest('label')!.querySelector('[id]')!;
+    await userEvent.click(checkedLabel);
+    await expect(boxes[1]).not.toBeChecked();
+    await userEvent.click(checkedLabel);
+    await expect(boxes[1]).toBeChecked();
+    await expect(boxes[2]).toHaveProperty('indeterminate', true);
+  },
 };
 
 function CheckboxSizesExample() {
@@ -194,7 +218,7 @@ function CheckboxSizesExample() {
         <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Medium (md)
         </span>
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-8">
           <Checkbox size="md">{text.off}</Checkbox>
           <Checkbox size="md" defaultSelected>
             {text.on}
@@ -208,12 +232,26 @@ function CheckboxSizesExample() {
         <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Large (lg)
         </span>
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-8">
           <Checkbox size="lg">{text.off}</Checkbox>
           <Checkbox size="lg" defaultSelected>
             {text.on}
           </Checkbox>
           <Checkbox size="lg" isIndeterminate>
+            {text.indeterminate}
+          </Checkbox>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+          Extra large (xl)
+        </span>
+        <div className="flex flex-wrap items-center gap-8">
+          <Checkbox size="xl">{text.off}</Checkbox>
+          <Checkbox size="xl" defaultSelected>
+            {text.on}
+          </Checkbox>
+          <Checkbox size="xl" isIndeterminate>
             {text.indeterminate}
           </Checkbox>
         </div>
@@ -246,12 +284,38 @@ function CheckboxDescriptionAndErrorExample() {
       >
         {text.labelText}
       </Checkbox>
+      <Checkbox
+        size="xl"
+        isInvalid
+        description={text.descriptionText}
+        errorMessage={text.errorText}
+      >
+        {text.labelText}
+      </Checkbox>
     </div>
   );
 }
 
 export const DescriptionAndError: Story = {
   render: () => <CheckboxDescriptionAndErrorExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    const ids = [...canvasElement.querySelectorAll('[id]')].map((node) => node.id);
+    await expect(new Set(ids).size).toBe(ids.length);
+    for (const box of boxes) {
+      await expect(box).toHaveAccessibleName(
+        box.closest('label')!.querySelector('[id]')!.textContent!,
+      );
+      const describedBy = (box.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean);
+      await expect(describedBy.length).toBeGreaterThan(0);
+      for (const id of describedBy) {
+        await expect(canvasElement.querySelector(`[id="${id}"]`)).toBeInTheDocument();
+      }
+    }
+    await expect(boxes[2].getAttribute('aria-describedby')?.split(' ')).toHaveLength(2);
+    await expect(canvas.getAllByRole('alert')).toHaveLength(4);
+  },
 };
 
 export const Invalid: Story = {
@@ -281,25 +345,147 @@ function CheckboxStatesAuditExample() {
   const text = useCheckboxText();
 
   return (
-    <div className="grid grid-cols-4 gap-[20px] items-start">
-      <div />
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.off}</div>
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.on}</div>
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.indeterminate}</div>
-
-      <div className="text-[12px] font-bold uppercase text-base-muted">Default</div>
-      <Checkbox />
-      <Checkbox defaultSelected />
-      <Checkbox isIndeterminate />
-
-      <div className="text-[12px] font-bold uppercase text-base-muted">Disabled</div>
-      <Checkbox isDisabled />
-      <Checkbox defaultSelected isDisabled />
-      <Checkbox isIndeterminate isDisabled />
+    <div className="grid max-w-[100vw] gap-8 overflow-auto">
+      {(['md', 'lg', 'xl'] as const).map((size) => (
+        <section key={size} className="grid grid-cols-4 items-start gap-5">
+          <span className="text-xs font-bold uppercase text-base-muted">{size}</span>
+          <span className="text-xs text-base-muted">{text.off}</span>
+          <span className="text-xs text-base-muted">{text.on}</span>
+          <span className="text-xs text-base-muted">{text.indeterminate}</span>
+          <span>Default</span>
+          <Checkbox size={size} description={text.descriptionText}>
+            {text.off}
+          </Checkbox>
+          <Checkbox size={size} defaultSelected description={text.descriptionText}>
+            {text.on}
+          </Checkbox>
+          <Checkbox size={size} isIndeterminate description={text.descriptionText}>
+            {text.indeterminate}
+          </Checkbox>
+          <span>Disabled</span>
+          <Checkbox size={size} isDisabled description={text.descriptionText}>
+            {text.off}
+          </Checkbox>
+          <Checkbox size={size} defaultSelected isDisabled description={text.descriptionText}>
+            {text.on}
+          </Checkbox>
+          <Checkbox size={size} isIndeterminate isDisabled description={text.descriptionText}>
+            {text.indeterminate}
+          </Checkbox>
+          <span>Invalid</span>
+          <Checkbox
+            size={size}
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.off}
+          </Checkbox>
+          <Checkbox
+            size={size}
+            defaultSelected
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.on}
+          </Checkbox>
+          <Checkbox
+            size={size}
+            isIndeterminate
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.indeterminate}
+          </Checkbox>
+        </section>
+      ))}
     </div>
   );
 }
 
 export const StatesAudit: Story = {
   render: () => <CheckboxStatesAuditExample />,
+  parameters: { layout: 'padded' },
+};
+
+function CheckboxGroupExample() {
+  const text = useCheckboxText();
+  const [value, setValue] = useState<string[]>(['email']);
+
+  return (
+    <div className="grid max-w-[280px] gap-8">
+      <CheckboxGroup value={value} onChange={setValue} description={text.descriptionText}>
+        <FieldLabel>{text.channels}</FieldLabel>
+        <Checkbox value="email">{text.email}</Checkbox>
+        <Checkbox value="sms">{text.sms}</Checkbox>
+        <Checkbox value="push">{text.push}</Checkbox>
+      </CheckboxGroup>
+      <CheckboxGroup aria-label={text.channels} isRequired isInvalid errorMessage={text.errorText}>
+        <Checkbox value="email">{text.email}</Checkbox>
+        <Checkbox value="sms">{text.sms}</Checkbox>
+      </CheckboxGroup>
+    </div>
+  );
+}
+
+export const Groups: Story = {
+  render: () => <CheckboxGroupExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const groups = canvas.getAllByRole('group');
+    await expect(groups).toHaveLength(2);
+    await expect(groups[0]).toHaveAccessibleName();
+    const email = within(groups[0]).getByRole('checkbox', { name: /Email|އީމެއިލް/ });
+    await expect(email).toBeChecked();
+    await userEvent.click(email);
+    await expect(email).not.toBeChecked();
+    await userEvent.click(email);
+    await expect(email).toBeChecked();
+    await expect(groups[1]).toHaveAttribute('data-invalid', 'true');
+    await expect(within(groups[1]).getByRole('alert')).toHaveTextContent(/Error text|އެރަރ/);
+  },
+};
+
+export const ReadOnlyAndRequired: Story = {
+  render: () => {
+    const text = useCheckboxText();
+    return (
+      <div className="grid gap-4">
+        <Checkbox isReadOnly defaultSelected>
+          {text.on}
+        </Checkbox>
+        <Checkbox isRequired>{text.off}</Checkbox>
+        <Checkbox aria-label={text.checkboxLabel} />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    await userEvent.click(boxes[0].closest('label')!);
+    await expect(boxes[0]).toBeChecked();
+    await expect(boxes[1]).toHaveAttribute('required');
+    await expect(boxes[2]).toHaveAccessibleName('Checkbox label');
+  },
+};
+
+export const NarrowLayout: Story = {
+  render: () => {
+    const text = useCheckboxText();
+    return (
+      <div className="w-[220px] max-w-full">
+        <Checkbox
+          size="xl"
+          isInvalid
+          description={text.descriptionText}
+          errorMessage={text.errorText}
+        >
+          {text.acceptTermsAndConditions}
+        </Checkbox>
+      </div>
+    );
+  },
+  parameters: { layout: 'centered' },
 };

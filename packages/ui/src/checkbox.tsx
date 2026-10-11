@@ -20,22 +20,29 @@ const checkboxIndicatorSizes = {
     indeterminate: { width: 10, height: 4, viewBox: '0 0 10 4' },
   },
   lg: {
-    check: { width: 15, height: 10, viewBox: '-1 -1 11.5 8.8' },
+    check: { width: 12, height: 8, viewBox: '-1 -1 11.5 8.8' },
+    indeterminate: { width: 13, height: 5, viewBox: '0 0 10 4' },
+  },
+  xl: {
+    check: { width: 14.25, height: 9, viewBox: '-1 -1 11.5 8.8' },
     indeterminate: { width: 15, height: 6, viewBox: '0 0 10 4' },
   },
 } as const;
 
-const checkboxGroupVariants = cva('inline-flex flex-col gap-3');
+const checkboxGroupVariants = cva(
+  'inline-flex flex-col gap-3 [&>[slot=description]]:text-base-muted',
+);
 
 const checkboxRootVariants = cva('group relative font-sans antialiased', {
   variants: {
     size: {
       md: 'type-body-sm-regular',
       lg: 'type-body-md-regular',
+      xl: 'type-body-lg-regular',
     },
     hasFieldMessages: {
-      true: 'inline-grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1',
-      false: 'inline-flex items-center gap-2',
+      true: 'inline-grid max-w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1',
+      false: 'inline-flex max-w-full items-center gap-3',
     },
     isDisabled: {
       true: 'cursor-not-allowed text-disabled',
@@ -54,6 +61,7 @@ const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
     size: {
       md: 'h-5',
       lg: 'h-6',
+      xl: 'h-7',
     },
   },
   defaultVariants: {
@@ -61,25 +69,32 @@ const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
   },
 });
 
-const checkboxLabelVariants = cva(`min-w-0 ${webkitDhivehiTextBaselineClassName}`);
+const checkboxLabelVariants = cva(`min-w-0 wrap-anywhere ${webkitDhivehiTextBaselineClassName}`);
 
-const checkboxDescriptionVariants = cva('col-start-2 type-body-sm-regular text-base-muted', {
+const checkboxDescriptionVariants = cva('col-start-2 min-w-0 wrap-anywhere text-base-muted', {
   variants: {
+    size: {
+      md: 'type-body-sm-regular',
+      lg: 'type-body-sm-regular',
+      xl: 'type-body-md-regular',
+    },
     isDisabled: {
       true: 'text-disabled',
       false: '',
     },
   },
   defaultVariants: {
+    size: 'md',
     isDisabled: false,
   },
 });
 
-const checkboxErrorVariants = cva('col-start-2 text-danger-muted', {
+const checkboxErrorVariants = cva('col-start-2 min-w-0 wrap-anywhere text-danger-muted', {
   variants: {
     size: {
       md: 'type-caption-regular',
       lg: 'type-body-sm-regular',
+      xl: 'type-body-md-regular',
     },
     isDisabled: {
       true: 'text-disabled',
@@ -93,12 +108,13 @@ const checkboxErrorVariants = cva('col-start-2 text-danger-muted', {
 });
 
 const checkboxControlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center transition-colors duration-fast ease-out focus-visible:outline-none',
+  'relative inline-flex shrink-0 items-center justify-center transition-colors duration-fast ease-out motion-reduce:transition-none focus-visible:outline-none',
   {
     variants: {
       size: {
         md: 'size-4 rounded-sm',
-        lg: 'size-6 rounded-md',
+        lg: 'size-5 rounded-md',
+        xl: 'size-6 rounded-md',
       },
       isSelected: {
         true: '',
@@ -143,6 +159,16 @@ const checkboxControlVariants = cva(
       },
       {
         size: 'lg',
+        isPressed: true,
+        className: 'border-4',
+      },
+      {
+        size: 'xl',
+        isPressed: false,
+        className: 'border-[3px]',
+      },
+      {
+        size: 'xl',
         isPressed: true,
         className: 'border-4',
       },
@@ -241,7 +267,7 @@ const checkboxControlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-[transform,opacity] duration-normal ease-out',
+  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-[transform,opacity] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       isVisible: {
@@ -279,11 +305,21 @@ export function CheckboxGroup({
       {(renderProps) => (
         <>
           {typeof children === 'function' ? children(renderProps) : children}
-          <FieldMessage
-            isInvalid={renderProps.isInvalid}
-            description={description}
-            errorMessage={errorMessage}
-          />
+          {renderProps.isInvalid ? (
+            <span role="alert">
+              <FieldMessage
+                isInvalid={renderProps.isInvalid}
+                description={description}
+                errorMessage={errorMessage}
+              />
+            </span>
+          ) : (
+            <FieldMessage
+              isInvalid={renderProps.isInvalid}
+              description={description}
+              errorMessage={errorMessage}
+            />
+          )}
         </>
       )}
     </AriaCheckboxGroup>
@@ -308,15 +344,55 @@ export function Checkbox({
   isIndeterminate,
   isInvalid,
   className,
+  onClick,
+  onPress,
   ...props
 }: CheckboxProps) {
+  const pressHandled = React.useRef(false);
+  const labelId = React.useId();
+  const descriptionId = React.useId();
+  const errorId = React.useId();
   const hasDescription = hasRenderableMessage(description);
   const hasErrorMessage = hasRenderableMessage(errorMessage);
+  const hasLabel = hasRenderableMessage(children);
   const hasFieldMessages = hasDescription || (Boolean(isInvalid) && hasErrorMessage);
+  const describedBy =
+    [
+      props['aria-describedby'],
+      hasDescription ? descriptionId : undefined,
+      isInvalid && hasErrorMessage ? errorId : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   return (
     <AriaCheckbox
       {...props}
+      onPress={(event) => {
+        pressHandled.current = true;
+        onPress?.(event);
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        const input = event.currentTarget.querySelector<HTMLInputElement>('input[type="checkbox"]');
+        if (
+          !input ||
+          event.target === input ||
+          input.disabled ||
+          input.getAttribute('aria-readonly') === 'true'
+        ) {
+          pressHandled.current = false;
+          return;
+        }
+        queueMicrotask(() => {
+          if (!pressHandled.current && input.isConnected) input.click();
+          pressHandled.current = false;
+        });
+      }}
+      aria-labelledby={
+        props['aria-labelledby'] ?? (hasLabel && !props['aria-label'] ? labelId : undefined)
+      }
+      aria-describedby={describedBy}
       isInvalid={isInvalid}
       isIndeterminate={isIndeterminate}
       className={(state) =>
@@ -394,18 +470,28 @@ export function Checkbox({
             </span>
             {hasFieldMessages ? (
               <>
-                {children ? <span className={checkboxLabelVariants()}>{children}</span> : null}
+                {hasLabel ? (
+                  <span id={labelId} className={checkboxLabelVariants()}>
+                    {children}
+                  </span>
+                ) : null}
                 {hasDescription ? (
                   <Text
+                    id={descriptionId}
                     slot="description"
-                    className={checkboxDescriptionVariants({ isDisabled: state.isDisabled })}
+                    className={checkboxDescriptionVariants({
+                      size: resolvedSize,
+                      isDisabled: state.isDisabled,
+                    })}
                   >
                     {description}
                   </Text>
                 ) : null}
                 {Boolean(isInvalid) && hasErrorMessage ? (
                   <Text
+                    id={errorId}
                     slot="errorMessage"
+                    role="alert"
                     className={checkboxErrorVariants({
                       size: resolvedSize,
                       isDisabled: state.isDisabled,
@@ -415,8 +501,10 @@ export function Checkbox({
                   </Text>
                 ) : null}
               </>
-            ) : children ? (
-              <span className={checkboxLabelVariants()}>{children}</span>
+            ) : hasLabel ? (
+              <span id={labelId} className={checkboxLabelVariants()}>
+                {children}
+              </span>
             ) : null}
           </>
         );
