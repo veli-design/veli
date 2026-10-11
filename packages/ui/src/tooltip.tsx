@@ -98,30 +98,18 @@ function tooltipArrowProps(size: 'sm' | 'lg' | null | undefined, placement: stri
 }
 
 const tooltipVariants = cva(
-  'group box-border font-sans type-body-sm-regular transition-[opacity,transform] duration-normal ease-out will-change-transform data-[entering]:scale-[0.98] data-[entering]:opacity-0 data-[exiting]:scale-[0.98] data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in',
+  'group box-border max-w-[calc(100vw-24px)] wrap-anywhere font-sans type-body-sm-regular transition-[opacity,scale,translate] duration-normal ease-out origin-[var(--trigger-anchor-point)] motion-reduce:transition-none forced-colors:bg-[Canvas] forced-colors:text-[CanvasText] forced-colors:outline forced-colors:outline-[CanvasText] motion-safe:data-[entering]:scale-95 data-[entering]:opacity-0 motion-safe:data-[exiting]:scale-95 data-[exiting]:opacity-0 data-[exiting]:duration-fast data-[exiting]:ease-in motion-safe:data-[placement=top]:data-[entering]:translate-y-1 motion-safe:data-[placement=top]:data-[exiting]:translate-y-1 motion-safe:data-[placement=bottom]:data-[entering]:-translate-y-1 motion-safe:data-[placement=bottom]:data-[exiting]:-translate-y-1 motion-safe:data-[placement=left]:data-[entering]:translate-x-1 motion-safe:data-[placement=left]:data-[exiting]:translate-x-1 motion-safe:data-[placement=right]:data-[entering]:-translate-x-1 motion-safe:data-[placement=right]:data-[exiting]:-translate-x-1',
   {
     variants: {
       size: {
-        sm: 'rounded-lg bg-tooltip-bg-small px-3 py-0.5 text-base-default shadow-md',
+        sm: 'rounded-lg border-[0.5px] border-base-subtle px-3 py-0.5 shadow-md',
         lg: 'max-w-[221px] rounded-xl px-4 py-3 shadow-lg',
       },
       tone: {
-        primary: '',
-        secondary: '',
+        primary: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
+        secondary: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
       },
     },
-    compoundVariants: [
-      {
-        size: 'lg',
-        tone: 'primary',
-        className: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
-      },
-      {
-        size: 'lg',
-        tone: 'secondary',
-        className: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
-      },
-    ],
     defaultVariants: {
       size: 'sm',
       tone: 'primary',
@@ -131,6 +119,7 @@ const tooltipVariants = cva(
 
 export interface TooltipProps
   extends Omit<AriaTooltipProps, 'children'>, VariantProps<typeof tooltipVariants> {
+  ref?: React.Ref<HTMLDivElement>;
   children: React.ReactNode;
 }
 
@@ -146,6 +135,7 @@ export function Tooltip({
   size,
   tone,
   arrowBoundaryOffset,
+  offset,
   lang,
   dir,
   ...props
@@ -159,7 +149,7 @@ export function Tooltip({
       {...props}
       lang={lang ?? languageConfig.lang}
       dir={dir ?? languageConfig.direction}
-      offset={showArrow ? 12 : 8}
+      offset={offset ?? (showArrow ? 12 : 8)}
       arrowBoundaryOffset={
         showArrow ? (arrowBoundaryOffset ?? TOOLTIP_ARROW_BOUNDARY_OFFSET) : undefined
       }
@@ -180,11 +170,12 @@ export function Tooltip({
 
             return (
               <svg
+                aria-hidden="true"
                 width={arrow.width}
                 height={arrow.height}
                 viewBox={arrow.viewBox}
                 className={twMerge(
-                  'block forced-colors:fill-[Canvas]',
+                  'block forced-colors:fill-[Canvas] forced-colors:stroke-[CanvasText] forced-colors:stroke-1',
                   tooltipArrowFillClass(size, tone),
                 )}
               >
