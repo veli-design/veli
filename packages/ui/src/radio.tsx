@@ -6,17 +6,16 @@ import {
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps,
   RadioProps as AriaRadioProps,
-  Text,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { FieldMessage } from './field-message.js';
 import { hasRenderableMessage } from './field-shared.js';
 import { twMerge } from 'tailwind-merge';
 
-const radioGroupVariants = cva('inline-flex flex-col gap-3');
+const radioGroupVariants = cva('inline-flex max-w-full flex-col gap-3');
 
 const radioRootVariants = cva(
-  'group relative inline-flex gap-2 font-sans antialiased transition-colors duration-normal ease-out',
+  'group relative inline-flex min-h-6 max-w-full gap-2 wrap-anywhere font-sans antialiased',
   {
     variants: {
       size: {
@@ -44,7 +43,7 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
   variants: {
     size: {
       md: 'h-5',
-      lg: 'h-6',
+      lg: 'h-7',
     },
   },
   defaultVariants: {
@@ -52,7 +51,7 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
   },
 });
 
-const radioLabelVariants = cva('min-w-0');
+const radioLabelVariants = cva('min-w-0 wrap-anywhere');
 
 const radioDescriptionVariants = cva('type-body-sm-regular text-base-muted', {
   variants: {
@@ -84,7 +83,7 @@ const radioErrorVariants = cva('text-danger-muted', {
 });
 
 const controlVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-radio-container-bg transition-colors duration-normal ease-out focus-visible:outline-none',
+  'relative inline-flex shrink-0 items-center justify-center rounded-full border-solid bg-radio-container-bg transition-[border-width] duration-fast ease-out motion-reduce:transition-none forced-colors:forced-color-adjust-none forced-colors:border-[ButtonText] forced-colors:bg-[Canvas] focus-visible:outline-none',
   {
     variants: {
       size: {
@@ -100,15 +99,15 @@ const controlVariants = cva(
         false: '',
       },
       isPressed: {
-        true: '',
-        false: '',
+        true: 'ease-spring',
+        false: 'ease-out',
       },
       isDisabled: {
         true: '',
         false: '',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
+        true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised forced-colors:outline-solid forced-colors:outline-2 forced-colors:outline-offset-2 forced-colors:outline-[Highlight]',
         false: '',
       },
     },
@@ -121,12 +120,12 @@ const controlVariants = cva(
       {
         size: 'md',
         isPressed: true,
-        className: 'border-[3px]',
+        className: 'border-3',
       },
       {
         size: 'lg',
         isPressed: false,
-        className: 'border-[3px]',
+        className: 'border-3',
       },
       {
         size: 'lg',
@@ -175,7 +174,7 @@ const controlVariants = cva(
       },
       {
         isDisabled: true,
-        className: 'border-radio-indicator-disabled-border',
+        className: 'border-radio-indicator-disabled-border forced-colors:border-[GrayText]',
       },
     ],
     defaultVariants: {
@@ -190,7 +189,7 @@ const controlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-normal ease-out',
+  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-[width,height] duration-fast ease-out motion-reduce:transition-none',
   {
     variants: {
       size: {
@@ -198,8 +197,8 @@ const indicatorVariants = cva(
         lg: '',
       },
       isPressed: {
-        true: '',
-        false: '',
+        true: 'ease-spring',
+        false: 'ease-out',
       },
       isSelected: {
         true: '',
@@ -249,24 +248,24 @@ const indicatorVariants = cva(
         isSelected: true,
         isHovered: false,
         isDisabled: false,
-        className: 'bg-radio-indicator-selected-bg',
+        className: 'bg-radio-indicator-selected-bg forced-colors:bg-[Highlight]',
       },
       {
         isSelected: true,
         isHovered: true,
         isDisabled: false,
-        className: 'bg-radio-indicator-selected-bg-hover',
+        className: 'bg-radio-indicator-selected-bg-hover forced-colors:bg-[Highlight]',
       },
       {
         isSelected: true,
         isPressed: true,
         isDisabled: false,
-        className: 'bg-radio-indicator-selected-bg-hover',
+        className: 'bg-radio-indicator-selected-bg-hover forced-colors:bg-[Highlight]',
       },
       {
         isSelected: true,
         isDisabled: true,
-        className: 'bg-radio-indicator-disabled-bg',
+        className: 'bg-radio-indicator-disabled-bg forced-colors:bg-[GrayText]',
       },
     ],
     defaultVariants: {
@@ -280,6 +279,7 @@ const indicatorVariants = cva(
 );
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style'> {
+  ref?: React.Ref<HTMLDivElement>;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   className?: string;
@@ -312,6 +312,7 @@ export interface RadioProps
   extends
     Omit<AriaRadioProps, 'className' | 'style' | 'children'>,
     Omit<VariantProps<typeof radioRootVariants>, 'isDisabled' | 'hasFieldMessages'> {
+  ref?: React.Ref<HTMLLabelElement>;
   children?: React.ReactNode;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
@@ -328,6 +329,10 @@ export function Radio({
   className,
   ...props
 }: RadioProps) {
+  const messageId = React.useId();
+  const labelId = `${messageId}-label`;
+  const descriptionId = `${messageId}-description`;
+  const errorId = `${messageId}-error`;
   const hasDescription = hasRenderableMessage(description);
   const hasErrorMessage = hasRenderableMessage(errorMessage);
   const hasFieldMessages = hasDescription || (Boolean(isInvalid) && hasErrorMessage);
@@ -335,6 +340,19 @@ export function Radio({
   return (
     <AriaRadio
       {...props}
+      aria-labelledby={
+        props['aria-labelledby'] ??
+        (props['aria-label'] ? undefined : hasRenderableMessage(children) ? labelId : undefined)
+      }
+      aria-describedby={
+        [
+          props['aria-describedby'],
+          hasDescription ? descriptionId : undefined,
+          Boolean(isInvalid) && hasErrorMessage ? errorId : undefined,
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
       className={(state) =>
         twMerge(
           radioRootVariants({
@@ -354,6 +372,7 @@ export function Radio({
         return (
           <>
             <span
+              aria-hidden="true"
               className={radioControlSlotVariants({
                 size: resolvedSize,
               })}
@@ -381,29 +400,35 @@ export function Radio({
             </span>
             {hasFieldMessages ? (
               <span className="flex min-w-0 flex-col gap-1">
-                {children ? <span className={radioLabelVariants()}>{children}</span> : null}
+                {hasRenderableMessage(children) ? (
+                  <span id={labelId} className={radioLabelVariants()}>
+                    {children}
+                  </span>
+                ) : null}
                 {hasDescription ? (
-                  <Text
-                    slot="description"
+                  <span
+                    id={descriptionId}
                     className={radioDescriptionVariants({ isDisabled: state.isDisabled })}
                   >
                     {description}
-                  </Text>
+                  </span>
                 ) : null}
                 {Boolean(isInvalid) && hasErrorMessage ? (
-                  <Text
-                    slot="errorMessage"
+                  <span
+                    id={errorId}
                     className={radioErrorVariants({
                       size: resolvedSize,
                       isDisabled: state.isDisabled,
                     })}
                   >
                     {errorMessage}
-                  </Text>
+                  </span>
                 ) : null}
               </span>
-            ) : children ? (
-              <span className={radioLabelVariants()}>{children}</span>
+            ) : hasRenderableMessage(children) ? (
+              <span id={labelId} className={radioLabelVariants()}>
+                {children}
+              </span>
             ) : null}
           </>
         );
