@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { I18nProvider, RouterProvider } from 'react-aria-components';
+import { RouterProvider as HookRouterProvider } from 'react-aria';
 import { twMerge } from 'tailwind-merge';
 import {
   getVeliLanguageConfig,
@@ -59,9 +60,11 @@ export function VeliProvider({
           <VeliRouterContext.Provider value={routerContext}>
             <I18nProvider locale={config.locale}>
               {navigate != null ? (
-                <RouterProvider navigate={navigate} useHref={useHref}>
-                  {content}
-                </RouterProvider>
+                <HookRouterProvider navigate={navigate} useHref={useHref}>
+                  <RouterProvider navigate={navigate} useHref={useHref}>
+                    {content}
+                  </RouterProvider>
+                </HookRouterProvider>
               ) : (
                 content
               )}

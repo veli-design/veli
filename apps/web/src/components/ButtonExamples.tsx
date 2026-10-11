@@ -92,6 +92,33 @@ export function ButtonStatesDemo() {
   );
 }
 
+export function ButtonNavigationDemo() {
+  const states = [
+    { label: 'Available', isDisabled: false, isLoading: false },
+    { label: 'Disabled', isDisabled: true, isLoading: false },
+    { label: 'Loading', isDisabled: false, isLoading: true },
+  ];
+
+  return (
+    <div className="flex flex-wrap items-start gap-6">
+      {states.map(({ label, ...state }) => (
+        <div key={label} className="space-y-2">
+          <span className="block type-body-sm-medium text-base-strong">{label}</span>
+          <Button
+            as="a"
+            href="https://www.mindco.mv/"
+            target="_blank"
+            rel="noopener noreferrer"
+            {...state}
+          >
+            Open Link
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ButtonRtlDemo() {
   const [localLanguage, setLocalLanguage] = useState('Dhivehi');
   const colorScheme = useSyncExternalStore(

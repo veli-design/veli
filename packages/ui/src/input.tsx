@@ -10,9 +10,8 @@ import {
   TextFieldProps as AriaTextFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { InfoIcon } from '@phosphor-icons/react';
+import { InfoIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
@@ -23,6 +22,11 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  getFieldOptionalLabel,
+  outlineFieldStrokeError,
+  outlineFieldStrokeFocusVisibleHide,
+  outlineFieldStrokeRest,
+  shouldShowFieldOptional,
 } from './field-shared.js';
 import { useVeliLanguage } from './provider.js';
 import { Tooltip, TooltipTrigger } from './tooltip.js';
@@ -30,7 +34,7 @@ import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { twMerge } from 'tailwind-merge';
 import { type RefProp } from './ref.js';
 
-const inputRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
+const inputRootVariants = cva('flex w-full flex-col font-sans antialiased');
 
 type InputAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type InputSize = VariantProps<typeof fieldShellVariants>['size'];
@@ -48,7 +52,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,border-color] duration-normal ease-out has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-2 rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -90,34 +94,16 @@ const fieldShellVariants = cva(
       },
       {
         appearance: 'default',
-        isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
-      },
-      {
-        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
-      },
-      {
-        appearance: 'default',
-        isDisabled: true,
-        isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
-      },
-      {
-        appearance: 'default',
-        isDisabled: true,
-        isReadOnly: true,
-        className: 'bg-ash-alpha-200',
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className:
-          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
+        className: `${outlineFieldStrokeRest.input} ${outlineFieldStrokeFocusVisibleHide.input} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
       },
       {
         appearance: 'outline',
@@ -128,27 +114,13 @@ const fieldShellVariants = cva(
       },
       {
         appearance: 'outline',
-        isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
-      },
-      {
-        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
+        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
       },
       {
-        appearance: 'outline',
         isDisabled: true,
-        isInvalid: true,
-        className: 'border border-text-input-stroke-disabled',
-      },
-      {
-        appearance: 'outline',
-        isDisabled: true,
-        isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: 'bg-text-input-bg-hover',
       },
     ],
     defaultVariants: {
@@ -201,7 +173,7 @@ const insetSlotVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -209,14 +181,14 @@ const inputElementVariants = cva(
         md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
-      isReadOnly: {
-        true: 'text-base-strong',
+      isLtrValueInRtl: {
+        true: 'placeholder-shown:[direction:rtl] [&:not(:placeholder-shown)]:font-sans!',
         false: '',
       },
     },
     defaultVariants: {
       size: 'md',
-      isReadOnly: false,
+      isLtrValueInRtl: false,
     },
   },
 );
@@ -261,7 +233,8 @@ export interface InputProps
   label?: React.ReactNode;
   infoTooltip?: React.ReactNode;
   infoTooltipAriaLabel?: string;
-  labelSupplementary?: React.ReactNode;
+  /** Shows a localized Optional caption beside the label. Hidden when `isRequired` is set. */
+  isOptional?: boolean;
   labelIcon?: React.ReactNode;
   action?: React.ReactNode;
   description?: React.ReactNode;
@@ -288,7 +261,7 @@ export function Input({
   label,
   infoTooltip,
   infoTooltipAriaLabel,
-  labelSupplementary,
+  isOptional = false,
   labelIcon,
   action,
   description,
@@ -321,105 +294,118 @@ export function Input({
   const inputValueDirection = getInputValueDirection(type);
   return (
     <AriaTextField {...props} className={twMerge(inputRootVariants(), className)}>
-      {({ isDisabled, isInvalid, isReadOnly, isRequired }) => (
-        <>
-          {label ||
-          infoTooltip ||
-          labelSupplementary ||
-          labelIcon ||
-          action ||
-          (showRequiredIndicator && isRequired) ? (
-            <div className="flex w-full items-center gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                {label ? (
-                  <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>{label}</Label>
-                ) : null}
-                {infoTooltip ? (
-                  <TooltipTrigger>
-                    <AriaButton
-                      type="button"
-                      aria-label={resolvedInfoTooltipAriaLabel}
-                      className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
-                      isDisabled={isDisabled}
-                    >
-                      <InfoIcon size={16} aria-hidden />
-                    </AriaButton>
-                    <Tooltip
-                      placement="top"
-                      lang={languageConfig.lang}
-                      dir={languageConfig.direction}
-                    >
-                      {infoTooltip}
-                    </Tooltip>
-                  </TooltipTrigger>
-                ) : null}
-                {labelSupplementary ? (
-                  <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
-                    {labelSupplementary}
-                  </span>
-                ) : null}
-                {showRequiredIndicator && isRequired ? (
-                  <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
-                ) : null}
-                {labelIcon ? (
-                  <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
-                ) : null}
+      {({ isDisabled, isInvalid, isReadOnly, isRequired }) => {
+        const showOptionalLabel = shouldShowFieldOptional(isOptional, isRequired);
+
+        return (
+          <>
+            {label ||
+            infoTooltip ||
+            showOptionalLabel ||
+            labelIcon ||
+            action ||
+            (showRequiredIndicator && isRequired) ? (
+              <div className="flex w-full items-center gap-2 pb-2">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {label ? (
+                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                      {label}
+                    </Label>
+                  ) : null}
+                  {infoTooltip ? (
+                    <TooltipTrigger>
+                      <AriaButton
+                        type="button"
+                        aria-label={resolvedInfoTooltipAriaLabel}
+                        className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}
+                        isDisabled={isDisabled}
+                      >
+                        <InfoIcon size={16} aria-hidden />
+                      </AriaButton>
+                      <Tooltip
+                        placement="top"
+                        lang={languageConfig.lang}
+                        dir={languageConfig.direction}
+                      >
+                        {infoTooltip}
+                      </Tooltip>
+                    </TooltipTrigger>
+                  ) : null}
+                  {showOptionalLabel ? (
+                    <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
+                      {getFieldOptionalLabel(languageConfig.language)}
+                    </span>
+                  ) : null}
+                  {showRequiredIndicator && isRequired ? (
+                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
+                  ) : null}
+                  {labelIcon ? (
+                    <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
+                  ) : null}
+                </div>
+                {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
               </div>
-              {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
+            ) : null}
+
+            <Group
+              className={fieldShellVariants({
+                appearance,
+                size,
+                isDisabled,
+                isInvalid,
+                isReadOnly,
+              })}
+              onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
+            >
+              {startAddon ? (
+                <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
+              ) : null}
+              {startContent ? (
+                <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
+              ) : null}
+              <AriaInput
+                ref={ref}
+                autoCapitalize={autoCapitalize}
+                autoComplete={autoComplete}
+                autoCorrect={autoCorrect}
+                enterKeyHint={enterKeyHint}
+                inputMode={inputMode}
+                maxLength={maxLength}
+                minLength={minLength}
+                pattern={pattern}
+                placeholder={placeholder}
+                spellCheck={spellCheck}
+                type={type}
+                dir={inputValueDirection}
+                className={inputElementVariants({
+                  size,
+                  isLtrValueInRtl:
+                    inputValueDirection === 'ltr' && languageConfig.direction === 'rtl',
+                })}
+              />
+              {isInvalid ? (
+                <div className={errorIconVariants({ isDisabled })} aria-hidden>
+                  <WarningCircleIcon size={size === 'lg' ? 20 : 16} weight="fill" />
+                </div>
+              ) : endContent ? (
+                <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
+              ) : null}
+              {endAddon ? (
+                <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div>
+              ) : null}
+            </Group>
+
+            <div className="empty:hidden [&:not(:empty)]:pt-1">
+              <FieldMessage
+                isInvalid={isInvalid}
+                size={size ?? 'md'}
+                description={description}
+                errorMessage={errorMessage}
+              />
             </div>
-          ) : null}
-
-          <Group
-            className={fieldShellVariants({
-              appearance,
-              size,
-              isDisabled,
-              isInvalid,
-              isReadOnly,
-            })}
-            onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
-          >
-            {startAddon ? (
-              <div className={insetSlotVariants({ isDisabled })}>{startAddon}</div>
-            ) : null}
-            {startContent ? (
-              <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
-            ) : null}
-            <AriaInput
-              ref={ref}
-              autoCapitalize={autoCapitalize}
-              autoComplete={autoComplete}
-              autoCorrect={autoCorrect}
-              enterKeyHint={enterKeyHint}
-              inputMode={inputMode}
-              maxLength={maxLength}
-              minLength={minLength}
-              pattern={pattern}
-              placeholder={placeholder}
-              spellCheck={spellCheck}
-              type={type}
-              dir={inputValueDirection}
-              className={inputElementVariants({ size, isReadOnly })}
-            />
-            {endContent ? (
-              <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
-            ) : null}
-            {isInvalid ? (
-              <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                <InfoIcon size={size === 'lg' ? 20 : 16} weight="fill" />
-              </div>
-            ) : null}
-            {endAddon ? <div className={insetSlotVariants({ isDisabled })}>{endAddon}</div> : null}
-          </Group>
-
-          <FieldMessage
-            isInvalid={isInvalid}
-            size={size ?? 'md'}
-            description={description}
-            errorMessage={errorMessage}
-          />
-        </>
-      )}
+          </>
+        );
+      }}
     </AriaTextField>
   );
 }

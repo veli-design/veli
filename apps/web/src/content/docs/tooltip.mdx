@@ -1,13 +1,19 @@
 ---
 title: Tooltip
-description: Hover and focus tooltip built on React Aria, with small and large sizes and primary or secondary tones.
+description: Brief help on hover or keyboard focus, with small and large surfaces and directional motion.
 ---
 
-import { TooltipUsageDemo, TooltipVariantsDemo } from '../../components/DocsExamples';
+import {
+  TooltipUsageDemo,
+  TooltipVariantsDemo,
+  TooltipPlacementsDemo,
+  TooltipShortcutDemo,
+  TooltipRtlDemo,
+} from '../../components/TooltipExamples';
 
 # Tooltip
 
-The Tooltip component shows brief, non-interactive help on hover or focus, built on React Aria. Compose `TooltipTrigger` around a focusable trigger and a `Tooltip`. Tooltips must not contain interactive content.
+Show brief, non-interactive help beside a focusable control. Compose a trigger and `Tooltip` inside `TooltipTrigger`. Use [Popover](/docs/popover/) for links, buttons, or other interactive content. Keep essential instructions visible; touch users cannot rely on hover tooltips.
 
 ## Import
 
@@ -19,7 +25,7 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <TooltipUsageDemo client:visible />
+  <TooltipUsageDemo client:load />
 </div>
 
 ```tsx
@@ -29,24 +35,147 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 </TooltipTrigger>
 ```
 
-## Sizes & tones
+Keyboard focus opens immediately. Hover uses `delay`; moving away uses `closeDelay`. `trigger="focus"` opens only for keyboard focus. Escape dismisses the tooltip and leaves focus on its trigger. A disabled tooltip trigger leaves the underlying control available but suppresses the help.
 
-`sm` suits short hints; `lg` allows a wider, multi-line tooltip with a caret. The `tone` selects between the primary and secondary surfaces.
+## Sizes and tones
+
+`sm` is a compact surface with no arrow. `lg` has a maximum width of 221px and an arrow. Both sizes use the same `primary` or `secondary` background and text colors. Text wraps when available space is narrow.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <TooltipVariantsDemo client:visible />
+  <TooltipVariantsDemo client:load />
 </div>
+
+```tsx
+<Tooltip size="lg" tone="secondary">
+  Keep this help short and non-interactive.
+</Tooltip>
+```
+
+## Placement
+
+Use `top`, `bottom`, `left`, or `right` for physical sides. `start` and `end`, and aligned placements such as `top start`, follow the locale's direction. React Aria flips the tooltip when its preferred side does not fit.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TooltipPlacementsDemo client:load />
+</div>
+
+```tsx
+<Tooltip placement="top start" offset={16} crossOffset={0}>
+  Aligned help
+</Tooltip>
+```
+
+The default gap is 8px for small and 12px for large. An explicit `offset`, including zero, overrides it. `arrowBoundaryOffset` keeps the large caret away from rounded tooltip corners; its default is 20px.
+
+## Shortcuts
+
+Compose existing [Kbd](/docs/kbd/) primitives beside small help text. Apply a row layout to the shortcut composition to keep its 8px gap; ordinary Tooltip content keeps inline text flow. No shortcut prop is needed.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TooltipShortcutDemo client:load />
+</div>
+
+```tsx
+<Tooltip className="flex items-center gap-2">
+  <span>Copy</span>
+  <KbdGroup>
+    <Kbd>⌘</Kbd>
+    <Kbd>C</Kbd>
+  </KbdGroup>
+</Tooltip>
+```
+
+## Language and direction
+
+Use `VeliProvider language="dv"` for a Dhivehi subtree. Portaled tooltips receive its language and direction and logical placements follow its locale. Explicit Tooltip `lang` and `dir` override its text direction; set the provider locale as well when changing logical positioning.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TooltipRtlDemo client:load />
+</div>
+
+## Controlled state
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+
+<TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
+  <Button>Help</Button>
+  <Tooltip>Brief help</Tooltip>
+</TooltipTrigger>;
+```
+
+Use `defaultOpen` for an uncontrolled initial state. Tooltips remain associated with their trigger through `aria-describedby`; icon-only controls still need their own accessible name.
+
+## Motion and accessibility
+
+Entry and exit move a short distance from the resolved side and fade with Veli motion tokens. Reduced motion removes the movement and transitions. Collision flipping uses the resulting placement for both motion and caret orientation. Forced colors preserve readable text, surface boundaries, and the caret.
+
+Do not make the tooltip focusable, put interactive controls inside it, or use it as the control's only accessible name. For native disabled controls, expose essential help outside the tooltip.
 
 ## API Reference
 
-| Prop                  | Type                       | Default     | Description                                                                    |
-| :-------------------- | :------------------------- | :---------- | :----------------------------------------------------------------------------- |
-| `size`                | `'sm' \| 'lg'`             | `'sm'`      | Tooltip size; `lg` enables a wider, multi-line surface.                        |
-| `tone`                | `'primary' \| 'secondary'` | `'primary'` | Surface treatment.                                                             |
-| `placement`           | `Placement`                | `'top'`     | Preferred side, e.g. `top`, `bottom`, `left`, `right`, and start/end variants. |
-| `arrowBoundaryOffset` | `number`                   | -           | Keeps the caret within the trigger bounds.                                     |
-| `children`            | `ReactNode`                | -           | Tooltip content (non-interactive).                                             |
+Tooltip is a Veli surface on React Aria [`Tooltip`](https://react-spectrum.adobe.com/react-aria/Tooltip.html#tooltip), which renders a native `<div>`. `TooltipTrigger` handles hover, focus, and open state. Props below follow that stack.
 
-`TooltipTrigger` accepts React Aria props such as `delay`, `closeDelay`, `isOpen`, and `defaultOpen`. All other React Aria `Tooltip` props are supported.
+### Tooltip
 
-In Dhivehi (`lang="dv"`) contexts the tooltip inherits the localized typography and mirrors placement for RTL.
+Veli-specific props for the composed surface.
+
+| Prop        | Type                        | Default     | Description                                                      |
+| :---------- | :-------------------------- | :---------- | :--------------------------------------------------------------- |
+| `size`      | `'sm' \| 'lg'`              | `'sm'`      | Surface size; only large has a caret.                            |
+| `tone`      | `'primary' \| 'secondary'`  | `'primary'` | Background and text colors for both sizes.                       |
+| `children`  | `ReactNode`                 | -           | Non-interactive content.                                         |
+| `className` | `string` or render function | -           | Classes merged with the Veli surface; receives React Aria state. |
+| `ref`       | `Ref<HTMLDivElement>`       | -           | Forwarded to the tooltip surface.                                |
+
+### React Aria Tooltip
+
+React Aria’s headless [`Tooltip`](https://react-spectrum.adobe.com/react-aria/Tooltip.html#tooltip). These props pass through, with Veli defaults for `offset` and `arrowBoundaryOffset`. The React Aria docs cover the rest, except the exclusion below.
+
+| Prop                  | Type                               | Default               | Description                                                   |
+| :-------------------- | :--------------------------------- | :-------------------- | :------------------------------------------------------------ |
+| `placement`           | `Placement`                        | `'top'`               | Preferred physical or logical side/alignment.                 |
+| `offset`              | `number`                           | `8` SM / `12` LG      | Gap from the trigger; explicit zero is respected.             |
+| `crossOffset`         | `number`                           | `0`                   | Offset along the other axis.                                  |
+| `shouldFlip`          | `boolean`                          | `true`                | Flip when the preferred side lacks space.                     |
+| `containerPadding`    | `number`                           | `12`                  | Minimum distance from the container boundary.                 |
+| `arrowBoundaryOffset` | `number`                           | `20` LG               | Minimum caret inset; unused for SM.                           |
+| `triggerRef`          | `RefObject<Element \| null>`       | from `TooltipTrigger` | Anchor ref; supply it for standalone positioning.             |
+| `style`               | `CSSProperties` or render function | -                     | Surface styles; receives resolved placement and motion state. |
+
+Not forwarded from React Aria `Tooltip`:
+
+| Prop       | Why                                                                                                     |
+| :--------- | :------------------------------------------------------------------------------------------------------ |
+| `children` | Replaced by Veli content. Children render functions are not supported; Veli owns the caret composition. |
+
+### TooltipTrigger
+
+React Aria’s headless [`TooltipTrigger`](https://react-spectrum.adobe.com/react-aria/Tooltip.html#tooltiptrigger). Veli forwards its props unchanged. Open-state props belong here when composing a trigger and tooltip.
+
+| Prop                 | Type                        | Default   | Description                                          |
+| :------------------- | :-------------------------- | :-------- | :--------------------------------------------------- |
+| `delay`              | `number`                    | `1500`    | Hover opening delay in milliseconds.                 |
+| `closeDelay`         | `number`                    | `500`     | Hover closing delay in milliseconds.                 |
+| `trigger`            | `'hover' \| 'focus'`        | `'hover'` | Hover and keyboard focus, or keyboard focus only.    |
+| `isDisabled`         | `boolean`                   | `false`   | Suppress the tooltip independently from its trigger. |
+| `shouldCloseOnPress` | `boolean`                   | `true`    | Dismiss when the trigger is pressed.                 |
+| `isOpen`             | `boolean`                   | -         | Controlled open state.                               |
+| `defaultOpen`        | `boolean`                   | `false`   | Uncontrolled initial open state.                     |
+| `onOpenChange`       | `(isOpen: boolean) => void` | -         | Called when the open state changes.                  |
+| `children`           | `ReactNode`                 | -         | A focusable trigger followed by the tooltip.         |
+
+### Native tooltip element
+
+The native `<div>` that React Aria renders. These attributes are applied to that surface. Veli defaults `lang` and `dir` to the provider values so the portaled content keeps its language and direction.
+
+| Prop              | Type     | Description                                              |
+| :---------------- | :------- | :------------------------------------------------------- |
+| `lang`            | `string` | Text language; defaults to the Veli provider language.   |
+| `dir`             | `string` | Text direction; defaults to the Veli provider direction. |
+| `aria-label`      | `string` | Accessible label for the tooltip surface.                |
+| `aria-labelledby` | `string` | IDs of elements that label the tooltip surface.          |
+
+## Release guidance
+
+Explicit offsets now take effect, small surfaces support the same primary and secondary colors as large surfaces, and motion respects reduced-motion preferences. Inline text keeps its normal flow; use the row classes shown above for shortcut composition. Sizes, tone names, and large caret geometry remain compatible.

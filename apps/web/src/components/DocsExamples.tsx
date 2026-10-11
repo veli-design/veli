@@ -45,12 +45,11 @@ import {
 import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
-  ArrowRightIcon,
   BellIcon,
   CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
-  InfoIcon,
+  LinkSimpleIcon,
   MagnifyingGlassIcon,
   PencilSimpleIcon,
   TrashIcon,
@@ -168,8 +167,6 @@ const tagsDocsText = {
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
 
-const inputExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
-const inputExplorationEndAddon = <ArrowRightIcon size={16} />;
 const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
@@ -495,46 +492,35 @@ export function CheckboxDisabledDemo() {
 export function InputUsageDemo() {
   return (
     <div className="w-[320px]">
-      <Input label="Email" placeholder="name@example.com" description="Helper text" />
+      <Input
+        label="Email"
+        type="email"
+        isOptional
+        placeholder="name@example.com"
+        description="Helper text"
+      />
     </div>
   );
 }
 
-export function InputExplorationDemo() {
+export function InputAppearancesDemo() {
   return (
-    <div className="w-[320px]">
-      <Input
-        label="Label"
-        labelSupplementary="(Optional)"
-        isRequired
-        labelIcon={<InfoIcon size={12} />}
-        action="Action"
-        placeholder="Placeholder"
-        description="Helper text"
-        startAddon={inputExplorationStartAddon}
-        startContent={<CalendarBlankIcon size={16} />}
-        endContent={
-          <span className="flex items-center gap-[4px]">
-            <WarningCircleIcon size={16} />
-            <CaretDownIcon size={16} />
-          </span>
-        }
-        endAddon={inputExplorationEndAddon}
-      />
+    <div className="grid gap-4 md:grid-cols-2">
+      <Input label="Default" placeholder="Enter value" />
+      <Input appearance="outline" label="Outline" placeholder="Enter value" />
     </div>
   );
 }
 
 export function InputValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
-      <Input label="Required" placeholder="Enter value" isRequired description="Helper text" />
+    <div className="w-[320px]">
       <Input
-        label="Invalid"
-        placeholder="Enter value"
+        label="Email"
+        type="email"
         isInvalid
-        errorMessage="This field needs attention."
-        endContent={<WarningCircleIcon size={16} />}
+        errorMessage="Enter a valid email address."
+        endContent={<LinkSimpleIcon size={20} />}
       />
     </div>
   );
@@ -699,7 +685,7 @@ export function ComboBoxValidationDemo() {
 export function SelectUsageDemo() {
   return (
     <div className="w-[320px]">
-      <Select label="Country" placeholder="Choose a country" description="Helper text">
+      <Select label="Country" isOptional placeholder="Choose a country" description="Helper text">
         <SelectItem id="my">Malaysia</SelectItem>
         <SelectItem id="sg">Singapore</SelectItem>
         <SelectItem id="th">Thailand</SelectItem>
@@ -708,37 +694,38 @@ export function SelectUsageDemo() {
   );
 }
 
-export function SelectExplorationDemo() {
+export function SelectAppearancesDemo() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <Select label="Default" placeholder="Choose an option">
+        <SelectItem id="a">Option A</SelectItem>
+        <SelectItem id="b">Option B</SelectItem>
+      </Select>
+      <Select appearance="outline" label="Outline" placeholder="Choose an option">
+        <SelectItem id="a">Option A</SelectItem>
+        <SelectItem id="b">Option B</SelectItem>
+      </Select>
+    </div>
+  );
+}
+
+export function SelectSectionsDemo() {
   return (
     <div className="w-[320px]">
-      <Select
-        label="Market"
-        labelSupplementary="(Optional)"
-        infoTooltip="Use this select to choose the requested market."
-        infoTooltipAriaLabel="More information"
-        labelIcon={<InfoIcon size={12} />}
-        action="Action"
-        placeholder="Choose a market"
-        description="Helper text"
-        startContent={<MagnifyingGlassIcon size={16} />}
-        endContent={<WarningCircleIcon size={16} />}
-      >
-        <SelectSection title="ASEAN">
-          <SelectItem id="my" description="Bursa-linked products">
-            <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-12-medium text-base-subtle">
-                MY
-              </span>
-              <span>Malaysia</span>
-            </span>
+      <Select label="Island" placeholder="Choose an island">
+        <SelectSection title="Popular">
+          <SelectItem id="male" description="Capital city">
+            Male&apos;
           </SelectItem>
-          <SelectItem id="sg" description="SGX-linked products">
-            Singapore
+          <SelectItem id="hulhumale" description="Reclaimed island">
+            Hulhumale&apos;
           </SelectItem>
         </SelectSection>
-        <SelectSection title="North Asia">
-          <SelectItem id="jp">Japan</SelectItem>
-          <SelectItem id="hk">Hong Kong</SelectItem>
+        <SelectSection title="Regional">
+          <SelectItem id="addu">Addu City</SelectItem>
+          <SelectItem id="fuvahmulah" isDisabled>
+            Fuvahmulah City
+          </SelectItem>
         </SelectSection>
       </Select>
     </div>
@@ -747,17 +734,8 @@ export function SelectExplorationDemo() {
 
 export function SelectValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
-      <Select label="Required" placeholder="Select an option" isRequired description="Helper text">
-        <SelectItem id="cash">Cash</SelectItem>
-        <SelectItem id="margin">Margin</SelectItem>
-      </Select>
-      <Select
-        label="Invalid"
-        placeholder="Select an option"
-        isInvalid
-        errorMessage="Please choose a valid option."
-      >
+    <div className="w-[320px]">
+      <Select label="Status" isInvalid errorMessage="Choose a status to continue.">
         <SelectItem id="active">Active</SelectItem>
         <SelectItem id="inactive">Inactive</SelectItem>
       </Select>
