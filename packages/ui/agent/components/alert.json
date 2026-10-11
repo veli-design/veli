@@ -26,19 +26,25 @@
   ],
   "approvedPatterns": [
     "Compose title, description, actions, and an optional close button.",
+    "Choose layout default, stacked, or compact for action arrangement.",
+    "Choose appearance light or highContrast for emphasis.",
     "Use alert live behavior only for dynamically inserted or updated messages.",
     "Use status live behavior for always-visible banners."
   ],
   "limitations": [
     "The close button only dismisses through its enclosing Alert.",
-    "Leading icons are decorative."
+    "Leading icons are decorative.",
+    "Default layout keeps actions on one row; use layout stacked when actions should wrap."
   ],
   "accessibility": [
     "Choose alert or status live behavior based on message timing.",
     "Keep visible text sufficient without relying on intent color or icon.",
     "Override the localized dismiss label when additional context is needed."
   ],
-  "responsive": ["The alert fills its container and actions wrap."],
+  "responsive": [
+    "The alert fills its container.",
+    "Use layout stacked when actions need to wrap on narrow widths."
+  ],
   "rtl": [
     "The close button uses logical end positioning.",
     "Provider language supplies the Dhivehi dismiss label."

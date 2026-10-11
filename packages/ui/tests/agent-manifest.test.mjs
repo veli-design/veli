@@ -143,12 +143,11 @@ test('docs only use published Veli UI subpath imports', async () => {
   }
 });
 
-test('published package includes the manifest, guide, recipes, and optional skill', () => {
+test('published package includes the manifest, guide, and recipes', () => {
   assert.equal(packageJson.exports['./manifest'], './agent/manifest.json');
-  for (const publishedPath of ['agent', 'skills', 'AGENT_GUIDE.md']) {
+  for (const publishedPath of ['agent', 'AGENT_GUIDE.md']) {
     assert.ok(packageJson.files.includes(publishedPath));
   }
-  assert.ok(packageJson.keywords.includes('tanstack-intent'));
 });
 
 test('Veli tokens are an explicit compatible UI peer', () => {

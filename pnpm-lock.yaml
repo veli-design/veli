@@ -329,9 +329,6 @@ importers:
         specifier: ^2.5.5
         version: 2.6.0
     devDependencies:
-      '@tanstack/intent':
-        specifier: ^0.3.6
-        version: 0.3.8
       '@tradenetcorp/veli-tokens':
         specifier: workspace:*
         version: link:../tokens
@@ -3458,13 +3455,6 @@ packages:
         integrity: sha512-3dfx9MBP0aq5sXKteikG629X9oviptrQj0IFRk9YGcb+lB7Kv5x8S17oOSk1wUWgjQZ4xVJEMbKwOAODymocgA==,
       }
 
-  '@tanstack/intent@0.3.8':
-    resolution:
-      {
-        integrity: sha512-5KXhk+dPqzVHcETuf0Q6l1jasjFS2BJvG4Vw1dakuHEaQ85kZ3oSsOMROsad5w/DsEsQ9q1F00cQzIrk9jPzsQ==,
-      }
-    hasBin: true
-
   '@tanstack/pacer-lite@0.1.1':
     resolution:
       {
@@ -4370,13 +4360,6 @@ packages:
       {
         integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==,
       }
-
-  cac@6.7.14:
-    resolution:
-      {
-        integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==,
-      }
-    engines: { node: '>=8' }
 
   cac@7.0.0:
     resolution:
@@ -8583,12 +8566,6 @@ packages:
         integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==,
       }
 
-  std-env@4.3.0:
-    resolution:
-      {
-        integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==,
-      }
-
   stop-iteration-iterator@1.1.0:
     resolution:
       {
@@ -11626,14 +11603,6 @@ snapshots:
       '@tanstack/pacer-lite': 0.1.1
       '@tanstack/store': 0.11.1
 
-  '@tanstack/intent@0.3.8':
-    dependencies:
-      cac: 6.7.14
-      jsonc-parser: 3.3.1
-      semver: 7.8.5
-      std-env: 4.3.0
-      yaml: 2.9.0
-
   '@tanstack/pacer-lite@0.1.1': {}
 
   '@tanstack/react-form@1.33.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
@@ -12376,8 +12345,6 @@ snapshots:
 
   buffer-from@1.1.2:
     optional: true
-
-  cac@6.7.14: {}
 
   cac@7.0.0: {}
 
@@ -15413,8 +15380,6 @@ snapshots:
       signal-exit: 4.1.0
 
   sprintf-js@1.0.3: {}
-
-  std-env@4.3.0: {}
 
   stop-iteration-iterator@1.1.0:
     dependencies:

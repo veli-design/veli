@@ -27,24 +27,29 @@
   "supportedInteractions": [
     "Pointer and keyboard toggle through React Aria",
     "Controlled or uncontrolled selected state",
-    "Disabled state"
+    "Disabled and read-only states"
   ],
   "approvedPatterns": [
     "Provide a concise label describing the setting.",
-    "Use controlled state when surrounding content must react to the setting."
+    "Use controlled state when surrounding content must react to the setting.",
+    "Choose appearance default or subtle and size sm, md, or lg for the surrounding density."
   ],
   "limitations": [
     "The component represents only binary on and off state.",
+    "The selected checkmark appears only for appearance default.",
     "Track and handle internals are private.",
     "style overrides are not supported and className is intended for outer layout."
   ],
   "accessibility": [
-    "Uses React Aria Switch semantics with keyboard, focus, selected, and disabled behavior.",
+    "Uses React Aria Switch semantics with keyboard, focus, selected, disabled, and read-only behavior.",
     "The visible label is part of the switch control."
   ],
   "responsive": [
     "The control is inline-flex; place multiple switches in a responsive grid or vertical stack."
   ],
-  "rtl": ["Logical positioning mirrors the handle and checkmark in RTL layouts."],
+  "rtl": [
+    "Logical positioning mirrors the handle in RTL layouts.",
+    "The default selected checkmark also follows the active direction."
+  ],
   "relatedComponents": ["checkbox", "radio"]
 }

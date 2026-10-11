@@ -5,8 +5,7 @@
   "keywords": [
     "design-system",
     "react",
-    "accessibility",
-    "tanstack-intent"
+    "accessibility"
   ],
   "repository": {
     "type": "git",
@@ -23,7 +22,6 @@
     "dist",
     "tailwind.css",
     "agent",
-    "skills",
     "AGENT_GUIDE.md"
   ],
   "exports": {
@@ -225,7 +223,6 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
     "test": "corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
-    "test:skills": "intent validate skills && intent stale --json",
     "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
     "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
   },
@@ -242,7 +239,6 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
-    "@tanstack/intent": "^0.3.6",
     "@tradenetcorp/veli-tokens": "workspace:*",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

@@ -65,22 +65,10 @@ The installed package includes version-matched guidance and semantic component m
 - `agent/manifest.json` — component discovery and links to semantic sidecars
 - `agent/components/*.json` — when to use each component, limitations, and relationships
 - `agent/recipes/` — type-checked integration examples
-- `skills/veli-ui/SKILL.md` — optional Agent Skill for automatic or manual loading
 
 Use the published TypeScript declarations for props and variants. Use
 `@tradenetcorp/veli-tokens/tokens`, `/tailwind`, and `/css` as the token authorities.
 Do not infer unsupported Veli APIs from the metadata.
-
-Agents that support project skills can copy `skills/veli-ui/` into their project skill
-directory. [TanStack Intent](https://tanstack.com/intent/latest) users can opt in after
-installing Veli:
-
-```bash
-npx @tanstack/intent@latest install
-```
-
-Intent discovers the version-matched skill from installed dependencies and adds loading
-guidance to the consuming project.
 
 ## Next.js and Vitest
 

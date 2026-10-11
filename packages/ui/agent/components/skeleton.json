@@ -14,24 +14,26 @@
   ],
   "avoidWhen": [
     {
-      "situation": "A component already exposes an isLoading or skeleton mode.",
-      "guidance": "Prefer the component's built-in loading presentation when it matches the surface.",
-      "useInstead": ["button", "input", "avatar"]
+      "situation": "A Button is waiting on an in-flight press action.",
+      "guidance": "Use Button isLoading or isPending rather than replacing the button with Skeleton.",
+      "useInstead": ["button"]
     }
   ],
   "supportedInteractions": [],
   "approvedPatterns": [
-    "Compose Skeleton elements to mirror the loaded layout's geometry.",
-    "Size skeletons with layout classes rather than inventing one-off loading components."
+    "Compose Skeleton elements to mirror the loaded layout's geometry, including input, avatar, and card shapes.",
+    "Size skeletons with layout classes rather than inventing one-off loading components.",
+    "Do not assume other components expose a skeleton mode; compose Skeleton instead."
   ],
   "limitations": [
     "Skeleton is decorative only and does not announce loading status by itself.",
-    "Pair skeletons with an appropriate live-region or busy state on the real content container when needed."
+    "Pair skeletons with an appropriate live-region or busy state on the real content container when needed.",
+    "Input and Avatar do not ship built-in skeleton modes."
   ],
   "accessibility": [
     "Renders with aria-hidden so assistive technology skips decorative placeholders."
   ],
   "responsive": ["Fill the intended slot; constrain width and height in the surrounding layout."],
   "rtl": ["Geometry is direction-neutral."],
-  "relatedComponents": ["avatar", "card", "input"]
+  "relatedComponents": ["avatar", "card", "input", "button"]
 }

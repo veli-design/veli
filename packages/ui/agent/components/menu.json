@@ -31,11 +31,12 @@
     "Keyboard and pointer item activation",
     "Single and multiple selection",
     "Persistent selection without closing",
-    "Nested submenu navigation",
+    "Nested submenu navigation through MenuSubmenuTrigger",
     "Disabled items"
   ],
   "approvedPatterns": [
     "Compose MenuTrigger, a trigger control, MenuPopover, Menu, and MenuItem.",
+    "Use MenuSubmenuTrigger for nested menus.",
     "Use sections and separators to group related actions.",
     "Use danger intent for destructive items.",
     "Use descriptions, icons, and shortcut hints for richer action context."

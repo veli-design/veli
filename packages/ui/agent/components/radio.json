@@ -32,22 +32,24 @@
   ],
   "approvedPatterns": [
     "Always place related Radio items inside RadioGroup.",
-    "Give RadioGroup a visible label or accessible name.",
-    "Use description for supporting option detail and errorMessage with an invalid option when needed."
+    "Place FieldLabel, FieldDescription, and FieldError inside RadioGroup; RadioGroup has no label prop.",
+    "Do not also pass description or errorMessage on RadioGroup when using FieldDescription or FieldError.",
+    "Use Radio size md or lg to match the surrounding form density."
   ],
   "limitations": [
     "Radio is not intended as a standalone independent toggle.",
+    "RadioGroup does not accept a label prop; compose FieldLabel inside the group.",
     "Control and indicator internals are private.",
     "style overrides are not supported and className is intended for outer layout."
   ],
   "accessibility": [
     "Uses React Aria RadioGroup and Radio semantics.",
     "Group-level keyboard behavior, disabled state, and controlled selection are provided by React Aria.",
-    "Description and invalid error content use React Aria text slots."
+    "FieldLabel associates the group name through React Aria LabelContext."
   ],
   "responsive": [
     "RadioGroup is vertical by default but root className can define responsive grid or flex layout."
   ],
   "rtl": ["Controls, labels, and group layout follow inherited document direction."],
-  "relatedComponents": ["checkbox", "switch", "select", "combobox"]
+  "relatedComponents": ["checkbox", "field", "switch", "select", "combobox"]
 }

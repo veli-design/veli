@@ -23,12 +23,13 @@
   "supportedInteractions": [
     "Pointer and keyboard press",
     "Disabled interaction blocking",
-    "Busy loading state"
+    "Busy loading state through isLoading or isPending"
   ],
   "approvedPatterns": [
     "Use danger intent for destructive actions.",
     "Pair leading or trailing icons with visible action text.",
-    "Keep visible content mounted while loading to preserve dimensions."
+    "Keep visible content mounted while loading to preserve dimensions.",
+    "Use isLoading or isPending interchangeably; both mark the button busy."
   ],
   "limitations": [
     "Accent treatment is supported only with the fill appearance.",
@@ -37,7 +38,7 @@
   "accessibility": [
     "Provide aria-label or aria-labelledby for icon-only buttons.",
     "Provide an accessible name when loading without visible children.",
-    "Loading disables interaction and marks the button busy."
+    "Loading uses isPending and aria-busy while keeping the button focusable; it is not native disabled."
   ],
   "responsive": ["Choose a size appropriate to the available space and interaction context."],
   "rtl": ["Order directional leading and trailing content for the active writing direction."],

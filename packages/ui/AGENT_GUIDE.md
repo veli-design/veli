@@ -36,7 +36,9 @@ Import Tailwind and Veli sources once in the application stylesheet:
 ```
 
 Wrap the application or Veli subtree with `VeliProvider` when language, direction, or color scheme
-must be coordinated:
+must be coordinated. The provider synchronizes `.dark`, `data-theme`, and `color-scheme` on
+`document.documentElement`. Use `@tradenetcorp/veli-ui/theme-script` when injecting the blocking
+theme script outside the provider.
 
 ```tsx
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
@@ -50,6 +52,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 }
 ```
 
+Pass `navigate` (and optional `useHref`) when Link, Tabs, Menu, or Breadcrumbs use `href` with a
+client-side router.
+
 All interactive Veli modules are client components. Keep the provider and interactive imports below
 the client boundary in React Server Component applications.
 
@@ -60,6 +65,11 @@ the client boundary in React Server Component applications.
 - Choose components by semantics before appearance. Use `Button` for actions and `Link` for
   navigation.
 - Prefer `Select` for fixed choices and `ComboBox` when users need to search choices.
+- Label `RadioGroup` and `CheckboxGroup` with `FieldLabel`, `FieldDescription`, and `FieldError`
+  from `@tradenetcorp/veli-ui/field` placed inside the group. Those groups do not accept a `label`
+  prop.
+- For React Hook Form, TanStack Form, or Standard Schema issues, pass errors into
+  `FieldError errors` or use helpers from `@tradenetcorp/veli-ui/form`.
 - Use `Alert` for persistent inline feedback and `Toast` for transient queued feedback.
 - Use `Tooltip` for non-interactive hints, `Popover` for anchored interactive content, and `Modal`
   for blocking work.
@@ -78,7 +88,6 @@ the client boundary in React Server Component applications.
 - Use logical layout and `start`/`end` placement. Do not hard-code left/right for directional UI.
 - Keep credentials, URLs, telephone numbers, file sizes, and similar values LTR where the component
   contract requires it.
-- Synchronize document-level dark mode when portaled overlays render outside the provider wrapper.
 
 ## Responsive behavior
 
@@ -97,9 +106,3 @@ Before presenting generated code as complete:
 5. Check narrow layout, dark mode, English LTR, and Dhivehi RTL where relevant.
 6. If Veli does not support the requested capability, say so and suggest the nearest documented
    component or an application-owned composition.
-
-## Optional skill loading
-
-The package ships `skills/veli-ui/SKILL.md`. Consumers may copy that directory into their agent's
-project skill directory or use TanStack Intent's opt-in dependency discovery. The skill routes agents
-to this guide and the version-matched manifest; it does not replace either source.

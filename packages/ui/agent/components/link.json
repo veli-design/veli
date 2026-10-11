@@ -3,10 +3,11 @@
   "schemaVersion": 1,
   "id": "link",
   "apiPattern": "flat",
-  "purpose": "Provides accessible navigation or inline references while inheriting surrounding typography.",
+  "purpose": "Provides accessible navigation or inline references with inherited typography, or a medium body preset when sized.",
   "runtime": {
     "clientComponent": true,
-    "provider": "optional"
+    "provider": "optional",
+    "notes": ["Pass navigate through VeliProvider when href should use client-side routing."]
   },
   "useWhen": [
     "Navigating to another location.",
@@ -26,13 +27,14 @@
     "Disabled interaction blocking"
   ],
   "approvedPatterns": [
+    "Omit size to inherit typography from the parent context.",
+    "Set size when the link should use a medium body typography preset and matching icon scale.",
     "Use default intent for standard navigation and secondary intent for quieter navigation.",
-    "Choose no underline, hover underline, or persistent underline according to context.",
-    "Match icon scale to the surrounding typography."
+    "Choose no underline, hover underline, or persistent underline according to context."
   ],
   "limitations": [
-    "Typography size and line height come from the parent context.",
-    "The size setting controls nested SVG dimensions rather than text typography."
+    "Omitting size inherits typography; setting size applies medium body presets rather than only resizing icons.",
+    "Router-aware navigation requires VeliProvider navigate."
   ],
   "accessibility": [
     "Use link semantics for navigation destinations.",
@@ -41,5 +43,5 @@
   ],
   "responsive": ["The inline layout follows the typography and available space of its parent."],
   "rtl": ["Place directional icons according to the active writing direction."],
-  "relatedComponents": ["button", "breadcrumbs"]
+  "relatedComponents": ["button", "breadcrumbs", "provider"]
 }

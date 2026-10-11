@@ -39,7 +39,7 @@
     "Compound child components must remain inside Dropzone, and item parts must remain inside DropzoneItem."
   ],
   "accessibility": [
-    "Uses React Aria DropZone, FileTrigger, Button, and ProgressBar primitives.",
+    "Uses React Aria DropZone, Button, and ProgressBar primitives with a native hidden file input.",
     "The drop target supports keyboard activation and has an accessible upload label.",
     "File rows expose list position, metadata, status text, and named removal actions."
   ],

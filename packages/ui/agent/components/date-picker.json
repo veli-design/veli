@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "id": "date-picker",
   "apiPattern": "flat",
-  "purpose": "Compact date or date-time control that opens a calendar popover for selection.",
+  "purpose": "Compact date or date-time control with editable segments and a calendar popover for selection.",
   "runtime": {
     "clientComponent": true,
     "provider": "recommended",
@@ -12,7 +12,7 @@
   "useWhen": [
     "A form needs compact date selection with a calendar available on demand.",
     "Users need minimum, maximum, or unavailable-date constraints in the calendar.",
-    "A selected date or date-time should be shown in locale-aware formatted text."
+    "Users may edit date segments directly or pick from the calendar."
   ],
   "avoidWhen": [
     {
@@ -27,7 +27,8 @@
     }
   ],
   "supportedInteractions": [
-    "Open a calendar popover from the field trigger.",
+    "Edit date segments with the keyboard.",
+    "Open a calendar popover from the calendar button.",
     "Select a date with mouse, touch, or keyboard.",
     "Use controlled or uncontrolled values.",
     "Select dates subject to minimum, maximum, and availability rules.",
@@ -36,28 +37,29 @@
   "approvedPatterns": [
     "Provide a visible label for form use.",
     "Use description text for guidance and errorMessage for invalid-state recovery.",
-    "Use the placeholder to state the expected selection when no value exists.",
+    "Use placeholderValue for the empty-state calendar focus date.",
     "Use granularity and hour cycle when displaying date-time values."
   ],
   "limitations": [
-    "The current trigger displays formatted text in a button rather than editable date segments.",
+    "The field combines editable DateSegments with a calendar button; it is not a formatted-text-only trigger.",
     "The popover contains the single-date Calendar component, not RangeCalendar.",
-    "Helper description is hidden while the picker is invalid."
+    "Helper description is hidden while the picker is invalid.",
+    "showTodayButton defaults to true."
   ],
   "accessibility": [
     "The visible label is associated with the React Aria date picker.",
-    "The trigger has a visible keyboard focus ring.",
+    "Date segments and the calendar button expose keyboard focus rings.",
     "The calendar icon is hidden from assistive technology.",
     "Disabled and read-only states preserve their underlying React Aria semantics."
   ],
   "responsive": [
-    "The trigger fills its container; constrain the parent to the intended form width.",
+    "The field fills its container; constrain the parent to the intended form width.",
     "Ensure narrow viewports can accommodate the calendar popover's fixed-width grid."
   ],
   "rtl": [
     "VeliProvider can supply Dhivehi locale and RTL direction.",
     "The popover receives the active language and direction.",
-    "Trigger text uses logical start alignment."
+    "Segment text uses logical start alignment."
   ],
   "relatedComponents": ["calendar", "date-field", "provider"]
 }

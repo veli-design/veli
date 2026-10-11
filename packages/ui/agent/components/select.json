@@ -36,7 +36,8 @@
   "approvedPatterns": [
     "Compose Select with SelectItem and optional SelectSection.",
     "Provide textValue or aria-label for complex or icon-only option content.",
-    "Use description text normally and errorMessage when invalid."
+    "Use description text normally and errorMessage when invalid.",
+    "Choose size and optional labelSupplementary, infoTooltip, and infoTooltipAriaLabel for the field header."
   ],
   "limitations": [
     "This component is not an editable or filterable input.",

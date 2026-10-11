@@ -36,11 +36,13 @@ jobs:
       - name: Test Agent Eval Scorer
         run: pnpm test:agent-eval
 
+      - name: Warn on Agent Sidecar Drift
+        run: pnpm check:agent-sidecar-drift
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+
       - name: Test UI Package
         run: pnpm test:ui
-
-      - name: Validate Agent Skill
-        run: pnpm test:skills
 
       - name: Check Formatting
         run: pnpm format:check

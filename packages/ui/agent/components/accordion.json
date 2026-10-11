@@ -16,25 +16,28 @@
     {
       "situation": "All content must remain visible for comparison.",
       "guidance": "Render visible sections instead of hiding content in disclosures."
+    },
+    {
+      "situation": "A loading placeholder is needed while content arrives.",
+      "guidance": "Compose the Skeleton primitive outside Accordion; Accordion has no skeleton or disabled mode.",
+      "useInstead": ["skeleton"]
     }
   ],
-  "supportedInteractions": [
-    "Expand and collapse sections.",
-    "Control expanded keys.",
-    "Disable individual sections."
-  ],
+  "supportedInteractions": ["Expand and collapse sections.", "Control expanded keys."],
   "approvedPatterns": [
     "Use the items API for uniform sections.",
     "Compose item, header, and panel parts for custom markup.",
-    "Use the skeleton mode while section content loads."
+    "Choose size, alignment, and flushed variants for the surrounding layout."
   ],
-  "limitations": ["Skeleton mode is a placeholder and does not expose disclosure controls."],
+  "limitations": [
+    "isDisabled is not supported on Accordion or AccordionItem.",
+    "There is no Accordion skeleton or isSkeleton mode."
+  ],
   "accessibility": [
     "Headers render heading-wrapped disclosure buttons.",
-    "Disabled and expanded states are provided by React Aria.",
-    "Skeleton output is marked busy and labeled."
+    "Expanded state is provided by React Aria."
   ],
   "responsive": ["The root and triggers fill their container."],
   "rtl": ["Use right indicator alignment when the design calls for a leading-side indicator."],
-  "relatedComponents": ["divider"]
+  "relatedComponents": ["divider", "skeleton"]
 }
