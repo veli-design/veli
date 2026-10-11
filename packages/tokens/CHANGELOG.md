@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.9.0
+
+_Released 2026-10-11._
+
+### Added
+
+- Expose normalized DTCG and motion data, complete Light/Dark CSS variables, grid utilities and retained focus effects.
+
+### Changed
+
+- Unify CSS and Tailwind on canonical namespaced DTCG tokens; migrate plain CSS references to `--veli-*` and use Figma typography values.
+- Align generic Tailwind font-size utilities with canonical English typography size, leading and tracking; use `type-*` for automatic Dhivehi styles.
+
+### Fixed
+
+- Reserve `text-base` for font size; use `text-base-default` for the default text color instead of the conflicting shorthand.
+- Make all UI entry points importable during Node server rendering and reject invalid relative ESM imports before publishing. Veli no longer requires Next.js `transpilePackages` or Vitest dependency inlining to resolve its JavaScript.
+
 ## 0.8.0
 
 _Released 2026-10-08._
