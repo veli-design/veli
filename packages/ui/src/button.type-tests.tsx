@@ -30,7 +30,34 @@ export function ButtonTypeExpectations() {
       <Button as="a" href="/account" iconOnly aria-label="Account">
         +
       </Button>
-      {/* @ts-expect-error Navigation requires an explicit destination. */}
+      <Button
+        as="a"
+        render={(props) => (
+          <a {...props} href="/account">
+            {props.children}
+          </a>
+        )}
+        ref={anchorRef}
+        onClick={(event) => {
+          const href: string = event.currentTarget.href;
+          void href;
+          event.preventDefault();
+        }}
+      >
+        Composed account
+      </Button>
+      <Button onPressUp={() => {}} onPressChange={() => {}}>
+        Action callbacks
+      </Button>
+      {/* @ts-expect-error useLink does not support this press callback. */}
+      <Button as="a" href="/account" onPressUp={() => {}}>
+        Account
+      </Button>
+      {/* @ts-expect-error useLink does not support this press callback. */}
+      <Button as="a" href="/account" onPressChange={() => {}}>
+        Account
+      </Button>
+      {/* @ts-expect-error Navigation requires href or an explicit renderer. */}
       <Button as="a">Account</Button>
       {/* @ts-expect-error href requires navigation mode. */}
       <Button href="/account">Account</Button>

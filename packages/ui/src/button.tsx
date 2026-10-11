@@ -5,6 +5,7 @@ import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
   ButtonContext,
+  Focusable as AriaFocusable,
   type LinkProps as AriaLinkProps,
   type LinkRenderProps,
   LinkContext,
@@ -13,7 +14,13 @@ import {
   ProgressBarContext,
   useSlottedContext,
 } from 'react-aria-components';
-import { useLink, useHover, useFocusRing, mergeProps } from 'react-aria';
+import {
+  Focusable as HookFocusable,
+  useLink,
+  useHover,
+  useFocusRing,
+  mergeProps,
+} from 'react-aria';
 import { filterDOMProps } from 'react-aria/filterDOMProps';
 import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -65,7 +72,6 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      // Primary
       {
         intent: 'primary',
         appearance: 'fill',
@@ -84,7 +90,6 @@ const buttonVariants = cva(
         className:
           'bg-transparent text-primary data-[hovered]:bg-button-primary-subtle data-[pressed]:bg-button-primary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(0_175_172_/_0.4)]',
       },
-      // Secondary
       {
         intent: 'secondary',
         appearance: 'fill',
@@ -103,7 +108,6 @@ const buttonVariants = cva(
         className:
           'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
-      // Danger
       {
         intent: 'danger',
         appearance: 'fill',
@@ -122,7 +126,6 @@ const buttonVariants = cva(
         className:
           'bg-transparent text-danger data-[hovered]:bg-button-danger-subtle data-[pressed]:bg-button-danger-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:rgb(255_2_0_/_0.61)]',
       },
-      // Accent (fill only in Figma)
       {
         intent: 'accent',
         appearance: 'fill',
@@ -232,11 +235,22 @@ type ButtonLinkState = LinkRenderProps & { isPending: boolean };
 
 interface ButtonLinkSharedProps
   extends
-    Omit<AriaLinkProps, 'style' | 'children' | 'className' | 'render' | 'href'>,
+    Omit<
+      AriaLinkProps,
+      | 'style'
+      | 'children'
+      | 'className'
+      | 'render'
+      | 'href'
+      | 'onClick'
+      | 'onPressUp'
+      | 'onPressChange'
+    >,
     Omit<VariantProps<typeof buttonVariants>, 'iconOnly'>,
     RefProp<HTMLAnchorElement> {
   as: 'a';
-  href: string;
+  href?: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   excludeFromTabOrder?: boolean;
   isLoading?: boolean;
   isPending?: boolean;
@@ -247,6 +261,7 @@ interface ButtonLinkSharedProps
 }
 
 type NavigationButtonProps = ButtonLinkSharedProps &
+  ({ href: string } | { render: NonNullable<ButtonLinkSharedProps['render']> }) &
   (
     | (AccessibleButtonName & { children?: React.ReactNode; iconOnly: true })
     | { children?: React.ReactNode; iconOnly?: false | undefined }
@@ -688,6 +703,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     onPointerCancel,
     onPressStart,
     onPressEnd,
+    onClick,
     'aria-busy': ariaBusy,
     render,
     ...props
@@ -720,9 +736,12 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     onPressStart,
     onPressEnd,
   });
+  // Omit href from useLink so the renderer cannot trigger duplicate routing or URL mapping.
+  const resolvedRender = render ?? (context?.render as ButtonLinkSharedProps['render']);
   const { linkProps, isPressed } = useLink(
     {
       ...props,
+      href: resolvedRender ? undefined : props.href,
       elementType,
       isDisabled: inactive,
       onPressStart: buttonEventHandlers.onPressStart,
@@ -747,19 +766,38 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
   };
   const nativeProps = filterDOMProps(props, { global: true });
   delete nativeProps.onClick;
-  const domProps = mergeProps(nativeProps, linkProps, hoverProps, focusProps, {
+  // Run cancellation on the native click before either routing owner handles it.
+  const domProps = mergeProps(nativeProps, { onClick }, linkProps, hoverProps, focusProps, {
     onPointerMove: buttonEventHandlers.onPointerMove,
     onPointerUp: buttonEventHandlers.onPointerUp,
     onPointerCancel: buttonEventHandlers.onPointerCancel,
   }) as React.ComponentPropsWithoutRef<'a'>;
+  // Keep focus when pending state replaces a router Link with a plain anchor.
+  const restoreFocus = React.useRef(false);
+  const anchorRef = React.useCallback(
+    (node: HTMLAnchorElement | null) => {
+      if (!node) {
+        restoreFocus.current = Boolean(
+          ref.current && ref.current === ref.current.ownerDocument.activeElement,
+        );
+      }
+      ref.current = node;
+      if (node && restoreFocus.current) {
+        restoreFocus.current = false;
+        if (!node.hasAttribute('data-disabled')) node.focus({ preventScroll: true });
+      }
+    },
+    [ref],
+  );
   const anchorProps: React.ComponentPropsWithRef<'a'> & Record<string, unknown> = {
     ...domProps,
-    ref,
+    ref: anchorRef,
     style:
       typeof context?.style === 'function'
         ? context.style({ ...state, defaultStyle: {} })
         : context?.style,
-    href: inactive ? undefined : domProps.href,
+    href: inactive ? undefined : resolvedRender ? props.href : domProps.href,
+    hrefLang: props.hrefLang,
     role: inactive ? 'link' : domProps.role,
     slot: props.slot ?? undefined,
     tabIndex: isDisabled ? -1 : pending ? (props.excludeFromTabOrder ? -1 : 0) : domProps.tabIndex,
@@ -806,11 +844,19 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       </ButtonContent>
     ),
   };
-  const resolvedRender = render ?? (context?.render as ButtonLinkSharedProps['render']);
-  return resolvedRender ? (
-    resolvedRender(anchorProps, state)
+  // Unmount inactive router links to prevent prefetch before activation.
+  const anchor =
+    resolvedRender && !inactive ? (
+      // eslint-disable-next-line react-hooks/refs -- The renderer forwards the ref without reading it.
+      resolvedRender(anchorProps, state)
+    ) : (
+      <a {...anchorProps}>{anchorProps.children}</a>
+    );
+  // Bridge consumer focus contexts only when React Aria Components uses a separate hook instance.
+  return AriaFocusable === HookFocusable ? (
+    anchor
   ) : (
-    <a {...anchorProps}>{anchorProps.children}</a>
+    <AriaFocusable isDisabled={inactive}>{anchor}</AriaFocusable>
   );
 }
 

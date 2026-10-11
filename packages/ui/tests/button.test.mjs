@@ -4,6 +4,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ButtonContext, LinkContext } from 'react-aria-components';
 import { Button } from '@tradenetcorp/veli-ui/button';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
 const render = (props, children = 'Account') => renderToStaticMarkup(h(Button, props, children));
 
@@ -14,6 +15,7 @@ test('Button navigation mode forwards anchor semantics without nested controls',
     target: '_blank',
     rel: 'noreferrer',
     download: 'account.txt',
+    hrefLang: 'dv',
     'aria-current': 'page',
   });
   assert.match(html, /^<a /);
@@ -22,6 +24,7 @@ test('Button navigation mode forwards anchor semantics without nested controls',
     'target="_blank"',
     'rel="noreferrer"',
     'download="account.txt"',
+    'hrefLang="dv"',
     'aria-current="page"',
   ])
     assert.ok(html.includes(attribute), attribute);
@@ -44,21 +47,28 @@ test('disabled and pending navigation keep an anchor without a native destinatio
   }
 });
 
-test('navigation composition receives guarded destination and pending state', () => {
-  for (const isPending of [false, true]) {
+test('navigation composition owns its destination and only renders while enabled', () => {
+  for (const state of [{}, { isDisabled: true }, { isLoading: true }, { isPending: true }]) {
     let received;
     const html = render({
       as: 'a',
-      href: '/account',
-      isPending,
-      render: (props, state) => {
-        received = { props, state };
-        return h('a', { ...props, 'data-adapter': true });
+      ...state,
+      render: (props, current) => {
+        received = { props, state: current };
+        return h('a', { ...props, href: '/account', 'data-router': true });
       },
     });
-    assert.equal(received.state.isPending, isPending);
-    assert.equal(received.props.href, isPending ? undefined : '/account');
-    assert.match(html, /data-adapter="true"/);
+    if (Object.keys(state).length) {
+      assert.equal(received, undefined);
+      assert.doesNotMatch(html, /href=|data-router=/);
+      assert.match(html, /aria-disabled="true"/);
+    } else {
+      assert.equal(received.props.href, undefined);
+      assert.equal(received.state.isPending, false);
+      assert.match(html, /href="\/account"/);
+      assert.match(html, /data-router="true"/);
+    }
+    assert.match(html, /^<a /);
     assert.doesNotMatch(html, /<button/);
   }
 });
@@ -98,7 +108,6 @@ test('navigation inherits disabled LinkContext and respects explicit overrides a
 });
 
 test('navigation context styles resolve against state and false current is not current', () => {
-  let state;
   const html = renderToStaticMarkup(
     h(
       LinkContext.Provider,
@@ -115,16 +124,14 @@ test('navigation context styles resolve against state and false current is not c
           as: 'a',
           href: '/account',
           'aria-current': 'false',
-          render: (props, current) => {
-            state = current;
-            return h('a', props);
+          render: () => {
+            throw new Error('Disabled context must not render a router link');
           },
         },
         'Account',
       ),
     ),
   );
-  assert.equal(state.isCurrent, false);
   assert.match(html, /style="opacity:0.5"/);
   assert.match(html, /context-disabled/);
   assert.doesNotMatch(html, /data-current=/);
@@ -134,4 +141,21 @@ test('pending navigation preserves an excluded tab stop', () => {
   const html = render({ as: 'a', href: '/account', isPending: true, excludeFromTabOrder: true });
   assert.match(html, /tabindex="-1"/);
   assert.doesNotMatch(html, /href=/);
+});
+
+test('custom navigation render owns href mapping while native links use the provider', () => {
+  for (const custom of [false, true]) {
+    const html = renderToStaticMarkup(
+      h(
+        VeliProvider,
+        { navigate() {}, useHref: (href) => `/base${href}` },
+        h(
+          Button,
+          { as: 'a', href: '/account', ...(custom ? { render: (props) => h('a', props) } : {}) },
+          'Account',
+        ),
+      ),
+    );
+    assert.match(html, custom ? /href="\/account"/ : /href="\/base\/account"/);
+  }
 });

@@ -153,25 +153,7 @@ Disabled and loading links retain their anchor and label, remove `href`, and blo
 
 ### Client routing
 
-Pass the application's navigation callback to `VeliProvider`. For Next.js App Router, configure it in your existing client-side provider:
-
-```tsx
-'use client';
-
-import type { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-
-export function AppProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
-
-  return (
-    <VeliProvider navigate={(href, options) => router.push(href, options)}>{children}</VeliProvider>
-  );
-}
-```
-
-Buttons inside that provider can navigate without a full page reload:
+A native anchor can use client routing. For links that only need navigation, pass `navigate` and (when needed) `useHref` to `VeliProvider`. `routerOptions` belongs to that provider contract. Map push/replace and route prefixes in the application; Veli does not infer framework options. This path has no automatic router prefetch.
 
 ```tsx
 <Button as="a" href="/account">
@@ -179,21 +161,71 @@ Buttons inside that provider can navigate without a full page reload:
 </Button>
 ```
 
-If your app already configures an outer React Aria `RouterProvider`, also pass its navigation callback to the existing `VeliProvider`. Veli bridges its hook and React Aria component router contexts when `navigate` is supplied. An outer provider alone can miss the Button's router context when React Aria versions differ, causing a full page reload. Direct provider integration requires the same hook version used by Veli (`react-aria` 3.49.0).
+Declare React Aria's application-level `RouterConfig.routerOptions` before passing options, and handle them in `navigate`. For example, a Next App Router provider can use `navigate={(href, options) => options?.replace ? router.replace(href, options) : router.push(href, options)}`. The Pages Router equivalent uses `next/router` and its `router.push(href, undefined, options)` / `router.replace(href, undefined, options)` signatures. Configure `useHref` for the browser-visible base path if the application requires one, including external/hash exclusions. Prefer the Next Link composition below when Next should own that mapping.
 
-This integration preserves native modifier clicks and disabled/loading behavior. It does not provide Next Link's automatic prefetching.
+Pass routing to the existing `VeliProvider`, even if the application has an outer React Aria provider. Veli bridges its hook and component router contexts; an independently installed hook provider can otherwise use a different context.
 
-### Composition
+### Router Link composition
 
-The `render` callback supports composition with an anchor adapter:
+Pass the router's real Link through `render`. Put its destination and framework options on that Link; Button's `href` is optional when you supply a renderer. This preserves typed routes and avoids framework dependencies or router adapters in Veli.
+
+Both Next App Router and Pages Router use `next/link`:
 
 ```tsx
-<Button as="a" href="/account" render={(props) => <a {...props} data-app-link="account" />}>
+'use client';
+
+import NextLink from 'next/link';
+import { Button } from '@tradenetcorp/veli-ui/button';
+
+<Button
+  as="a"
+  isLoading={isSaving}
+  render={(props) => <NextLink {...props} href="/account" prefetch={false} replace />}
+>
   Account
-</Button>
+</Button>;
 ```
 
-Adapters must preserve the supplied props, event handlers, children, and anchor ref, keep the same root mounted, and omit the native destination when `props.href` is absent. Arbitrary components and direct Next Link substitution are not supported: Next Link requires `href`, and a retained destination can still navigate through browser actions while disabled. Use a router integration or an adapter that honors this contract. Changing the rendered tag in default button mode does not enable navigation semantics.
+Next owns base paths, URL objects, typed routes, and options such as `scroll`, `onNavigate`, and Pages Router `as`, `shallow`, and `locale`. App Router `prefetch={false}` disables viewport and hover prefetch. Pages Router disables viewport prefetch but still prefetches on hover. Prefetch runs in production.
+
+TanStack Router keeps its registered route, params, and search types directly on its Link:
+
+```tsx
+import { Link as RouterLink } from '@tanstack/react-router';
+
+<Button
+  as="a"
+  render={(props) => (
+    <RouterLink {...props} to="/posts/$postId" params={{ postId: '42' }} preload="intent" />
+  )}
+>
+  Read post
+</Button>;
+```
+
+React Router uses the same pattern:
+
+```tsx
+import { Link as RouterLink } from 'react-router';
+
+<Button as="a" render={(props) => <RouterLink {...props} to="/account" replace />}>
+  Account
+</Button>;
+```
+
+Keep framework-specific behavior on the router Link. For downloads, use a native `<Button as="a" href="/report.pdf" download>`. A router’s `reloadDocument` option may navigate programmatically and lose browser download behavior; it is not a substitute for a native download link. React Router data prefetch depends on its data/framework setup; `BrowserRouter` alone does not provide it.
+
+### Composition contract
+
+`render` owns navigation and URL mapping. Button supplies React Aria link interactions, styles/content, and the anchor ref; a surrounding `VeliProvider` does not navigate or rewrite the renderer's destination. To use provider routing, omit `render`.
+
+Return one anchor-producing component and forward the generated props/ref/children. Set its destination after spreading `props`. Do not wrap a Button in a Link or nest anchors. Navigation `onClick` runs on the native anchor click and can cancel navigation with `event.preventDefault()`. Use it for activation analytics or cancellation (or Next's `onNavigate`). React Aria's keyboard `onPress` completes on keyup; a router can unmount the link after Enter's earlier native click. Do not use `onPress` to navigate a second time.
+
+While disabled, loading, or pending, Button renders a destination-free anchor itself and **does not call `render`**. This also applies to inherited `LinkContext` state and prevents the router Link from starting prefetch. Requests started before becoming inactive are not canceled. Put shared classes, accessible names, `target`, and test IDs on Button so they also apply to the inactive anchor. Root replacements retain pending focus, but refs receive normal detach/attach notifications; do not assume DOM identity across state changes. The action-button renderer is unchanged.
+
+React Aria Link styled as a Button is the semantic model. Veli uses `useLink` so disabled/loading mode can retain an anchor ref and pending focus; React Aria Components Link changes to a span when disabled. Both modes share Button styling and content. A general `Slot`/`asChild` API would still need the same event, ref, and inactive-state contract.
+
+Official references: [React Aria Link](https://react-aria.adobe.com/Link), [Next App Link](https://nextjs.org/docs/app/api-reference/components/link), [Next Pages Link](https://nextjs.org/docs/pages/api-reference/components/link), [TanStack custom links](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link), and [React Router Link](https://reactrouter.com/api/components/Link).
 
 ## API Reference
 
@@ -204,7 +236,7 @@ Button uses React Aria [`Button`](https://react-aria.adobe.com/Button) for actio
 | Mode       | Native contract                                                                                            |
 | :--------- | :--------------------------------------------------------------------------------------------------------- |
 | Action     | Omit `as` or use `as="button"`. Renders `<button>` with a `Ref<HTMLButtonElement>`. `href` is unavailable. |
-| Navigation | Use `as="a"` and a required `href`. Renders `<a>` with a `Ref<HTMLAnchorElement>`.                         |
+| Navigation | Use `as="a"` with `href` or an explicit `render`. Renders `<a>` with a `Ref<HTMLAnchorElement>`.           |
 
 `ButtonProps` defaults to the action type. Use its generic argument for navigation wrappers or components that accept both modes:
 
@@ -224,7 +256,7 @@ These props apply in both modes. Defaults describe a standalone Button; supporte
 
 | Prop         | Type                                                       | Default     | Description                                                                                                                  |
 | :----------- | :--------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `as`         | `'button' \| 'a'`                                          | `'button'`  | Selects action or navigation semantics. Navigation requires `href`.                                                          |
+| `as`         | `'button' \| 'a'`                                          | `'button'`  | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
 | `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'` | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
 | `appearance` | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`    | Surface treatment in either mode.                                                                                            |
 | `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`      | Text and icon-only size.                                                                                                     |
@@ -237,28 +269,28 @@ Passing `null` for `intent`, `appearance`, or `size` resolves to the listed defa
 
 ### React Aria interaction props
 
-These interaction props are available in both modes. The React Aria [Button](https://react-aria.adobe.com/Button) and [Link](https://react-aria.adobe.com/Link) references cover their respective event behavior, subject to Veli's exclusions below.
+These interaction props are available in both modes except where noted. The React Aria [Button](https://react-aria.adobe.com/Button) and [Link](https://react-aria.adobe.com/Link) references cover their respective event behavior, subject to Veli's exclusions below.
 
-| Prop                          | Type                                            | Default | Description                                                                                                                          |
-| :---------------------------- | :---------------------------------------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `isDisabled`                  | `boolean`                                       | `false` | Prevents activation and removes the control from the tab order. In link mode, also removes `href`.                                   |
-| `isPending`                   | `boolean`                                       | `false` | Uses the same spinner, busy state, and focus-preserving behavior as `isLoading`.                                                     |
-| `excludeFromTabOrder`         | `boolean`                                       | `false` | Removes an otherwise focusable control from sequential keyboard navigation, including while pending. It does not disable activation. |
-| `autoFocus`                   | `boolean`                                       | `false` | Focuses the control when it mounts.                                                                                                  |
-| `onPress`                     | `(event: PressEvent) => void`                   | -       | Activation callback for pointer, touch, keyboard, or assistive technology. In link mode, it does not replace `href` navigation.      |
-| `onPressStart`                | `(event: PressEvent) => void`                   | -       | Called when a press starts.                                                                                                          |
-| `onPressEnd`                  | `(event: PressEvent) => void`                   | -       | Called when a press ends, including cancellation. Does not necessarily mean activation.                                              |
-| `onPressUp`                   | `(event: PressEvent) => void`                   | -       | Called when a press is released over the control, even if it started elsewhere.                                                      |
-| `onPressChange`               | `(isPressed: boolean) => void`                  | -       | Called when the pressed state changes.                                                                                               |
-| `onHoverStart` / `onHoverEnd` | `(event: HoverEvent) => void`                   | -       | Called when a mouse or pen starts or stops hovering. Touch does not trigger hover.                                                   |
-| `onHoverChange`               | `(isHovered: boolean) => void`                  | -       | Called when the hover state changes.                                                                                                 |
-| `onFocus` / `onBlur`          | `(event: FocusEvent<Element>) => void`          | -       | Called when the control receives or loses focus.                                                                                     |
-| `onFocusChange`               | `(isFocused: boolean) => void`                  | -       | Called when the focus state changes.                                                                                                 |
-| `onKeyDown` / `onKeyUp`       | `(event: KeyboardEvent) => void`                | -       | Called for keyboard input while focused.                                                                                             |
-| `onClick`                     | `(event: MouseEvent<FocusableElement>) => void` | -       | React Aria compatibility callback. Prefer `onPress` for normalized activation across input methods.                                  |
-| `slot`                        | `string \| null`                                | -       | Receives props from `ButtonContext` in action mode or `LinkContext` in navigation mode. `null` opts out of parent context.           |
+| Prop                          | Type                                   | Default | Description                                                                                                                          |
+| :---------------------------- | :------------------------------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `isDisabled`                  | `boolean`                              | `false` | Prevents activation and removes the control from the tab order. In link mode, also removes `href`.                                   |
+| `isPending`                   | `boolean`                              | `false` | Uses the same spinner, busy state, and focus-preserving behavior as `isLoading`.                                                     |
+| `excludeFromTabOrder`         | `boolean`                              | `false` | Removes an otherwise focusable control from sequential keyboard navigation, including while pending. It does not disable activation. |
+| `autoFocus`                   | `boolean`                              | `false` | Focuses the control when it mounts.                                                                                                  |
+| `onPress`                     | `(event: PressEvent) => void`          | -       | Activation callback for pointer, touch, keyboard, or assistive technology. In link mode, it does not replace `href` navigation.      |
+| `onPressStart`                | `(event: PressEvent) => void`          | -       | Called when a press starts.                                                                                                          |
+| `onPressEnd`                  | `(event: PressEvent) => void`          | -       | Called when a press ends, including cancellation. Does not necessarily mean activation.                                              |
+| `onPressUp`                   | `(event: PressEvent) => void`          | -       | Action mode only. Called when a press is released over the control, even if it started elsewhere.                                    |
+| `onPressChange`               | `(isPressed: boolean) => void`         | -       | Action mode only. Called when the pressed state changes.                                                                             |
+| `onHoverStart` / `onHoverEnd` | `(event: HoverEvent) => void`          | -       | Called when a mouse or pen starts or stops hovering. Touch does not trigger hover.                                                   |
+| `onHoverChange`               | `(isHovered: boolean) => void`         | -       | Called when the hover state changes.                                                                                                 |
+| `onFocus` / `onBlur`          | `(event: FocusEvent<Element>) => void` | -       | Called when the control receives or loses focus.                                                                                     |
+| `onFocusChange`               | `(isFocused: boolean) => void`         | -       | Called when the focus state changes.                                                                                                 |
+| `onKeyDown` / `onKeyUp`       | `(event: KeyboardEvent) => void`       | -       | Called for keyboard input while focused.                                                                                             |
+| `onClick`                     | `(event: MouseEvent) => void`          | -       | Action: React Aria compatibility callback; prefer `onPress`. Navigation: native anchor click, including cancellation.                |
+| `slot`                        | `string \| null`                       | -       | Receives props from `ButtonContext` in action mode or `LinkContext` in navigation mode. `null` opts out of parent context.           |
 
-`PressEvent`, `HoverEvent`, `KeyboardEvent`, and `FocusableElement` above are React Aria types. `FocusEvent` and `MouseEvent` are React event types. Other DOM events pass through the supported React Aria attribute set for the selected mode.
+`PressEvent`, `HoverEvent`, and `KeyboardEvent` above are React Aria types. `FocusEvent` and `MouseEvent` are React event types. Other DOM events pass through the supported React Aria attribute set for the selected mode.
 
 `isLoading` or `isPending` makes the control inactive. If `isDisabled` is also true, it remains excluded from the tab order. Loading submit/reset buttons cancel their native form action; loading links retain their anchor but omit the destination.
 
@@ -284,10 +316,11 @@ These props apply only when `as="a"`. Button exposes React Aria's supported link
 
 | Prop             | Type                                | Default | Description                                                                                                                                                              |
 | :--------------- | :---------------------------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `href`           | `string`                            | -       | Required destination URL or fragment. Removed while disabled or loading.                                                                                                 |
+| `href`           | `string`                            | -       | Destination URL or fragment. Required unless `render` supplies the router Link. Removed while inactive.                                                                  |
 | `target`         | `HTMLAttributeAnchorTarget`         | -       | Browsing context, such as `_self`, `_blank`, or a named window.                                                                                                          |
 | `rel`            | `string`                            | -       | Link relationship, such as `noopener noreferrer`.                                                                                                                        |
 | `download`       | `boolean \| string`                 | -       | Requests a download, optionally with a filename. Browser origin restrictions apply.                                                                                      |
+| `hrefLang`       | `string`                            | -       | Language of the linked resource.                                                                                                                                         |
 | `ping`           | `string`                            | -       | Space-separated URLs notified when the link is followed.                                                                                                                 |
 | `referrerPolicy` | `HTMLAttributeReferrerPolicy`       | -       | Referrer information sent when following the link.                                                                                                                       |
 | `aria-current`   | `AriaAttributes['aria-current']`    | -       | Identifies the current page or destination. Button does not compare the URL automatically.                                                                               |
@@ -318,19 +351,19 @@ The optional `render` callback replaces the native root while retaining the gene
 | Action     | `(props: ComponentPropsWithRef<'button'>, state: ButtonRenderProps) => ReactElement`                   | Native `<button>` |
 | Navigation | `(props: ComponentPropsWithRef<'a'>, state: LinkRenderProps & { isPending: boolean }) => ReactElement` | Native `<a>`      |
 
-`ComponentPropsWithRef` and `ReactElement` are React types; `ButtonRenderProps` and `LinkRenderProps` are React Aria Components types. The generated `props` include children, ref, events, and accessibility attributes. Preserve them on the replacement root. In link mode, an adapter must omit `href` whenever the supplied `props.href` is absent; see [Composition](#composition) for the adapter contract.
+`ComponentPropsWithRef` and `ReactElement` are React types; `ButtonRenderProps` and `LinkRenderProps` are React Aria Components types. The generated `props` include children, ref, events, and accessibility attributes. Preserve them on the replacement root. In link mode, the renderer runs only while enabled; see [Composition contract](#composition-contract).
 
 The callback receives these observed states. They are not props for forcing visual state:
 
-| State            | Type      | Modes      | Meaning                                                                                             |
-| :--------------- | :-------- | :--------- | :-------------------------------------------------------------------------------------------------- |
-| `isHovered`      | `boolean` | Both       | A mouse or pen is hovering over the control.                                                        |
-| `isPressed`      | `boolean` | Both       | A pointer or keyboard press is in progress.                                                         |
-| `isFocused`      | `boolean` | Both       | The control has focus.                                                                              |
-| `isFocusVisible` | `boolean` | Both       | The control should show its keyboard focus indicator.                                               |
-| `isDisabled`     | `boolean` | Both       | Action mode reports its disabled state. Navigation mode also reports true while loading or pending. |
-| `isPending`      | `boolean` | Both       | `isLoading` or `isPending` is active.                                                               |
-| `isCurrent`      | `boolean` | Navigation | `aria-current` marks the current destination. `false` and `'false'` do not mark it current.         |
+| State            | Type      | Modes      | Meaning                                                                                     |
+| :--------------- | :-------- | :--------- | :------------------------------------------------------------------------------------------ |
+| `isHovered`      | `boolean` | Both       | A mouse or pen is hovering over the control.                                                |
+| `isPressed`      | `boolean` | Both       | A pointer or keyboard press is in progress.                                                 |
+| `isFocused`      | `boolean` | Both       | The control has focus.                                                                      |
+| `isFocusVisible` | `boolean` | Both       | The control should show its keyboard focus indicator.                                       |
+| `isDisabled`     | `boolean` | Both       | Action disabled state. Navigation renderers run only while enabled, so receive false.       |
+| `isPending`      | `boolean` | Both       | Action pending state. Navigation renderers run only while enabled, so receive false.        |
+| `isCurrent`      | `boolean` | Navigation | `aria-current` marks the current destination. `false` and `'false'` do not mark it current. |
 
 ### Unsupported props and forms
 
@@ -341,7 +374,7 @@ The callback receives these observed states. They are not props for forcing visu
 | `disabled`                                                              | Use `isDisabled`; anchors have no native disabled behavior.                                                        |
 | `variant`                                                               | Use `intent` and `appearance` for styling.                                                                         |
 | `asChild`, `elementType`, or `as="link"`                                | Select the supported mode with `as="button"` or `as="a"`; use the mode-specific `render` contract for composition. |
-| `hrefLang`                                                              | Inherited from React Aria types, but not currently forwarded as a native `hreflang` attribute in Button link mode. |
+| `onPressUp` / `onPressChange` in navigation mode                        | Not supported by the installed `useLink` hook. Use `onPressStart` / `onPressEnd`, or read `isPressed` in `render`. |
 | `href` without `as="a"`                                                 | Select navigation mode explicitly.                                                                                 |
 | Button form attributes in navigation mode                               | Use an action Button for submit/reset behavior.                                                                    |
 | `isHovered`, `isPressed`, `isFocused`, `isFocusVisible`, or `isCurrent` | Read callback state; use `aria-current` for the current destination and a ref or `autoFocus` to move focus.        |

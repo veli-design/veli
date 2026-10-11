@@ -1,8 +1,9 @@
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { Button } from '@tradenetcorp/veli-ui/button';
+import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
 
 // Keep release regressions in the existing States story without adding demo-only APIs.
 export async function verifyButtonRegressions(canvasElement: HTMLElement) {
@@ -115,12 +116,18 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
   const navigate = fn();
   const onPress = fn();
   const onClick = fn();
+  const cancelNavigation = fn((event: React.MouseEvent<HTMLAnchorElement>) =>
+    event.preventDefault(),
+  );
   const cleanup = fn();
   const ref = fn(() => cleanup);
   const render = (isPending: boolean, isDisabled = false) => {
     flushSync(() => {
       root.render(
         <VeliProvider navigate={navigate}>
+          <Button as="a" href="/cancel" onClick={cancelNavigation}>
+            Canceled destination
+          </Button>
           <Button
             as="a"
             href="/button-account"
@@ -160,7 +167,7 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
   try {
     render(false);
     const link = canvas.getByRole('link', { name: 'Account destination' });
-    const adapter = canvas.getByRole('link', { name: 'Adapter destination' });
+    let adapter = canvas.getByRole('link', { name: 'Adapter destination' });
     await expect(link.tagName).toBe('A');
     await expect(ref).toHaveBeenCalledWith(link);
     await expect(container.querySelector('button')).toBeNull();
@@ -174,6 +181,12 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
     await user.keyboard(' ');
     await expect(navigate).toHaveBeenCalledTimes(2);
     await expect(onPress).toHaveBeenCalledTimes(2);
+    const canceled = canvas.getByRole('link', { name: 'Canceled destination' });
+    await user.click(canceled);
+    canceled.focus();
+    await user.keyboard('{Enter}');
+    await expect(cancelNavigation).toHaveBeenCalledTimes(2);
+    await expect(navigate).toHaveBeenCalledTimes(2);
     await user.click(adapter);
     await expect(onClick).toHaveBeenCalledTimes(1);
     await expect(navigate).toHaveBeenCalledTimes(2);
@@ -186,6 +199,7 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
     await expect(link).toHaveAttribute('aria-busy', 'true');
     await expect(link).toHaveAttribute('aria-disabled', 'true');
     await expect(link).not.toHaveAttribute('href');
+    adapter = canvas.getByRole('link', { name: 'Adapter destination' });
     await expect(adapter).not.toHaveAttribute('href');
     await user.click(link);
     await user.keyboard('{Enter} ');
@@ -195,6 +209,7 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
     await expect(onPress).toHaveBeenCalledTimes(2);
     await expect(onClick).toHaveBeenCalledTimes(1);
     render(false, true);
+    adapter = canvas.getByRole('link', { name: 'Adapter destination' });
     await expect(link).not.toHaveAttribute('href');
     await expect(link).toHaveAttribute('data-disabled');
     await user.click(link);
@@ -216,4 +231,142 @@ export async function verifyButtonLinkRegressions(canvasElement: HTMLElement) {
     container.remove();
   }
   await expect(cleanup).toHaveBeenCalledTimes(1);
+}
+
+export async function verifyButtonRouterComposition(canvasElement: HTMLElement) {
+  const container = document.createElement('div');
+  canvasElement.append(container);
+  const root = createRoot(container);
+  const user = userEvent.setup();
+  const providerNavigate = fn();
+  const routerNavigate = fn();
+  const nativeClick = fn();
+  let cancel = false;
+  const refCleanup = fn();
+  const ref = fn(() => refCleanup);
+  function RouterLink(props: React.ComponentPropsWithRef<'a'>) {
+    return (
+      <a
+        {...props}
+        href={props.href}
+        onClick={(event) => {
+          props.onClick?.(event);
+          if (!event.defaultPrevented) {
+            event.preventDefault();
+            routerNavigate(props.href);
+          }
+        }}
+      >
+        {props.children}
+      </a>
+    );
+  }
+  const render = (isPending: boolean) =>
+    flushSync(() =>
+      root.render(
+        <VeliProvider navigate={providerNavigate} useHref={(href) => `/wrong${href}`}>
+          <Button
+            as="a"
+            isPending={isPending}
+            ref={ref}
+            onClick={(event) => {
+              nativeClick();
+              if (cancel) event.preventDefault();
+            }}
+            render={(props) => <RouterLink {...props} href="/account" />}
+          >
+            Router account
+          </Button>
+        </VeliProvider>,
+      ),
+    );
+  try {
+    render(false);
+    let link = within(container).getByRole('link', { name: 'Router account' });
+    refCleanup.mockClear();
+    await expect(link).toHaveAttribute('href', '/account');
+    await user.click(link);
+    await expect(routerNavigate).toHaveBeenCalledTimes(1);
+    await expect(providerNavigate).not.toHaveBeenCalled();
+    link.focus();
+    render(true);
+    link = within(container).getByRole('link', { name: 'Router account' });
+    await expect(link).toHaveFocus();
+    await expect(link).not.toHaveAttribute('href');
+    await expect(link).toHaveAttribute('aria-busy', 'true');
+    await expect(refCleanup).toHaveBeenCalledTimes(1);
+    await user.keyboard('{Enter}');
+    await user.click(link);
+    await expect(routerNavigate).toHaveBeenCalledTimes(1);
+    render(false);
+    link = within(container).getByRole('link', { name: 'Router account' });
+    await expect(link).toHaveFocus();
+    await expect(ref).toHaveBeenLastCalledWith(link);
+    await expect(refCleanup).toHaveBeenCalledTimes(2);
+    await user.keyboard('{Enter}');
+    await expect(routerNavigate).toHaveBeenCalledTimes(2);
+    await expect(providerNavigate).not.toHaveBeenCalled();
+    await expect(nativeClick).toHaveBeenCalledTimes(2);
+    cancel = true;
+    await user.keyboard('{Enter}');
+    await user.click(link);
+    await expect(nativeClick).toHaveBeenCalledTimes(4);
+    await expect(routerNavigate).toHaveBeenCalledTimes(2);
+  } finally {
+    flushSync(() => root.unmount());
+    container.remove();
+  }
+  await expect(refCleanup).toHaveBeenCalledTimes(3);
+}
+
+export async function verifyButtonLinkFocusContext(canvasElement: HTMLElement) {
+  const container = document.createElement('div');
+  canvasElement.append(container);
+  const root = createRoot(container);
+  const user = userEvent.setup();
+  const onFocus = fn();
+  const onOpenChange = fn();
+  try {
+    for (const composed of [false, true]) {
+      flushSync(() =>
+        root.render(
+          <>
+            <input aria-label="Before link tooltip" />
+            <TooltipTrigger delay={0} closeDelay={0} onOpenChange={onOpenChange}>
+              <Button
+                as="a"
+                href="#tooltip-target"
+                onFocus={onFocus}
+                render={composed ? (props) => <a {...props}>{props.children}</a> : undefined}
+              >
+                Tooltip link
+              </Button>
+              <Tooltip>Link help</Tooltip>
+            </TooltipTrigger>
+          </>,
+        ),
+      );
+      onFocus.mockClear();
+      onOpenChange.mockClear();
+      within(container).getByRole('textbox').focus();
+      await user.tab();
+      const link = within(container).getByRole('link', { name: 'Tooltip link' });
+      await expect(link).toHaveFocus();
+      await waitFor(() =>
+        expect(within(document.body).getByRole('tooltip')).toHaveTextContent('Link help'),
+      );
+      const tooltip = within(document.body).getByRole('tooltip');
+      await expect(link).toHaveAttribute('aria-describedby', tooltip.id);
+      await expect(onFocus).toHaveBeenCalledTimes(1);
+      await expect(onOpenChange).toHaveBeenCalledExactlyOnceWith(true);
+      await user.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(within(document.body).queryByRole('tooltip')).not.toBeInTheDocument(),
+      );
+      await expect(onOpenChange).toHaveBeenCalledTimes(2);
+    }
+  } finally {
+    flushSync(() => root.unmount());
+    container.remove();
+  }
 }

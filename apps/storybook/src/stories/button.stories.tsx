@@ -5,7 +5,12 @@ import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
 import { VeliProvider, useVeliLanguage, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
 import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
-import { verifyButtonRegressions, verifyButtonLinkRegressions } from '../tests/button';
+import {
+  verifyButtonRegressions,
+  verifyButtonLinkRegressions,
+  verifyButtonRouterComposition,
+  verifyButtonLinkFocusContext,
+} from '../tests/button';
 
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
 const iconSizeMap = { xs: 12, sm: 16, md: 16, lg: 20, xl: 20 } as const;
@@ -426,4 +431,8 @@ function ButtonClientRouting() {
 export const ClientRouting: Story = {
   parameters: exampleParameters,
   render: () => <ButtonClientRouting />,
+  play: async ({ canvasElement }) => {
+    await verifyButtonRouterComposition(canvasElement);
+    await verifyButtonLinkFocusContext(canvasElement);
+  },
 };
