@@ -16,15 +16,33 @@ import { twMerge } from 'tailwind-merge';
 
 const checkboxIndicatorSizes = {
   md: {
-    check: { width: 10, height: 10, viewBox: '-1 -1 11.5 8.8' },
+    check: {
+      width: 10.9142,
+      height: 8.12132,
+      viewBox: '0 0 10.9142 8.12132',
+      path: 'M0.707107 3.20711L4.20711 6.70711L10.2071 0.707107',
+      strokeWidth: 2,
+    },
     indeterminate: { width: 10, height: 4, viewBox: '0 0 10 4' },
   },
   lg: {
-    check: { width: 12, height: 8, viewBox: '-1 -1 11.5 8.8' },
+    check: {
+      width: 13.8149,
+      height: 10.6772,
+      viewBox: '0 0 13.8149 10.6772',
+      path: 'M0.907441 4.19301L5.32849 8.85968L12.9074 0.859681',
+      strokeWidth: 2.5,
+    },
     indeterminate: { width: 13, height: 5, viewBox: '0 0 10 4' },
   },
   xl: {
-    check: { width: 14.25, height: 9, viewBox: '-1 -1 11.5 8.8' },
+    check: {
+      width: 16.3713,
+      height: 12.182,
+      viewBox: '0 0 16.3713 12.182',
+      path: 'M1.06066 4.81066L6.31066 10.0607L15.3107 1.06066',
+      strokeWidth: 3,
+    },
     indeterminate: { width: 15, height: 6, viewBox: '0 0 10 4' },
   },
 } as const;
@@ -460,9 +478,15 @@ export function Checkbox({
                       width={indicators.check.width}
                       height={indicators.check.height}
                       viewBox={indicators.check.viewBox}
+                      preserveAspectRatio="none"
+                      overflow="visible"
                       fill="none"
                     >
-                      <path d="M0 2.5L3.5 6L9.5 0" stroke="currentColor" strokeWidth="2" />
+                      <path
+                        d={indicators.check.path}
+                        stroke="currentColor"
+                        strokeWidth={indicators.check.strokeWidth}
+                      />
                     </svg>
                   )}
                 </span>

@@ -8,6 +8,8 @@ The live [English](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Desi
 
 In [Basim's PD-830 reply](https://linear.app/onegov/issue/PD-830/audit-checkbox-for-public-release), he confirmed that the check/dash should stay white in dark mode and that a read-only design state is needed. The former is now implemented in `checkbox.tsx`; the latter still needs a Figma treatment before code can reproduce it. The issue assignee confirmed the invalid state is needed for required consent and group validation, including explanatory text. The current code and docs already support those cases.
 
+The rendered [Sizes story](http://localhost:6007/?path=/story/components-checkbox--sizes) exposed another icon mismatch: the shared SVG viewBox and 2 px stroke shrank the visible `lg` and `xl` checks, while the dash scaled up. The current Figma [md check](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=305-8917), [lg check](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=305-8952), and [xl check](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=5219-16933) export at 10.9142×8.12132, 13.8149×10.6772, and 16.3713×12.182 px with 2, 2.5, and 3 px strokes. [`checkbox.tsx`](../packages/ui/src/checkbox.tsx) now uses those exact rendered dimensions and vector paths; the Sizes story and UI tests check them.
+
 ## Comparison matrix
 
 | Coverage                                          | Current Figma evidence                                                                                                                                                                                                                                                                                                                                              | Rendered code evidence and result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -52,7 +54,7 @@ The current [Figma and code gaps](https://www.figma.com/design/4h7LJTwcIvXiwx5a1
 ## Validation
 
 - `corepack pnpm --filter @tradenetcorp/veli-ui lint` — passed.
-- `corepack pnpm --filter @tradenetcorp/veli-ui test` — passed, 99/99 tests, including new Checkbox render/export checks.
+- `corepack pnpm --filter @tradenetcorp/veli-ui test` — passed, 100/100 tests, including Checkbox vector geometry and render/export checks.
 - `corepack pnpm --filter @tradenetcorp/veli-storybook build` — passed.
 - `corepack pnpm --filter @tradenetcorp/veli-web build` — passed, including 24 web tests and 52 generated pages.
 - `corepack pnpm changeset:check` — passed, one guided UI changeset.

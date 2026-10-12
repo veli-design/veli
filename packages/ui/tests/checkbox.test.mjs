@@ -28,6 +28,29 @@ test('all public sizes render the spec box, first-line slot, and text scale', ()
   assert.match(render(), /items-center gap-3/);
 });
 
+test('check marks use the Figma vector sizes and grow alongside the dash', () => {
+  // Exported Check vectors: 305:8917 (md), 305:8952 (lg), 5219:16933 (xl).
+  for (const [size, expectedWidth, expectedHeight, expectedStroke] of [
+    ['md', 10.9142, 8.12132, 2],
+    ['lg', 13.8149, 10.6772, 2.5],
+    ['xl', 16.3713, 12.182, 3],
+  ]) {
+    const check = render({ size, defaultSelected: true });
+    const dash = render({ size, isIndeterminate: true });
+    const checkSvg = check.match(/<svg\b[^>]*>/)?.[0] ?? '';
+    const dashSvg = dash.match(/<svg\b[^>]*>/)?.[0] ?? '';
+    const checkWidth = Number(checkSvg.match(/\bwidth="([^"]+)"/)?.[1]);
+    const checkHeight = Number(checkSvg.match(/\bheight="([^"]+)"/)?.[1]);
+    const dashWidth = Number(dashSvg.match(/\bwidth="([^"]+)"/)?.[1]);
+
+    assert.equal(checkWidth, expectedWidth, size);
+    assert.equal(checkHeight, expectedHeight, size);
+    assert.ok(checkWidth > dashWidth, size);
+    assert.match(checkSvg, new RegExp(`viewBox="0 0 ${expectedWidth} ${expectedHeight}"`));
+    assert.match(check, new RegExp(`stroke-width="${expectedStroke}"`));
+  }
+});
+
 test('helper and invalid error describe the input without joining its name', () => {
   const html = render({
     isInvalid: true,

@@ -262,6 +262,23 @@ function CheckboxSizesExample() {
 
 export const Sizes: Story = {
   render: () => <CheckboxSizesExample />,
+  play: async ({ canvasElement }) => {
+    const boxes = within(canvasElement).getAllByRole('checkbox');
+
+    for (const [row, expectedWidth, expectedHeight] of [
+      [0, 10.9142, 8.12132],
+      [1, 13.8149, 10.6772],
+      [2, 16.3713, 12.182],
+    ]) {
+      const check = boxes[row * 3 + 1].closest('label')!.querySelector('svg')!;
+      const dash = boxes[row * 3 + 2].closest('label')!.querySelector('svg')!;
+      const checkBounds = check.getBoundingClientRect();
+
+      await expect(Math.abs(checkBounds.width - expectedWidth)).toBeLessThan(0.05);
+      await expect(Math.abs(checkBounds.height - expectedHeight)).toBeLessThan(0.05);
+      await expect(checkBounds.width).toBeGreaterThan(dash.getBoundingClientRect().width);
+    }
+  },
 };
 
 function CheckboxDescriptionAndErrorExample() {
