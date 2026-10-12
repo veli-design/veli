@@ -488,4 +488,20 @@ export const NarrowLayout: Story = {
     );
   },
   parameters: { layout: 'centered' },
+  play: async ({ canvasElement }) => {
+    const checkbox = within(canvasElement).getByRole('checkbox');
+    const label = checkbox.closest('label')!;
+    const visibleLabel = label.querySelector<HTMLElement>(
+      `#${CSS.escape(checkbox.getAttribute('aria-labelledby')!)}`,
+    )!;
+    const controlSlot = visibleLabel.previousElementSibling!;
+    const firstLineHeight = parseFloat(getComputedStyle(visibleLabel).lineHeight);
+
+    await expect(visibleLabel.getBoundingClientRect().height).toBeGreaterThan(
+      firstLineHeight * 1.5,
+    );
+    await expect(
+      Math.abs(controlSlot.getBoundingClientRect().top - visibleLabel.getBoundingClientRect().top),
+    ).toBeLessThan(1);
+  },
 };

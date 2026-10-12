@@ -56,7 +56,7 @@ const checkboxRootVariants = cva('group relative font-sans antialiased', {
   },
 });
 
-const checkboxControlSlotVariants = cva('flex shrink-0 items-center', {
+const checkboxControlSlotVariants = cva('flex shrink-0 self-start items-center', {
   variants: {
     size: {
       md: 'h-5',

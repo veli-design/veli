@@ -22,6 +22,8 @@ In [Basim's PD-830 reply](https://linear.app/onegov/issue/PD-830/audit-checkbox-
 
 ## Findings
 
+The [Narrow layout story](http://localhost:6007/?path=/story/components-checkbox--narrow-layout) exposed one additional code defect after review: when the label wrapped, the box was centered against both lines. The control slot now aligns with the first line in English LTR and Dhivehi RTL. The story checks the rendered positions in both languages; Figma does not provide a narrow-width frame for comparison.
+
 ### 1. Implemented changes supported by the current spec
 
 | Finding                                                                           | Evidence                                                                                                                                                                                                                                                                                                                                                    | Change                                                                                        |
