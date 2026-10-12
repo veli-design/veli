@@ -267,7 +267,7 @@ const checkboxControlVariants = cva(
 );
 
 const indicatorVariants = cva(
-  'pointer-events-none absolute inset-0 flex items-center justify-center text-base-inverted transition-[transform,opacity] duration-normal ease-out motion-reduce:transition-none',
+  'pointer-events-none absolute inset-0 flex items-center justify-center text-white transition-[transform,opacity] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       isVisible: {
