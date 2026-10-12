@@ -12,8 +12,6 @@ const englishCheckboxText = {
   on: 'On',
   indeterminate: 'Indeterminate',
   labelText: 'Label text',
-  indentedItem: 'Indented item',
-  gridItem: 'Grid item',
   channels: 'Notification channels',
   email: 'Email',
   sms: 'SMS',
@@ -33,8 +31,6 @@ const dhivehiCheckboxText = {
   on: 'އޮން',
   indeterminate: 'އިންޑިޓަރމިނޭޓް',
   labelText: 'ލޭބަލްގެ ލިޔުން',
-  indentedItem: 'އިންޑެންޓްކުރެވިފައިވާ އައިޓަމް',
-  gridItem: 'ގްރިޑް އައިޓަމް',
   channels: 'އެންގުމުގެ ވަސީލަތްތައް',
   email: 'އީމެއިލް',
   sms: 'އެސް އެމް އެސް',
@@ -341,21 +337,6 @@ export const Invalid: Story = {
     isInvalid: true,
     errorMessage: englishValidationText.termsRequiredError,
   },
-};
-
-function CheckboxRootClassNameExample() {
-  const text = useCheckboxText();
-
-  return (
-    <div className="grid gap-[12px]">
-      <Checkbox className="ml-[24px]">{text.indentedItem}</Checkbox>
-      <Checkbox className="justify-self-start">{text.gridItem}</Checkbox>
-    </div>
-  );
-}
-
-export const RootClassName: Story = {
-  render: () => <CheckboxRootClassNameExample />,
 };
 
 function CheckboxStatesAuditExample() {
