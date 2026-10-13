@@ -530,12 +530,19 @@ export function CheckboxGroupDemo() {
     <CheckboxGroup
       value={channels}
       onChange={setChannels}
+      isRequired
       description="Where should we send updates?"
     >
-      <FieldLabel>Notification channels</FieldLabel>
-      <Checkbox value="email">Email</Checkbox>
-      <Checkbox value="sms">SMS</Checkbox>
-      <Checkbox value="push">Push notifications</Checkbox>
+      {({ isDisabled, isRequired }) => (
+        <>
+          <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+            Notification channels
+          </FieldLabel>
+          <Checkbox value="email">Email</Checkbox>
+          <Checkbox value="sms">SMS</Checkbox>
+          <Checkbox value="push">Push notifications</Checkbox>
+        </>
+      )}
     </CheckboxGroup>
   );
 }

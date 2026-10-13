@@ -100,13 +100,26 @@ Disabled checkboxes cannot be focused or changed. `isReadOnly` keeps a checkbox 
 </div>
 
 ```tsx
-<CheckboxGroup name="channels" defaultValue={['email']} description="Where should we send updates?">
-  <FieldLabel>Notification channels</FieldLabel>
-  <Checkbox value="email">Email</Checkbox>
-  <Checkbox value="sms">SMS</Checkbox>
-  <Checkbox value="push">Push</Checkbox>
+<CheckboxGroup
+  name="channels"
+  isRequired
+  defaultValue={['email']}
+  description="Where should we send updates?"
+>
+  {({ isDisabled, isRequired }) => (
+    <>
+      <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+        Notification channels
+      </FieldLabel>
+      <Checkbox value="email">Email</Checkbox>
+      <Checkbox value="sms">SMS</Checkbox>
+      <Checkbox value="push">Push</Checkbox>
+    </>
+  )}
 </CheckboxGroup>
 ```
+
+For required or disabled groups, pass the group's render-state flags to `FieldLabel` as shown above. These explicit props keep the required indicator and label color aligned with the group, including when it is nested inside a `Field` with different state. `FieldLabel` is a group heading; use plain visible children for each checkbox's inline label.
 
 For one controlled checkbox, pass `isSelected` and `onChange`. For an uncontrolled checkbox, use `defaultSelected`.
 

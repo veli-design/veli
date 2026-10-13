@@ -4,7 +4,7 @@ import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Field, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
 const render = (props = {}, children = 'Email') =>
@@ -109,6 +109,38 @@ test('group connects its visible label and shared message and announces an error
   );
   assert.match(invalid, /role="alert"/);
   assert.match(invalid, /Choose one/);
+});
+
+test('group render state keeps FieldLabel aligned even inside a conflicting Field', () => {
+  for (const [isDisabled, isRequired] of [
+    [false, false],
+    [false, true],
+    [true, true],
+  ]) {
+    const html = renderToStaticMarkup(
+      h(
+        Field,
+        { isDisabled: !isDisabled, isRequired: !isRequired },
+        h(CheckboxGroup, { isDisabled, isRequired }, (state) => [
+          h(
+            FieldLabel,
+            {
+              key: 'label',
+              isDisabled: state.isDisabled,
+              isRequired: state.isRequired,
+            },
+            'Notification channels',
+          ),
+          h(Checkbox, { key: 'email', value: 'email' }, 'Email'),
+        ]),
+      ),
+    );
+    const label = html.match(/<span[^>]*data-slot="field-label"[\s\S]*?<\/span>/)?.[0] ?? '';
+    assert.ok(label.includes('Notification channels'));
+    assert.equal(label.includes('text-disabled'), isDisabled);
+    assert.equal(label.includes('>*</span>'), isRequired);
+    assert.equal(inputOf(html).includes('disabled=""'), isDisabled);
+  }
 });
 
 test('published checkbox entry and Dhivehi direction remain available', () => {

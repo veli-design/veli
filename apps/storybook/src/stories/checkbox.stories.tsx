@@ -477,9 +477,27 @@ function CheckboxGroupExample() {
         <Checkbox value="sms">{text.sms}</Checkbox>
         <Checkbox value="push">{text.push}</Checkbox>
       </CheckboxGroup>
-      <CheckboxGroup aria-label={text.channels} isRequired isInvalid errorMessage={text.errorText}>
-        <Checkbox value="email">{text.email}</Checkbox>
-        <Checkbox value="sms">{text.sms}</Checkbox>
+      <CheckboxGroup isRequired isInvalid errorMessage={text.errorText}>
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              {text.channels}
+            </FieldLabel>
+            <Checkbox value="email">{text.email}</Checkbox>
+            <Checkbox value="sms">{text.sms}</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+      <CheckboxGroup isDisabled isRequired defaultValue={['email']}>
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              {text.channels}
+            </FieldLabel>
+            <Checkbox value="email">{text.email}</Checkbox>
+            <Checkbox value="sms">{text.sms}</Checkbox>
+          </>
+        )}
       </CheckboxGroup>
     </div>
   );
@@ -490,7 +508,7 @@ export const Groups: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const groups = canvas.getAllByRole('group');
-    await expect(groups).toHaveLength(2);
+    await expect(groups).toHaveLength(3);
     await expect(groups[0]).toHaveAccessibleName();
     const email = within(groups[0]).getByRole('checkbox', { name: /Email|އީމެއިލް/ });
     await expect(email).toBeChecked();
@@ -500,6 +518,17 @@ export const Groups: Story = {
     await expect(email).toBeChecked();
     await expect(groups[1]).toHaveAttribute('data-invalid', 'true');
     await expect(within(groups[1]).getByRole('alert')).toHaveTextContent(/Error text|އެރަރ/);
+    for (const group of groups.slice(1)) {
+      await expect(group).toHaveAccessibleName(/^(Notification channels|އެންގުމުގެ ވަސީލަތްތައް)$/);
+      await expect(
+        group.querySelector('[data-slot="field-label"] [aria-hidden]'),
+      ).toHaveTextContent('*');
+    }
+    const disabledLabel = groups[2].querySelector('[data-slot="field-label"]')!;
+    await expect(disabledLabel).toHaveClass('text-disabled');
+    for (const checkbox of within(groups[2]).getAllByRole('checkbox')) {
+      await expect(checkbox).toBeDisabled();
+    }
   },
 };
 

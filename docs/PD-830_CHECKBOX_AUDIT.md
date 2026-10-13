@@ -30,6 +30,10 @@ The on pressed check vectors are size-specific: [md](https://www.figma.com/desig
 
 ## Findings
 
+### Shared form-control alignment after merging latest main
+
+Merged `origin/main` at `3d78699` (Search public-release audit). Its shared change adds explicit `isDisabled` and `isRequired` overrides to `FieldLabel`; `FieldMessage`, message variants, and renderable-message helpers are unchanged. Checkbox's inline label/message implementation retains its audited size and accessible-description contract. CheckboxGroup already uses the shared `FieldMessage` and exposes group render state, so no new component API or package styling change is needed. The [Groups story](http://localhost:6007/?path=/story/components-checkbox--groups) and website group example now pass group state into `FieldLabel`, covering visible required indicators and disabled heading/indicator colors. The package regression test verifies that these explicit flags override a surrounding `Field` with conflicting state.
+
 The [Narrow layout story](http://localhost:6007/?path=/story/components-checkbox--narrow-layout) exposed one additional code defect after review: when the label wrapped, the box was centered against both lines. The control slot now aligns with the first line in English LTR and Dhivehi RTL. The story checks the rendered positions in both languages; Figma does not provide a narrow-width frame for comparison.
 
 ### 1. Implemented changes supported by the current spec
@@ -60,7 +64,7 @@ The current [Figma and code gaps](https://www.figma.com/design/4h7LJTwcIvXiwx5a1
 ## Validation
 
 - `corepack pnpm --filter @tradenetcorp/veli-ui lint` — passed.
-- `corepack pnpm --filter @tradenetcorp/veli-ui test` — passed, 100/100 tests, including Checkbox vector geometry and render/export checks.
+- `corepack pnpm --filter @tradenetcorp/veli-ui test` — passed, 109/109 tests after merging Search, including Checkbox vector geometry, FieldLabel group-state overrides, and render/export checks.
 - `corepack pnpm --filter @tradenetcorp/veli-storybook build` — passed.
 - `corepack pnpm --filter @tradenetcorp/veli-web build` — passed, including 24 web tests and 52 generated pages.
 - `corepack pnpm changeset:check` — passed, one guided UI changeset.
