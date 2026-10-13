@@ -11,6 +11,7 @@ import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/c
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Form } from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
@@ -1026,19 +1027,102 @@ export function KbdVariantsDemo() {
 
 export function SearchUsageDemo() {
   return (
-    <div className="w-[320px]">
+    <div className="w-[320px] max-w-full">
       <Search aria-label="Search services" placeholder="Search services" />
     </div>
   );
 }
 
-export function SearchVariantsDemo() {
+export function SearchAppearancesDemo() {
   return (
-    <div className="grid w-full max-w-[360px] gap-[16px]">
+    <div className="grid w-full max-w-[320px] gap-4">
       <Search aria-label="Default search" placeholder="Default" />
-      <Search aria-label="Outline search" variant="outline" placeholder="Outline" />
+      <Search aria-label="Outline search" appearance="outline" placeholder="Outline" />
       <Search aria-label="Small search" size="sm" placeholder="Small" />
       <Search aria-label="Large search" size="lg" placeholder="Large" />
+    </div>
+  );
+}
+
+export function SearchControlledDemo() {
+  const [query, setQuery] = useState('');
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        appearance="outline"
+        label="Search services"
+        value={query}
+        onChange={setQuery}
+        description="Filter services as you type."
+      />
+      <p className="type-body-sm-regular text-base-muted">Query: {query || 'None'}</p>
+    </div>
+  );
+}
+
+export function SearchValidationDemo() {
+  return (
+    <div className="w-[320px] max-w-full space-y-4">
+      <Search label="Search services" description="Search by service name" />
+      <Search
+        appearance="outline"
+        label="Invalid search"
+        isInvalid
+        errorMessage="Enter a more specific query."
+      />
+      <Search aria-label="Disabled search" defaultValue="Unavailable" isDisabled />
+      <Search aria-label="Read-only search" defaultValue="Saved query" isReadOnly />
+    </div>
+  );
+}
+
+export function SearchFormDemo() {
+  const [submitted, setSubmitted] = useState('');
+  return (
+    <Form
+      className="w-[320px] max-w-full"
+      validationBehavior="native"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setSubmitted(String(new FormData(event.currentTarget).get('query')));
+      }}
+    >
+      <Search
+        label="Find a service"
+        name="query"
+        isRequired
+        pattern="[A-Za-z ]+"
+        description="Enter a service name using letters and spaces."
+        errorMessage="Enter a service name using letters and spaces."
+      />
+      <div className="flex gap-3">
+        <Button type="submit">Search</Button>
+        <Button type="reset" appearance="ghost" onPress={() => setSubmitted('')}>
+          Reset
+        </Button>
+      </div>
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted ? `Submitted query: ${submitted}` : 'No query submitted.'}
+      </p>
+    </Form>
+  );
+}
+
+export function SearchEventsDemo() {
+  const [submitted, setSubmitted] = useState('');
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        aria-label="Search documents"
+        placeholder="Search documents"
+        onSubmit={setSubmitted}
+        onClear={() => setSubmitted('')}
+      />
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted
+          ? `Requested query: ${submitted}`
+          : 'Press Enter to request a search; Escape clears the query.'}
+      </p>
     </div>
   );
 }
