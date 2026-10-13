@@ -222,7 +222,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "test": "corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
+    "test": "corepack pnpm --filter @tradenetcorp/veli-tokens run build && corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
     "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
     "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
   },
