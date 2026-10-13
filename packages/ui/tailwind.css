@@ -2,6 +2,39 @@
    In the app: @import "@tradenetcorp/veli-ui/tailwind"; */
 @source "./dist";
 
+/* Snapshot pseudos inherit from the document, not the original Toast element. */
+::view-transition-new(.toast-from-left),
+::view-transition-old(.toast-from-left) {
+  --toast-enter-x: -100%;
+  --toast-exit-x: -100%;
+  --toast-enter-y: 0;
+  --toast-exit-y: 0;
+}
+
+::view-transition-new(.toast-from-right),
+::view-transition-old(.toast-from-right) {
+  --toast-enter-x: 100%;
+  --toast-exit-x: 100%;
+  --toast-enter-y: 0;
+  --toast-exit-y: 0;
+}
+
+::view-transition-new(.toast-from-top),
+::view-transition-old(.toast-from-top) {
+  --toast-enter-x: 0;
+  --toast-exit-x: 0;
+  --toast-enter-y: -100%;
+  --toast-exit-y: -100%;
+}
+
+::view-transition-new(.toast-from-bottom),
+::view-transition-old(.toast-from-bottom) {
+  --toast-enter-x: 0;
+  --toast-exit-x: 0;
+  --toast-enter-y: 100%;
+  --toast-exit-y: 100%;
+}
+
 ::view-transition-new(.toast):only-child {
   animation: toast-enter 400ms ease;
 }
@@ -22,5 +55,13 @@
     translate: var(--toast-exit-x, 100%) var(--toast-exit-y, 0);
     opacity: 0;
     visibility: hidden;
+  }
+}
+
+/* Queue updates remain immediate when users reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(.toast),
+  ::view-transition-old(.toast) {
+    animation: none;
   }
 }

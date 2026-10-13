@@ -1,10 +1,24 @@
-import { useEffect, useMemo, type ReactNode } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  useCallback,
+  type ReactNode,
+} from 'react';
+import { UNSTABLE_ToastStateContext as ToastStateContext } from 'react-aria-components';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import {
   createToastQueue,
+  Toast,
+  ToastContent,
+  ToastActions,
+  ToastCloseButton,
+  ToastTimeoutProgress,
   ToastRegion,
   type ToastAppearance,
+  type ToastRegionProps,
   type ToastIntent,
   type VeliToastContent,
 } from '@tradenetcorp/veli-ui/toast';
@@ -167,85 +181,8 @@ type StaticToastPreview = {
   progress?: number;
 };
 
-function getStaticToastActionKey(action: NonNullable<VeliToastContent['actions']>[number]) {
-  if (action.id != null) {
-    return action.id;
-  }
-
-  if (typeof action.label === 'string' || typeof action.label === 'number') {
-    return action.label;
-  }
-
-  return action.intent ?? action.appearance ?? 'toast-action';
-}
-
-const getStatusButtonIntent = (intent: ToastIntent) => {
-  if (intent === 'danger') {
-    return 'danger';
-  }
-
-  if (intent === 'positive') {
-    return 'primary';
-  }
-
-  return 'secondary';
-};
-
-const staticToastIntentClasses = {
-  outline: {
-    neutral: 'border-status-neutral-subtle bg-bg-surface-raised text-text-default-default',
-    info: 'border-status-info-subtle bg-bg-surface-raised text-text-primary-default',
-    positive: 'border-status-success-subtle bg-bg-surface-raised text-text-success-default',
-    cautious: 'border-status-cautious-subtle bg-bg-surface-raised text-text-cautious-default',
-    warning: 'border-status-warning-subtle bg-bg-surface-raised text-text-warning-default',
-    danger: 'border-status-danger-subtle bg-bg-surface-raised text-text-danger-default',
-  },
-  subtle: {
-    neutral: 'border-status-neutral-subtle bg-status-neutral-subtle text-text-default-strong',
-    info: 'border-status-info-subtle bg-status-info-subtle text-text-primary-strong',
-    positive: 'border-status-success-subtle bg-status-success-subtle text-text-success-strong',
-    cautious: 'border-status-cautious-subtle bg-status-cautious-subtle text-text-cautious-strong',
-    warning: 'border-status-warning-subtle bg-status-warning-subtle text-text-warning-strong',
-    danger: 'border-status-danger-subtle bg-status-danger-subtle text-text-danger-strong',
-  },
-  emphasis: {
-    neutral: 'border-status-neutral-emphasis bg-status-neutral-emphasis text-text-default-inverted',
-    info: 'border-status-info-emphasis bg-status-info-emphasis text-text-primary-inverted',
-    positive:
-      'border-status-success-emphasis bg-status-success-emphasis text-text-success-inverted',
-    cautious:
-      'border-status-cautious-emphasis bg-status-cautious-emphasis text-text-cautious-inverted',
-    warning: 'border-status-warning-emphasis bg-status-warning-emphasis text-text-warning-inverted',
-    danger: 'border-status-danger-emphasis bg-status-danger-emphasis text-text-danger-inverted',
-  },
-} satisfies Record<ToastAppearance, Record<ToastIntent, string>>;
-
-const staticToastDescriptionClasses = {
-  outline: 'text-text-default-muted',
-  subtle: 'text-text-default-muted',
-  emphasis: 'text-current opacity-80',
-} satisfies Record<ToastAppearance, string>;
-
-const staticToastCloseButtonClasses = {
-  outline: 'text-icon-default-default',
-  subtle: 'text-icon-default-default',
-  emphasis: 'text-current',
-} satisfies Record<ToastAppearance, string>;
-
-const staticToastProgressTrackClasses = {
-  outline: 'bg-gray-alpha-100',
-  subtle: 'bg-gray-alpha-200',
-  emphasis: 'bg-black/10',
-} satisfies Record<ToastAppearance, string>;
-
-const staticToastProgressIntentFillClasses = {
-  neutral: 'bg-status-neutral-emphasis',
-  info: 'bg-status-info-emphasis',
-  positive: 'bg-status-success-emphasis',
-  cautious: 'bg-status-cautious-emphasis',
-  warning: 'bg-status-warning-emphasis',
-  danger: 'bg-status-danger-emphasis',
-} satisfies Record<ToastIntent, string>;
+const getStatusButtonIntent = (intent: ToastIntent) =>
+  intent === 'danger' ? 'danger' : intent === 'positive' ? 'primary' : 'secondary';
 
 function ToastStoryShell({ children, controls }: { children: ReactNode; controls: ReactNode }) {
   return (
@@ -256,96 +193,35 @@ function ToastStoryShell({ children, controls }: { children: ReactNode; controls
   );
 }
 
-function StaticToastCard({ label, content, progress }: StaticToastPreview) {
-  const intent = content.intent ?? 'neutral';
-  const appearance = content.appearance ?? 'outline';
-
+function StaticToastCard({ label, content }: StaticToastPreview) {
+  // ToastRegion intentionally portals; use its real queue state for inline previews.
+  const queue = useMemo(
+    () => createToastQueue<VeliToastContent>({ maxVisibleToasts: 1, wrapUpdate: (fn) => fn() }),
+    [],
+  );
+  const subscribe = useCallback((onChange: () => void) => queue.subscribe(onChange), [queue]);
+  const getSnapshot = useCallback(() => queue.visibleToasts, [queue]);
+  const visibleToasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  useEffect(() => {
+    const key = queue.add(content, { timeout: content.showProgress ? 60000 : 0 });
+    return () => queue.close(key);
+  }, [queue, content]);
   return (
     <div className="flex w-full max-w-sm flex-col gap-2">
-      <p className="type-caption-medium text-start text-text-default-muted">{label}</p>
-      <div
-        className={[
-          'relative flex min-h-[112px] w-full items-start gap-3 overflow-hidden rounded-xl border p-4 font-sans antialiased shadow-md outline-none',
-          staticToastIntentClasses[appearance][intent],
-        ].join(' ')}
+      <p className="type-caption-medium text-start text-base-muted">{label}</p>
+      <ToastStateContext.Provider
+        value={{
+          visibleToasts,
+          add: queue.add.bind(queue),
+          close: queue.close.bind(queue),
+          pauseAll: queue.pauseAll.bind(queue),
+          resumeAll: queue.resumeAll.bind(queue),
+        }}
       >
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="type-body-sm-medium">{content.title}</p>
-            {content.description ? (
-              <p
-                className={['type-body-sm-regular', staticToastDescriptionClasses[appearance]].join(
-                  ' ',
-                )}
-              >
-                {content.description}
-              </p>
-            ) : null}
-          </div>
-          {content.actions?.length ? (
-            <div className="flex flex-wrap items-center gap-2">
-              {content.actions.map((action) => {
-                const actionAppearance = action.appearance ?? 'fill';
-                const emphasisQuietActionClassName =
-                  appearance === 'emphasis' && actionAppearance !== 'fill'
-                    ? 'text-current hover:bg-white/15 active:bg-white/20'
-                    : undefined;
-
-                return (
-                  <Button
-                    key={getStaticToastActionKey(action)}
-                    size="xs"
-                    intent={action.intent ?? 'secondary'}
-                    appearance={actionAppearance}
-                    className={emphasisQuietActionClassName}
-                  >
-                    {action.label}
-                  </Button>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
-        <span
-          aria-hidden="true"
-          className={[
-            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline-none',
-            staticToastCloseButtonClasses[appearance],
-          ].join(' ')}
-        >
-          <svg
-            aria-hidden="true"
-            className="size-4"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-          >
-            <path d="M4 4 12 12" />
-            <path d="M12 4 4 12" />
-          </svg>
-        </span>
-        {content.showProgress ? (
-          <div
-            aria-hidden="true"
-            className={[
-              'pointer-events-none absolute inset-x-0 bottom-0 h-1 overflow-hidden rounded-b-[inherit]',
-              staticToastProgressTrackClasses[appearance],
-            ].join(' ')}
-          >
-            <div
-              className={[
-                'h-full origin-left will-change-transform',
-                appearance === 'emphasis'
-                  ? 'bg-white/70'
-                  : staticToastProgressIntentFillClasses[intent],
-              ].join(' ')}
-              style={{ transform: `scaleX(${progress ?? 0.68})` }}
-            />
-          </div>
-        ) : null}
-      </div>
+        {visibleToasts.map((toast) => (
+          <Toast key={toast.key} toast={toast} />
+        ))}
+      </ToastStateContext.Provider>
     </div>
   );
 }
@@ -473,7 +349,7 @@ export const Appearances: Story = {
         <div className="mx-auto flex min-h-[640px] w-full max-w-6xl flex-col justify-center gap-8 p-8">
           {staticToasts.map(({ appearance, label, toasts }) => (
             <div key={appearance} className="flex flex-col items-center gap-3">
-              <p className="type-body-sm-medium text-text-default-emphasis">{label}</p>
+              <p className="type-body-sm-medium text-base-emphasis">{label}</p>
               <StaticToastGrid toasts={toasts} />
               <div className="flex flex-wrap justify-center gap-2">
                 {statusIntents.map((intent) => (
@@ -629,6 +505,186 @@ export const WithProgress: Story = {
           ))}
         >
           <StaticToastGrid toasts={progressToastExamples} />
+        </ToastStoryShell>
+      </>
+    );
+  },
+};
+
+export const Placements: Story = {
+  render: function PlacementsStory() {
+    const queue = useStoryToastQueue(3);
+    const text = useToastText();
+    const [placement, setPlacement] =
+      useState<NonNullable<ToastRegionProps<VeliToastContent>['placement']>>('bottom-end');
+    return (
+      <>
+        <ToastRegion queue={queue} placement={placement} />
+        <ToastStoryShell
+          controls={['top', 'bottom', 'top-start', 'top-end', 'bottom-start', 'bottom-end'].map(
+            (value) => (
+              <Button
+                key={value}
+                onPress={() => {
+                  setPlacement(value as typeof placement);
+                  queue.clear();
+                  queue.add(
+                    { title: text.applicationSaved, description: text.draftStored },
+                    { timeout: 0 },
+                  );
+                }}
+              >
+                {value}
+              </Button>
+            ),
+          )}
+        >
+          <p className="type-body-sm-regular text-base-default">{text.noteSaved}</p>
+        </ToastStoryShell>
+      </>
+    );
+  },
+};
+
+export const NarrowLongContent: Story = {
+  render: function NarrowLongContentStory() {
+    const text = useToastText();
+    const toasts = useMemo(
+      () => [
+        {
+          id: 'long',
+          label: text.multipleActions,
+          content: {
+            title: `${text.applicationSaved} — ${text.applicationSaved}`,
+            description: (
+              <>
+                {text.draftStored} {text.draftStored}{' '}
+                <bdi>application_reference_12345678901234567890123456789012345678901234567890</bdi>
+              </>
+            ),
+            actions: [
+              { label: `${text.retry} ${text.retry} ${text.retry}`, dismissOnPress: false },
+              { label: text.undo, intent: 'accent' as const },
+            ],
+          },
+        },
+        {
+          id: 'no-close',
+          label: text.noteAdded,
+          content: {
+            title: text.noteAdded,
+            showCloseButton: false,
+            actions: [{ label: text.dismiss }],
+          },
+        },
+      ],
+      [text],
+    );
+    return (
+      <div className="mx-auto w-full max-w-[288px] p-4">
+        <StaticToastGrid toasts={toasts} />
+      </div>
+    );
+  },
+};
+
+export const Composition: Story = {
+  render: function CompositionStory() {
+    const queue = useStoryToastQueue(2);
+    const text = useToastText();
+    const [count, setCount] = useState(0);
+    return (
+      <>
+        <ToastRegion
+          queue={queue}
+          className={({ isHovered }) => (isHovered ? 'ring-1 ring-border-focus' : '')}
+          style={{ maxWidth: 360 }}
+        >
+          {({ toast }) => (
+            <Toast
+              toast={toast}
+              className={({ isFocusVisible }) => (isFocusVisible ? 'ring-2' : '')}
+              style={() => ({ borderStyle: 'dashed' })}
+            >
+              {({ toast: current }) => (
+                <>
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
+                    <ToastContent toast={current} />
+                    <ToastActions toast={current} className="gap-3" />
+                  </div>
+                  <ToastCloseButton aria-label={text.dismiss} />
+                  <ToastTimeoutProgress toast={current} />
+                </>
+              )}
+            </Toast>
+          )}
+        </ToastRegion>
+        <ToastStoryShell
+          controls={
+            <>
+              <Button
+                onPress={() =>
+                  queue.add(
+                    {
+                      title: text.updateAvailable,
+                      description: 0,
+                      actions: [
+                        {
+                          label: text.retry,
+                          dismissOnPress: false,
+                          onPress: () => setCount((value) => value + 1),
+                        },
+                        { label: text.dismiss },
+                      ],
+                    },
+                    { timeout: 0 },
+                  )
+                }
+              >
+                {text.singleAction}
+              </Button>
+              <Button onPress={() => queue.clear()}>{text.dismiss}</Button>
+            </>
+          }
+        >
+          <output className="type-body-sm-regular text-base-default">
+            {text.singleAction}: {count}
+          </output>
+        </ToastStoryShell>
+      </>
+    );
+  },
+};
+
+export const ActionIdentity: Story = {
+  render: function ActionIdentityStory() {
+    const queue = useStoryToastQueue(1);
+    const text = useToastText();
+    const [reverse, setReverse] = useState(false);
+    useEffect(() => {
+      const key = queue.add({ title: text.updateAvailable });
+      return () => queue.close(key);
+    }, [queue, text]);
+    const actions = [
+      { id: 'retry', label: text.retry, dismissOnPress: false },
+      { id: 'later', label: text.later, dismissOnPress: false },
+    ];
+    return (
+      <>
+        <ToastRegion queue={queue}>
+          {({ toast }) => (
+            <Toast
+              toast={{
+                ...toast,
+                content: { ...toast.content, actions: reverse ? [...actions].reverse() : actions },
+              }}
+            />
+          )}
+        </ToastRegion>
+        <ToastStoryShell
+          controls={<Button onPress={() => setReverse((value) => !value)}>Reverse actions</Button>}
+        >
+          <p className="type-body-sm-regular text-base-default">{text.multipleActions}</p>
         </ToastStoryShell>
       </>
     );
