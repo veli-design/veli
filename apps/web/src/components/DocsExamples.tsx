@@ -637,7 +637,7 @@ export function ComboBoxExplorationDemo() {
 
 export function ComboBoxValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
+    <div className="flex flex-col gap-[16px]">
       <ComboBox
         label="Default"
         description="Helper text"
