@@ -46,14 +46,11 @@ import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   BellIcon,
-  CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
   LinkSimpleIcon,
-  MagnifyingGlassIcon,
   PencilSimpleIcon,
   TrashIcon,
-  WarningCircleIcon,
 } from '@phosphor-icons/react';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
@@ -166,8 +163,6 @@ const tagsDocsText = {
 } as const;
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
-
-const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
   en: {
@@ -624,28 +619,9 @@ export function ComboBoxUsageDemo() {
 export function ComboBoxExplorationDemo() {
   return (
     <div className="w-[320px]">
-      <ComboBox
-        label="Location"
-        isOptional
-        infoTooltip="Use this combobox to search and choose a matching option."
-        infoTooltipAriaLabel="More information"
-        action="Browse"
-        description="Choose a service location or enter a custom value."
-        placeholder="Search location"
-        allowsCustomValue
-        startAddon={comboBoxExplorationStartAddon}
-        startContent={<CalendarBlankIcon size={16} />}
-        endContent={<WarningCircleIcon size={16} />}
-      >
+      <ComboBox label="Location" placeholder="Search location">
         <ComboBoxSection title="Popular">
-          <ComboBoxItem id="male">
-            <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-medium text-base-subtle">
-                MLE
-              </span>
-              <span>Male'</span>
-            </span>
-          </ComboBoxItem>
+          <ComboBoxItem id="male">Male'</ComboBoxItem>
           <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
           <ComboBoxItem id="addu">Addu City</ComboBoxItem>
         </ComboBoxSection>

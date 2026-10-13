@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import {
-  CalendarBlankIcon,
-  InfoIcon,
-  MagnifyingGlassIcon,
-  WarningCircleIcon,
-} from '@phosphor-icons/react';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
@@ -56,7 +50,6 @@ const comboboxText = {
     readOnly: 'Read only',
     customValue: 'Custom value',
     empty: 'No options',
-    action: 'Browse',
     errorMessage: 'Please choose a supported location.',
     infoTooltip: 'Search and choose a matching location.',
     infoTooltipAriaLabel: 'More information',
@@ -80,7 +73,6 @@ const comboboxText = {
     readOnly: 'ކިޔަމަށް އެކަނި',
     customValue: 'ކަސްޓަމް ވެލިއު',
     empty: 'އޮޕްޝަނެއް ނެތް',
-    action: 'ބްރައުޒް',
     errorMessage: 'ސައްޙަ ތަނެއް ޚިޔާރުކުރައްވާ.',
     infoTooltip: 'ތަނެއް ހޯދައި ޚިޔާރުކުރައްވާ.',
     infoTooltipAriaLabel: 'އިތުރު މަޢުލޫމާތު',
@@ -100,11 +92,6 @@ type ComboBoxLanguage = keyof typeof comboboxText;
 type ComboBoxText = (typeof comboboxText)[ComboBoxLanguage];
 type ComboBoxStoryArgs = ComponentProps<typeof ComboBox> & {
   showInfoTooltip: boolean;
-  showLabelIcon: boolean;
-  showAction: boolean;
-  showStartAddon: boolean;
-  showStartContent: boolean;
-  showEndContent: boolean;
 };
 
 const argTextKeys = [
@@ -190,8 +177,6 @@ const meta = {
       infoTooltip: { control: 'text' },
       infoTooltipAriaLabel: { control: 'text' },
       showInfoTooltip: { control: 'boolean' },
-      showLabelIcon: { control: 'boolean' },
-      showAction: { control: 'boolean' },
     }),
     ...withArgCategory('Content', {
       placeholder: { control: 'text' },
@@ -203,9 +188,6 @@ const meta = {
       menuTrigger: { control: 'select', options: ['focus', 'input', 'manual'] },
       allowsCustomValue: { control: 'boolean' },
       emptyState: { control: 'text' },
-      showStartAddon: { control: 'boolean' },
-      showStartContent: { control: 'boolean' },
-      showEndContent: { control: 'boolean' },
     }),
     ...withArgCategory('State', {
       isRequired: { control: 'boolean' },
@@ -239,16 +221,11 @@ const meta = {
     infoTooltip: comboboxText.en.infoTooltip,
     infoTooltipAriaLabel: comboboxText.en.infoTooltipAriaLabel,
     showInfoTooltip: true,
-    showLabelIcon: false,
-    showAction: false,
     placeholder: comboboxText.en.placeholder,
     description: comboboxText.en.helperText,
     defaultValue: null,
     menuTrigger: 'focus',
     allowsCustomValue: false,
-    showStartAddon: false,
-    showStartContent: false,
-    showEndContent: false,
     isRequired: false,
     showRequiredIndicator: true,
     isInvalid: false,
@@ -265,15 +242,7 @@ export const Default: Story = {
   render: (args) => {
     const language = useComboBoxLanguage();
     const text = comboboxText[language];
-    const {
-      showInfoTooltip,
-      showLabelIcon,
-      showAction,
-      showStartAddon,
-      showStartContent,
-      showEndContent,
-      ...comboboxArgs
-    } = args;
+    const { showInfoTooltip, ...comboboxArgs } = args;
     return (
       <div key={`${language}:${args.defaultValue ?? ''}`} className="w-[min(320px,90vw)]">
         <ComboBox
@@ -290,11 +259,6 @@ export const Default: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
-          labelIcon={showLabelIcon ? <InfoIcon size={16} aria-hidden /> : undefined}
-          action={showAction ? text.action : undefined}
-          startAddon={showStartAddon ? <MagnifyingGlassIcon size={16} aria-hidden /> : undefined}
-          startContent={showStartContent ? <CalendarBlankIcon size={16} aria-hidden /> : undefined}
-          endContent={showEndContent ? <WarningCircleIcon size={16} aria-hidden /> : undefined}
         >
           {renderOptions(text)}
         </ComboBox>
@@ -443,11 +407,7 @@ export const Sections: Story = {
       <div key={language} className="w-[min(320px,90vw)]">
         <ComboBox label={text.label} placeholder={text.placeholder} defaultValue="male">
           <ComboBoxSection title={text.popular}>
-            <ComboBoxItem
-              id="male"
-              description={text.helperText}
-              startContent={<CalendarBlankIcon size={16} aria-hidden />}
-            >
+            <ComboBoxItem id="male" description={text.helperText}>
               {text.locations.male}
             </ComboBoxItem>
             <ComboBoxItem id="hulhumale">{text.locations.hulhumale}</ComboBoxItem>
@@ -455,11 +415,7 @@ export const Sections: Story = {
           </ComboBoxSection>
           <ComboBoxSection title={text.regional}>
             <ComboBoxItem id="fuvahmulah">{text.locations.fuvahmulah}</ComboBoxItem>
-            <ComboBoxItem
-              id="kulhudhuffushi"
-              isDisabled
-              endContent={<WarningCircleIcon size={16} aria-hidden />}
-            >
+            <ComboBoxItem id="kulhudhuffushi" isDisabled>
               {text.locations.kulhudhuffushi}
             </ComboBoxItem>
           </ComboBoxSection>
@@ -484,15 +440,4 @@ export const Sections: Story = {
     await expect(selected.querySelector('svg')).not.toBeNull();
     await userEvent.keyboard('{Escape}');
   },
-};
-
-export const Slots: Story = {
-  args: {
-    showLabelIcon: true,
-    showAction: true,
-    showStartAddon: true,
-    showStartContent: true,
-    showEndContent: true,
-  },
-  render: Default.render,
 };
