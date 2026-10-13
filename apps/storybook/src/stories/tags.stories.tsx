@@ -904,14 +904,15 @@ export const InteractionStates: Story = {
   parameters: { controls: { disable: true } },
   render: () => {
     const text = useTagsText();
-    const [items, setItems] = useState(['tourism', 'fisheries', 'transport']);
+    const [items, setItems] = useState(['tourism', 'fisheries', 'transport', 'education']);
     const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(
-      () => new Set(['fisheries']),
+      () => new Set(['fisheries', 'education']),
     );
     const labels: Record<string, string> = {
       tourism: text.tourism,
       fisheries: text.fisheries,
       transport: text.transport,
+      education: text.education,
     };
 
     return (
@@ -926,7 +927,7 @@ export const InteractionStates: Story = {
           onRemove={(keys) => setItems((current) => current.filter((id) => !keys.has(id)))}
         >
           {items.map((id) => (
-            <Tag key={id} id={id} textValue={labels[id]}>
+            <Tag key={id} id={id} textValue={labels[id]} isDisabled={id === 'education'}>
               {() => <span>{labels[id]}</span>}
             </Tag>
           ))}
@@ -956,9 +957,17 @@ export const InteractionStates: Story = {
     await userEvent.click(rows[0]);
     await expect(rows[0]).toHaveAttribute('aria-selected', 'true');
     await userEvent.click(removeButton);
-    await expect(within(grid).getAllByRole('row')).toHaveLength(2);
+    await expect(within(grid).getAllByRole('row')).toHaveLength(3);
     await expect(within(rows[1]).getByRole('button')).toBeDisabled();
     await expect(rows[1]).toHaveAttribute('data-selected', 'true');
+    await userEvent.click(rows[2]);
+    await userEvent.keyboard('{Delete}');
+    const remainingRows = within(grid).getAllByRole('row');
+    await expect(remainingRows).toHaveLength(2);
+    for (const row of remainingRows) {
+      await expect(row).toHaveAttribute('aria-disabled', 'true');
+      await expect(within(row).getByRole('button')).toBeDisabled();
+    }
   },
 };
 

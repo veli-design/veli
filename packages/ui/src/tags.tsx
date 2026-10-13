@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   Button as AriaButton,
   Label,
+  ListStateContext,
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagList as AriaTagList,
@@ -26,6 +27,24 @@ import { useVeliLanguage } from './provider.js';
 
 const TagGroupDisabledContext = React.createContext(false);
 const TagGroupSizeContext = React.createContext<TagSize | undefined>(undefined);
+
+type TagListState = React.ContextType<typeof ListStateContext>;
+
+function TagRemovalState({ stateRef }: { stateRef: React.RefObject<TagListState> }) {
+  const state = React.useContext(ListStateContext);
+
+  React.useLayoutEffect(() => {
+    if (!state) {
+      return;
+    }
+    stateRef.current = state;
+    return () => {
+      stateRef.current = null;
+    };
+  }, [state, stateRef]);
+
+  return null;
+}
 
 export type TagSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -245,6 +264,7 @@ export function TagGroup<T extends object>({
   errorMessage,
   items,
   children,
+  onRemove,
   renderEmptyState,
   isDisabled = false,
   size,
@@ -254,6 +274,28 @@ export function TagGroup<T extends object>({
 }: TagGroupProps<T>) {
   const languageConfig = useVeliLanguage();
   const text = localizedTagText[languageConfig.language];
+  const removalStateRef = React.useRef<TagListState>(null);
+  const handleRemove = React.useCallback<NonNullable<AriaTagGroupProps['onRemove']>>(
+    (keys) => {
+      const state = removalStateRef.current;
+      if (isDisabled || !state || !onRemove) {
+        return;
+      }
+
+      // React Aria includes disabled selected keys in keyboard bulk removal.
+      // Read its collection directly to retain numeric/string Key identity and
+      // cover both disabledKeys and individual Tag isDisabled props.
+      const removableKeys = new Set(
+        [...keys].filter(
+          (key) => !state.disabledKeys.has(key) && !state.collection.getItem(key)?.props.isDisabled,
+        ),
+      );
+      if (removableKeys.size > 0) {
+        onRemove(removableKeys);
+      }
+    },
+    [isDisabled, onRemove],
+  );
   const setRootRef = React.useCallback(
     (node: HTMLDivElement | null) => {
       if (!node) {
@@ -274,6 +316,7 @@ export function TagGroup<T extends object>({
       <TagGroupSizeContext.Provider value={size}>
         <AriaTagGroup
           {...props}
+          onRemove={onRemove ? handleRemove : undefined}
           ref={setRootRef}
           data-disabled={isDisabled || undefined}
           className={twMerge(
@@ -282,6 +325,7 @@ export function TagGroup<T extends object>({
             className,
           )}
         >
+          <TagRemovalState stateRef={removalStateRef} />
           {hasRenderableMessage(label) ? (
             <Label
               className={twMerge(
