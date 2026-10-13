@@ -23,6 +23,13 @@ const checkboxIndicatorSizes = {
       path: 'M0.707107 3.20711L4.20711 6.70711L10.2071 0.707107',
       strokeWidth: 2,
     },
+    pressedCheck: {
+      width: 10.0411,
+      height: 7.47161,
+      viewBox: '0 0 10.0411 7.47161',
+      path: 'M0.650538 2.95054L3.87054 6.17054L9.39054 0.650538',
+      strokeWidth: 1.84,
+    },
     indeterminate: { width: 10, height: 4, viewBox: '0 0 10 4' },
   },
   lg: {
@@ -33,6 +40,13 @@ const checkboxIndicatorSizes = {
       path: 'M0.907441 4.19301L5.32849 8.85968L12.9074 0.859681',
       strokeWidth: 2.5,
     },
+    pressedCheck: {
+      width: 10.4519,
+      height: 8.14177,
+      viewBox: '0 0 10.4519 8.14177',
+      path: 'M0.725953 3.18774L4.04174 6.68774L9.72595 0.687745',
+      strokeWidth: 2,
+    },
     indeterminate: { width: 13, height: 5, viewBox: '0 0 10 4' },
   },
   xl: {
@@ -42,6 +56,13 @@ const checkboxIndicatorSizes = {
       viewBox: '0 0 16.3713 12.182',
       path: 'M1.06066 4.81066L6.31066 10.0607L15.3107 1.06066',
       strokeWidth: 3,
+    },
+    pressedCheck: {
+      width: 13.0971,
+      height: 9.74558,
+      viewBox: '0 0 13.0971 9.74558',
+      path: 'M0.848528 3.84853L5.04853 8.04853L12.2485 0.848528',
+      strokeWidth: 2.4,
     },
     indeterminate: { width: 15, height: 6, viewBox: '0 0 10 4' },
   },
@@ -212,7 +233,7 @@ const checkboxControlVariants = cva(
         isIndeterminate: false,
         isDisabled: false,
         isPressed: true,
-        className: 'bg-checkbox-container-bg border-checkbox-container-bg-hover',
+        className: 'bg-checkbox-container-bg border-checkbox-container-border-hover',
       },
       {
         isSelected: false,
@@ -430,10 +451,8 @@ export function Checkbox({
         const isPressed = state.isDisabled ? false : state.isPressed;
         const resolvedSize = size ?? 'md';
         const indicators = checkboxIndicatorSizes[resolvedSize];
-        const indicatorScaleClass =
-          checkedOrIndeterminate && (!isPressed || state.isIndeterminate)
-            ? 'scale-100'
-            : 'scale-70';
+        const check = isPressed ? indicators.pressedCheck : indicators.check;
+        const indicatorScaleClass = checkedOrIndeterminate ? 'scale-100' : 'scale-70';
 
         return (
           <>
@@ -475,18 +494,14 @@ export function Checkbox({
                   ) : (
                     <svg
                       aria-hidden="true"
-                      width={indicators.check.width}
-                      height={indicators.check.height}
-                      viewBox={indicators.check.viewBox}
+                      width={check.width}
+                      height={check.height}
+                      viewBox={check.viewBox}
                       preserveAspectRatio="none"
                       overflow="visible"
                       fill="none"
                     >
-                      <path
-                        d={indicators.check.path}
-                        stroke="currentColor"
-                        strokeWidth={indicators.check.strokeWidth}
-                      />
+                      <path d={check.path} stroke="currentColor" strokeWidth={check.strokeWidth} />
                     </svg>
                   )}
                 </span>

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
 import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
 import { FieldLabel } from '@tradenetcorp/veli-ui/field';
@@ -273,6 +273,63 @@ export const Sizes: Story = {
       await expect(Math.abs(checkBounds.width - expectedWidth)).toBeLessThan(0.05);
       await expect(Math.abs(checkBounds.height - expectedHeight)).toBeLessThan(0.05);
       await expect(checkBounds.width).toBeGreaterThan(dash.getBoundingClientRect().width);
+    }
+
+    // Figma pressed vectors: 305:8922, 305:8956, 5219:16954.
+    const pointerCoords = (target: HTMLElement) => {
+      const bounds = target.getBoundingClientRect();
+      // React Aria treats zero-size pointers as assistive-technology activation.
+      return {
+        clientX: bounds.x + 8,
+        clientY: bounds.y + bounds.height / 2,
+        width: 1,
+        height: 1,
+        pressure: 0.5,
+      };
+    };
+    for (const [row, width, height, stroke, borderWidth] of [
+      [0, 10.0411, 7.47161, 1.84, '3px'],
+      [1, 10.4519, 8.14177, 2, '4px'],
+      [2, 13.0971, 9.74558, 2.4, '4px'],
+    ] as const) {
+      const offLabel = boxes[row * 3].closest('label')!;
+      const offControl = offLabel.querySelector('svg')!.parentElement!.parentElement!;
+      await fireEvent.pointerOver(offLabel, { pointerType: 'mouse' });
+      await waitFor(() => expect(offLabel).toHaveAttribute('data-hovered'));
+      await Promise.all(offControl.getAnimations().map((animation) => animation.finished));
+      const hoverBorder = getComputedStyle(offControl).borderColor;
+      await fireEvent.pointerDown(offLabel, {
+        ...pointerCoords(offLabel),
+        pointerId: 1,
+        pointerType: 'mouse',
+        button: 0,
+      });
+      await Promise.all(offControl.getAnimations().map((animation) => animation.finished));
+      await expect(getComputedStyle(offControl).borderColor).toBe(hoverBorder);
+      await expect(getComputedStyle(offControl).borderTopWidth).toBe(borderWidth);
+      await fireEvent.pointerCancel(offLabel, { pointerId: 1, pointerType: 'mouse' });
+      await waitFor(() => expect(offLabel).not.toHaveAttribute('data-pressed'));
+      await expect(boxes[row * 3]).not.toBeChecked();
+
+      const onLabel = boxes[row * 3 + 1].closest('label')!;
+      await fireEvent.pointerDown(onLabel, {
+        ...pointerCoords(onLabel),
+        pointerId: 1,
+        pointerType: 'mouse',
+        button: 0,
+      });
+      const pressedCheck = onLabel.querySelector('svg')!;
+      await expect(Math.abs(pressedCheck.getBoundingClientRect().width - width)).toBeLessThan(0.05);
+      await expect(Math.abs(pressedCheck.getBoundingClientRect().height - height)).toBeLessThan(
+        0.05,
+      );
+      await expect(pressedCheck.querySelector('path')).toHaveAttribute(
+        'stroke-width',
+        String(stroke),
+      );
+      await fireEvent.pointerCancel(onLabel, { pointerId: 1, pointerType: 'mouse' });
+      await waitFor(() => expect(onLabel).not.toHaveAttribute('data-pressed'));
+      await expect(boxes[row * 3 + 1]).toBeChecked();
     }
   },
 };
