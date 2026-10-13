@@ -28,6 +28,7 @@ import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/c
 ```tsx
 <ComboBox
   label="Country"
+  placeholder="Choose a country"
   description="Start typing to filter options."
   defaultItems={[
     { id: 'mv', name: 'Maldives' },
@@ -45,7 +46,7 @@ Use `value`, `defaultValue`, and `onChange` for selected keys, or React Aria's `
 `default` uses the underline shell. `outline` draws an inset border. Sizes `sm`, `md`, and `lg` have field heights of 36, 44, and 52px.
 
 ```tsx
-<ComboBox label="Country" appearance="outline" size="md">
+<ComboBox label="Country" placeholder="Choose a country" appearance="outline" size="md">
   <ComboBoxItem id="mv">Maldives</ComboBoxItem>
   <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
 </ComboBox>
@@ -80,7 +81,12 @@ When `isInvalid` is set, `errorMessage` replaces the helper text. `isRequired` m
 </div>
 
 ```tsx
-<ComboBox label="Country" isInvalid errorMessage="Choose a country to continue.">
+<ComboBox
+  label="Country"
+  placeholder="Choose a country"
+  isInvalid
+  errorMessage="Choose a country to continue."
+>
   <ComboBoxItem id="mv">Maldives</ComboBoxItem>
   <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
 </ComboBox>

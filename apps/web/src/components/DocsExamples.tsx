@@ -607,6 +607,7 @@ export function ComboBoxUsageDemo() {
     <div className="w-[320px]">
       <ComboBox
         label="Country"
+        placeholder="Choose a country"
         description="Start typing to filter options."
         defaultItems={COUNTRY_OPTIONS}
       >
