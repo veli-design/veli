@@ -197,7 +197,7 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
               placeholder="Search"
               autoComplete="off"
               spellCheck={false}
-              variant="default"
+              appearance="default"
               size="lg"
             />
 
