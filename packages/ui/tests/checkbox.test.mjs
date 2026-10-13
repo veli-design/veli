@@ -82,6 +82,8 @@ test('caller labels and numeric visible labels remain accessible', () => {
   assert.match(inputOf(numeric), /aria-labelledby="[^"]+"/);
   assert.match(render({ isIndeterminate: true }), /M0 2H10/);
   assert.match(inputOf(render({ isDisabled: true })), /disabled=""/);
+  assert.match(inputOf(render({ isRequired: true })), /required=""/);
+  assert.match(inputOf(render({ isReadOnly: true })), /aria-readonly="true"/);
 });
 
 test('group connects its visible label and shared message and announces an error', () => {

@@ -446,7 +446,7 @@ export const Groups: Story = {
   },
 };
 
-export const ReadOnlyAndRequired: Story = {
+export const ReadOnly: Story = {
   render: () => {
     const text = useCheckboxText();
     return (
@@ -454,18 +454,36 @@ export const ReadOnlyAndRequired: Story = {
         <Checkbox isReadOnly defaultSelected>
           {text.on}
         </Checkbox>
-        <Checkbox isRequired>{text.off}</Checkbox>
-        <Checkbox aria-label={text.checkboxLabel} />
+        <Checkbox isReadOnly>{text.off}</Checkbox>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Both checkboxes remain focusable, but clicking them or pressing Space does not change their values. The current Figma spec does not define a separate read-only appearance.',
+      },
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const boxes = canvas.getAllByRole('checkbox');
+    await expect(boxes).toHaveLength(2);
+    await expect(boxes[0]).toHaveAttribute('aria-readonly', 'true');
+    await expect(boxes[1]).toHaveAttribute('aria-readonly', 'true');
+    await expect(boxes[0]).toHaveAttribute('tabindex', '0');
+    await expect(boxes[1]).toHaveAttribute('tabindex', '0');
     await userEvent.click(boxes[0].closest('label')!);
+    await userEvent.click(boxes[1].closest('label')!);
     await expect(boxes[0]).toBeChecked();
-    await expect(boxes[1]).toHaveAttribute('required');
-    await expect(boxes[2]).toHaveAccessibleName('Checkbox label');
+    await expect(boxes[1]).not.toBeChecked();
+    boxes[0].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[0]).toBeChecked();
+    boxes[1].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[1]).not.toBeChecked();
   },
 };
 
