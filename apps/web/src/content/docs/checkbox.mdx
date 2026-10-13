@@ -32,10 +32,20 @@ Give each checkbox visible label text. If it cannot have visible text, provide `
 </div>
 
 ```tsx
-<Checkbox>Default</Checkbox>
-<Checkbox defaultSelected>Checked</Checkbox>
-<Checkbox isIndeterminate>Indeterminate</Checkbox>
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+
+export function CheckboxUsageDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-3">
+      <Checkbox>Default</Checkbox>
+      <Checkbox defaultSelected>Checked</Checkbox>
+      <Checkbox isIndeterminate>Indeterminate</Checkbox>
+    </div>
+  );
+}
 ```
+
+The examples use Tailwind utilities for the surrounding layout. With Veli's Tailwind theme loaded, spacing utilities such as `gap-3` use Veli tokens; semantic classes such as `type-body-sm-regular` and `text-base-muted` style supplementary content. Checkbox supplies its control, label, and message styles.
 
 ## States
 
@@ -44,9 +54,17 @@ Give each checkbox visible label text. If it cannot have visible text, provide `
 </div>
 
 ```tsx
-<Checkbox>Off</Checkbox>
-<Checkbox defaultSelected>On</Checkbox>
-<Checkbox isIndeterminate>Indeterminate</Checkbox>
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+
+export function CheckboxStatesDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-3">
+      <Checkbox>Off</Checkbox>
+      <Checkbox defaultSelected>On</Checkbox>
+      <Checkbox isIndeterminate>Indeterminate</Checkbox>
+    </div>
+  );
+}
 ```
 
 ## Sizes
@@ -58,9 +76,23 @@ Give each checkbox visible label text. If it cannot have visible text, provide `
 </div>
 
 ```tsx
-<Checkbox size="md">Medium</Checkbox>
-<Checkbox size="lg">Large</Checkbox>
-<Checkbox size="xl">Extra large</Checkbox>
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+
+export function CheckboxSizesDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <Checkbox size="md" description="16px box">
+        Medium
+      </Checkbox>
+      <Checkbox size="lg" description="20px box">
+        Large
+      </Checkbox>
+      <Checkbox size="xl" description="24px box">
+        Extra large
+      </Checkbox>
+    </div>
+  );
+}
 ```
 
 `isIndeterminate` shows the mixed dash state until your application clears the prop. Clicking it does not clear that prop automatically.
@@ -74,13 +106,24 @@ Give each checkbox visible label text. If it cannot have visible text, provide `
 </div>
 
 ```tsx
-<Checkbox
-  isInvalid
-  description="Review this option."
-  errorMessage="You must accept the terms to continue."
->
-  Accept terms and conditions
-</Checkbox>
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+
+export function CheckboxMessagesDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <Checkbox description="We send it to the address on your account.">
+        Email me a receipt
+      </Checkbox>
+      <Checkbox
+        isInvalid
+        description="Review this option before continuing."
+        errorMessage="You must accept the terms to continue."
+      >
+        Accept terms and conditions
+      </Checkbox>
+    </div>
+  );
+}
 ```
 
 ## Disabled
@@ -91,6 +134,24 @@ Disabled checkboxes cannot be focused or changed. `isReadOnly` keeps a checkbox 
   <CheckboxDisabledDemo client:visible />
 </div>
 
+```tsx
+import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+
+export function CheckboxDisabledDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-3">
+      <Checkbox isDisabled>Off</Checkbox>
+      <Checkbox defaultSelected isDisabled>
+        On
+      </Checkbox>
+      <Checkbox isIndeterminate isDisabled>
+        Indeterminate
+      </Checkbox>
+    </div>
+  );
+}
+```
+
 ## Group
 
 `CheckboxGroup` manages several checkboxes as one `string[]` value. Give each `Checkbox` a unique `value`. Put `FieldLabel` inside the group for a visible group name, or use `aria-label` or `aria-labelledby`. Group `description` provides shared guidance; an invalid group's `errorMessage` replaces that description. The group's `value` / `onChange` accept a form library field directly (see [Forms](/patterns/forms/)).
@@ -100,23 +161,41 @@ Disabled checkboxes cannot be focused or changed. `isReadOnly` keeps a checkbox 
 </div>
 
 ```tsx
-<CheckboxGroup
-  name="channels"
-  isRequired
-  defaultValue={['email']}
-  description="Where should we send updates?"
->
-  {({ isDisabled, isRequired }) => (
-    <>
-      <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
-        Notification channels
-      </FieldLabel>
-      <Checkbox value="email">Email</Checkbox>
-      <Checkbox value="sms">SMS</Checkbox>
-      <Checkbox value="push">Push</Checkbox>
-    </>
-  )}
-</CheckboxGroup>
+'use client';
+
+import { useState } from 'react';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+
+export function CheckboxGroupDemo() {
+  const [channels, setChannels] = useState<string[]>(['email']);
+
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <CheckboxGroup
+        name="channels"
+        value={channels}
+        onChange={setChannels}
+        isRequired
+        description="Where should we send updates?"
+      >
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              Notification channels
+            </FieldLabel>
+            <Checkbox value="email">Email</Checkbox>
+            <Checkbox value="sms">SMS</Checkbox>
+            <Checkbox value="push">Push notifications</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        Selected: {channels.length ? channels.join(', ') : 'None'}
+      </p>
+    </div>
+  );
+}
 ```
 
 For required or disabled groups, pass the group's render-state flags to `FieldLabel` as shown above. These explicit props keep the required indicator and label color aligned with the group, including when it is nested inside a `Field` with different state. `FieldLabel` is a group heading; use plain visible children for each checkbox's inline label.
