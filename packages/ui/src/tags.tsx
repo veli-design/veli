@@ -16,7 +16,11 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { StaticFieldMessage } from './field-shared.js';
-import { fieldHeaderLabelVariants, fieldRootVariants } from './field-shared-variants.js';
+import {
+  fieldHeaderLabelVariants,
+  fieldRootVariants,
+  hasRenderableMessage,
+} from './field-shared-variants.js';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
 import { useVeliLanguage } from './provider.js';
 
@@ -39,15 +43,15 @@ const localizedTagText = {
 } as const;
 
 const tagListVariants = cva(
-  'flex flex-wrap gap-2 rounded-lg outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex min-w-0 flex-wrap gap-2 rounded-lg outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
 );
 
 const emptyStateVariants = cva(
-  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle',
+  'min-w-0 rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-base-subtle [overflow-wrap:anywhere]',
 );
 
 const tagVariants = cva(
-  'group inline-flex max-w-full items-center rounded-full border border-transparent antialiased outline-none transition-colors data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'group inline-flex min-w-0 max-w-full items-center rounded-full border border-transparent antialiased outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
   {
     variants: {
       size: {
@@ -58,15 +62,15 @@ const tagVariants = cva(
         xl: 'h-11 gap-2 px-3 type-body-md-medium',
       },
       isSelected: {
-        true: 'bg-button-primary-subtle-default text-text-primary-muted',
-        false: 'bg-button-secondary-subtle-default text-text-default-default',
+        true: 'bg-button-primary-subtle-default text-primary-muted',
+        false: 'bg-button-secondary-subtle-default text-base-default',
       },
       isDisabled: {
-        true: 'bg-button-disabled-disabled text-text-disabled-disabled',
+        true: 'bg-button-disabled text-disabled',
         false: '',
       },
       isLink: {
-        true: 'cursor-pointer text-text-links-default',
+        true: 'cursor-pointer',
         false: 'cursor-default',
       },
       allowsRemoving: {
@@ -98,7 +102,7 @@ const tagVariants = cva(
         isDisabled: false,
         isLink: true,
         className:
-          'bg-button-primary-subtle-default hover:bg-button-primary-subtle-hover hover:text-text-links-hover active:bg-button-primary-subtle-pressed active:text-text-links-hover',
+          'bg-button-primary-subtle-default text-links hover:bg-button-primary-subtle-hover hover:text-links-hover active:bg-button-primary-subtle-pressed active:text-links-hover',
       },
       {
         isDisabled: true,
@@ -152,7 +156,7 @@ const selectionIconVariants = cva('flex shrink-0 items-center justify-center', {
 });
 
 const removeButtonVariants = cva(
-  'flex shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0',
+  'flex shrink-0 items-center justify-center rounded-full outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-0 forced-colors:focus-visible:outline-solid forced-colors:focus-visible:outline-2',
   {
     variants: {
       size: {
@@ -163,8 +167,8 @@ const removeButtonVariants = cva(
         xl: 'size-6 [&_svg]:size-3.5',
       },
       isDisabled: {
-        true: 'cursor-not-allowed text-text-disabled-disabled',
-        false: 'text-current hover:bg-gray-alpha-200 active:bg-gray-alpha-300',
+        true: 'cursor-not-allowed text-disabled',
+        false: 'text-current hover:bg-neutral-alpha-200 active:bg-neutral-alpha-300',
       },
     },
     defaultVariants: {
@@ -272,10 +276,21 @@ export function TagGroup<T extends object>({
           {...props}
           ref={setRootRef}
           data-disabled={isDisabled || undefined}
-          className={twMerge(fieldRootVariants(), className)}
+          className={twMerge(
+            fieldRootVariants(),
+            'min-w-0 [&>[slot=description]]:[overflow-wrap:anywhere] [&>[slot=errorMessage]]:[overflow-wrap:anywhere]',
+            className,
+          )}
         >
-          {label ? (
-            <Label className={fieldHeaderLabelVariants({ isDisabled })}>{label}</Label>
+          {hasRenderableMessage(label) ? (
+            <Label
+              className={twMerge(
+                fieldHeaderLabelVariants({ isDisabled }),
+                'min-w-0 [overflow-wrap:anywhere]',
+              )}
+            >
+              {label}
+            </Label>
           ) : null}
           <AriaTagList
             items={items}
@@ -399,6 +414,9 @@ export function Tag({
             {state.allowsRemoving ? (
               <AriaButton
                 slot="remove"
+                // React Aria's default references the tag as well as the button.
+                // Our localized label already contains the tag text.
+                aria-labelledby=""
                 aria-label={resolvedRemoveButtonLabel}
                 className={removeButtonVariants({ size, isDisabled: state.isDisabled })}
               >

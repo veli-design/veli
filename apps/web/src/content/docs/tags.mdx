@@ -47,23 +47,40 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 
 Plain text and nested text content are used for tag text and remove button labels automatically. For icon-only, render-function, or otherwise non-text tags, provide `textValue` or `removeButtonLabel`.
 
+### Selection and removal
+
+`onRemove` enables the remove controls; update `items` or rendered children in the callback to remove the requested keys. Clicking a remove control removes that tag without selecting it. On a focused tag, Delete or Backspace requests removal of the selected keys, or just the focused tag when it is unselected. React Aria manages arrow-key navigation and selection; disabled tags and their remove controls cannot be activated.
+
+Use `VeliProvider` to select English/LTR or Dhivehi/RTL. Built-in empty messages and remove labels follow the provider language. Localize visible content and custom `removeButtonLabel` values in your application. The leading slot is decorative and does not contribute to the accessible name; include meaningful badge or icon information in `textValue`.
+
+### Messages and narrow layouts
+
+`errorMessage` is a supplied message, not an automatic validation rule. Compute it from your selection or application validation, and clear it when the requirement is satisfied. A non-empty error replaces the description. Labels, descriptions, and errors wrap in narrow layouts; long tag content truncates while its full text remains available to assistive technology.
+
+Tags retain five fixed heights, from `xs` (28px) through `xl` (44px). Keyboard focus remains visible in forced-colors mode. Color changes use the shared 200ms Veli `duration-normal` / `ease-out` transition and become immediate when reduced motion is requested.
+
 ## API Reference
 
 ### `TagGroup`
 
-| Prop                  | Type                                   | Description                                                                      |
-| :-------------------- | :------------------------------------- | :------------------------------------------------------------------------------- |
-| `label`               | `ReactNode`                            | Adds a visible label above the tag list.                                         |
-| `selectionMode`       | `'none' \| 'single' \| 'multiple'`     | Controls whether tags are selectable and how many can be selected.               |
-| `selectedKeys`        | `'all' \| Iterable<Key>`               | Controls the current selection from external state.                              |
-| `defaultSelectedKeys` | `'all' \| Iterable<Key>`               | Sets the initial selection for uncontrolled usage.                               |
-| `onSelectionChange`   | `(keys) => void`                       | Called when the selected tags change.                                            |
-| `onRemove`            | `(keys) => void`                       | Called when one or more removable tags are dismissed.                            |
-| `description`         | `ReactNode`                            | Adds helper text below the tag list when no error is shown.                      |
-| `errorMessage`        | `ReactNode`                            | Adds validation text below the tag list and replaces `description` when present. |
-| `isDisabled`          | `boolean`                              | Disables the full group and styles the visible label as disabled.                |
-| `disabledKeys`        | `Iterable<Key>`                        | Disables specific tags in a collection.                                          |
-| `size`                | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | Sets the default size for every tag in the group.                                |
+| Prop                  | Type                                    | Description                                                                      |
+| :-------------------- | :-------------------------------------- | :------------------------------------------------------------------------------- |
+| `label`               | `ReactNode`                             | Adds a visible label above the tag list.                                         |
+| `selectionMode`       | `'none' \| 'single' \| 'multiple'`      | Controls whether tags are selectable and how many can be selected.               |
+| `selectedKeys`        | `'all' \| Iterable<Key>`                | Controls the current selection from external state.                              |
+| `defaultSelectedKeys` | `'all' \| Iterable<Key>`                | Sets the initial selection for uncontrolled usage.                               |
+| `onSelectionChange`   | `(keys) => void`                        | Called when the selected tags change.                                            |
+| `onRemove`            | `(keys) => void`                        | Called when one or more removable tags are dismissed.                            |
+| `description`         | `ReactNode`                             | Adds helper text below the tag list when no error is shown.                      |
+| `errorMessage`        | `ReactNode`                             | Adds validation text below the tag list and replaces `description` when present. |
+| `isDisabled`          | `boolean`                               | Disables the full group and styles the visible label as disabled.                |
+| `disabledKeys`        | `Iterable<Key>`                         | Disables specific tags in a collection.                                          |
+| `size`                | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`  | Sets the default size for every tag in the group.                                |
+| `items`               | `Iterable<T>`                           | Supplies a dynamic collection; render each item with function children.          |
+| `children`            | `ReactNode \| ((item: T) => ReactNode)` | Renders static tags or each item in a dynamic collection.                        |
+| `renderEmptyState`    | `(state) => ReactNode`                  | Replaces the localized empty-collection message.                                 |
+| `className`           | `string`                                | Adds local styling to the group root.                                            |
+| `listClassName`       | `string`                                | Adds local styling to the wrapping tag list.                                     |
 
 ### `Tag`
 
@@ -79,5 +96,6 @@ Plain text and nested text content are used for tag text and remove button label
 | `leading`           | `ReactNode`                            | Adds decorative leading content such as an icon or badge. Include meaningful leading text in `textValue`.        |
 | `removeButtonLabel` | `string \| ((tagText) => string)`      | Overrides the accessible label used by the built-in remove button, useful for icon-only or render-function tags. |
 | `className`         | `string`                               | Adds local styling overrides to a single tag.                                                                    |
+| `children`          | `ReactNode \| ((state) => ReactNode)`  | Renders tag content or derives it from the React Aria tag state.                                                 |
 
 All remaining supported React Aria `TagGroup` and `Tag` props can still be passed through these wrappers.

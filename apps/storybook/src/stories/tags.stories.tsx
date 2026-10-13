@@ -5,6 +5,7 @@ import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Tag, TagGroup, type TagSize } from '@tradenetcorp/veli-ui/tags';
 import { UserIcon } from '@phosphor-icons/react';
+import { expect, userEvent, within } from '@storybook/test';
 
 type TagItem = {
   id: string;
@@ -22,7 +23,7 @@ const sizesAndLeadingSectionClassName = 'space-y-4';
 const sizesAndLeadingSectionHeaderClassName = 'space-y-1';
 
 const tagEmptyStateClassName =
-  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-text-default-subtle';
+  'rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-base-subtle';
 
 const tagSizes: TagSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
 const selectionModes = ['none', 'single', 'multiple'] as const;
@@ -696,9 +697,9 @@ function StorySection({
   return (
     <div className={sizesAndLeadingSectionClassName}>
       <div className={sizesAndLeadingSectionHeaderClassName}>
-        <p className="type-body-sm-medium text-text-default-emphasis">{title}</p>
+        <p className="type-body-sm-medium text-base-emphasis">{title}</p>
         {description ? (
-          <p className="type-body-sm-regular text-text-default-subtle">{description}</p>
+          <p className="type-body-sm-regular text-base-subtle">{description}</p>
         ) : null}
       </div>
       {children}
@@ -747,7 +748,7 @@ export const Variations: Story = {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">{text.selectableTags}</p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.selectableTags}</p>
             <TagGroup
               label={text.departments}
               selectionMode="multiple"
@@ -764,7 +765,7 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">{text.removableTags}</p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.removableTags}</p>
             <TagGroup<TagItem>
               label={text.savedTopics}
               items={removableItems}
@@ -794,7 +795,7 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">{text.linkTags}</p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.linkTags}</p>
             <TagGroup label={text.relatedGuidance}>
               <Tag id="passport" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
                 {text.passportServices}
@@ -811,7 +812,7 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">{text.disabledKeys}</p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.disabledKeys}</p>
             <TagGroup
               label={text.amenities}
               selectionMode="multiple"
@@ -828,7 +829,7 @@ export const Variations: Story = {
 
         <div className={storyPanelClassName}>
           <div className={storySectionClassName}>
-            <p className="type-body-sm-medium text-text-default-emphasis">{text.disabledGroup}</p>
+            <p className="type-body-sm-medium text-base-emphasis">{text.disabledGroup}</p>
             <TagGroup
               label={text.restrictedServices}
               selectionMode="multiple"
@@ -877,19 +878,122 @@ export const Validation: Story = {
   },
   render: () => {
     const text = useTagsText();
+    const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(() => new Set());
 
     return (
       <div className={storyPanelClassName}>
         <TagGroup
           label={text.requiredDepartments}
           selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={(keys) => setSelectedKeys(new Set(keys === 'all' ? [] : keys))}
           description={text.chooseOneDepartment}
-          errorMessage={text.selectOneDepartment}
+          errorMessage={selectedKeys.size === 0 ? text.selectOneDepartment : undefined}
         >
           <Tag id="tourism">{text.tourism}</Tag>
           <Tag id="fisheries">{text.fisheries}</Tag>
           <Tag id="transport">{text.transport}</Tag>
           <Tag id="education">{text.education}</Tag>
+        </TagGroup>
+      </div>
+    );
+  },
+};
+
+export const InteractionStates: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const text = useTagsText();
+    const [items, setItems] = useState(['tourism', 'fisheries', 'transport']);
+    const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(
+      () => new Set(['fisheries']),
+    );
+    const labels: Record<string, string> = {
+      tourism: text.tourism,
+      fisheries: text.fisheries,
+      transport: text.transport,
+    };
+
+    return (
+      <div className={`${storyPanelClassName} space-y-6`}>
+        <TagGroup
+          label={text.departments}
+          description={text.chooseDepartments}
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={(keys) => setSelectedKeys(new Set(keys === 'all' ? items : keys))}
+          disabledKeys={['fisheries']}
+          onRemove={(keys) => setItems((current) => current.filter((id) => !keys.has(id)))}
+        >
+          {items.map((id) => (
+            <Tag key={id} id={id} textValue={labels[id]}>
+              {() => <span>{labels[id]}</span>}
+            </Tag>
+          ))}
+        </TagGroup>
+        <TagGroup
+          label={text.restrictedServices}
+          isDisabled
+          selectionMode="multiple"
+          defaultSelectedKeys={['documents']}
+          onRemove={() => {}}
+        >
+          <Tag id="documents">{text.documents}</Tag>
+          <Tag id="payments" href="https://one.gov.mv/" target="_blank" rel="noreferrer">
+            {text.payments}
+          </Tag>
+        </TagGroup>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const grid = canvas.getAllByRole('grid')[0];
+    const rows = within(grid).getAllByRole('row');
+    const removeButton = within(rows[0]).getByRole('button');
+    // The localized label already includes the tag, so RAC must not append it again.
+    await expect(removeButton).toHaveAccessibleName(removeButton.getAttribute('aria-label')!);
+    await userEvent.click(rows[0]);
+    await expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(removeButton);
+    await expect(within(grid).getAllByRole('row')).toHaveLength(2);
+    await expect(within(rows[1]).getByRole('button')).toBeDisabled();
+    await expect(rows[1]).toHaveAttribute('data-selected', 'true');
+  },
+};
+
+export const ContentAndEmptyStates: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const text = useTagsText();
+    return (
+      <div className="w-64 max-w-full space-y-6">
+        <TagGroup label={0} description={text.chooseDepartments.repeat(8)}>
+          <Tag id={0}>{0}</Tag>
+          <Tag id="long" leading={<TagUserIcon size="sm" />}>
+            {text.documents.repeat(40)}
+          </Tag>
+        </TagGroup>
+        <TagGroup label={text.savedTopics} errorMessage={text.selectOneDepartment.repeat(8)}>
+          <Tag id="large" size="xl" textValue={text.documents}>
+            {() => <span>{text.documents}</span>}
+          </Tag>
+        </TagGroup>
+        <TagGroup label={text.categories} />
+        <TagGroup
+          label={text.savedTopics}
+          renderEmptyState={() => <p>{text.allSavedTopicsRemoved}</p>}
+          listClassName="border border-base-subtle p-2"
+        />
+        <TagGroup label={text.relatedContacts} onRemove={() => {}}>
+          <Tag
+            id="custom"
+            textValue={text.liaisonOfficer}
+            removeButtonLabel={(label) => `${text.relatedContacts}: ${label}`}
+            isDisabled
+          >
+            {text.liaisonOfficer}
+          </Tag>
         </TagGroup>
       </div>
     );
