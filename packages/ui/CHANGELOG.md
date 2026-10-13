@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.15.0
+
+_Released 2026-10-11._
+
+### Added
+
+- Add `isOptional` to `Input` to show a localized Optional caption beside the label. The caption is hidden when the field is required.
+- Add native navigation to Button with as="a", matching styles, anchor refs, guarded disabled and loading states, and router-link composition that preserves framework navigation and prefetch options.
+- Expose normalized DTCG and motion data, complete Light/Dark CSS variables, grid utilities and retained focus effects.
+- Add `isOptional` to `Select` to show a localized Optional caption beside the label. The caption is hidden when the field is required.
+
+### Changed
+
+- Show a warning icon in place of `endContent` on an invalid `Input`, matching the Figma error state.
+- Render entered `Input` values in the strong text colour, and use 8px gaps between the header, field content, and slots, with 4px above the helper text.
+- Apply the same primary and secondary background and text colors to small and large Tooltip surfaces.
+- Use Body/sm/Medium typography for the current breadcrumb in both English and Dhivehi.
+- Unify CSS and Tailwind on canonical namespaced DTCG tokens; migrate plain CSS references to `--veli-*` and use Figma typography values.
+- Align generic Tailwind font-size utilities with canonical English typography size, leading and tracking; use `type-*` for automatic Dhivehi styles.
+- Replace the legacy icon dependency with the maintained `@phosphor-icons/react` package, preserving icon styling and behavior with the maintained artwork.
+- Align `Select` options with the Figma menu: 16px inline padding, menu hover and pressed fills, a trailing check instead of a tinted selected row, sentence-case section headers, dividers between sections, and a 0.5px muted popover border.
+- Render the selected `Select` value in the strong text colour, and use 8px gaps between the header, field content, and slots, with 4px above the helper text.
+
+### Removed
+
+- Remove `labelSupplementary` from `Input`. Replace `labelSupplementary="Optional"` with `isOptional`; put other header text in `description`, `infoTooltip`, or `action`.
+- Remove `labelSupplementary` from `Select`. Replace `labelSupplementary="Optional"` with `isOptional`; put other header text in `description`, `infoTooltip`, or `action`.
+
+### Fixed
+
+- Draw outline `Input` strokes inside the field so hover, focus, and error states no longer shift the layout.
+- Show disabled `Input` fields as a flat fill with no underline or outline.
+- Remove `Input` state transitions when users prefer reduced motion.
+- Keep Dhivehi placeholders right-aligned in RTL `email`, `url`, `tel`, and `password` inputs, and render their entered values in the Latin font instead of a system fallback.
+- Correct Radio label and helper/error associations, respect reduced motion, preserve selection and focus in forced colors, and wrap long option labels and messages.
+- Respect Tooltip reduced motion and explicit offsets, improve directional entry and exit, retain small inline text flow, and wrap long content.
+- Expose the Tooltip surface ref in its public types.
+- Reserve `text-base` for font size; use `text-base-default` for the default text color instead of the conflicting shorthand.
+- Make all UI entry points importable during Node server rendering and reject invalid relative ESM imports before publishing. Veli no longer requires Next.js `transpilePackages` or Vitest dependency inlining to resolve its JavaScript.
+- Draw outline `Select` strokes inside the field so hover, focus, and error states no longer shift the layout.
+- Show disabled `Select` fields as a flat fill with no underline or outline, and dim the caret and option icons.
+- Remove `Select` state transitions when users prefer reduced motion.
+- Show only the selected option's label in the `Select` trigger, so option descriptions and `startContent` no longer overflow the field.
+
 ## 0.14.0
 
 _Released 2026-10-08._

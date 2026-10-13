@@ -1117,6 +1117,27 @@ body {
   grid-template-columns: minmax(0, 176px) minmax(0, 1fr);
 }
 
+/* Keep Button API types readable when the reference is shown in the Code tab. */
+@media (max-width: 767px) {
+  :is(.docs-prose, .docs-tab-panel):has(> #rendering-modes-and-types)
+    > #api-reference
+    ~ table:has(> thead > tr > :nth-child(3)) {
+    display: block;
+    overflow-x: auto;
+  }
+
+  :is(.docs-prose, .docs-tab-panel):has(> #rendering-modes-and-types)
+    > #api-reference
+    ~ table:has(> thead > tr > :nth-child(3))
+    > :is(thead, tbody) {
+    min-width: 640px;
+  }
+
+  :is(.docs-prose, .docs-tab-panel) > #rendering-modes-and-types + table tr {
+    grid-template-columns: minmax(0, 90px) minmax(0, 1fr);
+  }
+}
+
 .docs-storybook-link {
   display: inline-flex;
   align-items: center;

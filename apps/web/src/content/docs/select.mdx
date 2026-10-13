@@ -1,17 +1,18 @@
 ---
 title: Select
-description: Accessible select built with React Aria Select primitives and Veli token styling.
+description: Single-choice picker with a listbox popover, sections, and option descriptions.
 ---
 
 import {
-  SelectExplorationDemo,
+  SelectAppearancesDemo,
+  SelectSectionsDemo,
   SelectUsageDemo,
   SelectValidationDemo,
 } from '../../components/DocsExamples';
 
 # Select
 
-The Select component wraps React Aria's `Select`, `Button`, `Popover`, and `ListBox` primitives in a Veli-styled field shell with labels, helper text, validation messaging, and structured option content.
+Use Select to choose one value from a short, known list. For long or searchable lists, use [ComboBox](/docs/combobox/). For actions instead of values, use [Menu](/docs/menu/).
 
 ## Import
 
@@ -26,53 +27,159 @@ import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select'
 </div>
 
 ```tsx
-<Select label="Country" placeholder="Choose a country" description="Helper text">
+<Select label="Country" isOptional placeholder="Choose a country" description="Helper text">
   <SelectItem id="my">Malaysia</SelectItem>
   <SelectItem id="sg">Singapore</SelectItem>
   <SelectItem id="th">Thailand</SelectItem>
 </Select>
 ```
 
-## Figma Exploration
+Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/patterns/forms/) for recipes.
+
+## Appearances
+
+`default` uses the underline trigger. `outline` draws a bordered trigger. Size the field with `sm`, `md`, or `lg`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <SelectExplorationDemo client:visible />
+  <SelectAppearancesDemo client:visible />
 </div>
 
+```tsx
+<Select label="Default" placeholder="Choose an option">…</Select>
+<Select appearance="outline" label="Outline" placeholder="Choose an option">…</Select>
+```
+
+## Sections
+
+Group options with `SelectSection`. Options can carry a `description` and leading `startContent`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SelectSectionsDemo client:visible />
+</div>
+
+```tsx
+<Select label="Island" placeholder="Choose an island">
+  <SelectSection title="Popular">
+    <SelectItem id="male" description="Capital city">
+      Male'
+    </SelectItem>
+    <SelectItem id="hulhumale" description="Reclaimed island">
+      Hulhumale'
+    </SelectItem>
+  </SelectSection>
+  <SelectSection title="Regional">
+    <SelectItem id="addu">Addu City</SelectItem>
+    <SelectItem id="fuvahmulah" isDisabled>
+      Fuvahmulah City
+    </SelectItem>
+  </SelectSection>
+</Select>
+```
+
 ## Validation
+
+When `isInvalid` is set, `errorMessage` replaces the helper text.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <SelectValidationDemo client:visible />
 </div>
 
-## Option Text
-
-`SelectItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so typeahead, selected value text, and screen-reader output remain reliable.
+```tsx
+<Select label="Status" isInvalid errorMessage="Choose a status to continue.">
+  <SelectItem id="active">Active</SelectItem>
+  <SelectItem id="inactive">Inactive</SelectItem>
+</Select>
+```
 
 ## API Reference
 
-| Prop                    | Type                     | Default            | Description                                                                  |
-| :---------------------- | :----------------------- | :----------------- | :--------------------------------------------------------------------------- |
-| `label`                 | `ReactNode`              | -                  | Visible label content rendered with React Aria's `Label`.                    |
-| `labelSupplementary`    | `ReactNode`              | -                  | Inline helper copy beside the label, for cases like `Optional`.              |
-| `infoTooltip`           | `ReactNode`              | -                  | Optional tooltip content displayed from a small info icon in the header.     |
-| `infoTooltipAriaLabel`  | `string`                 | Localized string   | Accessible label for the tooltip trigger button.                             |
-| `labelIcon`             | `ReactNode`              | -                  | Small icon placed after the label content.                                   |
-| `action`                | `ReactNode`              | -                  | Right-aligned header content, suitable for an inline action.                 |
-| `description`           | `ReactNode`              | -                  | Helper text shown beneath the field when not invalid.                        |
-| `errorMessage`          | `ReactNode`              | -                  | Validation content shown beneath the field when `isInvalid` is true.         |
-| `startContent`          | `ReactNode`              | -                  | Leading inline content rendered inside the trigger shell.                    |
-| `endContent`            | `ReactNode`              | -                  | Trailing inline content rendered before the indicator.                       |
-| `indicator`             | `ReactNode`              | Default chevron    | Custom trailing indicator content.                                           |
-| `showRequiredIndicator` | `boolean`                | `true`             | Controls whether the required asterisk is rendered when `isRequired` is set. |
-| `placeholder`           | `string`                 | React Aria default | Placeholder text shown when no option is selected.                           |
-| `triggerRef`            | `Ref<HTMLButtonElement>` | -                  | Ref to the trigger button, so form libraries can focus it on errors.         |
-| `className`             | `string`                 | -                  | Layout-only class override merged onto the outermost root element.           |
+Select is a Veli field on React Aria [`Select`](https://react-spectrum.adobe.com/react-aria/Select.html), composed with `Button`, `Popover`, and `ListBox`. Props below follow that stack.
 
-All other `react-aria-components` `Select` props are supported, excluding direct `style` and child layout overrides. Use `SelectItem` for tokenized options and `SelectSection` to group related options.
+### Select
 
-Control the selection with `value` / `onChange`. The key type is inferred from the value you pass, so a `string | null` form field spreads without conversion. With React Hook Form, pass `ref` as `triggerRef`; see [Forms](/patterns/forms/) for React Hook Form and TanStack Form recipes.
+Veli-specific props for the composed field.
 
-`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.
+| Prop                    | Type                          | Default            | Description                                                          |
+| :---------------------- | :---------------------------- | :----------------- | :------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'`      | `'default'`        | Underline or bordered trigger.                                       |
+| `size`                  | `'sm' \| 'md' \| 'lg'`        | `'md'`             | Field size.                                                          |
+| `label`                 | `ReactNode`                   | -                  | Visible label.                                                       |
+| `isOptional`            | `boolean`                     | `false`            | Shows localized Optional beside the label. Hidden when `isRequired`. |
+| `infoTooltip`           | `ReactNode`                   | -                  | Content for the header info tooltip.                                 |
+| `infoTooltipAriaLabel`  | `string`                      | Localized string   | Accessible name for the info tooltip trigger.                        |
+| `labelIcon`             | `ReactNode`                   | -                  | Small icon after the label.                                          |
+| `action`                | `ReactNode`                   | -                  | Trailing header content, such as an inline link.                     |
+| `description`           | `ReactNode`                   | -                  | Helper text beneath the field.                                       |
+| `errorMessage`          | `ReactNode`                   | -                  | Error text shown when `isInvalid`.                                   |
+| `showRequiredIndicator` | `boolean`                     | `true`             | Shows the required asterisk when `isRequired`.                       |
+| `startContent`          | `ReactNode`                   | -                  | Leading content inside the trigger.                                  |
+| `endContent`            | `ReactNode`                   | -                  | Trailing content before the indicator.                               |
+| `indicator`             | `ReactNode`                   | Caret              | Replaces the caret.                                                  |
+| `placeholder`           | `string`                      | React Aria default | Text shown when nothing is selected.                                 |
+| `value`                 | `K \| null`                   | -                  | Controlled selected key.                                             |
+| `defaultValue`          | `K \| null`                   | -                  | Uncontrolled initial key.                                            |
+| `onChange`              | `(value: K \| null) => void`  | -                  | Called with the selected key.                                        |
+| `items`                 | `Iterable<T>`                 | -                  | Items for a dynamic collection.                                      |
+| `children`              | `ReactNode \| (item: T) => …` | -                  | Options, or a render function for `items`.                           |
+| `triggerRef`            | `Ref<HTMLButtonElement>`      | -                  | Ref to the trigger, for focusing it on form errors.                  |
+| `className`             | `string`                      | -                  | Layout class on the root (width, margin, flex/grid).                 |
 
-For Dhivehi (`lang="dv"`) selects, the trigger, dropdown, option text, and section labels inherit the active language and direction so generated typography tokens use the Dhivehi font in both the field and popover. Select also applies internal Dhivehi field metrics to the trigger value and option labels, so consumers should not override font family or vertical padding manually.
+### React Aria Select
+
+React Aria’s headless [`Select`](https://react-spectrum.adobe.com/react-aria/Select.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop           | Type                        | Default | Description                              |
+| :------------- | :-------------------------- | :------ | :--------------------------------------- |
+| `isDisabled`   | `boolean`                   | `false` | Disables the field.                      |
+| `isInvalid`    | `boolean`                   | `false` | Marks the field invalid.                 |
+| `isRequired`   | `boolean`                   | `false` | Marks the field required.                |
+| `disabledKeys` | `Iterable<Key>`             | -       | Keys of options to disable.              |
+| `name`         | `string`                    | -       | Native form field name.                  |
+| `validate`     | `function`                  | -       | Custom validation.                       |
+| `isOpen`       | `boolean`                   | -       | Controlled open state.                   |
+| `onOpenChange` | `(isOpen: boolean) => void` | -       | Called when the listbox opens or closes. |
+| `autoFocus`    | `boolean`                   | `false` | Focuses the trigger on mount.            |
+
+Not forwarded from React Aria `Select`:
+
+| Prop                                | Why                                                        |
+| :---------------------------------- | :--------------------------------------------------------- |
+| `children`, `items`                 | Replaced by Veli’s option `children` and `items` above.    |
+| `value`, `defaultValue`, `onChange` | Replaced by Veli’s typed key props above.                  |
+| `style`                             | Not supported.                                             |
+| `className`                         | Replaced by Veli’s layout `className` on the root.         |
+| `isReadOnly`                        | Not supported by React Aria Select. Use a read-only Input. |
+
+### SelectItem
+
+| Prop           | Type        | Default | Description                                                 |
+| :------------- | :---------- | :------ | :---------------------------------------------------------- |
+| `id`           | `Key`       | -       | Option key used by `value` and `onChange`.                  |
+| `children`     | `ReactNode` | -       | Option label.                                               |
+| `description`  | `ReactNode` | -       | Secondary text below the label.                             |
+| `startContent` | `ReactNode` | -       | Leading content, such as an icon.                           |
+| `endContent`   | `ReactNode` | -       | Trailing content before the selected check.                 |
+| `textValue`    | `string`    | -       | Plain text for typeahead when `children` is not plain text. |
+| `isDisabled`   | `boolean`   | `false` | Shows the option but blocks selection.                      |
+| `className`    | `string`    | -       | Class merged onto the option.                               |
+
+Other React Aria [`ListBoxItem`](https://react-spectrum.adobe.com/react-aria/ListBox.html#listboxitem) props pass through.
+
+### SelectSection
+
+| Prop        | Type        | Default | Description                    |
+| :---------- | :---------- | :------ | :----------------------------- |
+| `title`     | `ReactNode` | -       | Section header.                |
+| `children`  | `ReactNode` | -       | The section’s options.         |
+| `className` | `string`    | -       | Class merged onto the section. |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- The trigger announces its label and selected value. Space, Enter, and the arrow keys open the listbox, and typing jumps to a matching option.
+- `description` is the accessible helper. On error, `errorMessage` replaces it.
+- Give icon-only or composed options a `textValue` or `aria-label`.
+
+## RTL and Language
+
+On `lang="dv"` pages, the trigger value, options, and section headers use `MV_Faseyha` in both the field and the popover. In RTL, the trigger content, caret, option content, and selected check follow `dir`.

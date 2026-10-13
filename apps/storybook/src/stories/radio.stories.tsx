@@ -1,5 +1,7 @@
 import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, fireEvent, userEvent, within } from '@storybook/test';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { useArgs } from 'storybook/internal/preview-api';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
@@ -9,17 +11,12 @@ const englishRadioButtonText = {
     option1: 'Option 1',
     option2: 'Option 2',
     option3: 'Option 3',
-    optionA: 'Option A',
-    optionB: 'Option B',
-    optionC: 'Option C',
   },
   states: {
     mediumOff: 'Medium Off',
     mediumOn: 'Medium On',
     largeOff: 'Large Off',
     largeOn: 'Large On',
-    disabledOff: 'Disabled Off',
-    disabledOn: 'Disabled On',
     off: 'Off',
     on: 'On',
     md: 'MD',
@@ -31,8 +28,6 @@ const englishRadioButtonText = {
     labelText: 'Label text',
     descriptionText: 'Description text',
     errorText: 'Error text',
-    acceptTerms: 'Accept terms and conditions',
-    termsRequired: 'You must accept the terms to continue',
   },
 } as const;
 
@@ -41,17 +36,12 @@ const dhivehiRadioButtonText = {
     option1: 'އޮޕްޝަން 1',
     option2: 'އޮޕްޝަން 2',
     option3: 'އޮޕްޝަން 3',
-    optionA: 'އޮޕްޝަން އޭ',
-    optionB: 'އޮޕްޝަން ބީ',
-    optionC: 'އޮޕްޝަން ސީ',
   },
   states: {
     mediumOff: 'މެދު އޮފް',
     mediumOn: 'މެދު އޮން',
     largeOff: 'ބޮޑު އޮފް',
     largeOn: 'ބޮޑު އޮން',
-    disabledOff: 'ބޭނުންނުކުރެވޭ އޮފް',
-    disabledOn: 'ބޭނުންނުކުރެވޭ އޮން',
     off: 'އޮފް',
     on: 'އޮން',
     md: 'އެމްޑީ',
@@ -63,8 +53,6 @@ const dhivehiRadioButtonText = {
     labelText: 'ލޭބަލްގެ ލިޔުން',
     descriptionText: 'ތަފްޞީލު ލިޔުން',
     errorText: 'އެރަރ ޓެކްސްޓް',
-    acceptTerms: 'އުސޫލުތަކާއި ޝަރުތުތައް ގަބޫލުކުރަން',
-    termsRequired: 'ކުރިއަށް ދިއުމަށްޓަކައި ޝަރުތުތައް ގަބޫލުކުރައްވަން ޖެހޭނެއެވެ.',
   },
 } as const;
 
@@ -83,15 +71,10 @@ const radioButtonTextPairs = [
   [englishRadioButtonText.options.option1, dhivehiRadioButtonText.options.option1],
   [englishRadioButtonText.options.option2, dhivehiRadioButtonText.options.option2],
   [englishRadioButtonText.options.option3, dhivehiRadioButtonText.options.option3],
-  [englishRadioButtonText.options.optionA, dhivehiRadioButtonText.options.optionA],
-  [englishRadioButtonText.options.optionB, dhivehiRadioButtonText.options.optionB],
-  [englishRadioButtonText.options.optionC, dhivehiRadioButtonText.options.optionC],
   [englishRadioButtonText.states.mediumOff, dhivehiRadioButtonText.states.mediumOff],
   [englishRadioButtonText.states.mediumOn, dhivehiRadioButtonText.states.mediumOn],
   [englishRadioButtonText.states.largeOff, dhivehiRadioButtonText.states.largeOff],
   [englishRadioButtonText.states.largeOn, dhivehiRadioButtonText.states.largeOn],
-  [englishRadioButtonText.states.disabledOff, dhivehiRadioButtonText.states.disabledOff],
-  [englishRadioButtonText.states.disabledOn, dhivehiRadioButtonText.states.disabledOn],
   [englishRadioButtonText.states.off, dhivehiRadioButtonText.states.off],
   [englishRadioButtonText.states.on, dhivehiRadioButtonText.states.on],
   [englishRadioButtonText.states.md, dhivehiRadioButtonText.states.md],
@@ -101,8 +84,6 @@ const radioButtonTextPairs = [
   [englishRadioButtonText.text.labelText, dhivehiRadioButtonText.text.labelText],
   [englishRadioButtonText.text.descriptionText, dhivehiRadioButtonText.text.descriptionText],
   [englishRadioButtonText.text.errorText, dhivehiRadioButtonText.text.errorText],
-  [englishRadioButtonText.text.acceptTerms, dhivehiRadioButtonText.text.acceptTerms],
-  [englishRadioButtonText.text.termsRequired, dhivehiRadioButtonText.text.termsRequired],
 ] as const;
 
 const useRadioButtonLanguage = (): RadioButtonLanguage => {
@@ -165,7 +146,7 @@ const meta = {
         const localizedChildren = getLocalizedRadioButtonNode(
           children,
           language,
-          text.text.acceptTerms,
+          text.options.option1,
         );
         const localizedDescription = getLocalizedRadioButtonNode(
           description,
@@ -175,7 +156,7 @@ const meta = {
         const localizedErrorMessage = getLocalizedRadioButtonNode(
           errorMessage,
           language,
-          text.text.termsRequired,
+          text.text.errorText,
         );
 
         if (children !== undefined && children !== localizedChildren) {
@@ -203,24 +184,34 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
+    className: { table: { disable: true } },
+    ref: { table: { disable: true } },
+    inputRef: { table: { disable: true } },
+    value: { table: { disable: true } },
     size: {
       control: 'select',
       options: ['md', 'lg'],
+      table: { category: 'Appearance' },
     },
     isDisabled: {
       control: 'boolean',
+      table: { category: 'State' },
     },
     isInvalid: {
       control: 'boolean',
+      table: { category: 'State' },
     },
     children: {
       control: 'text',
+      table: { category: 'Content' },
     },
     description: {
       control: 'text',
+      table: { category: 'Content' },
     },
     errorMessage: {
       control: 'text',
+      table: { category: 'Content' },
     },
   },
   args: {
@@ -233,13 +224,43 @@ export default meta;
 type Story = StoryObj<RadioStoryArgs>;
 
 export const Default: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const radios = canvas.getAllByRole('radio');
+    if (args.isDisabled) {
+      await expect(radios[0]).toBeDisabled();
+      return;
+    }
+    radios[0].focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(radios[1]).toBeChecked();
+    await userEvent.keyboard('{ArrowUp}');
+    await expect(radios[0]).toBeChecked();
+    const label = radios[2].closest('label')!;
+    const bounds = label.getBoundingClientRect();
+    const pointer = {
+      pointerId: 1,
+      pointerType: 'mouse',
+      button: 0,
+      width: 1,
+      height: 1,
+      clientX: bounds.x + 1,
+      clientY: bounds.y + 1,
+    };
+    fireEvent.pointerDown(label, pointer);
+    fireEvent.pointerUp(label, pointer);
+    fireEvent.click(label, { button: 0, detail: 1 });
+    await expect(radios[2]).toBeChecked();
+  },
   render: (args) => {
-    const text = useRadioButtonText();
+    const language = useRadioButtonLanguage();
+    const text = radioButtonText[language];
 
     return (
-      <RadioGroup aria-label="Default radio group" defaultValue="option-1">
+      <RadioGroup defaultValue="option-1">
+        <FieldLabel>{text.text.labelText}</FieldLabel>
         <Radio {...args} value="option-1">
-          {text.options.option1}
+          {getLocalizedRadioButtonNode(args.children, language, text.options.option1)}
         </Radio>
         <Radio {...args} value="option-2">
           {text.options.option2}
@@ -254,9 +275,7 @@ export const Default: Story = {
 
 export const Sizes: Story = {
   parameters: {
-    controls: {
-      exclude: ['size', 'isDisabled'],
-    },
+    controls: { disable: true },
   },
   render: () => {
     const text = useRadioButtonText();
@@ -286,6 +305,33 @@ export const Sizes: Story = {
 };
 
 export const DescriptionAndError: Story = {
+  parameters: { controls: { disable: true } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const radios = canvas.getAllByRole('radio');
+    const ids = [...canvasElement.querySelectorAll('[id]')].map((node) => node.id);
+    await expect(new Set(ids).size).toBe(ids.length);
+    const descriptions = radios.map((radio) =>
+      (radio.getAttribute('aria-describedby') ?? '')
+        .split(' ')
+        .filter(Boolean)
+        .map((id) => document.getElementById(id)?.textContent)
+        .filter(Boolean)
+        .join(' '),
+    );
+    await expect(descriptions[0]).toContain(
+      canvasElement.querySelector('label span[id$="description"]')!.textContent!,
+    );
+    await expect(radios[0]).toHaveAccessibleName(
+      radios[0].closest('label')!.querySelector('[id$="label"]')!.textContent!,
+    );
+    await expect(descriptions[1]).toContain(
+      canvasElement.querySelector('label span[id$="error"]')!.textContent!,
+    );
+    await expect(radios[0].getAttribute('aria-describedby')).not.toBe(
+      radios[1].getAttribute('aria-describedby'),
+    );
+  },
   render: () => {
     const text = useRadioButtonText();
 
@@ -324,112 +370,53 @@ export const DescriptionAndError: Story = {
   },
 };
 
-export const Invalid: Story = {
-  args: {
-    children: englishRadioButtonText.text.acceptTerms,
-    isInvalid: true,
-    errorMessage: englishRadioButtonText.text.termsRequired,
-  },
-  render: (args) => {
-    const language = useRadioButtonLanguage();
-    const text = radioButtonText[language];
-    const { children, errorMessage, ...radioArgs } = args;
-
-    return (
-      <RadioGroup
-        aria-label="Invalid radio example"
-        defaultValue="terms"
-        isInvalid={Boolean(args.isInvalid)}
-      >
-        <Radio
-          {...radioArgs}
-          value="terms"
-          errorMessage={getLocalizedRadioButtonNode(
-            errorMessage,
-            language,
-            text.text.termsRequired,
-          )}
-        >
-          {getLocalizedRadioButtonNode(children, language, text.text.acceptTerms)}
-        </Radio>
-      </RadioGroup>
-    );
-  },
-};
-
-export const RootClassName: Story = {
-  render: () => {
-    const text = useRadioButtonText();
-
-    return (
-      <RadioGroup
-        aria-label="Radio layout className example"
-        className="grid grid-cols-3 gap-[16px]"
-        defaultValue="a"
-      >
-        <Radio className="justify-center" value="a">
-          {text.options.optionA}
-        </Radio>
-        <Radio className="justify-center" value="b">
-          {text.options.optionB}
-        </Radio>
-        <Radio className="justify-center" value="c">
-          {text.options.optionC}
-        </Radio>
-      </RadioGroup>
-    );
-  },
-};
-
-export const StatesAudit: Story = {
+export const States: Story = {
   parameters: {
-    controls: {
-      exclude: ['size', 'isDisabled'],
-    },
+    controls: { disable: true },
   },
   render: () => {
     const text = useRadioButtonText();
 
     return (
-      <div className="grid grid-cols-3 gap-[20px] items-start">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-5">
         <div />
         <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.off}</div>
         <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.on}</div>
 
         <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.md}</div>
         <RadioGroup aria-label="Medium off state">
-          <Radio value="md-off" size="md" />
+          <Radio value="md-off" size="md" aria-label="md-off" />
         </RadioGroup>
         <RadioGroup aria-label="Medium on state" defaultValue="md-on">
-          <Radio value="md-on" size="md" />
+          <Radio value="md-on" size="md" aria-label="md-on" />
         </RadioGroup>
 
         <div className="text-[12px] font-bold uppercase text-base-muted">
           {text.states.mdDisabled}
         </div>
         <RadioGroup aria-label="Medium disabled off state">
-          <Radio value="md-off-disabled" size="md" isDisabled />
+          <Radio value="md-off-disabled" size="md" isDisabled aria-label="md-off-disabled" />
         </RadioGroup>
         <RadioGroup aria-label="Medium disabled on state" defaultValue="md-on-disabled">
-          <Radio value="md-on-disabled" size="md" isDisabled />
+          <Radio value="md-on-disabled" size="md" isDisabled aria-label="md-on-disabled" />
         </RadioGroup>
 
         <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.lg}</div>
         <RadioGroup aria-label="Large off state">
-          <Radio value="lg-off" size="lg" />
+          <Radio value="lg-off" size="lg" aria-label="lg-off" />
         </RadioGroup>
         <RadioGroup aria-label="Large on state" defaultValue="lg-on">
-          <Radio value="lg-on" size="lg" />
+          <Radio value="lg-on" size="lg" aria-label="lg-on" />
         </RadioGroup>
 
         <div className="text-[12px] font-bold uppercase text-base-muted">
           {text.states.lgDisabled}
         </div>
         <RadioGroup aria-label="Large disabled off state">
-          <Radio value="lg-off-disabled" size="lg" isDisabled />
+          <Radio value="lg-off-disabled" size="lg" isDisabled aria-label="lg-off-disabled" />
         </RadioGroup>
         <RadioGroup aria-label="Large disabled on state" defaultValue="lg-on-disabled">
-          <Radio value="lg-on-disabled" size="lg" isDisabled />
+          <Radio value="lg-on-disabled" size="lg" isDisabled aria-label="lg-on-disabled" />
         </RadioGroup>
       </div>
     );

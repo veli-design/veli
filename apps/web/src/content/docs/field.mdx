@@ -84,12 +84,14 @@ Field primitives are thin wrappers over React Aria [`Label`](https://react-spect
 
 ### FieldLabel
 
-| Prop                    | Type                   | Default | Description                                                  |
-| :---------------------- | :--------------------- | :------ | :----------------------------------------------------------- |
-| `size`                  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Label typography size.                                       |
-| `isOptional`            | `boolean`              | `false` | Shows localized Optional. Hidden when the field is required. |
-| `showRequiredIndicator` | `boolean`              | `true`  | Shows `*` when a surrounding `Field` is required.            |
-| `htmlFor`               | `string`               | -       | Optional override for standalone label association.          |
+| Prop                    | Type                   | Default     | Description                                                  |
+| :---------------------- | :--------------------- | :---------- | :----------------------------------------------------------- |
+| `size`                  | `'sm' \| 'md' \| 'lg'` | `'md'`      | Label typography size.                                       |
+| `isOptional`            | `boolean`              | `false`     | Shows localized Optional. Hidden when the field is required. |
+| `isDisabled`            | `boolean`              | Field state | Overrides disabled label styling for built-in controls.      |
+| `isRequired`            | `boolean`              | Field state | Overrides required state for built-in controls.              |
+| `showRequiredIndicator` | `boolean`              | `true`      | Shows `*` when a surrounding `Field` is required.            |
+| `htmlFor`               | `string`               | -           | Optional override for standalone label association.          |
 
 React Aria [`Label`](https://react-spectrum.adobe.com/react-aria/Label.html#props) props pass through except:
 

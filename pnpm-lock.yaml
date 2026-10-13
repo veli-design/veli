@@ -325,6 +325,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
+      react-aria:
+        specifier: 3.49.0
+        version: 3.49.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0

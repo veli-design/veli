@@ -1,79 +1,196 @@
 ---
 title: Radio
-description: Accessible radio input with semantic token states and explicit geometry.
+description: Accessible single selection with medium and large controls, group validation, and composable field messages.
 ---
 
-import { RadioDisabledDemo, RadioSizesDemo, RadioUsageDemo } from '../../components/DocsExamples';
+import {
+  RadioUsageDemo,
+  RadioSizesDemo,
+  RadioMessagesDemo,
+  RadioStatesDemo,
+  RadioControlledDemo,
+  RadioRtlDemo,
+} from '../../components/RadioExamples';
 
 # Radio
 
-The Radio component supports two sizes and the full state set from the design system: default, hover, pressed, focus, and disabled.
+Use `RadioGroup` when exactly one option may be selected. Selection, keyboard navigation, form values, and validation belong to the group. Use [Checkbox](/docs/checkbox/) for independent choices.
 
 ## Import
 
 ```tsx
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { FieldLabel, FieldDescription, FieldError } from '@tradenetcorp/veli-ui/field';
 ```
 
 ## Usage
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
-  <RadioUsageDemo client:visible />
+Place a `FieldLabel` inside the group, or provide `aria-label` or `aria-labelledby`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioUsageDemo client:load />
 </div>
 
 ```tsx
-<RadioGroup defaultValue="a">
-  <Radio value="a">Option A</Radio>
-  <Radio value="b">Option B</Radio>
-  <Radio value="c">Option C</Radio>
+<RadioGroup name="contact" defaultValue="email">
+  <FieldLabel>Contact method</FieldLabel>
+  <Radio value="email">Email</Radio>
+  <Radio value="sms">SMS</Radio>
 </RadioGroup>
 ```
 
 ## Sizes
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
-  <RadioSizesDemo client:visible />
+`md` has a 16px control and 8px selected indicator. `lg` has a 24px control and 14px indicator. The label and helper text wrap while the control keeps its size.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioSizesDemo client:load />
 </div>
 
 ```tsx
-<Radio size="md" value="one">
-  Medium
-</Radio>
-<Radio size="lg" value="two">
-  Large
-</Radio>
+<RadioGroup aria-label="Choices" defaultValue="one">
+  <Radio size="md" value="one">
+    Medium
+  </Radio>
+  <Radio size="lg" value="two">
+    Large
+  </Radio>
+</RadioGroup>
 ```
 
-## Disabled
+## Descriptions and validation
 
-<div className="preview p-4 border border-base-subtle rounded-lg bg-surface-raised mb-4">
-  <RadioDisabledDemo client:visible />
+Use group `description` and `errorMessage` for shared guidance. When the group is invalid, its error replaces the description. Alternatively, compose `FieldDescription` and `FieldError` inside the group; choose one message approach per slot.
+
+An option's `description` and `errorMessage` are associated with that option. Its `isInvalid` controls local error visibility; group `isInvalid`, `isRequired`, and `validate` control validation.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioMessagesDemo client:load />
 </div>
+
+```tsx
+<RadioGroup isInvalid errorMessage="Choose a contact method.">
+  <FieldLabel>Contact method</FieldLabel>
+  <Radio value="email" description="Receive a message in your inbox.">
+    Email
+  </Radio>
+  <Radio value="sms">SMS</Radio>
+</RadioGroup>
+```
+
+For required forms, set `name` and `isRequired` on the group. `validationBehavior="native"` blocks invalid submission; `"aria"` exposes validation without blocking it. A native reset restores an uncontrolled group's `defaultValue`; reset controlled state in the application.
+
+## Controlled selection
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioControlledDemo client:load />
+</div>
+
+```tsx
+const [value, setValue] = useState('email');
+
+<RadioGroup value={value} onChange={setValue} aria-label="Contact method">
+  <Radio value="email">Email</Radio>
+  <Radio value="sms">SMS</Radio>
+</RadioGroup>;
+```
+
+## Disabled and read only
+
+`isDisabled` prevents focus and selection and excludes the control from form submission. Group `isReadOnly` keeps its value and allows focus while preventing changes. Individual radios may also be disabled.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioStatesDemo client:load />
+</div>
+
+## Language and direction
+
+Use the same locale and direction as the surrounding UI. Dhivehi typography follows `lang="dv"`; the label stays beside its control in RTL. Wrap a localized subtree in React Aria's `I18nProvider` when it differs from the application locale so horizontal arrow keys follow that direction.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioRtlDemo client:load />
+</div>
+
+## Accessibility and motion
+
+Give each option visible label content or `aria-label`/`aria-labelledby`. Tab enters the selected option; arrow keys move selection, skipping disabled options, and Space selects the focused option. Helper and error text describe the input without becoming its name. The focus ring is visible for keyboard use and selection remains visible in forced colors.
+
+Hover colors update immediately. Press and release animate the border and selected indicator over the fast motion token (80ms). Reduced motion disables those transitions.
 
 ## API Reference
 
-### `Radio`
+Radio and RadioGroup are Veli components on React Aria's [radio components](https://react-spectrum.adobe.com/react-aria/RadioGroup.html), which manage native `<input type="radio">` elements. Props below follow that stack.
 
-| Prop         | Type           | Default | Description                                                         |
-| :----------- | :------------- | :------ | :------------------------------------------------------------------ |
-| `size`       | `'md' \| 'lg'` | `'md'`  | Visual size of the radio control.                                   |
-| `isDisabled` | `boolean`      | `false` | Disables interaction and applies disabled styling.                  |
-| `value`      | `string`       | -       | Value used by the parent `RadioGroup` for selection.                |
-| `children`   | `ReactNode`    | -       | Label content.                                                      |
-| `className`  | `string`       | -       | Layout-only class override merged onto the outermost radio element. |
+### Radio
 
-### `RadioGroup`
+Veli-specific props for an option inside RadioGroup.
 
-| Prop           | Type                      | Default | Description                                                               |
-| :------------- | :------------------------ | :------ | :------------------------------------------------------------------------ |
-| `defaultValue` | `string`                  | -       | Uncontrolled initial selected value.                                      |
-| `value`        | `string`                  | -       | Controlled selected value.                                                |
-| `onChange`     | `(value: string) => void` | -       | Callback when selection changes.                                          |
-| `isDisabled`   | `boolean`                 | `false` | Disables all radios in the group.                                         |
-| `description`  | `ReactNode`               | -       | Helper text below the group.                                              |
-| `errorMessage` | `ReactNode`               | -       | Error text shown below the group when `isInvalid` is set.                 |
-| `className`    | `string`                  | -       | Layout-only class override merged onto the outermost radio group element. |
+| Prop           | Type                    | Default | Description                                                   |
+| :------------- | :---------------------- | :------ | :------------------------------------------------------------ |
+| `size`         | `'md' \| 'lg'`          | `'md'`  | Control and label size.                                       |
+| `children`     | `ReactNode`             | -       | Visible option label.                                         |
+| `description`  | `ReactNode`             | -       | Helper text associated with this option.                      |
+| `errorMessage` | `ReactNode`             | -       | Local error shown when option `isInvalid` is true.            |
+| `isInvalid`    | `boolean`               | `false` | Shows the option's local error; group validation is separate. |
+| `className`    | `string`                | -       | Layout classes on the root label.                             |
+| `ref`          | `Ref<HTMLLabelElement>` | -       | Forwarded to the root label.                                  |
 
-_Note: All other `react-aria-components` Radio and RadioGroup props are supported, excluding `style` overrides._
+### RadioGroup
 
-`className` is a root-level escape hatch for layout and composition cases such as margin and grid or flex placement. The radio control and indicator internals remain private to preserve focus, contrast, disabled, and selected states.
+Veli-specific props for the composed group.
+
+| Prop           | Type                  | Default | Description                                               |
+| :------------- | :-------------------- | :------ | :-------------------------------------------------------- |
+| `description`  | `ReactNode`           | -       | Shared helper text.                                       |
+| `errorMessage` | `ReactNode`           | -       | Shared error text; replaces the description when invalid. |
+| `className`    | `string`              | -       | Layout classes on the root group.                         |
+| `ref`          | `Ref<HTMLDivElement>` | -       | Forwarded to the root group.                              |
+
+### React Aria Radio
+
+React Aria's headless option props pass through. Its documentation covers the remaining accessible-label, focus, hover, and DOM props, except the exclusions below.
+
+| Prop         | Type                                  | Default | Description                              |
+| :----------- | :------------------------------------ | :------ | :--------------------------------------- |
+| `value`      | `string`                              | -       | Required unique value inside RadioGroup. |
+| `isDisabled` | `boolean`                             | `false` | Disables this option.                    |
+| `autoFocus`  | `boolean`                             | `false` | Focuses this option on mount.            |
+| `inputRef`   | `RefObject<HTMLInputElement \| null>` | -       | Ref for the native radio input.          |
+
+### React Aria RadioGroup
+
+React Aria's headless group props pass through. Selection, form values, and validation belong to the group.
+
+| Prop                 | Type                           | Default      | Description                                               |
+| :------------------- | :----------------------------- | :----------- | :-------------------------------------------------------- |
+| `children`           | `ReactNode` or render function | -            | Options and fields; render functions receive group state. |
+| `value`              | `string \| null`               | -            | Controlled selection.                                     |
+| `defaultValue`       | `string \| null`               | -            | Uncontrolled initial selection.                           |
+| `onChange`           | `(value: string) => void`      | -            | Called when selection changes.                            |
+| `isDisabled`         | `boolean`                      | `false`      | Disables all options.                                     |
+| `isReadOnly`         | `boolean`                      | `false`      | Allows focus while preventing selection changes.          |
+| `isRequired`         | `boolean`                      | `false`      | Requires a selection.                                     |
+| `isInvalid`          | `boolean`                      | `false`      | Marks the group invalid.                                  |
+| `name`               | `string`                       | -            | Native form field name.                                   |
+| `form`               | `string`                       | -            | ID of the owning form.                                    |
+| `validate`           | `function`                     | -            | Custom validation of the selected value.                  |
+| `validationBehavior` | `'native' \| 'aria'`           | `'native'`   | Native blocking or ARIA validation.                       |
+| `orientation`        | `'vertical' \| 'horizontal'`   | `'vertical'` | Announced orientation; use classes for row layout.        |
+
+Not forwarded from React Aria:
+
+| Prop                      | Why                                                              |
+| :------------------------ | :--------------------------------------------------------------- |
+| `style`                   | Not supported on Radio or RadioGroup.                            |
+| `className`               | Replaced by Veli's string layout `className` on the root.        |
+| Radio `children`          | Veli owns the control; children provide the visible label.       |
+| RadioGroup `label`        | Compose FieldLabel, or use `aria-label` / `aria-labelledby`.     |
+| RadioGroup `errorMessage` | Replaced by Veli's message content; functions are not supported. |
+
+### Native radio input
+
+React Aria manages the native input's checked state and keyboard behavior. The option's `value` and the group's `name` and `form` reach that input; `inputRef` accesses it. Set selection through RadioGroup rather than adding a separate `checked` prop to Radio. Internal control and indicator slots remain private.
+
+## Release guidance
+
+Existing selection and Field composition APIs remain unchanged. Option helper/error associations are corrected, and reduced motion is respected. No migration is required.
