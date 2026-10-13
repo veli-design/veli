@@ -1098,6 +1098,20 @@ body {
   font-size: inherit;
 }
 
+/* Preserve readable API columns when the documentation frame is narrower than
+   the reference tracks, including beside the desktop navigation rails. */
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table:has(> thead > tr > :nth-child(3)):not(:has(> thead > tr > :nth-child(5))) {
+  display: block;
+  overflow-x: auto;
+}
+
+:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+  > table:has(> thead > tr > :nth-child(3)):not(:has(> thead > tr > :nth-child(5)))
+  > :is(thead, tbody) {
+  min-width: 640px;
+}
+
 /* API tables use Figma's column tracks at the 1512px reference width. */
 :is(.docs-prose, .docs-tab-panel, .foundation-prose)
   > table
