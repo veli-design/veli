@@ -50,32 +50,51 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
   <ComboBoxValidationDemo client:visible />
 </div>
 
+## Optional and Required
+
+Use `isOptional` to display localized optional copy. It is never inferred from `!isRequired`. Required fields suppress the optional marker even when `showRequiredIndicator={false}`. The older `labelSupplementary` prop remains supported for custom supplementary text and is deprecated for optional labels; replace `labelSupplementary="(Optional)"` with `isOptional`.
+
+## Selection and Interaction
+
+Use `value`, `defaultValue`, and `onChange` for form bindings, or React Aria's `selectedKey`, `defaultSelectedKey`, and `onSelectionChange`. Avoid mixing both controlled selection APIs. `inputValue` and `onInputChange` control the search text independently. `menuTrigger` defaults to `"focus"`; `"input"` opens while typing and `"manual"` opens from the disclosure button or keyboard.
+
+`isReadOnly` keeps the value focusable and selectable while preventing edits and opening. `isDisabled` prevents interaction. Async collections can use `items`, `allowsEmptyCollection`, and an explicit `emptyState` for loading or no-results copy; ComboBox has no separate pending state.
+
 ## Option Text
 
 `ComboBoxItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so filtering, selected values, and screen-reader output remain reliable.
 
+## Size and Appearance
+
+`appearance` supports `"default"` and `"outline"`. `size` supports `"sm"`, `"md"` (default), and `"lg"`, with fixed field heights of 36, 44, and 52px. Outline strokes paint inside the field without moving its content on hover or focus.
+
+## Motion
+
+Field background and outline feedback, trigger hover/press feedback, and option hover/press feedback reuse Veli's `duration-normal` (200ms), `ease-out`, with no delay. The caret rotates 180 degrees on open using `duration-normal` and `ease-in-out`; reduced motion disables each transition. Vertical caret motion is identical in LTR and RTL. Popup opening remains immediate; tooltip timing and enter/exit motion come from the shared Tooltip component.
+
 ## API Reference
 
-| Prop                    | Type        | Default               | Description                                                                                  |
-| :---------------------- | :---------- | :-------------------- | :------------------------------------------------------------------------------------------- |
-| `label`                 | `ReactNode` | -                     | Visible label content rendered with React Aria's `Label`.                                    |
-| `labelSupplementary`    | `ReactNode` | -                     | Inline helper copy beside the label, for cases like `(Optional)`.                            |
-| `infoTooltip`           | `ReactNode` | -                     | Optional tooltip content displayed from a small info icon in the header.                     |
-| `infoTooltipAriaLabel`  | `string`    | Localized string      | Accessible label for the tooltip trigger button.                                             |
-| `labelIcon`             | `ReactNode` | -                     | Small icon placed after the label content.                                                   |
-| `action`                | `ReactNode` | -                     | Right-aligned header content, suitable for an inline action.                                 |
-| `description`           | `ReactNode` | -                     | Helper text shown beneath the field when not invalid.                                        |
-| `errorMessage`          | `ReactNode` | -                     | Validation content shown beneath the field when `isInvalid` is true.                         |
-| `startAddon`            | `ReactNode` | -                     | Leading content rendered inside the inset 24px accessory container.                          |
-| `startContent`          | `ReactNode` | -                     | Leading inline content rendered directly inside the field shell.                             |
-| `endContent`            | `ReactNode` | -                     | Trailing inline content rendered directly inside the field shell, before the trigger button. |
-| `menuTriggerIcon`       | `ReactNode` | chevron               | Replaces the default dropdown indicator icon.                                                |
-| `emptyState`            | `ReactNode` | `"No matches found."` | Empty-state content rendered when filtering produces no results.                             |
-| `showRequiredIndicator` | `boolean`   | `true`                | Controls whether the required asterisk is rendered when `isRequired` is set.                 |
-| `className`             | `string`    | -                     | Layout-only class override merged onto the outermost root element.                           |
+| Prop                    | Type        | Default          | Description                                                                                     |
+| :---------------------- | :---------- | :--------------- | :---------------------------------------------------------------------------------------------- |
+| `label`                 | `ReactNode` | -                | Visible label content rendered with React Aria's `Label`.                                       |
+| `isOptional`            | `boolean`   | `false`          | Show localized optional copy; `isRequired` always takes precedence.                             |
+| `labelSupplementary`    | `ReactNode` | -                | Deprecated for optional markers; use `isOptional`. Custom supplementary text remains supported. |
+| `infoTooltip`           | `ReactNode` | -                | Optional tooltip content displayed from a small info icon in the header.                        |
+| `infoTooltipAriaLabel`  | `string`    | Localized string | Accessible label for the tooltip trigger button.                                                |
+| `labelIcon`             | `ReactNode` | -                | Small icon placed after the label content.                                                      |
+| `action`                | `ReactNode` | -                | Content aligned at the end of the header, suitable for an inline action.                        |
+| `description`           | `ReactNode` | -                | Helper text shown beneath the field when not invalid.                                           |
+| `errorMessage`          | `ReactNode` | -                | Validation content shown beneath the field when `isInvalid` is true.                            |
+| `startAddon`            | `ReactNode` | -                | Leading accessory rendered inside the field shell.                                              |
+| `startContent`          | `ReactNode` | -                | Leading inline content rendered directly inside the field shell.                                |
+| `endContent`            | `ReactNode` | -                | Trailing inline content rendered directly inside the field shell, before the trigger button.    |
+| `menuTriggerIcon`       | `ReactNode` | chevron          | Replaces the default dropdown indicator icon.                                                   |
+| `emptyState`            | `ReactNode` | Localized string | Empty-state content rendered when filtering produces no results.                                |
+| `showRequiredIndicator` | `boolean`   | `true`           | Controls whether the required asterisk is rendered when `isRequired` is set.                    |
+| `className`             | `string`    | -                | Layout-only class override merged onto the outermost root element.                              |
 
 All other `react-aria-components` `ComboBox` props are supported, excluding `style` and direct child composition overrides on the root wrapper.
 
 `className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.
 
-For Dhivehi (`lang="dv"`) comboboxes, the field text, placeholder, dropdown, options, and section labels inherit the active language and direction. ComboBox also applies internal Dhivehi field metrics to keep the typed value and placeholder visually centered across sizes.
+Use `VeliProvider language="dv"` for Dhivehi, or override a field with `lang="dv"`. Explicit `lang` and `dir` are propagated to the field, tooltip, and portalled list. React Aria locale overrides are respected for filtering and built-in labels. For Dhivehi (`lang="dv"`) comboboxes, the field text, placeholder, dropdown, options, and section labels inherit the active language and direction. ComboBox also applies internal Dhivehi field metrics to keep the typed value and placeholder visually centered across sizes.

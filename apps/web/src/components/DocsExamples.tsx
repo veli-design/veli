@@ -626,7 +626,7 @@ export function ComboBoxExplorationDemo() {
     <div className="w-[320px]">
       <ComboBox
         label="Location"
-        labelSupplementary="(Optional)"
+        isOptional
         infoTooltip="Use this combobox to search and choose a matching option."
         infoTooltipAriaLabel="More information"
         action="Browse"

@@ -4,7 +4,12 @@ import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { CalendarBlankIcon, MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react';
+import {
+  CalendarBlankIcon,
+  CaretDownIcon,
+  MagnifyingGlassIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 
 type Option = {
   id: string;
@@ -99,10 +104,6 @@ const comboboxArgText = {
     en: comboboxText.en.label,
     dv: comboboxText.dv.label,
   },
-  labelSupplementary: {
-    en: comboboxText.en.optional,
-    dv: comboboxText.dv.optional,
-  },
   infoTooltip: {
     en: comboboxText.en.infoTip,
     dv: comboboxText.dv.infoTip,
@@ -127,7 +128,6 @@ const comboboxArgText = {
 
 type ComboBoxArgTextKey = keyof typeof comboboxArgText;
 type ComboBoxStoryArgs = ComponentProps<typeof ComboBox> & {
-  showOptional: boolean;
   showInfoTooltip: boolean;
   allowsCustomValue: boolean;
   items: Option[];
@@ -251,15 +251,8 @@ const meta = {
     (Story, context) => {
       const language: ComboBoxLanguage = context.globals.language === 'dv' ? 'dv' : 'en';
       const [args, updateArgs] = useArgs();
-      const {
-        description,
-        errorMessage,
-        infoTooltip,
-        infoTooltipAriaLabel,
-        label,
-        labelSupplementary,
-        placeholder,
-      } = args;
+      const { description, errorMessage, infoTooltip, infoTooltipAriaLabel, label, placeholder } =
+        args;
 
       useEffect(() => {
         const nextArgs: Partial<Record<ComboBoxArgTextKey, string>> = {};
@@ -269,7 +262,6 @@ const meta = {
           infoTooltip,
           infoTooltipAriaLabel,
           label,
-          labelSupplementary,
           placeholder,
         };
 
@@ -290,7 +282,6 @@ const meta = {
         infoTooltip,
         infoTooltipAriaLabel,
         label,
-        labelSupplementary,
         language,
         placeholder,
         updateArgs,
@@ -305,9 +296,6 @@ const meta = {
   tags: ['autodocs'],
   argTypes: {
     label: {
-      control: 'text',
-    },
-    labelSupplementary: {
       control: 'text',
     },
     infoTooltip: {
@@ -339,13 +327,16 @@ const meta = {
     isDisabled: {
       control: 'boolean',
     },
+    isReadOnly: { control: 'boolean' },
+    menuTrigger: { control: 'select', options: ['focus', 'input', 'manual'] },
+    emptyState: { control: 'text' },
     isRequired: {
       control: 'boolean',
     },
     showRequiredIndicator: {
       control: 'boolean',
     },
-    showOptional: {
+    isOptional: {
       control: 'boolean',
     },
     showInfoTooltip: {
@@ -357,14 +348,13 @@ const meta = {
   },
   args: {
     label: comboboxText.en.label,
-    labelSupplementary: comboboxText.en.optional,
     infoTooltip: comboboxText.en.infoTip,
     infoTooltipAriaLabel: comboboxText.en.infoTipLabel,
     placeholder: comboboxText.en.placeholder,
     description: comboboxText.en.helperText,
     errorMessage: comboboxText.en.errorMessage,
     showRequiredIndicator: true,
-    showOptional: false,
+    isOptional: false,
     showInfoTooltip: false,
     allowsCustomValue: false,
     isDisabled: false,
@@ -380,7 +370,7 @@ export const Default: Story = {
   render: (args) => {
     const language = useComboBoxLanguage();
     const text = comboboxText[language];
-    const { items, showInfoTooltip, showOptional, ...comboboxArgs } = args;
+    const { items, showInfoTooltip, ...comboboxArgs } = args;
     const safeItems = useMemo(() => getSafeItems(items, text), [items, text]);
     const { inputValue, selectedKey, handleInputChange, handleSelectionChange } =
       useControlledComboBoxState(safeItems);
@@ -390,11 +380,6 @@ export const Default: Story = {
         <ComboBox
           {...comboboxArgs}
           label={getLocalizedComboBoxArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedComboBoxArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedComboBoxArgText('infoTooltip', args.infoTooltip, language)
@@ -433,7 +418,7 @@ export const Outline: Story = {
   render: (args) => {
     const language = useComboBoxLanguage();
     const text = comboboxText[language];
-    const { items, showInfoTooltip, showOptional, ...comboboxArgs } = args;
+    const { items, showInfoTooltip, ...comboboxArgs } = args;
     const safeItems = useMemo(() => getSafeItems(items, text), [items, text]);
     const { inputValue, selectedKey, handleInputChange, handleSelectionChange } =
       useControlledComboBoxState(safeItems);
@@ -443,11 +428,6 @@ export const Outline: Story = {
         <ComboBox
           {...comboboxArgs}
           label={getLocalizedComboBoxArgText('label', args.label, language)}
-          labelSupplementary={
-            showOptional
-              ? getLocalizedComboBoxArgText('labelSupplementary', args.labelSupplementary, language)
-              : undefined
-          }
           infoTooltip={
             showInfoTooltip
               ? getLocalizedComboBoxArgText('infoTooltip', args.infoTooltip, language)
@@ -690,7 +670,7 @@ export const FigmaExploration: Story = {
       <div className="w-[320px]">
         <ComboBox
           label={text.label}
-          labelSupplementary={text.optional}
+          isOptional
           infoTooltip={text.infoTip}
           infoTooltipAriaLabel={text.infoTipLabel}
           action={text.action}
@@ -834,4 +814,193 @@ export const ValidationStates: Story = {
       </div>
     );
   },
+};
+
+export const ReadOnly: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    return (
+      <div className="grid w-[min(680px,90vw)] grid-cols-1 gap-6 sm:grid-cols-2">
+        {(['default', 'outline'] as const).map((appearance) => (
+          <ComboBox
+            key={appearance}
+            appearance={appearance}
+            label={text.label}
+            isReadOnly
+            defaultValue="male"
+            defaultItems={createOptions(text)}
+            description={text.helperText}
+          >
+            {renderComboBoxItems}
+          </ComboBox>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const RequiredPrecedence: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    return (
+      <div className="flex w-[min(320px,90vw)] flex-col gap-6">
+        <ComboBox label={text.label} isOptional defaultItems={createOptions(text)}>
+          {renderComboBoxItems}
+        </ComboBox>
+        <ComboBox label={text.label} isOptional isRequired defaultItems={createOptions(text)}>
+          {renderComboBoxItems}
+        </ComboBox>
+        <ComboBox
+          label={text.label}
+          isOptional
+          isRequired
+          showRequiredIndicator={false}
+          defaultItems={createOptions(text)}
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+      </div>
+    );
+  },
+};
+
+export const LocalLanguageOverrides: Story = {
+  render: () => (
+    <div className="flex w-[min(320px,90vw)] flex-col gap-6">
+      {(['en', 'dv'] as const).map((lang) => (
+        <ComboBox
+          key={lang}
+          lang={lang}
+          label={comboboxText[lang].label}
+          isOptional
+          infoTooltip={comboboxText[lang].infoTip}
+          placeholder={comboboxText[lang].placeholder}
+          description={comboboxText[lang].helperText}
+          defaultItems={createOptions(comboboxText[lang])}
+          allowsEmptyCollection
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+      ))}
+    </div>
+  ),
+};
+
+export const LongContent: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    return (
+      <div className="w-[min(240px,90vw)]">
+        <ComboBox
+          label={`${text.label} — ${text.helperText}`}
+          infoTooltip={text.infoTip}
+          isOptional
+          labelIcon={<CalendarBlankIcon size={16} aria-hidden />}
+          action={text.action}
+          description={`${text.helperText} — ${text.helperText.replace(/\s/g, '').repeat(3)}`}
+          placeholder={text.placeholder}
+          menuTriggerIcon={<CaretDownIcon size={20} aria-hidden />}
+        >
+          <ComboBoxSection title={text.sections.regional}>
+            <ComboBoxItem
+              id="long"
+              textValue={text.locations.kulhudhuffushi}
+              description={text.helperText}
+              startContent={<CalendarBlankIcon size={16} aria-hidden />}
+              endContent={<WarningCircleIcon size={16} aria-hidden />}
+            >
+              <span>
+                {text.locations.kulhudhuffushi} — {text.helperText}
+              </span>
+            </ComboBoxItem>
+            <ComboBoxItem id="disabled" isDisabled>
+              {text.disabled}
+            </ComboBoxItem>
+          </ComboBoxSection>
+        </ComboBox>
+      </div>
+    );
+  },
+};
+
+export const FormValue: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    const [value, onChange] = useState<string | null>('male');
+    return (
+      <div className="flex w-[min(320px,90vw)] flex-col gap-3">
+        <ComboBox
+          label={text.label}
+          value={value}
+          onChange={onChange}
+          defaultItems={createOptions(text)}
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+        <output>{value ?? text.none}</output>
+      </div>
+    );
+  },
+};
+
+export const EmptyCollection: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    return (
+      <div className="w-[min(320px,90vw)]">
+        <ComboBox
+          label={text.label}
+          placeholder={text.placeholder}
+          items={[]}
+          allowsEmptyCollection
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+      </div>
+    );
+  },
+};
+
+export const LongMessages: Story = {
+  render: () => {
+    const text = useComboBoxText();
+    return (
+      <div className="flex w-[min(240px,90vw)] flex-col gap-6">
+        <ComboBox
+          label={text.label}
+          description={text.helperText.replace(/\s/g, '').repeat(4)}
+          defaultItems={createOptions(text)}
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+        <ComboBox
+          label={text.invalid}
+          isInvalid
+          errorMessage={text.errorMessage.replace(/\s/g, '').repeat(4)}
+          defaultItems={createOptions(text)}
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+      </div>
+    );
+  },
+};
+
+export const LocalDirectionOverrides: Story = {
+  render: () => (
+    <div className="flex w-[min(320px,90vw)] flex-col gap-6">
+      {(['en', 'dv'] as const).map((lang) => (
+        <ComboBox
+          key={lang}
+          lang={lang}
+          dir={lang === 'en' ? 'rtl' : 'ltr'}
+          label={comboboxText[lang].label}
+          infoTooltip={comboboxText[lang].infoTip}
+          defaultItems={createOptions(comboboxText[lang])}
+        >
+          {renderComboBoxItems}
+        </ComboBox>
+      ))}
+    </div>
+  ),
 };
