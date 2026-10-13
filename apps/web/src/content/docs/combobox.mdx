@@ -4,6 +4,7 @@ description: Searchable single-choice field with a listbox popover and grouped o
 ---
 
 import {
+  ComboBoxDhivehiDemo,
   ComboBoxExplorationDemo,
   ComboBoxUsageDemo,
   ComboBoxValidationDemo,
@@ -210,5 +211,24 @@ Other declared React Aria `ListBoxSection` props are passed to the section. Veli
 ## RTL and Language
 
 Use `VeliProvider language="dv"` for Dhivehi, or override a field with `lang="dv"`. Field text, options, and section headers use `MV_Faseyha` and follow the field direction. Optional copy, the info trigger name, and the default empty state are localized; custom labels and messages remain caller-owned.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxDhivehiDemo client:visible />
+</div>
+
+```tsx
+<ComboBox
+  lang="dv"
+  dir="rtl"
+  label="ތަން"
+  isOptional
+  placeholder="ތަނެއް ހޯދާ"
+  description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
+>
+  <ComboBoxItem id="male">މާލެ</ComboBoxItem>
+  <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
+  <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
+</ComboBox>
+```
 
 Explicit `lang` keeps filtering tied to that locale. Explicit `dir="ltr"` or `dir="rtl"` also controls the effective direction of popup and tooltip content, even when it differs from the locale direction.

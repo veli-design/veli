@@ -617,6 +617,25 @@ export function ComboBoxUsageDemo() {
   );
 }
 
+export function ComboBoxDhivehiDemo() {
+  return (
+    <div className="w-[320px] max-w-full">
+      <ComboBox
+        lang="dv"
+        dir="rtl"
+        label="ތަން"
+        isOptional
+        placeholder="ތަނެއް ހޯދާ"
+        description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
+      >
+        <ComboBoxItem id="male">މާލެ</ComboBoxItem>
+        <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
+        <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
+      </ComboBox>
+    </div>
+  );
+}
+
 export function ComboBoxExplorationDemo() {
   return (
     <div className="w-[320px]">
