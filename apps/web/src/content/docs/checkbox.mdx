@@ -208,42 +208,103 @@ Use `VeliProvider language="dv"` for Dhivehi. It places the box at the right in 
 
 ## API Reference
 
-### `Checkbox`
+Checkbox composes React Aria's checkbox behavior with a native `<input type="checkbox">` inside a label. CheckboxGroup composes React Aria's [CheckboxGroup](https://react-aria.adobe.com/CheckboxGroup) around several Checkbox inputs. Props below follow that stack.
 
-| Prop              | Type                          | Default | Description                                              |
-| :---------------- | :---------------------------- | :------ | :------------------------------------------------------- |
-| `children`        | `ReactNode`                   | -       | Visible label and accessible name.                       |
-| `size`            | `'md' \| 'lg' \| 'xl'`        | `'md'`  | Control and text size.                                   |
-| `isSelected`      | `boolean`                     | -       | Controlled checked state.                                |
-| `defaultSelected` | `boolean`                     | `false` | Initial uncontrolled checked state.                      |
-| `onChange`        | `(selected: boolean) => void` | -       | Called when selection changes.                           |
-| `isIndeterminate` | `boolean`                     | `false` | Displays a dash indicator state.                         |
-| `isDisabled`      | `boolean`                     | `false` | Prevents focus and interaction.                          |
-| `isReadOnly`      | `boolean`                     | `false` | Allows focus but prevents changes.                       |
-| `isRequired`      | `boolean`                     | `false` | Marks the input as required.                             |
-| `isInvalid`       | `boolean`                     | `false` | Marks the input invalid and shows `errorMessage`.        |
-| `description`     | `ReactNode`                   | -       | Helper text linked to the input.                         |
-| `errorMessage`    | `ReactNode`                   | -       | Error text linked to the input when invalid.             |
-| `value`           | `string`                      | -       | Value added to the parent `CheckboxGroup` when selected. |
-| `name`            | `string`                      | -       | Native form field name outside a group.                  |
-| `aria-label`      | `string`                      | -       | Accessible name when no visible `children` are provided. |
-| `className`       | `string`                      | -       | Layout classes merged onto the outer label.              |
+### Checkbox
 
-### `CheckboxGroup`
+Veli-specific props and composition for the individual control.
 
-| Prop           | Type                           | Default | Description                                               |
-| :------------- | :----------------------------- | :------ | :-------------------------------------------------------- |
-| `children`     | `ReactNode` or render function | -       | `FieldLabel` and checkboxes, or a render function.        |
-| `defaultValue` | `string[]`                     | -       | Uncontrolled initial selected values.                     |
-| `value`        | `string[]`                     | -       | Controlled selected values.                               |
-| `onChange`     | `(value: string[]) => void`    | -       | Callback when the selection changes.                      |
-| `isDisabled`   | `boolean`                      | `false` | Disables every checkbox in the group.                     |
-| `isReadOnly`   | `boolean`                      | `false` | Allows focus but prevents changes.                        |
-| `isRequired`   | `boolean`                      | `false` | Requires a selection.                                     |
-| `isInvalid`    | `boolean`                      | `false` | Marks the group invalid and shows its error.              |
-| `description`  | `ReactNode`                    | -       | Helper text below the group.                              |
-| `errorMessage` | `ReactNode`                    | -       | Error text shown below the group when `isInvalid` is set. |
-| `name`         | `string`                       | -       | Native form field name for the group.                     |
-| `className`    | `string`                       | -       | Layout-only class override merged onto the group element. |
+| Prop           | Type                   | Default | Description                                                                  |
+| :------------- | :--------------------- | :------ | :--------------------------------------------------------------------------- |
+| `size`         | `'md' \| 'lg' \| 'xl'` | `'md'`  | 16px, 20px, or 24px control with matching label and message typography.      |
+| `children`     | `ReactNode`            | -       | Visible inline label. Render-function children are not supported.            |
+| `description`  | `ReactNode`            | -       | Helper text beneath the label, linked to the input's accessible description. |
+| `errorMessage` | `ReactNode`            | -       | Error text displayed and announced when `isInvalid` is explicitly true.      |
+| `className`    | `string`               | -       | Layout class merged onto the outer label.                                    |
 
-_Note: All other `react-aria-components` Checkbox and CheckboxGroup props are supported, excluding `style` overrides._
+An invalid individual checkbox keeps its description alongside its error. For application-managed errors, pass both `isInvalid` and `errorMessage`; this component does not render generated React Aria `FieldError` messages automatically.
+
+### React Aria Checkbox
+
+Selection, interaction, validation, and accessible-label props pass through to React Aria. The [React Aria Checkbox documentation](https://react-aria.adobe.com/Checkbox) covers its behavior; Veli's differences and exclusions are listed below.
+
+| Prop                 | Type                                                                  | Default                                   | Description                                                         |
+| :------------------- | :-------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------ |
+| `isSelected`         | `boolean`                                                             | -                                         | Controlled checked state outside a group.                           |
+| `defaultSelected`    | `boolean`                                                             | `false`                                   | Initial uncontrolled checked state outside a group.                 |
+| `onChange`           | `(selected: boolean) => void`                                         | -                                         | Receives a boolean when selection changes, rather than a DOM event. |
+| `isIndeterminate`    | `boolean`                                                             | `false`                                   | Displays the mixed dash until the application clears this prop.     |
+| `isDisabled`         | `boolean`                                                             | `false`                                   | Prevents focus, interaction, and native submission of this input.   |
+| `isReadOnly`         | `boolean`                                                             | `false`                                   | Allows focus but prevents selection changes.                        |
+| `isRequired`         | `boolean`                                                             | `false`                                   | Requires this checkbox to be selected outside a group.              |
+| `isInvalid`          | `boolean`                                                             | `false`                                   | Marks the input invalid; enables Veli's explicit inline error.      |
+| `validate`           | `(selected: boolean) => ValidationError \| true \| null \| undefined` | -                                         | Custom validation of the selection state.                           |
+| `validationBehavior` | `'native' \| 'aria'`                                                  | Inherited from Form, otherwise `'native'` | Browser constraint validation or ARIA-only feedback.                |
+| `autoFocus`          | `boolean`                                                             | `false`                                   | Focuses the input on mount.                                         |
+| `inputRef`           | `RefObject<HTMLInputElement \| null>`                                 | -                                         | Ref to the native checkbox input for focus or inspection.           |
+| `aria-label`         | `string`                                                              | -                                         | Accessible name when no visible label is provided.                  |
+| `aria-labelledby`    | `string`                                                              | -                                         | IDs of elements supplying the accessible name.                      |
+| `aria-describedby`   | `string`                                                              | -                                         | Extra description IDs, combined with Veli's helper/error IDs.       |
+
+`ValidationError` is a string or string array. `validate` returns `true`, `null`, or `undefined` when valid. Veli `Form` defaults to `validationBehavior="aria"`; opt into `"native"` when browser validation should block submission. Inside a group, drive selection with the group's `value` / `onChange` and each checkbox's unique `value`.
+
+React Aria differences and exclusions:
+
+| Prop           | Veli behavior                                                                    |
+| :------------- | :------------------------------------------------------------------------------- |
+| `children`     | Replaced by visible `ReactNode` label content; no render function.               |
+| `className`    | Replaced by a string layout class on the root; no state function.                |
+| `style`        | Not supported.                                                                   |
+| `errorMessage` | Accepts `ReactNode`; validation-message render functions are not supported.      |
+| `ref`          | A root ref is not declared in Veli's public props; use `inputRef` for the input. |
+
+### Native checkbox input
+
+These attributes reach the native input. The type is fixed to `checkbox`. Use `isSelected` / `defaultSelected`, `isDisabled`, and `isReadOnly` instead of native `checked` / `defaultChecked`, `disabled`, and `readOnly` props.
+
+| Prop    | Type     | Default                           | Description                                                  |
+| :------ | :------- | :-------------------------------- | :----------------------------------------------------------- |
+| `value` | `string` | Native `'on'` outside a group     | Submitted value when checked; must be unique inside a group. |
+| `name`  | `string` | Inherited from group, otherwise - | Native form field name.                                      |
+| `form`  | `string` | Inherited from group, otherwise - | ID of the associated form.                                   |
+
+### CheckboxGroup
+
+Veli-specific props for the group container and its shared message.
+
+| Prop           | Type        | Default | Description                                                               |
+| :------------- | :---------- | :------ | :------------------------------------------------------------------------ |
+| `description`  | `ReactNode` | -       | Shared helper text below the group.                                       |
+| `errorMessage` | `ReactNode` | -       | Replaces the helper when invalid; generated errors are used when omitted. |
+| `className`    | `string`    | -       | Layout class merged onto the outer group element.                         |
+
+### React Aria CheckboxGroup
+
+React Aria's [CheckboxGroup props](https://react-aria.adobe.com/CheckboxGroup#api) pass through, subject to the exclusions below. The container has `role="group"`; native form values come from its child checkbox inputs.
+
+| Prop                 | Type                                                                | Default                                   | Description                                                         |
+| :------------------- | :------------------------------------------------------------------ | :---------------------------------------- | :------------------------------------------------------------------ |
+| `children`           | `ReactNode` or render function                                      | -                                         | Group label and checkboxes; a render function receives group state. |
+| `value`              | `string[]`                                                          | -                                         | Controlled selected values.                                         |
+| `defaultValue`       | `string[]`                                                          | `[]`                                      | Initial uncontrolled selected values.                               |
+| `onChange`           | `(value: string[]) => void`                                         | -                                         | Receives the updated selected values.                               |
+| `isDisabled`         | `boolean`                                                           | `false`                                   | Disables every checkbox in the group.                               |
+| `isReadOnly`         | `boolean`                                                           | `false`                                   | Allows focus but prevents selection changes throughout the group.   |
+| `isRequired`         | `boolean`                                                           | `false`                                   | Requires at least one selection.                                    |
+| `isInvalid`          | `boolean`                                                           | `false`                                   | Marks the group invalid and displays its error.                     |
+| `validate`           | `(value: string[]) => ValidationError \| true \| null \| undefined` | -                                         | Custom validation of the group's selected values.                   |
+| `validationBehavior` | `'native' \| 'aria'`                                                | Inherited from Form, otherwise `'native'` | Browser constraint validation or ARIA-only feedback.                |
+| `name`               | `string`                                                            | -                                         | Default native form field name for child checkboxes.                |
+| `form`               | `string`                                                            | -                                         | Default associated form ID for child checkboxes.                    |
+| `aria-label`         | `string`                                                            | -                                         | Accessible group name when no visible group label is provided.      |
+| `aria-labelledby`    | `string`                                                            | -                                         | IDs of elements supplying the group's accessible name.              |
+| `aria-describedby`   | `string`                                                            | -                                         | Extra description IDs for the group.                                |
+
+React Aria differences and exclusions:
+
+| Prop           | Veli behavior                                                               |
+| :------------- | :-------------------------------------------------------------------------- |
+| `className`    | Replaced by a string layout class on the root; no state function.           |
+| `style`        | Not supported.                                                              |
+| `errorMessage` | Accepts `ReactNode`; validation-message render functions are not supported. |
+| `ref`          | A root ref is not declared in Veli's public group props.                    |

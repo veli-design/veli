@@ -36,6 +36,8 @@ Merged `origin/main` at `3d78699` (Search public-release audit). Its shared chan
 
 The website's six Checkbox demos now have complete React code examples matching their rendered previews, including imports, exported components, token-backed Tailwind layout classes, and the controlled group's `useState` and Veli-styled selection summary. The previously missing Disabled snippet is included. All seven TSX code blocks (the import block and six demos) independently typecheck against the installed React and Veli package types.
 
+The API reference now follows Search/TextArea's layered structure: Veli-specific Checkbox and CheckboxGroup props, React Aria selection/validation/accessibility props, and native checkbox input attributes. It documents the actual public-type exclusions instead of promising every upstream prop, including render-function children, message render functions, style/class functions, and root refs. It also distinguishes explicit inline Checkbox errors from the group's generated shared errors, and records `inputRef`, validation defaults, and native form attributes from the installed package types and implementation.
+
 The [Narrow layout story](http://localhost:6007/?path=/story/components-checkbox--narrow-layout) exposed one additional code defect after review: when the label wrapped, the box was centered against both lines. The control slot now aligns with the first line in English LTR and Dhivehi RTL. The story checks the rendered positions in both languages; Figma does not provide a narrow-width frame for comparison.
 
 ### 1. Implemented changes supported by the current spec
