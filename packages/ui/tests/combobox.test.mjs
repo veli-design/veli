@@ -96,3 +96,11 @@ test('ComboBox helper tone is muted without changing other fields or validation 
   assert.match(invalid, /text-danger-muted/);
   assert.match(invalid, /Choose a location/);
 });
+
+test('ComboBox preserves numeric zero labels and their accessible association', () => {
+  const html = liveMarkup(render({ label: 0 }));
+  const label = html.match(/<label[^>]*id="([^"]+)"[^>]*>0<\/label>/);
+  assert.ok(label);
+  const labelledBy = html.match(/<input[^>]*aria-labelledby="([^"]+)"/)?.[1];
+  assert.ok(labelledBy?.split(' ').includes(label[1]));
+});

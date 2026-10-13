@@ -33,6 +33,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   getFieldOptionalLabel,
+  hasRenderableMessage,
   shouldShowFieldOptional,
   outlineFieldStrokeRest,
   outlineFieldStrokeError,
@@ -414,6 +415,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
   ...props
 }: ComboBoxProps<T, K>) {
   const resolvedInputRef = inputRef ?? ref;
+  const hasLabel = hasRenderableMessage(label);
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [triggerWidth, setTriggerWidth] = React.useState<number>();
   const { locale, direction } = useLocale();
@@ -463,7 +465,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
             : labelSupplementary;
           return (
             <>
-              {label ||
+              {hasLabel ||
               infoTooltip ||
               supplementary ||
               labelIcon ||
@@ -471,7 +473,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
               (showRequiredIndicator && isRequired) ? (
                 <div className="flex w-full items-center gap-2 pb-2">
                   <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                    {label ? (
+                    {hasLabel ? (
                       <Label
                         className={twMerge(
                           fieldHeaderLabelVariants({ size, isDisabled }),
