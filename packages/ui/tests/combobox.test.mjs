@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { I18nProvider } from 'react-aria-components';
+import { Button, I18nProvider } from 'react-aria-components';
 import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
@@ -44,7 +44,41 @@ test('ComboBox info trigger has independent identity and no disclosure attribute
   assert.match(html, /aria-label="Show suggestions"/);
 });
 
+test('ComboBox custom action and accessory buttons keep their own identity', () => {
+  for (const slot of ['action', 'startAddon', 'startContent', 'endContent']) {
+    const content = `Custom ${slot}`;
+    const html = liveMarkup(render({ [slot]: h(Button, null, content) }));
+    const button = [...html.matchAll(/<button[^>]*>[\s\S]*?<\/button>/g)]
+      .map((match) => match[0])
+      .find((markup) => markup.includes(content));
+    assert.ok(button);
+    assert.doesNotMatch(
+      button,
+      /aria-expanded|aria-haspopup|aria-controls|aria-labelledby|tabindex="-1"/,
+    );
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.equal((html.match(/aria-haspopup="listbox"/g) ?? []).length, 1);
+
+    for (const state of [{ isDisabled: true }, { isReadOnly: true }]) {
+      const inactive = liveMarkup(render({ ...state, [slot]: h(Button, null, content) }));
+      const inactiveButton = [...inactive.matchAll(/<button[^>]*>[\s\S]*?<\/button>/g)]
+        .map((match) => match[0])
+        .find((markup) => markup.includes(content));
+      assert.match(inactiveButton, /disabled=""/);
+    }
+  }
+});
+
 test('ComboBox locale overrides update field direction and localized marker independently of provider', () => {
+  const inherited = liveMarkup(
+    render({ isOptional: true, infoTooltip: 'Help' }, (node) =>
+      h(VeliProvider, { language: 'dv' }, node),
+    ),
+  );
+  assert.match(inherited, /lang="dv-MV" dir="rtl"/);
+  assert.match(inherited, /އިޚްތިޔާރީ/);
+  assert.match(inherited, /aria-label="އިތުރު މަޢުލޫމާތު"/);
   const dv = liveMarkup(
     render({ lang: 'dv', isOptional: true }, (node) => h(VeliProvider, { language: 'en' }, node)),
   );

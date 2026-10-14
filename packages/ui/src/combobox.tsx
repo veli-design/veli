@@ -5,6 +5,7 @@ import {
   Button as AriaButton,
   ButtonContext,
   I18nProvider,
+  useLocale,
   ComboBox as AriaComboBox,
   Group,
   Header,
@@ -18,7 +19,6 @@ import {
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxSectionProps as AriaListBoxSectionProps,
 } from 'react-aria-components';
-import { useLocale } from 'react-aria';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CaretDownIcon, CheckIcon, InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
@@ -157,7 +157,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
   variants: {
     isDisabled: {
       true: 'text-disabled',
-      false: 'text-base-subtle',
+      false: 'text-base-default',
     },
   },
   defaultVariants: {
@@ -166,7 +166,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled disabled:placeholder:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
+  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-default disabled:text-disabled disabled:placeholder:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
   {
     variants: {
       size: {
@@ -203,7 +203,7 @@ const triggerButtonVariants = cva(
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
         false:
-          'text-base-subtle hover:bg-ash-alpha-100 hover:text-base-default data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base-default',
+          'text-icon-base hover:bg-ash-alpha-100 hover:text-base-default data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base-default',
       },
     },
     defaultVariants: {
@@ -224,7 +224,9 @@ const itemVariants = cva(
 
 const itemLabelVariants = cva('wrap-anywhere type-body-sm-regular');
 
-const itemDescriptionVariants = cva('wrap-anywhere type-body-sm-regular text-base-muted');
+const itemDescriptionVariants = cva(
+  'wrap-anywhere type-body-sm-regular text-base-strong group-data-[disabled]:text-base-muted',
+);
 
 const itemSelectionIndicatorVariants = cva(
   'shrink-0 text-icon-base group-data-[disabled]:text-icon-disabled [&:lang(dv)]:-translate-y-1',
@@ -233,7 +235,7 @@ const itemSelectionIndicatorVariants = cva(
 const sectionHeaderVariants = cva('px-4 py-2 wrap-anywhere type-body-sm-medium text-base-emphasis');
 
 const emptyStateVariants = cva(
-  'min-w-0 wrap-anywhere px-2 py-2.5 type-body-sm-regular text-base-subtle',
+  'min-w-0 wrap-anywhere px-2 py-2.5 type-body-sm-regular text-base-default',
 );
 
 const infoTooltipDefaultAriaLabels = {
@@ -286,7 +288,9 @@ export function ComboBoxItem<T extends object = object>({
         return (
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {startContent ? (
-              <span className="shrink-0 text-base-subtle">{startContent}</span>
+              <span className="shrink-0 text-base-strong group-data-[disabled]:text-disabled">
+                {startContent}
+              </span>
             ) : null}
             <div className="min-w-0 flex-1">
               {renderedChildren ? (
@@ -459,6 +463,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
         className={twMerge(comboboxRootVariants(), className)}
       >
         {({ isDisabled, isInvalid, isOpen, isRequired, isReadOnly }) => {
+          const accessoryButtonContext = { isDisabled: isDisabled || isReadOnly };
           const showOptionalLabel = shouldShowFieldOptional(isOptional, isRequired);
           const supplementary = showOptionalLabel
             ? getFieldOptionalLabel(language)
@@ -507,7 +512,12 @@ export function ComboBox<T extends object, K extends Key = Key>({
                       </ButtonContext.Provider>
                     ) : null}
                     {supplementary ? (
-                      <span className={fieldHeaderSupplementaryVariants({ size, isDisabled })}>
+                      <span
+                        className={twMerge(
+                          fieldHeaderSupplementaryVariants({ size, isDisabled }),
+                          !isDisabled && 'text-base-muted',
+                        )}
+                      >
                         {supplementary}
                       </span>
                     ) : null}
@@ -520,7 +530,13 @@ export function ComboBox<T extends object, K extends Key = Key>({
                       <span className={inlineSlotVariants({ isDisabled })}>{labelIcon}</span>
                     ) : null}
                   </div>
-                  {action ? <div className={actionVariants({ isDisabled })}>{action}</div> : null}
+                  {action ? (
+                    <div className={actionVariants({ isDisabled })}>
+                      <ButtonContext.Provider value={accessoryButtonContext}>
+                        {action}
+                      </ButtonContext.Provider>
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 
@@ -537,10 +553,18 @@ export function ComboBox<T extends object, K extends Key = Key>({
                 onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
               >
                 {startAddon ? (
-                  <div className={inlineSlotVariants({ isDisabled })}>{startAddon}</div>
+                  <div className={inlineSlotVariants({ isDisabled })}>
+                    <ButtonContext.Provider value={accessoryButtonContext}>
+                      {startAddon}
+                    </ButtonContext.Provider>
+                  </div>
                 ) : null}
                 {startContent ? (
-                  <div className={inlineSlotVariants({ isDisabled })}>{startContent}</div>
+                  <div className={inlineSlotVariants({ isDisabled })}>
+                    <ButtonContext.Provider value={accessoryButtonContext}>
+                      {startContent}
+                    </ButtonContext.Provider>
+                  </div>
                 ) : null}
                 <AriaInput
                   ref={resolvedInputRef}
@@ -548,9 +572,15 @@ export function ComboBox<T extends object, K extends Key = Key>({
                   className={inputElementVariants({ size })}
                 />
                 {endContent ? (
-                  <div className={inlineSlotVariants({ isDisabled })}>{endContent}</div>
+                  <div className={inlineSlotVariants({ isDisabled })}>
+                    <ButtonContext.Provider value={accessoryButtonContext}>
+                      {endContent}
+                    </ButtonContext.Provider>
+                  </div>
                 ) : null}
-                <AriaButton className={triggerButtonVariants({ isDisabled })}>
+                <AriaButton
+                  className={triggerButtonVariants({ isDisabled: isDisabled || isReadOnly })}
+                >
                   {menuTriggerIcon ?? (
                     <CaretDownIcon
                       aria-hidden
