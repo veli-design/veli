@@ -25,6 +25,40 @@ The Tailwind adapter imports `tokens.css` and references its variables. Existing
 
 Generic font-size utilities `text-xs` through `text-9xl` reference canonical English regular typography for size, line height and letter spacing. Their mappings are: xs → caption, sm/base/lg → body sm/md/lg, xl → subtitle, 2xl/3xl → title 2/1, 4xl/5xl/6xl/7xl → heading 4/3/2/1, and 8xl/9xl → display md/lg. Font family and weight remain independently composable; explicit leading and tracking utilities override the companions. These generic utilities do not switch typography with language. Use `type-*` for complete bilingual Figma styles, which switch all five properties under `:lang(dv)` (set `lang="dv"`, not only `dir="rtl"`).
 
+### Loading the Latin font
+
+The host app loads Inter; Veli supplies the family choice and a system sans fallback through `--veli-font-sans`. This one token drives `font-sans`, English `type-*` utilities, and the English typography CSS variables. Dhivehi styles continue to use their own font tokens.
+
+Apps that load an `Inter`-named face with `@font-face` or a font package need no font token setup. This applies to Vite + React, TanStack Start, and React Router; import the font CSS and Veli CSS from the app entry or root route so they are available on the first render. For a locally hosted font, the CSS can look like this:
+
+```css
+@font-face {
+  font-family: Inter;
+  src: url('./Inter.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+```
+
+When a loader gives the font a generated family name, bind that name to `--veli-font-sans` on the document root. For example, with Next.js App Router:
+
+```tsx
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], variable: '--veli-font-sans' });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+Apply the variable class to `<html>`, where the plain CSS typography tokens resolve. A loader in any framework can use the same root token; there is no `@theme` font reassignment. The font file or font package must provide the weights and scripts the app uses.
+
 Fractional spacing classes such as `gap-1.5` and `p-1.5` remain available. In plain CSS, use `var(--veli-spacing-1-5)` (6px); canonical variable names use dashes instead of decimal points or underscores.
 
 Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind share this contract. A host that offers system preference should resolve that preference to one of these classes; `VeliProvider` handles this for React applications. Tokens use native OKLCH without gamut clipping or legacy fallbacks, matching Tailwind v4's modern browser baseline: Chrome 111+, Safari 16.4+, Firefox 128+.

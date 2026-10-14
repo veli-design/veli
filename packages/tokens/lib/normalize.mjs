@@ -171,6 +171,7 @@ export function normalize(figma, motion) {
     if (!token) throw new Error(`Unknown source alias: ${key}`);
     return resolveRaw(token.$value, new Set([...seen, key]));
   };
+  const sansFamily = raw.has('font.sans') ? resolveRaw(raw.get('font.sans').$value) : undefined;
   const result = {
     $extensions: {
       [META]: {
@@ -298,6 +299,9 @@ export function normalize(figma, motion) {
     token.$value = rewrite(token.$value);
     if (token.$extensions.mode) token.$extensions.mode = rewrite(token.$extensions.mode);
     if (token.$type === 'typography') {
+      // Figma exports most English styles with the literal family even though they use font.sans.
+      if (path[1] === 'en' && resolveRaw(original.$value.fontFamily) === sansFamily)
+        token.$value.fontFamily = '{font.sans}';
       const font = { 'MV A Waheed': 'waheed', 'MV Faseyha': 'faseyha', 'MV Aaamu FK': 'aaamu' }[
         original.$value.fontFamily
       ];

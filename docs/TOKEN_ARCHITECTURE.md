@@ -187,7 +187,7 @@ Example generated utility:
 
 ```css
 @utility type-body-md-regular {
-  font-family: var(--font-sans);
+  font-family: var(--veli-font-sans);
   font-size: var(--text-base);
   line-height: var(--text-base--line-height);
   font-weight: var(--font-weight-regular);
