@@ -180,11 +180,6 @@
       "import": "./dist/tags.js",
       "default": "./dist/tags.js"
     },
-    "./page-tab": {
-      "types": "./dist/page-tab.d.ts",
-      "import": "./dist/page-tab.js",
-      "default": "./dist/page-tab.js"
-    },
     "./pagination": {
       "types": "./dist/pagination.d.ts",
       "import": "./dist/pagination.js",
