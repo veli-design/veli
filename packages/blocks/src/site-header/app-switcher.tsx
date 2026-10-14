@@ -447,7 +447,7 @@ function SearchFilterRow({
           ref={inputRef}
           aria-label={labels.searchAppsAndSites}
           placeholder={labels.search}
-          variant="outline"
+          appearance="outline"
           size="md"
           value={query}
           onChange={onQueryChange}
