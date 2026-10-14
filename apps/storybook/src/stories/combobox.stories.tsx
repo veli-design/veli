@@ -1,12 +1,18 @@
-import { useEffect, type ComponentProps } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
+import { Button } from '@tradenetcorp/veli-ui/button';
 import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-const collapsedControlGroups = ['Content', 'State'] as const;
+const collapsedControlGroups = [
+  'Content',
+  'State',
+  'Composition',
+  'Selection and collection',
+] as const;
 
 function ComboBoxDocsContainer(props: DocsContainerProps) {
   useEffect(() => {
@@ -55,6 +61,9 @@ const comboboxText = {
     infoTooltipAriaLabel: 'More information',
     popular: 'Popular',
     regional: 'Regional',
+    reset: 'Reset',
+    selectedKey: 'Selected key',
+    noSelection: 'None',
     locations: {
       male: "Male'",
       hulhumale: "Hulhumale'",
@@ -78,6 +87,9 @@ const comboboxText = {
     infoTooltipAriaLabel: 'އިތުރު މަޢުލޫމާތު',
     popular: 'މަޝްހޫރު',
     regional: 'ރީޖަނަލް',
+    reset: 'އަލުން ފަށާ',
+    selectedKey: 'ޚިޔާރުކުރެވުނު ކީ',
+    noSelection: 'ނެތް',
     locations: {
       male: 'މާލެ',
       hulhumale: 'ހުޅުމާލެ',
@@ -90,7 +102,8 @@ const comboboxText = {
 
 type ComboBoxLanguage = keyof typeof comboboxText;
 type ComboBoxText = (typeof comboboxText)[ComboBoxLanguage];
-type ComboBoxStoryArgs = ComponentProps<typeof ComboBox> & {
+type LocationItem = { id: string; name: string };
+type ComboBoxStoryArgs = ComponentProps<typeof ComboBox<LocationItem>> & {
   showInfoTooltip: boolean;
 };
 
@@ -116,6 +129,8 @@ const withArgCategory = <T extends Record<string, object>>(category: string, arg
     Object.entries(argTypes).map(([name, argType]) => [name, { ...argType, table: { category } }]),
   ) as { [K in keyof T]: T[K] & { table: { category: string } } };
 const useComboBoxLanguage = (): ComboBoxLanguage => useVeliLanguage().language;
+const locationItems = (text: ComboBoxText): LocationItem[] =>
+  Object.entries(text.locations).map(([id, name]) => ({ id, name }));
 const renderOptions = (text: ComboBoxText) =>
   Object.entries(text.locations).map(([id, label]) => (
     <ComboBoxItem key={id} id={id}>
@@ -197,21 +212,33 @@ const meta = {
       isDisabled: { control: 'boolean' },
       isReadOnly: { control: 'boolean' },
     }),
-    children: { control: false, table: { disable: true } },
+    ...withArgCategory('Composition', {
+      labelSupplementary: { control: false, description: 'Custom label text.' },
+      action: { control: false, description: 'Independent header action.' },
+      labelIcon: { control: false, description: 'Label icon.' },
+      startAddon: { control: false, description: 'Leading accessory.' },
+      startContent: { control: false, description: 'Leading inline content.' },
+      endContent: { control: false, description: 'Trailing inline content.' },
+      menuTriggerIcon: { control: false, description: 'Custom disclosure icon.' },
+      inputRef: { control: false, description: 'Inner input ref.' },
+    }),
+    ...withArgCategory('Selection and collection', {
+      value: { control: false, description: 'Controlled selected key; see Controlled.' },
+      onChange: { control: false, description: 'Selected-key callback; see Controlled.' },
+      items: { control: false, description: 'Controlled, caller-filtered items; see Controlled.' },
+      defaultItems: { control: false, description: 'Uncontrolled collection; see Default.' },
+      inputValue: { control: false, description: 'Controlled search text; see Controlled.' },
+      onInputChange: { control: false, description: 'Search-text callback; see Controlled.' },
+      children: {
+        control: false,
+        description: 'Options, sections, or a collection item renderer.',
+      },
+    }),
     className: { table: { disable: true } },
-    labelSupplementary: { table: { disable: true } },
-    action: { table: { disable: true } },
-    labelIcon: { table: { disable: true } },
-    startAddon: { table: { disable: true } },
-    startContent: { table: { disable: true } },
-    endContent: { table: { disable: true } },
-    menuTriggerIcon: { table: { disable: true } },
-    inputRef: { table: { disable: true } },
-    ref: { table: { disable: true } },
-    value: { table: { disable: true } },
-    onChange: { table: { disable: true } },
-    items: { table: { disable: true } },
-    defaultItems: { table: { disable: true } },
+    ref: {
+      control: false,
+      description: 'Inner input ref; inputRef takes precedence if both are set.',
+    },
   },
   args: {
     appearance: 'default',
@@ -259,8 +286,9 @@ export const Default: Story = {
             args.infoTooltipAriaLabel,
             language,
           )}
+          defaultItems={locationItems(text)}
         >
-          {renderOptions(text)}
+          {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
         </ComboBox>
       </div>
     );
@@ -323,6 +351,7 @@ export const States: Story = {
             <ComboBox
               appearance={appearance}
               label={text.invalid}
+              placeholder={text.placeholder}
               isInvalid
               description={text.helperText}
               errorMessage={text.errorMessage}
@@ -405,11 +434,14 @@ export const Sections: Story = {
     const text = comboboxText[language];
     return (
       <div key={language} className="w-[min(320px,90vw)]">
-        <ComboBox label={text.label} placeholder={text.placeholder} defaultValue="male">
+        <ComboBox
+          label={text.label}
+          placeholder={text.placeholder}
+          description={text.helperText}
+          defaultValue="male"
+        >
           <ComboBoxSection title={text.popular}>
-            <ComboBoxItem id="male" description={text.helperText}>
-              {text.locations.male}
-            </ComboBoxItem>
+            <ComboBoxItem id="male">{text.locations.male}</ComboBoxItem>
             <ComboBoxItem id="hulhumale">{text.locations.hulhumale}</ComboBoxItem>
             <ComboBoxItem id="addu">{text.locations.addu}</ComboBoxItem>
           </ComboBoxSection>
@@ -439,5 +471,74 @@ export const Sections: Story = {
     await expect(selected).toHaveAttribute('aria-selected', 'true');
     await expect(selected.querySelector('svg')).not.toBeNull();
     await userEvent.keyboard('{Escape}');
+  },
+};
+
+function ControlledComboBox({ text }: { text: ComboBoxText }) {
+  const [value, setValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const locations = locationItems(text);
+  return (
+    <div className="flex w-[min(320px,90vw)] flex-col gap-4">
+      <ComboBox
+        label={text.label}
+        placeholder={text.placeholder}
+        description={text.helperText}
+        value={value}
+        onChange={(key) => {
+          setValue(key);
+          setInputValue(locations.find((item) => item.id === key)?.name ?? '');
+        }}
+        items={locations.filter((item) =>
+          item.name.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase()),
+        )}
+        inputValue={inputValue}
+        onInputChange={(query) => {
+          setInputValue(query);
+          setValue(null);
+        }}
+      >
+        {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+      </ComboBox>
+      <p className="type-body-sm-regular text-base-default">
+        {text.selectedKey}: <output data-testid="selected-key">{value ?? text.noSelection}</output>
+      </p>
+      <Button
+        appearance="ghost"
+        size="sm"
+        onPress={() => {
+          setValue(null);
+          setInputValue('');
+        }}
+      >
+        {text.reset}
+      </Button>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => {
+    const language = useComboBoxLanguage();
+    return <ControlledComboBox key={language} text={comboboxText[language]} />;
+  },
+  play: async ({ canvasElement, globals }) => {
+    const text = comboboxText[globals.language === 'dv' ? 'dv' : 'en'];
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox');
+    await userEvent.click(input);
+    await userEvent.type(input, text.locations.fuvahmulah);
+    await expect(
+      await page.findByRole('option', { name: text.locations.fuvahmulah }),
+    ).toBeVisible();
+    await expect(page.getAllByRole('option')).toHaveLength(1);
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await expect(input).toHaveValue(text.locations.fuvahmulah);
+    await expect(canvas.getByTestId('selected-key')).toHaveTextContent('fuvahmulah');
+    await userEvent.click(canvas.getByRole('button', { name: text.reset }));
+    await expect(input).toHaveValue('');
+    await expect(canvas.getByTestId('selected-key')).toHaveTextContent(text.noSelection);
+    await expect(input).toHaveAttribute('aria-expanded', 'false');
   },
 };

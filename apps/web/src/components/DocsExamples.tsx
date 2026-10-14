@@ -617,22 +617,72 @@ export function ComboBoxUsageDemo() {
   );
 }
 
-export function ComboBoxDhivehiDemo() {
+export function ComboBoxAppearancesDemo() {
   return (
-    <div className="w-[320px] max-w-full">
-      <ComboBox
-        lang="dv"
-        dir="rtl"
-        label="ތަން"
-        isOptional
-        placeholder="ތަނެއް ހޯދާ"
-        description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
-      >
-        <ComboBoxItem id="male">މާލެ</ComboBoxItem>
-        <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
-        <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
-      </ComboBox>
+    <div className="flex w-full flex-wrap justify-center gap-4">
+      {(['default', 'outline'] as const).map((appearance) => (
+        <div key={appearance} className="w-[320px] max-w-full">
+          <ComboBox
+            appearance={appearance}
+            label={appearance === 'default' ? 'Default' : 'Outline'}
+            placeholder="Choose a country"
+            defaultItems={COUNTRY_OPTIONS}
+          >
+            {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+          </ComboBox>
+        </div>
+      ))}
     </div>
+  );
+}
+
+export function ComboBoxRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+  const text = isDhivehi
+    ? {
+        label: 'ތަން',
+        placeholder: 'ތަނެއް ހޯދާ',
+        description: 'ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ',
+        locations: { male: 'މާލެ', hulhumale: 'ހުޅުމާލެ', fuvahmulah: 'ފުވައްމުލައް ސިޓީ' },
+      }
+    : {
+        label: 'Location',
+        placeholder: 'Search location',
+        description: 'Start typing to filter options.',
+        locations: { male: "Male'", hulhumale: "Hulhumale'", fuvahmulah: 'Fuvahmulah City' },
+      };
+
+  return (
+    <DocsPreview
+      codeKey={`combobox-language-${isDhivehi ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <div className="w-[320px] max-w-full">
+        <ComboBox
+          key={language}
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+          label={text.label}
+          isOptional
+          placeholder={text.placeholder}
+          description={text.description}
+        >
+          {Object.entries(text.locations).map(([id, name]) => (
+            <ComboBoxItem key={id} id={id}>
+              {name}
+            </ComboBoxItem>
+          ))}
+        </ComboBox>
+      </div>
+    </DocsPreview>
   );
 }
 
@@ -656,7 +706,7 @@ export function ComboBoxExplorationDemo() {
 
 export function ComboBoxValidationDemo() {
   return (
-    <div className="flex flex-col gap-[16px]">
+    <div className="flex w-[320px] max-w-full flex-col gap-[16px]">
       <ComboBox
         label="Default"
         description="Helper text"

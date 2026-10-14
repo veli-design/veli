@@ -4,7 +4,8 @@ description: Searchable single-choice field with a listbox popover and grouped o
 ---
 
 import {
-  ComboBoxDhivehiDemo,
+  ComboBoxAppearancesDemo,
+  ComboBoxRtlDemo,
   ComboBoxExplorationDemo,
   ComboBoxUsageDemo,
   ComboBoxValidationDemo,
@@ -46,8 +47,16 @@ Use `value`, `defaultValue`, and `onChange` for selected keys, or React Aria's `
 
 `default` uses the underline shell. `outline` draws an inset border. Sizes `sm`, `md`, and `lg` have field heights of 36, 44, and 52px.
 
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxAppearancesDemo client:visible />
+</div>
+
 ```tsx
-<ComboBox label="Country" placeholder="Choose a country" appearance="outline" size="md">
+<ComboBox label="Default" placeholder="Choose a country">
+  <ComboBoxItem id="mv">Maldives</ComboBoxItem>
+  <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
+</ComboBox>
+<ComboBox appearance="outline" label="Outline" placeholder="Choose a country">
   <ComboBoxItem id="mv">Maldives</ComboBoxItem>
   <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
 </ComboBox>
@@ -210,25 +219,31 @@ Other declared React Aria `ListBoxSection` props are passed to the section. Veli
 
 ## RTL and Language
 
-Use `VeliProvider language="dv"` for Dhivehi, or override a field with `lang="dv"`. Field text, options, and section headers use `MV_Faseyha` and follow the field direction. Optional copy, the info trigger name, and the default empty state are localized; custom labels and messages remain caller-owned.
+Use `VeliProvider language="dv"` for Dhivehi, or override a field with `lang="dv"`. Input and regular option text use `MV Faseyha`; section headings use `MV A Waheed` through the medium typography token. Both follow the field direction. Optional copy, the info trigger name, and the default empty state are localized; custom labels and messages remain caller-owned. Switch the preview between English and Dhivehi to compare both directions.
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <ComboBoxDhivehiDemo client:visible />
+<div className="preview mb-4">
+  <ComboBoxRtlDemo client:load />
 </div>
 
 ```tsx
-<ComboBox
-  lang="dv"
-  dir="rtl"
-  label="ތަން"
-  isOptional
-  placeholder="ތަނެއް ހޯދާ"
-  description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
->
-  <ComboBoxItem id="male">މާލެ</ComboBoxItem>
-  <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
-  <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
-</ComboBox>
+import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
+
+export default function ComboBoxLanguageDemo() {
+  return (
+    <ComboBox
+      lang="dv"
+      dir="rtl"
+      label="ތަން"
+      isOptional
+      placeholder="ތަނެއް ހޯދާ"
+      description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
+    >
+      <ComboBoxItem id="male">މާލެ</ComboBoxItem>
+      <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
+      <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
+    </ComboBox>
+  );
+}
 ```
 
 Explicit `lang` keeps filtering tied to that locale. Explicit `dir="ltr"` or `dir="rtl"` also controls the effective direction of popup and tooltip content, even when it differs from the locale direction.
