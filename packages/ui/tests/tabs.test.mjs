@@ -77,10 +77,15 @@ test('Tabs renders tablist semantics and a single tabIndex=0', () => {
 
 test('Tabs aria-controls resolves to a panel id', () => {
   const html = render();
-  const tabMatch = html.match(/aria-controls="([^"]+)"[^>]*role="tab"|role="tab"[^>]*aria-controls="([^"]+)"/);
+  const tabMatch = html.match(
+    /aria-controls="([^"]+)"[^>]*role="tab"|role="tab"[^>]*aria-controls="([^"]+)"/,
+  );
   assert.ok(tabMatch);
   const panelId = tabMatch[1] ?? tabMatch[2];
-  assert.match(html, new RegExp(`id="${panelId}"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="${panelId}"`));
+  assert.match(
+    html,
+    new RegExp(`id="${panelId}"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="${panelId}"`),
+  );
 });
 
 test('Tabs keeps aria-controls resolving in overflow mode', () => {
@@ -95,10 +100,15 @@ test('Tabs keeps aria-controls resolving in overflow mode', () => {
   assert.match(html, /role="tabpanel"/);
   assert.match(html, />More</);
 
-  const tabMatch = html.match(/aria-controls="([^"]+)"[^>]*role="tab"|role="tab"[^>]*aria-controls="([^"]+)"/);
+  const tabMatch = html.match(
+    /aria-controls="([^"]+)"[^>]*role="tab"|role="tab"[^>]*aria-controls="([^"]+)"/,
+  );
   assert.ok(tabMatch);
   const panelId = tabMatch[1] ?? tabMatch[2];
-  assert.match(html, new RegExp(`id="${panelId}"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="${panelId}"`));
+  assert.match(
+    html,
+    new RegExp(`id="${panelId}"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="${panelId}"`),
+  );
 });
 
 test('Tabs still renders a hidden panel when panel content is omitted', () => {
@@ -136,7 +146,10 @@ test('Tabs applies size classes', () => {
 });
 
 test('Tabs defaults keyboardActivation to manual when any item has an href', () => {
-  assert.match(source, /keyboardActivation: keyboardActivation \?\? \(hasLinkItems \? 'manual' : undefined\)/);
+  assert.match(
+    source,
+    /keyboardActivation: keyboardActivation \?\? \(hasLinkItems \? 'manual' : undefined\)/,
+  );
 
   const html = render({
     items: [
@@ -152,10 +165,7 @@ test('Tabs defaults keyboardActivation to manual when any item has an href', () 
 test('Tabs localizes the overflow More label from language', () => {
   assert.match(source, /tabsOverflowDefaultLabels/);
   assert.match(source, /language === 'dv'/);
-  assert.doesNotMatch(
-    source,
-    /const defaultLabel = direction === 'rtl' \? 'އިތުރު' : 'More'/,
-  );
+  assert.doesNotMatch(source, /const defaultLabel = direction === 'rtl' \? 'އިތުރު' : 'More'/);
 
   const english = render({
     overflowItems: [{ id: 'billing', label: 'Billing', panel: 'Billing panel' }],
