@@ -21,7 +21,7 @@
     {
       "situation": "Switching between named peer sections rather than numbered pages.",
       "guidance": "Use tabs for section switching.",
-      "useInstead": ["tabs", "page-tab"]
+      "useInstead": ["tabs"]
     }
   ],
   "supportedInteractions": [

@@ -23,7 +23,7 @@
     {
       "situation": "Users switch between persistent content panels.",
       "guidance": "Use tabs for persistent peer content.",
-      "useInstead": ["tabs", "page-tab"]
+      "useInstead": ["tabs"]
     }
   ],
   "supportedInteractions": [

@@ -20,7 +20,7 @@
     {
       "situation": "Switching between peer sections on the same page.",
       "guidance": "Use tabs for peer content rather than hierarchical navigation.",
-      "useInstead": ["tabs", "page-tab"]
+      "useInstead": ["tabs"]
     }
   ],
   "supportedInteractions": [
@@ -53,5 +53,5 @@
     "Back-link caret direction follows VeliProvider direction.",
     "Overflow menu language and direction follow VeliProvider."
   ],
-  "relatedComponents": ["link", "menu", "tabs", "page-tab", "provider"]
+  "relatedComponents": ["link", "menu", "tabs", "provider"]
 }

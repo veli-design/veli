@@ -69,14 +69,6 @@
           "importPath": "@tradenetcorp/veli-ui/tabs",
           "declaration": "../dist/tabs.d.ts",
           "metadata": "./components/tabs.json"
-        },
-        {
-          "id": "page-tab",
-          "name": "PageTab",
-          "summary": "Page-level tab navigation for top-level sections.",
-          "importPath": "@tradenetcorp/veli-ui/page-tab",
-          "declaration": "../dist/page-tab.d.ts",
-          "metadata": "./components/page-tab.json"
         }
       ]
     },

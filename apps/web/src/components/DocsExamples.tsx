@@ -22,7 +22,6 @@ import {
   MenuTrigger,
 } from '@tradenetcorp/veli-ui/menu';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
@@ -1518,22 +1517,6 @@ export function TabsUsageDemo() {
   return (
     <div className="w-full max-w-[520px]">
       <Tabs listAriaLabel="Service sections" items={TAB_ITEMS} />
-    </div>
-  );
-}
-
-export function PageTabUsageDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} />
-    </div>
-  );
-}
-
-export function PageTabCenteredDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} isCentered />
     </div>
   );
 }

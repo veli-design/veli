@@ -19,11 +19,6 @@
   ],
   "avoidWhen": [
     {
-      "situation": "The tabs represent top-level page sections needing the wider page treatment.",
-      "guidance": "Use the page-level tab component.",
-      "useInstead": ["page-tab"]
-    },
-    {
       "situation": "The options perform actions rather than reveal content or navigate.",
       "guidance": "Use direct actions or a menu.",
       "useInstead": ["button", "menu"]
@@ -62,5 +57,5 @@
     "Overflow menu language and direction follow VeliProvider.",
     "Tab labels and supplied slot content should be appropriate for the active direction."
   ],
-  "relatedComponents": ["page-tab", "menu", "provider", "link"]
+  "relatedComponents": ["menu", "provider", "link"]
 }

@@ -187,11 +187,6 @@ export const componentGroups: ComponentGroup[] = [
         slug: 'tabs',
         description: 'Inline tabbed sections with optional overflow menu.',
       },
-      {
-        title: 'PageTab',
-        slug: 'page-tab',
-        description: 'Page-level tab navigation for top-level sections.',
-      },
     ],
   },
   {
