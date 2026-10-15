@@ -1,3 +1,11 @@
+## 0.2.1
+
+### Fixed
+
+- Align warning icons and empty-state text with their design color tokens.
+- Correct notification row spacing, divider placement, desktop bottom padding and options menu geometry while allowing longer content to grow.
+- Slide unread indicators away with their timestamps when notifications are marked as read, with mirrored RTL motion and reduced-motion support.
+
 ## 0.2.0
 
 ### Changed

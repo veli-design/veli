@@ -14,20 +14,21 @@ const notificationDemoItems: NotificationItem[] = [
     id: 'progress',
     content: (
       <>
-        Your application is now <strong>in progress</strong>.
+        Your application <strong>maju redirect</strong> is now in <strong>progress</strong> status
       </>
     ),
     timestamp: '5 minutes ago',
     time: '09:30',
     unread: true,
-    intent: 'warning',
+    intent: 'success',
     href: '#progress',
   },
   {
     id: 'review',
     content: (
       <>
-        Your application needs <strong>more information</strong>. Review the requested details.
+        Action required for your application <strong>MND.01.CA.cx.26.MY5638</strong>. Please review
+        and submit additional information.
       </>
     ),
     timestamp: '30 minutes ago',
@@ -53,7 +54,8 @@ const notificationDemoItems: NotificationItem[] = [
     id: 'action',
     content: (
       <>
-        Your payment was <strong>unsuccessful</strong>. Please try again.
+        Action required for your application <strong>MND.01.CA.cx.26.MY5638</strong>. Please review
+        and submit additional information.
       </>
     ),
     timestamp: '1 day ago',
@@ -65,7 +67,8 @@ const notificationDemoItems: NotificationItem[] = [
     id: 'completed',
     content: (
       <>
-        Your application is <strong>complete</strong>. View the outcome.
+        Status update for your application <strong>MND.01.CA.26.MY5638</strong>. Marked{' '}
+        <strong>complete.</strong>
       </>
     ),
     timestamp: '3 days ago',
