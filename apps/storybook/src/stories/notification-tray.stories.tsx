@@ -199,6 +199,7 @@ function usePreviewProps(
 ): NotificationTrayProps {
   const { direction } = useVeliLanguage();
   const isDhivehi = direction === 'rtl';
+  const loadMore = args.loadMore;
   return {
     ...args,
     items: args.items
@@ -222,13 +223,30 @@ function usePreviewProps(
       }
       args.onItemAction?.(id);
     },
-    onMarkAllRead: () => {
+    onMarkAllRead: async () => {
+      updateArgs({ isMarkingAllRead: true });
+      args.onMarkAllRead?.();
+      await new Promise((resolve) => setTimeout(resolve, 1600));
       updateArgs({
+        isMarkingAllRead: false,
         items: args.items.map((item) => ({ ...item, unread: false })),
         unreadCount: 0,
       });
-      args.onMarkAllRead?.();
     },
+    loadMore: loadMore
+      ? {
+          ...loadMore,
+          onLoadMore: async () => {
+            updateArgs({ loadMore: { ...loadMore, isLoading: true } });
+            loadMore.onLoadMore();
+            await new Promise((resolve) => setTimeout(resolve, 1600));
+            updateArgs({
+              items: [...args.items, { ...notificationDemoItems[0], id: 'next-page' }],
+              loadMore: undefined,
+            });
+          },
+        }
+      : undefined,
   };
 }
 
@@ -294,7 +312,7 @@ export const Paginated: Story = {
 };
 export const Empty: Story = { args: { items: [], unreadCount: 0 } };
 export const EmptyUnread: Story = { args: { items: [], unreadCount: 0, filter: 'unread' } };
-export const Loading: Story = { args: { items: [], isLoading: true } };
+export const Loading: Story = { args: { items: [], unreadCount: 0, isLoading: true } };
 export const Error: Story = {
   args: { items: [], error: 'Notifications could not be loaded.', onRetry: () => {} },
 };
@@ -318,5 +336,42 @@ export const LongContent: Story = {
         href: '#long',
       },
     ],
+  },
+};
+
+export const RetryPending: Story = {
+  args: { items: [], error: 'Notifications could not be loaded.', onRetry: fn(), isLoading: true },
+};
+
+export const LoadingStates: Story = {
+  name: 'Notification loading states',
+  render: function Render(args) {
+    const [, updateArgs] = useArgs<NotificationTrayProps>();
+    return (
+      <div className="flex max-w-full flex-wrap justify-center gap-6">
+        {[
+          {
+            title: 'Initial loading skeleton',
+            props: { items: [], unreadCount: 0, isLoading: true },
+          },
+          {
+            title: 'Pending paging button',
+            props: {
+              items: notificationDemoItems.slice(0, 2),
+              loadMore: { onLoadMore: fn(), isLoading: true },
+            },
+          },
+          {
+            title: 'Mark all as read — open options',
+            props: { items: notificationDemoItems.slice(0, 2), isMarkingAllRead: true },
+          },
+        ].map(({ title, props }) => (
+          <div key={title} className="flex max-w-full flex-col gap-3">
+            <p className="type-body-sm-semibold text-base-strong">{title}</p>
+            <Preview args={{ ...args, ...props }} updateArgs={updateArgs} embedded />
+          </div>
+        ))}
+      </div>
+    );
   },
 };

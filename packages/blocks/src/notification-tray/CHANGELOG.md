@@ -1,4 +1,8 @@
-## 0.2.1
+## 0.3.0
+
+### Changed
+
+- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@tradenetcorp/veli-ui` to `^0.16.0` when updating copied source.
 
 ### Fixed
 

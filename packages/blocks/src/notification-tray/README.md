@@ -43,7 +43,15 @@ Supply translated labels, messages and timestamps for English/LTR and Dhivehi/RT
 
 Validate your application's routes, translations, keyboard behavior, mobile gestures and mutation failures before adoption.
 
+## Loading feedback
+
+Initial loading composes Veli `Skeleton` placeholders in the notification row layout, including the icon, message and timestamps. The placeholders are decorative, and the tray announces the translated loading status once. Pulsing stops under reduced motion. Existing notifications stay visible during a refresh; retry states show their pending action instead of initial-loading placeholders.
+
+Pending retry and paging actions use the shared `Spinner` button variant. The mark-all-read menu action uses `LoadingText`. These components support Veli themes and reduced motion; loading labels remain application-owned and translated through `labels`.
+
 ## Updating your copy
+
+Version 0.3.0 requires `@tradenetcorp/veli-ui@^0.16.0` for the shared loading components. Existing loading and mutation props control the indicators.
 
 Version 0.2.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/react@^2.1.10` as a direct dependency when upgrading the copied source. Review whether your application still needs its legacy icon dependency before removing it.
 

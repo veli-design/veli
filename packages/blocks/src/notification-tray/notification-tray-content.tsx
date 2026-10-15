@@ -6,12 +6,14 @@ import {
   BellSimpleIcon,
   CheckCircleIcon,
   DotsThreeIcon,
-  SpinnerIcon,
   WarningCircleIcon,
   XIcon,
 } from '@phosphor-icons/react';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
+import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
+import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Spinner } from '@tradenetcorp/veli-ui/spinner';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
 import {
@@ -88,6 +90,32 @@ const intentStyles = {
 };
 
 const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
+
+function NotificationTraySkeleton() {
+  return (
+    <div aria-hidden="true" className="flex min-h-80 flex-col gap-1">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div
+          key={index}
+          className="flex items-start gap-4 border-b border-base-subtle p-2 last:border-b-0"
+        >
+          <Skeleton className="size-8 shrink-0 rounded-full motion-reduce:animate-none" />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex min-h-14 flex-col gap-2 py-1">
+              <Skeleton className="h-2.5 w-full rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2.5 w-5/6 rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2.5 w-2/3 rounded-xs motion-reduce:animate-none" />
+            </div>
+            <div className="flex min-h-4 items-center justify-between gap-2">
+              <Skeleton className="h-2 w-24 rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2 w-10 rounded-xs motion-reduce:animate-none" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function NotificationRow({
   item,
@@ -237,11 +265,17 @@ export function NotificationTrayContent({
             >
               <MenuItem
                 id="mark-all"
+                textValue={isMarkingAllRead ? labels.markingAllRead : labels.markAllRead}
+                aria-label={isMarkingAllRead ? labels.markingAllRead : undefined}
                 size="sm"
                 className="px-4 py-[calc((var(--spacing)*9-1lh)/2)]"
                 isDisabled={!onMarkAllRead || unreadCount === 0 || isMarkingAllRead}
               >
-                {isMarkingAllRead ? labels.markingAllRead : labels.markAllRead}
+                {isMarkingAllRead ? (
+                  <LoadingText aria-hidden="true">{labels.markingAllRead}</LoadingText>
+                ) : (
+                  labels.markAllRead
+                )}
               </MenuItem>
               <MenuSeparator className="relative mx-0 my-0 h-0 border-0 after:absolute after:inset-x-0 after:top-0 after:-translate-y-1/2 after:border-t after:border-base-subtle" />
               <MenuItem
@@ -284,7 +318,10 @@ export function NotificationTrayContent({
       <p role="status" className="sr-only">
         {status}
       </p>
-      <div className="veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4">
+      <div
+        aria-busy={isLoading || undefined}
+        className="veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4"
+      >
         {error ? (
           <div
             className={`flex flex-col items-center justify-center gap-4 p-2 text-center ${items.length === 0 ? 'min-h-80' : 'py-4'}`}
@@ -308,6 +345,7 @@ export function NotificationTrayContent({
                 appearance="fill"
                 onPress={onRetry}
                 isPending={isLoading}
+                loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
               >
                 {labels.retry}
               </Button>
@@ -329,10 +367,8 @@ export function NotificationTrayContent({
               />
             ))}
           </ul>
-        ) : isLoading ? (
-          <div aria-hidden className="flex min-h-80 items-center justify-center">
-            <SpinnerIcon className="size-8 text-icon-base-muted motion-safe:animate-spin" />
-          </div>
+        ) : isLoading && !error ? (
+          <NotificationTraySkeleton />
         ) : !error ? (
           <div
             role="status"
@@ -362,6 +398,7 @@ export function NotificationTrayContent({
               size="sm"
               onPress={loadMore.onLoadMore}
               isPending={loadMore.isLoading}
+              loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
               isDisabled={isLoading}
             >
               {labels.loadMore}
