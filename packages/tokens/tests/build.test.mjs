@@ -154,6 +154,12 @@ test('English typography and font-sans share an overridable font token', async (
     /&:lang\(dv\) \{\s*font-family: var\(--veli-typography-dv-body-md-regular-font-family\);/,
   );
 });
+test('English typography resolves the legacy sans font alias', () => {
+  const input = structuredClone(raw);
+  input['Typography-styles'].Type.Display.lg.Regular.$value.fontFamily = '{typography.font.sans}';
+  const graph = normalize(input, motion);
+  assert.equal(graph.typography.en.display.lg.regular.$value.fontFamily, '{font.sans}');
+});
 test('Tailwind compilation resolves aliases and uses literal query thresholds', async () => {
   const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
   const { compile } = require('tailwindcss');

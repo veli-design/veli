@@ -143,17 +143,17 @@ export function normalize(figma, motion) {
         ].join('.'),
       ]),
   );
+  const sourceAlias = (target) =>
+    ({
+      'typography.font.sans': 'font.sans',
+      'typography.font.mono': 'font.mono',
+      'typography.font.dhivehi': 'font.dhivehi',
+      'colors.fg.border.focus': 'color.semantics.border.focus',
+      'colors.bg.surface.surface-raised': 'color.semantics.bg.surface.raised',
+    })[target] ?? target;
   const rewrite = (value) => {
     if (alias(value)) {
-      let target = value.slice(1, -1);
-      target =
-        {
-          'typography.font.sans': 'font.sans',
-          'typography.font.mono': 'font.mono',
-          'typography.font.dhivehi': 'font.dhivehi',
-          'colors.fg.border.focus': 'color.semantics.border.focus',
-          'colors.bg.surface.surface-raised': 'color.semantics.bg.surface.raised',
-        }[target] ?? target;
+      const target = sourceAlias(value.slice(1, -1));
       const name = names.get(target);
       if (!name) throw new Error(`Unresolved Figma alias: ${value}`);
       return `{${name}}`;
@@ -165,7 +165,7 @@ export function normalize(figma, motion) {
   };
   const resolveRaw = (value, seen = new Set()) => {
     if (!alias(value)) return value;
-    const key = value.slice(1, -1);
+    const key = sourceAlias(value.slice(1, -1));
     if (seen.has(key)) throw new Error(`Alias cycle: ${key}`);
     const token = raw.get(key);
     if (!token) throw new Error(`Unknown source alias: ${key}`);
