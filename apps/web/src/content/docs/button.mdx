@@ -227,18 +227,12 @@ React Aria Link styled as a Button is the semantic model. Veli uses `useLink` so
 
 Official references: [React Aria Link](https://react-aria.adobe.com/Link), [Next App Link](https://nextjs.org/docs/app/api-reference/components/link), [Next Pages Link](https://nextjs.org/docs/pages/api-reference/components/link), [TanStack custom links](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link), and [React Router Link](https://reactrouter.com/api/components/Link).
 
-Use `loadingIndicator` to supply a decorative pending visual while keeping the button's size, accessible label and pending behavior:
+Button uses the shared compact button spinner by default while keeping its size, accessible label and pending behavior. Use `loadingIndicator` only when supplying a custom decorative pending visual.
 
 ```tsx
-import { Spinner } from '@tradenetcorp/veli-ui/spinner';
-
-<Button
-  isPending={isSaving}
-  loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
-  onPress={handleSave}
->
+<Button isPending={isSaving} onPress={handleSave}>
   Save changes
-</Button>;
+</Button>
 ```
 
 ## API Reference

@@ -28,15 +28,10 @@ import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
 <LoadingText>Marking all as read</LoadingText>
 ```
 
-For pending buttons, pass the shared spinner through `loadingIndicator`. Button retains the original label and width while it is busy:
+Pending buttons use the shared compact spinner by default. Button retains the original label and width while it is busy:
 
 ```tsx
-<Button
-  isPending={isSaving}
-  loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
->
-  Save changes
-</Button>
+<Button isPending={isSaving}>Save changes</Button>
 ```
 
 The default spinner uses the general loading animation. The `button` variant uses the compact animation and inherits its text colour. Override the default spinner's colour or dimensions with `className`.

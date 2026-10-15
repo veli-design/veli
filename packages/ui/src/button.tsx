@@ -22,11 +22,11 @@ import {
   mergeProps,
 } from 'react-aria';
 import { filterDOMProps } from 'react-aria/filterDOMProps';
-import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y.js';
 import type { RefProp } from './ref.js';
+import { Spinner } from './spinner.js';
 import { useVeliLanguage } from './provider-shared.js';
 
 const buttonVariants = cva(
@@ -212,7 +212,7 @@ interface ButtonSharedProps
     RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
-  /** Optional decorative visual for isLoading/isPending; the default spinner is retained when omitted. */
+  /** Optional decorative visual for isLoading/isPending; the shared button spinner is used when omitted. */
   loadingIndicator?: React.ReactNode;
   className?: string;
 }
@@ -326,11 +326,7 @@ function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
       aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
       className="inline-flex shrink-0 items-center justify-center"
     >
-      <CircleNotchIcon
-        aria-hidden="true"
-        weight="bold"
-        className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}
-      />
+      <Spinner variant="button" aria-hidden="true" className={loadingIndicatorVariants({ size })} />
     </span>
   );
 }
