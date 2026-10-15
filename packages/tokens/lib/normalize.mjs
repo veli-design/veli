@@ -145,9 +145,6 @@ export function normalize(figma, motion) {
   );
   const sourceAlias = (target) =>
     ({
-      'typography.font.sans': 'font.sans',
-      'typography.font.mono': 'font.mono',
-      'typography.font.dhivehi': 'font.dhivehi',
       'colors.fg.border.focus': 'color.semantics.border.focus',
       'colors.bg.surface.surface-raised': 'color.semantics.bg.surface.raised',
     })[target] ?? target;

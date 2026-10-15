@@ -72,7 +72,7 @@ The typography alignment work was implemented on 2026-05-07.
 - `type-*` is Veli's composite typography utility namespace.
 - Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
 - Foundation groups `radius`, `spacing`, `blur`, `breakpoints`, and `container` map into the Tailwind theme so utilities use Veli tokens instead of Tailwind defaults. The DTCG `breakpoints` collection remaps to Tailwind's singular `--breakpoint-*` namespace.
-- The former Figma `typography` collection is not present in the checked-in export. Normalization still recognizes a few of its alias paths for older exports.
+- The former Figma `typography` variable collection is not present in the checked-in export; font families now live under `font/sans`, `font/mono`, and `font/dhivehi`.
 
 The following build verification was recorded after the May 2026 typography alignment export:
 
@@ -149,7 +149,7 @@ Cleanup recorded during the May 2026 alignment:
   - `Dhivehi/button/Waheed 19`
   - `Dhivehi/Inputs/Faruma 17`
 
-The current export uses `{font.sans}` for the display style that formerly exported `{typography.font.sans}`. The normalizer retains the old path as an input alias for older exports.
+The current export uses `{font.sans}` for the display style that once pointed to the former `typography` collection. The old font alias is no longer supported by the pipeline.
 
 ## Generated Tailwind v4 shape
 
@@ -346,7 +346,7 @@ These composites are used to generate semantic `type-*` utilities.
 The normalizer:
 
 - Converts Figma names into canonical DTCG paths, including color tiers, typography language groups, grids, effects, and fractional spacing names.
-- Maps supported older source aliases such as `{typography.font.sans}` to current paths. The current export uses `{font.sans}`; the mapping protects older exports.
+- Maps the supported older color source aliases to current paths. Font-family aliases must reference the current `font` collection.
 - Promotes exported `font/*` strings to `$type: "fontFamily"`, so typography composites can retain valid aliases instead of flattening them to literal family names.
 - Converts exporter-specific typography fields, font weights, leading, tracking, colors, and motion into typed canonical values while retaining relevant provenance in `org.veli` metadata.
 - Excludes Figma-only `_docs` annotations from published output and rejects unresolved aliases, invalid types, collisions, and inconsistent authored colors.
@@ -357,7 +357,7 @@ During local development, the shared Vite playground plugin regenerates ignored 
 
 ## TokensBruecke exporter considerations
 
-The normalization boundary remains useful if the exporter improves because it defines canonical paths, validates input, and preserves support for older exports.
+The normalization boundary remains useful if the exporter improves because it defines canonical paths, validates input, and preserves the few explicitly supported older color aliases.
 
 Recommended exporter improvements:
 
@@ -433,4 +433,4 @@ System questions:
 
 - Decide whether Dhivehi fonts should eventually be bundled with licensed `@font-face` assets instead of referenced by family name only.
 - Decide whether typography CSS output should eventually convert px values to rem values.
-- Decide how long to retain support for older Figma source aliases at the normalization boundary.
+- Decide how long to retain support for older color source aliases at the normalization boundary.
