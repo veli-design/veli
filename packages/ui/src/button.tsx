@@ -212,6 +212,8 @@ interface ButtonSharedProps
     RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
+  /** Optional decorative visual for isLoading/isPending; the default spinner is retained when omitted. */
+  loadingIndicator?: React.ReactNode;
   className?: string;
 }
 
@@ -254,6 +256,8 @@ interface ButtonLinkSharedProps
   excludeFromTabOrder?: boolean;
   isLoading?: boolean;
   isPending?: boolean;
+  /** Optional decorative visual for isLoading/isPending. */
+  loadingIndicator?: React.ReactNode;
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   'aria-current'?: React.AriaAttributes['aria-current'];
   className?: string;
@@ -336,12 +340,14 @@ function ButtonContent({
   hasChildren,
   isIconOnly,
   isLoading,
+  loadingIndicator,
   size,
 }: {
   children: React.ReactNode;
   hasChildren: boolean;
   isIconOnly: boolean;
   isLoading: boolean;
+  loadingIndicator?: React.ReactNode;
   size: ButtonProps['size'];
 }) {
   return (
@@ -364,7 +370,7 @@ function ButtonContent({
             hasChildren ? 'absolute inset-0' : 'h-lh',
           )}
         >
-          <ButtonLoadingIndicator size={size} />
+          {loadingIndicator ?? <ButtonLoadingIndicator size={size} />}
         </span>
       ) : null}
     </>
@@ -564,6 +570,7 @@ function ActionButton({
   iconOnly,
   isLoading,
   isPending,
+  loadingIndicator,
   isDisabled,
   className,
   onPointerMove,
@@ -675,6 +682,7 @@ function ActionButton({
         <ButtonContent
           hasChildren={hasChildren}
           isLoading={pending}
+          loadingIndicator={loadingIndicator}
           isIconOnly={isIconOnly}
           size={resolvedSize}
         >
@@ -697,6 +705,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     iconOnly,
     isLoading,
     isPending,
+    loadingIndicator,
     isDisabled,
     onPointerMove,
     onPointerUp,
@@ -837,6 +846,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       <ButtonContent
         hasChildren={hasChildren}
         isLoading={pending}
+        loadingIndicator={loadingIndicator}
         isIconOnly={isIconOnly}
         size={resolvedSize}
       >

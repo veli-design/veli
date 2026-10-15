@@ -227,6 +227,20 @@ React Aria Link styled as a Button is the semantic model. Veli uses `useLink` so
 
 Official references: [React Aria Link](https://react-aria.adobe.com/Link), [Next App Link](https://nextjs.org/docs/app/api-reference/components/link), [Next Pages Link](https://nextjs.org/docs/pages/api-reference/components/link), [TanStack custom links](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link), and [React Router Link](https://reactrouter.com/api/components/Link).
 
+Use `loadingIndicator` to supply a decorative pending visual while keeping the button's size, accessible label and pending behavior:
+
+```tsx
+import { Spinner } from '@tradenetcorp/veli-ui/spinner';
+
+<Button
+  isPending={isSaving}
+  loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
+  onPress={handleSave}
+>
+  Save changes
+</Button>;
+```
+
 ## API Reference
 
 Button uses React Aria [`Button`](https://react-aria.adobe.com/Button) for actions and [`useLink`](https://react-aria.adobe.com/Link/useLink) for navigation. Select the semantic mode with `as`; the mode determines the required props, native element, and ref type.
@@ -254,16 +268,17 @@ An icon-only button requires `iconOnly: true` and a non-empty `aria-label` or `a
 
 These props apply in both modes. Defaults describe a standalone Button; supported React Aria context props can supply inherited values.
 
-| Prop         | Type                                                       | Default     | Description                                                                                                                  |
-| :----------- | :--------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `as`         | `'button' \| 'a'`                                          | `'button'`  | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
-| `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'` | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
-| `appearance` | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`    | Surface treatment in either mode.                                                                                            |
-| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`      | Text and icon-only size.                                                                                                     |
-| `iconOnly`   | `boolean`                                                  | `false`     | Square icon control. Requires an accessible name.                                                                            |
-| `isLoading`  | `boolean`                                                  | `false`     | Shows a spinner, sets `aria-busy`, and prevents activation while retaining focus.                                            |
-| `children`   | `ReactNode`                                                | -           | Label and optional icons. Function-valued children are not supported. Keep children mounted while loading to preserve width. |
-| `className`  | `string`                                                   | -           | Classes merged onto the native root. Function-valued classes are not supported.                                              |
+| Prop               | Type                                                       | Default          | Description                                                                                                                  |
+| :----------------- | :--------------------------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `as`               | `'button' \| 'a'`                                          | `'button'`       | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
+| `intent`           | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'`      | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
+| `appearance`       | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`         | Surface treatment in either mode.                                                                                            |
+| `size`             | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`           | Text and icon-only size.                                                                                                     |
+| `iconOnly`         | `boolean`                                                  | `false`          | Square icon control. Requires an accessible name.                                                                            |
+| `loadingIndicator` | `ReactNode`                                                | Built-in spinner | Decorative pending visual, rendered only during `isLoading` or `isPending`. Works for action and navigation buttons.         |
+| `isLoading`        | `boolean`                                                  | `false`          | Shows a spinner, sets `aria-busy`, and prevents activation while retaining focus.                                            |
+| `children`         | `ReactNode`                                                | -                | Label and optional icons. Function-valued children are not supported. Keep children mounted while loading to preserve width. |
+| `className`        | `string`                                                   | -                | Classes merged onto the native root. Function-valued classes are not supported.                                              |
 
 Passing `null` for `intent`, `appearance`, or `size` resolves to the listed default. An accent intent resolves to fill regardless of `appearance`.
 
