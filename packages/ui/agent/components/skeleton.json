@@ -17,6 +17,11 @@
       "situation": "A Button is waiting on an in-flight press action.",
       "guidance": "Use Button isLoading or isPending rather than replacing the button with Skeleton.",
       "useInstead": ["button"]
+    },
+    {
+      "situation": "Only an indeterminate indicator or pending label is needed.",
+      "guidance": "Use Spinner or LoadingText instead of layout placeholders.",
+      "useInstead": ["spinner", "loading-text"]
     }
   ],
   "supportedInteractions": [],
@@ -35,5 +40,5 @@
   ],
   "responsive": ["Fill the intended slot; constrain width and height in the surrounding layout."],
   "rtl": ["Geometry is direction-neutral."],
-  "relatedComponents": ["avatar", "card", "input", "button"]
+  "relatedComponents": ["avatar", "card", "input", "button", "spinner", "loading-text"]
 }

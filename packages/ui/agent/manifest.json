@@ -249,6 +249,22 @@
           "metadata": "./components/divider.json"
         },
         {
+          "id": "spinner",
+          "name": "Spinner",
+          "summary": "Indeterminate loading indicator for pending content and busy controls.",
+          "importPath": "@tradenetcorp/veli-ui/spinner",
+          "declaration": "../dist/spinner.d.ts",
+          "metadata": "./components/spinner.json"
+        },
+        {
+          "id": "loading-text",
+          "name": "LoadingText",
+          "summary": "Settling pending label with decorative grains for indeterminate actions.",
+          "importPath": "@tradenetcorp/veli-ui/loading-text",
+          "declaration": "../dist/loading-text.d.ts",
+          "metadata": "./components/loading-text.json"
+        },
+        {
           "id": "skeleton",
           "name": "Skeleton",
           "summary": "Generic loading placeholder for composing loading states.",
