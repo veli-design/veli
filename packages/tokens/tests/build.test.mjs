@@ -124,6 +124,36 @@ test('typography follows Figma composites and produces language counterparts and
   assert.ok(theme.includes('@utility grid-style-xs'));
   assert.ok(theme.includes('padding-inline: var(--veli-grid-xs-columnmargin)'));
 });
+test('English typography and font-sans share an overridable font token', async () => {
+  const styles = entries(canonical.typography.en);
+  assert.equal(styles.length, 52);
+  for (const [id, token] of styles) assert.equal(token.$value.fontFamily, '{font.sans}', id);
+
+  const css = files['tokens.css'];
+  assert.match(
+    css,
+    /:where\(:root, :host\) \{\s*--veli-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;/,
+  );
+  assert.equal([...css.matchAll(/--veli-font-sans:/g)].length, 1);
+  assert.match(css, /--veli-typography-en-body-md-regular-font-family: var\(--veli-font-sans\);/);
+  assert.match(
+    css,
+    /--veli-typography-dv-body-md-regular-font-family: var\(--veli-font-dhivehi-faseyha\);/,
+  );
+
+  const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
+  const { compile } = require('tailwindcss');
+  const compiler = await compile(
+    files['tailwind-theme.css'].replace("@import './tokens.css';", '') + '\n@tailwind utilities;',
+  );
+  const result = compiler.build(['font-sans', 'type-body-md-regular']);
+  assert.match(result, /\.font-sans \{\s*font-family: var\(--veli-font-sans\);/);
+  assert.match(result, /\.type-body-md-regular \{\s*font-family: var\(--veli-font-sans\);/);
+  assert.match(
+    result,
+    /&:lang\(dv\) \{\s*font-family: var\(--veli-typography-dv-body-md-regular-font-family\);/,
+  );
+});
 test('Tailwind compilation resolves aliases and uses literal query thresholds', async () => {
   const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
   const { compile } = require('tailwindcss');
