@@ -49,10 +49,12 @@ test('Tabs matches the Figma spacing model', () => {
 });
 
 test('Tabs hugs the tab group and scrolls when narrow', () => {
-  assert.match(source, /relative inline-flex max-w-full min-w-0 items-end border-b-2/);
-  assert.match(source, /overflow-x-auto overscroll-x-contain/);
+  assert.match(source, /relative inline-flex w-max items-end border-b-2/);
+  assert.match(source, /w-full max-w-full overflow-x-auto/);
+  assert.match(source, /overflow-x-auto overscroll-x-contain p-1/);
   assert.match(source, /scrollbar-width:none/);
-  assert.match(source, /scrollIntoView/);
+  assert.match(source, /container\.scrollBy\(\{ left:/);
+  assert.doesNotMatch(source, /\.scrollIntoView\s*\(/);
   assert.match(source, /motion-safe:scroll-smooth/);
 });
 
@@ -61,7 +63,8 @@ test('Tabs honors reduced motion and logical selection indicator placement', () 
     source,
     /motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none/,
   );
-  assert.match(source, /inset-inline-start-0/);
+  assert.match(source, /absolute -bottom-1 start-0 h-0\.5 w-full/);
+  assert.doesNotMatch(source, /inset-inline-start-0/);
 });
 
 test('Tabs renders tablist semantics and a single tabIndex=0', () => {

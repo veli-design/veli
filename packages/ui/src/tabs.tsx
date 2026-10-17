@@ -89,7 +89,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'>
 }
 
 const tabSelectionIndicatorClassName =
-  'absolute -bottom-1 inset-inline-start-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
+  'absolute -bottom-1 start-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
 const tabBaseClassName =
   'relative mb-0.5 inline-flex cursor-pointer items-center rounded-lg whitespace-nowrap text-base-default antialiased outline-none motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-icon-base';
@@ -131,10 +131,12 @@ const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabBarScrollClassName =
-  'w-full max-w-full overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-safe:scroll-smooth';
+  // p-1 keeps ring-2 + ring-offset-2 inside the scrollport on every edge;
+  // overflow-x-auto also forces vertical overflow to auto, which clips without it.
+  'w-full max-w-full overflow-x-auto overscroll-x-contain p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-safe:scroll-smooth';
 
 const tabBarUnderlineClassName =
-  'relative inline-flex max-w-full min-w-0 items-end border-b-2 border-tabs-border-inactive';
+  'relative inline-flex w-max items-end border-b-2 border-tabs-border-inactive';
 
 const tabLabelGridClassName =
   'inline-grid justify-items-center [&>*]:col-start-1 [&>*]:row-start-1';
@@ -622,14 +624,27 @@ export function Tabs({
       return;
     }
 
+    const container = scrollContainerRef.current;
     const target = overflowItemIds.has(currentSelectedKey)
       ? overflowTriggerRef.current
       : tabElementsRef.current.get(currentSelectedKey);
 
-    target?.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    });
+    if (!container || !target) {
+      return;
+    }
+
+    // Scroll only the horizontal strip so the document's vertical position is unchanged
+    // (e.g. Storybook Docs must not jump on mount).
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const overflowStart = targetRect.left - containerRect.left;
+    const overflowEnd = targetRect.right - containerRect.right;
+
+    if (overflowStart < 0) {
+      container.scrollBy({ left: overflowStart });
+    } else if (overflowEnd > 0) {
+      container.scrollBy({ left: overflowEnd });
+    }
   }, [currentSelectedKey, overflowItemIds, tabElementsRef, indicatorVersion]);
 
   const navigateLinkTab = React.useCallback(
@@ -678,7 +693,7 @@ export function Tabs({
     <AriaTabs {...tabsProps} className={twMerge('w-full', className)}>
       <div ref={scrollContainerRef} className={tabBarScrollClassName}>
         <div ref={tabBarRef} className={twMerge(tabBarUnderlineClassName, tabListClassName)}>
-          <AriaTabList aria-label={listAriaLabel} className="inline-flex min-w-0">
+          <AriaTabList aria-label={listAriaLabel} className="inline-flex">
             {items.map((item) => (
               <TabItem
                 key={item.id}
