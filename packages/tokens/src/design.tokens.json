@@ -18059,7 +18059,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 64,
@@ -18098,7 +18098,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 64,
@@ -18137,7 +18137,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 64,
@@ -18178,7 +18178,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 56,
@@ -18217,7 +18217,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 56,
@@ -18256,7 +18256,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 56,
@@ -18295,7 +18295,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 56,
@@ -18338,7 +18338,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 48,
@@ -18377,7 +18377,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 48,
@@ -18416,7 +18416,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 48,
@@ -18455,7 +18455,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 48,
@@ -18496,7 +18496,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 40,
@@ -18535,7 +18535,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 40,
@@ -18574,7 +18574,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 40,
@@ -18613,7 +18613,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 40,
@@ -18654,7 +18654,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 36,
@@ -18693,7 +18693,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 36,
@@ -18732,7 +18732,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 36,
@@ -18771,7 +18771,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 36,
@@ -18812,7 +18812,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 32,
@@ -18851,7 +18851,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 32,
@@ -18890,7 +18890,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 32,
@@ -18929,7 +18929,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 32,
@@ -18972,7 +18972,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 28,
@@ -19011,7 +19011,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 28,
@@ -19050,7 +19050,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 28,
@@ -19089,7 +19089,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 28,
@@ -19130,7 +19130,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 24,
@@ -19169,7 +19169,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 24,
@@ -19208,7 +19208,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 24,
@@ -19247,7 +19247,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 24,
@@ -19289,7 +19289,7 @@
         "regular": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 400,
             "fontSize": {
               "value": 20,
@@ -19328,7 +19328,7 @@
         "medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 500,
             "fontSize": {
               "value": 20,
@@ -19367,7 +19367,7 @@
         "semibold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 600,
             "fontSize": {
               "value": 20,
@@ -19406,7 +19406,7 @@
         "bold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 700,
             "fontSize": {
               "value": 20,
@@ -19448,7 +19448,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 18,
@@ -19487,7 +19487,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 18,
@@ -19526,7 +19526,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 18,
@@ -19565,7 +19565,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 18,
@@ -19606,7 +19606,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 16,
@@ -19645,7 +19645,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 16,
@@ -19684,7 +19684,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 16,
@@ -19723,7 +19723,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 16,
@@ -19764,7 +19764,7 @@
           "regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 400,
               "fontSize": {
                 "value": 14,
@@ -19803,7 +19803,7 @@
           "medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 500,
               "fontSize": {
                 "value": 14,
@@ -19842,7 +19842,7 @@
           "semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 600,
               "fontSize": {
                 "value": 14,
@@ -19881,7 +19881,7 @@
           "bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
+              "fontFamily": "{font.sans}",
               "fontWeight": 700,
               "fontSize": {
                 "value": 14,
@@ -19923,7 +19923,7 @@
         "regular": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 400,
             "fontSize": {
               "value": 12,
@@ -19962,7 +19962,7 @@
         "medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 500,
             "fontSize": {
               "value": 12,
@@ -20001,7 +20001,7 @@
         "semibold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 600,
             "fontSize": {
               "value": 12,
@@ -20040,7 +20040,7 @@
         "bold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
+            "fontFamily": "{font.sans}",
             "fontWeight": 700,
             "fontSize": {
               "value": 12,

@@ -180,11 +180,6 @@
       "import": "./dist/tags.js",
       "default": "./dist/tags.js"
     },
-    "./page-tab": {
-      "types": "./dist/page-tab.d.ts",
-      "import": "./dist/page-tab.js",
-      "default": "./dist/page-tab.js"
-    },
     "./pagination": {
       "types": "./dist/pagination.d.ts",
       "import": "./dist/pagination.js",
@@ -209,6 +204,16 @@
       "types": "./dist/tooltip.d.ts",
       "import": "./dist/tooltip.js",
       "default": "./dist/tooltip.js"
+    },
+    "./spinner": {
+      "types": "./dist/spinner.d.ts",
+      "import": "./dist/spinner.js",
+      "default": "./dist/spinner.js"
+    },
+    "./loading-text": {
+      "types": "./dist/loading-text.d.ts",
+      "import": "./dist/loading-text.js",
+      "default": "./dist/loading-text.js"
     }
   },
   "scripts": {

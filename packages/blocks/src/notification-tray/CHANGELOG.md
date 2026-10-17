@@ -1,3 +1,15 @@
+## 0.3.0
+
+### Changed
+
+- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@tradenetcorp/veli-ui` to `^0.16.0` when updating copied source.
+
+### Fixed
+
+- Align warning icons and empty-state text with their design color tokens.
+- Correct notification row spacing, divider placement, desktop bottom padding and options menu geometry while allowing longer content to grow.
+- Slide unread indicators away with their timestamps when notifications are marked as read, with mirrored RTL motion and reduced-motion support.
+
 ## 0.2.0
 
 ### Changed
