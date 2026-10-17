@@ -1,22 +1,13 @@
 ---
 title: Tabs
-description: Data-driven tabbed interface built on React Aria, with leading/trailing slots and optional overflow menu.
+description: Underlined tab navigation with sizes, slots, and an optional overflow menu.
 ---
 
-import {
-  TabsControlledDemo,
-  TabsDisabledDemo,
-  TabsFullWidthDemo,
-  TabsOverflowDemo,
-  TabsScrollDemo,
-  TabsSizesDemo,
-  TabsSlotsDemo,
-  TabsUsageDemo,
-} from '../../components/DocsExamples';
+import { TabsOverflowDemo, TabsUsageDemo } from '../../components/DocsExamples';
 
 # Tabs
 
-The Tabs component renders a data-driven tabbed interface on React Aria's `Tabs`. Pass an `items` array of tabs, each with a `label` and optional `panel`; extra tabs can be collapsed into an overflow menu via `overflowItems`. The underline hugs the tab group by default, and the tab bar scrolls horizontally when content is wider than its container.
+Use Tabs for switching between related panels in a page section. Pass an `items` array with at least two tabs. Collapse extras with `overflowItems`, or pass `href` on an item for route-driven navigation.
 
 ## Import
 
@@ -40,50 +31,11 @@ const items = [
 <Tabs listAriaLabel="Service sections" items={items} />;
 ```
 
-Each item also accepts `leading` and `trailing` nodes (for icons or badges) and `isDisabled`. At least two items are required. When `panel` is omitted, Tabs still renders a visually hidden panel so the selected tab's `aria-controls` resolves.
-
-## Sizes
-
-Tabs support `sm`, `md`, and `lg`. The default is `sm`.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsSizesDemo client:visible />
-</div>
-
-```tsx
-<Tabs size="md" listAriaLabel="Service sections" items={items} />
-```
-
-## Slots
-
-Use `leading` and `trailing` for icons, badges, or other adornments. Slot spacing matches the design system: a 2px pad around each slot and size-specific label padding.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsSlotsDemo client:visible />
-</div>
-
-```tsx
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { HouseIcon } from '@phosphor-icons/react';
-
-<Tabs
-  listAriaLabel="Workspace sections"
-  items={[
-    {
-      id: 'overview',
-      label: 'Overview',
-      leading: <HouseIcon size={16} />,
-      trailing: <Badge intent="danger" appearance="emphasis" count={2} size="sm" />,
-      panel: 'Summary content.',
-    },
-    { id: 'services', label: 'Services', panel: 'Service list.' },
-  ]}
-/>;
-```
+Size with `sm`, `md`, or `lg`. Use `leading` and `trailing` for icons or badges. The underline hugs the tab group; when tabs are wider than the container, the bar scrolls horizontally. Pass `tabListClassName="w-full"` for a full-width underline.
 
 ## Overflow
 
-Pass additional tabs as `overflowItems` to collapse them behind a localized "More" menu. Selecting a menu item activates that tab and shows its panel. Overflow tabs stay in the accessibility tree for panel association, but keyboard focus stays on the visible tabs and the More trigger.
+Pass additional tabs as `overflowItems` to collapse them behind a localized More menu.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TabsOverflowDemo client:visible />
@@ -100,205 +52,64 @@ Pass additional tabs as `overflowItems` to collapse them behind a localized "Mor
 />
 ```
 
-`TabsOverflow` is also exported for advanced composition inside an active React Aria tab list. Prefer configuring overflow through `Tabs`.
+## Navigation
 
-## Disabled tabs
-
-Set `isDisabled` on an item to prevent selection. When the first item is disabled and no `defaultSelectedKey` is provided, Tabs selects the first enabled item.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsDisabledDemo client:visible />
-</div>
+Pass `href` on an item to render that tab as a link. Drive selection from the current route and leave page content outside Tabs. When any item has an `href`, Tabs defaults `keyboardActivation` to `'manual'`. Wire client-side navigation through [`VeliProvider`](/docs/provider/) `navigate`, or a per-item `render` prop for framework `Link` components.
 
 ```tsx
 <Tabs
-  listAriaLabel="Service sections"
+  listAriaLabel="Team sections"
+  selectedKey={pathname}
+  onSelectionChange={() => {}}
   items={[
-    { id: 'overview', label: 'Overview', panel: 'Summary content.' },
-    { id: 'services', label: 'Services', isDisabled: true, panel: 'Service list.' },
-    { id: 'pricing', label: 'Pricing', panel: 'Fees and schedules.' },
+    { id: '/team/overview', label: 'Overview', href: '/team/overview' },
+    { id: '/team/members', label: 'Members', href: '/team/members' },
   ]}
 />
 ```
 
-## Controlled selection
-
-Drive selection with `selectedKey` and `onSelectionChange`, or set an initial tab with `defaultSelectedKey`.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsControlledDemo client:visible />
-</div>
-
-```tsx
-const [selectedKey, setSelectedKey] = useState('services');
-
-<Tabs
-  listAriaLabel="Service sections"
-  selectedKey={selectedKey}
-  onSelectionChange={setSelectedKey}
-  items={items}
-/>;
-```
-
-## Responsive scroll and full-width underline
-
-When tabs are wider than their container, the tab bar scrolls horizontally and keeps the selected tab in view. The inactive underline hugs the tab group by default. Pass `tabListClassName="w-full"` when you need the underline to span the full container width.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsScrollDemo client:visible />
-</div>
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <TabsFullWidthDemo client:visible />
-</div>
-
-```tsx
-<div className="w-[240px]">
-  <Tabs listAriaLabel="Scrollable sections" items={manyItems} />
-</div>
-
-<Tabs listAriaLabel="Full-width underline" tabListClassName="w-full" items={items} />
-```
-
-## Navigation tabs
-
-Pass `href` on an item to render that tab as a link. Drive selection from the current route and leave page content outside the component.
-
-When any item has an `href`, Tabs defaults `keyboardActivation` to `'manual'` so arrow-key focus does not navigate. Pass `keyboardActivation` explicitly to override.
-
-### Next.js App Router
-
-Wire client-side navigation either through `VeliProvider` or a per-item `render` prop.
-
-```tsx
-'use client';
-
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { Tabs } from '@tradenetcorp/veli-ui/tabs';
-
-function TeamTabs() {
-  const pathname = usePathname();
-  const items = [
-    { id: '/team/overview', label: 'Overview', href: '/team/overview' },
-    { id: '/team/members', label: 'Members', href: '/team/members' },
-  ] as const;
-
-  return (
-    <Tabs
-      listAriaLabel="Team sections"
-      items={[...items]}
-      selectedKey={pathname}
-      onSelectionChange={() => {}}
-    />
-  );
-}
-
-// App-wide: href tabs use the router instead of full page loads.
-export function AppProviders({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-
-  return (
-    <VeliProvider navigate={(href, options) => router.push(href, options)}>{children}</VeliProvider>
-  );
-}
-
-// Or per item, for prefetch and framework Link APIs:
-const itemsWithRender = [
-  {
-    id: '/team/overview',
-    label: 'Overview',
-    href: '/team/overview',
-    render: (props) => <Link {...props} />,
-  },
-  {
-    id: '/team/members',
-    label: 'Members',
-    href: '/team/members',
-    render: (props) => <Link {...props} />,
-  },
-];
-```
-
-### TanStack Router
-
-```tsx
-import { Link, useRouter, useRouterState } from '@tanstack/react-router';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { Tabs } from '@tradenetcorp/veli-ui/tabs';
-
-function TeamTabs() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const items = [
-    { id: '/team/overview', label: 'Overview', href: '/team/overview' },
-    { id: '/team/members', label: 'Members', href: '/team/members' },
-  ] as const;
-
-  return (
-    <Tabs
-      listAriaLabel="Team sections"
-      items={[...items]}
-      selectedKey={pathname}
-      onSelectionChange={() => {}}
-    />
-  );
-}
-
-export function AppProviders({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-
-  return (
-    <VeliProvider
-      navigate={(to, options) => router.navigate({ to, ...options })}
-      useHref={(to) => router.buildLocation({ to }).href}
-    >
-      {children}
-    </VeliProvider>
-  );
-}
-
-// Or per item:
-const itemsWithRender = [
-  {
-    id: '/team/overview',
-    label: 'Overview',
-    href: '/team/overview',
-    render: (props) => <Link {...props} to={props.href} />,
-  },
-];
-```
-
-## Accessibility
-
-- Provide `listAriaLabel` so the tab list has an accessible name.
-- Arrow keys move focus between visible tabs. Home and End jump to the first and last enabled tab.
-- With automatic activation (the default for non-link tabs), focus also selects the tab. Link tabs default to manual activation.
-- Disabled tabs are skipped. Overflow tabs are selected from the More menu rather than the tablist keyboard sequence.
-- Color and indicator transitions respect `prefers-reduced-motion`.
-
-## RTL and localization
-
-Tabs inherit direction and language from `VeliProvider`. In Dhivehi (`language="dv"`), the overflow trigger label becomes `އިތުރު`, layout mirrors for RTL, and label typography uses the Dhivehi baseline adjustment. Pass localized `label` and `panel` content on each item.
+Omit `panel` for route-driven tabs; Tabs still renders a visually hidden panel so `aria-controls` resolves.
 
 ## API Reference
 
+Tabs is built on React Aria [`Tabs`](https://react-spectrum.adobe.com/react-aria/Tabs.html). Props below follow that stack.
+
 ### Tabs
 
-| Prop                                                   | Type                      | Default  | Description                                                                                                                 |
-| :----------------------------------------------------- | :------------------------ | :------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `items`                                                | `[TabsItem, TabsItem, …]` | -        | Tabs: `{ id, label, panel?, leading?, trailing?, isDisabled?, href?, target?, rel?, routerOptions?, render?, … }`.          |
-| `overflowItems`                                        | `TabsItem[]`              | -        | Additional tabs collapsed into an overflow menu.                                                                            |
-| `size`                                                 | `'sm' \| 'md' \| 'lg'`    | `'sm'`   | Tab padding and label typography scale.                                                                                     |
-| `listAriaLabel`                                        | `string`                  | `'Tabs'` | Accessible label for the tab list.                                                                                          |
-| `selectedKey`                                          | `Key`                     | -        | Controlled selected tab.                                                                                                    |
-| `defaultSelectedKey`                                   | `Key`                     | -        | Initially selected tab (uncontrolled). Defaults to the first enabled item.                                                  |
-| `onSelectionChange`                                    | `(key: Key) => void`      | -        | Called when the active tab changes.                                                                                         |
-| `keyboardActivation`                                   | `'automatic' \| 'manual'` | -        | Defaults to `'manual'` when any item has an `href`.                                                                         |
-| `tabListClassName` / `tabClassName` / `panelClassName` | `string`                  | -        | Class overrides for the underline bar, each tab, and the panel. Use `tabListClassName="w-full"` for a full-width underline. |
-| `className`                                            | `string`                  | -        | Layout-only class override merged onto the root element.                                                                    |
+Veli-specific props for the composed control.
 
-All other React Aria `Tabs` props are supported.
+| Prop               | Type                      | Default  | Description                                                            |
+| :----------------- | :------------------------ | :------- | :--------------------------------------------------------------------- |
+| `items`            | `[TabsItem, TabsItem, …]` | -        | Tabs to show. At least two.                                            |
+| `overflowItems`    | `TabsItem[]`              | -        | Additional tabs collapsed into the More menu.                          |
+| `size`             | `'sm' \| 'md' \| 'lg'`    | `'sm'`   | Tab padding and label typography.                                      |
+| `listAriaLabel`    | `string`                  | `'Tabs'` | Accessible name for the tab list.                                      |
+| `tabListClassName` | `string`                  | -        | Class on the underline bar. Use `"w-full"` for a full-width underline. |
+| `tabClassName`     | `string`                  | -        | Class merged onto each visible tab.                                    |
+| `panelClassName`   | `string`                  | -        | Class merged onto each visible panel.                                  |
+| `className`        | `string`                  | -        | Layout class on the root (width, margin, flex/grid).                   |
+
+### React Aria Tabs
+
+React Aria’s headless [`Tabs`](https://react-spectrum.adobe.com/react-aria/Tabs.html#props). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop                 | Type                         | Default                | Description                                                |
+| :------------------- | :--------------------------- | :--------------------- | :--------------------------------------------------------- |
+| `selectedKey`        | `Key`                        | -                      | Controlled selected tab.                                   |
+| `defaultSelectedKey` | `Key`                        | first enabled          | Uncontrolled initial tab.                                  |
+| `onSelectionChange`  | `(key: Key) => void`         | -                      | Called when the active tab changes.                        |
+| `keyboardActivation` | `'automatic' \| 'manual'`    | `'manual'` with `href` | When to select on focus.                                   |
+| `isDisabled`         | `boolean`                    | `false`                | Disables the whole tab list.                               |
+| `disabledKeys`       | `Iterable<Key>`              | -                      | Keys of tabs to disable. Prefer `isDisabled` on each item. |
+| `orientation`        | `'horizontal' \| 'vertical'` | `'horizontal'`         | Tab list orientation.                                      |
+
+Not forwarded from React Aria `Tabs`:
+
+| Prop        | Why                                                |
+| :---------- | :------------------------------------------------- |
+| `children`  | Replaced by Veli’s `items` / `overflowItems`.      |
+| `style`     | Not supported.                                     |
+| `className` | Replaced by Veli’s layout `className` on the root. |
 
 ### TabsItem
 
@@ -307,18 +118,23 @@ All other React Aria `Tabs` props are supported.
 | `id`         | `string \| number` | Stable tab key.                                     |
 | `label`      | `ReactNode`        | Visible tab label.                                  |
 | `panel`      | `ReactNode`        | Optional panel content. Omit for route-driven tabs. |
-| `leading`    | `ReactNode`        | Content before the label (icon, avatar, …).         |
-| `trailing`   | `ReactNode`        | Content after the label (badge, icon, …).           |
+| `leading`    | `ReactNode`        | Content before the label.                           |
+| `trailing`   | `ReactNode`        | Content after the label.                            |
 | `isDisabled` | `boolean`          | Prevents selection.                                 |
 | `href`       | `string`           | Renders the tab as a link.                          |
 | `render`     | `RenderProps`      | Escape hatch for framework `Link` components.       |
 
-Link DOM props (`target`, `rel`, `hrefLang`, `download`, `ping`, `referrerPolicy`, `routerOptions`) are also accepted on each item.
+Link DOM props (`target`, `rel`, `hrefLang`, `download`, `ping`, `referrerPolicy`, `routerOptions`) are also accepted on each item. `overflowItems` uses the same shape; panels still come from those items.
 
-### TabsOverflowItem
+`TabsOverflow` is also exported for advanced composition inside an active React Aria tab list. Prefer `overflowItems` on `Tabs`.
 
-Same as `TabsItem` without `panel`. Used for `overflowItems` menu entries; panels still come from the full `TabsItem` objects passed to `overflowItems` on `Tabs`.
+## Accessibility
 
-### TabsOverflow
+- Provide `listAriaLabel` so the tab list has an accessible name.
+- Arrow keys move focus between visible tabs. Home and End jump to the first and last enabled tab.
+- With automatic activation, focus also selects the tab. Link tabs default to manual activation.
+- Disabled tabs are skipped. Overflow tabs are selected from the More menu.
 
-Advanced "More" trigger for composition inside an active React Aria tab list state. Prefer `overflowItems` on `Tabs`. Renders nothing when used outside tab list state.
+## RTL and Language
+
+Tabs inherit direction and language from `VeliProvider`. On `lang="dv"`, the overflow trigger label becomes `އިތުރު` and labels use the Dhivehi baseline adjustment. In RTL, the tab row, indicator, and More caret follow `dir`. Pass localized `label` and `panel` content on each item.

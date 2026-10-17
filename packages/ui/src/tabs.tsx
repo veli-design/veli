@@ -88,6 +88,8 @@ export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'>
   panelClassName?: string;
 }
 
+// Pin with start-0 so the underline flushes the trigger padding box (including
+// narrow/scroll layouts). RAC SharedElement animates translate/width between tabs.
 const tabSelectionIndicatorClassName =
   'absolute -bottom-1 start-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
@@ -131,9 +133,9 @@ const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
 const tabBarScrollClassName =
-  // p-1 keeps ring-2 + ring-offset-2 inside the scrollport on every edge;
-  // overflow-x-auto also forces vertical overflow to auto, which clips without it.
-  'w-full max-w-full overflow-x-auto overscroll-x-contain p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-safe:scroll-smooth';
+  // overflow-x-auto also forces vertical overflow to auto. Focus rings use
+  // ring-inset so they stay inside the tab and are not clipped by the scrollport.
+  'w-full max-w-full overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-safe:scroll-smooth';
 
 const tabBarUnderlineClassName =
   'relative inline-flex w-max items-end border-b-2 border-tabs-border-inactive';
@@ -220,42 +222,31 @@ function measureTabBarIndicatorPosition(
   };
 }
 
-function useTabBarIndicatorPosition({
+/** Underline for the overflow More trigger (not a RAC Tab, so no SelectionIndicator). */
+function useOverflowIndicatorPosition({
   containerRef,
-  selectedKey,
-  overflowItemIds,
-  tabElementsRef,
   overflowTriggerRef,
+  isActive,
   version,
 }: {
   containerRef: React.RefObject<HTMLElement | null>;
-  selectedKey: string | number | null;
-  overflowItemIds: ReadonlySet<string | number>;
-  tabElementsRef: React.MutableRefObject<Map<string | number, HTMLElement>>;
   overflowTriggerRef: React.MutableRefObject<HTMLElement | null>;
+  isActive: boolean;
   version: number;
 }) {
   const [position, setPosition] = React.useState<TabIndicatorPosition | null>(null);
 
   const measure = React.useCallback(() => {
     const container = containerRef.current;
-    if (!container || selectedKey == null) {
-      setPosition(null);
-      return false;
-    }
-
-    const target = overflowItemIds.has(selectedKey)
-      ? overflowTriggerRef.current
-      : tabElementsRef.current.get(selectedKey);
-
-    if (!target) {
+    const target = overflowTriggerRef.current;
+    if (!container || !isActive || !target) {
       setPosition(null);
       return false;
     }
 
     setPosition(measureTabBarIndicatorPosition(container, target));
     return true;
-  }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef]);
+  }, [containerRef, isActive, overflowTriggerRef]);
   const measureRef = React.useRef(measure);
 
   React.useLayoutEffect(() => {
@@ -267,6 +258,10 @@ function useTabBarIndicatorPosition({
   }, [measure, version]);
 
   React.useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+
     let frame = 0;
     let attempts = 0;
     const runMeasure = () => measureRef.current();
@@ -285,18 +280,13 @@ function useTabBarIndicatorPosition({
     }
 
     const container = containerRef.current;
+    const target = overflowTriggerRef.current;
     if (!container) {
       return () => cancelAnimationFrame(frame);
     }
 
     const resizeObserver = new ResizeObserver(runMeasure);
     resizeObserver.observe(container);
-
-    const target = overflowItemIds.has(selectedKey ?? '')
-      ? overflowTriggerRef.current
-      : selectedKey != null
-        ? tabElementsRef.current.get(selectedKey)
-        : null;
     if (target) {
       resizeObserver.observe(target);
     }
@@ -308,32 +298,26 @@ function useTabBarIndicatorPosition({
       resizeObserver.disconnect();
       window.removeEventListener('resize', runMeasure);
     };
-  }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef, version]);
+  }, [containerRef, isActive, overflowTriggerRef, version]);
 
   return position;
 }
 
-function TabsBarIndicator({
+function TabsOverflowIndicator({
   containerRef,
-  selectedKey,
-  overflowItemIds,
-  tabElementsRef,
   overflowTriggerRef,
+  isActive,
   version,
 }: {
   containerRef: React.RefObject<HTMLElement | null>;
-  selectedKey: string | number | null;
-  overflowItemIds: ReadonlySet<string | number>;
-  tabElementsRef: React.MutableRefObject<Map<string | number, HTMLElement>>;
   overflowTriggerRef: React.MutableRefObject<HTMLElement | null>;
+  isActive: boolean;
   version: number;
 }) {
-  const position = useTabBarIndicatorPosition({
+  const position = useOverflowIndicatorPosition({
     containerRef,
-    selectedKey,
-    overflowItemIds,
-    tabElementsRef,
     overflowTriggerRef,
+    isActive,
     version,
   });
 
@@ -344,10 +328,10 @@ function TabsBarIndicator({
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute -bottom-0.5 left-0 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
+      className="pointer-events-none absolute -bottom-0.5 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
       style={{
-        width: position.width,
         left: position.x,
+        width: position.width,
       }}
     />
   );
@@ -374,7 +358,7 @@ function getTabClassName(
     options?.isHovered && 'bg-tabs-hover',
     options?.isPressed && 'bg-tabs-pressed',
     isSelected && '[&_svg]:text-icon-base-strong',
-    options?.isFocusVisible && 'ring-2 ring-border-focus ring-offset-2',
+    options?.isFocusVisible && 'ring-2 ring-inset ring-border-focus',
     options?.tabClassName,
   );
 }
@@ -493,13 +477,11 @@ function TabItem({
   item,
   size,
   tabClassName,
-  showSelectionIndicator = true,
   onTabElementChange,
 }: {
   item: TabsItem | TabsOverflowItem;
   size: TabsSize;
   tabClassName?: string;
-  showSelectionIndicator?: boolean;
   onTabElementChange?: (id: string | number, element: HTMLElement | null) => void;
 }) {
   const tabElementRef = React.useCallback(
@@ -533,9 +515,7 @@ function TabItem({
             {item.label}
           </TabLabel>
           {item.trailing ? <TabSlot>{item.trailing}</TabSlot> : null}
-          {showSelectionIndicator ? (
-            <SelectionIndicator className={tabSelectionIndicatorClassName} />
-          ) : null}
+          <SelectionIndicator className={tabSelectionIndicatorClassName} />
         </>
       )}
     </AriaTab>
@@ -634,11 +614,14 @@ export function Tabs({
     }
 
     // Scroll only the horizontal strip so the document's vertical position is unchanged
-    // (e.g. Storybook Docs must not jump on mount).
+    // (e.g. Storybook Docs must not jump on mount). Align to the padded client area.
     const containerRect = container.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
-    const overflowStart = targetRect.left - containerRect.left;
-    const overflowEnd = targetRect.right - containerRect.right;
+    const styles = getComputedStyle(container);
+    const padStart = Number.parseFloat(styles.paddingLeft) || 0;
+    const padEnd = Number.parseFloat(styles.paddingRight) || 0;
+    const overflowStart = targetRect.left - (containerRect.left + padStart);
+    const overflowEnd = targetRect.right - (containerRect.right - padEnd);
 
     if (overflowStart < 0) {
       container.scrollBy({ left: overflowStart });
@@ -700,7 +683,6 @@ export function Tabs({
                 item={item}
                 size={size}
                 tabClassName={tabClassName}
-                showSelectionIndicator={!hasOverflow}
                 onTabElementChange={handleTabElementChange}
               />
             ))}
@@ -729,12 +711,10 @@ export function Tabs({
             />
           ) : null}
           {hasOverflow ? (
-            <TabsBarIndicator
+            <TabsOverflowIndicator
               containerRef={tabBarRef}
-              selectedKey={currentSelectedKey}
-              overflowItemIds={overflowItemIds}
-              tabElementsRef={tabElementsRef}
               overflowTriggerRef={overflowTriggerRef}
+              isActive={currentSelectedKey != null && overflowItemIds.has(currentSelectedKey)}
               version={indicatorVersion}
             />
           ) : null}

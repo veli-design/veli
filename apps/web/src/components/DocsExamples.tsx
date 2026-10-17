@@ -48,11 +48,8 @@ import {
   BellIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
-  GearIcon,
-  HouseIcon,
   LinkSimpleIcon,
   PencilSimpleIcon,
-  SquaresFourIcon,
   TrashIcon,
 } from '@phosphor-icons/react';
 
@@ -1570,47 +1567,6 @@ export function TabsUsageDemo() {
   );
 }
 
-export function TabsSizesDemo() {
-  return (
-    <div className="flex w-full max-w-[520px] flex-col gap-6">
-      <Tabs listAriaLabel="Small tabs" size="sm" items={TAB_ITEMS} />
-      <Tabs listAriaLabel="Medium tabs" size="md" items={TAB_ITEMS} />
-      <Tabs listAriaLabel="Large tabs" size="lg" items={TAB_ITEMS} />
-    </div>
-  );
-}
-
-export function TabsSlotsDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <Tabs
-        listAriaLabel="Workspace sections"
-        items={[
-          {
-            id: 'overview',
-            label: 'Overview',
-            leading: <HouseIcon size={16} />,
-            trailing: <Badge intent="danger" appearance="emphasis" count={2} size="sm" />,
-            panel: 'Summary of the service and what it offers.',
-          },
-          {
-            id: 'services',
-            label: 'Services',
-            leading: <SquaresFourIcon size={16} />,
-            panel: 'The list of services available under this agency.',
-          },
-          {
-            id: 'settings',
-            label: 'Settings',
-            leading: <GearIcon size={16} />,
-            panel: 'Workspace preferences and notifications.',
-          },
-        ]}
-      />
-    </div>
-  );
-}
-
 export function TabsOverflowDemo() {
   return (
     <div className="min-h-56 w-full max-w-[520px]">
@@ -1623,74 +1579,6 @@ export function TabsOverflowDemo() {
           { id: 'audit-log', label: 'Audit log', panel: 'Recent account activity.' },
         ]}
       />
-    </div>
-  );
-}
-
-export function TabsDisabledDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <Tabs
-        listAriaLabel="Service sections"
-        items={[
-          {
-            id: 'overview',
-            label: 'Overview',
-            panel: 'Summary of the service and what it offers.',
-          },
-          {
-            id: 'services',
-            label: 'Services',
-            isDisabled: true,
-            panel: 'The list of services available under this agency.',
-          },
-          {
-            id: 'pricing',
-            label: 'Pricing',
-            panel: 'Fees, schedules, and payment options.',
-          },
-        ]}
-      />
-    </div>
-  );
-}
-
-export function TabsControlledDemo() {
-  const [selectedKey, setSelectedKey] = useState<string | number>('services');
-
-  return (
-    <div className="flex w-full max-w-[520px] flex-col gap-3">
-      <Tabs
-        listAriaLabel="Controlled service sections"
-        selectedKey={selectedKey}
-        onSelectionChange={setSelectedKey}
-        items={TAB_ITEMS}
-      />
-      <p className="type-body-sm-regular text-base-muted">Selected: {String(selectedKey)}</p>
-    </div>
-  );
-}
-
-export function TabsScrollDemo() {
-  return (
-    <div className="w-[240px] max-w-full rounded-lg border border-base-subtle p-3">
-      <Tabs
-        listAriaLabel="Scrollable service sections"
-        items={[
-          ...TAB_ITEMS,
-          { id: 'billing', label: 'Billing', panel: 'Invoices and payment methods.' },
-          { id: 'integrations', label: 'Integrations', panel: 'Connected apps and APIs.' },
-          { id: 'members', label: 'Members', panel: 'People with access to this workspace.' },
-        ]}
-      />
-    </div>
-  );
-}
-
-export function TabsFullWidthDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <Tabs listAriaLabel="Full-width underline tabs" tabListClassName="w-full" items={TAB_ITEMS} />
     </div>
   );
 }
