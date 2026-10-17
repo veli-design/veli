@@ -1,9 +1,9 @@
 import process from 'node:process';
 import console from 'node:console';
-import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
+import { spawnSyncCorepack } from '../../../scripts/corepack.mjs';
 import { tokenFixture } from './token-fixture.mjs';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
 
@@ -16,8 +16,7 @@ mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
 // Exercise Storybook play functions against the same canonical imports in a real browser.
 // Build its workspace dependencies first: fresh checkouts have no generated token CSS or UI dist.
-const storybookBuild = spawnSync(
-  'corepack',
+const storybookBuild = spawnSyncCorepack(
   ['pnpm', 'exec', 'turbo', 'build', '--filter=@tradenetcorp/veli-storybook'],
   {
     cwd: resolve(packageRoot, '../..'),
@@ -118,7 +117,7 @@ for (const args of [
   ['pnpm', 'test'],
 ]) {
   if (args[1] === 'test') await tokenFixture(target);
-  const result = spawnSync('corepack', args, { cwd: target, env, stdio: 'inherit' });
+  const result = spawnSyncCorepack(args, { cwd: target, env, stdio: 'inherit' });
   if (result.status !== 0)
     throw new Error(`Consumer check failed: ${args.join(' ')}. Fixture retained at ${target}`);
 }

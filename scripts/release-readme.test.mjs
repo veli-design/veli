@@ -9,16 +9,16 @@ import test from 'node:test';
 import { promisify } from 'node:util';
 import { gunzipSync } from 'node:zlib';
 
+import { resolveCorepackCli } from './corepack.mjs';
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
 
-function resolveBundledCli(relativeSegments) {
+function resolveNpmCli() {
   const execDir = path.dirname(process.execPath);
+  const relativeSegments = ['node_modules', 'npm', 'bin', 'npm-cli.js'];
   const candidates = [
-    // Windows Node distributions keep package managers next to the node binary.
     path.join(execDir, ...relativeSegments),
-    // Unix Node distributions keep package managers under lib/.
     path.join(execDir, '..', 'lib', ...relativeSegments),
   ];
   const cli = candidates.find((candidate) => existsSync(candidate));
@@ -26,14 +26,6 @@ function resolveBundledCli(relativeSegments) {
     throw new Error(`Unable to locate ${relativeSegments.join('/')} from ${process.execPath}`);
   }
   return cli;
-}
-
-function resolveNpmCli() {
-  return resolveBundledCli(['node_modules', 'npm', 'bin', 'npm-cli.js']);
-}
-
-function resolveCorepackCli() {
-  return resolveBundledCli(['node_modules', 'corepack', 'dist', 'corepack.js']);
 }
 
 function readTarEntry(tarball, entryName) {

@@ -1,3 +1,9 @@
+## 0.4.1
+
+### Fixed
+
+- Clear `switcherRendered` after the collapse duration even when the surface never emits `transitionend`, so host shells can restore notices in headless browsers.
+
 ## 0.4.0
 
 ### Added

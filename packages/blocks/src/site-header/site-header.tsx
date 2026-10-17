@@ -383,6 +383,7 @@ export function SiteHeader({
   const titleId = useId();
   const surfaceRef = useRef<HTMLElement>(null);
   const bannerExitRef = useRef<HTMLDivElement>(null);
+  const unrenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { mode: scrollMode, floatingMotion } = useHeaderScrollMode(
     pathname,
@@ -469,7 +470,14 @@ export function SiteHeader({
     ? undefined
     : `height ${isOfficialBannerResizing ? COLLAPSE_MS : OFFICIAL_BANNER_MS}ms ${EASE_DRAWER_CSS}`;
 
+  const clearUnrenderTimeout = useCallback(() => {
+    if (unrenderTimeoutRef.current == null) return;
+    clearTimeout(unrenderTimeoutRef.current);
+    unrenderTimeoutRef.current = null;
+  }, []);
+
   const openMenu = useCallback(() => {
+    clearUnrenderTimeout();
     setOpenedFromFloating(floatingLayout);
     setOfficialBannerExpanded(false);
     setIsMobileMenuOpen(false);
@@ -479,7 +487,7 @@ export function SiteHeader({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setIsExpanded(true));
     });
-  }, [floatingLayout]);
+  }, [clearUnrenderTimeout, floatingLayout]);
 
   const focusLogo = useCallback(() => {
     const active = document.activeElement;
@@ -495,9 +503,17 @@ export function SiteHeader({
     setIsExpanded(false);
     setIsOpen(false);
     if (prefersReducedMotion) {
+      clearUnrenderTimeout();
       setIsRendered(false);
+      return;
     }
-  }, [focusLogo, prefersReducedMotion]);
+    clearUnrenderTimeout();
+    // Fallback if the surface never emits transitionend (some headless runs).
+    unrenderTimeoutRef.current = setTimeout(() => {
+      unrenderTimeoutRef.current = null;
+      setIsRendered(false);
+    }, COLLAPSE_MS + 50);
+  }, [clearUnrenderTimeout, focusLogo, prefersReducedMotion]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -542,11 +558,12 @@ export function SiteHeader({
       if (event.target !== event.currentTarget) return;
       if (event.propertyName !== 'height') return;
       if (!isExpanded) {
+        clearUnrenderTimeout();
         setIsRendered(false);
         focusLogo();
       }
     },
-    [focusLogo, isExpanded],
+    [clearUnrenderTimeout, focusLogo, isExpanded],
   );
 
   useEffect(() => {

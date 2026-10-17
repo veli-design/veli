@@ -30,7 +30,10 @@ test('app switcher fades main and hides preview banner; Escape restores them', a
   await expect(
     page.getByRole('heading', { name: 'Browse government services and sites' }),
   ).toHaveCount(0);
+  // Main chrome clears with switcherOpen; the banner waits for switcherRendered
+  // (collapse animation / transitionend).
   await expect(content).not.toHaveAttribute('aria-hidden', 'true');
+  await waitForMotion(page);
   await expect(page.locator('[data-preview-banner-region]')).not.toHaveAttribute(
     'aria-hidden',
     'true',
