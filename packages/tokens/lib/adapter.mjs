@@ -1,4 +1,4 @@
-import { META } from './normalize.mjs';
+import { entries, META } from './normalize.mjs';
 export const variableName = (token) => `--veli-${token.id.replace(/[._]/g, '-')}`;
 export const subVariableName = (name, field) => `${name}-${field}`;
 const namespaces = {
@@ -33,9 +33,13 @@ const textStyles = {
   '9xl': 'display.lg.regular',
 };
 const fields = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing'];
-function typographyDeclarations(token) {
+function typographyDeclarations(token, useSansFamily = false) {
   return fields
-    .map((field) => `  ${field}: var(${subVariableName(variableName(token), field)});`)
+    .map((field) =>
+      field === 'font-family' && useSansFamily
+        ? '  font-family: var(--veli-font-sans);'
+        : `  ${field}: var(${subVariableName(variableName(token), field)});`,
+    )
     .join('\n');
 }
 function dhivehiTarget(token) {
@@ -54,6 +58,11 @@ function dhivehiTarget(token) {
 
 /** Emit the Tailwind adapter from Terrazzo's validated graph, never by editing CSS. */
 export default function veliAdapter(canonical) {
+  const sansTypography = new Set(
+    entries(canonical.typography?.en)
+      .filter(([, token]) => token.$value.fontFamily === '{font.sans}')
+      .map(([id]) => `typography.en.${id}`),
+  );
   return {
     name: 'veli-adapter',
     enforce: 'post',
@@ -72,7 +81,8 @@ export default function veliAdapter(canonical) {
       );
       for (const token of Object.values(tokens)) {
         const css = transforms.get(token.id);
-        if (!css) throw new Error(`Missing canonical CSS transform: ${token.id}`);
+        if (!css && token.id !== 'font.sans')
+          throw new Error(`Missing canonical CSS transform: ${token.id}`);
         const [group, ...path] = token.id.split('.');
         const suffix = path.join('-');
         const reference = `var(${variableName(token)})`;
@@ -129,7 +139,7 @@ export default function veliAdapter(canonical) {
           const metadata = token.$extensions[META];
           const utility =
             metadata.language === 'dv' ? `type-dv-${path.slice(1).join('-')}` : metadata.utility;
-          let body = typographyDeclarations(token);
+          let body = typographyDeclarations(token, sansTypography.has(token.id));
           if (path[0] === 'en') {
             const target = dhivehiTarget(token);
             if (!target || !tokens[target])

@@ -237,6 +237,39 @@ function paginationExample(language, variant) {
   );
 }
 
+function comboBoxLanguage(language) {
+  const isDhivehi = language === 'dv';
+  const text = isDhivehi
+    ? {
+        label: 'ތަން',
+        placeholder: 'ތަނެއް ހޯދާ',
+        description: 'ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ',
+        locations: { male: 'މާލެ', hulhumale: 'ހުޅުމާލެ', fuvahmulah: 'ފުވައްމުލައް ސިޓީ' },
+      }
+    : {
+        label: 'Location',
+        placeholder: 'Search location',
+        description: 'Start typing to filter options.',
+        locations: { male: "Male'", hulhumale: "Hulhumale'", fuvahmulah: 'Fuvahmulah City' },
+      };
+  return component(
+    'ComboBoxLanguageDemo',
+    "import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';",
+    `<ComboBox
+  lang="${language}"
+  dir="${isDhivehi ? 'rtl' : 'ltr'}"
+  label="${text.label}"
+  isOptional
+  placeholder="${text.placeholder}"
+  description="${text.description}"
+>
+${Object.entries(text.locations)
+  .map(([id, name]) => `  <ComboBoxItem id="${id}">${name}</ComboBoxItem>`)
+  .join('\n')}
+</ComboBox>`,
+  );
+}
+
 function languageVariants(prefix, builder) {
   return Object.fromEntries(
     ['en', 'dv'].map((language) => [`${prefix}-${language}`, builder(language)]),
@@ -278,6 +311,10 @@ export const previewCodeGroups = {
   SwitchRtlDemo: {
     defaultKey: 'switch-language-dv',
     variants: languageVariants('switch-language', switchLanguage),
+  },
+  ComboBoxRtlDemo: {
+    defaultKey: 'combobox-language-dv',
+    variants: languageVariants('combobox-language', comboBoxLanguage),
   },
   AccordionRtlDemo: {
     defaultKey: 'accordion-language-dv',
