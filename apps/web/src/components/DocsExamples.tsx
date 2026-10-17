@@ -46,14 +46,11 @@ import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   BellIcon,
-  CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
   LinkSimpleIcon,
-  MagnifyingGlassIcon,
   PencilSimpleIcon,
   TrashIcon,
-  WarningCircleIcon,
 } from '@phosphor-icons/react';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
@@ -166,8 +163,6 @@ const tagsDocsText = {
 } as const;
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
-
-const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
   en: {
@@ -675,6 +670,7 @@ export function ComboBoxUsageDemo() {
     <div className="w-[320px]">
       <ComboBox
         label="Country"
+        placeholder="Choose a country"
         description="Start typing to filter options."
         defaultItems={COUNTRY_OPTIONS}
       >
@@ -684,31 +680,81 @@ export function ComboBoxUsageDemo() {
   );
 }
 
+export function ComboBoxAppearancesDemo() {
+  return (
+    <div className="flex w-full flex-wrap justify-center gap-4">
+      {(['default', 'outline'] as const).map((appearance) => (
+        <div key={appearance} className="w-[320px] max-w-full">
+          <ComboBox
+            appearance={appearance}
+            label={appearance === 'default' ? 'Default' : 'Outline'}
+            placeholder="Choose a country"
+            defaultItems={COUNTRY_OPTIONS}
+          >
+            {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+          </ComboBox>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ComboBoxRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+  const text = isDhivehi
+    ? {
+        label: 'ތަން',
+        placeholder: 'ތަނެއް ހޯދާ',
+        description: 'ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ',
+        locations: { male: 'މާލެ', hulhumale: 'ހުޅުމާލެ', fuvahmulah: 'ފުވައްމުލައް ސިޓީ' },
+      }
+    : {
+        label: 'Location',
+        placeholder: 'Search location',
+        description: 'Start typing to filter options.',
+        locations: { male: "Male'", hulhumale: "Hulhumale'", fuvahmulah: 'Fuvahmulah City' },
+      };
+
+  return (
+    <DocsPreview
+      codeKey={`combobox-language-${isDhivehi ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <div className="w-[320px] max-w-full">
+        <ComboBox
+          key={language}
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+          label={text.label}
+          isOptional
+          placeholder={text.placeholder}
+          description={text.description}
+        >
+          {Object.entries(text.locations).map(([id, name]) => (
+            <ComboBoxItem key={id} id={id}>
+              {name}
+            </ComboBoxItem>
+          ))}
+        </ComboBox>
+      </div>
+    </DocsPreview>
+  );
+}
+
 export function ComboBoxExplorationDemo() {
   return (
     <div className="w-[320px]">
-      <ComboBox
-        label="Location"
-        labelSupplementary="(Optional)"
-        infoTooltip="Use this combobox to search and choose a matching option."
-        infoTooltipAriaLabel="More information"
-        action="Browse"
-        description="Choose a service location or enter a custom value."
-        placeholder="Search location"
-        allowsCustomValue
-        startAddon={comboBoxExplorationStartAddon}
-        startContent={<CalendarBlankIcon size={16} />}
-        endContent={<WarningCircleIcon size={16} />}
-      >
+      <ComboBox label="Location" placeholder="Search location">
         <ComboBoxSection title="Popular">
-          <ComboBoxItem id="male">
-            <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-medium text-base-subtle">
-                MLE
-              </span>
-              <span>Male'</span>
-            </span>
-          </ComboBoxItem>
+          <ComboBoxItem id="male">Male'</ComboBoxItem>
           <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
           <ComboBoxItem id="addu">Addu City</ComboBoxItem>
         </ComboBoxSection>
@@ -723,7 +769,7 @@ export function ComboBoxExplorationDemo() {
 
 export function ComboBoxValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
+    <div className="flex w-[320px] max-w-full flex-col gap-[16px]">
       <ComboBox
         label="Default"
         description="Helper text"
