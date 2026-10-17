@@ -22,11 +22,11 @@ import {
   mergeProps,
 } from 'react-aria';
 import { filterDOMProps } from 'react-aria/filterDOMProps';
-import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y.js';
 import type { RefProp } from './ref.js';
+import { Spinner } from './spinner.js';
 import { useVeliLanguage } from './provider-shared.js';
 
 const buttonVariants = cva(
@@ -212,6 +212,8 @@ interface ButtonSharedProps
     RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
+  /** Optional decorative visual for isLoading/isPending; the shared button spinner is used when omitted. */
+  loadingIndicator?: React.ReactNode;
   className?: string;
 }
 
@@ -254,6 +256,8 @@ interface ButtonLinkSharedProps
   excludeFromTabOrder?: boolean;
   isLoading?: boolean;
   isPending?: boolean;
+  /** Optional decorative visual for isLoading/isPending. */
+  loadingIndicator?: React.ReactNode;
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   'aria-current'?: React.AriaAttributes['aria-current'];
   className?: string;
@@ -322,11 +326,7 @@ function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
       aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
       className="inline-flex shrink-0 items-center justify-center"
     >
-      <CircleNotchIcon
-        aria-hidden="true"
-        weight="bold"
-        className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}
-      />
+      <Spinner variant="button" aria-hidden="true" className={loadingIndicatorVariants({ size })} />
     </span>
   );
 }
@@ -336,12 +336,14 @@ function ButtonContent({
   hasChildren,
   isIconOnly,
   isLoading,
+  loadingIndicator,
   size,
 }: {
   children: React.ReactNode;
   hasChildren: boolean;
   isIconOnly: boolean;
   isLoading: boolean;
+  loadingIndicator?: React.ReactNode;
   size: ButtonProps['size'];
 }) {
   return (
@@ -364,7 +366,7 @@ function ButtonContent({
             hasChildren ? 'absolute inset-0' : 'h-lh',
           )}
         >
-          <ButtonLoadingIndicator size={size} />
+          {loadingIndicator ?? <ButtonLoadingIndicator size={size} />}
         </span>
       ) : null}
     </>
@@ -564,6 +566,7 @@ function ActionButton({
   iconOnly,
   isLoading,
   isPending,
+  loadingIndicator,
   isDisabled,
   className,
   onPointerMove,
@@ -675,6 +678,7 @@ function ActionButton({
         <ButtonContent
           hasChildren={hasChildren}
           isLoading={pending}
+          loadingIndicator={loadingIndicator}
           isIconOnly={isIconOnly}
           size={resolvedSize}
         >
@@ -697,6 +701,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     iconOnly,
     isLoading,
     isPending,
+    loadingIndicator,
     isDisabled,
     onPointerMove,
     onPointerUp,
@@ -837,6 +842,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       <ButtonContent
         hasChildren={hasChildren}
         isLoading={pending}
+        loadingIndicator={loadingIndicator}
         isIconOnly={isIconOnly}
         size={resolvedSize}
       >

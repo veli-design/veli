@@ -296,6 +296,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Content separation for page and component layouts.',
       },
       {
+        title: 'Loading',
+        slug: 'loading',
+        description: 'Shared spinners and settling text for pending actions.',
+      },
+      {
         title: 'Skeleton',
         slug: 'skeleton',
         description: 'Generic loading placeholder for composing loading states.',

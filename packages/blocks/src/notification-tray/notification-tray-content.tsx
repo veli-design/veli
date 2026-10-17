@@ -6,12 +6,14 @@ import {
   BellSimpleIcon,
   CheckCircleIcon,
   DotsThreeIcon,
-  SpinnerIcon,
   WarningCircleIcon,
   XIcon,
 } from '@phosphor-icons/react';
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
+import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
+import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Spinner } from '@tradenetcorp/veli-ui/spinner';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
 import {
@@ -83,11 +85,37 @@ export type NotificationTrayContentProps = {
 const intentStyles = {
   neutral: 'bg-bg-secondary-subtle text-icon-base',
   success: 'bg-bg-success-subtle text-icon-success',
-  warning: 'bg-warning-300 text-icon-warning',
+  warning: 'bg-warning-300 text-icon-warning-muted',
   danger: 'bg-bg-danger-subtle text-icon-danger',
 };
 
 const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
+
+function NotificationTraySkeleton() {
+  return (
+    <div aria-hidden="true" className="flex min-h-80 flex-col gap-1">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div
+          key={index}
+          className="flex items-start gap-4 border-b border-base-subtle p-2 last:border-b-0"
+        >
+          <Skeleton className="size-8 shrink-0 rounded-full motion-reduce:animate-none" />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex min-h-14 flex-col gap-2 py-1">
+              <Skeleton className="h-2.5 w-full rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2.5 w-5/6 rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2.5 w-2/3 rounded-xs motion-reduce:animate-none" />
+            </div>
+            <div className="flex min-h-4 items-center justify-between gap-2">
+              <Skeleton className="h-2 w-24 rounded-xs motion-reduce:animate-none" />
+              <Skeleton className="h-2 w-10 rounded-xs motion-reduce:animate-none" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function NotificationRow({
   item,
@@ -117,17 +145,23 @@ function NotificationRow({
         <Icon className="size-5" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="type-body-sm-regular min-h-14 text-base-strong wrap-anywhere [&_strong]:font-semibold">
+        {/* Preserve the design's space below two lines, and grow with longer messages. */}
+        <span className="type-body-sm-regular min-h-[54px] pb-[max(0px,calc(54px-2lh))] text-base-strong wrap-anywhere [&_strong]:font-semibold">
           {item.content}
         </span>
         <span className="type-caption-regular flex items-start justify-between gap-2 text-base-muted">
           <span className="flex min-w-0 items-center">
             <span
               aria-hidden
-              className="inline-flex w-0 shrink-0 overflow-hidden opacity-0 transition-[width,opacity] duration-normal ease-out motion-reduce:transition-none data-[unread=true]:w-4 data-[unread=true]:opacity-100"
+              className="inline-flex w-0 shrink-0 overflow-hidden transition-[width,translate] duration-normal ease-out motion-reduce:transition-none data-[unread=true]:w-4 data-[unread=false]:-translate-x-4 rtl:data-[unread=false]:translate-x-4"
               data-unread={Boolean(item.unread)}
             >
-              <Badge size="xs" appearance="emphasis" intent="info" className="bg-info-700" />
+              <Badge
+                size="xs"
+                appearance="emphasis"
+                intent="info"
+                className="max-w-none bg-info-700"
+              />
             </span>
             <time dateTime={item.dateTime} className="min-w-0 wrap-anywhere">
               <bdi>{item.timestamp}</bdi>
@@ -143,7 +177,7 @@ function NotificationRow({
 
   return (
     <li
-      className="veli-notification-row relative rounded-2xl hover:bg-neutral-alpha-200 focus-within:bg-neutral-alpha-200 [&>:first-child]:flex [&>:first-child]:items-start [&>:first-child]:justify-start [&>:first-child]:gap-4 [&>:first-child]:rounded-2xl [&>:first-child]:p-2 [&>:first-child]:no-underline not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-0.5 not-last:after:h-px not-last:after:bg-border-base-subtle hover:after:opacity-0 focus-within:after:opacity-0 has-[+li:focus-within]:after:opacity-0 [@media(hover:hover)]:has-[+li:hover]:after:opacity-0"
+      className="veli-notification-row relative rounded-2xl hover:bg-neutral-alpha-200 focus-within:bg-neutral-alpha-200 [&>:first-child]:flex [&>:first-child]:items-start [&>:first-child]:justify-start [&>:first-child]:gap-4 [&>:first-child]:rounded-2xl [&>:first-child]:p-2 [&>:first-child]:no-underline not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-1 not-last:after:h-px not-last:after:translate-y-1/2 not-last:after:bg-border-base-subtle hover:after:opacity-0 focus-within:after:opacity-0 has-[+li:focus-within]:after:opacity-0 [@media(hover:hover)]:has-[+li:hover]:after:opacity-0"
       aria-busy={item.isPending || undefined}
     >
       {item.href ? (
@@ -217,7 +251,11 @@ export function NotificationTrayContent({
           >
             <DotsThreeIcon className="size-5" />
           </Button>
-          <MenuPopover placement="bottom end" offset={2} className="z-50 min-w-50">
+          <MenuPopover
+            placement="bottom end"
+            offset={2}
+            className="z-50 min-w-[201px] border-0 ring-[0.5px] ring-inset ring-border-base-muted"
+          >
             <Menu
               aria-label={labels.options}
               onAction={(key) => {
@@ -227,18 +265,31 @@ export function NotificationTrayContent({
             >
               <MenuItem
                 id="mark-all"
+                textValue={isMarkingAllRead ? labels.markingAllRead : labels.markAllRead}
+                aria-label={isMarkingAllRead ? labels.markingAllRead : undefined}
                 size="sm"
+                className="px-4 py-[calc((var(--spacing)*9-1lh)/2)]"
                 isDisabled={!onMarkAllRead || unreadCount === 0 || isMarkingAllRead}
               >
-                {isMarkingAllRead ? labels.markingAllRead : labels.markAllRead}
+                {isMarkingAllRead ? (
+                  <LoadingText aria-hidden="true">{labels.markingAllRead}</LoadingText>
+                ) : (
+                  labels.markAllRead
+                )}
               </MenuItem>
-              <MenuSeparator />
-              <MenuItem id="all" size="sm" aria-current={filter === 'all' ? 'true' : undefined}>
+              <MenuSeparator className="relative mx-0 my-0 h-0 border-0 after:absolute after:inset-x-0 after:top-0 after:-translate-y-1/2 after:border-t after:border-base-subtle" />
+              <MenuItem
+                id="all"
+                size="sm"
+                className="px-4 py-[calc((var(--spacing)*9-1lh)/2)]"
+                aria-current={filter === 'all' ? 'true' : undefined}
+              >
                 {labels.showAll}
               </MenuItem>
               <MenuItem
                 id="unread"
                 size="sm"
+                className="px-4 py-[calc((var(--spacing)*9-1lh)/2)]"
                 aria-current={filter === 'unread' ? 'true' : undefined}
               >
                 {labels.showUnread}
@@ -259,12 +310,17 @@ export function NotificationTrayContent({
           </Button>
         ) : null}
       </div>
-      <Divider aria-hidden appearance="subtle" className="veli-notification-divider" />
+      <Divider
+        aria-hidden
+        appearance="subtle"
+        className="veli-notification-divider relative h-0 border-0 after:absolute after:inset-x-0 after:top-0 after:-translate-y-1/2 after:border-t after:border-base-subtle"
+      />
       <p role="status" className="sr-only">
         {status}
       </p>
       <div
-        className={`veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain ${items.length === 0 ? 'pb-4' : ''}`}
+        aria-busy={isLoading || undefined}
+        className="veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4"
       >
         {error ? (
           <div
@@ -289,6 +345,7 @@ export function NotificationTrayContent({
                 appearance="fill"
                 onPress={onRetry}
                 isPending={isLoading}
+                loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
               >
                 {labels.retry}
               </Button>
@@ -298,7 +355,7 @@ export function NotificationTrayContent({
         {items.length > 0 ? (
           <ul
             aria-label={filter === 'unread' ? labels.showUnread : labels.showAll}
-            className="m-0 flex list-none flex-col gap-1 p-0"
+            className="m-0 flex list-none flex-col gap-2 p-0"
           >
             {items.map((item) => (
               <NotificationRow
@@ -310,14 +367,12 @@ export function NotificationTrayContent({
               />
             ))}
           </ul>
-        ) : isLoading ? (
-          <div aria-hidden className="flex min-h-80 items-center justify-center">
-            <SpinnerIcon className="size-8 text-icon-base-muted motion-safe:animate-spin" />
-          </div>
+        ) : isLoading && !error ? (
+          <NotificationTraySkeleton />
         ) : !error ? (
           <div
             role="status"
-            className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-muted"
+            className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-inactive"
           >
             <span aria-hidden className="flex size-8 items-center justify-center">
               <span
@@ -343,6 +398,7 @@ export function NotificationTrayContent({
               size="sm"
               onPress={loadMore.onLoadMore}
               isPending={loadMore.isLoading}
+              loadingIndicator={<Spinner variant="button" size="sm" aria-hidden="true" />}
               isDisabled={isLoading}
             >
               {labels.loadMore}
