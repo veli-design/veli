@@ -59,15 +59,15 @@ const buttonVariants = cva(
         ghost: 'bg-transparent',
       },
       size: {
-        // Figma hugs the content plus padding, including translated or wrapped labels.
-        xs: 'px-1.5 py-1.5',
-        sm: 'px-2 py-2',
-        md: 'px-3 py-2.5',
-        lg: 'px-3.5 py-3',
-        xl: 'px-4.5 py-4',
+        // Figma reduces Dhivehi padding to keep the same height with its taller typography.
+        xs: 'px-1.5 py-1.5 [&:lang(dv)]:py-0.5',
+        sm: 'px-2 py-2 [&:lang(dv)]:py-1',
+        md: 'px-3 py-2.5 [&:lang(dv)]:py-1.5',
+        lg: 'px-3.5 py-3 [&:lang(dv)]:py-2',
+        xl: 'px-4.5 py-4 [&:lang(dv)]:py-3.5',
       },
       iconOnly: {
-        true: 'shrink-0 p-0',
+        true: 'shrink-0 p-0 [&:lang(dv)]:py-0',
         false: '',
       },
     },
