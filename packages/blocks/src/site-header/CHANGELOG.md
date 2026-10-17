@@ -1,3 +1,10 @@
+## 0.4.0
+
+### Added
+
+- Optional `onOverlayChange` reports switcher open/rendered and mobile-menu visibility so a page shell can fade chrome and hide notices.
+- Optional ref handle with `closeOverlays()` and `focusLogo()` for host adapters that coordinate search and other overlays.
+
 ## 0.3.1
 
 ### Fixed

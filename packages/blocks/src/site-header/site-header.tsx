@@ -4,10 +4,12 @@ import {
   useCallback,
   useEffect,
   useId,
+  useImperativeHandle,
   useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
+  type Ref,
   type TransitionEvent,
 } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
@@ -300,6 +302,23 @@ function HeaderActions({
   );
 }
 
+/** Overlay flags the page shell uses to fade chrome and hide notices. */
+export type SiteHeaderOverlayState = {
+  /** App switcher is open (chrome fade). */
+  switcherOpen: boolean;
+  /** App switcher surface is still mounted during its exit (notice hide). */
+  switcherRendered: boolean;
+  /** Mobile menu is visible, including exit animation (chrome fade and notice hide). */
+  mobileMenuVisible: boolean;
+};
+
+/** Imperative controls for host adapters that coordinate search and other overlays. */
+export type SiteHeaderHandle = {
+  closeOverlays: () => void;
+  /** Focus the logo trigger unless another control already owns focus. */
+  focusLogo: () => void;
+};
+
 export type SiteHeaderProps = {
   /** Brand mark rendered inside the logo trigger. */
   logo: ReactNode;
@@ -333,6 +352,9 @@ export type SiteHeaderProps = {
   className?: string;
   /** Default selected app-switcher tile. */
   defaultSelectedAppId?: string;
+  /** Reports switcher and mobile-menu visibility for page-shell chrome coordination. */
+  onOverlayChange?: (state: SiteHeaderOverlayState) => void;
+  ref?: Ref<SiteHeaderHandle | null>;
 };
 
 export function SiteHeader({
@@ -355,6 +377,8 @@ export function SiteHeader({
   renderNavLink,
   className = '',
   defaultSelectedAppId,
+  onOverlayChange,
+  ref,
 }: SiteHeaderProps) {
   const titleId = useId();
   const surfaceRef = useRef<HTMLElement>(null);
@@ -457,23 +481,49 @@ export function SiteHeader({
     });
   }, [floatingLayout]);
 
-  const closeMenu = useCallback(() => {
+  const focusLogo = useCallback(() => {
     const active = document.activeElement;
     if (!active || active === document.body || surfaceRef.current?.contains(active)) {
       surfaceRef.current
         ?.querySelector<HTMLElement>('[data-header-logo]')
         ?.focus({ preventScroll: true });
     }
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    focusLogo();
     setIsExpanded(false);
     setIsOpen(false);
     if (prefersReducedMotion) {
       setIsRendered(false);
     }
-  }, [prefersReducedMotion]);
+  }, [focusLogo, prefersReducedMotion]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
+
+  const closeOverlays = useCallback(() => {
+    closeMenu();
+    closeMobileMenu();
+  }, [closeMenu, closeMobileMenu]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      closeOverlays,
+      focusLogo,
+    }),
+    [closeOverlays, focusLogo],
+  );
+
+  useEffect(() => {
+    onOverlayChange?.({
+      switcherOpen: isOpen,
+      switcherRendered: isRendered,
+      mobileMenuVisible: isMobileMenuVisible,
+    });
+  }, [isOpen, isRendered, isMobileMenuVisible, onOverlayChange]);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((open) => {
@@ -493,15 +543,10 @@ export function SiteHeader({
       if (event.propertyName !== 'height') return;
       if (!isExpanded) {
         setIsRendered(false);
-        const active = document.activeElement;
-        if (!active || active === document.body || surfaceRef.current?.contains(active)) {
-          surfaceRef.current
-            ?.querySelector<HTMLElement>('[data-header-logo]')
-            ?.focus({ preventScroll: true });
-        }
+        focusLogo();
       }
     },
-    [isExpanded],
+    [focusLogo, isExpanded],
   );
 
   useEffect(() => {

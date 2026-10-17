@@ -35,6 +35,8 @@ cpSync(
 function adapterFileName(id) {
   if (id === 'site-footer') return 'footer-adapter.tsx';
   if (id === 'site-header') return 'header-adapter.tsx';
+  if (id === 'site-shell') return 'shell-adapter.tsx';
+  if (id === 'preview-banner') return 'preview-banner-adapter.tsx';
   if (id === 'notification-tray') return 'notification-adapter.tsx';
   if (id === 'account-panel') return 'account-adapter.tsx';
   return `${id}-adapter.tsx`;
