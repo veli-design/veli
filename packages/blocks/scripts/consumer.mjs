@@ -54,7 +54,8 @@ for (const block of getBlocks()) {
   cpSync(resolve(packageRoot, 'examples', exampleName), adapter);
   writeFileSync(
     adapter,
-    readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"),
+    // Examples may import several blocks; rewrite every relative components import.
+    readFileSync(adapter, 'utf8').replaceAll("'../components/", "'./components/"),
   );
 }
 
