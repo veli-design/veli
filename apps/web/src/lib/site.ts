@@ -187,11 +187,6 @@ export const componentGroups: ComponentGroup[] = [
         slug: 'tabs',
         description: 'Inline tabbed sections with optional overflow menu.',
       },
-      {
-        title: 'PageTab',
-        slug: 'page-tab',
-        description: 'Page-level tab navigation for top-level sections.',
-      },
     ],
   },
   {
@@ -299,6 +294,11 @@ export const componentGroups: ComponentGroup[] = [
         title: 'Divider',
         slug: 'divider',
         description: 'Content separation for page and component layouts.',
+      },
+      {
+        title: 'Loading',
+        slug: 'loading',
+        description: 'Shared spinners and settling text for pending actions.',
       },
       {
         title: 'Skeleton',

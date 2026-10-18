@@ -354,6 +354,8 @@ export const messageVariants = cva('', {
     },
     tone: {
       subtle: 'text-base-subtle',
+      muted: 'text-base-muted',
+      disabled: 'text-disabled',
       danger: 'text-danger-muted',
     },
   },

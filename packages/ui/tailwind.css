@@ -24,3 +24,100 @@
     visibility: hidden;
   }
 }
+
+/* Settling text: supplied 1600ms drift followed by staggered grain lift/settle. */
+.veli-loading-text {
+  --veli-loading-loop: 1600ms;
+  --veli-loading-rest: var(--veli-color-text-base-muted);
+  --veli-loading-lit: var(--veli-color-text-primary-strong);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+}
+.veli-loading-text__label {
+  min-inline-size: 0;
+  color: var(--veli-loading-rest);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .veli-loading-text__label {
+    background: linear-gradient(
+        90deg,
+        var(--veli-loading-rest) 44%,
+        var(--veli-loading-lit) 50%,
+        var(--veli-loading-rest) 56%
+      )
+      100% 0 / 300% 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: veli-loading-drift var(--veli-loading-loop) linear infinite;
+  }
+}
+.veli-loading-text:dir(rtl) .veli-loading-text__label {
+  animation-direction: reverse;
+}
+@keyframes veli-loading-drift {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.veli-loading-text__grains {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 0.16em;
+}
+.veli-loading-text__grain {
+  inline-size: 0.2em;
+  block-size: 0.2em;
+  border-radius: 50%;
+  background: var(--veli-loading-lit);
+  animation: veli-loading-settle var(--veli-loading-loop) cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  animation-delay: -480ms;
+}
+.veli-loading-text__grain:nth-child(2) {
+  animation-delay: -380ms;
+}
+.veli-loading-text__grain:nth-child(3) {
+  animation-delay: -280ms;
+}
+@keyframes veli-loading-settle {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.8);
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(-0.18em) scale(1);
+  }
+  22% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  55%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.8);
+  }
+}
+@keyframes veli-loading-breathe {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .veli-loading-text__label {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+  .veli-loading-text__grain {
+    animation: veli-loading-breathe 1600ms ease-in-out infinite alternate;
+    animation-delay: 0s;
+  }
+}

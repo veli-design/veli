@@ -1,9 +1,11 @@
 ---
 title: ComboBox
-description: Accessible searchable select input built with React Aria ComboBox primitives and Veli token styling.
+description: Searchable single-choice field with a listbox popover and grouped options.
 ---
 
 import {
+  ComboBoxAppearancesDemo,
+  ComboBoxRtlDemo,
   ComboBoxExplorationDemo,
   ComboBoxUsageDemo,
   ComboBoxValidationDemo,
@@ -11,12 +13,12 @@ import {
 
 # ComboBox
 
-The ComboBox component combines Veli's input shell styling with React Aria's accessible filtering, selection, and popover behaviors.
+Use ComboBox to search a list and choose one value. For a short list that does not need search, use [Select](/docs/select/).
 
 ## Import
 
 ```tsx
-import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
+import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
 ```
 
 ## Usage
@@ -28,6 +30,7 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 ```tsx
 <ComboBox
   label="Country"
+  placeholder="Choose a country"
   description="Start typing to filter options."
   defaultItems={[
     { id: 'mv', name: 'Maldives' },
@@ -38,44 +41,209 @@ import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 </ComboBox>
 ```
 
-## Structural Styling
+Use `value`, `defaultValue`, and `onChange` for selected keys, or React Aria's `selectedKey`, `defaultSelectedKey`, and `onSelectionChange`. Choose one selection API. `inputValue` and `onInputChange` control search text separately.
+
+## Appearances
+
+`default` uses the underline shell. `outline` draws an inset border. Sizes `sm`, `md`, and `lg` have field heights of 36, 44, and 52px.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ComboBoxAppearancesDemo client:visible />
+</div>
+
+```tsx
+<ComboBox label="Default" placeholder="Choose a country">
+  <ComboBoxItem id="mv">Maldives</ComboBoxItem>
+  <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
+</ComboBox>
+<ComboBox appearance="outline" label="Outline" placeholder="Choose a country">
+  <ComboBoxItem id="mv">Maldives</ComboBoxItem>
+  <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
+</ComboBox>
+```
+
+## Sections
+
+Group related options with `ComboBoxSection`. Options can include a description and leading or trailing content.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <ComboBoxExplorationDemo client:visible />
 </div>
 
+```tsx
+<ComboBox label="Location" placeholder="Search location">
+  <ComboBoxSection title="Popular">
+    <ComboBoxItem id="male">Male'</ComboBoxItem>
+    <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
+  </ComboBoxSection>
+  <ComboBoxSection title="Regional">
+    <ComboBoxItem id="fuvahmulah">Fuvahmulah City</ComboBoxItem>
+  </ComboBoxSection>
+</ComboBox>
+```
+
 ## Validation
+
+When `isInvalid` is set, `errorMessage` replaces the helper text. `isRequired` marks the field required; `isOptional` never appears beside the required marker.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <ComboBoxValidationDemo client:visible />
 </div>
 
-## Option Text
-
-`ComboBoxItem` derives option text from plain or nested visible children. When an option is icon-only, render-function based, or otherwise cannot expose useful text, provide `textValue` or `aria-label` so filtering, selected values, and screen-reader output remain reliable.
+```tsx
+<ComboBox
+  label="Country"
+  placeholder="Choose a country"
+  isInvalid
+  errorMessage="Choose a country to continue."
+>
+  <ComboBoxItem id="mv">Maldives</ComboBoxItem>
+  <ComboBoxItem id="lk">Sri Lanka</ComboBoxItem>
+</ComboBox>
+```
 
 ## API Reference
 
-| Prop                    | Type        | Default               | Description                                                                                  |
-| :---------------------- | :---------- | :-------------------- | :------------------------------------------------------------------------------------------- |
-| `label`                 | `ReactNode` | -                     | Visible label content rendered with React Aria's `Label`.                                    |
-| `labelSupplementary`    | `ReactNode` | -                     | Inline helper copy beside the label, for cases like `(Optional)`.                            |
-| `infoTooltip`           | `ReactNode` | -                     | Optional tooltip content displayed from a small info icon in the header.                     |
-| `infoTooltipAriaLabel`  | `string`    | Localized string      | Accessible label for the tooltip trigger button.                                             |
-| `labelIcon`             | `ReactNode` | -                     | Small icon placed after the label content.                                                   |
-| `action`                | `ReactNode` | -                     | Right-aligned header content, suitable for an inline action.                                 |
-| `description`           | `ReactNode` | -                     | Helper text shown beneath the field when not invalid.                                        |
-| `errorMessage`          | `ReactNode` | -                     | Validation content shown beneath the field when `isInvalid` is true.                         |
-| `startAddon`            | `ReactNode` | -                     | Leading content rendered inside the inset 24px accessory container.                          |
-| `startContent`          | `ReactNode` | -                     | Leading inline content rendered directly inside the field shell.                             |
-| `endContent`            | `ReactNode` | -                     | Trailing inline content rendered directly inside the field shell, before the trigger button. |
-| `menuTriggerIcon`       | `ReactNode` | chevron               | Replaces the default dropdown indicator icon.                                                |
-| `emptyState`            | `ReactNode` | `"No matches found."` | Empty-state content rendered when filtering produces no results.                             |
-| `showRequiredIndicator` | `boolean`   | `true`                | Controls whether the required asterisk is rendered when `isRequired` is set.                 |
-| `className`             | `string`    | -                     | Layout-only class override merged onto the outermost root element.                           |
+ComboBox is a Veli field on React Aria [`ComboBox`](https://react-spectrum.adobe.com/react-aria/ComboBox.html), composed with `Input`, `Button`, `Popover`, and `ListBox`. Props below follow that stack. `Key` is `string | number`; `K` is the selected-key type inferred by the Veli selection props.
 
-All other `react-aria-components` `ComboBox` props are supported, excluding `style` and direct child composition overrides on the root wrapper.
+### ComboBox
 
-`className` is a root-level escape hatch for layout and composition cases such as width, margin, and grid or flex placement. Slot-level overrides are intentionally not exposed until internal usage proves a repeated need.
+Veli props for the composed field.
 
-For Dhivehi (`lang="dv"`) comboboxes, the field text, placeholder, dropdown, options, and section labels inherit the active language and direction. ComboBox also applies internal Dhivehi field metrics to keep the typed value and placeholder visually centered across sizes.
+| Prop                    | Type                                  | Default          | Description                                                                                    |
+| :---------------------- | :------------------------------------ | :--------------- | :--------------------------------------------------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'`              | `'default'`      | Underline or bordered field.                                                                   |
+| `size`                  | `'sm' \| 'md' \| 'lg'`                | `'md'`           | Field size.                                                                                    |
+| `label`                 | `ReactNode`                           | -                | Visible label.                                                                                 |
+| `isOptional`            | `boolean`                             | `false`          | Shows localized Optional beside the label. Hidden when `isRequired`.                           |
+| `labelSupplementary`    | `ReactNode`                           | -                | Deprecated for optional labels; use `isOptional`. Custom supplementary text remains supported. |
+| `infoTooltip`           | `ReactNode`                           | -                | Content for the header info tooltip.                                                           |
+| `infoTooltipAriaLabel`  | `string`                              | Localized string | Accessible name for the info tooltip trigger.                                                  |
+| `labelIcon`             | `ReactNode`                           | -                | Small icon after the label.                                                                    |
+| `action`                | `ReactNode`                           | -                | Trailing header content, such as an inline link.                                               |
+| `description`           | `ReactNode`                           | -                | Helper text beneath the field.                                                                 |
+| `errorMessage`          | `ReactNode`                           | -                | Error text shown when `isInvalid`.                                                             |
+| `showRequiredIndicator` | `boolean`                             | `true`           | Shows the required asterisk when `isRequired`.                                                 |
+| `startAddon`            | `ReactNode`                           | -                | Leading accessory inside the field shell.                                                      |
+| `startContent`          | `ReactNode`                           | -                | Leading inline content inside the field shell.                                                 |
+| `endContent`            | `ReactNode`                           | -                | Trailing content before the disclosure button.                                                 |
+| `menuTriggerIcon`       | `ReactNode`                           | Caret            | Replaces the default disclosure icon.                                                          |
+| `placeholder`           | `string`                              | -                | Placeholder for an empty input.                                                                |
+| `emptyState`            | `ReactNode`                           | Localized string | Content for an empty list. Explicit `null` hides the content.                                  |
+| `value`                 | `K \| null`                           | -                | Controlled selected key.                                                                       |
+| `defaultValue`          | `K \| null`                           | -                | Uncontrolled initial selected key.                                                             |
+| `onChange`              | `(value: K \| null) => void`          | -                | Called with the selected key.                                                                  |
+| `children`              | `ReactNode \| (item: T) => ReactNode` | -                | Options and sections, or an item renderer for a collection.                                    |
+| `className`             | `string`                              | -                | Class merged onto the root for width, margin, or flex/grid placement.                          |
+| `ref`                   | `Ref<HTMLInputElement>`               | -                | Ref to the inner input, not the root.                                                          |
+| `inputRef`              | `Ref<HTMLInputElement>`               | -                | Ref to the inner input; takes precedence over `ref` when both are set.                         |
+
+### React Aria ComboBox
+
+The following React Aria [`ComboBox`](https://react-spectrum.adobe.com/react-aria/ComboBox.html#props) state, collection, input, and validation props are passed to the headless root. React Aria routes input behavior to the inner input and manages the listbox.
+
+| Prop                            | Type                                                                  | Default                 | Description                                                              |
+| :------------------------------ | :-------------------------------------------------------------------- | :---------------------- | :----------------------------------------------------------------------- |
+| `items`                         | `Iterable<T>`                                                         | -                       | Controlled collection; filter it yourself when controlling the items.    |
+| `defaultItems`                  | `Iterable<T>`                                                         | -                       | Initial collection used with the default filter.                         |
+| `selectedKey`                   | `Key \| null`                                                         | -                       | React Aria's controlled selected-key API.                                |
+| `defaultSelectedKey`            | `Key \| null`                                                         | -                       | React Aria's uncontrolled initial key.                                   |
+| `onSelectionChange`             | `(key: Key \| null) => void`                                          | -                       | React Aria's selected-key callback.                                      |
+| `inputValue`                    | `string`                                                              | -                       | Controlled search text.                                                  |
+| `defaultInputValue`             | `string`                                                              | -                       | Uncontrolled initial search text.                                        |
+| `onInputChange`                 | `(value: string) => void`                                             | -                       | Called when search text changes.                                         |
+| `menuTrigger`                   | `'focus' \| 'input' \| 'manual'`                                      | `'focus'`               | When suggestions open. Veli supplies this default.                       |
+| `onOpenChange`                  | `(isOpen: boolean, trigger?: 'focus' \| 'input' \| 'manual') => void` | -                       | Called when suggestions open or close.                                   |
+| `allowsCustomValue`             | `boolean`                                                             | `false`                 | Allows input text outside the collection.                                |
+| `allowsEmptyCollection`         | `boolean`                                                             | `false`                 | Allows the listbox to open with no matching options.                     |
+| `defaultFilter`                 | `(textValue: string, inputValue: string) => boolean`                  | Locale-aware contains   | Filter used for an uncontrolled collection.                              |
+| `disabledKeys`                  | `Iterable<Key>`                                                       | -                       | Keys of options to disable.                                              |
+| `isDisabled`                    | `boolean`                                                             | `false`                 | Disables the field.                                                      |
+| `isReadOnly`                    | `boolean`                                                             | `false`                 | Prevents editing and opening while keeping the value focusable.          |
+| `isInvalid`                     | `boolean`                                                             | `false`                 | Marks the field invalid.                                                 |
+| `isRequired`                    | `boolean`                                                             | `false`                 | Marks the field required.                                                |
+| `name`                          | `string`                                                              | -                       | Native form field name.                                                  |
+| `form`                          | `string`                                                              | -                       | ID of the form associated with the input.                                |
+| `formValue`                     | `'key' \| 'text'`                                                     | `'key'`                 | Value submitted by the native form; custom values submit text.           |
+| `validate`                      | `function`                                                            | -                       | Custom validation.                                                       |
+| `validationBehavior`            | `'native' \| 'aria'`                                                  | React Aria/Form default | Native form blocking or ARIA-only validation.                            |
+| `autoFocus`                     | `boolean`                                                             | `false`                 | Focuses the input on mount.                                              |
+| `aria-label`, `aria-labelledby` | `string`                                                              | -                       | Accessible name when a visible label is not used.                        |
+| `lang`, `dir`                   | `string`                                                              | Active locale/direction | Field language and direction; also applied to popup and tooltip content. |
+
+Supported focus and keyboard handlers and global DOM attributes follow the installed React Aria `ComboBoxProps` type. `ref` and `inputRef` target the native input, but the root does not accept the full `InputHTMLAttributes` API: `autoComplete`, `maxLength`, `inputMode`, and `spellCheck` are not public ComboBox props. Veli does not expose separate `Input`, `Popover`, or `ListBox` prop objects.
+
+Not forwarded unchanged from React Aria `ComboBox`:
+
+| Prop                                                  | Why                                                                                                     |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `children`                                            | Replaced by Veli option composition and the collection renderer above; no root render-prop composition. |
+| `label`, `description`, `errorMessage`, `placeholder` | Rendered by Veli in the label, helper/error, and inner input slots.                                     |
+| `value`, `defaultValue`, `onChange`                   | Replaced by Veli's typed selected-key props above.                                                      |
+| `className`                                           | Replaced by Veli's string class on the root; no state-based class function.                             |
+| `style`                                               | Not supported on the Veli root.                                                                         |
+
+### ComboBoxItem
+
+| Prop           | Type                                                        | Default               | Description                                                                |
+| :------------- | :---------------------------------------------------------- | :-------------------- | :------------------------------------------------------------------------- |
+| `id`           | `Key`                                                       | -                     | Option key used by selection.                                              |
+| `children`     | `ReactNode \| (state: ListBoxItemRenderProps) => ReactNode` | -                     | Option content, or a render function receiving option state.               |
+| `description`  | `ReactNode`                                                 | -                     | Secondary text below the option label.                                     |
+| `startContent` | `ReactNode`                                                 | -                     | Leading content, such as an icon.                                          |
+| `endContent`   | `ReactNode`                                                 | -                     | Trailing content before the selected check.                                |
+| `textValue`    | `string`                                                    | Derived from children | Plain text for filtering, selected input text, and accessible option text. |
+| `aria-label`   | `string`                                                    | -                     | Accessible option name; also supplies text when `textValue` is absent.     |
+| `isDisabled`   | `boolean`                                                   | `false`               | Shows the option but blocks selection.                                     |
+| `className`    | `string`                                                    | -                     | Class merged onto the option; no state-based class function.               |
+
+Other declared React Aria [`ListBoxItem`](https://react-spectrum.adobe.com/react-aria/ListBox.html#listboxitem) props, such as option events and DOM attributes, are passed to the option. Veli owns its label, description, accessories, and selected check.
+
+### ComboBoxSection
+
+| Prop        | Type        | Default | Description                    |
+| :---------- | :---------- | :------ | :----------------------------- |
+| `title`     | `ReactNode` | -       | Section header.                |
+| `children`  | `ReactNode` | -       | The section's options.         |
+| `className` | `string`    | -       | Class merged onto the section. |
+
+Other declared React Aria `ListBoxSection` props are passed to the section. Veli replaces its collection-renderer `children` with static option composition and its `className` with a string.
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- Type to filter suggestions. The arrow keys navigate options, Enter selects, and Escape dismisses the listbox.
+- `description` is the accessible helper. On error, `errorMessage` replaces it.
+- Give render-function, icon-only, or complex options a `textValue` or `aria-label` when their children cannot provide useful text.
+- Field, caret, and option feedback respect reduced motion. The info tooltip reuses the shared Tooltip behavior.
+
+## RTL and Language
+
+Use `VeliProvider language="dv"` for Dhivehi, or override a field with `lang="dv"`. Input and regular option text use `MV Faseyha`; section headings use `MV A Waheed` through the medium typography token. Both follow the field direction. Optional copy, the info trigger name, and the default empty state are localized; custom labels and messages remain caller-owned. Switch the preview between English and Dhivehi to compare both directions.
+
+<div className="preview mb-4">
+  <ComboBoxRtlDemo client:load />
+</div>
+
+```tsx
+import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
+
+export default function ComboBoxLanguageDemo() {
+  return (
+    <ComboBox
+      lang="dv"
+      dir="rtl"
+      label="ތަން"
+      isOptional
+      placeholder="ތަނެއް ހޯދާ"
+      description="ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ"
+    >
+      <ComboBoxItem id="male">މާލެ</ComboBoxItem>
+      <ComboBoxItem id="hulhumale">ހުޅުމާލެ</ComboBoxItem>
+      <ComboBoxItem id="fuvahmulah">ފުވައްމުލައް ސިޓީ</ComboBoxItem>
+    </ComboBox>
+  );
+}
+```
+
+Explicit `lang` keeps filtering tied to that locale. Explicit `dir="ltr"` or `dir="rtl"` also controls the effective direction of popup and tooltip content, even when it differs from the locale direction.

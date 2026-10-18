@@ -54,6 +54,36 @@ export async function verifyButtonRegressions(canvasElement: HTMLElement) {
   };
 
   try {
+    // Figma uses the same nominal heights with distinct bilingual typography.
+    for (const language of ['en', 'dv'] as const) {
+      flushSync(() => {
+        root.render(
+          <VeliProvider language={language}>
+            {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+              <div key={size} data-size={size}>
+                <Button size={size}>{language === 'dv' ? 'ކުރިއަށް' : 'Continue'}</Button>
+                <Button as="a" href="#" size={size}>
+                  {language === 'dv' ? 'ކުރިއަށް' : 'Continue'}
+                </Button>
+                <Button size={size} isPending aria-label="Loading" />
+                <Button size={size} iconOnly aria-label="Add">
+                  +
+                </Button>
+              </div>
+            ))}
+          </VeliProvider>,
+        );
+      });
+      await document.fonts.ready;
+      for (const row of container.querySelectorAll<HTMLElement>('[data-size]')) {
+        const height = { xs: 28, sm: 36, md: 44, lg: 52, xl: 60 }[
+          row.dataset.size as 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+        ];
+        for (const button of row.querySelectorAll<HTMLElement>('button, a')) {
+          await expect(button.offsetHeight).toBe(height);
+        }
+      }
+    }
     render(false);
     const submit = canvas.getByRole('button', { name: 'Save form' });
     const reset = canvas.getByRole('button', { name: 'Reset form' });
