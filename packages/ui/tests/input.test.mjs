@@ -6,6 +6,10 @@ import test from 'node:test';
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const source = readFileSync(join(packageDir, 'src', 'input.tsx'), 'utf8');
+const fieldVariantsSource = readFileSync(
+  join(packageDir, 'src', 'field-shared-variants.ts'),
+  'utf8',
+);
 const manifest = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
 
 test('Input exposes the public API reconciled with Figma', () => {
@@ -33,6 +37,26 @@ test('Input error icon replaces trailing content and stays decorative', () => {
     source,
     /\{isInvalid \? \(\s*<div className=\{errorIconVariants\(\{ isDisabled \}\)\} aria-hidden>\s*<WarningCircle[^>]*weight="fill" \/>\s*<\/div>\s*\) : endContent \? \(/,
   );
+});
+
+test('Input keeps the shell surface and themed text during browser autofill', () => {
+  assert.match(source, /rounded-md overflow-hidden/);
+  assert.match(
+    source,
+    /disabled:text-disabled \$\{fieldInputAutofill\} \$\{webkitDhivehiTextBaselineClassName\}/,
+  );
+
+  for (const selector of ['autofill:', '\\[&:-webkit-autofill\\]:']) {
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[transition:background-color_0s_600000s\\]`),
+    );
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-base-strong\\)\\]`),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`${selector}caret-text-base-strong`));
+  }
 });
 
 test('Input honors reduced motion and keeps LTR value types', () => {

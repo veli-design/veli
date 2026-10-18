@@ -575,6 +575,56 @@ export const Slots: Story = {
   render: Default.render,
 };
 
+export const Autofill: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Use browser autofill on these fields to check that the surface, stroke or underline, rounded corners, and themed text stay intact.',
+      },
+    },
+  },
+  render: () => {
+    const language = useInputLanguage();
+    const text = useInputText();
+
+    return (
+      <form
+        key={language}
+        className="grid w-[680px] grid-cols-2 gap-[24px]"
+        onSubmit={(event) => event.preventDefault()}
+      >
+        {(['default', 'outline'] as const).map((appearance) => (
+          <div key={appearance} className="flex flex-col gap-4">
+            {(['sm', 'md', 'lg'] as const).map((size) => (
+              <Input
+                key={size}
+                appearance={appearance}
+                size={size}
+                label={text.input.email}
+                name={`${appearance}-${size}-email`}
+                type="email"
+                autoComplete="email"
+                placeholder={text.core.placeholder}
+              />
+            ))}
+            <Input
+              appearance={appearance}
+              label={text.input.phone}
+              name={`${appearance}-tel`}
+              type="tel"
+              autoComplete="tel"
+              placeholder={text.core.placeholder}
+              startAddon={renderInputIcon('search', 16)}
+              endContent={renderInputIcon('caretDown')}
+            />
+          </div>
+        ))}
+      </form>
+    );
+  },
+};
+
 export const InputTypes: Story = {
   render: () => {
     const language = useInputLanguage();
