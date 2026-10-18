@@ -11,6 +11,7 @@ import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/c
 import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Form } from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
@@ -21,7 +22,6 @@ import {
   MenuTrigger,
 } from '@tradenetcorp/veli-ui/menu';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { PageTab } from '@tradenetcorp/veli-ui/page-tab';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
@@ -45,14 +45,11 @@ import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   BellIcon,
-  CalendarBlankIcon,
   CaretDownIcon,
   DownloadSimpleIcon,
   LinkSimpleIcon,
-  MagnifyingGlassIcon,
   PencilSimpleIcon,
   TrashIcon,
-  WarningCircleIcon,
 } from '@phosphor-icons/react';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
@@ -165,8 +162,6 @@ const tagsDocsText = {
 } as const;
 
 type TagsDocsText = { [Key in keyof (typeof tagsDocsText)['en']]: string };
-
-const comboBoxExplorationStartAddon = <MagnifyingGlassIcon size={16} />;
 
 const radioDocsText = {
   en: {
@@ -456,7 +451,7 @@ export function TagsVariantsDemo() {
 }
 export function CheckboxUsageDemo() {
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="grid w-full max-w-sm gap-3">
       <Checkbox>Default</Checkbox>
       <Checkbox defaultSelected>Checked</Checkbox>
       <Checkbox isIndeterminate>Indeterminate</Checkbox>
@@ -466,7 +461,7 @@ export function CheckboxUsageDemo() {
 
 export function CheckboxStatesDemo() {
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="grid w-full max-w-sm gap-3">
       <Checkbox>Off</Checkbox>
       <Checkbox defaultSelected>On</Checkbox>
       <Checkbox isIndeterminate>Indeterminate</Checkbox>
@@ -476,7 +471,7 @@ export function CheckboxStatesDemo() {
 
 export function CheckboxDisabledDemo() {
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="grid w-full max-w-sm gap-3">
       <Checkbox isDisabled>Off</Checkbox>
       <Checkbox defaultSelected isDisabled>
         On
@@ -484,6 +479,69 @@ export function CheckboxDisabledDemo() {
       <Checkbox isIndeterminate isDisabled>
         Indeterminate
       </Checkbox>
+    </div>
+  );
+}
+
+export function CheckboxSizesDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <Checkbox size="md" description="16px box">
+        Medium
+      </Checkbox>
+      <Checkbox size="lg" description="20px box">
+        Large
+      </Checkbox>
+      <Checkbox size="xl" description="24px box">
+        Extra large
+      </Checkbox>
+    </div>
+  );
+}
+
+export function CheckboxMessagesDemo() {
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <Checkbox description="We send it to the address on your account.">
+        Email me a receipt
+      </Checkbox>
+      <Checkbox
+        isInvalid
+        description="Review this option before continuing."
+        errorMessage="You must accept the terms to continue."
+      >
+        Accept terms and conditions
+      </Checkbox>
+    </div>
+  );
+}
+
+export function CheckboxGroupDemo() {
+  const [channels, setChannels] = useState<string[]>(['email']);
+
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <CheckboxGroup
+        name="channels"
+        value={channels}
+        onChange={setChannels}
+        isRequired
+        description="Where should we send updates?"
+      >
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              Notification channels
+            </FieldLabel>
+            <Checkbox value="email">Email</Checkbox>
+            <Checkbox value="sms">SMS</Checkbox>
+            <Checkbox value="push">Push notifications</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        Selected: {channels.length ? channels.join(', ') : 'None'}
+      </p>
     </div>
   );
 }
@@ -611,6 +669,7 @@ export function ComboBoxUsageDemo() {
     <div className="w-[320px]">
       <ComboBox
         label="Country"
+        placeholder="Choose a country"
         description="Start typing to filter options."
         defaultItems={COUNTRY_OPTIONS}
       >
@@ -620,31 +679,81 @@ export function ComboBoxUsageDemo() {
   );
 }
 
+export function ComboBoxAppearancesDemo() {
+  return (
+    <div className="flex w-full flex-wrap justify-center gap-4">
+      {(['default', 'outline'] as const).map((appearance) => (
+        <div key={appearance} className="w-[320px] max-w-full">
+          <ComboBox
+            appearance={appearance}
+            label={appearance === 'default' ? 'Default' : 'Outline'}
+            placeholder="Choose a country"
+            defaultItems={COUNTRY_OPTIONS}
+          >
+            {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+          </ComboBox>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ComboBoxRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+  const text = isDhivehi
+    ? {
+        label: 'ތަން',
+        placeholder: 'ތަނެއް ހޯދާ',
+        description: 'ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ',
+        locations: { male: 'މާލެ', hulhumale: 'ހުޅުމާލެ', fuvahmulah: 'ފުވައްމުލައް ސިޓީ' },
+      }
+    : {
+        label: 'Location',
+        placeholder: 'Search location',
+        description: 'Start typing to filter options.',
+        locations: { male: "Male'", hulhumale: "Hulhumale'", fuvahmulah: 'Fuvahmulah City' },
+      };
+
+  return (
+    <DocsPreview
+      codeKey={`combobox-language-${isDhivehi ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <div className="w-[320px] max-w-full">
+        <ComboBox
+          key={language}
+          lang={isDhivehi ? 'dv' : 'en'}
+          dir={isDhivehi ? 'rtl' : 'ltr'}
+          label={text.label}
+          isOptional
+          placeholder={text.placeholder}
+          description={text.description}
+        >
+          {Object.entries(text.locations).map(([id, name]) => (
+            <ComboBoxItem key={id} id={id}>
+              {name}
+            </ComboBoxItem>
+          ))}
+        </ComboBox>
+      </div>
+    </DocsPreview>
+  );
+}
+
 export function ComboBoxExplorationDemo() {
   return (
     <div className="w-[320px]">
-      <ComboBox
-        label="Location"
-        labelSupplementary="(Optional)"
-        infoTooltip="Use this combobox to search and choose a matching option."
-        infoTooltipAriaLabel="More information"
-        action="Browse"
-        description="Choose a service location or enter a custom value."
-        placeholder="Search location"
-        allowsCustomValue
-        startAddon={comboBoxExplorationStartAddon}
-        startContent={<CalendarBlankIcon size={16} />}
-        endContent={<WarningCircleIcon size={16} />}
-      >
+      <ComboBox label="Location" placeholder="Search location">
         <ComboBoxSection title="Popular">
-          <ComboBoxItem id="male">
-            <span className="inline-flex min-w-0 items-center gap-[6px]">
-              <span aria-hidden="true" className="type-caption-medium text-base-subtle">
-                MLE
-              </span>
-              <span>Male'</span>
-            </span>
-          </ComboBoxItem>
+          <ComboBoxItem id="male">Male'</ComboBoxItem>
           <ComboBoxItem id="hulhumale">Hulhumale'</ComboBoxItem>
           <ComboBoxItem id="addu">Addu City</ComboBoxItem>
         </ComboBoxSection>
@@ -659,7 +768,7 @@ export function ComboBoxExplorationDemo() {
 
 export function ComboBoxValidationDemo() {
   return (
-    <div className="grid gap-[16px] md:grid-cols-2">
+    <div className="flex w-[320px] max-w-full flex-col gap-[16px]">
       <ComboBox
         label="Default"
         description="Helper text"
@@ -975,19 +1084,102 @@ export function KbdVariantsDemo() {
 
 export function SearchUsageDemo() {
   return (
-    <div className="w-[320px]">
+    <div className="w-[320px] max-w-full">
       <Search aria-label="Search services" placeholder="Search services" />
     </div>
   );
 }
 
-export function SearchVariantsDemo() {
+export function SearchAppearancesDemo() {
   return (
-    <div className="grid w-full max-w-[360px] gap-[16px]">
+    <div className="grid w-full max-w-[320px] gap-4">
       <Search aria-label="Default search" placeholder="Default" />
-      <Search aria-label="Outline search" variant="outline" placeholder="Outline" />
+      <Search aria-label="Outline search" appearance="outline" placeholder="Outline" />
       <Search aria-label="Small search" size="sm" placeholder="Small" />
       <Search aria-label="Large search" size="lg" placeholder="Large" />
+    </div>
+  );
+}
+
+export function SearchControlledDemo() {
+  const [query, setQuery] = useState('');
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        appearance="outline"
+        label="Search services"
+        value={query}
+        onChange={setQuery}
+        description="Filter services as you type."
+      />
+      <p className="type-body-sm-regular text-base-muted">Query: {query || 'None'}</p>
+    </div>
+  );
+}
+
+export function SearchValidationDemo() {
+  return (
+    <div className="w-[320px] max-w-full space-y-4">
+      <Search label="Search services" description="Search by service name" />
+      <Search
+        appearance="outline"
+        label="Invalid search"
+        isInvalid
+        errorMessage="Enter a more specific query."
+      />
+      <Search aria-label="Disabled search" defaultValue="Unavailable" isDisabled />
+      <Search aria-label="Read-only search" defaultValue="Saved query" isReadOnly />
+    </div>
+  );
+}
+
+export function SearchFormDemo() {
+  const [submitted, setSubmitted] = useState('');
+  return (
+    <Form
+      className="w-[320px] max-w-full"
+      validationBehavior="native"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setSubmitted(String(new FormData(event.currentTarget).get('query')));
+      }}
+    >
+      <Search
+        label="Find a service"
+        name="query"
+        isRequired
+        pattern="[A-Za-z ]+"
+        description="Enter a service name using letters and spaces."
+        errorMessage="Enter a service name using letters and spaces."
+      />
+      <div className="flex gap-3">
+        <Button type="submit">Search</Button>
+        <Button type="reset" appearance="ghost" onPress={() => setSubmitted('')}>
+          Reset
+        </Button>
+      </div>
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted ? `Submitted query: ${submitted}` : 'No query submitted.'}
+      </p>
+    </Form>
+  );
+}
+
+export function SearchEventsDemo() {
+  const [submitted, setSubmitted] = useState('');
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        aria-label="Search documents"
+        placeholder="Search documents"
+        onSubmit={setSubmitted}
+        onClear={() => setSubmitted('')}
+      />
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted
+          ? `Requested query: ${submitted}`
+          : 'Press Enter to request a search; Escape clears the query.'}
+      </p>
     </div>
   );
 }
@@ -1370,22 +1562,6 @@ export function TabsUsageDemo() {
   return (
     <div className="w-full max-w-[520px]">
       <Tabs listAriaLabel="Service sections" items={TAB_ITEMS} />
-    </div>
-  );
-}
-
-export function PageTabUsageDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} />
-    </div>
-  );
-}
-
-export function PageTabCenteredDemo() {
-  return (
-    <div className="w-full max-w-[520px]">
-      <PageTab listAriaLabel="Service sections" items={TAB_ITEMS} isCentered />
     </div>
   );
 }

@@ -312,6 +312,10 @@ export function FieldContent({ className, ...props }: FieldContentProps) {
 export interface FieldLabelProps extends Omit<AriaLabelProps, 'className' | 'style'> {
   className?: string;
   size?: FieldSize;
+  /** Overrides the surrounding Field state when used inside a built-in control. */
+  isDisabled?: boolean;
+  /** Overrides the surrounding Field state when used inside a built-in control. */
+  isRequired?: boolean;
   isOptional?: boolean;
   showRequiredIndicator?: boolean;
 }
@@ -320,6 +324,8 @@ export function FieldLabel({
   children,
   className,
   size,
+  isDisabled: disabledProp,
+  isRequired: requiredProp,
   isOptional,
   showRequiredIndicator = true,
   id,
@@ -330,8 +336,8 @@ export function FieldLabel({
   const insideRac = useIsInsideRacLabelable();
   const languageConfig = useVeliLanguage();
   const resolvedSize = size ?? field?.size ?? 'md';
-  const isDisabled = field?.isDisabled ?? false;
-  const isRequired = field?.isRequired ?? false;
+  const isDisabled = disabledProp ?? field?.isDisabled ?? false;
+  const isRequired = requiredProp ?? field?.isRequired ?? false;
   const showOptional = shouldShowFieldOptional(isOptional ?? field?.isOptional, isRequired);
 
   return (

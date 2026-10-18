@@ -1,3 +1,9 @@
+## 0.3.1
+
+### Fixed
+
+- Use Search’s `appearance` prop in the app switcher for compatibility with Veli UI 0.15.
+
 ## 0.3.0
 
 ### Changed

@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useEffect, type ComponentProps, type ReactNode } from 'react';
+import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
+import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
 const englishCheckboxText = {
@@ -10,8 +12,10 @@ const englishCheckboxText = {
   on: 'On',
   indeterminate: 'Indeterminate',
   labelText: 'Label text',
-  indentedItem: 'Indented item',
-  gridItem: 'Grid item',
+  channels: 'Notification channels',
+  email: 'Email',
+  sms: 'SMS',
+  push: 'Push notifications',
 } as const;
 
 const englishValidationText = {
@@ -27,8 +31,10 @@ const dhivehiCheckboxText = {
   on: 'އޮން',
   indeterminate: 'އިންޑިޓަރމިނޭޓް',
   labelText: 'ލޭބަލްގެ ލިޔުން',
-  indentedItem: 'އިންޑެންޓްކުރެވިފައިވާ އައިޓަމް',
-  gridItem: 'ގްރިޑް އައިޓަމް',
+  channels: 'އެންގުމުގެ ވަސީލަތްތައް',
+  email: 'އީމެއިލް',
+  sms: 'އެސް އެމް އެސް',
+  push: 'ޕުޝް އެންގުން',
 } as const;
 
 const dhivehiValidationText = {
@@ -145,7 +151,7 @@ const meta: Meta<typeof Checkbox> = {
     },
     size: {
       control: 'select',
-      options: ['md', 'lg'],
+      options: ['md', 'lg', 'xl'],
     },
     isIndeterminate: {
       control: 'boolean',
@@ -183,6 +189,20 @@ function CheckboxStatesExample() {
 
 export const States: Story = {
   render: () => <CheckboxStatesExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    await expect(boxes[0]).not.toBeChecked();
+    boxes[0].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[0]).toBeChecked();
+    const checkedLabel = boxes[1].closest('label')!.querySelector('[id]')!;
+    await userEvent.click(checkedLabel);
+    await expect(boxes[1]).not.toBeChecked();
+    await userEvent.click(checkedLabel);
+    await expect(boxes[1]).toBeChecked();
+    await expect(boxes[2]).toHaveProperty('indeterminate', true);
+  },
 };
 
 function CheckboxSizesExample() {
@@ -194,7 +214,7 @@ function CheckboxSizesExample() {
         <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Medium (md)
         </span>
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-8">
           <Checkbox size="md">{text.off}</Checkbox>
           <Checkbox size="md" defaultSelected>
             {text.on}
@@ -208,12 +228,26 @@ function CheckboxSizesExample() {
         <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
           Large (lg)
         </span>
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-8">
           <Checkbox size="lg">{text.off}</Checkbox>
           <Checkbox size="lg" defaultSelected>
             {text.on}
           </Checkbox>
           <Checkbox size="lg" isIndeterminate>
+            {text.indeterminate}
+          </Checkbox>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
+          Extra large (xl)
+        </span>
+        <div className="flex flex-wrap items-center gap-8">
+          <Checkbox size="xl">{text.off}</Checkbox>
+          <Checkbox size="xl" defaultSelected>
+            {text.on}
+          </Checkbox>
+          <Checkbox size="xl" isIndeterminate>
             {text.indeterminate}
           </Checkbox>
         </div>
@@ -224,6 +258,80 @@ function CheckboxSizesExample() {
 
 export const Sizes: Story = {
   render: () => <CheckboxSizesExample />,
+  play: async ({ canvasElement }) => {
+    const boxes = within(canvasElement).getAllByRole('checkbox');
+
+    for (const [row, expectedWidth, expectedHeight] of [
+      [0, 10.9142, 8.12132],
+      [1, 13.8149, 10.6772],
+      [2, 16.3713, 12.182],
+    ]) {
+      const check = boxes[row * 3 + 1].closest('label')!.querySelector('svg')!;
+      const dash = boxes[row * 3 + 2].closest('label')!.querySelector('svg')!;
+      const checkBounds = check.getBoundingClientRect();
+
+      await expect(Math.abs(checkBounds.width - expectedWidth)).toBeLessThan(0.05);
+      await expect(Math.abs(checkBounds.height - expectedHeight)).toBeLessThan(0.05);
+      await expect(checkBounds.width).toBeGreaterThan(dash.getBoundingClientRect().width);
+    }
+
+    // Figma pressed vectors: 305:8922, 305:8956, 5219:16954.
+    const pointerCoords = (target: HTMLElement) => {
+      const bounds = target.getBoundingClientRect();
+      // React Aria treats zero-size pointers as assistive-technology activation.
+      return {
+        clientX: bounds.x + 8,
+        clientY: bounds.y + bounds.height / 2,
+        width: 1,
+        height: 1,
+        pressure: 0.5,
+      };
+    };
+    for (const [row, width, height, stroke, borderWidth] of [
+      [0, 10.0411, 7.47161, 1.84, '3px'],
+      [1, 10.4519, 8.14177, 2, '4px'],
+      [2, 13.0971, 9.74558, 2.4, '4px'],
+    ] as const) {
+      const offLabel = boxes[row * 3].closest('label')!;
+      const offControl = offLabel.querySelector('svg')!.parentElement!.parentElement!;
+      await fireEvent.pointerOver(offLabel, { pointerType: 'mouse' });
+      await waitFor(() => expect(offLabel).toHaveAttribute('data-hovered'));
+      await Promise.all(offControl.getAnimations().map((animation) => animation.finished));
+      const hoverBorder = getComputedStyle(offControl).borderColor;
+      await fireEvent.pointerDown(offLabel, {
+        ...pointerCoords(offLabel),
+        pointerId: 1,
+        pointerType: 'mouse',
+        button: 0,
+      });
+      await Promise.all(offControl.getAnimations().map((animation) => animation.finished));
+      await expect(getComputedStyle(offControl).borderColor).toBe(hoverBorder);
+      await expect(getComputedStyle(offControl).borderTopWidth).toBe(borderWidth);
+      await fireEvent.pointerCancel(offLabel, { pointerId: 1, pointerType: 'mouse' });
+      await waitFor(() => expect(offLabel).not.toHaveAttribute('data-pressed'));
+      await expect(boxes[row * 3]).not.toBeChecked();
+
+      const onLabel = boxes[row * 3 + 1].closest('label')!;
+      await fireEvent.pointerDown(onLabel, {
+        ...pointerCoords(onLabel),
+        pointerId: 1,
+        pointerType: 'mouse',
+        button: 0,
+      });
+      const pressedCheck = onLabel.querySelector('svg')!;
+      await expect(Math.abs(pressedCheck.getBoundingClientRect().width - width)).toBeLessThan(0.05);
+      await expect(Math.abs(pressedCheck.getBoundingClientRect().height - height)).toBeLessThan(
+        0.05,
+      );
+      await expect(pressedCheck.querySelector('path')).toHaveAttribute(
+        'stroke-width',
+        String(stroke),
+      );
+      await fireEvent.pointerCancel(onLabel, { pointerId: 1, pointerType: 'mouse' });
+      await waitFor(() => expect(onLabel).not.toHaveAttribute('data-pressed'));
+      await expect(boxes[row * 3 + 1]).toBeChecked();
+    }
+  },
 };
 
 function CheckboxDescriptionAndErrorExample() {
@@ -246,12 +354,38 @@ function CheckboxDescriptionAndErrorExample() {
       >
         {text.labelText}
       </Checkbox>
+      <Checkbox
+        size="xl"
+        isInvalid
+        description={text.descriptionText}
+        errorMessage={text.errorText}
+      >
+        {text.labelText}
+      </Checkbox>
     </div>
   );
 }
 
 export const DescriptionAndError: Story = {
   render: () => <CheckboxDescriptionAndErrorExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    const ids = [...canvasElement.querySelectorAll('[id]')].map((node) => node.id);
+    await expect(new Set(ids).size).toBe(ids.length);
+    for (const box of boxes) {
+      await expect(box).toHaveAccessibleName(
+        box.closest('label')!.querySelector('[id]')!.textContent!,
+      );
+      const describedBy = (box.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean);
+      await expect(describedBy.length).toBeGreaterThan(0);
+      for (const id of describedBy) {
+        await expect(canvasElement.querySelector(`[id="${id}"]`)).toBeInTheDocument();
+      }
+    }
+    await expect(boxes[2].getAttribute('aria-describedby')?.split(' ')).toHaveLength(2);
+    await expect(canvas.getAllByRole('alert')).toHaveLength(4);
+  },
 };
 
 export const Invalid: Story = {
@@ -262,44 +396,214 @@ export const Invalid: Story = {
   },
 };
 
-function CheckboxRootClassNameExample() {
-  const text = useCheckboxText();
-
-  return (
-    <div className="grid gap-[12px]">
-      <Checkbox className="ml-[24px]">{text.indentedItem}</Checkbox>
-      <Checkbox className="justify-self-start">{text.gridItem}</Checkbox>
-    </div>
-  );
-}
-
-export const RootClassName: Story = {
-  render: () => <CheckboxRootClassNameExample />,
-};
-
 function CheckboxStatesAuditExample() {
   const text = useCheckboxText();
 
   return (
-    <div className="grid grid-cols-4 gap-[20px] items-start">
-      <div />
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.off}</div>
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.on}</div>
-      <div className="text-[12px] font-bold uppercase text-base-muted">{text.indeterminate}</div>
-
-      <div className="text-[12px] font-bold uppercase text-base-muted">Default</div>
-      <Checkbox />
-      <Checkbox defaultSelected />
-      <Checkbox isIndeterminate />
-
-      <div className="text-[12px] font-bold uppercase text-base-muted">Disabled</div>
-      <Checkbox isDisabled />
-      <Checkbox defaultSelected isDisabled />
-      <Checkbox isIndeterminate isDisabled />
+    <div className="grid max-w-[100vw] gap-8 overflow-auto">
+      {(['md', 'lg', 'xl'] as const).map((size) => (
+        <section key={size} className="grid grid-cols-4 items-start gap-5">
+          <span className="text-xs font-bold uppercase text-base-muted">{size}</span>
+          <span className="text-xs text-base-muted">{text.off}</span>
+          <span className="text-xs text-base-muted">{text.on}</span>
+          <span className="text-xs text-base-muted">{text.indeterminate}</span>
+          <span>Default</span>
+          <Checkbox size={size} description={text.descriptionText}>
+            {text.off}
+          </Checkbox>
+          <Checkbox size={size} defaultSelected description={text.descriptionText}>
+            {text.on}
+          </Checkbox>
+          <Checkbox size={size} isIndeterminate description={text.descriptionText}>
+            {text.indeterminate}
+          </Checkbox>
+          <span>Disabled</span>
+          <Checkbox size={size} isDisabled description={text.descriptionText}>
+            {text.off}
+          </Checkbox>
+          <Checkbox size={size} defaultSelected isDisabled description={text.descriptionText}>
+            {text.on}
+          </Checkbox>
+          <Checkbox size={size} isIndeterminate isDisabled description={text.descriptionText}>
+            {text.indeterminate}
+          </Checkbox>
+          <span>Invalid</span>
+          <Checkbox
+            size={size}
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.off}
+          </Checkbox>
+          <Checkbox
+            size={size}
+            defaultSelected
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.on}
+          </Checkbox>
+          <Checkbox
+            size={size}
+            isIndeterminate
+            isInvalid
+            description={text.descriptionText}
+            errorMessage={text.errorText}
+          >
+            {text.indeterminate}
+          </Checkbox>
+        </section>
+      ))}
     </div>
   );
 }
 
 export const StatesAudit: Story = {
   render: () => <CheckboxStatesAuditExample />,
+  parameters: { layout: 'padded' },
+};
+
+function CheckboxGroupExample() {
+  const text = useCheckboxText();
+  const [value, setValue] = useState<string[]>(['email']);
+
+  return (
+    <div className="grid max-w-[280px] gap-8">
+      <CheckboxGroup value={value} onChange={setValue} description={text.descriptionText}>
+        <FieldLabel>{text.channels}</FieldLabel>
+        <Checkbox value="email">{text.email}</Checkbox>
+        <Checkbox value="sms">{text.sms}</Checkbox>
+        <Checkbox value="push">{text.push}</Checkbox>
+      </CheckboxGroup>
+      <CheckboxGroup isRequired isInvalid errorMessage={text.errorText}>
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              {text.channels}
+            </FieldLabel>
+            <Checkbox value="email">{text.email}</Checkbox>
+            <Checkbox value="sms">{text.sms}</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+      <CheckboxGroup isDisabled isRequired defaultValue={['email']}>
+        {({ isDisabled, isRequired }) => (
+          <>
+            <FieldLabel isDisabled={isDisabled} isRequired={isRequired}>
+              {text.channels}
+            </FieldLabel>
+            <Checkbox value="email">{text.email}</Checkbox>
+            <Checkbox value="sms">{text.sms}</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+    </div>
+  );
+}
+
+export const Groups: Story = {
+  render: () => <CheckboxGroupExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const groups = canvas.getAllByRole('group');
+    await expect(groups).toHaveLength(3);
+    await expect(groups[0]).toHaveAccessibleName();
+    const email = within(groups[0]).getByRole('checkbox', { name: /Email|އީމެއިލް/ });
+    await expect(email).toBeChecked();
+    await userEvent.click(email);
+    await expect(email).not.toBeChecked();
+    await userEvent.click(email);
+    await expect(email).toBeChecked();
+    await expect(groups[1]).toHaveAttribute('data-invalid', 'true');
+    await expect(within(groups[1]).getByRole('alert')).toHaveTextContent(/Error text|އެރަރ/);
+    for (const group of groups.slice(1)) {
+      await expect(group).toHaveAccessibleName(/^(Notification channels|އެންގުމުގެ ވަސީލަތްތައް)$/);
+      await expect(
+        group.querySelector('[data-slot="field-label"] [aria-hidden]'),
+      ).toHaveTextContent('*');
+    }
+    const disabledLabel = groups[2].querySelector('[data-slot="field-label"]')!;
+    await expect(disabledLabel).toHaveClass('text-disabled');
+    for (const checkbox of within(groups[2]).getAllByRole('checkbox')) {
+      await expect(checkbox).toBeDisabled();
+    }
+  },
+};
+
+export const ReadOnly: Story = {
+  render: () => {
+    const text = useCheckboxText();
+    return (
+      <div className="grid gap-4">
+        <Checkbox isReadOnly defaultSelected>
+          {text.on}
+        </Checkbox>
+        <Checkbox isReadOnly>{text.off}</Checkbox>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Both checkboxes remain focusable, but clicking them or pressing Space does not change their values. The current Figma spec does not define a separate read-only appearance.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const boxes = canvas.getAllByRole('checkbox');
+    await expect(boxes).toHaveLength(2);
+    await expect(boxes[0]).toHaveAttribute('aria-readonly', 'true');
+    await expect(boxes[1]).toHaveAttribute('aria-readonly', 'true');
+    await expect(boxes[0]).toHaveAttribute('tabindex', '0');
+    await expect(boxes[1]).toHaveAttribute('tabindex', '0');
+    await userEvent.click(boxes[0].closest('label')!);
+    await userEvent.click(boxes[1].closest('label')!);
+    await expect(boxes[0]).toBeChecked();
+    await expect(boxes[1]).not.toBeChecked();
+    boxes[0].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[0]).toBeChecked();
+    boxes[1].focus();
+    await userEvent.keyboard(' ');
+    await expect(boxes[1]).not.toBeChecked();
+  },
+};
+
+export const NarrowLayout: Story = {
+  render: () => {
+    const text = useCheckboxText();
+    return (
+      <div className="w-[220px] max-w-full">
+        <Checkbox
+          size="xl"
+          isInvalid
+          description={text.descriptionText}
+          errorMessage={text.errorText}
+        >
+          {text.acceptTermsAndConditions}
+        </Checkbox>
+      </div>
+    );
+  },
+  parameters: { layout: 'centered' },
+  play: async ({ canvasElement }) => {
+    const checkbox = within(canvasElement).getByRole('checkbox');
+    const label = checkbox.closest('label')!;
+    const visibleLabel = label.querySelector<HTMLElement>(
+      `#${CSS.escape(checkbox.getAttribute('aria-labelledby')!)}`,
+    )!;
+    const controlSlot = visibleLabel.previousElementSibling!;
+    const firstLineHeight = parseFloat(getComputedStyle(visibleLabel).lineHeight);
+
+    await expect(visibleLabel.getBoundingClientRect().height).toBeGreaterThan(
+      firstLineHeight * 1.5,
+    );
+    await expect(
+      Math.abs(controlSlot.getBoundingClientRect().top - visibleLabel.getBoundingClientRect().top),
+    ).toBeLessThan(1);
+  },
 };

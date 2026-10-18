@@ -1,31 +1,31 @@
 # Veli Token Architecture
 
-Working notes for aligning Veli Design System variables, DTCG tokens, Tailwind CSS v4 theme variables, and Figma text styles.
+Architecture and historical typography notes for Veli Design System variables, DTCG tokens, Tailwind CSS v4, and Figma text styles.
 
-Last updated: 2026-05-07
+Last updated: 2026-10-16
 
 ## Summary
 
-Veli uses Figma as the design authoring surface and `packages/tokens/src/design.tokens.json` as the raw exported token source. Tokens are exported from Figma through TokensBruecke as DTCG-compatible JSON, normalized locally where the export shape is not yet ideal, then built with Terrazzo into CSS outputs.
+Veli uses Figma as the design authoring surface. TokensBruecke's untouched export lives in `packages/tokens/src/figma.tokens.json`. The normalization boundary merges code-owned motion tokens, resolves exporter-specific shapes and aliases, and writes the validated canonical DTCG graph to `packages/tokens/src/design.tokens.json`. Terrazzo's CSS plugin and Veli adapter build all published outputs from that graph.
 
-The target architecture is:
+The current architecture was implemented in [PR #248](https://github.com/tradenetcorp/veli/pull/248) and released as tokens 0.9.0 in [PR #249](https://github.com/tradenetcorp/veli/pull/249):
 
 ```text
 Figma variables and styles
   -> TokensBruecke DTCG export
-  -> packages/tokens/prebuild.js
-  -> .cache/design.tokens.normalized.json
-  -> Terrazzo
-  -> packages/tokens/postbuild.js
-  -> dist/tokens.css
-  -> dist/tailwind-theme.css
+  -> src/figma.tokens.json + src/motion.tokens.json
+  -> lib/normalize.mjs (tokens:sync)
+  -> src/design.tokens.json (validated canonical DTCG)
+  -> Terrazzo CSS plugin + lib/adapter.mjs
+  -> dist/tokens.css, dist/tailwind-theme.css, dist/tokens.json,
+     dist/motion.tokens.json, dist/coverage.json
 ```
 
 Consuming apps import the Tailwind theme CSS from `@tradenetcorp/veli-tokens/tailwind` after `@import "tailwindcss"`.
 
 Veli is Tailwind-aligned, not Tailwind-default-valued. We use Tailwind v4's native variable namespaces and utility model, while preserving Veli's government design system values and semantic design intent.
 
-Dark mode is class-driven. Token CSS emits light variables by default and dark overrides under `:where(.dark, .dark *)`, and consuming apps should apply `.dark` to the document root or the relevant provider boundary. Veli supports `system`, `light`, and `dark` color scheme intents; `system` resolves from `prefers-color-scheme`.
+Dark mode is class-driven. Token CSS emits light variables by default and dark overrides under `.dark`; the Tailwind adapter adds `@custom-variant dark (&:where(.dark, .dark *))`. Consuming apps should apply `.dark` to the document root or a theme boundary. Veli supports `system`, `light`, and `dark` color scheme intents; `system` resolves from `prefers-color-scheme`.
 
 `VeliProvider` injects a parser-blocking inline script and syncs `.dark`, `data-theme`, and `color-scheme` to `document.documentElement`. Portaled components (modals, popovers, tooltips, menus) then match `:where(.dark, .dark *)` even though they render under `document.body`.
 
@@ -72,9 +72,9 @@ The typography alignment work was implemented on 2026-05-07.
 - `type-*` is Veli's composite typography utility namespace.
 - Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
 - Foundation groups `radius`, `spacing`, `blur`, `breakpoints`, and `container` map into the Tailwind theme so utilities use Veli tokens instead of Tailwind defaults. The DTCG `breakpoints` collection remaps to Tailwind's singular `--breakpoint-*` namespace.
-- The old Figma `typography` collection is legacy. It may remain for one migration cycle, but it is excluded from canonical typography output.
+- The former Figma `typography` variable collection is not present in the checked-in export; font families now live under `font/sans`, `font/mono`, and `font/dhivehi`.
 
-Build verification completed after a fresh Figma DTCG export:
+The following build verification was recorded after the May 2026 typography alignment export:
 
 - `pnpm build` in `packages/tokens` passes.
 - `pnpm --filter @tradenetcorp/veli-ui lint` passes.
@@ -87,9 +87,9 @@ Build verification completed after a fresh Figma DTCG export:
 - 52 `@utility type-*` classes are generated from exported Figma typography composites.
 - 52 Dhivehi `:lang(dv)` typography overrides are generated from exported `Typography-styles/Dhivehi` composites.
 
-Known non-blocking warning:
+Warning recorded during that verification:
 
-- Web and Storybook builds currently show an existing CSS optimizer warning near generated color token CSS around `--color-inputs-checkbox-container-*`. Generated CSS braces were checked and balanced, and the warning does not block builds.
+- Web and Storybook builds showed a CSS optimizer warning near generated color token CSS around `--color-inputs-checkbox-container-*`. Generated CSS braces were checked and balanced at the time.
 
 ## Figma Model
 
@@ -114,11 +114,11 @@ Current canonical Figma variable collections:
 | `leading`     | Standalone line-height utilities, including relative semantic values and a curated fixed subset.     |
 | `tracking`    | Standalone letter-spacing utilities, including Tailwind-style tracking values and `caption`.         |
 
-Current legacy Figma collection:
+Former Figma collection:
 
-| Collection   | Status                                                                                                             |
-| ------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `typography` | Deprecated. Kept temporarily for migration context and older references. Do not treat as canonical for new output. |
+| Collection   | Status                                                                                                           |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `typography` | Replaced by `font`, `font-weight`, `text`, `leading`, and `tracking`; absent from the current checked-in export. |
 
 Current semantic Figma text styles:
 
@@ -143,35 +143,36 @@ Completed Figma cleanup:
 - Updated caption styles to use `1%` letter spacing.
 - Updated semantic line heights to use percentage units in Figma-facing styles.
 
-Remaining Figma cleanup:
+Cleanup recorded during the May 2026 alignment:
 
-- Three remote Dhivehi style references remain because the required fonts were unavailable to the Figma automation:
+- Remote Dhivehi style references included the following because the required fonts were unavailable to the Figma automation:
   - `Dhivehi/button/Waheed 19`
   - `Dhivehi/Inputs/Faruma 17`
-- One stale font-family variable binding remains on `Type/Display/1/Regular`. It visually resolves to Inter, but TokensBruecke exports it as `{typography.font.sans}`. Remove that binding or rebind it to canonical `font/sans` after the exporter supports `fontFamily` token typing.
 
-## Tailwind V4 Target Shape
+The current export uses `{font.sans}` for the display style that once pointed to the former `typography` collection. The old font alias is no longer supported by the pipeline.
+
+## Generated Tailwind v4 shape
 
 Tailwind v4 theme variables are CSS custom properties under native namespaces.
 
 ```css
-@theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+@theme inline static {
+  --font-sans: var(--veli-font-sans);
+  --font-mono: var(--veli-font-mono);
 
-  --text-base: 16px;
-  --text-base--line-height: 24px;
+  --text-base: var(--veli-typography-en-body-md-regular-font-size);
+  --text-base--line-height: var(--veli-typography-en-body-md-regular-line-height);
 
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --font-weight-regular: var(--veli-font-weight-regular);
+  --font-weight-medium: var(--veli-font-weight-medium);
+  --font-weight-semibold: var(--veli-font-weight-semibold);
+  --font-weight-bold: var(--veli-font-weight-bold);
 
-  --tracking-normal: 0em;
-  --tracking-caption: 0.01em;
+  --tracking-normal: var(--veli-tracking-normal);
+  --tracking-caption: var(--veli-tracking-caption);
 
-  --leading-tight: 1.25;
-  --leading-normal: 1.5;
+  --leading-tight: var(--veli-leading-tight);
+  --leading-normal: var(--veli-leading-normal);
 }
 ```
 
@@ -187,11 +188,11 @@ Example generated utility:
 
 ```css
 @utility type-body-md-regular {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: var(--text-base--line-height);
-  font-weight: var(--font-weight-regular);
-  letter-spacing: var(--tracking-normal);
+  font-family: var(--veli-font-sans);
+  font-size: var(--veli-typography-en-body-md-regular-font-size);
+  font-weight: var(--veli-typography-en-body-md-regular-font-weight);
+  line-height: var(--veli-typography-en-body-md-regular-line-height);
+  letter-spacing: var(--veli-typography-en-body-md-regular-letter-spacing);
 }
 ```
 
@@ -246,9 +247,9 @@ Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own 
 
 ## Export refreshes
 
-Replace `packages/tokens/src/design.tokens.json` with the fresh Tokens Bruecke DTCG export, including typography and effect styles, then run `corepack pnpm --filter @tradenetcorp/veli-tokens build`. Do not edit generated CSS. Keep the raw export intact, including Figma names and metadata.
+Replace `packages/tokens/src/figma.tokens.json` with the fresh TokensBruecke DTCG export, including typography, grid, effect, and color styles. Keep its Figma names and metadata intact. Then run `corepack pnpm --filter @tradenetcorp/veli-tokens tokens:sync` and review the generated changes to `src/design.tokens.json`. Run `tokens:check`, `test`, and `build` before publishing. Do not edit generated CSS.
 
-`prebuild.js` excludes the Figma-only `_docs` annotation collection and exporter-specific `Grid-styles` composites from CSS generation. Product colour validation remains strict. Code-owned motion primitives live in `src/motion.tokens.json` (published as `@tradenetcorp/veli-tokens/motion-tokens`) and are merged into the normalized build input. The public `@tradenetcorp/veli-tokens/tokens` entry point resolves to `dist/tokens.json`, generated from the untouched Figma export plus these motion defaults before CSS-specific normalization. This preserves existing JSON paths as well as CSS utilities. A future Figma motion collection takes precedence over these defaults.
+`lib/normalize.mjs` excludes Figma-only `_docs` annotations, converts `Grid-styles` to standard number and dimension tokens, and validates product colors. Code-owned motion primitives live in `src/motion.tokens.json` and are merged into the canonical graph; Figma wins if it supplies the same key. The public `/tokens` and `/motion-tokens` entries expose generated JSON from that graph. A normal package build reads the committed canonical file; it does not rewrite either source file.
 
 ## Motion Values
 
@@ -307,18 +308,18 @@ Expected exported shape:
 {
   "text": {
     "base": {
-      "font-size": { "$type": "dimension", "$value": "16px" },
-      "line-height": { "$type": "dimension", "$value": "24px" }
+      "font-size": { "$type": "dimension", "$value": { "value": 16, "unit": "px" } },
+      "line-height": { "$type": "dimension", "$value": { "value": 24, "unit": "px" } }
     }
   }
 }
 ```
 
-Postbuild converts Terrazzo's direct variable names into Tailwind's paired shape:
+The Veli adapter maps the validated English typography graph to Tailwind's paired text variables:
 
 ```text
-text.base.font-size    -> --text-base
-text.base.line-height  -> --text-base--line-height
+typography.en.body.md.regular.fontSize   -> --veli-typography-en-body-md-regular-font-size   -> --text-base
+typography.en.body.md.regular.lineHeight -> --veli-typography-en-body-md-regular-line-height -> --text-base--line-height
 ```
 
 Typography style composites export under `Typography-styles`:
@@ -338,40 +339,25 @@ Typography style composites export under `Typography-styles`:
 
 These composites are used to generate semantic `type-*` utilities.
 
-## Build Normalization
+## Normalization and generation
 
-`packages/tokens/prebuild.js` normalizes raw DTCG before Terrazzo. It exists because current TokensBruecke output is close, but not perfectly typed for Terrazzo validation.
+`build.mjs sync` runs `lib/normalize.mjs` on the raw Figma export and code-owned motion input, validates the result with Terrazzo, and writes the canonical `src/design.tokens.json`. `tokens:check` verifies that the committed canonical file matches its inputs. Ordinary `build` reads that committed file and does not normalize or rewrite it.
 
-Current prebuild responsibilities:
+The normalizer:
 
-- Writes `.cache/design.tokens.normalized.json`.
-- Keeps `packages/tokens/src/design.tokens.json` as the untouched raw Figma export.
-- Rewrites stale aliases such as `{typography.font.sans}` to the canonical namespace.
-- Resolves typography composite `fontFamily` aliases to literal font family values before Terrazzo, because current `font/*` tokens export as `$type: "string"` rather than `$type: "fontFamily"`.
-- Renames Figma fractional spacing keys that use commas (`0,5`) to Tailwind dotted form (`0.5`) so CSS custom properties stay valid.
-- Hoists `Effect-styles.Shadow` into a top-level `shadow` group for the Tailwind theme map.
+- Converts Figma names into canonical DTCG paths, including color tiers, typography language groups, grids, effects, and fractional spacing names.
+- Maps the supported older color source aliases to current paths. Font-family aliases must reference the current `font` collection.
+- Promotes exported `font/*` strings to `$type: "fontFamily"`, so typography composites can retain valid aliases instead of flattening them to literal family names.
+- Converts exporter-specific typography fields, font weights, leading, tracking, colors, and motion into typed canonical values while retaining relevant provenance in `org.veli` metadata.
+- Excludes Figma-only `_docs` annotations from published output and rejects unresolved aliases, invalid types, collisions, and inconsistent authored colors.
 
-`packages/tokens/postbuild.js` normalizes final CSS output.
+`lib/pipeline.mjs` configures Terrazzo's CSS plugin to emit canonical `--veli-*` variables, preserve aliases and authored OKLCH, and emit Light/Dark rules. It also emits a low-specificity default `--veli-font-sans` so host apps can bind their loaded font at the root. `lib/adapter.mjs` uses Terrazzo's validated transforms to emit the Tailwind theme, paired text variables, color and foundation mappings, `type-*` and other utilities, DTCG JSON, motion JSON, and coverage data. The adapter writes the required import and dark variant directly; there is no generated CSS postprocessing step.
 
-Current postbuild responsibilities:
+During local development, the shared Vite playground plugin regenerates ignored CSS for Astro and Storybook when token inputs change. It does not replace the committed canonical file or the published build.
 
-- Removes generated `@import "tailwindcss";` from `tailwind-theme.css`.
-- Adds Tailwind v4's `.dark` custom variant and base `color-scheme` rules.
-- Adds `--spacing: 4px;` inside `@theme` as the Tailwind spacing multiplier (named `--spacing-*` tokens still override matching utilities).
-- Rewrites Terrazzo fractional spacing hyphens (`--spacing-0-5`) to Tailwind underscore form (`--spacing-0_5`); unescaped dots are invalid in CSS custom-property names.
-- Aliases `radius.DEFAULT` to bare `--radius` (`rounded`) and `--radius-md` (`rounded-md`), because Veli has no separate `radius.md` token.
-- Emits motion primitives from the designer-approved values.
-- Generates Veli `@utility duration-*` and `@utility delay-*` classes from token CSS variables.
-- Converts grouped text variables to Tailwind's paired font-size and line-height syntax.
-- Converts font weight artifacts such as `600px` to numeric CSS values.
-- Converts tracking artifacts to `em`, including `--tracking-caption: 0.01em`.
-- Converts semantic leading percentages to unitless Tailwind values.
-- Quotes multi-word font family values.
-- Generates Veli `@utility type-*` classes from `Typography-styles`.
+## TokensBruecke exporter considerations
 
-## TokensBruecke Fork Recommendations
-
-Keep the local prebuild guard even if the exporter is improved. The guard makes the package resilient to stale Figma bindings and older exports.
+The normalization boundary remains useful if the exporter improves because it defines canonical paths, validates input, and preserves the few explicitly supported older color aliases.
 
 Recommended exporter improvements:
 
@@ -387,7 +373,7 @@ Why this matters:
 
 - Figma font-family variables are internally string-like values, so a generic exporter naturally serializes `font/sans` as `$type: "string"`.
 - Terrazzo's DTCG typography parser requires a `fontFamily` alias inside a typography composite to point to a `$type: "fontFamily"` token.
-- This is why `{font.sans}` is currently invalid inside exported typography composites even though the human meaning is correct.
+- The raw export currently types `font.sans` as `string`. Normalization promotes it to `fontFamily` before Terrazzo parses the canonical graph, so `{font.sans}` is valid in the generated tokens.
 
 ## Developer Usage
 
@@ -435,25 +421,16 @@ For developers:
 
 Near-term cleanup:
 
-- Remove or rebind the stale Figma font-family binding on `Type/Display/1/Regular`.
-- Resolve the three remaining remote Dhivehi text style references once the required fonts are available in Figma automation.
-- Remove or fully deprecate the old `typography` Figma collection after one migration cycle.
-- Investigate the existing CSS optimizer warning around generated color token CSS.
+- Recheck the remote Dhivehi text style references recorded in the May 2026 Figma inspection when the required fonts are available.
+- Recheck the old CSS optimizer warning if it recurs in a current build.
 
 Exporter/build improvements:
 
 - Update the TokensBruecke fork so font-family variables export as `$type: "fontFamily"` when scoped as `FONT_FAMILY`.
-- Move more unit normalization from `postbuild.js` into either TokensBruecke or `prebuild.js` over time.
-- Add a small automated fixture that asserts key generated CSS output:
-  - `--text-base` is non-zero.
-  - `--text-base--line-height` is non-zero.
-  - `--font-weight-semibold: 600`.
-  - `--tracking-caption: 0.01em`.
-  - representative `@utility type-*` classes exist.
-  - representative `:lang(dv)` Dhivehi typography overrides exist.
+- Move exporter-specific unit interpretation into TokensBruecke when its output can satisfy the canonical DTCG contract directly. Keep normalization and generated-output tests as the validation boundary.
 
 System questions:
 
 - Decide whether Dhivehi fonts should eventually be bundled with licensed `@font-face` assets instead of referenced by family name only.
 - Decide whether typography CSS output should eventually convert px values to rem values.
-- Decide how long to publish legacy typography tokens for downstream compatibility.
+- Decide how long to retain support for older color source aliases at the normalization boundary.

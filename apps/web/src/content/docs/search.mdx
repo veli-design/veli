@@ -1,13 +1,20 @@
 ---
 title: Search
-description: Search field built on React Aria TextField with a leading search icon, clearable input, and the shared field shell.
+description: Accessible search field with a leading icon, localized defaults, and a clear button.
 ---
 
-import { SearchUsageDemo, SearchVariantsDemo } from '../../components/DocsExamples';
+import {
+  SearchUsageDemo,
+  SearchAppearancesDemo,
+  SearchValidationDemo,
+  SearchControlledDemo,
+  SearchFormDemo,
+  SearchEventsDemo,
+} from '../../components/DocsExamples';
 
 # Search
 
-The Search component is a purpose-built text field for search input. It wraps React Aria's `TextField` in the shared Veli field shell with a leading magnifying-glass icon, and supports the same sizing and validation surface as the other form fields.
+Use Search to enter a query. It wraps React Aria’s `SearchField` and a native search input with a leading magnifying glass. A clear button appears when an editable field contains text; clearing returns focus to the input. Search supports standalone filtering and use within Veli forms; the application owns querying and result rendering.
 
 ## Import
 
@@ -22,32 +29,283 @@ import { Search } from '@tradenetcorp/veli-ui/search';
 </div>
 
 ```tsx
-<Search aria-label="Search services" placeholder="Search services" />
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchUsageDemo() {
+  return (
+    <div className="w-[320px] max-w-full">
+      <Search aria-label="Search services" placeholder="Search services" />
+    </div>
+  );
+}
 ```
 
-## Variants & sizes
+Give Search a visible `label`, or an accessible name with `aria-label` or `aria-labelledby` for compact standalone use. A placeholder is a hint, not a label. Width follows the parent; the examples use a responsive 320px container.
+
+```tsx
+<Search label="Find a service" description="Search by service name." />
+<Search label="Find a service" isRequired showRequiredIndicator={false} />
+```
+
+The optional label uses Veli's shared `FieldLabel`. `showRequiredIndicator` controls the visual asterisk; it does not change required validation. Helper and error text use Veli's shared `FieldMessage`, including React Aria `FieldError` for generated validation messages.
+
+## Appearances and sizes
+
+`default` uses an underline; `outline` uses a pill shell with an inside stroke that does not shift the content on hover or focus. A filled outline uses the hover fill without a resting stroke. Active and keyboard-focus styling take precedence. Disabled and read-only fields use the hover fill and hide the clear button.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <SearchVariantsDemo client:visible />
+  <SearchAppearancesDemo client:visible />
 </div>
 
 ```tsx
-<Search variant="outline" placeholder="Outline" />
-<Search size="sm" placeholder="Small" />
-<Search size="lg" placeholder="Large" />
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchAppearancesDemo() {
+  return (
+    <div className="grid w-full max-w-[320px] gap-4">
+      <Search aria-label="Default search" placeholder="Default" />
+      <Search aria-label="Outline search" appearance="outline" placeholder="Outline" />
+      <Search aria-label="Small search" size="sm" placeholder="Small" />
+      <Search aria-label="Large search" size="lg" placeholder="Large" />
+    </div>
+  );
+}
+```
+
+## Controlled values
+
+Use `defaultValue` for an uncontrolled initial query, or `value` and `onChange` to own the query. `onChange` receives a string, including an empty string when cleared. Clearing does not submit the form.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchControlledDemo client:visible />
+</div>
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchControlledDemo() {
+  const [query, setQuery] = useState('');
+
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        appearance="outline"
+        label="Search services"
+        value={query}
+        onChange={setQuery}
+        description="Filter services as you type."
+      />
+      <p className="type-body-sm-regular text-base-muted">Query: {query || 'None'}</p>
+    </div>
+  );
+}
+```
+
+Set `name` to include the query in native form submission. Submit handling belongs to the parent form. Form reset restores the initial query; controlled consumers receive the reset value through `onChange`.
+
+## Using Search in Veli forms
+
+Search follows Veli's [form handling conventions](/patterns/forms/), just like Input and TextArea. Veli `Form` defaults to `validationBehavior="aria"`, which Search inherits so your form library owns validation. Use `validationBehavior="native"` on the form when you want browser constraint validation to block submission. Named errors supplied through `Form`'s `validationErrors` also reach Search.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchFormDemo client:visible />
+</div>
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@tradenetcorp/veli-ui/button';
+import { Form } from '@tradenetcorp/veli-ui/form';
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchFormDemo() {
+  const [submitted, setSubmitted] = useState('');
+
+  return (
+    <Form
+      className="w-[320px] max-w-full"
+      validationBehavior="native"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setSubmitted(String(new FormData(event.currentTarget).get('query')));
+      }}
+    >
+      <Search
+        label="Find a service"
+        name="query"
+        isRequired
+        pattern="[A-Za-z ]+"
+        description="Enter a service name using letters and spaces."
+        errorMessage="Enter a service name using letters and spaces."
+      />
+      <div className="flex gap-3">
+        <Button type="submit">Search</Button>
+        <Button type="reset" appearance="ghost" onPress={() => setSubmitted('')}>
+          Reset
+        </Button>
+      </div>
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted ? `Submitted query: ${submitted}` : 'No query submitted.'}
+      </p>
+    </Form>
+  );
+}
+```
+
+With React Hook Form, spread the `Controller` field object (`name`, `value`, `onChange`, `onBlur`, `ref`) onto Search and pass `isInvalid` and `errorMessage` from `fieldState`. With TanStack Form, pass `field.state.value`, `field.handleChange`, and `field.handleBlur`, using Veli's form error helpers for messages. Initialize controlled queries to `''`. Both modes support clearing; `onChange` receives the query string rather than a DOM event.
+
+## Search events
+
+Without `onSubmit` on Search, Enter follows native parent-form submission. With `onSubmit`, Enter invokes that callback with the query instead of submitting the parent form; it is a search request event, not a validated form submission. For forms that must validate before submitting, handle `onSubmit` on the parent `Form` instead. `onClear` runs when the clear button or Escape clears a nonempty editable query. Both also trigger `onChange('')`. Escape on an empty query does not trigger clearing.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchEventsDemo client:visible />
+</div>
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchEventsDemo() {
+  const [submitted, setSubmitted] = useState('');
+
+  return (
+    <div className="w-[320px] max-w-full space-y-3">
+      <Search
+        aria-label="Search documents"
+        placeholder="Search documents"
+        onSubmit={setSubmitted}
+        onClear={() => setSubmitted('')}
+      />
+      <p className="type-body-sm-regular text-base-muted" role="status">
+        {submitted
+          ? `Requested query: ${submitted}`
+          : 'Press Enter to request a search; Escape clears the query.'}
+      </p>
+    </div>
+  );
+}
+```
+
+Debouncing, fetching, cancellation, result messages, and autocomplete remain application concerns. Empty queries are valid unless you opt into required or custom validation. No results and network failures should be represented in the results experience rather than automatically marking the field invalid.
+
+## Validation
+
+`description` supplies accessible helper text. When invalid, `errorMessage` replaces it. Use `isInvalid` for externally managed errors, or React Aria’s validation props for form validation.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <SearchValidationDemo client:visible />
+</div>
+
+```tsx
+import { Search } from '@tradenetcorp/veli-ui/search';
+
+export function SearchValidationDemo() {
+  return (
+    <div className="w-[320px] max-w-full space-y-4">
+      <Search label="Search services" description="Search by service name" />
+      <Search
+        appearance="outline"
+        label="Invalid search"
+        isInvalid
+        errorMessage="Enter a more specific query."
+      />
+      <Search aria-label="Disabled search" defaultValue="Unavailable" isDisabled />
+      <Search aria-label="Read-only search" defaultValue="Saved query" isReadOnly />
+    </div>
+  );
+}
 ```
 
 ## API Reference
 
-| Prop           | Type                     | Default     | Description                                                  |
-| :------------- | :----------------------- | :---------- | :----------------------------------------------------------- |
-| `variant`      | `'default' \| 'outline'` | `'default'` | Visual appearance of the field shell.                        |
-| `size`         | `'sm' \| 'md' \| 'lg'`   | `'md'`      | Field size.                                                  |
-| `description`  | `ReactNode`              | -           | Helper text shown beneath the field when not invalid.        |
-| `errorMessage` | `ReactNode`              | -           | Validation content shown beneath the field when `isInvalid`. |
-| `placeholder`  | `string`                 | -           | Placeholder text.                                            |
-| `className`    | `string`                 | -           | Layout-only class override merged onto the root element.     |
+Search composes React Aria [`SearchField`](https://react-aria.adobe.com/SearchField) with a native `<input type="search">`.
 
-All other `react-aria-components` `TextField` props are supported (`value`, `onChange`, `isDisabled`, `isInvalid`, `aria-label`, …), excluding `style`, `type`, and direct child composition. Provide a `label` via the page or an `aria-label` so the field has an accessible name.
+### Search
 
-In RTL layouts the field UI mirrors while entered values follow the standard input direction rules, so search terms read as expected.
+| Prop                    | Type                     | Default     | Description                                           |
+| :---------------------- | :----------------------- | :---------- | :---------------------------------------------------- |
+| `appearance`            | `'default' \| 'outline'` | `'default'` | Underline or pill shell.                              |
+| `size`                  | `'sm' \| 'md' \| 'lg'`   | `'md'`      | 36px, 44px, or 52px field height.                     |
+| `label`                 | `ReactNode`              | -           | Optional visible label associated with the input.     |
+| `showRequiredIndicator` | `boolean`                | `true`      | Show the shared required indicator when required.     |
+| `description`           | `ReactNode`              | -           | Accessible helper text below the field.               |
+| `errorMessage`          | `ReactNode`              | -           | Replaces helper text when invalid.                    |
+| `className`             | `string`                 | -           | Layout class on the root, such as width or margin.    |
+| `ref`                   | `Ref<HTMLInputElement>`  | -           | Forwarded to the inner input for focus or inspection. |
+
+### SearchField
+
+React Aria’s [`SearchField` props](https://react-aria.adobe.com/SearchField#api) pass through, subject to the exclusions below.
+
+| Prop                 | Type                                                              | Default                                   | Description                                                                |
+| :------------------- | :---------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------- |
+| `value`              | `string`                                                          | -                                         | Controlled query.                                                          |
+| `defaultValue`       | `string`                                                          | -                                         | Uncontrolled initial query.                                                |
+| `onChange`           | `(value: string) => void`                                         | -                                         | Query change, clear, or form reset.                                        |
+| `onSubmit`           | `(value: string) => void`                                         | -                                         | Enter-triggered query callback; replaces parent-form submission for Enter. |
+| `onClear`            | `() => void`                                                      | -                                         | Clear button or Escape clears a nonempty editable query.                   |
+| `isDisabled`         | `boolean`                                                         | `false`                                   | Prevents interaction and native form submission of this field.             |
+| `isReadOnly`         | `boolean`                                                         | `false`                                   | Prevents edits; permits focus and selection.                               |
+| `isInvalid`          | `boolean`                                                         | `false`                                   | Marks the field invalid.                                                   |
+| `isRequired`         | `boolean`                                                         | `false`                                   | Requires a query.                                                          |
+| `validate`           | `(value: string) => ValidationError \| true \| null \| undefined` | -                                         | Custom React Aria validation.                                              |
+| `validationBehavior` | `'native' \| 'aria'`                                              | Inherited from Form, otherwise `'native'` | Native form validation or ARIA-only feedback.                              |
+| `name`               | `string`                                                          | -                                         | Native form field name.                                                    |
+| `form`               | `string`                                                          | -                                         | ID of the associated form.                                                 |
+| `autoFocus`          | `boolean`                                                         | `false`                                   | Focuses on mount.                                                          |
+| `aria-label`         | `string`                                                          | -                                         | Accessible name when there is no visible label.                            |
+| `aria-labelledby`    | `string`                                                          | -                                         | IDs of elements supplying the accessible name.                             |
+| `aria-describedby`   | `string`                                                          | -                                         | Additional accessible description IDs.                                     |
+
+Not forwarded from `SearchField`:
+
+| Prop         | Why                                          |
+| :----------- | :------------------------------------------- |
+| `children`   | Search owns its composition.                 |
+| `style`      | Not supported.                               |
+| `className`  | Replaced by the root layout class.           |
+| `type`       | Fixed to `search`.                           |
+| `spellCheck` | Applied directly to the inner input instead. |
+
+### Native input
+
+These attributes are applied to the inner search input.
+
+| Prop             | Type      | Default          | Description                                                                                        |
+| :--------------- | :-------- | :--------------- | :------------------------------------------------------------------------------------------------- |
+| `placeholder`    | `string`  | Localized Search | Hint for an empty input; pass `''` to omit it.                                                     |
+| `autoComplete`   | `string`  | `'off'`          | Browser autocomplete token.                                                                        |
+| `autoCapitalize` | `string`  | -                | Virtual-keyboard capitalization.                                                                   |
+| `autoCorrect`    | `string`  | -                | Browser autocorrect setting.                                                                       |
+| `enterKeyHint`   | `string`  | `'search'`       | Virtual-keyboard enter-key label.                                                                  |
+| `inputMode`      | `string`  | -                | Virtual-keyboard input mode.                                                                       |
+| `maxLength`      | `number`  | -                | Maximum query length.                                                                              |
+| `minLength`      | `number`  | -                | Minimum length for a nonempty query.                                                               |
+| `pattern`        | `string`  | -                | Native pattern constraint. With native validation, nonempty queries must match the entire pattern. |
+| `spellCheck`     | `boolean` | -                | Browser spellcheck.                                                                                |
+
+## Accessibility, language, and motion
+
+- Provide `label`, `aria-label`, or `aria-labelledby`; use `aria-labelledby` for a visible external label.
+- Tab reaches the input and, when present, the clear button. Enter or Space activates the clear button. Keyboard focus is visible on the shell.
+- Clicking unused space in the shell focuses the input. Disabled fields cannot receive focus; read-only fields remain focusable.
+- The provider localizes the default placeholder and clear-button name to English or Dhivehi. On `lang="dv"` inputs, entered text uses MV Faseyha; RTL layout mirrors the search and clear icons. The magnifying glass and cross retain their shapes.
+- Background, stroke, and clear-button transitions respect reduced-motion preferences.
+
+## Migration
+
+Replace `variant` with `appearance`; the values and default are unchanged. The old prop is removed.
+
+```tsx
+// Before
+<Search variant="outline" aria-label="Search services" />
+// After
+<Search appearance="outline" aria-label="Search services" />
+```
