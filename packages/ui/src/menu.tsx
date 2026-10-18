@@ -5,32 +5,62 @@ import {
   Header,
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
+  MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   Popover as AriaPopover,
-  Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   Separator as AriaSeparator,
-  Keyboard,
   type MenuItemProps as AriaMenuItemProps,
   type MenuProps as AriaMenuProps,
+  type MenuSectionProps as AriaMenuSectionProps,
   type MenuTriggerProps as AriaMenuTriggerProps,
   type PopoverProps as AriaPopoverProps,
-  type SectionProps as AriaSectionProps,
   type SubmenuTriggerProps as AriaSubmenuTriggerProps,
   type SeparatorProps as AriaSeparatorProps,
 } from 'react-aria-components';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
+import { Kbd, KbdGroup } from './kbd.js';
 import { useVeliLanguage } from './provider.js';
 
-const menuPopoverClassName =
-  'min-w-56 w-max rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none';
+/**
+ * Enter/exit motion on the positioned root. Opacity, translate and scale must live on
+ * this node so React Aria's enter reflow applies to both (inner group-data
+ * slides never paint a "from" state). Overlay positioning uses left/top here,
+ * so translate is free. `--trigger-anchor-point` is set inline by React Aria on
+ * this node, so scale grows from the trigger.
+ */
+const menuPopoverRootClassName = [
+  'outline-none origin-[var(--trigger-anchor-point)]',
+  'transition-[opacity,translate,scale] duration-normal ease-out motion-reduce:transition-none',
+  'data-[entering]:opacity-0 data-[exiting]:opacity-0',
+  'motion-safe:data-[entering]:scale-[0.97] motion-safe:data-[exiting]:scale-[0.97]',
+  'data-[exiting]:duration-fast data-[exiting]:ease-in',
+  'motion-safe:data-[placement^=top]:data-[entering]:translate-y-1',
+  'motion-safe:data-[placement^=top]:data-[exiting]:translate-y-1',
+  'motion-safe:data-[placement^=bottom]:data-[entering]:-translate-y-1',
+  'motion-safe:data-[placement^=bottom]:data-[exiting]:-translate-y-1',
+  'motion-safe:data-[placement^=left]:data-[entering]:translate-x-1',
+  'motion-safe:data-[placement^=left]:data-[exiting]:translate-x-1',
+  'motion-safe:data-[placement^=right]:data-[entering]:-translate-x-1',
+  'motion-safe:data-[placement^=right]:data-[exiting]:-translate-x-1',
+  'motion-safe:data-[placement^=start]:data-[entering]:translate-x-1',
+  'motion-safe:data-[placement^=start]:data-[exiting]:translate-x-1',
+  'motion-safe:data-[placement^=end]:data-[entering]:-translate-x-1',
+  'motion-safe:data-[placement^=end]:data-[exiting]:-translate-x-1',
+].join(' ');
+
+/** Visual surface — kept off the root so width/className overrides stay local. */
+const menuPopoverSurfaceClassName = [
+  'min-w-48 w-max rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none',
+].join(' ');
 
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[hovered]:bg-menu-hover data-[focus-visible]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-4 text-start antialiased outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[hovered]:bg-menu-hover data-[focus-visible]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
@@ -53,7 +83,7 @@ const menuItemVariants = cva(
 
 const menuSectionVariants = cva('py-1 first:pt-0 last:pb-0');
 
-const menuSectionTitleVariants = cva('px-3 text-start text-base-emphasis', {
+const menuSectionTitleVariants = cva('px-4 text-start text-base-emphasis', {
   variants: {
     size: {
       sm: 'py-1.5 type-body-sm-medium',
@@ -70,7 +100,7 @@ const menuItemRowVariants = cva('flex min-w-0 flex-1 items-start gap-2');
 
 const menuItemTextVariants = cva('flex min-w-0 flex-1 flex-col gap-1.5');
 
-const menuItemLabelRowVariants = cva('flex min-w-0 items-center gap-2');
+const menuItemLabelRowVariants = cva('flex min-w-0 items-center gap-1.5');
 
 const menuItemLabelVariants = cva('min-w-0 flex-1 truncate', {
   variants: {
@@ -86,11 +116,19 @@ const menuItemLabelVariants = cva('min-w-0 flex-1 truncate', {
 });
 
 const menuItemDescriptionVariants = cva(
-  'truncate type-caption-regular text-base-muted group-data-[disabled]:text-disabled',
-);
-
-const menuShortcutVariants = cva(
-  'inline-flex shrink-0 items-center rounded-sm bg-menu-shortcut-bg px-1 type-caption-regular text-base-default group-data-[disabled]:text-disabled [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base group-data-[disabled]:[&_svg]:text-icon-disabled',
+  'truncate text-base-muted group-data-[disabled]:text-disabled',
+  {
+    variants: {
+      size: {
+        sm: 'type-body-sm-regular',
+        md: 'type-body-sm-regular',
+        lg: 'type-body-md-regular',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  },
 );
 
 const menuItemCheckIconVariants = cva(
@@ -119,13 +157,29 @@ const menuItemIconVariants = cva(
         lg: '[&_svg]:size-5',
       },
       intent: {
-        default: 'text-base-muted group-data-[disabled]:text-icon-disabled',
-        danger: 'text-danger-muted group-data-[disabled]:text-icon-disabled',
+        default: 'text-icon-base group-data-[disabled]:text-icon-disabled',
+        danger: 'text-icon-danger-muted group-data-[disabled]:text-icon-disabled',
       },
     },
     defaultVariants: {
       size: 'md',
       intent: 'default',
+    },
+  },
+);
+
+const menuSubmenuCaretVariants = cva(
+  'mt-0.5 inline-flex shrink-0 items-center justify-center text-icon-base group-data-[disabled]:text-icon-disabled [&_svg]:shrink-0',
+  {
+    variants: {
+      size: {
+        sm: '[&_svg]:size-4',
+        md: '[&_svg]:size-4',
+        lg: '[&_svg]:size-5',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
     },
   },
 );
@@ -167,10 +221,50 @@ function MenuItemSelectionSlot({
     <span
       className={menuItemCheckIconVariants({ size })}
       aria-hidden={isSelected ? undefined : true}
+      data-veli-menu-selection-slot=""
     >
       {isSelected ? <MenuItemCheckIcon /> : null}
     </span>
   );
+}
+
+function MenuSubmenuCaret({ size }: { size?: 'sm' | 'md' | 'lg' | null }) {
+  const { direction } = useVeliLanguage();
+  const CaretIcon = direction === 'rtl' ? CaretLeftIcon : CaretRightIcon;
+
+  return (
+    <span
+      className={menuSubmenuCaretVariants({ size })}
+      data-veli-menu-submenu-caret=""
+      aria-hidden
+    >
+      <CaretIcon weight="regular" />
+    </span>
+  );
+}
+
+function MenuShortcut({ shortcut }: { shortcut: React.ReactNode }) {
+  if (typeof shortcut === 'string') {
+    return (
+      <KbdGroup dir="ltr" data-veli-menu-shortcut="">
+        <Kbd lang="en">{shortcut}</Kbd>
+      </KbdGroup>
+    );
+  }
+
+  if (Array.isArray(shortcut)) {
+    return (
+      <KbdGroup dir="ltr" data-veli-menu-shortcut="">
+        {shortcut.map((key, index) => (
+          <Kbd key={index} lang="en">
+            {key}
+          </Kbd>
+        ))}
+      </KbdGroup>
+    );
+  }
+
+  return shortcut;
 }
 
 export interface MenuTriggerProps extends AriaMenuTriggerProps {}
@@ -185,11 +279,12 @@ export function MenuSubmenuTrigger(props: MenuSubmenuTriggerProps) {
   return <AriaSubmenuTrigger {...props} />;
 }
 
-export interface MenuPopoverProps extends Omit<AriaPopoverProps, 'className'> {
+export interface MenuPopoverProps extends Omit<AriaPopoverProps, 'className' | 'children'> {
   className?: string;
+  children?: React.ReactNode;
 }
 
-export function MenuPopover({ className, offset = 8, ...props }: MenuPopoverProps) {
+export function MenuPopover({ children, className, offset = 8, ...props }: MenuPopoverProps) {
   const languageConfig = useVeliLanguage();
 
   return (
@@ -198,8 +293,10 @@ export function MenuPopover({ className, offset = 8, ...props }: MenuPopoverProp
       offset={offset}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
-      className={twMerge(menuPopoverClassName, className)}
-    />
+      className={menuPopoverRootClassName}
+    >
+      <div className={twMerge(menuPopoverSurfaceClassName, className)}>{children}</div>
+    </AriaPopover>
   );
 }
 
@@ -214,7 +311,7 @@ export function Menu<T extends object>({ className, ...props }: MenuProps<T>) {
 
 export interface MenuSectionProps<T extends object>
   extends
-    Omit<AriaSectionProps<T>, 'className' | 'children'>,
+    Omit<AriaMenuSectionProps<T>, 'className' | 'children'>,
     VariantProps<typeof menuSectionTitleVariants> {
   title?: React.ReactNode;
   children?: React.ReactNode;
@@ -229,10 +326,10 @@ export function MenuSection<T extends object>({
   ...props
 }: MenuSectionProps<T>) {
   return (
-    <AriaSection {...props} className={twMerge(menuSectionVariants(), className)}>
+    <AriaMenuSection {...props} className={twMerge(menuSectionVariants(), className)}>
       {title ? <Header className={menuSectionTitleVariants({ size })}>{title}</Header> : null}
       {children}
-    </AriaSection>
+    </AriaMenuSection>
   );
 }
 
@@ -241,17 +338,13 @@ export interface MenuSeparatorProps extends Omit<AriaSeparatorProps, 'className'
 }
 
 export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
-  return (
-    <AriaSeparator
-      {...props}
-      className={twMerge('mx-3 my-1 border-t border-base-subtle', className)}
-    />
-  );
+  return <AriaSeparator {...props} className={twMerge('border-t border-base-muted', className)} />;
 }
 
 interface MenuItemContentProps {
   isSelected: boolean;
   showSelectionSlot: boolean;
+  hasSubmenu: boolean;
   size?: 'sm' | 'md' | 'lg' | null;
   intent?: 'default' | 'danger' | null;
   description?: React.ReactNode;
@@ -264,6 +357,7 @@ interface MenuItemContentProps {
 function MenuItemContent({
   isSelected,
   showSelectionSlot,
+  hasSubmenu,
   size,
   intent,
   description,
@@ -274,6 +368,7 @@ function MenuItemContent({
 }: MenuItemContentProps) {
   const hasStructuredLayout =
     showSelectionSlot ||
+    hasSubmenu ||
     description !== undefined ||
     startIcon !== undefined ||
     endIcon !== undefined ||
@@ -299,20 +394,19 @@ function MenuItemContent({
         {children || shortcut ? (
           <div className={menuItemLabelRowVariants()}>
             {children ? <div className={menuItemLabelVariants({ size })}>{children}</div> : null}
-            {shortcut ? (
-              <Keyboard lang="en" className={menuShortcutVariants()}>
-                {shortcut}
-              </Keyboard>
-            ) : null}
+            {shortcut !== undefined ? <MenuShortcut shortcut={shortcut} /> : null}
           </div>
         ) : null}
-        {description ? <div className={menuItemDescriptionVariants()}>{description}</div> : null}
+        {description ? (
+          <div className={menuItemDescriptionVariants({ size })}>{description}</div>
+        ) : null}
       </div>
       {endIcon ? (
         <span className={menuItemIconVariants({ size, intent: intent ?? 'default' })}>
           {endIcon}
         </span>
       ) : null}
+      {hasSubmenu ? <MenuSubmenuCaret size={size} /> : null}
     </div>
   );
 }
@@ -323,7 +417,8 @@ export interface MenuItemProps
   description?: React.ReactNode;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-  shortcut?: React.ReactNode;
+  /** Keyboard shortcut hint. Strings and string arrays render as `Kbd` keys; other nodes pass through. */
+  shortcut?: string | readonly string[] | React.ReactNode;
   /** Whether the menu closes when this item is selected. Defaults to React Aria behavior per `selectionMode`. */
   closeOnSelect?: boolean;
 }
@@ -342,12 +437,15 @@ export function MenuItem({
   return (
     <AriaMenuItem {...props} className={twMerge(menuItemVariants({ size, intent }), className)}>
       {(renderProps) => {
-        const { isSelected, selectionMode } = renderProps;
+        const { isSelected, selectionMode, hasSubmenu } = renderProps;
         const showSelectionSlot = selectionMode !== 'none';
 
         if (typeof children === 'function') {
-          if (!showSelectionSlot) {
-            return children(renderProps);
+          const content = children(renderProps);
+          const needsChrome = showSelectionSlot || hasSubmenu;
+
+          if (!needsChrome) {
+            return content;
           }
 
           return (
@@ -357,7 +455,8 @@ export function MenuItem({
                 showSelectionSlot={showSelectionSlot}
                 size={size}
               />
-              <div className={menuItemTextVariants()}>{children(renderProps)}</div>
+              <div className={menuItemTextVariants()}>{content}</div>
+              {hasSubmenu ? <MenuSubmenuCaret size={size} /> : null}
             </div>
           );
         }
@@ -366,6 +465,7 @@ export function MenuItem({
           <MenuItemContent
             isSelected={isSelected}
             showSelectionSlot={showSelectionSlot}
+            hasSubmenu={hasSubmenu}
             size={size}
             intent={intent}
             description={description}
