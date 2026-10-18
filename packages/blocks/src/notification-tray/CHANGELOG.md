@@ -1,3 +1,9 @@
+## 0.3.2
+
+### Fixed
+
+- Keep placeholder heights and avatar sizes consistent across tray widths, and resolve the highlight from the local colour scheme on nested surfaces.
+
 ## 0.3.1
 
 ### Changed

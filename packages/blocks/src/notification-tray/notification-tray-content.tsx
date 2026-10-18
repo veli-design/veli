@@ -91,6 +91,7 @@ const intentStyles = {
 const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
 
 // One coordinate system keeps the highlight aligned across every shape in a row.
+// Without a viewBox, shapes retain pixel sizes while bar widths follow the viewport.
 // Keep this artwork local: it describes the notification layout, not a Skeleton API.
 function NotificationSkeletonRow() {
   const id = useId();
@@ -101,26 +102,29 @@ function NotificationSkeletonRow() {
     <svg
       aria-hidden="true"
       focusable="false"
-      viewBox="0 0 360 80"
+      height="80"
       className="veli-notification-skeleton-row block w-full"
     >
       <defs>
         <clipPath id={clipId}>
           <circle cx="16" cy="20" r="16" />
-          <rect x="48" y="8" width="312" height="10" rx="5" />
-          <rect x="48" y="28" width="260" height="10" rx="5" />
-          <rect x="48" y="48" width="208" height="10" rx="5" />
+          <rect x="48" y="8" style={{ width: 'calc(100% - 48px)' }} height="10" rx="5" />
+          <rect x="48" y="28" style={{ width: 'calc((100% - 48px) * 5 / 6)' }} height="10" rx="5" />
+          <rect x="48" y="48" style={{ width: 'calc((100% - 48px) * 2 / 3)' }} height="10" rx="5" />
           <rect x="48" y="72" width="104" height="8" rx="4" />
-          <rect x="320" y="72" width="40" height="8" rx="4" />
+          <rect style={{ x: 'calc(100% - 40px)' }} y="72" width="40" height="8" rx="4" />
         </clipPath>
         <linearGradient id={gradientId}>
           <stop offset="0" stopColor="var(--veli-color-white)" stopOpacity="0" />
-          <stop offset="0.5" stopColor="var(--veli-color-white)" />
+          <stop
+            offset="0.5"
+            stopColor="light-dark(color-mix(in srgb, var(--veli-color-white) 65%, transparent), color-mix(in srgb, var(--veli-color-white) 8%, transparent))"
+          />
           <stop offset="1" stopColor="var(--veli-color-white)" stopOpacity="0" />
         </linearGradient>
       </defs>
       <g clipPath={`url(#${clipId})`}>
-        <path d="M0 0H360V80H0Z" fill="var(--veli-color-bg-skeleton)" />
+        <rect width="100%" height="80" fill="var(--veli-color-bg-skeleton)" />
         <rect
           className="veli-notification-skeleton-highlight"
           width="140"
@@ -138,15 +142,14 @@ function NotificationTraySkeleton() {
       <style>{`
         .veli-notification-skeleton-item:dir(rtl) > svg { transform: scaleX(-1); }
         .veli-notification-skeleton-highlight {
-          opacity: .65;
+          transform-box: view-box;
           transform: translateX(-140px);
           animation: veli-notification-skeleton-sweep 2000ms var(--veli-ease-linear, linear) infinite;
         }
-        .dark .veli-notification-skeleton-highlight { opacity: .08; }
         /* 1500ms sweep, followed by 500ms fully outside the clipped shapes. */
         @keyframes veli-notification-skeleton-sweep {
           0% { transform: translateX(-140px); }
-          75%, 100% { transform: translateX(360px); }
+          75%, 100% { transform: translateX(100%); }
         }
         @media (prefers-reduced-motion: reduce) {
           .veli-notification-skeleton-highlight { animation: none; visibility: hidden; }
