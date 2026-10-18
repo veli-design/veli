@@ -1,3 +1,9 @@
+## 0.1.1
+
+### Fixed
+
+- A single navigation group uses the full navigation area instead of the narrow first column at tablet and desktop widths.
+
 ## 0.1.0
 
 ### Added

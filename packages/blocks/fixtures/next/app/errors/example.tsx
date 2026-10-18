@@ -114,6 +114,12 @@ export default function ErrorExample({ initial }: { initial: Record<string, stri
         {initial.footer !== 'none' &&
           (initial.variant === 'empty-footer' ? (
             <PageNavigationFooter label={footer.label} />
+          ) : initial.variant === 'internal-only' || initial.variant === 'external-only' ? (
+            <PageNavigationFooter
+              {...footer}
+              internalLinks={initial.variant === 'external-only' ? [] : footer.internalLinks}
+              externalLinks={initial.variant === 'internal-only' ? [] : footer.externalLinks}
+            />
           ) : initial.variant === 'long' ? (
             <PageNavigationFooter
               {...footer}

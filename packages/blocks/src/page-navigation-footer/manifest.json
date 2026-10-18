@@ -1,7 +1,7 @@
 {
   "id": "page-navigation-footer",
   "title": "Page navigation footer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "experimental",
   "description": "Responsive organization identity, navigation groups and social links.",
   "files": ["page-navigation-footer.tsx"],

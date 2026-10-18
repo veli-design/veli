@@ -138,7 +138,9 @@ export function PageNavigationFooter({
           )}
           {!dv && social}
           {visibleGroups.length > 0 && (
-            <div className="grid min-w-0 grid-cols-1 items-start gap-x-8 gap-y-12 @[700px]:col-start-2 @[700px]:row-span-2 @[700px]:row-start-1 @[700px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)] @[1100px]:grid-cols-[minmax(0,100px)_minmax(0,1fr)] @[1100px]:gap-x-[92px]">
+            <div
+              className={`grid min-w-0 grid-cols-1 items-start gap-x-8 gap-y-12 @[700px]:col-start-2 @[700px]:row-span-2 @[700px]:row-start-1 ${visibleGroups.length > 1 ? '@[700px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)] @[1100px]:grid-cols-[minmax(0,100px)_minmax(0,1fr)] @[1100px]:gap-x-[92px]' : ''}`}
+            >
               {visibleGroups.map((group) => (
                 <nav key={group.id} aria-label={group.label} className="min-w-0">
                   <p

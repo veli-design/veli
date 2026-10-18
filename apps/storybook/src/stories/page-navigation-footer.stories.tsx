@@ -7,13 +7,13 @@ const meta = {
   title: 'Blocks/Page navigation footer',
   component: PageNavigationFooter,
   parameters: { layout: 'fullscreen' },
-  args: { ...pageNavigationFooterContent('en') },
+  // Keep localized defaults in render so only explicit controls override them.
+  args: { label: undefined },
   render: (args) => {
     const { language } = useVeliLanguage();
     const content = pageNavigationFooterContent(language);
     return (
       <PageNavigationFooter
-        {...args}
         {...content}
         identity={{
           ...content.identity,
@@ -27,6 +27,8 @@ const meta = {
             />
           ),
         }}
+        {...args}
+        label={args.label ?? content.label}
       />
     );
   },
@@ -35,19 +37,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const NoLogo: Story = {
-  render: () => {
+  render: (args) => {
     const { language } = useVeliLanguage();
-    return <PageNavigationFooter {...pageNavigationFooterContent(language)} />;
+    const content = pageNavigationFooterContent(language);
+    return <PageNavigationFooter {...content} {...args} label={args.label ?? content.label} />;
   },
 };
 export const Minimal: Story = {
-  render: () => (
-    <PageNavigationFooter label="Organization information" identity={{ name: 'Example service' }} />
+  render: (args) => (
+    <PageNavigationFooter
+      identity={{ name: 'Example service' }}
+      {...args}
+      label={args.label ?? 'Organization information'}
+    />
   ),
 };
-export const Empty: Story = { render: () => <PageNavigationFooter label="Page navigation" /> };
+export const Empty: Story = {
+  render: (args) => <PageNavigationFooter {...args} label={args.label ?? 'Page navigation'} />,
+};
 export const LongLabels: Story = {
-  render: () => {
+  render: (args) => {
     const { language } = useVeliLanguage();
     const content = pageNavigationFooterContent(language);
     return (
@@ -62,6 +71,8 @@ export const LongLabels: Story = {
           ...link,
           label: link.label.repeat(5),
         }))}
+        {...args}
+        label={args.label ?? content.label}
       />
     );
   },
