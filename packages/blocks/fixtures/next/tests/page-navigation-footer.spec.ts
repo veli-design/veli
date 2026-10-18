@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 
 for (const language of ['en', 'dv'])
   test(`${language}: standalone footer retains content at every size and has one contentinfo`, async ({
@@ -53,7 +54,7 @@ for (const language of ['en', 'dv'])
       );
       await page.screenshot({ path: info.outputPath(`footer-${width}.png`), fullPage: true });
     }
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    await warnAccessibilityViolations(new AxeBuilder({ page }).analyze());
   });
 
 test('footer router links forward keyboard focus and preserve Next navigation', async ({

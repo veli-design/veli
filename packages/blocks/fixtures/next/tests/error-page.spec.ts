@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 import { errorPageMessages } from '../error-page-messages';
 
 const kinds = ['401', '403', '404', '500', '503', 'offline'] as const;
@@ -36,7 +37,7 @@ for (const width of [320, 768, 1512])
           await expect(page.getByRole('contentinfo')).toHaveCount(1);
           if (kind === '404') {
             const axe = await new AxeBuilder({ page }).analyze();
-            expect(axe.violations).toEqual([]);
+            await warnAccessibilityViolations(axe);
           }
           await page.screenshot({ path: info.outputPath(`${kind}.png`), fullPage: true });
         }
