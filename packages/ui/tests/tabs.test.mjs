@@ -45,7 +45,21 @@ test('Tabs matches the Figma spacing model', () => {
   assert.match(source, /sm: 'px-1\.5'/);
   assert.match(source, /md: 'px-2'/);
   assert.doesNotMatch(source, /gap-2 rounded-lg whitespace-nowrap/);
-  assert.match(source, /inline-flex shrink-0 items-center p-0\.5/);
+  assert.match(source, /placement === 'trailing' \? 'px-0\.5' : 'p-0\.5'/);
+  assert.match(source, /<TabSlot placement="trailing">\{item\.trailing\}<\/TabSlot>/);
+});
+
+test('Tabs renders a trailing badge slot without extra vertical padding', () => {
+  const markup = renderToStaticMarkup(
+    createElement(Tabs, {
+      items: [
+        { id: 'overview', label: 'Overview', trailing: createElement('span', null, '2') },
+        { id: 'services', label: 'Services' },
+      ],
+    }),
+  );
+
+  assert.match(markup, /class="inline-flex shrink-0 items-center px-0\.5"><span>2<\/span>/);
 });
 
 test('Tabs hugs the tab group and scrolls when narrow', () => {

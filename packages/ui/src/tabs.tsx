@@ -91,7 +91,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'>
 // Pin with start-0 so the underline flushes the trigger padding box (including
 // narrow/scroll layouts). RAC SharedElement animates translate/width between tabs.
 const tabSelectionIndicatorClassName =
-  'absolute -bottom-1 start-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
+  'absolute -bottom-1 start-0 h-0.5 w-full bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
 const tabBaseClassName =
   'relative mb-0.5 inline-flex cursor-pointer items-center rounded-lg whitespace-nowrap text-base-default antialiased outline-none motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-icon-base';
@@ -198,8 +198,23 @@ function TabLabel({
   );
 }
 
-function TabSlot({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex shrink-0 items-center p-0.5">{children}</span>;
+function TabSlot({
+  children,
+  placement = 'leading',
+}: {
+  children: React.ReactNode;
+  placement?: 'leading' | 'trailing';
+}) {
+  return (
+    <span
+      className={twMerge(
+        'inline-flex shrink-0 items-center',
+        placement === 'trailing' ? 'px-0.5' : 'p-0.5',
+      )}
+    >
+      {children}
+    </span>
+  );
 }
 
 const tabsOverflowTriggerAttribute = 'data-tabs-overflow-trigger';
@@ -328,7 +343,7 @@ function TabsOverflowIndicator({
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute -bottom-0.5 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
+      className="pointer-events-none absolute -bottom-0.5 h-0.5 bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
       style={{
         left: position.x,
         width: position.width,
@@ -514,7 +529,7 @@ function TabItem({
           <TabLabel isSelected={state.isSelected} size={size}>
             {item.label}
           </TabLabel>
-          {item.trailing ? <TabSlot>{item.trailing}</TabSlot> : null}
+          {item.trailing ? <TabSlot placement="trailing">{item.trailing}</TabSlot> : null}
           <SelectionIndicator className={tabSelectionIndicatorClassName} />
         </>
       )}
