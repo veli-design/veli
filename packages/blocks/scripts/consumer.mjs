@@ -56,10 +56,25 @@ for (const block of getBlocks()) {
   );
 }
 
+// Application-owned example content is shared by docs, stories and the copied adapters.
+for (const name of ['error-page-messages.ts', 'page-navigation-footer-content.tsx']) {
+  cpSync(resolve(packageRoot, 'examples', name), resolve(target, name));
+}
+
+mkdirSync(resolve(target, 'public/blocks'), { recursive: true });
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/public/blocks/example-organization-emblem.svg'),
+  resolve(target, 'public/blocks/example-organization-emblem.svg'),
+);
+
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),
   resolve(target, 'public/fonts/MV_Faseyha_Regular.ttf'),
+);
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/public/fonts/MV_A_Waheed_Bold_2.ttf'),
+  resolve(target, 'public/fonts/MV_A_Waheed_Bold_2.ttf'),
 );
 if (process.argv.includes('--prepare')) {
   console.log(target);

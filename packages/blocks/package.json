@@ -11,7 +11,12 @@
       "types": "./scripts/catalog.d.ts",
       "import": "./scripts/catalog.mjs"
     },
-    "./account-panel": "./src/account-panel/account-panel.tsx"
+    "./account-panel": "./src/account-panel/account-panel.tsx",
+    "./error-page": "./src/error-page/error-page.tsx",
+    "./page-navigation-footer": "./src/page-navigation-footer/page-navigation-footer.tsx",
+    "./examples/error-page-messages": "./examples/error-page-messages.ts",
+    "./examples/page-navigation-footer-content": "./examples/page-navigation-footer-content.tsx",
+    "./examples/error-page-preview": "./examples/error-page-preview.tsx"
   },
   "scripts": {
     "build": "node scripts/check.mjs && tsc --noEmit",
