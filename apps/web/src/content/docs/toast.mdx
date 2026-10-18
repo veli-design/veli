@@ -8,6 +8,7 @@ import {
   ToastAppearancesDemo,
   ToastActionsDemo,
   ToastProgressDemo,
+  ToastRtlDemo,
 } from '../../components/ToastExamples';
 
 # Toast
@@ -226,3 +227,7 @@ Options for `queue.add(content, options)`:
 ## RTL and Language
 
 `VeliProvider language="dv"` supplies Dhivehi typography, RTL direction, and a localized close label. Text and actions align to the reading start; the close button sits at the reading end. Logical start/end placements reverse in RTL. Use `<bdi>` to isolate Latin references in Dhivehi messages.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastRtlDemo client:load />
+</div>

@@ -1,6 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
+import {
+  VeliProvider,
+  useVeliLanguage,
+  type VeliColorScheme,
+} from '@tradenetcorp/veli-ui/provider';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
+
+const usageCopy = {
+  en: {
+    title: 'Application saved',
+    description: 'Your draft has been stored securely.',
+    showToast: 'Show toast',
+  },
+  dv: {
+    title: 'އެޕްލިކޭޝަން ސޭވްކުރެވިއްޖެ',
+    description: 'ތިޔަ ޑްރާފްޓް ރައްކާތެރިކަމާއެކު ސޭވްކުރެވިއްޖެ.',
+    showToast: 'ނޮޓިފިކޭޝަން ދައްކާ',
+  },
+};
 
 function useToastQueue() {
   const queue = useMemo(() => createToastQueue<VeliToastContent>({ maxVisibleToasts: 3 }), []);
@@ -10,21 +29,22 @@ function useToastQueue() {
 
 export function ToastUsageDemo() {
   const queue = useToastQueue();
+  const text = usageCopy[useVeliLanguage().language];
   return (
     <>
       <Button
         onPress={() =>
           queue.add(
             {
-              title: 'Application saved',
-              description: 'Your draft has been stored securely.',
+              title: text.title,
+              description: text.description,
               intent: 'positive',
             },
             { timeout: 5000 },
           )
         }
       >
-        Show toast
+        {text.showToast}
       </Button>
       <ToastRegion queue={queue} />
     </>
@@ -114,5 +134,43 @@ export function ToastProgressDemo() {
       </Button>
       <ToastRegion queue={queue} />
     </>
+  );
+}
+
+function subscribeToDocsTheme(onChange: () => void) {
+  window.addEventListener('veli:color-scheme-change', onChange);
+  return () => window.removeEventListener('veli:color-scheme-change', onChange);
+}
+
+function getDocsColorScheme(): VeliColorScheme {
+  const scheme = document.documentElement.dataset.colorScheme;
+  return scheme === 'light' || scheme === 'dark' ? scheme : 'system';
+}
+
+export function ToastRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const colorScheme = useSyncExternalStore(
+    subscribeToDocsTheme,
+    getDocsColorScheme,
+    () => 'system' as const,
+  );
+  const locale = language === 'Dhivehi' ? 'dv' : 'en';
+
+  return (
+    <DocsPreview
+      codeKey={`toast-language-${locale}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <VeliProvider language={locale} colorScheme={colorScheme}>
+        <ToastUsageDemo key={locale} />
+      </VeliProvider>
+    </DocsPreview>
   );
 }
