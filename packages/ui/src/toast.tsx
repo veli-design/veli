@@ -74,8 +74,9 @@ const toastRegionVariants = cva(
   },
 );
 
+// Figma's inside stroke does not contribute to auto-layout padding.
 const toastVariants = cva(
-  'relative flex w-full max-w-sm shrink-0 items-start gap-3 overflow-hidden rounded-xl border p-4 font-sans text-start antialiased shadow-md outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
+  'relative flex w-full max-w-sm shrink-0 items-start gap-3 overflow-hidden rounded-xl border p-[calc(var(--veli-spacing-4)-1px)] font-sans text-start antialiased shadow-md outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
 );
 
 type ToastPlacement = NonNullable<VariantProps<typeof toastRegionVariants>['placement']>;
@@ -102,20 +103,25 @@ function getToastMotionStyle(
 
 const toastContentVariants = cva('flex min-w-0 flex-1 flex-col gap-1');
 
-const toastTitleVariants = cva('type-body-sm-medium [overflow-wrap:anywhere]');
+const toastTitleVariants = cva(
+  'type-body-sm-medium [&:not(:lang(dv))]:leading-[var(--veli-typography-auxiliary-storybook-alert-body-sm-medium-line-height)] [overflow-wrap:anywhere]',
+);
 
-const toastDescriptionVariants = cva('type-body-sm-regular [overflow-wrap:anywhere]', {
-  variants: {
-    appearance: {
-      outline: 'text-base-muted',
-      subtle: 'text-base-muted',
-      emphasis: 'text-current opacity-80',
+const toastDescriptionVariants = cva(
+  'type-body-sm-regular [&:not(:lang(dv))]:leading-[var(--veli-typography-auxiliary-storybook-alert-body-sm-regular-line-height)] [overflow-wrap:anywhere]',
+  {
+    variants: {
+      appearance: {
+        outline: 'text-base-muted',
+        subtle: 'text-base-muted',
+        emphasis: 'text-current opacity-80',
+      },
+    },
+    defaultVariants: {
+      appearance: 'outline',
     },
   },
-  defaultVariants: {
-    appearance: 'outline',
-  },
-});
+);
 
 const toastCloseButtonVariants = cva(
   'flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
