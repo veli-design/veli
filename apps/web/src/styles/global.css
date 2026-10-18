@@ -1023,7 +1023,7 @@ body {
 
 /* Tables can be rendered directly by MDX or inside a component tab panel.
    Keep the Figma table frame and row treatment shared across both paths. */
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table {
   width: 100%;
   margin-top: 24px;
   margin-bottom: 32px;
@@ -1045,8 +1045,8 @@ body {
   }
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table th,
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table th,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table td {
   min-width: 0;
   padding: 0;
   text-align: left;
@@ -1054,11 +1054,11 @@ body {
   overflow-wrap: anywhere;
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(thead, tbody) {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table :is(thead, tbody) {
   display: block;
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tr {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table tr {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
@@ -1066,30 +1066,35 @@ body {
   padding: 10px 16px;
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table thead {
   background: var(--veli-color-neutral-alpha-200);
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead th {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table thead th {
   color: var(--veli-color-text-base-default);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.45;
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table thead tr,
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table tbody tr:not(:last-child) {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table thead tr,
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll)
+  > table
+  tbody
+  tr:not(:last-child) {
   border-bottom: 1px solid var(--veli-color-border-base-subtle);
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table td:not(:last-child) {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll)
+  > table
+  td:not(:last-child) {
   font-family:
     var(--veli-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 13px;
   line-height: 1.5;
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose) > table :is(th, td) code {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll) > table :is(th, td) code {
   border-radius: 0;
   background: transparent;
   padding: 0;
@@ -1098,34 +1103,49 @@ body {
   font-size: inherit;
 }
 
-/* Preserve readable API columns when the documentation frame is narrower than
-   the reference tracks, including beside the desktop navigation rails. */
-:is(.docs-prose, .docs-tab-panel, .foundation-prose)
-  > table:has(> thead > tr > :nth-child(3)):not(:has(> thead > tr > :nth-child(5))) {
-  display: block;
+/* Keep API columns readable without losing native table semantics. The named
+   scroll wrapper supports keyboard scrolling in WebKit as well as Chromium. */
+.docs-table-scroll {
+  width: 100%;
+  margin: 24px 0 32px;
   overflow-x: auto;
+  border: 1px solid var(--veli-color-border-base-subtle);
+  border-radius: 12px;
+  background: var(--veli-color-bg-surface-raised);
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose)
-  > table:has(> thead > tr > :nth-child(3)):not(:has(> thead > tr > :nth-child(5)))
-  > :is(thead, tbody) {
+:is(.docs-prose, .docs-tab-panel, .foundation-prose) .docs-table-scroll > table {
   min-width: 640px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.docs-table-scroll:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .docs-table-scroll:focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 /* API tables use Figma's column tracks at the 1512px reference width. */
-:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll)
   > table
   tr:has(> :nth-child(4)):not(:has(> :nth-child(5))) {
   grid-template-columns: minmax(0, 176px) minmax(0, 160px) minmax(0, 64px) minmax(0, 1fr);
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll)
   > table
   tr:has(> :nth-child(3)):not(:has(> :nth-child(4))) {
   grid-template-columns: minmax(0, 176px) minmax(0, 240px) minmax(0, 1fr);
 }
 
-:is(.docs-prose, .docs-tab-panel, .foundation-prose)
+:is(.docs-prose, .docs-tab-panel, .foundation-prose, .docs-table-scroll)
   > table
   tr:has(> :nth-child(2)):not(:has(> :nth-child(3))) {
   grid-template-columns: minmax(0, 176px) minmax(0, 1fr);
