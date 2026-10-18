@@ -3,7 +3,12 @@ title: Toast
 description: Temporary notifications with actions, dismissal, and timeout progress.
 ---
 
-import { ToastUsageDemo } from '../../components/DocsExamples';
+import {
+  ToastUsageDemo,
+  ToastAppearancesDemo,
+  ToastActionsDemo,
+  ToastProgressDemo,
+} from '../../components/ToastExamples';
 
 # Toast
 
@@ -12,22 +17,13 @@ Use Toast for brief feedback about an action or event. Mount one `ToastRegion` i
 ## Import
 
 ```tsx
-import {
-  createToastQueue,
-  ToastRegion,
-  Toast,
-  ToastContent,
-  ToastActions,
-  ToastCloseButton,
-  ToastTimeoutProgress,
-  type VeliToastContent,
-} from '@tradenetcorp/veli-ui/toast';
+import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
 ```
 
 ## Usage
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <ToastUsageDemo client:visible />
+  <ToastUsageDemo client:load />
 </div>
 
 ```tsx
@@ -50,18 +46,27 @@ queue.add(
 
 `placement` follows the screen's logical start and end. Use a timeout of at least 5000 ms for auto-dismiss messages. Omit `timeout` or set it to `0` when the message should remain until dismissed.
 
-## Appearances and intents
+## Appearances
 
 `outline` uses a raised surface, `subtle` uses a tinted surface, and `emphasis` uses a solid status color. Choose an intent to match the message: `neutral`, `info`, `positive`, `cautious`, `warning`, or `danger`.
 
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastAppearancesDemo client:load />
+</div>
+
 ```tsx
+queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'outline' });
 queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'subtle' });
-queue.add({ title: 'Upload failed', intent: 'danger', appearance: 'emphasis' });
+queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'emphasis' });
 ```
 
 ## Actions
 
 Actions dismiss the toast after `onPress` returns unless `dismissOnPress` is `false`. Give actions unique `id` values when their order can change. Accent actions use Button's filled accent treatment.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastActionsDemo client:load />
+</div>
 
 ```tsx
 queue.add({
@@ -84,6 +89,10 @@ To hide the default close button, set `showCloseButton: false` and provide anoth
 ## Timeout progress
 
 `showProgress` displays a decorative countdown when a positive timeout is supplied. The timer pauses while the region is hovered or focused.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastProgressDemo client:load />
+</div>
 
 ```tsx
 queue.add({ title: 'Saved', intent: 'positive', showProgress: true }, { timeout: 8000 });
@@ -151,13 +160,13 @@ Toast callbacks can read `toast`, `isFocused`, and `isFocusVisible`. With custom
 
 Both wrappers inherit React Aria's labeling, global DOM, and `render` props. For the full definitions, see [React Aria Toast](https://react-aria.adobe.com/Toast#api). Common supported props include:
 
-| Prop               | Type     | Default       | Description                              |
-| :----------------- | :------- | :------------ | :--------------------------------------- |
-| `aria-label`       | `string` | Derived label | Accessible name for the toast or region. |
-| `aria-labelledby`  | `string` | -             | References an accessible label.          |
-| `aria-describedby` | `string` | -             | References an accessible description.    |
+| Prop               | Type     | Default                           | Description                                                |
+| :----------------- | :------- | :-------------------------------- | :--------------------------------------------------------- |
+| `aria-label`       | `string` | Localized region count            | Accessible name for ToastRegion.                           |
+| `aria-labelledby`  | `string` | Toast title ID                    | References an accessible label; overrides the Toast title. |
+| `aria-describedby` | `string` | Toast description ID (if present) | References an accessible description.                      |
 
-Without `aria-label`, Toast is named by its title and ToastRegion uses a localized notification count.
+Toast is named by its title through `aria-labelledby`, which takes precedence over `aria-label`. Set `aria-labelledby` to reference another label when needed. ToastRegion uses a localized notification count unless `aria-label` is supplied.
 
 Not passed through unchanged:
 

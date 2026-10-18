@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { UNSTABLE_ToastStateContext as ToastStateContext } from 'react-aria-components';
 import { Button } from '@tradenetcorp/veli-ui/button';
@@ -142,9 +143,40 @@ const contentFromArgs = (
   showProgress: args.showProgress,
 });
 
+const collapsedControlGroups = ['Content', 'State'] as const;
+
+function ToastDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let frame = 0;
+    let attempts = 0;
+    const collapseGroups = () => {
+      const ready = collapsedControlGroups.every((group) =>
+        document.querySelector(`tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`),
+      );
+      if (!ready && attempts++ < 40) {
+        frame = requestAnimationFrame(collapseGroups);
+        return;
+      }
+      collapsedControlGroups.forEach((group) =>
+        document
+          .querySelector(`tr[title^="Hide ${group} item"]`)
+          ?.querySelector<HTMLElement>('[tabindex="0"]')
+          ?.click(),
+      );
+    };
+    collapseGroups();
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return <DocsContainer {...props} />;
+}
+
 const meta = {
   title: 'Components/Toast',
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'padded',
+    controls: { sort: 'none' },
+    docs: { container: ToastDocsContainer },
+  },
   tags: ['autodocs'],
   argTypes: {
     appearance: { control: 'select', options: appearances, table: { category: 'Appearance' } },
@@ -169,10 +201,10 @@ const meta = {
     },
   },
   args: {
-    title: toastText.en.title,
-    description: toastText.en.description,
     appearance: 'outline',
     intent: 'neutral',
+    title: toastText.en.title,
+    description: toastText.en.description,
     placement: 'bottom-end',
     showCloseButton: true,
     showProgress: false,
@@ -188,7 +220,7 @@ export const Default: Story = {
     const queue = useToastQueue();
     const content = contentFromArgs(args, text);
     return (
-      <div className="flex w-full max-w-sm flex-col items-start gap-4">
+      <div className="mx-auto flex w-full max-w-sm flex-col items-start gap-4">
         <ToastPreview content={content} />
         {args.showProgress ? (
           <p className="type-body-sm-regular text-base-muted">{text.progressHint}</p>
@@ -207,7 +239,7 @@ export const Appearances: Story = {
   render: function AppearancesStory(args) {
     const text = useToastText();
     return (
-      <div className="grid w-full max-w-5xl gap-6 md:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-6 md:grid-cols-3">
         {appearances.map((appearance) => (
           <div key={appearance} className="flex flex-col gap-3">
             <p className="type-body-sm-medium text-base-muted">{text.appearance[appearance]}</p>
@@ -224,7 +256,7 @@ export const Intents: Story = {
   render: function IntentsStory(args) {
     const text = useToastText();
     return (
-      <div className="grid w-full max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-6 md:grid-cols-2 lg:grid-cols-3">
         {intents.map((intent) => (
           <div key={intent} className="flex flex-col gap-3">
             <p className="type-body-sm-medium text-base-muted">{text.intent[intent]}</p>
@@ -256,7 +288,7 @@ export const WithActions: Story = {
       [text],
     );
     return (
-      <div className="flex w-full max-w-5xl flex-col items-start gap-4">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-4">
         <div className="grid w-full gap-6 md:grid-cols-3">
           <div className="flex flex-col gap-3" data-example="undo">
             <p className="type-body-sm-medium text-base-muted">{text.undo}</p>
