@@ -62,17 +62,19 @@ export type TabsOverflowItem = Pick<
 >;
 
 function getTabsItemLinkProps(item: TabsItem | TabsOverflowItem): TabsItemLinkProps {
-  return {
-    href: item.href,
-    hrefLang: item.hrefLang,
-    target: item.target,
-    rel: item.rel,
-    download: item.download,
-    ping: item.ping,
-    referrerPolicy: item.referrerPolicy,
-    routerOptions: item.routerOptions,
-    render: item.render,
-  };
+  const linkProps: TabsItemLinkProps = {};
+
+  if (item.href != null) linkProps.href = item.href;
+  if (item.hrefLang != null) linkProps.hrefLang = item.hrefLang;
+  if (item.target != null) linkProps.target = item.target;
+  if (item.rel != null) linkProps.rel = item.rel;
+  if (item.download != null) linkProps.download = item.download;
+  if (item.ping != null) linkProps.ping = item.ping;
+  if (item.referrerPolicy != null) linkProps.referrerPolicy = item.referrerPolicy;
+  if (item.routerOptions != null) linkProps.routerOptions = item.routerOptions;
+  if (item.render != null) linkProps.render = item.render;
+
+  return linkProps;
 }
 
 export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'> {
@@ -86,16 +88,24 @@ export interface TabsProps extends Omit<AriaTabsProps, 'children' | 'className'>
   panelClassName?: string;
 }
 
+// Pin with start-0 so the underline flushes the trigger padding box (including
+// narrow/scroll layouts). RAC SharedElement animates translate/width between tabs.
 const tabSelectionIndicatorClassName =
-  'absolute -bottom-1 left-0 h-0.5 w-full rounded-sm bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
+  'absolute -bottom-1 start-0 h-0.5 w-full bg-tabs-border-active motion-safe:transition-[translate,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none';
 
 const tabBaseClassName =
-  'relative mb-0.5 inline-flex cursor-pointer items-center gap-2 rounded-lg whitespace-nowrap text-base-default antialiased transition-colors duration-normal ease-in-out outline-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-icon-base';
+  'relative mb-0.5 inline-flex cursor-pointer items-center rounded-lg whitespace-nowrap text-base-default antialiased outline-none motion-safe:transition-colors motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-icon-base';
 
 const tabSizeClassName: Record<TabsSize, string> = {
-  sm: 'px-3.5 py-2',
-  md: 'px-4 py-2.5',
-  lg: 'px-4 py-2.5',
+  sm: 'p-2',
+  md: 'px-2 py-2.5',
+  lg: 'px-2 py-2.5',
+};
+
+const tabLabelPaddingClassName: Record<TabsSize, string> = {
+  sm: 'px-1.5',
+  md: 'px-2',
+  lg: 'px-2',
 };
 
 const tabLabelTypeClassName: Record<
@@ -122,8 +132,42 @@ const tabLabelTypeClassName: Record<
 const hiddenTabClassName =
   'pointer-events-none absolute h-px w-px overflow-hidden border-0 p-0 opacity-0 [-webkit-clip-path:inset(50%)] [clip-path:inset(50%)]';
 
+const tabBarScrollClassName =
+  // overflow-x-auto also forces vertical overflow to auto. Focus rings use
+  // ring-inset so they stay inside the tab and are not clipped by the scrollport.
+  'w-full max-w-full overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-safe:scroll-smooth';
+
+const tabBarUnderlineClassName =
+  'relative inline-flex w-max items-end border-b-2 border-tabs-border-inactive';
+
 const tabLabelGridClassName =
   'inline-grid justify-items-center [&>*]:col-start-1 [&>*]:row-start-1';
+
+const tabsOverflowDefaultLabels = {
+  en: 'More',
+  dv: 'އިތުރު',
+} as const;
+
+function getFirstEnabledTabId(
+  items: readonly TabsItem[],
+  overflowItems?: readonly TabsItem[],
+): string | number {
+  for (const item of items) {
+    if (!item.isDisabled) {
+      return item.id;
+    }
+  }
+
+  if (overflowItems) {
+    for (const item of overflowItems) {
+      if (!item.isDisabled) {
+        return item.id;
+      }
+    }
+  }
+
+  return items[0].id;
+}
 
 function TabLabel({
   children,
@@ -137,7 +181,7 @@ function TabLabel({
   const type = tabLabelTypeClassName[size];
 
   return (
-    <span className={tabLabelGridClassName}>
+    <span className={twMerge(tabLabelGridClassName, tabLabelPaddingClassName[size])}>
       <span aria-hidden="true" className={twMerge('invisible inline-block', type.reserve)}>
         {children}
       </span>
@@ -150,6 +194,25 @@ function TabLabel({
       >
         {children}
       </span>
+    </span>
+  );
+}
+
+function TabSlot({
+  children,
+  placement = 'leading',
+}: {
+  children: React.ReactNode;
+  placement?: 'leading' | 'trailing';
+}) {
+  return (
+    <span
+      className={twMerge(
+        'inline-flex shrink-0 items-center',
+        placement === 'trailing' ? 'px-0.5' : 'p-0.5',
+      )}
+    >
+      {children}
     </span>
   );
 }
@@ -174,42 +237,31 @@ function measureTabBarIndicatorPosition(
   };
 }
 
-function useTabBarIndicatorPosition({
+/** Underline for the overflow More trigger (not a RAC Tab, so no SelectionIndicator). */
+function useOverflowIndicatorPosition({
   containerRef,
-  selectedKey,
-  overflowItemIds,
-  tabElementsRef,
   overflowTriggerRef,
+  isActive,
   version,
 }: {
   containerRef: React.RefObject<HTMLElement | null>;
-  selectedKey: string | number | null;
-  overflowItemIds: ReadonlySet<string | number>;
-  tabElementsRef: React.MutableRefObject<Map<string | number, HTMLElement>>;
   overflowTriggerRef: React.MutableRefObject<HTMLElement | null>;
+  isActive: boolean;
   version: number;
 }) {
   const [position, setPosition] = React.useState<TabIndicatorPosition | null>(null);
 
   const measure = React.useCallback(() => {
     const container = containerRef.current;
-    if (!container || selectedKey == null) {
-      setPosition(null);
-      return false;
-    }
-
-    const target = overflowItemIds.has(selectedKey)
-      ? overflowTriggerRef.current
-      : tabElementsRef.current.get(selectedKey);
-
-    if (!target) {
+    const target = overflowTriggerRef.current;
+    if (!container || !isActive || !target) {
       setPosition(null);
       return false;
     }
 
     setPosition(measureTabBarIndicatorPosition(container, target));
     return true;
-  }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef]);
+  }, [containerRef, isActive, overflowTriggerRef]);
   const measureRef = React.useRef(measure);
 
   React.useLayoutEffect(() => {
@@ -221,6 +273,10 @@ function useTabBarIndicatorPosition({
   }, [measure, version]);
 
   React.useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+
     let frame = 0;
     let attempts = 0;
     const runMeasure = () => measureRef.current();
@@ -239,18 +295,13 @@ function useTabBarIndicatorPosition({
     }
 
     const container = containerRef.current;
+    const target = overflowTriggerRef.current;
     if (!container) {
       return () => cancelAnimationFrame(frame);
     }
 
     const resizeObserver = new ResizeObserver(runMeasure);
     resizeObserver.observe(container);
-
-    const target = overflowItemIds.has(selectedKey ?? '')
-      ? overflowTriggerRef.current
-      : selectedKey != null
-        ? tabElementsRef.current.get(selectedKey)
-        : null;
     if (target) {
       resizeObserver.observe(target);
     }
@@ -262,32 +313,26 @@ function useTabBarIndicatorPosition({
       resizeObserver.disconnect();
       window.removeEventListener('resize', runMeasure);
     };
-  }, [containerRef, overflowItemIds, overflowTriggerRef, selectedKey, tabElementsRef, version]);
+  }, [containerRef, isActive, overflowTriggerRef, version]);
 
   return position;
 }
 
-function TabsBarIndicator({
+function TabsOverflowIndicator({
   containerRef,
-  selectedKey,
-  overflowItemIds,
-  tabElementsRef,
   overflowTriggerRef,
+  isActive,
   version,
 }: {
   containerRef: React.RefObject<HTMLElement | null>;
-  selectedKey: string | number | null;
-  overflowItemIds: ReadonlySet<string | number>;
-  tabElementsRef: React.MutableRefObject<Map<string | number, HTMLElement>>;
   overflowTriggerRef: React.MutableRefObject<HTMLElement | null>;
+  isActive: boolean;
   version: number;
 }) {
-  const position = useTabBarIndicatorPosition({
+  const position = useOverflowIndicatorPosition({
     containerRef,
-    selectedKey,
-    overflowItemIds,
-    tabElementsRef,
     overflowTriggerRef,
+    isActive,
     version,
   });
 
@@ -298,10 +343,10 @@ function TabsBarIndicator({
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute -bottom-0.5 left-0 h-0.5 rounded-sm bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
+      className="pointer-events-none absolute -bottom-0.5 h-0.5 bg-tabs-border-active motion-safe:transition-[left,width] motion-safe:duration-normal motion-safe:ease-in-out motion-reduce:transition-none"
       style={{
-        width: position.width,
         left: position.x,
+        width: position.width,
       }}
     />
   );
@@ -328,7 +373,7 @@ function getTabClassName(
     options?.isHovered && 'bg-tabs-hover',
     options?.isPressed && 'bg-tabs-pressed',
     isSelected && '[&_svg]:text-icon-base-strong',
-    options?.isFocusVisible && 'ring-2 ring-border-focus ring-offset-2',
+    options?.isFocusVisible && 'ring-2 ring-inset ring-border-focus',
     options?.tabClassName,
   );
 }
@@ -346,6 +391,11 @@ export interface TabsOverflowProps {
   triggerRef?: React.Ref<HTMLButtonElement>;
 }
 
+/**
+ * Overflow "More" trigger used by `Tabs` when `overflowItems` are provided.
+ * Prefer configuring overflow through `Tabs`; this export is for advanced
+ * composition inside an active React Aria tab list state.
+ */
 export function TabsOverflow({
   items,
   selectedKey: selectedKeyProp,
@@ -358,10 +408,11 @@ export function TabsOverflow({
   popoverClassName,
   triggerRef,
 }: TabsOverflowProps) {
-  const { direction, lang } = useVeliLanguage();
+  const { direction, language, lang } = useVeliLanguage();
   const state = React.useContext(TabListStateContext);
   const selectedKey = selectedKeyProp ?? state?.selectedKey ?? null;
-  const defaultLabel = direction === 'rtl' ? 'އިތުރު' : 'More';
+  const defaultLabel =
+    tabsOverflowDefaultLabels[language === 'dv' ? 'dv' : 'en'] ?? tabsOverflowDefaultLabels.en;
   const selectTab =
     onSelectTab ??
     (state
@@ -396,12 +447,14 @@ export function TabsOverflow({
           }
         >
           {isSelected && selectedOverflowItem.leading ? (
-            <span className="shrink-0">{selectedOverflowItem.leading}</span>
+            <TabSlot>{selectedOverflowItem.leading}</TabSlot>
           ) : null}
           <TabLabel isSelected={isSelected} size={size}>
             {triggerLabel}
           </TabLabel>
-          <CaretDownIcon aria-hidden="true" size={16} />
+          <TabSlot>
+            <CaretDownIcon aria-hidden="true" size={16} />
+          </TabSlot>
         </AriaButton>
         <MenuPopover className={popoverClassName}>
           <Menu
@@ -439,13 +492,11 @@ function TabItem({
   item,
   size,
   tabClassName,
-  showSelectionIndicator = true,
   onTabElementChange,
 }: {
   item: TabsItem | TabsOverflowItem;
   size: TabsSize;
   tabClassName?: string;
-  showSelectionIndicator?: boolean;
   onTabElementChange?: (id: string | number, element: HTMLElement | null) => void;
 }) {
   const tabElementRef = React.useCallback(
@@ -474,14 +525,12 @@ function TabItem({
     >
       {(state) => (
         <>
-          {item.leading ? <span className="shrink-0">{item.leading}</span> : null}
+          {item.leading ? <TabSlot>{item.leading}</TabSlot> : null}
           <TabLabel isSelected={state.isSelected} size={size}>
             {item.label}
           </TabLabel>
-          {item.trailing ? <span className="shrink-0">{item.trailing}</span> : null}
-          {showSelectionIndicator ? (
-            <SelectionIndicator className={tabSelectionIndicatorClassName} />
-          ) : null}
+          {item.trailing ? <TabSlot placement="trailing">{item.trailing}</TabSlot> : null}
+          <SelectionIndicator className={tabSelectionIndicatorClassName} />
         </>
       )}
     </AriaTab>
@@ -514,7 +563,9 @@ export function Tabs({
   ...props
 }: TabsProps) {
   const veliRouter = useVeliRouter();
-  const [uncontrolledKey, setUncontrolledKey] = React.useState(defaultSelectedKey ?? items[0].id);
+  const [uncontrolledKey, setUncontrolledKey] = React.useState(
+    () => defaultSelectedKey ?? getFirstEnabledTabId(items, overflowItems),
+  );
   const isControlled = selectedKeyProp !== undefined;
   const currentSelectedKey = isControlled ? selectedKeyProp : uncontrolledKey;
 
@@ -540,6 +591,7 @@ export function Tabs({
     () => new Set(overflowItems?.map((item) => item.id) ?? []),
     [overflowItems],
   );
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const tabBarRef = React.useRef<HTMLDivElement>(null);
   const tabElementsRef = useLazyRef(() => new Map<string | number, HTMLElement>());
   const overflowTriggerRef = React.useRef<HTMLElement | null>(null);
@@ -562,6 +614,37 @@ export function Tabs({
     setIndicatorVersion((version) => version + 1);
   }, []);
 
+  React.useEffect(() => {
+    if (currentSelectedKey == null) {
+      return;
+    }
+
+    const container = scrollContainerRef.current;
+    const target = overflowItemIds.has(currentSelectedKey)
+      ? overflowTriggerRef.current
+      : tabElementsRef.current.get(currentSelectedKey);
+
+    if (!container || !target) {
+      return;
+    }
+
+    // Scroll only the horizontal strip so the document's vertical position is unchanged
+    // (e.g. Storybook Docs must not jump on mount). Align to the padded client area.
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const styles = getComputedStyle(container);
+    const padStart = Number.parseFloat(styles.paddingLeft) || 0;
+    const padEnd = Number.parseFloat(styles.paddingRight) || 0;
+    const overflowStart = targetRect.left - (containerRect.left + padStart);
+    const overflowEnd = targetRect.right - (containerRect.right - padEnd);
+
+    if (overflowStart < 0) {
+      container.scrollBy({ left: overflowStart });
+    } else if (overflowEnd > 0) {
+      container.scrollBy({ left: overflowEnd });
+    }
+  }, [currentSelectedKey, overflowItemIds, tabElementsRef, indicatorVersion]);
+
   const navigateLinkTab = React.useCallback(
     (href: string, routerOptions: Parameters<NonNullable<typeof veliRouter>['navigate']>[1]) => {
       veliRouter?.navigate(href, routerOptions);
@@ -576,35 +659,6 @@ export function Tabs({
       });
     },
     [allPanelItems, handleSelectionChange, veliRouter],
-  );
-
-  const tabList = (
-    <AriaTabList
-      aria-label={listAriaLabel}
-      className={twMerge('flex', hasOverflow && 'inline-flex max-w-full', tabListClassName)}
-    >
-      {items.map((item) => (
-        <TabItem
-          key={item.id}
-          item={item}
-          size={size}
-          tabClassName={tabClassName}
-          showSelectionIndicator={!hasOverflow}
-          onTabElementChange={handleTabElementChange}
-        />
-      ))}
-      {overflowItems?.map((item) => (
-        <AriaTab
-          key={item.id}
-          id={item.id}
-          isDisabled={item.isDisabled}
-          className={hiddenTabClassName}
-          {...getTabsItemLinkProps(item)}
-        >
-          {item.label}
-        </AriaTab>
-      ))}
-    </AriaTabList>
   );
 
   const panels = allPanelItems.map((item) => {
@@ -633,62 +687,56 @@ export function Tabs({
     onSelectionChange: handleSelectionChange,
   };
 
-  const tree = !hasOverflow ? (
+  const tree = (
     <AriaTabs {...tabsProps} className={twMerge('w-full', className)}>
-      <AriaTabList
-        aria-label={listAriaLabel}
-        className={twMerge('flex border-b-2 border-tabs-border-inactive', tabListClassName)}
-      >
-        {items.map((item) => (
-          <TabItem key={item.id} item={item} size={size} tabClassName={tabClassName} />
-        ))}
-      </AriaTabList>
+      <div ref={scrollContainerRef} className={tabBarScrollClassName}>
+        <div ref={tabBarRef} className={twMerge(tabBarUnderlineClassName, tabListClassName)}>
+          <AriaTabList aria-label={listAriaLabel} className="inline-flex">
+            {items.map((item) => (
+              <TabItem
+                key={item.id}
+                item={item}
+                size={size}
+                tabClassName={tabClassName}
+                onTabElementChange={handleTabElementChange}
+              />
+            ))}
+            {overflowItems?.map((item) => (
+              <AriaTab
+                key={item.id}
+                id={item.id}
+                // Keep overflow tabs in the collection for panels/selection, but
+                // exclude them from keyboard navigation; the More menu selects them.
+                isDisabled
+                aria-hidden="true"
+                className={hiddenTabClassName}
+                {...getTabsItemLinkProps(item)}
+              >
+                {item.label}
+              </AriaTab>
+            ))}
+          </AriaTabList>
+          {hasOverflow ? (
+            <TabsOverflow
+              items={overflowItems}
+              selectedKey={currentSelectedKey}
+              onSelectTab={handleSelectionChange}
+              size={size}
+              triggerRef={handleOverflowTriggerChange}
+            />
+          ) : null}
+          {hasOverflow ? (
+            <TabsOverflowIndicator
+              containerRef={tabBarRef}
+              overflowTriggerRef={overflowTriggerRef}
+              isActive={currentSelectedKey != null && overflowItemIds.has(currentSelectedKey)}
+              version={indicatorVersion}
+            />
+          ) : null}
+        </div>
+      </div>
       {panels}
     </AriaTabs>
-  ) : (
-    <div className={twMerge('flex w-full flex-col', className)}>
-      <div
-        ref={tabBarRef}
-        className={twMerge(
-          'relative inline-flex max-w-full items-end border-b-2 border-tabs-border-inactive',
-          tabListClassName,
-        )}
-      >
-        <AriaTabs {...tabsProps} className="contents">
-          {tabList}
-        </AriaTabs>
-        <TabsOverflow
-          items={overflowItems}
-          selectedKey={currentSelectedKey}
-          onSelectTab={handleSelectionChange}
-          size={size}
-          triggerRef={handleOverflowTriggerChange}
-        />
-        <TabsBarIndicator
-          containerRef={tabBarRef}
-          selectedKey={currentSelectedKey}
-          overflowItemIds={overflowItemIds}
-          tabElementsRef={tabElementsRef}
-          overflowTriggerRef={overflowTriggerRef}
-          version={indicatorVersion}
-        />
-      </div>
-      <AriaTabs {...tabsProps} className="w-full">
-        <AriaTabList aria-label={listAriaLabel} className={hiddenTabClassName}>
-          {allPanelItems.map((item) => (
-            <AriaTab
-              key={item.id}
-              id={item.id}
-              isDisabled={item.isDisabled}
-              {...getTabsItemLinkProps(item)}
-            >
-              {item.label}
-            </AriaTab>
-          ))}
-        </AriaTabList>
-        {panels}
-      </AriaTabs>
-    </div>
   );
 
   // React Aria resets selection for href tabs; wrap with a router that re-applies
