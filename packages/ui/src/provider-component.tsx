@@ -37,7 +37,7 @@ export function VeliProvider({
     [navigate, useHref],
   );
 
-  useSyncThemeToDocument(resolvedColorScheme, disableTransitionOnChange);
+  useSyncThemeToDocument(colorScheme, resolvedColorScheme, disableTransitionOnChange);
 
   const content = (
     <div
@@ -115,11 +115,13 @@ function getColorSchemeSnapshot(): VeliResolvedColorScheme {
 }
 
 function useSyncThemeToDocument(
+  colorScheme: VeliColorScheme,
   resolvedColorScheme: VeliResolvedColorScheme,
   disableTransitionOnChange: boolean,
 ) {
   React.useLayoutEffect(() => {
-    const resolved = resolvedColorScheme;
+    // Hydration uses the server snapshot; preserve the client's initialized theme.
+    const resolved = colorScheme === 'system' ? getColorSchemeSnapshot() : resolvedColorScheme;
     const isDark = resolved === 'dark';
     const root = document.documentElement;
 
@@ -135,7 +137,7 @@ function useSyncThemeToDocument(
     root.setAttribute('data-theme', resolved);
     root.style.colorScheme = resolved;
     reenable?.();
-  }, [resolvedColorScheme, disableTransitionOnChange]);
+  }, [colorScheme, resolvedColorScheme, disableTransitionOnChange]);
 }
 
 function disableAnimations(): () => void {

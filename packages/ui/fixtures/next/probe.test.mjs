@@ -1,7 +1,8 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import React, { act } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom';
+import { renderToString } from 'react-dom/server';
 import { VeliProvider, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
@@ -87,3 +88,75 @@ test('system theme changes synchronize the Provider, document and portal inherit
     document.documentElement.style.colorScheme = '';
   }
 });
+
+test.each([
+  ['dark system preference', true, null, 'dark'],
+  ['stored dark preference on a light system', false, 'dark', 'dark'],
+  ['stored light preference on a dark system', true, 'light', 'light'],
+])(
+  'system-theme hydration preserves the initialized document theme: %s',
+  async (_label, systemDark, storedTheme, expectedTheme) => {
+    globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+    const previousMatchMedia = window.matchMedia;
+    window.matchMedia = () => ({
+      matches: systemDark,
+      addEventListener() {},
+      removeEventListener() {},
+    });
+    const storageKey = 'veli-color-scheme';
+    const previousStoredTheme = localStorage.getItem(storageKey);
+    if (storedTheme == null) localStorage.removeItem(storageKey);
+    else localStorage.setItem(storageKey, storedTheme);
+    const documentRoot = document.documentElement;
+    const previousClass = documentRoot.getAttribute('class');
+    const previousTheme = documentRoot.getAttribute('data-theme');
+    const previousColorScheme = documentRoot.style.colorScheme;
+    const passiveThemes = [];
+    function HydrationProbe() {
+      React.useEffect(() => {
+        passiveThemes.push(documentRoot.dataset.theme);
+      }, []);
+      return React.createElement('span', null, 'Hydrated content');
+    }
+    const app = React.createElement(
+      VeliProvider,
+      { colorScheme: 'system' },
+      React.createElement(HydrationProbe),
+    );
+    const host = document.createElement('div');
+    document.body.append(host);
+    let root;
+    let themeWrites;
+    try {
+      host.innerHTML = renderToString(app);
+      // Execute the emitted parser initializer before React hydrates the server markup.
+      Function(host.querySelector('script').textContent)();
+      expect(documentRoot.dataset.theme).toBe(expectedTheme);
+      themeWrites = vi.spyOn(documentRoot, 'setAttribute');
+      await act(async () => {
+        root = hydrateRoot(host, app);
+      });
+      const writtenThemes = themeWrites.mock.calls
+        .filter(([attribute]) => attribute === 'data-theme')
+        .map(([, value]) => value);
+      expect(writtenThemes.every((theme) => theme === expectedTheme)).toBe(true);
+      expect(passiveThemes).toEqual([expectedTheme]);
+      expect(documentRoot.dataset.theme).toBe(expectedTheme);
+      expect(documentRoot.classList.contains('dark')).toBe(expectedTheme === 'dark');
+      expect(documentRoot.style.colorScheme).toBe(expectedTheme);
+      expect(host.querySelector('[data-theme]').dataset.theme).toBe(expectedTheme);
+    } finally {
+      if (root) await act(async () => root.unmount());
+      themeWrites?.mockRestore();
+      host.remove();
+      window.matchMedia = previousMatchMedia;
+      if (previousStoredTheme == null) localStorage.removeItem(storageKey);
+      else localStorage.setItem(storageKey, previousStoredTheme);
+      if (previousClass == null) documentRoot.removeAttribute('class');
+      else documentRoot.setAttribute('class', previousClass);
+      if (previousTheme == null) documentRoot.removeAttribute('data-theme');
+      else documentRoot.setAttribute('data-theme', previousTheme);
+      documentRoot.style.colorScheme = previousColorScheme;
+    }
+  },
+);
