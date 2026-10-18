@@ -1,3 +1,9 @@
+## 0.3.1
+
+### Changed
+
+- Align the initial-loading highlight across each notification row with a 1500ms sweep and 500ms rest. Respect light and dark themes, RTL, and reduced motion.
+
 ## 0.3.0
 
 ### Changed

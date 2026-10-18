@@ -312,7 +312,17 @@ export const Paginated: Story = {
 };
 export const Empty: Story = { args: { items: [], unreadCount: 0 } };
 export const EmptyUnread: Story = { args: { items: [], unreadCount: 0, filter: 'unread' } };
-export const Loading: Story = { args: { items: [], unreadCount: 0, isLoading: true } };
+export const Loading: Story = {
+  args: { items: [], unreadCount: 0, isLoading: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Each notification row shares one highlight across its icon and text placeholders: 1500ms sweep, then 500ms rest. Supports light/dark themes, RTL, and static placeholders under reduced motion.',
+      },
+    },
+  },
+};
 export const Error: Story = {
   args: { items: [], error: 'Notifications could not be loaded.', onRetry: () => {} },
 };
