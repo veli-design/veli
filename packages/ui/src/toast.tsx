@@ -17,6 +17,7 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
+import { XIcon } from '@phosphor-icons/react';
 import { Button } from './button.js';
 import { useVeliLanguage } from './provider.js';
 
@@ -51,7 +52,7 @@ const toastIntentClasses = {
 } satisfies Record<ToastAppearance, Record<ToastIntent, string>>;
 
 const toastRegionVariants = cva(
-  'fixed z-50 flex max-h-dvh flex-col gap-2 overflow-y-auto p-4 outline-none',
+  'fixed z-50 flex max-h-dvh flex-col gap-2 overflow-y-auto p-4 outline-none data-[focus-visible]:outline-solid data-[focus-visible]:outline-2 data-[focus-visible]:-outline-offset-4 data-[focus-visible]:outline-border-focus forced-colors:data-[focus-visible]:outline-[Highlight]',
   {
     variants: {
       placement: {
@@ -562,18 +563,7 @@ export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCl
       aria-label={resolvedAriaLabel}
       className={twMerge(toastCloseButtonVariants({ appearance }), className)}
     >
-      <svg
-        aria-hidden="true"
-        className="size-4"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      >
-        <path d="M4 4 12 12" />
-        <path d="M12 4 4 12" />
-      </svg>
+      <XIcon aria-hidden="true" size={16} weight="regular" />
     </AriaButton>
   );
 }

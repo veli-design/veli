@@ -77,26 +77,18 @@ test('placement movement and progress origin mirror with RTL', () => {
   assert.match(html, /aria-label="ނޮޓިފިކޭޝަން ބަންދުކުރޭ"/);
 });
 
-test('duplicate labels, element labels and explicit ids render without duplicate React keys', () => {
-  const errors = [];
-  const previous = console.error;
-  console.error = (...args) => errors.push(args);
-  try {
-    const html = render({
-      actions: [
-        { label: 'Retry' },
-        { label: 'Retry' },
-        { id: 'same', label: h('b', {}, 'Later') },
-        { id: 'same', label: 'Dismiss' },
-        { intent: 'accent', appearance: 'ghost', label: 'Accent' },
-      ],
-    });
-    assert.equal((html.match(/>Retry</g) ?? []).length, 2);
-    assert.match(html, /bg-button-accent/);
-    assert.deepEqual(errors, []);
-  } finally {
-    console.error = previous;
-  }
+test('duplicate labels, element labels and accent actions preserve rendered content', () => {
+  const html = render({
+    actions: [
+      { label: 'Retry' },
+      { label: 'Retry' },
+      { id: 'same', label: h('b', {}, 'Later') },
+      { id: 'same', label: 'Dismiss' },
+      { intent: 'accent', appearance: 'ghost', label: 'Accent' },
+    ],
+  });
+  assert.equal((html.match(/>Retry</g) ?? []).length, 2);
+  assert.match(html, /bg-button-accent/);
 });
 
 test('progress is decorative and only rendered for timed toasts', () => {

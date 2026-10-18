@@ -7,6 +7,7 @@ import { VeliProvider, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
+import { createToastQueue, ToastRegion } from '@tradenetcorp/veli-ui/toast';
 test('published UI resolves and renders without dependency inlining', async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const host = document.createElement('div');
@@ -160,3 +161,54 @@ test.each([
     }
   },
 );
+
+test('Toast actions avoid duplicate client keys for repeated labels and ids', async () => {
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const duplicateKeyWarnings = () =>
+    errors.mock.calls.filter((args) =>
+      args.some((value) => typeof value === 'string' && value.includes('same key')),
+    );
+  try {
+    await act(async () => {
+      root.render(
+        React.createElement('div', null, [
+          React.createElement('span', { key: 'duplicate' }, 'First'),
+          React.createElement('span', { key: 'duplicate' }, 'Second'),
+        ]),
+      );
+    });
+    // React's development client renderer must detect the deliberate duplicate control.
+    expect(duplicateKeyWarnings().length).toBeGreaterThan(0);
+    errors.mockClear();
+    const queue = createToastQueue();
+    queue.add({
+      title: 'Duplicate actions',
+      showCloseButton: false,
+      actions: [
+        { label: 'Retry' },
+        { label: 'Retry' },
+        { id: 'same', label: React.createElement('b', null, 'Later') },
+        { id: 'same', label: 'Dismiss' },
+      ],
+    });
+    await act(async () => {
+      root.render(React.createElement(ToastRegion, { queue }));
+    });
+    const toast = document.querySelector('[role="alertdialog"]');
+    expect(Array.from(toast.querySelectorAll('button'), (button) => button.textContent)).toEqual([
+      'Retry',
+      'Retry',
+      'Later',
+      'Dismiss',
+    ]);
+    expect(duplicateKeyWarnings()).toHaveLength(0);
+  } finally {
+    await act(async () => root.unmount());
+    errors.mockRestore();
+    host.remove();
+  }
+});
