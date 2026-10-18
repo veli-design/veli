@@ -316,6 +316,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Dialog surfaces with dismissal and sizing guidance.',
       },
       {
+        title: 'Popover',
+        slug: 'popover',
+        description: 'Anchored dialog with header, content, footer, intents, and an arrow.',
+      },
+      {
         title: 'Table',
         slug: 'table',
         description: 'Sortable, selectable data tables with Veli styling.',
