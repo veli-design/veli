@@ -15,7 +15,7 @@ import {
   CircleIcon,
   EyeIcon,
   EyeSlashIcon,
-  InfoIcon,
+  WarningCircleIcon,
 } from '@phosphor-icons/react';
 import {
   arePasswordRequirementsMet,
@@ -722,7 +722,7 @@ export function PasswordInput({
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <InfoIcon size={iconSize} weight="fill" />
+                  <WarningCircleIcon size={iconSize} weight="fill" />
                 </div>
               ) : showVisibilityToggle ? (
                 <AriaButton
