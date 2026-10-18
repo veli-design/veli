@@ -1,3 +1,9 @@
+## 0.3.3
+
+### Fixed
+
+- Restore the loading rows' 8px padding, 8px text-bar gaps, and 96px timestamp placeholder to match the supplied reference geometry.
+
 ## 0.3.2
 
 ### Fixed

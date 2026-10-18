@@ -109,10 +109,10 @@ function NotificationSkeletonRow() {
         <clipPath id={clipId}>
           <circle cx="16" cy="20" r="16" />
           <rect x="48" y="8" style={{ width: 'calc(100% - 48px)' }} height="10" rx="5" />
-          <rect x="48" y="28" style={{ width: 'calc((100% - 48px) * 5 / 6)' }} height="10" rx="5" />
-          <rect x="48" y="48" style={{ width: 'calc((100% - 48px) * 2 / 3)' }} height="10" rx="5" />
-          <rect x="48" y="72" width="104" height="8" rx="4" />
-          <rect style={{ x: 'calc(100% - 40px)' }} y="72" width="40" height="8" rx="4" />
+          <rect x="48" y="26" style={{ width: 'calc((100% - 48px) * 5 / 6)' }} height="10" rx="5" />
+          <rect x="48" y="44" style={{ width: 'calc((100% - 48px) * 2 / 3)' }} height="10" rx="5" />
+          <rect x="48" y="68" width="96" height="8" rx="4" />
+          <rect style={{ x: 'calc(100% - 40px)' }} y="68" width="40" height="8" rx="4" />
         </clipPath>
         <linearGradient id={gradientId}>
           <stop offset="0" stopColor="var(--veli-color-white)" stopOpacity="0" />
@@ -156,7 +156,7 @@ function NotificationTraySkeleton() {
         }
       `}</style>
       {Array.from({ length: 3 }, (_, index) => (
-        <div key={index} className="veli-notification-skeleton-item py-4">
+        <div key={index} className="veli-notification-skeleton-item p-2">
           <NotificationSkeletonRow />
         </div>
       ))}
