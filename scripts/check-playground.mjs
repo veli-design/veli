@@ -24,8 +24,13 @@ try {
   for (const name of ['ui', 'tokens']) {
     const source = `${root}/packages/${name}/dist`;
     const backup = `${root}/.cache/playground-check/${name}`;
-    await rename(source, backup);
-    moved.push([source, backup]);
+    try {
+      await rename(source, backup);
+      moved.push([source, backup]);
+    } catch (error) {
+      // A dedicated cold-check runner has never built these packages.
+      if (error.code !== 'ENOENT') throw error;
+    }
   }
   for (const [name, args] of [
     ['veli-web', ['--host', '127.0.0.1', '--port', '4322']],
