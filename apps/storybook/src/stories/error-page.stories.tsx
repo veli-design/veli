@@ -50,6 +50,8 @@ export const NoActions: Story = {
   args: { primaryAction: undefined, secondaryAction: undefined, report: undefined },
 };
 export const Composed: Story = {
+  // The composed footer passes React elements as social icon props.
+  parameters: { docs: { source: { type: 'code' } } },
   render: (args) => {
     const { language } = useVeliLanguage();
     const footer = pageNavigationFooterContent(language);

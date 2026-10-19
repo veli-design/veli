@@ -6,7 +6,11 @@ import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 const meta = {
   title: 'Blocks/Page navigation footer',
   component: PageNavigationFooter,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    // Avoid serializing React 19 development owners inside social icon props.
+    docs: { source: { type: 'code' } },
+  },
   // Keep localized defaults in render so only explicit controls override them.
   args: { label: undefined },
   render: (args) => {
