@@ -66,6 +66,9 @@ importers:
       prettier-plugin-astro:
         specifier: ^0.14.1
         version: 0.14.1
+      semver:
+        specifier: 7.7.3
+        version: 7.7.3
       turbo:
         specifier: ^2.10.7
         version: 2.10.7
