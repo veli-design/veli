@@ -3,6 +3,10 @@ import path from 'node:path';
 
 import { extractReleaseContent } from './changeset-format.mjs';
 
+export function createReleaseReadme(readme, releaseContent, version) {
+  return `## What's new in ${version}\n\n${releaseContent.trim()}\n\n---\n\n${readme}`;
+}
+
 export async function withReleaseReadmes(packages, publish) {
   const originals = new Map();
 
@@ -29,7 +33,10 @@ export async function withReleaseReadmes(packages, publish) {
 
       const original = await fs.readFile(readmePath, 'utf8');
       originals.set(readmePath, original);
-      await fs.writeFile(readmePath, releaseContent);
+      await fs.writeFile(
+        readmePath,
+        createReleaseReadme(original, releaseContent, pkg.packageJson.version),
+      );
     }
 
     return await publish();

@@ -272,7 +272,7 @@ export function ComboBoxItem<T extends object = object>({
 
   warnDev(
     Boolean(resolvedTextValue),
-    'Coral UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
+    'Veli UI: ComboBoxItem with complex content requires textValue or aria-label so the option has reliable accessible text.',
   );
 
   return (
