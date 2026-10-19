@@ -1,7 +1,7 @@
 {
   "id": "site-header",
   "title": "Site header",
-  "version": "0.4.2",
+  "version": "0.4.5",
   "status": "experimental",
   "description": "Scroll-aware site header with official banner, language and theme controls, mobile menu, and an embedded app switcher.",
   "files": [

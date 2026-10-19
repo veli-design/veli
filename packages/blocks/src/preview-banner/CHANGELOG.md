@@ -1,3 +1,16 @@
+## 0.1.2
+
+### Changed
+
+- Match the updated mobile Draft preview layout from Figma: ping with title and status on the first row, message beside a hug-width secondary exit on the second, `p-3.5` / `gap-2` / `rounded-4xl` below `lg`.
+- Use the secondary transparent exit action on desktop as well as mobile.
+- Use a bold SignOut icon and align banner type/color tokens with Figma (title strong, message subtle).
+- Use Badge `md` for the status label so height and Body/sm type match Figma.
+
+### Fixed
+
+- Keep the status ping in a fixed 24px wrapper so layout cannot expand the ping fill, and keep it outside truncating overflow so the ripple is not cut off.
+
 ## 0.1.1
 
 ### Fixed

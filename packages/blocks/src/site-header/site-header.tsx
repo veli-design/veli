@@ -172,10 +172,12 @@ function HeaderLogoButton({
   return (
     <AriaButton
       data-header-logo=""
-      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer items-center bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+        title ? 'items-center' : 'items-start'
+      } ${
         isFloating
-          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-2.5 lg:gap-[26px]' : 'shrink-0 gap-2'}`
-          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-2 lg:gap-3' : 'shrink-0 gap-2'}`
+          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
+          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
       }`}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
@@ -202,7 +204,7 @@ function HeaderLogoButton({
             className={`text-text-base-emphasis line-clamp-2 min-w-0 text-start transition-[max-width,font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
               isFloating
                 ? 'type-body-md-medium max-w-40 leading-[1.5] sm:max-w-52 xl:max-w-[242px]'
-                : 'type-body-sm-medium text-text-base-strong max-w-28 leading-tight sm:max-w-40 xl:max-w-[220px]'
+                : 'type-caption-medium max-w-[184px] leading-[1.34] tracking-[0.18px] lg:type-body-md-medium lg:max-w-[242px] lg:leading-[1.5] lg:tracking-normal'
             }`}
             aria-hidden
           >
@@ -215,7 +217,11 @@ function HeaderLogoButton({
         </span>
       )}
       <motion.span
-        className="text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center"
+        // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
+        // Use margin so this does not fight the rotate transform.
+        className={`text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center ${
+          title ? '' : '-mt-1.5'
+        }`}
         animate={{
           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
         }}

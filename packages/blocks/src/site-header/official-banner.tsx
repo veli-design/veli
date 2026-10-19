@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef } from 'react';
 import { BankIcon, CaretDownIcon, LockSimpleIcon } from '@phosphor-icons/react';
+import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { motion } from 'motion/react';
 
 import { HeaderLanguageMenu, type SiteHeaderLanguageOption } from './header-controls';
@@ -127,32 +128,32 @@ export function OfficialWebsiteBanner({
         inert={!expanded || undefined}
         aria-hidden={!expanded || undefined}
       >
-        <div
-          ref={detailsRef}
-          className="grid gap-6 px-4 pt-5 pb-4 md:grid-cols-2 md:gap-14 md:px-8"
-        >
-          <div className="flex gap-2">
-            <BankIcon className="text-icon-base-emphasis size-6 shrink-0" aria-hidden />
-            <div className="flex min-w-0 flex-col gap-1">
-              <p className="type-body-md-semibold text-text-base-emphasis">
-                {labels.officialLinksTitle}
-              </p>
-              <p className="type-body-md-regular text-text-base">
-                {labels.officialLinksDescription}
-              </p>
+        <div ref={detailsRef} className="flex flex-col gap-6 px-4 pt-6 md:px-8">
+          <div className="grid gap-6 pb-4 md:grid-cols-2 md:gap-14">
+            <div className="flex gap-2">
+              <BankIcon className="text-icon-primary size-6 shrink-0" aria-hidden />
+              <div className="flex min-w-0 flex-col gap-1">
+                <p className="type-body-md-semibold text-text-base-emphasis">
+                  {labels.officialLinksTitle}
+                </p>
+                <p className="type-body-md-regular text-text-base-strong">
+                  {labels.officialLinksDescription}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <LockSimpleIcon className="text-accent-500 size-6 shrink-0" aria-hidden />
+              <div className="flex min-w-0 flex-col gap-1">
+                <p className="type-body-md-semibold text-text-base-emphasis">
+                  {labels.secureWebsitesTitle}
+                </p>
+                <p className="type-body-md-regular text-text-base-strong">
+                  {labels.secureWebsitesDescription}
+                </p>
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <LockSimpleIcon className="text-icon-base-emphasis size-6 shrink-0" aria-hidden />
-            <div className="flex min-w-0 flex-col gap-1">
-              <p className="type-body-md-semibold text-text-base-emphasis">
-                {labels.secureWebsitesTitle}
-              </p>
-              <p className="type-body-md-regular text-text-base">
-                {labels.secureWebsitesDescription}
-              </p>
-            </div>
-          </div>
+          <Divider appearance="subtle" className="w-full" />
         </div>
       </motion.div>
     </motion.aside>

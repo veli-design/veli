@@ -33,12 +33,20 @@ const dotFill = {
 function StatusDot({ previewStatus }: { previewStatus?: PreviewBannerNotice['previewStatus'] }) {
   const color = dotFill[previewStatus ?? 'none'];
   return (
-    <div data-preview-dot="" aria-hidden="true" className="relative flex-none rounded-full p-1">
-      {/* Ping scales from the padded box (same as gov.mv), not the size-2 center. */}
-      <div
-        className={`absolute inset-0 rounded-full opacity-30 motion-safe:animate-ping motion-safe:[animation-duration:2s] ${color}`}
-      />
-      <div className={`relative size-2 rounded-full ${color}`} />
+    // Figma icon-wrapper is 24px; inner 16px box drives the ping scale.
+    <div
+      data-preview-dot=""
+      aria-hidden="true"
+      className="relative grid size-6 shrink-0 place-items-center"
+    >
+      <div className="relative size-4">
+        <div
+          className={`absolute inset-0 rounded-full opacity-30 motion-safe:animate-ping motion-safe:[animation-duration:2s] ${color}`}
+        />
+        <div
+          className={`absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${color}`}
+        />
+      </div>
     </div>
   );
 }
@@ -64,37 +72,31 @@ function ExitPreviewButton({
       size="sm"
       className={className}
     >
-      <SignOutIcon size={16} weight="regular" aria-hidden="true" />
+      <SignOutIcon size={16} weight="bold" aria-hidden="true" />
       {action.label}
     </Button>
   );
 }
 
-function NoticeMeta({ notice }: { notice: PreviewBannerNotice }) {
+function StatusBadge({ notice }: { notice: PreviewBannerNotice }) {
+  if (!notice.statusLabel) return null;
   return (
-    <div className="flex w-full min-w-0 flex-1 items-center gap-3 overflow-hidden">
-      <p className="type-body-lg-medium text-text-base-strong shrink-0 truncate">{notice.title}</p>
-      {notice.statusLabel ? (
-        <>
-          <span aria-hidden="true" className="bg-border-base-muted h-3 w-px shrink-0" />
-          <Badge
-            size="sm"
-            appearance="outline"
-            intent={
-              notice.previewStatus === 'published'
-                ? 'positive'
-                : notice.previewStatus === 'draft'
-                  ? 'warning'
-                  : 'neutral'
-            }
-          >
-            {notice.statusLabel}
-          </Badge>
-        </>
-      ) : null}
-      <span aria-hidden="true" className="bg-border-base-muted h-3 w-px shrink-0" />
-      <p className="type-body-lg-regular text-text-base-muted min-w-0 truncate">{notice.message}</p>
-    </div>
+    <>
+      <span aria-hidden="true" className="bg-border-base-subtle h-3 w-px shrink-0" />
+      <Badge
+        size="md"
+        appearance="outline"
+        intent={
+          notice.previewStatus === 'published'
+            ? 'positive'
+            : notice.previewStatus === 'draft'
+              ? 'warning'
+              : 'neutral'
+        }
+      >
+        {notice.statusLabel}
+      </Badge>
+    </>
   );
 }
 
@@ -103,28 +105,41 @@ function PreviewBannerCard({ notice }: { notice: PreviewBannerNotice }) {
   let actions: ReactNode = null;
   if (action) {
     actions = (
-      <>
-        <ExitPreviewButton
-          action={action}
-          intent="secondary"
-          appearance="transparent"
-          className="lg:hidden"
-        />
-        <ExitPreviewButton action={action} intent="accent" className="hidden lg:inline-flex" />
-      </>
+      <ExitPreviewButton
+        action={action}
+        intent="secondary"
+        appearance="transparent"
+        className="shrink-0"
+      />
     );
   }
 
   return (
-    // Width and edge offset match the floating header pill in site-header / gov.mv.
+    // Mobile (Figma 7974:120715): [ping · Preview · Draft] / [message · Exit].
+    // Desktop: single horizontal pill. Width matches the floating header pill.
     <aside
       aria-label={notice.title}
       data-preview-banner={notice.id}
-      className="bg-surface-raised text-text-base-strong pointer-events-auto flex w-[calc(100%-1rem)] max-w-[1464px] flex-col items-stretch gap-3 rounded-[2.625rem] p-3 shadow-lg lg:w-[calc(100%-4rem)] lg:flex-row lg:items-center"
+      className="bg-surface-raised text-base-strong pointer-events-auto flex w-[calc(100%-1rem)] max-w-[1464px] flex-col items-stretch gap-2 overflow-visible rounded-4xl p-3.5 shadow-lg lg:w-[calc(100%-4rem)] lg:flex-row lg:items-center lg:gap-3 lg:rounded-[2.625rem] lg:p-3"
     >
-      <StatusDot previewStatus={notice.previewStatus} />
-      <NoticeMeta notice={notice} />
-      {actions}
+      <div className="flex w-full min-w-0 items-center gap-3 lg:contents">
+        <StatusDot previewStatus={notice.previewStatus} />
+        <p className="type-body-lg-medium text-base-strong shrink-0 truncate">{notice.title}</p>
+        <StatusBadge notice={notice} />
+        <span
+          aria-hidden="true"
+          className="bg-border-base-subtle hidden h-3 w-px shrink-0 lg:block"
+        />
+        <p className="type-body-lg-regular text-base-subtle hidden min-w-0 flex-1 truncate lg:block">
+          {notice.message}
+        </p>
+      </div>
+      <div className="flex w-full min-w-0 items-center gap-2 lg:contents">
+        <p className="type-body-lg-regular text-base-subtle min-w-0 flex-1 lg:hidden">
+          {notice.message}
+        </p>
+        {actions}
+      </div>
     </aside>
   );
 }

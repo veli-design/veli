@@ -42,7 +42,7 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 Notice actions use a native `Button as="a"` so exiting draft preview stays a full document navigation (for example clearing a server-side preview cookie). Supply translated labels and fully resolved URLs.
 
-`previewStatus` of `draft` or `published` drives the outline status badge intent (`warning` / `positive`) and pulsing indicator color. Omit it for a neutral indicator. Exit actions render with a SignOut icon: accent fill from the `lg` breakpoint up, secondary subtle below.
+`previewStatus` of `draft` or `published` drives the outline status badge intent (`warning` / `positive`) and pulsing indicator color. Omit it for a neutral indicator. Exit actions render with a SignOut icon and secondary transparent (subtle) styling at every breakpoint. On small screens the card stacks ping/title/status above a message + exit row; from `lg` it is a single horizontal pill.
 
 ## Host adapter pattern
 

@@ -1,3 +1,22 @@
+## 0.4.5
+
+### Fixed
+
+- Align the official banner expanded panel with Figma: Body/md strong copy, 24px header-to-details gap, primary/accent detail icons, and a bottom subtle divider.
+
+## 0.4.4
+
+### Fixed
+
+- Match ministry logo-trigger spacing and title type to Figma: 12/16px gaps, caption on small screens and Body/md at 242px on desktop.
+- Use teal-500 for the “You are here” tile ring, add the idle tile subtle border, set the info-panel title to default text color, and tighten the switcher content gap/padding to 16px.
+
+## 0.4.3
+
+### Fixed
+
+- Align the app-switcher trigger caret to the wordmark x-height (not the full glyph box), so descenders like in gov.mv do not pull the caret low.
+
 ## 0.4.2
 
 ### Fixed
