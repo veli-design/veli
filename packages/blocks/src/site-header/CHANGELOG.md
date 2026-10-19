@@ -1,3 +1,41 @@
+## 0.4.5
+
+### Fixed
+
+- Align the official banner expanded panel with Figma: Body/md strong copy, 24px header-to-details gap, primary/accent detail icons, and a bottom subtle divider.
+
+## 0.4.4
+
+### Fixed
+
+- Match ministry logo-trigger spacing and title type to Figma: 12/16px gaps, caption on small screens and Body/md at 242px on desktop.
+- Use teal-500 for the “You are here” tile ring, add the idle tile subtle border, set the info-panel title to default text color, and tighten the switcher content gap/padding to 16px.
+
+## 0.4.3
+
+### Fixed
+
+- Align the app-switcher trigger caret to the wordmark x-height (not the full glyph box), so descenders like in gov.mv do not pull the caret low.
+
+## 0.4.2
+
+### Fixed
+
+- Vertically center the app-switcher trigger caret with the logo instead of using floating-only optical offsets.
+
+## 0.4.1
+
+### Fixed
+
+- Clear `switcherRendered` after the collapse duration even when the surface never emits `transitionend`, so host shells can restore notices in headless browsers.
+
+## 0.4.0
+
+### Added
+
+- Optional `onOverlayChange` reports switcher open/rendered and mobile-menu visibility so a page shell can fade chrome and hide notices.
+- Optional ref handle with `closeOverlays()` and `focusLogo()` for host adapters that coordinate search and other overlays.
+
 ## 0.3.1
 
 ### Fixed
