@@ -18,6 +18,7 @@ runs:
       if: inputs.candidate-artifact-id != ''
       with:
         artifact-ids: ${{ inputs.candidate-artifact-id }}
+        merge-multiple: true
         path: ${{ runner.temp }}/candidate
     - run: node scripts/consumer-ci.mjs verify "$RUNNER_TEMP/candidate"
       if: inputs.candidate-artifact-id != ''

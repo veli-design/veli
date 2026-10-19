@@ -248,6 +248,8 @@ test('workflow syntax, dependency graph, conditions and unchanged coverage wirin
   );
   const download = setup.runs.steps.find((step) => step.uses === 'actions/download-artifact@v4');
   assert.equal(download.with['artifact-ids'], '${{ inputs.candidate-artifact-id }}');
+  // By-ID downloads otherwise nest even a single artifact beneath its name.
+  assert.equal(download.with['merge-multiple'], true);
   assert.equal(
     workflow.jobs.candidate.outputs['artifact-id'],
     '${{ steps.upload.outputs.artifact-id }}',
