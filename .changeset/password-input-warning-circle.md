@@ -2,6 +2,6 @@
 '@tradenetcorp/veli-ui': patch
 ---
 
-### Changed
+### Fixed
 
-- Use a filled WarningCircle for the PasswordInput invalid-state icon, matching Input at 20px for `lg` and 16px otherwise.
+- Use a filled WarningCircle at 16px for the PasswordInput invalid-state icon, matching the Figma field error treatment at every size.

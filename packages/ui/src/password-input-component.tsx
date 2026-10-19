@@ -430,10 +430,7 @@ function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: b
 }
 
 const PASSWORD_VISIBILITY_ICON_SIZE = 20;
-
-function getPasswordIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
-  return size === 'lg' ? 20 : 16;
-}
+const PASSWORD_ERROR_ICON_SIZE = 16;
 
 interface PasswordRequirementIndicatorProps {
   isMet: boolean;
@@ -616,7 +613,6 @@ export function PasswordInput({
   const revealed = isRevealedControlled ? isRevealed : uncontrolledRevealed;
   const passwordValue = value === undefined ? uncontrolledValue : String(value);
   const resolvedSize = size ?? 'md';
-  const iconSize = getPasswordIconSize(resolvedSize);
   const visibilityLabels = visibilityToggleDefaultAriaLabels[languageConfig.language];
 
   const setRevealed = React.useCallback(
@@ -722,7 +718,7 @@ export function PasswordInput({
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <WarningCircleIcon size={iconSize} weight="fill" />
+                  <WarningCircleIcon size={PASSWORD_ERROR_ICON_SIZE} weight="fill" />
                 </div>
               ) : showVisibilityToggle ? (
                 <AriaButton
