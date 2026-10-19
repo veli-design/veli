@@ -122,7 +122,7 @@ test('Popover intents match the Figma surfaces', () => {
 
 test('Popover propagates height so the body can scroll under a max-height', () => {
   assert.match(source, /group flex min-h-0 flex-col outline-0/);
-  assert.match(source, /relative flex max-h-full min-h-0 w-full flex-col overflow-visible/);
+  assert.match(source, /relative flex max-h-\[inherit\] min-h-0 w-full flex-col overflow-visible/);
   assert.match(source, /flex min-h-0 min-w-0 flex-1 flex-col outline-none/);
   assert.match(source, /flex shrink-0 flex-col px-4/);
   assert.match(source, /min-h-0 flex-1 px-4 py-3/);
@@ -145,15 +145,15 @@ test('Popover close button keeps hover and focus treatment on each surface', () 
 });
 
 test('Popover honors reduced motion', () => {
-  assert.match(source, /transition-\[opacity,scale,translate\] duration-normal ease-out/);
+  assert.match(source, /transition-opacity duration-normal ease-out/);
+  assert.match(source, /transition-\[scale,translate\] duration-normal ease-out/);
   assert.match(source, /origin-\[var\(--trigger-anchor-point\)\]/);
   assert.match(
     source,
-    /'motion-safe:data-\[entering\]:scale-\[0\.96\] motion-safe:data-\[exiting\]:scale-\[0\.96\]'/,
+    /motion-safe:group-data-\[entering\]:scale-\[0\.96\] motion-safe:group-data-\[exiting\]:scale-\[0\.96\]/,
   );
   assert.match(source, /data-\[entering\]:opacity-0 data-\[exiting\]:opacity-0/);
-  assert.doesNotMatch(source, /data-\[exiting\]:ease-in/);
-  assert.doesNotMatch(source, /group-data-\[/);
+  assert.doesNotMatch(source, /data-\[exiting\]:ease-in|group-data-\[exiting\]:ease-in/);
   const slides = source.match(/'[^']*translate-[xy]-2'/g) ?? [];
   assert.equal(slides.length, 8);
   for (const slide of slides) assert.match(slide, /^'motion-safe:/);

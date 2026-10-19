@@ -89,23 +89,27 @@ function popoverArrowProps(placement: string | null) {
 }
 
 /**
- * Motion lives on the positioned root: React Aria only reads that element's transitions when it
- * starts the entry and waits for them before unmounting.
+ * Opacity stays on the positioned root so React Aria can wait for entry/exit. Scale and slide live
+ * on the surface so they do not fight the overlay position transform.
  */
 const popoverRootAnimationClassName = [
-  'group flex min-h-0 flex-col outline-0 transition-[opacity,scale,translate] duration-normal ease-out',
-  'origin-[var(--trigger-anchor-point)]',
+  'group flex min-h-0 flex-col outline-0 transition-opacity duration-normal ease-out',
   'data-[entering]:opacity-0 data-[exiting]:opacity-0',
-  'motion-safe:data-[entering]:scale-[0.96] motion-safe:data-[exiting]:scale-[0.96]',
   'data-[exiting]:duration-fast',
-  'motion-safe:data-[placement=top]:data-[entering]:translate-y-2',
-  'motion-safe:data-[placement=top]:data-[exiting]:translate-y-2',
-  'motion-safe:data-[placement=bottom]:data-[entering]:-translate-y-2',
-  'motion-safe:data-[placement=bottom]:data-[exiting]:-translate-y-2',
-  'motion-safe:data-[placement=left]:data-[entering]:translate-x-2',
-  'motion-safe:data-[placement=left]:data-[exiting]:translate-x-2',
-  'motion-safe:data-[placement=right]:data-[entering]:-translate-x-2',
-  'motion-safe:data-[placement=right]:data-[exiting]:-translate-x-2',
+].join(' ');
+
+const popoverSurfaceMotionClassName = [
+  'origin-[var(--trigger-anchor-point)]',
+  'transition-[scale,translate] duration-normal ease-out group-data-[exiting]:duration-fast',
+  'motion-safe:group-data-[entering]:scale-[0.96] motion-safe:group-data-[exiting]:scale-[0.96]',
+  'motion-safe:group-data-[placement=top]:group-data-[entering]:translate-y-2',
+  'motion-safe:group-data-[placement=top]:group-data-[exiting]:translate-y-2',
+  'motion-safe:group-data-[placement=bottom]:group-data-[entering]:-translate-y-2',
+  'motion-safe:group-data-[placement=bottom]:group-data-[exiting]:-translate-y-2',
+  'motion-safe:group-data-[placement=left]:group-data-[entering]:translate-x-2',
+  'motion-safe:group-data-[placement=left]:group-data-[exiting]:translate-x-2',
+  'motion-safe:group-data-[placement=right]:group-data-[entering]:-translate-x-2',
+  'motion-safe:group-data-[placement=right]:group-data-[exiting]:-translate-x-2',
 ].join(' ');
 
 function popoverArrowOverlapClass(placement: string | null) {
@@ -122,7 +126,9 @@ function popoverArrowOverlapClass(placement: string | null) {
 }
 
 const popoverVariants = cva(
-  'relative flex max-h-full min-h-0 w-full flex-col overflow-visible rounded-xl bg-clip-padding shadow-lg outline-0 forced-colors:outline forced-colors:outline-1 forced-colors:outline-[CanvasText]',
+  // max-h-[inherit] mirrors React Aria's root max-height; percentage max-height is unreliable when
+  // the root only has a max-height from available space.
+  `relative flex max-h-[inherit] min-h-0 w-full flex-col overflow-visible rounded-xl bg-clip-padding shadow-lg outline-0 forced-colors:outline forced-colors:outline-1 forced-colors:outline-[CanvasText] ${popoverSurfaceMotionClassName}`,
   {
     variants: {
       intent: {
