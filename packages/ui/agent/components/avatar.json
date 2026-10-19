@@ -1,0 +1,36 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "avatar",
+  "apiPattern": "flat",
+  "purpose": "Represents a person, agency, or service with an image, initials, or icon.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language controls English or Dhivehi initials formatting."]
+  },
+  "useWhen": ["A compact visual identity is needed for a person, agency, or service."],
+  "avoidWhen": [
+    {
+      "situation": "The identity must be conveyed by text alone.",
+      "guidance": "Render the full name or label adjacent to the avatar."
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Provide an image with meaningful alternative text.",
+    "Provide a full name or initials when an image is unavailable.",
+    "Use the agency icon for agency identities."
+  ],
+  "limitations": [
+    "The component is presentational and has no built-in action.",
+    "Failed images fall back to initials when supplied, otherwise an icon."
+  ],
+  "accessibility": [
+    "Provide a meaningful alt value for image avatars.",
+    "Initials and icons expose an accessible identity label while decorative glyphs are hidden."
+  ],
+  "responsive": ["Avatar dimensions are fixed by the selected design-system size."],
+  "rtl": ["Dhivehi names use provider-aware Thaana initials formatting."],
+  "relatedComponents": ["badge", "tags", "provider"]
+}

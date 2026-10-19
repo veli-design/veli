@@ -1,19 +1,18 @@
 ---
-title: Loading
-description: Shared spinners and settling text for pending actions and indeterminate loading.
+title: Spinner
+description: Indeterminate loading indicator for pending actions and content.
 ---
 
 import { LoadingUsageDemo } from '../../components/LoadingExamples';
 
-# Loading
+# Spinner
 
-Use `Spinner` for indeterminate loading and `LoadingText` when a short label can explain the pending action. Both follow Veli themes, and settling text follows the current text direction.
+Use `Spinner` for indeterminate loading. Pair it with [LoadingText](/docs/loading-text/) when a short label should explain the pending action. Spinners follow Veli themes and respect reduced motion.
 
 ## Import
 
 ```tsx
 import { Spinner } from '@tradenetcorp/veli-ui/spinner';
-import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
 ```
 
 ## Usage
@@ -25,7 +24,6 @@ import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
 ```tsx
 <Spinner size="lg" aria-label="Loading notifications" />
 <Spinner variant="button" aria-label="Saving" />
-<LoadingText>Marking all as read</LoadingText>
 ```
 
 Pending buttons use the shared compact spinner by default. Button retains the original label and width while it is busy:
@@ -36,11 +34,9 @@ Pending buttons use the shared compact spinner by default. Button retains the or
 
 The default spinner uses the general loading animation. The `button` variant uses the compact animation and inherits its text colour. Override the default spinner's colour or dimensions with `className`.
 
-Write the pending label without an ellipsis; the three decorative grains provide it. A trailing ellipsis in an existing label is removed visually to avoid duplication. The light band follows LTR or RTL direction. Pass your application's translated pending label as `children`.
-
 ## Accessibility and reduced motion
 
-Both components provide `role="status"`. Give `Spinner` a translated `aria-label`; its default is “Loading” in the current Veli language. `LoadingText` uses the complete label as its accessible name and hides animated decoration from assistive technology.
+`Spinner` provides `role="status"`. Give it a translated `aria-label`; its default is “Loading” in the current Veli language.
 
 When a parent already announces progress, pass `aria-hidden="true"` to avoid duplicate announcements. Keep pending action controls disabled through their own component's pending state; a loading indicator alone does not block activation.
 
@@ -51,11 +47,9 @@ When a parent already announces progress, pass `aria-hidden="true"` to avoid dup
 </div>
 ```
 
-With reduced motion enabled, the spinner shows a static dotted ring. Settling text stops the moving light band and grain movement, retaining the design's gentle opacity pulse.
+With reduced motion enabled, the spinner shows a static dotted ring.
 
 ## API Reference
-
-### Spinner
 
 | Prop        | Type                    | Default     | Description                                                    |
 | :---------- | :---------------------- | :---------- | :------------------------------------------------------------- |
@@ -63,11 +57,4 @@ With reduced motion enabled, the spinner shows a static dotted ring. Settling te
 | `size`      | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Indicator size: 20, 24 or 32px with the default spacing scale. |
 | `className` | `string`                | —           | Override colour, dimensions or layout.                         |
 
-### LoadingText
-
-| Prop        | Type     | Default | Description                        |
-| :---------- | :------- | :------ | :--------------------------------- |
-| `children`  | `string` | —       | Required translated pending label. |
-| `className` | `string` | —       | Typography and layout overrides.   |
-
-Both support standard HTML `span` attributes and a `ref` to their root span. The components render their own content, so `Spinner` does not accept children.
+Supports standard HTML `span` attributes and a `ref` to the root span. `Spinner` does not accept children.
