@@ -328,5 +328,4 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Ministry: Story = { args: { title: 'Ministry of Tourism' } };
-export const Rtl: Story = { args: { language: 'dv' } };
 export const EmptySites: Story = { args: { emptySites: true } };

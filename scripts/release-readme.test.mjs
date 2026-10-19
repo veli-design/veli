@@ -9,16 +9,16 @@ import test from 'node:test';
 import { promisify } from 'node:util';
 import { gunzipSync } from 'node:zlib';
 
+import { corepackSpawnTarget } from './corepack.mjs';
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
 
-function resolveBundledCli(relativeSegments) {
+function resolveNpmCli() {
   const execDir = path.dirname(process.execPath);
+  const relativeSegments = ['node_modules', 'npm', 'bin', 'npm-cli.js'];
   const candidates = [
-    // Windows Node distributions keep package managers next to the node binary.
     path.join(execDir, ...relativeSegments),
-    // Unix Node distributions keep package managers under lib/.
     path.join(execDir, '..', 'lib', ...relativeSegments),
   ];
   const cli = candidates.find((candidate) => existsSync(candidate));
@@ -26,14 +26,6 @@ function resolveBundledCli(relativeSegments) {
     throw new Error(`Unable to locate ${relativeSegments.join('/')} from ${process.execPath}`);
   }
   return cli;
-}
-
-function resolveNpmCli() {
-  return resolveBundledCli(['node_modules', 'npm', 'bin', 'npm-cli.js']);
-}
-
-function resolveCorepackCli() {
-  return resolveBundledCli(['node_modules', 'corepack', 'dist', 'corepack.js']);
 }
 
 function readTarEntry(tarball, entryName) {
@@ -197,24 +189,21 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
   const userConfig = path.join(fixture.dir, '.npmrc');
   await fs.writeFile(userConfig, '');
 
-  await withReleaseReadmes(fixture.packages, () =>
-    execFileAsync(
-      process.execPath,
-      [
-        resolveCorepackCli(),
-        'pnpm',
-        'publish',
-        '--registry',
-        registryUrl,
-        '--no-git-checks',
-        '--ignore-scripts',
-      ],
-      {
-        cwd: fixture.dir,
-        env: { ...process.env, npm_config_userconfig: userConfig },
-      },
-    ),
-  );
+  await withReleaseReadmes(fixture.packages, () => {
+    const target = corepackSpawnTarget([
+      'pnpm',
+      'publish',
+      '--registry',
+      registryUrl,
+      '--no-git-checks',
+      '--ignore-scripts',
+    ]);
+    return execFileAsync(target.command, target.args, {
+      cwd: fixture.dir,
+      env: { ...process.env, npm_config_userconfig: userConfig },
+      shell: target.options.shell,
+    });
+  });
 
   const publishRequest = requests.find((request) => request.method === 'PUT');
   assert.ok(publishRequest, 'expected pnpm to send a registry publish request');
