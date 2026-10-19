@@ -134,7 +134,13 @@ test('candidate identity includes exact commit and both immutable tarball digest
 });
 test('change detection uses merge base and retains deleted and renamed dependency paths', () => {
   const directory = mkdtempSync(resolve(tmpdir(), 'veli-diff-test-'));
-  const git = (...args) => execFileSync('git', args, { cwd: directory, encoding: 'utf8' }).trim();
+  // Hooks export GIT_DIR/GIT_INDEX_FILE; never let a temporary-repository test
+  // modify the caller's repository or configuration.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
+  const git = (...args) =>
+    execFileSync('git', args, { cwd: directory, encoding: 'utf8', env }).trim();
   try {
     git('init', '-q');
     git('config', 'user.email', 'ci@example.test');
@@ -160,7 +166,7 @@ test('change detection uses merge base and retains deleted and renamed dependenc
           {
             cwd: directory,
             encoding: 'utf8',
-            env: { ...process.env, GITHUB_OUTPUT: output },
+            env: { ...env, GITHUB_OUTPUT: output },
           },
         ),
       );
@@ -181,7 +187,7 @@ test('change detection uses merge base and retains deleted and renamed dependenc
         {
           cwd: directory,
           encoding: 'utf8',
-          env: { ...process.env, GITHUB_OUTPUT: output },
+          env: { ...env, GITHUB_OUTPUT: output },
         },
       ),
     );
