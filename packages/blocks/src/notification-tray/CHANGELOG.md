@@ -1,3 +1,21 @@
+## 0.3.3
+
+### Fixed
+
+- Restore the loading rows' 8px padding, 8px text-bar gaps, and 96px timestamp placeholder to match the supplied reference geometry.
+
+## 0.3.2
+
+### Fixed
+
+- Keep placeholder heights and avatar sizes consistent across tray widths, and resolve the highlight from the local colour scheme on nested surfaces.
+
+## 0.3.1
+
+### Changed
+
+- Align the initial-loading highlight across each notification row with a 1500ms sweep and 500ms rest. Respect light and dark themes, RTL, and reduced motion.
+
 ## 0.3.0
 
 ### Changed

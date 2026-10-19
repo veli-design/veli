@@ -12,7 +12,6 @@ import {
 import { Badge } from '@tradenetcorp/veli-ui/badge';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
 import { Spinner } from '@tradenetcorp/veli-ui/spinner';
 import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
@@ -91,26 +90,74 @@ const intentStyles = {
 
 const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
 
+// One coordinate system keeps the highlight aligned across every shape in a row.
+// Without a viewBox, shapes retain pixel sizes while bar widths follow the viewport.
+// Keep this artwork local: it describes the notification layout, not a Skeleton API.
+function NotificationSkeletonRow() {
+  const id = useId();
+  const clipId = `${id}-clip`;
+  const gradientId = `${id}-highlight`;
+
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      height="80"
+      className="veli-notification-skeleton-row block w-full"
+    >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx="16" cy="20" r="16" />
+          <rect x="48" y="8" style={{ width: 'calc(100% - 48px)' }} height="10" rx="5" />
+          <rect x="48" y="26" style={{ width: 'calc((100% - 48px) * 5 / 6)' }} height="10" rx="5" />
+          <rect x="48" y="44" style={{ width: 'calc((100% - 48px) * 2 / 3)' }} height="10" rx="5" />
+          <rect x="48" y="68" width="96" height="8" rx="4" />
+          <rect style={{ x: 'calc(100% - 40px)' }} y="68" width="40" height="8" rx="4" />
+        </clipPath>
+        <linearGradient id={gradientId}>
+          <stop offset="0" stopColor="var(--veli-color-white)" stopOpacity="0" />
+          <stop
+            offset="0.5"
+            stopColor="light-dark(color-mix(in srgb, var(--veli-color-white) 65%, transparent), color-mix(in srgb, var(--veli-color-white) 8%, transparent))"
+          />
+          <stop offset="1" stopColor="var(--veli-color-white)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        <rect width="100%" height="80" fill="var(--veli-color-bg-skeleton)" />
+        <rect
+          className="veli-notification-skeleton-highlight"
+          width="140"
+          height="80"
+          fill={`url(#${gradientId})`}
+        />
+      </g>
+    </svg>
+  );
+}
+
 function NotificationTraySkeleton() {
   return (
-    <div aria-hidden="true" className="flex min-h-80 flex-col gap-1">
+    <div aria-hidden="true" className="divide-y divide-base-subtle">
+      <style>{`
+        .veli-notification-skeleton-item:dir(rtl) > svg { transform: scaleX(-1); }
+        .veli-notification-skeleton-highlight {
+          transform-box: view-box;
+          transform: translateX(-140px);
+          animation: veli-notification-skeleton-sweep 2000ms var(--veli-ease-linear, linear) infinite;
+        }
+        /* 1500ms sweep, followed by 500ms fully outside the clipped shapes. */
+        @keyframes veli-notification-skeleton-sweep {
+          0% { transform: translateX(-140px); }
+          75%, 100% { transform: translateX(100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .veli-notification-skeleton-highlight { animation: none; visibility: hidden; }
+        }
+      `}</style>
       {Array.from({ length: 3 }, (_, index) => (
-        <div
-          key={index}
-          className="flex items-start gap-4 border-b border-base-subtle p-2 last:border-b-0"
-        >
-          <Skeleton className="size-8 shrink-0 rounded-full motion-reduce:animate-none" />
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex min-h-14 flex-col gap-2 py-1">
-              <Skeleton className="h-2.5 w-full rounded-xs motion-reduce:animate-none" />
-              <Skeleton className="h-2.5 w-5/6 rounded-xs motion-reduce:animate-none" />
-              <Skeleton className="h-2.5 w-2/3 rounded-xs motion-reduce:animate-none" />
-            </div>
-            <div className="flex min-h-4 items-center justify-between gap-2">
-              <Skeleton className="h-2 w-24 rounded-xs motion-reduce:animate-none" />
-              <Skeleton className="h-2 w-10 rounded-xs motion-reduce:animate-none" />
-            </div>
-          </div>
+        <div key={index} className="veli-notification-skeleton-item p-2">
+          <NotificationSkeletonRow />
         </div>
       ))}
     </div>
