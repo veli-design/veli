@@ -1,29 +1,34 @@
 ---
 title: Toast
-description: Temporary notifications via React Aria ToastQueue and ToastRegion with Veli styling.
+description: Temporary notifications with actions, dismissal, and timeout progress.
 ---
 
-import { ToastUsageDemo } from '../../components/DocsExamples';
+import {
+  ToastUsageDemo,
+  ToastAppearancesDemo,
+  ToastActionsDemo,
+  ToastProgressDemo,
+  ToastRtlDemo,
+} from '../../components/ToastExamples';
 
 # Toast
 
-Toasts display brief, temporary notifications. Mount a `ToastRegion` once at the app root (inside `VeliProvider`) and enqueue messages from anywhere using a shared `ToastQueue`.
+Use Toast for brief feedback about an action or event. Mount one `ToastRegion` inside `VeliProvider` and share its queue across the app. For persistent information in the page, use [Alert](/docs/alert/).
 
 ## Import
 
 ```tsx
-import {
-  createToastQueue,
-  ToastRegion,
-  Toast,
-  type VeliToastContent,
-} from '@tradenetcorp/veli-ui/toast';
+import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
 ```
 
-## Setup
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastUsageDemo client:load />
+</div>
 
 ```tsx
-const queue = createToastQueue<VeliToastContent>();
+const queue = createToastQueue<VeliToastContent>({ maxVisibleToasts: 3 });
 
 function AppShell({ children }) {
   return (
@@ -34,31 +39,195 @@ function AppShell({ children }) {
   );
 }
 
-// Anywhere in the app:
-queue.add({ title: 'Saved', description: 'Draft stored.', intent: 'positive' }, { timeout: 5000 });
+queue.add(
+  { title: 'Application saved', description: 'Your draft has been stored.', intent: 'positive' },
+  { timeout: 5000 },
+);
 ```
 
-## Usage
+`placement` follows the screen's logical start and end. Use a timeout of at least 5000 ms for auto-dismiss messages. Omit `timeout` or set it to `0` when the message should remain until dismissed.
+
+## Appearances
+
+`outline` uses a raised surface, `subtle` uses a tinted surface, and `emphasis` uses a solid status color. Choose an intent to match the message: `neutral`, `info`, `positive`, `cautious`, `warning`, or `danger`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <ToastUsageDemo client:visible />
+  <ToastAppearancesDemo client:load />
 </div>
+
+```tsx
+queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'outline' });
+queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'subtle' });
+queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'emphasis' });
+```
+
+## Actions
+
+Actions dismiss the toast after `onPress` returns unless `dismissOnPress` is `false`. Give actions unique `id` values when their order can change. Accent actions use Button's filled accent treatment.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastActionsDemo client:load />
+</div>
+
+```tsx
+queue.add({
+  title: 'File deleted',
+  actions: [
+    { id: 'undo', label: 'Undo', intent: 'accent', onPress: restoreFile },
+    {
+      id: 'details',
+      label: 'View details',
+      appearance: 'ghost',
+      dismissOnPress: false,
+      onPress: showDetails,
+    },
+  ],
+});
+```
+
+To hide the default close button, set `showCloseButton: false` and provide another way to dismiss the message, such as an action or timeout.
+
+## Timeout progress
+
+`showProgress` displays a decorative countdown when a positive timeout is supplied. The timer pauses while the region is hovered or focused.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastProgressDemo client:load />
+</div>
+
+```tsx
+queue.add({ title: 'Saved', intent: 'positive', showProgress: true }, { timeout: 8000 });
+```
 
 ## API Reference
 
-### `ToastRegion`
+Toast is a Veli notification built on React Aria's [Toast](https://react-aria.adobe.com/Toast), `ToastRegion`, and `ToastQueue`. Props below follow that stack.
 
-| Prop        | Type                                                                              | Default        | Description                  |
-| :---------- | :-------------------------------------------------------------------------------- | :------------- | :--------------------------- |
-| `queue`     | `ToastQueue<T>`                                                                   | -              | Shared toast queue instance. |
-| `placement` | `'top' \| 'bottom' \| 'top-end' \| 'bottom-end' \| 'top-start' \| 'bottom-start'` | `'bottom-end'` | Screen position.             |
+### ToastRegion
 
-### `VeliToastContent`
+Veli's region positions and renders queued notifications.
 
-| Field         | Type         | Description               |
-| :------------ | :----------- | :------------------------ |
-| `title`       | `ReactNode`  | Primary message.          |
-| `description` | `ReactNode`  | Optional supporting text. |
-| `intent`      | Toast intent | Semantic color treatment. |
+| Prop        | Type                                                                              | Default        | Description                     |
+| :---------- | :-------------------------------------------------------------------------------- | :------------- | :------------------------------ |
+| `queue`     | `ToastQueue<T>`                                                                   | -              | Required shared queue instance. |
+| `placement` | `'top' \| 'bottom' \| 'top-start' \| 'top-end' \| 'bottom-start' \| 'bottom-end'` | `'bottom-end'` | Logical screen position.        |
+| `children`  | `ReactNode \| ({ toast }) => ReactElement`                                        | Default Toast  | Custom queued-toast rendering.  |
+| `className` | `string \| (state) => string`                                                     | -              | Additional region classes.      |
+| `style`     | `CSSProperties \| ((state) => CSSProperties \| undefined)`                        | -              | Region styles.                  |
 
-Use a minimum `timeout` of 5000 ms for auto-dismiss toasts. Omit `timeout` or set `timeout: 0` when the toast includes actions or must stay until dismissed.
+Region styling callbacks can read `visibleToasts`, `isHovered`, `isFocused`, and `isFocusVisible`. The default renderer expects `VeliToastContent`; use custom `children` for another content type.
+
+### VeliToastContent
+
+The content passed to `queue.add()`.
+
+| Prop              | Type                                                                       | Default     | Description                                           |
+| :---------------- | :------------------------------------------------------------------------- | :---------- | :---------------------------------------------------- |
+| `title`           | `ReactNode`                                                                | -           | Required primary message.                             |
+| `description`     | `ReactNode`                                                                | -           | Supporting content, including numeric values.         |
+| `intent`          | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                             |
+| `appearance`      | `'outline' \| 'subtle' \| 'emphasis'`                                      | `'outline'` | Surface treatment.                                    |
+| `actions`         | `VeliToastAction[]`                                                        | -           | Actions in supplied order.                            |
+| `showCloseButton` | `boolean`                                                                  | `true`      | Includes the close button in the default composition. |
+| `showProgress`    | `boolean`                                                                  | `false`     | Shows the countdown for a positive timeout.           |
+
+### VeliToastAction
+
+| Prop             | Type                                               | Default       | Description                                   |
+| :--------------- | :------------------------------------------------- | :------------ | :-------------------------------------------- |
+| `id`             | `React.Key`                                        | -             | Unique stable identity for reordered actions. |
+| `label`          | `ReactNode`                                        | -             | Required action content.                      |
+| `onPress`        | `() => void`                                       | -             | Action handler.                               |
+| `dismissOnPress` | `boolean`                                          | `true`        | Closes the toast after the handler returns.   |
+| `intent`         | `'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'secondary'` | Button treatment.                             |
+| `appearance`     | `'fill' \| 'transparent' \| 'ghost'`               | `'fill'`      | Button surface; accent always uses fill.      |
+
+### Toast
+
+Used by `ToastRegion` or in a custom region renderer.
+
+| Prop         | Type                                                       | Default                          | Description                                            |
+| :----------- | :--------------------------------------------------------- | :------------------------------- | :----------------------------------------------------- |
+| `toast`      | `QueuedToast<T>`                                           | -                                | Required queue entry.                                  |
+| `intent`     | `ToastIntent`                                              | Queued intent or `'neutral'`     | Overrides the queued intent.                           |
+| `appearance` | `ToastAppearance`                                          | Queued appearance or `'outline'` | Overrides the queued appearance.                       |
+| `children`   | `ReactNode \| (state) => ReactNode`                        | Default composition              | Replaces content, actions, close button, and progress. |
+| `className`  | `string \| (state) => string`                              | -                                | Additional toast classes.                              |
+| `style`      | `CSSProperties \| ((state) => CSSProperties \| undefined)` | -                                | Styles merged with Toast's transition styles.          |
+
+Toast callbacks can read `toast`, `isFocused`, and `isFocusVisible`. With custom `children`, you choose which parts to include; `showCloseButton` controls only the default composition.
+
+### React Aria Toast and ToastRegion
+
+Both wrappers inherit React Aria's labeling, global DOM, and `render` props. For the full definitions, see [React Aria Toast](https://react-aria.adobe.com/Toast#api). Common supported props include:
+
+| Prop               | Type     | Default                           | Description                                                |
+| :----------------- | :------- | :-------------------------------- | :--------------------------------------------------------- |
+| `aria-label`       | `string` | Localized region count            | Accessible name for ToastRegion.                           |
+| `aria-labelledby`  | `string` | Toast title ID                    | References an accessible label; overrides the Toast title. |
+| `aria-describedby` | `string` | Toast description ID (if present) | References an accessible description.                      |
+
+Toast is named by its title through `aria-labelledby`, which takes precedence over `aria-label`. Set `aria-labelledby` to reference another label when needed. ToastRegion uses a localized notification count unless `aria-label` is supplied.
+
+Not passed through unchanged:
+
+| Prop          | Why                                                                                   |
+| :------------ | :------------------------------------------------------------------------------------ |
+| `lang`, `dir` | Set from `VeliProvider`; local values do not override them.                           |
+| `children`    | Veli supplies default rendering and allows replacement as described above.            |
+| `className`   | Merged with Veli's classes.                                                           |
+| `style`       | Toast merges transition styles; ToastRegion passes the supplied styles to React Aria. |
+| `id`, `ref`   | Not declared by Veli's wrapper public types.                                          |
+
+### ToastContent, ToastActions, and ToastTimeoutProgress
+
+These parts render the queued content, actions, and countdown inside a `Toast`.
+
+| Prop        | Type             | Default | Description                     |
+| :---------- | :--------------- | :------ | :------------------------------ |
+| `toast`     | `QueuedToast<T>` | -       | Required queue entry.           |
+| `className` | `string`         | -       | Additional classes on the part. |
+
+### ToastCloseButton
+
+| Prop         | Type     | Default          | Description                      |
+| :----------- | :------- | :--------------- | :------------------------------- |
+| `aria-label` | `string` | Localized string | Accessible close-button name.    |
+| `className`  | `string` | -                | Additional close-button classes. |
+
+The parts expose only the props listed above. They do not inherit the underlying React Aria content/button props, native attributes, `children`, `style`, or refs as public props.
+
+### createToastQueue
+
+`createToastQueue<T>(options)` returns a React Aria queue with Veli's default update behavior.
+
+| Prop               | Type                   | Default          | Description                                             |
+| :----------------- | :--------------------- | :--------------- | :------------------------------------------------------ |
+| `maxVisibleToasts` | `number`               | `Infinity`       | Maximum visible notifications.                          |
+| `wrapUpdate`       | `(fn, action) => void` | Veli transitions | Custom update wrapper; call `fn` to deliver the update. |
+
+`action` is `'add'`, `'remove'`, or `'clear'`. A custom wrapper takes precedence over Veli's default motion behavior.
+
+Options for `queue.add(content, options)`:
+
+| Prop      | Type         | Default | Description                                                    |
+| :-------- | :----------- | :------ | :------------------------------------------------------------- |
+| `timeout` | `number`     | -       | Auto-dismiss delay in milliseconds; omitted or `0` stays open. |
+| `onClose` | `() => void` | -       | Called when this toast closes; not called by `clear()`.        |
+
+`add()` returns a key for `close(key)`. `clear()` removes all entries. `pauseAll()` and `resumeAll()` control visible timers; `visibleToasts` exposes the visible entries, and `subscribe(fn)` returns an unsubscribe function.
+
+## Accessibility
+
+- Use a clear title and include supporting information in `description`.
+- React Aria announces notifications and provides focus management. `F6` and `Shift+F6` navigate toast regions.
+- Keep messages with actions open until dismissed. If the close button is hidden, provide an action or timeout to remove the toast.
+- With reduced motion, Veli skips entry/exit transitions and hides decorative progress. A custom `wrapUpdate` controls its own motion behavior.
+
+## RTL and Language
+
+`VeliProvider language="dv"` supplies Dhivehi typography, RTL direction, and a localized close label. Text and actions align to the reading start; the close button sits at the reading end. Logical start/end placements reverse in RTL. Use `<bdi>` to isolate Latin references in Dhivehi messages.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <ToastRtlDemo client:load />
+</div>

@@ -9,6 +9,8 @@ import { SiteHeaderDemo } from '../../components/SiteHeaderDemo';
 import { SiteShellDemo } from '../../components/SiteShellDemo';
 import { PreviewBannerDemo } from '../../components/PreviewBannerDemo';
 import { NotificationTrayDemo } from '../../components/NotificationTrayDemo';
+import { ErrorPageDemo } from '../../components/ErrorPageDemo';
+import { PageNavigationFooterDemo } from '../../components/PageNavigationFooterDemo';
 import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
 
 // Cache one processor/highlighter for all block pages — Shiki is a singleton and
@@ -46,5 +48,7 @@ const slug = Astro.params.slug;
   {slug === 'preview-banner' && <PreviewBannerDemo client:visible />}
   {slug === 'notification-tray' && <NotificationTrayDemo client:visible />}
   {slug === 'account-panel' && <AccountPanelDemo client:visible />}
+  {slug === 'error-page' && <ErrorPageDemo client:visible />}
+  {slug === 'page-navigation-footer' && <PageNavigationFooterDemo client:visible />}
   <article class="docs-prose" set:html={rendered.code} />
 </DocsLayout>

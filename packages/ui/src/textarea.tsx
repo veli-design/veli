@@ -22,6 +22,7 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  fieldInputAutofill,
   getFieldOptionalLabel,
   shouldShowFieldOptional,
 } from './field-shared.js';
@@ -81,7 +82,7 @@ const outlineFieldStrokeFocusVisibleHide =
   'has-[textarea[data-focus-visible]]:shadow-none has-[textarea[data-focus-visible]]:hover:shadow-none';
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-start rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-start rounded-md overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[textarea[data-focus-visible]]:ring-2 has-[textarea[data-focus-visible]]:ring-border-focus has-[textarea[data-focus-visible]]:ring-offset-2 has-[textarea[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -196,7 +197,7 @@ type TextAreaAppearance = VariantProps<typeof fieldShellVariants>['appearance'];
 type TextAreaSize = VariantProps<typeof fieldShellVariants>['size'];
 
 const textareaElementVariants = cva(
-  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 h-full min-h-[inherit] min-w-0 flex-1 resize-none border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
