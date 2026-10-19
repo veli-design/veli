@@ -130,12 +130,12 @@ function PreviewBannerCard({ notice }: { notice: PreviewBannerNotice }) {
           aria-hidden="true"
           className="bg-border-base-subtle hidden h-3 w-px shrink-0 lg:block"
         />
-        <p className="type-body-lg-regular text-base-subtle hidden min-w-0 flex-1 truncate lg:block">
+        <p className="type-body-lg-regular text-base-muted hidden min-w-0 flex-1 truncate lg:block">
           {notice.message}
         </p>
       </div>
       <div className="flex w-full min-w-0 items-center gap-2 lg:contents">
-        <p className="type-body-lg-regular text-base-subtle min-w-0 flex-1 lg:hidden">
+        <p className="type-body-lg-regular text-base-muted min-w-0 flex-1 lg:hidden">
           {notice.message}
         </p>
         {actions}

@@ -1,3 +1,9 @@
+## 0.1.3
+
+### Fixed
+
+- Use `text-base-muted` for the preview message so body copy meets WCAG 2 AA contrast on the raised surface (Figma’s subtle token is too light at Body/lg).
+
 ## 0.1.2
 
 ### Changed
