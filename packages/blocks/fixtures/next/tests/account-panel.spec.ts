@@ -273,6 +273,7 @@ test('empty, skeleton loading, errors and pending actions have distinct semantic
     }
     if (state === 'one') await expect(dialog.getByRole('listitem')).toHaveCount(1);
     await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
   }
   await expect(page.locator('[data-calls]')).toHaveText(
     'Selection: 0; logout: 0; delegation: 1; management: 0',
