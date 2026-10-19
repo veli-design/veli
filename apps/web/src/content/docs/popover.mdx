@@ -1,0 +1,83 @@
+---
+title: Popover
+description: Anchored interactive panel for contextual controls, onboarding, and rich help content.
+---
+
+# Popover
+
+Popover presents interactive content next to a trigger without blocking the rest of the page.
+Use [Tooltip](/docs/tooltip/) for brief non-interactive hints, [Menu](/docs/menu/) for
+action lists, and [Modal](/docs/modal/) for focused blocking work.
+
+## Import
+
+```tsx
+import { Button } from '@tradenetcorp/veli-ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverDialog,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+} from '@tradenetcorp/veli-ui/popover';
+```
+
+## Usage
+
+```tsx
+<PopoverTrigger>
+  <Button>Open filters</Button>
+  <Popover placement="bottom start" className="w-80">
+    <PopoverDialog>
+      {({ close }) => (
+        <>
+          <PopoverHeader title="Filters" onClose={close} />
+          <PopoverContent>{/* Interactive filter controls */}</PopoverContent>
+          <PopoverFooter>
+            <Button onPress={close}>Apply</Button>
+          </PopoverFooter>
+        </>
+      )}
+    </PopoverDialog>
+  </Popover>
+</PopoverTrigger>
+```
+
+`PopoverTrigger` manages open state and restores focus to its trigger. Use controlled state when
+multiple controls open the same popover or application state must determine whether it is open.
+
+## Composition
+
+- `PopoverTrigger` connects a trigger and popover.
+- `Popover` positions and styles the anchored surface.
+- `PopoverDialog` provides dialog semantics and access to the React Aria close function.
+- `PopoverHeader`, `PopoverContent`, and `PopoverFooter` provide the standard internal layout.
+
+The header and footer dividers are enabled by default. Pass custom children to `PopoverHeader` when
+the standard icon, title, and close-button layout is not sufficient.
+
+## Accessibility
+
+Place interactive popover content inside `PopoverDialog`. The trigger must have an accessible name.
+When providing a custom close label, localize `closeButtonLabel`; the built-in English and Dhivehi
+labels follow `VeliProvider`.
+
+## Responsive behavior
+
+React Aria can flip the placement to keep the surface visible. Set a width that fits the expected
+content while allowing the popover to remain within the viewport. Prefer logical `start` and `end`
+placements when the surface must follow LTR and RTL direction.
+
+## Key props
+
+| Prop            | Type                                     | Default      | Description                                   |
+| :-------------- | :--------------------------------------- | :----------- | :-------------------------------------------- |
+| `intent`        | `'primary' \| 'secondary' \| 'tertiary'` | `'tertiary'` | Semantic surface treatment.                   |
+| `placement`     | React Aria `PopoverProps['placement']`   | -            | Preferred position relative to the trigger.   |
+| `showArrow`     | `boolean`                                | `true`       | Displays the directional surface arrow.       |
+| `isOpen`        | `boolean`                                | -            | Controlled open state.                        |
+| `defaultOpen`   | `boolean`                                | -            | Initial uncontrolled open state.              |
+| `onOpenChange`  | `(isOpen: boolean) => void`              | -            | Called when open state changes.               |
+| `isDismissable` | `boolean`                                | -            | Enables outside-interaction dismissal.        |
+| `shouldFlip`    | `boolean`                                | React Aria   | Allows placement to flip near viewport edges. |

@@ -1,0 +1,53 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "spinner",
+  "apiPattern": "flat",
+  "purpose": "Shows an indeterminate loading indicator for pending content or compact in-button busy states.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "VeliProvider supplies the default Loading aria-label language; English is the fallback."
+    ]
+  },
+  "useWhen": [
+    "Content or an action is pending and the layout needs an indeterminate indicator.",
+    "A compact spinner should inherit surrounding text colour inside a busy control."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The layout shape should be reserved while concrete UI is loading.",
+      "guidance": "Compose Skeleton placeholders instead of a lone spinner.",
+      "useInstead": ["skeleton"]
+    },
+    {
+      "situation": "A short label should explain the pending action.",
+      "guidance": "Use LoadingText, alone or beside Spinner.",
+      "useInstead": ["loading-text"]
+    },
+    {
+      "situation": "A Button is waiting on an in-flight press action.",
+      "guidance": "Prefer Button isLoading or isPending, which already mounts the compact spinner.",
+      "useInstead": ["button"]
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Provide a translated aria-label unless the spinner is decorative with aria-hidden.",
+    "Use variant button when the spinner sits inside busy controls and should inherit text colour.",
+    "Use size sm, md, or lg to match density; default is md."
+  ],
+  "limitations": [
+    "Spinner does not accept children.",
+    "A spinner alone does not disable surrounding controls."
+  ],
+  "accessibility": [
+    "Defaults to role status with a language-aware Loading label.",
+    "Pass aria-hidden when a parent live region already announces progress.",
+    "Reduced motion replaces the animation with a static dotted ring."
+  ],
+  "responsive": ["Size tokens keep the indicator compact across breakpoints."],
+  "rtl": ["Artwork is direction-neutral; labels come from VeliProvider language."],
+  "relatedComponents": ["loading-text", "button", "skeleton"]
+}

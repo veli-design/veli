@@ -87,18 +87,29 @@ _Released 2026-07-30._
   return {
     dir,
     originalReadme,
+    releaseReadme: `## What's new in 1.2.3
+
+_Released 2026-07-30._
+
+### Fixed
+
+- Publish release-specific notes.
+
+---
+
+${originalReadme}`,
     packages: [{ dir, packageJson: { name: '@tradenetcorp/example', version: '1.2.3' } }],
   };
 }
 
-test('stages only current release notes and restores the package README', async (t) => {
+test('prepends current release notes and restores the package README', async (t) => {
   const fixture = await createPackageFixture();
   t.after(() => fs.rm(fixture.dir, { recursive: true, force: true }));
 
   await withReleaseReadmes(fixture.packages, async () => {
     assert.equal(
       await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
-      '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
+      fixture.releaseReadme,
     );
   });
 
@@ -145,10 +156,7 @@ test('packs the release-specific README into the package artifact', async (t) =>
   });
 
   const packedReadme = readTarEntry(await fs.readFile(tarball), 'package/README.md');
-  assert.equal(
-    packedReadme,
-    '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
-  );
+  assert.equal(packedReadme, fixture.releaseReadme);
   assert.equal(
     await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
     fixture.originalReadme,
@@ -200,9 +208,7 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
   const publishRequest = requests.find((request) => request.method === 'PUT');
   assert.ok(publishRequest, 'expected pnpm to send a registry publish request');
   const metadata = JSON.parse(publishRequest.body);
-  const releaseReadme =
-    '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n';
-  assert.equal(metadata.versions['1.2.3'].readme, releaseReadme);
+  assert.equal(metadata.versions['1.2.3'].readme, fixture.releaseReadme);
   assert.equal(
     await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
     fixture.originalReadme,

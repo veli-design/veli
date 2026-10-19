@@ -8,6 +8,7 @@ import test from 'node:test';
 import { parse, stringify } from 'yaml';
 import { spawnCorepack } from './corepack.mjs';
 import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
+
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const manifest = await createManifest(sourceCommit);

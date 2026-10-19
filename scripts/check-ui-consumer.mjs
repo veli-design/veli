@@ -6,20 +6,22 @@ import { URL, fileURLToPath } from 'node:url';
 import { setTimeout } from 'node:timers/promises';
 import { spawnCorepack } from './corepack.mjs';
 
-const [directory, tarball, nextVersion = '15.5.18'] = process.argv.slice(2);
+const [directory, uiTarball, tokensTarball, nextVersion = '15.5.18'] = process.argv.slice(2);
 assert.ok(
-  directory && tarball,
-  'Usage: node scripts/check-ui-consumer.mjs <new-directory> <ui-tarball> [next-version]',
+  directory && uiTarball && tokensTarball,
+  'Usage: node scripts/check-ui-consumer.mjs <new-directory> <ui-tarball> <tokens-tarball> [next-version]',
 );
 const target = resolve(directory);
 assert.ok(!existsSync(target), 'Use a new directory for an isolated package consumer');
 cpSync(fileURLToPath(new URL('../packages/ui/fixtures/next/', import.meta.url)), target, {
   recursive: true,
 });
-cpSync(resolve(tarball), resolve(target, 'ui.tgz'));
+cpSync(resolve(uiTarball), resolve(target, 'ui.tgz'));
+cpSync(resolve(tokensTarball), resolve(target, 'tokens.tgz'));
 const manifestPath = resolve(target, 'package.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 manifest.dependencies.next = nextVersion;
+manifest.dependencies['@tradenetcorp/veli-tokens'] = 'file:tokens.tgz';
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 const env = { ...process.env, NEXT_TELEMETRY_DISABLED: '1' };
 function run(args) {
