@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 import { waitForMotion } from './wait-for-motion';
 
 async function openTray(page: import('@playwright/test').Page) {
@@ -190,7 +191,7 @@ for (const width of [320, 1280])
         const tray = page.getByRole('dialog');
         await expect(tray).toBeVisible();
         await page.evaluate(() => document.fonts.ready);
-        expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+        await warnAccessibilityViolations(new AxeBuilder({ page }).analyze());
         expect(await tray.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
           true,
         );

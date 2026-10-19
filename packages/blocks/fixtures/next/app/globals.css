@@ -15,3 +15,10 @@
 [lang='dv'] {
   font-family: 'MV Faseyha', sans-serif;
 }
+
+@font-face {
+  font-family: 'MV A Waheed';
+  src: url('/fonts/MV_A_Waheed_Bold_2.ttf');
+  font-weight: 700;
+  font-display: swap;
+}

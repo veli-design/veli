@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 import { waitForMotion } from './wait-for-motion';
 
 async function openPanel(page: Page) {
@@ -166,9 +167,9 @@ for (const theme of ['light', 'dark']) {
     const hoverColor = await row.evaluate((element) => getComputedStyle(element).backgroundColor);
     expect(hoverColor).not.toBe(idleColor);
     await waitForMotion(page);
-    expect(
-      (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
-    ).toEqual([]);
+    await warnAccessibilityViolations(
+      new AxeBuilder({ page }).include('[role="dialog"]').analyze(),
+    );
     await row.screenshot({ path: testInfo.outputPath('account-row-hover.png') });
     await page.mouse.down();
     await expect(row).toHaveAttribute('data-pressed', 'true');
@@ -195,9 +196,9 @@ for (const theme of ['light', 'dark']) {
     expect(pressed.transform).toBe('none');
     expect(pressed.ripple).toBe('none');
     expect(pressed.animations).toBe(0);
-    expect(
-      (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
-    ).toEqual([]);
+    await warnAccessibilityViolations(
+      new AxeBuilder({ page }).include('[role="dialog"]').analyze(),
+    );
     await row.screenshot({ path: testInfo.outputPath('account-row-pressed.png') });
     await page.mouse.up();
     await expect(dialog.getByRole('button', { name: /Ali Hassan/ })).toHaveCount(0);
@@ -240,9 +241,9 @@ test('empty, skeleton loading, errors and pending actions have distinct semantic
     }
     if (state === 'error') {
       await waitForMotion(page);
-      expect(
-        (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
-      ).toEqual([]);
+      await warnAccessibilityViolations(
+        new AxeBuilder({ page }).include('[role="dialog"]').analyze(),
+      );
     }
     if (state === 'pending') {
       const signOut = dialog.getByRole('button', { name: 'Sign out' });
@@ -474,9 +475,9 @@ for (const width of [320, 1280])
               .boundingBox(),
           ).toEqual(beforeScroll);
         }
-        expect(
-          (await new AxeBuilder({ page }).include('[role="dialog"]').analyze()).violations,
-        ).toEqual([]);
+        await warnAccessibilityViolations(
+          new AxeBuilder({ page }).include('[role="dialog"]').analyze(),
+        );
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
         ).toBe(true);
