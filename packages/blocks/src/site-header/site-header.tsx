@@ -4,10 +4,12 @@ import {
   useCallback,
   useEffect,
   useId,
+  useImperativeHandle,
   useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
+  type Ref,
   type TransitionEvent,
 } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
@@ -171,9 +173,11 @@ function HeaderLogoButton({
     <AriaButton
       data-header-logo=""
       className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+        title ? 'items-center' : 'items-start'
+      } ${
         isFloating
-          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'items-center gap-2.5 lg:gap-[26px]' : 'shrink-0 items-center gap-2'}`
-          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'items-center gap-2 lg:gap-3' : 'shrink-0 items-start gap-2'}`
+          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
+          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
       }`}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
@@ -200,7 +204,7 @@ function HeaderLogoButton({
             className={`text-text-base-emphasis line-clamp-2 min-w-0 text-start transition-[max-width,font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
               isFloating
                 ? 'type-body-md-medium max-w-40 leading-[1.5] sm:max-w-52 xl:max-w-[242px]'
-                : 'type-body-sm-medium text-text-base-strong max-w-28 leading-tight sm:max-w-40 xl:max-w-[220px]'
+                : 'type-caption-medium max-w-[184px] leading-[1.34] tracking-[0.18px] lg:type-body-md-medium lg:max-w-[242px] lg:leading-[1.5] lg:tracking-normal'
             }`}
             aria-hidden
           >
@@ -208,13 +212,15 @@ function HeaderLogoButton({
           </span>
         </>
       ) : (
-        <span className={`relative block shrink-0 ${isFloating ? '' : 'mt-1'}`} aria-hidden>
+        <span className="relative block shrink-0" aria-hidden>
           {logo}
         </span>
       )}
       <motion.span
-        className={`text-text-base-strong inline-flex size-8 items-center justify-center ${
-          title || isFloating ? '' : '-mt-1'
+        // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
+        // Use margin so this does not fight the rotate transform.
+        className={`text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center ${
+          title ? '' : '-mt-1.5'
         }`}
         animate={{
           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -300,6 +306,23 @@ function HeaderActions({
   );
 }
 
+/** Overlay flags the page shell uses to fade chrome and hide notices. */
+export type SiteHeaderOverlayState = {
+  /** App switcher is open (chrome fade). */
+  switcherOpen: boolean;
+  /** App switcher surface is still mounted during its exit (notice hide). */
+  switcherRendered: boolean;
+  /** Mobile menu is visible, including exit animation (chrome fade and notice hide). */
+  mobileMenuVisible: boolean;
+};
+
+/** Imperative controls for host adapters that coordinate search and other overlays. */
+export type SiteHeaderHandle = {
+  closeOverlays: () => void;
+  /** Focus the logo trigger unless another control already owns focus. */
+  focusLogo: () => void;
+};
+
 export type SiteHeaderProps = {
   /** Brand mark rendered inside the logo trigger. */
   logo: ReactNode;
@@ -333,6 +356,9 @@ export type SiteHeaderProps = {
   className?: string;
   /** Default selected app-switcher tile. */
   defaultSelectedAppId?: string;
+  /** Reports switcher and mobile-menu visibility for page-shell chrome coordination. */
+  onOverlayChange?: (state: SiteHeaderOverlayState) => void;
+  ref?: Ref<SiteHeaderHandle | null>;
 };
 
 export function SiteHeader({
@@ -355,10 +381,13 @@ export function SiteHeader({
   renderNavLink,
   className = '',
   defaultSelectedAppId,
+  onOverlayChange,
+  ref,
 }: SiteHeaderProps) {
   const titleId = useId();
   const surfaceRef = useRef<HTMLElement>(null);
   const bannerExitRef = useRef<HTMLDivElement>(null);
+  const unrenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { mode: scrollMode, floatingMotion } = useHeaderScrollMode(
     pathname,
@@ -445,7 +474,14 @@ export function SiteHeader({
     ? undefined
     : `height ${isOfficialBannerResizing ? COLLAPSE_MS : OFFICIAL_BANNER_MS}ms ${EASE_DRAWER_CSS}`;
 
+  const clearUnrenderTimeout = useCallback(() => {
+    if (unrenderTimeoutRef.current == null) return;
+    clearTimeout(unrenderTimeoutRef.current);
+    unrenderTimeoutRef.current = null;
+  }, []);
+
   const openMenu = useCallback(() => {
+    clearUnrenderTimeout();
     setOpenedFromFloating(floatingLayout);
     setOfficialBannerExpanded(false);
     setIsMobileMenuOpen(false);
@@ -455,25 +491,59 @@ export function SiteHeader({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setIsExpanded(true));
     });
-  }, [floatingLayout]);
+  }, [clearUnrenderTimeout, floatingLayout]);
 
-  const closeMenu = useCallback(() => {
+  const focusLogo = useCallback(() => {
     const active = document.activeElement;
     if (!active || active === document.body || surfaceRef.current?.contains(active)) {
       surfaceRef.current
         ?.querySelector<HTMLElement>('[data-header-logo]')
         ?.focus({ preventScroll: true });
     }
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    focusLogo();
     setIsExpanded(false);
     setIsOpen(false);
     if (prefersReducedMotion) {
+      clearUnrenderTimeout();
       setIsRendered(false);
+      return;
     }
-  }, [prefersReducedMotion]);
+    clearUnrenderTimeout();
+    // Fallback if the surface never emits transitionend (some headless runs).
+    unrenderTimeoutRef.current = setTimeout(() => {
+      unrenderTimeoutRef.current = null;
+      setIsRendered(false);
+    }, COLLAPSE_MS + 50);
+  }, [clearUnrenderTimeout, focusLogo, prefersReducedMotion]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
+
+  const closeOverlays = useCallback(() => {
+    closeMenu();
+    closeMobileMenu();
+  }, [closeMenu, closeMobileMenu]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      closeOverlays,
+      focusLogo,
+    }),
+    [closeOverlays, focusLogo],
+  );
+
+  useEffect(() => {
+    onOverlayChange?.({
+      switcherOpen: isOpen,
+      switcherRendered: isRendered,
+      mobileMenuVisible: isMobileMenuVisible,
+    });
+  }, [isOpen, isRendered, isMobileMenuVisible, onOverlayChange]);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((open) => {
@@ -492,16 +562,12 @@ export function SiteHeader({
       if (event.target !== event.currentTarget) return;
       if (event.propertyName !== 'height') return;
       if (!isExpanded) {
+        clearUnrenderTimeout();
         setIsRendered(false);
-        const active = document.activeElement;
-        if (!active || active === document.body || surfaceRef.current?.contains(active)) {
-          surfaceRef.current
-            ?.querySelector<HTMLElement>('[data-header-logo]')
-            ?.focus({ preventScroll: true });
-        }
+        focusLogo();
       }
     },
-    [isExpanded],
+    [clearUnrenderTimeout, focusLogo, isExpanded],
   );
 
   useEffect(() => {
