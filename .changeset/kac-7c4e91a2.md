@@ -17,6 +17,7 @@
 ### Fixed
 
 - Make Popover entry and exit slide 8px from the resolved side; previously only the fade ran. With reduced motion, the popover fades without moving.
+- Keep tall Popovers inside their max height so the body scrolls and the header and footer stay in view.
 - Show hover, pressed, and focus ring states on the header close button that match `primary` and `secondary` surfaces.
 - Overlap the arrow with the surface by 2px, as in Figma, so no seam shows between them.
 - Draw an outline around the Popover surface in forced colors mode.

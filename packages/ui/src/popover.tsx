@@ -93,7 +93,7 @@ function popoverArrowProps(placement: string | null) {
  * starts the entry and waits for them before unmounting.
  */
 const popoverRootAnimationClassName = [
-  'group outline-0 transition-[opacity,scale,translate] duration-normal ease-out',
+  'group flex min-h-0 flex-col outline-0 transition-[opacity,scale,translate] duration-normal ease-out',
   'origin-[var(--trigger-anchor-point)]',
   'data-[entering]:opacity-0 data-[exiting]:opacity-0',
   'motion-safe:data-[entering]:scale-[0.96] motion-safe:data-[exiting]:scale-[0.96]',
@@ -122,7 +122,7 @@ function popoverArrowOverlapClass(placement: string | null) {
 }
 
 const popoverVariants = cva(
-  'relative flex flex-col overflow-visible rounded-xl bg-clip-padding shadow-lg outline-0 forced-colors:outline forced-colors:outline-1 forced-colors:outline-[CanvasText]',
+  'relative flex max-h-full min-h-0 w-full flex-col overflow-visible rounded-xl bg-clip-padding shadow-lg outline-0 forced-colors:outline forced-colors:outline-1 forced-colors:outline-[CanvasText]',
   {
     variants: {
       intent: {
@@ -209,7 +209,7 @@ export function PopoverDialog({ className, ...props }: PopoverDialogProps) {
   return (
     <AriaDialog
       {...props}
-      className={twMerge('flex min-w-0 flex-1 flex-col outline-none', className)}
+      className={twMerge('flex min-h-0 min-w-0 flex-1 flex-col outline-none', className)}
     />
   );
 }
@@ -248,7 +248,7 @@ export function PopoverHeader({
     (languageConfig.language === 'dv' ? 'ޕޮޕްއޯވަރ ބަންދުކުރައްވާ' : 'Close popover');
 
   return (
-    <div {...props} className={twMerge('flex flex-col px-4', className)}>
+    <div {...props} className={twMerge('flex shrink-0 flex-col px-4', className)}>
       <div className="flex items-center gap-2 py-2">
         {children ?? (
           <>
@@ -328,7 +328,7 @@ export function PopoverFooter({
   const intent = usePopoverIntent();
 
   return (
-    <div {...props} className={twMerge('flex flex-col px-4', className)}>
+    <div {...props} className={twMerge('flex shrink-0 flex-col px-4', className)}>
       {showDivider ? <div aria-hidden className={popoverDividerVariants({ intent })} /> : null}
       <div className="flex items-center gap-2 py-3">
         {label ? <p className={popoverFooterLabelVariants({ intent })}>{label}</p> : null}

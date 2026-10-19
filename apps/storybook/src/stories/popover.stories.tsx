@@ -869,6 +869,30 @@ const LOGICAL_PLACEMENTS: PopoverPlacement[] = [
   'bottom end',
 ];
 
+/** Keep flip off, but park the trigger where a 220px panel still fits. */
+function logicalTriggerStageClassName(placement: PopoverPlacement) {
+  const opensTowardStart =
+    placement === 'start' ||
+    placement.startsWith('start ') ||
+    placement.endsWith(' start') ||
+    placement.includes(' start ');
+  const opensTowardEnd =
+    placement === 'end' ||
+    placement.startsWith('end ') ||
+    placement.endsWith(' end') ||
+    placement.includes(' end ');
+
+  if (opensTowardStart) {
+    return 'flex min-h-[360px] w-full min-w-[320px] items-center justify-end pe-2';
+  }
+
+  if (opensTowardEnd) {
+    return 'flex min-h-[360px] w-full min-w-[320px] items-center justify-start ps-2';
+  }
+
+  return 'flex min-h-[360px] w-full min-w-[320px] items-center justify-center';
+}
+
 export const LogicalPlacements: Story = {
   name: 'Logical placements',
   parameters: { layout: 'padded' },
@@ -877,11 +901,11 @@ export const LogicalPlacements: Story = {
     const [openPlacement, setOpenPlacement] = useState<PopoverPlacement | null>(null);
 
     return (
-      <div className="grid grid-cols-1 gap-10 bg-surface-base p-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-10 bg-surface-base p-8 sm:grid-cols-2">
         {LOGICAL_PLACEMENTS.map((placement) => (
-          <div key={placement} className="flex min-h-[300px] flex-col items-center gap-3">
+          <div key={placement} className="flex flex-col items-center gap-3">
             <code className="type-caption-regular text-base-muted">{placement}</code>
-            <div className="flex flex-1 items-center justify-center">
+            <div className={logicalTriggerStageClassName(placement)}>
               <PopoverTrigger
                 isOpen={openPlacement === placement}
                 onOpenChange={(open) => setOpenPlacement(open ? placement : null)}

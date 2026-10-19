@@ -120,6 +120,15 @@ test('Popover intents match the Figma surfaces', () => {
   assert.match(source, /forced-colors:outline-\[CanvasText\]/);
 });
 
+test('Popover propagates height so the body can scroll under a max-height', () => {
+  assert.match(source, /group flex min-h-0 flex-col outline-0/);
+  assert.match(source, /relative flex max-h-full min-h-0 w-full flex-col overflow-visible/);
+  assert.match(source, /flex min-h-0 min-w-0 flex-1 flex-col outline-none/);
+  assert.match(source, /flex shrink-0 flex-col px-4/);
+  assert.match(source, /min-h-0 flex-1 px-4 py-3/);
+  assert.match(source, /flex min-h-0 flex-1 flex-col overflow-hidden rounded-\[inherit\]/);
+});
+
 test('Popover arrow uses physical placements and the surface fill', () => {
   assert.doesNotMatch(source, /case 'start'|case 'end'|placement\^=/);
   assert.match(source, /'fill-popover-bg-primary'/);
