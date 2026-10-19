@@ -1,3 +1,9 @@
+## 0.4.0
+
+### Changed
+
+- Require Veli tokens 0.9.1 or later in the 0.9 line for the validated five-block CLI installation. Applications using older token versions must upgrade before adding or updating this block; earlier versions are not claimed to be broken in isolation. Tested with UI 0.16.0 and tokens 0.9.1.
+
 ## 0.3.3
 
 ### Fixed

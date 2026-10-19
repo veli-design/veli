@@ -1,3 +1,9 @@
+## 0.3.0
+
+### Changed
+
+- Require Veli UI 0.16.0 or later in the 0.16 line and tokens 0.9.1 or later in the 0.9 line for the validated five-block CLI installation. Applications using older package versions must upgrade before adding or updating this block; earlier versions are not claimed to be broken in isolation. Tested with UI 0.16.0 and tokens 0.9.1.
+
 ## 0.2.0
 
 ### Changed
