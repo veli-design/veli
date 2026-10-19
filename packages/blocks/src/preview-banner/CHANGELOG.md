@@ -1,3 +1,9 @@
+## 0.1.1
+
+### Fixed
+
+- Constrain the stacked mobile metadata row to the card width so the message truncates inside the pill instead of overflowing the viewport.
+
 ## 0.1.0
 
 ### Added

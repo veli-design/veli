@@ -9,7 +9,7 @@ import test from 'node:test';
 import { promisify } from 'node:util';
 import { gunzipSync } from 'node:zlib';
 
-import { resolveCorepackCli } from './corepack.mjs';
+import { corepackSpawnTarget } from './corepack.mjs';
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
@@ -181,24 +181,21 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
   const userConfig = path.join(fixture.dir, '.npmrc');
   await fs.writeFile(userConfig, '');
 
-  await withReleaseReadmes(fixture.packages, () =>
-    execFileAsync(
-      process.execPath,
-      [
-        resolveCorepackCli(),
-        'pnpm',
-        'publish',
-        '--registry',
-        registryUrl,
-        '--no-git-checks',
-        '--ignore-scripts',
-      ],
-      {
-        cwd: fixture.dir,
-        env: { ...process.env, npm_config_userconfig: userConfig },
-      },
-    ),
-  );
+  await withReleaseReadmes(fixture.packages, () => {
+    const target = corepackSpawnTarget([
+      'pnpm',
+      'publish',
+      '--registry',
+      registryUrl,
+      '--no-git-checks',
+      '--ignore-scripts',
+    ]);
+    return execFileAsync(target.command, target.args, {
+      cwd: fixture.dir,
+      env: { ...process.env, npm_config_userconfig: userConfig },
+      shell: target.options.shell,
+    });
+  });
 
   const publishRequest = requests.find((request) => request.method === 'PUT');
   assert.ok(publishRequest, 'expected pnpm to send a registry publish request');

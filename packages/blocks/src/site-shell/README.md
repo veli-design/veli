@@ -57,7 +57,7 @@ For gov.mv, keep `useFrontendSession`, `SearchPalette`, `getDraftModeNotices`, a
 
 ## Accessibility and responsive behavior
 
-Preserve the single `main` landmark and chrome fade that sets `aria-hidden` and disables pointer events while overlays are open. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the single `main` landmark and chrome fade that sets `aria-hidden`, `inert`, and disables pointer events while overlays are open so faded content leaves the tab order. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

@@ -72,7 +72,7 @@ function ExitPreviewButton({
 
 function NoticeMeta({ notice }: { notice: PreviewBannerNotice }) {
   return (
-    <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div className="flex w-full min-w-0 flex-1 items-center gap-3 overflow-hidden">
       <p className="type-body-lg-medium text-text-base-strong shrink-0 truncate">{notice.title}</p>
       {notice.statusLabel ? (
         <>
@@ -120,7 +120,7 @@ function PreviewBannerCard({ notice }: { notice: PreviewBannerNotice }) {
     <aside
       aria-label={notice.title}
       data-preview-banner={notice.id}
-      className="bg-surface-raised text-text-base-strong pointer-events-auto flex w-[calc(100%-1rem)] max-w-[1464px] flex-col items-start gap-3 rounded-[2.625rem] p-3 shadow-lg lg:w-[calc(100%-4rem)] lg:flex-row lg:items-center"
+      className="bg-surface-raised text-text-base-strong pointer-events-auto flex w-[calc(100%-1rem)] max-w-[1464px] flex-col items-stretch gap-3 rounded-[2.625rem] p-3 shadow-lg lg:w-[calc(100%-4rem)] lg:flex-row lg:items-center"
     >
       <StatusDot previewStatus={notice.previewStatus} />
       <NoticeMeta notice={notice} />

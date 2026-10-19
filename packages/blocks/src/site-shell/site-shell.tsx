@@ -58,6 +58,8 @@ function ChromeFade({
       transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
       style={{ pointerEvents: hidden ? 'none' : 'auto' }}
       aria-hidden={hidden || undefined}
+      // Opacity and aria-hidden alone leave descendants in the tab order.
+      inert={hidden || undefined}
     >
       {children}
     </motion.div>
@@ -90,7 +92,7 @@ export function SiteShell({
       <ChromeFade
         chrome="content"
         hidden={isChromeHidden}
-        className={`flex min-h-0 flex-1 flex-col px-2 ${contentClassName}`}
+        className={`flex min-h-0 flex-1 flex-col px-1 lg:px-2 ${contentClassName}`}
         prefersReducedMotion={prefersReducedMotion}
       >
         <main className="bg-surface-base flex min-h-0 flex-1 flex-col rounded-3xl">{children}</main>

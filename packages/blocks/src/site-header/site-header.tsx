@@ -172,10 +172,10 @@ function HeaderLogoButton({
   return (
     <AriaButton
       data-header-logo=""
-      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer items-center bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
         isFloating
-          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'items-center gap-2.5 lg:gap-[26px]' : 'shrink-0 items-center gap-2'}`
-          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'items-center gap-2 lg:gap-3' : 'shrink-0 items-start gap-2'}`
+          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-2.5 lg:gap-[26px]' : 'shrink-0 gap-2'}`
+          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-2 lg:gap-3' : 'shrink-0 gap-2'}`
       }`}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
@@ -210,14 +210,12 @@ function HeaderLogoButton({
           </span>
         </>
       ) : (
-        <span className={`relative block shrink-0 ${isFloating ? '' : 'mt-1'}`} aria-hidden>
+        <span className="relative block shrink-0" aria-hidden>
           {logo}
         </span>
       )}
       <motion.span
-        className={`text-text-base-strong inline-flex size-8 items-center justify-center ${
-          title || isFloating ? '' : '-mt-1'
-        }`}
+        className="text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center"
         animate={{
           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
         }}

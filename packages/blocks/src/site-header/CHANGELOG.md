@@ -1,3 +1,9 @@
+## 0.4.2
+
+### Fixed
+
+- Vertically center the app-switcher trigger caret with the logo instead of using floating-only optical offsets.
+
 ## 0.4.1
 
 ### Fixed

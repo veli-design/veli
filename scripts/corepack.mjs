@@ -3,28 +3,38 @@ import { dirname, join } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 
 /**
- * Resolve the Corepack JS entry next to the running Node binary.
- * Windows cannot `spawn('corepack')` without a shell (ENOENT on the .cmd shim).
+ * Prefer Corepack next to the active Node binary (works when `spawn('corepack')`
+ * cannot launch Windows `.cmd` shims without a shell). Fall back to PATH-based
+ * `corepack` for installs that keep Corepack separate (for example Homebrew).
+ *
+ * @returns {{ mode: 'node', cli: string } | { mode: 'path' }}
  */
-export function resolveCorepackCli() {
+export function resolveCorepackInvocation() {
   const execDir = dirname(process.execPath);
   const candidates = [
     join(execDir, 'node_modules', 'corepack', 'dist', 'corepack.js'),
     join(execDir, '..', 'lib', 'node_modules', 'corepack', 'dist', 'corepack.js'),
   ];
   const cli = candidates.find((candidate) => existsSync(candidate));
-  if (cli == null) {
-    throw new Error(`Unable to locate corepack.js from ${process.execPath}`);
-  }
-  return cli;
+  if (cli != null) return { mode: 'node', cli };
+  return { mode: 'path' };
 }
 
 /**
- * Arguments for `spawn(process.execPath, …)` / `spawnSync(process.execPath, …)`.
  * @param {readonly string[]} args
+ * @returns {{ command: string, args: string[], options: { shell?: boolean } }}
  */
-export function corepackArgs(args) {
-  return [resolveCorepackCli(), ...args];
+export function corepackSpawnTarget(args) {
+  const resolved = resolveCorepackInvocation();
+  if (resolved.mode === 'node') {
+    return { command: process.execPath, args: [resolved.cli, ...args], options: {} };
+  }
+  // PATH fallback: shell is required on Windows so `.cmd` shims resolve.
+  return {
+    command: 'corepack',
+    args: [...args],
+    options: { shell: process.platform === 'win32' },
+  };
 }
 
 /**
@@ -32,7 +42,8 @@ export function corepackArgs(args) {
  * @param {import('node:child_process').SpawnOptions} [options]
  */
 export function spawnCorepack(args, options = {}) {
-  return spawn(process.execPath, corepackArgs(args), options);
+  const target = corepackSpawnTarget(args);
+  return spawn(target.command, target.args, { ...options, ...target.options });
 }
 
 /**
@@ -40,5 +51,6 @@ export function spawnCorepack(args, options = {}) {
  * @param {import('node:child_process').SpawnSyncOptions} [options]
  */
 export function spawnSyncCorepack(args, options = {}) {
-  return spawnSync(process.execPath, corepackArgs(args), options);
+  const target = corepackSpawnTarget(args);
+  return spawnSync(target.command, target.args, { ...options, ...target.options });
 }
