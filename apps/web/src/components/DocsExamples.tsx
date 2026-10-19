@@ -46,8 +46,8 @@ import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   BellIcon,
-  CaretDownIcon,
   DownloadSimpleIcon,
+  GearIcon,
   LinkSimpleIcon,
   PencilSimpleIcon,
   TrashIcon,
@@ -1500,12 +1500,11 @@ export function MenuUsageDemo() {
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Actions
-        <CaretDownIcon size={16} />
       </Button>
       <MenuPopover>
         <Menu>
           <MenuItem startIcon={<PencilSimpleIcon size={16} />}>Edit</MenuItem>
-          <MenuItem startIcon={<DownloadSimpleIcon size={16} />} shortcut="⌘E">
+          <MenuItem startIcon={<DownloadSimpleIcon size={16} />} shortcut={['⌘', 'E']}>
             Export
           </MenuItem>
           <MenuSeparator />
@@ -1518,33 +1517,24 @@ export function MenuUsageDemo() {
   );
 }
 
-export function MenuVariantsDemo() {
+export function MenuItemsDemo() {
   return (
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Open menu
-        <CaretDownIcon size={16} />
       </Button>
-      <MenuPopover>
+      <MenuPopover className="max-w-xs">
         <Menu>
           <MenuItem
             startIcon={<PencilSimpleIcon size={16} />}
-            description="Update labels, metadata, and visibility."
+            description="Update labels and visibility."
+            shortcut={['⌘', 'E']}
           >
             Edit details
           </MenuItem>
-          <MenuItem
-            startIcon={<DownloadSimpleIcon size={16} />}
-            description="Create a local copy for offline work."
-          >
-            Download
-          </MenuItem>
+          <MenuItem startIcon={<GearIcon size={16} />}>Advanced</MenuItem>
           <MenuSeparator />
-          <MenuItem
-            intent="danger"
-            startIcon={<TrashIcon size={16} />}
-            description="This action is permanent."
-          >
+          <MenuItem intent="danger" startIcon={<TrashIcon size={16} />} shortcut="Del">
             Remove file
           </MenuItem>
         </Menu>
