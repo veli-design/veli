@@ -9,7 +9,7 @@ This experimental block is editable source for internal teams with access to Vel
 Configure `@tradenetcorp:registry=https://npm.pkg.github.com` and use your existing package-read credentials. Never commit credentials.
 
 ```sh
-corepack pnpm add react@19.2.6 react-dom@19.2.6 motion@12.42.2 @tradenetcorp/veli-tokens@0.9.0
+corepack pnpm add react@19.2.6 react-dom@19.2.6 motion@12.42.2 @tradenetcorp/veli-tokens@0.9.1
 ```
 
 Use Tailwind 4 with your framework's integration. In your global stylesheet:

@@ -1,7 +1,7 @@
 {
   "id": "error-page",
   "title": "Error page",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "experimental",
   "description": "Responsive error recovery content with interactive, theme-aware artwork.",
   "files": [
@@ -17,23 +17,23 @@
     "types.ts"
   ],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.15.0",
+    "@tradenetcorp/veli-ui": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0",
     "motion": "^12.42.2"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.9.0",
+    "@tradenetcorp/veli-tokens": "^0.9.1",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.15.0",
+    "@tradenetcorp/veli-ui": "0.16.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.19.0",
     "motion": "12.42.2",
-    "@tradenetcorp/veli-tokens": "0.9.0",
+    "@tradenetcorp/veli-tokens": "0.9.1",
     "tailwindcss": "4.3.2",
     "next": "16.2.11"
   }

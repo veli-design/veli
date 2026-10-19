@@ -1,3 +1,9 @@
+## 0.2.0
+
+### Changed
+
+- Require Veli tokens 0.9.1 or later in the 0.9 line for installation alongside the complete block catalog. Upgrade the applicable packages before adding or updating this block. Validated against release candidates; repeat a clean registry install after publication.
+
 ## 0.1.1
 
 ### Fixed
