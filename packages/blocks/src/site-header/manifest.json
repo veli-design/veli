@@ -1,7 +1,7 @@
 {
   "id": "site-header",
   "title": "Site header",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "status": "experimental",
   "description": "Scroll-aware site header with official banner, language and theme controls, mobile menu, and an embedded app switcher.",
   "files": [
@@ -15,7 +15,7 @@
     "motion.ts"
   ],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.15.0",
+    "@tradenetcorp/veli-ui": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0",
@@ -27,8 +27,8 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.15.0",
-    "@tradenetcorp/veli-tokens": "0.9.0",
+    "@tradenetcorp/veli-ui": "0.16.0",
+    "@tradenetcorp/veli-tokens": "0.9.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.19.0",
