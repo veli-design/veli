@@ -1,0 +1,65 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "calendar",
+  "apiPattern": "flat",
+  "purpose": "Standalone calendar surface for selecting one date or a date range.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider when the calendar must follow Veli language and text direction settings."
+    ]
+  },
+  "useWhen": [
+    "Embed date selection directly in a scheduling, booking, filter, or availability surface.",
+    "Show constrained or unavailable dates while preserving calendar context.",
+    "Keep the selected or focused date synchronized with external state."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Date selection should remain compact until the user opens it.",
+      "guidance": "Use the field-style control with its calendar popover.",
+      "useInstead": ["date-picker"]
+    },
+    {
+      "situation": "Users only need direct segment-by-segment date entry.",
+      "guidance": "Use the dedicated editable date field.",
+      "useInstead": ["date-field"]
+    }
+  ],
+  "supportedInteractions": [
+    "Select a single date or a start-and-end date range.",
+    "Navigate months and choose a year from the header.",
+    "Move keyboard focus within the calendar.",
+    "Optionally focus and select today.",
+    "Block dates by minimum, maximum, or availability rules."
+  ],
+  "approvedPatterns": [
+    "Provide an accessible name when no visible label describes the calendar.",
+    "Use controlled value and focus state when selection must stay synchronized with other UI.",
+    "Use RangeCalendar for start-and-end date selection.",
+    "Pair invalid state with a concise error message when guidance is needed."
+  ],
+  "limitations": [
+    "The date grid has a fixed 19.25rem width.",
+    "The built-in Today action is opt-in.",
+    "Unavailable dates remain focusable but cannot be selected."
+  ],
+  "accessibility": [
+    "Provide aria-label when there is no visible label.",
+    "Disabled and unavailable dates are visually distinguished.",
+    "Keyboard focus receives a visible focus ring.",
+    "Weekday abbreviations expose full Dhivehi labels where available."
+  ],
+  "responsive": [
+    "Reserve enough horizontal space for the fixed-width date grid.",
+    "Place multiple calendars in one column on narrow layouts."
+  ],
+  "rtl": [
+    "VeliProvider can supply Dhivehi locale and RTL direction.",
+    "Navigation icons reverse direction in RTL.",
+    "Range endpoints use logical start and end rounding."
+  ],
+  "relatedComponents": ["date-field", "date-picker", "provider"]
+}

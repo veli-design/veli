@@ -602,11 +602,11 @@ function ActionButton({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !resolvedPending || hasChildren || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const { buttonRef, buttonEventHandlers } = useButtonRipple({

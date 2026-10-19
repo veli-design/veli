@@ -1,0 +1,62 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "toast",
+  "apiPattern": "multi-part",
+  "purpose": "Delivers brief temporary notifications through a shared queue and landmark region.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Mount Toast Region once inside VeliProvider for localized direction and close text."]
+  },
+  "useWhen": [
+    "A brief global notification should appear without interrupting the current task.",
+    "Application events need queued notification delivery."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The message must remain near related page content.",
+      "guidance": "Use an inline alert.",
+      "useInstead": ["alert"]
+    },
+    {
+      "situation": "The user must make a blocking decision.",
+      "guidance": "Use a modal with explicit actions.",
+      "useInstead": ["modal"]
+    }
+  ],
+  "supportedInteractions": [
+    "Enqueue and dismiss notifications.",
+    "Run one or more actions.",
+    "Auto-dismiss timed notifications.",
+    "Display timeout progress.",
+    "Navigate and close notifications through the toast region."
+  ],
+  "approvedPatterns": [
+    "Create and share one toast queue.",
+    "Mount one Toast Region near the application root.",
+    "Use at least five seconds for auto-dismiss notifications.",
+    "Keep action-bearing or important notifications open until dismissed.",
+    "Use stable action ids when labels are not stable primitive values."
+  ],
+  "limitations": [
+    "Timeout progress only renders for a timed queue entry with an active timer.",
+    "Toast uses React Aria unstable toast primitives.",
+    "Actions dismiss by default unless explicitly configured otherwise."
+  ],
+  "accessibility": [
+    "Use a concise title and optional supporting description.",
+    "Keep actionable notifications persistent so users have time to respond.",
+    "The close control has provider-localized notification text.",
+    "The visual timeout progress bar is hidden from assistive technology."
+  ],
+  "responsive": [
+    "Toasts cap their width and regions use viewport insets.",
+    "Start and end placements adapt to logical direction."
+  ],
+  "rtl": [
+    "Provider direction is applied to the toast region and each toast.",
+    "Use start or end placement names rather than physical sides."
+  ],
+  "relatedComponents": ["alert", "modal", "provider"]
+}

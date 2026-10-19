@@ -22,6 +22,7 @@ export default [
       '**/coverage/**',
       '**/out/**',
       '**/storybook-static/**',
+      'evals/agent/runs/**',
       'playground/**',
       'pnpm-lock.yaml',
       'packages/blocks/examples/**',
@@ -51,6 +52,7 @@ export default [
   {
     files: [
       'scripts/**/*.mjs',
+      'evals/**/*.mjs',
       'packages/tokens/**/*.mjs',
       'packages/ui/**/*.mjs',
       'packages/blocks/**/*.mjs',

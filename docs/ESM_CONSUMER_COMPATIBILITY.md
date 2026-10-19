@@ -46,12 +46,16 @@ UI `prepublishOnly` builds and runs `package:check`. The repository release comm
 CI also runs the isolated packed-package Pages/Vitest fixture on both Next versions:
 
 ```sh
-corepack pnpm --filter @tradenetcorp/veli-ui build
+corepack pnpm --filter @tradenetcorp/veli-ui --filter @tradenetcorp/veli-tokens build
 corepack pnpm --filter @tradenetcorp/veli-ui pack --out /tmp/ui.tgz
-node scripts/check-ui-consumer.mjs /tmp/veli-next15 /tmp/ui.tgz 15.5.18
-node scripts/check-ui-consumer.mjs /tmp/veli-next16 /tmp/ui.tgz 16.2.6
+corepack pnpm --filter @tradenetcorp/veli-tokens pack --out /tmp/tokens.tgz
+node scripts/check-ui-consumer.mjs /tmp/veli-next15 /tmp/ui.tgz /tmp/tokens.tgz 15.5.18
+node scripts/check-ui-consumer.mjs /tmp/veli-next16 /tmp/ui.tgz /tmp/tokens.tgz 16.2.6
 ```
 
-Use new output directories. These fixtures install only public dependencies and the local UI tarball, without Veli transpilation, dependency inlining, aliases or mocks. Both use webpack to hold the bundler constant.
+Use new output directories. These fixtures install only public dependencies plus the local UI and
+tokens tarballs, without Veli transpilation, dependency inlining, aliases or mocks. Both use
+webpack to hold the bundler constant. Tokens must come from the packed tarball because
+`@tradenetcorp/veli-tokens` is a UI peer and is not fetched from the public npm registry in CI.
 
 After upgrading to the release containing this fix (planned UI **0.15.0**), OnePass can remove only its Veli entry from `transpilePackages` and Vitest `server.deps.inline`. Keep the separate `osm-ws-client` transpilation entry and other application-specific configuration. govmv-web needs no Veli-specific workaround. Removing the existing workarounds before upgrading still leaves the old package broken.

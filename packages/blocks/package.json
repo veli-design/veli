@@ -7,6 +7,8 @@
     "./notification-tray": "./src/notification-tray/notification-tray.tsx",
     "./site-footer": "./src/site-footer/site-footer.tsx",
     "./site-header": "./src/site-header/site-header.tsx",
+    "./site-shell": "./src/site-shell/site-shell.tsx",
+    "./preview-banner": "./src/preview-banner/preview-banner.tsx",
     "./catalog": {
       "types": "./scripts/catalog.d.ts",
       "import": "./scripts/catalog.mjs"
