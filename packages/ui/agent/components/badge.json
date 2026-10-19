@@ -1,0 +1,44 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "badge",
+  "apiPattern": "flat",
+  "purpose": "Labels statuses, categories, and compact numeric counts.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "A compact status or category label is needed.",
+    "A notification-style count or status dot is needed."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Users need to click or toggle the label.",
+      "guidance": "Use an interactive control instead of making Badge behave like one.",
+      "useInstead": ["tags"]
+    },
+    {
+      "situation": "A full contextual message is needed.",
+      "guidance": "Use a message component with title and description.",
+      "useInstead": ["alert", "toast"]
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Use semantic intent for status meaning.",
+    "Use counter mode for compact counts.",
+    "Provide an accessible label for a standalone status dot."
+  ],
+  "limitations": [
+    "Status dots hide themselves from assistive technology unless labeled.",
+    "Leading icons are not shown in counter or dot modes."
+  ],
+  "accessibility": [
+    "Do not rely on color alone to communicate status.",
+    "Add aria-label when a dot or context-free count needs an accessible meaning."
+  ],
+  "responsive": ["Labels truncate within the available inline width."],
+  "rtl": ["Leading content and logical positioning follow the surrounding direction."],
+  "relatedComponents": ["alert", "tags", "toast"]
+}

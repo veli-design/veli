@@ -1,0 +1,45 @@
+---
+title: LoadingText
+description: Settling pending label with decorative grains for indeterminate actions.
+---
+
+import { LoadingUsageDemo } from '../../components/LoadingExamples';
+
+# LoadingText
+
+Use `LoadingText` when a short label can explain a pending action. Pair it with [Spinner](/docs/spinner/) for indeterminate loading indicators. Settling text follows the current text direction and respects reduced motion.
+
+## Import
+
+```tsx
+import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <LoadingUsageDemo client:visible />
+</div>
+
+```tsx
+<LoadingText>Marking all as read</LoadingText>
+```
+
+Write the pending label without an ellipsis; the three decorative grains provide it. A trailing ellipsis in an existing label is removed visually to avoid duplication. The light band follows LTR or RTL direction. Pass your application's translated pending label as `children`.
+
+## Accessibility and reduced motion
+
+`LoadingText` provides `role="status"`. It uses the complete label as its accessible name and hides animated decoration from assistive technology.
+
+When a parent already announces progress, pass `aria-hidden="true"` to avoid duplicate announcements. Keep pending action controls disabled through their own component's pending state; a loading indicator alone does not block activation.
+
+With reduced motion enabled, settling text stops the moving light band and grain movement, retaining the design's gentle opacity pulse.
+
+## API Reference
+
+| Prop        | Type     | Default | Description                        |
+| :---------- | :------- | :------ | :--------------------------------- |
+| `children`  | `string` | —       | Required translated pending label. |
+| `className` | `string` | —       | Typography and layout overrides.   |
+
+Supports standard HTML `span` attributes and a `ref` to the root span.

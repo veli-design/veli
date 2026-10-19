@@ -16,10 +16,11 @@ Accessible React primitives for the Veli Design System. Built on [React Aria Com
 **Packages:**
 
 ```bash
-pnpm add @tradenetcorp/veli-ui
+pnpm add @tradenetcorp/veli-ui @tradenetcorp/veli-tokens
 ```
 
-Peers (`react`, `react-dom`, `react-aria-components`) are required. Veli UI installs `@phosphor-icons/react` automatically for its internal icons. If your app imports icons directly, add the package as a direct dependency:
+Peers (`@tradenetcorp/veli-tokens`, `react`, `react-dom`, `react-aria-components`) are
+required. Veli UI installs `@phosphor-icons/react` automatically for its internal icons. If your app imports icons directly, add the package as a direct dependency:
 
 ```bash
 pnpm add @phosphor-icons/react@^2.1.10
@@ -39,7 +40,7 @@ In your global CSS (import once from app entry):
 
 ```tsx
 import { Button } from '@tradenetcorp/veli-ui/button';
-import { Tabs, TabList, Tab, TabPanel } from '@tradenetcorp/veli-ui/tabs';
+import { Tabs } from '@tradenetcorp/veli-ui/tabs';
 ```
 
 ```tsx
@@ -55,6 +56,19 @@ export function CreateAction() {
   );
 }
 ```
+
+## AI assistants
+
+The installed package includes version-matched guidance and semantic component metadata:
+
+- `AGENT_GUIDE.md` — setup, lookup order, and Veli-wide implementation rules
+- `agent/manifest.json` — component discovery and links to semantic sidecars
+- `agent/components/*.json` — when to use each component, limitations, and relationships
+- `agent/recipes/` — type-checked integration examples
+
+Use the published TypeScript declarations for props and variants. Use
+`@tradenetcorp/veli-tokens/tokens`, `/tailwind`, and `/css` as the token authorities.
+Do not infer unsupported Veli APIs from the metadata.
 
 ## Next.js and Vitest
 

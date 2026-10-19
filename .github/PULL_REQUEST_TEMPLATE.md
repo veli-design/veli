@@ -28,3 +28,13 @@ For untracked maintenance work, write: N/A — <brief reason>
 
 <!-- List automated and manual checks run. State any intentionally skipped
 validation and why. -->
+
+## Agent docs
+
+<!--
+If this PR changes packages/ui/src/<id>.tsx public API or behavior that agents
+need to know, update packages/ui/agent/components/<id>.json (and AGENT_GUIDE.md
+when the system-wide rules change).
+-->
+
+- [ ] Agent sidecars / guide updated, or N/A

@@ -1,0 +1,62 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "date-field",
+  "apiPattern": "flat",
+  "purpose": "Segment-based field for direct date or date-time entry.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["VeliProvider supplies the React Aria locale used to format and order date segments."]
+  },
+  "useWhen": [
+    "Users should enter a date directly, segment by segment.",
+    "A form needs date or date-time entry without an attached calendar popover.",
+    "The value must be submitted as an ISO string through a named form field."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Users need visual date discovery or availability context.",
+      "guidance": "Use a calendar-backed picker or an embedded calendar.",
+      "useInstead": ["date-picker", "calendar"]
+    },
+    {
+      "situation": "The field should open a calendar from a compact trigger.",
+      "guidance": "Use the date picker.",
+      "useInstead": ["date-picker"]
+    }
+  ],
+  "supportedInteractions": [
+    "Edit date and optional time segments.",
+    "Use controlled or uncontrolled values.",
+    "Submit a named value through a form.",
+    "Enforce minimum, maximum, required, and custom validation rules.",
+    "Present disabled and read-only states."
+  ],
+  "approvedPatterns": [
+    "Provide a visible label for form use.",
+    "Use description text for entry guidance and errorMessage for invalid-state recovery.",
+    "Set granularity only when time segments are required.",
+    "Use placeholderValue to establish the segment shape and calendar or time-zone context."
+  ],
+  "limitations": [
+    "No calendar or availability surface is included.",
+    "Helper description is hidden while the field is invalid.",
+    "Time-zone entry depends on the supplied date value and formatting settings."
+  ],
+  "accessibility": [
+    "The visible label is associated with the React Aria date field.",
+    "Each editable date part is rendered as a semantic date segment.",
+    "Disabled fields prevent editing and focus; read-only fields keep the value readable.",
+    "Required and invalid states are exposed through the underlying field semantics."
+  ],
+  "responsive": [
+    "The field fills its container; constrain its parent to the intended form width.",
+    "Allow validation and description text to wrap below the field."
+  ],
+  "rtl": [
+    "Use VeliProvider for Dhivehi locale and RTL segment ordering.",
+    "The field uses locale-aware React Aria date segments."
+  ],
+  "relatedComponents": ["calendar", "date-picker", "provider"]
+}

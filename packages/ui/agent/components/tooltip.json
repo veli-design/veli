@@ -1,0 +1,58 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "tooltip",
+  "apiPattern": "compound",
+  "purpose": "Shows brief non-interactive contextual help on hover or focus.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language and direction are applied to the overlay."]
+  },
+  "useWhen": [
+    "A focusable control needs a short explanatory hint.",
+    "An icon-only action benefits from a visible text label on hover or focus."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The floating content contains controls or links.",
+      "guidance": "Tooltips must remain non-interactive; use a popover.",
+      "useInstead": ["popover"]
+    },
+    {
+      "situation": "Information is essential to completing the task.",
+      "guidance": "Place essential guidance visibly in the page."
+    }
+  ],
+  "supportedInteractions": [
+    "Open from trigger hover or keyboard focus.",
+    "Close after trigger interaction ends.",
+    "Control open state and timing.",
+    "Flip or position around the trigger."
+  ],
+  "approvedPatterns": [
+    "Wrap one focusable trigger and Tooltip in Tooltip Trigger.",
+    "Use the small size for short hints.",
+    "Use the large size for wider multiline guidance.",
+    "Use start and end placements for direction-aware alignment."
+  ],
+  "limitations": [
+    "Tooltip content must not be interactive.",
+    "Only the large size renders an arrow.",
+    "Tone changes the large tooltip treatment; the small treatment is fixed."
+  ],
+  "accessibility": [
+    "Use a focusable trigger so keyboard users can reveal the tooltip.",
+    "Keep content concise and non-interactive.",
+    "Do not use the tooltip as the only accessible name for an icon-only control."
+  ],
+  "responsive": [
+    "Large tooltips have a capped width and can wrap.",
+    "Allow flipping when the preferred placement lacks space."
+  ],
+  "rtl": [
+    "Provider direction is applied to the tooltip.",
+    "Prefer start and end placements when alignment should mirror."
+  ],
+  "relatedComponents": ["kbd", "popover", "provider"]
+}

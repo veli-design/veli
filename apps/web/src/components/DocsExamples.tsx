@@ -1566,6 +1566,22 @@ export function TabsUsageDemo() {
   );
 }
 
+export function TabsOverflowDemo() {
+  return (
+    <div className="min-h-56 w-full max-w-[520px]">
+      <Tabs
+        listAriaLabel="Workspace sections"
+        items={TAB_ITEMS}
+        overflowItems={[
+          { id: 'billing', label: 'Billing', panel: 'Invoices and payment methods.' },
+          { id: 'integrations', label: 'Integrations', panel: 'Connected apps and APIs.' },
+          { id: 'audit-log', label: 'Audit log', panel: 'Recent account activity.' },
+        ]}
+      />
+    </div>
+  );
+}
+
 export function TooltipUsageDemo() {
   return (
     <TooltipTrigger delay={0}>

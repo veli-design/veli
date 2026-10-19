@@ -1,0 +1,338 @@
+{
+  "sharedForbidSnippets": ["allowsBrowse", "Coral UI"],
+  "signalTasks": [
+    "15-form-setting",
+    "16-undo-toast",
+    "17-help-link",
+    "18-tile-links",
+    "19-sticky-table",
+    "20-loading-form"
+  ],
+  "tasks": [
+    {
+      "id": "01-setup",
+      "title": "Setup",
+      "goal": "Install both packages, Tailwind v4 token/ui imports, and VeliProvider.",
+      "fixture": "bare",
+      "prompt": "This Vite React app should use Veli for its interface. Get the project ready so we can start building screens. Some of those screens will be English and some Dhivehi, and users may prefer light or dark appearance.",
+      "requireImports": ["provider"],
+      "forbidImports": [],
+      "requireSnippets": [
+        "@tradenetcorp/veli-tokens/tailwind",
+        "@tradenetcorp/veli-ui/tailwind",
+        "VeliProvider",
+        "colorScheme"
+      ],
+      "requirePatterns": ["@import\\s+['\"]tailwindcss['\"]"],
+      "requirePackages": ["@tradenetcorp/veli-ui", "@tradenetcorp/veli-tokens"],
+      "requireProvider": true,
+      "judgeChecks": [
+        "Both Veli packages are added as dependencies.",
+        "The stylesheet imports Tailwind, then the Veli tokens and UI Tailwind sources.",
+        "VeliProvider wraps the app, sets a language that can be en or dv, and sets a colorScheme of system or a user choice."
+      ]
+    },
+    {
+      "id": "02-action-nav",
+      "title": "Action vs navigation",
+      "goal": "Button + onPress for Create; Link + href for Learn more.",
+      "prompt": "Create a `PermitsEmptyState` component for residents who have no permit applications yet. It offers Create application and Learn more. Create starts a new draft. Learn more goes to /help.",
+      "requireImports": ["button", "link"],
+      "forbidImports": [],
+      "requireSnippets": ["onPress", "href"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Create application is a Button that runs an action through onPress.",
+        "Learn more is a Link with href /help, not a Button."
+      ]
+    },
+    {
+      "id": "03-form",
+      "title": "Accessible form",
+      "goal": "Input + Select with SelectItem and visible labels; not ComboBox.",
+      "prompt": "Create a `ServiceRequestForm` component. A resident is requesting a service. Collect their full name and the service they want. The services are Permits and Registrations. They send the request from this form.",
+      "requireImports": ["button", "input", "select"],
+      "forbidImports": ["combobox"],
+      "requireSnippets": ["SelectItem"],
+      "requirePatterns": ["(?<![\\w-])label="],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Full name uses Input with a visible label.",
+        "Service uses Select with SelectItem options Permits and Registrations and a visible label.",
+        "Sending is a Button in a form, and missing required values show an error."
+      ]
+    },
+    {
+      "id": "04-tabs-table",
+      "title": "Tabs and table",
+      "goal": "Data-driven Tabs with items, plus Table; not PageTab or RAC TabList.",
+      "prompt": "Create an `ApplicationsReview` component. Staff review applications. They move between Active and Archived. Active lists each application with its name and status. Archived has nothing in it yet.",
+      "requireImports": ["tabs", "table"],
+      "forbidImports": ["page-tab"],
+      "requireSnippets": ["items=", "aria-label"],
+      "requirePatterns": ["TableHeader|Table\\.Header"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Active and Archived are data-driven Tabs items with labels and panels.",
+        "Active shows a Table with an accessible name and a row header column.",
+        "Archived shows a clear empty state."
+      ]
+    },
+    {
+      "id": "05-confirm",
+      "title": "Blocking confirmation",
+      "goal": "Modal, not Popover/Tooltip; keep it open while delete is in progress.",
+      "prompt": "Create a `DeleteApplication` component. Staff can delete an application. They have to confirm before it is removed. If the delete request is still running, they should not be able to leave that confirmation unfinished.",
+      "requireImports": ["button", "modal"],
+      "forbidImports": ["popover", "tooltip"],
+      "requireSnippets": ["Modal.Title", "isOpen", "isDismissable", "isKeyboardDismissDisabled"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "The confirmation uses Modal, not Popover or Tooltip.",
+        "While the delete request runs, an outside click or Escape cannot dismiss the modal.",
+        "The confirm button shows a busy state with isPending or isLoading while deleting."
+      ]
+    },
+    {
+      "id": "06-filters",
+      "title": "Anchored filters",
+      "goal": "Popover composition with checkbox; not Modal, Tooltip, or Menu.",
+      "prompt": "Create an `ApplicationsToolbar` component with Filters. People can choose Active only and Assigned to me, then apply those choices.",
+      "requireImports": ["button", "popover", "checkbox"],
+      "forbidImports": ["modal", "tooltip", "menu"],
+      "requireSnippets": ["PopoverTrigger", "PopoverDialog"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Filters opens an anchored Popover from a trigger button.",
+        "Active only and Assigned to me are Checkboxes in the popover.",
+        "An apply action commits the choices and closes the popover."
+      ]
+    },
+    {
+      "id": "07-date",
+      "title": "Appointment date",
+      "goal": "DatePicker form field; not DateField segments or an inline Calendar.",
+      "prompt": "Create an `AppointmentForm` component. Residents book an office appointment. They need to choose the date on this form.",
+      "requireImports": ["date-picker"],
+      "forbidImports": ["date-field", "calendar"],
+      "requirePatterns": ["(?<![\\w-])label="],
+      "requireProvider": false,
+      "judgeChecks": [
+        "The date uses DatePicker with a visible label.",
+        "It does not use DateField alone or an always-visible Calendar."
+      ]
+    },
+    {
+      "id": "08-files",
+      "title": "File upload",
+      "goal": "DropzoneField, or compound Dropzone with area, list, and item; not the old flat Dropzone props.",
+      "prompt": "Create a `SupportingDocuments` component. Applicants attach supporting documents. They may add at most two files, and only PDF or images. They need to see what they attached and remove a file if it was the wrong one.",
+      "requireImports": ["dropzone"],
+      "forbidImports": [],
+      "requireSnippets": ["maxFiles"],
+      "requirePatterns": [
+        "DropzoneField|^(?=[\\s\\S]*DropzoneArea)(?=[\\s\\S]*DropzoneList)(?=[\\s\\S]*DropzoneItem)",
+        "\\baccept(?:edFileTypes)?="
+      ],
+      "forbidPatterns": ["<Dropzone\\b[^>]*\\bacceptedFileTypes="],
+      "requireProvider": false,
+      "judgeChecks": [
+        "It uses DropzoneField or compound Dropzone parts, with no invented props.",
+        "It limits uploads to two files of PDF or image type and states those limits near the target.",
+        "Users see the attached files and can remove each one.",
+        "A rejected file gets a visible explanation."
+      ]
+    },
+    {
+      "id": "09-feedback",
+      "title": "Alert and toast",
+      "goal": "Alert for the policy notice; ToastRegion queue for Saved.",
+      "prompt": "Create a `DraftEditor` page component. There is a new records-retention policy that people must notice while they are on this page. After they save a draft, let them know it worked so they can keep editing.",
+      "requireImports": ["alert", "toast"],
+      "forbidImports": [],
+      "requireSnippets": ["ToastRegion", "createToastQueue"],
+      "requireProvider": true,
+      "judgeChecks": [
+        "The retention policy is an inline Alert that stays visible on the page.",
+        "The saved confirmation uses one toast queue with a ToastRegion, not an Alert.",
+        "The saved confirmation does not block editing."
+      ]
+    },
+    {
+      "id": "10-rtl",
+      "title": "Dhivehi responsive cards",
+      "goal": "VeliProvider language=dv and Card; two columns on desktop.",
+      "prompt": "Create a `ServiceTiles` component. Show Permits and Registrations as service tiles. The copy is Dhivehi. This is the Dhivehi site, including for people who prefer dark appearance. On a laptop the tiles should sit side by side.",
+      "requireImports": ["card", "provider"],
+      "forbidImports": [],
+      "requirePatterns": ["language=(?:\"dv\"|'dv'|\\{['\"]dv['\"]\\})", "(?:md|lg):grid-cols-2"],
+      "requireProvider": true,
+      "judgeChecks": [
+        "VeliProvider uses language dv.",
+        "Tiles use Card, with two columns from a laptop breakpoint and one column on narrow screens.",
+        "Layout uses logical start and end, not hard-coded left and right."
+      ]
+    },
+    {
+      "id": "11-range",
+      "title": "Unsupported range picker",
+      "goal": "Refuse a single range-picker control; RangeCalendar or two fields is acceptable.",
+      "prompt": "Create a `StayDates` component for a hotel booking form. It needs check-in and check-out together as one date range field.",
+      "requireImports": [],
+      "forbidImports": [],
+      "requireSnippets": [],
+      "acceptedImports": ["calendar", "date-picker"],
+      "requireProvider": false,
+      "expectRefusal": true,
+      "judgeChecks": [
+        "It states that Veli has no single date-range field.",
+        "It does not invent a range-picker component or prop.",
+        "Any shipped code uses RangeCalendar or two clearly labeled DatePickers."
+      ]
+    },
+    {
+      "id": "12-radio-group",
+      "title": "Radio group with Field",
+      "goal": "FieldLabel inside RadioGroup; do not invent a RadioGroup label prop.",
+      "prompt": "Create a `DeliveryMethod` component. Ask residents which delivery method they prefer: Collection or Post. Show a short description under the question and require a choice before they continue.",
+      "requireImports": ["radio", "field"],
+      "forbidImports": [],
+      "requireSnippets": ["RadioGroup", "FieldLabel", "FieldDescription"],
+      "forbidPatterns": [
+        "<RadioGroup[^>]*\\blabel=",
+        "<RadioGroup[^>]*\\b(?:description|errorMessage)="
+      ],
+      "requireProvider": false,
+      "judgeChecks": [
+        "FieldLabel, FieldDescription, and FieldError are inside RadioGroup, and RadioGroup has no label prop.",
+        "The description and error are not repeated through RadioGroup description or errorMessage props.",
+        "A choice is required, and the error is visible when no choice is made."
+      ]
+    },
+    {
+      "id": "13-form-library",
+      "title": "Form library errors",
+      "goal": "React Hook Form with FieldError errors and /form helpers where useful.",
+      "prompt": "Create a `NameForm` component with React Hook Form that collects a full name. When the name is missing, show the validation error with Veli field messaging. Prefer Veli helpers if the package exposes form-library utilities.",
+      "requireImports": ["input", "field"],
+      "forbidImports": [],
+      "requireSnippets": ["FieldError", "errors", "useForm"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "It uses React Hook Form useForm with a required rule on the name.",
+        "It shows the error through FieldError errors or a helper from @tradenetcorp/veli-ui/form."
+      ]
+    },
+    {
+      "id": "14-tab-links",
+      "title": "Link tabs with router",
+      "goal": "Tabs items with href plus VeliProvider navigate.",
+      "prompt": "The app uses React Router. The `react-router` package is installed but routing is not set up yet. Staff move between Overview at /overview and History at /history. Use Veli tabs that navigate like links, and set up routing so those tabs do not do a full page reload.",
+      "requireImports": ["tabs", "provider"],
+      "forbidImports": [],
+      "requireSnippets": ["href", "navigate", "VeliProvider"],
+      "requireProvider": true,
+      "judgeChecks": [
+        "Tabs items use href for /overview and /history and omit panel content.",
+        "VeliProvider receives the router navigate function, and useHref when available.",
+        "Routes for /overview and /history are set up."
+      ]
+    },
+    {
+      "id": "15-form-setting",
+      "title": "Form-submitted setting",
+      "goal": "Checkbox for a boolean saved on submit; the Switch sidecar avoids form-submitted values.",
+      "prompt": "Create a `NotificationPreferences` form. Residents choose whether to get email updates about their applications. The choice is saved only when they press Save preferences.",
+      "requireImports": ["checkbox", "button"],
+      "forbidImports": ["switch"],
+      "requireSnippets": ["Save preferences"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Email updates uses a Checkbox, not a Switch.",
+        "The value is saved only when Save preferences is pressed.",
+        "The checkbox has a visible label."
+      ]
+    },
+    {
+      "id": "16-undo-toast",
+      "title": "Undo notification",
+      "goal": "One toast queue and region; the Undo toast stays open until dismissed.",
+      "prompt": "Create a `DraftsList` component that lists two drafts, each with a Delete action. After a draft is deleted, tell the user and let them undo the deletion.",
+      "requireImports": ["toast", "button"],
+      "requireSnippets": ["createToastQueue", "ToastRegion", "actions"],
+      "forbidPatterns": ["timeout:\\s*(?:\\d{1,3}|[0-4]\\d{3})\\b"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "It uses one toast queue and one ToastRegion.",
+        "The deletion notification has an Undo action.",
+        "The notification with Undo has no auto-dismiss timeout.",
+        "Undo restores the deleted draft."
+      ]
+    },
+    {
+      "id": "17-help-link",
+      "title": "Help with a link",
+      "goal": "Interactive help goes in a Popover or visible text, not a Tooltip or infoTooltip.",
+      "prompt": "Create a `ReferenceNumberField` component with a reference number text field. Next to its label, add a small help control. The help explains where to find the number and links to /help/reference-numbers.",
+      "requireImports": ["input"],
+      "forbidImports": ["tooltip"],
+      "requireSnippets": ["/help/reference-numbers"],
+      "forbidPatterns": ["infoTooltip=\\{[\\s\\S]{0,400}?(?:<Link\\b|<a\\b|href=)"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "The help link is not inside a Tooltip or an infoTooltip.",
+        "Keyboard users can reach the /help/reference-numbers link, in a Popover or in visible text.",
+        "The reference number field has a visible label."
+      ]
+    },
+    {
+      "id": "18-tile-links",
+      "title": "Navigating tiles",
+      "goal": "Card interactive is visual only; each tile navigates through a real Link.",
+      "prompt": "Create a `ServiceDirectory` component with three service tiles: Permits, Registrations, and Licences. Each tile shows a title and a one-line description. Selecting a tile opens that service page at /services/<name>.",
+      "requireImports": ["card", "link"],
+      "requirePatterns": ["\\bhref="],
+      "forbidPatterns": ["<Card\\b[^>]*\\bon(?:Click|Press)=", "window\\.location"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "Each tile navigates through a real link with href, not a click handler on Card.",
+        "It does not rely on Card interactive to make the tile actionable.",
+        "Each tile has a title and description and links to /services/permits, /services/registrations, or /services/licences."
+      ]
+    },
+    {
+      "id": "19-sticky-table",
+      "title": "Sticky table header",
+      "goal": "Table stickyHeader inside a bounded scroll container; sticky headers need a scrolling ancestor.",
+      "prompt": "Create an `ApplicationsTable` component that lists 50 applications with name, status, and submitted date. The column headings must stay visible while staff scroll through the rows.",
+      "requireImports": ["table"],
+      "requireSnippets": ["stickyHeader", "aria-label"],
+      "requirePatterns": ["overflow-(?:y-)?(?:auto|scroll)", "\\b(?:max-h|h)-(?:\\[|\\d)"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "It uses Table with stickyHeader.",
+        "The table is inside a scroll container with a bounded height, so the header can stick.",
+        "The table has an accessible name and a row header column."
+      ]
+    },
+    {
+      "id": "20-loading-form",
+      "title": "Loading and saving states",
+      "goal": "Compose Skeleton with a busy container; Button isPending for saving; no invented skeleton props.",
+      "prompt": "Create a `ProfileForm` component with full name and email fields. While the saved profile loads, show a placeholder in the shape of the form. After it loads, people can edit and save. While saving, the Save button shows that work is in progress.",
+      "requireImports": ["skeleton", "input", "button"],
+      "requirePatterns": [
+        "aria-busy|aria-live|role=[\"']status[\"']",
+        "\\bis(?:Pending|Loading)\\b"
+      ],
+      "forbidPatterns": ["\\bisSkeleton\\b"],
+      "requireProvider": false,
+      "judgeChecks": [
+        "While loading, Skeleton shapes mirror the form fields.",
+        "The loading container announces its busy state with aria-busy or a live region.",
+        "Saving uses Button isPending or isLoading, not a Skeleton.",
+        "It does not invent a skeleton prop on Input or Button."
+      ]
+    }
+  ]
+}

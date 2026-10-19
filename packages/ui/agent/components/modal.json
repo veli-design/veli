@@ -1,0 +1,59 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "modal",
+  "apiPattern": "compound",
+  "purpose": "Presents focused dialog content above the current page.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language and direction are applied to the overlay and dialog."]
+  },
+  "useWhen": [
+    "A task or decision requires focused interaction without leaving the page.",
+    "A confirmation requires explicit actions."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The content is brief contextual help anchored to a control.",
+      "guidance": "Use an anchored overlay.",
+      "useInstead": ["popover", "tooltip"]
+    },
+    {
+      "situation": "The information can remain inline without interrupting the user.",
+      "guidance": "Keep it in page content or use an inline alert.",
+      "useInstead": ["alert"]
+    }
+  ],
+  "supportedInteractions": [
+    "Open and close with controlled, uncontrolled, or trigger-managed state.",
+    "Dismiss by outside interaction or Escape when enabled.",
+    "Restore focus to a composed trigger.",
+    "Scroll overflowing dialog content."
+  ],
+  "approvedPatterns": [
+    "Compose trigger, header, title, description, close button, content, and footer.",
+    "Use Modal Trigger for standard state and focus restoration.",
+    "Use controlled state for routing, asynchronous guards, or multiple triggers.",
+    "Disable outside and keyboard dismissal for flows requiring an explicit choice."
+  ],
+  "limitations": [
+    "Subcomponents and the close button must be used within Modal.",
+    "When using Modal Trigger, pass open-state controls to the trigger rather than Modal.",
+    "Dialog height is capped and overflow scrolls."
+  ],
+  "accessibility": [
+    "Every dialog needs Modal Title, aria-label, or aria-labelledby.",
+    "React Aria provides focus management and Escape handling.",
+    "Do not remove all dismissal paths unless explicit actions remain."
+  ],
+  "responsive": [
+    "The surface is full-width within viewport padding and capped by its selected maximum width.",
+    "Dialog height is capped at ninety percent of the dynamic viewport."
+  ],
+  "rtl": [
+    "Provider direction is set on the overlay, surface, and dialog.",
+    "The built-in close label is localized for Dhivehi."
+  ],
+  "relatedComponents": ["alert", "divider", "popover", "provider", "tooltip"]
+}
