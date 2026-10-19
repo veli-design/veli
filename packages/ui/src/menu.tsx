@@ -54,13 +54,13 @@ const menuPopoverRootClassName = [
 
 /** Visual surface — kept off the root so width/className overrides stay local. */
 const menuPopoverSurfaceClassName = [
-  'min-w-48 w-max rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none',
+  'min-w-56 w-max rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-default shadow-md backdrop-blur-xs outline-none',
 ].join(' ');
 
 const menuVariants = cva('outline-none');
 
 const menuItemVariants = cva(
-  'group flex w-full cursor-default items-center gap-2 rounded-lg px-4 text-start antialiased outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[hovered]:bg-menu-hover data-[focus-visible]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
+  'group flex w-full cursor-default items-center gap-2 rounded-lg px-3 text-start antialiased outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[disabled]:[&_svg]:text-icon-disabled data-[hovered]:bg-menu-hover data-[focus-visible]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[open]:bg-menu-hover',
   {
     variants: {
       size: {
@@ -83,7 +83,7 @@ const menuItemVariants = cva(
 
 const menuSectionVariants = cva('py-1 first:pt-0 last:pb-0');
 
-const menuSectionTitleVariants = cva('px-4 text-start text-base-emphasis', {
+const menuSectionTitleVariants = cva('px-3 text-start text-base-emphasis', {
   variants: {
     size: {
       sm: 'py-1.5 type-body-sm-medium',
@@ -243,11 +243,16 @@ function MenuSubmenuCaret({ size }: { size?: 'sm' | 'md' | 'lg' | null }) {
   );
 }
 
+const menuShortcutKeyClassName =
+  'group-data-[disabled]:text-disabled group-data-[disabled]:[&_svg]:text-icon-disabled';
+
 function MenuShortcut({ shortcut }: { shortcut: React.ReactNode }) {
   if (typeof shortcut === 'string') {
     return (
       <KbdGroup dir="ltr" data-veli-menu-shortcut="">
-        <Kbd lang="en">{shortcut}</Kbd>
+        <Kbd lang="en" className={menuShortcutKeyClassName}>
+          {shortcut}
+        </Kbd>
       </KbdGroup>
     );
   }
@@ -256,7 +261,7 @@ function MenuShortcut({ shortcut }: { shortcut: React.ReactNode }) {
     return (
       <KbdGroup dir="ltr" data-veli-menu-shortcut="">
         {shortcut.map((key, index) => (
-          <Kbd key={index} lang="en">
+          <Kbd key={index} lang="en" className={menuShortcutKeyClassName}>
             {key}
           </Kbd>
         ))}
@@ -338,7 +343,12 @@ export interface MenuSeparatorProps extends Omit<AriaSeparatorProps, 'className'
 }
 
 export function MenuSeparator({ className, ...props }: MenuSeparatorProps) {
-  return <AriaSeparator {...props} className={twMerge('border-t border-base-muted', className)} />;
+  return (
+    <AriaSeparator
+      {...props}
+      className={twMerge('mx-3 my-1 border-t border-base-muted', className)}
+    />
+  );
 }
 
 interface MenuItemContentProps {

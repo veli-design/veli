@@ -48,7 +48,7 @@ test('Menu exposes the public composition API and package export', () => {
 test('MenuPopover matches Figma surface, width, and motion', () => {
   assert.match(
     source,
-    /min-w-48 w-max rounded-xl border-\[0\.5px\] border-base-muted bg-menu-bg p-1/,
+    /min-w-56 w-max rounded-xl border-\[0\.5px\] border-base-muted bg-menu-bg p-1/,
   );
   assert.match(source, /motion-reduce:transition-none/);
   assert.match(source, /transition-\[opacity,translate,scale\] duration-normal ease-out/);
@@ -57,12 +57,12 @@ test('MenuPopover matches Figma surface, width, and motion', () => {
   assert.match(source, /origin-\[var\(--trigger-anchor-point\)\]/);
   assert.match(source, /motion-safe:data-\[entering\]:scale-\[0\.97\]/);
   assert.doesNotMatch(source, /scale-0\b/);
-  assert.doesNotMatch(source, /min-w-56/);
+  assert.doesNotMatch(source, /min-w-48/);
   assert.doesNotMatch(source, /border border-base-subtle/);
 });
 
 test('MenuItem matches Figma spacing, description type, and reduced motion', () => {
-  assert.match(source, /rounded-lg px-4 text-start/);
+  assert.match(source, /rounded-lg px-3 text-start/);
   assert.match(source, /gap-1\.5/);
   assert.match(source, /transition-colors duration-normal ease-out motion-reduce:transition-none/);
   assert.match(source, /menuItemDescriptionVariants[\s\S]*sm: 'type-body-sm-regular'/);
@@ -134,6 +134,19 @@ test('MenuItem shortcut renders Kbd keys for strings and arrays', () => {
     { language: 'dv' },
   );
   assert.match(rtlShortcut, /dir="ltr"[^>]*data-veli-menu-shortcut/);
+
+  const disabledShortcut = renderMenu(
+    createElement(MenuItem, { id: 'rename', shortcut: 'E', isDisabled: true }, 'Rename'),
+  );
+  assert.match(disabledShortcut, /group-data-\[disabled\]:text-disabled/);
+  assert.match(disabledShortcut, /<kbd\b[^>]*group-data-\[disabled\]:text-disabled[^>]*>E<\/kbd>/);
+
+  const disabledArrayShortcut = renderMenu(
+    createElement(MenuItem, { id: 'export', shortcut: ['⌘', 'E'], isDisabled: true }, 'Export'),
+  );
+  assert.ok(
+    (disabledArrayShortcut.match(/group-data-\[disabled\]:text-disabled/g) || []).length >= 2,
+  );
 });
 
 test('MenuItem icons use Figma icon tokens', () => {
@@ -166,7 +179,7 @@ test('Menu sections, separators, and composition wrappers render', () => {
   assert.match(html, /text-base-emphasis/);
   assert.match(html, /type-body-sm-medium/);
   assert.match(html, /role="separator"/);
-  assert.match(html, /class="border-t border-base-muted"/);
+  assert.match(html, /class="mx-3 my-1 border-t border-base-muted"/);
 });
 
 test('Submenu caret flips with provider direction and is automatic', () => {
