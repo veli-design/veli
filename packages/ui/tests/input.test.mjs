@@ -56,6 +56,13 @@ test('Input keeps the shell surface and themed text during browser autofill', ()
       new RegExp(`${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-base-strong\\)\\]`),
     );
     assert.match(fieldVariantsSource, new RegExp(`${selector}caret-text-base-strong`));
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(
+        `disabled:${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-disabled\\)\\]`,
+      ),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`disabled:${selector}caret-text-disabled`));
   }
 });
 

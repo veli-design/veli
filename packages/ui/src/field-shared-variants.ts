@@ -69,9 +69,10 @@ export const outlineFieldStrokeFocusVisibleHide = {
  * that author `!important` cannot override. Transitions outrank every `!important` declaration,
  * so an effectively infinite delay keeps the native input transparent over the field shell.
  * Both selectors are listed because older Chromium only matches `:-webkit-autofill`.
+ * Disabled autofill keeps the muted token so `disabled:text-disabled` is not overridden.
  */
 export const fieldInputAutofill =
-  'autofill:[transition:background-color_0s_600000s] autofill:[-webkit-text-fill-color:var(--veli-color-text-base-strong)] autofill:caret-text-base-strong [&:-webkit-autofill]:[transition:background-color_0s_600000s] [&:-webkit-autofill]:[-webkit-text-fill-color:var(--veli-color-text-base-strong)] [&:-webkit-autofill]:caret-text-base-strong';
+  'autofill:[transition:background-color_0s_600000s] autofill:[-webkit-text-fill-color:var(--veli-color-text-base-strong)] autofill:caret-text-base-strong disabled:autofill:[-webkit-text-fill-color:var(--veli-color-text-disabled)] disabled:autofill:caret-text-disabled [&:-webkit-autofill]:[transition:background-color_0s_600000s] [&:-webkit-autofill]:[-webkit-text-fill-color:var(--veli-color-text-base-strong)] [&:-webkit-autofill]:caret-text-base-strong disabled:[&:-webkit-autofill]:[-webkit-text-fill-color:var(--veli-color-text-disabled)] disabled:[&:-webkit-autofill]:caret-text-disabled';
 
 export const fieldRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
