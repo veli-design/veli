@@ -2,6 +2,57 @@
    In the app: @import "@tradenetcorp/veli-ui/tailwind"; */
 @source "./dist";
 
+.veli-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    light-dark(
+      color-mix(in srgb, var(--veli-color-white) 65%, transparent),
+      color-mix(in srgb, var(--veli-color-white) 8%, transparent)
+    ),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: veli-skeleton-sweep 2000ms var(--veli-ease-linear, linear) infinite;
+}
+
+.veli-skeleton:dir(rtl)::after {
+  animation-name: veli-skeleton-sweep-rtl;
+}
+
+/* Sweep for 1500ms, then hold fully outside the clip for 500ms. */
+@keyframes veli-skeleton-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  75%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes veli-skeleton-sweep-rtl {
+  0% {
+    transform: translateX(100%);
+  }
+  75%,
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veli-skeleton::after,
+  .veli-skeleton:dir(rtl)::after {
+    animation: none;
+    background: none;
+  }
+}
+
 ::view-transition-new(.toast):only-child {
   animation: toast-enter 400ms ease;
 }

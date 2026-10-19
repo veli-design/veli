@@ -12,7 +12,10 @@ export function Skeleton({ className, ref, ...props }: SkeletonProps) {
     <div
       ref={ref}
       aria-hidden="true"
-      className={twMerge('animate-pulse rounded-md bg-skeleton', className)}
+      className={twMerge(
+        'veli-skeleton relative overflow-hidden rounded-md bg-skeleton',
+        className,
+      )}
       {...props}
     />
   );

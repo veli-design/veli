@@ -45,7 +45,7 @@ Validate your application's routes, translations, keyboard behavior, mobile gest
 
 ## Loading feedback
 
-Initial loading composes Veli `Skeleton` placeholders in the notification row layout, including the icon, message and timestamps. The placeholders are decorative, and the tray announces the translated loading status once. Pulsing stops under reduced motion. Existing notifications stay visible during a refresh; retry states show their pending action instead of initial-loading placeholders.
+Initial loading uses local notification-shaped placeholders with one shared highlight across each row’s icon, message and timestamps. The highlight sweeps for 1500ms, then rests without shimmer for 500ms. It follows the text direction and uses Veli colour and easing tokens. The placeholders are decorative, and the tray announces the translated loading status once. Reduced motion shows static placeholders. Existing notifications stay visible during a refresh; retry states show their pending action instead of initial-loading placeholders.
 
 Pending retry and paging actions use the shared `Spinner` button variant. The mark-all-read menu action uses `LoadingText`. These components support Veli themes and reduced motion; loading labels remain application-owned and translated through `labels`.
 
