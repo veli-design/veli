@@ -71,8 +71,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const [command, target] = process.argv.slice(2);
   if (command === 'changes') {
     // Diff both names for renames/deletions. Never use the moving base branch tip as the diff base.
-    const base = execFileSync('git', ['merge-base', target, 'HEAD'], { encoding: 'utf8' }).trim();
-    const paths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', base, 'HEAD'], {
+    const head = process.argv[4] ?? 'HEAD';
+    const base = execFileSync('git', ['merge-base', target, head], { encoding: 'utf8' }).trim();
+    const paths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', base, head], {
       encoding: 'utf8',
     })
       .split('\0')

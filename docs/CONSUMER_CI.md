@@ -5,7 +5,8 @@ and accepts only successful selected jobs or explicitly unselected, skipped jobs
 A failed selector, failed/cancelled job, missing result or unexpected skip fails it.
 Branch protection does not need new check names.
 
-The selector diffs the PR checkout against `git merge-base <PR base SHA> HEAD`.
+The selector diffs the PR head against `git merge-base <PR base SHA> <PR head SHA>`.
+It uses the event head SHA even when checkout is GitHub’s synthetic merge commit.
 Renames include both old and new paths. Selection is a union across all changed
 paths, and unknown paths run the full suite.
 

@@ -174,6 +174,18 @@ test('change detection uses merge base and retains deleted and renamed dependenc
     assert.equal(result.base, base);
     assert.deepEqual(result.paths, ['CONTRIBUTING.md', 'README.md']);
     assert.equal(result.selected.candidate, false);
+    const feature = git('rev-parse', 'HEAD');
+    git('merge', '--no-edit', advanced);
+    const fromMergeCheckout = JSON.parse(
+      execFileSync(
+        process.execPath,
+        [new URL('./consumer-ci.mjs', import.meta.url).pathname, 'changes', advanced, feature],
+        { cwd: directory, encoding: 'utf8', env: { ...env, GITHUB_OUTPUT: output } },
+      ),
+    );
+    assert.equal(fromMergeCheckout.base, base);
+    assert.deepEqual(fromMergeCheckout.paths, result.paths);
+    assert.equal(fromMergeCheckout.selected.candidate, false);
     writeFileSync(resolve(directory, 'pnpm-lock.yaml'), 'lock');
     git('add', 'pnpm-lock.yaml');
     git('commit', '-qm', 'lock');
