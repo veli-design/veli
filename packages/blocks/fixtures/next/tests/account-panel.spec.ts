@@ -680,7 +680,7 @@ for (const width of [440, 1280]) {
   }
 }
 
-test('reduced-motion skeletons are decorative and do not pulse', async ({ page }) => {
+test('reduced-motion skeletons are decorative and do not shimmer', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/accounts');
   await page.getByLabel('State').selectOption('loading');
@@ -695,7 +695,7 @@ test('reduced-motion skeletons are decorative and do not pulse', async ({ page }
   const avatar = rows.first().locator(':scope > .rounded-full');
   await expect(avatar).toHaveCSS('width', '44px');
   await expect(avatar).toHaveCSS('height', '44px');
-  await expect(rows.locator('.animate-pulse')).toHaveCount(9);
+  await expect(rows.locator('.veli-skeleton')).toHaveCount(9);
   expect(
     await rows.evaluateAll((elements) =>
       elements.every(
