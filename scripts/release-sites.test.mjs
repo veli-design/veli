@@ -1,12 +1,26 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { execFileSync, spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import test from 'node:test';
 import { parse, stringify } from 'yaml';
 import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
+
+function resolveCorepackCli() {
+  const execDir = dirname(process.execPath);
+  const candidates = [
+    join(execDir, 'node_modules', 'corepack', 'dist', 'corepack.js'),
+    join(execDir, '..', 'lib', 'node_modules', 'corepack', 'dist', 'corepack.js'),
+  ];
+  const cli = candidates.find((candidate) => existsSync(candidate));
+  if (cli == null) {
+    throw new Error(`Unable to locate corepack.js from ${process.execPath}`);
+  }
+  return cli;
+}
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const manifest = await createManifest(sourceCommit);
@@ -135,8 +149,15 @@ test(
           `registry=${registry}\n@tradenetcorp:registry=${registry}\nfetch-retries=0\n`,
         );
         const child = spawn(
-          'corepack',
-          ['pnpm', 'install', '--lockfile-only', '--ignore-scripts', '--no-frozen-lockfile'],
+          process.execPath,
+          [
+            resolveCorepackCli(),
+            'pnpm',
+            'install',
+            '--lockfile-only',
+            '--ignore-scripts',
+            '--no-frozen-lockfile',
+          ],
           {
             cwd: consumer,
             env: {

@@ -1,0 +1,46 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "divider",
+  "apiPattern": "flat",
+  "purpose": "Separates related content horizontally or vertically, optionally as an interactive expand control.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Related content blocks need a subtle structural boundary.",
+    "Inline items need a vertical separator.",
+    "A horizontal divider should act as a labeled expand or collapse control."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A new semantic section or heading is required.",
+      "guidance": "Use document structure rather than a divider alone."
+    }
+  ],
+  "supportedInteractions": ["Optional pointer and keyboard activation when onClick is supplied"],
+  "approvedPatterns": [
+    "Use a horizontal divider between stacked content.",
+    "Use a vertical divider inside a container with an explicit height.",
+    "Use text only with a horizontal divider.",
+    "Choose appearance subtle, muted, strong, or emphasis for visual weight.",
+    "When interactive, supply onClick with aria-label and optional showIcon and aria-expanded."
+  ],
+  "limitations": [
+    "Text is ignored for vertical orientation.",
+    "Vertical dividers depend on the surrounding layout for usable height.",
+    "Interactive mode requires an accessible name through aria-label."
+  ],
+  "accessibility": [
+    "Plain dividers expose React Aria separator semantics.",
+    "Decorative lines around divider text are hidden from assistive technology.",
+    "Interactive dividers expose button semantics with the supplied aria-label."
+  ],
+  "responsive": [
+    "Horizontal dividers fill available width.",
+    "Vertical dividers stretch to their container."
+  ],
+  "rtl": ["Divider geometry is direction-neutral."],
+  "relatedComponents": ["card", "modal", "accordion"]
+}

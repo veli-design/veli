@@ -1,0 +1,57 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "search",
+  "apiPattern": "flat",
+  "purpose": "Collect search terms in a purpose-built field with a leading search icon and contextual clear action.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider for localized placeholder and clear-button labels and RTL behavior."
+    ]
+  },
+  "useWhen": [
+    "Users need to enter a query that filters or searches content.",
+    "The query should expose a one-action clear control when populated."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The field collects non-search text.",
+      "guidance": "Use the general single-line field.",
+      "useInstead": ["input"]
+    },
+    {
+      "situation": "Users must search a finite option list and select a value.",
+      "guidance": "Use the searchable selection component.",
+      "useInstead": ["combobox"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard search entry",
+    "Controlled or uncontrolled value changes",
+    "Clear the current value and restore input focus",
+    "Focus by clicking the field shell"
+  ],
+  "approvedPatterns": [
+    "Always provide an accessible name through page labeling or aria-label.",
+    "Use description text normally and errorMessage when invalid."
+  ],
+  "limitations": [
+    "No visible label is rendered by the component.",
+    "The clear button is hidden for empty, disabled, or read-only fields.",
+    "Direct child composition, style overrides, and changing the input type are not supported."
+  ],
+  "accessibility": [
+    "Uses a native search input through React Aria TextField.",
+    "The clear action has a localized accessible label and returns focus to the input.",
+    "Disabled, read-only, and invalid states are exposed through React Aria."
+  ],
+  "responsive": [
+    "The field fills its container; set width through surrounding layout or root className."
+  ],
+  "rtl": [
+    "The field layout mirrors with the active direction and search terms follow standard input direction behavior."
+  ],
+  "relatedComponents": ["input", "combobox"]
+}

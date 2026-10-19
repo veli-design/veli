@@ -1,0 +1,62 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "provider",
+  "apiPattern": "provider",
+  "purpose": "Provides supported language, direction, locale, color-scheme, and optional router navigation context to a Veli subtree.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional",
+    "notes": ["Place VeliProvider at the application or Veli subtree boundary."]
+  },
+  "useWhen": [
+    "Veli components need coordinated English or Dhivehi language and direction.",
+    "A subtree needs Veli light, dark, or system color-scheme context.",
+    "Client-side href navigation on Link, Tabs, Menu, or Breadcrumbs needs a router navigate function."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A framework theme runtime already owns document-level theme state and must not be overridden.",
+      "guidance": "Pass an explicit light or dark colorScheme from that runtime, or keep theme ownership outside VeliProvider."
+    }
+  ],
+  "supportedInteractions": [
+    "React to system color-scheme changes.",
+    "Synchronize .dark, data-theme, and color-scheme on document.documentElement.",
+    "Inject an optional blocking theme script via @tradenetcorp/veli-ui/theme-script.",
+    "Read active language and color-scheme context through exported hooks."
+  ],
+  "approvedPatterns": [
+    "Wrap the application or Veli component subtree once.",
+    "Select language rather than passing locale and direction independently.",
+    "Pass navigate and useHref when composing router-aware href components.",
+    "Use getVeliThemeScript from @tradenetcorp/veli-ui/theme-script when injecting the theme script outside VeliProvider."
+  ],
+  "limitations": [
+    "Only English and Dhivehi language mappings are supported.",
+    "Only system, light, and dark color schemes are supported.",
+    "Router integration requires the consumer to supply navigate and optional useHref."
+  ],
+  "accessibility": [
+    "The wrapper sets lang and dir for its subtree.",
+    "React Aria receives the mapped locale.",
+    "Keep document language and direction coherent when the provider does not wrap the full page."
+  ],
+  "responsive": [],
+  "rtl": [
+    "Dhivehi maps to dv-MV and rtl.",
+    "Direction-aware components should consume provider context or inherited direction."
+  ],
+  "relatedComponents": [
+    "alert",
+    "avatar",
+    "link",
+    "menu",
+    "modal",
+    "popover",
+    "tabs",
+    "tags",
+    "toast",
+    "tooltip"
+  ]
+}
