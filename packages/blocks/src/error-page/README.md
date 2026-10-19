@@ -7,7 +7,7 @@ An experimental composition of Veli typography and links with artwork from Basim
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.15.0 @tradenetcorp/veli-tokens@0.9.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 motion@12.42.2
+corepack pnpm add @tradenetcorp/veli-ui@0.16.0 @tradenetcorp/veli-tokens@0.9.1 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 motion@12.42.2
 corepack pnpm dlx @tradenetcorp/veli init
 corepack pnpm dlx @tradenetcorp/veli add error-page
 ```
