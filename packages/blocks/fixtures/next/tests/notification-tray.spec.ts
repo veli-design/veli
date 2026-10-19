@@ -1,10 +1,15 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { warnAccessibilityViolations } from './accessibility.mjs';
+import { waitForMotion } from './wait-for-motion';
 
 async function openTray(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: /^Notifications/ }).click();
-  return page.getByRole('dialog', { name: 'Notifications', exact: true });
+  const tray = page.getByRole('dialog', { name: 'Notifications', exact: true });
+  await expect(tray).toBeVisible();
+  // Popover surface scale would otherwise skew getBoundingClientRect while entering.
+  await waitForMotion(page);
+  return tray;
 }
 
 test('desktop width stays 389px across viewport sizes and notification states', async ({

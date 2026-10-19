@@ -3,6 +3,7 @@
 import {
   Dialog as AriaDialog,
   DialogTrigger as AriaDialogTrigger,
+  Heading as AriaHeading,
   OverlayArrow,
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
@@ -17,7 +18,7 @@ import { useVeliLanguage } from './provider.js';
 /** Minimum inset of the arrow from the popover edge (keeps it off rounded corners). */
 const POPOVER_ARROW_BOUNDARY_OFFSET = 20;
 
-type PopoverIntent = 'primary' | 'secondary' | 'tertiary';
+export type PopoverIntent = 'primary' | 'secondary' | 'tertiary';
 type PopoverArrowAxis = 'top' | 'bottom' | 'left' | 'right';
 
 const PopoverIntentContext = React.createContext<PopoverIntent>('tertiary');
@@ -26,38 +27,27 @@ function usePopoverIntent() {
   return React.useContext(PopoverIntentContext);
 }
 
+/** React Aria resolves `start`/`end` to a physical side before rendering the arrow. */
 function getPopoverArrowAxis(placement: string | null): PopoverArrowAxis {
-  const axis = placement?.split(' ')[0];
-
-  switch (axis) {
+  switch (placement) {
     case 'bottom':
     case 'left':
     case 'right':
-      return axis;
-    case 'start':
-      return 'left';
-    case 'end':
-      return 'right';
+      return placement;
     default:
       return 'top';
   }
 }
 
-function popoverArrowFillClass(intent: PopoverIntent | null | undefined) {
-  const resolvedIntent = intent ?? 'tertiary';
-
-  switch (resolvedIntent) {
+function popoverArrowClassName(intent: PopoverIntent) {
+  switch (intent) {
     case 'primary':
-      return 'fill-[var(--veli-color-popover-bg-primary)]';
+      return 'fill-popover-bg-primary';
     case 'secondary':
-      return 'fill-[var(--veli-color-popover-bg-secondary)]';
+      return 'fill-popover-bg-secondary';
     default:
-      return 'fill-[var(--veli-color-popover-bg-tertiary)]';
+      return 'fill-popover-bg-tertiary';
   }
-}
-
-function popoverArrowClassName(intent: PopoverIntent | null | undefined) {
-  return popoverArrowFillClass(intent);
 }
 
 function popoverArrowProps(placement: string | null) {
@@ -98,51 +88,53 @@ function popoverArrowProps(placement: string | null) {
   };
 }
 
-/** Opacity on the positioned root — React Aria waits for transitions on this element before unmounting. */
+/**
+ * Opacity stays on the positioned root so React Aria can wait for entry/exit. Scale and slide live
+ * on the surface so they do not fight the overlay position transform.
+ */
 const popoverRootAnimationClassName = [
-  'group outline-0 transition-opacity duration-normal ease-out',
+  'group flex min-h-0 flex-col outline-0 transition-opacity duration-normal ease-out',
   'data-[entering]:opacity-0 data-[exiting]:opacity-0',
-  'data-[exiting]:duration-fast data-[exiting]:ease-in',
+  'data-[exiting]:duration-fast',
 ].join(' ');
 
-/** Slide on the inner surface so we don't fight the overlay positioning transform. */
-const popoverSlideClassName = [
-  'transition-transform duration-normal ease-out group-data-[exiting]:duration-fast group-data-[exiting]:ease-in',
-  'group-data-[placement^=top]:group-data-[entering]:translate-y-2',
-  'group-data-[placement^=top]:group-data-[exiting]:translate-y-2',
-  'group-data-[placement^=bottom]:group-data-[entering]:-translate-y-2',
-  'group-data-[placement^=bottom]:group-data-[exiting]:-translate-y-2',
-  'group-data-[placement^=left]:group-data-[entering]:translate-x-2',
-  'group-data-[placement^=left]:group-data-[exiting]:translate-x-2',
-  'group-data-[placement^=right]:group-data-[entering]:-translate-x-2',
-  'group-data-[placement^=right]:group-data-[exiting]:-translate-x-2',
-  'group-data-[placement^=start]:group-data-[entering]:translate-x-2',
-  'group-data-[placement^=start]:group-data-[exiting]:translate-x-2',
-  'group-data-[placement^=end]:group-data-[entering]:-translate-x-2',
-  'group-data-[placement^=end]:group-data-[exiting]:-translate-x-2',
+const popoverSurfaceMotionClassName = [
+  'origin-[var(--trigger-anchor-point)]',
+  'transition-[scale,translate] duration-normal ease-out group-data-[exiting]:duration-fast',
+  'motion-safe:group-data-[entering]:scale-[0.96] motion-safe:group-data-[exiting]:scale-[0.96]',
+  'motion-safe:group-data-[placement=top]:group-data-[entering]:translate-y-2',
+  'motion-safe:group-data-[placement=top]:group-data-[exiting]:translate-y-2',
+  'motion-safe:group-data-[placement=bottom]:group-data-[entering]:-translate-y-2',
+  'motion-safe:group-data-[placement=bottom]:group-data-[exiting]:-translate-y-2',
+  'motion-safe:group-data-[placement=left]:group-data-[entering]:translate-x-2',
+  'motion-safe:group-data-[placement=left]:group-data-[exiting]:translate-x-2',
+  'motion-safe:group-data-[placement=right]:group-data-[entering]:-translate-x-2',
+  'motion-safe:group-data-[placement=right]:group-data-[exiting]:-translate-x-2',
 ].join(' ');
 
 function popoverArrowOverlapClass(placement: string | null) {
   switch (getPopoverArrowAxis(placement)) {
     case 'top':
-      return '-translate-y-px';
+      return '-translate-y-0.5';
     case 'bottom':
-      return 'translate-y-px';
+      return 'translate-y-0.5';
     case 'left':
-      return '-translate-x-px';
+      return '-translate-x-0.5';
     case 'right':
-      return 'translate-x-px';
+      return 'translate-x-0.5';
   }
 }
 
 const popoverVariants = cva(
-  'relative flex flex-col overflow-visible rounded-xl bg-clip-padding outline-0',
+  // max-h-[inherit] mirrors React Aria's root max-height; percentage max-height is unreliable when
+  // the root only has a max-height from available space.
+  `relative flex max-h-[inherit] min-h-0 w-full flex-col overflow-visible rounded-xl bg-clip-padding shadow-lg outline-0 forced-colors:outline forced-colors:outline-1 forced-colors:outline-[CanvasText] ${popoverSurfaceMotionClassName}`,
   {
     variants: {
       intent: {
         primary: 'bg-popover-bg-primary text-popover-fg-on-primary',
         secondary: 'bg-popover-bg-secondary text-popover-fg-on-secondary',
-        tertiary: 'bg-popover-bg-tertiary text-base-default shadow-xl',
+        tertiary: 'bg-popover-bg-tertiary text-base-default',
       },
     },
     defaultVariants: {
@@ -194,10 +186,10 @@ const popoverCloseButtonVariants = cva('', {
   variants: {
     intent: {
       primary:
-        'text-popover-fg-on-primary hover:bg-popover-fg-on-primary/10 active:bg-popover-fg-on-primary/20',
+        'text-popover-fg-on-primary data-[hovered]:bg-popover-fg-on-primary/10 data-[pressed]:bg-popover-fg-on-primary/20 focus-visible:ring-offset-popover-bg-primary',
       secondary:
-        'text-popover-fg-on-secondary hover:bg-popover-fg-on-secondary/10 active:bg-popover-fg-on-secondary/20',
-      tertiary: 'text-base-strong',
+        'text-popover-fg-on-secondary data-[hovered]:bg-popover-fg-on-secondary/10 data-[pressed]:bg-popover-fg-on-secondary/20 focus-visible:ring-offset-popover-bg-secondary',
+      tertiary: 'text-base-strong focus-visible:ring-offset-popover-bg-tertiary',
     },
   },
   defaultVariants: {
@@ -223,29 +215,37 @@ export function PopoverDialog({ className, ...props }: PopoverDialogProps) {
   return (
     <AriaDialog
       {...props}
-      className={twMerge('flex min-w-0 flex-1 flex-col outline-none', className)}
+      className={twMerge('flex min-h-0 min-w-0 flex-1 flex-col outline-none', className)}
     />
   );
 }
 
-export interface PopoverHeaderProps {
-  className?: string;
+export interface PopoverHeaderProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'title' | 'children'
+> {
+  /** Rendered as the dialog's title heading, which names the surrounding `PopoverDialog`. */
   title?: React.ReactNode;
+  /** Heading level for `title`. */
+  titleLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   icon?: React.ReactNode;
   onClose?: () => void;
   closeButtonLabel?: string;
   showDivider?: boolean;
+  /** Replaces the icon and title; include a `Heading slot="title"` or label the dialog yourself. */
   children?: React.ReactNode;
 }
 
 export function PopoverHeader({
   className,
   title,
+  titleLevel,
   icon,
   onClose,
   closeButtonLabel,
   showDivider = true,
   children,
+  ...props
 }: PopoverHeaderProps) {
   const intent = usePopoverIntent();
   const languageConfig = useVeliLanguage();
@@ -254,12 +254,24 @@ export function PopoverHeader({
     (languageConfig.language === 'dv' ? 'ޕޮޕްއޯވަރ ބަންދުކުރައްވާ' : 'Close popover');
 
   return (
-    <div className={twMerge('flex flex-col px-4', className)}>
+    <div {...props} className={twMerge('flex shrink-0 flex-col px-4', className)}>
       <div className="flex items-center gap-2 py-2">
         {children ?? (
           <>
-            {icon ? <span className="inline-flex shrink-0 [&_svg]:size-4">{icon}</span> : null}
-            {title ? <p className={popoverHeaderTitleVariants({ intent })}>{title}</p> : null}
+            {icon ? (
+              <span aria-hidden className="inline-flex shrink-0 [&_svg]:size-4">
+                {icon}
+              </span>
+            ) : null}
+            {title ? (
+              <AriaHeading
+                slot="title"
+                level={titleLevel}
+                className={popoverHeaderTitleVariants({ intent })}
+              >
+                {title}
+              </AriaHeading>
+            ) : null}
           </>
         )}
         {onClose ? (
@@ -294,17 +306,19 @@ export function PopoverHeader({
   );
 }
 
-export interface PopoverContentProps {
-  className?: string;
+export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export function PopoverContent({ className, children }: PopoverContentProps) {
-  return <div className={twMerge('min-h-0 flex-1 px-4 py-3', className)}>{children}</div>;
+export function PopoverContent({ className, children, ...props }: PopoverContentProps) {
+  return (
+    <div {...props} className={twMerge('min-h-0 flex-1 px-4 py-3', className)}>
+      {children}
+    </div>
+  );
 }
 
-export interface PopoverFooterProps {
-  className?: string;
+export interface PopoverFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: React.ReactNode;
   showDivider?: boolean;
   children?: React.ReactNode;
@@ -315,11 +329,12 @@ export function PopoverFooter({
   label,
   showDivider = true,
   children,
+  ...props
 }: PopoverFooterProps) {
   const intent = usePopoverIntent();
 
   return (
-    <div className={twMerge('flex flex-col px-4', className)}>
+    <div {...props} className={twMerge('flex shrink-0 flex-col px-4', className)}>
       {showDivider ? <div aria-hidden className={popoverDividerVariants({ intent })} /> : null}
       <div className="flex items-center gap-2 py-3">
         {label ? <p className={popoverFooterLabelVariants({ intent })}>{label}</p> : null}
@@ -361,7 +376,7 @@ export function Popover({
           twMerge(popoverRootAnimationClassName, userClassName),
         )}
       >
-        <div className={twMerge(popoverVariants({ intent }), popoverSlideClassName)}>
+        <div className={popoverVariants({ intent })}>
           {showArrow && (
             <OverlayArrow>
               {({ placement }) => {

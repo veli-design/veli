@@ -9,6 +9,8 @@ async function openPanel(page: Page) {
   const dialog = page.getByRole('dialog', { name: 'Your account' });
   await expect(dialog).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  // Popover surface scale would otherwise skew getBoundingClientRect while entering.
+  await waitForMotion(page);
   return dialog;
 }
 
@@ -524,6 +526,8 @@ for (const language of ['en', 'dv'])
         })
         .click();
       const dialog = page.getByRole('dialog');
+      await expect(dialog).toBeVisible();
+      await waitForMotion(page);
       const pill = dialog.locator('[data-account-appearance-pill]');
       // Auto changes the preference while retaining the light theme, so the host's
       // disableTransitionOnChange does not suppress this independent movement.

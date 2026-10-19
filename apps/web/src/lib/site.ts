@@ -323,7 +323,7 @@ export const componentGroups: ComponentGroup[] = [
       {
         title: 'Popover',
         slug: 'popover',
-        description: 'Anchored interactive panel for contextual controls and rich help.',
+        description: 'Anchored dialog with header, content, footer, intents, and an arrow.',
       },
       {
         title: 'Table',
