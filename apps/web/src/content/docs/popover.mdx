@@ -1,18 +1,17 @@
 ---
 title: Popover
-description: Anchored interactive panel for contextual controls, onboarding, and rich help content.
+description: Anchored dialog for interactive content, with header, content, and footer parts, three intents, and a directional arrow.
 ---
+
+import { PopoverIntentsDemo, PopoverUsageDemo } from '../../components/DocsExamples';
 
 # Popover
 
-Popover presents interactive content next to a trigger without blocking the rest of the page.
-Use [Tooltip](/docs/tooltip/) for brief non-interactive hints, [Menu](/docs/menu/) for
-action lists, and [Modal](/docs/modal/) for focused blocking work.
+Show interactive content beside the control that opened it — filters, quick settings, or onboarding steps. Compose a pressable trigger and `Popover` inside `PopoverTrigger`, then put a `PopoverDialog` inside the popover. Use [Tooltip](/docs/tooltip/) for brief, non-interactive help, [Menu](/docs/menu/) for a list of actions, and [Modal](/docs/modal/) for blocking tasks that are not tied to a trigger.
 
 ## Import
 
 ```tsx
-import { Button } from '@tradenetcorp/veli-ui/button';
 import {
   Popover,
   PopoverContent,
@@ -21,21 +20,30 @@ import {
   PopoverHeader,
   PopoverTrigger,
 } from '@tradenetcorp/veli-ui/popover';
+import { Button } from '@tradenetcorp/veli-ui/button';
 ```
 
 ## Usage
 
+<div className="preview mb-4 rounded-lg border p-4">
+  <PopoverUsageDemo client:visible />
+</div>
+
 ```tsx
 <PopoverTrigger>
-  <Button>Open filters</Button>
-  <Popover placement="bottom start" className="w-80">
+  <Button intent="secondary">Account</Button>
+  <Popover placement="bottom" className="w-[274px]">
     <PopoverDialog>
       {({ close }) => (
         <>
-          <PopoverHeader title="Filters" onClose={close} />
-          <PopoverContent>{/* Interactive filter controls */}</PopoverContent>
-          <PopoverFooter>
-            <Button onPress={close}>Apply</Button>
+          <PopoverHeader title="Account" icon={<UserIcon aria-hidden />} onClose={close} />
+          <PopoverContent>
+            <p className="type-body-sm-regular">Signed in as Aishath Ali.</p>
+          </PopoverContent>
+          <PopoverFooter label="Step 1 of 2">
+            <Button intent="primary" size="xs" onPress={close}>
+              Next
+            </Button>
           </PopoverFooter>
         </>
       )}
@@ -44,40 +52,123 @@ import {
 </PopoverTrigger>
 ```
 
-`PopoverTrigger` manages open state and restores focus to its trigger. Use controlled state when
-multiple controls open the same popover or application state must determine whether it is open.
+`PopoverTrigger` owns open state and restores focus to the opener. Use controlled `isOpen` / `onOpenChange` when routing or async guards manage visibility. Size the surface with `className` — Figma draws it 274px wide.
 
-## Composition
+## Intents
 
-- `PopoverTrigger` connects a trigger and popover.
-- `Popover` positions and styles the anchored surface.
-- `PopoverDialog` provides dialog semantics and access to the React Aria close function.
-- `PopoverHeader`, `PopoverContent`, and `PopoverFooter` provide the standard internal layout.
+`tertiary` is the default raised surface. `primary` uses the brand surface and `secondary` the inverse surface. Header, footer, close button, and arrow follow the intent.
 
-The header and footer dividers are enabled by default. Pass custom children to `PopoverHeader` when
-the standard icon, title, and close-button layout is not sufficient.
+<div className="preview mb-4 rounded-lg border p-4">
+  <PopoverIntentsDemo client:visible />
+</div>
+
+```tsx
+<Popover intent="primary">
+  …
+  <PopoverFooter label="Label">
+    <Button intent="secondary" size="xs">
+      Next
+    </Button>
+  </PopoverFooter>
+</Popover>
+```
+
+Pair footer actions with the surface: `secondary` buttons on `primary` popovers, and `primary` buttons on `secondary` and `tertiary` popovers.
+
+## API Reference
+
+Popover is a Veli surface on React Aria [`DialogTrigger`](https://react-spectrum.adobe.com/react-aria/DialogTrigger.html), [`Popover`](https://react-spectrum.adobe.com/react-aria/Popover.html), and [`Dialog`](https://react-spectrum.adobe.com/react-aria/Dialog.html). Props below follow that stack.
+
+### Popover
+
+Veli-specific props for the positioned surface.
+
+| Prop        | Type                                     | Default       | Description                                                  |
+| :---------- | :--------------------------------------- | :------------ | :----------------------------------------------------------- |
+| `intent`    | `'primary' \| 'secondary' \| 'tertiary'` | `'tertiary'`  | Surface treatment for the popover and its parts.             |
+| `showArrow` | `boolean`                                | `true`        | Renders the directional arrow.                               |
+| `className` | `string` or render function              | -             | Classes on the positioned root, such as width or max height. |
+| `lang`      | `string`                                 | from provider | Language of the portaled surface.                            |
+| `dir`       | `string`                                 | from provider | Direction of the portaled surface.                           |
+| `children`  | `ReactNode`                              | -             | Usually a `PopoverDialog`.                                   |
+
+### React Aria Popover
+
+React Aria’s headless [`Popover`](https://react-spectrum.adobe.com/react-aria/Popover.html#popover). These props pass through, with Veli defaults for `offset` and `arrowBoundaryOffset`. The React Aria docs cover the rest.
+
+| Prop                        | Type                         | Default               | Description                                   |
+| :-------------------------- | :--------------------------- | :-------------------- | :-------------------------------------------- |
+| `placement`                 | `Placement`                  | `'bottom'`            | Preferred physical or logical side/alignment. |
+| `offset`                    | `number`                     | `12` / `8`            | Gap from the trigger with or without arrow.   |
+| `crossOffset`               | `number`                     | `0`                   | Offset along the other axis.                  |
+| `arrowBoundaryOffset`       | `number`                     | `20`                  | Minimum arrow inset from the surface edge.    |
+| `shouldFlip`                | `boolean`                    | `true`                | Flip when the preferred side lacks space.     |
+| `containerPadding`          | `number`                     | `12`                  | Minimum distance from the container boundary. |
+| `isNonModal`                | `boolean`                    | `false`               | Allow interaction outside while open.         |
+| `isKeyboardDismissDisabled` | `boolean`                    | `false`               | Prevent Escape from closing.                  |
+| `triggerRef`                | `RefObject<Element \| null>` | from `PopoverTrigger` | Anchor for standalone positioning.            |
+
+### PopoverTrigger
+
+React Aria’s headless [`DialogTrigger`](https://react-spectrum.adobe.com/react-aria/DialogTrigger.html). Veli forwards its props unchanged.
+
+| Prop           | Type                        | Default | Description                                    |
+| :------------- | :-------------------------- | :------ | :--------------------------------------------- |
+| `isOpen`       | `boolean`                   | -       | Controlled open state.                         |
+| `defaultOpen`  | `boolean`                   | `false` | Uncontrolled initial open state.               |
+| `onOpenChange` | `(isOpen: boolean) => void` | -       | Called when the open state changes.            |
+| `children`     | `ReactNode`                 | -       | A pressable trigger followed by the `Popover`. |
+
+### Composition
+
+Assemble the dialog with `PopoverDialog`, `PopoverHeader`, `PopoverContent`, and `PopoverFooter`.
+
+| Part             | Notes                                                                               |
+| :--------------- | :---------------------------------------------------------------------------------- |
+| `PopoverDialog`  | Dialog semantics and focus. `children` may be a function that receives `{ close }`. |
+| `PopoverHeader`  | Optional icon, title heading, close button, and divider.                            |
+| `PopoverContent` | Padded body that grows and can scroll.                                              |
+| `PopoverFooter`  | Optional divider, caption label, and end-aligned actions.                           |
+
+### PopoverHeader
+
+| Prop               | Type                         | Default   | Description                                                  |
+| :----------------- | :--------------------------- | :-------- | :----------------------------------------------------------- |
+| `title`            | `ReactNode`                  | -         | Dialog heading; names the `PopoverDialog`.                   |
+| `titleLevel`       | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `2`       | Heading level for `title`.                                   |
+| `icon`             | `ReactNode`                  | -         | Decorative leading icon.                                     |
+| `onClose`          | `() => void`                 | -         | Shows the close button; usually the `close` render argument. |
+| `closeButtonLabel` | `string`                     | Localized | Accessible name for the close button.                        |
+| `showDivider`      | `boolean`                    | `true`    | Show the divider below the header.                           |
+| `children`         | `ReactNode`                  | -         | Replaces the icon and title; label the dialog yourself.      |
+
+Native `<div>` attributes such as `id`, `className`, and `data-*` are forwarded.
+
+### PopoverContent
+
+| Prop       | Type        | Default | Description   |
+| :--------- | :---------- | :------ | :------------ |
+| `children` | `ReactNode` | -       | Body content. |
+
+Native `<div>` attributes are forwarded.
+
+### PopoverFooter
+
+| Prop          | Type        | Default | Description                                 |
+| :------------ | :---------- | :------ | :------------------------------------------ |
+| `label`       | `ReactNode` | -       | Caption text at the start of the footer.    |
+| `showDivider` | `boolean`   | `true`  | Show the divider above the footer.          |
+| `children`    | `ReactNode` | -       | Actions aligned to the end with an 8px gap. |
+
+Native `<div>` attributes are forwarded.
 
 ## Accessibility
 
-Place interactive popover content inside `PopoverDialog`. The trigger must have an accessible name.
-When providing a custom close label, localize `closeButtonLabel`; the built-in English and Dhivehi
-labels follow `VeliProvider`.
+- Provide one dialog name: `PopoverHeader` `title`, or `aria-label` / `aria-labelledby` on `PopoverDialog`.
+- Focus moves into the dialog on open and returns to the trigger on close. Escape dismisses unless `isKeyboardDismissDisabled` is set.
+- Icon-only triggers need an `aria-label`. Header icons and dividers are decorative.
+- Entry and exit fade, scale, and slide from the trigger. Reduced motion keeps the fade and removes the movement.
 
-## Responsive behavior
+## RTL and Language
 
-React Aria can flip the placement to keep the surface visible. Set a width that fits the expected
-content while allowing the popover to remain within the viewport. Prefer logical `start` and `end`
-placements when the surface must follow LTR and RTL direction.
-
-## Key props
-
-| Prop            | Type                                     | Default      | Description                                   |
-| :-------------- | :--------------------------------------- | :----------- | :-------------------------------------------- |
-| `intent`        | `'primary' \| 'secondary' \| 'tertiary'` | `'tertiary'` | Semantic surface treatment.                   |
-| `placement`     | React Aria `PopoverProps['placement']`   | -            | Preferred position relative to the trigger.   |
-| `showArrow`     | `boolean`                                | `true`       | Displays the directional surface arrow.       |
-| `isOpen`        | `boolean`                                | -            | Controlled open state.                        |
-| `defaultOpen`   | `boolean`                                | -            | Initial uncontrolled open state.              |
-| `onOpenChange`  | `(isOpen: boolean) => void`              | -            | Called when open state changes.               |
-| `isDismissable` | `boolean`                                | -            | Enables outside-interaction dismissal.        |
-| `shouldFlip`    | `boolean`                                | React Aria   | Allows placement to flip near viewport edges. |
+The overlay inherits `lang` and `dir` from `VeliProvider`. Logical placements, the arrow side, and header and footer alignment follow `dir`. On `lang="dv"`, the default close button label is `ޕޮޕްއޯވަރ ބަންދުކުރައްވާ`.
