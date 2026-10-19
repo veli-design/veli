@@ -1,0 +1,61 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "tabs",
+  "apiPattern": "data-driven",
+  "purpose": "Switches between inline peer content panels or navigates peer destinations using a data-driven tab list with optional overflow.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "VeliProvider supplies language and direction for the optional overflow menu; English LTR is the fallback.",
+      "Pass navigate through VeliProvider when tab items use href for client-side routing."
+    ]
+  },
+  "useWhen": [
+    "Users switch between related content sections in the same context.",
+    "Each tab reveals a panel or navigates to a peer destination via href.",
+    "Additional tabs need to be placed in an explicit overflow menu."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The options perform actions rather than reveal content or navigate.",
+      "guidance": "Use direct actions or a menu.",
+      "useInstead": ["button", "menu"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard and pointer tab selection",
+    "Controlled and uncontrolled selection",
+    "Disabled tabs",
+    "Overflow-menu tab selection",
+    "Link navigation through item href, optional render, and routerOptions"
+  ],
+  "approvedPatterns": [
+    "Supply at least two items with stable ids and labels.",
+    "Include panel content for in-place tabs; omit panel when items navigate with href.",
+    "Use size sm, md, or lg to match density; default is sm.",
+    "Use leading and trailing slots for icons or badges.",
+    "Move explicitly chosen extra tabs into overflowItems.",
+    "Wire VeliProvider navigate when any item uses href."
+  ],
+  "limitations": [
+    "Overflow is configured by the consumer rather than detected automatically.",
+    "Only overflowItems appear in the overflow menu.",
+    "keyboardActivation defaults to manual when any item has href."
+  ],
+  "accessibility": [
+    "Provide a descriptive listAriaLabel for the tab list when the default Tabs label is insufficient.",
+    "React Aria associates each tab with its panel and supplies keyboard behavior.",
+    "Disabled tabs are removed from interaction."
+  ],
+  "responsive": [
+    "Use overflowItems to keep the visible tab row within constrained widths.",
+    "The component does not automatically decide which tabs overflow."
+  ],
+  "rtl": [
+    "Overflow menu language and direction follow VeliProvider.",
+    "Tab labels and supplied slot content should be appropriate for the active direction."
+  ],
+  "relatedComponents": ["menu", "provider", "link"]
+}

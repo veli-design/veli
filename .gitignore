@@ -16,6 +16,11 @@ storybook-static
 .env
 .env*.local
 
+# Agent eval submissions and local prepared fixtures
+evals/agent/runs/**
+!evals/agent/runs/.gitkeep
+evals/agent/.prepared/
+
 # Logs
 *.log
 npm-debug.log*
@@ -29,6 +34,10 @@ Thumbs.db
 .idea
 *.swp
 *.swo
+
+# Lyse local cache (baseline.json is tracked)
+.lyse/*
+!.lyse/baseline.json
 
 # Local editor and browser-agent artifacts
 .cursor/settings.json

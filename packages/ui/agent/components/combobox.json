@@ -1,0 +1,60 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "combobox",
+  "apiPattern": "compound",
+  "purpose": "Search, filter, and select from an option list, with optional custom-value entry and grouped results.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider so field text, options, empty state, tooltip labels, and direction are localized consistently."
+    ]
+  },
+  "useWhen": [
+    "Users need to filter a predefined list by typing before selecting.",
+    "A selection list is long, grouped, or may optionally accept custom values."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The option set is short and does not need text filtering.",
+      "guidance": "Use a non-editable selector or visible radio group.",
+      "useInstead": ["select", "radio"]
+    },
+    {
+      "situation": "Typed text performs a general content search rather than selecting a value.",
+      "guidance": "Use the dedicated search field.",
+      "useInstead": ["search"]
+    }
+  ],
+  "supportedInteractions": [
+    "Type to filter options",
+    "Open the menu on focus or with the trigger",
+    "Keyboard option navigation and selection through React Aria",
+    "Controlled input and selection state",
+    "Optional custom-value entry"
+  ],
+  "approvedPatterns": [
+    "Compose ComboBox with ComboBoxItem and optional ComboBoxSection.",
+    "Provide textValue or aria-label for complex, icon-only, or render-function options.",
+    "Provide a useful empty state for no matching options.",
+    "Use description text normally and errorMessage when invalid."
+  ],
+  "limitations": [
+    "Direct root child composition and style overrides are not supported.",
+    "className is intended for outer layout.",
+    "Custom values are accepted only when explicitly enabled."
+  ],
+  "accessibility": [
+    "Uses React Aria ComboBox, Input, Button, Popover, and ListBox semantics.",
+    "Complex options require reliable accessible text for filtering, selected values, and screen readers.",
+    "Required, disabled, and invalid states are exposed through React Aria."
+  ],
+  "responsive": [
+    "The popover tracks the field width and the option list scrolls when its maximum height is reached."
+  ],
+  "rtl": [
+    "The field, placeholder, popover, options, and sections follow the active language and direction."
+  ],
+  "relatedComponents": ["select", "search", "input", "radio"]
+}

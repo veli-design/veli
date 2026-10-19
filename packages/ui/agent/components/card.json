@@ -1,0 +1,43 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "card",
+  "apiPattern": "compound",
+  "purpose": "Groups related content and actions on a contained surface.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Related content needs a distinct surface and optional header or footer.",
+    "A repeated content unit needs consistent internal spacing."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Content only needs a visual separator.",
+      "guidance": "Avoid adding an unnecessary container surface.",
+      "useInstead": ["divider"]
+    },
+    {
+      "situation": "The entire surface must perform an action.",
+      "guidance": "Interactive styling does not add button or link semantics; supply an appropriate interactive element."
+    }
+  ],
+  "supportedInteractions": ["Optional hover and pressed surface feedback."],
+  "approvedPatterns": [
+    "Compose header, title, description, content, and footer parts as needed.",
+    "Place header actions in the header action slot.",
+    "Place action buttons in the footer."
+  ],
+  "limitations": [
+    "Interactive mode only changes visual feedback and cursor behavior.",
+    "Header and footer parts are optional."
+  ],
+  "accessibility": [
+    "Card Title renders a level-three heading.",
+    "Add real button or link semantics for actionable cards."
+  ],
+  "responsive": ["Cards fill their container; constrain width in the surrounding layout."],
+  "rtl": ["Header and footer layouts use logical reading order from their content."],
+  "relatedComponents": ["divider"]
+}

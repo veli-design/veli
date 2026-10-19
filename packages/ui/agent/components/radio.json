@@ -1,0 +1,55 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "radio",
+  "apiPattern": "compound",
+  "purpose": "Choose exactly one value from a visible set of mutually exclusive options.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Users must compare a small set of visible options and select one.",
+    "The selected value belongs to a RadioGroup."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Each choice can be selected independently.",
+      "guidance": "Use checkboxes.",
+      "useInstead": ["checkbox"]
+    },
+    {
+      "situation": "The option list should be collapsed or searchable.",
+      "guidance": "Use select for a collapsed list or combobox for filtering.",
+      "useInstead": ["select", "combobox"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard group navigation and selection through React Aria",
+    "Pointer selection",
+    "Controlled or uncontrolled group value",
+    "Disabled and invalid states"
+  ],
+  "approvedPatterns": [
+    "Always place related Radio items inside RadioGroup.",
+    "Place FieldLabel, FieldDescription, and FieldError inside RadioGroup; RadioGroup has no label prop.",
+    "Do not also pass description or errorMessage on RadioGroup when using FieldDescription or FieldError.",
+    "Use Radio size md or lg to match the surrounding form density."
+  ],
+  "limitations": [
+    "Radio is not intended as a standalone independent toggle.",
+    "RadioGroup does not accept a label prop; compose FieldLabel inside the group.",
+    "Control and indicator internals are private.",
+    "style overrides are not supported and className is intended for outer layout."
+  ],
+  "accessibility": [
+    "Uses React Aria RadioGroup and Radio semantics.",
+    "Group-level keyboard behavior, disabled state, and controlled selection are provided by React Aria.",
+    "FieldLabel associates the group name through React Aria LabelContext."
+  ],
+  "responsive": [
+    "RadioGroup is vertical by default but root className can define responsive grid or flex layout."
+  ],
+  "rtl": ["Controls, labels, and group layout follow inherited document direction."],
+  "relatedComponents": ["checkbox", "field", "switch", "select", "combobox"]
+}

@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { rename, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { spawnCorepack } from './corepack.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const servers = [];
 const moved = [];
@@ -31,7 +32,7 @@ try {
     ['veli-storybook', ['--host', '127.0.0.1', '--port', '6007', '--ci']],
   ])
     servers.push(
-      spawn('corepack', ['pnpm', '--filter', `@tradenetcorp/${name}`, 'dev', ...args], {
+      spawnCorepack(['pnpm', '--filter', `@tradenetcorp/${name}`, 'dev', ...args], {
         cwd: root,
         stdio: 'inherit',
         detached: true,

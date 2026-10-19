@@ -1,0 +1,44 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "skeleton",
+  "apiPattern": "flat",
+  "purpose": "Generic animated loading placeholder for composing field, list, and content skeleton layouts.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Content is loading and the layout should reserve space with a placeholder shape.",
+    "Multiple skeleton pieces need to compose a page or component loading state."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A Button is waiting on an in-flight press action.",
+      "guidance": "Use Button isLoading or isPending rather than replacing the button with Skeleton.",
+      "useInstead": ["button"]
+    },
+    {
+      "situation": "Only an indeterminate indicator or pending label is needed.",
+      "guidance": "Use Spinner or LoadingText instead of layout placeholders.",
+      "useInstead": ["spinner", "loading-text"]
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Compose Skeleton elements to mirror the loaded layout's geometry, including input, avatar, and card shapes.",
+    "Size skeletons with layout classes rather than inventing one-off loading components.",
+    "Do not assume other components expose a skeleton mode; compose Skeleton instead."
+  ],
+  "limitations": [
+    "Skeleton is decorative only and does not announce loading status by itself.",
+    "Pair skeletons with an appropriate live-region or busy state on the real content container when needed.",
+    "Input and Avatar do not ship built-in skeleton modes."
+  ],
+  "accessibility": [
+    "Renders with aria-hidden so assistive technology skips decorative placeholders."
+  ],
+  "responsive": ["Fill the intended slot; constrain width and height in the surrounding layout."],
+  "rtl": ["Geometry is direction-neutral."],
+  "relatedComponents": ["avatar", "card", "input", "button", "spinner", "loading-text"]
+}
