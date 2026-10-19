@@ -6,6 +6,8 @@ export interface FieldMessageProps {
   isInvalid: boolean;
   size?: 'sm' | 'md' | 'lg';
   description?: React.ReactNode;
+  /** Semantic tone for helper copy. Existing fields keep the subtle default. */
+  descriptionTone?: 'subtle' | 'muted' | 'disabled';
   errorMessage?: React.ReactNode;
 }
 
@@ -13,6 +15,7 @@ export function FieldMessage({
   isInvalid,
   size = 'md',
   description,
+  descriptionTone = 'subtle',
   errorMessage,
 }: FieldMessageProps) {
   if (isInvalid) {
@@ -36,7 +39,7 @@ export function FieldMessage({
   }
 
   return (
-    <Text slot="description" className={messageVariants({ size, tone: 'subtle' })}>
+    <Text slot="description" className={messageVariants({ size, tone: descriptionTone })}>
       {renderedDescription}
     </Text>
   );

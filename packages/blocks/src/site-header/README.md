@@ -84,6 +84,8 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 - `flagSrc` for the official-website banner.
 - `actions` (ReactNode): search, sign-in, or account controls. The header fades this slot while overlays are open.
 - Optional `renderNavLink` for framework routers.
+- Optional `onOverlayChange({ switcherOpen, switcherRendered, mobileMenuVisible })` for page-shell chrome coordination. Fade main/footer while `switcherOpen || mobileMenuVisible`; hide notices while `switcherRendered || mobileMenuVisible`.
+- Optional ref handle: `closeOverlays()` and `focusLogo()`. `focusLogo` skips moving focus when another control already owns it (for example a search palette).
 
 Keep labels, routing, authentication, API calls, account panels, and persistence in the application. Put router render callbacks in a client adapter.
 

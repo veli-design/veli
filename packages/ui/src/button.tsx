@@ -22,11 +22,11 @@ import {
   mergeProps,
 } from 'react-aria';
 import { filterDOMProps } from 'react-aria/filterDOMProps';
-import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y.js';
 import type { RefProp } from './ref.js';
+import { Spinner } from './spinner.js';
 import { useVeliLanguage } from './provider-shared.js';
 
 const buttonVariants = cva(
@@ -59,15 +59,15 @@ const buttonVariants = cva(
         ghost: 'bg-transparent',
       },
       size: {
-        // Figma hugs the content plus padding, including translated or wrapped labels.
-        xs: 'px-1.5 py-1.5',
-        sm: 'px-2 py-2',
-        md: 'px-3 py-2.5',
-        lg: 'px-3.5 py-3',
-        xl: 'px-4.5 py-4',
+        // Figma reduces Dhivehi padding to keep the same height with its taller typography.
+        xs: 'px-1.5 py-1.5 [&:lang(dv)]:py-0.5',
+        sm: 'px-2 py-2 [&:lang(dv)]:py-1',
+        md: 'px-3 py-2.5 [&:lang(dv)]:py-1.5',
+        lg: 'px-3.5 py-3 [&:lang(dv)]:py-2',
+        xl: 'px-4.5 py-4 [&:lang(dv)]:py-3.5',
       },
       iconOnly: {
-        true: 'shrink-0 p-0',
+        true: 'shrink-0 p-0 [&:lang(dv)]:py-0',
         false: '',
       },
     },
@@ -212,6 +212,8 @@ interface ButtonSharedProps
     RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
+  /** Optional decorative visual for isLoading/isPending; the shared button spinner is used when omitted. */
+  loadingIndicator?: React.ReactNode;
   className?: string;
 }
 
@@ -254,6 +256,8 @@ interface ButtonLinkSharedProps
   excludeFromTabOrder?: boolean;
   isLoading?: boolean;
   isPending?: boolean;
+  /** Optional decorative visual for isLoading/isPending. */
+  loadingIndicator?: React.ReactNode;
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   'aria-current'?: React.AriaAttributes['aria-current'];
   className?: string;
@@ -322,11 +326,7 @@ function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
       aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
       className="inline-flex shrink-0 items-center justify-center"
     >
-      <CircleNotchIcon
-        aria-hidden="true"
-        weight="bold"
-        className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}
-      />
+      <Spinner variant="button" aria-hidden="true" className={loadingIndicatorVariants({ size })} />
     </span>
   );
 }
@@ -336,12 +336,14 @@ function ButtonContent({
   hasChildren,
   isIconOnly,
   isLoading,
+  loadingIndicator,
   size,
 }: {
   children: React.ReactNode;
   hasChildren: boolean;
   isIconOnly: boolean;
   isLoading: boolean;
+  loadingIndicator?: React.ReactNode;
   size: ButtonProps['size'];
 }) {
   return (
@@ -364,7 +366,7 @@ function ButtonContent({
             hasChildren ? 'absolute inset-0' : 'h-lh',
           )}
         >
-          <ButtonLoadingIndicator size={size} />
+          {loadingIndicator ?? <ButtonLoadingIndicator size={size} />}
         </span>
       ) : null}
     </>
@@ -564,6 +566,7 @@ function ActionButton({
   iconOnly,
   isLoading,
   isPending,
+  loadingIndicator,
   isDisabled,
   className,
   onPointerMove,
@@ -599,11 +602,11 @@ function ActionButton({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !resolvedPending || hasChildren || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const { buttonRef, buttonEventHandlers } = useButtonRipple({
@@ -675,6 +678,7 @@ function ActionButton({
         <ButtonContent
           hasChildren={hasChildren}
           isLoading={pending}
+          loadingIndicator={loadingIndicator}
           isIconOnly={isIconOnly}
           size={resolvedSize}
         >
@@ -697,6 +701,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     iconOnly,
     isLoading,
     isPending,
+    loadingIndicator,
     isDisabled,
     onPointerMove,
     onPointerUp,
@@ -837,6 +842,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       <ButtonContent
         hasChildren={hasChildren}
         isLoading={pending}
+        loadingIndicator={loadingIndicator}
         isIconOnly={isIconOnly}
         size={resolvedSize}
       >

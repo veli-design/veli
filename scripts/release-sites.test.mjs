@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { execFileSync, spawn } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import test from 'node:test';
 import { parse, stringify } from 'yaml';
+import { spawnCorepack } from './corepack.mjs';
 import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
+
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const manifest = await createManifest(sourceCommit);
@@ -134,8 +136,7 @@ test(
           userconfig,
           `registry=${registry}\n@tradenetcorp:registry=${registry}\nfetch-retries=0\n`,
         );
-        const child = spawn(
-          'corepack',
+        const child = spawnCorepack(
           ['pnpm', 'install', '--lockfile-only', '--ignore-scripts', '--no-frozen-lockfile'],
           {
             cwd: consumer,

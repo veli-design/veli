@@ -1,0 +1,43 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "accordion",
+  "apiPattern": "multi-part",
+  "purpose": "Groups related content into collapsible disclosure sections.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Users should reveal sections on demand.",
+    "A disclosure group needs single or multiple expanded sections."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "All content must remain visible for comparison.",
+      "guidance": "Render visible sections instead of hiding content in disclosures."
+    },
+    {
+      "situation": "A loading placeholder is needed while content arrives.",
+      "guidance": "Compose the Skeleton primitive outside Accordion; Accordion has no skeleton or disabled mode.",
+      "useInstead": ["skeleton"]
+    }
+  ],
+  "supportedInteractions": ["Expand and collapse sections.", "Control expanded keys."],
+  "approvedPatterns": [
+    "Use the items API for uniform sections.",
+    "Compose item, header, and panel parts for custom markup.",
+    "Choose size, alignment, and flushed variants for the surrounding layout."
+  ],
+  "limitations": [
+    "isDisabled is not supported on Accordion or AccordionItem.",
+    "There is no Accordion skeleton or isSkeleton mode."
+  ],
+  "accessibility": [
+    "Headers render heading-wrapped disclosure buttons.",
+    "Expanded state is provided by React Aria."
+  ],
+  "responsive": ["The root and triggers fill their container."],
+  "rtl": ["Use right indicator alignment when the design calls for a leading-side indicator."],
+  "relatedComponents": ["divider", "skeleton"]
+}

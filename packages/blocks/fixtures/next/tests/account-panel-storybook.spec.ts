@@ -222,7 +222,7 @@ for (const story of [
       ).toEqual({
         language: 'en',
         direction: 'ltr',
-        fontFamily: 'Inter',
+        fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
         fontSize: (await email.evaluate((node) => node.tagName === 'P')) ? '16px' : '14px',
         lineHeight: (await email.evaluate((node) => node.tagName === 'P')) ? '24px' : '20.3px',
       });
