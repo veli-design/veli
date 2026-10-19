@@ -23,6 +23,15 @@ import {
 } from '@tradenetcorp/veli-ui/menu';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverDialog,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  type PopoverIntent,
+} from '@tradenetcorp/veli-ui/popover';
 import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
 import { Search } from '@tradenetcorp/veli-ui/search';
@@ -45,11 +54,13 @@ import { Pagination } from '@tradenetcorp/veli-ui/pagination';
 import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
 import {
   BellIcon,
-  CaretDownIcon,
   DownloadSimpleIcon,
+  GearIcon,
+  InfoIcon,
   LinkSimpleIcon,
   PencilSimpleIcon,
   TrashIcon,
+  UserIcon,
 } from '@phosphor-icons/react';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
@@ -1499,12 +1510,11 @@ export function MenuUsageDemo() {
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Actions
-        <CaretDownIcon size={16} />
       </Button>
       <MenuPopover>
         <Menu>
           <MenuItem startIcon={<PencilSimpleIcon size={16} />}>Edit</MenuItem>
-          <MenuItem startIcon={<DownloadSimpleIcon size={16} />} shortcut="⌘E">
+          <MenuItem startIcon={<DownloadSimpleIcon size={16} />} shortcut={['⌘', 'E']}>
             Export
           </MenuItem>
           <MenuSeparator />
@@ -1517,33 +1527,24 @@ export function MenuUsageDemo() {
   );
 }
 
-export function MenuVariantsDemo() {
+export function MenuItemsDemo() {
   return (
     <MenuTrigger>
       <Button intent="secondary" appearance="transparent">
         Open menu
-        <CaretDownIcon size={16} />
       </Button>
-      <MenuPopover>
+      <MenuPopover className="max-w-xs">
         <Menu>
           <MenuItem
             startIcon={<PencilSimpleIcon size={16} />}
-            description="Update labels, metadata, and visibility."
+            description="Update labels and visibility."
+            shortcut={['⌘', 'E']}
           >
             Edit details
           </MenuItem>
-          <MenuItem
-            startIcon={<DownloadSimpleIcon size={16} />}
-            description="Create a local copy for offline work."
-          >
-            Download
-          </MenuItem>
+          <MenuItem startIcon={<GearIcon size={16} />}>Advanced</MenuItem>
           <MenuSeparator />
-          <MenuItem
-            intent="danger"
-            startIcon={<TrashIcon size={16} />}
-            description="This action is permanent."
-          >
+          <MenuItem intent="danger" startIcon={<TrashIcon size={16} />} shortcut="Del">
             Remove file
           </MenuItem>
         </Menu>
@@ -1721,6 +1722,82 @@ export function CardFormDemo() {
         <Button size="sm">{text.save}</Button>
       </Card.Footer>
     </Card>
+  );
+}
+
+export function PopoverUsageDemo() {
+  return (
+    <div className="flex min-h-[180px] items-center justify-center">
+      <PopoverTrigger>
+        <Button intent="secondary">Account</Button>
+        <Popover placement="bottom" className="w-[274px] max-w-[calc(100vw-24px)]">
+          <PopoverDialog>
+            {({ close }) => (
+              <>
+                <PopoverHeader title="Account" icon={<UserIcon aria-hidden />} onClose={close} />
+                <PopoverContent>
+                  <p className="type-body-sm-regular">
+                    Signed in as Aishath Ali. Manage your profile and notification preferences.
+                  </p>
+                </PopoverContent>
+                <PopoverFooter label="Step 1 of 2">
+                  <Button intent="primary" size="xs" onPress={close}>
+                    Next
+                  </Button>
+                </PopoverFooter>
+              </>
+            )}
+          </PopoverDialog>
+        </Popover>
+      </PopoverTrigger>
+    </div>
+  );
+}
+
+const popoverFooterButtonIntent = (intent: PopoverIntent) =>
+  intent === 'primary' ? 'secondary' : 'primary';
+
+export function PopoverIntentsDemo() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-4">
+      {(['primary', 'secondary', 'tertiary'] as const).map((intent) => (
+        <PopoverTrigger key={intent}>
+          <Button intent="secondary" className="capitalize">
+            {intent}
+          </Button>
+          <Popover
+            intent={intent}
+            placement="bottom"
+            className="w-[274px] max-w-[calc(100vw-24px)]"
+          >
+            <PopoverDialog>
+              {({ close }) => (
+                <>
+                  <PopoverHeader
+                    title="Header title"
+                    icon={<InfoIcon aria-hidden />}
+                    onClose={close}
+                  />
+                  <PopoverContent>
+                    <p className="type-body-sm-regular">
+                      Header, footer, and arrow colors follow the intent.
+                    </p>
+                  </PopoverContent>
+                  <PopoverFooter label="Label">
+                    <Button intent={popoverFooterButtonIntent(intent)} size="xs">
+                      Previous
+                    </Button>
+                    <Button intent={popoverFooterButtonIntent(intent)} size="xs" onPress={close}>
+                      Next
+                    </Button>
+                  </PopoverFooter>
+                </>
+              )}
+            </PopoverDialog>
+          </Popover>
+        </PopoverTrigger>
+      ))}
+    </div>
   );
 }
 
