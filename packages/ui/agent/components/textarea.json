@@ -1,0 +1,54 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "textarea",
+  "apiPattern": "flat",
+  "purpose": "Collect multiline text with field labeling, validation feedback, optional character counting, and vertical resizing.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider for localized tooltip and resize labels, direction, and Dhivehi typography."
+    ]
+  },
+  "useWhen": [
+    "A form needs free-form text that may span multiple lines.",
+    "Users benefit from a maximum-length counter or bounded vertical resizing."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The expected value is a short single line.",
+      "guidance": "Use the simpler single-line field.",
+      "useInstead": ["input"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard multiline text entry",
+    "Controlled or uncontrolled value changes",
+    "Pointer-driven vertical resizing within optional height bounds",
+    "Focus by clicking the field shell"
+  ],
+  "approvedPatterns": [
+    "Pair the character counter with a maximum length.",
+    "Use description text normally and errorMessage when invalid.",
+    "Set explicit minimum or maximum height only when the surrounding flow requires bounds."
+  ],
+  "limitations": [
+    "Resizing is vertical only.",
+    "Direct child composition and style overrides are not supported.",
+    "className is intended for outer layout."
+  ],
+  "accessibility": [
+    "Uses React Aria TextField, Label, and TextArea semantics.",
+    "The custom resize control has a localized accessible label.",
+    "Required, disabled, read-only, and invalid states are exposed through React Aria."
+  ],
+  "responsive": [
+    "The field fills its container and can grow vertically; constrain width in the surrounding layout."
+  ],
+  "rtl": [
+    "Field content and the resize indicator follow the active direction.",
+    "Dhivehi text uses localized typography metrics."
+  ],
+  "relatedComponents": ["input"]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "input",
+  "apiPattern": "flat",
+  "purpose": "Collect a single line of text with field labeling, helper content, validation feedback, and optional inline accessories.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider to localize tooltip labels and apply Dhivehi direction and typography."
+    ]
+  },
+  "useWhen": [
+    "A form needs a single-line text, email, URL, telephone, search, or similar native input.",
+    "The field needs a visible label, helper text, validation message, or leading and trailing content."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The user must enter multiple lines of text.",
+      "guidance": "Use the multiline field with its resize and character-count behavior.",
+      "useInstead": ["textarea"]
+    },
+    {
+      "situation": "The field is specifically for credentials or search.",
+      "guidance": "Use the purpose-built component for built-in visibility or clear behavior.",
+      "useInstead": ["password-input", "search"]
+    },
+    {
+      "situation": "A loading placeholder is needed while the field value loads.",
+      "guidance": "Compose Skeleton to mirror the field geometry; Input has no skeleton mode.",
+      "useInstead": ["skeleton"]
+    }
+  ],
+  "supportedInteractions": [
+    "Keyboard text entry and native input behaviors",
+    "Controlled or uncontrolled value changes",
+    "Focus by clicking the field shell",
+    "Tooltip and header action interaction when supplied"
+  ],
+  "approvedPatterns": [
+    "Provide a visible label for form fields.",
+    "Show description text normally and errorMessage when invalid.",
+    "Use accessory slots for concise icons or supporting actions."
+  ],
+  "limitations": [
+    "Direct child composition and style overrides are not supported.",
+    "className is intended for outer layout, not internal field styling.",
+    "Input has no built-in skeleton or loading presentation."
+  ],
+  "accessibility": [
+    "Uses React Aria TextField, Label, and Input semantics.",
+    "Required, disabled, read-only, and invalid states are exposed through React Aria."
+  ],
+  "responsive": [
+    "The root and field shell fill their container; constrain width in the surrounding layout."
+  ],
+  "rtl": [
+    "Field layout follows the active direction.",
+    "Email, URL, telephone, and password values remain LTR in RTL layouts."
+  ],
+  "relatedComponents": ["textarea", "password-input", "search", "select", "combobox", "skeleton"]
+}

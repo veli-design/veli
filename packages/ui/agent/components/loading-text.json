@@ -1,0 +1,48 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "loading-text",
+  "apiPattern": "flat",
+  "purpose": "Shows a translated pending label with decorative settling grains while an action completes.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional",
+    "notes": [
+      "Pass the application's translated pending label as children; direction follows surrounding layout or VeliProvider."
+    ]
+  },
+  "useWhen": [
+    "A short label can explain what is pending.",
+    "Decorative settling grains should replace a typed ellipsis."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Only an indeterminate icon is needed without explanatory text.",
+      "guidance": "Use Spinner instead.",
+      "useInstead": ["spinner"]
+    },
+    {
+      "situation": "The layout shape should be reserved while concrete UI is loading.",
+      "guidance": "Compose Skeleton placeholders instead.",
+      "useInstead": ["skeleton"]
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Pass a complete translated pending label without a trailing ellipsis.",
+    "Reuse LoadingText beside Spinner when both indicator and label are useful.",
+    "Hide the component with aria-hidden when a parent already announces status."
+  ],
+  "limitations": [
+    "Children must be a string label.",
+    "LoadingText does not disable surrounding controls by itself."
+  ],
+  "accessibility": [
+    "Defaults to role status and uses the full label as the accessible name.",
+    "Animated grains are hidden from assistive technology.",
+    "Reduced motion stops the light band and grain movement while keeping a gentle opacity pulse."
+  ],
+  "responsive": ["Typography follows surrounding type utilities."],
+  "rtl": ["The settling light band follows the active text direction."],
+  "relatedComponents": ["spinner", "button", "skeleton"]
+}

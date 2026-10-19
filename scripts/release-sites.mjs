@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSyncCorepack } from './corepack.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 export const packages = ['@tradenetcorp/veli-ui', '@tradenetcorp/veli-tokens'];
 export function validateManifest(manifest) {
@@ -113,7 +114,7 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
   );
 }
 function run(args, cwd) {
-  const result = spawnSync('corepack', ['pnpm', ...args], {
+  const result = spawnSyncCorepack(['pnpm', ...args], {
     cwd,
     stdio: 'inherit',
     env: process.env,

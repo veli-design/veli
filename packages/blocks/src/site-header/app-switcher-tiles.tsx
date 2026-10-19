@@ -99,8 +99,8 @@ function AppIconShell({
     <div
       className={`relative size-14 shrink-0 rounded-[20px] ${
         selected
-          ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-primary-700)]'
-          : ''
+          ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-teal-500)]'
+          : 'border border-base-subtle'
       } ${className}`}
     >
       <div
