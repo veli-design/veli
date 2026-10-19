@@ -1,30 +1,32 @@
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
 import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { resolve } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 import { setTimeout } from 'node:timers/promises';
+import { spawnCorepack } from './corepack.mjs';
 
-const [directory, tarball, nextVersion = '15.5.18'] = process.argv.slice(2);
+const [directory, uiTarball, tokensTarball, nextVersion = '15.5.18'] = process.argv.slice(2);
 assert.ok(
-  directory && tarball,
-  'Usage: node scripts/check-ui-consumer.mjs <new-directory> <ui-tarball> [next-version]',
+  directory && uiTarball && tokensTarball,
+  'Usage: node scripts/check-ui-consumer.mjs <new-directory> <ui-tarball> <tokens-tarball> [next-version]',
 );
 const target = resolve(directory);
 assert.ok(!existsSync(target), 'Use a new directory for an isolated package consumer');
 cpSync(fileURLToPath(new URL('../packages/ui/fixtures/next/', import.meta.url)), target, {
   recursive: true,
 });
-cpSync(resolve(tarball), resolve(target, 'ui.tgz'));
+cpSync(resolve(uiTarball), resolve(target, 'ui.tgz'));
+cpSync(resolve(tokensTarball), resolve(target, 'tokens.tgz'));
 const manifestPath = resolve(target, 'package.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 manifest.dependencies.next = nextVersion;
+manifest.dependencies['@tradenetcorp/veli-tokens'] = 'file:tokens.tgz';
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 const env = { ...process.env, NEXT_TELEMETRY_DISABLED: '1' };
 function run(args) {
   return new Promise((resolve, reject) => {
-    const child = spawn('corepack', ['pnpm', ...args], { cwd: target, env, stdio: 'inherit' });
+    const child = spawnCorepack(['pnpm', ...args], { cwd: target, env, stdio: 'inherit' });
     child.on('error', reject);
     child.on('exit', (code) =>
       code === 0 ? resolve() : reject(new Error(`pnpm ${args.join(' ')} exited ${code}`)),
@@ -43,7 +45,7 @@ const reservation = createServer();
 await new Promise((resolve) => reservation.listen(0, '127.0.0.1', resolve));
 const port = reservation.address().port;
 await new Promise((resolve) => reservation.close(resolve));
-const server = spawn('corepack', ['pnpm', 'exec', 'next', 'start', '-p', String(port)], {
+const server = spawnCorepack(['pnpm', 'exec', 'next', 'start', '-p', String(port)], {
   cwd: target,
   env,
   stdio: 'inherit',

@@ -625,10 +625,10 @@ export function AppSwitcher({
   return (
     <div
       ref={panelRef}
-      className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden px-6 pt-4 pb-6 xl:flex-row xl:gap-6 xl:px-12 xl:pt-8 xl:pb-12"
+      className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-6 pt-4 pb-6 xl:flex-row xl:gap-6 xl:px-12 xl:pt-8 xl:pb-12"
     >
-      <div className="flex min-h-0 w-full max-w-[952px] flex-1 flex-col gap-6 xl:shrink-0 xl:gap-4">
-        <div className="flex shrink-0 flex-col gap-6 xl:gap-4">
+      <div className="flex min-h-0 w-full max-w-[952px] flex-1 flex-col gap-4 xl:shrink-0">
+        <div className="flex shrink-0 flex-col gap-4">
           <div className="flex flex-col gap-2">
             <h2 id={titleId} className="type-subtitle-semibold text-text-base-strong">
               {labels.browse}
@@ -649,8 +649,8 @@ export function AppSwitcher({
           </div>
         </div>
 
-        <div className="xl:border-base-muted flex min-h-0 flex-1 flex-col overflow-hidden xl:rounded-[32px] xl:border">
-          <div className="hidden shrink-0 xl:block xl:px-5 xl:pt-4">
+        <div className="xl:border-base-muted flex min-h-0 flex-1 flex-col overflow-hidden xl:rounded-[32px] xl:border xl:p-4">
+          <div className="hidden shrink-0 xl:block">
             <SearchFilterRow
               inputRef={desktopSearchRef}
               query={query}
@@ -661,7 +661,7 @@ export function AppSwitcher({
           <motion.div
             ref={listRef}
             layoutScroll
-            className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain xl:px-4 xl:pb-4"
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain"
           >
             <SearchResults
               query={query.trim()}
@@ -717,9 +717,7 @@ export function AppSwitcher({
                 <div className="flex flex-col gap-6">
                   <SwitcherLargeIcon item={selected} />
                   <div className="flex flex-col gap-2 ps-1 pb-6">
-                    <h3 className="type-subtitle-semibold text-text-base-strong">
-                      {selected.name}
-                    </h3>
+                    <h3 className="type-subtitle-semibold text-text-base">{selected.name}</h3>
                     <p className="type-body-sm-regular text-text-base">{selected.description}</p>
                   </div>
                 </div>

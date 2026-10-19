@@ -123,11 +123,15 @@ const tabs = [
 
       const updateTabIndicator = (selected) => {
         if (!(selected instanceof HTMLElement)) return;
-        const rootRect = root.getBoundingClientRect();
+        // Position relative to the border track (the indicator's containing block),
+        // not the sticky root — root gains padding-inline on small screens.
+        const border = root.querySelector('.docs-page-tabs__border');
+        if (!(border instanceof HTMLElement)) return;
+        const borderRect = border.getBoundingClientRect();
         const selectedRect = selected.getBoundingClientRect();
         root.style.setProperty(
           '--docs-tab-indicator-left',
-          `${selectedRect.left - rootRect.left}px`,
+          `${selectedRect.left - borderRect.left}px`,
         );
         root.style.setProperty('--docs-tab-indicator-width', `${selectedRect.width}px`);
       };

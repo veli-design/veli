@@ -1,0 +1,57 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "table",
+  "apiPattern": "compound",
+  "purpose": "Displays structured row-and-column data with optional sorting, selection, resizing, and reordering.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Users need to scan or compare structured data across columns.",
+    "Rows need sorting, selection, activation, resizing, or reordering."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "Content is not naturally tabular.",
+      "guidance": "Use a list or grouped content instead.",
+      "useInstead": ["card"]
+    }
+  ],
+  "supportedInteractions": [
+    "Sort enabled columns.",
+    "Select rows in single or multiple modes.",
+    "Activate rows.",
+    "Resize configured columns.",
+    "Reorder rows through drag handles.",
+    "Navigate table controls by keyboard."
+  ],
+  "approvedPatterns": [
+    "Compose header, columns, body, rows, and cells.",
+    "Mark the identifying column as the row header.",
+    "Control sort and selection state when application data must update.",
+    "Wrap with the resizable container and add column resizers for resizing.",
+    "Supply drag-and-drop hooks for row reordering."
+  ],
+  "limitations": [
+    "Horizontal overflow is handled by the table frame.",
+    "Sticky headers require a scrolling ancestor to become visible.",
+    "Selection checkboxes are added for toggle-style multiple selection."
+  ],
+  "accessibility": [
+    "Give every table an accessible name.",
+    "Mark an identifying column as a row header.",
+    "Built-in selection controls are labeled for selecting all or one row.",
+    "React Aria provides table, sorting, selection, resizing, and drag semantics."
+  ],
+  "responsive": [
+    "The frame scrolls horizontally when columns exceed available width.",
+    "Use explicit column widths and minimum widths for resizable layouts."
+  ],
+  "rtl": [
+    "Headers use logical text alignment.",
+    "Validate column resizing and horizontal overflow in both directions."
+  ],
+  "relatedComponents": ["badge"]
+}

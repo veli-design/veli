@@ -1,0 +1,60 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "tags",
+  "apiPattern": "compound",
+  "purpose": "Presents compact labels, filters, choices, removable items, or linked metadata as a group.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language localizes empty-state and remove-button text."]
+  },
+  "useWhen": [
+    "A compact collection of categories or metadata is needed.",
+    "Users need to select, remove, or navigate through labeled items."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "A label only communicates status and has no group interaction.",
+      "guidance": "Use a badge.",
+      "useInstead": ["badge"]
+    },
+    {
+      "situation": "The choices require long labels or explanatory content.",
+      "guidance": "Use a less compact selection control."
+    }
+  ],
+  "supportedInteractions": [
+    "Single or multiple selection.",
+    "Remove items.",
+    "Navigate from link tags.",
+    "Disable a group or individual items.",
+    "Render data-driven collections and empty states."
+  ],
+  "approvedPatterns": [
+    "Compose Tag Group with Tag children.",
+    "Use selection mode when tags act as filters or choices.",
+    "Use onRemove with data-driven items for removable collections.",
+    "Use href when a tag navigates instead of selecting.",
+    "Provide label, description, and error message for field-like groups."
+  ],
+  "limitations": [
+    "Link and removable behavior should not be combined for the same tag.",
+    "Complex or render-function content may not yield a useful remove label automatically."
+  ],
+  "accessibility": [
+    "Give each group a visible label or accessible name.",
+    "Provide textValue or removeButtonLabel for icon-only or complex removable tags.",
+    "Decorative leading content is hidden from assistive technology.",
+    "Error text takes precedence over description text."
+  ],
+  "responsive": [
+    "Tag lists wrap within the available width.",
+    "Tag text truncates when a tag reaches its available width."
+  ],
+  "rtl": [
+    "Provider language supplies Dhivehi empty and removal text.",
+    "Logical spacing supports either direction."
+  ],
+  "relatedComponents": ["avatar", "badge", "provider"]
+}

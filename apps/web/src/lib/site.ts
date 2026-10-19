@@ -296,9 +296,14 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Content separation for page and component layouts.',
       },
       {
-        title: 'Loading',
-        slug: 'loading',
-        description: 'Shared spinners and settling text for pending actions.',
+        title: 'Spinner',
+        slug: 'spinner',
+        description: 'Indeterminate loading indicator for pending content and busy controls.',
+      },
+      {
+        title: 'LoadingText',
+        slug: 'loading-text',
+        description: 'Settling pending label with decorative grains for indeterminate actions.',
       },
       {
         title: 'Skeleton',
@@ -314,6 +319,11 @@ export const componentGroups: ComponentGroup[] = [
         title: 'Modal',
         slug: 'modal',
         description: 'Dialog surfaces with dismissal and sizing guidance.',
+      },
+      {
+        title: 'Popover',
+        slug: 'popover',
+        description: 'Anchored interactive panel for contextual controls and rich help.',
       },
       {
         title: 'Table',

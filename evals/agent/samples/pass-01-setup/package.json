@@ -1,0 +1,8 @@
+{
+  "name": "eval-setup-sample",
+  "private": true,
+  "dependencies": {
+    "@tradenetcorp/veli-tokens": "^0.9.0",
+    "@tradenetcorp/veli-ui": "^0.14.0"
+  }
+}
