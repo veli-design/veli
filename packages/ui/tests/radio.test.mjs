@@ -58,3 +58,66 @@ test('Radio retains numeric labels and caller-supplied accessible names', () => 
   assert.match(html, /aria-label="One star"/);
   assert.match(html, /disabled=""/);
 });
+
+for (const size of ['md', 'lg', 'xl']) {
+  test(`Radio ${size} preserves selection, disabled state, and localized message associations`, () => {
+    for (const [lang, dir, label, description, error] of [
+      ['en', 'ltr', 'Label text', 'Description text', 'Error text'],
+      ['dv', 'rtl', 'ލޭބަލްގެ ލިޔުން', 'ތަފްޞީލު ލިޔުން', 'އެރަރ ޓެކްސްޓް'],
+    ]) {
+      const html = renderToStaticMarkup(
+        h(
+          'div',
+          { lang, dir },
+          h(
+            RadioGroup,
+            { 'aria-label': 'Choices', name: 'choice', defaultValue: 'on' },
+            ...['on', 'off'].map((value) =>
+              h(
+                Radio,
+                {
+                  size,
+                  value,
+                  isDisabled: true,
+                  isInvalid: true,
+                  description,
+                  errorMessage: error,
+                },
+                label,
+              ),
+            ),
+          ),
+        ),
+      );
+      const inputs = [...html.matchAll(/<input\b[^>]*>/g)].map(([input]) => input);
+      assert.equal(inputs.length, 2);
+      assert.match(inputs[0], /checked=""/);
+      assert.doesNotMatch(inputs[1], /checked=""/);
+      for (const input of inputs) {
+        assert.match(input, /disabled=""/);
+        assert.match(input, /name="choice"/);
+        const labelId = input.match(/aria-labelledby="([^"]+)"/)[1];
+        assert.ok(html.includes(`id="${labelId}"`));
+        assert.ok(
+          html
+            .slice(html.indexOf(`id="${labelId}"`))
+            .split('</span>')[0]
+            .endsWith(`>${label}`),
+        );
+        const messageIds = input.match(/aria-describedby="([^"]+)"/)[1].split(' ');
+        for (const message of [description, error]) {
+          assert.ok(
+            messageIds.some(
+              (id) =>
+                html.includes(`id="${id}"`) &&
+                html
+                  .slice(html.indexOf(`id="${id}"`))
+                  .split('</span>')[0]
+                  .endsWith(`>${message}`),
+            ),
+          );
+        }
+      }
+    }
+  });
+}

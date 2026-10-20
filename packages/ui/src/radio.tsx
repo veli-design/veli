@@ -21,6 +21,7 @@ const radioRootVariants = cva(
       size: {
         md: 'type-body-sm-regular',
         lg: 'type-body-md-regular',
+        xl: 'type-body-lg-regular pe-2',
       },
       hasFieldMessages: {
         true: 'items-start',
@@ -31,6 +32,7 @@ const radioRootVariants = cva(
         false: 'cursor-pointer text-base-strong',
       },
     },
+    compoundVariants: [{ size: 'xl', hasFieldMessages: false, className: 'items-start' }],
     defaultVariants: {
       size: 'md',
       hasFieldMessages: false,
@@ -44,6 +46,7 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
     size: {
       md: 'h-5',
       lg: 'h-7',
+      xl: 'h-7',
     },
   },
   defaultVariants: {
@@ -53,14 +56,20 @@ const radioControlSlotVariants = cva('flex shrink-0 items-center', {
 
 const radioLabelVariants = cva('min-w-0 wrap-anywhere');
 
-const radioDescriptionVariants = cva('type-body-sm-regular text-base-muted', {
+const radioDescriptionVariants = cva('text-base-muted', {
   variants: {
+    size: {
+      md: 'type-body-sm-regular',
+      lg: 'type-body-sm-regular',
+      xl: 'type-body-md-regular',
+    },
     isDisabled: {
       true: 'text-disabled',
       false: '',
     },
   },
   defaultVariants: {
+    size: 'md',
     isDisabled: false,
   },
 });
@@ -70,6 +79,7 @@ const radioErrorVariants = cva('text-danger-muted', {
     size: {
       md: 'type-caption-regular',
       lg: 'type-body-sm-regular',
+      xl: 'type-body-md-regular',
     },
     isDisabled: {
       true: 'text-disabled',
@@ -89,6 +99,7 @@ const controlVariants = cva(
       size: {
         md: 'size-4',
         lg: 'size-6',
+        xl: 'size-6',
       },
       isSelected: {
         true: '',
@@ -128,9 +139,27 @@ const controlVariants = cva(
         className: 'border-3',
       },
       {
-        size: 'lg',
+        size: ['lg', 'xl'],
         isPressed: true,
         className: 'border-4',
+      },
+      {
+        size: 'xl',
+        isPressed: false,
+        isDisabled: false,
+        className: 'border-3',
+      },
+      {
+        size: 'xl',
+        isSelected: false,
+        isDisabled: true,
+        className: 'border-3',
+      },
+      {
+        size: 'xl',
+        isSelected: true,
+        isDisabled: true,
+        className: 'border-2',
       },
       {
         isSelected: false,
@@ -195,6 +224,7 @@ const indicatorVariants = cva(
       size: {
         md: '',
         lg: '',
+        xl: '',
       },
       isPressed: {
         true: 'ease-spring',
@@ -225,12 +255,12 @@ const indicatorVariants = cva(
         className: 'size-1.5',
       },
       {
-        size: 'lg',
+        size: ['lg', 'xl'],
         isPressed: false,
         className: 'size-3.5',
       },
       {
-        size: 'lg',
+        size: ['lg', 'xl'],
         isPressed: true,
         className: 'size-2.5',
       },
@@ -408,7 +438,10 @@ export function Radio({
                 {hasDescription ? (
                   <span
                     id={descriptionId}
-                    className={radioDescriptionVariants({ isDisabled: state.isDisabled })}
+                    className={radioDescriptionVariants({
+                      size: resolvedSize,
+                      isDisabled: state.isDisabled,
+                    })}
                   >
                     {description}
                   </span>
