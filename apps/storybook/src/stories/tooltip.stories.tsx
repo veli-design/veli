@@ -55,8 +55,8 @@ const englishTooltipText = {
     end: 'End',
   },
   variants: {
-    smallPrimary: 'Small — Primary',
-    smallSecondary: 'Small — Secondary',
+    smallPrimary: 'Small — Neutral (primary tone)',
+    smallSecondary: 'Small — Neutral (secondary tone)',
     largePrimary: 'Large — Primary',
     largeSecondary: 'Large — Secondary',
   },
@@ -221,12 +221,14 @@ const meta = {
     size: {
       control: 'select',
       options: ['sm', 'lg'],
-      description: 'Surface size. Both sizes use the primary or secondary tone tokens.',
+      description:
+        'Surface size. Small uses neutral colors; large uses primary or secondary tone tokens.',
     },
     tone: {
       control: 'select',
       options: ['primary', 'secondary'],
-      description: 'Primary or secondary color tone for both small and large tooltips.',
+      description:
+        'Primary or secondary color tone for large tooltips. Small tooltips stay neutral.',
     },
     children: {
       control: 'text',
@@ -353,9 +355,46 @@ export const Placements: Story = {
 };
 
 /**
- * Size and tone variants: both sizes support primary and secondary surfaces.
+ * Small surfaces stay neutral for both tones; large surfaces use the selected tone.
  */
 export const Variants: Story = {
+  play: async ({ canvasElement }) => {
+    const triggers = within(canvasElement).getAllByRole('button');
+    const user = userEvent.setup();
+    const colors = [
+      ['tooltip-bg-small', 'text-base-emphasis'],
+      ['tooltip-bg-small', 'text-base-emphasis'],
+      ['tooltip-bg-large-primary', 'tooltip-text-on-primary'],
+      ['tooltip-bg-large-secondary', 'tooltip-text-on-secondary'],
+    ];
+
+    triggers.forEach((trigger) => trigger.blur());
+    for (const [index, trigger] of triggers.entries()) {
+      await user.tab();
+      await waitFor(() => expect(within(document.body).getByRole('tooltip')).toBeVisible());
+      const tooltip = within(document.body).getByRole('tooltip');
+      const [background, foreground] = colors[index];
+      // Resolve the theme's tokens in the portal's own scope before comparing colors.
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(--veli-color-${background})`;
+      probe.style.color = `var(--veli-color-${foreground})`;
+      tooltip.append(probe);
+      try {
+        await expect(getComputedStyle(tooltip).backgroundColor).toBe(
+          getComputedStyle(probe).backgroundColor,
+        );
+        await expect(getComputedStyle(tooltip).color).toBe(getComputedStyle(probe).color);
+        await expect(tooltip.querySelector('svg') !== null).toBe(index >= 2);
+        await expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+      } finally {
+        probe.remove();
+      }
+      await user.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(within(document.body).queryByRole('tooltip')).not.toBeInTheDocument(),
+      );
+    }
+  },
   render: () => {
     const text = useTooltipText();
 

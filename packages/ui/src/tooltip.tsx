@@ -102,14 +102,26 @@ const tooltipVariants = cva(
   {
     variants: {
       size: {
-        sm: 'rounded-lg border-[0.5px] border-base-subtle px-3 py-0.5 shadow-md',
+        sm: 'rounded-lg border-[0.5px] border-base-subtle bg-tooltip-bg-small px-3 py-0.5 text-base-emphasis shadow-md',
         lg: 'max-w-[221px] rounded-xl px-4 py-3 shadow-lg',
       },
       tone: {
-        primary: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
-        secondary: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
+        primary: '',
+        secondary: '',
       },
     },
+    compoundVariants: [
+      {
+        size: 'lg',
+        tone: 'primary',
+        class: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
+      },
+      {
+        size: 'lg',
+        tone: 'secondary',
+        class: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
+      },
+    ],
     defaultVariants: {
       size: 'sm',
       tone: 'primary',
