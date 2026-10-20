@@ -8,6 +8,8 @@
     var(--veli-spacing-1) - var(--veli-service-detail-hairline)
   );
   --veli-service-detail-caption-line: calc(var(--veli-spacing-4) + var(--veli-spacing-0-5));
+  /* Figma 6603:626 leaves this remainder after the two responsive fee columns. */
+  --veli-service-detail-fee-grid-remainder: var(--veli-spacing-2);
   /* Measured Figma feature tokens, not additions to the shared Veli scale:
      6604:111401 desktop column; 7455:3170 modal; 7474:3442 / 7455:3559 scrim. */
   --veli-service-detail-content-max-width: 696px;
@@ -149,7 +151,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--veli-spacing-2);
-  color: var(--veli-color-text-primary-default);
+  color: var(--veli-color-text-links-default);
   border-radius: var(--veli-radius-lg);
   text-align: start;
   cursor: pointer;
@@ -162,7 +164,7 @@
 }
 .veli-service-detail-inline-action:hover,
 .veli-service-detail-guideline-link:hover {
-  color: var(--veli-color-text-primary-strong);
+  color: var(--veli-color-text-links-hover);
   text-decoration: underline;
 }
 .veli-service-detail-platform-trigger:hover {
@@ -180,6 +182,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--veli-spacing-3) var(--veli-spacing-6);
   padding: var(--veli-spacing-6) var(--veli-spacing-8);
+  padding-inline-end: calc(var(--veli-spacing-8) + var(--veli-service-detail-fee-grid-remainder));
   background: var(--veli-color-bg-surface-overlay-bg-0);
   border-radius: var(--veli-radius-4xl);
 }
@@ -279,6 +282,9 @@
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--veli-color-text-base-strong);
+}
+.veli-service-detail-platform-info-icon {
+  color: var(--veli-color-icon-base-inactive);
 }
 .veli-service-detail-platform-logo-slot {
   display: flex;
@@ -544,6 +550,7 @@
   border-radius: 0;
   border-inline-start: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
   padding: var(--veli-spacing-2) var(--veli-spacing-4);
+  padding-inline-end: var(--veli-spacing-2);
   color: var(--veli-color-text-base-default);
 }
 .veli-service-detail-toc-link:hover {
@@ -647,8 +654,11 @@
   list-style-type: decimal;
 }
 .veli-service-detail-rich-text a {
-  color: var(--veli-color-text-primary-default);
+  color: var(--veli-color-text-links-default);
   text-decoration: underline;
+}
+.veli-service-detail-rich-text a:hover {
+  color: var(--veli-color-text-links-hover);
 }
 .veli-service-detail-rich-text table {
   width: 100%;
@@ -956,13 +966,16 @@
   mask-repeat: no-repeat;
 }
 .veli-service-detail-guideline-section > h2 {
-  margin: 0 0 var(--veli-spacing-3);
+  margin: 0 0 var(--veli-spacing-4);
   color: var(--veli-color-text-base-strong);
   font-family: var(--veli-typography-en-title-2-semibold-font-family);
   font-size: var(--veli-typography-en-title-2-semibold-font-size);
   font-weight: var(--veli-typography-en-title-2-semibold-font-weight);
   line-height: var(--veli-typography-en-title-2-semibold-line-height);
   letter-spacing: var(--veli-typography-en-title-2-semibold-letter-spacing);
+}
+.veli-service-detail-guideline-section[data-heading-spacing='compact'] > h2 {
+  margin-block-end: var(--veli-spacing-3);
 }
 .veli-service-detail-guideline-section > h2:lang(dv) {
   font-family: var(--veli-typography-dv-title-2-medium-font-family);
@@ -1065,6 +1078,10 @@
   width: 100%;
   height: 100%;
 }
+.veli-service-detail-guideline-sheet-header .veli-service-detail-small-icon {
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
 
 /* Figma 8118:6055 / 6887: the mobile guideline keeps the TOC out of the scroll flow. */
 .veli-service-detail-mobile-toc-button {
@@ -1157,10 +1174,6 @@
     font-size: var(--veli-typography-dv-title-2-medium-font-size);
     font-weight: var(--veli-typography-dv-title-2-medium-font-weight);
     line-height: var(--veli-typography-dv-title-2-medium-line-height);
-  }
-  .veli-service-detail-guideline-sheet-header .veli-service-detail-small-icon {
-    width: var(--veli-spacing-5);
-    height: var(--veli-spacing-5);
   }
   .veli-service-detail-guideline-layout {
     gap: 0;

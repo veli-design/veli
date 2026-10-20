@@ -90,6 +90,7 @@ export function serviceDetailContent(
       sections: [
         {
           id: 'before',
+          headingSpacing: 'compact',
           title: labels.beforeYouStart,
           body: (
             <>

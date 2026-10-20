@@ -1,4 +1,4 @@
-Experimental `0.2.0` copied-source block for service details, fees, prerequisites,
+Experimental `0.3.0` copied-source block for service details, fees, prerequisites,
 application options and guidelines. The default and only presentation preserves
 Web2's approved summary/card and guideline sheet. A separate govmv article/sidebar
 presentation requires product approval; this block does not migrate either app.
@@ -35,6 +35,8 @@ such as an external-platform arrow. `target`, `rel` and `renderLink` are caller 
 tracking capability, workflow promises or storage is inferred from the mode.
 Platform branding is a caller-owned React node. `information` supplies the exact
 applying dialog title and ordered steps; `notice` supplies approved alert copy.
+The platform trigger takes its accessible name from its visible apply/platform
+label; `information.title` supplies the additional accessible description.
 
 Manual `forms` are individual downloadable forms with titles, optional file
 metadata, action and per-form guideline. Download-all and submission contacts are
@@ -50,6 +52,8 @@ and rendered bodies, or `content.body` for one rendered document without a TOC.
 The host renders/sanitizes Lexical/Tiptap/HTML; no editor, CMS or parser is included.
 Do not repeat a section's supplied title in its body. Rich content uses scoped prose
 styles; adapters must verify their renderer classes in real applications.
+Section headings have a 16px body gap. Set `headingSpacing: 'compact'` on an
+introductory section to use the designed 12px gap, without matching its text or ID.
 `updatedText` is already formatted/localized. Optional `summary` accepts content,
 pending/error state and an `onRequest` callback; hosts fetch and parse summaries.
 Optional `onCopyLink` owns URL creation and clipboard access. Rejection announces

@@ -19,7 +19,16 @@ export type ServiceAction = {
 
 /** IDs must be unique within this guideline; the block namespaces DOM IDs per instance. */
 export type GuidelineContent =
-  | { sections: readonly { id: string; title?: string; body: ReactNode }[]; body?: never }
+  | {
+      sections: readonly {
+        id: string;
+        title?: string;
+        body: ReactNode;
+        /** Use the 12px introductory gap instead of the default 16px heading gap. */
+        headingSpacing?: 'compact';
+      }[];
+      body?: never;
+    }
   | { body: ReactNode; sections?: never };
 
 export type ServiceGuideline = {

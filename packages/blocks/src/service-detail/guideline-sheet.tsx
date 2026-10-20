@@ -282,6 +282,7 @@ function GuidelineContentView({
                   key={section.domId}
                   id={section.domId}
                   data-guideline-section={section.title ? '' : undefined}
+                  data-heading-spacing={section.headingSpacing}
                   className={`veli-service-detail-guideline-block ${section.title ? 'veli-service-detail-guideline-section' : ''}`}
                 >
                   {section.title && <h2>{section.title}</h2>}

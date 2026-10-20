@@ -11,6 +11,19 @@ const ambiguous: ServiceAction = { id: 'both', label: 'Start', href: '/', onPres
 const externalForms: ServiceApply = { mode: 'external', forms: [] };
 // @ts-expect-error A guideline has either host rendered content or semantic sections.
 const ambiguousContent: GuidelineContent = { body: 'body', sections: [] };
+const introduction: GuidelineContent = {
+  sections: [{ id: 'intro', body: 'Introduction', headingSpacing: 'compact' }],
+};
+const unsupportedSpacing: GuidelineContent = {
+  sections: [
+    {
+      id: 'intro',
+      body: 'Introduction',
+      // @ts-expect-error Only the designed compact exception is supported.
+      headingSpacing: 'dense',
+    },
+  ],
+};
 const tinted: ServiceAction = {
   id: 'cancel',
   label: 'Download cancellation',
@@ -26,6 +39,8 @@ const unsupported: ServiceAction = {
   onPress() {},
 };
 void [
+  introduction,
+  unsupportedSpacing,
   tinted,
   unsupported,
   link,

@@ -160,7 +160,7 @@ export function ServiceDetail({
         <div className="veli-service-detail-card">
           {(hasMetadata || services.length > 0) && (
             <section className="veli-service-detail-summary" aria-label={labels.serviceSummary}>
-              {hasMetadata && (
+              {(metadata?.applicationTime || metadata?.feeSummary || !!metadata?.fees?.length) && (
                 <dl className="veli-service-detail-metadata">
                   {metadata?.applicationTime && (
                     <Meta icon="note-pencil" label={labels.applicationTime}>
@@ -187,16 +187,6 @@ export function ServiceDetail({
                       </span>
                     </Meta>
                   )}
-                  {metadata?.processingTime && (
-                    <Meta icon="hourglass-medium" label={labels.processingTime}>
-                      <DisplayText text={metadata.processingTime} />
-                    </Meta>
-                  )}
-                  {metadata?.eligibility && (
-                    <Meta icon="hand-deposit" label={labels.eligibility}>
-                      <DisplayText text={metadata.eligibility} />
-                    </Meta>
-                  )}
                 </dl>
               )}
               {feesOpen && !!metadata?.fees?.length && (
@@ -209,6 +199,20 @@ export function ServiceDetail({
                       </dd>
                     </div>
                   ))}
+                </dl>
+              )}
+              {(metadata?.processingTime || metadata?.eligibility) && (
+                <dl className="veli-service-detail-metadata">
+                  {metadata.processingTime && (
+                    <Meta icon="hourglass-medium" label={labels.processingTime}>
+                      <DisplayText text={metadata.processingTime} />
+                    </Meta>
+                  )}
+                  {metadata.eligibility && (
+                    <Meta icon="hand-deposit" label={labels.eligibility}>
+                      <DisplayText text={metadata.eligibility} />
+                    </Meta>
+                  )}
                 </dl>
               )}
               {services.length > 0 && (

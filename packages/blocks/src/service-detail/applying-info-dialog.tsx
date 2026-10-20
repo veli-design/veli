@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { Button as AriaButton, DialogTrigger, Heading } from 'react-aria-components';
 import {
   InfoIcon,
@@ -25,6 +26,7 @@ export function ApplyingInfoDialog({
   dialogClassName?: string;
   overlayClassName?: string;
 }) {
+  const descriptionId = useId();
   const numberIcons = [
     NumberCircleOneIcon,
     NumberCircleTwoIcon,
@@ -33,12 +35,19 @@ export function ApplyingInfoDialog({
   ];
   return (
     <DialogTrigger>
-      <AriaButton className="veli-service-detail-platform-trigger" aria-label={information.title}>
+      <AriaButton className="veli-service-detail-platform-trigger" aria-describedby={descriptionId}>
         <span>{labels.applyOn}</span>
         {platform?.logo}
         <strong>{platform?.name ?? information.title}</strong>
-        <InfoIcon aria-hidden className="veli-service-detail-small-icon" />
+        <InfoIcon
+          aria-hidden
+          weight="fill"
+          className="veli-service-detail-small-icon veli-service-detail-platform-info-icon"
+        />
       </AriaButton>
+      <span id={descriptionId} className="veli-service-detail-sr-only">
+        {information.title}
+      </span>
       <DialogSurface dialogClassName={dialogClassName} overlayClassName={overlayClassName}>
         <div className="veli-service-detail-dialog-header">
           <Heading slot="title">{information.title}</Heading>

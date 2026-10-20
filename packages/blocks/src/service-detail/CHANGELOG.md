@@ -1,3 +1,15 @@
+## 0.3.0
+
+### Added
+
+- Support an explicit compact heading gap for guideline introductory sections.
+
+### Fixed
+
+- Place expanded fees before processing/eligibility metadata and retain the designed trailing grid inset.
+- Use semantic link colors, the filled inactive platform information icon, and the 20px desktop guideline close icon.
+- Match default/introductory guideline heading gaps and inactive TOC padding; preserve visible platform labels in accessible names.
+
 ## 0.2.0
 
 ### Added
