@@ -17,14 +17,10 @@ export function TooltipUsageDemo() {
 export function TooltipVariantsDemo() {
   return (
     <div className="flex flex-wrap items-center gap-4">
-      {(['primary', 'secondary'] as const).map((tone) => (
-        <TooltipTrigger key={`sm-${tone}`} delay={0}>
-          <Button intent="secondary">Small — neutral ({tone})</Button>
-          <Tooltip size="sm" tone={tone}>
-            Brief help
-          </Tooltip>
-        </TooltipTrigger>
-      ))}
+      <TooltipTrigger delay={0}>
+        <Button intent="secondary">Small — neutral</Button>
+        <Tooltip size="sm">Brief help</Tooltip>
+      </TooltipTrigger>
       {(['primary', 'secondary'] as const).map((tone) => (
         <TooltipTrigger key={tone} delay={0}>
           <Button intent="secondary">Large — {tone}</Button>
