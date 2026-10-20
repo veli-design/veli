@@ -121,3 +121,27 @@ for (const size of ['md', 'lg', 'xl']) {
     }
   });
 }
+
+test('large and extra-large radios use a 2px ring only when selected and disabled', () => {
+  for (const size of ['lg', 'xl']) {
+    for (const isDisabled of [false, true]) {
+      for (const isSelected of [false, true]) {
+        const html = renderToStaticMarkup(
+          h(
+            RadioGroup,
+            { 'aria-label': 'Choices', defaultValue: isSelected ? 'a' : 'b' },
+            h(Radio, { value: 'a', size, isDisabled }, 'Option'),
+          ),
+        );
+        const controlClasses = html
+          .match(/class="([^"]*bg-radio-container-bg[^"]*)"/)[1]
+          .split(' ');
+        assert.deepEqual(
+          controlClasses.filter((name) => /^border-\d+$/.test(name)),
+          [isSelected && isDisabled ? 'border-2' : 'border-3'],
+          `${size}: selected=${isSelected}, disabled=${isDisabled}`,
+        );
+      }
+    }
+  }
+});

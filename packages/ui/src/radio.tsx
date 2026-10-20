@@ -134,29 +134,24 @@ const controlVariants = cva(
         className: 'border-3',
       },
       {
-        size: 'lg',
-        isPressed: false,
-        className: 'border-3',
-      },
-      {
         size: ['lg', 'xl'],
         isPressed: true,
         className: 'border-4',
       },
       {
-        size: 'xl',
+        size: ['lg', 'xl'],
         isPressed: false,
         isDisabled: false,
         className: 'border-3',
       },
       {
-        size: 'xl',
+        size: ['lg', 'xl'],
         isSelected: false,
         isDisabled: true,
         className: 'border-3',
       },
       {
-        size: 'xl',
+        size: ['lg', 'xl'],
         isSelected: true,
         isDisabled: true,
         className: 'border-2',
