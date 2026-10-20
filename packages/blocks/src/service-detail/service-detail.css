@@ -244,7 +244,6 @@
   display: inline;
   padding: 0;
   margin: 0;
-  margin-inline-start: var(--veli-spacing-2);
   vertical-align: baseline;
   white-space: nowrap;
 }

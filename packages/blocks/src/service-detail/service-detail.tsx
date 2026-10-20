@@ -221,6 +221,7 @@ export function ServiceDetail({
                           .map((service) => service.name)
                           .join(', ')}
                       </span>
+                      {servicesOpen && hiddenServices > 0 ? ' ' : null}
                       {hiddenServices > 0 && (
                         <button
                           type="button"
