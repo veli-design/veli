@@ -19,7 +19,7 @@ export function TooltipVariantsDemo() {
     <div className="flex flex-wrap items-center gap-4">
       {(['primary', 'secondary'] as const).map((tone) => (
         <TooltipTrigger key={`sm-${tone}`} delay={0}>
-          <Button intent="secondary">Small — {tone}</Button>
+          <Button intent="secondary">Small — neutral ({tone})</Button>
           <Tooltip size="sm" tone={tone}>
             Brief help
           </Tooltip>
@@ -100,7 +100,7 @@ export function TooltipRtlDemo() {
       <VeliProvider language={isDhivehi ? 'dv' : 'en'} colorScheme={colorScheme}>
         <TooltipTrigger delay={0}>
           <Button intent="secondary">{isDhivehi ? 'ކޮޕީ' : 'Copy'}</Button>
-          <Tooltip placement="start" size="lg">
+          <Tooltip placement="start">
             {isDhivehi ? 'ކްލިޕްބޯޑަށް ކޮޕީކުރައްވާ' : 'Copy to clipboard'}
           </Tooltip>
         </TooltipTrigger>
