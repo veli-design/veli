@@ -39,7 +39,12 @@ test('service details retain EN/DV, themes, four application modes and responsiv
                 .getByRole('button', { name: 'Fixture start', exact: true })
                 .locator('svg');
               await expect(icon).toHaveCount(1);
-              expect(await icon.evaluate((node) => node.getBoundingClientRect().width)).toBe(16);
+              expect(await icon.evaluate((node) => node.getBoundingClientRect().width)).toBe(20);
+              // Approved Phosphor ArrowUpRight Bold outline; regular has a different path.
+              await expect(icon.locator('path')).toHaveAttribute(
+                'd',
+                'M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z',
+              );
             }
             await page.getByRole('button', { name: 'Fixture start', exact: true }).click();
           } else

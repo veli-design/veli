@@ -307,6 +307,10 @@
 .veli-service-detail-start-button {
   width: 100%;
 }
+.veli-service-detail-start-button .veli-service-detail-small-icon {
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
 .veli-service-detail-stack {
   display: grid;
   gap: var(--veli-spacing-4);

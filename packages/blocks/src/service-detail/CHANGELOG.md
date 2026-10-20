@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Match the external Start arrow's 20px Bold Figma variant in the shared example and action slot.
 - Keep long service names readable without expansion, and keep expansion controls within the card.
 - Reuse unavailable/loading states for empty guideline and summary content instead of opening blank views.
 - Preserve spacing between isolated numbers and Dhivehi currency text, with localized numeric typography.

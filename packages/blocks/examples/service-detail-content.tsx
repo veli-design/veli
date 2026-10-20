@@ -506,7 +506,9 @@ export function serviceDetailContent(
             action: action(
               'start',
               text('Start', 'ފައްޓަވާ'),
-              mode === 'external' ? { trailingIcon: <ArrowUpRightIcon /> } : {},
+              mode === 'external'
+                ? { trailingIcon: <ArrowUpRightIcon weight="bold" size={20} /> }
+                : {},
             ),
           },
   };
