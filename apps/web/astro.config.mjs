@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import tokenPlayground from '../../packages/tokens/lib/playground.mjs';
 import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
+import rehypeDocTables from './src/lib/rehype-doc-tables.mjs';
 import rehypePreviewCode from './src/lib/rehype-preview-code.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
 import { remarkComponentTabs } from './src/lib/remark-component-tabs.mjs';
@@ -30,7 +31,7 @@ export default defineConfig({
       ],
     },
     remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
-    rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks],
+    rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks, rehypeDocTables],
   },
   vite: {
     ssr: { external: ['@tradenetcorp/veli-blocks/catalog'] },

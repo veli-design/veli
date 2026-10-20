@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath, URL } from 'node:url';
+import { assertCompatibleTokensPeer } from '../../../scripts/ui-token-peer.mjs';
 
 const uiDir = fileURLToPath(new URL('../', import.meta.url));
 const repoDir = fileURLToPath(new URL('../../../', import.meta.url));
@@ -151,9 +152,6 @@ test('published package includes the manifest, guide, and recipes', () => {
 });
 
 test('Veli tokens are an explicit compatible UI peer', () => {
-  assert.equal(
-    packageJson.peerDependencies['@tradenetcorp/veli-tokens'],
-    `^${tokensPackageJson.version}`,
-  );
+  assertCompatibleTokensPeer(packageJson, tokensPackageJson.version);
   assert.equal(packageJson.devDependencies['@tradenetcorp/veli-tokens'], 'workspace:*');
 });

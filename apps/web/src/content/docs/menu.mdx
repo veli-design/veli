@@ -1,16 +1,16 @@
 ---
 title: Menu
-description: Trigger-driven menu built on React Aria, with items, sections, separators, icons, shortcuts, and submenus.
+description: Trigger-driven action and selection menus with sections, shortcuts, and submenus.
 animation:
   src: /animations/menu-showcase/index.html
   label: Menu component anatomy animation
 ---
 
-import { MenuUsageDemo, MenuVariantsDemo } from '../../components/DocsExamples';
+import { MenuUsageDemo, MenuItemsDemo } from '../../components/DocsExamples';
 
 # Menu
 
-The Menu component is a popover list of actions or choices, built on React Aria. Compose `MenuTrigger` with a trigger element, `MenuPopover`, `Menu`, and `MenuItem`; add `MenuSection`, `MenuSeparator`, and `MenuSubmenuTrigger` for richer structures.
+Use Menu for a popover list of actions or choices from a trigger. Compose `MenuTrigger`, a trigger such as [Button](/docs/button/), `MenuPopover`, `Menu`, and `MenuItem`. Add `MenuSection`, `MenuSeparator`, and `MenuSubmenuTrigger` when you need groups or nested menus. Prefer [Select](/docs/select/) for a form field that always shows its value.
 
 ## Import
 
@@ -41,7 +41,7 @@ import { Button } from '@tradenetcorp/veli-ui/button';
   <MenuPopover>
     <Menu>
       <MenuItem startIcon={<PencilSimple size={16} />}>Edit</MenuItem>
-      <MenuItem startIcon={<DownloadSimple size={16} />} shortcut="⌘E">
+      <MenuItem startIcon={<DownloadSimple size={16} />} shortcut={['⌘', 'E']}>
         Export
       </MenuItem>
       <MenuSeparator />
@@ -53,24 +53,100 @@ import { Button } from '@tradenetcorp/veli-ui/button';
 </MenuTrigger>
 ```
 
-## Descriptions & intents
+Pass `selectionMode` on `Menu` for single or multiple selection. Nest a trigger `MenuItem` and `MenuPopover` in `MenuSubmenuTrigger` for submenus — the caret is automatic and flips with reading direction.
 
-Items support a `description`, leading and trailing icons, a `shortcut`, and a `danger` intent for destructive actions.
+## Appearances
+
+Items support size, danger intent, description, icons, and shortcut. Shortcuts use [Kbd](/docs/kbd/): a string, a string array, or a custom `KbdGroup`.
 
 <div className="preview mb-4 rounded-lg border p-4">
-  <MenuVariantsDemo client:visible />
+  <MenuItemsDemo client:visible />
 </div>
+
+```tsx
+<MenuItem
+  startIcon={<PencilSimple size={16} />}
+  description="Update labels and visibility."
+  shortcut={['⌘', 'E']}
+>
+  Edit details
+</MenuItem>
+<MenuItem startIcon={<Gear size={16} />}>Advanced</MenuItem>
+<MenuItem intent="danger" startIcon={<Trash size={16} />} shortcut="Del">
+  Remove file
+</MenuItem>
+```
 
 ## API Reference
 
-| Prop            | Type                    | Default     | Description                                                                                      |
-| :-------------- | :---------------------- | :---------- | :----------------------------------------------------------------------------------------------- |
-| `size`          | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Item height and typography.                                                                      |
-| `intent`        | `'default' \| 'danger'` | `'default'` | Use `danger` for destructive actions.                                                            |
-| `description`   | `ReactNode`             | -           | Secondary line beneath the label.                                                                |
-| `startIcon`     | `ReactNode`             | -           | Leading icon.                                                                                    |
-| `endIcon`       | `ReactNode`             | -           | Trailing icon.                                                                                   |
-| `shortcut`      | `ReactNode`             | -           | Keyboard shortcut hint shown at the trailing edge.                                               |
-| `closeOnSelect` | `boolean`               | -           | Whether selecting the item closes the menu; defaults to React Aria behavior per `selectionMode`. |
+Menu is a Veli composition on React Aria [`Menu`](https://react-spectrum.adobe.com/react-aria/Menu.html). Props below follow that stack.
 
-`Menu` supports React Aria selection (`selectionMode`, `selectedKeys`, `onSelectionChange`). `MenuSection` accepts a `title`, and `MenuPopover` accepts an `offset`. All other React Aria props on each part are supported.
+### MenuItem
+
+Veli-specific props for each item.
+
+| Prop          | Type                              | Default     | Description                                             |
+| :------------ | :-------------------------------- | :---------- | :------------------------------------------------------ |
+| `size`        | `'sm' \| 'md' \| 'lg'`            | `'md'`      | Item height and typography.                             |
+| `intent`      | `'default' \| 'danger'`           | `'default'` | Use `danger` for destructive actions.                   |
+| `description` | `ReactNode`                       | -           | Secondary line beneath the label.                       |
+| `startIcon`   | `ReactNode`                       | -           | Leading icon.                                           |
+| `endIcon`     | `ReactNode`                       | -           | Trailing icon (separate from the submenu caret).        |
+| `shortcut`    | `string \| string[] \| ReactNode` | -           | Shortcut hint; strings and arrays render as `Kbd` keys. |
+| `className`   | `string`                          | -           | Classes merged onto the item.                           |
+
+### React Aria MenuItem
+
+React Aria’s headless [`MenuItem`](https://react-spectrum.adobe.com/react-aria/Menu.html#menuitem). These props pass through. The React Aria docs cover the rest, except the exclusions below.
+
+| Prop            | Type      | Default | Description                                                      |
+| :-------------- | :-------- | :------ | :--------------------------------------------------------------- |
+| `id`            | `Key`     | -       | Item key for selection and `onAction`.                           |
+| `isDisabled`    | `boolean` | `false` | Disables the item.                                               |
+| `closeOnSelect` | `boolean` | -       | Whether selecting closes the menu; defaults per `selectionMode`. |
+| `textValue`     | `string`  | -       | Typeahead text when children are not plain text.                 |
+| `href`          | `string`  | -       | Renders the item as a link.                                      |
+
+Not forwarded from React Aria `MenuItem`:
+
+| Prop        | Why                                    |
+| :---------- | :------------------------------------- |
+| `className` | Replaced by Veli’s layout `className`. |
+
+### MenuPopover
+
+Veli-specific props for the surface.
+
+| Prop        | Type     | Default | Description                      |
+| :---------- | :------- | :------ | :------------------------------- |
+| `offset`    | `number` | `8`     | Distance from the trigger.       |
+| `className` | `string` | -       | Classes merged onto the surface. |
+
+Also accepts React Aria [`Popover`](https://react-spectrum.adobe.com/react-aria/Popover.html) props such as `placement` and `isNonModal`. `lang` and `dir` come from `VeliProvider`.
+
+### Menu
+
+Accepts React Aria [`Menu`](https://react-spectrum.adobe.com/react-aria/Menu.html) props, including `selectionMode`, `selectedKeys`, `onSelectionChange`, `onAction`, and `aria-label`.
+
+### MenuSection
+
+| Prop    | Type                   | Default | Description                    |
+| :------ | :--------------------- | :------ | :----------------------------- |
+| `title` | `ReactNode`            | -       | Section header label.          |
+| `size`  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Header padding and typography. |
+
+Also accepts React Aria [`MenuSection`](https://react-spectrum.adobe.com/react-aria/Menu.html#section) props.
+
+### MenuTrigger / MenuSubmenuTrigger / MenuSeparator
+
+`MenuTrigger` and `MenuSubmenuTrigger` accept their React Aria props. `MenuSeparator` is a visual divider and accepts React Aria `Separator` props plus `className`.
+
+## Accessibility
+
+- Give the menu an accessible name with `aria-label` or `aria-labelledby` when the trigger label alone is not enough.
+- Disabled items use `isDisabled` and expose `aria-disabled`.
+- Keyboard: arrows move focus; Home and End jump to the edges; typeahead matches labels; Enter or Space activates; Escape closes; Arrow Right / Left open and close submenus (mirrored in RTL).
+
+## RTL and Language
+
+`MenuPopover` inherits `lang` and `dir` from `VeliProvider`, so item alignment and the submenu caret follow reading direction. Shortcut keys keep `lang="en"` so modifier glyphs stay stable in Dhivehi.
