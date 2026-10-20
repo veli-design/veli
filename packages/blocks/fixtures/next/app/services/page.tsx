@@ -21,7 +21,20 @@ export default function ServicesFixture() {
   const [simpleManual, setSimpleManual] = useState(false);
   const [serviceCount, setServiceCount] = useState('default');
   const [guidelineState, setGuidelineState] = useState('supplied');
+  const [metadataSet, setMetadataSet] = useState('default');
   const content = serviceDetailContent(language, mode);
+  const metadata =
+    metadataSet === 'fees only'
+      ? { fees: content.metadata?.fees }
+      : metadataSet === 'processing only'
+        ? { processingTime: content.metadata?.processingTime }
+        : metadataSet === 'without fees'
+          ? {
+              applicationTime: content.metadata?.applicationTime,
+              processingTime: content.metadata?.processingTime,
+              eligibility: content.metadata?.eligibility,
+            }
+          : content.metadata;
   const longName =
     language === 'dv'
       ? 'ވިޔަފާރީގެ ރަޖިސްޓްރޭޝަން މަޢުލޫމާތު ބަދަލުކުރުން '.repeat(5)
@@ -129,6 +142,14 @@ export default function ServicesFixture() {
           </select>
         </label>
         <label>
+          Metadata{' '}
+          <select value={metadataSet} onChange={(event) => setMetadataSet(event.target.value)}>
+            {['default', 'fees only', 'processing only', 'without fees'].map((value) => (
+              <option key={value}>{value}</option>
+            ))}
+          </select>
+        </label>
+        <label>
           Guideline content{' '}
           <select
             value={guidelineState}
@@ -159,7 +180,7 @@ export default function ServicesFixture() {
       <VeliProvider language={language} colorScheme={dark ? 'dark' : 'light'}>
         <ServiceDetail
           {...content}
-          metadata={missing ? {} : content.metadata}
+          metadata={missing ? {} : metadata}
           services={
             missing
               ? []

@@ -134,7 +134,7 @@ test('fees, expansion, dialogs, copy errors, supplied/requested summaries and mi
     'aria-expanded',
     'true',
   );
-  const applying = page.getByRole('button', { name: 'How to apply', exact: true });
+  const applying = page.getByRole('button', { name: 'Apply on Public Services', exact: true });
   await applying.hover();
   expect(await applying.evaluate((node) => getComputedStyle(node).backgroundColor)).not.toBe(
     'rgba(0, 0, 0, 0)',
