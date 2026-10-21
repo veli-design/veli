@@ -3888,6 +3888,43 @@
             }
           }
         }
+      },
+      "contrast": {
+        "alpha": {
+          "12": {
+            "$type": "color",
+            "$value": "rgba(0, 0, 0, 0.12)",
+            "$description": "",
+            "$extensions": {
+              "mode": {
+                "Light": "rgba(0, 0, 0, 0.12)",
+                "Dark": "rgba(255, 255, 255, 0.12)"
+              }
+            }
+          },
+          "20": {
+            "$type": "color",
+            "$value": "rgba(0, 0, 0, 0.2)",
+            "$description": "",
+            "$extensions": {
+              "mode": {
+                "Light": "rgba(0, 0, 0, 0.2)",
+                "Dark": "rgba(255, 255, 255, 0.2)"
+              }
+            }
+          },
+          "28": {
+            "$type": "color",
+            "$value": "rgba(0, 0, 0, 0.28)",
+            "$description": "",
+            "$extensions": {
+              "mode": {
+                "Light": "rgba(0, 0, 0, 0.28)",
+                "Dark": "rgba(255, 255, 255, 0.28)"
+              }
+            }
+          }
+        }
       }
     },
     "brand": {
@@ -8013,6 +8050,113 @@
               "mode": {
                 "Light": "{color.brand.accent.600}",
                 "Dark": "{color.brand.accent.900}"
+              }
+            }
+          }
+        },
+        "onHighContrast": {
+          "secondary": {
+            "fill": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.100}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.100}",
+                    "Dark": "{color.brand.neutral.100}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.200}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.200}",
+                    "Dark": "{color.brand.neutral.200}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.300}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.300}",
+                    "Dark": "{color.brand.neutral.300}"
+                  }
+                }
+              },
+              "foreground": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1200}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1200}",
+                    "Dark": "{color.brand.neutral.1200}"
+                  }
+                }
+              }
+            },
+            "transparent": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.12}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.12}",
+                    "Dark": "{color.primitives.contrast.alpha.12}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.20}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.20}",
+                    "Dark": "{color.primitives.contrast.alpha.20}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.28}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.28}",
+                    "Dark": "{color.primitives.contrast.alpha.28}"
+                  }
+                }
+              },
+              "foreground": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.100}",
+                "$description": "",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.100}",
+                    "Dark": "{color.brand.neutral.100}"
+                  }
+                }
+              }
+            }
+          },
+          "focus": {
+            "$type": "color",
+            "$value": "{color.brand.neutral.100}",
+            "$description": "",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.brand.neutral.100}",
+                "Dark": "{color.brand.neutral.100}"
               }
             }
           }
