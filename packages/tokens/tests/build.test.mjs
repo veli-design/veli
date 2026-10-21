@@ -351,3 +351,39 @@ test('authored web spacing references resolve against canonical CSS', () => {
   }
   assert.ok(references > 0);
 });
+
+test('high-contrast Button aliases retain the approved Light/Dark color modes', async () => {
+  const parsed = await parse({
+    src: files['tokens.json'],
+    filename: new URL('src/design.tokens.json', root),
+  });
+  for (const mode of ['Light', 'Dark']) {
+    const tokens = parsed.resolver.apply(mode === 'Dark' ? { tzMode: mode } : {});
+    const value = (id) => tokens[`color.${id}`].$value;
+    for (const [state, step] of [
+      ['default', 100],
+      ['hover', 200],
+      ['pressed', 300],
+      ['foreground', 1200],
+    ]) {
+      assert.deepEqual(
+        value(`button.onhighcontrast.secondary.fill.${state}`),
+        value(`neutral.${step}`),
+      );
+    }
+    assert.deepEqual(value('button.onhighcontrast.focus'), value('neutral.100'));
+    assert.deepEqual(
+      value('button.onhighcontrast.secondary.transparent.foreground'),
+      value('neutral.100'),
+    );
+    for (const [state, alpha] of [
+      ['default', 0.12],
+      ['hover', 0.2],
+      ['pressed', 0.28],
+    ]) {
+      const color = value(`button.onhighcontrast.secondary.transparent.${state}`);
+      assert.equal(color.alpha, alpha);
+      assert.equal(color.components[0], mode === 'Light' ? 0 : 1);
+    }
+  }
+});

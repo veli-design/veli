@@ -5,6 +5,7 @@ description: Accessible action and link button with semantic intents, sizes, ico
 
 import {
   ButtonIconsDemo,
+  ButtonHighContrastDemo,
   ButtonNavigationDemo,
   ButtonRtlDemo,
   ButtonSizesDemo,
@@ -49,6 +50,34 @@ Choose `primary`, `secondary`, or `danger` with a `fill`, `transparent`, or `gho
 <Button intent="danger" appearance="ghost">Delete</Button>
 <Button intent="accent">Featured action</Button>
 ```
+
+## High contrast
+
+Use `highContrast` for secondary actions on a prominent surface, such as an informational Toast. This version of Veli UI requires `@tradenetcorp/veli-tokens` `^0.10.0`; upgrade tokens alongside UI to include the high-contrast colors.
+
+The prop defaults to `false`. Set it explicitly on each secondary button; it supports `fill`, `transparent`, and `ghost`, including link and icon-only buttons. Other intents ignore it.
+
+<div className="preview mb-4 rounded-lg border border-base-subtle p-4">
+  <ButtonHighContrastDemo client:visible />
+</div>
+
+```tsx
+<div className="flex flex-wrap gap-3 rounded-xl bg-status-info-emphasis p-6">
+  <Button intent="secondary" highContrast>
+    Install now
+  </Button>
+  <Button intent="secondary" appearance="transparent" highContrast>
+    View details
+  </Button>
+  <Button intent="secondary" appearance="ghost" highContrast>
+    Later
+  </Button>
+</div>
+```
+
+The background belongs to the surrounding surface; `highContrast` changes the Button colors. Keep it off on ordinary page surfaces. On a colored surface, check the label, hover, pressed and keyboard focus states in both themes. Button does not detect backgrounds or inherit high contrast from a Toast or Alert automatically.
+
+High-contrast disabled buttons retain their colors at 50% opacity. The focus ring has a transparent gap so the surrounding surface remains visible.
 
 ## Icons
 
@@ -267,6 +296,7 @@ These props apply in both modes. Defaults describe a standalone Button; supporte
 | `as`               | `'button' \| 'a'`                                          | `'button'`       | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
 | `intent`           | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'`      | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
 | `appearance`       | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`         | Surface treatment in either mode.                                                                                            |
+| `highContrast`     | `boolean`                                                  | `false`          | Explicit high-contrast treatment for secondary fill, transparent and ghost buttons.                                          |
 | `size`             | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`           | Text and icon-only size.                                                                                                     |
 | `iconOnly`         | `boolean`                                                  | `false`          | Square icon control. Requires an accessible name.                                                                            |
 | `loadingIndicator` | `ReactNode`                                                | Built-in spinner | Decorative pending visual, rendered only during `isLoading` or `isPending`. Works for action and navigation buttons.         |

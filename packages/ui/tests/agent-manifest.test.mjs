@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import getReleasePlan from '@changesets/get-release-plan';
 import { fileURLToPath, URL } from 'node:url';
 import { assertCompatibleTokensPeer } from '../../../scripts/ui-token-peer.mjs';
 
@@ -151,7 +152,11 @@ test('published package includes the manifest, guide, and recipes', () => {
   }
 });
 
-test('Veli tokens are an explicit compatible UI peer', () => {
-  assertCompatibleTokensPeer(packageJson, tokensPackageJson.version);
+test('Veli tokens planned release is an explicit compatible UI peer', async () => {
+  const plan = await getReleasePlan(repoDir);
+  const tokensVersion =
+    plan.releases.find(({ name }) => name === tokensPackageJson.name)?.newVersion ??
+    tokensPackageJson.version;
+  assertCompatibleTokensPeer(packageJson, tokensVersion);
   assert.equal(packageJson.devDependencies['@tradenetcorp/veli-tokens'], 'workspace:*');
 });

@@ -9,4 +9,4 @@
 ### Changed
 
 - Bind Tailwind text sizes and bilingual type utilities to Figma typography metrics, including updated line heights and Dhivehi font families.
-- Update subtle button colors to alpha tokens and add high-contrast button colors from the latest Figma export.
+- Update subtle button colors to alpha tokens from the latest Figma export.
