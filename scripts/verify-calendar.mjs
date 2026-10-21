@@ -13,6 +13,7 @@ await mkdir(evidence, { recursive: true });
 const results = [];
 const errors = [];
 const accessibilityFindings = [];
+const localeData = {};
 const url = (story, language, theme) =>
   `${base}/iframe.html?id=components-calendar--${story}&viewMode=story&veli-language=${language}&veli-theme=${theme}`;
 
@@ -69,22 +70,17 @@ for (const [engine, type] of Object.entries({ chromium, webkit })) {
     colorScheme: 'light',
   });
   const page = await context.newPage();
-  console.log(
-    `${engine} locale data:`,
-    await page.evaluate(() =>
-      ['dv-MV', 'dv-Thaa-MV', 'dv-Arab-MV', 'ar-MV', 'ar-Latn-MV', 'und-Thaa-MV'].map((tag) => {
-        const locale = new Intl.Locale(tag).maximize();
-        return {
-          tag,
-          maximized: locale.toString(),
-          textInfo: locale.getTextInfo?.() ?? locale.textInfo,
-          date: new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' }).format(
-            new Date(2026, 9, 18),
-          ),
-        };
-      }),
-    ),
-  );
+  localeData[engine] = await page.evaluate(() => {
+    const locale = new Intl.Locale('dv-MV').maximize();
+    return {
+      maximized: locale.toString(),
+      textInfo: locale.getTextInfo?.() ?? locale.textInfo,
+      month: new Intl.DateTimeFormat('dv-MV', { month: 'long', year: 'numeric' }).format(
+        new Date(2026, 9, 18),
+      ),
+    };
+  });
+  console.log(`${engine} native Dhivehi locale: ${JSON.stringify(localeData[engine])}`);
   page.on('pageerror', (e) => errors.push(`${engine}: ${e.message}`));
   page.on('console', (m) => {
     if (m.type() === 'error') errors.push(`${engine}: ${m.text()}`);
@@ -321,13 +317,42 @@ for (const [engine, type] of Object.entries({ chromium, webkit })) {
     await page.keyboard.press('Escape');
     await page.emulateMedia({ colorScheme: 'light' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    // Reproduce WebKit/ICU builds whose native Dhivehi direction data is LTR.
+    await page.addInitScript(() => {
+      const native = Intl.Locale.prototype.getTextInfo;
+      Object.defineProperty(Intl.Locale.prototype, 'getTextInfo', {
+        configurable: true,
+        value() {
+          return this.language === 'dv' ? { direction: 'ltr' } : native.call(this);
+        },
+      });
+    });
+    await open(page, 'responsive', 'dv');
+    for (const [name, output] of [
+      ['Mobile single date', 'single-value'],
+      ['Mobile date range', 'range-value'],
+    ]) {
+      const calendar = page.getByRole('application', { name: new RegExp(`^${name}`) });
+      const eighteenth = calendar
+        .locator('[role=grid] [role=button]:not([data-outside-month])')
+        .filter({ hasText: /^18$/ });
+      await eighteenth.tap();
+      await eighteenth.focus();
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('Enter');
+      await expect(page.getByTestId(output)).toHaveText(
+        output === 'single-value' ? '2026-10-19' : '2026-10-18 – 2026-10-19',
+      );
+      await page.keyboard.press('ArrowRight');
+      await expect(eighteenth).toBeFocused();
+    }
   } finally {
     await browser.close();
   }
 }
 await writeFile(
   `${evidence}/results.json`,
-  JSON.stringify({ results, errors, accessibilityFindings }, null, 2),
+  JSON.stringify({ results, errors, accessibilityFindings, localeData }, null, 2),
 );
 assert.deepEqual(errors, [], 'no browser console errors or uncaught exceptions');
 console.log(

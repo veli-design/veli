@@ -7,6 +7,7 @@ import {
   useSyncExternalStore,
   type RefObject,
   type ReactNode,
+  type KeyboardEvent,
 } from 'react';
 import { today } from '@internationalized/date';
 import {
@@ -396,6 +397,25 @@ export function RangeCalendar<T extends DateValue>({
   );
 }
 
+// Some WebKit/ICU builds report Dhivehi as LTR even though the grid is RTL.
+// Use the same public state actions as React Aria for horizontal arrows only.
+function useDhivehiGridKeyboardDirection() {
+  const { language } = useVeliLanguage();
+  const { direction } = useLocale();
+  const calendarState = useContext(CalendarStateContext);
+  const rangeState = useContext(RangeCalendarStateContext);
+  const state = calendarState ?? rangeState;
+
+  return (event: KeyboardEvent<HTMLDivElement>) => {
+    if (language !== 'dv' || direction === 'rtl' || !state) return;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === 'ArrowLeft') state.focusNextDay();
+    else state.focusPreviousDay();
+  };
+}
+
 function CalendarDateGrid({
   gridClassName,
   weekdayStyle,
@@ -404,23 +424,26 @@ function CalendarDateGrid({
   weekdayStyle: CalendarWeekdayStyle;
 }) {
   const { language } = useVeliLanguage();
+  const onKeyDownCapture = useDhivehiGridKeyboardDirection();
   const reactAriaWeekdayStyle =
     language === 'dv' && weekdayStyle === 'narrow' ? 'short' : weekdayStyle;
 
   return (
-    <CalendarGrid
-      weekdayStyle={reactAriaWeekdayStyle}
-      className={twMerge(calendarGridClassName, gridClassName)}
-    >
-      <CalendarGridHeader weekdayStyle={weekdayStyle} />
-      <CalendarGridBody>
-        {(date) => (
-          <CalendarCell date={date} className={(state) => getCalendarCellClassName(state)}>
-            {(state) => <CalendarDayLabel state={state} todayDotInverted={state.isSelected} />}
-          </CalendarCell>
-        )}
-      </CalendarGridBody>
-    </CalendarGrid>
+    <div className="contents" onKeyDownCapture={onKeyDownCapture}>
+      <CalendarGrid
+        weekdayStyle={reactAriaWeekdayStyle}
+        className={twMerge(calendarGridClassName, gridClassName)}
+      >
+        <CalendarGridHeader weekdayStyle={weekdayStyle} />
+        <CalendarGridBody>
+          {(date) => (
+            <CalendarCell date={date} className={(state) => getCalendarCellClassName(state)}>
+              {(state) => <CalendarDayLabel state={state} todayDotInverted={state.isSelected} />}
+            </CalendarCell>
+          )}
+        </CalendarGridBody>
+      </CalendarGrid>
+    </div>
   );
 }
 
@@ -432,35 +455,38 @@ function CalendarRangeGrid({
   weekdayStyle: CalendarWeekdayStyle;
 }) {
   const { language } = useVeliLanguage();
+  const onKeyDownCapture = useDhivehiGridKeyboardDirection();
   const reactAriaWeekdayStyle =
     language === 'dv' && weekdayStyle === 'narrow' ? 'short' : weekdayStyle;
 
   return (
-    <CalendarGrid
-      weekdayStyle={reactAriaWeekdayStyle}
-      className={twMerge(calendarGridClassName, '[&_td]:p-0', gridClassName)}
-    >
-      <CalendarGridHeader weekdayStyle={weekdayStyle} />
-      <CalendarGridBody>
-        {(date) => (
-          <CalendarCell date={date} className={(state) => getRangeCalendarCellClassName(state)}>
-            {(state) => {
-              const innerClassName = getRangeCalendarCellInnerClassName(state);
-              const label = (
-                <CalendarDayLabel
-                  state={state}
-                  todayDotInverted={
-                    state.isSelected && (state.isSelectionStart || state.isSelectionEnd)
-                  }
-                />
-              );
+    <div className="contents" onKeyDownCapture={onKeyDownCapture}>
+      <CalendarGrid
+        weekdayStyle={reactAriaWeekdayStyle}
+        className={twMerge(calendarGridClassName, '[&_td]:p-0', gridClassName)}
+      >
+        <CalendarGridHeader weekdayStyle={weekdayStyle} />
+        <CalendarGridBody>
+          {(date) => (
+            <CalendarCell date={date} className={(state) => getRangeCalendarCellClassName(state)}>
+              {(state) => {
+                const innerClassName = getRangeCalendarCellInnerClassName(state);
+                const label = (
+                  <CalendarDayLabel
+                    state={state}
+                    todayDotInverted={
+                      state.isSelected && (state.isSelectionStart || state.isSelectionEnd)
+                    }
+                  />
+                );
 
-              return innerClassName ? <span className={innerClassName}>{label}</span> : label;
-            }}
-          </CalendarCell>
-        )}
-      </CalendarGridBody>
-    </CalendarGrid>
+                return innerClassName ? <span className={innerClassName}>{label}</span> : label;
+              }}
+            </CalendarCell>
+          )}
+        </CalendarGridBody>
+      </CalendarGrid>
+    </div>
   );
 }
 
