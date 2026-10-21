@@ -69,6 +69,22 @@ for (const [engine, type] of Object.entries({ chromium, webkit })) {
     colorScheme: 'light',
   });
   const page = await context.newPage();
+  console.log(
+    `${engine} locale data:`,
+    await page.evaluate(() =>
+      ['dv-MV', 'dv-Thaa-MV', 'dv-Arab-MV', 'ar-MV', 'ar-Latn-MV', 'und-Thaa-MV'].map((tag) => {
+        const locale = new Intl.Locale(tag).maximize();
+        return {
+          tag,
+          maximized: locale.toString(),
+          textInfo: locale.getTextInfo?.() ?? locale.textInfo,
+          date: new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' }).format(
+            new Date(2026, 9, 18),
+          ),
+        };
+      }),
+    ),
+  );
   page.on('pageerror', (e) => errors.push(`${engine}: ${e.message}`));
   page.on('console', (m) => {
     if (m.type() === 'error') errors.push(`${engine}: ${m.text()}`);
