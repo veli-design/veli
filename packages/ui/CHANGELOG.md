@@ -6,6 +6,82 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.16.0
+
+_Released 2026-10-19._
+
+### Added
+
+- Ship a versioned agent guide, component manifest, semantic component metadata, and validated integration recipes.
+- Document Field composition for RadioGroup and CheckboxGroup, form-library error helpers, and router `navigate` wiring for href components.
+- Add optional Search labels and required indicators using the shared Veli FieldLabel, plus query submission and clear callbacks and Escape-to-clear behavior through React Aria SearchField.
+- Allow FieldLabel to receive explicit disabled and required state from built-in controls while retaining surrounding Field defaults.
+- Add optional Toast close buttons and accent actions, and support state callbacks for Toast and ToastRegion styling and composition.
+- Export the `PopoverIntent` type for typing `intent` on `Popover` and its parts.
+- Add a `titleLevel` prop to `PopoverHeader` to set the heading level of its title.
+- Forward native `div` attributes such as `id`, `className`, and `data-*` from `PopoverHeader`, `PopoverContent`, and `PopoverFooter`.
+- Add an explicit localized `isOptional` marker to ComboBox; required fields suppress the marker.
+- Add an extra-large Checkbox size with a 24px control and matching label and message typography.
+- Add Spinner and LoadingText components with themed animations, accessible status labels, RTL support and reduced-motion alternatives.
+- Allow Button loading indicators to be customized while retaining pending semantics, the accessible label and button dimensions.
+- Add array `shortcut` values that render as `Kbd` keys, and an automatic direction-aware submenu caret inside `MenuSubmenuTrigger`.
+- Scroll the Tabs bar horizontally when tabs are wider than their container, and keep the selected tab in view.
+
+### Changed
+
+- Require consumers to install a compatible `@tradenetcorp/veli-tokens` peer so Veli component styling has an explicit token source.
+- Align agent component metadata with current public APIs, including provider document sync, DatePicker segments, Link typography inheritance, and Accordion limitations.
+- Rename Search's variant prop to appearance; replace variant="outline" with appearance="outline".
+- Replace Skeleton pulsing with a theme-aware 1500ms shimmer sweep and 500ms rest, respecting RTL and reduced motion.
+- Render the `PopoverHeader` title as a heading that names the surrounding `PopoverDialog`. If your page outline relies on a specific level, set `titleLevel`. Remove any `aria-label` that only repeated the header title.
+- Give every Popover intent the `shadow-lg` elevation from Figma. `primary` and `secondary` popovers previously had no shadow, and `tertiary` used `shadow-xl`.
+- Scale Popovers from their trigger as they open and close, matching Tooltip. Exits now use ease-out.
+- Size the large Checkbox control to 20px and use 12px spacing between the box and label at every size.
+- Use the shared compact Spinner as Button's default loading indicator, including reduced-motion support.
+- Align Menu popover and item spacing with Figma: 224px minimum width, 0.5px muted border, 12px item inset, 6px label–shortcut gap, and body-sized descriptions.
+- Match Menu icons, submenu carets, and `MenuSeparator` to Figma tokens (`border-base-muted`, 12px side inset, 4px vertical spacing).
+- Make the Tabs underline hug the tab group width by default. Pass `tabListClassName="w-full"` to restore a full-width inactive border.
+- Require `@tradenetcorp/veli-tokens` `^0.9.0` as the compatible UI peer.
+
+### Deprecated
+
+- Use `ComboBox isOptional` instead of `labelSupplementary` for localized optional labels. Custom supplementary content remains supported.
+
+### Removed
+
+- Remove the unsupported `PageTab` component and its `@tradenetcorp/veli-ui/page-tab` entry point. Use `Tabs` for tabbed navigation.
+
+### Fixed
+
+- Keep Input, PasswordInput, and TextArea field surfaces, rounded corners, stroke or underline, and themed text colour when the browser autofills a value, instead of showing Chromium's blue autofill rectangle.
+- Fix Search outline layout shifts, error-state icon, filled and disabled styling, search icon color and weight, reduced motion, Dhivehi baseline, and native form reset.
+- Match Toast padding and English line heights to the design while preserving natural text wrapping and Dhivehi typography.
+- Correct Toast semantic colors, long-message wrapping, RTL placement motion, action identity, numeric descriptions, and rapid queue updates. Respect reduced-motion preferences and custom queue update wrappers.
+- Make keyboard focus visible when navigating to a ToastRegion with F6, and use the regular close icon from the design system.
+- Keep document and portal themes in sync when the system color scheme changes, while preserving the initialized theme during hydration.
+- Keep Button heights consistent between English and Dhivehi by matching the updated language-specific vertical padding.
+- Make Popover entry and exit slide 8px from the resolved side; previously only the fade ran. With reduced motion, the popover fades without moving.
+- Keep tall Popovers inside their max height so the body scrolls and the header and footer stay in view.
+- Show hover, pressed, and focus ring states on the header close button that match `primary` and `secondary` surfaces.
+- Overlap the arrow with the surface by 2px, as in Figma, so no seam shows between them.
+- Draw an outline around the Popover surface in forced colors mode.
+- Keep ComboBox outline content stable on hover and focus, align disabled and read-only fills, and use the specified helper and option treatments.
+- Keep the info tooltip and custom action/accessory buttons independent of suggestion disclosure, and preserve inherited language with supported React Aria versions.
+- Apply local language overrides consistently to field copy, filtering, tooltip, and popup content.
+- Improve contrast for enabled placeholders, optional/supplementary labels, accessories, empty-list messages, and option descriptions throughout interaction feedback.
+- Respect reduced motion for ComboBox feedback and wrap long option text within narrow popups.
+- Preserve numeric zero labels and their accessible input association.
+- Associate Checkbox descriptions and errors with the input without including them in its accessible name, and announce group errors.
+- Make checkbox labels activate their inputs and honor reduced-motion preferences.
+- Keep the check and indeterminate dash white in dark mode, as confirmed by the Checkbox design owner.
+- Align the box with the first line when a Checkbox label wraps in a narrow layout.
+- Match the checkmark's visible size and stroke weight to each Checkbox size, especially large and extra large.
+- Keep the unchecked pressed border consistent with hover and use the size-specific pressed checkmark geometry.
+- Keep `shortcut` key order left-to-right in Dhivehi and other RTL menus, and fade generated shortcut keys when the item is disabled.
+- Add MenuPopover enter and exit motion that scales from its trigger, with reduced-motion support, silence item color transitions under `prefers-reduced-motion`, and switch sections to React Aria `MenuSection`.
+- Use a filled WarningCircle at 16px for the PasswordInput invalid-state icon, matching the Figma field error treatment at every size.
+- Align Tabs leading and trailing slot spacing with the design system, consolidate overflow mode into a single accessible tab tree, select the first enabled tab by default, localize the overflow More label from language, and gate color transitions with reduced-motion.
+
 ## 0.15.0
 
 _Released 2026-10-11._

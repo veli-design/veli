@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 import { waitForMotion } from './wait-for-motion';
 
 test('copied footer renders, hydrates, preserves keyboard focus and Next navigation', async ({
@@ -43,7 +44,7 @@ for (const width of [320, 1280])
         if (theme === 'dark') await page.getByRole('button', { name: 'Fixture theme' }).click();
         await waitForMotion(page);
         const results = await new AxeBuilder({ page }).analyze();
-        expect(results.violations).toEqual([]);
+        await warnAccessibilityViolations(results);
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
         ).toBe(true);

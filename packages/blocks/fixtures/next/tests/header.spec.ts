@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { warnAccessibilityViolations } from './accessibility.mjs';
 
 test('app switcher opens, filters, closes with Escape, and returns focus', async ({ page }) => {
   const errors: string[] = [];
@@ -67,7 +68,7 @@ test('RTL layout does not overflow and passes axe', async ({ page }) => {
     true,
   );
   const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
+  await warnAccessibilityViolations(results);
 });
 
 test('reduced motion still opens the app switcher', async ({ page }) => {

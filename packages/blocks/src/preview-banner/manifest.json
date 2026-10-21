@@ -1,24 +1,24 @@
 {
   "id": "preview-banner",
   "title": "Preview banner",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "status": "experimental",
   "description": "Floating fixed bottom preview banner with a scroll spacer for draft and published preview states.",
   "files": ["preview-banner.tsx"],
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
-    "@tradenetcorp/veli-ui": "^0.15.0",
+    "@tradenetcorp/veli-ui": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.9.0",
+    "@tradenetcorp/veli-tokens": "^0.9.1",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.15.0",
-    "@tradenetcorp/veli-tokens": "0.9.0",
+    "@tradenetcorp/veli-ui": "0.16.0",
+    "@tradenetcorp/veli-tokens": "0.9.1",
     "@phosphor-icons/react": "2.1.10",
     "react": "19.2.6",
     "react-dom": "19.2.6",
