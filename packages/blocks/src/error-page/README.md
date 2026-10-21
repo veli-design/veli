@@ -31,7 +31,7 @@ Optional `primaryAction`, `secondaryAction` and `report.action` use the same dis
 
 ## Artwork and theming
 
-`animation="auto"` is the default. Activate the artwork with a pointer, Enter or Space to cycle its five styles. Fine pointers also influence nearby dots. Automatic style changes occur 15 seconds after a transition. Reduced motion settles the artwork immediately and still permits discrete style changes; `animation="static"` renders the first style without interactive controls.
+`animation="auto"` is the default. The intro plays once, then the artwork stays still. Activate the artwork with a pointer, Enter or Space to cycle its five styles; each chosen style stays still until the next activation. Fine pointers also influence nearby dots. Reduced motion skips the intro and settles style changes immediately; turning reduced motion off does not replay the intro. `animation="static"` renders the first style without interactive controls.
 
 Animation suspends for hidden tabs and offscreen artwork. Each instance releases its observers, listeners and animation frames on unmount or kind changes. Offline artwork is bundled with the component; other datasets load only when their state is displayed. Failed data loading or unavailable canvas leaves the heading and recovery content usable, without inactive artwork controls. This is not an offline cache or service worker.
 

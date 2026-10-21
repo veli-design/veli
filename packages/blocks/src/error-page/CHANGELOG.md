@@ -1,3 +1,9 @@
+## 0.2.1
+
+### Fixed
+
+- Play the intro once, then keep icon and 404 font styles still until pointer or keyboard activation. Remove automatic style cycling and idle waves, while preserving fine-pointer interaction and immediate style changes for reduced motion.
+
 ## 0.2.0
 
 ### Changed
