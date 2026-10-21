@@ -88,9 +88,7 @@ test('guideline typography survives the real Tailwind reset without leaking in E
     expect.soft(styles.sectionWeight).toBe(styles.headingToken);
     expect.soft(styles.sectionFamily).toContain(language === 'dv' ? 'MV A Waheed' : 'Inter');
     expect.soft(styles.sectionSize).toBe(language === 'dv' ? '27px' : '24px');
-    expect
-      .soft(Number.parseFloat(styles.sectionLine))
-      .toBeCloseTo(language === 'dv' ? 39.69 : 32.4, 1);
+    expect.soft(styles.sectionLine).toBe(language === 'dv' ? '40px' : '32px');
     expect.soft(styles.sectionTracking).toMatch(/^(normal|0px)$/);
     expect.soft(styles.richWeights).toEqual(language === 'dv' ? ['700', '700'] : ['600', '600']);
     expect

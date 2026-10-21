@@ -52,8 +52,16 @@ export function cssTransform(canonical) {
       { ...token, partialAliasOf: partialAliases(value) },
       options,
     );
-    if (token.$type === 'typography' && metadata?.letterSpacing)
-      return { ...transformed, 'letter-spacing': metadata.letterSpacing };
+    if (token.$type === 'typography') {
+      if (metadata?.letterSpacing) transformed['letter-spacing'] = metadata.letterSpacing;
+      if (metadata?.lineHeight) {
+        const line = metadata.lineHeight;
+        transformed['line-height'] =
+          typeof line === 'string'
+            ? `var(${variableName({ id: line.slice(1, -1) })})`
+            : `${line.value}px`;
+      }
+    }
     return transformed;
   };
 }
