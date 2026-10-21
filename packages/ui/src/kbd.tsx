@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 
 export type KbdVariant = 'default' | 'inverted';
 
-const kbdGroupVariants = cva('inline-flex items-center gap-0.5', {
+const kbdGroupVariants = cva('inline-flex shrink-0 items-center gap-0.5', {
   variants: {
     variant: {
       default: '',
@@ -18,8 +18,9 @@ const kbdGroupVariants = cva('inline-flex items-center gap-0.5', {
   },
 });
 
+// Keys keep a 16px Latin line box inside the fixed 20px Figma key, including in RTL.
 const kbdKeyVariants = cva(
-  'inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-sm px-1 font-sans antialiased leading-none type-caption-regular',
+  'inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-sm px-1 py-0.5 whitespace-nowrap font-sans antialiased type-caption-regular leading-4',
   {
     variants: {
       variant: {
@@ -56,7 +57,7 @@ export interface KbdGroupProps
 
 export function KbdGroup({ className, variant = 'default', children, ...props }: KbdGroupProps) {
   return (
-    <div {...props} className={twMerge(kbdGroupVariants({ variant }), className)}>
+    <div role="group" {...props} className={twMerge(kbdGroupVariants({ variant }), className)}>
       {React.Children.map(children, (child) => {
         if (!React.isValidElement<KbdProps>(child) || child.type !== Kbd) {
           return child;

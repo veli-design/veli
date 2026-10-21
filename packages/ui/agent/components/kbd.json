@@ -22,7 +22,7 @@
   "approvedPatterns": [
     "Use Kbd for one key.",
     "Use KbdGroup for key combinations.",
-    "Use the inverted treatment on dark surfaces."
+    "Choose default or inverted to match the surrounding component; both follow the active theme."
   ],
   "limitations": [
     "Kbd does not register or handle shortcuts.",
@@ -34,7 +34,8 @@
   ],
   "responsive": ["Shortcut groups remain inline and do not wrap internally."],
   "rtl": [
-    "Key labels stay in the component's sans typography regardless of surrounding direction."
+    "Keys default to lang=en so Latin shortcut labels retain sans typography in Dhivehi contexts.",
+    "Set dir=ltr on Latin shortcut groups to preserve modifier-first order in RTL layouts; the group otherwise inherits direction."
   ],
-  "relatedComponents": ["tooltip"]
+  "relatedComponents": ["menu", "tooltip"]
 }

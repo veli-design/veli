@@ -13,7 +13,6 @@ import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { Form } from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
-import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
   Menu,
   MenuItem,
@@ -1043,52 +1042,6 @@ export function BadgeStatusDotsDemo() {
       <Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
       <Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
       <Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
-    </div>
-  );
-}
-
-export function KbdUsageDemo() {
-  return (
-    <div className="flex flex-wrap items-center gap-[16px]">
-      <KbdGroup aria-label="Command K">
-        <Kbd>⌘</Kbd>
-        <Kbd>K</Kbd>
-      </KbdGroup>
-      <KbdGroup aria-label="Control Shift P">
-        <Kbd>Ctrl</Kbd>
-        <Kbd>Shift</Kbd>
-        <Kbd>P</Kbd>
-      </KbdGroup>
-      <Kbd>Esc</Kbd>
-    </div>
-  );
-}
-
-export function KbdVariantsDemo() {
-  return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Default</p>
-          <KbdGroup aria-label="Command Enter">
-            <Kbd>⌘</Kbd>
-            <Kbd>Enter</Kbd>
-          </KbdGroup>
-        </div>
-      </div>
-
-      <div
-        className="rounded-[16px] border border-white/10 p-[16px]"
-        style={{ background: '#1c1d22' }}
-      >
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-white">Inverted</p>
-          <KbdGroup variant="inverted" aria-label="Command Enter">
-            <Kbd>⌘</Kbd>
-            <Kbd>Enter</Kbd>
-          </KbdGroup>
-        </div>
-      </div>
     </div>
   );
 }
