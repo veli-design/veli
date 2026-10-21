@@ -1,6 +1,6 @@
 import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, userEvent, within } from '@storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { useArgs } from 'storybook/internal/preview-api';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -17,12 +17,16 @@ const englishRadioButtonText = {
     mediumOn: 'Medium On',
     largeOff: 'Large Off',
     largeOn: 'Large On',
+    extraLargeOff: 'Extra Large Off',
+    extraLargeOn: 'Extra Large On',
     off: 'Off',
     on: 'On',
     md: 'MD',
     lg: 'LG',
+    xl: 'XL',
     mdDisabled: 'MD Disabled',
     lgDisabled: 'LG Disabled',
+    xlDisabled: 'XL Disabled',
   },
   text: {
     labelText: 'Label text',
@@ -42,12 +46,16 @@ const dhivehiRadioButtonText = {
     mediumOn: 'މެދު އޮން',
     largeOff: 'ބޮޑު އޮފް',
     largeOn: 'ބޮޑު އޮން',
+    extraLargeOff: 'އިތުރަށް ބޮޑު އޮފް',
+    extraLargeOn: 'އިތުރަށް ބޮޑު އޮން',
     off: 'އޮފް',
     on: 'އޮން',
     md: 'އެމްޑީ',
     lg: 'އެލްޖީ',
+    xl: 'އެކްސްއެލް',
     mdDisabled: 'އެމްޑީ ބޭނުންނުކުރެވޭ',
     lgDisabled: 'އެލްޖީ ބޭނުންނުކުރެވޭ',
+    xlDisabled: 'އެކްސްއެލް ބޭނުންނުކުރެވޭ',
   },
   text: {
     labelText: 'ލޭބަލްގެ ލިޔުން',
@@ -75,6 +83,10 @@ const radioButtonTextPairs = [
   [englishRadioButtonText.states.mediumOn, dhivehiRadioButtonText.states.mediumOn],
   [englishRadioButtonText.states.largeOff, dhivehiRadioButtonText.states.largeOff],
   [englishRadioButtonText.states.largeOn, dhivehiRadioButtonText.states.largeOn],
+  [englishRadioButtonText.states.extraLargeOff, dhivehiRadioButtonText.states.extraLargeOff],
+  [englishRadioButtonText.states.extraLargeOn, dhivehiRadioButtonText.states.extraLargeOn],
+  [englishRadioButtonText.states.xl, dhivehiRadioButtonText.states.xl],
+  [englishRadioButtonText.states.xlDisabled, dhivehiRadioButtonText.states.xlDisabled],
   [englishRadioButtonText.states.off, dhivehiRadioButtonText.states.off],
   [englishRadioButtonText.states.on, dhivehiRadioButtonText.states.on],
   [englishRadioButtonText.states.md, dhivehiRadioButtonText.states.md],
@@ -190,7 +202,7 @@ const meta = {
     value: { table: { disable: true } },
     size: {
       control: 'select',
-      options: ['md', 'lg'],
+      options: ['md', 'lg', 'xl'],
       table: { category: 'Appearance' },
     },
     isDisabled: {
@@ -274,6 +286,28 @@ export const Default: Story = {
 };
 
 export const Sizes: Story = {
+  play: async ({ canvasElement }) => {
+    const group = within(canvasElement).getByRole('radiogroup', { name: 'Extra large radio size' });
+    const radios = within(group).getAllByRole('radio');
+    const label = radios[0].closest('label')!;
+    const control = label.querySelector('[aria-hidden="true"] > span')!;
+    const indicator = control.firstElementChild!;
+    await expect(control.getBoundingClientRect().width).toBe(24);
+    await expect(control.getBoundingClientRect().top - label.getBoundingClientRect().top).toBe(2);
+    await expect(indicator.getBoundingClientRect().width).toBe(14);
+    await userEvent.hover(label);
+    await userEvent.pointer({ target: label, keys: '[MouseLeft>]' });
+    await waitFor(() => {
+      expect(getComputedStyle(control).borderTopWidth).toBe('4px');
+      expect(indicator.getBoundingClientRect().width).toBe(10);
+    });
+    await userEvent.pointer({ target: label, keys: '[/MouseLeft]' });
+    await userEvent.unhover(label);
+    await expect(radios[0]).toBeChecked();
+    radios[0].focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(radios[1]).toBeChecked();
+  },
   parameters: {
     controls: { disable: true },
   },
@@ -297,6 +331,14 @@ export const Sizes: Story = {
           </Radio>
           <Radio value="lg-on" size="lg">
             {text.states.largeOn}
+          </Radio>
+        </RadioGroup>
+        <RadioGroup aria-label="Extra large radio size" defaultValue="xl-on">
+          <Radio value="xl-off" size="xl">
+            {text.states.extraLargeOff}
+          </Radio>
+          <Radio value="xl-on" size="xl">
+            {text.states.extraLargeOn}
           </Radio>
         </RadioGroup>
       </div>
@@ -365,6 +407,15 @@ export const DescriptionAndError: Story = {
         >
           {text.text.labelText}
         </Radio>
+        <Radio
+          value="xl"
+          size="xl"
+          isInvalid
+          description={text.text.descriptionText}
+          errorMessage={text.text.errorText}
+        >
+          {text.text.labelText}
+        </Radio>
       </RadioGroup>
     );
   },
@@ -417,6 +468,23 @@ export const States: Story = {
         </RadioGroup>
         <RadioGroup aria-label="Large disabled on state" defaultValue="lg-on-disabled">
           <Radio value="lg-on-disabled" size="lg" isDisabled aria-label="lg-on-disabled" />
+        </RadioGroup>
+        <div className="text-[12px] font-bold uppercase text-base-muted">{text.states.xl}</div>
+        <RadioGroup aria-label="Extra large off state">
+          <Radio value="xl-off" size="xl" aria-label="xl-off" />
+        </RadioGroup>
+        <RadioGroup aria-label="Extra large on state" defaultValue="xl-on">
+          <Radio value="xl-on" size="xl" aria-label="xl-on" />
+        </RadioGroup>
+
+        <div className="text-[12px] font-bold uppercase text-base-muted">
+          {text.states.xlDisabled}
+        </div>
+        <RadioGroup aria-label="Extra large disabled off state">
+          <Radio value="xl-off-disabled" size="xl" isDisabled aria-label="xl-off-disabled" />
+        </RadioGroup>
+        <RadioGroup aria-label="Extra large disabled on state" defaultValue="xl-on-disabled">
+          <Radio value="xl-on-disabled" size="xl" isDisabled aria-label="xl-on-disabled" />
         </RadioGroup>
       </div>
     );
