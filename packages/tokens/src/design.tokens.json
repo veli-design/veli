@@ -8631,6 +8631,73 @@
         }
       }
     },
+    "contrast": {
+      "alpha": {
+        "12": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0, 0, 0],
+            "alpha": 0.12
+          },
+          "$extensions": {
+            "org.veli": {
+              "source": "color.primitives.contrast.alpha.12",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": {
+                "colorSpace": "oklch",
+                "components": [1, 0, 0],
+                "alpha": 0.12
+              }
+            }
+          }
+        },
+        "20": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0, 0, 0],
+            "alpha": 0.2
+          },
+          "$extensions": {
+            "org.veli": {
+              "source": "color.primitives.contrast.alpha.20",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": {
+                "colorSpace": "oklch",
+                "components": [1, 0, 0],
+                "alpha": 0.2
+              }
+            }
+          }
+        },
+        "28": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0, 0, 0],
+            "alpha": 0.28
+          },
+          "$extensions": {
+            "org.veli": {
+              "source": "color.primitives.contrast.alpha.28",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": {
+                "colorSpace": "oklch",
+                "components": [1, 0, 0],
+                "alpha": 0.28
+              }
+            }
+          }
+        }
+      }
+    },
     "primary": {
       "100": {
         "$type": "color",
@@ -14319,6 +14386,131 @@
             },
             "mode": {
               "Dark": "{color.accent.900}"
+            }
+          }
+        }
+      },
+      "onhighcontrast": {
+        "secondary": {
+          "fill": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.neutral.100}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.fill.default",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.100}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.neutral.200}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.fill.hover",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.200}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.neutral.300}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.fill.pressed",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.300}"
+                }
+              }
+            },
+            "foreground": {
+              "$type": "color",
+              "$value": "{color.neutral.1200}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.fill.foreground",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.1200}"
+                }
+              }
+            }
+          },
+          "transparent": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.contrast.alpha.12}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.transparent.default",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.contrast.alpha.12}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.contrast.alpha.20}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.transparent.hover",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.contrast.alpha.20}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.contrast.alpha.28}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.transparent.pressed",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.contrast.alpha.28}"
+                }
+              }
+            },
+            "foreground": {
+              "$type": "color",
+              "$value": "{color.neutral.100}",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.button.onHighContrast.secondary.transparent.foreground",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.100}"
+                }
+              }
+            }
+          }
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "{color.neutral.100}",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.button.onHighContrast.focus",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.neutral.100}"
             }
           }
         }

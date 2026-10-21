@@ -85,6 +85,7 @@ const meta = {
       include: [
         'intent',
         'appearance',
+        'highContrast',
         'size',
         'iconOnly',
         'children',
@@ -111,6 +112,10 @@ const meta = {
         options: appearances,
         if: { arg: 'intent', neq: 'accent' },
         description: 'Accent supports fill only.',
+      },
+      highContrast: {
+        control: 'boolean',
+        description: 'Opt in on a suitable high-contrast surface. Secondary intent only.',
       },
       size: { control: 'select', options: sizes },
       iconOnly: { control: 'boolean' },
@@ -151,6 +156,7 @@ const meta = {
     appearance: 'fill',
     size: 'md',
     iconOnly: false,
+    highContrast: false,
     isDisabled: false,
     isLoading: false,
     isPending: false,
@@ -434,5 +440,71 @@ export const ClientRouting: Story = {
   play: async ({ canvasElement }) => {
     await verifyButtonRouterComposition(canvasElement);
     await verifyButtonLinkFocusContext(canvasElement);
+  },
+};
+
+export const HighContrast: Story = {
+  name: 'High contrast on Toasts',
+  args: { intent: 'secondary', appearance: 'fill', size: 'sm' },
+  parameters: {
+    controls: { include: ['appearance'] },
+  },
+  render: function HighContrast(args) {
+    const { direction } = useVeliLanguage();
+    const text =
+      direction === 'rtl'
+        ? {
+            title: 'އަޕްޑޭޓް ލިބެން އެބައިން',
+            description: 'އާ ވަރޝަނެއް އިންސްޓޯލް ކުރުމަށް ތައްޔާރަށް އެބައިން.',
+            install: 'މިހާރު އިންސްޓޯލްކުރޭ',
+            later: 'ފަހުން',
+          }
+        : {
+            title: 'Update available',
+            description: 'A new version is ready to install.',
+            install: 'Install now',
+            later: 'Later',
+          };
+
+    return (
+      <div className="grid w-[min(48rem,calc(100vw-2rem))] grid-cols-1 gap-6 sm:grid-cols-2">
+        {[false, true].map((highContrast) => (
+          <section key={String(highContrast)} className="flex flex-col gap-3">
+            <h2 className="type-body-md-medium text-base-strong">
+              High contrast {highContrast ? 'on' : 'off'}
+            </h2>
+            <div
+              data-high-contrast={highContrast}
+              className="flex flex-1 flex-col gap-3 rounded-xl border border-status-info-emphasis bg-status-info-emphasis p-4 text-text-primary-inverted shadow-md"
+            >
+              <div className="flex flex-1 flex-col gap-1">
+                <h3 className="type-body-sm-medium">{text.title}</h3>
+                <p className="type-body-sm-regular opacity-80">{text.description}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  intent="secondary"
+                  appearance={args.appearance}
+                  highContrast={highContrast}
+                  size="sm"
+                  onPress={args.onPress}
+                >
+                  {text.install}
+                </Button>
+                <Button
+                  intent="secondary"
+                  appearance="ghost"
+                  highContrast={highContrast}
+                  size="sm"
+                  onPress={args.onPress}
+                >
+                  {text.later}
+                </Button>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+    );
   },
 };
