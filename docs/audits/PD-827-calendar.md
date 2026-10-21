@@ -17,6 +17,7 @@ Audit date: 22 October 2026. Covers Calendar and RangeCalendar; DatePicker is ch
 - Removed mobile overflow caused by a fixed table width, including WebKit's handling of table `max-width`. The default surface retains Figma's 318 px width and 44 px day targets. Narrow containers retain seven columns and 44 px row heights; month labels can wrap when necessary.
 - Preserved the single-date, range, invalid, disabled, Today, and RTL visual treatments from Figma. Latin day numerals retain the English body typography in Dhivehi calendars. Dhivehi weekday and month labels retain their Dhivehi typography.
 - Localized navigation names, corrected logical RTL header padding, exposed disabled-calendar semantics, disabled its year control, and added reduced-motion handling for year-menu options.
+- Prevented Dhivehi SSR hydration mismatches in WebKit while preserving its native RTL keyboard behavior.
 - Added Calendar rendering tests and reproducible browser checks. Expanded deterministic stories using the audited Playground, grouped-control, localized-argument, and collapsed Content/State patterns.
 - Added dedicated website examples, RangeCalendar documentation, four-column API tables, and state/language previews with matching source. Excluded preview headings and tables from documentation prose styles that had enlarged the library's month heading to 32 px and added grid margins.
 - Existing imports, exported types, composition helpers, and default Today behavior are preserved. No consumer migration is required.
@@ -27,14 +28,16 @@ Audit date: 22 October 2026. Covers Calendar and RangeCalendar; DatePicker is ch
 
 The implementation deliberately matches Figma, as requested. The browser audit records this known design finding and fails unexpected accessibility violations. Disabled controls and previous/next-month dates are excluded from contrast findings. The disabled month label is an inactive-control contrast exemption. This audit does not claim full WCAG conformance; final accessibility/design sign-off remains open on PD-1164.
 
+[PD-1165](https://linear.app/onegov/issue/PD-1165/calendar-improve-dhivehi-accessible-date-descriptions-in-webkit) tracks WebKit's incomplete Dhivehi accessible month descriptions (`2026 M10`). Visible Dhivehi labels match Figma; the remaining finding concerns hidden date descriptions and announcements.
+
 ## Validation
 
-- UI suite: 190 tests and recipe type checks passed; public package entry checks passed (39 exports).
+- UI suite: 191 tests and recipe type checks passed; public package entry checks passed (39 exports).
 - Changeset tooling: 32 passed on Node 24; agent-eval scorer: 28; tokens: 21; blocks: 54; CLI: 35. Website preview/Markdown tests: 28.
 - Production monorepo build, lint, formatting, changeset validation, sidecar-drift check, and whitespace validation passed before handoff.
 - Browser evidence is **desktop/mobile emulation**, not physical-device testing. The matrix uses 320, 360, 375, 390, 414, 768, 1280, and 844 px widths, including 390 × 844 portrait and 844 × 390 landscape; English/Dhivehi × light/dark × Chromium/WebKit gives 64 viewport cases, each containing both selection modes.
 - Interaction checks cover touch selection, range endpoints, direction-aware keyboard selection, month/year navigation, scrollable year menus, Escape/focus return, DatePicker placement at both edges, outside-tap dismissal, Today, disabled/read-only behavior, validation associations, six-week months, system-theme switching, and reduced motion. No browser console errors or uncaught exceptions were observed in the completed component matrix.
-- The production-docs regression checks cover mobile widths, hydration, library heading typography, intrinsic calendar width, State/Language controls, and synchronized displayed source. A new PR workflow reruns both browser suites and uploads complete evidence. The last local docs rerun stalled before completion; its final result is pending CI.
+- The production-docs regression checks cover mobile widths, hydration, library heading typography, intrinsic calendar width, State/Language controls, and synchronized displayed source. All 14 production-docs viewport cases passed in Chromium/WebKit, with no hydration errors; State and Language controls update their displayed source. The PR workflow reruns both suites and uploads complete evidence.
 - Additional Storybook-wide `tsc --noEmit` reports existing errors in other stories/configuration (including Alert, Divider, Popover, and the token playground declaration); no Calendar errors were reported. The standard Storybook production build succeeds.
 - The first changeset-tooling attempt on Homebrew Node 26 failed to locate npm beside that Node installation; the same suite passed on the repository's Node 24 runtime.
 - Physical devices, manual screen-reader sessions, and release publication were not run. Installed-package Next and isolated-site checks are left to the existing PR CI jobs.

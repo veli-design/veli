@@ -5,3 +5,5 @@
 ### Fixed
 
 - Keep Calendar and RangeCalendar within narrow mobile containers, localize navigation labels, disable year selection with the calendar, and respect reduced motion in the year menu.
+
+- Prevent Dhivehi Calendar and RangeCalendar hydration mismatches in WebKit while retaining RTL keyboard navigation.

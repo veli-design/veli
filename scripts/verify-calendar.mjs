@@ -162,6 +162,25 @@ for (const [engine, type] of Object.entries({ chromium, webkit })) {
           assert.ok(box.x >= 0 && box.x + box.width <= 391, 'picker stays in viewport');
           await page.touchscreen.tap(2, 2);
           await expect(dialog).toHaveCount(0);
+          await page
+            .getByRole('button', {
+              name: language === 'en' ? /^Open calendar/ : /^ކަލަންޑަރު ހުޅުވާ/,
+            })
+            .nth(index)
+            .tap();
+          await dialog
+            .locator('[role=grid] [role=button]:not([data-outside-month])')
+            .filter({ hasText: /^18$/ })
+            .tap();
+          await expect(dialog).toHaveCount(0);
+          const segments = await page
+            .getByRole('group', {
+              name: index === 0 ? 'Start-edge picker' : 'End-edge picker',
+              exact: true,
+            })
+            .getByRole('spinbutton')
+            .allTextContents();
+          assert.ok(segments.includes('18'), 'DatePicker selects the tapped date');
         }
         const axe = await new AxeBuilder({ page })
           .include('[data-testid="responsive-calendars"]')

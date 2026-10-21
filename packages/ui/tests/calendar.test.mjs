@@ -94,3 +94,15 @@ test('Calendar composition exports remain available', () => {
   assert.equal(typeof CalendarHeader, 'function');
   assert.equal(typeof CalendarGridHeader, 'function');
 });
+
+test('Calendar preserves an explicit caller locale outside Dhivehi mode', async () => {
+  const { I18nProvider } = await import('react-aria-components');
+  const html = renderToStaticMarkup(
+    h(
+      I18nProvider,
+      { locale: 'fr-FR' },
+      h(Calendar, { 'aria-label': 'Booking', defaultValue: date }),
+    ),
+  );
+  assert.match(html, />octobre</);
+});

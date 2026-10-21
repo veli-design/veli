@@ -495,6 +495,7 @@ export const SixWeekMonth: Story = {
 };
 
 export const WeekdayAndWeekStart: Story = {
+  args: { firstDayOfWeek: 'mon', weekdayStyle: 'narrow' },
   render: (args) => (
     <Calendar
       {...args}

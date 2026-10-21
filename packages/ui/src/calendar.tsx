@@ -1,6 +1,13 @@
 'use client';
 
-import { useContext, useMemo, useRef, type RefObject } from 'react';
+import {
+  useContext,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+  type RefObject,
+  type ReactNode,
+} from 'react';
 import { today } from '@internationalized/date';
 import {
   Calendar as AriaCalendar,
@@ -8,6 +15,7 @@ import {
   CalendarStateContext,
   CalendarYearPicker,
   Heading,
+  I18nProvider,
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarStateContext,
   CalendarCell,
@@ -271,6 +279,28 @@ const cellVariants = cva(
   },
 );
 
+const subscribeToHydration = () => () => {};
+const getHydratedSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
+
+function CalendarLocale({ children }: { children: ReactNode }) {
+  const { language } = useVeliLanguage();
+  const { locale } = useLocale();
+  const hydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerHydrationSnapshot,
+  );
+  // WebKit's incomplete dv-MV month data produces "M10", unlike Node's "October".
+  // Match server/client Gregorian text during hydration, then restore the native
+  // locale (and its RTL keyboard direction). Visible Dhivehi labels are Veli copy.
+  return (
+    <I18nProvider locale={language === 'dv' && !hydrated ? 'en-GB' : locale}>
+      {children}
+    </I18nProvider>
+  );
+}
+
 export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'children'> {
   errorMessage?: string;
   className?: string;
@@ -295,23 +325,25 @@ export function Calendar<T extends DateValue>({
     weekdayStyle ?? getDefaultCalendarWeekdayStyle(languageConfig.direction);
 
   return (
-    <AriaCalendar
-      {...props}
-      aria-disabled={props.isDisabled || undefined}
-      firstDayOfWeek={firstDayOfWeek}
-      lang={languageConfig.lang}
-      dir={languageConfig.direction}
-      className={twMerge(calendarRootVariants(), className)}
-    >
-      <CalendarHeader />
-      <CalendarDateGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
-      {showTodayButton ? (
-        <CalendarTodayButton
-          label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
-        />
-      ) : null}
-      {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
-    </AriaCalendar>
+    <CalendarLocale>
+      <AriaCalendar
+        {...props}
+        aria-disabled={props.isDisabled || undefined}
+        firstDayOfWeek={firstDayOfWeek}
+        lang={languageConfig.lang}
+        dir={languageConfig.direction}
+        className={twMerge(calendarRootVariants(), className)}
+      >
+        <CalendarHeader />
+        <CalendarDateGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
+        {showTodayButton ? (
+          <CalendarTodayButton
+            label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
+          />
+        ) : null}
+        {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
+      </AriaCalendar>
+    </CalendarLocale>
   );
 }
 
@@ -342,23 +374,25 @@ export function RangeCalendar<T extends DateValue>({
     weekdayStyle ?? getDefaultCalendarWeekdayStyle(languageConfig.direction);
 
   return (
-    <AriaRangeCalendar
-      {...props}
-      aria-disabled={props.isDisabled || undefined}
-      firstDayOfWeek={firstDayOfWeek}
-      lang={languageConfig.lang}
-      dir={languageConfig.direction}
-      className={twMerge(calendarRootVariants(), className)}
-    >
-      <CalendarHeader />
-      <CalendarRangeGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
-      {showTodayButton ? (
-        <CalendarTodayButton
-          label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
-        />
-      ) : null}
-      {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
-    </AriaRangeCalendar>
+    <CalendarLocale>
+      <AriaRangeCalendar
+        {...props}
+        aria-disabled={props.isDisabled || undefined}
+        firstDayOfWeek={firstDayOfWeek}
+        lang={languageConfig.lang}
+        dir={languageConfig.direction}
+        className={twMerge(calendarRootVariants(), className)}
+      >
+        <CalendarHeader />
+        <CalendarRangeGrid gridClassName={gridClassName} weekdayStyle={resolvedWeekdayStyle} />
+        {showTodayButton ? (
+          <CalendarTodayButton
+            label={todayButtonLabel ?? getCalendarTodayLabel(languageConfig.language)}
+          />
+        ) : null}
+        {errorMessage ? <CalendarErrorMessage>{errorMessage}</CalendarErrorMessage> : null}
+      </AriaRangeCalendar>
+    </CalendarLocale>
   );
 }
 
