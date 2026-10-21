@@ -19690,7 +19690,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.display.lg.font-size}",
-              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "lineHeight": 1.3125,
               "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-display-1-regular",
@@ -19698,6 +19698,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.lg.Regular",
                 "styleId": "S:1fe74fdee692608f4e22ffc6d98c5ee425612b10,",
+                "lineHeight": "{type-metrics.en.display.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19722,7 +19723,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.display.lg.font-size}",
-              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "lineHeight": 1.3125,
               "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-display-1-medium",
@@ -19730,6 +19731,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.lg.Medium",
                 "styleId": "S:6d398e9bc81418fbfb0f684adac8c8b7cc0819a3,",
+                "lineHeight": "{type-metrics.en.display.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19754,7 +19756,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.display.lg.font-size}",
-              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "lineHeight": 1.3125,
               "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-display-1-semibold",
@@ -19762,6 +19764,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.lg.Semibold",
                 "styleId": "S:712e49c05631600d2dd2d008d62d9088715d6fb4,",
+                "lineHeight": "{type-metrics.en.display.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19786,7 +19789,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.display.lg.font-size}",
-              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "lineHeight": 1.3125,
               "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-display-1-bold",
@@ -19794,6 +19797,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.lg.Bold",
                 "styleId": "S:c1e5a4f434876c44f4d2389ac51857e3df03e8c8,",
+                "lineHeight": "{type-metrics.en.display.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19820,7 +19824,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.display.md.font-size}",
-              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "lineHeight": 1.3571428571428572,
               "letterSpacing": "{type-metrics.en.display.md.letter-spacing}"
             },
             "$description": "Tailwind: type-display-2-regular",
@@ -19828,6 +19832,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.md.Regular",
                 "styleId": "S:c8b5065a4457be9ee059af71509cf0bf57d072e4,",
+                "lineHeight": "{type-metrics.en.display.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19852,7 +19857,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.display.md.font-size}",
-              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "lineHeight": 1.3571428571428572,
               "letterSpacing": "{type-metrics.en.display.md.letter-spacing}"
             },
             "$description": "Tailwind: type-display-2-medium",
@@ -19860,6 +19865,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.md.Medium",
                 "styleId": "S:1579326df4a96a94225de5e805085f65e54fee85,",
+                "lineHeight": "{type-metrics.en.display.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19884,7 +19890,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.display.md.font-size}",
-              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "lineHeight": 1.3571428571428572,
               "letterSpacing": "{type-metrics.en.display.md.letter-spacing}"
             },
             "$description": "Tailwind: type-display-2-semibold",
@@ -19892,6 +19898,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.md.Semibold",
                 "styleId": "S:c2c3f045bf8d49480abf886a08fdc58356a52a8a,",
+                "lineHeight": "{type-metrics.en.display.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19916,7 +19923,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.display.md.font-size}",
-              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "lineHeight": 1.3571428571428572,
               "letterSpacing": "{type-metrics.en.display.md.letter-spacing}"
             },
             "$description": "Tailwind: type-display-2-bold",
@@ -19924,6 +19931,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Display.md.Bold",
                 "styleId": "S:a845bfcc07ddc3329db238036d4c96de500a1be4,",
+                "lineHeight": "{type-metrics.en.display.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19952,7 +19960,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.heading.1.font-size}",
-              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-1-regular",
@@ -19960,6 +19968,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.1.Regular",
                 "styleId": "S:b6c4acec7310401ba357295b65eb480f05b47572,",
+                "lineHeight": "{type-metrics.en.heading.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -19984,7 +19993,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.heading.1.font-size}",
-              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-1-medium",
@@ -19992,6 +20001,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.1.Medium",
                 "styleId": "S:38353f024015ed690735670d0567995d5ab6f526,",
+                "lineHeight": "{type-metrics.en.heading.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20016,7 +20026,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.heading.1.font-size}",
-              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-1-semibold",
@@ -20024,6 +20034,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.1.Semibold",
                 "styleId": "S:08e896e1acd0e04f88ac5d7818967ac419d304a5,",
+                "lineHeight": "{type-metrics.en.heading.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20048,7 +20059,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.heading.1.font-size}",
-              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-1-bold",
@@ -20056,6 +20067,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.1.Bold",
                 "styleId": "S:b5a5c792384447c0e45a3bebef7c987c95728f05,",
+                "lineHeight": "{type-metrics.en.heading.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20082,7 +20094,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.heading.2.font-size}",
-              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "lineHeight": 1.3,
               "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-2-regular",
@@ -20090,6 +20102,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.2.Regular",
                 "styleId": "S:37c864b95d1e3d6c8a8fe5da6dd7ba679b478e62,",
+                "lineHeight": "{type-metrics.en.heading.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20114,7 +20127,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.heading.2.font-size}",
-              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "lineHeight": 1.3,
               "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-2-medium",
@@ -20122,6 +20135,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.2.Medium",
                 "styleId": "S:c096a8b211fded22b4aa7fa1a6376279515cd1e2,",
+                "lineHeight": "{type-metrics.en.heading.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20146,7 +20160,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.heading.2.font-size}",
-              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "lineHeight": 1.3,
               "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-2-semibold",
@@ -20154,6 +20168,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.2.Semibold",
                 "styleId": "S:6c27235fdeff2180400abbe93c3e8a376068f9b9,",
+                "lineHeight": "{type-metrics.en.heading.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20178,7 +20193,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.heading.2.font-size}",
-              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "lineHeight": 1.3,
               "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-2-bold",
@@ -20186,6 +20201,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.2.Bold",
                 "styleId": "S:83d6fbbced5b66996e952295e50bd0908834c861,",
+                "lineHeight": "{type-metrics.en.heading.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20212,7 +20228,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.heading.3.font-size}",
-              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-3-regular",
@@ -20220,6 +20236,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.3.Regular",
                 "styleId": "S:d7ea256cfd5b0150a912f53bc24eac009b2b32a5,",
+                "lineHeight": "{type-metrics.en.heading.3.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20244,7 +20261,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.heading.3.font-size}",
-              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-3-medium",
@@ -20252,6 +20269,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.3.Medium",
                 "styleId": "S:b23d31a23659075a78b456f81d8a36b50cac35ba,",
+                "lineHeight": "{type-metrics.en.heading.3.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20276,7 +20294,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.heading.3.font-size}",
-              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-3-semibold",
@@ -20284,6 +20302,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.3.Semibold",
                 "styleId": "S:6d9e6245a6d473cd202329ea71c6238bd3db6b34,",
+                "lineHeight": "{type-metrics.en.heading.3.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20308,7 +20327,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.heading.3.font-size}",
-              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-3-bold",
@@ -20316,6 +20335,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.3.Bold",
                 "styleId": "S:d0e27e7a4f64a5070ff4c26ebe453f14ffdcd509,",
+                "lineHeight": "{type-metrics.en.heading.3.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20342,7 +20362,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.heading.4.font-size}",
-              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "lineHeight": 1.375,
               "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-4-regular",
@@ -20350,6 +20370,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.4.Regular",
                 "styleId": "S:eca8ec734aeb93e964eb8e2d71e0b1eb93d02885,",
+                "lineHeight": "{type-metrics.en.heading.4.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20374,7 +20395,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.heading.4.font-size}",
-              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "lineHeight": 1.375,
               "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-4-medium",
@@ -20382,6 +20403,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.4.Medium",
                 "styleId": "S:bdd30ceec295cad2e2867dc8c63b619639e6f238,",
+                "lineHeight": "{type-metrics.en.heading.4.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20406,7 +20428,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.heading.4.font-size}",
-              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "lineHeight": 1.375,
               "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-4-semibold",
@@ -20414,6 +20436,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.4.Semibold",
                 "styleId": "S:4c3da50ab413118a9f788197ffbfdac21ebcfe78,",
+                "lineHeight": "{type-metrics.en.heading.4.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20438,7 +20461,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.heading.4.font-size}",
-              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "lineHeight": 1.375,
               "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}"
             },
             "$description": "Tailwind: type-heading-4-bold",
@@ -20446,6 +20469,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Heading.4.Bold",
                 "styleId": "S:9e14964947caaa42bd450e88798742fda1dec3e5,",
+                "lineHeight": "{type-metrics.en.heading.4.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20474,7 +20498,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.title.1.font-size}",
-              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "lineHeight": 1.2857142857142858,
               "letterSpacing": "{type-metrics.en.title.1.letter-spacing}"
             },
             "$description": "Tailwind: type-title-1-regular",
@@ -20482,6 +20506,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.1.Regular",
                 "styleId": "S:4f21ad5fc400ffa05c97ee299b2095552b48ef2d,",
+                "lineHeight": "{type-metrics.en.title.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20506,7 +20531,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.title.1.font-size}",
-              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "lineHeight": 1.2857142857142858,
               "letterSpacing": "{type-metrics.en.title.1.letter-spacing}"
             },
             "$description": "Tailwind: type-title-1-medium",
@@ -20514,6 +20539,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.1.Medium",
                 "styleId": "S:630c2223a85f8dfa73e13ae6ac9aa27a6524bba3,",
+                "lineHeight": "{type-metrics.en.title.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20538,7 +20564,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.title.1.font-size}",
-              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "lineHeight": 1.2857142857142858,
               "letterSpacing": "{type-metrics.en.title.1.letter-spacing}"
             },
             "$description": "Tailwind: type-title-1-semibold",
@@ -20546,6 +20572,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.1.Semibold",
                 "styleId": "S:4dda869f14e0bd4d6c66c45b4a08deb26fb182cc,",
+                "lineHeight": "{type-metrics.en.title.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20570,7 +20597,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.title.1.font-size}",
-              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "lineHeight": 1.2857142857142858,
               "letterSpacing": "{type-metrics.en.title.1.letter-spacing}"
             },
             "$description": "Tailwind: type-title-1-bold",
@@ -20578,6 +20605,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.1.Bold",
                 "styleId": "S:4a63e04bb448bcf36a4ac91a57f8d5fb269ab9b1,",
+                "lineHeight": "{type-metrics.en.title.1.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20604,7 +20632,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.title.2.font-size}",
-              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.title.2.letter-spacing}"
             },
             "$description": "Tailwind: type-title-2-regular",
@@ -20612,6 +20640,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.2.Regular",
                 "styleId": "S:5472f4b2f264d83cdba417489b3df1c6d3fc21ce,",
+                "lineHeight": "{type-metrics.en.title.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20636,7 +20665,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.title.2.font-size}",
-              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.title.2.letter-spacing}"
             },
             "$description": "Tailwind: type-title-2-medium",
@@ -20644,6 +20673,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.2.Medium",
                 "styleId": "S:53ed562c1ec3f17a9f38ce8b6e27aec59fe7bda7,",
+                "lineHeight": "{type-metrics.en.title.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20668,7 +20698,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.title.2.font-size}",
-              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.title.2.letter-spacing}"
             },
             "$description": "Tailwind: type-title-2-semibold",
@@ -20676,6 +20706,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.2.Semibold",
                 "styleId": "S:54e72e224390eed7301fbae992f826416f662e83,",
+                "lineHeight": "{type-metrics.en.title.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20700,7 +20731,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.title.2.font-size}",
-              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.en.title.2.letter-spacing}"
             },
             "$description": "Tailwind: type-title-2-bold",
@@ -20708,6 +20739,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Title.2.Bold",
                 "styleId": "S:b4793f727cc72fdb59ef8c46d1097ebc59011dcd,",
+                "lineHeight": "{type-metrics.en.title.2.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20735,7 +20767,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.regular}",
             "fontSize": "{type-metrics.en.subtitle.font-size}",
-            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "lineHeight": 1.4,
             "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}"
           },
           "$description": "Tailwind: type-subtitle-regular",
@@ -20743,6 +20775,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Subtitle.Regular",
               "styleId": "S:26ac1459aaf4d99c9b14f56e6db8214d7bef5c40,",
+              "lineHeight": "{type-metrics.en.subtitle.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -20767,7 +20800,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.medium}",
             "fontSize": "{type-metrics.en.subtitle.font-size}",
-            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "lineHeight": 1.4,
             "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}"
           },
           "$description": "Tailwind: type-subtitle-medium",
@@ -20775,6 +20808,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Subtitle.Medium",
               "styleId": "S:8f2427ee2409db14bebbbb2788d1309ba7278242,",
+              "lineHeight": "{type-metrics.en.subtitle.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -20799,7 +20833,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.semibold}",
             "fontSize": "{type-metrics.en.subtitle.font-size}",
-            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "lineHeight": 1.4,
             "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}"
           },
           "$description": "Tailwind: type-subtitle-semibold",
@@ -20807,6 +20841,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Subtitle.Semibold",
               "styleId": "S:a2db2929a9b537b7e37c758f9dc00aabf2adcf3a,",
+              "lineHeight": "{type-metrics.en.subtitle.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -20831,7 +20866,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.bold}",
             "fontSize": "{type-metrics.en.subtitle.font-size}",
-            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "lineHeight": 1.4,
             "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}"
           },
           "$description": "Tailwind: type-subtitle-bold",
@@ -20839,6 +20874,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Subtitle.Bold",
               "styleId": "S:ba2480a4982f900e25e0aea8d410746fc8438e93,",
+              "lineHeight": "{type-metrics.en.subtitle.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -20866,7 +20902,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.body.lg.font-size}",
-              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "lineHeight": 1.5555555555555556,
               "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-body-lg-regular",
@@ -20874,6 +20910,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.lg.Regular",
                 "styleId": "S:843c642b2672671d1809818bc5c0329084484b80,",
+                "lineHeight": "{type-metrics.en.body.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20898,7 +20935,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.body.lg.font-size}",
-              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "lineHeight": 1.5555555555555556,
               "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-body-lg-medium",
@@ -20906,6 +20943,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.lg.Medium",
                 "styleId": "S:2e6622d48bbc0a781b7cb04c492dfa43e88d0f08,",
+                "lineHeight": "{type-metrics.en.body.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20930,7 +20968,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.body.lg.font-size}",
-              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "lineHeight": 1.5555555555555556,
               "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-body-lg-semibold",
@@ -20938,6 +20976,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.lg.Semibold",
                 "styleId": "S:f9f3291ca2605913a00cc669ef1153d768dd3616,",
+                "lineHeight": "{type-metrics.en.body.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20962,7 +21001,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.body.lg.font-size}",
-              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "lineHeight": 1.5555555555555556,
               "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}"
             },
             "$description": "Tailwind: type-body-lg-bold",
@@ -20970,6 +21009,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.lg.Bold",
                 "styleId": "S:104616959a26d7c0d0eb4edc02ef289b0092147b,",
+                "lineHeight": "{type-metrics.en.body.lg.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -20996,7 +21036,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.body.md.font-size}",
-              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.en.body.md.letter-spacing}"
             },
             "$description": "Tailwind: type-body-md-regular",
@@ -21004,6 +21044,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.md.Regular",
                 "styleId": "S:91f1b14df61db941e9a498167416b27531189058,",
+                "lineHeight": "{type-metrics.en.body.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21028,7 +21069,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.body.md.font-size}",
-              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.en.body.md.letter-spacing}"
             },
             "$description": "Tailwind: type-body-md-medium",
@@ -21036,6 +21077,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.md.Medium",
                 "styleId": "S:60d23545217c181ed425bd6e3a9a5ed5a34c4121,",
+                "lineHeight": "{type-metrics.en.body.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21060,7 +21102,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.body.md.font-size}",
-              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.en.body.md.letter-spacing}"
             },
             "$description": "Tailwind: type-body-md-semibold",
@@ -21068,6 +21110,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.md.Semibold",
                 "styleId": "S:8246b3baea710e0b8c9f028058742c53fc951458,",
+                "lineHeight": "{type-metrics.en.body.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21092,7 +21135,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.body.md.font-size}",
-              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.en.body.md.letter-spacing}"
             },
             "$description": "Tailwind: type-body-md-bold",
@@ -21100,6 +21143,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.md.Bold",
                 "styleId": "S:c496519ddeec465d3dc6cda677828dd8e6146ec4,",
+                "lineHeight": "{type-metrics.en.body.md.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21126,7 +21170,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$description": "Tailwind: type-body-sm-regular",
@@ -21134,6 +21178,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.sm.Regular",
                 "styleId": "S:aeeb47f5fe62fa2535c4bf80e88e1f417582cf1a,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21158,7 +21203,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$description": "Tailwind: type-body-sm-medium",
@@ -21166,6 +21211,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.sm.Medium",
                 "styleId": "S:fdfa38c55dbbbf984be49172831a7eb9e30df9a7,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21190,7 +21236,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.semibold}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$description": "Tailwind: type-body-sm-semibold",
@@ -21198,6 +21244,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.sm.Semibold",
                 "styleId": "S:90a3ff71d4560287c1c02827ac925243afc5750e,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21222,7 +21269,7 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$description": "Tailwind: type-body-sm-bold",
@@ -21230,6 +21277,7 @@
               "org.veli": {
                 "source": "Typography-styles.Type.Body.sm.Bold",
                 "styleId": "S:bad7ba3b570f15ef83e5b0fc345cd9b3329c9044,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21257,7 +21305,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.regular}",
             "fontSize": "{type-metrics.en.caption.font-size}",
-            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "lineHeight": 1.3333333333333333,
             "letterSpacing": "{type-metrics.en.caption.letter-spacing}"
           },
           "$description": "Tailwind: type-caption-regular",
@@ -21265,6 +21313,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Caption.Regular",
               "styleId": "S:69936b6538e6d35525a9751767e0522fe3788960,",
+              "lineHeight": "{type-metrics.en.caption.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -21289,7 +21338,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.medium}",
             "fontSize": "{type-metrics.en.caption.font-size}",
-            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "lineHeight": 1.3333333333333333,
             "letterSpacing": "{type-metrics.en.caption.letter-spacing}"
           },
           "$description": "Tailwind: type-caption-medium",
@@ -21297,6 +21346,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Caption.Medium",
               "styleId": "S:bdcb3fe913f8e12254e6aecd93dc308d33419707,",
+              "lineHeight": "{type-metrics.en.caption.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -21321,7 +21371,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.semibold}",
             "fontSize": "{type-metrics.en.caption.font-size}",
-            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "lineHeight": 1.3333333333333333,
             "letterSpacing": "{type-metrics.en.caption.letter-spacing}"
           },
           "$description": "Tailwind: type-caption-semibold",
@@ -21329,6 +21379,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Caption.Semibold",
               "styleId": "S:d7ea09e6bc6470e090a9c7819e4f1bb7f3aa03e5,",
+              "lineHeight": "{type-metrics.en.caption.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -21353,7 +21404,7 @@
             "fontFamily": "{font.sans}",
             "fontWeight": "{font-weight.bold}",
             "fontSize": "{type-metrics.en.caption.font-size}",
-            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "lineHeight": 1.3333333333333333,
             "letterSpacing": "{type-metrics.en.caption.letter-spacing}"
           },
           "$description": "Tailwind: type-caption-bold",
@@ -21361,6 +21412,7 @@
             "org.veli": {
               "source": "Typography-styles.Type.Caption.Bold",
               "styleId": "S:f8f42e36e8f136c114a238063a700e10dd04dfd8,",
+              "lineHeight": "{type-metrics.en.caption.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -21390,13 +21442,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.display.1.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.display.1.medium.line-height}",
+              "lineHeight": 1.2753623188405796,
               "letterSpacing": "{type-metrics.dv.display.1.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Display.1.Medium",
                 "styleId": "S:8ec641222ec4354d40a899cd00376be28241b783,",
+                "lineHeight": "{type-metrics.dv.display.1.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21421,13 +21474,14 @@
               "fontFamily": "{font.dhivehi-bold}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.display.1.bold.font-size}",
-              "lineHeight": "{type-metrics.dv.display.1.bold.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.dv.display.1.bold.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Display.1.Bold",
                 "styleId": "S:f7f9e348afa6730f0ce607a85b755d02c3565b8e,",
+                "lineHeight": "{type-metrics.dv.display.1.bold.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21454,13 +21508,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.display.2.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.display.2.medium.line-height}",
+              "lineHeight": 1.2903225806451613,
               "letterSpacing": "{type-metrics.dv.display.2.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Display.2.Medium",
                 "styleId": "S:3599d7b82057c761f7616b9ab9b89c07c53e7f43,",
+                "lineHeight": "{type-metrics.dv.display.2.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21485,13 +21540,14 @@
               "fontFamily": "{font.dhivehi-bold}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.display.2.bold.font-size}",
-              "lineHeight": "{type-metrics.dv.display.2.bold.line-height}",
+              "lineHeight": 1.543859649122807,
               "letterSpacing": "{type-metrics.dv.display.2.bold.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Display.2.Bold",
                 "styleId": "S:06b258ddf8a135888b9dd0714a84e78979d4c939,",
+                "lineHeight": "{type-metrics.dv.display.2.bold.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21520,13 +21576,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.heading.1.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.heading.1.medium.line-height}",
+              "lineHeight": 1.3846153846153846,
               "letterSpacing": "{type-metrics.dv.heading.1.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Heading.1.Medium",
                 "styleId": "S:6da8a9e6c29732ae867c16090a76a7331d462ab7,",
+                "lineHeight": "{type-metrics.dv.heading.1.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21553,13 +21610,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.heading.2.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.heading.2.medium.line-height}",
+              "lineHeight": 1.3478260869565217,
               "letterSpacing": "{type-metrics.dv.heading.2.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Heading.2.Medium",
                 "styleId": "S:c3b92f06dc07fb8046c5ca5978413de68c56b131,",
+                "lineHeight": "{type-metrics.dv.heading.2.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21586,13 +21644,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.heading.3.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.heading.3.medium.line-height}",
+              "lineHeight": 1.3333333333333333,
               "letterSpacing": "{type-metrics.dv.heading.3.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Heading.3.Medium",
                 "styleId": "S:886b9985f8ecbf23ae144acea28efa44264fab40,",
+                "lineHeight": "{type-metrics.dv.heading.3.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21619,13 +21678,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.heading.4.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.heading.4.medium.line-height}",
+              "lineHeight": 1.3714285714285714,
               "letterSpacing": "{type-metrics.dv.heading.4.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Heading.4.Medium",
                 "styleId": "S:f1f2b1eb3b2a361194b733944783d4f7dc81a9fc,",
+                "lineHeight": "{type-metrics.dv.heading.4.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21654,13 +21714,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.title.1.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.title.1.medium.line-height}",
+              "lineHeight": 1.5,
               "letterSpacing": "{type-metrics.dv.title.1.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Title.1.Medium",
                 "styleId": "S:6804e10239db06b48110d625938d39bd9406a308,",
+                "lineHeight": "{type-metrics.dv.title.1.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21687,13 +21748,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.title.2.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.title.2.medium.line-height}",
+              "lineHeight": 1.4814814814814814,
               "letterSpacing": "{type-metrics.dv.title.2.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Title.2.Medium",
                 "styleId": "S:3a04bba8c5f6692ba9493b878f324e474ca1130c,",
+                "lineHeight": "{type-metrics.dv.title.2.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21721,13 +21783,14 @@
             "fontFamily": "{font.dhivehi-medium}",
             "fontWeight": "{font-weight.bold}",
             "fontSize": "{type-metrics.dv.subtitle.medium.font-size}",
-            "lineHeight": "{type-metrics.dv.subtitle.medium.line-height}",
+            "lineHeight": 1.3333333333333333,
             "letterSpacing": "{type-metrics.dv.subtitle.medium.letter-spacing}"
           },
           "$extensions": {
             "org.veli": {
               "source": "Typography-styles.Dhivehi.Subtitle.Medium",
               "styleId": "S:ae769bf8be13ef5d0841dda5165cafe293148cc9,",
+              "lineHeight": "{type-metrics.dv.subtitle.medium.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -21755,13 +21818,14 @@
               "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": "{font-weight.dhivehi-regular}",
               "fontSize": "{type-metrics.dv.body.lg.regular.font-size}",
-              "lineHeight": "{type-metrics.dv.body.lg.regular.line-height}",
+              "lineHeight": 1.894736842105263,
               "letterSpacing": "{type-metrics.dv.body.lg.regular.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.lg.Regular",
                 "styleId": "S:0643993ac472ff7ce935ad79d7b5e68284992762,",
+                "lineHeight": "{type-metrics.dv.body.lg.regular.line-height}",
                 "style": {
                   "fontStyle": "Regular",
                   "paragraphSpacing": {
@@ -21786,13 +21850,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.body.lg.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.body.lg.medium.line-height}",
+              "lineHeight": 1.7142857142857142,
               "letterSpacing": "{type-metrics.dv.body.lg.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.lg.Medium",
                 "styleId": "S:96a04d3ebebf5304695a3be5622b0ea0427952fd,",
+                "lineHeight": "{type-metrics.dv.body.lg.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21819,13 +21884,14 @@
               "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": "{font-weight.dhivehi-regular}",
               "fontSize": "{type-metrics.dv.body.md.regular.font-size}",
-              "lineHeight": "{type-metrics.dv.body.md.regular.line-height}",
+              "lineHeight": 1.8823529411764706,
               "letterSpacing": "{type-metrics.dv.body.md.regular.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.md.Regular",
                 "styleId": "S:d234ddc06ad8cac60e19588961988ae2258ab8f1,",
+                "lineHeight": "{type-metrics.dv.body.md.regular.line-height}",
                 "style": {
                   "fontStyle": "Regular",
                   "paragraphSpacing": {
@@ -21850,13 +21916,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.body.md.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.body.md.medium.line-height}",
+              "lineHeight": 1.6842105263157894,
               "letterSpacing": "{type-metrics.dv.body.md.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.md.Medium",
                 "styleId": "S:a8f4068ab9377c02e9c990587fad7e4458b22140,",
+                "lineHeight": "{type-metrics.dv.body.md.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21883,13 +21950,14 @@
               "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": "{font-weight.dhivehi-regular}",
               "fontSize": "{type-metrics.dv.body.sm.regular.font-size}",
-              "lineHeight": "{type-metrics.dv.body.sm.regular.line-height}",
+              "lineHeight": 1.75,
               "letterSpacing": "{type-metrics.dv.body.sm.regular.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.sm.Regular",
                 "styleId": "S:c6fda79bfe91a632e9a6f5fe4276e0d2d6038272,",
+                "lineHeight": "{type-metrics.dv.body.sm.regular.line-height}",
                 "style": {
                   "fontStyle": "Regular",
                   "paragraphSpacing": {
@@ -21914,13 +21982,14 @@
               "fontFamily": "{font.dhivehi-medium}",
               "fontWeight": "{font-weight.bold}",
               "fontSize": "{type-metrics.dv.body.sm.medium.font-size}",
-              "lineHeight": "{type-metrics.dv.body.sm.medium.line-height}",
+              "lineHeight": 1.6470588235294117,
               "letterSpacing": "{type-metrics.dv.body.sm.medium.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Dhivehi.Body.sm.Medium",
                 "styleId": "S:afba04c024f39dbcafaafa6727c30f683aab4949,",
+                "lineHeight": "{type-metrics.dv.body.sm.medium.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -21948,13 +22017,14 @@
             "fontFamily": "{font.dhivehi-regular}",
             "fontWeight": "{font-weight.dhivehi-regular}",
             "fontSize": "{type-metrics.dv.caption.regular.font-size}",
-            "lineHeight": "{type-metrics.dv.caption.regular.line-height}",
+            "lineHeight": 1.7142857142857142,
             "letterSpacing": "{type-metrics.dv.caption.regular.letter-spacing}"
           },
           "$extensions": {
             "org.veli": {
               "source": "Typography-styles.Dhivehi.Caption.Regular",
               "styleId": "S:bd7d00a27191df1ea8b8e770b80f58426a75e6db,",
+              "lineHeight": "{type-metrics.dv.caption.regular.line-height}",
               "style": {
                 "fontStyle": "Regular",
                 "paragraphSpacing": {
@@ -21979,13 +22049,14 @@
             "fontFamily": "{font.dhivehi-medium}",
             "fontWeight": "{font-weight.bold}",
             "fontSize": "{type-metrics.dv.caption.medium.font-size}",
-            "lineHeight": "{type-metrics.dv.caption.medium.line-height}",
+            "lineHeight": 1.6,
             "letterSpacing": "{type-metrics.dv.caption.medium.letter-spacing}"
           },
           "$extensions": {
             "org.veli": {
               "source": "Typography-styles.Dhivehi.Caption.Medium",
               "styleId": "S:0b2999bcea89982a1bad3cc469d9083daa8aa720,",
+              "lineHeight": "{type-metrics.dv.caption.medium.line-height}",
               "style": {
                 "fontStyle": "normal",
                 "paragraphSpacing": {
@@ -22015,13 +22086,14 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.regular}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Storybook.Alert.Body sm.Regular",
                 "styleId": "S:c82704ac8c6afb4b62559ca4c190c1aaf31c08d9,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {
@@ -22046,13 +22118,14 @@
               "fontFamily": "{font.sans}",
               "fontWeight": "{font-weight.medium}",
               "fontSize": "{type-metrics.en.body.sm.font-size}",
-              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "lineHeight": 1.4285714285714286,
               "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}"
             },
             "$extensions": {
               "org.veli": {
                 "source": "Typography-styles.Storybook.Alert.Body sm.Medium",
                 "styleId": "S:d04facb275044b364dff89f70d91e1e09ca492d7,",
+                "lineHeight": "{type-metrics.en.body.sm.line-height}",
                 "style": {
                   "fontStyle": "normal",
                   "paragraphSpacing": {

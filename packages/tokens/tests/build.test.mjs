@@ -126,10 +126,7 @@ test('typography follows Figma composites and produces language counterparts and
   const theme = files['tailwind-theme.css'];
   assert.ok(theme.includes('@utility type-display-1-regular'));
   assert.ok(theme.includes('&:lang(dv)'));
-  assert.equal(
-    canonical.typography.en.display.lg.regular.$value.lineHeight,
-    '{type-metrics.en.display.lg.line-height}',
-  );
+  assert.equal(canonical.typography.en.display.lg.regular.$value.lineHeight, 84 / 64);
   assert.equal(
     canonical.typography.en.display.lg.regular.$value.letterSpacing,
     '{type-metrics.en.display.lg.letter-spacing}',
@@ -142,7 +139,7 @@ test('typography follows Figma composites and produces language counterparts and
     },
     {
       fontFamily: '{font.dhivehi-regular}',
-      lineHeight: '{type-metrics.dv.body.md.regular.line-height}',
+      lineHeight: 32 / 17,
       letterSpacing: '{type-metrics.dv.body.md.regular.letter-spacing}',
     },
   );

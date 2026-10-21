@@ -82,6 +82,23 @@ function dimension(value, label) {
     throw new Error(`${label}: expected a px/rem dimension`);
   return result;
 }
+function lineHeightValues(line, size, label) {
+  if (size.value <= 0) throw new Error(`${label}: expected a positive font size`);
+  const percentage =
+    typeof line === 'string' && /^-?\d+(?:\.\d+)?%$/.test(line)
+      ? Number(line.slice(0, -1))
+      : line?.unit === '%'
+        ? line.value
+        : undefined;
+  // Match the exporter's existing 16px rem normalization. Bare source numbers are pixels.
+  const pixels = (value) => value.value * (value.unit === 'rem' ? 16 : 1);
+  const height =
+    percentage !== undefined ? (percentage / 100) * pixels(size) : pixels(dimension(line, label));
+  const ratio = percentage !== undefined ? percentage / 100 : height / pixels(size);
+  if (!Number.isFinite(ratio) || !Number.isFinite(height))
+    throw new Error(`${label}: expected a finite line height`);
+  return { ratio, pixels: height };
+}
 function structuredColor(value, description, mode, label, requireAuthored = true) {
   if (alias(value)) return value;
   const pattern = new RegExp(`OKLCH\\s+${mode}\\s*:\\s*(oklch\\([^)]*\\))`, 'i');
@@ -277,7 +294,19 @@ export function normalize(figma, motion) {
       const value = original.$value;
       const size = dimension(value.fontSize, id);
       const literalSize = dimension(resolveRaw(value.fontSize), id);
-      const line = alias(value.lineHeight) ? value.lineHeight : resolveRaw(value.lineHeight);
+      const line = resolveRaw(value.lineHeight);
+      const lineHeight = lineHeightValues(line, literalSize, id);
+      const pixelLine =
+        typeof line === 'number' ||
+        line?.unit === 'px' ||
+        (typeof line === 'string' && line.endsWith('px'));
+      // Preserve authored pixel bindings for CSS without making DTCG lineHeight a dimension.
+      metadata.lineHeight =
+        alias(value.lineHeight) &&
+        pixelLine &&
+        raw.get(value.lineHeight.slice(1, -1))?.$type === 'dimension'
+          ? rewrite(value.lineHeight)
+          : { value: lineHeight.pixels, unit: 'px' };
       const tracking = alias(value.letterSpacing)
         ? value.letterSpacing
         : resolveRaw(value.letterSpacing);
@@ -289,11 +318,8 @@ export function normalize(figma, motion) {
         fontFamily: value.fontFamily,
         fontWeight: value.fontWeight,
         fontSize: size,
-        lineHeight: alias(line)
-          ? line
-          : typeof line === 'string' && line.endsWith('%')
-            ? Number.parseFloat(line) / 100
-            : dimension(line, id).value / literalSize.value,
+        // Source metrics stay dimensions; a DTCG composite requires a numeric multiplier.
+        lineHeight: lineHeight.ratio,
         letterSpacing: alias(tracking)
           ? tracking
           : ratio !== undefined
