@@ -9,4 +9,4 @@
 
 ### Changed
 
-- Allow Veli UI to use `@tradenetcorp/veli-tokens` `0.10.x` alongside the supported `0.9.x` releases. High-contrast Buttons require the new `0.10.x` tokens.
+- Require `@tradenetcorp/veli-tokens` `^0.10.0` so every supported tokens version includes the high-contrast Button colors. Upgrade tokens from `0.9.x` when upgrading Veli UI.
