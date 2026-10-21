@@ -1,6 +1,6 @@
 ---
 title: Radio
-description: Accessible single selection with medium and large controls, group validation, and composable field messages.
+description: Accessible single selection with medium, large, and extra-large sizes, group validation, and composable field messages.
 ---
 
 import {
@@ -41,7 +41,7 @@ Place a `FieldLabel` inside the group, or provide `aria-label` or `aria-labelled
 
 ## Sizes
 
-`md` has a 16px control and 8px selected indicator. `lg` has a 24px control and 14px indicator. The label and helper text wrap while the control keeps its size.
+`md` has a 16px control and 8px selected indicator. `lg` has a 24px control and 14px indicator. `xl` keeps the 24px control and 14px indicator, with body-lg labels and body-md helper/error text. The label and helper text wrap while the control keeps its size.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <RadioSizesDemo client:load />
@@ -54,6 +54,9 @@ Place a `FieldLabel` inside the group, or provide `aria-label` or `aria-labelled
   </Radio>
   <Radio size="lg" value="two">
     Large
+  </Radio>
+  <Radio size="xl" value="three">
+    Extra large
   </Radio>
 </RadioGroup>
 ```
@@ -103,20 +106,6 @@ const [value, setValue] = useState('email');
   <RadioStatesDemo client:load />
 </div>
 
-## Language and direction
-
-Use the same locale and direction as the surrounding UI. Dhivehi typography follows `lang="dv"`; the label stays beside its control in RTL. Wrap a localized subtree in React Aria's `I18nProvider` when it differs from the application locale so horizontal arrow keys follow that direction.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <RadioRtlDemo client:load />
-</div>
-
-## Accessibility and motion
-
-Give each option visible label content or `aria-label`/`aria-labelledby`. Tab enters the selected option; arrow keys move selection, skipping disabled options, and Space selects the focused option. Helper and error text describe the input without becoming its name. The focus ring is visible for keyboard use and selection remains visible in forced colors.
-
-Hover colors update immediately. Press and release animate the border and selected indicator over the fast motion token (80ms). Reduced motion disables those transitions.
-
 ## API Reference
 
 Radio and RadioGroup are Veli components on React Aria's [radio components](https://react-spectrum.adobe.com/react-aria/RadioGroup.html), which manage native `<input type="radio">` elements. Props below follow that stack.
@@ -127,7 +116,7 @@ Veli-specific props for an option inside RadioGroup.
 
 | Prop           | Type                    | Default | Description                                                   |
 | :------------- | :---------------------- | :------ | :------------------------------------------------------------ |
-| `size`         | `'md' \| 'lg'`          | `'md'`  | Control and label size.                                       |
+| `size`         | `'md' \| 'lg' \| 'xl'`  | `'md'`  | Control and label size.                                       |
 | `children`     | `ReactNode`             | -       | Visible option label.                                         |
 | `description`  | `ReactNode`             | -       | Helper text associated with this option.                      |
 | `errorMessage` | `ReactNode`             | -       | Local error shown when option `isInvalid` is true.            |
@@ -191,6 +180,16 @@ Not forwarded from React Aria:
 
 React Aria manages the native input's checked state and keyboard behavior. The option's `value` and the group's `name` and `form` reach that input; `inputRef` accesses it. Set selection through RadioGroup rather than adding a separate `checked` prop to Radio. Internal control and indicator slots remain private.
 
-## Release guidance
+## Accessibility
 
-Existing selection and Field composition APIs remain unchanged. Option helper/error associations are corrected, and reduced motion is respected. No migration is required.
+Give each option visible label content or `aria-label`/`aria-labelledby`. Tab enters the selected option; arrow keys move selection, skipping disabled options, and Space selects the focused option. Helper and error text describe the input without becoming its name. The focus ring is visible for keyboard use and selection remains visible in forced colors.
+
+Hover colors update immediately. Press and release animate the border and selected indicator over the fast motion token (80ms). Reduced motion disables those transitions.
+
+## RTL and Language
+
+Use the same locale and direction as the surrounding UI. Dhivehi typography follows `lang="dv"`; the label stays beside its control in RTL. Wrap a localized subtree in React Aria's `I18nProvider` when it differs from the application locale so horizontal arrow keys follow that direction.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <RadioRtlDemo client:load />
+</div>
