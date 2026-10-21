@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
+import { useArgs } from 'storybook/internal/preview-api';
+import { expect, userEvent, within } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   type DateValue,
@@ -7,11 +10,12 @@ import {
   parseDate,
   today,
 } from '@internationalized/date';
+import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Calendar, RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
 
-const now = today(getLocalTimeZone());
+const now = parseDate('2026-10-12');
 const disabledRanges = [
   [now.add({ days: 4 }), now.add({ days: 7 })],
   [now.add({ days: 12 }), now.add({ days: 14 })],
@@ -26,48 +30,170 @@ const dhivehiDateText = {
   pickDateWithinAllowedWindow: 'ހުއްދަކުރެވިފައިވާ މުއްދަތުގެ ތެރެއިން ތާރީޚެއް ޚިޔާރުކުރައްވާ.',
 };
 
+const calendarText = {
+  en: {
+    label: 'Appointment calendar',
+    error: 'Pick a date within the allowed window.',
+    today: 'Today',
+  },
+  dv: {
+    label: 'އެޕޮއިންޓްމަންޓް ކަލަންޑަރު',
+    error: dhivehiDateText.pickDateWithinAllowedWindow,
+    today: 'މިއަދު',
+  },
+} as const;
+
+function CalendarDocsContainer(props: DocsContainerProps) {
+  useEffect(() => {
+    let cancelled = false;
+    let attempts = 0;
+    const collapse = () => {
+      if (cancelled) return;
+      const groups = ['Content', 'State'];
+      if (
+        groups.some(
+          (group) =>
+            !document.querySelector(
+              `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
+            ),
+        ) &&
+        attempts++ < 40
+      ) {
+        requestAnimationFrame(collapse);
+        return;
+      }
+      groups.forEach((group) =>
+        document
+          .querySelector<HTMLElement>(`tr[title^="Hide ${group} item"] [tabindex="0"]`)
+          ?.click(),
+      );
+    };
+    collapse();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return <DocsContainer {...props} />;
+}
+
+const group = <T extends Record<string, object>>(category: string, fields: T) =>
+  Object.fromEntries(
+    Object.entries(fields).map(([key, value]) => [key, { ...value, table: { category } }]),
+  );
+
 const meta = {
   title: 'Components/Calendar',
   component: Calendar,
   parameters: {
     layout: 'centered',
+    controls: { sort: 'none' },
+    docs: { container: CalendarDocsContainer },
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story, context) => {
+      const [args, updateArgs] = useArgs();
+      const language = context.globals.language === 'dv' ? 'dv' : 'en';
+      const label = args['aria-label'];
+      const { errorMessage, todayButtonLabel } = args;
+      useEffect(() => {
+        const next: Record<string, string> = {};
+        for (const [prop, key, value] of [
+          ['aria-label', 'label', label],
+          ['errorMessage', 'error', errorMessage],
+          ['todayButtonLabel', 'today', todayButtonLabel],
+        ] as const) {
+          if (
+            typeof value === 'string' &&
+            Object.values(calendarText).some((copy) => copy[key] === value) &&
+            value !== calendarText[language][key]
+          )
+            next[prop] = calendarText[language][key];
+        }
+        if (Object.keys(next).length) updateArgs(next);
+      }, [label, errorMessage, todayButtonLabel, language, updateArgs]);
+      return <Story />;
+    },
+  ],
   argTypes: {
-    isDisabled: {
-      control: 'boolean',
-    },
-    isReadOnly: {
-      control: 'boolean',
-    },
-    isInvalid: {
-      control: 'boolean',
-    },
-    weekdayStyle: {
-      control: 'select',
-      options: ['narrow', 'short', 'long'],
-    },
-    showTodayButton: {
-      control: 'boolean',
-    },
-    todayButtonLabel: {
-      control: 'text',
-    },
+    ...group('Appearance', {
+      firstDayOfWeek: {
+        control: 'select',
+        options: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+      },
+      weekdayStyle: { control: 'select', options: ['narrow', 'short', 'long'] },
+      showTodayButton: { control: 'boolean' },
+    }),
+    ...group('Content', {
+      'aria-label': { control: 'text' },
+      todayButtonLabel: { control: 'text', if: { arg: 'showTodayButton' } },
+    }),
+    ...group('State', {
+      isDisabled: { control: 'boolean' },
+      isReadOnly: { control: 'boolean' },
+      isInvalid: { control: 'boolean' },
+      errorMessage: { control: 'text', if: { arg: 'isInvalid' } },
+    }),
+    ...Object.fromEntries(
+      [
+        'className',
+        'gridClassName',
+        'children',
+        'value',
+        'defaultValue',
+        'onChange',
+        'focusedValue',
+        'defaultFocusedValue',
+        'onFocusChange',
+        'minValue',
+        'maxValue',
+        'isDateUnavailable',
+        'visibleDuration',
+        'pageBehavior',
+        'selectionAlignment',
+        'autoFocus',
+        'onFocus',
+        'onBlur',
+        'onFocusChange',
+        'onKeyDown',
+        'onKeyUp',
+        'createCalendar',
+      ].map((key) => [key, { control: false, table: { disable: true } }]),
+    ),
   },
   args: {
-    'aria-label': 'Appointment calendar',
+    'aria-label': calendarText.en.label,
+    defaultFocusedValue: parseDate('2026-10-15'),
+    firstDayOfWeek: 'sun',
+    showTodayButton: false,
+    isDisabled: false,
+    isReadOnly: false,
+    isInvalid: false,
   },
 } satisfies Meta<typeof Calendar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  render: (args) => <Calendar {...args} />,
+export const Playground: Story = {
+  render: (args) => {
+    const { language } = useVeliLanguage();
+    return (
+      <Calendar
+        key={`${language}:${args.defaultFocusedValue}`}
+        {...args}
+        errorMessage={
+          args.isInvalid ? args.errorMessage || calendarText[language].error : undefined
+        }
+      />
+    );
+  },
 };
 
+export const Default: Story = { render: Playground.render };
+
 export const WithSelectedDate: Story = {
-  render: (args) => <Calendar {...args} defaultValue={parseDate('2026-04-18')} />,
+  render: (args) => <Calendar {...args} defaultValue={parseDate('2026-10-18')} />,
 };
 
 export const WithTodayButton: Story = {
@@ -80,10 +206,10 @@ export const WithTodayButton: Story = {
     },
   },
   render: () => {
-    const [value, setValue] = useState(parseDate('2026-04-01'));
+    const [value, setValue] = useState(parseDate('2026-10-01'));
     const [rangeValue, setRangeValue] = useState({
-      start: parseDate('2026-04-10'),
-      end: parseDate('2026-04-18'),
+      start: parseDate('2026-10-10'),
+      end: parseDate('2026-10-18'),
     });
 
     return (
@@ -131,8 +257,8 @@ export const DateRange: Story = {
     <RangeCalendar
       aria-label="Trip dates"
       defaultValue={{
-        start: parseDate('2026-04-10'),
-        end: parseDate('2026-04-18'),
+        start: parseDate('2026-10-10'),
+        end: parseDate('2026-10-18'),
       }}
     />
   ),
@@ -149,8 +275,8 @@ export const ControlledDateRange: Story = {
   },
   render: () => {
     const [value, setValue] = useState({
-      start: parseDate('2026-04-10'),
-      end: parseDate('2026-04-18'),
+      start: parseDate('2026-10-10'),
+      end: parseDate('2026-10-18'),
     });
 
     return (
@@ -177,7 +303,7 @@ export const ControlledByExternalState: Story = {
     },
   },
   render: () => {
-    const [value, setValue] = useState(parseDate('2026-04-30'));
+    const [value, setValue] = useState(parseDate('2026-10-30'));
     const [focusedValue, setFocusedValue] = useState(value);
 
     return (
@@ -198,12 +324,12 @@ export const ControlledByExternalState: Story = {
             intent="secondary"
             appearance="transparent"
             onPress={() => {
-              const nextValue = parseDate('2026-04-30');
+              const nextValue = parseDate('2026-10-30');
               setValue(nextValue);
               setFocusedValue(nextValue);
             }}
           >
-            Reset to April 30
+            Reset to October 30
           </Button>
           <Button
             size="sm"
@@ -264,13 +390,13 @@ export const ValidationStates: Story = {
         <Calendar
           aria-label="Invalid calendar"
           isInvalid
-          defaultValue={parseDate('2026-04-01')}
+          defaultValue={parseDate('2026-10-01')}
           errorMessage={errorMessage}
         />
         <Calendar
           aria-label="Invalid calendar without message"
           isInvalid
-          defaultValue={parseDate('2026-04-01')}
+          defaultValue={parseDate('2026-10-01')}
         />
       </div>
     );
@@ -280,8 +406,174 @@ export const ValidationStates: Story = {
 export const DisabledAndReadOnly: Story = {
   render: () => (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Calendar aria-label="Disabled calendar" isDisabled defaultValue={parseDate('2026-04-18')} />
-      <Calendar aria-label="Read only calendar" isReadOnly defaultValue={parseDate('2026-04-18')} />
+      <Calendar aria-label="Disabled calendar" isDisabled defaultValue={parseDate('2026-10-18')} />
+      <Calendar aria-label="Read only calendar" isReadOnly defaultValue={parseDate('2026-10-18')} />
     </div>
+  ),
+};
+
+/** A padded container, rather than Storybook's intrinsic centered canvas. */
+export const Responsive: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => <ResponsiveCalendars />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const single = within(canvas.getByRole('application', { name: /^Mobile single date/ }));
+    await userEvent.click(
+      single.getAllByRole('button').find((button) => button.textContent === '15')!,
+    );
+    await expect(canvas.getByTestId('single-value')).toHaveTextContent('2026-10-15');
+    const range = within(canvas.getByRole('application', { name: /^Mobile date range/ }));
+    await userEvent.click(
+      range.getAllByRole('button').find((button) => button.textContent === '13')!,
+    );
+    await userEvent.click(
+      range.getAllByRole('button').find((button) => button.textContent === '20')!,
+    );
+    await expect(canvas.getByTestId('range-value')).toHaveTextContent('2026-10-13 – 2026-10-20');
+  },
+};
+
+function ResponsiveCalendars() {
+  const [value, setValue] = useState<DateValue | null>(parseDate('2026-10-15'));
+  const [range, setRange] = useState<{ start: DateValue; end: DateValue } | null>({
+    start: parseDate('2026-10-13'),
+    end: parseDate('2026-10-20'),
+  });
+  return (
+    <div className="w-full min-w-0 space-y-6 p-4" data-testid="responsive-calendars">
+      <div className="min-w-0">
+        <Calendar
+          aria-label="Mobile single date"
+          value={value}
+          onChange={setValue}
+          showTodayButton
+        />
+        <p className="type-caption-regular" data-testid="single-value">
+          {value?.toString() ?? 'None'}
+        </p>
+      </div>
+      <div className="min-w-0">
+        <RangeCalendar
+          aria-label="Mobile date range"
+          value={range}
+          onChange={setRange}
+          showTodayButton
+        />
+        <p className="type-caption-regular" data-testid="range-value">
+          {range ? `${range.start} – ${range.end}` : 'None'}
+        </p>
+      </div>
+      <div className="flex min-w-0 justify-start">
+        <DatePicker
+          label="Start-edge picker"
+          defaultValue={parseDate('2026-10-15')}
+          showTodayButton
+        />
+      </div>
+      <div className="flex min-w-0 justify-end">
+        <DatePicker
+          label="End-edge picker"
+          defaultValue={parseDate('2026-10-15')}
+          showTodayButton
+        />
+      </div>
+    </div>
+  );
+}
+
+export const SixWeekMonth: Story = {
+  render: () => (
+    <div className="grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2">
+      <Calendar aria-label="Six week single date" defaultValue={parseDate('2026-08-15')} />
+      <RangeCalendar
+        aria-label="Six week range"
+        defaultValue={{ start: parseDate('2026-08-29'), end: parseDate('2026-09-03') }}
+      />
+    </div>
+  ),
+};
+
+export const WeekdayAndWeekStart: Story = {
+  render: (args) => (
+    <Calendar
+      {...args}
+      firstDayOfWeek={args.firstDayOfWeek ?? 'mon'}
+      weekdayStyle={args.weekdayStyle ?? 'narrow'}
+    />
+  ),
+};
+
+export const Customization: Story = {
+  args: {
+    showTodayButton: true,
+    todayButtonLabel: 'Choose today',
+    className: 'shadow-none',
+    gridClassName: 'w-[17.5rem]',
+  },
+  render: (args) => <Calendar {...args} />,
+};
+
+export const RangeStates: Story = {
+  render: () => {
+    const { language } = useVeliLanguage();
+    const value = { start: parseDate('2026-10-13'), end: parseDate('2026-10-20') };
+    return (
+      <div className="grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2">
+        <RangeCalendar
+          aria-label="Invalid range"
+          defaultValue={value}
+          isInvalid
+          errorMessage={
+            language === 'dv'
+              ? dhivehiDateText.pickDateWithinAllowedWindow
+              : 'Pick a date within the allowed window.'
+          }
+        />
+        <RangeCalendar
+          aria-label="Disabled range"
+          defaultValue={value}
+          isDisabled
+          showTodayButton
+        />
+        <RangeCalendar
+          aria-label="Read only range"
+          defaultValue={value}
+          isReadOnly
+          showTodayButton
+        />
+        <RangeCalendar
+          aria-label="Single day range"
+          defaultValue={{ start: value.start, end: value.start }}
+        />
+        <RangeCalendar
+          aria-label="Constrained range"
+          defaultFocusedValue={now}
+          minValue={now}
+          maxValue={now.add({ months: 2 })}
+          isDateUnavailable={appointmentUnavailable}
+          showTodayButton
+        />
+        <RangeCalendar
+          aria-label="Non contiguous range"
+          defaultFocusedValue={now}
+          isDateUnavailable={appointmentUnavailable}
+          allowsNonContiguousRanges
+        />
+      </div>
+    );
+  },
+};
+
+export const TodayOutsideAllowedWindow: Story = {
+  render: () => (
+    <Calendar
+      aria-label="Today unavailable"
+      defaultFocusedValue={now}
+      minValue={parseDate('2026-10-01')}
+      maxValue={parseDate('2026-10-31')}
+      isDateUnavailable={() => true}
+      showTodayButton
+    />
   ),
 };

@@ -1,0 +1,596 @@
+{
+   "baseCommit" : "ac4f284698e783c2d81121c8b338cdfa61beebbf",
+   "cases" : [
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "light",
+         "viewport" : 320
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "light",
+         "viewport" : 360
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "light",
+         "viewport" : 375
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "light",
+         "viewport" : 390
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "light",
+         "viewport" : 414
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "light",
+         "viewport" : 768
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "light",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "light",
+         "viewport" : 844
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "dark",
+         "viewport" : 320
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "dark",
+         "viewport" : 360
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "dark",
+         "viewport" : 375
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "dark",
+         "viewport" : 390
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "dark",
+         "viewport" : 414
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "dark",
+         "viewport" : 768
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "dark",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "dark",
+         "viewport" : 844
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "light",
+         "viewport" : 320
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "light",
+         "viewport" : 360
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "light",
+         "viewport" : 375
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "light",
+         "viewport" : 390
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "light",
+         "viewport" : 414
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "light",
+         "viewport" : 768
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "light",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "light",
+         "viewport" : 844
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "dark",
+         "viewport" : 320
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "dark",
+         "viewport" : 360
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "dark",
+         "viewport" : 375
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "dark",
+         "viewport" : 390
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "dark",
+         "viewport" : 414
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "dark",
+         "viewport" : 768
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "dark",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "chromium",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "dark",
+         "viewport" : 844
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "light",
+         "viewport" : 320
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "light",
+         "viewport" : 360
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "light",
+         "viewport" : 375
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "light",
+         "viewport" : 390
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "light",
+         "viewport" : 414
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "light",
+         "viewport" : 768
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "light",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "light",
+         "viewport" : 844
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "dark",
+         "viewport" : 320
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "dark",
+         "viewport" : 360
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "dark",
+         "viewport" : 375
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "dark",
+         "viewport" : 390
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "dark",
+         "viewport" : 414
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "dark",
+         "viewport" : 768
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "dark",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "en",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "dark",
+         "viewport" : 844
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "light",
+         "viewport" : 320
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "light",
+         "viewport" : 360
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "light",
+         "viewport" : 375
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "light",
+         "viewport" : 390
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "light",
+         "viewport" : 414
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "light",
+         "viewport" : 768
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "light",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "light",
+         "viewport" : 844
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 39.703125,
+         "scrollWidth" : 320,
+         "theme" : "dark",
+         "viewport" : 320
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 360,
+         "theme" : "dark",
+         "viewport" : 360
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 375,
+         "theme" : "dark",
+         "viewport" : 375
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 390,
+         "theme" : "dark",
+         "viewport" : 390
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 414,
+         "theme" : "dark",
+         "viewport" : 414
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 768,
+         "theme" : "dark",
+         "viewport" : 768
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 1280,
+         "theme" : "dark",
+         "viewport" : 1280
+      },
+      {
+         "engine" : "webkit",
+         "gridCount" : 2,
+         "language" : "dv",
+         "minimumDayWidth" : 44,
+         "scrollWidth" : 844,
+         "theme" : "dark",
+         "viewport" : 844
+      }
+   ],
+   "componentBrowserSuite" : "passed before the final intrinsic-width cap",
+   "consoleErrors" : [],
+   "date" : "2026-10-22",
+   "followUp" : "PD-1164",
+   "knownDesignFindings" : [
+      {
+         "label" : "chromium/en/dark",
+         "summary" : "Fix any of the following:\n  Element has insufficient color contrast of 3.28 (foreground color: #0e0e0d, background color: #146f77, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+         "target" : [
+            ".rounded-e-none > .h-5.min-w-5.leading-5"
+         ]
+      }
+   ],
+   "physicalDevicesTested" : false,
+   "productionDocsSuite" : "pending final CI rerun"
+}

@@ -37,6 +37,7 @@ import { twMerge } from 'tailwind-merge';
 import { Button } from './button.js';
 import {
   getCalendarTodayLabel,
+  getCalendarNavigationLabels,
   getDhivehiMonthName,
   getDhivehiWeekdayLabel,
 } from './calendar-localization.js';
@@ -62,12 +63,13 @@ type CalendarPickerSelectProps = {
   itemClassName?: string;
   popoverClassName?: string;
   triggerRef?: RefObject<Element | null>;
+  isDisabled?: boolean;
 };
 
 const calendarHeaderControlClassName = 'flex items-center rounded-lg bg-calendar-bg-month-year';
 
 const calendarHeaderMonthLabelClassName =
-  'min-w-0 flex-1 px-0.5 text-center type-body-sm-medium text-base-strong whitespace-nowrap';
+  'min-w-0 flex-1 px-0.5 text-center type-body-sm-medium text-base-strong whitespace-normal break-words';
 
 const calendarNumericTextClassName = 'tabular-nums';
 
@@ -90,10 +92,10 @@ const calendarYearPickerPopoverClassName = 'w-[var(--trigger-width)]';
 const calendarPickerListBoxClassName = 'max-h-60 overflow-auto outline-none';
 
 const calendarErrorMessageClassName =
-  'flex items-center gap-1.5 px-2 pb-2 pt-2 type-caption-regular text-danger-muted';
+  'flex min-w-0 items-center gap-1.5 px-2 pb-2 pt-2 type-caption-regular text-danger-muted';
 
 const calendarPickerItemVariants = cva(
-  'flex min-h-9 w-full cursor-default items-center rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors duration-normal ease-out',
+  'flex min-h-9 w-full cursor-default items-center rounded-lg px-2 py-2 text-start type-body-sm-regular outline-none transition-colors duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       isSelected: {
@@ -121,7 +123,7 @@ function CalendarErrorMessage({ children }: { children: string }) {
   return (
     <Text slot="errorMessage" elementType="div" className={calendarErrorMessageClassName}>
       <WarningCircleIcon aria-hidden weight="fill" className="size-4 shrink-0" />
-      <span>{children}</span>
+      <span className="min-w-0 break-words">{children}</span>
     </Text>
   );
 }
@@ -137,12 +139,14 @@ function CalendarPickerSelect({
   itemClassName,
   popoverClassName,
   triggerRef,
+  isDisabled,
 }: CalendarPickerSelectProps) {
   const selectedLabel = items.find((item) => item.id === value)?.formatted ?? '';
 
   return (
     <AriaSelect
       aria-label={ariaLabel}
+      isDisabled={isDisabled}
       selectedKey={value}
       onSelectionChange={onChange}
       className="flex items-center gap-2"
@@ -190,17 +194,19 @@ function CalendarPickerSelect({
 }
 
 const calendarRootVariants = cva(
-  'flex max-w-full flex-col rounded-xl border border-base-subtle bg-calendar-bg p-1 font-sans text-base-default shadow-md',
+  'flex w-fit min-w-0 max-w-[min(19.875rem,100%)] flex-col rounded-xl border border-base-subtle bg-calendar-bg p-1 font-sans text-base-default shadow-md',
 );
 
-const calendarGridClassName = 'w-[19.25rem] table-fixed border-spacing-0';
+const calendarGridClassName =
+  'w-[min(19.25rem,100%)] max-w-full table-fixed border-spacing-0 [&_td]:p-0';
 
 const calendarHeaderCellClassName =
-  'w-11 max-w-11 overflow-hidden px-0 py-2 text-center type-caption-regular text-base-default';
+  'w-1/7 overflow-hidden px-0 py-2 text-center type-caption-regular text-base-default';
 
 const calendarWeekdayLabelClassName = 'block truncate no-underline';
 
-const calendarDayLabelClassName = 'inline-flex h-5 min-w-5 items-center justify-center leading-5';
+const calendarDayLabelClassName =
+  'inline-flex h-5 min-w-5 items-center justify-center type-body-sm-regular leading-5';
 
 function getDefaultCalendarWeekdayStyle(direction: CalendarDirection): CalendarWeekdayStyle {
   return direction === 'rtl' ? 'long' : 'short';
@@ -211,7 +217,7 @@ function getCalendarWeekdayLabelClassName() {
 }
 
 const cellVariants = cva(
-  'flex size-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none [-webkit-tap-highlight-color:transparent]',
+  'mx-auto flex h-11 min-w-6 w-full max-w-11 items-center justify-center type-body-sm-regular forced-color-adjust-none outline-none [-webkit-tap-highlight-color:transparent]',
   {
     variants: {
       cellRadius: {
@@ -221,7 +227,7 @@ const cellVariants = cva(
       },
       isSelected: {
         false: 'text-base-emphasis data-[outside-month]:text-base-subtle',
-        true: 'bg-calendar-day-selected text-primary-inverted data-[invalid]:bg-button-danger data-[invalid]:text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
+        true: 'bg-calendar-day-selected text-base-inverted data-[invalid]:bg-button-danger data-[invalid]:text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
       },
       isDisabled: {
         true: 'cursor-not-allowed text-disabled forced-colors:text-[GrayText]',
@@ -291,6 +297,7 @@ export function Calendar<T extends DateValue>({
   return (
     <AriaCalendar
       {...props}
+      aria-disabled={props.isDisabled || undefined}
       firstDayOfWeek={firstDayOfWeek}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
@@ -337,6 +344,7 @@ export function RangeCalendar<T extends DateValue>({
   return (
     <AriaRangeCalendar
       {...props}
+      aria-disabled={props.isDisabled || undefined}
       firstDayOfWeek={firstDayOfWeek}
       lang={languageConfig.lang}
       dir={languageConfig.direction}
@@ -506,7 +514,11 @@ function CalendarTodayButton({ label }: { label: string }) {
 }
 
 export function CalendarHeader() {
-  const { direction, lang } = useVeliLanguage();
+  const { direction, lang, language } = useVeliLanguage();
+  const calendarState = useContext(CalendarStateContext);
+  const rangeCalendarState = useContext(RangeCalendarStateContext);
+  const state = calendarState ?? rangeCalendarState;
+  const labels = getCalendarNavigationLabels(language);
   const yearTriggerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -520,8 +532,11 @@ export function CalendarHeader() {
           appearance="ghost"
           size="sm"
           iconOnly
-          aria-label="Previous month"
-          className={calendarHeaderIconButtonClassName}
+          aria-label={labels.previousMonth}
+          className={twMerge(
+            calendarHeaderIconButtonClassName,
+            'data-[disabled]:[&_svg]:text-icon-disabled',
+          )}
         >
           {direction === 'rtl' ? (
             <CaretRightIcon aria-hidden weight="regular" className="size-4 shrink-0" />
@@ -529,15 +544,23 @@ export function CalendarHeader() {
             <CaretLeftIcon aria-hidden weight="regular" className="size-4 shrink-0" />
           )}
         </Button>
-        <CalendarMonthLabel className={calendarHeaderMonthLabelClassName} />
+        <CalendarMonthLabel
+          className={twMerge(
+            calendarHeaderMonthLabelClassName,
+            state?.isDisabled && 'text-disabled',
+          )}
+        />
         <Button
           slot="next"
           intent="secondary"
           appearance="ghost"
           size="sm"
           iconOnly
-          aria-label="Next month"
-          className={calendarHeaderIconButtonClassName}
+          aria-label={labels.nextMonth}
+          className={twMerge(
+            calendarHeaderIconButtonClassName,
+            'data-[disabled]:[&_svg]:text-icon-disabled',
+          )}
         >
           {direction === 'rtl' ? (
             <CaretLeftIcon aria-hidden weight="regular" className="size-4 shrink-0" />
@@ -548,12 +571,14 @@ export function CalendarHeader() {
       </div>
       <div
         ref={yearTriggerRef}
-        className={twMerge(calendarHeaderControlClassName, 'shrink-0 py-0.5 pl-2 pr-0.5')}
+        className={twMerge(calendarHeaderControlClassName, 'shrink-0 py-0.5 ps-2 pe-0.5')}
       >
         <CalendarYearPicker>
           {(props) => (
             <CalendarPickerSelect
               {...props}
+              aria-label={labels.year}
+              isDisabled={state?.isDisabled}
               lang={lang}
               dir={direction}
               labelClassName={calendarHeaderYearLabelClassName}
@@ -617,14 +642,14 @@ function CalendarDayLabel({
   todayDotInverted: boolean;
 }) {
   return (
-    <span className={twMerge(calendarDayLabelClassName, state.isToday && 'relative')}>
+    <span lang="en" className={twMerge(calendarDayLabelClassName, state.isToday && 'relative')}>
       {state.formattedDate}
       {state.isToday ? (
         <span
           aria-hidden="true"
           className={twMerge(
             'absolute left-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
-            todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
+            todayDotInverted ? 'bg-text-base-inverted' : 'bg-calendar-day-selected',
           )}
         />
       ) : null}
@@ -666,7 +691,7 @@ function getRangeCalendarCellInnerClassName(state: CalendarCellRenderProps) {
   }
 
   if (state.isSelected) {
-    return 'flex size-11 items-center justify-center';
+    return 'flex h-11 min-w-6 w-full max-w-11 items-center justify-center';
   }
 
   return null;

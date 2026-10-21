@@ -42,7 +42,7 @@
     "Pair invalid state with a concise error message when guidance is needed."
   ],
   "limitations": [
-    "The date grid has a fixed 19.25rem width.",
+    "The date grid defaults to 19.25rem and shrinks to fit its container.",
     "The built-in Today action is opt-in.",
     "Unavailable dates remain focusable but cannot be selected."
   ],
@@ -53,7 +53,7 @@
     "Weekday abbreviations expose full Dhivehi labels where available."
   ],
   "responsive": [
-    "Reserve enough horizontal space for the fixed-width date grid.",
+    "Use min-w-0 on flex/grid parents so the seven-column grid can shrink on mobile.",
     "Place multiple calendars in one column on narrow layouts."
   ],
   "rtl": [
