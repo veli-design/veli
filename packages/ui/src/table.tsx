@@ -25,6 +25,22 @@ import { cva } from 'class-variance-authority';
 import { CaretDownIcon, CaretUpIcon, DotsSixVerticalIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import { Checkbox } from './checkbox.js';
+import { useVeliLanguage } from './provider-shared.js';
+
+const tableText = {
+  en: {
+    selectAll: 'Select all',
+    selectRow: 'Select row',
+    moveRow: 'Move row',
+    empty: 'No results found.',
+  },
+  dv: {
+    selectAll: 'ހުރިހާ ރޯތަކެއް ޚިޔާރުކުރޭ',
+    selectRow: 'ރޯ ޚިޔާރުކުރޭ',
+    moveRow: 'ރޯ ތަރުތީބުކުރޭ',
+    empty: 'ނަތީޖާއެއް ނުފެނުނު.',
+  },
+};
 
 const TableFrameContext = React.createContext(false);
 
@@ -48,11 +64,11 @@ const tableVariants = cva(
 );
 
 const tableColumnVariants = cva(
-  'border-b border-base-subtle text-start type-body-sm-medium text-text-default-emphasis outline-none',
+  'border-b border-base-subtle text-start type-body-sm-medium text-base-emphasis outline-none',
   {
     variants: {
       allowsSorting: {
-        true: 'cursor-pointer select-none data-[hovered]:bg-gray-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus',
+        true: 'cursor-pointer select-none data-[hovered]:bg-ash-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus',
         false: '',
       },
       resizable: {
@@ -80,11 +96,11 @@ const tableColumnContentVariants = cva('inline-flex min-w-0 flex-1 items-center 
 });
 
 const tableRowVariants = cva(
-  'outline-none transition-colors data-[hovered]:bg-gray-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus data-[selected]:bg-button-primary-subtle-default data-[disabled]:text-text-disabled-disabled',
+  'outline-none transition-colors motion-reduce:transition-none data-[hovered]:bg-ash-alpha-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus data-[selected]:bg-button-primary-subtle data-[disabled]:text-disabled',
 );
 
 const tableCellVariants = cva(
-  'border-b border-base-subtle px-4 py-3 type-body-sm-regular text-text-default-default',
+  'border-b border-base-subtle px-4 py-3 type-body-sm-regular text-base-default group-data-[disabled]/row:text-disabled outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-border-focus',
 );
 
 const tableDragCellClassName = twMerge(
@@ -94,12 +110,10 @@ const tableDragCellClassName = twMerge(
 
 const tableDragColumnClassName = twMerge(tableColumnVariants(), 'w-10 cursor-grab');
 
-const tableEmptyVariants = cva(
-  'px-4 py-8 text-center type-body-sm-regular text-text-default-muted',
-);
+const tableEmptyVariants = cva('px-4 py-8 text-center type-body-sm-regular text-base-muted');
 
 const tableResizerVariants = cva(
-  'box-content w-px shrink-0 cursor-col-resize self-stretch touch-action-none bg-clip-content px-2 bg-border-base-subtle outline-none data-[resizing]:w-0.5 data-[resizing]:bg-border-focus data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
+  'box-content w-px shrink-0 cursor-col-resize self-stretch touch-none bg-clip-content px-2 bg-border-base-subtle outline-none data-[resizing]:w-0.5 data-[resizing]:bg-border-focus data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus',
 );
 
 function SortIndicator({ direction }: { direction?: 'ascending' | 'descending' }) {
@@ -167,14 +181,19 @@ export interface TableHeaderProps<T = unknown> extends Omit<
 
 export function TableHeader<T = unknown>({ className, children, ...props }: TableHeaderProps<T>) {
   const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
+  const { language } = useVeliLanguage();
   const showSelection = selectionBehavior === 'toggle' && selectionMode === 'multiple';
 
   return (
     <AriaTableHeader {...props} className={className}>
-      {allowsDragging ? <AriaColumn className={tableDragColumnClassName} /> : null}
+      {allowsDragging ? (
+        <AriaColumn className={tableDragColumnClassName}>
+          <span className="sr-only">{tableText[language].moveRow}</span>
+        </AriaColumn>
+      ) : null}
       {showSelection ? (
         <AriaColumn className={twMerge(tableColumnVariants(), 'w-12')}>
-          <Checkbox slot="selection" size="md" aria-label="Select all" />
+          <Checkbox slot="selection" size="md" aria-label={tableText[language].selectAll} />
         </AriaColumn>
       ) : null}
       {children}
@@ -268,16 +287,22 @@ export interface TableBodyProps<T extends object> extends Omit<
 
 export function TableBody<T extends object>({
   className,
-  emptyMessage = 'No results found.',
+  emptyMessage,
   renderEmptyState,
   ...props
 }: TableBodyProps<T>) {
+  const { language } = useVeliLanguage();
   return (
     <AriaTableBody
       {...props}
       className={className}
       renderEmptyState={
-        renderEmptyState ?? (() => <div className={tableEmptyVariants()}>{emptyMessage}</div>)
+        renderEmptyState ??
+        (() => (
+          <div className={tableEmptyVariants()}>
+            {emptyMessage === undefined ? tableText[language].empty : emptyMessage}
+          </div>
+        ))
       }
     />
   );
@@ -300,6 +325,7 @@ export function TableRow<T = unknown>({
   ...props
 }: TableRowProps<T>) {
   const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
+  const { language } = useVeliLanguage();
   const showSelection = selectionBehavior === 'toggle' && selectionMode === 'multiple';
   const dragFromHandleRef = React.useRef(false);
   const rowRef = React.useRef<HTMLTableRowElement>(null);
@@ -344,13 +370,13 @@ export function TableRow<T = unknown>({
             slot="drag"
             className="inline-flex rounded-md p-1 outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
           >
-            <DotsSixVerticalIcon aria-hidden="true" className="size-4 text-icon-default-muted" />
+            <DotsSixVerticalIcon aria-hidden="true" className="size-4 text-icon-base-muted" />
           </AriaButton>
         </AriaCell>
       ) : null}
       {showSelection ? (
         <AriaCell className={tableCellVariants()}>
-          <Checkbox slot="selection" size="md" aria-label="Select row" />
+          <Checkbox slot="selection" size="md" aria-label={tableText[language].selectRow} />
         </AriaCell>
       ) : null}
       {children}
