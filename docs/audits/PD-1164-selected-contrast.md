@@ -29,4 +29,4 @@ All 48 cases passed. The lowest measured text contrast is **5.33:1**; dark teal 
 
 Local checks also include the UI TypeScript build, 11 focused Calendar rendering tests, changed-file ESLint/Prettier, changeset validation, sidecar drift, and `git diff --check`. Token generation supplies the local preview; no token definitions changed.
 
-Full suites, full accessibility audits, production builds, physical-device checks, and manual screen-reader sessions were intentionally excluded from this color-only follow-up. PD-1165 and PD-1166 remain separate. Automatic PR CI after push is reported separately; no broad CI run was manually triggered. PD-1164 remains In progress until PR #285 merges.
+Full suites, full accessibility audits, production builds, physical-device checks, and manual screen-reader sessions were intentionally excluded from this color-only follow-up. PD-1165 and PD-1166 remain separate. Automatic PR CI after push is reported separately; no broad CI run was manually triggered. The PR integration moves PD-1164 to Review; it remains open until PR #285 merges.
