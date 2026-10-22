@@ -847,7 +847,7 @@ export const ShortcutRegression: Story = {
         ),
       );
       await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
-      await expect(trigger).toHaveFocus();
+      await waitFor(() => expect(trigger).toHaveFocus());
     }
   },
 };

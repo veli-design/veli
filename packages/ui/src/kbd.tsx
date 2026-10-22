@@ -39,7 +39,12 @@ const kbdKeyVariants = cva(
 export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
   variant?: KbdVariant;
   className?: string;
+  /** Latin key label or shortcut glyph. Dhivehi key labels are not supported. */
   children: React.ReactNode;
+  /** Native language tag. Keep the English default in Dhivehi interfaces to preserve Latin typography.
+   * Other scripts, including explicit lang="dv", have no supported key geometry.
+   */
+  lang?: string;
 }
 
 export function Kbd({ className, variant = 'default', children, lang = 'en', ...props }: KbdProps) {

@@ -25,9 +25,9 @@ test('Latin keys retain their default language inside a Dhivehi provider', () =>
   const html = render(h(VeliProvider, { language: 'dv' }, h(Kbd, null, 'Ctrl')));
   assert.equal(keys(html).length, 1);
   assert.match(keys(html)[0][1], /lang="en"/);
-  const localized = render(h(Kbd, { lang: 'dv', dir: 'rtl' }, 'ހ'));
-  assert.match(localized, /lang="dv"/);
-  assert.match(localized, /dir="rtl"/);
+  const latin = render(h(Kbd, { lang: 'en-GB', dir: 'ltr' }, 'Ctrl'));
+  assert.match(latin, /lang="en-GB"/);
+  assert.match(latin, /dir="ltr"/);
 });
 
 test('KbdGroup has nameable group semantics and preserves direct-child variant overrides', () => {

@@ -64,10 +64,10 @@ Veli-specific props for a single keyboard key.
 | Prop        | Type                      | Default     | Description                                    |
 | :---------- | :------------------------ | :---------- | :--------------------------------------------- |
 | `variant`   | `'default' \| 'inverted'` | `'default'` | Color treatment of the key.                    |
-| `children`  | `ReactNode`               | —           | Key label content (required).                  |
+| `children`  | `ReactNode`               | —           | Latin key label or shortcut glyph (required).  |
 | `className` | `string`                  | —           | Classes merged with the key's default styling. |
 
-Keys use one size: 20px high, at least 20px wide, with 4px corners and 2px vertical / 4px horizontal padding. Longer labels such as `Page Down` expand without wrapping. Text uses 12px Caption Regular with a 16px line height; decorative icons are 12px.
+Latin keys use one size: 20px high, at least 20px wide, with 4px corners and 2px vertical / 4px horizontal padding. Longer labels such as `Page Down` expand without wrapping. Text uses 12px Caption Regular with a 16px line height; decorative icons are 12px.
 
 ### KbdGroup
 
@@ -88,13 +88,13 @@ Neither component wraps a React Aria primitive, so there are no forwarded React 
 
 `Kbd` forwards `React.HTMLAttributes<HTMLElement>` to its `<kbd>` element. Common native props are listed below.
 
-| Prop         | Type                       | Default   | Description                                                                           |
-| :----------- | :------------------------- | :-------- | :------------------------------------------------------------------------------------ |
-| `lang`       | `string`                   | `'en'`    | Language of the key label. Defaults to English to preserve Latin shortcut typography. |
-| `dir`        | `'ltr' \| 'rtl' \| 'auto'` | Inherited | Direction of the key content.                                                         |
-| `id`         | `string`                   | —         | Native element identifier.                                                            |
-| `title`      | `string`                   | —         | Additional text describing the key.                                                   |
-| `aria-label` | `string`                   | —         | Accessible name, useful for an icon-only key.                                         |
+| Prop         | Type                       | Default   | Description                                                                                                                  |
+| :----------- | :------------------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `lang`       | `string`                   | `'en'`    | Native language tag for Latin labels. Keep the English default in Dhivehi interfaces; Dhivehi key typography is unsupported. |
+| `dir`        | `'ltr' \| 'rtl' \| 'auto'` | Inherited | Direction of the key content.                                                                                                |
+| `id`         | `string`                   | —         | Native element identifier.                                                                                                   |
+| `title`      | `string`                   | —         | Additional text describing the key.                                                                                          |
+| `aria-label` | `string`                   | —         | Accessible name, useful for an icon-only key.                                                                                |
 
 Native `data-*`, other ARIA attributes, and DOM event handlers also pass through. The component does not register shortcuts or make the key focusable by default.
 
@@ -115,7 +115,9 @@ Native `data-*`, other ARIA attributes, and DOM event handlers also pass through
 
 ## Language and direction
 
-Keys default to `lang="en"` so Latin shortcut labels retain Inter inside a Dhivehi provider. Set `lang` explicitly only when the key label itself needs another language. Group direction inherits from the surrounding layout; use `dir="ltr"` to keep a Latin shortcut in modifier-first order in an RTL interface.
+Kbd supports Latin key labels and shortcut glyphs only; Dhivehi labels and typography are not supported. Keys default to `lang="en"` so Latin labels retain Inter and the 12px/16px metrics inside a Dhivehi provider. Keep this default when the surrounding interface uses `language="dv"`. The native `lang` attribute still passes through for compatibility, but setting `lang="dv"` activates shared Dhivehi typography outside the supported key geometry.
+
+Group direction inherits from the surrounding layout; use `dir="ltr"` to keep a Latin shortcut in modifier-first order in an RTL interface. The surrounding Menu can remain RTL.
 
 ```tsx
 <div lang="dv" dir="rtl">

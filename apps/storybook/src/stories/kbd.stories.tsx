@@ -27,7 +27,11 @@ const meta = {
     children: {
       control: 'text',
     },
-    lang: { control: 'text' },
+    lang: {
+      control: 'text',
+      description:
+        'Native language tag for Latin labels. Keep en in Dhivehi interfaces; Dhivehi key typography is unsupported.',
+    },
     dir: { control: 'select', options: [undefined, 'ltr', 'rtl'] },
   },
 } satisfies Meta<typeof Kbd>;
@@ -234,7 +238,7 @@ export const InMenu: Story = {
     docs: {
       description: {
         story:
-          'Kbd inside Menu at every item size. Edit uses the array shortcut API, Open composes an icon key with KbdGroup, and Delete shows disabled shortcut styling. Use the provider toolbar to compare languages and themes.',
+          'Latin Kbd labels inside Menu at every item size. Edit uses the array shortcut API, Open composes an icon key with KbdGroup, and Delete shows disabled shortcut styling. Use the provider toolbar to compare surrounding UI languages and themes; key labels remain Latin.',
       },
     },
   },
