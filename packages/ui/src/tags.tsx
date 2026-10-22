@@ -123,7 +123,7 @@ const tagVariants = cva(
         isDisabled: false,
         isLink: true,
         className:
-          'bg-button-primary-subtle-default text-links hover:bg-button-primary-subtle-hover hover:text-links-hover active:bg-button-primary-subtle-pressed active:text-links-hover',
+          'bg-button-primary-subtle-default text-links hover:bg-button-primary-subtle-hover hover:text-links-hover dark:hover:text-links active:bg-button-primary-subtle-pressed active:text-links-hover dark:active:text-links',
       },
       {
         isDisabled: true,
