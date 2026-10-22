@@ -112,7 +112,7 @@ const meta = {
         }
         if (Object.keys(next).length) updateArgs(next);
       }, [label, errorMessage, todayButtonLabel, language, updateArgs]);
-      return <Story />;
+      return (<div className="min-w-0 max-w-full [&_[role=application]]:mx-auto"><Story /></div>);
     },
   ],
   argTypes: {
@@ -584,7 +584,7 @@ export const TodayIndicatorStates: Story = {
   render: () => {
     const current = today(getLocalTimeZone());
     return (
-      <div className="flex max-w-full flex-wrap items-start gap-6">
+      <div className="flex max-w-full flex-wrap items-start justify-center gap-6">
         <div className="min-w-0 max-w-full space-y-3">
           <p className="type-caption-regular text-base-muted">Today, unselected</p>
           <Calendar aria-label="Today unselected" defaultFocusedValue={current} />
