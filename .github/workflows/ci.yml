@@ -54,6 +54,12 @@ jobs:
       - name: Build Packages
         run: pnpm build
 
+      - name: Test Veli component contracts
+        run: corepack pnpm test:veli-lint
+
+      - name: Enforce reviewed Veli contracts and report advisory findings
+        run: corepack pnpm lint:veli
+
       - name: Test canonical tokens and public UI entry points
         run: corepack pnpm test:tokens && corepack pnpm test:ui
 

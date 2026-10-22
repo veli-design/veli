@@ -83,6 +83,9 @@ pnpm format:check
 # Run ESLint
 pnpm lint
 
+# Enforce reviewed Button/field contracts and report other styling findings (PD-809)
+corepack pnpm lint:veli
+
 # Run the same quality gates used before pushing
 pnpm check
 ```
@@ -91,6 +94,12 @@ Husky installs Git hooks during `pnpm install`. Commits run `lint-staged` so sta
 files are formatted and lint-fixed before they land. Pushes run `pnpm check` to
 verify formatting, linting, and builds across the monorepo. Contributors can bypass
 local hooks with `--no-verify`, but CI runs the same checks and blocks invalid PRs.
+
+The [Veli component contracts](docs/VELI_STYLING.md) block reviewed Button/field
+violations and report advisory findings for the remaining matrix. The separate
+command and policy tests run in `check` and CI. The guide documents consumer opt-in,
+explicit allowances, repository-local exceptions and coverage limits; installing
+Veli does not enable lint in consuming apps.
 
 ## Apps
 
