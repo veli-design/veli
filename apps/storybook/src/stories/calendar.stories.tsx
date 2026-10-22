@@ -112,7 +112,11 @@ const meta = {
         }
         if (Object.keys(next).length) updateArgs(next);
       }, [label, errorMessage, todayButtonLabel, language, updateArgs]);
-      return (<div className="min-w-0 max-w-full [&_[role=application]]:mx-auto"><Story /></div>);
+      return (
+        <div className="min-w-0 max-w-full [&_[role=application]]:mx-auto">
+          <Story />
+        </div>
+      );
     },
   ],
   argTypes: {

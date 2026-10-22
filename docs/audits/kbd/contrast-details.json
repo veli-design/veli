@@ -1,0 +1,60 @@
+[
+  {
+    "theme": "light",
+    "atomic": "oklch(94.52% 0.0059 128.42)",
+    "legacy": "oklch(34.83% 0.083 129.26 / 0.09)",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "nodes": [
+          {
+            "html": "<kbd lang=\"en\" class=\"inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-sm px-1 py-0.5 whitespace-nowrap font-sans antialiased type-caption-regular leading-4 bg-button-secondary-subtle text-base-inactive [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base-inactive\">",
+            "checks": [
+              {
+                "message": "Element has insufficient color contrast of 2.35 (foreground color: #9a9d96, background color: #eceee9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+                "data": {
+                  "fgColor": "#9a9d96",
+                  "bgColor": "#eceee9",
+                  "contrastRatio": 2.35,
+                  "fontSize": "9.0pt (12px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "atomic": "oklch(22.94% 0.0041 128.66)",
+    "legacy": "oklch(0.651 0.004 145.532 / 0.04)",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "nodes": [
+          {
+            "html": "<kbd lang=\"en\" class=\"inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-sm px-1 py-0.5 whitespace-nowrap font-sans antialiased type-caption-regular leading-4 bg-button-secondary-subtle text-base-inactive [&_svg]:size-3 [&_svg]:shrink-0 [&_svg]:text-icon-base-inactive\">",
+            "checks": [
+              {
+                "message": "Element has insufficient color contrast of 2.31 (foreground color: #555753, background color: #1c1d1b, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+                "data": {
+                  "fgColor": "#555753",
+                  "bgColor": "#1c1d1b",
+                  "contrastRatio": 2.31,
+                  "fontSize": "9.0pt (12px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
