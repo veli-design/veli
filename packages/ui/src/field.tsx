@@ -14,6 +14,7 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  fieldHelperTone,
   getFieldOptionalLabel,
   hasRenderableMessage,
   messageVariants,
@@ -408,6 +409,7 @@ export function FieldDescription({
   // matches the rendered node. Outside RAC, FieldContext needs a stable id.
   const id = idProp ?? (insideRac ? undefined : generatedId);
   const resolvedSize = size ?? field?.size ?? 'md';
+  const isDisabled = field?.isDisabled ?? false;
 
   const active = hasRenderableMessage(children);
   useDescribedByRegistration('description', id ?? generatedId, active && Boolean(id));
@@ -422,7 +424,10 @@ export function FieldDescription({
       id={id}
       slot="description"
       data-slot="field-description"
-      className={twMerge(messageVariants({ size: resolvedSize, tone: 'subtle' }), className)}
+      className={twMerge(
+        messageVariants({ size: resolvedSize, tone: fieldHelperTone(isDisabled) }),
+        className,
+      )}
     >
       {children}
     </AriaText>

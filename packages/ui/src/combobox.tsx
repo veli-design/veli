@@ -32,6 +32,7 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHelperTone,
   getFieldOptionalLabel,
   hasRenderableMessage,
   shouldShowFieldOptional,
@@ -483,7 +484,6 @@ export function ComboBox<T extends object, K extends Key = Key>({
                         className={twMerge(
                           fieldHeaderLabelVariants({ size, isDisabled }),
                           'min-w-0 wrap-anywhere',
-                          isDisabled && 'text-base-muted',
                         )}
                       >
                         {label}
@@ -622,7 +622,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
 
               <div className="min-w-0 wrap-anywhere empty:hidden [&:not(:empty)]:pt-1">
                 <FieldMessage
-                  descriptionTone={isDisabled ? 'disabled' : 'muted'}
+                  descriptionTone={fieldHelperTone(isDisabled)}
                   isInvalid={isInvalid}
                   size={size ?? 'md'}
                   description={description}

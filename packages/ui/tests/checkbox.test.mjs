@@ -137,7 +137,7 @@ test('group render state keeps FieldLabel aligned even inside a conflicting Fiel
     );
     const label = html.match(/<span[^>]*data-slot="field-label"[\s\S]*?<\/span>/)?.[0] ?? '';
     assert.ok(label.includes('Notification channels'));
-    assert.equal(label.includes('text-disabled'), isDisabled);
+    assert.equal(label.includes('text-base-muted'), isDisabled);
     assert.equal(label.includes('>*</span>'), isRequired);
     assert.equal(inputOf(html).includes('disabled=""'), isDisabled);
   }
