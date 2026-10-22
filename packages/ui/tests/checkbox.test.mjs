@@ -4,7 +4,7 @@ import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { Field, FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Field, FieldDescription, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
 
 const render = (props = {}, children = 'Email') =>
@@ -141,6 +141,30 @@ test('group render state keeps FieldLabel aligned even inside a conflicting Fiel
     assert.equal(label.includes('>*</span>'), isRequired);
     assert.equal(inputOf(html).includes('disabled=""'), isDisabled);
   }
+});
+
+test('enabled group helper stays muted inside a disabled Field', () => {
+  const html = renderToStaticMarkup(
+    h(
+      Field,
+      { isDisabled: true },
+      h(CheckboxGroup, { isDisabled: false }, (state) => [
+        h(FieldLabel, { key: 'label', isDisabled: state.isDisabled }, 'Notification channels'),
+        h(
+          FieldDescription,
+          { key: 'description', isDisabled: state.isDisabled },
+          'Helpful instructions',
+        ),
+        h(Checkbox, { key: 'email', value: 'email' }, 'Email'),
+      ]),
+    ),
+  );
+  const description = html.match(/<[^>]*slot="description"[^>]*>[\s\S]*?<\/[^>]+>/)?.[0] ?? '';
+
+  assert.match(description, /text-base-muted/);
+  assert.doesNotMatch(description, /text-disabled/);
+  assert.match(description, /Helpful instructions/);
+  assert.doesNotMatch(inputOf(html), /disabled=""/);
 });
 
 test('published checkbox entry and Dhivehi direction remain available', () => {
