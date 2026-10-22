@@ -38,7 +38,7 @@ The first audit omitted the separate Changelog checklist. The follow-up inspecte
 
 ### Today-dot distinction
 
-The unselected Today indicator ([1210:5533](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1210-5533)) binds to `components/calendar/day-selected`. When today is also selected, the large selection fill still uses that token, the date number uses `semantics/text/base/inverted`, and the **small dot inside the selection** ([1210:5535](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1210-5535)) binds to `semantics/text/primary/inverted`. Both dots are 4 × 4 px at y = 34 in a full 44 px day cell. Storybook's Today Indicator States makes the combined case explicit, including a one-day range.
+The unselected Today indicator ([1210:5533](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1210-5533)) binds to `components/calendar/day-selected`. When today is also selected, the large selection fill still uses that token, the date number uses `color/white`, and the **small dot inside the selection** ([1210:5535](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1210-5535)) binds to `color/white`. Both dots are 4 × 4 px at y = 34 in a full 44 px day cell. Storybook's Today Indicator States makes the combined case explicit, including a one-day range.
 
 ### DatePicker geometry, field states and documented mappings
 
@@ -54,9 +54,9 @@ The DatePicker-specific text corrections address its portion of [PD-1001](https:
 
 ## Accessibility finding retained for Figma alignment
 
-[PD-1164: review active selected-date contrast in dark Figma variants](https://linear.app/onegov/issue/PD-1164/calendar-review-active-selected-date-contrast-in-dark-figma-variants) tracks the enabled, selected-date foreground at **3.28:1** (`#0e0e0d` on `#146f77`), below the 4.5:1 AA threshold for 14 px regular text. This affects active current-month selections and range endpoints in dark mode, in both languages and browser engines.
+[PD-1164](https://linear.app/onegov/issue/PD-1164/calendar-review-active-selected-date-contrast-in-dark-figma-variants) originally tracked **3.28:1** (`#0e0e0d` on `#146f77`) for active selected dates and range endpoints in dark mode. Basim's approved 22 October update replaces selected/error date text and the corresponding Today dots with `color/white`. The implementation now follows that update; see the [scoped follow-up and evidence](PD-1164-selected-contrast.md). The original measurements below remain historical audit evidence.
 
-The implementation deliberately matches Figma, as requested. The browser audit records this known design finding and fails unexpected accessibility violations. Disabled controls and previous/next-month dates are excluded from contrast findings. The disabled month label is an inactive-control contrast exemption. This audit does not claim full WCAG conformance; final accessibility/design sign-off remains open on PD-1164.
+The browser audit now fails active selected-date contrast regressions. Disabled controls and previous/next-month dates remain excluded. This follow-up does not claim full WCAG conformance or close the separate PD-1165/PD-1166 findings.
 
 [PD-1165](https://linear.app/onegov/issue/PD-1165/calendar-improve-dhivehi-accessible-date-descriptions-in-webkit) tracks WebKit's incomplete Dhivehi accessible month descriptions (`2026 M10`). Visible Dhivehi labels match Figma; the remaining finding concerns hidden date descriptions and announcements.
 

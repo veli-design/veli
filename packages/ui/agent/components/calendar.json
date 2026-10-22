@@ -50,6 +50,7 @@
     "Provide aria-label when there is no visible label.",
     "Disabled and unavailable dates are visually distinguished.",
     "Keyboard focus receives a visible focus ring.",
+    "Selected dates and range endpoints use white text and Today indicators in both themes, including invalid selections.",
     "Weekday abbreviations expose full Dhivehi labels where available."
   ],
   "responsive": [

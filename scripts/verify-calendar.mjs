@@ -28,12 +28,9 @@ async function checkAccessibility(page, violations, label) {
       const state = await page.locator(node.target[0]).evaluate((e) => ({
         disabled: Boolean(e.closest('[data-disabled], [aria-disabled="true"]')),
         outsideMonth: Boolean(e.closest('[data-outside-month]')),
-        selected: Boolean(e.closest('[data-selected]')),
       }));
       if (state.disabled || state.outsideMonth) continue;
-      // PD-827 follows the Figma foreground even when active selection contrast fails.
-      assert.ok(state.selected, `New contrast failure outside the known Figma selection: ${label}`);
-      accessibilityFindings.push({ label, target: node.target, summary: node.failureSummary });
+      assert.fail(`Unexpected active date contrast failure: ${label}/${node.target}`);
     }
   }
 }
@@ -356,5 +353,5 @@ await writeFile(
 );
 assert.deepEqual(errors, [], 'no browser console errors or uncaught exceptions');
 console.log(
-  `Passed ${results.length} layout cases plus touch, keyboard, year menu, DatePicker, themes, reduced motion, and axe checks (known Figma selection contrast findings are recorded) in Chromium and WebKit. Evidence: ${evidence}`,
+  `Passed ${results.length} layout cases plus touch, keyboard, year menu, DatePicker, themes, reduced motion, and axe checks in Chromium and WebKit. Evidence: ${evidence}`,
 );

@@ -240,7 +240,7 @@ const cellVariants = cva(
       },
       isSelected: {
         false: 'text-base-emphasis data-[outside-month]:text-base-subtle',
-        true: 'bg-calendar-day-selected text-base-inverted data-[invalid]:bg-button-danger data-[invalid]:text-danger-inverted forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
+        true: 'bg-calendar-day-selected text-white data-[invalid]:bg-button-danger forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-colors:data-[invalid]:bg-[Mark]',
       },
       isDisabled: {
         true: 'cursor-not-allowed text-disabled forced-colors:text-[GrayText]',
@@ -713,7 +713,7 @@ function CalendarDayLabel({
           aria-hidden="true"
           className={twMerge(
             'absolute left-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
-            todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
+            todayDotInverted ? 'bg-white' : 'bg-calendar-day-selected',
           )}
         />
       ) : null}

@@ -239,15 +239,15 @@ for (const [engine, type] of Object.entries({ chromium, webkit })) {
           .tap();
         await expect(page.locator('input[name=appointment][type=text]')).toHaveValue('2026-10-22');
         const dot = day(22).locator('[aria-hidden=true]');
-        await matchesToken(dot, '--veli-color-text-primary-inverted', 'backgroundColor');
+        await matchesToken(dot, '--veli-color-white', 'backgroundColor');
         await page.keyboard.press('Escape');
         await expect(trigger).toBeFocused();
         await page.goto(url('calendar', 'today-indicator-states', language, theme));
         await page.getByRole('grid').first().waitFor();
         for (const [name, token] of [
           ['Today unselected', '--veli-color-calendar-day-selected'],
-          ['Today selected', '--veli-color-text-primary-inverted'],
-          ['Today selected in range', '--veli-color-text-primary-inverted'],
+          ['Today selected', '--veli-color-white'],
+          ['Today selected in range', '--veli-color-white'],
         ]) {
           const root = page.getByRole('application', { name: new RegExp(`^${name}(?:,|$)`) });
           const today = root.locator('[role=button][data-today]');
