@@ -1,3 +1,10 @@
+## Core package baseline
+
+Version 0.3.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+before adding or updating this application-owned source. The approved typography
+metrics and subtle-button colors can change wrapping and element height. Previous
+block archives retain their existing requirements.
+
 ## Ownership and prerequisites
 
 This experimental block renders an inner page navigation section: organization identity, optional description/address, navigation groups, and social/contact links. It is separate from the compact [site footer](/blocks/site-footer/) and can be used on error pages or other application pages.
@@ -9,7 +16,7 @@ Logos, organization details, link labels, icons and destinations come from the c
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.16.0 @tradenetcorp/veli-tokens@0.9.1 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 @phosphor-icons/react@2.1.10
+corepack pnpm add @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 @phosphor-icons/react@2.1.10
 corepack pnpm dlx @tradenetcorp/veli init
 corepack pnpm dlx @tradenetcorp/veli add page-navigation-footer
 ```
