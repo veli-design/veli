@@ -278,6 +278,38 @@ function languageVariants(prefix, builder) {
 
 // Build-time sources: these are highlighted into inert templates, never shipped as a highlighter.
 export const previewCodeGroups = {
+  KbdUsageDemo: {
+    defaultKey: 'kbd-shortcut-command-k',
+    variants: Object.fromEntries(
+      [
+        ['command-k', 'Command K', ['⌘', 'K']],
+        ['control-shift-p', 'Control Shift P', ['Ctrl', 'Shift', 'P']],
+        ['escape', 'Escape', ['Esc']],
+      ].map(([id, label, keys]) => [
+        `kbd-shortcut-${id}`,
+        component(
+          'KbdUsageDemo',
+          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          keys.length === 1
+            ? `<Kbd>${keys[0]}</Kbd>`
+            : `<KbdGroup dir="ltr" aria-label="${label}">\n${keys.map((key) => `  <Kbd>${key}</Kbd>`).join('\n')}\n</KbdGroup>`,
+        ),
+      ]),
+    ),
+  },
+  KbdVariantsDemo: {
+    defaultKey: 'kbd-variant-default',
+    variants: Object.fromEntries(
+      ['default', 'inverted'].map((variant) => [
+        `kbd-variant-${variant}`,
+        component(
+          'KbdVariantsDemo',
+          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          `<KbdGroup variant="${variant}" dir="ltr" aria-label="Command Enter">\n  <Kbd>⌘</Kbd>\n  <Kbd>Enter</Kbd>\n</KbdGroup>`,
+        ),
+      ]),
+    ),
+  },
   AlertVariantsDemo: {
     defaultKey: 'alert-appearance-light',
     variants: Object.fromEntries(
