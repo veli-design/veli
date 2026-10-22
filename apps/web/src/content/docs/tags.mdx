@@ -197,6 +197,7 @@ By default, the group root and tag rows are `<div>` elements, with a grid for ke
 - Give the group a visible `label`, or use `aria-label` / `aria-labelledby`.
 - Arrow keys navigate tags; selection follows `selectionMode`. Delete or Backspace removes enabled selected tags, or the focused tag when it is unselected.
 - Clicking a remove control removes that tag without selecting it. Disabled tags remain in the collection during bulk removal.
+- A selected disabled tag retains `aria-selected="true"` alongside `aria-disabled="true"`. Link tags retain grid-row keyboard navigation and announce their destination through an accessible description.
 - Plain and nested text supply the tag name automatically. Provide `textValue` for complex or function content, and a useful `removeButtonLabel` for custom removal wording.
 - `description` is the accessible helper; a non-empty `errorMessage` replaces it. Focus remains visible in forced-colors mode, and reduced motion makes color changes immediate.
 

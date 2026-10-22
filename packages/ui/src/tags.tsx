@@ -53,11 +53,13 @@ const localizedTagText = {
     noTagsAvailable: 'No tags available.',
     removeTag: 'Remove {tag}',
     removeGenericTag: 'Remove tag',
+    linkDestination: 'Link: {href}',
   },
   dv: {
     noTagsAvailable: 'އެއްވެސް ޓެގެއް ލިބޭކަށް ނެތް.',
     removeTag: '{tag} އުނިކުރޭ',
     removeGenericTag: 'ޓެގް އުނިކުރޭ',
+    linkDestination: 'ލިންކް: {href}',
   },
 } as const;
 
@@ -386,6 +388,7 @@ export function Tag({
   isDisabled,
   leading,
   removeButtonLabel,
+  render,
   size: sizeProp,
   textValue,
   ...props
@@ -432,6 +435,19 @@ export function Tag({
           className,
         )
       }
+      render={(domProps, state) => {
+        // React Aria omits aria-selected for disabled rows even when they are selected.
+        // Keep that state exposed whenever the selected check is visible.
+        const description =
+          domProps['aria-description'] ??
+          (href == null ? undefined : text.linkDestination.replace('{href}', href));
+        const rowProps = {
+          ...domProps,
+          ...(state.isSelected && { 'aria-selected': true as const }),
+          ...(description != null && { 'aria-description': description }),
+        };
+        return render ? render(rowProps, state) : <div {...rowProps} />;
+      }}
     >
       {(state) => {
         const content = typeof children === 'function' ? children(state) : children;
