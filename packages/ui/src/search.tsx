@@ -5,31 +5,39 @@ import {
   Button as AriaButton,
   Group,
   Input as AriaInput,
-  TextField as AriaTextField,
-  TextFieldProps as AriaTextFieldProps,
+  SearchField as AriaSearchField,
+  SearchFieldProps as AriaSearchFieldProps,
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { InfoIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
+import { MagnifyingGlassIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react';
 import {
-  defaultFieldUnderlineDisabled,
   defaultFieldUnderlineError,
   defaultFieldUnderlineErrorFocusPressed,
   defaultFieldUnderlineFocusPressed,
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldInputAutofill,
 } from './field-shared.js';
+import { FieldLabel } from './field.js';
 import { useVeliLanguage } from './provider.js';
 import { twMerge } from 'tailwind-merge';
+import { webkitDhivehiTextBaselineClassName } from './typography-shared.js';
 import { assignRef, type RefProp } from './ref.js';
 
 const searchRootVariants = cva('flex w-full flex-col gap-1.5 font-sans antialiased');
 
+// Paint Figma's inside stroke without changing the field or text geometry.
+const outlineStrokeActive =
+  '[&:focus-within:not(:has([data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-pressed)]';
+const outlineStrokeFocusHide =
+  'has-[[data-focus-visible]]:shadow-none has-[[data-focus-visible]]:hover:shadow-none';
+
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 transition-[background-color,border-color] duration-normal ease-out has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-2 overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
-      variant: {
+      appearance: {
         default: 'rounded-md',
         outline: 'rounded-full',
       },
@@ -50,91 +58,65 @@ const fieldShellVariants = cva(
         true: '',
         false: '',
       },
+      isFilled: {
+        true: '',
+        false: '',
+      },
     },
     compoundVariants: [
       {
-        variant: 'default',
+        appearance: 'default',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
       },
       {
-        variant: 'default',
-        isDisabled: false,
-        isInvalid: false,
-        isReadOnly: true,
-        className: 'bg-text-input-bg-hover',
-      },
-      {
-        variant: 'default',
-        isDisabled: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled} bg-ash-alpha-200`,
-      },
-      {
-        variant: 'default',
+        appearance: 'default',
         isInvalid: true,
         isDisabled: false,
         className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
       },
       {
-        variant: 'default',
         isDisabled: true,
-        isInvalid: true,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineDisabled}`,
-      },
-      {
-        variant: 'default',
-        isDisabled: true,
-        isReadOnly: true,
-        className: 'bg-ash-alpha-200',
-      },
-      {
-        variant: 'outline',
-        isDisabled: false,
-        isInvalid: false,
-        isReadOnly: false,
-        className:
-          'border border-text-input-stroke bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-hover [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-pressed focus-within:bg-text-input-bg-pressed has-[input[data-focus-visible]]:border-transparent has-[input[data-focus-visible]]:hover:border-transparent',
-      },
-      {
-        variant: 'outline',
-        isDisabled: false,
-        isInvalid: false,
-        isReadOnly: true,
         className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
-        isDisabled: true,
-        className: 'border border-text-input-stroke-disabled bg-ash-alpha-200',
+        isReadOnly: true,
+        isDisabled: false,
+        isInvalid: false,
+        className: 'bg-text-input-bg-hover',
       },
       {
-        variant: 'outline',
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: false,
+        isFilled: false,
+        className: `shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)] ${outlineStrokeActive} ${outlineStrokeFocusHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
+      },
+      {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: false,
+        isFilled: true,
+        className: `${outlineStrokeActive} ${outlineStrokeFocusHide} bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
+      },
+      {
+        appearance: 'outline',
         isInvalid: true,
         isDisabled: false,
-        className:
-          'border border-text-input-stroke-error bg-text-input-bg [&:hover:not(:focus-within)]:border-[1.5px] [&:hover:not(:focus-within)]:border-text-input-stroke-error [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:border-2 focus-within:border-text-input-stroke-error focus-within:bg-text-input-bg',
-      },
-      {
-        variant: 'outline',
-        isDisabled: true,
-        isInvalid: true,
-        className: 'border border-text-input-stroke-disabled',
-      },
-      {
-        variant: 'outline',
-        isDisabled: true,
-        isReadOnly: true,
-        className: 'bg-ash-alpha-200',
+        className: `shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-error)] [&:hover:not(:focus-within)]:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-error)] [&:focus-within:not(:has([data-focus-visible]))]:shadow-[inset_0_0_0_2px_var(--veli-color-text-input-stroke-error)] ${outlineStrokeFocusHide} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover`,
       },
     ],
     defaultVariants: {
-      variant: 'default',
+      appearance: 'default',
       size: 'md',
       isDisabled: false,
       isInvalid: false,
       isReadOnly: false,
+      isFilled: false,
     },
   },
 );
@@ -142,8 +124,8 @@ const fieldShellVariants = cva(
 const leadingIconVariants = cva('relative z-[1] flex shrink-0 items-center justify-center', {
   variants: {
     isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-subtle',
+      true: 'text-icon-disabled',
+      false: 'text-icon-base-muted',
     },
   },
   defaultVariants: {
@@ -164,7 +146,7 @@ const errorIconVariants = cva('relative z-[1] flex shrink-0 items-center justify
 });
 
 const clearButtonVariants = cva(
-  'relative z-[1] inline-flex shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
+  'relative z-[1] inline-flex shrink-0 items-center justify-center rounded-xs border-0 bg-transparent p-0 outline-none transition-colors duration-normal ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-raised',
   {
     variants: {
       size: {
@@ -185,13 +167,13 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-default outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
-        sm: '-mx-3 -my-2 px-3 py-2 type-body-sm-regular',
-        md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
-        lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
+        sm: 'type-body-sm-regular',
+        md: 'type-body-sm-regular',
+        lg: 'type-body-md-regular',
       },
       isReadOnly: {
         true: 'text-base-strong',
@@ -236,9 +218,14 @@ function getSearchIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
 
 export interface SearchProps
   extends
-    Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'spellCheck' | 'type'>,
-    Omit<VariantProps<typeof fieldShellVariants>, 'isDisabled' | 'isInvalid' | 'isReadOnly'>,
+    Omit<AriaSearchFieldProps, 'children' | 'className' | 'style' | 'spellCheck' | 'type'>,
+    Omit<
+      VariantProps<typeof fieldShellVariants>,
+      'isDisabled' | 'isInvalid' | 'isReadOnly' | 'isFilled'
+    >,
     RefProp<HTMLInputElement> {
+  label?: React.ReactNode;
+  showRequiredIndicator?: boolean;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   className?: string;
@@ -255,10 +242,12 @@ export interface SearchProps
 }
 
 export function Search({
+  label,
+  showRequiredIndicator = true,
   description,
   errorMessage,
   className,
-  variant = 'default',
+  appearance = 'default',
   size = 'md',
   autoCapitalize,
   autoComplete = 'off',
@@ -270,9 +259,7 @@ export function Search({
   pattern,
   placeholder,
   spellCheck,
-  onChange,
-  value,
-  defaultValue,
+  onClear,
   ref,
   ...props
 }: SearchProps) {
@@ -280,58 +267,50 @@ export function Search({
   const resolvedPlaceholder = placeholder ?? searchPlaceholderDefaults[languageConfig.language];
   const iconSize = getSearchIconSize(size);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
-  const [uncontrolledValue, setUncontrolledValue] = React.useState(String(defaultValue ?? ''));
-  const searchValue = value === undefined ? uncontrolledValue : String(value);
-
   const setInputRef = React.useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
-
       assignRef(ref, node);
     },
     [ref],
   );
-
-  const handleChange = React.useCallback(
-    (nextValue: string) => {
-      if (value === undefined) {
-        setUncontrolledValue(nextValue);
-      }
-
-      onChange?.(nextValue);
-    },
-    [onChange, value],
-  );
-
-  const clearSearch = React.useCallback(() => {
-    handleChange('');
-    inputRef.current?.focus();
-  }, [handleChange]);
-
   return (
-    <AriaTextField
+    <AriaSearchField
       {...props}
-      value={searchValue}
-      onChange={handleChange}
+      onClear={onClear}
+      type="search"
       className={twMerge(searchRootVariants(), className)}
     >
-      {({ isDisabled, isInvalid, isReadOnly }) => {
-        const showClearButton = searchValue.length > 0 && !isDisabled && !isReadOnly;
+      {({ isDisabled, isInvalid, isReadOnly, isRequired, isEmpty, state }) => {
+        const showClearButton = !isEmpty && !isDisabled && !isReadOnly;
 
         return (
           <>
+            {label || (showRequiredIndicator && isRequired) ? (
+              <FieldLabel
+                size={size ?? 'md'}
+                isDisabled={isDisabled}
+                isRequired={isRequired}
+                isOptional={false}
+                showRequiredIndicator={showRequiredIndicator}
+                className="w-full"
+              >
+                {label}
+              </FieldLabel>
+            ) : null}
             <Group
               className={fieldShellVariants({
-                variant,
+                appearance,
                 size,
                 isDisabled,
                 isInvalid,
                 isReadOnly,
+                isFilled: !isEmpty,
               })}
               onMouseDown={(event) => focusInputFromShell(event, isDisabled)}
             >
               <div className={leadingIconVariants({ isDisabled })} aria-hidden>
-                <MagnifyingGlassIcon size={iconSize} />
+                <MagnifyingGlassIcon size={iconSize} weight="bold" />
               </div>
               <AriaInput
                 ref={setInputRef}
@@ -350,17 +329,24 @@ export function Search({
               />
               {showClearButton ? (
                 <AriaButton
+                  // Keep Veli's clear button in the tab order. SearchField's default
+                  // press-start focus transfer interrupts its keyboard activation.
+                  slot={null}
                   type="button"
                   aria-label={searchClearButtonAriaLabels[languageConfig.language]}
                   className={clearButtonVariants({ size, isDisabled })}
-                  onPress={clearSearch}
+                  onPress={() => {
+                    state.setValue('');
+                    onClear?.();
+                    inputRef.current?.focus();
+                  }}
                 >
                   <XIcon size={iconSize} aria-hidden />
                 </AriaButton>
               ) : null}
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <InfoIcon size={iconSize} weight="fill" />
+                  <WarningCircleIcon size={iconSize} weight="fill" />
                 </div>
               ) : null}
             </Group>
@@ -374,6 +360,6 @@ export function Search({
           </>
         );
       }}
-    </AriaTextField>
+    </AriaSearchField>
   );
 }

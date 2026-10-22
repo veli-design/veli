@@ -9,16 +9,16 @@ import test from 'node:test';
 import { promisify } from 'node:util';
 import { gunzipSync } from 'node:zlib';
 
+import { corepackSpawnTarget } from './corepack.mjs';
 import { withReleaseReadmes } from './release-readme.mjs';
 
 const execFileAsync = promisify(execFile);
 
-function resolveBundledCli(relativeSegments) {
+function resolveNpmCli() {
   const execDir = path.dirname(process.execPath);
+  const relativeSegments = ['node_modules', 'npm', 'bin', 'npm-cli.js'];
   const candidates = [
-    // Windows Node distributions keep package managers next to the node binary.
     path.join(execDir, ...relativeSegments),
-    // Unix Node distributions keep package managers under lib/.
     path.join(execDir, '..', 'lib', ...relativeSegments),
   ];
   const cli = candidates.find((candidate) => existsSync(candidate));
@@ -26,14 +26,6 @@ function resolveBundledCli(relativeSegments) {
     throw new Error(`Unable to locate ${relativeSegments.join('/')} from ${process.execPath}`);
   }
   return cli;
-}
-
-function resolveNpmCli() {
-  return resolveBundledCli(['node_modules', 'npm', 'bin', 'npm-cli.js']);
-}
-
-function resolveCorepackCli() {
-  return resolveBundledCli(['node_modules', 'corepack', 'dist', 'corepack.js']);
 }
 
 function readTarEntry(tarball, entryName) {
@@ -95,18 +87,29 @@ _Released 2026-07-30._
   return {
     dir,
     originalReadme,
+    releaseReadme: `## What's new in 1.2.3
+
+_Released 2026-07-30._
+
+### Fixed
+
+- Publish release-specific notes.
+
+---
+
+${originalReadme}`,
     packages: [{ dir, packageJson: { name: '@tradenetcorp/example', version: '1.2.3' } }],
   };
 }
 
-test('stages only current release notes and restores the package README', async (t) => {
+test('prepends current release notes and restores the package README', async (t) => {
   const fixture = await createPackageFixture();
   t.after(() => fs.rm(fixture.dir, { recursive: true, force: true }));
 
   await withReleaseReadmes(fixture.packages, async () => {
     assert.equal(
       await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
-      '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
+      fixture.releaseReadme,
     );
   });
 
@@ -153,10 +156,7 @@ test('packs the release-specific README into the package artifact', async (t) =>
   });
 
   const packedReadme = readTarEntry(await fs.readFile(tarball), 'package/README.md');
-  assert.equal(
-    packedReadme,
-    '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n',
-  );
+  assert.equal(packedReadme, fixture.releaseReadme);
   assert.equal(
     await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
     fixture.originalReadme,
@@ -189,31 +189,26 @@ test('publishes the release-specific README in pnpm registry metadata', async (t
   const userConfig = path.join(fixture.dir, '.npmrc');
   await fs.writeFile(userConfig, '');
 
-  await withReleaseReadmes(fixture.packages, () =>
-    execFileAsync(
-      process.execPath,
-      [
-        resolveCorepackCli(),
-        'pnpm',
-        'publish',
-        '--registry',
-        registryUrl,
-        '--no-git-checks',
-        '--ignore-scripts',
-      ],
-      {
-        cwd: fixture.dir,
-        env: { ...process.env, npm_config_userconfig: userConfig },
-      },
-    ),
-  );
+  await withReleaseReadmes(fixture.packages, () => {
+    const target = corepackSpawnTarget([
+      'pnpm',
+      'publish',
+      '--registry',
+      registryUrl,
+      '--no-git-checks',
+      '--ignore-scripts',
+    ]);
+    return execFileAsync(target.command, target.args, {
+      cwd: fixture.dir,
+      env: { ...process.env, npm_config_userconfig: userConfig },
+      shell: target.options.shell,
+    });
+  });
 
   const publishRequest = requests.find((request) => request.method === 'PUT');
   assert.ok(publishRequest, 'expected pnpm to send a registry publish request');
   const metadata = JSON.parse(publishRequest.body);
-  const releaseReadme =
-    '_Released 2026-07-30._\n\n### Fixed\n\n- Publish release-specific notes.\n';
-  assert.equal(metadata.versions['1.2.3'].readme, releaseReadme);
+  assert.equal(metadata.versions['1.2.3'].readme, fixture.releaseReadme);
   assert.equal(
     await fs.readFile(path.join(fixture.dir, 'README.md'), 'utf8'),
     fixture.originalReadme,

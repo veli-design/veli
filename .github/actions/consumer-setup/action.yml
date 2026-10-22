@@ -1,0 +1,28 @@
+name: Consumer setup
+description: Install the pinned workspace and optionally verify immutable candidate packages
+inputs:
+  candidate-artifact-id:
+    description: Download candidate tarballs from this exact run and attempt
+    default: ''
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: pnpm
+    - run: corepack pnpm install --frozen-lockfile
+      shell: bash
+    - uses: actions/download-artifact@v4
+      if: inputs.candidate-artifact-id != ''
+      with:
+        artifact-ids: ${{ inputs.candidate-artifact-id }}
+        merge-multiple: true
+        path: ${{ runner.temp }}/candidate
+    - run: node scripts/consumer-ci.mjs verify "$RUNNER_TEMP/candidate"
+      if: inputs.candidate-artifact-id != ''
+      shell: bash
+    - run: echo "VELI_TARBALLS={\"@tradenetcorp/veli-ui\":\"$RUNNER_TEMP/candidate/ui.tgz\",\"@tradenetcorp/veli-tokens\":\"$RUNNER_TEMP/candidate/tokens.tgz\"}" >> "$GITHUB_ENV"
+      if: inputs.candidate-artifact-id != ''
+      shell: bash

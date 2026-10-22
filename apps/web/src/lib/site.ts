@@ -187,11 +187,6 @@ export const componentGroups: ComponentGroup[] = [
         slug: 'tabs',
         description: 'Inline tabbed sections with optional overflow menu.',
       },
-      {
-        title: 'PageTab',
-        slug: 'page-tab',
-        description: 'Page-level tab navigation for top-level sections.',
-      },
     ],
   },
   {
@@ -301,6 +296,16 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Content separation for page and component layouts.',
       },
       {
+        title: 'Spinner',
+        slug: 'spinner',
+        description: 'Indeterminate loading indicator for pending content and busy controls.',
+      },
+      {
+        title: 'LoadingText',
+        slug: 'loading-text',
+        description: 'Settling pending label with decorative grains for indeterminate actions.',
+      },
+      {
         title: 'Skeleton',
         slug: 'skeleton',
         description: 'Generic loading placeholder for composing loading states.',
@@ -314,6 +319,11 @@ export const componentGroups: ComponentGroup[] = [
         title: 'Modal',
         slug: 'modal',
         description: 'Dialog surfaces with dismissal and sizing guidance.',
+      },
+      {
+        title: 'Popover',
+        slug: 'popover',
+        description: 'Anchored dialog with header, content, footer, intents, and an arrow.',
       },
       {
         title: 'Table',

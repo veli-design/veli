@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { rename, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { spawnCorepack } from './corepack.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const servers = [];
 const moved = [];
@@ -23,15 +24,20 @@ try {
   for (const name of ['ui', 'tokens']) {
     const source = `${root}/packages/${name}/dist`;
     const backup = `${root}/.cache/playground-check/${name}`;
-    await rename(source, backup);
-    moved.push([source, backup]);
+    try {
+      await rename(source, backup);
+      moved.push([source, backup]);
+    } catch (error) {
+      // A dedicated cold-check runner has never built these packages.
+      if (error.code !== 'ENOENT') throw error;
+    }
   }
   for (const [name, args] of [
     ['veli-web', ['--host', '127.0.0.1', '--port', '4322']],
     ['veli-storybook', ['--host', '127.0.0.1', '--port', '6007', '--ci']],
   ])
     servers.push(
-      spawn('corepack', ['pnpm', '--filter', `@tradenetcorp/${name}`, 'dev', ...args], {
+      spawnCorepack(['pnpm', '--filter', `@tradenetcorp/${name}`, 'dev', ...args], {
         cwd: root,
         stdio: 'inherit',
         detached: true,

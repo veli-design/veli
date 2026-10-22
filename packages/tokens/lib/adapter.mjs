@@ -1,4 +1,4 @@
-import { META } from './normalize.mjs';
+import { entries, META } from './normalize.mjs';
 export const variableName = (token) => `--veli-${token.id.replace(/[._]/g, '-')}`;
 export const subVariableName = (name, field) => `${name}-${field}`;
 const namespaces = {
@@ -16,26 +16,30 @@ const namespaces = {
   duration: 'duration',
   delay: 'delay',
 };
-// Generic text sizes use English regular styles; type-* owns language switching.
-const textStyles = {
-  xs: 'caption.regular',
-  sm: 'body.sm.regular',
-  base: 'body.md.regular',
-  lg: 'body.lg.regular',
-  xl: 'subtitle.regular',
-  '2xl': 'title.2.regular',
-  '3xl': 'title.1.regular',
-  '4xl': 'heading.4.regular',
-  '5xl': 'heading.3.regular',
-  '6xl': 'heading.2.regular',
-  '7xl': 'heading.1.regular',
-  '8xl': 'display.md.regular',
-  '9xl': 'display.lg.regular',
-};
+// Generic text sizes follow Figma's text ramp; type-* owns language switching.
+const textSizes = new Set([
+  'xs',
+  'sm',
+  'base',
+  'lg',
+  'xl',
+  '2xl',
+  '3xl',
+  '4xl',
+  '5xl',
+  '6xl',
+  '7xl',
+  '8xl',
+  '9xl',
+]);
 const fields = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing'];
-function typographyDeclarations(token) {
+function typographyDeclarations(token, useSansFamily = false) {
   return fields
-    .map((field) => `  ${field}: var(${subVariableName(variableName(token), field)});`)
+    .map((field) =>
+      field === 'font-family' && useSansFamily
+        ? '  font-family: var(--veli-font-sans);'
+        : `  ${field}: var(${subVariableName(variableName(token), field)});`,
+    )
     .join('\n');
 }
 function dhivehiTarget(token) {
@@ -54,6 +58,11 @@ function dhivehiTarget(token) {
 
 /** Emit the Tailwind adapter from Terrazzo's validated graph, never by editing CSS. */
 export default function veliAdapter(canonical) {
+  const sansTypography = new Set(
+    entries(canonical.typography?.en)
+      .filter(([, token]) => token.$value.fontFamily === '{font.sans}')
+      .map(([id]) => `typography.en.${id}`),
+  );
   return {
     name: 'veli-adapter',
     enforce: 'post',
@@ -72,7 +81,8 @@ export default function veliAdapter(canonical) {
       );
       for (const token of Object.values(tokens)) {
         const css = transforms.get(token.id);
-        if (!css) throw new Error(`Missing canonical CSS transform: ${token.id}`);
+        if (!css && token.id !== 'font.sans')
+          throw new Error(`Missing canonical CSS transform: ${token.id}`);
         const [group, ...path] = token.id.split('.');
         const suffix = path.join('-');
         const reference = `var(${variableName(token)})`;
@@ -92,24 +102,16 @@ export default function veliAdapter(canonical) {
             add(`--${property}-${name}`, reference);
             const shorthand = name.endsWith('-default') ? name.slice(0, -8) : undefined;
             // Reserve text size names: legacy text-color aliases win Tailwind resolution.
-            if (shorthand && !(property === 'text-color' && textStyles[shorthand]))
+            if (shorthand && !(property === 'text-color' && textSizes.has(shorthand)))
               add(`--${property}-${shorthand}`, reference);
           }
         } else if (group === 'text') {
-          const styleId = `typography.en.${textStyles[path[0]]}`;
-          const style = tokens[styleId];
-          if (!style || !['font-size', 'line-height'].includes(path[1]))
-            throw new Error(`Missing English text counterpart for ${token.id}: ${styleId}`);
-          const styleVariable = variableName(style);
-          add(
-            `--text-${path[0]}${path[1] === 'line-height' ? '--line-height' : ''}`,
-            `var(${subVariableName(styleVariable, path[1])})`,
-          );
-          if (path[1] === 'font-size')
-            add(
-              `--text-${path[0]}--letter-spacing`,
-              `var(${subVariableName(styleVariable, 'letter-spacing')})`,
-            );
+          if (
+            !textSizes.has(path[0]) ||
+            !['font-size', 'line-height', 'letter-spacing'].includes(path[1])
+          )
+            throw new Error(`Unexpected text ramp token: ${token.id}`);
+          add(`--text-${path[0]}${path[1] === 'font-size' ? '' : `--${path[1]}`}`, reference);
         } else if (namespaces[group]) {
           const name = `--${namespaces[group]}-${suffix}`;
           add(name, ['breakpoints', 'container'].includes(group) ? css.value : reference);
@@ -129,7 +131,7 @@ export default function veliAdapter(canonical) {
           const metadata = token.$extensions[META];
           const utility =
             metadata.language === 'dv' ? `type-dv-${path.slice(1).join('-')}` : metadata.utility;
-          let body = typographyDeclarations(token);
+          let body = typographyDeclarations(token, sansTypography.has(token.id));
           if (path[0] === 'en') {
             const target = dhivehiTarget(token);
             if (!target || !tokens[target])
@@ -140,7 +142,8 @@ export default function veliAdapter(canonical) {
               .join('\n')}\n  }`;
           }
           utilities.push(`@utility ${utility} {\n${body}\n}`);
-        } else if (group !== 'grid') throw new Error(`Unmapped Tailwind token: ${token.id}`);
+        } else if (!['grid', 'type-metrics'].includes(group))
+          throw new Error(`Unmapped Tailwind token: ${token.id}`);
       }
       for (const name of Object.keys(canonical.grid))
         utilities.push(

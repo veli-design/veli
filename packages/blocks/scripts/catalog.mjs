@@ -397,13 +397,31 @@ export function blocksCatalog(provenance = getProvenance()) {
 export function blockMarkdown(block) {
   const { manifest, readme, files, changelog } = block;
   const example = readFileSync(resolve(packageRoot, 'examples', `${manifest.id}-next.tsx`), 'utf8');
+  /** @type {Record<string, string[]>} */
+  const exampleFiles = {
+    'error-page': ['error-page-messages.ts'],
+    'service-detail': ['service-detail-content.tsx'],
+    'page-navigation-footer': ['page-navigation-footer-content.tsx'],
+  };
+  const supportingExamples = (exampleFiles[manifest.id] ?? [])
+    .map((name) => {
+      const content = readFileSync(resolve(packageRoot, 'examples', name), 'utf8').replace(
+        "'../src/service-detail/types'",
+        "'../components/blocks/service-detail/types'",
+      );
+      return `### ${name}\n\n\`\`\`tsx\n${content.trimEnd()}\n\`\`\``;
+    })
+    .join('\n\n');
+  const exampleSection = supportingExamples
+    ? `\n\n## Application-owned example content\n\nCopy these modules beside the adapter and replace the sample data with your product content.\n\n${supportingExamples}`
+    : '';
   return `# ${manifest.title}\n\n${manifest.description}\n\nStatus: **${manifest.status}** · Version: **${manifest.version}**\n\n[Download source and update baseline](/blocks/${manifest.id}/source.tar.gz)\n\n${readme.trim()}\n\n## Tested dependency baseline\n\n${Object.entries(
     manifest.testedDependencies,
   )
     .map(([name, version]) => `- ${name}: ${version}`)
     .join(
       '\n',
-    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`\n\n## Source\n\n${files.map(({ path, bytes }) => `### ${path}\n\n\`\`\`text\n${bytes.toString('utf8').trimEnd()}\n\`\`\``).join('\n\n')}\n\n## Changelog\n\n${changelog
+    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`${exampleSection}\n\n## Source\n\n${files.map(({ path, bytes }) => `### ${path}\n\n\`\`\`text\n${bytes.toString('utf8').trimEnd()}\n\`\`\``).join('\n\n')}\n\n## Changelog\n\n${changelog
     .replace(/^## /gm, '### ')
     .replace(/^### (Added|Changed|Fixed|Removed)/gm, '#### $1')
     .trim()}\n`;

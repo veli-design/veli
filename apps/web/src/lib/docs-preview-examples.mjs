@@ -237,6 +237,39 @@ function paginationExample(language, variant) {
   );
 }
 
+function comboBoxLanguage(language) {
+  const isDhivehi = language === 'dv';
+  const text = isDhivehi
+    ? {
+        label: 'ތަން',
+        placeholder: 'ތަނެއް ހޯދާ',
+        description: 'ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ',
+        locations: { male: 'މާލެ', hulhumale: 'ހުޅުމާލެ', fuvahmulah: 'ފުވައްމުލައް ސިޓީ' },
+      }
+    : {
+        label: 'Location',
+        placeholder: 'Search location',
+        description: 'Start typing to filter options.',
+        locations: { male: "Male'", hulhumale: "Hulhumale'", fuvahmulah: 'Fuvahmulah City' },
+      };
+  return component(
+    'ComboBoxLanguageDemo',
+    "import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';",
+    `<ComboBox
+  lang="${language}"
+  dir="${isDhivehi ? 'rtl' : 'ltr'}"
+  label="${text.label}"
+  isOptional
+  placeholder="${text.placeholder}"
+  description="${text.description}"
+>
+${Object.entries(text.locations)
+  .map(([id, name]) => `  <ComboBoxItem id="${id}">${name}</ComboBoxItem>`)
+  .join('\n')}
+</ComboBox>`,
+  );
+}
+
 function languageVariants(prefix, builder) {
   return Object.fromEntries(
     ['en', 'dv'].map((language) => [`${prefix}-${language}`, builder(language)]),
@@ -245,6 +278,38 @@ function languageVariants(prefix, builder) {
 
 // Build-time sources: these are highlighted into inert templates, never shipped as a highlighter.
 export const previewCodeGroups = {
+  KbdUsageDemo: {
+    defaultKey: 'kbd-shortcut-command-k',
+    variants: Object.fromEntries(
+      [
+        ['command-k', 'Command K', ['⌘', 'K']],
+        ['control-shift-p', 'Control Shift P', ['Ctrl', 'Shift', 'P']],
+        ['escape', 'Escape', ['Esc']],
+      ].map(([id, label, keys]) => [
+        `kbd-shortcut-${id}`,
+        component(
+          'KbdUsageDemo',
+          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          keys.length === 1
+            ? `<Kbd>${keys[0]}</Kbd>`
+            : `<KbdGroup dir="ltr" aria-label="${label}">\n${keys.map((key) => `  <Kbd>${key}</Kbd>`).join('\n')}\n</KbdGroup>`,
+        ),
+      ]),
+    ),
+  },
+  KbdVariantsDemo: {
+    defaultKey: 'kbd-variant-default',
+    variants: Object.fromEntries(
+      ['default', 'inverted'].map((variant) => [
+        `kbd-variant-${variant}`,
+        component(
+          'KbdVariantsDemo',
+          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          `<KbdGroup variant="${variant}" dir="ltr" aria-label="Command Enter">\n  <Kbd>⌘</Kbd>\n  <Kbd>Enter</Kbd>\n</KbdGroup>`,
+        ),
+      ]),
+    ),
+  },
   AlertVariantsDemo: {
     defaultKey: 'alert-appearance-light',
     variants: Object.fromEntries(
@@ -278,6 +343,10 @@ export const previewCodeGroups = {
   SwitchRtlDemo: {
     defaultKey: 'switch-language-dv',
     variants: languageVariants('switch-language', switchLanguage),
+  },
+  ComboBoxRtlDemo: {
+    defaultKey: 'combobox-language-dv',
+    variants: languageVariants('combobox-language', comboBoxLanguage),
   },
   AccordionRtlDemo: {
     defaultKey: 'accordion-language-dv',

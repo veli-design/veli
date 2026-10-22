@@ -15,7 +15,7 @@ import {
   CircleIcon,
   EyeIcon,
   EyeSlashIcon,
-  InfoIcon,
+  WarningCircleIcon,
 } from '@phosphor-icons/react';
 import {
   arePasswordRequirementsMet,
@@ -31,6 +31,7 @@ import {
   FieldMessage,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
+  fieldInputAutofill,
   hasRenderableMessage,
 } from './field-shared.js';
 import { useVeliLanguage } from './provider.js';
@@ -79,7 +80,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-1 rounded-md overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -275,7 +276,7 @@ const visibilityToggleVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -430,10 +431,7 @@ function focusInputFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: b
 }
 
 const PASSWORD_VISIBILITY_ICON_SIZE = 20;
-
-function getPasswordIconSize(size: 'sm' | 'md' | 'lg' | null | undefined) {
-  return size === 'lg' ? 20 : 16;
-}
+const PASSWORD_ERROR_ICON_SIZE = 16;
 
 interface PasswordRequirementIndicatorProps {
   isMet: boolean;
@@ -616,7 +614,6 @@ export function PasswordInput({
   const revealed = isRevealedControlled ? isRevealed : uncontrolledRevealed;
   const passwordValue = value === undefined ? uncontrolledValue : String(value);
   const resolvedSize = size ?? 'md';
-  const iconSize = getPasswordIconSize(resolvedSize);
   const visibilityLabels = visibilityToggleDefaultAriaLabels[languageConfig.language];
 
   const setRevealed = React.useCallback(
@@ -722,7 +719,7 @@ export function PasswordInput({
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>
-                  <InfoIcon size={iconSize} weight="fill" />
+                  <WarningCircleIcon size={PASSWORD_ERROR_ICON_SIZE} weight="fill" />
                 </div>
               ) : showVisibilityToggle ? (
                 <AriaButton

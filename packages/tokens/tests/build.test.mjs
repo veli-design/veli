@@ -33,6 +33,12 @@ test('every source token is represented or explicitly excluded, including hybrid
   assert.equal(canonical.color.border.base.default.$type, 'color');
   assert.equal(canonical.color.border.base.subtle.$value, '{color.neutral.alpha.300}');
   assert.equal(canonical.shadow['focus-ring'].$type, 'shadow');
+  assert.equal(canonical.radius.field.$value.value, 10);
+  assert.equal(canonical['font-weight']['dhivehi-regular'].$value, '{font-weight.regular}');
+  assert.equal(
+    canonical['font-weight']['dhivehi-regular'].$extensions['org.veli'].figmaStyleName,
+    'Regular',
+  );
   assert.equal(Object.keys(canonical.grid).length, 6);
   assert.equal(entries(canonical.typography).length, entries(raw['Typography-styles']).length);
 });
@@ -58,6 +64,15 @@ test('DTCG exports contain standard types, typed motion, canonical paths and bot
     parsed.resolver.apply({ tzMode: 'Dark' })['color.alert.high-contrast.info.bg'].$value,
     parsed.resolver.apply({ tzMode: 'Dark' })['color.blue.1000'].$value,
   );
+  for (const token of [
+    canonical.typography.dv.body.lg.regular,
+    canonical.typography.dv.body.md.regular,
+    canonical.typography.dv.body.sm.regular,
+    canonical.typography.dv.caption.regular,
+  ]) {
+    assert.equal(token.$value.fontWeight, '{font-weight.dhivehi-regular}');
+    assert.equal(token.$extensions['org.veli'].style.fontStyle, 'Regular');
+  }
 });
 test('authored OKLCH survives exactly in canonical CSS, with Light/Dark parity', () => {
   const css = files['tokens.css'];
@@ -111,18 +126,61 @@ test('typography follows Figma composites and produces language counterparts and
   const theme = files['tailwind-theme.css'];
   assert.ok(theme.includes('@utility type-display-1-regular'));
   assert.ok(theme.includes('&:lang(dv)'));
-  assert.equal(canonical.typography.en.display.lg.regular.$value.lineHeight, 1.32);
-  assert.deepEqual(canonical.typography.en.display.lg.regular.$value.letterSpacing, {
-    value: -1.92,
-    unit: 'px',
-  });
+  assert.equal(canonical.typography.en.display.lg.regular.$value.lineHeight, 84 / 64);
+  assert.equal(
+    canonical.typography.en.display.lg.regular.$value.letterSpacing,
+    '{type-metrics.en.display.lg.letter-spacing}',
+  );
+  assert.deepEqual(
+    {
+      fontFamily: canonical.typography.dv.body.md.regular.$value.fontFamily,
+      lineHeight: canonical.typography.dv.body.md.regular.$value.lineHeight,
+      letterSpacing: canonical.typography.dv.body.md.regular.$value.letterSpacing,
+    },
+    {
+      fontFamily: '{font.dhivehi-regular}',
+      lineHeight: 32 / 17,
+      letterSpacing: '{type-metrics.dv.body.md.regular.letter-spacing}',
+    },
+  );
   assert.ok(
     files['tokens.css'].includes(
-      '--veli-typography-en-display-lg-regular-letter-spacing: -0.03em;',
+      '--veli-typography-en-display-lg-regular-letter-spacing: var(--veli-type-metrics-en-display-lg-letter-spacing);',
     ),
   );
   assert.ok(theme.includes('@utility grid-style-xs'));
   assert.ok(theme.includes('padding-inline: var(--veli-grid-xs-columnmargin)'));
+});
+test('English typography and font-sans share an overridable font token', async () => {
+  const styles = entries(canonical.typography.en);
+  assert.equal(styles.length, 52);
+  for (const [id, token] of styles) assert.equal(token.$value.fontFamily, '{font.sans}', id);
+
+  const css = files['tokens.css'];
+  assert.match(
+    css,
+    /:where\(:root, :host\) \{\s*--veli-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;/,
+  );
+  assert.equal([...css.matchAll(/--veli-font-sans:/g)].length, 1);
+  assert.match(css, /--veli-typography-en-body-md-regular-font-family: var\(--veli-font-sans\);/);
+  assert.match(
+    css,
+    /--veli-typography-dv-body-md-regular-font-family: var\(--veli-font-dhivehi-regular\);/,
+  );
+  assert.match(css, /--veli-font-dhivehi-faseyha: var\(--veli-font-dhivehi-regular\);/);
+
+  const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
+  const { compile } = require('tailwindcss');
+  const compiler = await compile(
+    files['tailwind-theme.css'].replace("@import './tokens.css';", '') + '\n@tailwind utilities;',
+  );
+  const result = compiler.build(['font-sans', 'type-body-md-regular']);
+  assert.match(result, /\.font-sans \{\s*font-family: var\(--veli-font-sans\);/);
+  assert.match(result, /\.type-body-md-regular \{\s*font-family: var\(--veli-font-sans\);/);
+  assert.match(
+    result,
+    /&:lang\(dv\) \{\s*font-family: var\(--veli-typography-dv-body-md-regular-font-family\);/,
+  );
 });
 test('Tailwind compilation resolves aliases and uses literal query thresholds', async () => {
   const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
@@ -210,41 +268,29 @@ test('Color styles normalize into the shared graph and ambiguous CSS names fail'
   );
 });
 
-test('generic Tailwind text sizes compile with exact English style companions', async () => {
-  const mapping = {
-    xs: 'caption-regular',
-    sm: 'body-sm-regular',
-    base: 'body-md-regular',
-    lg: 'body-lg-regular',
-    xl: 'subtitle-regular',
-    '2xl': 'title-2-regular',
-    '3xl': 'title-1-regular',
-    '4xl': 'heading-4-regular',
-    '5xl': 'heading-3-regular',
-    '6xl': 'heading-2-regular',
-    '7xl': 'heading-1-regular',
-    '8xl': 'display-md-regular',
-    '9xl': 'display-lg-regular',
-  };
+test('generic Tailwind text sizes follow Figma text aliases', async () => {
+  const sizes = Object.keys(raw.text);
   const require = createRequire(new URL('../../../apps/storybook/package.json', import.meta.url));
   const { compile } = require('tailwindcss');
   const compiler = await compile(
     files['tailwind-theme.css'].replace("@import './tokens.css';", '') + '\n@tailwind utilities;',
   );
   const result = compiler.build([
-    ...Object.keys(mapping).map((size) => `text-${size}`),
+    ...sizes.map((size) => `text-${size}`),
     'text-sm/6',
     'tracking-wide',
     'font-medium',
     'type-body-sm-regular',
   ]);
-  for (const [size, style] of Object.entries(mapping)) {
+  for (const size of sizes) {
     const rule = [...result.matchAll(new RegExp(`\\.text-${size} \\{([^}]+)\\}`, 'g'))]
       .map((match) => match[1])
       .find((body) => body.includes('font-size:'));
     assert.ok(rule, `Missing size utility: ${size}`);
-    for (const field of ['font-size', 'line-height', 'letter-spacing'])
-      assert.ok(rule.includes(`--veli-typography-en-${style}-${field}`), `${size}: ${field}`);
+    for (const field of ['font-size', 'line-height', 'letter-spacing']) {
+      assert.ok(rule.includes(`--veli-text-${size}-${field}`), `${size}: ${field}`);
+      assert.match(canonical.text[size][field].$value, /^\{type-metrics\.en\./);
+    }
     assert.ok(!rule.includes('font-family:') && !rule.includes('font-weight:'));
     assert.ok(!rule.includes('typography-dv-'));
   }
@@ -253,10 +299,14 @@ test('generic Tailwind text sizes compile with exact English style companions', 
   assert.ok(result.includes('.font-medium'));
   assert.ok(result.includes('&:lang(dv)'));
   assert.ok(
-    files['tokens.css'].includes('--veli-typography-en-caption-regular-letter-spacing: 0.015em;'),
+    files['tokens.css'].includes(
+      '--veli-typography-en-caption-regular-letter-spacing: var(--veli-type-metrics-en-caption-letter-spacing);',
+    ),
   );
   assert.ok(
-    files['tokens.css'].includes('--veli-typography-en-body-sm-regular-line-height: 1.45;'),
+    files['tokens.css'].includes(
+      '--veli-text-sm-line-height: var(--veli-type-metrics-en-body-sm-line-height);',
+    ),
   );
 });
 
@@ -297,4 +347,40 @@ test('authored web spacing references resolve against canonical CSS', () => {
     }
   }
   assert.ok(references > 0);
+});
+
+test('high-contrast Button aliases retain the approved Light/Dark color modes', async () => {
+  const parsed = await parse({
+    src: files['tokens.json'],
+    filename: new URL('src/design.tokens.json', root),
+  });
+  for (const mode of ['Light', 'Dark']) {
+    const tokens = parsed.resolver.apply(mode === 'Dark' ? { tzMode: mode } : {});
+    const value = (id) => tokens[`color.${id}`].$value;
+    for (const [state, step] of [
+      ['default', 100],
+      ['hover', 200],
+      ['pressed', 300],
+      ['foreground', 1200],
+    ]) {
+      assert.deepEqual(
+        value(`button.onhighcontrast.secondary.fill.${state}`),
+        value(`neutral.${step}`),
+      );
+    }
+    assert.deepEqual(value('button.onhighcontrast.focus'), value('neutral.100'));
+    assert.deepEqual(
+      value('button.onhighcontrast.secondary.transparent.foreground'),
+      value('neutral.100'),
+    );
+    for (const [state, alpha] of [
+      ['default', 0.12],
+      ['hover', 0.2],
+      ['pressed', 0.28],
+    ]) {
+      const color = value(`button.onhighcontrast.secondary.transparent.${state}`);
+      assert.equal(color.alpha, alpha);
+      assert.equal(color.components[0], mode === 'Light' ? 0 : 1);
+    }
+  }
 });

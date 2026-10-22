@@ -52,8 +52,16 @@ export function cssTransform(canonical) {
       { ...token, partialAliasOf: partialAliases(value) },
       options,
     );
-    if (token.$type === 'typography' && metadata?.letterSpacing)
-      return { ...transformed, 'letter-spacing': metadata.letterSpacing };
+    if (token.$type === 'typography') {
+      if (metadata?.letterSpacing) transformed['letter-spacing'] = metadata.letterSpacing;
+      if (metadata?.lineHeight) {
+        const line = metadata.lineHeight;
+        transformed['line-height'] =
+          typeof line === 'string'
+            ? `var(${variableName({ id: line.slice(1, -1) })})`
+            : `${line.value}px`;
+      }
+    }
     return transformed;
   };
 }
@@ -64,6 +72,8 @@ export function configFor(canonical, outDir = new URL('dist/', root)) {
     if (names.has(name)) throw new Error(`Canonical CSS naming collision: ${name}`);
     names.add(name);
   }
+  // Keep the host's font binding above Veli's default in the cascade, regardless of import order.
+  const sansDefault = `:where(:root, :host) {\n  --veli-font-sans: ${JSON.stringify(canonical.font.sans.$value)}, ui-sans-serif, system-ui, sans-serif;\n}`;
   return defineConfig(
     {
       tokens: [new URL('src/design.tokens.json', root)],
@@ -73,13 +83,14 @@ export function configFor(canonical, outDir = new URL('dist/', root)) {
         css({
           filename: 'tokens.css',
           variableName,
+          exclude: ['font.sans'],
           omitTypographyShorthand: true,
           transform: cssTransform(canonical),
           permutations: [
             {
               input: { tzMode: '.' },
               prepare: (contents) =>
-                `:root:not(.dark), :host:not(.dark), .light {\n  color-scheme: light;\n${contents}\n}`,
+                `${sansDefault}\n\n:root:not(.dark), :host:not(.dark), .light {\n  color-scheme: light;\n${contents}\n}`,
             },
             {
               input: { tzMode: 'Dark' },

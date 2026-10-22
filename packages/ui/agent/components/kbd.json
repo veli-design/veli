@@ -1,0 +1,42 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "kbd",
+  "apiPattern": "multi-part",
+  "purpose": "Displays keyboard keys and multi-key shortcuts.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "optional"
+  },
+  "useWhen": [
+    "Documenting a keyboard key or shortcut.",
+    "Showing a shortcut alongside a menu item or help hint."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The element must capture keyboard input.",
+      "guidance": "Kbd is display-only; implement keyboard handling separately."
+    }
+  ],
+  "supportedInteractions": [],
+  "approvedPatterns": [
+    "Use Kbd for one key.",
+    "Use KbdGroup for key combinations.",
+    "Choose default or inverted to match the surrounding component; both follow the active theme."
+  ],
+  "limitations": [
+    "Kbd supports Latin key labels and shortcut glyphs only; Dhivehi key typography is unsupported.",
+    "Kbd does not register or handle shortcuts.",
+    "Group treatment only propagates to direct Kbd children without their own treatment."
+  ],
+  "accessibility": [
+    "Label a shortcut group when the visible glyphs are not self-explanatory.",
+    "Mark decorative key icons as hidden from assistive technology."
+  ],
+  "responsive": ["Shortcut groups remain inline and do not wrap internally."],
+  "rtl": [
+    "Keep the default lang=en for Latin shortcut labels, including inside a Dhivehi provider; lang=dv activates unsupported key typography.",
+    "Set dir=ltr on Latin shortcut groups to preserve modifier-first order in RTL layouts; the group otherwise inherits direction."
+  ],
+  "relatedComponents": ["menu", "tooltip"]
+}

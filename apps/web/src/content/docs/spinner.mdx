@@ -1,0 +1,60 @@
+---
+title: Spinner
+description: Indeterminate loading indicator for pending actions and content.
+---
+
+import { LoadingUsageDemo } from '../../components/LoadingExamples';
+
+# Spinner
+
+Use `Spinner` for indeterminate loading. Pair it with [LoadingText](/docs/loading-text/) when a short label should explain the pending action. Spinners follow Veli themes and respect reduced motion.
+
+## Import
+
+```tsx
+import { Spinner } from '@tradenetcorp/veli-ui/spinner';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <LoadingUsageDemo client:visible />
+</div>
+
+```tsx
+<Spinner size="lg" aria-label="Loading notifications" />
+<Spinner variant="button" aria-label="Saving" />
+```
+
+Pending buttons use the shared compact spinner by default. Button retains the original label and width while it is busy:
+
+```tsx
+<Button isPending={isSaving}>Save changes</Button>
+```
+
+The default spinner uses the general loading animation. The `button` variant uses the compact animation and inherits its text colour. Override the default spinner's colour or dimensions with `className`.
+
+## Accessibility and reduced motion
+
+`Spinner` provides `role="status"`. Give it a translated `aria-label`; its default is “Loading” in the current Veli language.
+
+When a parent already announces progress, pass `aria-hidden="true"` to avoid duplicate announcements. Keep pending action controls disabled through their own component's pending state; a loading indicator alone does not block activation.
+
+```tsx
+<div role="status">
+  <Spinner aria-hidden="true" />
+  <span className="sr-only">Loading notifications…</span>
+</div>
+```
+
+With reduced motion enabled, the spinner shows a static dotted ring.
+
+## API Reference
+
+| Prop        | Type                    | Default     | Description                                                    |
+| :---------- | :---------------------- | :---------- | :------------------------------------------------------------- |
+| `variant`   | `'default' \| 'button'` | `'default'` | Select the general or compact animation.                       |
+| `size`      | `'sm' \| 'md' \| 'lg'`  | `'md'`      | Indicator size: 20, 24 or 32px with the default spacing scale. |
+| `className` | `string`                | —           | Override colour, dimensions or layout.                         |
+
+Supports standard HTML `span` attributes and a `ref` to the root span. `Spinner` does not accept children.

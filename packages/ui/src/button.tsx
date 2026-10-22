@@ -22,11 +22,11 @@ import {
   mergeProps,
 } from 'react-aria';
 import { filterDOMProps } from 'react-aria/filterDOMProps';
-import { CircleNotchIcon } from '@phosphor-icons/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { hasAccessibleName, invariantDev } from './a11y.js';
 import type { RefProp } from './ref.js';
+import { Spinner } from './spinner.js';
 import { useVeliLanguage } from './provider-shared.js';
 
 const buttonVariants = cva(
@@ -59,15 +59,16 @@ const buttonVariants = cva(
         ghost: 'bg-transparent',
       },
       size: {
-        // Figma hugs the content plus padding, including translated or wrapped labels.
-        xs: 'px-1.5 py-1.5',
-        sm: 'px-2 py-2',
-        md: 'px-3 py-2.5',
-        lg: 'px-3.5 py-3',
-        xl: 'px-4.5 py-4',
+        // Figma reduces Dhivehi padding to keep the same height with its taller typography.
+        xs: 'px-1.5 py-1.5 [&:lang(dv)]:py-0.5',
+        sm: 'px-2 py-2 [&:lang(dv)]:py-1',
+        md: 'px-3 py-2.5 [&:lang(dv)]:py-1.5',
+        lg: 'px-3.5 py-3 [&:lang(dv)]:py-2',
+        xl: 'px-4.5 py-4 [&:lang(dv)]:py-3.5',
       },
+      highContrast: { true: '', false: '' },
       iconOnly: {
-        true: 'shrink-0 p-0',
+        true: 'shrink-0 p-0 [&:lang(dv)]:py-0',
         false: '',
       },
     },
@@ -93,18 +94,21 @@ const buttonVariants = cva(
       {
         intent: 'secondary',
         appearance: 'fill',
+        highContrast: false,
         className:
           'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
+        highContrast: false,
         className:
           'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
+        highContrast: false,
         className:
           'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
@@ -132,6 +136,34 @@ const buttonVariants = cva(
         className:
           'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
       },
+      // Figma specifies pressed fills without an additional high-contrast ripple color.
+      {
+        intent: 'secondary',
+        highContrast: true,
+        className:
+          'focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-button-onhighcontrast-focus focus-visible:ring-0 focus-visible:ring-offset-0 data-[disabled]:opacity-50 [--button-ripple-color:transparent]',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'fill',
+        highContrast: true,
+        className:
+          'bg-button-onhighcontrast-secondary-fill text-button-onhighcontrast-secondary-fill-foreground data-[hovered]:bg-button-onhighcontrast-secondary-fill-hover data-[pressed]:bg-button-onhighcontrast-secondary-fill-pressed data-[disabled]:bg-button-onhighcontrast-secondary-fill data-[disabled]:text-button-onhighcontrast-secondary-fill-foreground',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'transparent',
+        highContrast: true,
+        className:
+          'bg-button-onhighcontrast-secondary-transparent text-button-onhighcontrast-secondary-transparent-foreground data-[hovered]:bg-button-onhighcontrast-secondary-transparent-hover data-[pressed]:bg-button-onhighcontrast-secondary-transparent-pressed data-[disabled]:bg-button-onhighcontrast-secondary-transparent data-[disabled]:text-button-onhighcontrast-secondary-transparent-foreground',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'ghost',
+        highContrast: true,
+        className:
+          'bg-transparent text-button-onhighcontrast-secondary-transparent-foreground data-[hovered]:bg-button-onhighcontrast-secondary-transparent data-[pressed]:bg-button-onhighcontrast-secondary-transparent-hover data-[disabled]:bg-transparent data-[disabled]:text-button-onhighcontrast-secondary-transparent-foreground',
+      },
       { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
       { size: 'sm', iconOnly: true, className: 'h-9 w-9' },
       { size: 'md', iconOnly: true, className: 'h-11 w-11' },
@@ -143,6 +175,7 @@ const buttonVariants = cva(
       appearance: 'fill',
       size: 'md',
       iconOnly: false,
+      highContrast: false,
     },
   },
 );
@@ -212,6 +245,8 @@ interface ButtonSharedProps
     RefProp<HTMLButtonElement> {
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   isLoading?: boolean;
+  /** Optional decorative visual for isLoading/isPending; the shared button spinner is used when omitted. */
+  loadingIndicator?: React.ReactNode;
   className?: string;
 }
 
@@ -254,6 +289,8 @@ interface ButtonLinkSharedProps
   excludeFromTabOrder?: boolean;
   isLoading?: boolean;
   isPending?: boolean;
+  /** Optional decorative visual for isLoading/isPending. */
+  loadingIndicator?: React.ReactNode;
   'aria-busy'?: React.AriaAttributes['aria-busy'];
   'aria-current'?: React.AriaAttributes['aria-current'];
   className?: string;
@@ -322,11 +359,7 @@ function ButtonLoadingIndicator({ size }: { size: ButtonProps['size'] }) {
       aria-label={language === 'dv' ? 'ލޯޑުވަނީ' : 'Loading'}
       className="inline-flex shrink-0 items-center justify-center"
     >
-      <CircleNotchIcon
-        aria-hidden="true"
-        weight="bold"
-        className={twMerge(loadingIndicatorVariants({ size }), 'motion-safe:animate-spin')}
-      />
+      <Spinner variant="button" aria-hidden="true" className={loadingIndicatorVariants({ size })} />
     </span>
   );
 }
@@ -336,12 +369,14 @@ function ButtonContent({
   hasChildren,
   isIconOnly,
   isLoading,
+  loadingIndicator,
   size,
 }: {
   children: React.ReactNode;
   hasChildren: boolean;
   isIconOnly: boolean;
   isLoading: boolean;
+  loadingIndicator?: React.ReactNode;
   size: ButtonProps['size'];
 }) {
   return (
@@ -364,7 +399,7 @@ function ButtonContent({
             hasChildren ? 'absolute inset-0' : 'h-lh',
           )}
         >
-          <ButtonLoadingIndicator size={size} />
+          {loadingIndicator ?? <ButtonLoadingIndicator size={size} />}
         </span>
       ) : null}
     </>
@@ -559,11 +594,13 @@ function ActionButton({
   as: elementType = 'button',
   intent,
   appearance,
+  highContrast = false,
   size,
   children,
   iconOnly,
   isLoading,
   isPending,
+  loadingIndicator,
   isDisabled,
   className,
   onPointerMove,
@@ -599,11 +636,11 @@ function ActionButton({
 
   invariantDev(
     !isIconOnly || hasButtonAccessibleName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !resolvedPending || hasChildren || hasButtonAccessibleName,
-    'Coral UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
   );
 
   const { buttonRef, buttonEventHandlers } = useButtonRipple({
@@ -646,6 +683,7 @@ function ActionButton({
           buttonVariants({
             intent: resolvedIntent,
             appearance: resolvedAppearance,
+            highContrast: resolvedIntent === 'secondary' && Boolean(highContrast),
             size: resolvedSize,
             iconOnly: isIconOnly,
           }),
@@ -675,6 +713,7 @@ function ActionButton({
         <ButtonContent
           hasChildren={hasChildren}
           isLoading={pending}
+          loadingIndicator={loadingIndicator}
           isIconOnly={isIconOnly}
           size={resolvedSize}
         >
@@ -692,11 +731,13 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     as: elementType,
     intent,
     appearance,
+    highContrast = false,
     size,
     children,
     iconOnly,
     isLoading,
     isPending,
+    loadingIndicator,
     isDisabled,
     onPointerMove,
     onPointerUp,
@@ -824,6 +865,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       buttonVariants({
         intent: resolvedIntent,
         appearance: resolvedAppearance,
+        highContrast: resolvedIntent === 'secondary' && Boolean(highContrast),
         size: resolvedSize,
         iconOnly: isIconOnly,
       }),
@@ -837,6 +879,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       <ButtonContent
         hasChildren={hasChildren}
         isLoading={pending}
+        loadingIndicator={loadingIndicator}
         isIconOnly={isIconOnly}
         size={resolvedSize}
       >

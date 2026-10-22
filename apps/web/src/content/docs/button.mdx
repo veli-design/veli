@@ -5,6 +5,7 @@ description: Accessible action and link button with semantic intents, sizes, ico
 
 import {
   ButtonIconsDemo,
+  ButtonHighContrastDemo,
   ButtonNavigationDemo,
   ButtonRtlDemo,
   ButtonSizesDemo,
@@ -49,6 +50,34 @@ Choose `primary`, `secondary`, or `danger` with a `fill`, `transparent`, or `gho
 <Button intent="danger" appearance="ghost">Delete</Button>
 <Button intent="accent">Featured action</Button>
 ```
+
+## High contrast
+
+Use `highContrast` for secondary actions on a prominent surface, such as an informational Toast. This version of Veli UI requires `@tradenetcorp/veli-tokens` `^0.10.0`; upgrade tokens alongside UI to include the high-contrast colors.
+
+The prop defaults to `false`. Set it explicitly on each secondary button; it supports `fill`, `transparent`, and `ghost`, including link and icon-only buttons. Other intents ignore it.
+
+<div className="preview mb-4 rounded-lg border border-base-subtle p-4">
+  <ButtonHighContrastDemo client:visible />
+</div>
+
+```tsx
+<div className="flex flex-wrap gap-3 rounded-xl bg-status-info-emphasis p-6">
+  <Button intent="secondary" highContrast>
+    Install now
+  </Button>
+  <Button intent="secondary" appearance="transparent" highContrast>
+    View details
+  </Button>
+  <Button intent="secondary" appearance="ghost" highContrast>
+    Later
+  </Button>
+</div>
+```
+
+The background belongs to the surrounding surface; `highContrast` changes the Button colors. Keep it off on ordinary page surfaces. On a colored surface, check the label, hover, pressed and keyboard focus states in both themes. Button does not detect backgrounds or inherit high contrast from a Toast or Alert automatically.
+
+High-contrast disabled buttons retain their colors at 50% opacity. The focus ring has a transparent gap so the surrounding surface remains visible.
 
 ## Icons
 
@@ -227,6 +256,14 @@ React Aria Link styled as a Button is the semantic model. Veli uses `useLink` so
 
 Official references: [React Aria Link](https://react-aria.adobe.com/Link), [Next App Link](https://nextjs.org/docs/app/api-reference/components/link), [Next Pages Link](https://nextjs.org/docs/pages/api-reference/components/link), [TanStack custom links](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link), and [React Router Link](https://reactrouter.com/api/components/Link).
 
+Button uses the shared compact button spinner by default while keeping its size, accessible label and pending behavior. Use `loadingIndicator` only when supplying a custom decorative pending visual.
+
+```tsx
+<Button isPending={isSaving} onPress={handleSave}>
+  Save changes
+</Button>
+```
+
 ## API Reference
 
 Button uses React Aria [`Button`](https://react-aria.adobe.com/Button) for actions and [`useLink`](https://react-aria.adobe.com/Link/useLink) for navigation. Select the semantic mode with `as`; the mode determines the required props, native element, and ref type.
@@ -254,16 +291,18 @@ An icon-only button requires `iconOnly: true` and a non-empty `aria-label` or `a
 
 These props apply in both modes. Defaults describe a standalone Button; supported React Aria context props can supply inherited values.
 
-| Prop         | Type                                                       | Default     | Description                                                                                                                  |
-| :----------- | :--------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `as`         | `'button' \| 'a'`                                          | `'button'`  | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
-| `intent`     | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'` | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
-| `appearance` | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`    | Surface treatment in either mode.                                                                                            |
-| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`      | Text and icon-only size.                                                                                                     |
-| `iconOnly`   | `boolean`                                                  | `false`     | Square icon control. Requires an accessible name.                                                                            |
-| `isLoading`  | `boolean`                                                  | `false`     | Shows a spinner, sets `aria-busy`, and prevents activation while retaining focus.                                            |
-| `children`   | `ReactNode`                                                | -           | Label and optional icons. Function-valued children are not supported. Keep children mounted while loading to preserve width. |
-| `className`  | `string`                                                   | -           | Classes merged onto the native root. Function-valued classes are not supported.                                              |
+| Prop               | Type                                                       | Default          | Description                                                                                                                  |
+| :----------------- | :--------------------------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `as`               | `'button' \| 'a'`                                          | `'button'`       | Selects action or navigation semantics. Navigation requires `href` or `render`.                                              |
+| `intent`           | `'primary' \| 'secondary' \| 'danger' \| 'accent' \| null` | `'primary'`      | Semantic emphasis. Accent always uses the fill appearance.                                                                   |
+| `appearance`       | `'fill' \| 'transparent' \| 'ghost' \| null`               | `'fill'`         | Surface treatment in either mode.                                                                                            |
+| `highContrast`     | `boolean`                                                  | `false`          | Explicit high-contrast treatment for secondary fill, transparent and ghost buttons.                                          |
+| `size`             | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| null`             | `'md'`           | Text and icon-only size.                                                                                                     |
+| `iconOnly`         | `boolean`                                                  | `false`          | Square icon control. Requires an accessible name.                                                                            |
+| `loadingIndicator` | `ReactNode`                                                | Built-in spinner | Decorative pending visual, rendered only during `isLoading` or `isPending`. Works for action and navigation buttons.         |
+| `isLoading`        | `boolean`                                                  | `false`          | Shows a spinner, sets `aria-busy`, and prevents activation while retaining focus.                                            |
+| `children`         | `ReactNode`                                                | -                | Label and optional icons. Function-valued children are not supported. Keep children mounted while loading to preserve width. |
+| `className`        | `string`                                                   | -                | Classes merged onto the native root. Function-valued classes are not supported.                                              |
 
 Passing `null` for `intent`, `appearance`, or `size` resolves to the listed default. An accent intent resolves to fill regardless of `appearance`.
 

@@ -1,9 +1,9 @@
 import process from 'node:process';
 import console from 'node:console';
-import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
+import { spawnSyncCorepack } from '../../../scripts/corepack.mjs';
 import { tokenFixture } from './token-fixture.mjs';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
 
@@ -16,8 +16,7 @@ mkdirSync(target, { recursive: true });
 cpSync(resolve(packageRoot, 'fixtures/next'), target, { recursive: true });
 // Exercise Storybook play functions against the same canonical imports in a real browser.
 // Build its workspace dependencies first: fresh checkouts have no generated token CSS or UI dist.
-const storybookBuild = spawnSync(
-  'corepack',
+const storybookBuild = spawnSyncCorepack(
   ['pnpm', 'exec', 'turbo', 'build', '--filter=@tradenetcorp/veli-storybook'],
   {
     cwd: resolve(packageRoot, '../..'),
@@ -35,6 +34,8 @@ cpSync(
 function adapterFileName(id) {
   if (id === 'site-footer') return 'footer-adapter.tsx';
   if (id === 'site-header') return 'header-adapter.tsx';
+  if (id === 'site-shell') return 'shell-adapter.tsx';
+  if (id === 'preview-banner') return 'preview-banner-adapter.tsx';
   if (id === 'notification-tray') return 'notification-adapter.tsx';
   if (id === 'account-panel') return 'account-adapter.tsx';
   return `${id}-adapter.tsx`;
@@ -52,14 +53,48 @@ for (const block of getBlocks()) {
   cpSync(resolve(packageRoot, 'examples', exampleName), adapter);
   writeFileSync(
     adapter,
-    readFileSync(adapter, 'utf8').replace("'../components/", "'./components/"),
+    // Examples may import several blocks; rewrite every relative components import.
+    readFileSync(adapter, 'utf8').replaceAll("'../components/", "'./components/"),
   );
 }
 
+// Application-owned example content is shared by docs, stories and the copied adapters.
+for (const name of [
+  'error-page-messages.ts',
+  'page-navigation-footer-content.tsx',
+  'service-detail-content.tsx',
+]) {
+  cpSync(resolve(packageRoot, 'examples', name), resolve(target, name));
+  if (name === 'service-detail-content.tsx') {
+    const path = resolve(target, name);
+    writeFileSync(
+      path,
+      readFileSync(path, 'utf8').replace(
+        "'../src/service-detail/types'",
+        "'./components/blocks/service-detail/types'",
+      ),
+    );
+  }
+}
+
+mkdirSync(resolve(target, 'public/blocks'), { recursive: true });
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/public/blocks/example-organization-emblem.svg'),
+  resolve(target, 'public/blocks/example-organization-emblem.svg'),
+);
+
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
+cpSync(
+  resolve(packageRoot, '../../apps/web/public/fonts/inter-latin.woff2'),
+  resolve(target, 'public/fonts/inter-latin.woff2'),
+);
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),
   resolve(target, 'public/fonts/MV_Faseyha_Regular.ttf'),
+);
+cpSync(
+  resolve(packageRoot, '../../apps/storybook/public/fonts/MV_A_Waheed_Bold_2.ttf'),
+  resolve(target, 'public/fonts/MV_A_Waheed_Bold_2.ttf'),
 );
 if (process.argv.includes('--prepare')) {
   console.log(target);
@@ -115,7 +150,7 @@ for (const args of [
   ['pnpm', 'test'],
 ]) {
   if (args[1] === 'test') await tokenFixture(target);
-  const result = spawnSync('corepack', args, { cwd: target, env, stdio: 'inherit' });
+  const result = spawnSyncCorepack(args, { cwd: target, env, stdio: 'inherit' });
   if (result.status !== 0)
     throw new Error(`Consumer check failed: ${args.join(' ')}. Fixture retained at ${target}`);
 }

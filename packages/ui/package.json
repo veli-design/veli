@@ -1,7 +1,12 @@
 {
   "name": "@tradenetcorp/veli-ui",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Accessible React primitives for the Veli Design System.",
+  "keywords": [
+    "design-system",
+    "react",
+    "accessibility"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tradenetcorp/veli.git",
@@ -15,11 +20,14 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "tailwind.css"
+    "tailwind.css",
+    "agent",
+    "AGENT_GUIDE.md"
   ],
   "exports": {
     "./package.json": "./package.json",
     "./tailwind": "./tailwind.css",
+    "./manifest": "./agent/manifest.json",
     "./theme-script": {
       "types": "./dist/theme-script.d.ts",
       "import": "./dist/theme-script.js",
@@ -180,11 +188,6 @@
       "import": "./dist/tags.js",
       "default": "./dist/tags.js"
     },
-    "./page-tab": {
-      "types": "./dist/page-tab.d.ts",
-      "import": "./dist/page-tab.js",
-      "default": "./dist/page-tab.js"
-    },
     "./pagination": {
       "types": "./dist/pagination.d.ts",
       "import": "./dist/pagination.js",
@@ -209,16 +212,27 @@
       "types": "./dist/tooltip.d.ts",
       "import": "./dist/tooltip.js",
       "default": "./dist/tooltip.js"
+    },
+    "./spinner": {
+      "types": "./dist/spinner.d.ts",
+      "import": "./dist/spinner.js",
+      "default": "./dist/spinner.js"
+    },
+    "./loading-text": {
+      "types": "./dist/loading-text.d.ts",
+      "import": "./dist/loading-text.js",
+      "default": "./dist/loading-text.js"
     }
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "test": "corepack pnpm run build && node --test tests/*.test.mjs",
+    "test": "corepack pnpm --filter @tradenetcorp/veli-tokens run build && corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
     "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
     "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
   },
   "peerDependencies": {
+    "@tradenetcorp/veli-tokens": "^0.10.0",
     "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0"
@@ -231,6 +245,7 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
+    "@tradenetcorp/veli-tokens": "workspace:*",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "react": "^19.0.0",

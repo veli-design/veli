@@ -13,6 +13,7 @@ const groups = new Set([
   'radius',
   'spacing',
   'text',
+  'type-metrics',
   'tracking',
   'ease',
   'duration',
@@ -81,6 +82,23 @@ function dimension(value, label) {
     throw new Error(`${label}: expected a px/rem dimension`);
   return result;
 }
+function lineHeightValues(line, size, label) {
+  if (size.value <= 0) throw new Error(`${label}: expected a positive font size`);
+  const percentage =
+    typeof line === 'string' && /^-?\d+(?:\.\d+)?%$/.test(line)
+      ? Number(line.slice(0, -1))
+      : line?.unit === '%'
+        ? line.value
+        : undefined;
+  // Match the exporter's existing 16px rem normalization. Bare source numbers are pixels.
+  const pixels = (value) => value.value * (value.unit === 'rem' ? 16 : 1);
+  const height =
+    percentage !== undefined ? (percentage / 100) * pixels(size) : pixels(dimension(line, label));
+  const ratio = percentage !== undefined ? percentage / 100 : height / pixels(size);
+  if (!Number.isFinite(ratio) || !Number.isFinite(height))
+    throw new Error(`${label}: expected a finite line height`);
+  return { ratio, pixels: height };
+}
 function structuredColor(value, description, mode, label, requireAuthored = true) {
   if (alias(value)) return value;
   const pattern = new RegExp(`OKLCH\\s+${mode}\\s*:\\s*(oklch\\([^)]*\\))`, 'i');
@@ -148,9 +166,6 @@ export function normalize(figma, motion) {
       let target = value.slice(1, -1);
       target =
         {
-          'typography.font.sans': 'font.sans',
-          'typography.font.mono': 'font.mono',
-          'typography.font.dhivehi': 'font.dhivehi',
           'colors.fg.border.focus': 'color.semantics.border.focus',
           'colors.bg.surface.surface-raised': 'color.semantics.bg.surface.raised',
         }[target] ?? target;
@@ -171,6 +186,7 @@ export function normalize(figma, motion) {
     if (!token) throw new Error(`Unknown source alias: ${key}`);
     return resolveRaw(token.$value, new Set([...seen, key]));
   };
+  const sansFamily = raw.has('font.sans') ? resolveRaw(raw.get('font.sans').$value) : undefined;
   const result = {
     $extensions: {
       [META]: {
@@ -232,9 +248,21 @@ export function normalize(figma, motion) {
         };
     } else if (id.startsWith('font-weight.')) {
       token.$type = 'fontWeight';
-      token.$value = resolveRaw(original.$value).value;
+      const weight = resolveRaw(original.$value);
+      if (id === 'font-weight.dhivehi-regular' && weight === 'Regular') {
+        // Figma uses a font style name here; CSS needs the equivalent numeric weight.
+        token.$value = '{font-weight.regular}';
+        metadata.figmaStyleName = weight;
+      } else if (Number.isFinite(weight?.value)) token.$value = weight.value;
+      else throw new Error(`${id}: unsupported font weight ${JSON.stringify(weight)}`);
     } else if (id.startsWith('font.')) {
       token.$type = 'fontFamily';
+      if (id.startsWith('font.dhivehi-')) {
+        const regular = resolveRaw(raw.get('font.dhivehi-regular')?.$value);
+        if (typeof regular !== 'string') throw new Error('Missing Dhivehi regular font');
+        const family = resolveRaw(original.$value);
+        token.$value = [...new Set([family, regular]), 'sans-serif'];
+      }
     } else if (id.startsWith('leading.') && !/^leading\.\d+$/.test(id)) {
       token.$type = 'number';
       token.$value = resolveRaw(original.$value).value / 100;
@@ -267,7 +295,21 @@ export function normalize(figma, motion) {
       const size = dimension(value.fontSize, id);
       const literalSize = dimension(resolveRaw(value.fontSize), id);
       const line = resolveRaw(value.lineHeight);
-      const tracking = resolveRaw(value.letterSpacing);
+      const lineHeight = lineHeightValues(line, literalSize, id);
+      const pixelLine =
+        typeof line === 'number' ||
+        line?.unit === 'px' ||
+        (typeof line === 'string' && line.endsWith('px'));
+      // Preserve authored pixel bindings for CSS without making DTCG lineHeight a dimension.
+      metadata.lineHeight =
+        alias(value.lineHeight) &&
+        pixelLine &&
+        raw.get(value.lineHeight.slice(1, -1))?.$type === 'dimension'
+          ? rewrite(value.lineHeight)
+          : { value: lineHeight.pixels, unit: 'px' };
+      const tracking = alias(value.letterSpacing)
+        ? value.letterSpacing
+        : resolveRaw(value.letterSpacing);
       const ratio =
         typeof tracking === 'string' && tracking.endsWith('%')
           ? Number.parseFloat(tracking) / 100
@@ -276,15 +318,19 @@ export function normalize(figma, motion) {
         fontFamily: value.fontFamily,
         fontWeight: value.fontWeight,
         fontSize: size,
-        lineHeight:
-          typeof line === 'string' && line.endsWith('%')
-            ? Number.parseFloat(line) / 100
-            : dimension(line, id).value / literalSize.value,
-        letterSpacing:
-          ratio !== undefined
+        // Source metrics stay dimensions; a DTCG composite requires a numeric multiplier.
+        lineHeight: lineHeight.ratio,
+        letterSpacing: alias(tracking)
+          ? tracking
+          : ratio !== undefined
             ? { value: ratio * literalSize.value, unit: literalSize.unit }
             : dimension(tracking, id),
       };
+      if (path[1] === 'dv' && value.fontStyle === '{font-weight.dhivehi-regular}') {
+        if (value.fontWeight !== 400)
+          throw new Error(`${id}: Dhivehi Regular style must have numeric weight 400`);
+        token.$value.fontWeight = '{font-weight.dhivehi-regular}';
+      }
       metadata.style = Object.fromEntries(
         Object.entries(value).filter(([key]) => !(key in token.$value)),
       );
@@ -298,10 +344,9 @@ export function normalize(figma, motion) {
     token.$value = rewrite(token.$value);
     if (token.$extensions.mode) token.$extensions.mode = rewrite(token.$extensions.mode);
     if (token.$type === 'typography') {
-      const font = { 'MV A Waheed': 'waheed', 'MV Faseyha': 'faseyha', 'MV Aaamu FK': 'aaamu' }[
-        original.$value.fontFamily
-      ];
-      if (font) token.$value.fontFamily = `{font.dhivehi-${font}}`;
+      // Keep older literal-family exports linked to the shared English font token.
+      if (path[1] === 'en' && resolveRaw(original.$value.fontFamily) === sansFamily)
+        token.$value.fontFamily = '{font.sans}';
     }
     // Non-DTCG exporter details are metadata and must not retain unresolved aliases.
     metadata.style = metadata.style
@@ -318,18 +363,16 @@ export function normalize(figma, motion) {
       : undefined;
     insert(result, path, token);
   }
-  for (const [name, family] of Object.entries({
-    waheed: 'MV A Waheed',
-    faseyha: 'MV Faseyha',
-    aaamu: 'MV Aaamu FK',
+  for (const [name, target] of Object.entries({
+    dhivehi: 'dhivehi-regular',
+    'dhivehi-faseyha': 'dhivehi-regular',
+    'dhivehi-waheed': 'dhivehi-medium',
+    'dhivehi-aaamu': 'dhivehi-bold',
   }))
-    insert(result, ['font', `dhivehi-${name}`], {
+    insert(result, ['font', name], {
       $type: 'fontFamily',
-      $value: [family, '{font.dhivehi}', 'sans-serif'],
-      $extensions: { [META]: { derived: 'Dhivehi font fallback stack' } },
+      $value: `{font.${target}}`,
+      $extensions: { [META]: { derived: 'Legacy Dhivehi font alias' } },
     });
-  // Arrays of font families cannot contain DTCG aliases; keep the fallback resolved.
-  for (const name of ['waheed', 'faseyha', 'aaamu'])
-    result.font[`dhivehi-${name}`].$value[1] = result.font.dhivehi.$value;
   return result;
 }

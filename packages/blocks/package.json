@@ -7,11 +7,20 @@
     "./notification-tray": "./src/notification-tray/notification-tray.tsx",
     "./site-footer": "./src/site-footer/site-footer.tsx",
     "./site-header": "./src/site-header/site-header.tsx",
+    "./site-shell": "./src/site-shell/site-shell.tsx",
+    "./preview-banner": "./src/preview-banner/preview-banner.tsx",
     "./catalog": {
       "types": "./scripts/catalog.d.ts",
       "import": "./scripts/catalog.mjs"
     },
-    "./account-panel": "./src/account-panel/account-panel.tsx"
+    "./account-panel": "./src/account-panel/account-panel.tsx",
+    "./error-page": "./src/error-page/error-page.tsx",
+    "./page-navigation-footer": "./src/page-navigation-footer/page-navigation-footer.tsx",
+    "./examples/error-page-messages": "./examples/error-page-messages.ts",
+    "./examples/page-navigation-footer-content": "./examples/page-navigation-footer-content.tsx",
+    "./examples/error-page-preview": "./examples/error-page-preview.tsx",
+    "./service-detail": "./src/service-detail/service-detail.tsx",
+    "./examples/service-detail-content": "./examples/service-detail-content.tsx"
   },
   "scripts": {
     "build": "node scripts/check.mjs && tsc --noEmit",

@@ -21,7 +21,9 @@ import {
 
 ## React Hook Form
 
-`Controller`'s `field` object (`name`, `value`, `onChange`, `onBlur`, `ref`) spreads directly onto `Input`, `TextArea`, `Select`, `ComboBox`, `RadioGroup`, and `CheckboxGroup`. For `Select` and `DatePicker`, pass `ref` as `triggerRef` so focus-on-error reaches the trigger button.
+`Controller`'s `field` object (`name`, `value`, `onChange`, `onBlur`, `ref`) spreads directly onto `Input`, `TextArea`, `Search`, `Select`, `ComboBox`, `RadioGroup`, and `CheckboxGroup`. For `Select` and `DatePicker`, pass `ref` as `triggerRef` so focus-on-error reaches the trigger button.
+
+Search supports the same field validation props and optional label as Input. For validated query submission, handle submission on the parent `Form`; Search's own `onSubmit` is an Enter-triggered query callback that replaces native form submission for that key. See [Search](/docs/search/) for standalone and form examples.
 
 `Select` and `ComboBox` infer their key type from `value` / `onChange`. A `string | null` field therefore type-checks with no conversion. Date components use `DateValue` objects; when the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` so you do not need a direct `@internationalized/date` dependency.
 

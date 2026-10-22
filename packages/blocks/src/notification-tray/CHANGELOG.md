@@ -1,3 +1,39 @@
+## 0.4.0
+
+### Changed
+
+- Require Veli tokens 0.9.1 or later in the 0.9 line for the complete eight-block CLI installation. Applications using older token versions must upgrade before adding or updating this block; earlier versions are not claimed to be broken in isolation. Validated with UI 0.16.0 and tokens 0.9.1 release candidates; repeat a clean registry install after publication.
+
+## 0.3.3
+
+### Fixed
+
+- Restore the loading rows' 8px padding, 8px text-bar gaps, and 96px timestamp placeholder to match the supplied reference geometry.
+
+## 0.3.2
+
+### Fixed
+
+- Keep placeholder heights and avatar sizes consistent across tray widths, and resolve the highlight from the local colour scheme on nested surfaces.
+
+## 0.3.1
+
+### Changed
+
+- Align the initial-loading highlight across each notification row with a 1500ms sweep and 500ms rest. Respect light and dark themes, RTL, and reduced motion.
+
+## 0.3.0
+
+### Changed
+
+- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@tradenetcorp/veli-ui` to `^0.16.0` when updating copied source.
+
+### Fixed
+
+- Align warning icons and empty-state text with their design color tokens.
+- Correct notification row spacing, divider placement, desktop bottom padding and options menu geometry while allowing longer content to grow.
+- Slide unread indicators away with their timestamps when notifications are marked as read, with mirrored RTL motion and reduced-motion support.
+
 ## 0.2.0
 
 ### Changed

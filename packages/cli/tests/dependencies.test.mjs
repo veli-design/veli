@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import semver from 'semver';
 import { mergeDependencyRequirements } from '../dist/dependencies.js';
+import { getBlocks } from '../../blocks/scripts/catalog.mjs';
 
 test('shared requirements intersect independently of block order', () => {
   const requirements = [{ react: '^19.0.0' }, { react: '~19.2.0' }, { react: '^19.2.6' }];
@@ -40,4 +41,28 @@ test('exact versions must satisfy all other selected ranges', () => {
     true,
   );
   assert.throws(() => mergeDependencyRequirements([{ react: '~19.1.0' }, { react: '19.2.6' }]));
+});
+
+test('every catalog selection has compatible runtime and setup requirements', () => {
+  const blocks = getBlocks();
+  // Exercise individual blocks, every combination, and the entire catalog. A new
+  // block automatically participates, so independently valid ranges cannot leave
+  // a consumer with an impossible combined CLI installation.
+  for (let selection = 1; selection < 2 ** blocks.length; selection++) {
+    const selected = blocks.filter((_, index) => selection & (2 ** index));
+    const requirements = selected.flatMap(({ manifest }) => [
+      manifest.dependencies,
+      manifest.setupDependencies,
+    ]);
+    const merged = mergeDependencyRequirements(requirements);
+    const context = selected.map(({ manifest }) => manifest.id).join(', ');
+    assert.deepEqual(mergeDependencyRequirements([...requirements].reverse()), merged, context);
+    for (const { manifest } of selected)
+      for (const [name, version] of Object.entries(manifest.testedDependencies))
+        if (merged[name])
+          assert.ok(
+            semver.satisfies(version, merged[name]),
+            `${context}: tested ${name}@${version} must satisfy ${merged[name]}`,
+          );
+  }
 });
