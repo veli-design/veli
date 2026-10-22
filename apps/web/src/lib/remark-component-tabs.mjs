@@ -1,6 +1,6 @@
 export const docsTabIds = ['overview', 'design', 'code', 'accessibility'];
 
-const organizedDocSlugs = new Set(['accordion', 'menu']);
+const organizedDocSlugs = new Set(['accordion', 'menu', 'radio']);
 
 const designHeadingPattern =
   /(?:anatomy|appearance|variant|variation|size|state|elevation|spacing|intent|icon|layout|visual|style|shape|counter mode|status dot)/i;

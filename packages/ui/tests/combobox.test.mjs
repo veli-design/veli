@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -6,6 +9,13 @@ import { Button, I18nProvider } from 'react-aria-components';
 import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
+const comboboxSource = readFileSync(join(packageDir, 'src', 'combobox.tsx'), 'utf8');
+const fieldVariantsSource = readFileSync(
+  join(packageDir, 'src', 'field-shared-variants.ts'),
+  'utf8',
+);
 
 const render = (props = {}, wrapper = (node) => node) =>
   renderToStaticMarkup(
@@ -143,4 +153,31 @@ test('ComboBox preserves numeric zero labels and their accessible association', 
   assert.ok(label);
   const labelledBy = html.match(/<input[^>]*aria-labelledby="([^"]+)"/)?.[1];
   assert.ok(labelledBy?.split(' ').includes(label[1]));
+});
+
+test('ComboBox keeps the shell surface and themed text during browser autofill', () => {
+  assert.match(comboboxSource, /rounded-md overflow-hidden/);
+  assert.match(
+    comboboxSource,
+    /disabled:placeholder:text-disabled \$\{fieldInputAutofill\} \[&:lang\(dv\)\]/,
+  );
+
+  for (const selector of ['autofill:', '\\[&:-webkit-autofill\\]:']) {
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[transition:background-color_0s_600000s\\]`),
+    );
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-base-strong\\)\\]`),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`${selector}caret-text-base-strong`));
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(
+        `disabled:${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-disabled\\)\\]`,
+      ),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`disabled:${selector}caret-text-disabled`));
+  }
 });

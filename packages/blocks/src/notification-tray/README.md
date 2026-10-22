@@ -1,3 +1,10 @@
+## Core package baseline
+
+Version 0.5.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+before adding or updating this application-owned source. The approved typography
+metrics and subtle-button colors can change wrapping and element height. Previous
+block archives retain their existing requirements.
+
 ## Ownership and prerequisites
 
 A notification tray with a desktop popover and mobile bottom sheet. This experimental block is editable source. Applications supply notification data, translations, formatted dates, URLs and callbacks, and own fetching, filtering, pagination and read state.

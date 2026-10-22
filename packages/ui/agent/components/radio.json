@@ -34,7 +34,7 @@
     "Always place related Radio items inside RadioGroup.",
     "Place FieldLabel, FieldDescription, and FieldError inside RadioGroup; RadioGroup has no label prop.",
     "Do not also pass description or errorMessage on RadioGroup when using FieldDescription or FieldError.",
-    "Use Radio size md or lg to match the surrounding form density."
+    "Use Radio size md, lg, or xl to match the surrounding form density."
   ],
   "limitations": [
     "Radio is not intended as a standalone independent toggle.",
