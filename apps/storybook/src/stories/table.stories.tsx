@@ -771,6 +771,34 @@ export const RowActions: Story = {
     row.focus();
     await userEvent.keyboard('{Enter}');
     await expect(args.onRowAction).toHaveBeenCalledTimes(2);
+    const rows = within(canvasElement).getAllByRole('row').slice(1);
+    for (let index = 1; index < rows.length; index++) await userEvent.keyboard('{ArrowDown}');
+    const lastRow = rows[rows.length - 1];
+    await expect(lastRow).toHaveFocus();
+    const frameStyle = getComputedStyle(lastRow.closest('table')!.parentElement!);
+    const innerRadius =
+      parseFloat(frameStyle.borderBottomLeftRadius) - parseFloat(frameStyle.borderLeftWidth);
+    const lastStyle = getComputedStyle(lastRow);
+    await expect(parseFloat(lastStyle.borderBottomLeftRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(lastStyle.borderBottomRightRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(getComputedStyle(rows[0]).borderBottomLeftRadius)).toBe(0);
+    const cells = lastRow.querySelectorAll('td');
+    const nextCellKey = lastStyle.direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}';
+    await userEvent.keyboard(nextCellKey);
+    await expect(cells[0]).toHaveFocus();
+    await expect(parseFloat(getComputedStyle(cells[0]).borderEndEndRadius)).toBe(0);
+    for (let index = 1; index < cells.length; index++) await userEvent.keyboard(nextCellKey);
+    await expect(cells[cells.length - 1]).toHaveFocus();
+    await expect(parseFloat(getComputedStyle(cells[cells.length - 1]).borderEndStartRadius)).toBe(
+      0,
+    );
+    await expect(parseFloat(getComputedStyle(cells[0]).borderEndStartRadius)).toBeCloseTo(
+      innerRadius,
+      0,
+    );
+    await expect(
+      parseFloat(getComputedStyle(cells[cells.length - 1]).borderEndEndRadius),
+    ).toBeCloseTo(innerRadius, 0);
   },
 };
 

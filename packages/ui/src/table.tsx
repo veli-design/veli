@@ -49,7 +49,7 @@ const tableFrameVariants = cva(
 );
 
 const tableVariants = cva(
-  'w-full border-separate border-spacing-0 font-sans antialiased [&_tbody_tr:last-child_td]:border-b-0',
+  'w-full border-separate border-spacing-0 font-sans antialiased [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr:last-child]:rounded-b-[calc(var(--radius-2xl)-1px)] [&_tbody_tr:last-child_td:first-child]:rounded-es-[calc(var(--radius-2xl)-1px)] [&_tbody_tr:last-child_td:last-child]:rounded-ee-[calc(var(--radius-2xl)-1px)]',
   {
     variants: {
       stickyHeader: {
