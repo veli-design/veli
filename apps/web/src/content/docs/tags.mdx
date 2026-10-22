@@ -26,6 +26,7 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
   <Tag id="news">News</Tag>
   <Tag id="travel">Travel</Tag>
   <Tag id="gaming">Gaming</Tag>
+  <Tag id="shopping">Shopping</Tag>
 </TagGroup>
 ```
 
@@ -40,9 +41,15 @@ Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to sho
 </div>
 
 ```tsx
-<TagGroup label="Departments" selectionMode="multiple" defaultSelectedKeys={['tourism']}>
+<TagGroup
+  label="Departments"
+  selectionMode="multiple"
+  defaultSelectedKeys={['tourism', 'fisheries']}
+>
   <Tag id="tourism">Tourism</Tag>
   <Tag id="fisheries">Fisheries</Tag>
+  <Tag id="transport">Transport</Tag>
+  <Tag id="education">Education</Tag>
 </TagGroup>
 
 <TagGroup label="Saved topics" items={topics} onRemove={removeTopics}>

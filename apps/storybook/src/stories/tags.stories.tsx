@@ -149,7 +149,7 @@ export const Default: Story = {
     const language = useTagsLanguage();
     const text = tagsText[language];
     return (
-      <div className="w-[320px] max-w-full">
+      <div className="w-[min(320px,calc(100vw-2rem))] max-w-full">
         <TagGroup
           {...args}
           label={localize(args.label, language)}
@@ -171,7 +171,7 @@ export const Sizes: Story = {
   render: () => {
     const text = useTagsText();
     return (
-      <div className="flex w-[320px] max-w-full flex-col gap-6">
+      <div className="flex w-[min(320px,calc(100vw-2rem))] max-w-full flex-col gap-6">
         {sizes.map((size) => (
           <TagGroup key={size} label={size.toUpperCase()} size={size}>
             <Tag id="tourism">{text.tourism}</Tag>
@@ -197,7 +197,7 @@ export const Variations: Story = {
       { id: 'payments', label: text.payments },
     ].filter((item) => !removedKeys.has(item.id));
     return (
-      <div className="flex w-[320px] max-w-full flex-col gap-8">
+      <div className="flex w-[min(320px,calc(100vw-2rem))] max-w-full flex-col gap-8">
         <TagGroup
           label={text.preferredChannel}
           description={text.oneChannelOnly}
@@ -213,7 +213,7 @@ export const Variations: Story = {
           items={items}
           onRemove={(keys) => setRemovedKeys((current) => new Set([...current, ...keys]))}
           renderEmptyState={() => (
-            <p className="type-caption-regular text-base-subtle">{text.allSavedTopicsRemoved}</p>
+            <p className="type-caption-regular text-base-default">{text.allSavedTopicsRemoved}</p>
           )}
         >
           {(item) => (
@@ -254,7 +254,7 @@ export const States: Story = {
       education: text.education,
     };
     return (
-      <div className="flex w-[320px] max-w-full flex-col gap-8">
+      <div className="flex w-[min(320px,calc(100vw-2rem))] max-w-full flex-col gap-8">
         <TagGroup
           label={text.departments}
           description={text.chooseDepartments}
@@ -318,7 +318,7 @@ export const Validation: Story = {
     const text = useTagsText();
     const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(() => new Set());
     return (
-      <div className="w-[320px] max-w-full">
+      <div className="w-[min(320px,calc(100vw-2rem))] max-w-full">
         <TagGroup
           label={text.requiredDepartments}
           selectionMode="multiple"

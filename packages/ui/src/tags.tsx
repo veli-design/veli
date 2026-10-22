@@ -66,7 +66,7 @@ const tagListVariants = cva(
 );
 
 const emptyStateVariants = cva(
-  'min-w-0 rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-base-subtle [overflow-wrap:anywhere]',
+  'min-w-0 rounded-xl border border-dashed border-base-subtle px-3 py-2.5 type-body-sm-regular text-base-default [overflow-wrap:anywhere]',
 );
 
 const tagVariants = cva(
