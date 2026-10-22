@@ -207,14 +207,17 @@ test('guideline icons, section gaps and inactive TOC padding match the desktop a
         const headings = page.locator(`${sheet} .veli-service-detail-guideline-section > h2`);
         await expect(headings.first()).toHaveCSS('margin-bottom', '12px');
         await expect(headings.nth(1)).toHaveCSS('margin-bottom', '16px');
-        const geometry = await headings
-          .nth(1)
-          .evaluate(
-            (node) =>
-              node.nextElementSibling!.getBoundingClientRect().top -
-              node.getBoundingClientRect().bottom,
-          );
-        expect(geometry).toBeCloseTo(16, 1);
+        const heading = headings.nth(1);
+        // WebKit can advance the sheet's translate animation between rectangle reads.
+        await page.locator(sheet).evaluate(async (node) => {
+          await Promise.all(node.getAnimations().map((animation) => animation.finished));
+        });
+        const visualGap = await heading.evaluate((node) => {
+          const title = node.getBoundingClientRect();
+          const body = node.nextElementSibling!.getBoundingClientRect();
+          return body.top - title.bottom;
+        });
+        expect(visualGap).toBeCloseTo(16, 1);
         if (width === 1512) {
           const toc = page.locator(
             `${sheet} .veli-service-detail-guideline-sidebar .veli-service-detail-toc-link`,
