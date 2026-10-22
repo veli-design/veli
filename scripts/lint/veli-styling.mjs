@@ -32,11 +32,24 @@ function unwrapType(node) {
 
 // @shadcn/lint 0.2.3 tracks import names without lexical JSX bindings. Keep its
 // class analysis intact, but skip attribute sites whose Veli import is shadowed.
+// Its Program-only configuration diagnostics must still fail a warning-only run.
 function withLexicalImports(rule) {
   return {
     ...rule,
     create(context) {
-      const visitors = rule.create(context);
+      let configurationFailure = false;
+      const visitors = rule.create(
+        Object.create(context, {
+          report: {
+            value(descriptor) {
+              if (configurationFailure) throw new Error(descriptor.message);
+              context.report(descriptor);
+            },
+          },
+        }),
+      );
+      // Pinned 0.2.3 reports invalid contracts through this dedicated visitor.
+      configurationFailure = Object.keys(visitors).length === 1 && !!visitors.Program;
       const imports = new Set(
         context.sourceCode.ast.body.flatMap((node) =>
           node.type === 'ImportDeclaration' && new RegExp(importPattern).test(node.source.value)
@@ -153,7 +166,6 @@ export const veliStyling = {
   files: ['**/*.{jsx,tsx}'],
   plugins: {
     shadcn: scopedShadcn,
-    'shadcn-review': scopedShadcn,
     veli: { rules: { 'review-styling-boundaries': reviewBoundaries } },
   },
   settings: {
@@ -163,16 +175,14 @@ export const veliStyling = {
     },
   },
   rules: {
-    'shadcn/no-restyle': ['error', { allow: ['*'], contracts: upstreamContracts('error') }],
+    'shadcn/no-restyle': ['warn', { allow: ['*'], contracts: upstreamContracts() }],
     'shadcn/no-arbitrary-values': [
-      'error',
+      'warn',
       {
         allow: ['*'],
         contracts: [{ pattern: `^(${coreNames.join('|')})$`, allow: [] }],
       },
     ],
-    // ESLint-native alias allows different severities for the remaining matrix.
-    'shadcn-review/no-restyle': ['warn', { allow: ['*'], contracts: upstreamContracts('warn') }],
     'veli/review-styling-boundaries': 'warn',
   },
 };

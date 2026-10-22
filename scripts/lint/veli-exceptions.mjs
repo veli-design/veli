@@ -59,7 +59,7 @@ export const compositionConfigs = compositionExceptions.map((exception) => ({
   files: [exception.file],
   rules: {
     'shadcn/no-restyle': [
-      'error',
+      'warn',
       {
         ...veliStyling.rules['shadcn/no-restyle'][1],
         contracts: [

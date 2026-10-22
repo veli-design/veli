@@ -95,8 +95,9 @@ files are formatted and lint-fixed before they land. Pushes run `pnpm check` to
 verify formatting, linting, and builds across the monorepo. Contributors can bypass
 local hooks with `--no-verify`, but CI runs the same checks and blocks invalid PRs.
 
-The [Veli component contracts](docs/VELI_STYLING.md) block reviewed Button/field
-violations and report advisory findings for the remaining matrix. The separate
+The [Veli component contracts](docs/VELI_STYLING.md) report styling warnings for
+all 96 component/part contracts, including Button/field arbitrary-value checks.
+Styling findings stay non-blocking; parse/configuration failures still fail. The separate
 command and policy tests run in `check` and CI. The guide documents consumer opt-in,
 explicit allowances, repository-local exceptions and coverage limits; installing
 Veli does not enable lint in consuming apps.

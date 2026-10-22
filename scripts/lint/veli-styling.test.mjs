@@ -32,7 +32,7 @@ function messages(code, preamble = imports) {
   });
   assert.equal(result.filter((message) => message.fatal).length, 0, JSON.stringify(result));
   assert.ok(
-    result.every((message) => message.severity === (message.ruleId?.startsWith('shadcn/') ? 2 : 1)),
+    result.every((message) => message.severity === 1),
     JSON.stringify(result),
   );
   return result;
@@ -208,7 +208,7 @@ test('unrelated components, plain elements and shadowed bindings stay outside co
   assert.deepEqual(messages('<div className="h-12" />'), []);
   assert.ok(
     messages('<SelectItem className="p-8" />').some(
-      (message) => message.ruleId === 'shadcn-review/no-restyle' && message.severity === 1,
+      (message) => message.ruleId === 'shadcn/no-restyle' && message.severity === 1,
     ),
   );
   assert.deepEqual(
@@ -224,14 +224,14 @@ test('unrelated components, plain elements and shadowed bindings stay outside co
   );
 });
 
-test('shadowed named and namespace imports do not block unrelated local components', () => {
+test('shadowed named and namespace imports do not report unrelated local components', () => {
   for (const body of [
     'function Local(Button) { return <Button className="p-8 m-[13px]" />; }',
     'function Local() { const Button = Other; return <Button className={cn("p-8", "m-[13px]")} />; }',
     'function Local(Button) { const props = {className:"p-8"}; return <Button {...props} />; }',
   ]) {
     assert.deepEqual(messages(body), []);
-    assert.ok(messages(`${body}\n<Button className="p-8" />`).some((m) => m.severity === 2));
+    assert.ok(messages(`${body}\n<Button className="p-8" />`).some((m) => m.severity === 1));
   }
   assert.deepEqual(
     messages(
@@ -246,7 +246,7 @@ test('shadowed named and namespace imports do not block unrelated local componen
   assert.equal(shared.filter((m) => m.ruleId === 'shadcn/no-arbitrary-values').length, 1);
 });
 
-test('nested static helpers, templates and known object spreads still block forbidden classes', () => {
+test('nested static helpers, templates and known object spreads still report forbidden classes', () => {
   for (const expression of [
     'cn("w-full", clsx({"p-8": active}))',
     '`w-full ${active ? "p-8" : "mt-4"}`',
@@ -279,7 +279,7 @@ test('custom class-helper aliases are checked when explicitly configured', () =>
   const result = linter.verify(source, [{ languageOptions: { parser: tseslint.parser } }, custom], {
     filename: path.join(root, 'apps/helper-alias.tsx'),
   });
-  assert.ok(result.some((m) => m.ruleId === 'shadcn/no-restyle' && m.severity === 2));
+  assert.ok(result.some((m) => m.ruleId === 'shadcn/no-restyle' && m.severity === 1));
 });
 
 test('documented upstream limits: generated classes and spread precedence need manual review', () => {
@@ -301,12 +301,12 @@ test('boundary warnings never suppress independent core violations', () => {
     '<Button iconOnly className="p-8" style={{padding:8}} inputClassName="w-full" />',
   );
   assert.equal(
-    result.filter((m) => m.ruleId === 'shadcn/no-restyle' && m.severity === 2).length,
+    result.filter((m) => m.ruleId === 'shadcn/no-restyle' && m.severity === 1).length,
     1,
   );
   assert.deepEqual(
     result
-      .filter((m) => m.severity === 1)
+      .filter((m) => m.ruleId === 'veli/review-styling-boundaries')
       .map((m) => m.messageId)
       .sort(),
     ['icon', 'internal', 'style'],
@@ -385,7 +385,7 @@ test('documented limit: consumer re-exports are missed in this package-import se
   }
 });
 
-test('enforced config returns core errors, preserves narrow directives, and excludes implementation', async () => {
+test('warning-only config reports core classes, preserves narrow directives, and excludes implementation', async () => {
   const eslint = new ESLint({
     cwd: root,
     overrideConfigFile: true,
@@ -393,8 +393,8 @@ test('enforced config returns core errors, preserves narrow directives, and excl
   });
   const code = `${imports}\n<Button className="h-12" />`;
   const [result] = await eslint.lintText(code, { filePath: 'apps/consumer.tsx' });
-  assert.equal(result.errorCount, 1);
-  assert.equal(result.warningCount, 0);
+  assert.equal(result.errorCount, 0);
+  assert.equal(result.warningCount, 1);
   const [exception] = await eslint.lintText(
     `${imports}\n// eslint-disable-next-line shadcn/no-restyle -- PD-809: preserve accessibility repair pending Veli support\n<Button className="h-12" />`,
     { filePath: 'apps/consumer.tsx' },
@@ -431,18 +431,13 @@ await mkdir(path.join(root, '.cache'), { recursive: true });
 
 for (const entry of veliContracts) {
   for (const name of entry.names) {
-    test(`${name} has a ${entry.severity} contract protecting padding`, () => {
+    test(`${name} has a warning contract protecting padding`, () => {
       const result = messages(
         `<${name} className="p-9" />`,
         `import {${name}} from '@tradenetcorp/veli-ui/${entry.module}';`,
       );
       assert.ok(
-        result.some(
-          (message) =>
-            message.ruleId ===
-              (entry.severity === 'error' ? 'shadcn/no-restyle' : 'shadcn-review/no-restyle') &&
-            message.severity === (entry.severity === 'error' ? 2 : 1),
-        ),
+        result.some((message) => message.ruleId === 'shadcn/no-restyle' && message.severity === 1),
         JSON.stringify(result),
       );
     });
@@ -481,7 +476,9 @@ test('every configured component is a real public runtime export', async () => {
   }
 });
 
-test('contract table has exactly the reviewed blocking core and no broad category allowances', () => {
+test('contract table has exactly the reviewed extra-value coverage and no broad category allowances', () => {
+  for (const setting of Object.values(veliStyling.rules))
+    assert.equal(Array.isArray(setting) ? setting[0] : setting, 'warn');
   assert.deepEqual(coreNames, [
     'Button',
     'Input',
@@ -496,7 +493,7 @@ test('contract table has exactly the reviewed blocking core and no broad categor
   const names = veliContracts.flatMap((entry) => entry.names);
   assert.equal(names.length, 96);
   assert.equal(
-    veliContracts.filter((entry) => entry.severity === 'warn').flatMap((entry) => entry.names)
+    veliContracts.filter((entry) => entry.coverage === 'classes').flatMap((entry) => entry.names)
       .length,
     87,
   );
@@ -551,7 +548,7 @@ test('compound parts and namespace aliases use their actual slot contracts', () 
     assert.deepEqual(messages(`<Surface.${part} className="${valid}" />`, preamble), []);
     assert.ok(
       messages(`<Surface.${part} className="p-8" />`, preamble).some(
-        (message) => message.ruleId === 'shadcn-review/no-restyle',
+        (message) => message.ruleId === 'shadcn/no-restyle',
       ),
     );
   }
@@ -598,16 +595,19 @@ test('repository exceptions are closed, exact-file and Button-only', async () =>
       { filePath: exception.file },
     );
     assert.equal(allowed.errorCount, 0, JSON.stringify(allowed.messages));
-    const [stillBlocked] = await eslint.lintText(
+    assert.equal(allowed.warningCount, 0, JSON.stringify(allowed.messages));
+    const [stillReported] = await eslint.lintText(
       `${imports}\n<><Button className="p-8" /><Input className="p-8" /><Button className="m-[13px]" /><Button className="mt-(--gap)" /></>`,
       { filePath: exception.file },
     );
-    assert.equal(stillBlocked.errorCount, 4, JSON.stringify(stillBlocked.messages));
+    assert.equal(stillReported.errorCount, 0, JSON.stringify(stillReported.messages));
+    assert.equal(stillReported.warningCount, 4, JSON.stringify(stillReported.messages));
     const [outside] = await eslint.lintText(
       `${imports}\n<Button className="${exception.classes.join(' ')}" />`,
       { filePath: 'apps/unapproved-consumer.tsx' },
     );
-    assert.ok(outside.errorCount > 0);
+    assert.equal(outside.errorCount, 0);
+    assert.ok(outside.warningCount > 0);
   }
 });
 
@@ -625,21 +625,22 @@ test('actual CLI verifies diagnostics, severity, shadowing, parse failures and e
   for (const [source, expected, expectedRules] of [
     [
       'import {Button} from \'@tradenetcorp/veli-ui/button\'; <Button className="p-8" />',
-      1,
+      0,
       ['shadcn/no-restyle'],
     ],
     [
       'import {Badge} from \'@tradenetcorp/veli-ui/badge\'; <Badge className="p-8" />',
       0,
-      ['shadcn-review/no-restyle'],
+      ['shadcn/no-restyle'],
     ],
     [`${imports}function Local(Button) {return <Button className="p-8 m-[13px]" />;}`, 0, []],
     [
       `${imports}<Button iconOnly className="p-8" style={{padding:8}} />`,
-      1,
+      0,
       ['shadcn/no-restyle', 'veli/review-styling-boundaries', 'veli/review-styling-boundaries'],
     ],
-    [`${imports}<Button className="mt-(--gap)" />`, 1, ['shadcn/no-restyle']],
+    [`${imports}<Button className="mt-(--gap)" />`, 0, ['shadcn/no-restyle']],
+    [`${imports}<Button className="m-[13px]" />`, 0, ['shadcn/no-arbitrary-values']],
     [
       'import * as UI from "@tradenetcorp/veli-ui/card"; <UI.Card.Content style={{padding:8}} />',
       0,
@@ -662,6 +663,75 @@ test('actual CLI verifies diagnostics, severity, shadowing, parse failures and e
     const [report] = JSON.parse(result.stdout);
     assert.deepEqual(report.messages.map((m) => m.ruleId).sort(), expectedRules.sort());
     assert.equal(report.fatalErrorCount, expectedRules.includes(null) ? 1 : 0);
+    assert.equal(report.errorCount, expectedRules.includes(null) ? 1 : 0);
+    assert.equal(report.warningCount, expectedRules.includes(null) ? 0 : expectedRules.length);
+    assert.ok(report.messages.every((m) => m.severity === (m.fatal ? 2 : 1)));
+  }
+});
+
+test('normal repository quality lint still fails real quality errors', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      'node_modules/eslint/bin/eslint.js',
+      '--stdin',
+      '--stdin-filename',
+      'apps/policy-quality.tsx',
+      '--format',
+      'json',
+    ],
+    { cwd: root, input: 'debugger;', encoding: 'utf8', timeout: 15000 },
+  );
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  const [report] = JSON.parse(result.stdout);
+  assert.ok(report.messages.some((m) => m.ruleId === 'no-debugger' && m.severity === 2));
+});
+
+test('actual CLI still fails malformed contracts, invalid rule options, missing plugins and config loads', async () => {
+  const directory = await mkdtemp(path.join(root, '.cache/veli-config-'));
+  try {
+    const file = path.join(directory, 'eslint.config.mjs');
+    for (const [rules, expected] of [
+      [
+        { 'shadcn/no-restyle': ['warn', { contracts: [{ pattern: '[' }] }] },
+        /not a valid regular expression/,
+      ],
+      [
+        { 'shadcn/no-arbitrary-values': ['warn', { contracts: [{ pattern: '[' }] }] },
+        /not a valid regular expression/,
+      ],
+      [{ 'shadcn/no-arbitrary-values': ['warn', { allow: 42 }] }, /should be array/],
+      [{ 'missing-plugin/no-restyle': 'warn' }, /could not find plugin/i],
+      [null, /PD-809 configuration load failure/],
+    ]) {
+      await writeFile(
+        file,
+        rules
+          ? `import base from '../../eslint.veli.config.mjs'; export default [...base, {rules:${JSON.stringify(rules)}}];`
+          : 'throw new Error("PD-809 configuration load failure");',
+      );
+      const result = spawnSync(
+        process.execPath,
+        [
+          'node_modules/eslint/bin/eslint.js',
+          '--config',
+          file,
+          '--stdin',
+          '--stdin-filename',
+          'apps/policy-cli.tsx',
+        ],
+        {
+          cwd: root,
+          input: `${imports}<Button className="w-full" />`,
+          encoding: 'utf8',
+          timeout: 15000,
+        },
+      );
+      assert.equal(result.status, 2, result.stderr || result.stdout);
+      assert.match(result.stderr, expected);
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true });
   }
 });
 
@@ -699,20 +769,21 @@ test('documented consumer config works outside the workspace with copied policy 
       `${imports}function Action({className}) {return <Button className={className} />;} <Action className="p-8" />`,
     );
     const [wrapperResult] = await eslint.lintFiles([wrapper]);
-    assert.equal(wrapperResult.errorCount, 1, JSON.stringify(wrapperResult.messages));
+    assert.equal(wrapperResult.errorCount, 0, JSON.stringify(wrapperResult.messages));
+    assert.equal(wrapperResult.warningCount, 1, JSON.stringify(wrapperResult.messages));
     assert.equal(wrapperResult.messages[0].ruleId, 'shadcn/no-restyle');
 
     for (const [source, errors, warnings] of [
       [`${imports}<><Button className="mt-4 w-full" /><Input className="w-full" /></>`, 0, 0],
-      [`${imports}<><Button className="p-8" /><Input className="mt-4" /></>`, 2, 0],
+      [`${imports}<><Button className="p-8" /><Input className="mt-4" /></>`, 0, 2],
       [
         'import {Card} from \'@tradenetcorp/veli-ui/card\'; <Card.Content className="grid gap-4" />',
         0,
         0,
       ],
       ['import {Card} from \'@tradenetcorp/veli-ui/card\'; <Card.Content className="p-8" />', 0, 1],
-      [`${imports}<Button className="ring-2" />`, 1, 0],
-      [`${imports}<Button className="mt-(--custom-gap)" />`, 1, 0],
+      [`${imports}<Button className="ring-2" />`, 0, 1],
+      [`${imports}<Button className="mt-(--custom-gap)" />`, 0, 1],
       [`${imports}function Local(Button) {return <Button className="p-8 m-[13px]" />;}`, 0, 0],
       [
         'import * as UI from "@tradenetcorp/veli-ui/card"; <UI.Card.Content style={{padding:8}} />',

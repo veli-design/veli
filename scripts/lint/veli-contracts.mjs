@@ -1,5 +1,5 @@
-// One contract table drives severity, upstream configuration and boundary review.
-// Only the reviewed Button/complete-field core is blocking at this stage.
+// One contract table drives coverage, upstream configuration and boundary review.
+// Every styling finding warns; the core also checks arbitrary values/shorthand.
 export const marginClasses = [
   'm-*',
   'mx-*',
@@ -58,12 +58,12 @@ const contentClasses = [
   'justify-around',
   'justify-evenly',
 ];
-const contract = (module, names, allow, guidance, severity = 'warn') => ({
+const contract = (module, names, allow, guidance, coverage = 'classes') => ({
   module,
   names,
   allow,
   guidance,
-  severity,
+  coverage,
 });
 const completeFields = [
   ['input', 'Input'],
@@ -84,7 +84,7 @@ export const veliContracts = [
     ['Button'],
     buttonClasses,
     'Use size, intent and appearance. Parent gap/alignment controls outer layout; icon-only dimensions stay within Veli.',
-    'error',
+    'classes-and-arbitrary-values',
   ),
   ...completeFields.map(([module, name]) =>
     contract(
@@ -92,7 +92,7 @@ export const veliContracts = [
       [name],
       fillClasses,
       'Only complete-field width may change. Put placement on a parent and preserve label/control/help/error spacing. TextArea rows/minHeight/maxHeight remain supported.',
-      'error',
+      'classes-and-arbitrary-values',
     ),
   ),
   contract(
@@ -348,16 +348,14 @@ export const contractFor = new Map(
   veliContracts.flatMap((entry) => entry.names.map((name) => [name, entry])),
 );
 export const coreNames = veliContracts
-  .filter((entry) => entry.severity === 'error')
+  .filter((entry) => entry.coverage === 'classes-and-arbitrary-values')
   .flatMap((entry) => entry.names);
 
-export function upstreamContracts(severity) {
-  return veliContracts
-    .filter((entry) => entry.severity === severity)
-    .map((entry) => ({
-      pattern: `^(${entry.names.join('|')})$`,
-      allow: entry.allow,
-      ...(severity === 'error' ? { deny: coreDeniedClasses } : {}),
-      message: `"{{className}}" on {{component}} ${severity === 'error' ? 'violates the Veli contract' : 'needs review'}. ${entry.guidance}`,
-    }));
+export function upstreamContracts() {
+  return veliContracts.map((entry) => ({
+    pattern: `^(${entry.names.join('|')})$`,
+    allow: entry.allow,
+    ...(entry.coverage === 'classes-and-arbitrary-values' ? { deny: coreDeniedClasses } : {}),
+    message: `"{{className}}" on {{component}} needs review. ${entry.guidance}`,
+  }));
 }

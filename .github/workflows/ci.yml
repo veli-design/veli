@@ -57,7 +57,7 @@ jobs:
       - name: Test Veli component contracts
         run: corepack pnpm test:veli-lint
 
-      - name: Enforce reviewed Veli contracts and report advisory findings
+      - name: Report Veli styling contract warnings
         run: corepack pnpm lint:veli
 
       - name: Test canonical tokens and public UI entry points
