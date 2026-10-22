@@ -180,7 +180,12 @@ test('change detection uses merge base and retains deleted and renamed dependenc
     const fromMergeCheckout = JSON.parse(
       execFileSync(
         process.execPath,
-        [fileURLToPath(new URL('./consumer-ci.mjs', import.meta.url)), 'changes', advanced, feature],
+        [
+          fileURLToPath(new URL('./consumer-ci.mjs', import.meta.url)),
+          'changes',
+          advanced,
+          feature,
+        ],
         { cwd: directory, encoding: 'utf8', env: { ...env, GITHUB_OUTPUT: output } },
       ),
     );
