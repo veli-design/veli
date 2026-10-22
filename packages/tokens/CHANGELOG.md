@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.10.0
+
+_Released 2026-10-22._
+
+### Added
+
+- Add explicit `highContrast` support for secondary Button appearances, with Light/Dark state tokens and a visible keyboard focus ring.
+- Expose the Figma field radius and Dhivehi Regular font weight tokens to CSS and Tailwind.
+
+### Changed
+
+- Require `@tradenetcorp/veli-tokens` `^0.10.0` so every supported tokens version includes the high-contrast Button colors. Upgrade tokens from `0.9.x` when upgrading Veli UI.
+- Bind Tailwind text sizes and bilingual type utilities to Figma typography metrics, including updated line heights and Dhivehi font families.
+- Update subtle button colors to alpha tokens from the latest Figma export.
+
+### Fixed
+
+- Export DTCG typography composite line heights as full-precision numeric font-size multipliers while preserving authored pixel values and metric bindings in CSS and Tailwind typography utilities.
+
 ## 0.9.1
 
 _Released 2026-10-19._
