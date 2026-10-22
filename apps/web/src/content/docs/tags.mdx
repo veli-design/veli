@@ -3,7 +3,7 @@ title: Tags
 description: Compact labels, selectable filters, and removable collections.
 ---
 
-import { TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
+import { TagsRtlDemo, TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
 
 # Tags
 
@@ -205,3 +205,34 @@ By default, the group root and tag rows are `<div>` elements, with a grid for ke
 Use [VeliProvider](/docs/provider/) with `language="dv"` for Dhivehi and RTL, or `language="en"` for English and LTR. Dhivehi tags use `MV A Waheed`; labels and messages follow the provider typography. Leading content and removal controls follow the text direction.
 
 Built-in empty messages and remove labels follow the provider language. Localize your visible tag content and custom remove labels in your application. Local `lang` and `dir` attributes do not change the built-in translated copy.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsRtlDemo client:visible />
+</div>
+
+Switch between Dhivehi and English to compare tag order, selection, and the built-in remove controls. Removing a saved topic updates the preview collection.
+
+```tsx
+import { useState } from 'react';
+import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+function DhivehiTags() {
+  const [topics, setTopics] = useState([
+    { id: 'documents', label: 'ލިޔެކިޔުންތައް' },
+    { id: 'forms', label: 'ފޯމުތައް' },
+  ]);
+
+  return (
+    <VeliProvider language="dv">
+      <TagGroup
+        label="ސޭވްކުރެވިފައިވާ މައުޟޫޢުތައް"
+        items={topics}
+        onRemove={(keys) => setTopics((current) => current.filter((item) => !keys.has(item.id)))}
+      >
+        {(item) => <Tag id={item.id}>{item.label}</Tag>}
+      </TagGroup>
+    </VeliProvider>
+  );
+}
+```
