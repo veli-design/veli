@@ -5,9 +5,14 @@ on:
     branches: [main]
     paths:
       - 'packages/ui/src/calendar*'
+      - 'packages/ui/src/date-picker.tsx'
+      - 'packages/ui/src/date-segments.tsx'
       - 'apps/storybook/src/stories/calendar.stories.tsx'
+      - 'apps/storybook/src/stories/date-picker.stories.tsx'
       - 'apps/web/src/components/CalendarExamples.tsx'
+      - 'apps/web/src/components/DateExamples.tsx'
       - 'apps/web/src/content/docs/calendar.mdx'
+      - 'apps/web/src/content/docs/date-picker.mdx'
       - 'apps/web/src/styles/global.css'
       - 'apps/web/src/lib/docs-preview-examples.mjs'
       - 'scripts/verify-calendar*.mjs'
@@ -46,6 +51,7 @@ jobs:
           curl --fail --silent --retry 30 --retry-connrefused --retry-delay 1 http://127.0.0.1:6029/index.json > /dev/null
           curl --fail --silent --retry 30 --retry-connrefused --retry-delay 1 http://127.0.0.1:4329/docs/calendar/ > /dev/null
           node scripts/verify-calendar.mjs "$RUNNER_TEMP/calendar-browser" http://127.0.0.1:6029 "$RUNNER_TEMP/calendar-evidence"
+          node scripts/verify-calendar-datepicker.mjs "$RUNNER_TEMP/calendar-browser" http://127.0.0.1:6029 "$RUNNER_TEMP/calendar-evidence"
           node scripts/verify-calendar-docs.mjs "$RUNNER_TEMP/calendar-browser" http://127.0.0.1:4329/docs/calendar/ "$RUNNER_TEMP/calendar-evidence"
       - uses: actions/upload-artifact@v4
         if: always()

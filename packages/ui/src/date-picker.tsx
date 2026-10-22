@@ -9,9 +9,11 @@ import {
   Dialog,
   Group,
   Label,
+  I18nProvider,
   Popover,
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
+  type DateSegmentRenderProps,
 } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
 import { Calendar } from './calendar.js';
@@ -47,10 +49,12 @@ const calendarButtonClassName =
   'relative z-[1] flex size-5 shrink-0 items-center justify-center rounded-xs text-icon-base outline-none data-[disabled]:text-icon-disabled data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus';
 
 const popoverSurfaceClassName =
-  'max-w-[calc(100vw-1rem)] rounded-xl border border-base-subtle bg-calendar-bg p-1 shadow-md outline-none';
+  'w-[19.75rem] max-w-[calc(100vw-1rem)] rounded-xl bg-calendar-bg p-1 shadow-md outline-none';
 
-const compactCalendarGridClassName =
-  'w-[17.125rem] [&_th]:w-[39px] [&_th]:max-w-[39px] [&_td_[role=button]]:size-[39px]';
+const embeddedCalendarClassName = 'border-none p-0 shadow-none [&_header_h2]:py-2';
+
+const embeddedCalendarFooterClassName =
+  "[&_[data-slot=calendar-today]]:relative [&_[data-slot=calendar-today]]:mt-0 [&_[data-slot=calendar-today]]:border-0 [&_[data-slot=calendar-today]]:pt-0 [&_[data-slot=calendar-today]]:before:absolute [&_[data-slot=calendar-today]]:before:left-0 [&_[data-slot=calendar-today]]:before:top-0 [&_[data-slot=calendar-today]]:before:w-[min(17.125rem,100%)] [&_[data-slot=calendar-today]]:before:border-t [&_[data-slot=calendar-today]]:before:border-base-subtle [&_[data-slot=calendar-today]]:before:content-['']";
 
 function focusDateSegmentFromShell(event: React.MouseEvent<HTMLElement>, isDisabled: boolean) {
   if (
@@ -128,9 +132,19 @@ export function DatePicker<T extends DateValue>({
       dir={languageConfig.direction}
       className={twMerge(fieldRootVariants(), 'gap-0', className)}
     >
-      {({ isDisabled, isInvalid, isReadOnly, isOpen }) => {
+      {({ isDisabled, isInvalid, isReadOnly, isOpen, state }) => {
         const showRequired = showRequiredIndicator && Boolean(props.isRequired);
         const showOptional = shouldShowFieldOptional(isOptional, props.isRequired);
+
+        const segmentClassName = (segment: DateSegmentRenderProps) => {
+          if (segment.isDisabled) return 'text-disabled data-[type=literal]:text-disabled';
+          if (segment.isFocused)
+            return 'text-primary-inverted data-[type=literal]:text-primary-inverted';
+          const isEmpty = segment.isPlaceholder || (segment.type === 'literal' && !state.value);
+          return isEmpty
+            ? 'text-base-inactive data-[type=literal]:text-base-inactive'
+            : 'text-base-strong data-[type=literal]:text-base-strong';
+        };
 
         return (
           <>
@@ -138,7 +152,12 @@ export function DatePicker<T extends DateValue>({
               <div className="flex w-full items-center gap-2 pb-2">
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   {label ? (
-                    <Label className={fieldHeaderLabelVariants({ size, isDisabled })}>
+                    <Label
+                      className={twMerge(
+                        fieldHeaderLabelVariants({ size, isDisabled }),
+                        isDisabled && 'text-base-muted',
+                      )}
+                    >
                       {label}
                     </Label>
                   ) : null}
@@ -171,7 +190,7 @@ export function DatePicker<T extends DateValue>({
                     </span>
                   ) : null}
                   {showRequired ? (
-                    <span className={fieldHeaderRequiredIndicatorVariants({ isDisabled })}>*</span>
+                    <span className={fieldHeaderRequiredIndicatorVariants()}>*</span>
                   ) : null}
                 </div>
               </div>
@@ -180,12 +199,35 @@ export function DatePicker<T extends DateValue>({
             <Group
               className={twMerge(
                 fieldShellVariants({ appearance, size, isDisabled, isInvalid, isReadOnly, isOpen }),
-                'gap-2',
+                'gap-2 rounded-[var(--radius-field)]',
+                !isDisabled &&
+                  !isInvalid &&
+                  !isReadOnly &&
+                  'focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed has-[span[data-focus-visible]]:bg-text-input-bg-pressed has-[span[data-focus-visible]]:hover:bg-text-input-bg-pressed has-[button[data-focus-visible]]:bg-text-input-bg-pressed has-[button[data-focus-visible]]:hover:bg-text-input-bg-pressed',
+                appearance === 'outline' &&
+                  state.value &&
+                  !isOpen &&
+                  !isInvalid &&
+                  !isDisabled &&
+                  !isReadOnly &&
+                  'bg-text-input-bg-hover',
                 inputClassName,
               )}
               onMouseDown={(event) => focusDateSegmentFromShell(event, isDisabled)}
             >
-              <DateSegments size={size} />
+              {languageConfig.language === 'dv' ? (
+                <I18nProvider locale="en-GB">
+                  <DateSegments
+                    size={size}
+                    lang="en"
+                    dir="ltr"
+                    className="justify-end"
+                    segmentClassName={segmentClassName}
+                  />
+                </I18nProvider>
+              ) : (
+                <DateSegments size={size} segmentClassName={segmentClassName} />
+              )}
               <AriaButton
                 ref={setTriggerRef}
                 slot="button"
@@ -203,6 +245,7 @@ export function DatePicker<T extends DateValue>({
                 isInvalid={isInvalid}
                 size={size}
                 description={description}
+                descriptionTone={isDisabled ? 'disabled' : 'muted'}
                 errorMessage={errorMessage}
               />
             </div>
@@ -218,8 +261,11 @@ export function DatePicker<T extends DateValue>({
                 <Calendar
                   showTodayButton={showTodayButton}
                   todayButtonLabel={todayButtonLabel}
-                  gridClassName={compactCalendarGridClassName}
-                  className={twMerge('border-none p-0 shadow-none', calendarClassName)}
+                  className={twMerge(
+                    embeddedCalendarClassName,
+                    embeddedCalendarFooterClassName,
+                    calendarClassName,
+                  )}
                 />
               </Dialog>
             </Popover>

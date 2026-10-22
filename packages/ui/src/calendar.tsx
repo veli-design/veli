@@ -131,7 +131,11 @@ const calendarPickerItemVariants = cva(
 function CalendarErrorMessage({ children }: { children: string }) {
   return (
     <Text slot="errorMessage" elementType="div" className={calendarErrorMessageClassName}>
-      <WarningCircleIcon aria-hidden weight="fill" className="size-4 shrink-0" />
+      <WarningCircleIcon
+        aria-hidden
+        weight="fill"
+        className="size-4 shrink-0 text-icon-danger-muted"
+      />
       <span className="min-w-0 break-words">{children}</span>
     </Text>
   );
@@ -540,7 +544,7 @@ function CalendarTodayButton({ label }: { label: string }) {
   }
 
   return (
-    <div className="mt-1 border-t border-base-subtle pt-1">
+    <div data-slot="calendar-today" className="mt-1 border-t border-base-subtle pt-1">
       <Button
         slot={null}
         intent="primary"
@@ -709,7 +713,7 @@ function CalendarDayLabel({
           aria-hidden="true"
           className={twMerge(
             'absolute left-1/2 top-full mt-0.5 size-1 -translate-x-1/2 shrink-0 rounded-full',
-            todayDotInverted ? 'bg-text-base-inverted' : 'bg-calendar-day-selected',
+            todayDotInverted ? 'bg-text-primary-inverted' : 'bg-calendar-day-selected',
           )}
         />
       ) : null}

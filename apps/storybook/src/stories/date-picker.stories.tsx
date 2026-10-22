@@ -286,7 +286,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Playground: Story = {
   render: (args) => {
     const language = useDatePickerLanguage();
     const { showInfoTooltip, ...datePickerArgs } = args;
@@ -318,7 +318,7 @@ export const Outline: Story = {
   args: {
     appearance: 'outline',
   },
-  render: Default.render,
+  render: Playground.render,
 };
 
 export const Sizes: Story = {
@@ -404,7 +404,7 @@ export const Required: Story = {
     isRequired: true,
     isOptional: false,
   },
-  render: Default.render,
+  render: Playground.render,
 };
 
 export const Granularity: Story = {
@@ -426,6 +426,68 @@ export const Granularity: Story = {
           defaultValue={parseDateTime('2026-04-18T21:10:00')}
         />
       </div>
+    );
+  },
+};
+
+/** All supported resting states at each Figma appearance/size. Hover, focus and active are interactive. */
+export const StateMatrix: Story = {
+  name: 'States and sizes',
+  parameters: { layout: 'fullscreen' },
+  render: () => {
+    const text = useDatePickerText();
+    return (
+      <div
+        className="grid min-w-0 grid-cols-1 gap-8 p-4 md:grid-cols-2"
+        data-testid="date-picker-changelog"
+      >
+        {(['default', 'outline'] as const).flatMap((appearance) =>
+          (['sm', 'md', 'lg'] as const).map((size) => (
+            <div key={`${appearance}-${size}`} className="min-w-0 space-y-5">
+              <p className="type-caption-regular text-base-muted">
+                {appearance} / {size}
+              </p>
+              {(['empty', 'filled', 'invalid', 'disabled', 'read-only'] as const).map((state) => (
+                <div key={state} data-testid={`picker-${appearance}-${size}-${state}`}>
+                  <StoryDatePicker
+                    appearance={appearance}
+                    size={size}
+                    label={text.appointmentDate}
+                    infoTooltip={text.infoTip}
+                    description={text.helperText}
+                    defaultValue={state === 'empty' ? undefined : parseDate('2026-10-15')}
+                    placeholderValue={parseDate('2026-10-15')}
+                    isOptional={state !== 'invalid'}
+                    isRequired={state === 'invalid' || state === 'disabled'}
+                    isInvalid={state === 'invalid'}
+                    errorMessage={text.pickAppointmentDateWithinAllowedWindow}
+                    isDisabled={state === 'disabled'}
+                    isReadOnly={state === 'read-only'}
+                  />
+                </div>
+              ))}
+            </div>
+          )),
+        )}
+      </div>
+    );
+  },
+};
+
+export const ConstraintsAndToday: Story = {
+  render: () => {
+    const text = useDatePickerText();
+    return (
+      <StoryDatePicker
+        label={text.appointmentDate}
+        name="appointment"
+        defaultValue={parseDate('2026-10-15')}
+        minValue={parseDate('2026-10-12')}
+        maxValue={parseDate('2026-10-28')}
+        isDateUnavailable={(date) => date.day === 16}
+        shouldCloseOnSelect={false}
+        description={text.pickAppointmentDateWithinAllowedWindow}
+      />
     );
   },
 };

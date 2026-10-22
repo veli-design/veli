@@ -278,6 +278,25 @@ function languageVariants(prefix, builder) {
 
 // Build-time sources: these are highlighted into inert templates, never shipped as a highlighter.
 export const previewCodeGroups = {
+  DatePickerRtlDemo: {
+    defaultKey: 'date-picker-language-dv',
+    variants: languageVariants('date-picker-language', (language) =>
+      component(
+        'DatePickerLanguageDemo',
+        `import { parseDate } from '@internationalized/date';
+import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+${providerImport}`,
+        `<VeliProvider language="${language}">
+  <DatePicker
+    label="${language === 'dv' ? 'އެޕޮއިންޓްމަންޓް ތާރީޚު' : 'Appointment date'}"
+    description="${language === 'dv' ? 'އެހީތެރިވެދޭ ލިޔުން' : 'Helper text'}"
+    defaultValue={parseDate('2026-10-15')}
+    isOptional
+  />
+</VeliProvider>`,
+      ),
+    ),
+  },
   CalendarVariantsDemo: {
     defaultKey: 'calendar-state-constrained',
     variants: Object.fromEntries(

@@ -578,3 +578,29 @@ export const TodayOutsideAllowedWindow: Story = {
     />
   ),
 };
+
+// This example follows the current local date so the combined Today states are visible.
+export const TodayIndicatorStates: Story = {
+  render: () => {
+    const current = today(getLocalTimeZone());
+    return (
+      <div className="flex max-w-full flex-wrap items-start gap-6">
+        <div className="min-w-0 max-w-full space-y-3">
+          <p className="type-caption-regular text-base-muted">Today, unselected</p>
+          <Calendar aria-label="Today unselected" defaultFocusedValue={current} />
+        </div>
+        <div className="min-w-0 max-w-full space-y-3">
+          <p className="type-caption-regular text-base-muted">Today, selected</p>
+          <Calendar aria-label="Today selected" defaultValue={current} />
+        </div>
+        <div className="min-w-0 max-w-full space-y-3">
+          <p className="type-caption-regular text-base-muted">Today, selected in a range</p>
+          <RangeCalendar
+            aria-label="Today selected in range"
+            defaultValue={{ start: current, end: current }}
+          />
+        </div>
+      </div>
+    );
+  },
+};

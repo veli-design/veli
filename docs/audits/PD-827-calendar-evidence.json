@@ -4,7 +4,7 @@
   "reviewBase": "cba5aa7a3e0d656e925048d144e4ad938b1e6719",
   "physicalDevicesTested": false,
   "componentBrowserSuite": "passed: 64 cases",
-  "productionDocsSuite": "passed: 14 cases",
+  "productionDocsSuite": "passed: 28 cases (14 Calendar, 14 DatePicker)",
   "componentConsoleErrors": [],
   "componentMeasurements": {
     "chromium/en/light": {
@@ -91,5 +91,106 @@
   "knownContrastFindings": [
     "Fix any of the following:\n  Element has insufficient color contrast of 3.28 (foreground color: #0e0e0d, background color: #146f77, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
   ],
-  "followUps": ["PD-1164", "PD-1165"]
+  "followUps": ["PD-1164", "PD-1165", "PD-1166"],
+  "datePickerBrowserSuite": "passed: 64 viewport cases with 30 fields each, plus 48 desktop appearance/size/language/theme interaction combinations",
+  "uiTests": 193,
+  "datePickerConsoleErrors": [],
+  "datePickerMeasurements": {
+    "chromium/en/light": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 336,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "chromium/en/dark": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 336,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "chromium/dv/light": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 352,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "chromium/dv/dark": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 352,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "webkit/en/light": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 336,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "webkit/en/dark": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 336,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "webkit/dv/light": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 352,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    },
+    "webkit/dv/dark": {
+      "viewports": [320, 360, 375, 390, 414, 768, 1280, 844],
+      "horizontalOverflow": false,
+      "fieldHeights": [36, 44, 52],
+      "fieldRadius": 10,
+      "popoverWidth": 316,
+      "popoverHeight": 352,
+      "unconstrainedDayTarget": [44, 44],
+      "numericDateOrder": "day/month/year"
+    }
+  },
+  "datePickerKnownContrastFindings": [
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.08 (foreground color: #555753, background color: #252624, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.1 (foreground color: #555753, background color: #242523, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.31 (foreground color: #555753, background color: #1c1d1b, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.31 (foreground color: #555753, background color: #1c1d1b, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #9a9d96, background color: #f4f6f3, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #9a9d96, background color: #f5f7f5, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #9a9d96, background color: #fbfcfb, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #9a9d96, background color: #fbfcfb, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.08 (foreground color: #8b8d87, background color: #f4f6f3, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.08 (foreground color: #8b8d87, background color: #f4f6f3, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.08 (foreground color: #8b8d87, background color: #f4f6f3, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.22 (foreground color: #626460, background color: #0e0e0d, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.22 (foreground color: #626460, background color: #0e0e0d, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+    "Fix any of the following:\n  Element has insufficient color contrast of 3.22 (foreground color: #626460, background color: #0e0e0d, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+  ]
 }
