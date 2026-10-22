@@ -26,6 +26,44 @@ import { DateField } from '@tradenetcorp/veli-ui/date-field';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
 `;
 
+test('copied policy passes the reviewed Oxlint quality config while real errors still fail', async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'veli-policy-quality-'));
+  try {
+    const policy = path.join(directory, 'scripts/lint');
+    await mkdir(policy, { recursive: true });
+    for (const file of ['veli-contracts.mjs', 'veli-styling.mjs'])
+      await cp(path.join(root, 'scripts/lint', file), path.join(policy, file));
+    // Exact config from the independent 2026-10-22 source-copy review; this
+    // checks copied module code, not @shadcn/lint's separate Oxlint adapter.
+    await cp(
+      path.join(root, 'scripts/lint/fixtures/govmv.oxlintrc.json'),
+      path.join(directory, '.oxlintrc.json'),
+    );
+    const run = () => {
+      const result = spawnSync(
+        process.execPath,
+        [path.join(root, 'node_modules/oxlint/bin/oxlint'), '.', '--format', 'json'],
+        { cwd: directory, encoding: 'utf8', timeout: 15000 },
+      );
+      return { ...result, report: JSON.parse(result.stdout) };
+    };
+    const clean = run();
+    assert.equal(clean.status, 0, clean.stderr || clean.stdout);
+    assert.equal(clean.report.number_of_files, 2);
+    assert.deepEqual(clean.report.diagnostics, []);
+    await writeFile(path.join(policy, 'quality-negative.mjs'), 'debugger;');
+    const negative = run();
+    assert.equal(negative.status, 1, negative.stderr || negative.stdout);
+    assert.ok(
+      negative.report.diagnostics.some(
+        (message) => message.code === 'eslint(no-debugger)' && message.severity === 'error',
+      ),
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 function messages(code, preamble = imports) {
   const result = linter.verify(`${preamble}\n${code}`, config, {
     filename: path.join(root, 'apps/veli-policy-test.tsx'),
@@ -161,6 +199,7 @@ test('upstream handles conditional helpers, variables, aliases and namespace imp
 });
 
 test('internal class props never inherit root width allowances', () => {
+  assert.deepEqual(messages('<Button xml:lang="dv" />'), []);
   for (const prop of ['inputClassName', 'popoverClassName', 'calendarClassName', 'classNames']) {
     assert.ok(
       messages(`<DatePicker ${prop}="w-full" />`).some(
@@ -535,6 +574,20 @@ test('new complete-field and surface roots have explicit positive allowances', (
       ),
       [],
     );
+});
+
+test('content flex-group matching retains its current scope without broad layout permission', () => {
+  for (const [module, name] of [
+    ['card', 'Card'],
+    ['modal', 'Modal'],
+    ['popover', 'Popover'],
+  ]) {
+    const preamble = `import {${name}} from '@tradenetcorp/veli-ui/${module}';`;
+    assert.deepEqual(messages(`<${name}.Content className="flex-1 flex-auto" />`, preamble), []);
+    for (const className of ['basis-1', 'shrink-0'])
+      assert.ok(messages(`<${name}.Content className="${className}" />`, preamble).length);
+  }
+  assert.ok(messages('<Button className="flex-1" />').length);
 });
 
 test('compound parts and namespace aliases use their actual slot contracts', () => {

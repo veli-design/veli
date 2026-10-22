@@ -133,6 +133,7 @@ const reviewBoundaries = {
         );
         for (const attr of attributes) {
           const prop = attr.name.name;
+          if (typeof prop !== 'string') continue;
           // Empty literals and explicit null/undefined have no styling effect.
           const value = unwrapType(
             attr.value?.type === 'JSXExpressionContainer' ? attr.value.expression : attr.value,
@@ -147,7 +148,7 @@ const reviewBoundaries = {
           const messageId =
             prop === 'style'
               ? 'style'
-              : /ClassName$/.test(prop) || prop === 'classNames'
+              : prop.endsWith('ClassName') || prop === 'classNames'
                 ? 'internal'
                 : component === 'Button' && iconOnly && prop === 'className'
                   ? 'icon'

@@ -45,6 +45,8 @@ The following terms name **explicit class lists**, never the upstream broad
 - **Content layout:** enumerated flex/grid displays, directions, wrapping, gaps,
   grid tracks and child alignment; see the exact list in the contract module.
   Padding, typography and surface appearance remain owned by Veli.
+  Upstream also interprets `flex` as the flex utility group, so `flex-1` and
+  `flex-auto` pass on these content slots; `basis-1` and `shrink-0` still warn.
 
 | Component / slot                                                                       | Allowed changes                                                                                                                                                 | Level                                                                |
 | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -169,6 +171,11 @@ package and modifies no consumer repository. To opt in:
 
 1. Copy `scripts/lint/veli-styling.mjs`, `veli-contracts.mjs` and this document.
    Keep `veli-exceptions.mjs` and repository-local overrides out of the consumer.
+   Format the copied modules and new config with the app's formatter before its
+   normal checks. Veli's formatting can differ (for example, semicolons versus
+   govmv's Oxfmt settings); this is source adoption, not a drop-in formatted package.
+   With Oxfmt, target only these files:
+   `corepack pnpm exec oxfmt scripts/lint/veli-styling.mjs scripts/lint/veli-contracts.mjs eslint.veli.config.mjs`.
 2. Install `@shadcn/lint@0.2.3`, ESLint >=9.30 and `typescript-eslint` >=8.40
    (the example below uses its parser export). Node must be >=20.19; Veli's checkout requires Node >=24.
 3. Reuse the app's parser and ignores in a separate flat config. The following
@@ -187,6 +194,27 @@ package and modifies no consumer repository. To opt in:
    ];
    ```
 
+   An Oxlint-only app may have no ESLint plugin registry to reuse. If it retains
+   `@next/next/no-img-element` directives, install a compatible
+   `@next/eslint-plugin-next` dev dependency and register its definitions explicitly.
+   For example, keep the minimal config above and add `eslint.veli.next.config.mjs`:
+
+   ```js
+   import nextPlugin from '@next/eslint-plugin-next';
+   import base from './eslint.veli.config.mjs';
+
+   export default [
+     ...base,
+     { plugins: { '@next/next': nextPlugin } },
+     { linterOptions: { reportUnusedDisableDirectives: 'off' } },
+   ];
+   ```
+
+   Use `eslint --config eslint.veli.next.config.mjs src` for this adaptation.
+   It registers definitions without enabling Next quality rules in this separate
+   styling pass. The app's existing quality command stays unchanged. Missing plugins
+   still fail; do not discard errors or disable source directives wholesale.
+
 4. Add an app-owned command such as
    `eslint --config eslint.veli.config.mjs src` (use that app’s source folders).
    Baseline the app's actual usages and preserve required accessibility/behavior
@@ -197,6 +225,10 @@ package and modifies no consumer repository. To opt in:
 
 Upstream documents Oxlint >=1.80, but this local boundary rule is an ESLint
 integration. Verify adapter support independently before adopting it with Oxlint.
+The copied policy modules pass an isolated Oxlint 1.72.0 quality smoke test using
+the config preserved in the independent govmv source-copy review. Oxlint is pinned
+as a Veli test dependency for that regression, not used to run the styling rules.
+This does not establish installed govmv compatibility or a supported Oxlint adapter.
 Current remote govmv-web/one-fleet reads returned 404. A local govmv snapshot
 `b0215c3` uses Veli UI 0.14.0 and Oxlint `^1.72.0`, below upstream's documented
 Oxlint minimum; this snapshot does not establish the current remote version.

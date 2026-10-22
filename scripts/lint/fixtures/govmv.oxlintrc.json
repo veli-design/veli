@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "nextjs", "vitest"],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": [
+    ".veli/**",
+    "src/components/blocks/notification-tray/**",
+    ".next/**",
+    "src/payload-types.ts",
+    "src/payload-generated-schema.ts",
+    "src/app/(payload)/admin/importMap.js",
+    "packages/payload-plugin-datasets/**",
+    "src/migrations/**",
+    ".veli/**"
+  ],
+  "rules": {
+    "jsx-a11y/heading-has-content": "off",
+    "nextjs/no-before-interactive-script-outside-document": "off",
+    "no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off"
+  },
+  "env": {
+    "browser": true,
+    "builtin": true,
+    "node": true,
+    "vitest": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.2.6"
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/components/blocks/account-panel/**"],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
+      }
+    }
+  ]
+}

@@ -83,7 +83,7 @@ pnpm format:check
 # Run ESLint
 pnpm lint
 
-# Enforce reviewed Button/field contracts and report other styling findings (PD-809)
+# Report warning-only Veli styling findings (PD-809)
 corepack pnpm lint:veli
 
 # Run the same quality gates used before pushing
