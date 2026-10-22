@@ -59,3 +59,7 @@ The local pre-push gate was also attempted. Homebrew Node 26 initially failed th
 ## Review follow-up: final-row focus corners
 
 The final row's inset keyboard focus ring now follows the frame's inner bottom radius (frame radius minus its 1px border), preventing the square ring from being clipped at the corners. The first and last cells use logical bottom-corner radii so their individual focus rings also fit in LTR and RTL. Other rows retain square focus rings. The Row Actions interaction test navigates to the last row and checks the rendered row/cell radii against the frame.
+
+## Review follow-up: selection alignment
+
+Table's select-all and row Checkbox instances now use block flex layout rather than inline flex, removing the baseline gap that raised the control relative to the row text. The shared Checkbox component remains unchanged. The selection story checks each checkbox's vertical centre against the adjacent cell's content area, including the header, disabled and final rows.

@@ -506,6 +506,19 @@ export const WithSelection: Story = {
     }
     await userEvent.click(checkboxes[0]);
     for (const checkbox of checkboxes.slice(1)) await expect(checkbox).not.toBeChecked();
+    for (const checkbox of checkboxes) {
+      const label = checkbox.closest('label')!;
+      const textCell = checkbox.closest('tr')!.querySelectorAll('td, th')[1];
+      const controlRect = label.getBoundingClientRect();
+      const textRect = textCell.getBoundingClientRect();
+      const style = getComputedStyle(textCell);
+      const textCentre =
+        textRect.top +
+        (textRect.height + parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth)) /
+          2;
+      const controlCentre = controlRect.top + controlRect.height / 2;
+      await expect(Math.abs(controlCentre - textCentre)).toBeLessThan(0.5);
+    }
   },
   parameters: {
     controls: { disable: true },

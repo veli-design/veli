@@ -193,7 +193,12 @@ export function TableHeader<T = unknown>({ className, children, ...props }: Tabl
       ) : null}
       {showSelection ? (
         <AriaColumn className={twMerge(tableColumnVariants(), 'w-12')}>
-          <Checkbox slot="selection" size="md" aria-label={tableText[language].selectAll} />
+          <Checkbox
+            slot="selection"
+            size="md"
+            className="flex w-fit"
+            aria-label={tableText[language].selectAll}
+          />
         </AriaColumn>
       ) : null}
       {children}
@@ -376,7 +381,12 @@ export function TableRow<T = unknown>({
       ) : null}
       {showSelection ? (
         <AriaCell className={tableCellVariants()}>
-          <Checkbox slot="selection" size="md" aria-label={tableText[language].selectRow} />
+          <Checkbox
+            slot="selection"
+            size="md"
+            className="flex w-fit"
+            aria-label={tableText[language].selectRow}
+          />
         </AriaCell>
       ) : null}
       {children}
