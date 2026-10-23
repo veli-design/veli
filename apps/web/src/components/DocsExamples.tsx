@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
@@ -459,6 +459,76 @@ export function TagsVariantsDemo() {
     </div>
   );
 }
+
+function subscribeToTagsDocsTheme(onChange: () => void) {
+  window.addEventListener('veli:color-scheme-change', onChange);
+  return () => window.removeEventListener('veli:color-scheme-change', onChange);
+}
+
+function getTagsDocsColorScheme() {
+  const colorScheme = document.documentElement.dataset.colorScheme;
+  return colorScheme === 'light' || colorScheme === 'dark' ? colorScheme : 'system';
+}
+
+function TagsRtlContent() {
+  const text = useTagsDocsText();
+  const [topics, setTopics] = useState(() => getTagsDocsRemovableSeed(text));
+
+  return (
+    <div className="w-full max-w-lg space-y-5">
+      <TagGroup
+        label={text.departments}
+        selectionMode="multiple"
+        defaultSelectedKeys={['tourism']}
+        description={text.chooseDepartments}
+      >
+        <Tag id="tourism">{text.tourism}</Tag>
+        <Tag id="fisheries">{text.fisheries}</Tag>
+        <Tag id="education">{text.education}</Tag>
+      </TagGroup>
+      <TagGroup<TagDemoItem>
+        label={text.savedTopics}
+        items={topics}
+        onRemove={(keys) => setTopics((current) => current.filter((item) => !keys.has(item.id)))}
+      >
+        {(item) => <Tag id={item.id}>{item.label}</Tag>}
+      </TagGroup>
+    </div>
+  );
+}
+
+export function TagsRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+  const colorScheme = useSyncExternalStore(
+    subscribeToTagsDocsTheme,
+    getTagsDocsColorScheme,
+    () => 'system' as const,
+  );
+
+  return (
+    <DocsPreview
+      codeKey={`tags-language-${isDhivehi ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <VeliProvider
+        language={isDhivehi ? 'dv' : 'en'}
+        colorScheme={colorScheme}
+        className="w-full min-w-0"
+      >
+        <TagsRtlContent key={language} />
+      </VeliProvider>
+    </DocsPreview>
+  );
+}
+
 export function CheckboxUsageDemo() {
   return (
     <div className="grid w-full max-w-sm gap-3">

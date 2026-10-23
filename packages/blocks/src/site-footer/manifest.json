@@ -1,23 +1,23 @@
 {
   "id": "site-footer",
   "title": "Site footer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "experimental",
   "description": "Responsive, bilingual footer link groups composed from Veli Link.",
   "files": ["site-footer.tsx"],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.16.0",
+    "@tradenetcorp/veli-ui": "^0.17.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.9.1",
+    "@tradenetcorp/veli-tokens": "^0.10.0",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.16.0",
-    "@tradenetcorp/veli-tokens": "0.9.1",
+    "@tradenetcorp/veli-ui": "0.17.0",
+    "@tradenetcorp/veli-tokens": "0.10.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.19.0",
