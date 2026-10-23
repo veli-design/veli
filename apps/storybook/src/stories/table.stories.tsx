@@ -430,6 +430,28 @@ export const Sortable: Story = {
     column.focus();
     await userEvent.keyboard('{Enter}');
     await expect(column).toHaveAttribute('aria-sort', 'ascending');
+    await expect(column).toHaveFocus();
+    const columns = canvas.getAllByRole('columnheader');
+    const frameStyle = getComputedStyle(column.closest('table')!.parentElement!);
+    const innerRadius =
+      parseFloat(frameStyle.borderTopLeftRadius) - parseFloat(frameStyle.borderLeftWidth);
+    const firstStyle = getComputedStyle(column);
+    const isRtl = firstStyle.direction === 'rtl';
+    await expect(parseFloat(firstStyle.borderStartStartRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(firstStyle.borderStartEndRadius)).toBe(0);
+    await expect(
+      parseFloat(isRtl ? firstStyle.borderTopRightRadius : firstStyle.borderTopLeftRadius),
+    ).toBeCloseTo(innerRadius, 0);
+    const nextColumnKey = isRtl ? '{ArrowLeft}' : '{ArrowRight}';
+    for (let index = 1; index < columns.length; index++) await userEvent.keyboard(nextColumnKey);
+    const lastColumn = columns[columns.length - 1];
+    await expect(lastColumn).toHaveFocus();
+    const lastStyle = getComputedStyle(lastColumn);
+    await expect(parseFloat(lastStyle.borderStartEndRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(lastStyle.borderStartStartRadius)).toBe(0);
+    await expect(
+      parseFloat(isRtl ? lastStyle.borderTopLeftRadius : lastStyle.borderTopRightRadius),
+    ).toBeCloseTo(innerRadius, 0);
   },
   parameters: {
     controls: { disable: true },

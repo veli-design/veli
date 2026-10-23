@@ -9,3 +9,5 @@
 - Round the final table row and edge-cell focus rings to match the frame corners in both LTR and RTL.
 
 - Align selection checkboxes with table header and row text by removing the inline baseline gap.
+
+- Round the outer top header focus corners to follow the table frame in LTR and RTL.
