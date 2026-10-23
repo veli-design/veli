@@ -6,7 +6,7 @@ export interface FieldMessageProps {
   isInvalid: boolean;
   size?: 'sm' | 'md' | 'lg';
   description?: React.ReactNode;
-  /** Semantic tone for helper copy. Existing fields keep the subtle default. */
+  /** Semantic tone for helper copy. Text fields pass `fieldHelperTone`; other controls keep subtle. */
   descriptionTone?: 'subtle' | 'muted' | 'disabled';
   errorMessage?: React.ReactNode;
 }

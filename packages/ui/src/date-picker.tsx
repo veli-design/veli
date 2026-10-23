@@ -22,6 +22,7 @@ import { DateSegments } from './date-segments.js';
 import {
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -245,7 +246,7 @@ export function DatePicker<T extends DateValue>({
                 isInvalid={isInvalid}
                 size={size}
                 description={description}
-                descriptionTone={isDisabled ? 'disabled' : 'muted'}
+                descriptionTone={fieldHelperTone(isDisabled)}
                 errorMessage={errorMessage}
               />
             </div>

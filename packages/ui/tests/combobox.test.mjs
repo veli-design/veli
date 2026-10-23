@@ -118,7 +118,7 @@ test('ComboBox disabled and read-only states preserve selection and match shell 
   }
 });
 
-test('ComboBox helper tone is muted without changing other fields or validation association', () => {
+test('ComboBox and Input helper tones follow the shared field footer', () => {
   const html = liveMarkup(render({ description: 'Search locations' }));
   assert.match(html, /class="[^"]*text-base-muted"[^>]*slot="description"/);
   const descriptionId = html.match(/id="([^"]+)" slot="description"/)?.[1];
@@ -132,7 +132,13 @@ test('ComboBox helper tone is muted without changing other fields or validation 
   const disabled = liveMarkup(render({ isDisabled: true, description: 'Disabled help' }));
   assert.match(disabled, /class="[^"]*text-disabled"[^>]*slot="description"/);
   const input = renderToStaticMarkup(h(Input, { label: 'Name', description: 'Enter name' }));
-  assert.match(input, /class="[^"]*text-base-subtle"[^>]*slot="description"/);
+  assert.match(input, /class="[^"]*text-base-muted"[^>]*slot="description"/);
+  const disabledInput = renderToStaticMarkup(
+    h(Input, { label: 'Name', description: 'Enter name', isDisabled: true, isRequired: true }),
+  );
+  assert.match(disabledInput, /<label[^>]*text-base-muted/);
+  assert.match(disabledInput, /class="[^"]*text-disabled"[^>]*slot="description"/);
+  assert.match(disabledInput, /text-danger-muted[^>]*>\*/);
   const invalid = liveMarkup(
     render({ isInvalid: true, description: 'Hidden helper', errorMessage: 'Choose a location' }),
   );

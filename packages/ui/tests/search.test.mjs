@@ -86,7 +86,17 @@ test('Search only offers clearing for a nonempty editable value', () => {
 test('Search exposes helper and error associations with validation semantics', () => {
   const helper = render({ description: 'Search by name' });
   assert.match(helper, /aria-describedby="[^"]+"/);
+  assert.match(helper, /class="[^"]*text-base-muted"[^>]*slot="description"/);
   assert.match(helper, /slot="description"[^>]*>Search by name/);
+  const disabledHelper = render({
+    label: 'Unavailable',
+    description: 'Unavailable hint',
+    isDisabled: true,
+    isRequired: true,
+  });
+  assert.match(disabledHelper, /<label[^>]*text-base-muted/);
+  assert.match(disabledHelper, /class="[^"]*text-disabled"[^>]*slot="description"/);
+  assert.match(disabledHelper, /text-danger-muted[^>]*>\*/);
   const error = render({
     isInvalid: true,
     description: 'Hidden helper',
@@ -125,7 +135,7 @@ test('Search associates its optional visible label and shares Veli required indi
     />\*<\/span>/,
   );
   assert.doesNotMatch(render(), /<label\b/);
-  assert.match(render({ label: 'Unavailable', isDisabled: true }), /<label[^>]*text-disabled/);
+  assert.match(render({ label: 'Unavailable', isDisabled: true }), /<label[^>]*text-base-muted/);
 });
 
 test('Search inherits Veli Form validation behavior and named server errors', () => {
@@ -168,7 +178,8 @@ test('FieldLabel supports explicit control state without losing Field context de
         ),
       ),
     );
-  assert.match(renderLabel({}), /<label[^>]*text-disabled/);
+  assert.match(renderLabel({}), /<label[^>]*text-base-muted/);
+  assert.match(renderLabel({}), /text-danger-muted[^>]*>\*/);
   assert.match(renderLabel({}), /aria-hidden="true">\*/);
   const overridden = renderLabel({ isDisabled: false, isRequired: false });
   assert.match(overridden, /<label[^>]*text-base-default/);
