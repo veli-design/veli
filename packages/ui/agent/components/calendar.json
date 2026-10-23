@@ -55,7 +55,8 @@
   ],
   "responsive": [
     "Use min-w-0 on flex/grid parents so the seven-column grid can shrink on mobile.",
-    "Place multiple calendars in one column on narrow layouts."
+    "Place multiple calendars in one column on narrow layouts.",
+    "Weekday names remain fully visible at 44px column widths and truncate only in narrower columns."
   ],
   "rtl": [
     "VeliProvider can supply Dhivehi locale and RTL direction.",

@@ -214,9 +214,10 @@ const calendarGridClassName =
   'w-[min(19.25rem,100%)] max-w-full table-fixed border-spacing-0 [&_td]:p-0';
 
 const calendarHeaderCellClassName =
-  'w-1/7 overflow-hidden px-0 py-2 text-center type-caption-regular text-base-default';
+  'w-1/7 px-0 py-2 text-center type-caption-regular text-base-default';
 
-const calendarWeekdayLabelClassName = 'block truncate no-underline';
+const calendarWeekdayLabelClassName =
+  'block truncate no-underline @min-[44px]:overflow-visible @min-[44px]:text-clip';
 
 const calendarDayLabelClassName =
   'inline-flex h-5 min-w-5 items-center justify-center type-body-sm-regular leading-5';
@@ -671,13 +672,15 @@ export function CalendarGridHeader({ weekdayStyle }: { weekdayStyle?: CalendarWe
 
         return (
           <CalendarHeaderCell className={calendarHeaderCellClassName}>
-            <abbr
-              aria-label={weekdayFullLabel}
-              title={weekdayFullLabel}
-              className={getCalendarWeekdayLabelClassName()}
-            >
-              {weekdayLabel}
-            </abbr>
+            <div className="@container">
+              <abbr
+                aria-label={weekdayFullLabel}
+                title={weekdayFullLabel}
+                className={getCalendarWeekdayLabelClassName()}
+              >
+                {weekdayLabel}
+              </abbr>
+            </div>
           </CalendarHeaderCell>
         );
       }}

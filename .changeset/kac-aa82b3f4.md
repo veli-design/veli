@@ -13,3 +13,5 @@
 - Restore DatePicker's 44-pixel calendar days and Figma popover geometry, align filled and focused field tokens, and keep Dhivehi numeric date segments consistent across browsers and hydration.
 
 - Use the approved white text and Today indicator for selected Calendar dates and range endpoints, including invalid selections, so dark-mode selected dates meet AA text contrast.
+
+- Show full weekday names at the Calendar's design column width, truncating them only when a narrow container shrinks the columns.
