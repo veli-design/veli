@@ -341,6 +341,59 @@ export const previewCodeGroups = {
       ]),
     ),
   },
+  DatePickerRtlDemo: {
+    defaultKey: 'date-picker-language-dv',
+    variants: languageVariants('date-picker-language', (language) =>
+      component(
+        'DatePickerLanguageDemo',
+        `import { parseDate } from '@internationalized/date';
+import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+${providerImport}`,
+        `<VeliProvider language="${language}">
+  <DatePicker
+    label="${language === 'dv' ? 'އެޕޮއިންޓްމަންޓް ތާރީޚު' : 'Appointment date'}"
+    description="${language === 'dv' ? 'އެހީތެރިވެދޭ ލިޔުން' : 'Helper text'}"
+    defaultValue={parseDate('2026-10-15')}
+    isOptional
+  />
+</VeliProvider>`,
+      ),
+    ),
+  },
+  CalendarVariantsDemo: {
+    defaultKey: 'calendar-state-constrained',
+    variants: Object.fromEntries(
+      ['Constrained', 'Unavailable', 'Disabled', 'Read only'].map((state) => [
+        `calendar-state-${state.toLowerCase()}`,
+        component(
+          'CalendarStateDemo',
+          "import { parseDate } from '@internationalized/date';\nimport { Calendar } from '@tradenetcorp/veli-ui/calendar';",
+          `<Calendar
+  aria-label="Booking availability calendar"
+  defaultValue={parseDate('2026-10-15')}${state === 'Constrained' ? "\n  minValue={parseDate('2026-10-12')}\n  maxValue={parseDate('2026-10-28')}" : ''}${state === 'Unavailable' ? '\n  isDateUnavailable={(date) => date.day === 16 || date.day === 23}' : ''}${state === 'Disabled' ? '\n  isDisabled' : ''}${state === 'Read only' ? '\n  isReadOnly' : ''}
+/>`,
+        ),
+      ]),
+    ),
+  },
+  CalendarRtlDemo: {
+    defaultKey: 'calendar-language-dv',
+    variants: languageVariants('calendar-language', (language) =>
+      component(
+        'CalendarLanguageDemo',
+        `import { parseDate } from '@internationalized/date';
+import { RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
+${providerImport}`,
+        `<VeliProvider language="${language}">
+  <RangeCalendar
+    aria-label="${language === 'dv' ? 'ދަތުރު ކުރާ ތާރީޚުތައް' : 'Trip dates'}"
+    defaultValue={{ start: parseDate('2026-10-13'), end: parseDate('2026-10-20') }}
+    showTodayButton
+  />
+</VeliProvider>`,
+      ),
+    ),
+  },
   TableRtlDemo: {
     defaultKey: 'table-language-dv',
     variants: languageVariants('table-language', tableLanguage),

@@ -113,7 +113,11 @@ test('all default Markdown examples agree with the dynamically displayed source'
       ? 'alert'
       : name.startsWith('Kbd')
         ? 'kbd'
-        : name.replace('RtlDemo', '').toLowerCase();
+        : name.startsWith('DatePicker')
+          ? 'date-picker'
+          : name.startsWith('Calendar')
+            ? 'calendar'
+            : name.replace('RtlDemo', '').toLowerCase();
     const mdx = readFileSync(new URL(`../content/docs/${page}.mdx`, import.meta.url), 'utf8');
     const following = mdx.slice(mdx.indexOf(`<${name}`));
     const source = following.match(/```tsx\n([\s\S]*?)\n```/)[1];
