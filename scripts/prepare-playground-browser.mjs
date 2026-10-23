@@ -17,20 +17,15 @@ writeFileSync(
     devDependencies: { '@playwright/test': fixture.devDependencies['@playwright/test'] },
   }),
 );
-const skipBrowserInstall = process.argv.includes('--skip-browser-install');
 for (const args of [
   ['pnpm', 'install', '--ignore-scripts'],
-  ...(skipBrowserInstall
-    ? []
-    : [
-        [
-          'pnpm',
-          'exec',
-          'playwright',
-          'install',
-          ...(process.platform === 'linux' ? ['--with-deps'] : []),
-          'chromium',
-        ],
-      ]),
+  [
+    'pnpm',
+    'exec',
+    'playwright',
+    'install',
+    ...(process.platform === 'linux' ? ['--with-deps'] : []),
+    'chromium',
+  ],
 ])
   assert.equal(spawnSyncCorepack(args, { cwd: target, stdio: 'inherit' }).status, 0);
