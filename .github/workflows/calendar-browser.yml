@@ -30,7 +30,12 @@ jobs:
   calendar-browser:
     name: Calendar / Chromium and WebKit
     runs-on: ubuntu-latest
+    # Match packages/blocks/fixtures/next/package.json; includes browsers and OS dependencies.
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
     timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/consumer-setup
@@ -38,8 +43,8 @@ jobs:
         run: corepack pnpm build
       - name: Prepare isolated browser runtime
         run: |
-          node scripts/prepare-playground-browser.mjs "$RUNNER_TEMP/calendar-browser"
-          corepack pnpm --dir "$RUNNER_TEMP/calendar-browser" exec playwright install --with-deps webkit
+          node -e "const p = require('./packages/blocks/fixtures/next/package.json'); if (p.devDependencies['@playwright/test'] !== '1.58.2') throw new Error('Update the Calendar Playwright image to match the fixture version');"
+          node scripts/prepare-playground-browser.mjs "$RUNNER_TEMP/calendar-browser" --skip-browser-install
           corepack pnpm --dir "$RUNNER_TEMP/calendar-browser" add -D @axe-core/playwright@4.11.1
       - name: Verify Calendar, RangeCalendar and production documentation
         run: |
