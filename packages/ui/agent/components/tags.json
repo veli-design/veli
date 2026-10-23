@@ -46,7 +46,8 @@
     "Give each group a visible label or accessible name.",
     "Provide textValue or removeButtonLabel for icon-only or complex removable tags.",
     "Decorative leading content is hidden from assistive technology.",
-    "Error text takes precedence over description text."
+    "Error text takes precedence over description text.",
+    "Selected disabled tags expose both selected and disabled states; linked tags remain grid rows and describe their destination."
   ],
   "responsive": [
     "Tag lists wrap within the available width.",
