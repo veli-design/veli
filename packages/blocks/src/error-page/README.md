@@ -1,3 +1,10 @@
+## Core package baseline
+
+Version 0.3.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+before adding or updating this application-owned source. The approved typography
+metrics and subtle-button colors can change wrapping and element height. Previous
+block archives retain their existing requirements.
+
 ## Ownership and prerequisites
 
 An experimental composition of Veli typography and links with artwork from Basim Abdullah’s ENG-3733 prototype, adapted from [govmv-web PR #134](https://github.com/tradenetcorp/govmv-web/pull/134) at `e590a6786325fcda0c508e9fe8ca279e46670fd2`. The block contains no application routes, translations, authentication or connectivity policy. It never reloads the browser automatically or displays exception details.
@@ -7,7 +14,7 @@ An experimental composition of Veli typography and links with artwork from Basim
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.16.0 @tradenetcorp/veli-tokens@0.9.1 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 motion@12.42.2
+corepack pnpm add @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 motion@12.42.2
 corepack pnpm dlx @tradenetcorp/veli init
 corepack pnpm dlx @tradenetcorp/veli add error-page
 ```
