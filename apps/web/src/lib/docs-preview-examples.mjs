@@ -276,6 +276,37 @@ function languageVariants(prefix, builder) {
   );
 }
 
+function tableLanguage(language) {
+  const dv = language === 'dv';
+  const rows = dv
+    ? [
+        { id: 'tourism', name: 'ފަތުރުވެރިކަމުގެ ލައިސަންސް', status: 'ފާސްކުރެވިފައި' },
+        { id: 'fishing', name: 'މަސްވެރިކަން ކުރުމުގެ ހުއްދަ', status: 'ޕެންޑިންގ' },
+        { id: 'business', name: 'ވިޔަފާރި ރަޖިސްޓްރީކުރުން', status: 'ރިޖެކްޓްކުރެވިފައި' },
+      ]
+    : [
+        { id: 'tourism', name: 'Tourism licence', status: 'Approved' },
+        { id: 'fishing', name: 'Fishing permit', status: 'Pending' },
+        { id: 'business', name: 'Business registration', status: 'Rejected' },
+      ];
+  return component(
+    'TableRtlDemo',
+    `import { useState } from 'react';
+import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
+${providerImport}`,
+    `<VeliProvider language="${language}">
+  <Table aria-label="${dv ? 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް' : 'Permit applications'}" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} disabledKeys={['business']}>
+    <Table.Header><Table.Column isRowHeader>${dv ? 'ނަން' : 'Name'}</Table.Column><Table.Column>${dv ? 'ޙާލަތު' : 'Status'}</Table.Column></Table.Header>
+    <Table.Body items={rows}>
+      {item => <Table.Row id={item.id}><Table.Cell>{item.name}</Table.Cell><Table.Cell>{item.status}</Table.Cell></Table.Row>}
+    </Table.Body>
+  </Table>
+</VeliProvider>`,
+    `  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['fishing']));
+  const rows = ${JSON.stringify(rows, null, 2)};`,
+  );
+}
+
 // Build-time sources: these are highlighted into inert templates, never shipped as a highlighter.
 export const previewCodeGroups = {
   KbdUsageDemo: {
@@ -362,6 +393,10 @@ ${providerImport}`,
 </VeliProvider>`,
       ),
     ),
+  },
+  TableRtlDemo: {
+    defaultKey: 'table-language-dv',
+    variants: languageVariants('table-language', tableLanguage),
   },
   AlertVariantsDemo: {
     defaultKey: 'alert-appearance-light',
