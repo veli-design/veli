@@ -16,6 +16,7 @@ import { DateSegments, fieldRootVariants, fieldShellVariants } from './date-shar
 import {
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -170,6 +171,7 @@ export function DateField<T extends DateValue>({
               isInvalid={isInvalid}
               size={size ?? 'md'}
               description={description}
+              descriptionTone={fieldHelperTone(isDisabled)}
               errorMessage={errorMessage}
             />
           </>
