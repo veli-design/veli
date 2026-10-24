@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { spawnSyncCorepack } from '../../../scripts/corepack.mjs';
 import { tokenFixture } from './token-fixture.mjs';
-import { stringify as stringifyYAML } from 'yaml';
+import { parse as parseYAML, stringify as stringifyYAML } from 'yaml';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
 
 const target = process.env.BLOCKS_CONSUMER_DIR
@@ -113,13 +113,16 @@ if (tarballs) {
   const manifest = JSON.parse(readFileSync(filename, 'utf8'));
   for (const [name, path] of Object.entries(tarballs))
     manifest.dependencies[name] = `file:${resolve(path)}`;
-  const workspace = {
-    minimumReleaseAge: 1440,
-    overrides: Object.fromEntries(
+  const workspacePath = resolve(target, 'pnpm-workspace.yaml');
+  const workspace = parseYAML(readFileSync(workspacePath, 'utf8'));
+  workspace.minimumReleaseAge ??= 1440;
+  workspace.overrides = {
+    ...workspace.overrides,
+    ...Object.fromEntries(
       Object.entries(tarballs).map(([name, path]) => [name, `file:${resolve(path)}`]),
     ),
   };
-  writeFileSync(resolve(target, 'pnpm-workspace.yaml'), stringifyYAML(workspace));
+  writeFileSync(workspacePath, stringifyYAML(workspace));
   writeFileSync(filename, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 const npmConfigDirectory = mkdtempSync(resolve(tmpdir(), 'veli-blocks-npmrc-'));
