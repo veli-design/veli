@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Search } from '@tradenetcorp/veli-ui/search';
-import { Form } from '@tradenetcorp/veli-ui/form';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Search } from '@veli-design/react/search';
+import { Form } from '@veli-design/react/form';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const dhivehiSearchText = {
   label: 'ހޯދާ',

@@ -6,11 +6,17 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSyncCorepack } from './corepack.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const packages = ['@tradenetcorp/veli-ui', '@tradenetcorp/veli-tokens'];
+const packageDirectories = {
+  '@veli-design/react': 'react',
+  '@veli-design/tokens': 'tokens',
+  '@veli-design/cli': 'cli',
+};
+// Sites consume only React and tokens; the durable snapshot records all publications.
+export const packages = ['@veli-design/react', '@veli-design/tokens'];
 export function validateManifest(manifest) {
   if (manifest.schema !== 1 || !/^[a-f0-9]{40}$/.test(manifest.sourceCommit))
     throw new Error('Invalid release snapshot');
-  for (const name of packages)
+  for (const name of Object.keys(packageDirectories))
     if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(manifest.packages?.[name] ?? ''))
       throw new Error(`Missing exact release version: ${name}`);
   return manifest;
@@ -21,8 +27,7 @@ export async function createManifest(sourceCommit) {
     sourceCommit,
     packages: Object.fromEntries(
       await Promise.all(
-        packages.map(async (name) => {
-          const directory = name.endsWith('-ui') ? 'ui' : 'tokens';
+        Object.entries(packageDirectories).map(async ([name, directory]) => {
           return [
             name,
             JSON.parse(await readFile(resolve(root, 'packages', directory, 'package.json'), 'utf8'))
@@ -46,7 +51,7 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
   for (const filename of files) {
     if (!existsSync(resolve(root, filename))) continue;
     if (
-      /^packages\/(ui|tokens)\//.test(filename) &&
+      /^packages\/(react|tokens)\//.test(filename) &&
       filename !== 'packages/tokens/lib/playground.mjs'
     )
       continue;
@@ -73,7 +78,7 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
   // Deployment immediately follows publication; exempt only this release snapshot.
   workspace.minimumReleaseAgeExclude = [
     ...(workspace.minimumReleaseAgeExclude ?? []),
-    ...packages.map((name) => `${name}@${manifest.packages[name]}`),
+    ...Object.entries(manifest.packages).map(([name, version]) => `${name}@${version}`),
   ];
   const lock = parseYAML(await readFile(resolve(root, 'pnpm-lock.yaml'), 'utf8'));
   if (Object.keys(tarballs).length)
@@ -104,7 +109,7 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
       path,
       css
         .split('\n')
-        .filter((line) => !/^@source .*packages\/ui/.test(line))
+        .filter((line) => !/^@source .*packages\/react/.test(line))
         .join('\n'),
     );
   }
@@ -145,7 +150,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         [
           '--input-type=module',
           '-e',
-          `import fs from 'node:fs';import {fileURLToPath} from 'node:url';import {dirname,resolve} from 'node:path';const path=import.meta.resolve('${name}/'+${JSON.stringify(name.endsWith('-ui') ? 'button' : 'tokens')});if(!path.includes('/node_modules/'))throw new Error(path);const actual=JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(path)),'../package.json'))).version;if(actual!==${JSON.stringify(manifest.packages[name])})throw new Error('Unexpected package version: '+actual);`,
+          `import fs from 'node:fs';import {fileURLToPath} from 'node:url';import {dirname,resolve} from 'node:path';const path=import.meta.resolve('${name}/'+${JSON.stringify(name === '@veli-design/react' ? 'button' : 'tokens')});if(!path.includes('/node_modules/'))throw new Error(path);const actual=JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(path)),'../package.json'))).version;if(actual!==${JSON.stringify(manifest.packages[name])})throw new Error('Unexpected package version: '+actual);`,
         ],
         { cwd: resolve(target, 'apps/web'), stdio: 'inherit' },
       );

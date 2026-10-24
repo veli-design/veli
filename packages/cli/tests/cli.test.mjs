@@ -380,12 +380,12 @@ for (const conflicting of [false, true])
         ...entry.manifest,
         dependencies: {
           ...entry.manifest.dependencies,
-          '@tradenetcorp/veli-ui':
+          '@veli-design/react':
             conflicting && entry.manifest.id === 'site-footer' ? '^0.10.0' : '^0.13.0',
         },
         setupDependencies: {
           ...entry.manifest.setupDependencies,
-          '@tradenetcorp/veli-tokens': '^0.7.1',
+          '@veli-design/tokens': '^0.7.1',
         },
       },
     }));
@@ -430,7 +430,7 @@ for (const conflicting of [false, true])
         await fixture(async (cwd) => {
           await writeFile(
             path.join(cwd, 'package.json'),
-            JSON.stringify({ dependencies: { '@tradenetcorp/veli-ui': '0.10.0' } }),
+            JSON.stringify({ dependencies: { '@veli-design/react': '0.10.0' } }),
           );
           await execFileAsync(process.execPath, [
             executable,
@@ -461,7 +461,7 @@ for (const conflicting of [false, true])
             const result = JSON.parse(stdout);
             assert.deepEqual(result.added, order);
             assert.deepEqual(result.dependencies.incompatible, [
-              { name: '@tradenetcorp/veli-ui', current: '0.10.0', required: '^0.13.0' },
+              { name: '@veli-design/react', current: '0.10.0', required: '^0.13.0' },
             ]);
             assert.deepEqual(
               (await installedBlocks(cwd)).map(({ id }) => id).sort(),

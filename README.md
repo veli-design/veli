@@ -2,18 +2,21 @@
 
 A modern, accessible design system monorepo built with Turbo, React Aria, and Tailwind CSS v4.
 
-## Published packages
+## Packages
 
-| Package                                                  | Purpose                                                              | Install                              | Release history                           |
-| -------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------- |
-| [`@tradenetcorp/veli-ui`](packages/ui/README.md)         | Accessible React primitives styled with Tailwind CSS.                | `pnpm add @tradenetcorp/veli-ui`     | [Changelog](packages/ui/CHANGELOG.md)     |
-| [`@tradenetcorp/veli-tokens`](packages/tokens/README.md) | Veli design tokens exported as CSS, Tailwind theme, and DTCG source. | `pnpm add @tradenetcorp/veli-tokens` | [Changelog](packages/tokens/CHANGELOG.md) |
-| [`@tradenetcorp/veli`](packages/cli/README.md)           | CLI for installing and managing application-owned Veli Blocks.       | `pnpm dlx @tradenetcorp/veli`        | [Changelog](packages/cli/CHANGELOG.md)    |
+The `@veli-design` packages below are prepared for a separately approved public npm release.
+Publication remains on hold; see [the migration runbook](docs/NPM_MIGRATION.md) before switching an existing application.
 
-GitHub shows this repository README on each connected package's landing page. Follow the
-package links above for package-specific installation and usage documentation. Under a
-package's **Recent versions**, **About this version** contains only that version's release
-notes; the same notes are used for the corresponding repository release.
+| Package                                            | Purpose                                                              | Install                        | Release history                           |
+| -------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------ | ----------------------------------------- |
+| [`@veli-design/react`](packages/react/README.md)   | Accessible React primitives styled with Tailwind CSS.                | `pnpm add @veli-design/react`  | [Changelog](packages/react/CHANGELOG.md)  |
+| [`@veli-design/tokens`](packages/tokens/README.md) | Veli design tokens exported as CSS, Tailwind theme, and DTCG source. | `pnpm add @veli-design/tokens` | [Changelog](packages/tokens/CHANGELOG.md) |
+| [`@veli-design/cli`](packages/cli/README.md)       | CLI for installing and managing application-owned Veli Blocks.       | `pnpm dlx @veli-design/cli`    | [Changelog](packages/cli/CHANGELOG.md)    |
+
+Follow the package links above for package-specific installation and usage. Release
+artifacts include the matching changelog notes in their README; the same notes
+are used for the corresponding GitHub Release. The repository remains under
+`tradenetcorp` during this packages-first migration.
 
 ## Structure
 
@@ -23,7 +26,7 @@ veli/
 │   ├── web/              # Documentation website (Astro)
 │   └── storybook/        # Component development (Storybook)
 ├── packages/
-│   ├── ui/               # React component library (React Aria)
+│   ├── react/            # React component library (React Aria)
 │   ├── tokens/           # Design tokens (DTCG format)
 │   ├── blocks/           # Canonical application-owned block source
 │   └── cli/              # Veli Blocks CLI
@@ -109,7 +112,7 @@ Standalone Storybook app for component development and testing.
 
 ## Releases & Publishing
 
-This monorepo uses [Changesets](https://github.com/changesets/changesets) for automated versioning and releases to GitHub Packages. Design tokens are synced from Figma via Veli Bridge (Figma Plugin) and Veli Bridge Bot (GitHub App).
+This monorepo uses [Changesets](https://github.com/changesets/changesets) for versioning and gated releases to public npm. See [the migration runbook](docs/NPM_MIGRATION.md) for publication holds. Design tokens are synced from Figma via Veli Bridge (Figma Plugin) and Veli Bridge Bot (GitHub App).
 
 **Documentation:**
 

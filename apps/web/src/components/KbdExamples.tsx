@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Kbd, KbdGroup, type KbdVariant } from '@tradenetcorp/veli-ui/kbd';
+import { Kbd, KbdGroup, type KbdVariant } from '@veli-design/react/kbd';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const shortcuts = {

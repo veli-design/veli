@@ -10,7 +10,7 @@ import {
   validateReleasePolicy,
 } from './changeset-format.mjs';
 
-const frontmatter = "---\n'@tradenetcorp/veli-ui': patch\n---";
+const frontmatter = "---\n'@veli-design/react': patch\n---";
 
 test('accepts every Keep a Changelog category', () => {
   for (const category of CHANGELOG_CATEGORIES) {
@@ -73,29 +73,29 @@ test('identifies pre-stable package versions', () => {
 
 test('rejects major changesets for pre-stable packages', () => {
   const changeset = parseChangeset(
-    "---\n'@tradenetcorp/veli-ui': major\n---\n\n### Removed\n\n- Remove an API.\n",
+    "---\n'@veli-design/react': major\n---\n\n### Removed\n\n- Remove an API.\n",
     'major.md',
   );
 
   assert.throws(
-    () => validateReleasePolicy(changeset, new Map([['@tradenetcorp/veli-ui', '0.9.4']])),
+    () => validateReleasePolicy(changeset, new Map([['@veli-design/react', '0.9.4']])),
     /use a minor bump for breaking changes before 1\.0\.0/,
   );
 });
 
 test('allows major changesets for stable packages', () => {
   const changeset = parseChangeset(
-    "---\n'@tradenetcorp/veli-ui': major\n---\n\n### Removed\n\n- Remove an API.\n",
+    "---\n'@veli-design/react': major\n---\n\n### Removed\n\n- Remove an API.\n",
     'major.md',
   );
 
   assert.doesNotThrow(() =>
-    validateReleasePolicy(changeset, new Map([['@tradenetcorp/veli-ui', '1.4.0']])),
+    validateReleasePolicy(changeset, new Map([['@veli-design/react', '1.4.0']])),
   );
 });
 
 test('renders a dated, category-grouped release above legacy history', () => {
-  const existing = '# @tradenetcorp/veli-ui\n\n## 0.7.2\n\n### Patch Changes\n\n- Legacy entry.\n';
+  const existing = '# @veli-design/react\n\n## 0.7.2\n\n### Patch Changes\n\n- Legacy entry.\n';
   const changesets = [
     {
       empty: false,
@@ -108,7 +108,7 @@ test('renders a dated, category-grouped release above legacy history', () => {
   ];
   const rendered = updateChangelog(
     existing,
-    '@tradenetcorp/veli-ui',
+    '@veli-design/react',
     '0.7.3',
     '2026-07-14',
     changesets,
@@ -117,7 +117,7 @@ test('renders a dated, category-grouped release above legacy history', () => {
   assert.match(rendered, /## \[Unreleased\]\n\n## 0.7.3\n\n_Released 2026-07-14\._/);
   assert.ok(rendered.indexOf('### Added') < rendered.indexOf('### Fixed'));
   assert.ok(rendered.indexOf('## 0.7.2') > rendered.indexOf('## 0.7.3'));
-  assert.match(rendered, /All notable changes to `@tradenetcorp\/veli-ui`/);
+  assert.match(rendered, /All notable changes to `@veli-design\/react`/);
 });
 
 test('extracts only the exact version content used by release outputs', () => {

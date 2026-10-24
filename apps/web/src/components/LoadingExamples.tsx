@@ -1,6 +1,6 @@
-import { Spinner } from '@tradenetcorp/veli-ui/spinner';
-import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Spinner } from '@veli-design/react/spinner';
+import { LoadingText } from '@veli-design/react/loading-text';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 export function LoadingUsageDemo() {
   const { language } = useVeliLanguage();

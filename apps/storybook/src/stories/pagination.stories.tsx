@@ -7,7 +7,7 @@ import {
   type PaginationPageProps,
   type PaginationLoadMoreProps,
   type PaginationVariant,
-} from '@tradenetcorp/veli-ui/pagination';
+} from '@veli-design/react/pagination';
 
 type PaginationStoryArgs = Omit<PaginationPageProps, 'variant'> &
   Partial<Omit<PaginationLoadMoreProps, 'variant'>> & { variant: PaginationVariant };

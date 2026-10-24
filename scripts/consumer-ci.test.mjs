@@ -10,13 +10,13 @@ import { aggregate, candidateManifest, checks, classify } from './consumer-ci.mj
 const all = { next: true, blocks: true, sites: true, cold: true, candidate: true };
 test('shared and transitive package/build dependencies require full coverage', () => {
   for (const path of [
-    'packages/ui/src/provider.tsx',
-    'packages/ui/tailwind.css',
-    'packages/ui/package.json',
+    'packages/react/src/provider.tsx',
+    'packages/react/tailwind.css',
+    'packages/react/package.json',
     'packages/tokens/src/design.tokens.json',
     'packages/tokens/lib/playground.mjs',
     'packages/tokens/build.mjs',
-    'packages/ui/tsconfig.build.json',
+    'packages/react/tsconfig.build.json',
     'pnpm-lock.yaml',
     'pnpm-workspace.yaml',
     'package.json',
@@ -62,7 +62,7 @@ test('known prose skips; executable docs and app build inputs retain their consu
       candidate: true,
     });
   assert.deepEqual(classify(['docs/executable.mdx']), all);
-  assert.deepEqual(classify(['docs/guide.md', 'packages/ui/src/button.tsx']), all);
+  assert.deepEqual(classify(['docs/guide.md', 'packages/react/src/button.tsx']), all);
   assert.deepEqual(classify(['scripts/check-ui-consumer.mjs']), {
     next: true,
     blocks: false,
@@ -119,14 +119,15 @@ test('aggregation accepts every intentional selection and rejects any failed/can
     assert.throws(() => aggregate({ ...selection, cold: '' }, jobs), /Invalid selection/);
   }
 });
-test('candidate identity includes exact commit and both immutable tarball digests', () => {
+test('candidate identity includes exact commit and all three immutable tarball digests', () => {
   const directory = mkdtempSync(resolve(tmpdir(), 'veli-candidate-test-'));
   try {
     writeFileSync(resolve(directory, 'ui.tgz'), 'ui');
     writeFileSync(resolve(directory, 'tokens.tgz'), 'tokens');
+    writeFileSync(resolve(directory, 'cli.tgz'), 'cli');
     const original = candidateManifest(directory, 'a'.repeat(40));
     assert.notDeepEqual(candidateManifest(directory, 'b'.repeat(40)), original);
-    writeFileSync(resolve(directory, 'tokens.tgz'), 'different');
+    writeFileSync(resolve(directory, 'cli.tgz'), 'different');
     assert.notDeepEqual(candidateManifest(directory, 'a'.repeat(40)), original);
     assert.throws(() => candidateManifest(directory, 'main'));
   } finally {

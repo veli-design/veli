@@ -1,6 +1,6 @@
 'use client';
 
-import { Dropzone } from '@tradenetcorp/veli-ui/dropzone';
+import { Dropzone } from '@veli-design/react/dropzone';
 
 export function Attachments() {
   return (

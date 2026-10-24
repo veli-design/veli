@@ -16,8 +16,8 @@ import {
   Heading,
   Popover,
 } from 'react-aria-components';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage, useVeliColorScheme } from '@veli-design/react/provider';
 import { CaretRightIcon, ShareIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
 import type { ServiceDetailProps, ServiceGuideline } from './types';
 import { DialogSurface } from './dialog-surface';

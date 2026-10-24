@@ -1,8 +1,8 @@
 import { useState, useSyncExternalStore } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
-import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
-import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { Tooltip, TooltipTrigger } from '@veli-design/react/tooltip';
+import { Kbd, KbdGroup } from '@veli-design/react/kbd';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 export function TooltipUsageDemo() {

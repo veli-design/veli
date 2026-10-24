@@ -1,4 +1,4 @@
-import { MenuItem } from '@tradenetcorp/veli-ui/menu';
+import { MenuItem } from '@veli-design/react/menu';
 import { Button, Menu, MenuTrigger, Popover, Text } from 'react-aria-components';
 import styles from './DocsPageActionButtons.module.css';
 import { ArrowSquareOutIcon, CaretDownIcon, CopyIcon } from '@phosphor-icons/react';

@@ -1,4 +1,4 @@
-import { DateRangePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { DateRangePicker } from '@veli-design/react/date-picker';
 
 export function StayDates() {
   return <DateRangePicker label="Stay dates" />;

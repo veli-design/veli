@@ -7,7 +7,7 @@ import {
   type ServiceDetailProps,
 } from '@tradenetcorp/veli-blocks/service-detail';
 import { serviceDetailContent } from '@tradenetcorp/veli-blocks/examples/service-detail-content';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 function ServicePreview({
   mode = 'online',

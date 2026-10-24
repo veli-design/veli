@@ -1,8 +1,8 @@
 'use client';
 
 import { useId } from 'react';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Link } from '@veli-design/react/link';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { ErrorArtwork } from './error-artwork';
 import type { ErrorPageAction, ErrorPageProps } from './types';
 export type {

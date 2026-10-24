@@ -1,4 +1,4 @@
-# @tradenetcorp/veli-tokens
+# @veli-design/tokens
 
 Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come from one normalized graph.
 
@@ -6,7 +6,7 @@ Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come
 
 ```css
 /* Plain CSS */
-@import '@tradenetcorp/veli-tokens/css';
+@import '@veli-design/tokens/css';
 
 .card {
   background: var(--veli-color-bg-surface-raised);
@@ -18,7 +18,7 @@ Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come
 ```css
 /* Tailwind v4: import Tailwind first. */
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
+@import '@veli-design/tokens/tailwind';
 ```
 
 The Tailwind adapter imports `tokens.css` and references its variables. Existing Tailwind utility names remain available, including `text-base-default`, `type-body-sm-regular`, `duration-fast`, and property-specific background/border/ring aliases. `grid-style-xs` through `grid-style-2xl` reproduce Figma columns, gaps and inner margins; responsive variants such as `md:grid-style-md` work normally.
@@ -67,14 +67,14 @@ Fractional spacing classes such as `gap-1.5` and `p-1.5` remain available. In pl
 
 Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind share this contract. A host that offers system preference should resolve that preference to one of these classes; `VeliProvider` handles this for React applications. Tokens use native OKLCH without gamut clipping or legacy fallbacks, matching Tailwind v4's modern browser baseline: Chrome 111+, Safari 16.4+, Firefox 128+.
 
-`@tradenetcorp/veli-tokens/tokens` exports normalized DTCG JSON. `/motion-tokens` exports its duration, delay and easing subset. Aliases reference canonical paths; consumers can resolve them with a DTCG parser. `$extensions.mode.Dark` provides the alternate value; the default `$value` is Light. `org.veli` extensions retain source/style provenance and relative CSS intent that cannot be expressed with DTCG's px/rem dimensions.
+`@veli-design/tokens/tokens` exports normalized DTCG JSON. `/motion-tokens` exports its duration, delay and easing subset. Aliases reference canonical paths; consumers can resolve them with a DTCG parser. `$extensions.mode.Dark` provides the alternate value; the default `$value` is Light. `org.veli` extensions retain source/style provenance and relative CSS intent that cannot be expressed with DTCG's px/rem dimensions.
 
 ## Authoring and build
 
 1. Export Variables and Typography/Grid/Effect/Color Styles with TokensBruecke into `src/figma.tokens.json`.
 2. Keep authored `OKLCH light: oklch(...)` and `OKLCH dark: oklch(...)` descriptions in Figma. The pipeline promotes these values, validates their fallback colors and preserves their exact CSS spelling. It rejects missing chromatic descriptions; achromatic fallback values use a proper color-space conversion.
 3. Maintain code-owned motion primitives in `src/motion.tokens.json` using typed duration values and cubic Bézier arrays. Figma wins if it later supplies the same motion key.
-4. Run `corepack pnpm --filter @tradenetcorp/veli-tokens tokens:sync` and review both input and canonical `src/design.tokens.json` changes.
+4. Run `corepack pnpm --filter @veli-design/tokens tokens:sync` and review both input and canonical `src/design.tokens.json` changes.
 5. Run `tokens:check`, `test` and `build` through the same package filter.
 
 Normal package builds read committed canonical data and never rewrite source. Terrazzo 2.7.1 validates the graph and its CSS plugin generates canonical declarations. The Veli adapter plugin generates Tailwind mappings, utilities, JSON exports and coverage. There are no prebuild/postbuild hooks or generated CSS rewrites. Query thresholds are the deliberate exception to variable references: viewport/container conditions use literals generated from the same graph because CSS variables cannot supply their query values.

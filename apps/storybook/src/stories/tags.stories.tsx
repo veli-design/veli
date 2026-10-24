@@ -2,9 +2,9 @@ import { useEffect, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Tag, TagGroup, type TagGroupProps, type TagSize } from '@tradenetcorp/veli-ui/tags';
+import { Badge } from '@veli-design/react/badge';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Tag, TagGroup, type TagGroupProps, type TagSize } from '@veli-design/react/tags';
 import { UserIcon } from '@phosphor-icons/react';
 
 const englishTagsText = {

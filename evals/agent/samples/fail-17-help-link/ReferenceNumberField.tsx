@@ -1,5 +1,5 @@
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Input } from '@veli-design/react/input';
+import { Link } from '@veli-design/react/link';
 
 export function ReferenceNumberField() {
   return (

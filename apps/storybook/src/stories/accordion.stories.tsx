@@ -7,8 +7,8 @@ import {
   AccordionItem,
   AccordionPanel,
   type AccordionProps,
-} from '@tradenetcorp/veli-ui/accordion';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/accordion';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const storyPanelClassName =
   'w-[calc(100vw-2rem)] max-w-[640px] rounded-2xl border border-base-subtle bg-surface-raised p-4';

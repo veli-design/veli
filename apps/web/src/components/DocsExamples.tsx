@@ -1,27 +1,21 @@
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
-import { Accordion } from '@tradenetcorp/veli-ui/accordion';
-import { Avatar } from '@tradenetcorp/veli-ui/avatar';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
-import { DateField } from '@tradenetcorp/veli-ui/date-field';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { Form } from '@tradenetcorp/veli-ui/form';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import {
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSeparator,
-  MenuTrigger,
-} from '@tradenetcorp/veli-ui/menu';
-import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
+import { Accordion } from '@veli-design/react/accordion';
+import { Avatar } from '@veli-design/react/avatar';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@veli-design/react/breadcrumbs';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { ComboBox, ComboBoxItem, ComboBoxSection } from '@veli-design/react/combobox';
+import { DateField } from '@veli-design/react/date-field';
+import { Divider } from '@veli-design/react/divider';
+import { FieldDescription, FieldError, FieldLabel } from '@veli-design/react/field';
+import { Form } from '@veli-design/react/form';
+import { Input } from '@veli-design/react/input';
+import { Menu, MenuItem, MenuPopover, MenuSeparator, MenuTrigger } from '@veli-design/react/menu';
+import { Modal } from '@veli-design/react/modal';
+import { PasswordInput } from '@veli-design/react/password-input';
 import {
   Popover,
   PopoverContent,
@@ -30,17 +24,17 @@ import {
   PopoverHeader,
   PopoverTrigger,
   type PopoverIntent,
-} from '@tradenetcorp/veli-ui/popover';
-import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
-import { Search } from '@tradenetcorp/veli-ui/search';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
-import { Tabs } from '@tradenetcorp/veli-ui/tabs';
-import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
-import { TextArea } from '@tradenetcorp/veli-ui/textarea';
-import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
-import { Card } from '@tradenetcorp/veli-ui/card';
-import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+} from '@veli-design/react/popover';
+import { VeliProvider, useVeliLanguage } from '@veli-design/react/provider';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
+import { Search } from '@veli-design/react/search';
+import { Skeleton } from '@veli-design/react/skeleton';
+import { Tabs } from '@veli-design/react/tabs';
+import { Tag, TagGroup } from '@veli-design/react/tags';
+import { TextArea } from '@veli-design/react/textarea';
+import { Tooltip, TooltipTrigger } from '@veli-design/react/tooltip';
+import { Card } from '@veli-design/react/card';
+import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 import {
   Table,
   TableBody,
@@ -48,9 +42,9 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from '@tradenetcorp/veli-ui/table';
-import { Pagination } from '@tradenetcorp/veli-ui/pagination';
-import { DropzoneField, type DropzoneProps } from '@tradenetcorp/veli-ui/dropzone';
+} from '@veli-design/react/table';
+import { Pagination } from '@veli-design/react/pagination';
+import { DropzoneField, type DropzoneProps } from '@veli-design/react/dropzone';
 import {
   BellIcon,
   DownloadSimpleIcon,

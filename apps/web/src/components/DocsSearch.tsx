@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { CommandIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Kbd } from '@tradenetcorp/veli-ui/kbd';
+import { Button } from '@veli-design/react/button';
+import { Kbd } from '@veli-design/react/kbd';
 
 const loadDocsSearchDialog = () => import('./DocsSearchDialog');
 const DocsSearchDialog = lazy(loadDocsSearchDialog);

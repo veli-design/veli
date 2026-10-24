@@ -16,9 +16,9 @@ import {
   type AlertAppearance,
   type AlertIntent,
   type AlertLayout,
-} from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const intents: AlertIntent[] = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];
 const appearances: AlertAppearance[] = ['light', 'highContrast'];

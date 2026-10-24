@@ -53,7 +53,7 @@ const lines = (count) =>
   Array.from({ length: count }, (_, index) => `// Line ${index + 1}`).join('\n');
 
 test('install tabs preserve packages and link to their own command panels', () => {
-  const packages = '@tradenetcorp/veli-ui@0.12.0 react';
+  const packages = '@veli-design/react@0.12.0 react';
   const tree = render(
     ...['bash', 'sh', 'shell'].map((dataLanguage) =>
       codeBlock(`pnpm add ${packages}\n`, { dataLanguage }),

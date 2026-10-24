@@ -9,19 +9,13 @@ import {
   WarningCircleIcon,
   XIcon,
 } from '@phosphor-icons/react';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
-import { Spinner } from '@tradenetcorp/veli-ui/spinner';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
-import {
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSeparator,
-  MenuTrigger,
-} from '@tradenetcorp/veli-ui/menu';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { LoadingText } from '@veli-design/react/loading-text';
+import { Spinner } from '@veli-design/react/spinner';
+import { Divider } from '@veli-design/react/divider';
+import { Link, type LinkProps } from '@veli-design/react/link';
+import { Menu, MenuItem, MenuPopover, MenuSeparator, MenuTrigger } from '@veli-design/react/menu';
 
 export type NotificationFilter = 'all' | 'unread';
 

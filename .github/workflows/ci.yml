@@ -105,10 +105,13 @@ jobs:
       - name: Build and pack once
         run: |
           mkdir -p "$RUNNER_TEMP/candidate"
-          corepack pnpm exec turbo build --filter=@tradenetcorp/veli-ui --filter=@tradenetcorp/veli-tokens
-          corepack pnpm --filter @tradenetcorp/veli-ui pack --out "$RUNNER_TEMP/candidate/ui.tgz"
-          corepack pnpm --filter @tradenetcorp/veli-tokens pack --out "$RUNNER_TEMP/candidate/tokens.tgz"
+          corepack pnpm exec turbo build --filter=@veli-design/react --filter=@veli-design/tokens --filter=@veli-design/cli
+          corepack pnpm --filter @veli-design/react pack --out "$RUNNER_TEMP/candidate/ui.tgz"
+          corepack pnpm --filter @veli-design/tokens pack --out "$RUNNER_TEMP/candidate/tokens.tgz"
+          corepack pnpm --filter @veli-design/cli pack --out "$RUNNER_TEMP/candidate/cli.tgz"
           node scripts/consumer-ci.mjs stamp "$RUNNER_TEMP/candidate"
+      - name: Rehearse installed npm packages and CLI Blocks
+        run: node scripts/check-npm-migration.mjs "$RUNNER_TEMP/npm-migration-consumer" "$RUNNER_TEMP/candidate"
       - uses: actions/upload-artifact@v4
         id: upload
         with:
@@ -163,7 +166,6 @@ jobs:
           candidate-artifact-id: ${{ needs.candidate.outputs.artifact-id }}
       - run: corepack pnpm test:blocks:consumer
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BLOCKS_CONSUMER_DIR: ${{ runner.temp }}/veli-blocks-consumer
       - uses: actions/upload-artifact@v4
         if: always()
@@ -189,8 +191,6 @@ jobs:
           node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-sites" "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-sites"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cold-reload:
     name: Cold source playground / hot reload

@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { expect, userEvent, within } from '@storybook/test';
-import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@tradenetcorp/veli-ui/breadcrumbs';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Breadcrumb, BreadcrumbOverflow, Breadcrumbs } from '@veli-design/react/breadcrumbs';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 

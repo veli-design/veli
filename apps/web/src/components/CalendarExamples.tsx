@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from 'react';
 import { parseDate, type DateValue } from '@internationalized/date';
-import { Calendar, RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
-import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { Calendar, RangeCalendar } from '@veli-design/react/calendar';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const initial = parseDate('2026-10-15');

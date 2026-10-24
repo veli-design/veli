@@ -4,9 +4,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { GearIcon, HouseIcon, SquaresFourIcon } from '@phosphor-icons/react';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { useVeliLanguage, VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { Tabs } from '@tradenetcorp/veli-ui/tabs';
+import { Badge } from '@veli-design/react/badge';
+import { useVeliLanguage, VeliProvider } from '@veli-design/react/provider';
+import { Tabs } from '@veli-design/react/tabs';
 
 const collapsedControlGroups = ['State'] as const;
 

@@ -19,8 +19,8 @@ Use `Checkbox` for an independent choice and `CheckboxGroup` for several choices
 ## Import
 
 ```tsx
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { FieldLabel } from '@veli-design/react/field';
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ Give each checkbox visible label text. If it cannot have visible text, provide `
 </div>
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function CheckboxUsageDemo() {
   return (
@@ -54,7 +54,7 @@ The examples use Tailwind utilities for the surrounding layout. With Veli's Tail
 </div>
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function CheckboxStatesDemo() {
   return (
@@ -76,7 +76,7 @@ export function CheckboxStatesDemo() {
 </div>
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function CheckboxSizesDemo() {
   return (
@@ -106,7 +106,7 @@ export function CheckboxSizesDemo() {
 </div>
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function CheckboxMessagesDemo() {
   return (
@@ -135,7 +135,7 @@ Disabled checkboxes cannot be focused or changed. `isReadOnly` keeps a checkbox 
 </div>
 
 ```tsx
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function CheckboxDisabledDemo() {
   return (
@@ -164,8 +164,8 @@ export function CheckboxDisabledDemo() {
 'use client';
 
 import { useState } from 'react';
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { FieldLabel } from '@veli-design/react/field';
 
 export function CheckboxGroupDemo() {
   const [channels, setChannels] = useState<string[]>(['email']);

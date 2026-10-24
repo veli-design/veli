@@ -5,7 +5,7 @@ import {
   VeliProvider,
   type VeliColorScheme,
   type VeliResolvedColorScheme,
-} from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/provider';
 import {
   normalizeProviderSwitcherValues,
   providerSwitcherLanguageQueryParam,

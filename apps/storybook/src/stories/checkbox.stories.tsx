@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { FieldLabel } from '@veli-design/react/field';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const englishCheckboxText = {
   checkboxLabel: 'Checkbox label',

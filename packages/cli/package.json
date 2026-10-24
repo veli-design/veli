@@ -1,5 +1,5 @@
 {
-  "name": "@tradenetcorp/veli",
+  "name": "@veli-design/cli",
   "version": "0.1.1",
   "description": "Install and manage application-owned Veli Blocks.",
   "repository": {
@@ -41,7 +41,7 @@
     "typescript": "^5.9.3"
   },
   "publishConfig": {
-    "@tradenetcorp:registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }

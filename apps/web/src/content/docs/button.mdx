@@ -21,7 +21,7 @@ Use Button to perform an action, submit a form, or open a dialog. For navigation
 ## Import
 
 ```tsx
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 ```
 
 ## Usage
@@ -53,7 +53,7 @@ Choose `primary`, `secondary`, or `danger` with a `fill`, `transparent`, or `gho
 
 ## High contrast
 
-Use `highContrast` for secondary actions on a prominent surface, such as an informational Toast. This version of Veli UI requires `@tradenetcorp/veli-tokens` `^0.10.0`; upgrade tokens alongside UI to include the high-contrast colors.
+Use `highContrast` for secondary actions on a prominent surface, such as an informational Toast. This version of Veli UI requires `@veli-design/tokens` `^0.10.0`; upgrade tokens alongside UI to include the high-contrast colors.
 
 The prop defaults to `false`. Set it explicitly on each secondary button; it supports `fill`, `transparent`, and `ghost`, including link and icon-only buttons. Other intents ignore it.
 
@@ -204,7 +204,7 @@ Both Next App Router and Pages Router use `next/link`:
 'use client';
 
 import NextLink from 'next/link';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 
 <Button
   as="a"
@@ -278,7 +278,7 @@ Button uses React Aria [`Button`](https://react-aria.adobe.com/Button) for actio
 `ButtonProps` defaults to the action type. Use its generic argument for navigation wrappers or components that accept both modes:
 
 ```tsx
-import type { ButtonProps } from '@tradenetcorp/veli-ui/button';
+import type { ButtonProps } from '@veli-design/react/button';
 
 type ActionProps = ButtonProps;
 type NavigationProps = ButtonProps<'a'>;
@@ -438,8 +438,8 @@ Button does not translate labels or mirror arbitrary children. Localize the labe
 
 ```tsx
 import { ArrowLeftIcon, PlusIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function ButtonLanguageDemo() {
   return (

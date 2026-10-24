@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Switch } from '@tradenetcorp/veli-ui/switch';
+import { Button } from '@veli-design/react/button';
+import { Switch } from '@veli-design/react/switch';
 
 export function NotificationPreferences({
   onSave,

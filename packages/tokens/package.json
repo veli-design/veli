@@ -1,5 +1,5 @@
 {
-  "name": "@tradenetcorp/veli-tokens",
+  "name": "@veli-design/tokens",
   "version": "0.10.0",
   "description": "Design tokens for the Veli Design System in CSS, Tailwind, and DTCG formats.",
   "repository": {
@@ -41,7 +41,7 @@
     "prettier": "3.8.3"
   },
   "publishConfig": {
-    "@tradenetcorp:registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }

@@ -2,18 +2,18 @@ import { useState, type FormEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useForm } from '@tanstack/react-form';
 import { Controller, useForm as useReactHookForm } from 'react-hook-form';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { Button } from '@veli-design/react/button';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { DatePicker } from '@veli-design/react/date-picker';
 import {
   Form,
   dateValueToIsoDate,
   isoDateToDateValue,
   toErrorMessage,
-} from '@tradenetcorp/veli-ui/form';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
-import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
+} from '@veli-design/react/form';
+import { Input } from '@veli-design/react/input';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
+import { Select, SelectItem } from '@veli-design/react/select';
 
 const meta = {
   title: 'Patterns/Forms',

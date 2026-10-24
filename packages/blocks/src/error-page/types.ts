@@ -1,4 +1,4 @@
-import type { LinkProps } from '@tradenetcorp/veli-ui/link';
+import type { LinkProps } from '@veli-design/react/link';
 
 export type ErrorPageKind = '401' | '403' | '404' | '500' | '503' | 'offline';
 

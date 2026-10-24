@@ -2,7 +2,7 @@
 
 import type { ComponentProps, ReactNode } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { Divider } from '@veli-design/react/divider';
 
 import {
   HeaderLanguageMenu,

@@ -1,8 +1,8 @@
 'use client';
 
 import { ApplicationAccountPanel } from '../../account-adapter';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { createToastQueue, ToastRegion } from '@tradenetcorp/veli-ui/toast';
+import { VeliProvider } from '@veli-design/react/provider';
+import { createToastQueue, ToastRegion } from '@veli-design/react/toast';
 import { useState } from 'react';
 
 export default function ExamplePage() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import { ApplicationShell } from '../../shell-adapter';
 
 const FLAG_SRC =

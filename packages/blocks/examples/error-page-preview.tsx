@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ErrorPage, type ErrorPageProps } from '../src/error-page/error-page';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { errorPageMessages } from './error-page-messages';
 
 /** Local catalog/story example. Applications own equivalent route and message wiring. */

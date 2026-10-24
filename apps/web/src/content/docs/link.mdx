@@ -19,7 +19,7 @@ Use Link to navigate to another page, a resource, or a section of the current pa
 ## Import
 
 ```tsx
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 ```
 
 ## Usage
@@ -71,7 +71,7 @@ English medium presets use Inter at weight 500. Dhivehi medium presets use MV A 
 
 ```tsx
 import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@phosphor-icons/react';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 function ContinueLink() {
   const { direction, language } = useVeliLanguage();
@@ -134,7 +134,7 @@ Use React Aria's `render` prop to compose a compatible router link. Keep `href` 
 'use client';
 
 import NextLink from 'next/link';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 
 export function AccountLink() {
   return (
@@ -157,7 +157,7 @@ React Router uses `to` for the destination. Put router-specific options on the r
 
 ```tsx
 import { Link as RouterLink } from 'react-router';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 
 <Link
   href="/account"
@@ -177,7 +177,7 @@ TanStack Start uses TanStack Router's Link. Keep typed route options on that com
 
 ```tsx
 import { Link as TanStackLink } from '@tanstack/react-router';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 
 <Link
   href="/account"
@@ -215,7 +215,7 @@ For imperative focus, use a ref on an enabled link:
 
 ```tsx
 import { useRef } from 'react';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 
 function AccountLink() {
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -342,8 +342,8 @@ Switch the preview between English and Dhivehi to compare text direction, typogr
 
 ```tsx
 import { ArrowLeftIcon } from '@phosphor-icons/react';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Link } from '@veli-design/react/link';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function LinkLanguageDemo() {
   return (

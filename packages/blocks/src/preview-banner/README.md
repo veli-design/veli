@@ -7,31 +7,31 @@ block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's restricted GitHub Packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
+This experimental block is editable source for internal teams with access to Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
 
 `PreviewBanner` is a floating fixed bottom banner with a measured scroll spacer so page content is not covered. It renders nothing when `notices` is empty, so site-shell only reserves bottom space when a banner is mounted with notices. Applications own draft-mode cookies, notice resolution, translations, and action URLs. Compose it in the [site-shell](/blocks/site-shell/) `notices` slot (or any flex column that should reserve bottom space).
 
 ## Installation
 
-Configure `@tradenetcorp:registry=https://npm.pkg.github.com` and use your existing package-read credentials. Never commit credentials.
+Public npm installation needs no credentials. Configure the separately approved compatible Blocks registry URL.
 
 ```sh
-corepack pnpm add @phosphor-icons/react@2.1.10 @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
+corepack pnpm add @phosphor-icons/react@2.1.10 @veli-design/react@0.17.0 @veli-design/tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
 ```
 
 Use Tailwind 4 with your framework's integration. In your global stylesheet:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 ```
 
 Initialize Veli Blocks and add the banner:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add preview-banner
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add preview-banner
 ```
 
 The CLI copies `preview-banner.tsx` into the configured Blocks directory and retains originals under `.veli/blocks/preview-banner/`. Import the editable working copy directly and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.

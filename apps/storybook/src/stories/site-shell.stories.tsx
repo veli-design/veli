@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { addons } from 'storybook/internal/preview-api';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliColorScheme, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { useVeliColorScheme, useVeliLanguage } from '@veli-design/react/provider';
 import {
   SiteHeader,
   type SiteHeaderColorScheme,

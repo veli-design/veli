@@ -1,9 +1,9 @@
 @import 'tailwindcss';
 
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 
-@source "../../../../packages/ui";
+@source "../../../../packages/react";
 
 /* Self-hosted fonts are discovered with the initial stylesheet rather than
    after a second request to Google Fonts. The Inter face is variable, so one

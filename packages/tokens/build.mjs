@@ -14,7 +14,7 @@ if (command === 'sync' || command === 'check') {
   if (command === 'sync') await writeFile(filename, expected);
   else if ((await readFile(filename, 'utf8')) !== expected)
     throw new Error(
-      'Canonical tokens are stale. Run corepack pnpm --filter @tradenetcorp/veli-tokens tokens:sync.',
+      'Canonical tokens are stale. Run corepack pnpm --filter @veli-design/tokens tokens:sync.',
     );
 } else if (command === 'playground') {
   const directory = new URL('.cache/playground/', root);

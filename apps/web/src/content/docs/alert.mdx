@@ -23,7 +23,7 @@ Use Alert for important information about the current page or section. Alerts pe
 
 ```tsx
 import { InfoIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { Alert } from '@veli-design/react/alert';
 
 export default function AlertUsageDemo() {
   return (
@@ -57,7 +57,7 @@ import {
   WarningCircleIcon,
   WarningOctagonIcon,
 } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { Alert } from '@veli-design/react/alert';
 
 export default function AlertAppearancesDemo() {
   return (
@@ -105,8 +105,8 @@ The alert fills its container. Select its layout explicitly for the available sp
 
 ```tsx
 import { InfoIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Alert } from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';
 
 export default function AlertLayoutDemo() {
   return (
@@ -150,8 +150,8 @@ Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `a
 
 import { useState } from 'react';
 import { InfoIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Alert } from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';
 
 export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
   const [visible, setVisible] = useState(true);
@@ -202,7 +202,7 @@ With `isVisible`, the parent owns visibility: `onDismiss` requests dismissal, bu
 The default `live="status"` uses a polite status role. Use `live="alert"` for newly inserted urgent feedback that needs an assertive announcement. `role` deliberately overrides the role selected by `live`. These choices do not change the visual appearance.
 
 ```tsx
-import { Alert } from '@tradenetcorp/veli-ui/alert';
+import { Alert } from '@veli-design/react/alert';
 
 export default function AlertAnnouncementDemo() {
   return (
@@ -260,9 +260,9 @@ Use `VeliProvider language="dv"` for Dhivehi typography and RTL direction. The i
 
 ```tsx
 import { InfoIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Alert } from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function AlertLanguageDemo() {
   return (

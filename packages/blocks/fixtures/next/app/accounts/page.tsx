@@ -6,8 +6,8 @@ import {
   AccountPanel,
   type AccountPanelAccount,
 } from '../../components/blocks/account-panel/account-panel';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 
 const initial = {
   id: 'primary',

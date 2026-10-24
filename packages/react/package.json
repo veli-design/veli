@@ -1,0 +1,260 @@
+{
+  "name": "@veli-design/react",
+  "version": "0.17.0",
+  "description": "Accessible React primitives for the Veli Design System.",
+  "keywords": [
+    "design-system",
+    "react",
+    "accessibility"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/react#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "tailwind.css",
+    "agent",
+    "AGENT_GUIDE.md"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./tailwind": "./tailwind.css",
+    "./manifest": "./agent/manifest.json",
+    "./theme-script": {
+      "types": "./dist/theme-script.d.ts",
+      "import": "./dist/theme-script.js",
+      "default": "./dist/theme-script.js"
+    },
+    "./avatar": {
+      "types": "./dist/avatar.d.ts",
+      "import": "./dist/avatar.js",
+      "default": "./dist/avatar.js"
+    },
+    "./accordion": {
+      "types": "./dist/accordion.d.ts",
+      "import": "./dist/accordion.js",
+      "default": "./dist/accordion.js"
+    },
+    "./alert": {
+      "types": "./dist/alert.d.ts",
+      "import": "./dist/alert.js",
+      "default": "./dist/alert.js"
+    },
+    "./badge": {
+      "types": "./dist/badge.d.ts",
+      "import": "./dist/badge.js",
+      "default": "./dist/badge.js"
+    },
+    "./breadcrumbs": {
+      "types": "./dist/breadcrumbs.d.ts",
+      "import": "./dist/breadcrumbs.js",
+      "default": "./dist/breadcrumbs.js"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "import": "./dist/button.js",
+      "default": "./dist/button.js"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "import": "./dist/calendar.js",
+      "default": "./dist/calendar.js"
+    },
+    "./card": {
+      "types": "./dist/card.d.ts",
+      "import": "./dist/card.js",
+      "default": "./dist/card.js"
+    },
+    "./checkbox": {
+      "types": "./dist/checkbox.d.ts",
+      "import": "./dist/checkbox.js",
+      "default": "./dist/checkbox.js"
+    },
+    "./combobox": {
+      "types": "./dist/combobox.d.ts",
+      "import": "./dist/combobox.js",
+      "default": "./dist/combobox.js"
+    },
+    "./divider": {
+      "types": "./dist/divider.d.ts",
+      "import": "./dist/divider.js",
+      "default": "./dist/divider.js"
+    },
+    "./dropzone": {
+      "types": "./dist/dropzone.d.ts",
+      "import": "./dist/dropzone.js",
+      "default": "./dist/dropzone.js"
+    },
+    "./field": {
+      "types": "./dist/field.d.ts",
+      "import": "./dist/field.js",
+      "default": "./dist/field.js"
+    },
+    "./form": {
+      "types": "./dist/form.d.ts",
+      "import": "./dist/form.js",
+      "default": "./dist/form.js"
+    },
+    "./date-field": {
+      "types": "./dist/date-field.d.ts",
+      "import": "./dist/date-field.js",
+      "default": "./dist/date-field.js"
+    },
+    "./date-picker": {
+      "types": "./dist/date-picker.d.ts",
+      "import": "./dist/date-picker.js",
+      "default": "./dist/date-picker.js"
+    },
+    "./input": {
+      "types": "./dist/input.d.ts",
+      "import": "./dist/input.js",
+      "default": "./dist/input.js"
+    },
+    "./kbd": {
+      "types": "./dist/kbd.d.ts",
+      "import": "./dist/kbd.js",
+      "default": "./dist/kbd.js"
+    },
+    "./link": {
+      "types": "./dist/link.d.ts",
+      "import": "./dist/link.js",
+      "default": "./dist/link.js"
+    },
+    "./menu": {
+      "types": "./dist/menu.d.ts",
+      "import": "./dist/menu.js",
+      "default": "./dist/menu.js"
+    },
+    "./modal": {
+      "types": "./dist/modal.d.ts",
+      "import": "./dist/modal.js",
+      "default": "./dist/modal.js"
+    },
+    "./popover": {
+      "types": "./dist/popover.d.ts",
+      "import": "./dist/popover.js",
+      "default": "./dist/popover.js"
+    },
+    "./password-input": {
+      "types": "./dist/password-input.d.ts",
+      "import": "./dist/password-input.js",
+      "default": "./dist/password-input.js"
+    },
+    "./provider": {
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js",
+      "default": "./dist/provider.js"
+    },
+    "./radio": {
+      "types": "./dist/radio.d.ts",
+      "import": "./dist/radio.js",
+      "default": "./dist/radio.js"
+    },
+    "./search": {
+      "types": "./dist/search.d.ts",
+      "import": "./dist/search.js",
+      "default": "./dist/search.js"
+    },
+    "./select": {
+      "types": "./dist/select.d.ts",
+      "import": "./dist/select.js",
+      "default": "./dist/select.js"
+    },
+    "./skeleton": {
+      "types": "./dist/skeleton.d.ts",
+      "import": "./dist/skeleton.js",
+      "default": "./dist/skeleton.js"
+    },
+    "./switch": {
+      "types": "./dist/switch.d.ts",
+      "import": "./dist/switch.js",
+      "default": "./dist/switch.js"
+    },
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.js",
+      "default": "./dist/table.js"
+    },
+    "./tags": {
+      "types": "./dist/tags.d.ts",
+      "import": "./dist/tags.js",
+      "default": "./dist/tags.js"
+    },
+    "./pagination": {
+      "types": "./dist/pagination.d.ts",
+      "import": "./dist/pagination.js",
+      "default": "./dist/pagination.js"
+    },
+    "./tabs": {
+      "types": "./dist/tabs.d.ts",
+      "import": "./dist/tabs.js",
+      "default": "./dist/tabs.js"
+    },
+    "./textarea": {
+      "types": "./dist/textarea.d.ts",
+      "import": "./dist/textarea.js",
+      "default": "./dist/textarea.js"
+    },
+    "./toast": {
+      "types": "./dist/toast.d.ts",
+      "import": "./dist/toast.js",
+      "default": "./dist/toast.js"
+    },
+    "./tooltip": {
+      "types": "./dist/tooltip.d.ts",
+      "import": "./dist/tooltip.js",
+      "default": "./dist/tooltip.js"
+    },
+    "./spinner": {
+      "types": "./dist/spinner.d.ts",
+      "import": "./dist/spinner.js",
+      "default": "./dist/spinner.js"
+    },
+    "./loading-text": {
+      "types": "./dist/loading-text.d.ts",
+      "import": "./dist/loading-text.js",
+      "default": "./dist/loading-text.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "test": "corepack pnpm --filter @veli-design/tokens run build && corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
+    "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
+    "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
+  },
+  "peerDependencies": {
+    "@veli-design/tokens": "^0.10.0 || ^0.11.0",
+    "react": "^19.0.0",
+    "react-aria-components": "^1.18.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.2",
+    "@phosphor-icons/react": "^2.1.10",
+    "class-variance-authority": "^0.7.1",
+    "react-aria": "3.49.0",
+    "tailwind-merge": "^2.5.5"
+  },
+  "devDependencies": {
+    "@veli-design/tokens": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-aria-components": "^1.18.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  }
+}

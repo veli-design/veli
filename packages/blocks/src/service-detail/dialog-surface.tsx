@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { Dialog, Modal, ModalOverlay } from 'react-aria-components';
-import { useVeliColorScheme, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliColorScheme, useVeliLanguage } from '@veli-design/react/provider';
 
 /** React Aria owns focus trapping, restoration, dismissal and scroll locking. */
 export function DialogSurface({

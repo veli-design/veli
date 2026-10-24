@@ -4,6 +4,16 @@ The public website uses Astro, MDX, and React. Component documentation lives in
 `src/content/docs/`; foundation documentation lives in `src/content/foundations/`.
 Reusable interactive examples live in `src/components/`.
 
+## Package references
+
+Website code examples use `@veli-design/react` and `@veli-design/tokens`;
+React source lives in `packages/react`. These package names are prepared for a
+separately approved public npm release. Coordinate application and copied-Block
+imports with the matching registry before migration; see the
+[migration runbook](../../docs/NPM_MIGRATION.md).
+
+`@tradenetcorp/veli-web` remains the private documentation workspace name.
+
 ## Code blocks
 
 Write fenced code directly in MDX. The site adds syntax highlighting for light and
@@ -12,7 +22,7 @@ No component import is required for code blocks.
 
 ````mdx
 ```tsx
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 ```
 ````
 
@@ -28,7 +38,7 @@ gets pnpm, npm, yarn, and bun tabs. Copy uses the selected package manager's com
 
 ````mdx
 ```bash
-pnpm add @tradenetcorp/veli-ui
+pnpm add @veli-design/react
 ```
 ````
 
@@ -42,7 +52,7 @@ Add a double-quoted `title` to show a filename header and copy control:
 
 ````mdx
 ```tsx title="app/page.tsx"
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 
 export default function Page() {
   return <Button>Continue</Button>;
@@ -113,7 +123,7 @@ Controls wrap on narrow screens. Keep selection state in the demo:
 
 ```tsx
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 export function ButtonOptionsDemo() {

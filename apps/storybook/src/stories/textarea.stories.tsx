@@ -2,8 +2,8 @@ import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { TextArea } from '@tradenetcorp/veli-ui/textarea';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { TextArea } from '@veli-design/react/textarea';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { WarningCircleIcon } from '@phosphor-icons/react';
 
 const collapsedControlGroups = ['Content', 'State'] as const;

@@ -1,6 +1,6 @@
 'use client';
 
-import { DateField } from '@tradenetcorp/veli-ui/date-field';
+import { DateField } from '@veli-design/react/date-field';
 
 export function AppointmentDate() {
   return <DateField label="Appointment date" calendarButtonLabel="Open calendar" />;

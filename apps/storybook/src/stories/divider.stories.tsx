@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { expect, userEvent, within } from '@storybook/test';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Divider } from '@veli-design/react/divider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const dividerVariants = ['subtle', 'muted', 'strong', 'emphasis'] as const;
 

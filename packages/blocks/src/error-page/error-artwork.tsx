@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { useVeliColorScheme } from '@veli-design/react/provider';
 import { createErrorArtwork, type BakedArtwork } from './error-artwork-engine';
 import offlineArtwork from './artwork-data/offline';
 import type { ErrorPageArtworkLabels, ErrorPageKind } from './types';

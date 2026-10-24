@@ -3,7 +3,7 @@
 import { useCallback, useState, type ReactNode } from 'react';
 import NextLink from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 import {
   SiteHeader,
   type SiteHeaderColorScheme,

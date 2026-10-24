@@ -4,7 +4,7 @@ import {
   type NotificationFilter,
   type NotificationItem,
 } from '@tradenetcorp/veli-blocks/notification-tray';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 const notificationDemoItems: NotificationItem[] = [
   {

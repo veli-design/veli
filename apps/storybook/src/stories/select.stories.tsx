@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { BankIcon, InfoIcon, MagnifyingGlassIcon, WalletIcon } from '@phosphor-icons/react';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 

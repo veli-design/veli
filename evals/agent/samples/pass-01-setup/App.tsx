@@ -1,4 +1,4 @@
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function App({ children }: { children: React.ReactNode }) {
   return (

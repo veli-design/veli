@@ -13,11 +13,21 @@ test('release manifests require exact versions and immutable commit IDs', async 
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const manifest = await createManifest(sourceCommit);
   assert.equal(validateManifest(manifest), manifest);
+  for (const [name, directory] of [
+    ['@veli-design/react', 'react'],
+    ['@veli-design/tokens', 'tokens'],
+    ['@veli-design/cli', 'cli'],
+  ]) {
+    const source = JSON.parse(
+      await readFile(new URL(`../packages/${directory}/package.json`, import.meta.url), 'utf8'),
+    );
+    assert.equal(manifest.packages[name], source.version);
+  }
   assert.throws(() => validateManifest({ ...manifest, sourceCommit: 'main' }));
   assert.throws(() =>
     validateManifest({
       ...manifest,
-      packages: { ...manifest.packages, '@tradenetcorp/veli-ui': '^0.14.0' },
+      packages: { ...manifest.packages, '@veli-design/react': '^0.14.0' },
     }),
   );
 });
@@ -28,17 +38,14 @@ test('staged sites use registry versions, locked tools and no source fallbacks',
   await stageConsumer(target, manifest);
   for (const app of ['web', 'storybook']) {
     const json = JSON.parse(await readFile(join(target, 'apps', app, 'package.json'), 'utf8'));
+    assert.equal(json.dependencies['@veli-design/react'], manifest.packages['@veli-design/react']);
     assert.equal(
-      json.dependencies['@tradenetcorp/veli-ui'],
-      manifest.packages['@tradenetcorp/veli-ui'],
-    );
-    assert.equal(
-      json.dependencies['@tradenetcorp/veli-tokens'],
-      manifest.packages['@tradenetcorp/veli-tokens'],
+      json.dependencies['@veli-design/tokens'],
+      manifest.packages['@veli-design/tokens'],
     );
     assert.match(json.devDependencies.tailwindcss, /^\d+\.\d+\.\d+$/);
   }
-  await assert.rejects(readFile(join(target, 'packages/ui/package.json')));
+  await assert.rejects(readFile(join(target, 'packages/react/package.json')));
   await assert.rejects(readFile(join(target, 'packages/tokens/src/design.tokens.json')));
   const workspace = parse(await readFile(join(target, 'pnpm-workspace.yaml'), 'utf8'));
   assert.deepEqual(workspace.packages, ['apps/*', 'packages/blocks']);
@@ -67,6 +74,12 @@ test('release deployment only follows successful publication and has durable red
     new URL('../.github/workflows/deploy-release-sites.yml', import.meta.url),
     'utf8',
   );
+  const releaseWorkflow = parse(release);
+  assert.equal(releaseWorkflow.on.push, undefined);
+  assert.equal(releaseWorkflow.on.workflow_dispatch.inputs['dist-tag'].required, true);
+  assert.match(releaseWorkflow.jobs.release.if, /VELI_NPM_PUBLICATION_APPROVED/);
+  assert.match(releaseWorkflow.jobs.release.if, /github.ref_name == vars.VELI_RELEASE_BRANCH/);
+  assert.match(parse(reusable).jobs.deploy.if, /VELI_REGISTRY_TRANSITION_APPROVED/);
   assert.ok(release.includes("if: needs.release.outputs.published == 'true'"));
   assert.ok(release.includes('uploadReleaseAsset'));
   assert.ok(!parse(web).on.push);
@@ -119,7 +132,7 @@ test(
       const registry = `http://127.0.0.1:${server.address().port}/`;
       for (const [label, dependencies, expected] of [
         ['release', manifest.packages, 0],
-        ['other-veli-version', { '@tradenetcorp/veli-tokens': '99.0.0' }, 1],
+        ['other-veli-version', { '@veli-design/tokens': '99.0.0' }, 1],
         ['external', { 'veli-test-external': '1.0.0' }, 1],
       ]) {
         const consumer = await mkdtemp(join(target, `${label}-`));
@@ -134,7 +147,7 @@ test(
         const userconfig = join(consumer, '.npmrc');
         await writeFile(
           userconfig,
-          `registry=${registry}\n@tradenetcorp:registry=${registry}\nfetch-retries=0\n`,
+          `registry=${registry}\n@veli-design:registry=${registry}\nfetch-retries=0\n`,
         );
         const child = spawnCorepack(
           ['pnpm', 'install', '--lockfile-only', '--ignore-scripts', '--no-frozen-lockfile'],

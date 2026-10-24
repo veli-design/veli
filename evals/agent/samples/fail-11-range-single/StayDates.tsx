@@ -1,6 +1,6 @@
 'use client';
 
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { DatePicker } from '@veli-design/react/date-picker';
 
 export function StayDates() {
   return <DatePicker label="Stay dates" />;

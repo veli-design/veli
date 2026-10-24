@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 
 export function DocsCodeExpandButton({
   pre,

@@ -10,7 +10,7 @@ description: Supported language, direction, and color scheme contract for Veli c
 ## Import
 
 ```tsx
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 ```
 
 ## Usage
@@ -64,8 +64,8 @@ All examples should import Veli's Tailwind theme CSS after Tailwind so semantic 
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 ```
 
 ### Next.js with next-themes
@@ -100,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 'use client';
 
 import { useTheme } from 'next-themes';
-import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
 
 function toVeliColorScheme(theme: string | undefined): VeliColorScheme {
   return theme === 'light' || theme === 'dark' ? theme : 'system';
@@ -191,7 +191,7 @@ Client-rendered React apps can use a small app-shell theme provider. The importa
 
 ```tsx
 import * as React from 'react';
-import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
 
 const storageKey = 'veli-color-scheme';
 
@@ -254,7 +254,7 @@ Pass `navigate` (and optionally `useHref`) to wrap the subtree in React Aria's `
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -269,7 +269,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 'use client';
 
 import { useRouter } from '@tanstack/react-router';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -304,7 +304,7 @@ import {
   getVeliLanguageConfig,
   useVeliColorScheme,
   useVeliLanguage,
-} from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/provider';
 ```
 
 `useVeliLanguage` returns the active Veli language config inside a provider subtree. `getVeliLanguageConfig` returns the same mapping without reading React context.

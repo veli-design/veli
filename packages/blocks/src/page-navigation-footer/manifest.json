@@ -1,28 +1,28 @@
 {
   "id": "page-navigation-footer",
   "title": "Page navigation footer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "experimental",
   "description": "Responsive organization identity, navigation groups and social links.",
   "files": ["page-navigation-footer.tsx"],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.17.0",
+    "@veli-design/react": "^0.17.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0",
     "@phosphor-icons/react": "^2.1.10"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.10.0",
+    "@veli-design/tokens": "^0.10.0",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.17.0",
+    "@veli-design/react": "0.17.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.19.0",
     "@phosphor-icons/react": "2.1.10",
-    "@tradenetcorp/veli-tokens": "0.10.0",
+    "@veli-design/tokens": "0.10.0",
     "tailwindcss": "4.3.2",
     "next": "16.2.11"
   }

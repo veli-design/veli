@@ -17,7 +17,7 @@ export function classify(paths) {
       )
     )
       continue;
-    if (/^packages\/(ui|tokens)\//.test(path)) include();
+    if (/^packages\/(react|tokens)\//.test(path)) include();
     else if (/^packages\/blocks\//.test(path)) include(['blocks', 'sites', 'cold']);
     else if (/^apps\/storybook\//.test(path)) include(['blocks', 'sites', 'cold']);
     else if (/^apps\/web\//.test(path)) include(['sites', 'cold']);
@@ -57,7 +57,7 @@ export function candidateManifest(directory, sha) {
   return {
     sha,
     hashes: Object.fromEntries(
-      ['ui.tgz', 'tokens.tgz'].map((file) => [
+      ['ui.tgz', 'tokens.tgz', 'cli.tgz'].map((file) => [
         file,
         createHash('sha256')
           .update(readFileSync(resolve(directory, file)))

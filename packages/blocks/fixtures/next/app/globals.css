@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 @source '../components';
 
 /* Consumer apps own font loading. This fixture works without a remote font service. */

@@ -3,10 +3,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { FunnelIcon, InfoIcon, UserIcon } from '@phosphor-icons/react';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { Checkbox } from '@veli-design/react/checkbox';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   Popover,
   PopoverContent,
@@ -14,7 +14,7 @@ import {
   PopoverFooter,
   PopoverHeader,
   PopoverTrigger,
-} from '@tradenetcorp/veli-ui/popover';
+} from '@veli-design/react/popover';
 
 type PopoverIntent = NonNullable<ComponentProps<typeof Popover>['intent']>;
 type PopoverPlacement = NonNullable<ComponentProps<typeof Popover>['placement']>;

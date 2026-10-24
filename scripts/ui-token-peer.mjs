@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import semver from 'semver';
 
-const tokensName = '@tradenetcorp/veli-tokens';
+const tokensName = '@veli-design/tokens';
 
 export function assertCompatibleTokensPeer(uiPackage, tokensVersion) {
   const range = uiPackage?.peerDependencies?.[tokensName];

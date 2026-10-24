@@ -2,8 +2,8 @@ import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Input } from '@veli-design/react/input';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   ArrowRightIcon,
   CalendarBlankIcon,

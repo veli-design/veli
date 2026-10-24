@@ -78,11 +78,11 @@ Standalone tracking overrides are tuned for Latin. Thaana is a connected script 
 
 Veli selects font families through tokens but does not download font files. The host app must load the faces it uses. English `type-*` styles, `font-sans`, and plain CSS typography tokens all read `--veli-font-sans`; its default is Inter with system sans fallbacks. Dhivehi styles use separate tokens for MV Faseyha, MV A Waheed, and MV Aaamu FK. No Tailwind `@theme` font reassignment is needed.
 
-Import Veli once in the app's global stylesheet. Use the Tailwind entry below, or import `@tradenetcorp/veli-tokens/css` for plain CSS without Tailwind:
+Import Veli once in the app's global stylesheet. Use the Tailwind entry below, or import `@veli-design/tokens/css` for plain CSS without Tailwind:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
+@import '@veli-design/tokens/tailwind';
 ```
 
 ### Vite + React, TanStack Start, and React Router

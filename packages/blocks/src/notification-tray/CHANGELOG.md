@@ -1,5 +1,11 @@
 ## 0.5.0
 
+## 0.6.0
+
+### Changed
+
+- Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
 ### Changed
 
 - Adopt Veli UI 0.17.x and tokens 0.10.x as the supported core package baseline. Upgrade the applicable core packages together before adding or updating this copied block; earlier block versions retain their previous dependency contracts.

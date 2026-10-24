@@ -28,7 +28,7 @@ export function judgmentFromChecks(answers, inventedApi) {
 
 export async function loadEvalConfig() {
   const prompts = await readJson(path.join(agentDir, 'prompts.json'));
-  const uiPackage = await readJson(path.join(repoDir, 'packages/ui/package.json'));
+  const uiPackage = await readJson(path.join(repoDir, 'packages/react/package.json'));
   const allowedSlugs = new Set(
     Object.keys(uiPackage.exports)
       .filter((exportPath) => !NON_COMPONENT_EXPORTS.has(exportPath))
@@ -60,13 +60,13 @@ async function collectFiles(dir, extensions) {
 }
 
 function extractVeliImports(source) {
-  return [...source.matchAll(/from\s+['"]@tradenetcorp\/veli-ui(?:\/([a-z0-9-]+))?['"]/g)].map(
+  return [...source.matchAll(/from\s+['"]@veli-design\/react(?:\/([a-z0-9-]+))?['"]/g)].map(
     (match) => match[1] ?? '',
   );
 }
 
 function hasBarrelImport(source) {
-  return /from\s+['"]@tradenetcorp\/veli-ui['"]/.test(source);
+  return /from\s+['"]@veli-design\/react['"]/.test(source);
 }
 
 function checkSnippets(source, snippets) {
@@ -90,7 +90,7 @@ function countComponentUsage(source, name) {
 function hasInventedComponent(source, names) {
   return names.some((name) => {
     const importHit = new RegExp(
-      `import\\s*{[^}]*\\b${name}\\b[^}]*}\\s*from\\s*['"]@tradenetcorp\\/veli-ui`,
+      String.raw`import\s*{[^}]*\b${name}\b[^}]*}\s*from\s*['"]@veli-design/react(?:/|['"])`,
     ).test(source);
     const jsxHit = new RegExp(`<${name}\\b`).test(source);
     return importHit || jsxHit;

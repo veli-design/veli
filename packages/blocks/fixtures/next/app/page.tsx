@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 import { ApplicationFooter } from '../footer-adapter';
 import { ApplicationHeader } from '../header-adapter';
 import { SiteFooter } from '../components/blocks/site-footer/site-footer';

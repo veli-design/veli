@@ -2,22 +2,24 @@
 
 Install and manage editable Veli Blocks in an application while retaining the exact upstream source used for three-way updates.
 
-## Private installation
+## Installation
 
-Veli currently publishes to the private `@tradenetcorp` GitHub Packages scope. Configure package-read access as described in the Veli UI setup guide, then run:
+The prepared public npm package is `@veli-design/cli`; installation needs no package-read token once publication is approved. Until then, use the local tarball rehearsal described in [the migration runbook](../../docs/NPM_MIGRATION.md). After the approved publication, run:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
+corepack pnpm dlx @veli-design/cli init
 ```
 
 The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Web URL and block destination in `.veli/config.json`.
+
+Package installation and Blocks registry access are separate. Configure the separately approved new-scope Veli Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
 
 ## WFA access
 
 Before using Veli Web, request access at [MINDCo WFA](https://wfa.mindco.mv/) with your company account. Choose one of the available durations (at most 24 hours) and enter the required reason. WFA grants access to your requesting IP, so run the CLI from the same network. To check access or get guided recovery instructions, run:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli auth login
+corepack pnpm dlx @veli-design/cli auth login
 ```
 
 The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared` login or Access token is required for developers. Request another WFA grant if it expires or your network/IP changes. The CLI stores no authentication secrets in the project.

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { ArrowFatUpIcon, CommandIcon, OptionIcon } from '@phosphor-icons/react';
-import { Kbd, KbdGroup, type KbdVariant } from '@tradenetcorp/veli-ui/kbd';
-import { Menu, MenuItem } from '@tradenetcorp/veli-ui/menu';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Kbd, KbdGroup, type KbdVariant } from '@veli-design/react/kbd';
+import { Menu, MenuItem } from '@veli-design/react/menu';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const variants: KbdVariant[] = ['default', 'inverted'];
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
+import { Button } from '@veli-design/react/button';
+import { createToastQueue, ToastRegion, type VeliToastContent } from '@veli-design/react/toast';
 
 const toastQueue = createToastQueue<VeliToastContent>();
 

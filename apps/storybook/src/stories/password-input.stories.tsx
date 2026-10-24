@@ -2,12 +2,9 @@ import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { PasswordInput, defaultPasswordRequirements } from '@tradenetcorp/veli-ui/password-input';
-import type {
-  PasswordRequirement,
-  PasswordRequirementId,
-} from '@tradenetcorp/veli-ui/password-input';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { PasswordInput, defaultPasswordRequirements } from '@veli-design/react/password-input';
+import type { PasswordRequirement, PasswordRequirementId } from '@veli-design/react/password-input';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const collapsedControlGroups = ['Content', 'State', 'Password-specific'] as const;
 

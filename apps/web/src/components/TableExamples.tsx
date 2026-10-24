@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Table, type Selection, type SortDescriptor } from '@tradenetcorp/veli-ui/table';
-import { VeliProvider, useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Table, type Selection, type SortDescriptor } from '@veli-design/react/table';
+import { VeliProvider, useVeliLanguage } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const copy = {

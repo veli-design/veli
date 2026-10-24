@@ -10,9 +10,9 @@ import {
   type Ref,
 } from 'react';
 import { CaretDownIcon, FunnelSimpleIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
+import { Search } from '@veli-design/react/search';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
 
 import {

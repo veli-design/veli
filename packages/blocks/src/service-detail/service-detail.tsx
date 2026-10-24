@@ -1,9 +1,9 @@
 'use client';
 
 import { useId, useState, type ReactNode } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { Alert, AlertDescription, AlertTitle } from '@tradenetcorp/veli-ui/alert';
+import { Button } from '@veli-design/react/button';
+import { Link } from '@veli-design/react/link';
+import { Alert, AlertDescription, AlertTitle } from '@veli-design/react/alert';
 import { InfoIcon } from '@phosphor-icons/react';
 import { GuidelineSheet } from './guideline-sheet';
 import { ApplyingInfoDialog } from './applying-info-dialog';

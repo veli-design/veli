@@ -9,7 +9,7 @@ import {
   DropzoneItemMetadata,
   DropzoneList,
   useDropzone,
-} from '@tradenetcorp/veli-ui/dropzone';
+} from '@veli-design/react/dropzone';
 
 function FileListItems() {
   const files = useDropzone((state) =>

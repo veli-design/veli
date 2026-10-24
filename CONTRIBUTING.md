@@ -104,8 +104,8 @@ merge conventions are in the [Git workflow](docs/GIT_WORKFLOW.md).
 
 ## Changesets
 
-Changes that affect a published Veli package (`@tradenetcorp/veli-ui` or
-`@tradenetcorp/veli-tokens`) must include a changeset. Documentation-only
+Changes that affect a published Veli package (`@veli-design/react` or
+`@veli-design/tokens`) must include a changeset. Documentation-only
 and internal-only changes do not.
 
 Create one with:

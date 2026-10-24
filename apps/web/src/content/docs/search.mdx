@@ -19,7 +19,7 @@ Use Search to enter a query. It wraps React Aria’s `SearchField` and a native 
 ## Import
 
 ```tsx
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ import { Search } from '@tradenetcorp/veli-ui/search';
 </div>
 
 ```tsx
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 
 export function SearchUsageDemo() {
   return (
@@ -58,7 +58,7 @@ The optional label uses Veli's shared `FieldLabel`. `showRequiredIndicator` cont
 </div>
 
 ```tsx
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 
 export function SearchAppearancesDemo() {
   return (
@@ -84,7 +84,7 @@ Use `defaultValue` for an uncontrolled initial query, or `value` and `onChange` 
 'use client';
 
 import { useState } from 'react';
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 
 export function SearchControlledDemo() {
   const [query, setQuery] = useState('');
@@ -118,9 +118,9 @@ Search follows Veli's [form handling conventions](/patterns/forms/), just like I
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Form } from '@tradenetcorp/veli-ui/form';
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Button } from '@veli-design/react/button';
+import { Form } from '@veli-design/react/form';
+import { Search } from '@veli-design/react/search';
 
 export function SearchFormDemo() {
   const [submitted, setSubmitted] = useState('');
@@ -170,7 +170,7 @@ Without `onSubmit` on Search, Enter follows native parent-form submission. With 
 'use client';
 
 import { useState } from 'react';
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 
 export function SearchEventsDemo() {
   const [submitted, setSubmitted] = useState('');
@@ -204,7 +204,7 @@ Debouncing, fetching, cancellation, result messages, and autocomplete remain app
 </div>
 
 ```tsx
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Search } from '@veli-design/react/search';
 
 export function SearchValidationDemo() {
   return (

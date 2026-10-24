@@ -13,7 +13,7 @@ assert.ok(
 );
 const target = resolve(directory);
 assert.ok(!existsSync(target), 'Use a new directory for an isolated package consumer');
-cpSync(fileURLToPath(new URL('../packages/ui/fixtures/next/', import.meta.url)), target, {
+cpSync(fileURLToPath(new URL('../packages/react/fixtures/next/', import.meta.url)), target, {
   recursive: true,
 });
 cpSync(resolve(uiTarball), resolve(target, 'ui.tgz'));
@@ -21,7 +21,7 @@ cpSync(resolve(tokensTarball), resolve(target, 'tokens.tgz'));
 const manifestPath = resolve(target, 'package.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 manifest.dependencies.next = nextVersion;
-manifest.dependencies['@tradenetcorp/veli-tokens'] = 'file:tokens.tgz';
+manifest.dependencies['@veli-design/tokens'] = 'file:tokens.tgz';
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 const env = { ...process.env, NEXT_TELEMETRY_DISABLED: '1' };
 function run(args) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ServiceDetail, type ServiceApply } from '@tradenetcorp/veli-blocks/service-detail';
 import { serviceDetailContent } from '@tradenetcorp/veli-blocks/examples/service-detail-content';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function ServiceDetailDemo() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');

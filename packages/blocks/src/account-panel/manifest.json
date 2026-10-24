@@ -1,25 +1,25 @@
 {
   "id": "account-panel",
   "title": "Account panel",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "experimental",
   "description": "Responsive profile and account panel with host-owned identity data and actions.",
   "files": ["account-panel.tsx"],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.17.0",
+    "@veli-design/react": "^0.17.0",
     "@phosphor-icons/react": "^2.1.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.19.0"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.10.0",
+    "@veli-design/tokens": "^0.10.0",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.17.0",
+    "@veli-design/react": "0.17.0",
     "@phosphor-icons/react": "2.1.10",
-    "@tradenetcorp/veli-tokens": "0.10.0",
+    "@veli-design/tokens": "0.10.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.19.0",
