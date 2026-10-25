@@ -31,7 +31,11 @@ test('PasswordInput mirrors RTL chrome and keeps password values LTR', () => {
   );
   assert.match(
     source,
-    /\[&:not\(:placeholder-shown\)\]:font-sans! \[&:not\(:placeholder-shown\)\]:text-base!/,
+    /\[&:not\(:placeholder-shown\)\]:\[font-size:var\(--veli-typography-en-body-md-regular-font-size\)\]!/,
+  );
+  assert.match(
+    source,
+    /\[&:not\(:placeholder-shown\)\]:\[line-height:var\(--veli-typography-en-body-md-regular-line-height\)\]!/,
   );
 });
 

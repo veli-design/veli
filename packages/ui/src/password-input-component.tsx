@@ -278,12 +278,13 @@ const visibilityToggleVariants = cva(
 /**
  * Filled passwords keep English type inside a Dhivehi field.
  * `type-*` restyles under `:lang(dv)`; these win only after the user types.
+ * Prefer English body-md size tokens over the Tailwind body size utility name.
  */
 const rtlPasswordValueBodySm =
   '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:text-sm!';
 
 const rtlPasswordValueBodyMd =
-  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:text-base!';
+  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:[font-size:var(--veli-typography-en-body-md-regular-font-size)]! [&:not(:placeholder-shown)]:[line-height:var(--veli-typography-en-body-md-regular-line-height)]!';
 
 const inputElementVariants = cva(
   `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} ${webkitDhivehiTextBaselineClassName}`,
