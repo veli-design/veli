@@ -467,7 +467,7 @@ export const Shortcuts: Story = {
         <Button intent="secondary">{text.copy}</Button>
         <Tooltip className="flex items-center gap-2">
           <span>{text.copy}</span>
-          <KbdGroup>
+          <KbdGroup dir="ltr" aria-label="Command C">
             <Kbd>⌘</Kbd>
             <Kbd>C</Kbd>
           </KbdGroup>

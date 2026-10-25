@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { aggregate, candidateManifest, checks, classify } from './consumer-ci.mjs';
 
 const all = { next: true, blocks: true, sites: true, cold: true, candidate: true };
@@ -162,7 +163,7 @@ test('change detection uses merge base and retains deleted and renamed dependenc
       JSON.parse(
         execFileSync(
           process.execPath,
-          [new URL('./consumer-ci.mjs', import.meta.url).pathname, 'changes', advanced],
+          [fileURLToPath(new URL('./consumer-ci.mjs', import.meta.url)), 'changes', advanced],
           {
             cwd: directory,
             encoding: 'utf8',
@@ -179,7 +180,12 @@ test('change detection uses merge base and retains deleted and renamed dependenc
     const fromMergeCheckout = JSON.parse(
       execFileSync(
         process.execPath,
-        [new URL('./consumer-ci.mjs', import.meta.url).pathname, 'changes', advanced, feature],
+        [
+          fileURLToPath(new URL('./consumer-ci.mjs', import.meta.url)),
+          'changes',
+          advanced,
+          feature,
+        ],
         { cwd: directory, encoding: 'utf8', env: { ...env, GITHUB_OUTPUT: output } },
       ),
     );
@@ -195,7 +201,7 @@ test('change detection uses merge base and retains deleted and renamed dependenc
     const deleted = JSON.parse(
       execFileSync(
         process.execPath,
-        [new URL('./consumer-ci.mjs', import.meta.url).pathname, 'changes', 'HEAD~1'],
+        [fileURLToPath(new URL('./consumer-ci.mjs', import.meta.url)), 'changes', 'HEAD~1'],
         {
           cwd: directory,
           encoding: 'utf8',

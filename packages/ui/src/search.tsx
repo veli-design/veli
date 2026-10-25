@@ -17,6 +17,7 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHelperTone,
   fieldInputAutofill,
 } from './field-shared.js';
 import { FieldLabel } from './field.js';
@@ -355,6 +356,7 @@ export function Search({
               isInvalid={isInvalid}
               size={size ?? 'md'}
               description={description}
+              descriptionTone={fieldHelperTone(isDisabled)}
               errorMessage={errorMessage}
             />
           </>

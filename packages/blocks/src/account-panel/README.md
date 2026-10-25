@@ -1,3 +1,10 @@
+## Core package baseline
+
+Version 0.6.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+before adding or updating this application-owned source. The approved typography
+metrics and subtle-button colors can change wrapping and element height. Previous
+block archives retain their existing requirements.
+
 ## Ownership and prerequisites
 
 A profile card and account list in an anchored desktop dialog or mobile modal bottom sheet. This experimental block is portable, editable React source. The hosting application supplies identity data, selected account, translations, callbacks, and action state. It owns authentication, fetching, filtering, authorization, routing, persistence, analytics, and every network side effect.
