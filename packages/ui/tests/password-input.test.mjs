@@ -18,7 +18,7 @@ test('PasswordInput exposes the public API', () => {
 });
 
 test('PasswordInput keeps the shell surface and themed text during browser autofill', () => {
-  assert.match(source, /rounded-md overflow-hidden/);
+  assert.match(source, /rounded-field overflow-hidden/);
   assert.match(
     source,
     /disabled:text-disabled \$\{fieldInputAutofill\} \$\{webkitDhivehiTextBaselineClassName\}/,

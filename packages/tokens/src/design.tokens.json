@@ -17089,6 +17089,19 @@
           "source": "radius.full"
         }
       }
+    },
+    "field": {
+      "$type": "dimension",
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      },
+      "$description": "Corner radius for input fields.",
+      "$extensions": {
+        "org.veli": {
+          "source": "radius.field"
+        }
+      }
     }
   },
   "spacing": {

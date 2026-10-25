@@ -37,7 +37,7 @@ const fieldShellVariants = cva(
   {
     variants: {
       appearance: {
-        default: 'rounded-md',
+        default: 'rounded-field',
         outline: 'rounded-full',
       },
       size: {

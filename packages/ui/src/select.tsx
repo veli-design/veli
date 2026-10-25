@@ -63,7 +63,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'relative flex w-full items-center gap-2 rounded-md text-start outline-none transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
+  'relative flex w-full items-center gap-2 rounded-field text-start outline-none transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       appearance: {
