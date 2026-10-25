@@ -258,11 +258,19 @@ typescript-eslint 8.59.3 and React 19.2.8, with no workspace links. Allowed and
 locally shadowed examples passed; protected Button/Input classes and a Badge
 override warn and exit successfully under the refreshed warning-only policy.
 All nine core public entries imported.
-Current main's development versions have an inherited peer mismatch: UI 0.16.0
-requires tokens `^0.10.0`, while the token source is 0.9.1. Default installation
-succeeds with that warning; `pnpm peers check` reports it. The existing release
-plan advances tokens to 0.10.0. This lint validation does not approve publishing
-the current development package versions.
+The earlier 2026-10-22 snapshot had an inherited peer mismatch: UI 0.16.0
+required tokens `^0.10.0`, while the token source was 0.9.1. That historical
+installation succeeded with a peer warning. The reviewed 2026-10-25 main baseline
+(`a8eca75`), now integrated into this branch, contains UI 0.17.0 and tokens 0.10.0;
+installed candidate fixtures with that pair pass `pnpm peers check`. Lint
+validation does not approve package publication or consumer runtime upgrades.
+
+As checked on 2026-10-25, [PR #291](https://github.com/tradenetcorp/veli/pull/291)
+is an unmerged draft proposing `@veli-design/react` and `packages/react`. This
+policy still targets the current `@tradenetcorp/veli-ui` public imports. Coordinate
+the import matchers, test package paths, implementation exclusions and setup docs
+with that rename, then repeat installed-package checks; do not assume the draft's
+package names are already available on main.
 
 - Descendant selectors can bypass a root allowance: `[&_input]:w-full` can pass.
   Parent selectors, `*:`/`**:`, CSS files and ancestor variables are not traced to
