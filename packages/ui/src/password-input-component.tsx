@@ -275,6 +275,16 @@ const visibilityToggleVariants = cva(
   },
 );
 
+/**
+ * Filled passwords keep English type inside a Dhivehi field.
+ * `type-*` restyles under `:lang(dv)`; these win only after the user types.
+ */
+const rtlPasswordValueBodySm =
+  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:text-sm!';
+
+const rtlPasswordValueBodyMd =
+  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:text-base!';
+
 const inputElementVariants = cva(
   `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} ${webkitDhivehiTextBaselineClassName}`,
   {
@@ -284,9 +294,19 @@ const inputElementVariants = cva(
         md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
+      isLtrValueInRtl: {
+        true: 'text-right placeholder-shown:[direction:rtl] [@supports(-webkit-hyphens:none)]:[&:lang(dv)]:[&:not(:placeholder-shown)]:translate-y-0',
+        false: '',
+      },
     },
+    compoundVariants: [
+      { size: 'sm', isLtrValueInRtl: true, className: rtlPasswordValueBodySm },
+      { size: 'md', isLtrValueInRtl: true, className: rtlPasswordValueBodySm },
+      { size: 'lg', isLtrValueInRtl: true, className: rtlPasswordValueBodyMd },
+    ],
     defaultVariants: {
       size: 'md',
+      isLtrValueInRtl: false,
     },
   },
 );
@@ -684,7 +704,6 @@ export function PasswordInput({
             ) : null}
 
             <Group
-              dir="ltr"
               className={fieldShellVariants({
                 appearance,
                 size,
@@ -715,7 +734,10 @@ export function PasswordInput({
                 spellCheck={spellCheck}
                 type={revealed ? 'text' : 'password'}
                 dir="ltr"
-                className={inputElementVariants({ size })}
+                className={inputElementVariants({
+                  size,
+                  isLtrValueInRtl: languageConfig.direction === 'rtl',
+                })}
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>

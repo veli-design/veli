@@ -17,6 +17,24 @@ test('PasswordInput exposes the public API', () => {
   assert.ok(manifest.exports['./password-input']);
 });
 
+test('PasswordInput mirrors RTL chrome and keeps password values LTR', () => {
+  assert.doesNotMatch(source, /<Group\s+dir="ltr"/);
+  assert.match(source, /dir="ltr"/);
+  assert.match(source, /isLtrValueInRtl: languageConfig\.direction === 'rtl'/);
+  assert.match(
+    source,
+    /text-right placeholder-shown:\[direction:rtl\] \[@supports\(-webkit-hyphens:none\)\]:\[&:lang\(dv\)\]:\[&:not\(:placeholder-shown\)\]:translate-y-0/,
+  );
+  assert.match(
+    source,
+    /\[&:not\(:placeholder-shown\)\]:font-sans! \[&:not\(:placeholder-shown\)\]:text-sm!/,
+  );
+  assert.match(
+    source,
+    /\[&:not\(:placeholder-shown\)\]:font-sans! \[&:not\(:placeholder-shown\)\]:text-base!/,
+  );
+});
+
 test('PasswordInput keeps the shell surface and themed text during browser autofill', () => {
   assert.match(source, /rounded-md overflow-hidden/);
   assert.match(
