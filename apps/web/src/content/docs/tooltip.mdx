@@ -39,7 +39,7 @@ Keyboard focus opens immediately. Hover uses `delay`; moving away uses `closeDel
 
 ## Sizes and tones
 
-`sm` is a compact surface with no arrow. `lg` has a maximum width of 221px and an arrow. Both sizes use the same `primary` or `secondary` background and text colors. Text wraps when available space is narrow.
+`sm` is a compact surface with no arrow. `lg` has a maximum width of 221px and an arrow. Small tooltips use a neutral background and emphasized text in both themes and have no tone variants. Large tooltips use `primary` or `secondary` background and text colors. Text wraps when available space is narrow.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TooltipVariantsDemo client:load />
@@ -120,13 +120,13 @@ Tooltip is a Veli surface on React Aria [`Tooltip`](https://react-spectrum.adobe
 
 Veli-specific props for the composed surface.
 
-| Prop        | Type                        | Default     | Description                                                      |
-| :---------- | :-------------------------- | :---------- | :--------------------------------------------------------------- |
-| `size`      | `'sm' \| 'lg'`              | `'sm'`      | Surface size; only large has a caret.                            |
-| `tone`      | `'primary' \| 'secondary'`  | `'primary'` | Background and text colors for both sizes.                       |
-| `children`  | `ReactNode`                 | -           | Non-interactive content.                                         |
-| `className` | `string` or render function | -           | Classes merged with the Veli surface; receives React Aria state. |
-| `ref`       | `Ref<HTMLDivElement>`       | -           | Forwarded to the tooltip surface.                                |
+| Prop        | Type                        | Default              | Description                                                      |
+| :---------- | :-------------------------- | :------------------- | :--------------------------------------------------------------- |
+| `size`      | `'sm' \| 'lg'`              | `'sm'`               | Surface size; only large has a caret.                            |
+| `tone`      | `'primary' \| 'secondary'`  | `'primary'` for `lg` | Available only with `size="lg"`; omit for small tooltips.        |
+| `children`  | `ReactNode`                 | -                    | Non-interactive content.                                         |
+| `className` | `string` or render function | -                    | Classes merged with the Veli surface; receives React Aria state. |
+| `ref`       | `Ref<HTMLDivElement>`       | -                    | Forwarded to the tooltip surface.                                |
 
 ### React Aria Tooltip
 
@@ -178,4 +178,4 @@ The native `<div>` that React Aria renders. These attributes are applied to that
 
 ## Release guidance
 
-Explicit offsets now take effect, small surfaces support the same primary and secondary colors as large surfaces, and motion respects reduced-motion preferences. Inline text keeps its normal flow; use the row classes shown above for shortcut composition. Sizes, tone names, and large caret geometry remain compatible.
+Explicit offsets now take effect, small surfaces use one neutral appearance, and motion respects reduced-motion preferences. Inline text keeps its normal flow; use the row classes shown above for shortcut composition. Large tone names and caret geometry remain compatible. TypeScript now requires `size="lg"` when passing `tone`; remove `tone` from small or default-size tooltips. Legacy JavaScript small-tone inputs are ignored and remain neutral. `TooltipProps` is now a size-discriminated type alias; compose it with an intersection rather than extending it in an interface.

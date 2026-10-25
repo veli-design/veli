@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ci-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build and Test
@@ -61,48 +65,161 @@ jobs:
       - name: Test Veli CLI
         run: corepack pnpm test:cli
 
-  blocks-consumer:
-    name: Published-package block consumer
+  changes:
+    name: Select consumer checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      next: ${{ steps.select.outputs.next }}
+      blocks: ${{ steps.select.outputs.blocks }}
+      sites: ${{ steps.select.outputs.sites }}
+      cold: ${{ steps.select.outputs.cold }}
+      candidate: ${{ steps.select.outputs.candidate }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: select
+        run: node scripts/consumer-ci.mjs changes "$BASE_SHA" "$HEAD_SHA"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+  candidate:
+    name: Pack exact-SHA consumer candidates
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    needs: changes
+    if: needs.changes.outputs.candidate == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: corepack pnpm install --frozen-lockfile
-      - name: Pack candidate packages
+      - uses: ./.github/actions/consumer-setup
+      - name: Build and pack once
         run: |
+          mkdir -p "$RUNNER_TEMP/candidate"
           corepack pnpm exec turbo build --filter=@tradenetcorp/veli-ui --filter=@tradenetcorp/veli-tokens
-          corepack pnpm --filter @tradenetcorp/veli-ui pack --out "$RUNNER_TEMP/ui.tgz"
-          corepack pnpm --filter @tradenetcorp/veli-tokens pack --out "$RUNNER_TEMP/tokens.tgz"
-      - name: Verify Pages Router and Vitest without ESM workarounds
-        run: |
-          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next15" "$RUNNER_TEMP/ui.tgz" "$RUNNER_TEMP/tokens.tgz" 15.5.18
-          node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next16" "$RUNNER_TEMP/ui.tgz" "$RUNNER_TEMP/tokens.tgz" 16.2.6
+          corepack pnpm --filter @tradenetcorp/veli-ui pack --out "$RUNNER_TEMP/candidate/ui.tgz"
+          corepack pnpm --filter @tradenetcorp/veli-tokens pack --out "$RUNNER_TEMP/candidate/tokens.tgz"
+          node scripts/consumer-ci.mjs stamp "$RUNNER_TEMP/candidate"
+      - uses: actions/upload-artifact@v4
+        id: upload
+        with:
+          name: consumer-candidate-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/candidate
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 0
+
+  next-15:
+    name: Installed packages / Next 15
+    needs: [changes, candidate]
+    if: needs.changes.outputs.next == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/consumer-setup
+        with:
+          candidate-artifact-id: ${{ needs.candidate.outputs.artifact-id }}
+      - run: node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next15" "$RUNNER_TEMP/candidate/ui.tgz" "$RUNNER_TEMP/candidate/tokens.tgz" 15.5.18
+
+  next-16:
+    name: Installed packages / Next 16
+    needs: [changes, candidate]
+    if: needs.changes.outputs.next == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/consumer-setup
+        with:
+          candidate-artifact-id: ${{ needs.candidate.outputs.artifact-id }}
+      - run: node scripts/check-ui-consumer.mjs "$RUNNER_TEMP/ui-next16" "$RUNNER_TEMP/candidate/ui.tgz" "$RUNNER_TEMP/candidate/tokens.tgz" 16.2.6
+
+  block-browser:
+    name: Installed blocks / browser regression
+    needs: [changes, candidate]
+    if: needs.changes.outputs.blocks == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/consumer-setup
+        with:
+          candidate-artifact-id: ${{ needs.candidate.outputs.artifact-id }}
       - run: corepack pnpm test:blocks:consumer
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BLOCKS_CONSUMER_DIR: ${{ runner.temp }}/veli-blocks-consumer
-          VELI_TARBALLS: '{"@tradenetcorp/veli-ui":"${{ runner.temp }}/ui.tgz","@tradenetcorp/veli-tokens":"${{ runner.temp }}/tokens.tgz"}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blocks-consumer-evidence
+          path: ${{ runner.temp }}/veli-blocks-consumer/test-results
+
+  packaged-sites:
+    name: Installed packages / docs and Storybook
+    needs: [changes, candidate]
+    if: needs.changes.outputs.sites == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/consumer-setup
+        with:
+          candidate-artifact-id: ${{ needs.candidate.outputs.artifact-id }}
       - name: Build isolated packaged documentation sites
         run: |
           node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-sites" "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-sites"
         env:
-          VELI_TARBALLS: '{"@tradenetcorp/veli-ui":"${{ runner.temp }}/ui.tgz","@tradenetcorp/veli-tokens":"${{ runner.temp }}/tokens.tgz"}'
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cold-reload:
+    name: Cold source playground / hot reload
+    needs: changes
+    if: needs.changes.outputs.cold == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/consumer-setup
+      - name: Install isolated browser runtime
+        run: node scripts/prepare-playground-browser.mjs "$RUNNER_TEMP/playground-browser"
       - name: Verify cold local playground hot reload
-        run: node scripts/check-playground.mjs "$RUNNER_TEMP/veli-blocks-consumer"
-      - uses: actions/upload-artifact@v4
-        if: always()
+        run: node scripts/check-playground.mjs "$RUNNER_TEMP/playground-browser"
+
+  blocks-consumer:
+    name: Published-package block consumer
+    needs: [changes, candidate, next-15, next-16, block-browser, packaged-sites, cold-reload]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: blocks-consumer-evidence
-          path: ${{ runner.temp }}/veli-blocks-consumer/test-results
+          node-version: 24
+      - name: Require selected checks and intentional skips
+        run: node scripts/consumer-ci.mjs aggregate
+        env:
+          CONSUMER_JOBS: ${{ toJSON(needs) }}

@@ -33,6 +33,25 @@ export function TooltipTypeExpectations() {
         <Button>Disabled</Button>
         <Tooltip>Help</Tooltip>
       </TooltipTrigger>
+      <Tooltip size="sm">Neutral help</Tooltip>
+      <Tooltip size="lg">Primary help</Tooltip>
+      <Tooltip size="lg" tone="primary">
+        Primary help
+      </Tooltip>
+      {/* @ts-expect-error Small tooltips have no tone variants */}
+      <Tooltip size="sm" tone="primary">
+        Help
+      </Tooltip>
+      {/* @ts-expect-error Small tooltips have no tone variants */}
+      <Tooltip size="sm" tone="secondary">
+        Help
+      </Tooltip>
+      {/* @ts-expect-error Omitted size defaults to small, which has no tone */}
+      <Tooltip tone="secondary">Help</Tooltip>
+      {/* @ts-expect-error Null size also defaults to small */}
+      <Tooltip size={null} tone="primary">
+        Help
+      </Tooltip>
       {/* @ts-expect-error Only small and large sizes are supported */}
       <Tooltip size="md">Help</Tooltip>
       {/* @ts-expect-error Only primary and secondary tones are supported */}

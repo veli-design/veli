@@ -26,6 +26,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -534,6 +535,7 @@ export function Select<T extends object, K extends Key = Key>({
                 isInvalid={isInvalid}
                 size={size ?? 'md'}
                 description={description}
+                descriptionTone={fieldHelperTone(isDisabled)}
                 errorMessage={errorMessage}
               />
             </div>

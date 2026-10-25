@@ -400,11 +400,15 @@ export function blockMarkdown(block) {
   /** @type {Record<string, string[]>} */
   const exampleFiles = {
     'error-page': ['error-page-messages.ts'],
+    'service-detail': ['service-detail-content.tsx'],
     'page-navigation-footer': ['page-navigation-footer-content.tsx'],
   };
   const supportingExamples = (exampleFiles[manifest.id] ?? [])
     .map((name) => {
-      const content = readFileSync(resolve(packageRoot, 'examples', name), 'utf8');
+      const content = readFileSync(resolve(packageRoot, 'examples', name), 'utf8').replace(
+        "'../src/service-detail/types'",
+        "'../components/blocks/service-detail/types'",
+      );
       return `### ${name}\n\n\`\`\`tsx\n${content.trimEnd()}\n\`\`\``;
     })
     .join('\n\n');

@@ -42,7 +42,7 @@
     "Pair invalid state with a concise error message when guidance is needed."
   ],
   "limitations": [
-    "The date grid has a fixed 19.25rem width.",
+    "The date grid defaults to 19.25rem and shrinks to fit its container.",
     "The built-in Today action is opt-in.",
     "Unavailable dates remain focusable but cannot be selected."
   ],
@@ -50,11 +50,13 @@
     "Provide aria-label when there is no visible label.",
     "Disabled and unavailable dates are visually distinguished.",
     "Keyboard focus receives a visible focus ring.",
+    "Selected dates and range endpoints use white text and Today indicators in both themes, including invalid selections.",
     "Weekday abbreviations expose full Dhivehi labels where available."
   ],
   "responsive": [
-    "Reserve enough horizontal space for the fixed-width date grid.",
-    "Place multiple calendars in one column on narrow layouts."
+    "Use min-w-0 on flex/grid parents so the seven-column grid can shrink on mobile.",
+    "Place multiple calendars in one column on narrow layouts.",
+    "Weekday names remain fully visible at 44px column widths and truncate only in narrower columns."
   ],
   "rtl": [
     "VeliProvider can supply Dhivehi locale and RTL direction.",

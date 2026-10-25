@@ -1,3 +1,10 @@
+## 0.3.0
+
+### Changed
+
+- Adopt tokens 0.10.x as the supported core package baseline. Upgrade the applicable core packages together before adding or updating this copied block; earlier block versions retain their previous dependency contracts.
+- Record the tested core candidate versions for the bilingual typography and subtle-button color update. Block APIs and authored source are unchanged.
+
 ## 0.2.0
 
 ### Changed

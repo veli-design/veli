@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -6,6 +9,13 @@ import { Button, I18nProvider } from 'react-aria-components';
 import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
+const comboboxSource = readFileSync(join(packageDir, 'src', 'combobox.tsx'), 'utf8');
+const fieldVariantsSource = readFileSync(
+  join(packageDir, 'src', 'field-shared-variants.ts'),
+  'utf8',
+);
 
 const render = (props = {}, wrapper = (node) => node) =>
   renderToStaticMarkup(
@@ -108,7 +118,7 @@ test('ComboBox disabled and read-only states preserve selection and match shell 
   }
 });
 
-test('ComboBox helper tone is muted without changing other fields or validation association', () => {
+test('ComboBox and Input helper tones follow the shared field footer', () => {
   const html = liveMarkup(render({ description: 'Search locations' }));
   assert.match(html, /class="[^"]*text-base-muted"[^>]*slot="description"/);
   const descriptionId = html.match(/id="([^"]+)" slot="description"/)?.[1];
@@ -122,7 +132,13 @@ test('ComboBox helper tone is muted without changing other fields or validation 
   const disabled = liveMarkup(render({ isDisabled: true, description: 'Disabled help' }));
   assert.match(disabled, /class="[^"]*text-disabled"[^>]*slot="description"/);
   const input = renderToStaticMarkup(h(Input, { label: 'Name', description: 'Enter name' }));
-  assert.match(input, /class="[^"]*text-base-subtle"[^>]*slot="description"/);
+  assert.match(input, /class="[^"]*text-base-muted"[^>]*slot="description"/);
+  const disabledInput = renderToStaticMarkup(
+    h(Input, { label: 'Name', description: 'Enter name', isDisabled: true, isRequired: true }),
+  );
+  assert.match(disabledInput, /<label[^>]*text-base-muted/);
+  assert.match(disabledInput, /class="[^"]*text-disabled"[^>]*slot="description"/);
+  assert.match(disabledInput, /text-danger-muted[^>]*>\*/);
   const invalid = liveMarkup(
     render({ isInvalid: true, description: 'Hidden helper', errorMessage: 'Choose a location' }),
   );
@@ -137,4 +153,31 @@ test('ComboBox preserves numeric zero labels and their accessible association', 
   assert.ok(label);
   const labelledBy = html.match(/<input[^>]*aria-labelledby="([^"]+)"/)?.[1];
   assert.ok(labelledBy?.split(' ').includes(label[1]));
+});
+
+test('ComboBox keeps the shell surface and themed text during browser autofill', () => {
+  assert.match(comboboxSource, /rounded-field overflow-hidden/);
+  assert.match(
+    comboboxSource,
+    /disabled:placeholder:text-disabled \$\{fieldInputAutofill\} \[&:lang\(dv\)\]/,
+  );
+
+  for (const selector of ['autofill:', '\\[&:-webkit-autofill\\]:']) {
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[transition:background-color_0s_600000s\\]`),
+    );
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-base-strong\\)\\]`),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`${selector}caret-text-base-strong`));
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(
+        `disabled:${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-disabled\\)\\]`,
+      ),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`disabled:${selector}caret-text-disabled`));
+  }
 });

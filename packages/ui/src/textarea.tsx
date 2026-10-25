@@ -19,6 +19,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -613,6 +614,7 @@ export function TextArea({
               isInvalid={isInvalid}
               size={size ?? 'md'}
               description={description}
+              descriptionTone={fieldHelperTone(isDisabled)}
               errorMessage={errorMessage}
             />
           </>

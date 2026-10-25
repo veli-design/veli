@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -6,6 +9,13 @@ import { Search } from '@tradenetcorp/veli-ui/search';
 import { Form } from '@tradenetcorp/veli-ui/form';
 import { Field, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
+const searchSource = readFileSync(join(packageDir, 'src', 'search.tsx'), 'utf8');
+const fieldVariantsSource = readFileSync(
+  join(packageDir, 'src', 'field-shared-variants.ts'),
+  'utf8',
+);
 
 const render = (props = {}, provider = {}) =>
   renderToStaticMarkup(
@@ -76,7 +86,17 @@ test('Search only offers clearing for a nonempty editable value', () => {
 test('Search exposes helper and error associations with validation semantics', () => {
   const helper = render({ description: 'Search by name' });
   assert.match(helper, /aria-describedby="[^"]+"/);
+  assert.match(helper, /class="[^"]*text-base-muted"[^>]*slot="description"/);
   assert.match(helper, /slot="description"[^>]*>Search by name/);
+  const disabledHelper = render({
+    label: 'Unavailable',
+    description: 'Unavailable hint',
+    isDisabled: true,
+    isRequired: true,
+  });
+  assert.match(disabledHelper, /<label[^>]*text-base-muted/);
+  assert.match(disabledHelper, /class="[^"]*text-disabled"[^>]*slot="description"/);
+  assert.match(disabledHelper, /text-danger-muted[^>]*>\*/);
   const error = render({
     isInvalid: true,
     description: 'Hidden helper',
@@ -115,7 +135,7 @@ test('Search associates its optional visible label and shares Veli required indi
     />\*<\/span>/,
   );
   assert.doesNotMatch(render(), /<label\b/);
-  assert.match(render({ label: 'Unavailable', isDisabled: true }), /<label[^>]*text-disabled/);
+  assert.match(render({ label: 'Unavailable', isDisabled: true }), /<label[^>]*text-base-muted/);
 });
 
 test('Search inherits Veli Form validation behavior and named server errors', () => {
@@ -158,9 +178,37 @@ test('FieldLabel supports explicit control state without losing Field context de
         ),
       ),
     );
-  assert.match(renderLabel({}), /<label[^>]*text-disabled/);
+  assert.match(renderLabel({}), /<label[^>]*text-base-muted/);
+  assert.match(renderLabel({}), /text-danger-muted[^>]*>\*/);
   assert.match(renderLabel({}), /aria-hidden="true">\*/);
   const overridden = renderLabel({ isDisabled: false, isRequired: false });
   assert.match(overridden, /<label[^>]*text-base-default/);
   assert.doesNotMatch(overridden, /aria-hidden="true">\*/);
+});
+
+test('Search keeps the shell surface and themed text during browser autofill', () => {
+  assert.match(searchSource, /gap-2 overflow-hidden transition-\[background-color,box-shadow\]/);
+  assert.match(
+    searchSource,
+    /disabled:text-disabled \$\{fieldInputAutofill\} \[&::-webkit-search-cancel-button\]/,
+  );
+
+  for (const selector of ['autofill:', '\\[&:-webkit-autofill\\]:']) {
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[transition:background-color_0s_600000s\\]`),
+    );
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(`${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-base-strong\\)\\]`),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`${selector}caret-text-base-strong`));
+    assert.match(
+      fieldVariantsSource,
+      new RegExp(
+        `disabled:${selector}\\[-webkit-text-fill-color:var\\(--veli-color-text-disabled\\)\\]`,
+      ),
+    );
+    assert.match(fieldVariantsSource, new RegExp(`disabled:${selector}caret-text-disabled`));
+  }
 });
