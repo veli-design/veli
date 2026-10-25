@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { Accordion } from '@tradenetcorp/veli-ui/accordion';
@@ -13,7 +13,6 @@ import { Divider } from '@tradenetcorp/veli-ui/divider';
 import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
 import { Form } from '@tradenetcorp/veli-ui/form';
 import { Input } from '@tradenetcorp/veli-ui/input';
-import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 import {
   Menu,
   MenuItem,
@@ -460,6 +459,76 @@ export function TagsVariantsDemo() {
     </div>
   );
 }
+
+function subscribeToTagsDocsTheme(onChange: () => void) {
+  window.addEventListener('veli:color-scheme-change', onChange);
+  return () => window.removeEventListener('veli:color-scheme-change', onChange);
+}
+
+function getTagsDocsColorScheme() {
+  const colorScheme = document.documentElement.dataset.colorScheme;
+  return colorScheme === 'light' || colorScheme === 'dark' ? colorScheme : 'system';
+}
+
+function TagsRtlContent() {
+  const text = useTagsDocsText();
+  const [topics, setTopics] = useState(() => getTagsDocsRemovableSeed(text));
+
+  return (
+    <div className="w-full max-w-lg space-y-5">
+      <TagGroup
+        label={text.departments}
+        selectionMode="multiple"
+        defaultSelectedKeys={['tourism']}
+        description={text.chooseDepartments}
+      >
+        <Tag id="tourism">{text.tourism}</Tag>
+        <Tag id="fisheries">{text.fisheries}</Tag>
+        <Tag id="education">{text.education}</Tag>
+      </TagGroup>
+      <TagGroup<TagDemoItem>
+        label={text.savedTopics}
+        items={topics}
+        onRemove={(keys) => setTopics((current) => current.filter((item) => !keys.has(item.id)))}
+      >
+        {(item) => <Tag id={item.id}>{item.label}</Tag>}
+      </TagGroup>
+    </div>
+  );
+}
+
+export function TagsRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const isDhivehi = language === 'Dhivehi';
+  const colorScheme = useSyncExternalStore(
+    subscribeToTagsDocsTheme,
+    getTagsDocsColorScheme,
+    () => 'system' as const,
+  );
+
+  return (
+    <DocsPreview
+      codeKey={`tags-language-${isDhivehi ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <VeliProvider
+        language={isDhivehi ? 'dv' : 'en'}
+        colorScheme={colorScheme}
+        className="w-full min-w-0"
+      >
+        <TagsRtlContent key={language} />
+      </VeliProvider>
+    </DocsPreview>
+  );
+}
+
 export function CheckboxUsageDemo() {
   return (
     <div className="grid w-full max-w-sm gap-3">
@@ -1043,52 +1112,6 @@ export function BadgeStatusDotsDemo() {
       <Badge appearance="emphasis" intent="cautious" size="xs" aria-label="Away" />
       <Badge appearance="emphasis" intent="danger" size="xs" aria-label="Busy" />
       <Badge appearance="emphasis" intent="neutral" size="xs" aria-label="Offline" />
-    </div>
-  );
-}
-
-export function KbdUsageDemo() {
-  return (
-    <div className="flex flex-wrap items-center gap-[16px]">
-      <KbdGroup aria-label="Command K">
-        <Kbd>⌘</Kbd>
-        <Kbd>K</Kbd>
-      </KbdGroup>
-      <KbdGroup aria-label="Control Shift P">
-        <Kbd>Ctrl</Kbd>
-        <Kbd>Shift</Kbd>
-        <Kbd>P</Kbd>
-      </KbdGroup>
-      <Kbd>Esc</Kbd>
-    </div>
-  );
-}
-
-export function KbdVariantsDemo() {
-  return (
-    <div className="grid gap-[24px] lg:grid-cols-2">
-      <div className="rounded-[16px] border border-base-subtle bg-surface-raised p-[16px]">
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-base-emphasis">Default</p>
-          <KbdGroup aria-label="Command Enter">
-            <Kbd>⌘</Kbd>
-            <Kbd>Enter</Kbd>
-          </KbdGroup>
-        </div>
-      </div>
-
-      <div
-        className="rounded-[16px] border border-white/10 p-[16px]"
-        style={{ background: '#1c1d22' }}
-      >
-        <div className="space-y-[12px]">
-          <p className="type-body-sm-medium text-white">Inverted</p>
-          <KbdGroup variant="inverted" aria-label="Command Enter">
-            <Kbd>⌘</Kbd>
-            <Kbd>Enter</Kbd>
-          </KbdGroup>
-        </div>
-      </div>
     </div>
   );
 }

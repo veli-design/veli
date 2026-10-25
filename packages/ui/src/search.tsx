@@ -17,6 +17,8 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHelperTone,
+  fieldInputAutofill,
 } from './field-shared.js';
 import { FieldLabel } from './field.js';
 import { useVeliLanguage } from './provider.js';
@@ -33,7 +35,7 @@ const outlineStrokeFocusHide =
   'has-[[data-focus-visible]]:shadow-none has-[[data-focus-visible]]:hover:shadow-none';
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-2 overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -166,7 +168,7 @@ const clearButtonVariants = cva(
 );
 
 const inputElementVariants = cva(
-  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)] ${webkitDhivehiTextBaselineClassName}`,
   {
     variants: {
       size: {
@@ -354,6 +356,7 @@ export function Search({
               isInvalid={isInvalid}
               size={size ?? 'md'}
               description={description}
+              descriptionTone={fieldHelperTone(isDisabled)}
               errorMessage={errorMessage}
             />
           </>

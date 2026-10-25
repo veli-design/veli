@@ -55,8 +55,7 @@ const englishTooltipText = {
     end: 'End',
   },
   variants: {
-    smallPrimary: 'Small — Primary',
-    smallSecondary: 'Small — Secondary',
+    small: 'Small — Neutral',
     largePrimary: 'Large — Primary',
     largeSecondary: 'Large — Secondary',
   },
@@ -138,7 +137,9 @@ const PLACEMENT_GROUPS = [
   { labelKey: 'end', placements: ['end', 'end top', 'end bottom'] as const },
 ] as const;
 
-type TooltipStoryArgs = ComponentProps<typeof Tooltip> & {
+type TooltipStoryArgs = Omit<ComponentProps<typeof Tooltip>, 'size' | 'tone'> & {
+  size?: 'sm' | 'lg';
+  tone?: 'primary' | 'secondary';
   /** Hover delay before the tooltip opens; passed to `TooltipTrigger`. */
   delay?: number;
   closeDelay?: number;
@@ -221,12 +222,15 @@ const meta = {
     size: {
       control: 'select',
       options: ['sm', 'lg'],
-      description: 'Surface size. Both sizes use the primary or secondary tone tokens.',
+      description:
+        'Surface size. Small uses neutral colors; large uses primary or secondary tone tokens.',
     },
     tone: {
+      if: { arg: 'size', eq: 'lg' },
       control: 'select',
       options: ['primary', 'secondary'],
-      description: 'Primary or secondary color tone for both small and large tooltips.',
+      description:
+        'Primary or secondary color tone for large tooltips. Small tooltips stay neutral.',
     },
     children: {
       control: 'text',
@@ -241,7 +245,6 @@ const meta = {
     closeDelay: 0,
     isDisabled: false,
     size: 'sm',
-    tone: 'primary',
     children: englishTooltipText.shortHelp,
   },
 } satisfies Meta<TooltipStoryArgs>;
@@ -271,7 +274,8 @@ export const Playground: Story = {
     await expect(trigger).toHaveFocus();
   },
   render: (args) => {
-    const { delay, closeDelay, trigger, isDisabled, children, ...tooltipProps } = args;
+    const { delay, closeDelay, trigger, isDisabled, children, size, tone, ...tooltipProps } = args;
+    const variantProps = size === 'lg' ? ({ size, tone } as const) : ({ size: 'sm' } as const);
     const language = useTooltipLanguage();
     const text = localizedTooltipText[language];
 
@@ -284,7 +288,7 @@ export const Playground: Story = {
           isDisabled={isDisabled}
         >
           <Button intent="secondary">{text.triggerHoverFocus}</Button>
-          <Tooltip {...tooltipProps}>
+          <Tooltip {...tooltipProps} {...variantProps}>
             {getLocalizedTooltipArgText('children', children, language)}
           </Tooltip>
         </TooltipTrigger>
@@ -353,9 +357,52 @@ export const Placements: Story = {
 };
 
 /**
- * Size and tone variants: both sizes support primary and secondary surfaces.
+ * One neutral small surface and primary/secondary large surfaces.
  */
 export const Variants: Story = {
+  play: async ({ canvasElement }) => {
+    const triggers = within(canvasElement).getAllByRole('button');
+    const user = userEvent.setup();
+    await expect(triggers).toHaveLength(3);
+    const colors = [
+      ['tooltip-bg-small', 'text-base-emphasis'],
+      ['tooltip-bg-large-primary', 'tooltip-text-on-primary'],
+      ['tooltip-bg-large-secondary', 'tooltip-text-on-secondary'],
+    ];
+
+    triggers.forEach((trigger) => trigger.blur());
+    for (const [index, trigger] of triggers.entries()) {
+      await user.tab();
+      await waitFor(() => expect(within(document.body).getByRole('tooltip')).toBeVisible());
+      const tooltip = within(document.body).getByRole('tooltip');
+      const [background, foreground] = colors[index];
+      // Resolve the theme's tokens in the portal's own scope before comparing colors.
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(--veli-color-${background})`;
+      probe.style.color = `var(--veli-color-${foreground})`;
+      tooltip.append(probe);
+      try {
+        await expect(getComputedStyle(tooltip).backgroundColor).toBe(
+          getComputedStyle(probe).backgroundColor,
+        );
+        await expect(getComputedStyle(tooltip).color).toBe(getComputedStyle(probe).color);
+        const arrow = tooltip.querySelector('svg');
+        await expect(arrow !== null).toBe(index >= 1);
+        if (arrow) {
+          await expect(getComputedStyle(arrow).fill).toBe(
+            getComputedStyle(tooltip).backgroundColor,
+          );
+        }
+        await expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+      } finally {
+        probe.remove();
+      }
+      await user.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(within(document.body).queryByRole('tooltip')).not.toBeInTheDocument(),
+      );
+    }
+  },
   render: () => {
     const text = useTooltipText();
 
@@ -363,24 +410,11 @@ export const Variants: Story = {
       <div className="flex min-h-[280px] flex-col items-center justify-center gap-10 bg-surface-base p-8">
         <div className="flex flex-col items-center gap-4">
           <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.variants.smallPrimary}
+            {text.variants.small}
           </span>
           <TooltipTrigger delay={0}>
             <Button intent="secondary">{text.triggerHover}</Button>
-            <Tooltip size="sm" tone="primary">
-              {text.copyAriaLabel}
-            </Tooltip>
-          </TooltipTrigger>
-        </div>
-        <div className="flex flex-col items-center gap-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
-            {text.variants.smallSecondary}
-          </span>
-          <TooltipTrigger delay={0}>
-            <Button intent="secondary">{text.triggerHover}</Button>
-            <Tooltip size="sm" tone="secondary">
-              {text.copyAriaLabel}
-            </Tooltip>
+            <Tooltip size="sm">{text.copyAriaLabel}</Tooltip>
           </TooltipTrigger>
         </div>
         <div className="flex flex-col items-center gap-4">
@@ -433,7 +467,7 @@ export const Shortcuts: Story = {
         <Button intent="secondary">{text.copy}</Button>
         <Tooltip className="flex items-center gap-2">
           <span>{text.copy}</span>
-          <KbdGroup>
+          <KbdGroup dir="ltr" aria-label="Command C">
             <Kbd>⌘</Kbd>
             <Kbd>C</Kbd>
           </KbdGroup>

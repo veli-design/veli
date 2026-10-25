@@ -30,6 +30,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   fieldHeaderLabelVariants,
+  fieldHelperTone,
   fieldHeaderRequiredIndicatorVariants,
   fieldInputAutofill,
   hasRenderableMessage,
@@ -788,6 +789,7 @@ export function PasswordInput({
                     isInvalid={isInvalid}
                     size={resolvedSize}
                     description={description}
+                    descriptionTone={fieldHelperTone(isDisabled)}
                     errorMessage={errorMessage}
                   />
                 ) : null}

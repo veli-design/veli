@@ -23,7 +23,7 @@ for (const theme of ['light', 'dark'])
       const tailwind = await values('tailwind');
       expect(tailwind).toEqual(plain);
       expect(tailwind.fontSize).toBe('64px');
-      expect(parseFloat(tailwind.lineHeight)).toBeCloseTo(84.48, 2);
+      expect(parseFloat(tailwind.lineHeight)).toBeCloseTo(84, 2);
       expect(parseFloat(tailwind.tracking)).toBeCloseTo(-1.92, 2);
       const grid = await page.locator('#grid').evaluate((element) => {
         const css = getComputedStyle(element);
