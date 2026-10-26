@@ -25,6 +25,11 @@
       "situation": "A small set of choices should remain visible for comparison.",
       "guidance": "Use a visible single-choice group.",
       "useInstead": ["radio"]
+    },
+    {
+      "situation": "A chosen value must stay visible and submit with the form, but the user must not change it.",
+      "guidance": "Select has no read-only state. Use a read-only Input. A disabled Select is omitted from form submission.",
+      "useInstead": ["input"]
     }
   ],
   "supportedInteractions": [
