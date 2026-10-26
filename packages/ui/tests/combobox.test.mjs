@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -6,6 +9,9 @@ import { Button, I18nProvider } from 'react-aria-components';
 import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
+const source = readFileSync(join(packageDir, 'src', 'combobox.tsx'), 'utf8');
 
 const render = (props = {}, wrapper = (node) => node) =>
   renderToStaticMarkup(
@@ -137,4 +143,11 @@ test('ComboBox preserves numeric zero labels and their accessible association', 
   assert.ok(label);
   const labelledBy = html.match(/<input[^>]*aria-labelledby="([^"]+)"/)?.[1];
   assert.ok(labelledBy?.split(' ').includes(label[1]));
+});
+
+test('ComboBox options follow the Figma menu treatment', () => {
+  assert.match(source, /rounded-xl border-\[0\.5px\] border-base-muted bg-menu-bg p-1/);
+  assert.match(source, /rounded-lg px-4 py-2 text-start text-base-strong/);
+  assert.match(source, /data-\[focused\]:bg-menu-hover data-\[pressed\]:bg-menu-pressed/);
+  assert.doesNotMatch(source, /rounded-xl border border-base-subtle bg-menu-bg/);
 });
