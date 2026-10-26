@@ -243,6 +243,8 @@ test('every canonical variable reference resolves, including fractional spacing'
     for (const [, reference] of files[file].matchAll(/var\((--veli-[\w-]+)/g))
       assert.ok(declared.has(reference), `Dangling reference: ${reference}`);
   assert.match(css, /--veli-spacing-0-5: 2px;/);
+  assert.match(css, /--veli-radius-field: 10px;/);
+  assert.match(files['tailwind-theme.css'], /--radius-field: var\(--veli-radius-field\);/);
   assert.match(files['tailwind-theme.css'], /--spacing-0_5: var\(--veli-spacing-0-5\);/);
 });
 

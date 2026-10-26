@@ -200,7 +200,7 @@ export function DatePicker<T extends DateValue>({
             <Group
               className={twMerge(
                 fieldShellVariants({ appearance, size, isDisabled, isInvalid, isReadOnly, isOpen }),
-                'gap-2 rounded-[var(--radius-field)]',
+                'gap-2',
                 !isDisabled &&
                   !isInvalid &&
                   !isReadOnly &&

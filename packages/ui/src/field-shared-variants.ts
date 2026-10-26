@@ -153,7 +153,7 @@ export const fieldHeaderInfoTooltipTriggerVariants = cva(
 );
 
 export const fieldTriggerButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
+  'relative flex w-full items-center gap-1 rounded-field text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
   {
     variants: {
       appearance: {
