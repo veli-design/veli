@@ -22,7 +22,7 @@ test('Input exposes the public API reconciled with Figma', () => {
 });
 
 test('Input shell matches the Figma states', () => {
-  assert.match(source, /relative flex w-full items-center gap-2 rounded-md/);
+  assert.match(source, /relative flex w-full items-center gap-2 rounded-field/);
   assert.match(source, /\{\s*isDisabled: true,\s*className: 'bg-text-input-bg-hover',\s*\}/);
   assert.doesNotMatch(source, /bg-ash-alpha-200|text-input-stroke-disabled|border-\[1\.5px\]/);
   assert.match(source, /outlineFieldStrokeRest\.input/);
@@ -40,7 +40,7 @@ test('Input error icon replaces trailing content and stays decorative', () => {
 });
 
 test('Input keeps the shell surface and themed text during browser autofill', () => {
-  assert.match(source, /rounded-md overflow-hidden/);
+  assert.match(source, /rounded-field overflow-hidden/);
   assert.match(
     source,
     /disabled:text-disabled \$\{fieldInputAutofill\} \$\{webkitDhivehiTextBaselineClassName\}/,

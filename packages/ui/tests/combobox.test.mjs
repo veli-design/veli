@@ -156,7 +156,7 @@ test('ComboBox preserves numeric zero labels and their accessible association', 
 });
 
 test('ComboBox keeps the shell surface and themed text during browser autofill', () => {
-  assert.match(comboboxSource, /rounded-md overflow-hidden/);
+  assert.match(comboboxSource, /rounded-field overflow-hidden/);
   assert.match(
     comboboxSource,
     /disabled:placeholder:text-disabled \$\{fieldInputAutofill\} \[&:lang\(dv\)\]/,
