@@ -7,13 +7,13 @@ block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
+This experimental block is editable source for applications using Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
 
 `PreviewBanner` is a floating fixed bottom banner with a measured scroll spacer so page content is not covered. It renders nothing when `notices` is empty, so site-shell only reserves bottom space when a banner is mounted with notices. Applications own draft-mode cookies, notice resolution, translations, and action URLs. Compose it in the [site-shell](/blocks/site-shell/) `notices` slot (or any flex column that should reserve bottom space).
 
 ## Installation
 
-Public npm installation needs no credentials. Configure the separately approved compatible Blocks registry URL.
+Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
 corepack pnpm add @phosphor-icons/react@2.1.10 @veli-design/react@0.17.0 @veli-design/tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0

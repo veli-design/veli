@@ -13,7 +13,7 @@ Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and pr
 
 ## Installation
 
-Install the public npm packages and configure the separately approved compatible Blocks registry URL. Initialize Blocks once, using your team's Veli Web URL, then install:
+Install the public npm packages and configure the compatible Blocks registry URL. Initialize Blocks once, using the compatible Veli Web URL, then install:
 
 ```sh
 corepack pnpm dlx @veli-design/cli init

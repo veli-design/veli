@@ -4,7 +4,7 @@ A modern, accessible design system monorepo built with Turbo, React Aria, and Ta
 
 ## Packages
 
-The `@veli-design` packages below are prepared for a separately approved public npm release.
+The `@veli-design` packages below are prepared for public npm publication.
 Publication remains on hold; see [the migration runbook](docs/NPM_MIGRATION.md) before switching an existing application.
 
 | Package                                            | Purpose                                                              | Install                        | Release history                           |

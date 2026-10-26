@@ -1,21 +1,16 @@
-# Bundled npm release preparation
+# Npm release readiness
 
-Engineering release requirements for PD-595, PD-574, PD-573, PD-592 and PD-582.
-This document records artifact boundaries and unresolved rights. It is not legal
-assurance.
+This document records artifact boundaries, unresolved rights and operational
+release prerequisites. It is not legal assurance.
 
-## Licensing decision still needed
+## Licensing prerequisites
 
-The CTO's conditional go-ahead permits preparation with licences, copyright and
-asset notices in place; legal review is expected before public announcement.
-No verified legal entity or copyright year was provided in the inspected issue
-scope, comments or repository. Do not infer copyright ownership from GitHub's
-`tradenetcorp` namespace, the npm `veli-design` organisation, or MINDCo hosting.
-The standard MIT grant and disclaimer are unchanged. Root and npm-package copies
-use explicit `[YEAR] [COPYRIGHT HOLDER — TO BE CONFIRMED]` placeholders. Confirm
-the exact holder, year(s) and authority to license contributions before replacing
-them consistently. The supported root publication script rejects unresolved templates and draft
-notices; this is not a claim to intercept arbitrary direct npm publish commands. Local tarballs deliberately contain these templates for review only.
+Copyright holder, year and authority to license original work must be verified
+before distribution. Root and npm-package MIT copies retain explicit
+`[YEAR] [COPYRIGHT HOLDER — TO BE CONFIRMED]` placeholders. Complete copyright and
+attribution notices consistently across all packages. The standard MIT grant
+and disclaimer remain unchanged. The supported root publication script rejects
+unresolved templates and draft notices; local tarballs are for validation only.
 
 `LICENSING.md` separates MIT original software/code examples from CC BY 4.0
 original non-software documentation, with unresolved attribution placeholders.
@@ -42,7 +37,7 @@ The asset inventory contains 86 files across the two apps' public directories an
 seven standalone Block SVGs. Those files are outside the npm allowlists. No new
 claim to redistribution rights is made for any of them. Specifically:
 
-| Materials                                                                    | Evidence and required decision                                                                                                                                                              |
+| Materials                                                                    | Required evidence                                                                                                                                                                           |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Inter Latin/Latin-ext WOFF2 and IBM Plex Mono 400/500/600 WOFF2 in web fonts | Identify exact upstream files/version, attach matching upstream copyright and font licence, verify modification/subsetting terms. A known family name alone does not verify these binaries. |
 | MV Faseyha Regular, MV A Waheed Bold 2, MV Aaamu FK Bold TTF in both apps    | Obtain verified rights holder and explicit redistribution licence for these exact files. No licence was present beside them.                                                                |
@@ -84,21 +79,10 @@ Actual npm tarball inspection confirms no SVG/font/image asset is included in
 React, tokens or CLI. Those packages do not embed the fetched Block archives.
 
 New Blocks-registry publication and public docs/Storybook deployment remain
-blocked for these assets as well as the other unverified public assets. Existing
-production has not been changed or newly approved. Keep the existing deployment
-approval gate disabled; an MIT exclusion must never be treated as clearance to
+blocked for these assets as well as the other unverified public assets. Keep the deployment
+gate disabled until the registry and asset requirements are satisfied; an MIT exclusion must never be treated as clearance to
 activate it. Npm publication separately remains blocked by copyright templates
 and the existing rollout prerequisites.
-
-## Issue traceability
-
-| Issue  | Local contribution                                                                                                                    | Still required                                                                                                            |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| PD-574 | Standard MIT/CC BY texts, scope map, asset register, brand policy and third-party notices with three npm copies                       | Verify holder/year, code ownership and excluded-asset rights; review exact notices                                        |
-| PD-573 | Mixed MIT/CC BY metadata in seven workspaces; MIT in four private software fixture/sample inputs                                      | Replace copyright templates before shipping; metadata is a proposed selection, not clearance                              |
-| PD-582 | Discovery metadata in all seven workspaces; keywords completed in tokens/CLI                                                          | Current repository, homepage and bugs links require private GitHub access; public support route remains a launch decision |
-| PD-592 | Existing renamed public install docs retained; token install command, React registry guidance and per-package licence scope clarified | Confirm actual published versions/registry before directing users to install                                              |
-| PD-595 | Same package migration and local release controls                                                                                     | Rollout approvals and registry/auth decisions below                                                                       |
 
 ## Publication and rollout gates
 
@@ -112,12 +96,12 @@ The existing manual publication approval, explicit release branch/tag and
 separate registry-transition gates remain. Verify npm name availability,
 organisation role/publish permissions, initial authentication and any later trust
 provisioning through separately authorised steps. Do not claim provenance while
-the source repository is private. Approve a compatible new-scope Blocks registry
-and old-consumer support period before activating docs/registry deployment.
+the source repository is private. Validate a compatible new-scope Blocks registry
+and define the old-consumer support period before activating docs/registry deployment.
 Public npm CLI installation does not grant registry access through MINDCo WFA.
 
 Repository URLs truthfully retain `tradenetcorp/veli`; they have not been changed
-to the future GitHub organisation. No issue should be marked Done based on these draft legal files.
+to the future GitHub organisation.
 
 ## Reference material
 

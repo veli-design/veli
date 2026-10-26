@@ -4,7 +4,7 @@ Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come
 
 ## Installation
 
-After the approved public npm release, install with `pnpm add @veli-design/tokens`.
+After public npm publication, install with `pnpm add @veli-design/tokens`.
 The default npm registry requires no package-read token. Before release, use the
 local tarball rehearsal in the repository migration runbook.
 

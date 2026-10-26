@@ -12,7 +12,7 @@ block archives retain their existing requirements.
 
 ## Installation
 
-After an approved catalog release, use `corepack pnpm dlx @veli-design/cli add
+After a compatible catalog release, use `corepack pnpm dlx @veli-design/cli add
 service-detail`. This local branch is unpublished. Import `ServiceDetail` from
 `./components/blocks/service-detail/service-detail`; its CSS is imported by the source.
 Keep all manifest files together, including the six relative SVG masks. Configure

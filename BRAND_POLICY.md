@@ -32,7 +32,7 @@ This is not permission to use logos or official marks, name a fork “Veli”, �
 Design” or “Maldives Government Design System”, or make certification,
 affiliation, sponsorship or endorsement claims. Obtain separate permission from
 the verified controlling rights holder before those uses. The permission contact
-and approval process remain **TO BE CONFIRMED**; no contact is invented here.
+and approval process remain **TO BE CONFIRMED**.
 This policy does not curtail uses otherwise permitted by applicable law and
 adds no restrictions to MIT software or CC BY documentation rights.
 

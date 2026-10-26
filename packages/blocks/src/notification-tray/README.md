@@ -13,7 +13,7 @@ Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and pr
 
 ## Installation
 
-Initialize Veli Blocks once per application, using your team's Veli Web URL, then add the tray:
+Initialize Veli Blocks once per application, using the compatible Veli Web URL, then add the tray:
 
 ```sh
 corepack pnpm dlx @veli-design/cli init

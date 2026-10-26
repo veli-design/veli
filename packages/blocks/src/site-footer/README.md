@@ -7,11 +7,11 @@ block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace. Applications own translations, URLs, and changes to their copy.
+This experimental block is editable source for applications using Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace. Applications own translations, URLs, and changes to their copy.
 
 ## Installation
 
-Public npm installation needs no credentials. Configure the separately approved compatible Blocks registry URL.
+Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
 corepack pnpm add @veli-design/react@0.17.0 @veli-design/tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0

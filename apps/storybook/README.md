@@ -7,8 +7,8 @@ styles and design tokens from [`@veli-design/tokens`](../../packages/tokens).
 ## Package names
 
 Stories, docs snippets and help examples use `@veli-design/react` and
-`@veli-design/tokens`. Their public npm publication remains on hold until the
-separate release approval. Existing applications must migrate dependencies,
+`@veli-design/tokens`. Their public npm publication is gated by the
+release prerequisites. Existing applications must migrate dependencies,
 imports and copied Blocks together against the matching registry; see the
 [migration runbook](../../docs/NPM_MIGRATION.md).
 

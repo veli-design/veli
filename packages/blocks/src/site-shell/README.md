@@ -7,13 +7,13 @@ block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
+This experimental block is editable source for applications using Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
 
 `SiteShell` is the page frame only: raised viewport column, rounded main surface, and overlay chrome fade. Applications own the site header, footer, session, search palette, routing, draft-mode notices, translations, and persistence. Compose the [site-header](/blocks/site-header/), [site-footer](/blocks/site-footer/), and [preview-banner](/blocks/preview-banner/) blocks (or your own equivalents) through the `header`, `footer`, and `notices` slots.
 
 ## Installation
 
-Public npm installation needs no credentials. Configure the separately approved compatible Blocks registry URL.
+Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
 corepack pnpm add react@19.2.6 react-dom@19.2.6 motion@12.42.2 @veli-design/tokens@0.10.0

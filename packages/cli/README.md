@@ -4,7 +4,7 @@ Install and manage editable Veli Blocks in an application while retaining the ex
 
 ## Installation
 
-The prepared public npm package is `@veli-design/cli`; installation needs no package-read token once publication is approved. Until then, use the local tarball rehearsal described in [the migration runbook](../../docs/NPM_MIGRATION.md). After the approved publication, run:
+The prepared public npm package is `@veli-design/cli`; installation needs no package-read token after publication. Until then, use the local tarball rehearsal described in [the migration runbook](../../docs/NPM_MIGRATION.md). After publication, run:
 
 ```sh
 corepack pnpm dlx @veli-design/cli init
@@ -12,7 +12,7 @@ corepack pnpm dlx @veli-design/cli init
 
 The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Web URL and block destination in `.veli/config.json`.
 
-Package installation and Blocks registry access are separate. Configure the separately approved new-scope Veli Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
+Package installation and Blocks registry access are separate. Configure the compatible new-scope Veli Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
 
 ## WFA access
 
@@ -24,7 +24,7 @@ corepack pnpm dlx @veli-design/cli auth login
 
 The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared` login or Access token is required for developers. Request another WFA grant if it expires or your network/IP changes. The CLI stores no authentication secrets in the project.
 
-For CI, DevOps must configure a Cloudflare Access **Service Auth** policy if service-token access is available, then inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. CI cannot use an interactive WFA approval.
+For CI, configure a Cloudflare Access **Service Auth** policy if service-token access is available, then inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. CI cannot use an interactive WFA approval.
 
 ## Commands
 

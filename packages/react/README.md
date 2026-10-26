@@ -4,7 +4,7 @@ Accessible React primitives for the Veli Design System. Built on [React Aria Com
 
 ## Install
 
-These package names are prepared for an approved public npm release. Until
+These package names are prepared for public npm publication. Until
 publication, use the local tarball rehearsal in the repository migration runbook.
 After publication, the default npm registry needs no extra configuration. If your
 application overrides registries, route the scope explicitly in `.npmrc`:
