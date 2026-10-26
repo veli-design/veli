@@ -4,5 +4,6 @@
   "dependencies": {
     "@veli-design/tokens": "^0.9.0",
     "@veli-design/react": "^0.14.0"
-  }
+  },
+  "license": "MIT"
 }

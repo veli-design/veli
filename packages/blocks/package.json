@@ -40,5 +40,20 @@
     "react-aria-components": "^1.19.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "packages/blocks"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/blocks#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "description": "Private authoring workspace for application-owned Veli Blocks.",
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

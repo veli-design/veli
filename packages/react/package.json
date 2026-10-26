@@ -22,7 +22,13 @@
     "dist",
     "tailwind.css",
     "agent",
-    "AGENT_GUIDE.md"
+    "AGENT_GUIDE.md",
+    "LICENSE",
+    "BRAND_POLICY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSING.md",
+    "ASSET_LICENSES.md",
+    "LICENSES"
   ],
   "exports": {
     "./package.json": "./package.json",
@@ -256,5 +262,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)"
 }

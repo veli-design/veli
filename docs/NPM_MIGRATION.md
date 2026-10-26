@@ -17,6 +17,22 @@ The source directory moves from `packages/ui` to `packages/react`. The Blocks,
 web and Storybook private workspace names do not change. Old names in this table
 are migration inputs, not installation instructions for the new package set.
 
+## Bundled release preparation
+
+PD-574 supplies proposed code licensing and scoped asset/third-party notices;
+PD-573 covers mixed MIT/CC BY workspace metadata and MIT fixture metadata across the eleven tracked manifests (seven
+workspaces including the root and four fixtures/samples); PD-582 covers package
+discovery metadata for all seven workspaces. Fixture/sample manifests remain
+private test inputs. PD-592 public installation guidance is covered by the React,
+tokens and CLI READMEs and the existing website/Storybook migration guidance.
+
+The CTO's conditional go-ahead permits preparation with appropriate notices;
+legal review is expected before public announcement. This is not evidence of a
+particular legal entity owning the code or rights to every asset. The MIT files
+are explicitly unresolved copyright templates. Publication rejects these through
+`assertReleaseLegal`; packing for local review remains available. See
+[release readiness](RELEASE_READINESS.md) for the inventory and outstanding decisions.
+
 ## Publication hold
 
 Release is manual and requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository

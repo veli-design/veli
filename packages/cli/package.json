@@ -17,7 +17,13 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "BRAND_POLICY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSING.md",
+    "ASSET_LICENSES.md",
+    "LICENSES"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -43,5 +49,12 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "keywords": [
+    "veli",
+    "design-system",
+    "cli",
+    "blocks"
+  ]
 }

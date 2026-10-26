@@ -4,7 +4,10 @@ Accessible React primitives for the Veli Design System. Built on [React Aria Com
 
 ## Install
 
-**Registry** — add `.npmrc` in your app:
+These package names are prepared for an approved public npm release. Until
+publication, use the local tarball rehearsal in the repository migration runbook.
+After publication, the default npm registry needs no extra configuration. If your
+application overrides registries, route the scope explicitly in `.npmrc`:
 
 ```ini
 @veli-design:registry=https://registry.npmjs.org
@@ -89,3 +92,12 @@ See the [consumer investigation and reproduction matrix](../../docs/ESM_CONSUMER
 ## Related
 
 - [`@veli-design/tokens`](../tokens) — design tokens
+
+## Licence and assets
+
+Original software and code examples use MIT; original non-software documentation
+uses CC BY 4.0. See `LICENSING.md`, `LICENSE` and `LICENSES/CC-BY-4.0.txt`, with
+separate `BRAND_POLICY.md`, `ASSET_LICENSES.md` and `THIRD_PARTY_NOTICES.md`.
+Copyright/attribution identities and asset rights remain unresolved and block
+publication. Fonts and government/brand assets are not included or licensed by
+this package. Repository and issue links currently require private GitHub access.

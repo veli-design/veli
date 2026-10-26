@@ -41,3 +41,12 @@ veli doctor              # verify configuration, access, and receipt integrity
 Run `veli <command> --help` for command-specific flags. Use `--cwd` when the target is a package inside a monorepo, `--json` for automation, and `--dry-run` before mutating lifecycle operations.
 
 When an update conflicts, the CLI retains the installed baseline and a rollback snapshot. Resolve the labelled working-copy markers and run `veli update --continue <id>`, or run `veli update --abort <id>` to restore the pre-update working copy.
+
+## Licence and assets
+
+Original software and code examples use MIT; original non-software documentation
+uses CC BY 4.0. See `LICENSING.md`, `LICENSE` and `LICENSES/CC-BY-4.0.txt`, with
+separate `BRAND_POLICY.md`, `ASSET_LICENSES.md` and `THIRD_PARTY_NOTICES.md`.
+Copyright/attribution identities and asset rights remain unresolved and block
+publication. Fonts and government/brand assets are not included or licensed by
+this package. Repository and issue links currently require private GitHub access.

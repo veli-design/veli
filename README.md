@@ -121,3 +121,13 @@ This monorepo uses [Changesets](https://github.com/changesets/changesets) for ve
 - [Release Setup Guide](docs/RELEASE_SETUP.md) - Architecture, workflow, and troubleshooting
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
 - [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and trunk-based development conventions
+
+## Proposed licensing
+
+Original software and code examples use the standard MIT licence in `LICENSE`;
+original non-software documentation uses CC BY 4.0 in `LICENSES/CC-BY-4.0.txt`.
+[LICENSING.md](LICENSING.md) maps the scopes and draft attribution notice.
+[BRAND_POLICY.md](BRAND_POLICY.md), [ASSET_LICENSES.md](ASSET_LICENSES.md) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) keep excluded assets and upstream
+rights separate. Copyright holder/year and asset permissions remain unresolved;
+publication is blocked. See [release readiness](docs/RELEASE_READINESS.md).

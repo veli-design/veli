@@ -64,5 +64,19 @@
   "packageManager": "pnpm@11.18.0",
   "engines": {
     "node": ">=24"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "."
+  },
+  "homepage": "https://github.com/tradenetcorp/veli#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

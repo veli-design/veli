@@ -11,5 +11,6 @@
     "@veli-design/react": "file:ui.tgz",
     "vitest": "4.1.11",
     "jsdom": "30.0.1"
-  }
+  },
+  "license": "MIT"
 }

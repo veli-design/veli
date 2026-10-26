@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { assertReleaseLegal } from './release-legal.mjs';
+
 import { getPackages } from '@manypkg/get-packages';
 
 import { spawnCorepack } from './corepack.mjs';
@@ -29,6 +31,7 @@ if (process.argv.slice(2).some((argument) => argument.startsWith('--tag'))) {
   throw new Error('Use VELI_NPM_DIST_TAG for the approved dist-tag.');
 }
 const cwd = process.cwd();
+assertReleaseLegal(cwd);
 const { packages } = await getPackages(cwd);
 
 await run(

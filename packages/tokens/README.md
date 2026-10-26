@@ -2,6 +2,12 @@
 
 Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come from one normalized graph.
 
+## Installation
+
+After the approved public npm release, install with `pnpm add @veli-design/tokens`.
+The default npm registry requires no package-read token. Before release, use the
+local tarball rehearsal in the repository migration runbook.
+
 ## Consumption
 
 ```css
@@ -92,3 +98,12 @@ Type utilities now follow Figma composite line heights and letter spacing rather
 Generic `text-*` leading and tracking follow the Figma text ramp. Semantic `type-*` styles use the corresponding English or Dhivehi metrics, including their authored pixel line height and letter spacing. Review text wrapping when upgrading.
 
 The conflicting shorthand color alias `text-base` is reserved for font size. Use `text-base-default` for the default text color.
+
+## Licence and assets
+
+Original software and code examples use MIT; original non-software documentation
+uses CC BY 4.0. See `LICENSING.md`, `LICENSE` and `LICENSES/CC-BY-4.0.txt`, with
+separate `BRAND_POLICY.md`, `ASSET_LICENSES.md` and `THIRD_PARTY_NOTICES.md`.
+Copyright/attribution identities and asset rights remain unresolved and block
+publication. Fonts and government/brand assets are not included or licensed by
+this package. Repository and issue links currently require private GitHub access.

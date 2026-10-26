@@ -36,5 +36,20 @@
     "typescript": "^5.7.2",
     "vite": "^6.4.3",
     "wrangler": "^4.116.0"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "apps/storybook"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/apps/storybook#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "description": "Interactive component and Blocks examples for the Veli Design System.",
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

@@ -37,5 +37,20 @@
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "apps/web"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/apps/web#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "description": "Documentation website for the Veli Design System.",
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }
