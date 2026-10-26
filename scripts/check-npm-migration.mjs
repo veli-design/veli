@@ -7,6 +7,7 @@ import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { getBlocks, sourceArchive } from '../packages/blocks/scripts/catalog.mjs';
 import { corepackSpawnTarget } from './corepack.mjs';
+import { checkPackageLicensingArtifacts } from './check-package-licensing.mjs';
 
 // Local tarballs and a localhost registry only; this never publishes or deploys.
 const [targetArgument, candidateArgument] = process.argv.slice(2);
@@ -16,6 +17,7 @@ assert.ok(
 );
 const target = resolve(targetArgument);
 const candidate = resolve(candidateArgument);
+checkPackageLicensingArtifacts(candidate);
 await mkdir(target); // Refuse to overwrite any existing consumer.
 const run = promisify(execFile);
 await writeFile(

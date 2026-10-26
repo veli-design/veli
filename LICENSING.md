@@ -70,11 +70,20 @@ this documentation change.
 
 ## Distributed packages and repository access
 
-React, tokens and CLI contain matching copies of this scope map, MIT licence,
-CC BY legal text, brand policy, asset register and third-party notices. Their
-compiled software remains MIT; their original README/agent prose remains CC BY.
-No app font, brand image or Block SVG is in these three npm tarballs. CLI fetches
-Block archives later; those archives and hosted examples are separate artifacts.
+Root documents are canonical. pnpm 11.18.0 inherits the root MIT `LICENSE` when
+packing each workspace package; no package-local MIT copy is maintained.
+Each package's `prepack` hook stages the concise canonical distribution template
+from `packaging/LICENSING.md`, the complete CC BY text, and applicable sections of
+`THIRD_PARTY_NOTICES.md` under its ignored `licensing/` directory. Tokens has no
+runtime dependencies or bundled third-party implementation, so it has no extra
+third-party notice file. These files are generated artifacts, not parallel
+source policies. `BRAND_POLICY.md` and `ASSET_LICENSES.md` remain root-only.
+
+The package notice states MIT software / CC BY original documentation scope,
+attribution placeholders and exclusions without requiring access to root policy
+links. Actual tarball checks validate inherited MIT, canonical CC text, relevant
+notices, working package references and absence of excluded artwork. No app font,
+brand image or Block SVG is included; registry and hosted examples are separate.
 
 The repository currently remains private at `tradenetcorp/veli`; repository and
 issue links require access. Public npm publication, repository transfer and

@@ -23,12 +23,7 @@
     "tailwind.css",
     "agent",
     "AGENT_GUIDE.md",
-    "LICENSE",
-    "BRAND_POLICY.md",
-    "THIRD_PARTY_NOTICES.md",
-    "LICENSING.md",
-    "ASSET_LICENSES.md",
-    "LICENSES"
+    "licensing"
   ],
   "exports": {
     "./package.json": "./package.json",
@@ -235,7 +230,8 @@
     "lint": "tsc --noEmit",
     "test": "corepack pnpm --filter @veli-design/tokens run build && corepack pnpm run build && node --test tests/*.test.mjs && tsc -p tsconfig.recipes.json",
     "prepublishOnly": "corepack pnpm run build && corepack pnpm run package:check",
-    "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
+    "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs",
+    "prepack": "node ../../scripts/package-licensing.mjs"
   },
   "peerDependencies": {
     "@veli-design/tokens": "^0.10.0 || ^0.11.0",

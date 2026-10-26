@@ -102,8 +102,11 @@ The conflicting shorthand color alias `text-base` is reserved for font size. Use
 ## Licence and assets
 
 Original software and code examples use MIT; original non-software documentation
-uses CC BY 4.0. See `LICENSING.md`, `LICENSE` and `LICENSES/CC-BY-4.0.txt`, with
-separate `BRAND_POLICY.md`, `ASSET_LICENSES.md` and `THIRD_PARTY_NOTICES.md`.
-Copyright/attribution identities and asset rights remain unresolved and block
-publication. Fonts and government/brand assets are not included or licensed by
-this package. Repository and issue links currently require private GitHub access.
+uses CC BY 4.0. Installed packages include the root `LICENSE` and
+`licensing/LICENSING.md` with scope and attribution information, the complete
+CC BY text, and applicable third-party notices. See the
+[repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
+for source policy and asset details (repository access required).
+Copyright/attribution identities remain unresolved and block publication.
+Fonts, government/brand imagery and copied Block SVGs are not included or
+licensed by these npm packages; registry/hosted-site assets are separate.

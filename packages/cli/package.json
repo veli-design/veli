@@ -18,18 +18,14 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "BRAND_POLICY.md",
-    "THIRD_PARTY_NOTICES.md",
-    "LICENSING.md",
-    "ASSET_LICENSES.md",
-    "LICENSES"
+    "licensing"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
     "test": "corepack pnpm run build && node --test tests/*.test.mjs",
-    "prepublishOnly": "corepack pnpm run build"
+    "prepublishOnly": "corepack pnpm run build",
+    "prepack": "node ../../scripts/package-licensing.mjs"
   },
   "engines": {
     "node": ">=24"

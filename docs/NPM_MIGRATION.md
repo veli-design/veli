@@ -20,7 +20,8 @@ are migration inputs, not installation instructions for the new package set.
 ## Licensing and package metadata
 
 The three npm packages include standard software/documentation licence texts,
-a scope map, an asset register and brand/third-party notices. Seven workspaces
+a concise scope/attribution notice and applicable third-party notices.
+The full brand policy and asset register remain root-only. Seven workspaces
 contain discovery and mixed licence metadata; four fixture/sample manifests
 remain private software inputs. The React, tokens and CLI READMEs document
 public npm installation and the website/Storybook examples use the same names.

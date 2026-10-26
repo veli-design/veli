@@ -1,6 +1,6 @@
 # @veli-design/react
 
-Accessible React primitives for the Veli Design System. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](../tokens).
+Accessible React primitives for the Veli Design System. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme).
 
 ## Install
 
@@ -78,7 +78,7 @@ The React package ships explicit `.js` relative imports. After migrating, remove
 
 Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
 
-See the [consumer investigation and reproduction matrix](../../docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
+See the [consumer investigation and reproduction matrix](https://github.com/tradenetcorp/veli/blob/main/docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
 
 ## Troubleshooting
 
@@ -91,13 +91,16 @@ See the [consumer investigation and reproduction matrix](../../docs/ESM_CONSUMER
 
 ## Related
 
-- [`@veli-design/tokens`](../tokens) — design tokens
+- [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme) — design tokens
 
 ## Licence and assets
 
 Original software and code examples use MIT; original non-software documentation
-uses CC BY 4.0. See `LICENSING.md`, `LICENSE` and `LICENSES/CC-BY-4.0.txt`, with
-separate `BRAND_POLICY.md`, `ASSET_LICENSES.md` and `THIRD_PARTY_NOTICES.md`.
-Copyright/attribution identities and asset rights remain unresolved and block
-publication. Fonts and government/brand assets are not included or licensed by
-this package. Repository and issue links currently require private GitHub access.
+uses CC BY 4.0. Installed packages include the root `LICENSE` and
+`licensing/LICENSING.md` with scope and attribution information, the complete
+CC BY text, and applicable third-party notices. See the
+[repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
+for source policy and asset details (repository access required).
+Copyright/attribution identities remain unresolved and block publication.
+Fonts, government/brand imagery and copied Block SVGs are not included or
+licensed by these npm packages; registry/hosted-site assets are separate.

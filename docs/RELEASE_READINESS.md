@@ -6,9 +6,9 @@ release prerequisites. It is not legal assurance.
 ## Licensing prerequisites
 
 Copyright holder, year and authority to license original work must be verified
-before distribution. Root and npm-package MIT copies retain explicit
+before distribution. The root MIT licence retains explicit
 `[YEAR] [COPYRIGHT HOLDER — TO BE CONFIRMED]` placeholders. Complete copyright and
-attribution notices consistently across all packages. The standard MIT grant
+attribution notices consistently across the root sources and generated package notices. The standard MIT grant
 and disclaimer remain unchanged. The supported root publication script rejects
 unresolved templates and draft notices; local tarballs are for validation only.
 
@@ -24,8 +24,8 @@ not claims of ownership or a complete transitive licence audit.
 ## Artifact boundaries
 
 - React: compiled ESM and declarations, Tailwind source discovery CSS, agent
-  metadata/recipes, README, changelog, manifest, licence and notices.
-- Tokens: generated CSS/JSON, README, changelog, manifest, licence and notices.
+  metadata/recipes, README, changelog, manifest, inherited MIT licence and staged applicable notices.
+- Tokens: generated CSS/JSON, README, changelog, manifest, inherited MIT licence and staged applicable notices.
   Font-family strings reference host-supplied fonts; no font binaries are shipped.
 - CLI: compiled ESM, executable `veli`, README, changelog, manifest, licence and
   notices. Source Blocks are fetched later, not bundled inside the npm CLI.
@@ -109,3 +109,13 @@ to the future GitHub organisation.
 - [Creative Commons CC BY 4.0 legal text](https://creativecommons.org/licenses/by/4.0/legalcode.txt)
 - [npm package metadata and licence fields](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/)
 - [Migration rollout and consumer rehearsal](NPM_MIGRATION.md)
+
+## Package legal artifacts
+
+The root licence and governance files are canonical. Packages have no tracked
+MIT or governance copies. pnpm supplies root `LICENSE`; `prepack` stages only
+`licensing/LICENSING.md`, `licensing/CC-BY-4.0.txt` and applicable third-party
+notice sections. Full brand policy and asset register stay root-only; package
+scope notices include self-contained exclusions and absolute source references.
+The generated `licensing/` path avoids suppressing pnpm's root licence fallback.
+Actual tarball checks, not source-copy equality, enforce this distribution shape.

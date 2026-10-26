@@ -24,19 +24,15 @@
   },
   "files": [
     "dist",
-    "LICENSE",
-    "BRAND_POLICY.md",
-    "THIRD_PARTY_NOTICES.md",
-    "LICENSING.md",
-    "ASSET_LICENSES.md",
-    "LICENSES"
+    "licensing"
   ],
   "scripts": {
     "build": "node build.mjs",
     "prepublishOnly": "corepack pnpm run build",
     "test": "node --test tests/*.test.mjs",
     "tokens:sync": "node build.mjs sync",
-    "tokens:check": "node build.mjs check"
+    "tokens:check": "node build.mjs check",
+    "prepack": "node ../../scripts/package-licensing.mjs"
   },
   "devDependencies": {
     "@terrazzo/cli": "^2.7.1",

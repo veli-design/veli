@@ -11,6 +11,7 @@ export function assertReleaseLegal(root) {
     'BRAND_POLICY.md',
     'ASSET_LICENSES.md',
     'THIRD_PARTY_NOTICES.md',
+    'packaging/LICENSING.md',
   ];
   for (const document of documents) {
     const source = readFileSync(resolve(root, document), 'utf8');
@@ -20,12 +21,5 @@ export function assertReleaseLegal(root) {
       ),
       `${document}: unresolved legal template; confirm rights-holder and artifact scope before publication`,
     );
-    for (const directory of ['react', 'tokens', 'cli']) {
-      assert.equal(
-        readFileSync(resolve(root, 'packages', directory, document), 'utf8'),
-        source,
-        `${directory}/${document} differs from repository notice`,
-      );
-    }
   }
 }

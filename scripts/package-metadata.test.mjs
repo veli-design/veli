@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import test from 'node:test';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { corepackSpawnTarget } from './corepack.mjs';
+import { licensingPackages } from './package-licensing.mjs';
+import { checkPackageLicensingArtifacts } from './check-package-licensing.mjs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { assertReleaseLegal } from './release-legal.mjs';
@@ -65,24 +71,7 @@ test('publishing refuses to run without explicit approval and an approved dist-t
 
 // Pins the complete official CC legal text and MIT terms obtained from primary sources.
 // MIT's project-specific copyright line is deliberately outside the standard-terms hash.
-test('standard licence terms and all distributed scope/notice copies stay intact', async () => {
-  const documents = [
-    'LICENSE',
-    'LICENSES/CC-BY-4.0.txt',
-    'LICENSING.md',
-    'BRAND_POLICY.md',
-    'ASSET_LICENSES.md',
-    'THIRD_PARTY_NOTICES.md',
-  ];
-  for (const document of documents) {
-    const root = await fs.readFile(new URL(`../${document}`, import.meta.url));
-    for (const directory of ['react', 'tokens', 'cli']) {
-      const copy = await fs.readFile(
-        new URL(`../packages/${directory}/${document}`, import.meta.url),
-      );
-      assert.deepEqual(copy, root, `${directory}/${document}`);
-    }
-  }
+test('canonical standard licence terms stay intact', async () => {
   const cc = await fs.readFile(new URL('../LICENSES/CC-BY-4.0.txt', import.meta.url));
   assert.equal(
     createHash('sha256').update(cc).digest('hex'),
@@ -99,4 +88,28 @@ test('standard licence terms and all distributed scope/notice copies stay intact
 test('incomplete copyright and attribution templates continue to block publication', () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
   assert.throws(() => assertReleaseLegal(root), /unresolved legal template/);
+});
+
+test('real workspace tarballs inherit MIT and contain only applicable self-contained notices', async () => {
+  const target = await fs.mkdtemp(join(tmpdir(), 'veli-licensing-artifacts-'));
+  try {
+    for (const pkg of licensingPackages) {
+      const invocation = corepackSpawnTarget([
+        'pnpm',
+        '--filter',
+        pkg.name,
+        'pack',
+        '--out',
+        join(target, pkg.tarball),
+      ]);
+      await promisify(execFile)(invocation.command, invocation.args, {
+        cwd: fileURLToPath(new URL('../', import.meta.url)),
+        ...invocation.options,
+        maxBuffer: 10 * 1024 * 1024,
+      });
+    }
+    checkPackageLicensingArtifacts(target);
+  } finally {
+    await fs.rm(target, { recursive: true, force: true });
+  }
 });

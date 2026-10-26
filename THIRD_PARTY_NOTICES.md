@@ -50,6 +50,22 @@ remain external, retain their own installed licence files and terms. No licence
 text below grants rights to an unverified standalone SVG, font or government
 asset. Confirm exact provenance before assigning it an upstream licence.
 
+## Package distribution notices
+
+### React package
+
+<!-- BEGIN PACKAGE react -->
+
+# Third-party notices
+
+React uses external @internationalized/date, @phosphor-icons/react,
+class-variance-authority, react-aria and tailwind-merge dependencies, plus React,
+React DOM and React Aria Components peers. Their implementations are not bundled
+in this package; retain the upstream copyright, licence and any NOTICE files
+supplied with those separately installed dependencies. Veli's original-work
+licences do not replace upstream terms. The Phosphor notice below is preserved
+from the inspected upstream package; it grants no rights to unrelated assets.
+
 ## Phosphor Icons
 
 MIT License
@@ -73,3 +89,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+<!-- END PACKAGE react -->
+
+### CLI package
+
+<!-- BEGIN PACKAGE cli -->
+
+# Third-party notices
+
+CLI runtime dependencies are @clack/prompts, commander, node-diff3,
+package-manager-detector and semver. They are external imports, not bundled
+implementations. Retain their supplied copyright, licence and attribution
+files when distributing those dependencies; Veli's licence does not replace
+their MIT/ISC terms. This package includes no app font, government/brand image or
+Block source asset. Fetching a Block archive is a separate distribution and does
+not waive its third-party notices or required permissions.
+
+<!-- END PACKAGE cli -->
