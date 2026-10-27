@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     branches:
@@ -82,6 +85,7 @@ jobs:
       sites: ${{ steps.select.outputs.sites }}
       cold: ${{ steps.select.outputs.cold }}
       candidate: ${{ steps.select.outputs.candidate }}
+      release: ${{ steps.select.outputs.release }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -215,7 +219,7 @@ jobs:
 
   blocks-consumer:
     name: Published-package block consumer
-    needs: [changes, candidate, next-15, next-16, block-browser, packaged-sites, cold-reload]
+    needs: [build, changes, candidate, next-15, next-16, block-browser, packaged-sites, cold-reload]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -229,3 +233,15 @@ jobs:
         run: node scripts/consumer-ci.mjs aggregate
         env:
           CONSUMER_JOBS: ${{ toJSON(needs) }}
+      - name: Record successful release merge candidate
+        if: needs.changes.outputs.release == 'true'
+        run: node scripts/release-ci.mjs stamp "$RUNNER_TEMP/release-validation.json"
+        env:
+          CONSUMER_JOBS: ${{ toJSON(needs) }}
+      - uses: actions/upload-artifact@v4
+        if: needs.changes.outputs.release == 'true'
+        with:
+          name: release-validation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-validation.json
+          if-no-files-found: error
+          retention-days: 30

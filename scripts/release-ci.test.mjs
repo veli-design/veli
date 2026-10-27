@@ -1,0 +1,355 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import test from 'node:test';
+import {
+  approvedReleaseEvent,
+  isReleasePR,
+  requireReleaseChecks,
+  releaseMode,
+  validationEvidence,
+  verifyEvidence,
+  verifyPublication,
+} from './release-ci.mjs';
+
+const repository = 'tradenetcorp/veli';
+const base = 'a'.repeat(40);
+const head = 'b'.repeat(40);
+const candidateSHA = 'c'.repeat(40);
+const commitSHA = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim();
+
+function releaseJobs() {
+  const jobs = Object.fromEntries(
+    [
+      'build',
+      'changes',
+      'candidate',
+      'next-15',
+      'next-16',
+      'block-browser',
+      'packaged-sites',
+      'cold-reload',
+    ].map((name) => [name, { result: 'success' }]),
+  );
+  jobs.changes.outputs = Object.fromEntries(
+    ['release', 'candidate', 'next', 'blocks', 'sites', 'cold'].map((name) => [name, 'true']),
+  );
+  return jobs;
+}
+
+test('release evidence rejects missing, skipped or failed suites and incomplete selection', () => {
+  requireReleaseChecks(releaseJobs());
+  for (const name of Object.keys(releaseJobs())) {
+    for (const result of [undefined, 'skipped', 'cancelled', 'failure']) {
+      const jobs = releaseJobs();
+      jobs[name].result = result;
+      assert.throws(() => requireReleaseChecks(jobs), /must succeed/);
+    }
+  }
+  for (const name of Object.keys(releaseJobs().changes.outputs)) {
+    const jobs = releaseJobs();
+    jobs.changes.outputs[name] = 'false';
+    assert.throws(() => requireReleaseChecks(jobs), /must be enabled/);
+  }
+});
+
+function fixture() {
+  const pr = {
+    number: 290,
+    user: { login: 'github-actions[bot]' },
+    head: { ref: 'changeset-release/main', sha: head, repo: { full_name: repository } },
+    base: { ref: 'main', repo: { full_name: repository } },
+    merged: true,
+    merged_at: '2026-10-26T12:00:00Z',
+    merge_commit_sha: commitSHA,
+  };
+  const run = {
+    id: 123,
+    run_attempt: 2,
+    event: 'pull_request',
+    status: 'completed',
+    conclusion: 'success',
+    workflow_id: 42,
+    path: '.github/workflows/ci.yml',
+    head_repository: { full_name: repository },
+    head_branch: 'changeset-release/main',
+    actor: { login: 'github-actions[bot]' },
+    head_sha: head,
+  };
+  const commit = { sha: commitSHA, tree: { sha: tree }, parents: [{ sha: base }] };
+  const candidate = {
+    sha: candidateSHA,
+    tree: { sha: tree },
+    parents: [{ sha: base }, { sha: head }],
+  };
+  const env = {
+    GITHUB_REPOSITORY: repository,
+    GITHUB_ACTOR: 'github-actions[bot]',
+    GITHUB_EVENT_NAME: 'pull_request',
+    GITHUB_SHA: commitSHA,
+    GITHUB_RUN_ID: '123',
+    GITHUB_RUN_ATTEMPT: '2',
+  };
+  const evidence = validationEvidence({ pull_request: pr }, env, {
+    commit: candidateSHA,
+    tree,
+    parents: [base, head],
+  });
+  const context = { repository, pr, run, commit, candidate, workflowId: 42 };
+  const artifact = { id: 456, name: 'release-validation-2', expired: false };
+  const responses = {
+    [`/git/commits/${commitSHA}`]: commit,
+    [`/commits/${commitSHA}/pulls?per_page=100&page=1`]: [pr],
+    '/pulls/290': pr,
+    '/actions/workflows/ci.yml': { id: 42 },
+    [`/actions/workflows/42/runs?event=pull_request&head_sha=${head}&status=success&per_page=100&page=1`]:
+      { workflow_runs: [run] },
+    '/actions/runs/123/artifacts?per_page=100&page=1': { artifacts: [artifact] },
+    [`/git/commits/${candidateSHA}`]: candidate,
+  };
+  const api = async (path) => {
+    assert.ok(Object.hasOwn(responses, path), `Unexpected API request: ${path}`);
+    return responses[path];
+  };
+  return { evidence, context, env, responses, api, artifact };
+}
+
+test('release coverage authenticates bot, repository, branch, base and event actor, never title', () => {
+  const {
+    context: { pr },
+  } = fixture();
+  assert.ok(isReleasePR(pr, repository));
+  assert.ok(approvedReleaseEvent({ pull_request: pr }, repository, 'github-actions[bot]'));
+  assert.equal(approvedReleaseEvent({ pull_request: pr }, repository, 'contributor'), false);
+  for (const patch of [
+    { user: { login: 'contributor' }, title: 'chore: release packages' },
+    { head: { ...pr.head, repo: { full_name: 'fork/veli' } } },
+    { head: { ...pr.head, ref: 'feature/release' } },
+    { base: { ...pr.base, ref: 'other' } },
+  ])
+    assert.equal(isReleasePR({ ...pr, ...patch }, repository), false);
+});
+
+test('squash and merge commits accept the exact tested tree and original base', () => {
+  const { evidence, context } = fixture();
+  assert.ok(verifyEvidence(evidence, context));
+  context.commit.parents.push({ sha: head });
+  assert.ok(verifyEvidence(evidence, context));
+});
+
+test('head, base, tree, candidate and workflow identity cannot reuse stale success', () => {
+  for (const field of ['head', 'base', 'tree', 'candidate']) {
+    const { evidence, context } = fixture();
+    assert.throws(() => verifyEvidence({ ...evidence, [field]: 'd'.repeat(40) }, context));
+  }
+  for (const [field, value] of [
+    ['run', 124],
+    ['attempt', 1],
+    ['repository', 'fork/veli'],
+    ['pr', 291],
+    ['schema', 2],
+  ]) {
+    const { evidence, context } = fixture();
+    assert.throws(() => verifyEvidence({ ...evidence, [field]: value }, context));
+  }
+  for (const patch of [
+    { conclusion: 'failure' },
+    { status: 'in_progress' },
+    { event: 'push' },
+    { actor: { login: 'contributor' } },
+    { workflow_id: 99 },
+    { path: '.github/workflows/other.yml' },
+    { head_sha: base },
+    { head_repository: { full_name: 'fork/veli' } },
+  ]) {
+    const { evidence, context } = fixture();
+    assert.throws(() =>
+      verifyEvidence(evidence, { ...context, run: { ...context.run, ...patch } }),
+    );
+  }
+  const { evidence, context } = fixture();
+  context.candidate.parents[0].sha = head;
+  assert.throws(() => verifyEvidence(evidence, context));
+});
+
+test('new base invalidates evidence even if merged content happens to be identical', () => {
+  const { evidence, context } = fixture();
+  context.commit.parents[0].sha = 'e'.repeat(40);
+  assert.throws(() => verifyEvidence(evidence, context));
+});
+
+test('publication requires actual merged release and successful exact-attempt artifact', async () => {
+  const { api, env, evidence, artifact } = fixture();
+  await verifyPublication(api, env, async (download) => {
+    assert.equal(download.id, artifact.id);
+    return evidence;
+  });
+  for (const update of [
+    (f) => {
+      f.artifact.expired = true;
+    },
+    (f) => {
+      f.artifact.name = 'release-validation-1';
+    },
+    (f) => {
+      f.evidence.tree = 'e'.repeat(40);
+    },
+    (f) => {
+      f.evidence.base = 'e'.repeat(40);
+    },
+    (f) => {
+      f.context.pr.merge_commit_sha = base;
+    },
+    (f) => {
+      f.context.run.conclusion = 'failure';
+    },
+    (f) => {
+      f.context.pr.merged = false;
+    },
+  ]) {
+    const f = fixture();
+    update(f);
+    await assert.rejects(() => verifyPublication(f.api, f.env, async () => f.evidence));
+  }
+});
+
+test('stamp records both real merge parents in a depth-one Actions checkout', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'veli-release-stamp-'));
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
+  const source = join(directory, 'source');
+  const checkout = join(directory, 'checkout');
+  const git = (...args) =>
+    execFileSync('git', ['-C', source, ...args], { env, encoding: 'utf8' }).trim();
+  try {
+    execFileSync('git', ['init', '-q', '-b', 'main', source], { env });
+    git('config', 'user.email', 'ci@example.test');
+    git('config', 'user.name', 'CI');
+    writeFileSync(join(source, 'base'), 'base');
+    git('add', '.');
+    git('commit', '-qm', 'base');
+    const baseSHA = git('rev-parse', 'HEAD');
+    git('checkout', '-qb', 'release');
+    writeFileSync(join(source, 'release'), 'version');
+    git('add', '.');
+    git('commit', '-qm', 'release');
+    const headSHA = git('rev-parse', 'HEAD');
+    git('checkout', '-q', 'main');
+    git('merge', '--no-ff', '-qm', 'candidate', 'release');
+    const candidateSHA = git('rev-parse', 'HEAD');
+    execFileSync('git', ['clone', '-q', '--depth=1', pathToFileURL(source).href, checkout], {
+      env,
+    });
+    const f = fixture();
+    f.context.pr.head.sha = headSHA;
+    const eventPath = join(directory, 'event.json');
+    const output = join(directory, 'release-validation.json');
+    writeFileSync(eventPath, JSON.stringify({ pull_request: f.context.pr }));
+    execFileSync(
+      process.execPath,
+      [fileURLToPath(new URL('./release-ci.mjs', import.meta.url)), 'stamp', output],
+      {
+        cwd: checkout,
+        env: {
+          ...env,
+          ...f.env,
+          GITHUB_SHA: candidateSHA,
+          GITHUB_EVENT_PATH: eventPath,
+          CONSUMER_JOBS: JSON.stringify(releaseJobs()),
+        },
+      },
+    );
+    const evidence = JSON.parse(readFileSync(output, 'utf8'));
+    assert.equal(evidence.head, headSHA);
+    assert.equal(evidence.base, baseSHA);
+    assert.equal(evidence.candidate, candidateSHA);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('API failures, absent runs and missing evidence fail closed', async () => {
+  const f = fixture();
+  await assert.rejects(() =>
+    verifyPublication(async () => {
+      throw new Error('HTTP 403');
+    }, f.env),
+  );
+  f.responses[
+    `/actions/workflows/42/runs?event=pull_request&head_sha=${head}&status=success&per_page=100&page=1`
+  ].workflow_runs = [];
+  await assert.rejects(
+    () => verifyPublication(f.api, f.env, async () => f.evidence),
+    /Publication blocked/,
+  );
+});
+
+test('release preparation stays cheap and unrelated main pushes cannot publish', async () => {
+  const f = fixture();
+  assert.equal(
+    await releaseMode(
+      true,
+      async () => {
+        throw new Error('Preparation must not need publication history');
+      },
+      f.env,
+    ),
+    'prepare',
+  );
+  assert.equal(await releaseMode(false, f.api, f.env), 'publish');
+  f.responses[`/commits/${commitSHA}/pulls?per_page=100&page=1`] = [];
+  assert.equal(await releaseMode(false, f.api, f.env), 'none');
+});
+
+test('workflow keeps native approval, all release suites and publication ordering', async () => {
+  const { parse } = await import('yaml');
+  const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
+  const ci = parse(read('../.github/workflows/ci.yml'));
+  const release = parse(read('../.github/workflows/release.yml'));
+  assert.deepEqual(Object.keys(ci.on), ['pull_request']);
+  assert.deepEqual(Object.keys(release.on), ['push']);
+  const gate = ci.jobs['blocks-consumer'];
+  assert.ok(gate.needs.includes('build'));
+  const record = gate.steps.find((step) => step.run?.includes('release-ci.mjs stamp'));
+  assert.equal(record.if, "needs.changes.outputs.release == 'true'");
+  const publish = release.jobs.release;
+  assert.equal(publish.permissions.actions, 'read');
+  const verifyIndex = publish.steps.findIndex((step) =>
+    step.run?.includes('release-ci.mjs verify'),
+  );
+  const installIndex = publish.steps.findIndex((step) =>
+    step.run?.includes('install --frozen-lockfile'),
+  );
+  assert.ok(verifyIndex >= 0 && verifyIndex < installIndex);
+  assert.ok(!publish.steps.some((step) => step.run === 'pnpm build'));
+  const action = publish.steps.find((step) => step.uses === 'changesets/action@v1');
+  assert.equal(action.env.GITHUB_TOKEN, '${{ secrets.GITHUB_TOKEN }}');
+  assert.equal(
+    action.with.publish,
+    "${{ steps.plan.outputs.mode == 'publish' && 'corepack pnpm release' || '' }}",
+  );
+  assert.equal(action.if, "steps.plan.outputs.mode != 'none'");
+  const publisher = read('./publish-packages.mjs');
+  const publishedPackages = readdirSync(new URL('../packages/', import.meta.url))
+    .map((directory) =>
+      JSON.parse(
+        readFileSync(new URL(`../packages/${directory}/package.json`, import.meta.url), 'utf8'),
+      ),
+    )
+    .filter((pkg) => !pkg.private)
+    .map((pkg) => pkg.name)
+    .sort();
+  const buildFilters = [...publisher.matchAll(/--filter=(@[^']+)/g)]
+    .map((match) => match[1])
+    .sort();
+  assert.deepEqual(buildFilters, publishedPackages, 'Every distributable package must be built');
+  assert.ok(
+    publisher.indexOf('await verifyCurrentPublication()') < publisher.indexOf("await run(['pnpm'"),
+  );
+  assert.equal(release.jobs['deploy-sites'].if, "needs.release.outputs.published == 'true'");
+});
