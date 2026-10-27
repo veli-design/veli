@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { approvedReleaseEvent } from './release-ci.mjs';
 
 export const checks = ['next', 'blocks', 'sites', 'cold'];
 export function classify(paths) {
@@ -30,7 +31,16 @@ export function classify(paths) {
   return { ...selected, candidate: selected.next || selected.blocks || selected.sites };
 }
 
+export function selectChecks(paths, release) {
+  if (release) return { next: true, blocks: true, sites: true, cold: true, candidate: true };
+  const selected = classify(paths);
+  // Ordinary PRs retain source/unit/type contracts and selected installed-package
+  // consumers. Exhaustive Playwright runs once for the approved release candidate.
+  return { ...selected, blocks: false, cold: false, candidate: selected.next || selected.sites };
+}
+
 export function aggregate(selection, jobs) {
+  assert.equal(jobs.build?.result, 'success', 'Build and fast checks must succeed');
   assert.equal(jobs.changes?.result, 'success', 'Change detection must succeed');
   for (const key of [...checks, 'candidate'])
     assert.ok(['true', 'false'].includes(selection[key]), `Invalid selection: ${key}`);
@@ -78,10 +88,17 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     })
       .split('\0')
       .filter(Boolean);
-    const selected = classify(paths);
+    const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+    const release = approvedReleaseEvent(
+      event,
+      process.env.GITHUB_REPOSITORY,
+      process.env.GITHUB_ACTOR,
+    );
+    const selected = selectChecks(paths, release);
     for (const [key, value] of Object.entries(selected))
       appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
-    console.log(JSON.stringify({ base, paths, selected }, null, 2));
+    appendFileSync(process.env.GITHUB_OUTPUT, `release=${release}\n`);
+    console.log(JSON.stringify({ base, paths, selected, release }, null, 2));
   } else if (command === 'aggregate') {
     const jobs = JSON.parse(process.env.CONSUMER_JOBS);
     aggregate(jobs.changes?.outputs ?? {}, jobs);
