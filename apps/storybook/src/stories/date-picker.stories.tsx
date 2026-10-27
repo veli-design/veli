@@ -46,7 +46,11 @@ function DatePickerDocsContainer(props: DocsContainerProps) {
 }
 
 function StoryDatePicker<T extends DateValue>(props: DatePickerProps<T>) {
-  return <DatePicker {...props} className="w-[282px] max-w-full" />;
+  return (
+    <div className="w-[282px] max-w-full">
+      <DatePicker {...props} />
+    </div>
+  );
 }
 
 const enDatePickerText = {

@@ -53,12 +53,10 @@ function StatusDot({ previewStatus }: { previewStatus?: PreviewBannerNotice['pre
 
 function ExitPreviewButton({
   action,
-  className,
   intent,
   appearance,
 }: {
   action: NonNullable<PreviewBannerNotice['action']>;
-  className?: string;
   intent: 'accent' | 'secondary';
   appearance?: 'fill' | 'transparent';
 }) {
@@ -70,7 +68,6 @@ function ExitPreviewButton({
       intent={intent}
       appearance={appearance}
       size="sm"
-      className={className}
     >
       <SignOutIcon size={16} weight="bold" aria-hidden="true" />
       {action.label}
@@ -105,12 +102,9 @@ function PreviewBannerCard({ notice }: { notice: PreviewBannerNotice }) {
   let actions: ReactNode = null;
   if (action) {
     actions = (
-      <ExitPreviewButton
-        action={action}
-        intent="secondary"
-        appearance="transparent"
-        className="shrink-0"
-      />
+      <div className="shrink-0">
+        <ExitPreviewButton action={action} intent="secondary" appearance="transparent" />
+      </div>
     );
   }
 
