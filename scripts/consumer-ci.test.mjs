@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { aggregate, candidateManifest, checks, classify } from './consumer-ci.mjs';
+import { aggregate, candidateManifest, checks, classify, selectChecks } from './consumer-ci.mjs';
 
 const all = { next: true, blocks: true, sites: true, cold: true, candidate: true };
 test('shared and transitive package/build dependencies require full coverage', () => {
@@ -86,9 +86,28 @@ const jobKeys = [
   'packaged-sites',
   'cold-reload',
 ];
+test('only authenticated release mode selects exhaustive browsers, regardless of the narrow release diff', () => {
+  assert.deepEqual(selectChecks(['packages/ui/src/button.tsx'], false), {
+    next: true,
+    blocks: false,
+    sites: true,
+    cold: false,
+    candidate: true,
+  });
+  assert.deepEqual(selectChecks(['scripts/verify-playground.mjs'], false), {
+    next: false,
+    blocks: false,
+    sites: false,
+    cold: false,
+    candidate: false,
+  });
+  assert.deepEqual(selectChecks(['.changeset/README.md'], true), all);
+  assert.deepEqual(selectChecks([], true), all);
+});
 function jobsFor(selection) {
   const mapping = ['candidate', 'next', 'next', 'blocks', 'sites', 'cold'];
   return Object.fromEntries([
+    ['build', { result: 'success' }],
     ['changes', { result: 'success' }],
     ...jobKeys.map((name, i) => [
       name,
@@ -116,6 +135,8 @@ test('aggregation accepts every intentional selection and rejects any failed/can
         assert.throws(() => aggregate(selection, { ...jobs, [key]: { result } }), /unexpected/);
     for (const result of ['failure', 'cancelled', 'skipped', undefined])
       assert.throws(() => aggregate(selection, { ...jobs, changes: { result } }), /detection/);
+    for (const result of ['failure', 'cancelled', 'skipped', undefined])
+      assert.throws(() => aggregate(selection, { ...jobs, build: { result } }), /fast checks/);
     assert.throws(() => aggregate({ ...selection, cold: '' }, jobs), /Invalid selection/);
   }
 });
@@ -159,6 +180,9 @@ test('change detection uses merge base and retains deleted and renamed dependenc
     git('mv', 'README.md', 'CONTRIBUTING.md');
     git('commit', '-qm', 'rename prose');
     const output = resolve(directory, 'outputs');
+    const eventPath = resolve(directory, 'event.json');
+    writeFileSync(eventPath, JSON.stringify({ pull_request: { user: { login: 'contributor' } } }));
+    env.GITHUB_EVENT_PATH = eventPath;
     const run = () =>
       JSON.parse(
         execFileSync(
@@ -209,7 +233,7 @@ test('change detection uses merge base and retains deleted and renamed dependenc
         },
       ),
     );
-    assert.deepEqual(deleted.selected, all);
+    assert.deepEqual(deleted.selected, selectChecks(['pnpm-lock.yaml'], false));
     assert.match(readFileSync(output, 'utf8'), /candidate=true/);
   } finally {
     rmSync(directory, { recursive: true, force: true });
@@ -226,7 +250,7 @@ test('workflow syntax, dependency graph, conditions and unchanged coverage wirin
   );
   assert.equal(workflow.jobs['blocks-consumer'].name, 'Published-package block consumer');
   assert.equal(workflow.jobs['blocks-consumer'].if, 'always()');
-  assert.deepEqual(workflow.jobs['blocks-consumer'].needs, ['changes', ...jobKeys]);
+  assert.deepEqual(workflow.jobs['blocks-consumer'].needs, ['build', 'changes', ...jobKeys]);
   assert.equal(workflow.concurrency['cancel-in-progress'], true);
   assert.match(workflow.concurrency.group, /pull_request.number/);
   assert.equal(setup.runs.using, 'composite');
