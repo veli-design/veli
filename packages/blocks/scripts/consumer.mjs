@@ -59,8 +59,22 @@ for (const block of getBlocks()) {
 }
 
 // Application-owned example content is shared by docs, stories and the copied adapters.
-for (const name of ['error-page-messages.ts', 'page-navigation-footer-content.tsx']) {
+for (const name of [
+  'error-page-messages.ts',
+  'page-navigation-footer-content.tsx',
+  'service-detail-content.tsx',
+]) {
   cpSync(resolve(packageRoot, 'examples', name), resolve(target, name));
+  if (name === 'service-detail-content.tsx') {
+    const path = resolve(target, name);
+    writeFileSync(
+      path,
+      readFileSync(path, 'utf8').replace(
+        "'../src/service-detail/types'",
+        "'./components/blocks/service-detail/types'",
+      ),
+    );
+  }
 }
 
 mkdirSync(resolve(target, 'public/blocks'), { recursive: true });
@@ -70,6 +84,10 @@ cpSync(
 );
 
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
+cpSync(
+  resolve(packageRoot, '../../apps/web/public/fonts/inter-latin.woff2'),
+  resolve(target, 'public/fonts/inter-latin.woff2'),
+);
 cpSync(
   resolve(packageRoot, '../../apps/storybook/public/fonts/MV_Faseyha_Regular.ttf'),
   resolve(target, 'public/fonts/MV_Faseyha_Regular.ttf'),

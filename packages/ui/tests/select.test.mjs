@@ -21,7 +21,7 @@ test('Select exposes the public composition API', () => {
 });
 
 test('Select trigger matches the Figma states', () => {
-  assert.match(source, /relative flex w-full items-center gap-2 rounded-md text-start/);
+  assert.match(source, /relative flex w-full items-center gap-2 rounded-field text-start/);
   assert.match(source, /\{\s*isDisabled: true,\s*className: 'bg-text-input-bg-hover',\s*\}/);
   assert.doesNotMatch(source, /bg-ash-alpha-200|text-input-stroke-disabled|border-\[1\.5px\]/);
   assert.match(source, /shadow-\[inset_0_0_0_1px_var\(--color-text-input-stroke\)\]/);

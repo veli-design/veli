@@ -109,7 +109,15 @@ test('short dynamic snippets retain an expand mount point for longer variants', 
 
 test('all default Markdown examples agree with the dynamically displayed source', async () => {
   for (const [name, group] of Object.entries(previewCodeGroups)) {
-    const page = name.startsWith('Alert') ? 'alert' : name.replace('RtlDemo', '').toLowerCase();
+    const page = name.startsWith('Alert')
+      ? 'alert'
+      : name.startsWith('Kbd')
+        ? 'kbd'
+        : name.startsWith('DatePicker')
+          ? 'date-picker'
+          : name.startsWith('Calendar')
+            ? 'calendar'
+            : name.replace('RtlDemo', '').toLowerCase();
     const mdx = readFileSync(new URL(`../content/docs/${page}.mdx`, import.meta.url), 'utf8');
     const following = mdx.slice(mdx.indexOf(`<${name}`));
     const source = following.match(/```tsx\n([\s\S]*?)\n```/)[1];

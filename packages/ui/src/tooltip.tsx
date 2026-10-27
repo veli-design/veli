@@ -8,7 +8,7 @@ import {
   OverlayArrow,
   composeRenderProps,
 } from 'react-aria-components';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { useVeliLanguage } from './provider.js';
 
@@ -102,26 +102,40 @@ const tooltipVariants = cva(
   {
     variants: {
       size: {
-        sm: 'rounded-lg border-[0.5px] border-base-subtle px-3 py-0.5 shadow-md',
+        sm: 'rounded-lg border-[0.5px] border-base-subtle bg-tooltip-bg-small px-3 py-0.5 text-base-emphasis shadow-md',
         lg: 'max-w-[221px] rounded-xl px-4 py-3 shadow-lg',
       },
       tone: {
-        primary: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
-        secondary: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
+        primary: '',
+        secondary: '',
       },
     },
+    compoundVariants: [
+      {
+        size: 'lg',
+        tone: 'primary',
+        class: 'bg-tooltip-bg-large-primary text-tooltip-text-on-primary',
+      },
+      {
+        size: 'lg',
+        tone: 'secondary',
+        class: 'bg-tooltip-bg-large-secondary text-tooltip-text-on-secondary',
+      },
+    ],
     defaultVariants: {
       size: 'sm',
-      tone: 'primary',
     },
   },
 );
 
-export interface TooltipProps
-  extends Omit<AriaTooltipProps, 'children'>, VariantProps<typeof tooltipVariants> {
+interface TooltipBaseProps extends Omit<AriaTooltipProps, 'children'> {
   ref?: React.Ref<HTMLDivElement>;
   children: React.ReactNode;
 }
+
+// Only large tooltips have tones. Null retains the existing default-size semantics.
+export type TooltipProps = TooltipBaseProps &
+  ({ size?: 'sm' | null; tone?: never } | { size: 'lg'; tone?: 'primary' | 'secondary' | null });
 
 export interface TooltipTriggerProps extends React.ComponentProps<typeof AriaTooltipTrigger> {}
 
@@ -142,6 +156,7 @@ export function Tooltip({
 }: TooltipProps) {
   const resolvedSize = size ?? 'sm';
   const showArrow = resolvedSize === 'lg';
+  const resolvedTone = showArrow ? (tone ?? 'primary') : undefined;
   const languageConfig = useVeliLanguage();
 
   return (
@@ -156,8 +171,8 @@ export function Tooltip({
       className={composeRenderProps(className, (userClassName) =>
         twMerge(
           tooltipVariants({
-            size,
-            tone,
+            size: resolvedSize,
+            tone: resolvedTone,
           }),
           userClassName,
         ),
@@ -176,7 +191,7 @@ export function Tooltip({
                 viewBox={arrow.viewBox}
                 className={twMerge(
                   'block forced-colors:fill-[Canvas] forced-colors:stroke-[CanvasText] forced-colors:stroke-1',
-                  tooltipArrowFillClass(size, tone),
+                  tooltipArrowFillClass(resolvedSize, resolvedTone),
                 )}
               >
                 <path d={arrow.path} />

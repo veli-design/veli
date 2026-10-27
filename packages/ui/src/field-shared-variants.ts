@@ -84,7 +84,7 @@ export const fieldHeaderLabelVariants = cva('', {
       lg: 'type-body-md-regular',
     },
     isDisabled: {
-      true: 'text-disabled',
+      true: 'text-base-muted',
       false: 'text-base-default',
     },
   },
@@ -112,11 +112,12 @@ export const fieldHeaderSupplementaryVariants = cva('', {
   },
 });
 
-export const fieldHeaderRequiredIndicatorVariants = cva('type-caption-regular', {
+// Figma keeps the required asterisk on text/danger/muted when the field is disabled.
+export const fieldHeaderRequiredIndicatorVariants = cva('type-caption-regular text-danger-muted', {
   variants: {
     isDisabled: {
-      true: 'text-disabled',
-      false: 'text-danger-muted',
+      true: '',
+      false: '',
     },
   },
   defaultVariants: {
@@ -152,7 +153,7 @@ export const fieldHeaderInfoTooltipTriggerVariants = cva(
 );
 
 export const fieldTriggerButtonVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
+  'relative flex w-full items-center gap-1 rounded-field text-start outline-none transition-[background-color,border-color] duration-normal ease-out',
   {
     variants: {
       appearance: {
@@ -374,6 +375,11 @@ export const messageVariants = cva('', {
     tone: 'subtle',
   },
 });
+
+/** Enabled helpers use text/base/muted. Disabled helpers use text/disabled. */
+export function fieldHelperTone(isDisabled: boolean): 'muted' | 'disabled' {
+  return isDisabled ? 'disabled' : 'muted';
+}
 
 export function hasRenderableMessage(message: React.ReactNode): boolean {
   if (message == null || typeof message === 'boolean') {

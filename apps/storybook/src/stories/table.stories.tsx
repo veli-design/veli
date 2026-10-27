@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -51,6 +52,12 @@ type TableStoryArgs = {
   selectionMode: TableSelectionMode;
   selectionBehavior: TableSelectionBehavior;
   disabledKeys: string[];
+  disabledBehavior: 'selection' | 'all';
+  disallowEmptySelection: boolean;
+  empty: boolean;
+  emptyMessage?: string;
+  renderEmptyState?: () => React.ReactNode;
+  onRowAction?: (key: React.Key) => void;
 };
 
 const tableText = {
@@ -219,7 +226,25 @@ const getRowsByIds = (rows: readonly PermitRow[], ids: readonly string[]) =>
 const meta = {
   title: 'Components/Table',
   component: Table,
-  parameters: { layout: 'padded' },
+  subcomponents: {
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+    TableResizableContainer,
+    TableColumnResizer,
+  },
+  parameters: {
+    layout: 'padded',
+    controls: { sort: 'none' },
+    docs: {
+      description: {
+        component:
+          'Compose Table.Header, Table.Column, Table.Body, Table.Row and Table.Cell (also available as named exports). Figma examples are compositions, not size or appearance variants. Use the provider toolbar to check light, dark, system and Dhivehi RTL. Sorting is owned by the caller; allowsSorting belongs to each column. Resizing and reordering are opt-in compositions.',
+      },
+    },
+  },
   tags: ['autodocs'],
   decorators: [
     (Story, context) => {
@@ -246,8 +271,41 @@ const meta = {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
     disabledKeys: [],
+    disabledBehavior: 'all',
+    disallowEmptySelection: false,
+    empty: false,
+    emptyMessage: undefined,
+    onRowAction: undefined,
   },
   argTypes: {
+    disabledBehavior: {
+      control: 'select',
+      options: ['selection', 'all'],
+      description: 'Disable only selection, or all interactions on disabledKeys.',
+      table: { category: 'Selection' },
+    },
+    disallowEmptySelection: { control: 'boolean', table: { category: 'Selection' } },
+    empty: {
+      control: 'boolean',
+      description: 'Story-only: supply an empty items collection.',
+      table: { category: 'Demo' },
+    },
+    emptyMessage: {
+      control: 'text',
+      description:
+        'Table.Body fallback when items is empty. Undefined uses the localized default; renderEmptyState takes precedence.',
+      table: { category: 'Body' },
+    },
+    renderEmptyState: {
+      control: false,
+      description: 'Table.Body callback for a custom empty state.',
+      table: { category: 'Body' },
+    },
+    onRowAction: {
+      control: false,
+      description: 'Row activation callback; use Enter or a pointer to activate a row.',
+      table: { category: 'Events' },
+    },
     'aria-label': {
       control: 'text',
       description: 'Accessible name for the table.',
@@ -324,6 +382,9 @@ export const Default: Story = {
           selectedKeys={selectionMode ? selectedKeys : undefined}
           onSelectionChange={selectionMode ? setSelectedKeys : undefined}
           disabledKeys={disabledKeys}
+          disabledBehavior={args.disabledBehavior}
+          disallowEmptySelection={args.disallowEmptySelection}
+          onRowAction={args.onRowAction}
         >
           <TableHeader>
             <TableColumn id="name" isRowHeader allowsSorting={args.allowsSorting}>
@@ -339,7 +400,11 @@ export const Default: Story = {
               {text.columns.updated}
             </TableColumn>
           </TableHeader>
-          <TableBody items={rows}>
+          <TableBody
+            items={args.empty ? [] : rows}
+            emptyMessage={args.emptyMessage}
+            renderEmptyState={args.renderEmptyState}
+          >
             {(item) => (
               <TableRow id={item.id}>
                 <TableCell>{item.name}</TableCell>
@@ -356,6 +421,47 @@ export const Default: Story = {
 };
 
 export const Sortable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const column = canvas.getAllByRole('columnheader')[0];
+    await expect(column).toHaveAttribute('aria-sort', 'ascending');
+    await userEvent.click(column);
+    await expect(column).toHaveAttribute('aria-sort', 'descending');
+    column.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(column).toHaveAttribute('aria-sort', 'ascending');
+    await expect(column).toHaveFocus();
+    const columns = canvas.getAllByRole('columnheader');
+    const frameStyle = getComputedStyle(column.closest('table')!.parentElement!);
+    const innerRadius =
+      parseFloat(frameStyle.borderTopLeftRadius) - parseFloat(frameStyle.borderLeftWidth);
+    const firstStyle = getComputedStyle(column);
+    const isRtl = firstStyle.direction === 'rtl';
+    await expect(parseFloat(firstStyle.borderStartStartRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(firstStyle.borderStartEndRadius)).toBe(0);
+    await expect(
+      parseFloat(isRtl ? firstStyle.borderTopRightRadius : firstStyle.borderTopLeftRadius),
+    ).toBeCloseTo(innerRadius, 0);
+    const nextColumnKey = isRtl ? '{ArrowLeft}' : '{ArrowRight}';
+    for (let index = 1; index < columns.length; index++) await userEvent.keyboard(nextColumnKey);
+    const lastColumn = columns[columns.length - 1];
+    await expect(lastColumn).toHaveFocus();
+    const lastStyle = getComputedStyle(lastColumn);
+    await expect(parseFloat(lastStyle.borderStartEndRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(lastStyle.borderStartStartRadius)).toBe(0);
+    await expect(
+      parseFloat(isRtl ? lastStyle.borderTopLeftRadius : lastStyle.borderTopRightRadius),
+    ).toBeCloseTo(innerRadius, 0);
+  },
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Controlled sortDescriptor and onSortChange. The caller sorts items; Table does not reorder data automatically.',
+      },
+    },
+  },
   render: () => {
     const text = useTableText();
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -412,6 +518,39 @@ export const Sortable: Story = {
 };
 
 export const WithSelection: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const checkboxes = canvas.getAllByRole('checkbox');
+    await expect(checkboxes[3]).toBeDisabled();
+    await userEvent.click(checkboxes[0]);
+    for (const checkbox of checkboxes.slice(1)) {
+      if (!checkbox.hasAttribute('disabled')) await expect(checkbox).toBeChecked();
+    }
+    await userEvent.click(checkboxes[0]);
+    for (const checkbox of checkboxes.slice(1)) await expect(checkbox).not.toBeChecked();
+    for (const checkbox of checkboxes) {
+      const label = checkbox.closest('label')!;
+      const textCell = checkbox.closest('tr')!.querySelectorAll('td, th')[1];
+      const controlRect = label.getBoundingClientRect();
+      const textRect = textCell.getBoundingClientRect();
+      const style = getComputedStyle(textCell);
+      const textCentre =
+        textRect.top +
+        (textRect.height + parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth)) /
+          2;
+      const controlCentre = controlRect.top + controlRect.height / 2;
+      await expect(Math.abs(controlCentre - textCentre)).toBeLessThan(0.5);
+    }
+  },
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Controlled multiple selection. Toggle behavior inserts selection cells automatically. The third row is disabled.',
+      },
+    },
+  },
   render: () => {
     const text = useTableText();
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['2']));
@@ -446,6 +585,27 @@ export const WithSelection: Story = {
 };
 
 export const ResizableColumns: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const slider = canvas.getAllByRole('slider')[0];
+    const initial = Number((slider as HTMLInputElement).value);
+    // Enter the grid first; React Aria owns focus within its composite widgets.
+    await userEvent.click(canvas.getAllByRole('columnheader')[0]);
+    await userEvent.keyboard('{Enter}');
+    slider.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(Number((slider as HTMLInputElement).value)).not.toBe(initial);
+    await userEvent.keyboard('{Enter}');
+  },
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Wrap Table in TableResizableContainer. Put TableColumnResizer directly in each resizable column. Focus a handle, press Enter, resize with the horizontal arrow keys, then Enter to finish. Column minWidth/maxWidth constrain resizing.',
+      },
+    },
+  },
   render: () => {
     const text = useTableText();
 
@@ -481,6 +641,28 @@ export const ResizableColumns: Story = {
 };
 
 export const DragAndDrop: Story = {
+  play: async ({ canvasElement, globals }) => {
+    const canvas = within(canvasElement);
+    const firstRow = canvas.getAllByRole('row')[1];
+    const originalName = canvas.getAllByRole('rowheader')[0].textContent;
+    firstRow.focus();
+    await userEvent.keyboard(globals.language === 'dv' ? '{ArrowLeft}' : '{ArrowRight}');
+    await userEvent.keyboard('{Enter}');
+    await canvas.findAllByRole('button', { name: /Insert|އިންސަރޓް/ });
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await waitFor(() =>
+      expect(canvas.getAllByRole('rowheader')[0]).not.toHaveTextContent(originalName ?? ''),
+    );
+  },
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'useDragAndDrop is re-exported from React Aria. Supply getItems and onReorder, then update your collection. Focus a drag handle, press Enter, use arrow keys to choose a target, Enter to drop or Escape to cancel. Pointer dragging starts from the handle cell.',
+      },
+    },
+  },
   render: () => {
     const text = useTableText();
     const [orderedIds, setOrderedIds] = useState<string[]>(() =>
@@ -532,5 +714,178 @@ export const DragAndDrop: Story = {
         </Table>
       </div>
     );
+  },
+};
+
+export const Empty: Story = {
+  ...Default,
+  args: { empty: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('grid')).toBeInTheDocument();
+    await expect(canvas.getByRole('grid').querySelector('tbody')).toHaveTextContent(
+      /No results found.|ނަތީޖާ/,
+    );
+  },
+};
+
+export const CustomEmptyState: Story = {
+  ...Default,
+  args: {
+    empty: true,
+    emptyMessage: 'No matching permits.',
+    renderEmptyState: () => <p className="p-8 text-center">Try another search.</p>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Try another search.')).toBeInTheDocument();
+    await expect(canvas.queryByText('No matching permits.')).not.toBeInTheDocument();
+  },
+};
+
+export const SingleSelection: Story = {
+  ...Default,
+  args: { selectionMode: 'single', selectionBehavior: 'replace', disabledKeys: ['3'] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const rows = canvas.getAllByRole('row');
+    await userEvent.click(rows[1]);
+    await expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+    await expect(canvas.queryByRole('checkbox')).not.toBeInTheDocument();
+    await userEvent.click(rows[3]);
+    await expect(rows[3]).toHaveAttribute('aria-selected', 'false');
+  },
+};
+
+export const ReplaceSelection: Story = {
+  ...Default,
+  args: { selectionMode: 'multiple', selectionBehavior: 'replace', disallowEmptySelection: true },
+};
+
+export const UncontrolledSelection: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: 'Use defaultSelectedKeys for initial selection without owning selectedKeys state.',
+      },
+    },
+  },
+  render: () => {
+    const text = useTableText();
+    return (
+      <Table
+        aria-label={text.ariaLabels.selectablePermits}
+        selectionMode="multiple"
+        defaultSelectedKeys={['2']}
+      >
+        <Table.Header>
+          <Table.Column isRowHeader>{text.columns.name}</Table.Column>
+          <Table.Column>{text.columns.status}</Table.Column>
+        </Table.Header>
+        <Table.Body items={text.rows}>
+          {(item) => (
+            <Table.Row id={item.id}>
+              <Table.Cell>{item.name}</Table.Cell>
+              <Table.Cell>{item.status}</Table.Cell>
+            </Table.Row>
+          )}
+        </Table.Body>
+      </Table>
+    );
+  },
+};
+
+export const RowActions: Story = {
+  ...Default,
+  args: { onRowAction: fn() },
+  play: async ({ canvasElement, args }) => {
+    const row = within(canvasElement).getAllByRole('row')[1];
+    await userEvent.click(row);
+    await expect(args.onRowAction).toHaveBeenCalledWith('1');
+    row.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onRowAction).toHaveBeenCalledTimes(2);
+    const rows = within(canvasElement).getAllByRole('row').slice(1);
+    for (let index = 1; index < rows.length; index++) await userEvent.keyboard('{ArrowDown}');
+    const lastRow = rows[rows.length - 1];
+    await expect(lastRow).toHaveFocus();
+    const frameStyle = getComputedStyle(lastRow.closest('table')!.parentElement!);
+    const innerRadius =
+      parseFloat(frameStyle.borderBottomLeftRadius) - parseFloat(frameStyle.borderLeftWidth);
+    const lastStyle = getComputedStyle(lastRow);
+    await expect(parseFloat(lastStyle.borderBottomLeftRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(lastStyle.borderBottomRightRadius)).toBeCloseTo(innerRadius, 0);
+    await expect(parseFloat(getComputedStyle(rows[0]).borderBottomLeftRadius)).toBe(0);
+    const cells = lastRow.querySelectorAll('td');
+    const nextCellKey = lastStyle.direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}';
+    await userEvent.keyboard(nextCellKey);
+    await expect(cells[0]).toHaveFocus();
+    await expect(parseFloat(getComputedStyle(cells[0]).borderEndEndRadius)).toBe(0);
+    for (let index = 1; index < cells.length; index++) await userEvent.keyboard(nextCellKey);
+    await expect(cells[cells.length - 1]).toHaveFocus();
+    await expect(parseFloat(getComputedStyle(cells[cells.length - 1]).borderEndStartRadius)).toBe(
+      0,
+    );
+    await expect(parseFloat(getComputedStyle(cells[0]).borderEndStartRadius)).toBeCloseTo(
+      innerRadius,
+      0,
+    );
+    await expect(
+      parseFloat(getComputedStyle(cells[cells.length - 1]).borderEndEndRadius),
+    ).toBeCloseTo(innerRadius, 0);
+  },
+};
+
+export const StickyHeader: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Provide a bounded scrolling frame so stickyHeader can stick. className on Table styles the table element, not its automatic outer frame.',
+      },
+    },
+  },
+  render: () => {
+    const text = useTableText();
+    return (
+      <TableResizableContainer className="max-h-56 overflow-auto">
+        <Table aria-label={text.ariaLabels.permitApplications} stickyHeader>
+          <TableHeader>
+            <TableColumn isRowHeader>{text.columns.name}</TableColumn>
+            <TableColumn>{text.columns.status}</TableColumn>
+          </TableHeader>
+          <TableBody items={text.rows}>
+            {(item) => (
+              <TableRow id={item.id}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.status}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableResizableContainer>
+    );
+  },
+};
+
+export const NarrowContainer: Story = {
+  ...Default,
+  args: { className: 'min-w-[640px]' },
+  decorators: [
+    (Story) => (
+      <div className="w-80 max-w-full">
+        <Story />
+      </div>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A minimum table width keeps columns readable. The automatic frame scrolls horizontally within a narrow viewport in either direction.',
+      },
+    },
   },
 };

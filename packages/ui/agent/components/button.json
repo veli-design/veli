@@ -29,11 +29,14 @@
     "Use danger intent for destructive actions.",
     "Pair leading or trailing icons with visible action text.",
     "Keep visible content mounted while loading to preserve dimensions.",
-    "Use isLoading or isPending interchangeably; both mark the button busy."
+    "Use isLoading or isPending interchangeably; both mark the button busy.",
+    "Set highContrast explicitly on each secondary Button used on a prominent surface, such as an informational Toast."
   ],
   "limitations": [
     "Accent treatment is supported only with the fill appearance.",
-    "Icon sizing is supplied by the consumer."
+    "Icon sizing is supplied by the consumer.",
+    "highContrast defaults to false and applies only to secondary fill, transparent, and ghost appearances; other intents ignore it.",
+    "The consumer supplies the background surface. highContrast does not detect the surface automatically or inherit from Toast or Alert."
   ],
   "accessibility": [
     "Provide aria-label or aria-labelledby for icon-only buttons.",

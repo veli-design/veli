@@ -26,6 +26,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -63,7 +64,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldButtonVariants = cva(
-  'relative flex w-full items-center gap-2 rounded-md text-start outline-none transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
+  'relative flex w-full items-center gap-2 rounded-field text-start outline-none transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       appearance: {
@@ -534,6 +535,7 @@ export function Select<T extends object, K extends Key = Key>({
                 isInvalid={isInvalid}
                 size={size ?? 'md'}
                 description={description}
+                descriptionTone={fieldHelperTone(isDisabled)}
                 errorMessage={errorMessage}
               />
             </div>
