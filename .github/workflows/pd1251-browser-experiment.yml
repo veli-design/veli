@@ -1,0 +1,46 @@
+name: PD-1251 browser provisioning experiment
+
+# A single isolated branch push runs this experiment. It has no release,
+# deployment, PR, schedule, or workflow-dispatch entry point.
+on:
+  push:
+    branches: [codex/pd-1251-browser-provisioning-experiment]
+    paths:
+      - .github/workflows/pd1251-browser-experiment.yml
+      - scripts/experiments/pd1251-*.mjs
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    name: Provisioning / ${{ matrix.mode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [baseline, container]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.18.0
+          run_install: false
+      - name: Measure browser provisioning and launch parity
+        run: node scripts/experiments/pd1251-browser-setup.mjs "$EXPERIMENT_MODE"
+        env:
+          EXPERIMENT_MODE: ${{ matrix.mode }}
+      - name: Retain timings and browser metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pd1251-browser-${{ matrix.mode }}
+          path: ${{ runner.temp }}/pd1251-browser-results
+          if-no-files-found: error
+          retention-days: 7
