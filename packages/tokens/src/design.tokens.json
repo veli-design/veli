@@ -14066,40 +14066,40 @@
         "subtle": {
           "default": {
             "$type": "color",
-            "$value": "{color.primary.300}",
+            "$value": "{color.primary.alpha.300}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.primary.subtle.default",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.primary.300}"
+                "Dark": "{color.primary.alpha.300}"
               }
             }
           },
           "hover": {
             "$type": "color",
-            "$value": "{color.primary.400}",
+            "$value": "{color.primary.alpha.400}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.primary.subtle.hover",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.primary.400}"
+                "Dark": "{color.primary.alpha.400}"
               }
             }
           },
           "pressed": {
             "$type": "color",
-            "$value": "{color.primary.500}",
+            "$value": "{color.primary.alpha.500}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.primary.subtle.pressed",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.primary.500}"
+                "Dark": "{color.primary.alpha.500}"
               }
             }
           }
@@ -14148,40 +14148,40 @@
         "subtle": {
           "default": {
             "$type": "color",
-            "$value": "{color.neutral.300}",
+            "$value": "{color.neutral.alpha.300}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.secondary.subtle.default",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.neutral.300}"
+                "Dark": "{color.neutral.alpha.300}"
               }
             }
           },
           "hover": {
             "$type": "color",
-            "$value": "{color.neutral.400}",
+            "$value": "{color.neutral.alpha.400}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.secondary.subtle.hover",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.neutral.400}"
+                "Dark": "{color.neutral.alpha.400}"
               }
             }
           },
           "pressed": {
             "$type": "color",
-            "$value": "{color.neutral.500}",
+            "$value": "{color.neutral.alpha.500}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.secondary.subtle.pressed",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.neutral.500}"
+                "Dark": "{color.neutral.alpha.500}"
               }
             }
           }
@@ -14243,40 +14243,40 @@
         "subtle": {
           "default": {
             "$type": "color",
-            "$value": "{color.danger.300}",
+            "$value": "{color.danger.alpha.300}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.danger.subtle.default",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.danger.300}"
+                "Dark": "{color.danger.alpha.300}"
               }
             }
           },
           "hover": {
             "$type": "color",
-            "$value": "{color.danger.400}",
+            "$value": "{color.danger.alpha.400}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.danger.subtle.hover",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.danger.400}"
+                "Dark": "{color.danger.alpha.400}"
               }
             }
           },
           "pressed": {
             "$type": "color",
-            "$value": "{color.danger.500}",
+            "$value": "{color.danger.alpha.500}",
             "$extensions": {
               "org.veli": {
                 "source": "color.components.button.danger.subtle.pressed",
                 "authoredColors": {}
               },
               "mode": {
-                "Dark": "{color.danger.500}"
+                "Dark": "{color.danger.alpha.500}"
               }
             }
           }

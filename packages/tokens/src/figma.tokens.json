@@ -7798,34 +7798,34 @@
           "subtle": {
             "default": {
               "$type": "color",
-              "$value": "{color.brand.primary.300}",
+              "$value": "{color.brand.primary.alpha.300}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.primary.300}",
-                  "Dark": "{color.brand.primary.300}"
+                  "Light": "{color.brand.primary.alpha.300}",
+                  "Dark": "{color.brand.primary.alpha.300}"
                 }
               }
             },
             "hover": {
               "$type": "color",
-              "$value": "{color.brand.primary.400}",
+              "$value": "{color.brand.primary.alpha.400}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.primary.400}",
-                  "Dark": "{color.brand.primary.400}"
+                  "Light": "{color.brand.primary.alpha.400}",
+                  "Dark": "{color.brand.primary.alpha.400}"
                 }
               }
             },
             "pressed": {
               "$type": "color",
-              "$value": "{color.brand.primary.500}",
+              "$value": "{color.brand.primary.alpha.500}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.primary.500}",
-                  "Dark": "{color.brand.primary.500}"
+                  "Light": "{color.brand.primary.alpha.500}",
+                  "Dark": "{color.brand.primary.alpha.500}"
                 }
               }
             }
@@ -7868,34 +7868,34 @@
           "subtle": {
             "default": {
               "$type": "color",
-              "$value": "{color.brand.neutral.300}",
+              "$value": "{color.brand.neutral.alpha.300}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.neutral.300}",
-                  "Dark": "{color.brand.neutral.300}"
+                  "Light": "{color.brand.neutral.alpha.300}",
+                  "Dark": "{color.brand.neutral.alpha.300}"
                 }
               }
             },
             "hover": {
               "$type": "color",
-              "$value": "{color.brand.neutral.400}",
+              "$value": "{color.brand.neutral.alpha.400}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.neutral.400}",
-                  "Dark": "{color.brand.neutral.400}"
+                  "Light": "{color.brand.neutral.alpha.400}",
+                  "Dark": "{color.brand.neutral.alpha.400}"
                 }
               }
             },
             "pressed": {
               "$type": "color",
-              "$value": "{color.brand.neutral.500}",
+              "$value": "{color.brand.neutral.alpha.500}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.neutral.500}",
-                  "Dark": "{color.brand.neutral.500}"
+                  "Light": "{color.brand.neutral.alpha.500}",
+                  "Dark": "{color.brand.neutral.alpha.500}"
                 }
               }
             }
@@ -7949,34 +7949,34 @@
           "subtle": {
             "default": {
               "$type": "color",
-              "$value": "{color.brand.danger.300}",
+              "$value": "{color.brand.danger.alpha.300}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.danger.300}",
-                  "Dark": "{color.brand.danger.300}"
+                  "Light": "{color.brand.danger.alpha.300}",
+                  "Dark": "{color.brand.danger.alpha.300}"
                 }
               }
             },
             "hover": {
               "$type": "color",
-              "$value": "{color.brand.danger.400}",
+              "$value": "{color.brand.danger.alpha.400}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.danger.400}",
-                  "Dark": "{color.brand.danger.400}"
+                  "Light": "{color.brand.danger.alpha.400}",
+                  "Dark": "{color.brand.danger.alpha.400}"
                 }
               }
             },
             "pressed": {
               "$type": "color",
-              "$value": "{color.brand.danger.500}",
+              "$value": "{color.brand.danger.alpha.500}",
               "$description": "",
               "$extensions": {
                 "mode": {
-                  "Light": "{color.brand.danger.500}",
-                  "Dark": "{color.brand.danger.500}"
+                  "Light": "{color.brand.danger.alpha.500}",
+                  "Dark": "{color.brand.danger.alpha.500}"
                 }
               }
             }
