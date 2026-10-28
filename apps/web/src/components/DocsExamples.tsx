@@ -1785,9 +1785,7 @@ export function PopoverIntentsDemo() {
     <div className="flex flex-wrap items-center justify-center gap-4">
       {(['primary', 'secondary', 'tertiary'] as const).map((intent) => (
         <PopoverTrigger key={intent}>
-          <Button intent="secondary" className="capitalize">
-            {intent}
-          </Button>
+          <Button intent="secondary">{intent.charAt(0).toUpperCase() + intent.slice(1)}</Button>
           <Popover
             intent={intent}
             placement="bottom"

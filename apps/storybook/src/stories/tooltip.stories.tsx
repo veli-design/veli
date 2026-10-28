@@ -339,7 +339,7 @@ export const Placements: Story = {
               <div className="flex flex-col gap-3">
                 {group.placements.map((placement) => (
                   <TooltipTrigger key={placement} delay={0}>
-                    <Button intent="secondary" size="sm" className="w-full justify-center">
+                    <Button intent="secondary" size="sm" className="w-full">
                       {placement}
                     </Button>
                     <Tooltip placement={placement} size="lg" tone="primary">

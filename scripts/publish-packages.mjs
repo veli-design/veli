@@ -4,6 +4,7 @@ import { getPackages } from '@manypkg/get-packages';
 
 import { spawnCorepack } from './corepack.mjs';
 import { withReleaseReadmes } from './release-readme.mjs';
+import { verifyCurrentPublication } from './release-ci.mjs';
 
 function run(args, cwd) {
   return new Promise((resolve, reject) => {
@@ -17,9 +18,25 @@ function run(args, cwd) {
 }
 
 const cwd = process.cwd();
+// Keep this guard at the publication entry point as well as in the workflow:
+// Changesets may call publish even when pending Markdown contains no releases.
+if (process.env.GITHUB_ACTIONS === 'true') await verifyCurrentPublication();
 const { packages } = await getPackages(cwd);
 
-await run(['pnpm', '--filter', '@tradenetcorp/veli-ui', 'build'], cwd);
+// Release preparation does not build sites. Publication builds only distributable
+// packages and their dependencies, after the workflow's exact-tree gate passes.
+await run(
+  [
+    'pnpm',
+    'exec',
+    'turbo',
+    'build',
+    '--filter=@tradenetcorp/veli-ui',
+    '--filter=@tradenetcorp/veli-tokens',
+    '--filter=@tradenetcorp/veli',
+  ],
+  cwd,
+);
 await run(['pnpm', '--filter', '@tradenetcorp/veli-ui', 'package:check'], cwd);
 
 await withReleaseReadmes(packages, () =>

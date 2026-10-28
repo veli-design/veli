@@ -1,3 +1,9 @@
+## 0.3.1
+
+### Fixed
+
+- Keep the exit action from shrinking through its layout wrapper, preserving Button's component-owned sizing contract.
+
 ## 0.3.0
 
 ### Changed
