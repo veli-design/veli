@@ -91,7 +91,7 @@ Keep labels, routing, authentication, API calls, account panels, and persistence
 
 ## Accessibility and responsive behavior
 
-Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Link groups and language menus must keep readable names in English/LTR and Dhivehi/RTL. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 
