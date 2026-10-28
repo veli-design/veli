@@ -25,24 +25,43 @@ const render = (content = {}, toastProps = {}) => {
   return renderToast(queue.visibleToasts[0], toastProps);
 };
 
-test('Toast renders every intent and appearance using canonical tokens', () => {
-  for (const appearance of ['outline', 'subtle', 'emphasis']) {
-    for (const [intent, token] of [
-      ['neutral', 'neutral'],
-      ['info', 'info'],
-      ['positive', 'success'],
-      ['cautious', 'caution'],
-      ['warning', 'warning'],
-      ['danger', 'danger'],
-    ]) {
-      const html = render({ intent, appearance, description: 'Details' });
-      assert.match(
-        html,
-        new RegExp(`border-status-${token}-${appearance === 'emphasis' ? 'emphasis' : 'subtle'}`),
-      );
-      assert.doesNotMatch(html, /text-text-|text-icon-default-|status-cautious-|bg-gray-alpha-/);
-    }
+test('Toast renders subtle and emphasis with Alert surfaces', () => {
+  const intents = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];
+  for (const intent of intents) {
+    const subtle = render({ intent, appearance: 'subtle', description: 'Details' });
+    assert.match(subtle, new RegExp(`bg-alert-light-${intent}-bg`));
+    assert.match(subtle, new RegExp(`text-alert-light-${intent}-icon`));
+    assert.match(subtle, /border border-base-subtle/);
+    assert.match(subtle, /rounded-3xl/);
+    assert.match(subtle, /type-body-sm-semibold/);
+    assert.match(subtle, /text-base-emphasis/);
+    assert.match(subtle, /text-base-strong/);
+    assert.match(subtle, /data-slot="toast-icon"/);
+    assert.match(subtle, /h-9 w-9/);
+    assert.doesNotMatch(subtle, /text-base-muted|border-status-|bg-status-/);
+
+    const emphasis = render({ intent, appearance: 'emphasis', description: 'Details' });
+    assert.match(emphasis, new RegExp(`bg-alert-high-contrast-${intent}-bg`));
+    assert.match(emphasis, new RegExp(`text-alert-high-contrast-${intent}-foreground`));
+    assert.match(emphasis, new RegExp(`text-alert-high-contrast-${intent}-description`));
+    assert.match(emphasis, /rounded-3xl/);
+    assert.match(emphasis, /data-slot="toast-icon"/);
+    assert.doesNotMatch(emphasis, /border border-base-subtle|text-base-muted|border-status-|bg-status-/);
   }
+
+  const fallback = render({ description: 'Details' });
+  assert.match(fallback, /bg-alert-light-neutral-bg/);
+  assert.match(fallback, /data-slot="toast-icon"/);
+});
+
+test('leading icons follow the content contract', () => {
+  assert.doesNotMatch(render({ showLeadingIcon: false }), /data-slot="toast-icon"/);
+  const custom = render({
+    leadingIcon: h('span', {}, 'Mark'),
+    showLeadingIcon: false,
+  });
+  assert.match(custom, /data-slot="toast-icon"/);
+  assert.match(custom, />Mark</);
 });
 
 test('zero descriptions and optional close buttons preserve the content contract', () => {
@@ -98,6 +117,9 @@ test('progress is decorative and only rendered for timed toasts', () => {
   const html = renderToast(queue.visibleToasts[0]);
   assert.match(html, /aria-hidden="true"[^>]*class="[^"]*bg-toast-progress-track-emphasis/);
   assert.match(html, /bg-toast-progress-fill-emphasis/);
+  const subtleQueue = createToastQueue();
+  subtleQueue.add({ title: 'Saved', showProgress: true, appearance: 'subtle' }, { timeout: 5000 });
+  assert.match(renderToast(subtleQueue.visibleToasts[0]), /bg-toast-progress-track-subtle/);
 });
 
 function withViewTransitions(run, reduce = false) {

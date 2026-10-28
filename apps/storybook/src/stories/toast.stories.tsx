@@ -15,7 +15,7 @@ import {
   type VeliToastContent,
 } from '@tradenetcorp/veli-ui/toast';
 
-const appearances: ToastAppearance[] = ['outline', 'subtle', 'emphasis'];
+const appearances: ToastAppearance[] = ['subtle', 'emphasis'];
 const intents: ToastIntent[] = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];
 type Placement = NonNullable<ToastRegionProps<VeliToastContent>['placement']>;
 
@@ -38,7 +38,7 @@ const toastText = {
     restored: 'The file can still be restored.',
     failed: 'Upload failed',
     tryAgain: 'The file could not be processed. Try again.',
-    appearance: { outline: 'Outline', subtle: 'Subtle', emphasis: 'Emphasis' },
+    appearance: { subtle: 'Subtle', emphasis: 'Emphasis' },
     intent: {
       neutral: 'Neutral',
       info: 'Info',
@@ -66,7 +66,7 @@ const toastText = {
     restored: 'ފައިލް އަނބުރާ ލިބިގެންދާނެ.',
     failed: 'އަޕްލޯޑް ނުކުރެވުނު',
     tryAgain: 'މި ފައިލް ޕްރޮސެސްއެއް ނުކުރެވުނު. އަލުން މަސައްކަތްކުރައްވާ.',
-    appearance: { outline: 'އައުޓްލައިން', subtle: 'ސަބްޓަލް', emphasis: 'އެމްފަސިސް' },
+    appearance: { subtle: 'ސަބްޓަލް', emphasis: 'އެމްފަސިސް' },
     intent: {
       neutral: 'ނިއުޓްރަލް',
       info: 'އިންފޯ',
@@ -126,6 +126,7 @@ interface ToastStoryArgs {
   appearance: ToastAppearance;
   intent: ToastIntent;
   placement: Placement;
+  showLeadingIcon: boolean;
   showCloseButton: boolean;
   showProgress: boolean;
   timeout: number;
@@ -139,6 +140,7 @@ const contentFromArgs = (
   description: localizedArg(args.description, 'description', text),
   appearance: args.appearance,
   intent: args.intent,
+  showLeadingIcon: args.showLeadingIcon,
   showCloseButton: args.showCloseButton,
   showProgress: args.showProgress,
 });
@@ -188,6 +190,7 @@ const meta = {
       options: ['top', 'bottom', 'top-start', 'top-end', 'bottom-start', 'bottom-end'],
       table: { category: 'State' },
     },
+    showLeadingIcon: { control: 'boolean', table: { category: 'State' } },
     showCloseButton: { control: 'boolean', table: { category: 'State' } },
     showProgress: {
       control: 'boolean',
@@ -201,8 +204,9 @@ const meta = {
     },
   },
   args: {
-    appearance: 'outline',
+    appearance: 'subtle',
     intent: 'neutral',
+    showLeadingIcon: true,
     title: toastText.en.title,
     description: toastText.en.description,
     placement: 'bottom-end',
@@ -239,7 +243,7 @@ export const Appearances: Story = {
   render: function AppearancesStory(args) {
     const text = useToastText();
     return (
-      <div className="mx-auto grid w-full max-w-[1200px] gap-6 md:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-6 md:grid-cols-2">
         {appearances.map((appearance) => (
           <div key={appearance} className="flex flex-col gap-3">
             <p className="type-body-sm-medium text-base-muted">{text.appearance[appearance]}</p>

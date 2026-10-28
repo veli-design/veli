@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { flushSync } from 'react-dom';
 import {
-  Button as AriaButton,
   Text,
   UNSTABLE_Toast as AriaToast,
   UNSTABLE_ToastContent as AriaToastContent,
@@ -17,39 +16,34 @@ import {
 } from 'react-aria-components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
-import { XIcon } from '@phosphor-icons/react';
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  WarningCircleIcon,
+  WarningIcon,
+  WarningOctagonIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { Button } from './button.js';
 import { useVeliLanguage } from './provider.js';
+import { alertIntentClasses, type AlertIntent } from './alert-intent-classes.js';
 
-export type ToastAppearance = 'outline' | 'subtle' | 'emphasis';
-export type ToastIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
+export type ToastAppearance = 'subtle' | 'emphasis';
+export type ToastIntent = AlertIntent;
 
-const toastIntentClasses = {
-  outline: {
-    neutral: 'border-status-neutral-subtle bg-bg-surface-raised text-base-default',
-    info: 'border-status-info-subtle bg-bg-surface-raised text-primary-default',
-    positive: 'border-status-success-subtle bg-bg-surface-raised text-success-default',
-    cautious: 'border-status-caution-subtle bg-bg-surface-raised text-caution-default',
-    warning: 'border-status-warning-subtle bg-bg-surface-raised text-warning-default',
-    danger: 'border-status-danger-subtle bg-bg-surface-raised text-danger-default',
-  },
-  subtle: {
-    neutral: 'border-status-neutral-subtle bg-status-neutral-subtle text-base-strong',
-    info: 'border-status-info-subtle bg-status-info-subtle text-primary-strong',
-    positive: 'border-status-success-subtle bg-status-success-subtle text-success-strong',
-    cautious: 'border-status-caution-subtle bg-status-caution-subtle text-caution-strong',
-    warning: 'border-status-warning-subtle bg-status-warning-subtle text-warning-strong',
-    danger: 'border-status-danger-subtle bg-status-danger-subtle text-danger-strong',
-  },
-  emphasis: {
-    neutral: 'border-status-neutral-emphasis bg-status-neutral-emphasis text-base-inverted',
-    info: 'border-status-info-emphasis bg-status-info-emphasis text-primary-inverted',
-    positive: 'border-status-success-emphasis bg-status-success-emphasis text-success-inverted',
-    cautious: 'border-status-caution-emphasis bg-status-caution-emphasis text-caution-inverted',
-    warning: 'border-status-warning-emphasis bg-status-warning-emphasis text-warning-inverted',
-    danger: 'border-status-danger-emphasis bg-status-danger-emphasis text-danger-inverted',
-  },
-} satisfies Record<ToastAppearance, Record<ToastIntent, string>>;
+const toastIntentIcons = {
+  neutral: InfoIcon,
+  info: InfoIcon,
+  positive: CheckCircleIcon,
+  cautious: WarningCircleIcon,
+  warning: WarningIcon,
+  danger: WarningOctagonIcon,
+} satisfies Record<ToastIntent, typeof InfoIcon>;
+
+const toastAppearanceSurface = {
+  subtle: 'light',
+  emphasis: 'highContrast',
+} as const satisfies Record<ToastAppearance, 'light' | 'highContrast'>;
 
 const toastRegionVariants = cva(
   'fixed z-50 flex max-h-dvh flex-col gap-2 overflow-y-auto p-4 outline-none data-[focus-visible]:outline-solid data-[focus-visible]:outline-2 data-[focus-visible]:-outline-offset-4 data-[focus-visible]:outline-border-focus forced-colors:data-[focus-visible]:outline-[Highlight]',
@@ -74,15 +68,14 @@ const toastRegionVariants = cva(
   },
 );
 
-// Figma's inside stroke does not contribute to auto-layout padding.
 const toastVariants = cva(
-  'relative flex w-full max-w-sm shrink-0 items-start gap-3 overflow-hidden rounded-xl border p-[calc(var(--veli-spacing-4)-1px)] font-sans text-start antialiased shadow-md outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
+  'relative flex w-full max-w-sm shrink-0 items-start gap-3 overflow-hidden rounded-3xl p-4 font-sans text-start antialiased shadow-md outline-none [view-transition-class:toast] data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
 );
 
 type ToastPlacement = NonNullable<VariantProps<typeof toastRegionVariants>['placement']>;
 
 const ToastPlacementContext = React.createContext<ToastPlacement>('bottom-end');
-const ToastAppearanceContext = React.createContext<ToastAppearance>('outline');
+const ToastAppearanceContext = React.createContext<ToastAppearance>('subtle');
 
 function getToastMotionStyle(
   placement: ToastPlacement,
@@ -104,43 +97,10 @@ function getToastMotionStyle(
 const toastContentVariants = cva('flex min-w-0 flex-1 flex-col gap-1');
 
 const toastTitleVariants = cva(
-  'type-body-sm-medium [&:not(:lang(dv))]:leading-[var(--veli-typography-auxiliary-storybook-alert-body-sm-medium-line-height)] [overflow-wrap:anywhere]',
+  'min-w-0 wrap-anywhere type-body-sm-semibold [&:lang(dv)]:type-body-sm-medium',
 );
 
-const toastDescriptionVariants = cva(
-  'type-body-sm-regular [&:not(:lang(dv))]:leading-[var(--veli-typography-auxiliary-storybook-alert-body-sm-regular-line-height)] [overflow-wrap:anywhere]',
-  {
-    variants: {
-      appearance: {
-        outline: 'text-base-muted',
-        subtle: 'text-base-muted',
-        emphasis: 'text-current opacity-80',
-      },
-    },
-    defaultVariants: {
-      appearance: 'outline',
-    },
-  },
-);
-
-const toastCloseButtonVariants = cva(
-  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline-none transition-colors duration-normal ease-out motion-reduce:transition-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-[Highlight]',
-  {
-    variants: {
-      appearance: {
-        outline:
-          'text-icon-base-default data-[hovered]:bg-neutral-alpha-200 data-[pressed]:bg-neutral-alpha-300',
-        subtle:
-          'text-icon-base-default data-[hovered]:bg-neutral-alpha-200 data-[pressed]:bg-neutral-alpha-300',
-        emphasis:
-          'text-icon-base-inverted data-[hovered]:bg-toast-interactive-hover-emphasis data-[pressed]:bg-toast-interactive-active-emphasis',
-      },
-    },
-    defaultVariants: {
-      appearance: 'outline',
-    },
-  },
-);
+const toastDescriptionVariants = cva('min-w-0 wrap-anywhere type-body-sm-regular');
 
 const toastActionsVariants = cva(
   'flex max-w-full flex-wrap items-center gap-2 [&>button]:max-w-full [&>button]:whitespace-normal [&>button]:[overflow-wrap:anywhere]',
@@ -151,13 +111,12 @@ const toastProgressTrackVariants = cva(
   {
     variants: {
       appearance: {
-        outline: 'bg-toast-progress-track-outline',
         subtle: 'bg-toast-progress-track-subtle',
         emphasis: 'bg-toast-progress-track-emphasis',
       },
     },
     defaultVariants: {
-      appearance: 'outline',
+      appearance: 'subtle',
     },
   },
 );
@@ -215,6 +174,13 @@ export interface VeliToastContent {
   description?: React.ReactNode;
   intent?: ToastIntent;
   appearance?: ToastAppearance;
+  /** Replaces the default per-intent icon. */
+  leadingIcon?: React.ReactNode;
+  /**
+   * Shows the default per-intent icon when `leadingIcon` is omitted.
+   * @default true
+   */
+  showLeadingIcon?: boolean;
   actions?: VeliToastAction[];
   /** Show the close button in the default composition. @default true */
   showCloseButton?: boolean;
@@ -329,6 +295,20 @@ export function ToastRegion<T>({
 export interface ToastProps<T> extends AriaToastProps<T> {
   intent?: ToastIntent;
   appearance?: ToastAppearance;
+  leadingIcon?: React.ReactNode;
+  /** Shows the default per-intent icon when no `leadingIcon` is set. @default true */
+  showLeadingIcon?: boolean;
+}
+
+function resolveToastLeadingIcon(
+  intent: ToastIntent,
+  leadingIcon: React.ReactNode | undefined,
+  showLeadingIcon: boolean | undefined,
+) {
+  if (leadingIcon != null && leadingIcon !== false) return leadingIcon;
+  if (showLeadingIcon === false) return null;
+  const Icon = toastIntentIcons[intent];
+  return <Icon size={20} weight="fill" />;
 }
 
 const ToastIntentContext = React.createContext<ToastIntent>('neutral');
@@ -337,6 +317,8 @@ export function Toast<T>({
   className,
   intent,
   appearance,
+  leadingIcon,
+  showLeadingIcon,
   style,
   toast,
   children,
@@ -346,7 +328,14 @@ export function Toast<T>({
   const placement = React.useContext(ToastPlacementContext);
   const content = toast.content as VeliToastContent | undefined;
   const contentIntent = intent ?? content?.intent ?? 'neutral';
-  const contentAppearance = appearance ?? content?.appearance ?? 'outline';
+  const contentAppearance = appearance ?? content?.appearance ?? 'subtle';
+  const colors = alertIntentClasses[contentIntent];
+  const surface = toastAppearanceSurface[contentAppearance];
+  const leading = resolveToastLeadingIcon(
+    contentIntent,
+    leadingIcon ?? content?.leadingIcon,
+    showLeadingIcon ?? content?.showLeadingIcon,
+  );
 
   return (
     <ToastAppearanceContext.Provider value={contentAppearance}>
@@ -364,7 +353,8 @@ export function Toast<T>({
           className={(state) =>
             twMerge(
               toastVariants(),
-              toastIntentClasses[contentAppearance][contentIntent],
+              contentAppearance === 'subtle' && 'border border-base-subtle',
+              colors[surface],
               typeof className === 'function' ? className(state) : className,
             )
           }
@@ -372,6 +362,18 @@ export function Toast<T>({
           {children ??
             ((state) => (
               <>
+                {leading ? (
+                  <span
+                    aria-hidden="true"
+                    data-slot="toast-icon"
+                    className={twMerge(
+                      'inline-flex h-5 w-5 shrink-0 items-center justify-center [&_svg]:size-5 [&:lang(dv)]:h-7',
+                      contentAppearance === 'subtle' ? colors.icon : colors.foreground,
+                    )}
+                  >
+                    {leading}
+                  </span>
+                ) : null}
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                   <ToastContent toast={state.toast} />
                   <ToastActions toast={state.toast} />
@@ -394,14 +396,28 @@ export interface ToastContentProps<T> {
 export function ToastContent<T>({ toast, className }: ToastContentProps<T>) {
   const content = toast.content as VeliToastContent;
   const appearance = React.useContext(ToastAppearanceContext);
+  const intent = React.useContext(ToastIntentContext);
+  const colors = alertIntentClasses[intent];
 
   return (
     <AriaToastContent className={twMerge(toastContentVariants(), className)}>
-      <Text slot="title" className={toastTitleVariants()}>
+      <Text
+        slot="title"
+        className={twMerge(
+          toastTitleVariants(),
+          appearance === 'subtle' ? 'text-base-emphasis' : colors.foreground,
+        )}
+      >
         {content.title}
       </Text>
       {content.description != null && content.description !== false ? (
-        <Text slot="description" className={toastDescriptionVariants({ appearance })}>
+        <Text
+          slot="description"
+          className={twMerge(
+            toastDescriptionVariants(),
+            appearance === 'subtle' ? 'text-base-strong' : colors.description,
+          )}
+        >
           {content.description}
         </Text>
       ) : null}
@@ -558,19 +574,32 @@ export function ToastTimeoutProgress<T>({ toast, className }: ToastTimeoutProgre
 
 export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCloseButtonProps) {
   const appearance = React.useContext(ToastAppearanceContext);
+  const intent = React.useContext(ToastIntentContext);
   const languageConfig = useVeliLanguage();
   const resolvedAriaLabel =
     ariaLabel ??
     (languageConfig.language === 'dv' ? 'ނޮޓިފިކޭޝަން ބަންދުކުރޭ' : 'Close notification');
 
   return (
-    <AriaButton
-      slot="close"
-      aria-label={resolvedAriaLabel}
-      className={twMerge(toastCloseButtonVariants({ appearance }), className)}
-    >
-      <XIcon aria-hidden="true" size={16} weight="regular" />
-    </AriaButton>
+    <span className="relative h-5 w-5 shrink-0 [&:lang(dv)]:h-7">
+      <Button
+        slot="close"
+        type="button"
+        intent="secondary"
+        appearance="ghost"
+        size="sm"
+        iconOnly
+        aria-label={resolvedAriaLabel}
+        className={twMerge(
+          'absolute -end-2 -top-2 [&:lang(dv)]:-top-1',
+          appearance === 'emphasis' && alertIntentClasses[intent].foreground,
+          'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
+          className,
+        )}
+      >
+        <XIcon aria-hidden="true" size={16} />
+      </Button>
+    </span>
   );
 }
 
