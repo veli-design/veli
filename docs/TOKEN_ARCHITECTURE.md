@@ -106,13 +106,14 @@ Important Figma model details:
 
 Current canonical Figma variable collections:
 
-| Collection    | Purpose                                                                                              |
-| ------------- | ---------------------------------------------------------------------------------------------------- |
-| `font`        | Tailwind-aligned font family namespace: `sans`, `mono`, `dhivehi`.                                   |
-| `font-weight` | CSS numeric font weights: `regular`, `medium`, `semibold`, `bold`.                                   |
-| `text`        | Tailwind-aligned type ramp with `font-size` and paired `line-height` values from `xs` through `9xl`. |
-| `leading`     | Standalone line-height utilities, including relative semantic values and a curated fixed subset.     |
-| `tracking`    | Standalone letter-spacing utilities, including Tailwind-style tracking values and `caption`.         |
+| Collection     | Purpose                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `font`         | Font families: `sans`, `mono`, and Dhivehi `regular`, `medium`, and `bold` roles.                |
+| `font-weight`  | CSS numeric weights plus Figma's `dhivehi-regular` font style name.                              |
+| `type-metrics` | English and Dhivehi font size, line height, and letter spacing for semantic text styles.         |
+| `text`         | Tailwind-aligned `xs` through `9xl` ramp; all three fields alias English `type-metrics`.         |
+| `leading`      | Standalone line-height utilities, including relative semantic values and a curated fixed subset. |
+| `tracking`     | Standalone letter-spacing utilities, including Tailwind-style tracking values and `caption`.     |
 
 Former Figma collection:
 
@@ -143,6 +144,8 @@ Completed Figma cleanup:
 - Updated caption styles to use `1%` letter spacing.
 - Updated semantic line heights to use percentage units in Figma-facing styles.
 
+The current styles bind font size, pixel line height, and letter spacing to `type-metrics/en` or `type-metrics/dv`. Font families bind to `font`; English weights bind to numeric `font-weight` variables. Dhivehi Body and Caption Regular styles use Figma's `font-weight/dhivehi-regular` style name (`Regular`) alongside a numeric weight of 400. The pipeline preserves the Figma name in metadata and emits `--veli-font-weight-dhivehi-regular` as an alias of `--veli-font-weight-regular` for CSS.
+
 Cleanup recorded during the May 2026 alignment:
 
 - Remote Dhivehi style references included the following because the required fonts were unavailable to the Figma automation:
@@ -160,8 +163,9 @@ Tailwind v4 theme variables are CSS custom properties under native namespaces.
   --font-sans: var(--veli-font-sans);
   --font-mono: var(--veli-font-mono);
 
-  --text-base: var(--veli-typography-en-body-md-regular-font-size);
-  --text-base--line-height: var(--veli-typography-en-body-md-regular-line-height);
+  --text-base: var(--veli-text-base-font-size);
+  --text-base--line-height: var(--veli-text-base-line-height);
+  --text-base--letter-spacing: var(--veli-text-base-letter-spacing);
 
   --font-weight-regular: var(--veli-font-weight-regular);
   --font-weight-medium: var(--veli-font-weight-medium);
@@ -198,21 +202,21 @@ Example generated utility:
 
 ## Typography Values
 
-Veli keeps its established type scale values while mapping the primitive ramp onto Tailwind-compatible names.
+The Tailwind-compatible ramp uses the current English metrics from Figma. The `lg`, `3xl`, and `7xl` line heights changed when the ramp was bound to those metrics.
 
 | Tailwind-compatible name | Veli font size | Veli line-height | CDS semantic label |
 | ------------------------ | -------------: | ---------------: | ------------------ |
 | `xs`                     |         `12px` |           `16px` | Caption            |
 | `sm`                     |         `14px` |           `20px` | Body/sm            |
 | `base`                   |         `16px` |           `24px` | Body/md            |
-| `lg`                     |         `18px` |           `26px` | Body/lg            |
+| `lg`                     |         `18px` |           `28px` | Body/lg            |
 | `xl`                     |         `20px` |           `28px` | Subtitle           |
 | `2xl`                    |         `24px` |           `32px` | Title 2            |
-| `3xl`                    |         `28px` |           `38px` | Title 1            |
+| `3xl`                    |         `28px` |           `36px` | Title 1            |
 | `4xl`                    |         `32px` |           `44px` | Heading 4          |
 | `5xl`                    |         `36px` |           `48px` | Heading 3          |
 | `6xl`                    |         `40px` |           `52px` | Heading 2          |
-| `7xl`                    |         `48px` |           `68px` | Heading 1          |
+| `7xl`                    |         `48px` |           `64px` | Heading 1          |
 | `8xl`                    |         `56px` |           `76px` | Display 2          |
 | `9xl`                    |         `64px` |           `84px` | Display 1          |
 
@@ -296,10 +300,13 @@ Figma variable names use slash paths that export cleanly to grouped DTCG tokens:
 Collection: text
   xs/font-size
   xs/line-height
+  xs/letter-spacing
   sm/font-size
   sm/line-height
+  sm/letter-spacing
   base/font-size
   base/line-height
+  base/letter-spacing
 ```
 
 Expected exported shape:
@@ -308,18 +315,23 @@ Expected exported shape:
 {
   "text": {
     "base": {
-      "font-size": { "$type": "dimension", "$value": { "value": 16, "unit": "px" } },
-      "line-height": { "$type": "dimension", "$value": { "value": 24, "unit": "px" } }
+      "font-size": { "$type": "dimension", "$value": "{type-metrics.en.body.md.font-size}" },
+      "line-height": { "$type": "dimension", "$value": "{type-metrics.en.body.md.line-height}" },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.body.md.letter-spacing}"
+      }
     }
   }
 }
 ```
 
-The Veli adapter maps the validated English typography graph to Tailwind's paired text variables:
+The Veli adapter maps the validated `text` collection to Tailwind's paired text variables:
 
 ```text
-typography.en.body.md.regular.fontSize   -> --veli-typography-en-body-md-regular-font-size   -> --text-base
-typography.en.body.md.regular.lineHeight -> --veli-typography-en-body-md-regular-line-height -> --text-base--line-height
+text.base.font-size      -> --veli-text-base-font-size      -> --text-base
+text.base.line-height    -> --veli-text-base-line-height    -> --text-base--line-height
+text.base.letter-spacing -> --veli-text-base-letter-spacing -> --text-base--letter-spacing
 ```
 
 Typography style composites export under `Typography-styles`:
@@ -328,11 +340,11 @@ Typography style composites export under `Typography-styles`:
 {
   "$type": "typography",
   "$value": {
-    "fontFamily": "Inter",
-    "fontWeight": 400,
-    "fontSize": "16px",
-    "lineHeight": "150%",
-    "letterSpacing": "0%"
+    "fontFamily": "{font.sans}",
+    "fontWeight": "{font-weight.regular}",
+    "fontSize": "{type-metrics.en.body.md.font-size}",
+    "lineHeight": "{type-metrics.en.body.md.line-height}",
+    "letterSpacing": "{type-metrics.en.body.md.letter-spacing}"
   }
 }
 ```

@@ -32,6 +32,7 @@ import {
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
+  fieldHelperTone,
   getFieldOptionalLabel,
   hasRenderableMessage,
   shouldShowFieldOptional,
@@ -44,6 +45,7 @@ import {
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
+  fieldInputAutofill,
 } from './field-shared.js';
 import { getTextFromReactNode, normalizeAccessibleText, warnDev } from './a11y.js';
 import { Tooltip, TooltipTrigger } from './tooltip.js';
@@ -68,7 +70,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 const comboboxOutlineFocusVisibleHide = `${outlineFieldStrokeFocusVisibleHide.input} has-[button[data-focus-visible]]:shadow-none has-[button[data-focus-visible]]:hover:shadow-none`;
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 rounded-md transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised forced-colors:outline forced-colors:outline-[CanvasText]',
+  'relative flex w-full items-center gap-2 rounded-field overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised forced-colors:outline forced-colors:outline-[CanvasText]',
   {
     variants: {
       appearance: { default: '', outline: '' },
@@ -166,7 +168,7 @@ const inlineSlotVariants = cva('relative z-[1] flex shrink-0 items-center justif
 });
 
 const inputElementVariants = cva(
-  'relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-default disabled:text-disabled disabled:placeholder:text-disabled [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]',
+  `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-default disabled:text-disabled disabled:placeholder:text-disabled ${fieldInputAutofill} [&:lang(dv)]:!font-[var(--veli-font-dhivehi-faseyha)]`,
   {
     variants: {
       size: {
@@ -213,7 +215,7 @@ const triggerButtonVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
@@ -483,7 +485,6 @@ export function ComboBox<T extends object, K extends Key = Key>({
                         className={twMerge(
                           fieldHeaderLabelVariants({ size, isDisabled }),
                           'min-w-0 wrap-anywhere',
-                          isDisabled && 'text-base-muted',
                         )}
                       >
                         {label}
@@ -622,7 +623,7 @@ export function ComboBox<T extends object, K extends Key = Key>({
 
               <div className="min-w-0 wrap-anywhere empty:hidden [&:not(:empty)]:pt-1">
                 <FieldMessage
-                  descriptionTone={isDisabled ? 'disabled' : 'muted'}
+                  descriptionTone={fieldHelperTone(isDisabled)}
                   isInvalid={isInvalid}
                   size={size ?? 'md'}
                   description={description}

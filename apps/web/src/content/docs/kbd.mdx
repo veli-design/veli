@@ -3,11 +3,11 @@ title: Kbd
 description: Keyboard key and shortcut display, with a group wrapper for multi-key combinations and a default or inverted treatment.
 ---
 
-import { KbdUsageDemo, KbdVariantsDemo } from '../../components/DocsExamples';
+import { KbdUsageDemo, KbdVariantsDemo } from '../../components/KbdExamples';
 
 # Kbd
 
-The `Kbd` component renders a single keyboard key, and `KbdGroup` composes several keys into a shortcut. Use them in menus, tooltips, and documentation to show keyboard affordances.
+The `Kbd` component renders a single keyboard key, and `KbdGroup` composes several keys into a shortcut. Use them in menus, tooltips, and documentation to show keyboard affordances. These components display shortcuts; they do not register keyboard handlers.
 
 ## Import
 
@@ -17,44 +17,122 @@ import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 
 ## Usage
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <KbdUsageDemo client:visible />
+<div className="preview preview--options mb-4">
+  <KbdUsageDemo client:load />
 </div>
 
 ```tsx
-<KbdGroup aria-label="Command K">
-  <Kbd>⌘</Kbd>
-  <Kbd>K</Kbd>
-</KbdGroup>
+import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
 
-<Kbd>Esc</Kbd>
+export default function KbdUsageDemo() {
+  return (
+    <KbdGroup dir="ltr" aria-label="Command K">
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+    </KbdGroup>
+  );
+}
 ```
 
 ## Variants
 
-`KbdGroup` propagates its `variant` to the keys it contains. Use `inverted` on dark surfaces.
+`KbdGroup` propagates its `variant` to direct `Kbd` children that do not already specify a variant. Nested wrappers are left unchanged. Both treatments use theme tokens and respond to the active light or dark theme; choose the treatment prescribed by the surrounding component.
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <KbdVariantsDemo client:visible />
+<div className="preview preview--options mb-4">
+  <KbdVariantsDemo client:load />
 </div>
+
+```tsx
+import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
+
+export default function KbdVariantsDemo() {
+  return (
+    <KbdGroup variant="default" dir="ltr" aria-label="Command Enter">
+      <Kbd>⌘</Kbd>
+      <Kbd>Enter</Kbd>
+    </KbdGroup>
+  );
+}
+```
 
 ## API Reference
 
 ### Kbd
 
-| Prop        | Type                      | Default     | Description                                     |
-| :---------- | :------------------------ | :---------- | :---------------------------------------------- |
-| `variant`   | `'default' \| 'inverted'` | `'default'` | Color treatment of the key.                     |
-| `children`  | `ReactNode`               | -           | Key label content (required).                   |
-| `className` | `string`                  | -           | Class override merged onto the `<kbd>` element. |
+Veli-specific props for a single keyboard key.
 
-All other `<kbd>` attributes are supported.
+| Prop        | Type                      | Default     | Description                                    |
+| :---------- | :------------------------ | :---------- | :--------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Color treatment of the key.                    |
+| `children`  | `ReactNode`               | —           | Latin key label or shortcut glyph (required).  |
+| `className` | `string`                  | —           | Classes merged with the key's default styling. |
+
+Latin keys use one size: 20px high, at least 20px wide, with 4px corners and 2px vertical / 4px horizontal padding. Longer labels such as `Page Down` expand without wrapping. Text uses 12px Caption Regular with a 16px line height; decorative icons are 12px.
 
 ### KbdGroup
 
-| Prop        | Type                      | Default     | Description                                                |
-| :---------- | :------------------------ | :---------- | :--------------------------------------------------------- |
-| `variant`   | `'default' \| 'inverted'` | `'default'` | Treatment applied to the group and propagated to each key. |
-| `className` | `string`                  | -           | Class override merged onto the group element.              |
+Veli-specific props for composing keys into a shortcut.
 
-For Dhivehi (`lang="dv"`) contexts, `Kbd` keeps key labels in the sans font so shortcut glyphs stay legible regardless of the surrounding text direction.
+| Prop        | Type                      | Default     | Description                                                                |
+| :---------- | :------------------------ | :---------- | :------------------------------------------------------------------------- |
+| `variant`   | `'default' \| 'inverted'` | `'default'` | Treatment propagated to direct `Kbd` children without an explicit variant. |
+| `className` | `string`                  | —           | Classes merged with the group's default styling.                           |
+
+The group uses a 2px gap and keeps its contents together. Allow a surrounding row to wrap between groups on narrow screens.
+
+### React Aria forwarded props
+
+Neither component wraps a React Aria primitive, so there are no forwarded React Aria props. They render native elements directly. Menu and Tooltip use their own React Aria integrations when consuming Kbd.
+
+### Native `<kbd>` props
+
+`Kbd` forwards `React.HTMLAttributes<HTMLElement>` to its `<kbd>` element. Common native props are listed below.
+
+| Prop         | Type                       | Default   | Description                                                                                                                  |
+| :----------- | :------------------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `lang`       | `string`                   | `'en'`    | Native language tag for Latin labels. Keep the English default in Dhivehi interfaces; Dhivehi key typography is unsupported. |
+| `dir`        | `'ltr' \| 'rtl' \| 'auto'` | Inherited | Direction of the key content.                                                                                                |
+| `id`         | `string`                   | —         | Native element identifier.                                                                                                   |
+| `title`      | `string`                   | —         | Additional text describing the key.                                                                                          |
+| `aria-label` | `string`                   | —         | Accessible name, useful for an icon-only key.                                                                                |
+
+Native `data-*`, other ARIA attributes, and DOM event handlers also pass through. The component does not register shortcuts or make the key focusable by default.
+
+### Native `<div>` props
+
+`KbdGroup` forwards `React.HTMLAttributes<HTMLDivElement>` to its group container.
+
+| Prop         | Type                       | Default   | Description                                                           |
+| :----------- | :------------------------- | :-------- | :-------------------------------------------------------------------- |
+| `children`   | `ReactNode`                | —         | Keys and any additional group content.                                |
+| `dir`        | `'ltr' \| 'rtl' \| 'auto'` | Inherited | Use `'ltr'` for modifier-first Latin shortcut order in an RTL layout. |
+| `lang`       | `string`                   | Inherited | Language of group content; each Kbd still defaults to `'en'`.         |
+| `role`       | `AriaRole`                 | `'group'` | Makes the container a nameable group by default.                      |
+| `aria-label` | `string`                   | —         | Accessible name describing a key combination.                         |
+| `id`         | `string`                   | —         | Native element identifier.                                            |
+
+Native `data-*`, other ARIA attributes, and DOM event handlers also pass through.
+
+## Language and direction
+
+Kbd supports Latin key labels and shortcut glyphs only; Dhivehi labels and typography are not supported. Keys default to `lang="en"` so Latin labels retain Inter and the 12px/16px metrics inside a Dhivehi provider. Keep this default when the surrounding interface uses `language="dv"`. The native `lang` attribute still passes through for compatibility, but setting `lang="dv"` activates shared Dhivehi typography outside the supported key geometry.
+
+Group direction inherits from the surrounding layout; use `dir="ltr"` to keep a Latin shortcut in modifier-first order in an RTL interface. The surrounding Menu can remain RTL.
+
+```tsx
+<div lang="dv" dir="rtl">
+  <KbdGroup dir="ltr" aria-label="Control Shift P">
+    <Kbd>Ctrl</Kbd>
+    <Kbd>Shift</Kbd>
+    <Kbd>P</Kbd>
+  </KbdGroup>
+</div>
+```
+
+Menu's string and array `shortcut` props already render Latin keys in an LTR group. For a small Tooltip, compose the label and an LTR `KbdGroup` with an 8px gap; large Tooltip designs do not include shortcuts.
+
+## Accessibility and behavior
+
+`Kbd` uses the native `<kbd>` element and is not focusable by default. Give a shortcut group an accessible name when its glyphs need explanation, and hide decorative SVG icons with `aria-hidden="true"`. For an icon-only standalone key, provide `aria-label` on the key.
+
+Neither component handles key presses, adds motion, or changes the tab order. Implement any shortcut behavior on the application action separately, and use `aria-keyshortcuts` on that action when appropriate. Menu and Tooltip retain their own focus, dismissal, and reduced-motion behavior.

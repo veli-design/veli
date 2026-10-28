@@ -1,86 +1,13 @@
-import { useState, type ReactNode } from 'react';
-import {
-  type DateValue,
-  getLocalTimeZone,
-  isWeekend,
-  parseDate,
-  today,
-} from '@internationalized/date';
+import { useState, useSyncExternalStore, type ReactNode } from 'react';
+import { parseDate } from '@internationalized/date';
+import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { I18nProvider } from 'react-aria-components';
-import { Calendar } from '@tradenetcorp/veli-ui/calendar';
 import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-
-const now = today(getLocalTimeZone());
-const disabledRanges = [
-  [now.add({ days: 4 }), now.add({ days: 7 })],
-  [now.add({ days: 12 }), now.add({ days: 14 })],
-  [now.add({ days: 24 }), now.add({ days: 27 })],
-] as const;
-
-const appointmentUnavailable = (date: DateValue) =>
-  isWeekend(date, 'en-GB') ||
-  disabledRanges.some(([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0);
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {
   return <I18nProvider locale="en-GB">{children}</I18nProvider>;
-}
-
-export function CalendarUsageDemo() {
-  return (
-    <DocsEnGbLocale>
-      <Calendar aria-label="Appointment calendar" className="mx-auto w-fit" />
-    </DocsEnGbLocale>
-  );
-}
-
-export function CalendarControlledDemo() {
-  const [value, setValue] = useState(() => parseDate('2026-04-30'));
-  const [focusedValue, setFocusedValue] = useState(value);
-
-  return (
-    <DocsEnGbLocale>
-      <div className="space-y-3">
-        <Calendar
-          aria-label="Controlled calendar"
-          className="mx-auto w-fit"
-          value={value}
-          focusedValue={focusedValue}
-          onFocusChange={setFocusedValue}
-          onChange={(nextValue) => {
-            setValue(nextValue);
-            setFocusedValue(nextValue);
-          }}
-        />
-        <p className="text-xs text-slate-500">Selected date: {value.toString()}</p>
-      </div>
-    </DocsEnGbLocale>
-  );
-}
-
-export function CalendarVariantsDemo() {
-  return (
-    <DocsEnGbLocale>
-      <div className="grid gap-4 xl:grid-cols-2">
-        <div className="space-y-3">
-          <CalendarControlledDemo />
-          <p className="text-xs text-slate-500">
-            Controlled selection with the current chosen date kept in view.
-          </p>
-        </div>
-        <div className="space-y-3">
-          <Calendar
-            aria-label="Unavailable dates calendar"
-            className="mx-auto w-fit"
-            minValue={now}
-            maxValue={now.add({ months: 2 })}
-            isDateUnavailable={appointmentUnavailable}
-          />
-          <p className="text-xs text-slate-500">Weekends and blackout ranges are unavailable.</p>
-        </div>
-      </div>
-    </DocsEnGbLocale>
-  );
 }
 
 export function DatePickerUsageDemo() {
@@ -120,5 +47,49 @@ export function DatePickerValidationDemo() {
         <DatePicker label="Service date" isInvalid errorMessage="Enter a valid service date." />
       </div>
     </DocsEnGbLocale>
+  );
+}
+
+function subscribeToDocsTheme(callback: () => void) {
+  window.addEventListener('veli:color-scheme-change', callback);
+  return () => window.removeEventListener('veli:color-scheme-change', callback);
+}
+function getDocsColorScheme(): VeliColorScheme {
+  const value = document.documentElement.dataset.colorScheme;
+  return value === 'light' || value === 'dark' ? value : 'system';
+}
+
+export function DatePickerRtlDemo() {
+  const [language, setLanguage] = useState('Dhivehi');
+  const colorScheme = useSyncExternalStore(
+    subscribeToDocsTheme,
+    getDocsColorScheme,
+    () => 'system' as const,
+  );
+  return (
+    <DocsPreview
+      codeKey={`date-picker-language-${language === 'Dhivehi' ? 'dv' : 'en'}`}
+      controls={
+        <DocsPreviewOption
+          label="Language"
+          value={language}
+          options={['English', 'Dhivehi']}
+          onChange={setLanguage}
+        />
+      }
+    >
+      <VeliProvider
+        language={language === 'Dhivehi' ? 'dv' : 'en'}
+        colorScheme={colorScheme}
+        className="w-full min-w-0 max-w-[282px]"
+      >
+        <DatePicker
+          label={language === 'Dhivehi' ? 'އެޕޮއިންޓްމަންޓް ތާރީޚު' : 'Appointment date'}
+          description={language === 'Dhivehi' ? 'އެހީތެރިވެދޭ ލިޔުން' : 'Helper text'}
+          defaultValue={parseDate('2026-10-15')}
+          isOptional
+        />
+      </VeliProvider>
+    </DocsPreview>
   );
 }

@@ -164,3 +164,19 @@ export function ButtonRtlDemo() {
     </DocsPreview>
   );
 }
+
+export function ButtonHighContrastDemo() {
+  return (
+    <div className="flex flex-wrap gap-3 rounded-xl bg-status-info-emphasis p-6">
+      <Button intent="secondary" highContrast>
+        Install now
+      </Button>
+      <Button intent="secondary" appearance="transparent" highContrast>
+        View details
+      </Button>
+      <Button intent="secondary" appearance="ghost" highContrast>
+        Later
+      </Button>
+    </div>
+  );
+}

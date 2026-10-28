@@ -1,0 +1,14 @@
+{
+  "previewComponents": 2,
+  "shortcutControls": true,
+  "variantControls": true,
+  "synchronizedCode": true,
+  "apiHeadings": [
+    "Kbd",
+    "KbdGroup",
+    "React Aria forwarded props",
+    "Native <kbd> props",
+    "Native <div> props"
+  ],
+  "errors": []
+}
