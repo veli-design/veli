@@ -46,7 +46,10 @@ test('Toast renders subtle and emphasis with Alert surfaces', () => {
     assert.match(emphasis, new RegExp(`text-alert-high-contrast-${intent}-description`));
     assert.match(emphasis, /rounded-3xl/);
     assert.match(emphasis, /data-slot="toast-icon"/);
-    assert.doesNotMatch(emphasis, /border border-base-subtle|text-base-muted|border-status-|bg-status-/);
+    assert.doesNotMatch(
+      emphasis,
+      /border border-base-subtle|text-base-muted|border-status-|bg-status-/,
+    );
   }
 
   const fallback = render({ description: 'Details' });
