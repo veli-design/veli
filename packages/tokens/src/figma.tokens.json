@@ -3888,6 +3888,43 @@
             }
           }
         }
+      },
+      "contrast": {
+        "alpha": {
+          "12": {
+            "$type": "color",
+            "$value": "#0000001f",
+            "$description": "OKLCH light: oklch(0% 0 0 / 0.12)\nOKLCH dark: oklch(100% 0 0 / 0.12)\nTint for buttons on high-contrast surfaces: darkens under light text in Light, lightens under dark text in Dark.",
+            "$extensions": {
+              "mode": {
+                "Light": "#0000001f",
+                "Dark": "#ffffff1f"
+              }
+            }
+          },
+          "20": {
+            "$type": "color",
+            "$value": "#00000033",
+            "$description": "OKLCH light: oklch(0% 0 0 / 0.20)\nOKLCH dark: oklch(100% 0 0 / 0.20)\nTint for buttons on high-contrast surfaces: darkens under light text in Light, lightens under dark text in Dark.",
+            "$extensions": {
+              "mode": {
+                "Light": "#00000033",
+                "Dark": "#ffffff33"
+              }
+            }
+          },
+          "28": {
+            "$type": "color",
+            "$value": "#00000047",
+            "$description": "OKLCH light: oklch(0% 0 0 / 0.28)\nOKLCH dark: oklch(100% 0 0 / 0.28)\nTint for buttons on high-contrast surfaces: darkens under light text in Light, lightens under dark text in Dark.",
+            "$extensions": {
+              "mode": {
+                "Light": "#00000047",
+                "Dark": "#ffffff47"
+              }
+            }
+          }
+        }
       }
     },
     "brand": {
@@ -6478,17 +6515,6 @@
             }
           }
         },
-        "disabled": {
-          "$type": "color",
-          "$value": "{color.brand.neutral.500}",
-          "$description": "",
-          "$extensions": {
-            "mode": {
-              "Light": "{color.brand.neutral.500}",
-              "Dark": "{color.brand.neutral.500}"
-            }
-          }
-        },
         "primary": {
           "emphasis": {
             "$type": "color",
@@ -6576,6 +6602,17 @@
                 "Light": "{color.brand.primary.1000}",
                 "Dark": "{color.brand.primary.500}"
               }
+            }
+          }
+        },
+        "disabled": {
+          "$type": "color",
+          "$value": "{color.brand.neutral.500}",
+          "$description": "",
+          "$extensions": {
+            "mode": {
+              "Light": "{color.brand.neutral.500}",
+              "Dark": "{color.brand.neutral.500}"
             }
           }
         },
@@ -7044,17 +7081,6 @@
             }
           }
         },
-        "disabled": {
-          "$type": "color",
-          "$value": "{color.brand.neutral.500}",
-          "$description": "",
-          "$extensions": {
-            "mode": {
-              "Light": "{color.brand.neutral.500}",
-              "Dark": "{color.brand.neutral.500}"
-            }
-          }
-        },
         "primary": {
           "emphasis": {
             "$type": "color",
@@ -7131,6 +7157,17 @@
                 "Light": "{color.brand.primary.100}",
                 "Dark": "{color.brand.primary.100}"
               }
+            }
+          }
+        },
+        "disabled": {
+          "$type": "color",
+          "$value": "{color.brand.neutral.500}",
+          "$description": "",
+          "$extensions": {
+            "mode": {
+              "Light": "{color.brand.neutral.500}",
+              "Dark": "{color.brand.neutral.500}"
             }
           }
         },
@@ -8013,6 +8050,113 @@
               "mode": {
                 "Light": "{color.brand.accent.600}",
                 "Dark": "{color.brand.accent.900}"
+              }
+            }
+          }
+        },
+        "onHighContrast": {
+          "secondary": {
+            "fill": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.100}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.100}",
+                    "Dark": "{color.brand.neutral.100}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.200}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.200}",
+                    "Dark": "{color.brand.neutral.200}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.300}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.300}",
+                    "Dark": "{color.brand.neutral.300}"
+                  }
+                }
+              },
+              "foreground": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1200}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1200}",
+                    "Dark": "{color.brand.neutral.1200}"
+                  }
+                }
+              }
+            },
+            "transparent": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.12}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.12}",
+                    "Dark": "{color.primitives.contrast.alpha.12}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.20}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.20}",
+                    "Dark": "{color.primitives.contrast.alpha.20}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.primitives.contrast.alpha.28}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.primitives.contrast.alpha.28}",
+                    "Dark": "{color.primitives.contrast.alpha.28}"
+                  }
+                }
+              },
+              "foreground": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.100}",
+                "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.100}",
+                    "Dark": "{color.brand.neutral.100}"
+                  }
+                }
+              }
+            }
+          },
+          "focus": {
+            "$type": "color",
+            "$value": "{color.brand.neutral.100}",
+            "$description": "Secondary button on a high-contrast surface (step 800 and above). Code applies it automatically from the surface; in Figma turn on onHighContrast.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.brand.neutral.100}",
+                "Dark": "{color.brand.neutral.100}"
               }
             }
           }
@@ -10093,6 +10237,14 @@
       "$extensions": {
         "mode": {}
       }
+    },
+    "dhivehi-regular": {
+      "$type": "string",
+      "$value": "Regular",
+      "$description": "Font style name for MV Faseyha. Faseyha is always Regular.",
+      "$extensions": {
+        "mode": {}
+      }
     }
   },
   "font": {
@@ -10112,10 +10264,26 @@
         "mode": {}
       }
     },
-    "dhivehi": {
-      "$type": "string",
-      "$value": "MV Typewriter",
-      "$description": "",
+    "dhivehi-regular": {
+      "$type": "fontFamily",
+      "$value": "MV Faseyha",
+      "$description": "Dhivehi Regular styles (Body, Caption).",
+      "$extensions": {
+        "mode": {}
+      }
+    },
+    "dhivehi-medium": {
+      "$type": "fontFamily",
+      "$value": "MV A Waheed",
+      "$description": "Dhivehi Medium styles. The font has one weight, named Bold.",
+      "$extensions": {
+        "mode": {}
+      }
+    },
+    "dhivehi-bold": {
+      "$type": "fontFamily",
+      "$value": "MV Aaamu FK",
+      "$description": "Dhivehi Bold styles (Display/1, Display/2).",
       "$extensions": {
         "mode": {}
       }
@@ -10285,6 +10453,17 @@
         "unit": "px"
       },
       "$description": "",
+      "$extensions": {
+        "mode": {}
+      }
+    },
+    "field": {
+      "$type": "dimension",
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      },
+      "$description": "Corner radius of input fields: Input, TextArea, Search (default variant), Select, Combobox, Datepicker and PasswordInput.",
       "$extensions": {
         "mode": {}
       }
@@ -10791,10 +10970,7 @@
     "xs": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 12,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.caption.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10802,10 +10978,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.caption.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.caption.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10815,10 +10996,7 @@
     "sm": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.sm.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10826,10 +11004,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.sm.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.body.sm.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10839,10 +11022,7 @@
     "base": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.md.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10850,10 +11030,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 24,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.md.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.body.md.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10863,10 +11048,7 @@
     "lg": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 18,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.lg.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10874,10 +11056,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 26,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.body.lg.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.body.lg.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10887,10 +11074,7 @@
     "xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.subtitle.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10898,10 +11082,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 28,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.subtitle.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.subtitle.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10911,10 +11100,7 @@
     "2xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 24,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.title.2.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10922,10 +11108,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 32,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.title.2.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.title.2.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10935,10 +11126,7 @@
     "3xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 28,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.title.1.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10946,10 +11134,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 38,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.title.1.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.title.1.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10959,10 +11152,7 @@
     "4xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 32,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.4.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10970,10 +11160,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 44,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.4.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.heading.4.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10983,10 +11178,7 @@
     "5xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 36,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.3.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -10994,10 +11186,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 48,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.3.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.heading.3.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11007,10 +11204,7 @@
     "6xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 40,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.2.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11018,10 +11212,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 52,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.2.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.heading.2.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11031,10 +11230,7 @@
     "7xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 48,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.1.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11042,10 +11238,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 68,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.heading.1.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.heading.1.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11055,10 +11256,7 @@
     "8xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 56,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.display.md.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11066,10 +11264,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 76,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.display.md.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.display.md.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11079,10 +11282,7 @@
     "9xl": {
       "font-size": {
         "$type": "dimension",
-        "$value": {
-          "value": 64,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.display.lg.font-size}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11090,10 +11290,15 @@
       },
       "line-height": {
         "$type": "dimension",
-        "$value": {
-          "value": 84,
-          "unit": "px"
-        },
+        "$value": "{type-metrics.en.display.lg.line-height}",
+        "$description": "",
+        "$extensions": {
+          "mode": {}
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{type-metrics.en.display.lg.letter-spacing}",
         "$description": "",
         "$extensions": {
           "mode": {}
@@ -11244,6 +11449,1174 @@
       }
     }
   },
+  "type-metrics": {
+    "en": {
+      "display": {
+        "lg": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 64,
+              "unit": "px"
+            },
+            "$description": "Type/Display/lg, all weights. Same value as text/9xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 84,
+              "unit": "px"
+            },
+            "$description": "Type/Display/lg, all weights. Same value as text/9xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -1.92,
+              "unit": "px"
+            },
+            "$description": "Type/Display/lg, all weights. Same value as text/9xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "md": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 56,
+              "unit": "px"
+            },
+            "$description": "Type/Display/md, all weights. Same value as text/8xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 76,
+              "unit": "px"
+            },
+            "$description": "Type/Display/md, all weights. Same value as text/8xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -1.12,
+              "unit": "px"
+            },
+            "$description": "Type/Display/md, all weights. Same value as text/8xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      },
+      "heading": {
+        "1": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 48,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/1, all weights. Same value as text/7xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 64,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/1, all weights. Same value as text/7xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -0.96,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/1, all weights. Same value as text/7xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "2": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 40,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/2, all weights. Same value as text/6xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 52,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/2, all weights. Same value as text/6xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -0.4,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/2, all weights. Same value as text/6xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "3": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 36,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/3, all weights. Same value as text/5xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 48,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/3, all weights. Same value as text/5xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -0.36,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/3, all weights. Same value as text/5xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "4": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 32,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/4, all weights. Same value as text/4xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 44,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/4, all weights. Same value as text/4xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -0.32,
+              "unit": "px"
+            },
+            "$description": "Type/Heading/4, all weights. Same value as text/4xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      },
+      "title": {
+        "1": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 28,
+              "unit": "px"
+            },
+            "$description": "Type/Title/1, all weights. Same value as text/3xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 36,
+              "unit": "px"
+            },
+            "$description": "Type/Title/1, all weights. Same value as text/3xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": -0.28,
+              "unit": "px"
+            },
+            "$description": "Type/Title/1, all weights. Same value as text/3xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "2": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 24,
+              "unit": "px"
+            },
+            "$description": "Type/Title/2, all weights. Same value as text/2xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 32,
+              "unit": "px"
+            },
+            "$description": "Type/Title/2, all weights. Same value as text/2xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0,
+              "unit": "px"
+            },
+            "$description": "Type/Title/2, all weights. Same value as text/2xl.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      },
+      "subtitle": {
+        "font-size": {
+          "$type": "dimension",
+          "$value": {
+            "value": 20,
+            "unit": "px"
+          },
+          "$description": "Type/Subtitle, all weights. Same value as text/xl.",
+          "$extensions": {
+            "mode": {}
+          }
+        },
+        "line-height": {
+          "$type": "dimension",
+          "$value": {
+            "value": 28,
+            "unit": "px"
+          },
+          "$description": "Type/Subtitle, all weights. Same value as text/xl.",
+          "$extensions": {
+            "mode": {}
+          }
+        },
+        "letter-spacing": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          },
+          "$description": "Type/Subtitle, all weights. Same value as text/xl.",
+          "$extensions": {
+            "mode": {}
+          }
+        }
+      },
+      "body": {
+        "lg": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 18,
+              "unit": "px"
+            },
+            "$description": "Type/Body/lg, all weights. Same value as text/lg.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 28,
+              "unit": "px"
+            },
+            "$description": "Type/Body/lg, all weights. Same value as text/lg.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0,
+              "unit": "px"
+            },
+            "$description": "Type/Body/lg, all weights. Same value as text/lg.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "md": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 16,
+              "unit": "px"
+            },
+            "$description": "Type/Body/md, all weights. Same value as text/base.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 24,
+              "unit": "px"
+            },
+            "$description": "Type/Body/md, all weights. Same value as text/base.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0,
+              "unit": "px"
+            },
+            "$description": "Type/Body/md, all weights. Same value as text/base.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "sm": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 14,
+              "unit": "px"
+            },
+            "$description": "Type/Body/sm, all weights. Same value as text/sm.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 20,
+              "unit": "px"
+            },
+            "$description": "Type/Body/sm, all weights. Same value as text/sm.",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0,
+              "unit": "px"
+            },
+            "$description": "Type/Body/sm, all weights. Same value as text/sm.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      },
+      "caption": {
+        "font-size": {
+          "$type": "dimension",
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          },
+          "$description": "Type/Caption, all weights. Same value as text/xs.",
+          "$extensions": {
+            "mode": {}
+          }
+        },
+        "line-height": {
+          "$type": "dimension",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$description": "Type/Caption, all weights. Same value as text/xs.",
+          "$extensions": {
+            "mode": {}
+          }
+        },
+        "letter-spacing": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0.18,
+            "unit": "px"
+          },
+          "$description": "Type/Caption, all weights. Same value as text/xs.",
+          "$extensions": {
+            "mode": {}
+          }
+        }
+      }
+    },
+    "dv": {
+      "display": {
+        "1": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 69,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 88,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Medium. Rounded from 128% (88.32px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": -0.69,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Medium. From -1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          },
+          "bold": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 64,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Bold (MV Aaamu FK Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 96,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Bold. Rounded from 150% (96px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": -0.64,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/1/Bold. From -1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "2": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 62,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 80,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Medium. Rounded from 129% (79.98px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": -0.62,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Medium. From -1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          },
+          "bold": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 57,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Bold (MV Aaamu FK Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 88,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Bold. Rounded from 155% (88.35px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": -0.57,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Display/2/Bold. From -1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        }
+      },
+      "heading": {
+        "1": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 52,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/1/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 72,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/1/Medium. Rounded from 138% (71.76px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/1/Medium. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "2": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 46,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/2/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 62,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/2/Medium. Rounded from 135% (62.1px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/2/Medium. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "3": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 39,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/3/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 52,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/3/Medium. Rounded from 134% (52.26px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/3/Medium. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "4": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 35,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/4/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 48,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/4/Medium. Rounded from 136% (47.6px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Heading/4/Medium. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        }
+      },
+      "title": {
+        "1": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 32,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/1/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 48,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/1/Medium. Rounded from 149% (47.68px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": -0.32,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/1/Medium. From -1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "2": {
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 27,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/2/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 40,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/2/Medium. Rounded from 147% (39.69px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Title/2/Medium. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        }
+      },
+      "subtitle": {
+        "medium": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 24,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Subtitle/Medium (MV A Waheed Bold).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 32,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Subtitle/Medium. Rounded from 135% (32.4px).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0.24,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Subtitle/Medium. From 1%.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      },
+      "body": {
+        "lg": {
+          "regular": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 19,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Regular (MV Faseyha Regular).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 36,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Regular. Rounded from 187% (35.53px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Regular. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          },
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 21,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 36,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Medium. Rounded from 170% (35.7px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0.21,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/lg/Medium. From 1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "md": {
+          "regular": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 17,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Regular (MV Faseyha Regular).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 32,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Regular. Rounded from 186% (31.62px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Regular. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          },
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 19,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 32,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Medium. Rounded from 171% (32.49px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0.19,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/md/Medium. From 1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        },
+        "sm": {
+          "regular": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 16,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Regular (MV Faseyha Regular).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 28,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Regular. Rounded from 178% (28.48px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Regular. From 0%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          },
+          "medium": {
+            "font-size": {
+              "$type": "dimension",
+              "$value": {
+                "value": 17,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Medium (MV A Waheed Bold).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "line-height": {
+              "$type": "dimension",
+              "$value": {
+                "value": 28,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Medium. Rounded from 162% (27.54px).",
+              "$extensions": {
+                "mode": {}
+              }
+            },
+            "letter-spacing": {
+              "$type": "dimension",
+              "$value": {
+                "value": 0.17,
+                "unit": "px"
+              },
+              "$description": "Dhivehi/Body/sm/Medium. From 1%.",
+              "$extensions": {
+                "mode": {}
+              }
+            }
+          }
+        }
+      },
+      "caption": {
+        "regular": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 14,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Regular (MV Faseyha Regular).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 24,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Regular. Rounded from 170% (23.8px).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0.14,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Regular. From 1%.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        },
+        "medium": {
+          "font-size": {
+            "$type": "dimension",
+            "$value": {
+              "value": 15,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Medium (MV A Waheed Bold).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "line-height": {
+            "$type": "dimension",
+            "$value": {
+              "value": 24,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Medium. Rounded from 157% (23.55px).",
+            "$extensions": {
+              "mode": {}
+            }
+          },
+          "letter-spacing": {
+            "$type": "dimension",
+            "$value": {
+              "value": 0.3,
+              "unit": "px"
+            },
+            "$description": "Dhivehi/Caption/Medium. From 2%.",
+            "$extensions": {
+              "mode": {}
+            }
+          }
+        }
+      }
+    }
+  },
   "Typography-styles": {
     "Type": {
       "Display": {
@@ -11252,11 +12625,11 @@
             "$type": "typography",
             "$value": {
               "fontFamily": "{font.sans}",
-              "fontWeight": 400,
-              "fontStyle": "{typography.font-weight.regular}",
-              "fontSize": "{blur.3xl}",
-              "lineHeight": "132%",
-              "letterSpacing": "-3%",
+              "fontWeight": "{font-weight.regular}",
+              "fontStyle": "normal",
+              "fontSize": "{type-metrics.en.display.lg.font-size}",
+              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11276,15 +12649,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 64,
-                "unit": "px"
-              },
-              "lineHeight": "132%",
-              "letterSpacing": "-3%",
+              "fontSize": "{type-metrics.en.display.lg.font-size}",
+              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11304,15 +12674,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 64,
-                "unit": "px"
-              },
-              "lineHeight": "125%",
-              "letterSpacing": "-3%",
+              "fontSize": "{type-metrics.en.display.lg.font-size}",
+              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11332,15 +12699,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 64,
-                "unit": "px"
-              },
-              "lineHeight": "132%",
-              "letterSpacing": "-3%",
+              "fontSize": "{type-metrics.en.display.lg.font-size}",
+              "lineHeight": "{type-metrics.en.display.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.display.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11362,15 +12726,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 56,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.display.md.font-size}",
+              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "letterSpacing": "{type-metrics.en.display.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11390,15 +12751,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 56,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.display.md.font-size}",
+              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "letterSpacing": "{type-metrics.en.display.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11418,15 +12776,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 56,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.display.md.font-size}",
+              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "letterSpacing": "{type-metrics.en.display.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11446,15 +12801,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 56,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.display.md.font-size}",
+              "lineHeight": "{type-metrics.en.display.md.line-height}",
+              "letterSpacing": "{type-metrics.en.display.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11478,15 +12830,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 48,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.heading.1.font-size}",
+              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11506,15 +12855,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 48,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.heading.1.font-size}",
+              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11534,15 +12880,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 48,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.heading.1.font-size}",
+              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11562,15 +12905,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 48,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-2%",
+              "fontSize": "{type-metrics.en.heading.1.font-size}",
+              "lineHeight": "{type-metrics.en.heading.1.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11592,15 +12932,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 40,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.2.font-size}",
+              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11620,15 +12957,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 40,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.2.font-size}",
+              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11648,15 +12982,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 40,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.2.font-size}",
+              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11676,15 +13007,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 40,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.2.font-size}",
+              "lineHeight": "{type-metrics.en.heading.2.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11706,15 +13034,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 36,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.3.font-size}",
+              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11734,15 +13059,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 36,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.3.font-size}",
+              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11762,15 +13084,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 36,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.3.font-size}",
+              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11790,15 +13109,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 36,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.3.font-size}",
+              "lineHeight": "{type-metrics.en.heading.3.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.3.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11820,15 +13136,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 32,
-                "unit": "px"
-              },
-              "lineHeight": "136%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.4.font-size}",
+              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11848,15 +13161,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 32,
-                "unit": "px"
-              },
-              "lineHeight": "136%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.4.font-size}",
+              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11876,15 +13186,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 32,
-                "unit": "px"
-              },
-              "lineHeight": "136%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.4.font-size}",
+              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11904,15 +13211,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 32,
-                "unit": "px"
-              },
-              "lineHeight": "136%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.heading.4.font-size}",
+              "lineHeight": "{type-metrics.en.heading.4.line-height}",
+              "letterSpacing": "{type-metrics.en.heading.4.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11936,15 +13240,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 28,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.title.1.font-size}",
+              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "letterSpacing": "{type-metrics.en.title.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11964,15 +13265,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 28,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.title.1.font-size}",
+              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "letterSpacing": "{type-metrics.en.title.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -11992,15 +13290,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 28,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.title.1.font-size}",
+              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "letterSpacing": "{type-metrics.en.title.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12020,15 +13315,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 28,
-                "unit": "px"
-              },
-              "lineHeight": "130%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.en.title.1.font-size}",
+              "lineHeight": "{type-metrics.en.title.1.line-height}",
+              "letterSpacing": "{type-metrics.en.title.1.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12050,15 +13342,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 24,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.title.2.font-size}",
+              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "letterSpacing": "{type-metrics.en.title.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12078,15 +13367,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 24,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.title.2.font-size}",
+              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "letterSpacing": "{type-metrics.en.title.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12106,15 +13392,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 24,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.title.2.font-size}",
+              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "letterSpacing": "{type-metrics.en.title.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12134,15 +13417,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 24,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.title.2.font-size}",
+              "lineHeight": "{type-metrics.en.title.2.line-height}",
+              "letterSpacing": "{type-metrics.en.title.2.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12165,15 +13445,12 @@
         "Regular": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 400,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.regular}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 20,
-              "unit": "px"
-            },
-            "lineHeight": "142%",
-            "letterSpacing": "0%",
+            "fontSize": "{type-metrics.en.subtitle.font-size}",
+            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12193,15 +13470,12 @@
         "Medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 500,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.medium}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 20,
-              "unit": "px"
-            },
-            "lineHeight": "142%",
-            "letterSpacing": "0%",
+            "fontSize": "{type-metrics.en.subtitle.font-size}",
+            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12221,15 +13495,12 @@
         "Semibold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 600,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.semibold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 20,
-              "unit": "px"
-            },
-            "lineHeight": "142%",
-            "letterSpacing": "0%",
+            "fontSize": "{type-metrics.en.subtitle.font-size}",
+            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12249,15 +13520,12 @@
         "Bold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 700,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.bold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 20,
-              "unit": "px"
-            },
-            "lineHeight": "142%",
-            "letterSpacing": "0%",
+            "fontSize": "{type-metrics.en.subtitle.font-size}",
+            "lineHeight": "{type-metrics.en.subtitle.line-height}",
+            "letterSpacing": "{type-metrics.en.subtitle.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12280,15 +13548,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 18,
-                "unit": "px"
-              },
-              "lineHeight": "153%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.lg.font-size}",
+              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12308,15 +13573,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 18,
-                "unit": "px"
-              },
-              "lineHeight": "153%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.lg.font-size}",
+              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12336,15 +13598,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 18,
-                "unit": "px"
-              },
-              "lineHeight": "153%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.lg.font-size}",
+              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12364,15 +13623,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 18,
-                "unit": "px"
-              },
-              "lineHeight": "153%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.lg.font-size}",
+              "lineHeight": "{type-metrics.en.body.lg.line-height}",
+              "letterSpacing": "{type-metrics.en.body.lg.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12394,15 +13650,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 16,
-                "unit": "px"
-              },
-              "lineHeight": "150%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.md.font-size}",
+              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "letterSpacing": "{type-metrics.en.body.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12422,15 +13675,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 16,
-                "unit": "px"
-              },
-              "lineHeight": "150%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.md.font-size}",
+              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "letterSpacing": "{type-metrics.en.body.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12450,15 +13700,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 16,
-                "unit": "px"
-              },
-              "lineHeight": "150%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.md.font-size}",
+              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "letterSpacing": "{type-metrics.en.body.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12478,15 +13725,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 16,
-                "unit": "px"
-              },
-              "lineHeight": "150%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.md.font-size}",
+              "lineHeight": "{type-metrics.en.body.md.line-height}",
+              "letterSpacing": "{type-metrics.en.body.md.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12508,15 +13752,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": "145%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12536,15 +13777,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": "145%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12564,15 +13802,12 @@
           "Semibold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 600,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.semibold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": "145%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12592,15 +13827,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 700,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": "145%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12623,15 +13855,12 @@
         "Regular": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 400,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.regular}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 12,
-              "unit": "px"
-            },
-            "lineHeight": "134%",
-            "letterSpacing": "1.5%",
+            "fontSize": "{type-metrics.en.caption.font-size}",
+            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "letterSpacing": "{type-metrics.en.caption.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12651,15 +13880,12 @@
         "Medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 500,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.medium}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 12,
-              "unit": "px"
-            },
-            "lineHeight": "134%",
-            "letterSpacing": "1.5%",
+            "fontSize": "{type-metrics.en.caption.font-size}",
+            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "letterSpacing": "{type-metrics.en.caption.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12679,15 +13905,12 @@
         "Semibold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 600,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.semibold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 12,
-              "unit": "px"
-            },
-            "lineHeight": "134%",
-            "letterSpacing": "1.5%",
+            "fontSize": "{type-metrics.en.caption.font-size}",
+            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "letterSpacing": "{type-metrics.en.caption.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12707,15 +13930,12 @@
         "Bold": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "Inter",
-            "fontWeight": 700,
+            "fontFamily": "{font.sans}",
+            "fontWeight": "{font-weight.bold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 12,
-              "unit": "px"
-            },
-            "lineHeight": "134%",
-            "letterSpacing": "1.5%",
+            "fontSize": "{type-metrics.en.caption.font-size}",
+            "lineHeight": "{type-metrics.en.caption.line-height}",
+            "letterSpacing": "{type-metrics.en.caption.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -12740,15 +13960,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 69,
-                "unit": "px"
-              },
-              "lineHeight": "128%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.dv.display.1.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.display.1.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.display.1.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12768,15 +13985,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV Aaamu FK",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-bold}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 64,
-                "unit": "px"
-              },
-              "lineHeight": "150%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.dv.display.1.bold.font-size}",
+              "lineHeight": "{type-metrics.dv.display.1.bold.line-height}",
+              "letterSpacing": "{type-metrics.dv.display.1.bold.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12798,15 +14012,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 62,
-                "unit": "px"
-              },
-              "lineHeight": "129%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.dv.display.2.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.display.2.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.display.2.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12826,15 +14037,12 @@
           "Bold": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV Aaamu FK",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-bold}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 57,
-                "unit": "px"
-              },
-              "lineHeight": "155%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.dv.display.2.bold.font-size}",
+              "lineHeight": "{type-metrics.dv.display.2.bold.line-height}",
+              "letterSpacing": "{type-metrics.dv.display.2.bold.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12858,15 +14066,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 52,
-                "unit": "px"
-              },
-              "lineHeight": "138%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.dv.heading.1.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.heading.1.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.heading.1.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12888,15 +14093,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 46,
-                "unit": "px"
-              },
-              "lineHeight": "135%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.dv.heading.2.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.heading.2.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.heading.2.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12918,15 +14120,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 39,
-                "unit": "px"
-              },
-              "lineHeight": "134%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.dv.heading.3.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.heading.3.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.heading.3.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12948,15 +14147,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 35,
-                "unit": "px"
-              },
-              "lineHeight": "136%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.dv.heading.4.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.heading.4.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.heading.4.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -12980,15 +14176,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 32,
-                "unit": "px"
-              },
-              "lineHeight": "149%",
-              "letterSpacing": "-1%",
+              "fontSize": "{type-metrics.dv.title.1.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.title.1.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.title.1.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13010,15 +14203,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 27,
-                "unit": "px"
-              },
-              "lineHeight": "147%",
-              "letterSpacing": "0%",
+              "fontSize": "{type-metrics.dv.title.2.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.title.2.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.title.2.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13041,15 +14231,12 @@
         "Medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "MV A Waheed",
-            "fontWeight": 700,
+            "fontFamily": "{font.dhivehi-medium}",
+            "fontWeight": "{font-weight.bold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 24,
-              "unit": "px"
-            },
-            "lineHeight": "135%",
-            "letterSpacing": "1%",
+            "fontSize": "{type-metrics.dv.subtitle.medium.font-size}",
+            "lineHeight": "{type-metrics.dv.subtitle.medium.line-height}",
+            "letterSpacing": "{type-metrics.dv.subtitle.medium.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -13072,15 +14259,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV Faseyha",
+              "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": 400,
-              "fontStyle": "normal",
-              "fontSize": {
-                "value": 19,
-                "unit": "px"
-              },
-              "lineHeight": "187%",
-              "letterSpacing": "0%",
+              "fontStyle": "{font-weight.dhivehi-regular}",
+              "fontSize": "{type-metrics.dv.body.lg.regular.font-size}",
+              "lineHeight": "{type-metrics.dv.body.lg.regular.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.lg.regular.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13100,15 +14284,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 21,
-                "unit": "px"
-              },
-              "lineHeight": "170%",
-              "letterSpacing": "1%",
+              "fontSize": "{type-metrics.dv.body.lg.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.body.lg.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.lg.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13130,15 +14311,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV Faseyha",
+              "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": 400,
-              "fontStyle": "normal",
-              "fontSize": {
-                "value": 17,
-                "unit": "px"
-              },
-              "lineHeight": "186%",
-              "letterSpacing": "0%",
+              "fontStyle": "{font-weight.dhivehi-regular}",
+              "fontSize": "{type-metrics.dv.body.md.regular.font-size}",
+              "lineHeight": "{type-metrics.dv.body.md.regular.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.md.regular.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13158,15 +14336,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 19,
-                "unit": "px"
-              },
-              "lineHeight": "171%",
-              "letterSpacing": "1%",
+              "fontSize": "{type-metrics.dv.body.md.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.body.md.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.md.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13188,15 +14363,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV Faseyha",
+              "fontFamily": "{font.dhivehi-regular}",
               "fontWeight": 400,
-              "fontStyle": "normal",
-              "fontSize": {
-                "value": 16,
-                "unit": "px"
-              },
-              "lineHeight": "178%",
-              "letterSpacing": "0%",
+              "fontStyle": "{font-weight.dhivehi-regular}",
+              "fontSize": "{type-metrics.dv.body.sm.regular.font-size}",
+              "lineHeight": "{type-metrics.dv.body.sm.regular.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.sm.regular.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13216,15 +14388,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "MV A Waheed",
-              "fontWeight": 700,
+              "fontFamily": "{font.dhivehi-medium}",
+              "fontWeight": "{font-weight.bold}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 17,
-                "unit": "px"
-              },
-              "lineHeight": "162%",
-              "letterSpacing": "1%",
+              "fontSize": "{type-metrics.dv.body.sm.medium.font-size}",
+              "lineHeight": "{type-metrics.dv.body.sm.medium.line-height}",
+              "letterSpacing": "{type-metrics.dv.body.sm.medium.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13247,15 +14416,12 @@
         "Regular": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "MV Faseyha",
+            "fontFamily": "{font.dhivehi-regular}",
             "fontWeight": 400,
-            "fontStyle": "normal",
-            "fontSize": {
-              "value": 14,
-              "unit": "px"
-            },
-            "lineHeight": "170%",
-            "letterSpacing": "1%",
+            "fontStyle": "{font-weight.dhivehi-regular}",
+            "fontSize": "{type-metrics.dv.caption.regular.font-size}",
+            "lineHeight": "{type-metrics.dv.caption.regular.line-height}",
+            "letterSpacing": "{type-metrics.dv.caption.regular.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -13275,15 +14441,12 @@
         "Medium": {
           "$type": "typography",
           "$value": {
-            "fontFamily": "MV A Waheed",
-            "fontWeight": 700,
+            "fontFamily": "{font.dhivehi-medium}",
+            "fontWeight": "{font-weight.bold}",
             "fontStyle": "normal",
-            "fontSize": {
-              "value": 15,
-              "unit": "px"
-            },
-            "lineHeight": "157%",
-            "letterSpacing": "2%",
+            "fontSize": "{type-metrics.dv.caption.medium.font-size}",
+            "lineHeight": "{type-metrics.dv.caption.medium.line-height}",
+            "letterSpacing": "{type-metrics.dv.caption.medium.letter-spacing}",
             "paragraphSpacing": {
               "value": 0,
               "unit": "px"
@@ -13308,21 +14471,12 @@
           "Regular": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 400,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.regular}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": {
-                "value": 20,
-                "unit": "px"
-              },
-              "letterSpacing": {
-                "value": 0,
-                "unit": "px"
-              },
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13342,21 +14496,12 @@
           "Medium": {
             "$type": "typography",
             "$value": {
-              "fontFamily": "Inter",
-              "fontWeight": 500,
+              "fontFamily": "{font.sans}",
+              "fontWeight": "{font-weight.medium}",
               "fontStyle": "normal",
-              "fontSize": {
-                "value": 14,
-                "unit": "px"
-              },
-              "lineHeight": {
-                "value": 20,
-                "unit": "px"
-              },
-              "letterSpacing": {
-                "value": 0,
-                "unit": "px"
-              },
+              "fontSize": "{type-metrics.en.body.sm.font-size}",
+              "lineHeight": "{type-metrics.en.body.sm.line-height}",
+              "letterSpacing": "{type-metrics.en.body.sm.letter-spacing}",
               "paragraphSpacing": {
                 "value": 0,
                 "unit": "px"
@@ -13892,9 +15037,10 @@
         "spacing",
         "text",
         "tracking",
-        "_docs"
+        "_docs",
+        "type-metrics"
       ],
-      "createdAt": "2026-10-07T18:00:20.674Z"
+      "createdAt": "2026-10-20T13:23:00.085Z"
     }
   }
 }

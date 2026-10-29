@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.17.0
+
+_Released 2026-10-22._
+
+### Added
+
+- Add Radio size="xl" with larger label and helper text, matching the existing Veli typography tokens.
+- Add explicit `highContrast` support for secondary Button appearances, with Light/Dark state tokens and a visible keyboard focus ring.
+
+### Changed
+
+- Restrict Tooltip tone to size="lg" in TypeScript. Remove tone from small or default-size tooltips; legacy JavaScript inputs remain neutral. TooltipProps is now a discriminated type alias; use an intersection instead of interface inheritance.
+- Require `@tradenetcorp/veli-tokens` `^0.10.0` so every supported tokens version includes the high-contrast Button colors. Upgrade tokens from `0.9.x` when upgrading Veli UI.
+
+### Fixed
+
+- Correct the selected, disabled large Radio ring to use a 2px border.
+- Keep small tooltips neutral in both themes while preserving large tooltip colors.
+- Match keyboard key typography and padding to the 20px design and keep long labels on one line; expose named shortcut groups to assistive technology.
+- Keep Search and ComboBox field surfaces, rounded corners, stroke or underline, and themed text colour when the browser autofills a value, instead of showing Chromium's blue autofill rectangle.
+
 ## 0.16.0
 
 _Released 2026-10-19._

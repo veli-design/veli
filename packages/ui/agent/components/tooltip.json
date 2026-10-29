@@ -39,7 +39,7 @@
   "limitations": [
     "Tooltip content must not be interactive.",
     "Only the large size renders an arrow.",
-    "Tone changes the large tooltip treatment; the small treatment is fixed."
+    "Pass tone only with size=lg (primary by default or secondary); small and default-size tooltips have one neutral treatment and accept no tone."
   ],
   "accessibility": [
     "Use a focusable trigger so keyboard users can reveal the tooltip.",

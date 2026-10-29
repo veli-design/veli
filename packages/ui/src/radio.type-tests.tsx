@@ -22,7 +22,7 @@ export function RadioTypeExpectations() {
         <Radio value="a" ref={rootRef} inputRef={inputRef} description="Option details" size="lg">
           A
         </Radio>
-        <Radio value="b" aria-label="B" isDisabled />
+        <Radio value="b" aria-label="B" isDisabled size="xl" />
       </RadioGroup>
       <RadioGroup isReadOnly defaultValue="a">
         {({ isInvalid }) => (
@@ -34,7 +34,7 @@ export function RadioTypeExpectations() {
       </RadioGroup>
       {/* @ts-expect-error Radio must belong to a group and have a value */}
       <Radio />
-      {/* @ts-expect-error Figma specifies medium and large sizes */}
+      {/* @ts-expect-error Figma specifies medium, large, and extra-large sizes */}
       <Radio value="a" size="sm" />
       {/* @ts-expect-error Veli excludes inline style overrides */}
       <Radio value="a" style={{ color: 'red' }} />

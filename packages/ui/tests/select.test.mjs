@@ -21,7 +21,7 @@ test('Select exposes the public composition API', () => {
 });
 
 test('Select trigger matches the Figma states', () => {
-  assert.match(source, /relative flex w-full items-center gap-2 rounded-md text-start/);
+  assert.match(source, /relative flex w-full items-center gap-2 rounded-field text-start/);
   assert.match(source, /\{\s*isDisabled: true,\s*className: 'bg-text-input-bg-hover',\s*\}/);
   assert.doesNotMatch(source, /bg-ash-alpha-200|text-input-stroke-disabled|border-\[1\.5px\]/);
   assert.match(source, /shadow-\[inset_0_0_0_1px_var\(--color-text-input-stroke\)\]/);
@@ -55,4 +55,50 @@ test('Select honors reduced motion', () => {
     /transition-transform duration-normal ease-in-out motion-reduce:transition-none/,
   );
   assert.match(source, /transition-colors duration-normal ease-out motion-reduce:transition-none/);
+});
+
+test('locked Select substitute submits the option id, not the label', () => {
+  const sidecar = JSON.parse(
+    readFileSync(join(packageDir, 'agent', 'components', 'select.json'), 'utf8'),
+  );
+  const locked = sidecar.avoidWhen.find((entry) => entry.useInstead?.includes('input'));
+  assert.ok(locked);
+  assert.match(locked.guidance, /hidden input/i);
+  assert.match(locked.guidance, /option id/i);
+  assert.match(locked.guidance, /no name/i);
+  assert.match(locked.guidance, /disabled Select/i);
+  assert.ok(
+    sidecar.approvedPatterns.some(
+      (pattern) => /nameless read-only Input/.test(pattern) && /hidden input/.test(pattern),
+    ),
+  );
+
+  const recipe = readFileSync(
+    join(packageDir, 'agent', 'recipes', 'locked-select-value.tsx'),
+    'utf8',
+  );
+  assert.match(recipe, /value=\{atoll\.name\}/);
+  assert.match(recipe, /isReadOnly/);
+  assert.match(recipe, /type="hidden"/);
+  assert.match(recipe, /name="atollId"/);
+  assert.match(recipe, /value=\{atoll\.id\}/);
+  assert.doesNotMatch(recipe, /<Input[^>]*\bname=/);
+
+  const docs = readFileSync(
+    join(packageDir, '..', '..', 'apps', 'web', 'src', 'content', 'docs', 'select.mdx'),
+    'utf8',
+  );
+  assert.match(docs, /## Locked value/);
+  assert.match(docs, /type="hidden" name="atollId" value=\{atoll\.id\}/);
+  assert.match(docs, /value=\{atoll\.name\} isReadOnly/);
+
+  const atoll = { id: '26', name: 'Kaafu Atoll' };
+  const wrong = new FormData();
+  wrong.set('atollId', atoll.name);
+  assert.equal(wrong.get('atollId'), 'Kaafu Atoll');
+
+  const right = new FormData();
+  right.set('atollId', atoll.id);
+  assert.equal(right.get('atollId'), '26');
+  assert.notEqual(right.get('atollId'), atoll.name);
 });

@@ -68,6 +68,14 @@ test('FieldError normalizes form-library and Standard Schema errors', () => {
   assert.match(source, /<ul className="list-disc ps-4">/);
 });
 
+test('shared field header and helper colours follow the Figma text tokens', () => {
+  const variants = readFileSync(join(packageDir, 'src', 'field-shared-variants.ts'), 'utf8');
+  assert.match(variants, /true: 'text-base-muted',\s*false: 'text-base-default'/);
+  assert.match(variants, /type-caption-regular text-danger-muted/);
+  assert.match(variants, /return isDisabled \? 'disabled' : 'muted'/);
+  assert.match(source, /tone: fieldHelperTone\(isDisabled\)/);
+});
+
 test('Field documents RadioGroup and CheckboxGroup composition via RAC slots', () => {
   // Composition contract: FieldLabel/Description remain usable as RAC slot children.
   assert.match(source, /htmlFor=\{htmlFor \?\? \(!insideRac \? field\?\.controlId : undefined\)\}/);

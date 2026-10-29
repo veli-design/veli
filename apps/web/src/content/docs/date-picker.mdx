@@ -7,6 +7,7 @@ import {
   DatePickerAppearancesDemo,
   DatePickerUsageDemo,
   DatePickerValidationDemo,
+  DatePickerRtlDemo,
 } from '../../components/DateExamples';
 
 # DatePicker
@@ -49,6 +50,8 @@ Type into the date segments, use the arrow keys to change a segment, or open the
 <DatePicker appearance="outline" label="Outline" />
 ```
 
+The field uses the `radius/field` token (10 px). The calendar popover is 316 px wide with 44 px day targets where space permits, and clamps to the viewport on narrow phones. Heights stay 36, 44, and 52 px for `sm`, `md`, and `lg`, including Dhivehi. The calendar icon is 20 px and the info icon is 16 px. The popover opens 4 px below the field.
+
 ## Validation
 
 When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `maxValue`, and `isDateUnavailable` limit selectable dates.
@@ -62,6 +65,8 @@ When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `m
 ```
 
 Give the field a `name` to submit its completed value as an ISO string. Use `value` and `onChange` for a controlled value, or `defaultValue` for an initial value. `granularity` adds editable time segments for date-time values.
+
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state. See [Forms](/patterns/forms/) for form-library integration.
 
 ## API Reference
 
@@ -129,8 +134,29 @@ Not forwarded from React Aria `DatePicker`:
 
 Each date segment is individually editable and focusable. The calendar button is a separate control. Tab reaches the field and button; arrow keys and typing edit segments; Escape closes the calendar and returns focus. Helper and error content are linked to the picker. The Today action remains disabled when today's date is unavailable.
 
-## RTL and language
+## RTL and Language
 
-Set `language` on `VeliProvider`. Segment order and calendar text follow the locale; Dhivehi uses the system's RTL font and direction. Calendar navigation mirrors in RTL, while date values remain semantic dates rather than formatted strings.
+Set `language` on `VeliProvider`. English and caller-supplied locales keep their date format. Dhivehi uses native RTL labels and calendar text, with an English Gregorian formatter scoped to its editable field to keep Latin day/month/year segments stable across browser engines. The numeric field runs LTR and aligns to the right. Calendar navigation mirrors in RTL, while date values remain semantic dates rather than formatted strings.
 
-When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state and spread them directly. Set `name` when a native submit should send an ISO 8601 string. See [Forms](/patterns/forms/).
+<div className="preview mb-4 rounded-lg border p-4">
+  <DatePickerRtlDemo client:load />
+</div>
+
+```tsx
+import { parseDate } from '@internationalized/date';
+import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function DatePickerLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <DatePicker
+        label="އެޕޮއިންޓްމަންޓް ތާރީޚު"
+        description="އެހީތެރިވެދޭ ލިޔުން"
+        defaultValue={parseDate('2026-10-15')}
+        isOptional
+      />
+    </VeliProvider>
+  );
+}
+```

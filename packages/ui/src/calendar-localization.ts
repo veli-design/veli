@@ -113,3 +113,12 @@ export function getDhivehiWeekdayLabel(day: string, weekdayStyle: 'narrow' | 'sh
 
   return dhivehiCalendarText.weekdaysShort[weekdayKey as WeekdayKey];
 }
+
+const calendarNavigationLabels = {
+  en: { previousMonth: 'Previous month', nextMonth: 'Next month', year: 'Year' },
+  dv: { previousMonth: 'ކުރީ މަސް', nextMonth: 'ދެން އޮތް މަސް', year: 'އަހަރު' },
+} as const;
+
+export function getCalendarNavigationLabels(language: CalendarLanguage) {
+  return calendarNavigationLabels[language];
+}

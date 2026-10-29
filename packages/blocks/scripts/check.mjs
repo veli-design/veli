@@ -1,24 +1,26 @@
 import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 import { getBlocks, packageRoot } from './catalog.mjs';
 
+const repositoryRoot = resolve(packageRoot, '../..');
 const blocks = getBlocks();
 const base = process.env.BLOCKS_BASE_REF;
 if (base) {
   for (const { manifest } of blocks) {
     const path = `packages/blocks/src/${manifest.id}`;
     const exists = execFileSync('git', ['ls-tree', base, '--', `${path}/manifest.json`], {
-      cwd: packageRoot,
+      cwd: repositoryRoot,
       encoding: 'utf8',
     }).trim();
     if (!exists) continue;
     const old = JSON.parse(
       execFileSync('git', ['show', `${base}:${path}/manifest.json`], {
-        cwd: packageRoot,
+        cwd: repositoryRoot,
         encoding: 'utf8',
       }),
     );
     const changed = execFileSync('git', ['diff', base, '--', path], {
-      cwd: packageRoot,
+      cwd: repositoryRoot,
       encoding: 'utf8',
     }).trim();
     if (changed) {
