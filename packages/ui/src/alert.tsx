@@ -210,36 +210,28 @@ export interface AlertActionsProps {
   className?: string;
 }
 
-// Only direct Veli ghost Buttons (including fragments) receive Alert's foreground.
-// Other actions retain their own colour, event handlers, and application semantics.
-function styleGhostActions(children: React.ReactNode, foreground: string): React.ReactNode {
+// High-contrast Alerts opt direct Veli Buttons into Button's highContrast styles.
+// Other controls keep their own colour, event handlers, and application semantics.
+function withHighContrastActions(children: React.ReactNode): React.ReactNode {
   return React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return child;
     if (child.type === React.Fragment) {
       const fragment = child as React.ReactElement<{ children?: React.ReactNode }>;
       return React.cloneElement(fragment, {
-        children: styleGhostActions(fragment.props.children, foreground),
+        children: withHighContrastActions(fragment.props.children),
       });
     }
     if (child.type !== Button) return child;
     const button = child as React.ReactElement<ButtonProps>;
-    if (button.props.appearance !== 'ghost') return child;
-    return React.cloneElement(button, {
-      className: twMerge(
-        foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
-        button.props.className,
-      ),
-    });
+    if (button.props.highContrast) return child;
+    return React.cloneElement(button, { highContrast: true });
   });
 }
 export function AlertActions({ children, className }: AlertActionsProps) {
-  const { appearance, intent, layout } = React.useContext(AlertContext);
+  const { appearance, layout } = React.useContext(AlertContext);
   return (
     <div data-slot="alert-actions" className={twMerge(alertActionsVariants({ layout }), className)}>
-      {appearance === 'highContrast'
-        ? styleGhostActions(children, alertIntentClasses[intent].foreground)
-        : children}
+      {appearance === 'highContrast' ? withHighContrastActions(children) : children}
     </div>
   );
 }
@@ -249,7 +241,7 @@ export interface AlertCloseButtonProps {
   className?: string;
 }
 export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCloseButtonProps) {
-  const { appearance, intent, layout, dismiss } = React.useContext(AlertContext);
+  const { appearance, layout, dismiss } = React.useContext(AlertContext);
   const { language } = useVeliLanguage();
   return (
     <Button
@@ -258,13 +250,12 @@ export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCl
       appearance="ghost"
       size="sm"
       iconOnly
+      highContrast={appearance === 'highContrast'}
       data-slot="alert-close"
       aria-label={ariaLabel ?? (language === 'dv' ? 'އެލާޓް ލައްޕާ' : 'Dismiss alert')}
       className={twMerge(
         'absolute end-2 shrink-0',
         layout === 'compact' ? 'top-1/2 -translate-y-1/2' : 'top-2 [&:lang(dv)]:top-3',
-        appearance === 'highContrast' && alertIntentClasses[intent].foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
         className,
       )}
       onPress={() => dismiss?.()}

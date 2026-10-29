@@ -28,6 +28,7 @@
     "Compose title, description, actions, and an optional close button.",
     "Choose layout default, stacked, or compact for action arrangement.",
     "Choose appearance light or highContrast for emphasis.",
+    "On highContrast, use secondary fill and ghost Buttons with highContrast (Alert.Actions and Alert.CloseButton apply it to direct Veli Buttons).",
     "Use alert live behavior only for dynamically inserted or updated messages.",
     "Use status live behavior for always-visible banners."
   ],

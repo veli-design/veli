@@ -103,15 +103,14 @@ test('the close Button has a localized name and never submits a form', () => {
   );
 });
 
-test('highContrast applies foreground to Veli ghost actions without tinting other controls', () => {
-  const html = render(
-    { appearance: 'highContrast', intent: 'info' },
+test('highContrast opts direct Veli Buttons into Button highContrast styles without tinting other controls', () => {
+  const html = render({ appearance: 'highContrast', intent: 'info' }, [
     h(
       Alert.Actions,
-      {},
+      { key: 'actions' },
       h(
         Button,
-        { size: 'sm', intent: 'secondary', appearance: 'transparent', 'data-test': 'primary' },
+        { size: 'sm', intent: 'secondary', appearance: 'fill', 'data-test': 'primary' },
         'Track',
       ),
       h(
@@ -131,13 +130,18 @@ test('highContrast applies foreground to Veli ghost actions without tinting othe
       ),
       h('a', { href: '/track', className: 'text-primary' }, 'Track link'),
     ),
-  );
+    h(Alert.CloseButton, { key: 'close' }),
+  ]);
   const primary = html.match(/<button[^>]*data-test="primary"[^>]*>/)?.[0];
   const ghost = html.match(/<button[^>]*data-test="ghost"[^>]*>/)?.[0];
+  const close = html.match(/<button[^>]*data-slot="alert-close"[^>]*>/)?.[0];
+  assert.match(primary, /button-onhighcontrast-secondary-fill/);
   assert.doesNotMatch(primary, /text-alert-/);
-  assert.match(ghost, /text-alert-high-contrast-info-foreground/);
-  assert.match(ghost, /data-\[hovered\]:text-base-strong/);
+  assert.match(ghost, /button-onhighcontrast-secondary-transparent-foreground/);
+  assert.doesNotMatch(ghost, /text-alert-/);
   assert.match(ghost, /disabled/);
+  assert.match(close, /button-onhighcontrast-secondary-transparent-foreground/);
+  assert.doesNotMatch(close, /text-alert-/);
   assert.match(html, /<a href="\/track" class="text-primary">/);
 });
 

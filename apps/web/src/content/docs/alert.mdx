@@ -139,7 +139,7 @@ Default actions do not wrap. Choose `stacked` when two labels cannot fit on one 
 
 ## Actions and dismissal
 
-Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `appearance="fill"` for the primary action on a light alert, or `appearance="transparent"` on highContrast. An optional secondary action uses `appearance="ghost"`.
+Compose `Alert.Actions` with small Veli Buttons. Use `intent="secondary"` and `appearance="fill"` for the primary action, and `appearance="ghost"` for an optional secondary action. On `highContrast`, set `highContrast` on those Buttons (or let `Alert.Actions` and `Alert.CloseButton` apply it to direct Veli Buttons).
 
 <div className="preview mb-4 rounded-lg border p-4">
   <AlertDismissibleDemo client:load />
@@ -172,7 +172,8 @@ export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
           type="button"
           size="sm"
           intent="secondary"
-          appearance="transparent"
+          appearance="fill"
+          highContrast
           onPress={onTrack}
         >
           Track application
@@ -182,6 +183,7 @@ export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
           size="sm"
           intent="secondary"
           appearance="ghost"
+          highContrast
           onPress={() => setVisible(false)}
         >
           Remind me later
@@ -193,7 +195,7 @@ export default function PermitAlert({ onTrack }: { onTrack: () => void }) {
 }
 ```
 
-Actions retain their application callbacks and do not dismiss automatically. On highContrast, direct Veli ghost Buttons inside `Alert.Actions` (including fragments) receive the alert foreground at rest. Hover and pressed states use normal Veli Button foreground and surfaces to preserve contrast. Other controls keep their own styling.
+Actions retain their application callbacks and do not dismiss automatically. On `highContrast`, direct Veli Buttons inside `Alert.Actions` (including fragments) and `Alert.CloseButton` use Button’s `highContrast` styles. Other controls keep their own styling.
 
 With `isVisible`, the parent owns visibility: `onDismiss` requests dismissal, but the alert remains until the parent updates the prop. Without `isVisible`, `defaultVisible` initializes internal state and the close button hides the alert automatically. Changing `defaultVisible` after mount does not reset it; remount an uncontrolled alert to show it again. Alerts never time out.
 
@@ -293,4 +295,4 @@ Dhivehi titles use MV A Waheed at 17px and descriptions use MV Faseyha at 16px, 
 
 ## Migration
 
-The revised appearances replace `subtle`, `outline`, and `emphasis`. Change `subtle` to `light` and `emphasis` to `highContrast`. `outline` has no direct equivalent; choose the new treatment appropriate to the message. Update action Buttons to the appearance pairing above, and select `stacked` where the previous wrapping row was relied upon.
+The revised appearances replace `subtle`, `outline`, and `emphasis`. Change `subtle` to `light` and `emphasis` to `highContrast`. `outline` has no direct equivalent; choose the new treatment appropriate to the message. On high-contrast Alerts, use secondary `fill` and `ghost` Buttons with `highContrast` instead of transparent or colour overrides, and select `stacked` where the previous wrapping row was relied upon.
