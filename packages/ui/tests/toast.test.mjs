@@ -38,6 +38,7 @@ test('Toast renders subtle and emphasis with Alert surfaces', () => {
     assert.match(subtle, /text-base-strong/);
     assert.match(subtle, /data-slot="toast-icon"/);
     assert.match(subtle, /h-9 w-9/);
+    assert.match(subtle, /max-w-none/);
     assert.doesNotMatch(subtle, /text-base-muted|border-status-|bg-status-/);
 
     const emphasis = render({ intent, appearance: 'emphasis', description: 'Details' });

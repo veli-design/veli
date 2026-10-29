@@ -591,7 +591,7 @@ export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCl
         iconOnly
         aria-label={resolvedAriaLabel}
         className={twMerge(
-          'absolute -end-2 -top-2 [&:lang(dv)]:-top-1',
+          'absolute -end-2 -top-2 max-w-none [&:lang(dv)]:-top-1',
           appearance === 'emphasis'
             ? [
                 alertIntentClasses[intent].foreground,
