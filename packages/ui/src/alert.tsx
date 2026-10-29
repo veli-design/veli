@@ -178,11 +178,7 @@ function styleGhostActions(children: React.ReactNode, foreground: string): React
     const button = child as React.ReactElement<ButtonProps>;
     if (button.props.appearance !== 'ghost') return child;
     return React.cloneElement(button, {
-      className: twMerge(
-        foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
-        button.props.className,
-      ),
+      className: twMerge(foreground, button.props.className),
     });
   });
 }
@@ -216,8 +212,9 @@ export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCl
       className={twMerge(
         'absolute end-2 shrink-0',
         layout === 'compact' ? 'top-1/2 -translate-y-1/2' : 'top-2 [&:lang(dv)]:top-3',
-        appearance === 'highContrast' && alertIntentClasses[intent].foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
+        appearance === 'highContrast'
+          ? alertIntentClasses[intent].foreground
+          : 'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
         className,
       )}
       onPress={() => dismiss?.()}
