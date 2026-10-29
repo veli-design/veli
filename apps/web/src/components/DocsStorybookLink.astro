@@ -8,7 +8,8 @@ interface Props {
 const { slug } = Astro.props;
 const configuredBaseUrl = import.meta.env.PUBLIC_STORYBOOK_URL?.trim().replace(/\/$/, '');
 const storybookBaseUrl = configuredBaseUrl || 'http://localhost:6006';
-const href = `${storybookBaseUrl}/?path=/docs/components-${slug}--docs`;
+const storybookSlug = slug === 'sheet' ? 'sheets' : slug;
+const href = `${storybookBaseUrl}/?path=/docs/components-${storybookSlug}--docs`;
 ---
 
 <a class="docs-storybook-link" href={href} target="_blank" rel="noopener noreferrer">
