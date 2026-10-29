@@ -232,7 +232,7 @@
     "package:check": "node scripts/check-esm.mjs && node --test tests/package-exports.test.mjs"
   },
   "peerDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.10.0",
+    "@tradenetcorp/veli-tokens": "^0.11.0",
     "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0"
