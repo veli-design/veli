@@ -6,7 +6,7 @@
   "description": "Composable floating organization side navigation with collapse context, header chrome, menu parts, and shared level-swap motion.",
   "files": ["side-nav.tsx"],
   "dependencies": {
-    "@tradenetcorp/veli-ui": "^0.16.0",
+    "@tradenetcorp/veli-ui": "^0.17.0",
     "@phosphor-icons/react": "^2.1.10",
     "motion": "^12.42.2",
     "react": "^19.0.0",
@@ -14,13 +14,13 @@
     "react-aria-components": "^1.19.0"
   },
   "setupDependencies": {
-    "@tradenetcorp/veli-tokens": "^0.9.1",
+    "@tradenetcorp/veli-tokens": "^0.10.0",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@tradenetcorp/veli-ui": "0.16.0",
+    "@tradenetcorp/veli-ui": "0.17.0",
     "@phosphor-icons/react": "2.1.10",
-    "@tradenetcorp/veli-tokens": "0.9.1",
+    "@tradenetcorp/veli-tokens": "0.10.0",
     "motion": "12.42.2",
     "react": "19.2.6",
     "react-dom": "19.2.6",
