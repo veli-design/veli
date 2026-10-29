@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { verifyCurrentPublication } from './release-ci.mjs';
 import { assertReleaseLegal } from './release-legal.mjs';
 
 import { getPackages } from '@manypkg/get-packages';
@@ -32,6 +33,7 @@ if (process.argv.slice(2).some((argument) => argument.startsWith('--tag'))) {
 }
 const cwd = process.cwd();
 assertReleaseLegal(cwd);
+if (process.env.GITHUB_ACTIONS === 'true') await verifyCurrentPublication();
 const { packages } = await getPackages(cwd);
 
 await run(

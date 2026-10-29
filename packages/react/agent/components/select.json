@@ -25,6 +25,11 @@
       "situation": "A small set of choices should remain visible for comparison.",
       "guidance": "Use a visible single-choice group.",
       "useInstead": ["radio"]
+    },
+    {
+      "situation": "A chosen value must stay visible and submit with the form, but the user must not change it.",
+      "guidance": "Select has no read-only state. Show the option label in a read-only Input with no name, and submit the option id with a hidden input (or equivalent form state). Do not put the label in a named Input value, and do not use a disabled Select.",
+      "useInstead": ["input"]
     }
   ],
   "supportedInteractions": [
@@ -37,7 +42,8 @@
     "Compose Select with SelectItem and optional SelectSection.",
     "Provide textValue or aria-label for complex or icon-only option content.",
     "Use description text normally and errorMessage when invalid.",
-    "Choose size and optional labelSupplementary, infoTooltip, and infoTooltipAriaLabel for the field header."
+    "Choose size and optional labelSupplementary, infoTooltip, and infoTooltipAriaLabel for the field header.",
+    "For a locked selected value, pair a nameless read-only Input (label text) with a hidden input that posts the option id."
   ],
   "limitations": [
     "This component is not an editable or filterable input.",

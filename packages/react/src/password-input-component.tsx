@@ -81,7 +81,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-1 rounded-md overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-1 rounded-field overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -276,6 +276,17 @@ const visibilityToggleVariants = cva(
   },
 );
 
+/**
+ * Filled passwords keep English type inside a Dhivehi field.
+ * `type-*` restyles under `:lang(dv)`; these win only after the user types.
+ * Prefer English body-md size tokens over the Tailwind body size utility name.
+ */
+const rtlPasswordValueBodySm =
+  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:text-sm!';
+
+const rtlPasswordValueBodyMd =
+  '[&:not(:placeholder-shown)]:font-sans! [&:not(:placeholder-shown)]:[font-size:var(--veli-typography-en-body-md-regular-font-size)]! [&:not(:placeholder-shown)]:[line-height:var(--veli-typography-en-body-md-regular-line-height)]!';
+
 const inputElementVariants = cva(
   `relative z-0 min-w-0 flex-1 border-0 bg-transparent text-base-strong outline-none placeholder:text-base-inactive disabled:text-disabled ${fieldInputAutofill} ${webkitDhivehiTextBaselineClassName}`,
   {
@@ -285,9 +296,19 @@ const inputElementVariants = cva(
         md: '-mx-4 -my-3 px-4 py-3 type-body-sm-regular',
         lg: '-mx-4 -my-3.5 px-4 py-3.5 type-body-md-regular',
       },
+      isLtrValueInRtl: {
+        true: 'text-right placeholder-shown:[direction:rtl] [@supports(-webkit-hyphens:none)]:[&:lang(dv)]:[&:not(:placeholder-shown)]:translate-y-0',
+        false: '',
+      },
     },
+    compoundVariants: [
+      { size: 'sm', isLtrValueInRtl: true, className: rtlPasswordValueBodySm },
+      { size: 'md', isLtrValueInRtl: true, className: rtlPasswordValueBodySm },
+      { size: 'lg', isLtrValueInRtl: true, className: rtlPasswordValueBodyMd },
+    ],
     defaultVariants: {
       size: 'md',
+      isLtrValueInRtl: false,
     },
   },
 );
@@ -685,7 +706,6 @@ export function PasswordInput({
             ) : null}
 
             <Group
-              dir="ltr"
               className={fieldShellVariants({
                 appearance,
                 size,
@@ -716,7 +736,10 @@ export function PasswordInput({
                 spellCheck={spellCheck}
                 type={revealed ? 'text' : 'password'}
                 dir="ltr"
-                className={inputElementVariants({ size })}
+                className={inputElementVariants({
+                  size,
+                  isLtrValueInRtl: languageConfig.direction === 'rtl',
+                })}
               />
               {isInvalid ? (
                 <div className={errorIconVariants({ isDisabled })} aria-hidden>

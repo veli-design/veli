@@ -36,6 +36,23 @@ import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 
 Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/patterns/forms/) for recipes.
 
+## Locked value
+
+Select has no `isReadOnly`. When a chosen option must stay visible but locked, show the option label in a read-only [Input](/docs/input/) and submit the option id separately. Leave `name` off the Input so the label is not the form payload. A disabled Select is the wrong stand-in: it reads as unavailable and is omitted from native form submission.
+
+```tsx
+import { Input } from '@tradenetcorp/veli-ui/input';
+
+const atoll = { id: '26', name: 'Kaafu Atoll' };
+
+<>
+  <Input label="Atoll" value={atoll.name} isReadOnly />
+  <input type="hidden" name="atollId" value={atoll.id} />
+</>;
+```
+
+If the form is fully controlled and never reads native `FormData`, keep `atoll.id` in application state and use the Input only for display.
+
 ## Appearances
 
 `default` uses the underline trigger. `outline` draws a bordered trigger. Size the field with `sm`, `md`, or `lg`.
@@ -142,13 +159,13 @@ React Aria’s headless [`Select`](https://react-spectrum.adobe.com/react-aria/S
 
 Not forwarded from React Aria `Select`:
 
-| Prop                                | Why                                                        |
-| :---------------------------------- | :--------------------------------------------------------- |
-| `children`, `items`                 | Replaced by Veli’s option `children` and `items` above.    |
-| `value`, `defaultValue`, `onChange` | Replaced by Veli’s typed key props above.                  |
-| `style`                             | Not supported.                                             |
-| `className`                         | Replaced by Veli’s layout `className` on the root.         |
-| `isReadOnly`                        | Not supported by React Aria Select. Use a read-only Input. |
+| Prop                                | Why                                                                    |
+| :---------------------------------- | :--------------------------------------------------------------------- |
+| `children`, `items`                 | Replaced by Veli’s option `children` and `items` above.                |
+| `value`, `defaultValue`, `onChange` | Replaced by Veli’s typed key props above.                              |
+| `style`                             | Not supported.                                                         |
+| `className`                         | Replaced by Veli’s layout `className` on the root.                     |
+| `isReadOnly`                        | Not supported by React Aria Select. See [Locked value](#locked-value). |
 
 ### SelectItem
 

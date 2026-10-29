@@ -27,7 +27,9 @@
     "test:blocks": "corepack pnpm --filter @tradenetcorp/veli-blocks test",
     "test:blocks:consumer": "corepack pnpm --filter @tradenetcorp/veli-blocks test:consumer",
     "test:cli": "corepack pnpm --filter @veli-design/cli test",
-    "test:tokens": "corepack pnpm --filter @veli-design/tokens test"
+    "test:tokens": "corepack pnpm --filter @veli-design/tokens test",
+    "lint:veli": "eslint --config eslint.veli.config.mjs --no-warn-ignored apps packages/blocks/src",
+    "test:veli-lint": "node --test scripts/lint/*.test.mjs"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,astro}": [

@@ -18,16 +18,36 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: read
     outputs:
       published: ${{ steps.changesets.outputs.published }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      - name: Setup Node.js for release planning
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Select release preparation or publication
+        id: plan
+        run: node scripts/release-ci.mjs plan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify approved validation of the actual merged release tree
+        if: steps.plan.outputs.mode == 'publish'
+        run: node scripts/release-ci.mjs verify
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup pnpm
+        if: steps.plan.outputs.mode != 'none'
         uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
+        if: steps.plan.outputs.mode != 'none'
         uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -36,17 +56,16 @@ jobs:
           scope: '@veli-design'
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Packages
-        run: pnpm build
+        if: steps.plan.outputs.mode != 'none'
+        run: corepack pnpm install --frozen-lockfile
 
       - name: Create Release Pull Request or Publish to npm
+        if: steps.plan.outputs.mode != 'none'
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm version-packages
-          publish: pnpm release
+          version: corepack pnpm version-packages
+          publish: ${{ steps.plan.outputs.mode == 'publish' && 'corepack pnpm release' || '' }}
           commit: 'chore: release packages'
           title: 'chore: release packages'
         env:

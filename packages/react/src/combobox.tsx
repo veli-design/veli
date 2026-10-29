@@ -70,7 +70,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 const comboboxOutlineFocusVisibleHide = `${outlineFieldStrokeFocusVisibleHide.input} has-[button[data-focus-visible]]:shadow-none has-[button[data-focus-visible]]:hover:shadow-none`;
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 rounded-md overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised forced-colors:outline forced-colors:outline-[CanvasText]',
+  'relative flex w-full items-center gap-2 rounded-field overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised forced-colors:outline forced-colors:outline-[CanvasText]',
   {
     variants: {
       appearance: { default: '', outline: '' },
@@ -215,7 +215,7 @@ const triggerButtonVariants = cva(
 );
 
 const popoverVariants = cva(
-  'box-border overflow-hidden rounded-xl border border-base-subtle bg-menu-bg p-1 text-base-strong shadow-md outline-none',
+  'box-border overflow-hidden rounded-xl border-[0.5px] border-base-muted bg-menu-bg p-1 text-base-strong shadow-md outline-none',
 );
 
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');

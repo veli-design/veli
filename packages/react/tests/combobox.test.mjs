@@ -156,7 +156,7 @@ test('ComboBox preserves numeric zero labels and their accessible association', 
 });
 
 test('ComboBox keeps the shell surface and themed text during browser autofill', () => {
-  assert.match(comboboxSource, /rounded-md overflow-hidden/);
+  assert.match(comboboxSource, /rounded-field overflow-hidden/);
   assert.match(
     comboboxSource,
     /disabled:placeholder:text-disabled \$\{fieldInputAutofill\} \[&:lang\(dv\)\]/,
@@ -180,4 +180,11 @@ test('ComboBox keeps the shell surface and themed text during browser autofill',
     );
     assert.match(fieldVariantsSource, new RegExp(`disabled:${selector}caret-text-disabled`));
   }
+});
+
+test('ComboBox options follow the Figma menu treatment', () => {
+  assert.match(comboboxSource, /rounded-xl border-\[0\.5px\] border-base-muted bg-menu-bg p-1/);
+  assert.match(comboboxSource, /rounded-lg px-4 py-2 text-start text-base-strong/);
+  assert.match(comboboxSource, /data-\[focused\]:bg-menu-hover data-\[pressed\]:bg-menu-pressed/);
+  assert.doesNotMatch(comboboxSource, /rounded-xl border border-base-subtle bg-menu-bg/);
 });
