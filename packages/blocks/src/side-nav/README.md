@@ -18,7 +18,7 @@ The CLI checks dependencies and copies `side-nav.tsx` into your configured Block
 Install the block's peer stack when it is not already present:
 
 ```sh
-corepack pnpm add @phosphor-icons/react@2.1.10 @tradenetcorp/veli-ui@0.16.0 @tradenetcorp/veli-tokens@0.9.1 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
+corepack pnpm add @phosphor-icons/react@2.1.10 @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
 ```
 
 Your stylesheet must import Tailwind and the Veli token and UI themes:
