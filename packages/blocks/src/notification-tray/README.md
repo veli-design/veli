@@ -26,6 +26,8 @@ The CLI reports required dependencies and incompatible installed versions. Impor
 
 Supply `items` already filtered for the controlled `filter` (`all` or `unread`), and update them through `onFilterChange`. `unreadCount` is the total across all pages. The block does not change application data.
 
+The default trigger displays a numeric unread badge when `unreadCount` is positive. It uses Veli Badge's standard `99+` display above 99, while the button's accessible name retains the full total. The visual count is hidden from assistive technology to avoid announcing it twice. A supplied `trigger` remains entirely application-owned.
+
 Each `NotificationItem` requires a stable `id`, `content`, `timestamp` and `time`. Optional fields are `dateTime`, `unread`, `intent` (`neutral`, `success`, `warning`, `danger`), `href`, `isPending` and `actions`. Format dates and resolve URLs in your application. Use text or non-interactive markup for `content`; place buttons in `actions` outside the row link.
 
 | Props                                   | Use                                                                                                     |
@@ -57,6 +59,8 @@ Initial loading uses local notification-shaped placeholders with one shared high
 Pending retry and paging actions use the shared `Spinner` button variant. The mark-all-read menu action uses `LoadingText`. These components support Veli themes and reduced motion; loading labels remain application-owned and translated through `labels`.
 
 ## Updating your copy
+
+Version 0.5.1 replaces the default unread dot with a numeric counter aligned to the header reference. Continue supplying the total unread count across all pages; the displayed count is capped at `99+`. Custom triggers are unchanged.
 
 Version 0.3.0 requires `@tradenetcorp/veli-ui@^0.16.0` for the shared loading components. Existing loading and mutation props control the indicators.
 
