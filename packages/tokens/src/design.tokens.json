@@ -14102,6 +14102,484 @@
         }
       }
     },
+    "tag": {
+      "fill": {
+        "bg": {
+          "default": {
+            "$type": "color",
+            "$value": "{color.neutral.alpha.200}",
+            "$description": "Fill tag background, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.bg.default",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.alpha.400}"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{color.neutral.alpha.300}",
+            "$description": "Fill tag background on hover, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.bg.hover",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.alpha.500}"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{color.neutral.alpha.400}",
+            "$description": "Fill tag background when pressed, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.bg.pressed",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.alpha.600}"
+              }
+            }
+          }
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.text.base.strong}",
+          "$description": "Label and icons on a fill tag, not selected. text/base/strong in Light, text/base/emphasis in Dark so pressed keeps 4.5:1.",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.fill.foreground",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.text.base.emphasis}"
+            }
+          }
+        },
+        "selected": {
+          "bg": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.neutral.1100}",
+              "$description": "Selected fill tag background (charcoal in Light). Same values as the secondary button.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.fill.selected.bg.default",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.1200}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.neutral.1200}",
+              "$description": "Selected fill tag background on hover.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.fill.selected.bg.hover",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.1100}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.neutral.1000}",
+              "$description": "Selected fill tag background when pressed.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.fill.selected.bg.pressed",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.1000}"
+                }
+              }
+            }
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{color.text.base.inverted}",
+            "$description": "Label, check and icons on a selected fill tag.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.selected.foreground",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.text.base.inverted}"
+              }
+            }
+          },
+          "value": {
+            "$type": "color",
+            "$value": "{color.neutral.500}",
+            "$description": "Sub-label value text on a selected fill tag with a dropdown.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.selected.value",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.500}"
+              }
+            }
+          },
+          "divider": {
+            "$type": "color",
+            "$value": "{color.neutral.700}",
+            "$description": "Divider before the value on a selected fill tag with a dropdown.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.fill.selected.divider",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.700}"
+              }
+            }
+          },
+          "remove": {
+            "hover": {
+              "$type": "color",
+              "$value": "{color.neutral.1000}",
+              "$description": "Remove button background on hover, on a selected fill tag.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.fill.selected.remove.hover",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.1000}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.neutral.900}",
+              "$description": "Remove button background when pressed, on a selected fill tag.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.fill.selected.remove.pressed",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.900}"
+                }
+              }
+            }
+          }
+        }
+      },
+      "outline": {
+        "bg": {
+          "hover": {
+            "$type": "color",
+            "$value": "{color.neutral.alpha.200}",
+            "$description": "Outline tag background on hover, not selected. No background at rest.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.bg.hover",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.alpha.400}"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{color.neutral.alpha.300}",
+            "$description": "Outline tag background when pressed, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.bg.pressed",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.alpha.500}"
+              }
+            }
+          }
+        },
+        "border": {
+          "default": {
+            "$type": "color",
+            "$value": "{color.border.base.strong}",
+            "$description": "Outline tag border, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.border.default",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.border.base.strong}"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{color.border.base.emphasis}",
+            "$description": "Outline tag border on hover and when pressed, not selected.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.border.hover",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.border.base.emphasis}"
+              }
+            }
+          }
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.text.base.strong}",
+          "$description": "Label and icons on an outline tag, not selected. text/base/strong in Light, text/base/emphasis in Dark so pressed keeps 4.5:1.",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.outline.foreground",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.text.base.emphasis}"
+            }
+          }
+        },
+        "selected": {
+          "bg": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.neutral.alpha.200}",
+              "$description": "Selected outline tag background.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.outline.selected.bg.default",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.alpha.400}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.neutral.alpha.300}",
+              "$description": "Selected outline tag background on hover.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.outline.selected.bg.hover",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.alpha.500}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.neutral.alpha.400}",
+              "$description": "Selected outline tag background when pressed.",
+              "$extensions": {
+                "org.veli": {
+                  "source": "color.components.tag.outline.selected.bg.pressed",
+                  "authoredColors": {}
+                },
+                "mode": {
+                  "Dark": "{color.neutral.alpha.600}"
+                }
+              }
+            }
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{color.neutral.1100}",
+            "$description": "Selected outline tag border (charcoal in Light).",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.selected.border",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.neutral.1200}"
+              }
+            }
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{color.text.base.emphasis}",
+            "$description": "Label, check and icons on a selected outline tag.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.selected.foreground",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.text.base.emphasis}"
+              }
+            }
+          },
+          "value": {
+            "$type": "color",
+            "$value": "{color.text.base.muted}",
+            "$description": "Sub-label value text on a selected outline tag with a dropdown. text/base/muted in Light, text/base/DEFAULT in Dark for 4.5:1.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.selected.value",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.text.base.default}"
+              }
+            }
+          },
+          "divider": {
+            "$type": "color",
+            "$value": "{color.border.base.strong}",
+            "$description": "Divider before the value on a selected outline tag with a dropdown.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.outline.selected.divider",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.border.base.strong}"
+              }
+            }
+          }
+        }
+      },
+      "remove": {
+        "hover": {
+          "$type": "color",
+          "$value": "{color.neutral.alpha.300}",
+          "$description": "Remove button background on hover (every tag except a selected fill tag).",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.remove.hover",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.neutral.alpha.500}"
+            }
+          }
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{color.neutral.alpha.400}",
+          "$description": "Remove button background when pressed (every tag except a selected fill tag).",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.remove.pressed",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.neutral.alpha.600}"
+            }
+          }
+        }
+      },
+      "disabled": {
+        "bg": {
+          "$type": "color",
+          "$value": "{color.neutral.300}",
+          "$description": "Disabled fill tag background. Same values as the disabled button.",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.disabled.bg",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.neutral.400}"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.border.base.muted}",
+          "$description": "Disabled outline tag border.",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.disabled.border",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.border.base.muted}"
+            }
+          }
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.text.disabled}",
+          "$description": "Label and icons on a disabled tag.",
+          "$extensions": {
+            "org.veli": {
+              "source": "color.components.tag.disabled.foreground",
+              "authoredColors": {}
+            },
+            "mode": {
+              "Dark": "{color.text.disabled}"
+            }
+          }
+        }
+      },
+      "link": {
+        "foreground": {
+          "default": {
+            "$type": "color",
+            "$value": "{color.primary.900}",
+            "$description": "Label and icons on a link tag. One step darker than text/links/default in Light, so it keeps 4.5:1 on the tag fill.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.link.foreground.default",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.primary.900}"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{color.primary.1000}",
+            "$description": "Link tag label on hover and when pressed. primary/1000 in Light, primary/1100 in Dark, because text/links/hover is too dark there.",
+            "$extensions": {
+              "org.veli": {
+                "source": "color.components.tag.link.foreground.hover",
+                "authoredColors": {}
+              },
+              "mode": {
+                "Dark": "{color.primary.1100}"
+              }
+            }
+          }
+        }
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{color.border.focus}",
+        "$description": "Focus ring on tags, the remove button and the dropdown caret.",
+        "$extensions": {
+          "org.veli": {
+            "source": "color.components.tag.focus",
+            "authoredColors": {}
+          },
+          "mode": {
+            "Dark": "{color.border.focus}"
+          }
+        }
+      }
+    },
     "button": {
       "primary": {
         "default": {
