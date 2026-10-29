@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { test, expect, type Locator } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { warnAccessibilityViolations } from './accessibility.mjs';
 import { errorPageMessages } from '../error-page-messages';
@@ -101,9 +102,10 @@ test('keyboard artwork changes, reduced motion, theme and kind changes without p
     .not.toBe(reduced);
   const themed = await canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL());
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await expect
-    .poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL()))
-    .not.toBe(themed);
+  // Removing the preference must preserve the chosen style, without replaying the intro.
+  await page.clock.install();
+  await page.clock.runFor(2000);
+  expect(await canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL())).toBe(themed);
   await expect(artwork.getByRole('button')).toHaveCount(1);
   await expect(artwork.getByRole('button', { name: /Pause animation|Play animation/ })).toHaveCount(
     0,
@@ -113,6 +115,82 @@ test('keyboard artwork changes, reduced motion, theme and kind changes without p
   await expect(artwork).toHaveAttribute('data-ready', 'true');
   await expect(artwork.locator('canvas')).toHaveCount(1);
 });
+
+async function artworkHash(canvas: Locator) {
+  const pixels = await canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL());
+  return createHash('sha256').update(pixels).digest('hex');
+}
+
+for (const kind of kinds)
+  for (const reducedMotion of ['no-preference', 'reduce'] as const)
+    test(`${kind}: intro, idle and repeated deliberate artwork activation (${reducedMotion})`, async ({
+      page,
+    }, info) => {
+      await page.setViewportSize({ width: 1512, height: 1000 });
+      await page.emulateMedia({ reducedMotion });
+      // Pause before loading the engine so the intro and >15s idle intervals are deterministic.
+      const time = new Date('2026-10-21T12:00:00Z');
+      await page.clock.install({ time });
+      await page.clock.pauseAt(new Date(time.getTime() + 1000));
+      await page.goto(`/errors?kind=${kind}&footer=none`);
+      const artwork = page.locator('.veli-error-artwork');
+      await expect(artwork).toHaveAttribute('data-ready', 'true');
+      const canvas = artwork.locator('canvas');
+      const change = artwork.getByRole('button', { name: /Activate to change/ });
+      const initial = await artworkHash(canvas);
+      await page.clock.runFor(850);
+      const intro = await artworkHash(canvas);
+      await canvas.screenshot({ path: info.outputPath('intro.png') });
+      await page.clock.runFor(1000);
+      const settled = await artworkHash(canvas);
+      if (reducedMotion === 'reduce') {
+        expect(initial).toBe(settled);
+        expect(intro).toBe(settled);
+      } else {
+        expect(intro).not.toBe(initial);
+        expect(settled).not.toBe(intro);
+      }
+      await page.clock.runFor(20000);
+      expect(await artworkHash(canvas)).toBe(settled);
+      await page.screenshot({ path: info.outputPath('idle.png'), fullPage: true });
+
+      const styles = [settled];
+      for (const activation of ['click', 'Enter', 'Space', 'Enter', 'Space', 'click']) {
+        if (activation === 'click') {
+          await change.click();
+          await page.mouse.move(0, 0);
+        } else {
+          await change.focus();
+          await page.keyboard.press(activation);
+        }
+        const activated = await artworkHash(canvas);
+        await page.clock.runFor(2400);
+        const chosen = await artworkHash(canvas);
+        expect(chosen).not.toBe(styles.at(-1));
+        if (reducedMotion === 'reduce') expect(activated).toBe(chosen);
+        await page.clock.runFor(20000);
+        expect(await artworkHash(canvas)).toBe(chosen);
+        styles.push(chosen);
+      }
+      expect(new Set(styles.slice(0, 5)).size).toBe(5);
+      expect(styles[5]).toBe(styles[0]);
+      expect(styles[6]).toBe(styles[1]);
+      // Back-to-back activation during a transition must land on the requested style.
+      await change.press('Enter');
+      await change.press('Space');
+      await page.clock.runFor(2400);
+      expect(await artworkHash(canvas)).toBe(styles[3]);
+      await page.clock.runFor(20000);
+      expect(await artworkHash(canvas)).toBe(styles[3]);
+      await page.screenshot({ path: info.outputPath('activated.png'), fullPage: true });
+      if (reducedMotion === 'reduce') {
+        await change.press('Enter');
+        const chosen = await artworkHash(canvas);
+        await page.emulateMedia({ reducedMotion: 'no-preference' });
+        await page.clock.runFor(22000);
+        expect(await artworkHash(canvas)).toBe(chosen);
+      }
+    });
 
 test('static artwork has no controls; palette overrides resolve from the block', async ({
   page,

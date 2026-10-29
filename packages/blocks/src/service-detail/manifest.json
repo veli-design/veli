@@ -1,0 +1,42 @@
+{
+  "id": "service-detail",
+  "title": "Service detail",
+  "version": "0.4.0",
+  "status": "experimental",
+  "description": "Service summary, application options and accessible guideline sheet with host-owned content and actions.",
+  "files": [
+    "applying-info-dialog.tsx",
+    "dialog-surface.tsx",
+    "guideline-sheet.tsx",
+    "hand-coins.svg",
+    "hand-deposit.svg",
+    "hourglass-medium.svg",
+    "list-numbers.svg",
+    "note-pencil.svg",
+    "service-detail.css",
+    "service-detail.tsx",
+    "types.ts",
+    "list-bullets.svg"
+  ],
+  "dependencies": {
+    "@tradenetcorp/veli-ui": "^0.17.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-aria-components": "^1.19.0",
+    "@phosphor-icons/react": "^2.1.10"
+  },
+  "setupDependencies": {
+    "@tradenetcorp/veli-tokens": "^0.10.0",
+    "tailwindcss": "^4.3.2"
+  },
+  "testedDependencies": {
+    "@tradenetcorp/veli-ui": "0.17.0",
+    "@tradenetcorp/veli-tokens": "0.10.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-aria-components": "1.19.0",
+    "tailwindcss": "4.3.2",
+    "next": "16.2.11",
+    "@phosphor-icons/react": "2.1.10"
+  }
+}

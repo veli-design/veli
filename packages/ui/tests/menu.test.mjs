@@ -226,3 +226,25 @@ test('Submenu caret flips with provider direction and is automatic', () => {
   assert.match(source, /direction === 'rtl' \? CaretLeftIcon : CaretRightIcon/);
   assert.equal(typeof ltr, 'string');
 });
+
+test('Menu shortcuts retain Latin key order and dimensions across all item sizes and languages', () => {
+  for (const size of ['sm', 'md', 'lg']) {
+    for (const language of ['en', 'dv']) {
+      const html = renderMenu(
+        createElement(MenuItem, { id: 'export', size, shortcut: ['Ctrl', 'Shift', 'E'] }, 'Export'),
+        { language },
+      );
+      assert.match(html, /role="group" dir="ltr" data-veli-menu-shortcut/);
+      const keys = [...html.matchAll(/<kbd\b([^>]*)>(.*?)<\/kbd>/g)];
+      assert.deepEqual(
+        keys.map((key) => key[2]),
+        ['Ctrl', 'Shift', 'E'],
+      );
+      for (const key of keys) {
+        assert.match(key[1], /lang="en"/);
+        assert.match(key[1], /h-5/);
+        assert.match(key[1], /leading-4/);
+      }
+    }
+  }
+});

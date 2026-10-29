@@ -19,6 +19,7 @@ import {
   defaultFieldUnderlineShell,
   FieldMessage,
   fieldHeaderInfoTooltipTriggerVariants,
+  fieldHelperTone,
   fieldHeaderLabelVariants,
   fieldHeaderRequiredIndicatorVariants,
   fieldHeaderSupplementaryVariants,
@@ -53,7 +54,7 @@ const actionVariants = cva('shrink-0 type-body-sm-medium', {
 });
 
 const fieldShellVariants = cva(
-  'relative flex w-full items-center gap-2 rounded-md overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+  'relative flex w-full items-center gap-2 rounded-field overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
   {
     variants: {
       appearance: {
@@ -401,6 +402,7 @@ export function Input({
                 isInvalid={isInvalid}
                 size={size ?? 'md'}
                 description={description}
+                descriptionTone={fieldHelperTone(isDisabled)}
                 errorMessage={errorMessage}
               />
             </div>

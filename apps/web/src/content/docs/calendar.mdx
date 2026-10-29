@@ -1,92 +1,187 @@
 ---
 title: Calendar
-description: Standalone calendar surface for selecting dates.
+description: Accessible standalone single-date and date-range selection.
 ---
 
 import {
   CalendarControlledDemo,
   CalendarUsageDemo,
   CalendarVariantsDemo,
-} from '../../components/DateExamples';
+  CalendarRangeDemo,
+  CalendarValidationDemo,
+  CalendarRtlDemo,
+} from '../../components/CalendarExamples';
 
 # Calendar
 
-`Calendar` is the standalone visual date selector. It is useful for embedded scheduling UIs and is also the popover calendar used by `DatePicker`.
+`Calendar` selects one date. `RangeCalendar` selects a start and end date. Both are standalone surfaces; use `DatePicker` when date entry should open a calendar in a popover.
 
 ## Import
 
 ```tsx
-import { Calendar } from '@tradenetcorp/veli-ui/calendar';
+import { Calendar, RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
+import { parseDate } from '@internationalized/date';
 ```
 
 ## Usage
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <CalendarUsageDemo client:visible />
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarUsageDemo client:load />
 </div>
 
 ```tsx
-<Calendar aria-label="Appointment calendar" />
+<Calendar aria-label="Appointment calendar" defaultValue={parseDate('2026-10-15')} />
 ```
 
-## Variants
+### Controlled selection and focus
 
-### Default
+Use `value` and `onChange` to own the selected date. Use `focusedValue` and `onFocusChange` to keep externally changed dates in view.
 
-- Use when you need a simple embedded calendar with standard single-date selection.
-- Best for dashboards, inline filters, and basic scheduling surfaces.
-
-### Controlled
-
-- Use when the selected date is owned by React state.
-- Best when the calendar must stay synced with form state, URL state, or another UI panel.
-
-<div className="preview mb-4 rounded-lg border p-4">
-  <CalendarControlledDemo client:visible />
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarControlledDemo client:load />
 </div>
 
-### Constraints and unavailable dates
+```tsx
+const [value, setValue] = useState(parseDate('2026-10-15'));
+const [focusedValue, setFocusedValue] = useState(value);
 
-- Use when only certain dates should be selectable.
-- Best for bookings, appointments, public service scheduling, and blackout-date workflows.
+<Calendar
+  aria-label="Appointment calendar"
+  value={value}
+  focusedValue={focusedValue}
+  onFocusChange={setFocusedValue}
+  onChange={(next) => {
+    setValue(next);
+    setFocusedValue(next);
+  }}
+/>;
+```
 
-<div className="preview mb-4 rounded-lg border p-4">
-  <CalendarVariantsDemo client:visible />
+## Date range
+
+Select a start date, then an end date. Endpoints have a primary fill and dates between them form a continuous band, mirrored in RTL. A single-day range uses a circular selection.
+
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarRangeDemo client:load />
 </div>
+
+```tsx
+const [value, setValue] = useState({
+  start: parseDate('2026-10-13'),
+  end: parseDate('2026-10-20'),
+});
+
+<RangeCalendar aria-label="Trip dates" value={value} onChange={setValue} showTodayButton />;
+```
+
+For uncontrolled ranges, pass the same `{ start, end }` shape to `defaultValue`.
+
+## Constraints and validation
+
+`minValue` and `maxValue` disable dates outside the allowed window. `isDateUnavailable` marks blackout dates with a strikethrough; they remain keyboard-focusable but cannot be selected. Ranges cannot cross unavailable dates unless `allowsNonContiguousRanges` is enabled.
+
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarVariantsDemo client:load />
+</div>
+
+```tsx
+import { parseDate } from '@internationalized/date';
+import { Calendar } from '@tradenetcorp/veli-ui/calendar';
+
+export default function CalendarStateDemo() {
+  return (
+    <Calendar
+      aria-label="Booking availability calendar"
+      defaultValue={parseDate('2026-10-15')}
+      minValue={parseDate('2026-10-12')}
+      maxValue={parseDate('2026-10-28')}
+    />
+  );
+}
+```
+
+Use `isInvalid` with `errorMessage` to explain a validation problem. Provide the message in the user's language. `isDisabled` prevents interaction; `isReadOnly` allows navigation without changing selection.
+
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarValidationDemo client:load />
+</div>
+
+## Today and responsive behavior
+
+`showTodayButton` defaults to `false`. When enabled, Today focuses and selects today's date, or sets a one-day range. In read-only mode it only changes focus. It is disabled when today is outside the allowed window or unavailable. `todayButtonLabel` overrides the English or Dhivehi default.
+
+Use `VeliProvider` with `language="en"` or `language="dv"` for locale, direction, and typography; use `colorScheme="light"`, `"dark"`, or `"system"` for theme. Load Veli's documented fonts and stylesheet. Month/weekday labels, navigation names, and Today are localized. Consumer-provided labels and errors must be localized by the application.
+
+Both calendars start weeks on **Sunday**, independent of locale. Override `firstDayOfWeek` when needed. Weekday labels default to `short` in LTR and `long` in RTL; `weekdayStyle` can override this.
+
+The default surface is 318 CSS pixels wide with 44-pixel day targets. It shrinks within narrower containers while retaining seven columns and 44-pixel row heights. Give flex/grid parents `min-w-0`; avoid forcing a minimum width on the calendar. Use `gridClassName` for an intentional compact grid and `className` for the surface. Weekday text may visually abbreviate at narrow widths; full weekday names remain accessible.
 
 ## API Reference
 
-### Selection
+Calendar and RangeCalendar compose their corresponding React Aria calendar primitives.
 
-| Prop                  | Type                | Description                                           |
-| :-------------------- | :------------------ | :---------------------------------------------------- |
-| `value`               | `DateValue \| null` | Controlled selected date.                             |
-| `defaultValue`        | `DateValue`         | Uncontrolled initial selected date.                   |
-| `onChange`            | `(value) => void`   | Called when the selected date changes.                |
-| `focusedValue`        | `DateValue`         | Controlled focused date for custom navigation flows.  |
-| `defaultFocusedValue` | `DateValue`         | Initial focused date when no value is selected.       |
-| `onFocusChange`       | `(value) => void`   | Called when keyboard focus moves within the calendar. |
+### Calendar and RangeCalendar
 
-### Display and Navigation
+Veli-specific props shared by both selection modes.
 
-| Prop             | Type                            | Description                                |
-| :--------------- | :------------------------------ | :----------------------------------------- |
-| `firstDayOfWeek` | `'sun' \| 'mon' \| ...`         | Overrides the locale’s first weekday.      |
-| `weekdayStyle`   | `'narrow' \| 'short' \| 'long'` | Controls how weekday headers are rendered. |
+| Prop               | Type                            | Default                       | Description                                        |
+| :----------------- | :------------------------------ | :---------------------------- | :------------------------------------------------- |
+| `className`        | `string`                        | -                             | Merged surface styles.                             |
+| `gridClassName`    | `string`                        | -                             | Merged grid styles.                                |
+| `weekdayStyle`     | `'narrow' \| 'short' \| 'long'` | `short` in LTR; `long` in RTL | Weekday header format.                             |
+| `showTodayButton`  | `boolean`                       | `false`                       | Shows the Today action.                            |
+| `todayButtonLabel` | `string`                        | Localized string              | Overrides the Today label.                         |
+| `errorMessage`     | `string`                        | -                             | Error text associated with selected invalid dates. |
 
-### Constraints and Availability
+### React Aria Calendar and RangeCalendar
 
-| Prop                | Type                | Description                                     |
-| :------------------ | :------------------ | :---------------------------------------------- |
-| `minValue`          | `DateValue`         | Lowest selectable date.                         |
-| `maxValue`          | `DateValue`         | Highest selectable date.                        |
-| `isDisabled`        | `boolean`           | Disables the whole calendar.                    |
-| `isDateUnavailable` | `(date) => boolean` | Marks dates as unavailable but still focusable. |
+React Aria's corresponding Calendar and RangeCalendar props pass through, except `children`. Veli owns the internal composition.
 
-### Accessibility
+| Prop                                      | Type                                                          | Default | Description                                                     |
+| :---------------------------------------- | :------------------------------------------------------------ | :------ | :-------------------------------------------------------------- |
+| `value` / `defaultValue`                  | `DateValue` or `{ start: DateValue; end: DateValue }`         | -       | Controlled / initial selection. `value` also accepts `null`.    |
+| `onChange`                                | `(value) => void`                                             | -       | Called with the component's selection shape.                    |
+| `focusedValue` / `defaultFocusedValue`    | `DateValue`                                                   | -       | Controlled / initial focused date.                              |
+| `onFocusChange`                           | `(date: DateValue) => void`                                   | -       | Focused-date changes.                                           |
+| `firstDayOfWeek`                          | `'sun' \| 'mon' \| 'tue' \| 'wed' \| 'thu' \| 'fri' \| 'sat'` | `'sun'` | First weekday, independent of locale.                           |
+| `minValue` / `maxValue`                   | `DateValue`                                                   | -       | Inclusive selectable boundaries.                                |
+| `isDateUnavailable`                       | `(date: DateValue) => boolean`                                | -       | Marks blackout dates.                                           |
+| `isDisabled` / `isReadOnly` / `isInvalid` | `boolean`                                                     | `false` | Disabled, read-only, or invalid state.                          |
+| `allowsNonContiguousRanges`               | `boolean`                                                     | `false` | RangeCalendar only; permits a range spanning unavailable dates. |
+| `aria-label` / `aria-labelledby`          | `string`                                                      | -       | Supply an accessible name.                                      |
 
-| Prop         | Type     | Description                              |
-| :----------- | :------- | :--------------------------------------- |
-| `aria-label` | `string` | Required when there is no visible label. |
+Both wrappers inherit their corresponding React Aria Calendar props except `children`; their internal layout is fixed. `CalendarHeader` and `CalendarGridHeader` remain named exports for existing custom React Aria compositions. No new import or migration is required.
 
-All remaining supported React Aria `Calendar` props can still be passed through this wrapper.
+## Accessibility
+
+Tab reaches the navigation controls and active date. Arrow keys move between dates, Home/End move within the week, Page Up/Down change months, and Enter/Space selects a date. Horizontal navigation follows the active direction. In a range calendar, select the start and end with the same keyboard controls. The year menu supports keyboard selection, Escape dismissal, and focus return.
+
+Selected, unavailable, disabled, and invalid dates expose React Aria semantics. Focus rings remain visible, including in reduced-motion mode. Color is supplemented by selection announcements, unavailable-date strikethrough, and error text.
+
+## RTL and Language
+
+Use `VeliProvider language="dv"` for Dhivehi typography and RTL direction. Navigation icons and the range endpoints mirror automatically. The year menu and Today action follow the provider's language and theme. Latin day numbers retain the English numeric typography used in Figma.
+
+<div className="preview mb-4 min-w-0 rounded-lg border p-4">
+  <CalendarRtlDemo client:load />
+</div>
+
+```tsx
+import { parseDate } from '@internationalized/date';
+import { RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function CalendarLanguageDemo() {
+  return (
+    <VeliProvider language="dv">
+      <RangeCalendar
+        aria-label="ދަތުރު ކުރާ ތާރީޚުތައް"
+        defaultValue={{ start: parseDate('2026-10-13'), end: parseDate('2026-10-20') }}
+        showTodayButton
+      />
+    </VeliProvider>
+  );
+}
+```
+
+The date grid has no entrance or month-slide animation. Header Buttons retain Veli's reduced-motion behavior, and year-menu options disable transitions when reduced motion is requested.

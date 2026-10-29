@@ -57,7 +57,6 @@ const HEIGHT = 380;
 const PITCH = 8.4;
 const clamp = (value: number, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 const ease = cubicBezier(0.65, 0, 0.35, 1);
-const tideEase = cubicBezier(0.33, 1, 0.68, 1);
 
 export function createErrorArtwork(
   canvas: HTMLCanvasElement,
@@ -82,6 +81,7 @@ export function createErrorArtwork(
   let frame = 0;
   let lastDraw = 0;
   let disposed = false;
+  let moving = false;
 
   const dots: Dot[] = data.cells.map(
     ([x, y, size, sparkle, scatter, jitterX, jitterY, ...states]) => ({
@@ -163,8 +163,11 @@ export function createErrorArtwork(
       maxDistance = Math.max(maxDistance, dot.delay);
     }
     for (const dot of dots) dot.delay = (0.5 * duration * dot.delay) / maxDistance;
-    draw(now);
-    schedule();
+    if (staticMode || reduced.matches || paused) settle();
+    else {
+      draw(now);
+      schedule();
+    }
   }
 
   function draw(now: number) {
@@ -187,12 +190,7 @@ export function createErrorArtwork(
     );
     const still = staticMode || reduced.matches || paused;
     const morphing = !still && !entrance && now < end;
-    const tideProgress = ((now - end) % 7500) / 7500;
-    const tideFront =
-      !still && now > end && tideProgress < 0.5
-        ? tideEase(tideProgress * 2) * Math.max(radiusX, radiusY) * 1.15
-        : -1;
-    const tideFade = Math.sin(Math.PI * Math.min(1, tideProgress * 2.3));
+    moving = false;
 
     for (const dot of dots) {
       const target = dot.states[current];
@@ -224,15 +222,6 @@ export function createErrorArtwork(
         Math.abs(target.distance - dot.fromDistance) > PITCH * 0.5
       )
         color = palette[target.highlight];
-      if (tideFront >= 0 && target.role === 2 && coverage > 0.5) {
-        const distance = Math.hypot(dot.x - centerX, ((dot.y - centerY) * radiusX) / radiusY);
-        const crest =
-          Math.exp(-((distance - tideFront) ** 2) / (2 * (PITCH * 1.4) ** 2)) * tideFade;
-        if (crest > 0.02) {
-          radius *= 1 + 0.18 * crest;
-          if (crest > 0.55) color = palette[target.highlight];
-        }
-      }
       const x = dot.x + dot.jitterX * offset;
       const y = dot.y + dot.jitterY * offset;
       let pushX = 0;
@@ -249,6 +238,12 @@ export function createErrorArtwork(
       }
       dot.offsetX = still ? 0 : dot.offsetX + (pushX - dot.offsetX) * 0.16;
       dot.offsetY = still ? 0 : dot.offsetY + (pushY - dot.offsetY) * 0.16;
+      if (Math.abs(pushX - dot.offsetX) > 0.01 || Math.abs(pushY - dot.offsetY) > 0.01)
+        moving = true;
+      else {
+        dot.offsetX = pushX;
+        dot.offsetY = pushY;
+      }
       ctx.fillStyle = `rgba(${color[0] | 0},${color[1] | 0},${color[2] | 0},${color[3]})`;
       ctx.beginPath();
       ctx.arc(x + dot.offsetX, y + dot.offsetY, radius, 0, Math.PI * 2);
@@ -271,13 +266,13 @@ export function createErrorArtwork(
 
   function tick(now: number) {
     frame = 0;
-    if (now >= end + 15000) change((current + 1) % data.depths.length);
     // Cap at 30fps; suspend entirely for hidden tabs, offscreen art and reduced motion.
-    if (now - lastDraw >= 32) {
+    if (now - lastDraw >= 32 || (lastDraw < end && now >= end)) {
       draw(now);
       lastDraw = now;
     }
-    schedule();
+    // The intro and deliberate transitions finish on their final frame. Idle art stays still.
+    if (now < end || moving) schedule();
   }
 
   function refreshPalette() {
@@ -308,8 +303,6 @@ export function createErrorArtwork(
       frame = 0;
       if (reduced.matches) settle();
     } else {
-      // Time in a hidden tab must not advance the automatic style switch.
-      end = Math.max(end, performance.now());
       schedule();
     }
   }
@@ -343,7 +336,6 @@ export function createErrorArtwork(
   reduced.addEventListener('change', resume);
   refreshPalette();
   change(0, undefined, true);
-  if (staticMode || reduced.matches) settle();
 
   return {
     position: (clientX: number, clientY: number): Point | undefined => {
@@ -362,6 +354,8 @@ export function createErrorArtwork(
     next: (origin?: Point) => change((current + 1) % data.depths.length, origin),
     point: (value: Point | null) => {
       pointer = value;
+      moving = true;
+      schedule();
     },
     pause: (value: boolean) => {
       paused = value;

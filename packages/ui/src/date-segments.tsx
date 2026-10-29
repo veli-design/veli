@@ -1,20 +1,28 @@
-import { DateInput, DateSegment } from 'react-aria-components';
+import { DateInput, DateSegment, type DateSegmentRenderProps } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
 import { dateInputVariants, getDateSegmentClassName } from './date-shared-variants.js';
 
 export function DateSegments({
   className,
   size = 'md',
+  lang,
+  dir,
+  segmentClassName,
 }: {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  lang?: string;
+  dir?: 'ltr' | 'rtl';
+  segmentClassName?: (state: DateSegmentRenderProps) => string;
 }) {
   return (
-    <DateInput className={twMerge(dateInputVariants({ size }), className)}>
+    <DateInput lang={lang} dir={dir} className={twMerge(dateInputVariants({ size }), className)}>
       {(segment) => (
         <DateSegment
           segment={segment}
-          className={(state) => getDateSegmentClassName(state, size)}
+          className={(state) =>
+            twMerge(getDateSegmentClassName(state, size), segmentClassName?.(state))
+          }
         />
       )}
     </DateInput>

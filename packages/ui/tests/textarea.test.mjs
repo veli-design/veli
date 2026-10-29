@@ -18,7 +18,7 @@ test('TextArea exposes the public API', () => {
 });
 
 test('TextArea keeps the shell surface and themed text during browser autofill', () => {
-  assert.match(source, /rounded-md overflow-hidden/);
+  assert.match(source, /rounded-field overflow-hidden/);
   assert.match(source, /disabled:text-disabled \$\{fieldInputAutofill\} \[&:lang\(dv\)\]/);
 
   for (const selector of ['autofill:', '\\[&:-webkit-autofill\\]:']) {

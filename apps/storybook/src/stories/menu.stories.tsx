@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within, waitFor } from '@storybook/test';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { DownloadSimpleIcon, GearIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
@@ -726,5 +727,127 @@ export const RichItems: Story = {
         </MenuPopover>
       </MenuTrigger>
     );
+  },
+};
+
+/** Kbd consumer coverage: each menu size keeps keyboard behavior and shortcut layout. */
+function ShortcutRegressionPreview() {
+  const text = useMenuText();
+  const [selected, setSelected] = useState<MenuSelection>(new Set(['rename']));
+  const [action, setAction] = useState('none');
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      {(['sm', 'md', 'lg'] as const).map((size) => (
+        <MenuTrigger key={size}>
+          <Button intent="secondary" size="sm">
+            {size}
+          </Button>
+          <MenuPopover>
+            <Menu
+              aria-label={`${size} shortcuts`}
+              selectionMode="single"
+              disallowEmptySelection
+              selectedKeys={selected}
+              onSelectionChange={setSelected}
+              onAction={(key) => setAction(String(key))}
+            >
+              <MenuItem
+                id="rename"
+                size={size}
+                shortcut={['Ctrl', 'E']}
+                data-testid="shortcut-rename"
+                startIcon={<PencilSimpleIcon />}
+                endIcon={<GearIcon />}
+                textValue={text.rename}
+              >
+                {text.rename}
+              </MenuItem>
+              <MenuItem id="disabled" size={size} shortcut="D" isDisabled>
+                {text.disabledState}
+              </MenuItem>
+              <MenuSubmenuTrigger>
+                <MenuItem
+                  id="export"
+                  size={size}
+                  shortcut={['Ctrl', 'Shift', 'E']}
+                  data-testid="shortcut-export"
+                  textValue={text.exportAs}
+                >
+                  {text.exportAs}
+                </MenuItem>
+                <MenuPopover>
+                  <Menu aria-label="Formats" onAction={(key) => setAction(String(key))}>
+                    <MenuItem
+                      id="pdf"
+                      size={size}
+                      shortcut={['Ctrl', 'P']}
+                      data-testid="shortcut-pdf"
+                    >
+                      PDF
+                    </MenuItem>
+                  </Menu>
+                </MenuPopover>
+              </MenuSubmenuTrigger>
+              <MenuItem
+                id="delete"
+                size={size}
+                shortcut="Del"
+                intent="danger"
+                data-testid="shortcut-delete"
+                textValue={text.delete}
+              >
+                {text.delete}
+              </MenuItem>
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+      ))}
+      <output data-testid="shortcut-result" className="type-caption-regular">
+        {`selected:${selected === 'all' ? 'all' : Array.from(selected).join(',')}; action:${action}`}
+      </output>
+    </div>
+  );
+}
+
+export const ShortcutRegression: Story = {
+  render: () => <ShortcutRegressionPreview />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(document.body);
+    const rtl = getComputedStyle(canvasElement.querySelector('button')!).direction === 'rtl';
+    for (const size of ['sm', 'md', 'lg']) {
+      const trigger = canvas.getByRole('button', { name: size });
+      trigger.focus();
+      await userEvent.keyboard('{ArrowDown}{Home}');
+      await waitFor(() => expect(body.getByTestId('shortcut-rename')).toHaveFocus());
+      const keys = body.getByTestId('shortcut-rename').querySelectorAll('kbd');
+      await expect(keys.length).toBe(2);
+      await expect(keys[0]).toHaveAttribute('lang', 'en');
+      await waitFor(() => expect(keys[0].getBoundingClientRect().height).toBeCloseTo(20, 2));
+      await waitFor(() =>
+        expect(
+          keys[1].getBoundingClientRect().left - keys[0].getBoundingClientRect().right,
+        ).toBeCloseTo(2, 2),
+      );
+      await userEvent.keyboard('{ArrowDown}');
+      await waitFor(() => expect(body.getByTestId('shortcut-export')).toHaveFocus());
+      await userEvent.keyboard(rtl ? '{ArrowLeft}' : '{ArrowRight}');
+      await waitFor(() => expect(body.getByTestId('shortcut-pdf')).toHaveFocus());
+      await userEvent.keyboard(rtl ? '{ArrowRight}' : '{ArrowLeft}');
+      await waitFor(() => expect(body.getByTestId('shortcut-export')).toHaveFocus());
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(trigger).toHaveFocus());
+      await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
+      await userEvent.keyboard('{ArrowDown}{End}');
+      await waitFor(() => expect(body.getByTestId('shortcut-delete')).toHaveFocus());
+      await userEvent.keyboard('{Enter}');
+      await waitFor(() =>
+        expect(canvas.getByTestId('shortcut-result')).toHaveTextContent(
+          'selected:delete; action:delete',
+        ),
+      );
+      await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
+      await waitFor(() => expect(trigger).toHaveFocus());
+    }
   },
 };

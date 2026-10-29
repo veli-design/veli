@@ -22,7 +22,7 @@ const fieldShellFocusRingClassName =
   'has-[span[data-focus-visible]]:ring-2 has-[span[data-focus-visible]]:ring-border-focus has-[span[data-focus-visible]]:ring-offset-2 has-[span[data-focus-visible]]:ring-offset-bg-surface-raised has-[button[data-focus-visible]]:ring-2 has-[button[data-focus-visible]]:ring-border-focus has-[button[data-focus-visible]]:ring-offset-2 has-[button[data-focus-visible]]:ring-offset-bg-surface-raised';
 
 export const fieldShellVariants = cva(
-  `relative flex w-full items-center gap-1 rounded-md motion-safe:transition-[background-color,box-shadow] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
+  `relative flex w-full items-center gap-1 rounded-field motion-safe:transition-[background-color,box-shadow] motion-safe:duration-normal motion-safe:ease-out motion-reduce:transition-none ${fieldShellFocusRingClassName}`,
   {
     variants: {
       appearance: {
