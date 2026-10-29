@@ -451,12 +451,6 @@ export function ToastActions<T>({ toast, className }: ToastActionsProps<T>) {
     <div className={twMerge(toastActionsVariants(), className)}>
       {content.actions.map((action, index) => {
         const actionAppearance = action.appearance ?? 'fill';
-        const emphasisQuietActionClassName =
-          toastAppearance === 'emphasis' &&
-          actionAppearance !== 'fill' &&
-          action.intent !== 'accent'
-            ? 'text-icon-base-inverted data-[hovered]:bg-toast-interactive-hover-emphasis data-[pressed]:bg-toast-interactive-active-emphasis active:bg-white/20'
-            : undefined;
 
         return (
           <Button
@@ -468,7 +462,7 @@ export function ToastActions<T>({ toast, className }: ToastActionsProps<T>) {
             size="xs"
             intent={action.intent ?? 'secondary'}
             appearance={actionAppearance}
-            className={emphasisQuietActionClassName}
+            highContrast={toastAppearance === 'emphasis'}
             onPress={() => {
               action.onPress?.();
               if (action.dismissOnPress !== false) {
@@ -574,7 +568,6 @@ export function ToastTimeoutProgress<T>({ toast, className }: ToastTimeoutProgre
 
 export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCloseButtonProps) {
   const appearance = React.useContext(ToastAppearanceContext);
-  const intent = React.useContext(ToastIntentContext);
   const languageConfig = useVeliLanguage();
   const resolvedAriaLabel =
     ariaLabel ??
@@ -589,17 +582,9 @@ export function ToastCloseButton({ 'aria-label': ariaLabel, className }: ToastCl
         appearance="ghost"
         size="sm"
         iconOnly
+        highContrast={appearance === 'emphasis'}
         aria-label={resolvedAriaLabel}
-        className={twMerge(
-          'absolute -end-2 -top-2 max-w-none [&:lang(dv)]:-top-1',
-          appearance === 'emphasis'
-            ? [
-                alertIntentClasses[intent].foreground,
-                'data-[hovered]:bg-toast-interactive-hover-emphasis data-[pressed]:bg-toast-interactive-active-emphasis',
-              ]
-            : 'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
-          className,
-        )}
+        className={twMerge('absolute -end-2 -top-2 max-w-none [&:lang(dv)]:-top-1', className)}
       >
         <XIcon aria-hidden="true" size={16} />
       </Button>

@@ -39,6 +39,7 @@
     "Keep action-bearing or important notifications open until dismissed.",
     "Use stable action ids when labels are not stable primitive values.",
     "Use appearance subtle or emphasis. Subtle uses Alert light colours and emphasis uses Alert high-contrast colours.",
+    "On emphasis, ToastActions and ToastCloseButton apply highContrast to secondary Buttons so they use onHighContrast tokens.",
     "Keep the per-intent leading icon, pass leadingIcon to replace it, or set showLeadingIcon to false to omit it."
   ],
   "limitations": [

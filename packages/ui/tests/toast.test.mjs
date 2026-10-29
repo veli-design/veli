@@ -47,10 +47,10 @@ test('Toast renders subtle and emphasis with Alert surfaces', () => {
     assert.match(emphasis, new RegExp(`text-alert-high-contrast-${intent}-description`));
     assert.match(emphasis, /rounded-3xl/);
     assert.match(emphasis, /data-slot="toast-icon"/);
-    assert.match(emphasis, /data-\[hovered\]:bg-toast-interactive-hover-emphasis/);
+    assert.match(emphasis, /button-onhighcontrast-secondary-transparent-foreground/);
     assert.doesNotMatch(
       emphasis,
-      /border border-base-subtle|text-base-muted|border-status-|bg-status-|data-\[hovered\]:text-base-strong/,
+      /border border-base-subtle|text-base-muted|border-status-|bg-status-|toast-interactive|data-\[hovered\]:text-base-strong/,
     );
   }
 
@@ -113,6 +113,24 @@ test('duplicate labels, element labels and accent actions preserve rendered cont
   });
   assert.equal((html.match(/>Retry</g) ?? []).length, 2);
   assert.match(html, /bg-button-accent/);
+});
+
+test('emphasis opts secondary actions and close into Button highContrast styles', () => {
+  const html = render({
+    appearance: 'emphasis',
+    intent: 'info',
+    actions: [
+      { id: 'fill', label: 'Undo', intent: 'secondary', appearance: 'fill' },
+      { id: 'ghost', label: 'Later', intent: 'secondary', appearance: 'ghost' },
+      { id: 'subtle', label: 'Details', intent: 'secondary', appearance: 'transparent' },
+      { id: 'accent', label: 'Accent', intent: 'accent', appearance: 'ghost' },
+    ],
+  });
+  assert.match(html, /bg-button-onhighcontrast-secondary-fill/);
+  assert.match(html, /button-onhighcontrast-secondary-transparent-foreground/);
+  assert.match(html, /bg-button-onhighcontrast-secondary-transparent(?!-)/);
+  assert.match(html, /bg-button-accent/);
+  assert.doesNotMatch(html, /toast-interactive|text-icon-base-inverted/);
 });
 
 test('progress is decorative and only rendered for timed toasts', () => {
