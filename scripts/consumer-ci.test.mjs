@@ -87,7 +87,7 @@ const jobKeys = [
   'cold-reload',
 ];
 test('only authenticated release mode selects exhaustive browsers, regardless of the narrow release diff', () => {
-  assert.deepEqual(selectChecks(['packages/ui/src/button.tsx'], false), {
+  assert.deepEqual(selectChecks(['packages/react/src/button.tsx'], false), {
     next: true,
     blocks: false,
     sites: true,

@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "node scripts/check.mjs && tsc --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "test:consumer": "node scripts/consumer.mjs"
   },
   "dependencies": {

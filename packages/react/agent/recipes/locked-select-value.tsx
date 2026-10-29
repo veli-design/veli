@@ -1,8 +1,8 @@
 'use client';
 
 import type { FormEvent } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Input } from '@tradenetcorp/veli-ui/input';
+import { Button } from '@veli-design/react/button';
+import { Input } from '@veli-design/react/input';
 
 export function LockedAtollField({ atoll }: { atoll: { id: string; name: string } }) {
   return (

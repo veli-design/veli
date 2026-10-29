@@ -2,7 +2,7 @@ import { plugin as shadcn } from '@shadcn/lint';
 
 import { contractFor, coreNames, upstreamContracts } from './veli-contracts.mjs';
 
-const importPattern = '^@tradenetcorp/veli-ui/[^/]+$';
+const importPattern = '^@veli-design/react/[^/]+$';
 
 function jsxName(tag) {
   const parts = [];
@@ -99,7 +99,7 @@ function contractComponent(context, opening) {
       ? tag.parts.join('')
       : specifier.type === 'ImportSpecifier' && `${imported}${tag.parts.join('')}`;
   const contract = contractFor.get(name);
-  return contract && definition.parent.source.value === `@tradenetcorp/veli-ui/${contract.module}`
+  return contract && definition.parent.source.value === `@veli-design/react/${contract.module}`
     ? name
     : null;
 }

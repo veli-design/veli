@@ -16,7 +16,7 @@ export default [
   ...compositionConfigs,
   // Veli owns its implementation. Application-owned Blocks are consumers.
   {
-    files: ['packages/ui/**'],
+    files: ['packages/react/**'],
     rules: Object.fromEntries(Object.keys(veliStyling.rules).map((rule) => [rule, 'off'])),
   },
 ];
