@@ -1,13 +1,13 @@
 ---
 title: Tags
-description: Accessible tag groups built with React Aria TagGroup and Veli design tokens.
+description: Compact labels, selectable filters, and removable collections.
 ---
 
-import { TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
+import { TagsRtlDemo, TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
 
 # Tags
 
-`TagGroup` and `Tag` are used for compact labels, filters, categories, saved topics, and linked metadata. This Veli wrapper follows the React Aria tags pattern and supports the key interactive variants developers usually need: static tags, selectable tags, removable tags, link tags, disabled tags, size variants, and decorative leading content.
+Use `TagGroup` and `Tag` for categories, filters, saved topics, and linked metadata. Tags can be static, selectable, removable, or links.
 
 ## Import
 
@@ -30,54 +30,210 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 </TagGroup>
 ```
 
+Give each tag a stable `id`. Use `items` with function children for a dynamic collection.
+
 ## Variations
+
+Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to show remove controls, and update the collection in that callback. Use `href` for navigation. Disable individual tags with `disabledKeys` or `Tag isDisabled`, or the whole group with `TagGroup isDisabled`.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TagsVariantsDemo client:visible />
 </div>
 
-### Variant Notes
+```tsx
+<TagGroup
+  label="Departments"
+  selectionMode="multiple"
+  defaultSelectedKeys={['tourism', 'fisheries']}
+>
+  <Tag id="tourism">Tourism</Tag>
+  <Tag id="fisheries">Fisheries</Tag>
+  <Tag id="transport">Transport</Tag>
+  <Tag id="education">Education</Tag>
+</TagGroup>
 
-- `Selectable tags`: use `selectionMode="single"` or `selectionMode="multiple"` when tags act like filters or choices.
-- `Single selection`: use `selectionMode="single"` when only one tag may be active at a time.
-- `Removable tags`: use `onRemove` when people should be able to dismiss or clear tags from a collection.
-- `Link tags`: use `href` when a tag should navigate to related content instead of toggling selection.
-- `Disabled keys`: use `disabledKeys` on the group or `isDisabled` on individual tags to show unavailable items.
-- `Disabled group`: use `isDisabled` on `TagGroup` when the entire collection is unavailable.
+<TagGroup label="Saved topics" items={topics} onRemove={removeTopics}>
+  {(topic) => <Tag id={topic.id}>{topic.label}</Tag>}
+</TagGroup>
+```
 
-Plain text and nested text content are used for tag text and remove button labels automatically. For icon-only, render-function, or otherwise non-text tags, provide `textValue` or `removeButtonLabel`.
+Add decorative icons or badges with `leading`. Include meaningful leading information in `textValue` because the leading slot is hidden from assistive technology.
+
+## Sizes
+
+Tags have five sizes: `xs` (28px), `sm` (32px), `md` (36px), `lg` (40px), and `xl` (44px). Set the group size once, or override it on an individual tag.
+
+```tsx
+<TagGroup label="Departments" size="md">
+  <Tag id="tourism">Tourism</Tag>
+  <Tag id="fisheries" size="sm">
+    Fisheries
+  </Tag>
+</TagGroup>
+```
+
+## Validation
+
+A non-empty `errorMessage` replaces `description`. Tags do not validate selection automatically or expose `isInvalid`; derive the message from your application state.
+
+```tsx
+import { useState } from 'react';
+
+function Departments() {
+  const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(new Set());
+
+  return (
+    <TagGroup
+      label="Departments"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={(keys) =>
+        setSelectedKeys(new Set(keys === 'all' ? ['tourism', 'fisheries'] : keys))
+      }
+      description="Choose at least one department."
+      errorMessage={selectedKeys.size === 0 ? 'Select a department to continue.' : undefined}
+    >
+      <Tag id="tourism">Tourism</Tag>
+      <Tag id="fisheries">Fisheries</Tag>
+    </TagGroup>
+  );
+}
+```
 
 ## API Reference
 
-### `TagGroup`
+Tags compose React Aria [`TagGroup`, `TagList`, and `Tag`](https://react-spectrum.adobe.com/react-aria/TagGroup.html). `Key` is `string | number`. Props below follow that stack.
 
-| Prop                  | Type                                   | Description                                                                      |
-| :-------------------- | :------------------------------------- | :------------------------------------------------------------------------------- |
-| `label`               | `ReactNode`                            | Adds a visible label above the tag list.                                         |
-| `selectionMode`       | `'none' \| 'single' \| 'multiple'`     | Controls whether tags are selectable and how many can be selected.               |
-| `selectedKeys`        | `'all' \| Iterable<Key>`               | Controls the current selection from external state.                              |
-| `defaultSelectedKeys` | `'all' \| Iterable<Key>`               | Sets the initial selection for uncontrolled usage.                               |
-| `onSelectionChange`   | `(keys) => void`                       | Called when the selected tags change.                                            |
-| `onRemove`            | `(keys) => void`                       | Called when one or more removable tags are dismissed.                            |
-| `description`         | `ReactNode`                            | Adds helper text below the tag list when no error is shown.                      |
-| `errorMessage`        | `ReactNode`                            | Adds validation text below the tag list and replaces `description` when present. |
-| `isDisabled`          | `boolean`                              | Disables the full group and styles the visible label as disabled.                |
-| `disabledKeys`        | `Iterable<Key>`                        | Disables specific tags in a collection.                                          |
-| `size`                | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | Sets the default size for every tag in the group.                                |
+### TagGroup
 
-### `Tag`
+Veli props for the composed group. `items`, `children`, `renderEmptyState`, and `listClassName` configure its internal tag list.
 
-| Prop                | Type                                   | Description                                                                                                      |
-| :------------------ | :------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `id`                | `Key`                                  | Identifies the tag for selection, removal, and collection rendering.                                             |
-| `href`              | `string`                               | Turns the tag into a link-style action instead of a selectable tag.                                              |
-| `target`            | `string`                               | Sets the browsing context for link tags.                                                                         |
-| `rel`               | `string`                               | Adds relationship metadata for external link tags.                                                               |
-| `isDisabled`        | `boolean`                              | Disables a specific tag.                                                                                         |
-| `textValue`         | `string`                               | Text alternative for complex content. Nested visible text is derived automatically when possible.                |
-| `size`              | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | Overrides the group size for an individual tag.                                                                  |
-| `leading`           | `ReactNode`                            | Adds decorative leading content such as an icon or badge. Include meaningful leading text in `textValue`.        |
-| `removeButtonLabel` | `string \| ((tagText) => string)`      | Overrides the accessible label used by the built-in remove button, useful for icon-only or render-function tags. |
-| `className`         | `string`                               | Adds local styling overrides to a single tag.                                                                    |
+| Prop               | Type                                       | Default           | Description                                 |
+| :----------------- | :----------------------------------------- | :---------------- | :------------------------------------------ |
+| `label`            | `ReactNode`                                | -                 | Visible label above the list.               |
+| `description`      | `ReactNode`                                | -                 | Helper text below the list.                 |
+| `errorMessage`     | `ReactNode`                                | -                 | Replaces the helper when non-empty.         |
+| `isDisabled`       | `boolean`                                  | `false`           | Disables all tags and remove controls.      |
+| `size`             | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`     | `'sm'`            | Default size for tags in the group.         |
+| `items`            | `Iterable<T>`                              | -                 | Items for a dynamic collection.             |
+| `children`         | `ReactNode \| ((item: T) => ReactNode)`    | -                 | Static tags or a renderer for `items`.      |
+| `renderEmptyState` | `(state: TagListRenderProps) => ReactNode` | Localized message | Content shown when the collection is empty. |
+| `className`        | `string`                                   | -                 | Class merged onto the group root.           |
+| `listClassName`    | `string`                                   | -                 | Class merged onto the wrapping tag list.    |
 
-All remaining supported React Aria `TagGroup` and `Tag` props can still be passed through these wrappers.
+### React Aria TagGroup
+
+These React Aria [`TagGroup`](https://react-spectrum.adobe.com/react-aria/TagGroup.html#props) props pass to the group. Veli protects disabled tags when handling removal requests.
+
+| Prop                     | Type                                | Default            | Description                                                       |
+| :----------------------- | :---------------------------------- | :----------------- | :---------------------------------------------------------------- |
+| `selectionMode`          | `'none' \| 'single' \| 'multiple'`  | `'none'`           | Whether and how many tags can be selected.                        |
+| `selectionBehavior`      | `'toggle' \| 'replace'`             | `'toggle'`         | How multiple selection responds to interaction.                   |
+| `selectedKeys`           | `'all' \| Iterable<Key>`            | -                  | Controlled selection.                                             |
+| `defaultSelectedKeys`    | `'all' \| Iterable<Key>`            | -                  | Uncontrolled initial selection.                                   |
+| `onSelectionChange`      | `(keys: 'all' \| Set<Key>) => void` | -                  | Called when selection changes.                                    |
+| `disallowEmptySelection` | `boolean`                           | `false`            | Prevents clearing the last selected tag.                          |
+| `disabledKeys`           | `Iterable<Key>`                     | -                  | Keys of tags to disable.                                          |
+| `onRemove`               | `(keys: Set<Key>) => void`          | -                  | Enables removal and requests collection updates for enabled keys. |
+| `onAction`               | `(key: Key) => void`                | -                  | Called when a tag performs an action.                             |
+| `shouldSelectOnPressUp`  | `boolean`                           | `false`            | Selects on release rather than press down.                        |
+| `escapeKeyBehavior`      | `'clearSelection' \| 'none'`        | `'clearSelection'` | Whether Escape clears selection.                                  |
+| `aria-label`             | `string`                            | -                  | Accessible name when no visible label is used.                    |
+| `aria-labelledby`        | `string`                            | -                  | ID of an element that labels the group.                           |
+
+Other supported root DOM and ARIA props pass through. Not forwarded unchanged:
+
+| Prop        | Why                                            |
+| :---------- | :--------------------------------------------- |
+| `children`  | Replaced by Veli's tag-list composition above. |
+| `className` | Replaced by Veli's string class on the root.   |
+| `style`     | Not supported.                                 |
+| `ref`       | Not declared in the public wrapper types.      |
+
+React Aria `TagList` is internal. Its arbitrary `style`, `slot`, `render`, and other list props are not exposed; use the four list props in the Veli table above. Native form-field props such as `name`, `isRequired`, `isInvalid`, and `validate` are not part of this group API.
+
+### Tag
+
+Veli props for each tag.
+
+| Prop                | Type                                                   | Default              | Description                                      |
+| :------------------ | :----------------------------------------------------- | :------------------- | :----------------------------------------------- |
+| `size`              | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`                 | Group size or `'sm'` | Overrides the group size.                        |
+| `leading`           | `ReactNode`                                            | -                    | Decorative icon or badge before the content.     |
+| `removeButtonLabel` | `string \| ((tagText: string \| undefined) => string)` | Localized label      | Accessible name for the built-in remove control. |
+| `children`          | `ReactNode \| ((state: TagRenderProps) => ReactNode)`  | -                    | Content, or a renderer receiving the tag state.  |
+| `className`         | `string`                                               | -                    | Class merged onto the tag.                       |
+
+### React Aria Tag
+
+These React Aria [`Tag`](https://react-spectrum.adobe.com/react-aria/TagGroup.html#tag) props pass to the tag.
+
+| Prop         | Type         | Default      | Description                                       |
+| :----------- | :----------- | :----------- | :------------------------------------------------ |
+| `id`         | `Key`        | -            | Identifies the tag for selection and removal.     |
+| `textValue`  | `string`     | Derived text | Text alternative for complex or function content. |
+| `isDisabled` | `boolean`    | `false`      | Blocks interaction with this tag.                 |
+| `href`       | `string`     | -            | Destination for a link tag.                       |
+| `target`     | `string`     | -            | Browsing context for the destination.             |
+| `rel`        | `string`     | -            | Link relationship metadata.                       |
+| `onAction`   | `() => void` | -            | Called when the tag performs an action.           |
+
+Other supported DOM, ARIA, focus, hover, and press props pass to React Aria. Not forwarded unchanged:
+
+| Prop        | Why                                                           |
+| :---------- | :------------------------------------------------------------ |
+| `children`  | Replaced by Veli's content slot and state renderer.           |
+| `className` | Replaced by Veli's string class; functions are not supported. |
+| `style`     | Not supported.                                                |
+| `ref`       | Not declared in the public wrapper types.                     |
+| `onClick`   | Not part of React Aria Tag; use `onAction`.                   |
+
+### DOM structure
+
+By default, the group root and tag rows are `<div>` elements, with a grid for keyboard interaction. Tags are not native form inputs; include `selectedKeys` in your form data explicitly when submitting.
+
+## Accessibility
+
+- Give the group a visible `label`, or use `aria-label` / `aria-labelledby`.
+- Arrow keys navigate tags; selection follows `selectionMode`. Delete or Backspace removes enabled selected tags, or the focused tag when it is unselected.
+- Clicking a remove control removes that tag without selecting it. Disabled tags remain in the collection during bulk removal.
+- A selected disabled tag retains `aria-selected="true"` alongside `aria-disabled="true"`. Link tags retain grid-row keyboard navigation and announce their destination through an accessible description.
+- Plain and nested text supply the tag name automatically. Provide `textValue` for complex or function content, and a useful `removeButtonLabel` for custom removal wording.
+- `description` is the accessible helper; a non-empty `errorMessage` replaces it. Focus remains visible in forced-colors mode, and reduced motion makes color changes immediate.
+
+## RTL and Language
+
+Use [VeliProvider](/docs/provider/) with `language="dv"` for Dhivehi and RTL, or `language="en"` for English and LTR. Dhivehi tags use `MV A Waheed`; labels and messages follow the provider typography. Leading content and removal controls follow the text direction.
+
+Built-in empty messages and remove labels follow the provider language. Localize your visible tag content and custom remove labels in your application. Local `lang` and `dir` attributes do not change the built-in translated copy.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsRtlDemo client:visible />
+</div>
+
+Switch between Dhivehi and English to compare tag order, selection, and the built-in remove controls. Removing a saved topic updates the preview collection.
+
+```tsx
+import { useState } from 'react';
+import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+function DhivehiTags() {
+  const [topics, setTopics] = useState([
+    { id: 'documents', label: 'ލިޔެކިޔުންތައް' },
+    { id: 'forms', label: 'ފޯމުތައް' },
+  ]);
+
+  return (
+    <VeliProvider language="dv">
+      <TagGroup
+        label="ސޭވްކުރެވިފައިވާ މައުޟޫޢުތައް"
+        items={topics}
+        onRemove={(keys) => setTopics((current) => current.filter((item) => !keys.has(item.id)))}
+      >
+        {(item) => <Tag id={item.id}>{item.label}</Tag>}
+      </TagGroup>
+    </VeliProvider>
+  );
+}
+```

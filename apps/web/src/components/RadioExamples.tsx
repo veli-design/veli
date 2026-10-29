@@ -16,9 +16,10 @@ export function RadioUsageDemo() {
 
 export function RadioSizesDemo() {
   return (
-    <div className="grid gap-6 sm:grid-cols-2">
-      {(['md', 'lg'] as const).map((size) => (
-        <RadioGroup key={size} aria-label={`${size} choices`} defaultValue="a">
+    <div className="grid gap-6 sm:grid-cols-3">
+      {(['md', 'lg', 'xl'] as const).map((size) => (
+        <RadioGroup key={size} defaultValue="a">
+          <FieldLabel>{size.toUpperCase()}</FieldLabel>
           <Radio value="a" size={size}>
             Option A
           </Radio>
@@ -81,25 +82,38 @@ export function RadioControlledDemo() {
 
 export function RadioRtlDemo() {
   const [language, setLanguage] = useState('Dhivehi');
+  const [size, setSize] = useState<'md' | 'lg' | 'xl'>('md');
   const isDhivehi = language === 'Dhivehi';
   return (
     <DocsPreview
-      codeKey={`radio-language-${isDhivehi ? 'dv' : 'en'}`}
+      codeKey={`radio-language-${isDhivehi ? 'dv' : 'en'}-${size}`}
       controls={
-        <DocsPreviewOption
-          label="Language"
-          value={language}
-          options={['English', 'Dhivehi']}
-          onChange={setLanguage}
-        />
+        <>
+          <DocsPreviewOption
+            label="Language"
+            value={language}
+            options={['English', 'Dhivehi']}
+            onChange={setLanguage}
+          />
+          <DocsPreviewOption
+            label="Size"
+            value={size}
+            options={['md', 'lg', 'xl']}
+            onChange={(value) => setSize(value as 'md' | 'lg' | 'xl')}
+          />
+        </>
       }
     >
       <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
         <div lang={isDhivehi ? 'dv' : 'en'} dir={isDhivehi ? 'rtl' : 'ltr'}>
           <RadioGroup defaultValue="a">
             <FieldLabel>{isDhivehi ? 'އޮޕްޝަންތައް' : 'Options'}</FieldLabel>
-            <Radio value="a">{isDhivehi ? 'އޮޕްޝަން އޭ' : 'Option A'}</Radio>
-            <Radio value="b">{isDhivehi ? 'އޮޕްޝަން ބީ' : 'Option B'}</Radio>
+            <Radio value="a" size={size}>
+              {isDhivehi ? 'އޮޕްޝަން އޭ' : 'Option A'}
+            </Radio>
+            <Radio value="b" size={size}>
+              {isDhivehi ? 'އޮޕްޝަން ބީ' : 'Option B'}
+            </Radio>
           </RadioGroup>
         </div>
       </I18nProvider>

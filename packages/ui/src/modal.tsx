@@ -336,18 +336,22 @@ export interface ModalHeaderProps {
 export function ModalHeader({ children, className }: ModalHeaderProps) {
   const { register } = useModalLayout();
   const { titles, descriptions, closeButton } = splitHeaderChildren(children);
-  const hasDescription = descriptions.length > 0;
+  const hasDescription = descriptions.some(
+    (child) =>
+      React.isValidElement<{ children?: React.ReactNode }>(child) &&
+      hasRenderableMessage(child.props.children),
+  );
 
   React.useLayoutEffect(() => register('header'), [register]);
 
   return (
     <div className={twMerge('flex shrink-0 flex-col', className)}>
       <div className="flex flex-col gap-2">
-        <div className="flex items-end justify-between gap-2">
+        <div className="flex items-end gap-2">
           {titles.length > 0 ? (
             <div className="flex min-w-0 flex-1 flex-col justify-center pt-2">{titles}</div>
           ) : null}
-          {closeButton}
+          {closeButton.length > 0 ? <div className="ms-auto shrink-0">{closeButton}</div> : null}
         </div>
         {descriptions}
       </div>
@@ -390,10 +394,16 @@ export interface ModalDescriptionProps extends Omit<TextProps, 'className' | 'ch
 
 export function ModalDescription({ children, className, ...props }: ModalDescriptionProps) {
   const { register } = useModalLayout();
+  const hasContent = hasRenderableMessage(children);
 
-  React.useLayoutEffect(() => register('description'), [register]);
+  React.useLayoutEffect(() => {
+    if (!hasContent) {
+      return;
+    }
+    return register('description');
+  }, [hasContent, register]);
 
-  if (!hasRenderableMessage(children)) {
+  if (!hasContent) {
     return null;
   }
 
@@ -419,7 +429,7 @@ export function ModalCloseButton({
   'aria-label': ariaLabel,
   intent = 'secondary',
   appearance = 'ghost',
-  size = 'xs',
+  size = 'sm',
   ...props
 }: ModalCloseButtonProps) {
   const close = useModalClose();
