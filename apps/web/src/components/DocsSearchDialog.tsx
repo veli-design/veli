@@ -190,7 +190,6 @@ export default function DocsSearchDialog({ isOpen, onOpenChange }: DocsSearchDia
           >
             <Search
               ref={searchInputRef}
-              className="docs-search-field"
               value={query}
               onChange={setQuery}
               aria-label="Search documentation"

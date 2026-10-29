@@ -4,6 +4,13 @@ description: Accessible data tables with sorting, selection, resizing, and Veli 
 ---
 
 import { TableUsageDemo } from '../../components/DocsExamples';
+import {
+  TableSelectionDemo,
+  TableSortingDemo,
+  TableResizingDemo,
+  TableEmptyDemo,
+  TableRtlDemo,
+} from '../../components/TableExamples';
 
 # Table
 
@@ -31,30 +38,329 @@ import {
 </div>
 
 ```tsx
-<Table aria-label="Permit applications">
-  <TableHeader>
-    <TableColumn isRowHeader>Name</TableColumn>
-    <TableColumn>Department</TableColumn>
-    <TableColumn>Status</TableColumn>
-  </TableHeader>
-  <TableBody items={rows}>
-    {(item) => (
-      <TableRow id={item.id}>
-        <TableCell>{item.name}</TableCell>
-        <TableCell>{item.department}</TableCell>
-        <TableCell>{item.status}</TableCell>
-      </TableRow>
-    )}
-  </TableBody>
-</Table>
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@tradenetcorp/veli-ui/table';
+
+export default function PermitTable() {
+  const rows = [
+    { id: 'tourism', name: 'Tourism licence', department: 'Tourism', status: 'Approved' },
+    { id: 'fishing', name: 'Fishing permit', department: 'Fisheries', status: 'Pending' },
+    { id: 'business', name: 'Business registration', department: 'Commerce', status: 'Rejected' },
+  ];
+  return (
+    <Table aria-label="Permit applications">
+      <TableHeader>
+        <TableColumn isRowHeader>Name</TableColumn>
+        <TableColumn>Department</TableColumn>
+        <TableColumn>Status</TableColumn>
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow id={item.id}>
+            <TableCell>{item.name}</TableCell>
+            <TableCell>{item.department}</TableCell>
+            <TableCell>{item.status}</TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
 ```
 
-## Features
+## Sorting
 
-- **Sorting** — set `allowsSorting` on `TableColumn` and control `sortDescriptor` / `onSortChange` on `Table`.
-- **Selection** — `selectionMode="multiple"` adds a select-all header and row checkboxes.
-- **Row actions** — `onRowAction` on `Table` for keyboard and pointer activation.
-- **Resizing** — wrap the table in `TableResizableContainer` and add `TableColumnResizer` to columns.
-- **Sticky header** — `stickyHeader` on `Table` keeps header cells visible while scrolling.
+Sorting is controlled: set `allowsSorting` on individual columns, provide `sortDescriptor` and `onSortChange`, and sort the items yourself. Keep numeric and date values in their original types when comparing; formatted dates should not be sorted lexically.
 
-All React Aria `Table` props are supported on the root component.
+<div className="preview mb-4 rounded-lg border p-4">
+  <TableSortingDemo client:visible />
+</div>
+
+```tsx
+import { useState } from 'react';
+import { Table, type SortDescriptor } from '@tradenetcorp/veli-ui/table';
+
+export default function SortableTable() {
+  const [sort, setSort] = useState<SortDescriptor>({ column: 'name', direction: 'ascending' });
+  const rows = [
+    { id: 'tourism', name: 'Tourism licence', status: 'Approved' },
+    { id: 'fishing', name: 'Fishing permit', status: 'Pending' },
+    { id: 'business', name: 'Business registration', status: 'Rejected' },
+  ];
+  const items = [...rows].sort((a, b) => {
+    const column = sort.column as 'name' | 'status';
+    const result = a[column].localeCompare(b[column]);
+    return sort.direction === 'descending' ? -result : result;
+  });
+  return (
+    <Table aria-label="Permit applications" sortDescriptor={sort} onSortChange={setSort}>
+      <Table.Header>
+        <Table.Column id="name" isRowHeader allowsSorting>
+          Name
+        </Table.Column>
+        <Table.Column id="status" allowsSorting>
+          Status
+        </Table.Column>
+      </Table.Header>
+      <Table.Body items={items}>
+        {(item) => (
+          <Table.Row id={item.id}>
+            <Table.Cell>{item.name}</Table.Cell>
+            <Table.Cell>{item.status}</Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table>
+  );
+}
+```
+
+## Selection
+
+`selectionMode="multiple"` with the default `selectionBehavior="toggle"` inserts select-all and row checkboxes. Do not add those cells yourself. `single` and `replace` selection use row interaction without checkboxes. Use `defaultSelectedKeys` for uncontrolled selection, or `selectedKeys` with `onSelectionChange` for controlled selection. `Selection` is a set of keys or `'all'`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TableSelectionDemo client:visible />
+</div>
+
+```tsx
+import { useState } from 'react';
+import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
+
+export default function SelectableTable() {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['fishing']));
+  const rows = [
+    { id: 'tourism', name: 'Tourism licence', status: 'Approved' },
+    { id: 'fishing', name: 'Fishing permit', status: 'Pending' },
+    { id: 'business', name: 'Business registration', status: 'Rejected' },
+  ];
+  return (
+    <Table
+      aria-label="Permit applications"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      disabledKeys={['business']}
+    >
+      <Table.Header>
+        <Table.Column isRowHeader>Name</Table.Column>
+        <Table.Column>Status</Table.Column>
+      </Table.Header>
+      <Table.Body items={rows}>
+        {(item) => (
+          <Table.Row id={item.id}>
+            <Table.Cell>{item.name}</Table.Cell>
+            <Table.Cell>{item.status}</Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table>
+  );
+}
+```
+
+## Resizing
+
+Wrap the table in `TableResizableContainer` (or `Table.ResizableContainer`) and put `TableColumnResizer` directly inside each resizable column. `defaultWidth`, `minWidth` and `maxWidth` constrain that column. The idle divider becomes teal while resizing and shows a keyboard focus ring.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TableResizingDemo client:visible />
+</div>
+
+```tsx
+import { Table } from '@tradenetcorp/veli-ui/table';
+
+export default function ResizableTable() {
+  const rows = [
+    { id: 'tourism', name: 'Tourism licence', status: 'Approved' },
+    { id: 'fishing', name: 'Fishing permit', status: 'Pending' },
+    { id: 'business', name: 'Business registration', status: 'Rejected' },
+  ];
+  return (
+    <Table.ResizableContainer>
+      <Table aria-label="Permit applications">
+        <Table.Header>
+          <Table.Column isRowHeader defaultWidth={280} minWidth={160} maxWidth={400}>
+            Name
+            <Table.ColumnResizer />
+          </Table.Column>
+          <Table.Column>Status</Table.Column>
+        </Table.Header>
+        <Table.Body items={rows}>
+          {(item) => (
+            <Table.Row id={item.id}>
+              <Table.Cell>{item.name}</Table.Cell>
+              <Table.Cell>{item.status}</Table.Cell>
+            </Table.Row>
+          )}
+        </Table.Body>
+      </Table>
+    </Table.ResizableContainer>
+  );
+}
+```
+
+## Empty state
+
+The default message follows the provider language. Override `emptyMessage` with any React node, or use `renderEmptyState` for custom content; the callback takes precedence. Explicit `emptyMessage={null}` hides the fallback text.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TableEmptyDemo client:visible />
+</div>
+
+```tsx
+import { Table } from '@tradenetcorp/veli-ui/table';
+
+export default function EmptyTable() {
+  return (
+    <Table aria-label="Permit applications">
+      <Table.Header>
+        <Table.Column isRowHeader>Name</Table.Column>
+        <Table.Column>Status</Table.Column>
+      </Table.Header>
+      <Table.Body items={[]}>
+        {(item: { id: string; name: string; status: string }) => (
+          <Table.Row id={item.id}>
+            <Table.Cell>{item.name}</Table.Cell>
+            <Table.Cell>{item.status}</Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table>
+  );
+}
+```
+
+## Row actions and reordering
+
+Pass `onRowAction={(key) => openPermit(key)}` for activation. Enter activates the focused row. Pointer activation depends on selection behavior: toggle selection separates selection from actions, while replace selection uses double-click for an action. `TableRow` also accepts React Aria link props such as `href`; use the provider router for client-side navigation.
+
+For reordering, import `useDragAndDrop` from the Table entry point, supply `getItems` and `onReorder`, and pass the returned `dragAndDropHooks` to `Table`. Update your items in `onReorder`; the component does not own their order. Header and row drag cells are inserted automatically. The Drag And Drop story in the linked Storybook covers the complete controlled collection.
+
+## Responsive layout and sticky headers
+
+The automatic rounded frame scrolls horizontally when the table is wider than its container. Use `className="min-w-[640px]"` on `Table` when columns should retain their width on small screens. Table has one density; there are no public size or appearance variants.
+
+`stickyHeader` needs a bounded scrolling ancestor. Use `TableResizableContainer className="max-h-64 overflow-auto"` as that frame, even when columns are not resizable. The container replaces the automatic frame, so borders do not nest. `Table.className` targets the table element; container classes target the frame.
+
+## RTL and language
+
+Use `VeliProvider language="dv"` for Dhivehi fonts, direction, localized selection labels and the default empty message. App-owned headers, rows and custom empty content must be translated by the app. Horizontal alignment and selection/drag column order follow direction. Sorting chevrons remain vertical.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TableRtlDemo client:visible />
+</div>
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
+import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+
+export default function TableRtlDemo() {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['fishing']));
+  const rows = [
+    {
+      id: 'tourism',
+      name: 'ފަތުރުވެރިކަމުގެ ލައިސަންސް',
+      status: 'ފާސްކުރެވިފައި',
+    },
+    {
+      id: 'fishing',
+      name: 'މަސްވެރިކަން ކުރުމުގެ ހުއްދަ',
+      status: 'ޕެންޑިންގ',
+    },
+    {
+      id: 'business',
+      name: 'ވިޔަފާރި ރަޖިސްޓްރީކުރުން',
+      status: 'ރިޖެކްޓްކުރެވިފައި',
+    },
+  ];
+
+  return (
+    <VeliProvider language="dv">
+      <Table
+        aria-label="ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        disabledKeys={['business']}
+      >
+        <Table.Header>
+          <Table.Column isRowHeader>ނަން</Table.Column>
+          <Table.Column>ޙާލަތު</Table.Column>
+        </Table.Header>
+        <Table.Body items={rows}>
+          {(item) => (
+            <Table.Row id={item.id}>
+              <Table.Cell>{item.name}</Table.Cell>
+              <Table.Cell>{item.status}</Table.Cell>
+            </Table.Row>
+          )}
+        </Table.Body>
+      </Table>
+    </VeliProvider>
+  );
+}
+```
+
+## API Reference
+
+Table composes [React Aria Table](https://react-spectrum.adobe.com/react-aria/Table.html) with Veli styling. Each part accepts the corresponding React Aria props except `style` and state-based `className`; Veli exposes a string `className`. `TableHeader` and `TableRow` accept static React children rather than React Aria collection-renderer children. Use dynamic items on `TableBody` and return a row with explicit cells. `TableColumn` and `TableCell` retain render-function children.
+
+### Table
+
+| Prop                                  | Type                               | Default    | Description                                      |
+| :------------------------------------ | :--------------------------------- | :--------- | :----------------------------------------------- |
+| `aria-label`, `aria-labelledby`       | `string`                           | —          | Required accessible table name.                  |
+| `stickyHeader`                        | `boolean`                          | `false`    | Sticky header cells within a scrolling ancestor. |
+| `selectionMode`                       | `'none' \| 'single' \| 'multiple'` | `'none'`   | Row selection mode.                              |
+| `selectionBehavior`                   | `'toggle' \| 'replace'`            | `'toggle'` | Checkbox toggle or row replacement selection.    |
+| `selectedKeys`, `defaultSelectedKeys` | `'all' \| Iterable<Key>`           | —          | Controlled or initial selected rows.             |
+| `onSelectionChange`                   | `(keys: Selection) => void`        | —          | Selection updates.                               |
+| `disabledKeys`                        | `Iterable<Key>`                    | —          | Disabled row keys.                               |
+| `disabledBehavior`                    | `'selection' \| 'all'`             | `'all'`    | Disable selection only or all interactions.      |
+| `disallowEmptySelection`              | `boolean`                          | `false`    | Prevent clearing the final selection.            |
+| `sortDescriptor`                      | `SortDescriptor`                   | —          | Column key and ascending/descending direction.   |
+| `onSortChange`                        | `(sort: SortDescriptor) => void`   | —          | Request a new sort; caller orders items.         |
+| `onRowAction`                         | `(key: Key) => void`               | —          | Row activation.                                  |
+| `dragAndDropHooks`                    | `DragAndDropHooks`                 | —          | Hooks from `useDragAndDrop`.                     |
+| `className`                           | `string`                           | —          | Classes merged onto the table, not its frame.    |
+
+Other declared React Aria root props, including keyboard/focus handlers, `id` and ARIA attributes, are forwarded. There is no root `size`, `appearance` or `allowsSorting` prop.
+
+### Composition
+
+Each part is available as a named export and on `Table`: `TableHeader` / `Table.Header`, `TableColumn` / `Table.Column`, `TableBody` / `Table.Body`, `TableRow` / `Table.Row`, `TableCell` / `Table.Cell`, `TableResizableContainer` / `Table.ResizableContainer`, and `TableColumnResizer` / `Table.ColumnResizer`.
+
+| Part                      | Props                                                                                                          | Purpose                                                                                                                                       |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TableHeader`             | `children`, `className`                                                                                        | Explicit columns; inserts selection/drag columns when enabled.                                                                                |
+| `TableColumn`             | `id`, `isRowHeader`, `allowsSorting`, `children`, `width`, `defaultWidth`, `minWidth`, `maxWidth`, `className` | Column identity, accessible row heading, sorting and width constraints. Children may be a render function receiving column state.             |
+| `TableBody<T>`            | `items`, `children`, `emptyMessage`, `renderEmptyState`, `className`                                           | Static rows or an item renderer. Undefined `emptyMessage` uses the localized fallback.                                                        |
+| `TableRow<T>`             | `id`, `textValue`, `href`, `children`, `onPointerDownCapture`, `onDragStartCapture`, `className`               | Row identity and content. Set `textValue` for complex content used in typeahead/drag announcements. Pointer drags start from the handle cell. |
+| `TableCell`               | `children`, `textValue`, `className`                                                                           | Cell content; render-function children receive cell state.                                                                                    |
+| `TableResizableContainer` | `children`, `onResizeStart`, `onResize`, `onResizeEnd`, `className`                                            | Scroll frame and column resize callbacks (width maps keyed by column id).                                                                     |
+| `TableColumnResizer`      | `aria-label`, `className`                                                                                      | Focusable resize handle with React Aria keyboard/pointer behavior.                                                                            |
+
+`Selection`, `SortDescriptor`, `SortDirection`, and `useDragAndDrop` are re-exported from the same entry point. Custom classes are merged with defaults for each part.
+
+## Accessibility and motion
+
+- Give the table an accessible name and mark a meaningful column `isRowHeader` so row selection and drag announcements identify the row.
+- Arrow keys navigate the grid. Space selects when selection is enabled; Enter activates row actions. Focus rings identify rows, sortable headers, cells and resize handles.
+- Select-all skips disabled rows. `disabledBehavior="selection"` preserves row actions while blocking selection.
+- Focus a resize handle and press Enter to begin, use Left/Right to resize, and Enter to finish or Escape to cancel. Direction follows the provider locale.
+- Focus a drag handle and press Enter to begin moving, arrow keys to choose a drop target, Enter to drop, or Escape to cancel. Keep a pointer alternative through the visible handle.
+- Row feedback uses colour transitions and disables those transitions under `prefers-reduced-motion: reduce`. No entrance or layout animation is added by Table.
+
+## Design and examples
+
+The [Figma Table baseline](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1977-6930) contains default, sorting, selection, empty, resize and reorder examples. Explore these and the additional selection, action, sticky and narrow-container states in Storybook using the link after the API tables.

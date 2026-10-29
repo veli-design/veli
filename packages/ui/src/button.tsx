@@ -66,6 +66,7 @@ const buttonVariants = cva(
         lg: 'px-3.5 py-3 [&:lang(dv)]:py-2',
         xl: 'px-4.5 py-4 [&:lang(dv)]:py-3.5',
       },
+      highContrast: { true: '', false: '' },
       iconOnly: {
         true: 'shrink-0 p-0 [&:lang(dv)]:py-0',
         false: '',
@@ -93,18 +94,21 @@ const buttonVariants = cva(
       {
         intent: 'secondary',
         appearance: 'fill',
+        highContrast: false,
         className:
           'bg-button-secondary text-base-inverted data-[hovered]:bg-button-secondary-hover data-[pressed]:bg-button-secondary-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_40%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_98%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'transparent',
+        highContrast: false,
         className:
           'bg-button-secondary-subtle text-base-strong data-[hovered]:bg-button-secondary-subtle-hover data-[pressed]:bg-button-secondary-subtle-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
       {
         intent: 'secondary',
         appearance: 'ghost',
+        highContrast: false,
         className:
           'bg-transparent text-base-strong data-[hovered]:bg-button-secondary-subtle data-[pressed]:bg-button-secondary-subtle-hover data-[disabled]:bg-transparent data-[disabled]:text-disabled [--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_61%,transparent)] dark:[--button-ripple-color:color-mix(in_srgb,var(--veli-color-white)_15%,transparent)]',
       },
@@ -132,6 +136,34 @@ const buttonVariants = cva(
         className:
           'bg-button-accent text-primary-on-light data-[hovered]:bg-button-accent-hover data-[pressed]:bg-button-accent-pressed data-[disabled]:bg-button-disabled data-[disabled]:text-disabled [--button-ripple-color:var(--veli-color-accent-400)] dark:[--button-ripple-color:var(--veli-color-accent-1100)]',
       },
+      // Figma specifies pressed fills without an additional high-contrast ripple color.
+      {
+        intent: 'secondary',
+        highContrast: true,
+        className:
+          'focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-button-onhighcontrast-focus focus-visible:ring-0 focus-visible:ring-offset-0 data-[disabled]:opacity-50 [--button-ripple-color:transparent]',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'fill',
+        highContrast: true,
+        className:
+          'bg-button-onhighcontrast-secondary-fill text-button-onhighcontrast-secondary-fill-foreground data-[hovered]:bg-button-onhighcontrast-secondary-fill-hover data-[pressed]:bg-button-onhighcontrast-secondary-fill-pressed data-[disabled]:bg-button-onhighcontrast-secondary-fill data-[disabled]:text-button-onhighcontrast-secondary-fill-foreground',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'transparent',
+        highContrast: true,
+        className:
+          'bg-button-onhighcontrast-secondary-transparent text-button-onhighcontrast-secondary-transparent-foreground data-[hovered]:bg-button-onhighcontrast-secondary-transparent-hover data-[pressed]:bg-button-onhighcontrast-secondary-transparent-pressed data-[disabled]:bg-button-onhighcontrast-secondary-transparent data-[disabled]:text-button-onhighcontrast-secondary-transparent-foreground',
+      },
+      {
+        intent: 'secondary',
+        appearance: 'ghost',
+        highContrast: true,
+        className:
+          'bg-transparent text-button-onhighcontrast-secondary-transparent-foreground data-[hovered]:bg-button-onhighcontrast-secondary-transparent data-[pressed]:bg-button-onhighcontrast-secondary-transparent-hover data-[disabled]:bg-transparent data-[disabled]:text-button-onhighcontrast-secondary-transparent-foreground',
+      },
       { size: 'xs', iconOnly: true, className: 'h-7 w-7' },
       { size: 'sm', iconOnly: true, className: 'h-9 w-9' },
       { size: 'md', iconOnly: true, className: 'h-11 w-11' },
@@ -143,6 +175,7 @@ const buttonVariants = cva(
       appearance: 'fill',
       size: 'md',
       iconOnly: false,
+      highContrast: false,
     },
   },
 );
@@ -561,6 +594,7 @@ function ActionButton({
   as: elementType = 'button',
   intent,
   appearance,
+  highContrast = false,
   size,
   children,
   iconOnly,
@@ -649,6 +683,7 @@ function ActionButton({
           buttonVariants({
             intent: resolvedIntent,
             appearance: resolvedAppearance,
+            highContrast: resolvedIntent === 'secondary' && Boolean(highContrast),
             size: resolvedSize,
             iconOnly: isIconOnly,
           }),
@@ -696,6 +731,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
     as: elementType,
     intent,
     appearance,
+    highContrast = false,
     size,
     children,
     iconOnly,
@@ -829,6 +865,7 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
       buttonVariants({
         intent: resolvedIntent,
         appearance: resolvedAppearance,
+        highContrast: resolvedIntent === 'secondary' && Boolean(highContrast),
         size: resolvedSize,
         iconOnly: isIconOnly,
       }),

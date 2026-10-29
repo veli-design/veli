@@ -1,0 +1,1257 @@
+/* Feature measurements and aliases; canonical variables come from the shared token layer. */
+.veli-service-detail-root,
+.veli-service-detail-overlay,
+.veli-service-detail-dialog,
+.veli-service-detail-guideline-sheet {
+  --veli-service-detail-hairline: calc(var(--veli-spacing-0-5) / 2);
+  --veli-service-detail-toc-active-border: calc(
+    var(--veli-spacing-1) - var(--veli-service-detail-hairline)
+  );
+  --veli-service-detail-caption-line: calc(var(--veli-spacing-4) + var(--veli-spacing-0-5));
+  /* Figma 6603:626 leaves this remainder after the two responsive fee columns. */
+  --veli-service-detail-fee-grid-remainder: var(--veli-spacing-2);
+  /* Measured Figma feature tokens, not additions to the shared Veli scale:
+     6604:111401 desktop column; 7455:3170 modal; 7474:3442 / 7455:3559 scrim. */
+  --veli-service-detail-content-max-width: 696px;
+  --veli-service-detail-info-max-width: 474px;
+  --veli-service-detail-color-scrim: rgb(0 0 0 / 60%);
+}
+
+/* Feature geometry and typography resolve from the scoped Veli/Figma tokens. */
+.veli-service-detail-root,
+.veli-service-detail-dialog,
+.veli-service-detail-guideline-sheet {
+  --veli-service-detail-type-size: var(--veli-typography-en-body-md-regular-font-size);
+  --veli-service-detail-type-line: var(--veli-typography-en-body-md-regular-line-height);
+  --veli-service-detail-type-tracking: var(--veli-typography-en-body-md-regular-letter-spacing);
+  --veli-service-detail-title-size: var(--veli-typography-en-heading-3-medium-font-size);
+  --veli-service-detail-title-line: var(--veli-typography-en-heading-3-medium-line-height);
+  --veli-service-detail-title-tracking: var(--veli-typography-en-heading-3-medium-letter-spacing);
+  --veli-service-detail-title-weight: var(--veli-font-weight-semibold);
+  color: var(--veli-color-text-base-default);
+  font-family: var(--veli-font-sans);
+  font-size: var(--veli-service-detail-type-size);
+  font-weight: var(--veli-typography-en-body-md-regular-font-weight);
+  line-height: var(--veli-service-detail-type-line);
+  letter-spacing: var(--veli-service-detail-type-tracking);
+}
+.veli-service-detail-root:lang(dv),
+.veli-service-detail-dialog:lang(dv),
+.veli-service-detail-guideline-sheet:lang(dv) {
+  --veli-service-detail-type-size: var(--veli-typography-dv-body-md-regular-font-size);
+  --veli-service-detail-type-line: var(--veli-typography-dv-body-md-regular-line-height);
+  --veli-service-detail-type-tracking: var(--veli-typography-dv-body-md-regular-letter-spacing);
+  --veli-service-detail-title-size: var(--veli-typography-dv-heading-3-medium-font-size);
+  --veli-service-detail-title-line: var(--veli-typography-dv-heading-3-medium-line-height);
+  --veli-service-detail-title-tracking: var(--veli-typography-dv-heading-3-medium-letter-spacing);
+  --veli-service-detail-title-weight: var(--veli-typography-dv-heading-3-medium-font-weight);
+  font-family: var(--veli-typography-dv-body-md-regular-font-family);
+}
+.veli-service-detail-root {
+  background: var(--veli-color-bg-surface-base);
+  display: grid;
+  grid-template-columns: repeat(var(--veli-grid-xl-columncount), minmax(0, 1fr));
+  column-gap: var(--veli-grid-xl-columngap);
+  padding-inline: var(--veli-grid-xl-columnmargin);
+  width: 100%;
+}
+.veli-service-detail-page {
+  min-width: 0;
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 100%;
+  max-width: var(--veli-service-detail-content-max-width);
+  padding-block: var(--veli-spacing-24) calc(var(--veli-spacing-24) + var(--veli-spacing-6));
+}
+.veli-service-detail-header {
+  display: grid;
+  gap: var(--veli-spacing-4);
+  padding-block-end: var(--veli-spacing-12);
+}
+.veli-service-detail-title {
+  margin: 0;
+  color: var(--veli-color-text-base-emphasis);
+  font-size: var(--veli-service-detail-title-size);
+  font-weight: var(--veli-service-detail-title-weight);
+  line-height: var(--veli-service-detail-title-line);
+  letter-spacing: var(--veli-service-detail-title-tracking);
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-description,
+.veli-service-detail-guideline-description {
+  margin: 0;
+  color: var(--veli-color-text-base-default);
+  font-size: var(--veli-typography-en-body-lg-regular-font-size);
+  line-height: var(--veli-typography-en-body-lg-regular-line-height);
+}
+.veli-service-detail-provider {
+  margin: 0;
+  color: var(--veli-color-text-base-muted);
+}
+.veli-service-detail-card {
+  background: var(--veli-color-neutral-alpha-200);
+  border-radius: var(--veli-radius-4xl);
+  overflow: hidden;
+}
+.veli-service-detail-summary {
+  display: grid;
+  gap: var(--veli-spacing-6);
+  padding: var(--veli-spacing-6);
+}
+.veli-service-detail-metadata {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--veli-spacing-6);
+}
+.veli-service-detail-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--veli-spacing-4);
+  min-width: 0;
+}
+.veli-service-detail-meta-icon {
+  flex: none;
+  color: var(--veli-color-icon-base-default);
+  padding-block: var(--veli-spacing-2);
+}
+.veli-service-detail-meta-text {
+  display: grid;
+  flex: 1;
+  gap: var(--veli-spacing-1);
+  min-width: 0;
+  padding-block: var(--veli-spacing-1);
+}
+.veli-service-detail-meta-label {
+  color: var(--veli-color-text-base-muted);
+  font-size: var(--veli-typography-en-body-sm-regular-font-size);
+  line-height: var(--veli-typography-en-body-sm-regular-line-height);
+  letter-spacing: var(--veli-typography-en-body-sm-regular-letter-spacing);
+}
+.veli-service-detail-meta-value {
+  margin: 0;
+  color: var(--veli-color-text-base-strong);
+  font-weight: var(--veli-typography-en-body-md-medium-font-weight);
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-meta-value-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--veli-spacing-2);
+}
+.veli-service-detail-small-icon {
+  width: var(--veli-spacing-4);
+  height: var(--veli-spacing-4);
+  flex: none;
+}
+.veli-service-detail-inline-action,
+.veli-service-detail-platform-trigger,
+.veli-service-detail-guideline-link,
+.veli-service-detail-toc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veli-spacing-2);
+  color: var(--veli-color-text-links-default);
+  border-radius: var(--veli-radius-lg);
+  text-align: start;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-inline-action {
+  padding: var(--veli-spacing-1);
+  margin: calc(-1 * var(--veli-spacing-1));
+  font: inherit;
+}
+.veli-service-detail-inline-action:hover,
+.veli-service-detail-guideline-link:hover {
+  color: var(--veli-color-text-links-hover);
+  text-decoration: underline;
+}
+.veli-service-detail-platform-trigger:hover {
+  background: var(--veli-color-neutral-alpha-200);
+}
+.veli-service-detail-inline-action:focus-visible,
+.veli-service-detail-platform-trigger:focus-visible,
+.veli-service-detail-guideline-trigger:focus-visible,
+.veli-service-detail-toc-link:focus-visible {
+  outline: none;
+  box-shadow: var(--veli-shadow-focus-ring);
+}
+.veli-service-detail-fees {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--veli-spacing-3) var(--veli-spacing-6);
+  padding: var(--veli-spacing-6) var(--veli-spacing-8);
+  padding-inline-end: calc(var(--veli-spacing-8) + var(--veli-service-detail-fee-grid-remainder));
+  background: var(--veli-color-bg-surface-overlay-bg-0);
+  border-radius: var(--veli-radius-4xl);
+}
+.veli-service-detail-fee-row {
+  display: grid;
+  gap: var(--veli-spacing-1);
+  align-content: start;
+  padding-block-end: var(--veli-spacing-2);
+  border-block-end: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-subtle);
+  min-width: 0;
+}
+.veli-service-detail-fee-row > * {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-fee-row dt {
+  color: var(--veli-color-text-base-muted);
+  font-size: var(--veli-typography-en-caption-regular-font-size);
+  line-height: var(--veli-typography-en-caption-regular-line-height);
+  letter-spacing: var(--veli-typography-en-caption-regular-letter-spacing);
+}
+.veli-service-detail-fee-row dd {
+  color: var(--veli-color-text-base-strong);
+  font-size: var(--veli-typography-en-body-sm-medium-font-size);
+  font-weight: var(--veli-typography-en-body-sm-medium-font-weight);
+  line-height: var(--veli-typography-en-body-sm-medium-line-height);
+}
+.veli-service-detail-fee-row:last-child {
+  border: 0;
+}
+.veli-service-detail-services-meta {
+  min-width: 0;
+}
+.veli-service-detail-services-meta .veli-service-detail-meta-text {
+  grid-template-columns: minmax(0, 1fr);
+}
+.veli-service-detail-service-summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--veli-spacing-2);
+  min-width: 0;
+}
+.veli-service-detail-service-summary > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.veli-service-detail-service-summary > button {
+  flex: none;
+}
+.veli-service-detail-service-summary:has([aria-expanded='true']),
+.veli-service-detail-service-summary:not(:has(button)) {
+  display: block;
+}
+.veli-service-detail-service-summary:has([aria-expanded='true']) > span,
+.veli-service-detail-service-summary:not(:has(button)) > span {
+  white-space: normal;
+  overflow: visible;
+}
+.veli-service-detail-service-summary:has([aria-expanded='true']) > button {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.veli-service-detail-prerequisites {
+  display: grid;
+  margin: 0;
+  padding-inline-start: var(--veli-spacing-6);
+  list-style: disc;
+}
+.veli-service-detail-apply {
+  display: grid;
+  gap: var(--veli-spacing-6);
+  padding: var(--veli-spacing-4) var(--veli-spacing-6) var(--veli-spacing-8);
+  background: var(--veli-color-bg-surface-raised);
+  border-radius: var(--veli-radius-3xl);
+}
+.veli-service-detail-action-group {
+  display: grid;
+  gap: var(--veli-spacing-3-5);
+}
+.veli-service-detail-platform-trigger {
+  width: fit-content;
+  max-width: 100%;
+  justify-self: center;
+  padding: var(--veli-spacing-1) var(--veli-spacing-2-5);
+  gap: var(--veli-spacing-2-5);
+  color: var(--veli-color-text-base-subtle);
+  font-size: var(--veli-typography-en-body-sm-medium-font-size);
+  font-weight: var(--veli-typography-en-body-sm-medium-font-weight);
+  line-height: var(--veli-typography-en-body-sm-medium-line-height);
+}
+.veli-service-detail-platform-trigger strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--veli-color-text-base-strong);
+}
+.veli-service-detail-platform-info-icon {
+  color: var(--veli-color-icon-base-inactive);
+}
+.veli-service-detail-platform-logo-slot {
+  display: flex;
+  align-items: center;
+  width: calc(var(--veli-spacing-12) + var(--veli-spacing-6));
+  height: var(--veli-spacing-2-5);
+  flex: none;
+}
+.veli-service-detail-platform-logo {
+  display: block;
+  flex: none;
+  color: var(--veli-color-text-base-strong);
+}
+.veli-service-detail-platform-logo-dot {
+  fill: var(--veli-color-green-500);
+}
+:where(.dark) .veli-service-detail-platform-logo-dot {
+  fill: var(--veli-color-green-900);
+}
+.veli-service-detail-portal-logo {
+  max-width: calc(var(--veli-spacing-12) + var(--veli-spacing-6));
+  max-height: var(--veli-spacing-6);
+  object-fit: contain;
+}
+.veli-service-detail-start-button {
+  width: 100%;
+}
+.veli-service-detail-start-button .veli-service-detail-small-icon {
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
+.veli-service-detail-stack {
+  display: grid;
+  gap: var(--veli-spacing-4);
+}
+.veli-service-detail-section-title {
+  margin: 0;
+  color: var(--veli-color-text-base-strong);
+  font-size: var(--veli-typography-en-subtitle-semibold-font-size);
+  font-weight: var(--veli-typography-en-subtitle-semibold-font-weight);
+  line-height: var(--veli-typography-en-subtitle-semibold-line-height);
+  letter-spacing: var(--veli-typography-en-subtitle-semibold-letter-spacing);
+}
+.veli-service-detail-body-text {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-muted {
+  margin: 0;
+  color: var(--veli-color-text-base-muted);
+}
+.veli-service-detail-guideline-trigger {
+  display: grid;
+  gap: var(--veli-spacing-1-5);
+  text-align: start;
+  cursor: pointer;
+  border: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+  border-radius: var(--veli-radius-3xl);
+  padding: var(--veli-spacing-5);
+}
+.veli-service-detail-guideline-trigger .veli-service-detail-body-text {
+  color: var(--veli-color-text-base-strong);
+}
+.veli-service-detail-guideline-link {
+  width: 100%;
+  justify-content: space-between;
+  font-size: var(--veli-typography-en-body-lg-medium-font-size);
+  line-height: var(--veli-typography-en-body-lg-medium-line-height);
+  font-weight: var(--veli-typography-en-body-lg-medium-font-weight);
+}
+.veli-service-detail-download-list {
+  display: grid;
+  gap: var(--veli-spacing-6);
+}
+.veli-service-detail-download-row {
+  min-width: 0;
+  display: grid;
+  gap: var(--veli-spacing-3);
+}
+.veli-service-detail-download-row + .veli-service-detail-download-row {
+  border-block-start: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+  padding-block-start: var(--veli-spacing-6);
+}
+.veli-service-detail-download-row .veli-service-detail-guideline-trigger {
+  border: 0;
+  border-radius: 0;
+  padding: var(--veli-spacing-1) 0;
+}
+.veli-service-detail-download-row
+  .veli-service-detail-guideline-trigger
+  > .veli-service-detail-body-text {
+  display: none;
+}
+.veli-service-detail-download-row .veli-service-detail-guideline-link {
+  font-size: var(--veli-typography-en-body-md-medium-font-size);
+  line-height: var(--veli-typography-en-body-md-medium-line-height);
+}
+.veli-service-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--veli-service-detail-color-scrim);
+  backdrop-filter: blur(var(--veli-blur-xs));
+}
+.veli-service-detail-dialog,
+.veli-service-detail-guideline-sheet {
+  position: fixed;
+  z-index: 50;
+  background: var(--veli-color-modal-bg-solid);
+  outline: none;
+}
+.veli-service-detail-dialog {
+  box-shadow: var(--veli-shadow-sm);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  width: calc(100% - var(--veli-spacing-8));
+  max-width: var(--veli-service-detail-info-max-width);
+  max-height: calc(100dvh - var(--veli-spacing-8));
+  overflow-y: auto;
+  border-radius: var(--veli-radius-4xl);
+  padding: var(--veli-spacing-6) var(--veli-spacing-8) var(--veli-spacing-8);
+}
+.veli-service-detail-dialog:dir(rtl) {
+  translate: 50% -50%;
+}
+.veli-service-detail-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veli-spacing-4);
+}
+.veli-service-detail-dialog-header h2 {
+  margin: 0;
+  color: var(--veli-color-text-base-strong);
+  font-size: var(--veli-typography-en-subtitle-medium-font-size);
+  font-weight: var(--veli-typography-en-subtitle-medium-font-weight);
+  line-height: var(--veli-typography-en-subtitle-medium-line-height);
+  min-width: 0;
+}
+.veli-service-detail-steps {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: var(--veli-spacing-6) 0 var(--veli-spacing-4);
+}
+.veli-service-detail-step {
+  display: flex;
+  align-items: stretch;
+  gap: var(--veli-spacing-3);
+  min-width: 0;
+}
+.veli-service-detail-step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veli-spacing-2);
+  flex: none;
+  padding-block-end: var(--veli-spacing-2);
+}
+.veli-service-detail-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--veli-spacing-6);
+  height: var(--veli-spacing-6);
+  color: var(--veli-color-text-base-strong);
+  flex: none;
+}
+.veli-service-detail-step-icon {
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
+.veli-service-detail-step-connector {
+  flex: 1;
+  width: var(--veli-spacing-0-5);
+  background: var(--veli-color-border-base-muted);
+  border-radius: var(--veli-radius-xs);
+}
+.veli-service-detail-step-content {
+  flex: 1;
+  display: grid;
+  gap: var(--veli-spacing-1-5);
+  min-width: 0;
+  padding-block: var(--veli-spacing-0-5) var(--veli-spacing-7);
+  font-size: var(--veli-typography-en-body-sm-regular-font-size);
+  line-height: var(--veli-typography-en-body-sm-regular-line-height);
+}
+.veli-service-detail-step:last-child .veli-service-detail-step-content {
+  padding-block-end: 0;
+}
+.veli-service-detail-step-title {
+  margin: 0;
+  color: var(--veli-color-text-base-strong);
+  font-size: inherit;
+  font-weight: var(--veli-typography-en-body-sm-semibold-font-weight);
+}
+.veli-service-detail-guideline-sheet {
+  display: flex;
+  flex-direction: column;
+  inset-inline: 0;
+  bottom: 0;
+  height: calc(100dvh - var(--veli-spacing-16));
+  border-start-start-radius: var(--veli-radius-4xl);
+  border-start-end-radius: var(--veli-radius-4xl);
+  overflow: hidden;
+}
+.veli-service-detail-guideline-sheet-header {
+  flex: none;
+  padding: var(--veli-spacing-5) var(--veli-spacing-14);
+  border-block-end: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+}
+.veli-service-detail-guideline-sheet-header h2 {
+  color: var(--veli-color-text-base-emphasis);
+  font-size: var(--veli-typography-en-title-2-semibold-font-size);
+  line-height: var(--veli-typography-en-title-2-semibold-line-height);
+  font-weight: var(--veli-typography-en-title-2-semibold-font-weight);
+}
+.veli-service-detail-guideline-sheet-header button {
+  width: var(--veli-spacing-10);
+  height: var(--veli-spacing-10);
+  background: var(--veli-color-neutral-alpha-200);
+}
+.veli-service-detail-guideline-layout {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--veli-grid-xl-columncount), minmax(0, 1fr));
+  column-gap: var(--veli-grid-xl-columngap);
+  padding-inline: var(--veli-grid-xl-columnmargin);
+}
+/* Native scrolling spans the modal; content keeps its canonical grid/padding. */
+.veli-service-detail-guideline-scroll {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: inherit;
+  column-gap: inherit;
+  padding-inline: inherit;
+  overflow-y: auto;
+}
+.veli-service-detail-guideline-sidebar {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / span 3;
+  min-height: 0;
+  overflow-y: auto;
+  padding-block-start: var(--veli-spacing-10);
+  padding-inline: var(--veli-spacing-2) calc(var(--veli-spacing-16) + var(--veli-spacing-2));
+}
+.veli-service-detail-toc {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.veli-service-detail-toc-link {
+  display: block;
+  width: 100%;
+  border-radius: 0;
+  border-inline-start: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+  padding: var(--veli-spacing-2) var(--veli-spacing-4);
+  padding-inline-end: var(--veli-spacing-2);
+  color: var(--veli-color-text-base-default);
+}
+.veli-service-detail-toc-link:hover {
+  background: var(--veli-color-neutral-alpha-200);
+}
+.veli-service-detail-toc-link[aria-current='location'] {
+  border-inline-start-width: var(--veli-service-detail-toc-active-border);
+  border-inline-start-color: var(--veli-color-button-primary-default);
+  color: var(--veli-color-text-base-strong);
+  font-weight: var(--veli-typography-en-body-md-medium-font-weight);
+  border-start-end-radius: var(--veli-radius-lg);
+  border-end-end-radius: var(--veli-radius-lg);
+}
+.veli-service-detail-guideline-content {
+  align-self: start;
+  grid-column: 4 / span 6;
+  min-width: 0;
+  min-height: 0;
+  padding-block: var(--veli-spacing-10) var(--veli-spacing-40);
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-guideline-header {
+  display: flex;
+  align-items: center;
+  gap: var(--veli-spacing-3);
+  margin-block-end: var(--veli-spacing-16);
+}
+.veli-service-detail-guideline-meta-text {
+  flex: 1;
+  display: grid;
+  gap: var(--veli-spacing-1-5);
+  min-width: 0;
+}
+.veli-service-detail-guideline-caption {
+  margin: 0;
+  color: var(--veli-color-text-base-subtle);
+  font-size: var(--veli-typography-en-caption-medium-font-size);
+  font-weight: var(--veli-typography-en-caption-medium-font-weight);
+  line-height: var(--veli-service-detail-caption-line);
+}
+.veli-service-detail-guideline-meta {
+  margin: 0;
+  color: var(--veli-color-text-base-muted);
+}
+.veli-service-detail-guideline-actions {
+  display: flex;
+  gap: var(--veli-spacing-3);
+}
+.veli-service-detail-guideline-actions button {
+  width: var(--veli-spacing-11);
+  height: var(--veli-spacing-11);
+}
+.veli-service-detail-guideline-actions button:disabled {
+  background: var(--veli-color-neutral-alpha-200);
+}
+.veli-service-detail-guideline-description {
+  margin-block-end: var(--veli-spacing-16);
+}
+.veli-service-detail-guideline-block + .veli-service-detail-guideline-block {
+  margin-block-start: var(--veli-spacing-4);
+}
+.veli-service-detail-guideline-block.veli-service-detail-guideline-section {
+  margin-block-start: var(--veli-spacing-16);
+  scroll-margin-block-start: var(--veli-spacing-10);
+}
+.veli-service-detail-rich-text,
+.veli-service-detail-rich-text p,
+.veli-service-detail-rich-text li,
+.veli-service-detail-rich-text td,
+.veli-service-detail-rich-text th {
+  color: var(--veli-color-text-base-default);
+  font: inherit;
+  font-size: var(--veli-typography-en-body-lg-regular-font-size);
+  line-height: var(--veli-typography-en-body-lg-regular-line-height);
+}
+.veli-service-detail-rich-text {
+  text-align: start;
+  direction: inherit;
+}
+.veli-service-detail-rich-text p,
+.veli-service-detail-rich-text :is(h1, h2, h3) {
+  margin: 0;
+}
+.veli-service-detail-rich-text :is(h1, h2, h3) {
+  color: var(--veli-color-text-base-strong);
+  font-family: inherit;
+  font-size: var(--veli-typography-en-title-2-semibold-font-size);
+  line-height: var(--veli-typography-en-title-2-semibold-line-height);
+  font-weight: var(--veli-typography-en-title-2-semibold-font-weight);
+}
+.veli-service-detail-rich-text ul,
+.veli-service-detail-rich-text ol {
+  margin: 0;
+  padding-inline-start: var(--veli-spacing-6);
+  list-style-position: outside;
+}
+.veli-service-detail-rich-text ul {
+  list-style-type: disc;
+}
+.veli-service-detail-rich-text ol {
+  list-style-type: decimal;
+}
+.veli-service-detail-rich-text a {
+  color: var(--veli-color-text-links-default);
+  text-decoration: underline;
+}
+.veli-service-detail-rich-text a:hover {
+  color: var(--veli-color-text-links-hover);
+}
+.veli-service-detail-rich-text table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.veli-service-detail-rich-text td,
+.veli-service-detail-rich-text th {
+  padding: var(--veli-spacing-3);
+  border: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+  white-space: normal;
+}
+.veli-service-detail-sr-only {
+  position: absolute;
+  width: var(--veli-service-detail-hairline);
+  height: var(--veli-service-detail-hairline);
+  padding: 0;
+  margin: calc(-1 * var(--veli-service-detail-hairline));
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.veli-service-detail-directional-icon:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+/* Complete Dhivehi styles, including portal content and inherited rich text. */
+.veli-service-detail-description:lang(dv),
+.veli-service-detail-guideline-description:lang(dv),
+.veli-service-detail-rich-text:lang(dv),
+.veli-service-detail-rich-text:lang(dv) :is(p, li, td, th) {
+  font-family: var(--veli-typography-dv-body-lg-regular-font-family);
+  font-size: var(--veli-typography-dv-body-lg-regular-font-size);
+  line-height: var(--veli-typography-dv-body-lg-regular-line-height);
+}
+.veli-service-detail-meta-label:lang(dv) {
+  font-size: var(--veli-typography-dv-body-sm-regular-font-size);
+  line-height: var(--veli-typography-dv-body-sm-regular-line-height);
+  letter-spacing: var(--veli-typography-dv-body-sm-regular-letter-spacing);
+}
+.veli-service-detail-meta-value:lang(dv),
+.veli-service-detail-toc-link:lang(dv)[aria-current='location'] {
+  font-family: var(--veli-typography-dv-body-md-medium-font-family);
+  font-size: var(--veli-typography-dv-body-md-medium-font-size);
+  font-weight: var(--veli-typography-dv-body-md-medium-font-weight);
+  line-height: var(--veli-typography-dv-body-md-medium-line-height);
+  letter-spacing: var(--veli-typography-dv-body-md-medium-letter-spacing);
+}
+.veli-service-detail-section-title:lang(dv),
+.veli-service-detail-dialog-header h2:lang(dv),
+.veli-service-detail-rich-text:lang(dv) :is(h1, h2, h3) {
+  font-family: var(--veli-typography-dv-subtitle-medium-font-family);
+  font-size: var(--veli-typography-dv-subtitle-medium-font-size);
+  font-weight: var(--veli-typography-dv-subtitle-medium-font-weight);
+  line-height: var(--veli-typography-dv-subtitle-medium-line-height);
+  letter-spacing: var(--veli-typography-dv-subtitle-medium-letter-spacing);
+}
+.veli-service-detail-guideline-link:lang(dv) {
+  font-family: var(--veli-typography-dv-body-lg-medium-font-family);
+  font-size: var(--veli-typography-dv-body-lg-medium-font-size);
+  font-weight: var(--veli-typography-dv-body-lg-medium-font-weight);
+  line-height: var(--veli-typography-dv-body-lg-medium-line-height);
+}
+.veli-service-detail-platform-trigger:lang(dv),
+.veli-service-detail-step-title:lang(dv) {
+  font-family: var(--veli-typography-dv-body-sm-medium-font-family);
+  font-size: var(--veli-typography-dv-body-sm-medium-font-size);
+  font-weight: var(--veli-typography-dv-body-sm-medium-font-weight);
+  line-height: var(--veli-typography-dv-body-sm-medium-line-height);
+}
+.veli-service-detail-step-content:lang(dv) {
+  font-family: var(--veli-typography-dv-body-sm-regular-font-family);
+  font-size: var(--veli-typography-dv-body-sm-regular-font-size);
+  line-height: var(--veli-typography-dv-body-sm-regular-line-height);
+}
+.veli-service-detail-fees:lang(dv) {
+  direction: ltr;
+  font-family: var(--veli-font-sans);
+}
+
+/* Conditions mirror canonical md/lg breakpoints; custom properties are not valid here. */
+@media (width < 1024px) {
+  .veli-service-detail-root,
+  .veli-service-detail-guideline-layout {
+    grid-template-columns: repeat(var(--veli-grid-md-columncount), minmax(0, 1fr));
+    gap: var(--veli-grid-md-columngap);
+    padding-inline: var(--veli-grid-md-columnmargin);
+  }
+  .veli-service-detail-guideline-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--veli-spacing-6);
+    padding-inline: 0;
+  }
+  .veli-service-detail-guideline-scroll {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    display: block;
+    width: 100%;
+    padding-inline: var(--veli-grid-md-columnmargin);
+  }
+  .veli-service-detail-guideline-sidebar {
+    flex: none;
+    max-height: var(--veli-spacing-24);
+    padding: var(--veli-spacing-4) var(--veli-grid-md-columnmargin) 0;
+  }
+  .veli-service-detail-guideline-content {
+    flex: 1;
+    padding-block: 0 var(--veli-spacing-20);
+  }
+  .veli-service-detail-guideline-sheet-header {
+    padding-inline: var(--veli-grid-md-columnmargin);
+  }
+}
+@media (width < 768px) {
+  .veli-service-detail-root {
+    grid-template-columns: repeat(var(--veli-grid-sm-columncount), minmax(0, 1fr));
+    column-gap: var(--veli-grid-sm-columngap);
+    padding-inline: var(--veli-grid-sm-columnmargin);
+  }
+  .veli-service-detail-page {
+    padding-block: var(--veli-spacing-12) var(--veli-spacing-20);
+  }
+  .veli-service-detail-header {
+    padding-block-end: var(--veli-spacing-8);
+  }
+  .veli-service-detail-metadata {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--veli-spacing-4);
+  }
+  .veli-service-detail-summary {
+    padding: var(--veli-spacing-5);
+    gap: var(--veli-spacing-4);
+  }
+  .veli-service-detail-apply {
+    padding: var(--veli-spacing-4) var(--veli-spacing-5) var(--veli-spacing-6);
+  }
+  .veli-service-detail-service-summary {
+    display: block;
+  }
+  .veli-service-detail-service-summary > span {
+    white-space: normal;
+    overflow: visible;
+  }
+  .veli-service-detail-service-summary > button {
+    margin-inline-start: var(--veli-spacing-2);
+  }
+  .veli-service-detail-fees {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: var(--veli-spacing-5);
+  }
+  .veli-service-detail-dialog {
+    inset-block-start: auto;
+    inset-block-end: 0;
+    inset-inline: 0;
+    translate: none;
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - var(--veli-spacing-12));
+    padding: var(--veli-spacing-6) var(--veli-spacing-6) var(--veli-spacing-10);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .veli-service-detail-dialog:dir(rtl) {
+    translate: none;
+  }
+  .veli-service-detail-guideline-sheet {
+    height: calc(100dvh - var(--veli-spacing-4));
+  }
+  .veli-service-detail-guideline-sheet-header {
+    padding: var(--veli-spacing-4) var(--veli-spacing-5);
+  }
+  .veli-service-detail-guideline-sheet-header h2 {
+    font-size: var(--veli-typography-en-subtitle-semibold-font-size);
+    line-height: var(--veli-typography-en-subtitle-semibold-line-height);
+  }
+  .veli-service-detail-guideline-scroll,
+  .veli-service-detail-guideline-sidebar {
+    padding-inline: var(--veli-spacing-5);
+  }
+  .veli-service-detail-guideline-header {
+    gap: var(--veli-spacing-2);
+    margin-block-end: var(--veli-spacing-8);
+  }
+  .veli-service-detail-guideline-actions {
+    gap: var(--veli-spacing-2);
+  }
+  .veli-service-detail-guideline-actions button {
+    width: var(--veli-spacing-10);
+    height: var(--veli-spacing-10);
+  }
+  .veli-service-detail-guideline-description {
+    margin-block-end: var(--veli-spacing-8);
+  }
+  .veli-service-detail-guideline-block.veli-service-detail-guideline-section {
+    margin-block-start: var(--veli-spacing-8);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .veli-service-detail-overlay[data-entering] {
+    animation: veli-service-detail-fade-in var(--veli-duration-normal) var(--veli-ease-out);
+  }
+  .veli-service-detail-overlay[data-exiting] {
+    animation: veli-service-detail-fade-out var(--veli-duration-fast) var(--veli-ease-in);
+  }
+  .veli-service-detail-dialog[data-entering] {
+    animation: veli-service-detail-panel-in var(--veli-duration-normal) var(--veli-ease-out);
+  }
+  .veli-service-detail-dialog[data-exiting] {
+    animation: veli-service-detail-fade-out var(--veli-duration-fast) var(--veli-ease-in);
+  }
+}
+/* User-approved guideline-only exception (2026-10-20), Figma 6604:113385.
+   These authored timings/easing are not canonical Veli tokens. Reduced motion
+   changes the sheet to fade only; the annotation supplies no alternate timing. */
+.veli-service-detail-guideline-sheet,
+.veli-service-detail-guideline-overlay {
+  --veli-service-detail-guideline-enter-duration: 450ms;
+  --veli-service-detail-guideline-exit-duration: 350ms;
+  --veli-service-detail-guideline-easing: cubic-bezier(0.65, 0, 0.35, 1);
+}
+.veli-service-detail-guideline-sheet[data-entering],
+.veli-service-detail-guideline-overlay[data-entering] {
+  animation: veli-service-detail-fade-in var(--veli-service-detail-guideline-enter-duration)
+    var(--veli-service-detail-guideline-easing) both;
+}
+.veli-service-detail-guideline-sheet[data-exiting],
+.veli-service-detail-guideline-overlay[data-exiting] {
+  animation: veli-service-detail-fade-out var(--veli-service-detail-guideline-exit-duration)
+    var(--veli-service-detail-guideline-easing) both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .veli-service-detail-guideline-sheet[data-entering] {
+    animation-name: veli-service-detail-guideline-in;
+  }
+  .veli-service-detail-guideline-sheet[data-exiting] {
+    animation-name: veli-service-detail-guideline-out;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Override the shared instant-motion guard only for the authored fade. */
+  .veli-service-detail-guideline-sheet[data-entering],
+  .veli-service-detail-guideline-overlay[data-entering] {
+    animation-duration: var(--veli-service-detail-guideline-enter-duration) !important;
+  }
+  .veli-service-detail-guideline-sheet[data-exiting],
+  .veli-service-detail-guideline-overlay[data-exiting] {
+    animation-duration: var(--veli-service-detail-guideline-exit-duration) !important;
+  }
+}
+@keyframes veli-service-detail-guideline-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes veli-service-detail-guideline-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes veli-service-detail-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes veli-service-detail-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes veli-service-detail-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--veli-spacing-2));
+  }
+}
+
+.veli-service-detail-dialog-body {
+  outline: none;
+}
+.veli-service-detail-root,
+.veli-service-detail-root *,
+.veli-service-detail-overlay,
+.veli-service-detail-overlay * {
+  box-sizing: border-box;
+}
+.veli-service-detail-root button,
+.veli-service-detail-overlay button {
+  font-family: inherit;
+}
+.veli-service-detail-meta-art {
+  display: block;
+  width: var(--veli-spacing-6);
+  height: var(--veli-spacing-6);
+  background: var(--veli-color-icon-base-muted);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+.veli-service-detail-guideline-section > h2 {
+  margin: 0 0 var(--veli-spacing-4);
+  color: var(--veli-color-text-base-strong);
+  font-family: var(--veli-typography-en-title-2-semibold-font-family);
+  font-size: var(--veli-typography-en-title-2-semibold-font-size);
+  font-weight: var(--veli-typography-en-title-2-semibold-font-weight);
+  line-height: var(--veli-typography-en-title-2-semibold-line-height);
+  letter-spacing: var(--veli-typography-en-title-2-semibold-letter-spacing);
+}
+.veli-service-detail-guideline-section[data-heading-spacing='compact'] > h2 {
+  margin-block-end: var(--veli-spacing-3);
+}
+.veli-service-detail-guideline-section > h2:lang(dv) {
+  font-family: var(--veli-typography-dv-title-2-medium-font-family);
+  font-size: var(--veli-typography-dv-title-2-medium-font-size);
+  font-weight: var(--veli-typography-dv-title-2-medium-font-weight);
+  line-height: var(--veli-typography-dv-title-2-medium-line-height);
+  letter-spacing: var(--veli-typography-dv-title-2-medium-letter-spacing);
+}
+.veli-service-detail-guideline-trigger {
+  white-space: normal;
+  text-align: start;
+  height: auto;
+}
+.veli-service-detail-platform-trigger {
+  white-space: normal;
+  height: auto;
+}
+.veli-service-detail-step-number {
+  font-size: var(--veli-typography-en-caption-medium-font-size);
+}
+.veli-service-detail-art-note-pencil {
+  mask-image: url('./note-pencil.svg');
+}
+.veli-service-detail-art-hand-coins {
+  mask-image: url('./hand-coins.svg');
+}
+.veli-service-detail-art-hourglass-medium {
+  mask-image: url('./hourglass-medium.svg');
+}
+.veli-service-detail-art-hand-deposit {
+  mask-image: url('./hand-deposit.svg');
+}
+.veli-service-detail-art-list-numbers {
+  mask-image: url('./list-numbers.svg');
+}
+
+.veli-service-detail-rich-text :is(h1, h2, h3, h4, h5, h6) {
+  min-height: 0;
+}
+.veli-service-detail-rich-text blockquote {
+  margin-block: var(--veli-spacing-4);
+  padding: var(--veli-spacing-4);
+  border: 0;
+  border-inline-start: var(--veli-spacing-1) solid var(--veli-color-border-base-strong);
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-muted);
+}
+.veli-service-detail-rich-text hr {
+  margin-block: var(--veli-spacing-4);
+  border-color: var(--veli-color-border-base-subtle);
+}
+
+.veli-service-detail-toc-link > span {
+  display: block;
+}
+.veli-service-detail-toc-link[aria-current='location'] {
+  padding: var(--veli-spacing-0-5);
+  background: transparent;
+}
+.veli-service-detail-toc-link[aria-current='location'] > span {
+  padding: var(--veli-spacing-2) var(--veli-spacing-4);
+  background: var(--veli-color-neutral-alpha-200);
+  border-radius: var(--veli-spacing-2-5);
+}
+.veli-service-detail-guideline-sheet {
+  box-shadow: var(--veli-shadow-md);
+}
+
+.veli-service-detail-rich-text > * + * {
+  margin-block-start: var(--veli-spacing-4);
+}
+
+.veli-service-detail-guideline-sheet > .veli-service-detail-dialog-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.veli-service-detail-close-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--veli-spacing-8);
+  height: var(--veli-spacing-8);
+  border: 0;
+  border-radius: var(--veli-radius-full);
+  color: var(--veli-color-text-base-default);
+  background: var(--veli-color-neutral-alpha-200);
+  cursor: pointer;
+}
+.veli-service-detail-close-button:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 2px;
+}
+
+.veli-service-detail-small-icon > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.veli-service-detail-guideline-sheet-header .veli-service-detail-small-icon {
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
+
+/* Figma 8118:6055 / 6887: the mobile guideline keeps the TOC out of the scroll flow. */
+.veli-service-detail-mobile-toc-button {
+  display: none;
+}
+.veli-service-detail-toc-icon {
+  display: block;
+  flex: none;
+  width: var(--veli-spacing-5);
+  height: var(--veli-spacing-5);
+}
+.veli-service-detail-art-list-bullets {
+  background: currentColor;
+  mask: url('./list-bullets.svg') center / contain no-repeat;
+}
+.veli-service-detail-mobile-toc-panel {
+  z-index: 60;
+  width: calc(var(--veli-spacing-40) * 2);
+  max-width: calc(100vw - var(--veli-spacing-10));
+  max-height: var(--available-height);
+  overflow-y: auto;
+  padding: var(--veli-spacing-3) var(--veli-spacing-2) var(--veli-spacing-2);
+  border-radius: var(--veli-radius-3xl);
+  background: var(--veli-color-modal-bg-solid);
+  color: var(--veli-color-text-base-default);
+  font-family: var(--veli-font-sans);
+  font-size: var(--veli-typography-en-body-md-regular-font-size);
+  line-height: var(--veli-typography-en-body-md-regular-line-height);
+  box-shadow:
+    0 8px 20px rgb(0 0 0 / 12%),
+    0 0 3px rgb(0 0 0 / 6%);
+  outline: none;
+}
+.veli-service-detail-mobile-toc-panel:lang(dv) {
+  font-family: var(--veli-typography-dv-body-md-regular-font-family);
+  font-size: var(--veli-typography-dv-body-md-regular-font-size);
+  line-height: var(--veli-typography-dv-body-md-regular-line-height);
+}
+.veli-service-detail-mobile-toc-dialog {
+  outline: none;
+}
+.veli-service-detail-mobile-toc-heading {
+  margin: 0;
+  padding: 0 var(--veli-spacing-4) var(--veli-spacing-2);
+  color: var(--veli-color-text-base-muted);
+  font-size: var(--veli-typography-en-body-sm-medium-font-size);
+  font-weight: var(--veli-typography-en-body-sm-medium-font-weight);
+  line-height: var(--veli-typography-en-body-sm-medium-line-height);
+}
+.veli-service-detail-mobile-toc-panel .veli-service-detail-toc-link {
+  border-inline-start: calc(var(--veli-spacing-0-5) / 2) solid var(--veli-color-border-base-muted);
+  padding: var(--veli-spacing-2) var(--veli-spacing-2) var(--veli-spacing-2) var(--veli-spacing-4);
+  min-height: var(--veli-spacing-10);
+  line-height: inherit;
+}
+.veli-service-detail-mobile-toc-panel .veli-service-detail-toc-link[aria-current='location'] {
+  border-inline-start-width: calc(var(--veli-spacing-1) - var(--veli-spacing-0-5) / 2);
+  border-inline-start-color: var(--veli-color-button-primary-default);
+  padding: var(--veli-spacing-0-5);
+  min-height: var(--veli-spacing-11);
+  font-weight: var(--veli-typography-en-body-md-medium-font-weight);
+}
+.veli-service-detail-mobile-toc-panel
+  .veli-service-detail-toc-link[aria-current='location']
+  > span {
+  display: block;
+  padding: var(--veli-spacing-2) var(--veli-spacing-4);
+  background: var(--veli-color-neutral-alpha-200);
+  border-radius: var(--veli-spacing-2-5);
+}
+.veli-service-detail-latin {
+  font-family: var(--veli-font-sans);
+}
+@media (width < 768px) {
+  .veli-service-detail-guideline-sheet {
+    height: calc(100dvh - var(--veli-spacing-12));
+  }
+  .veli-service-detail-guideline-sheet-header {
+    padding: var(--veli-spacing-5) var(--veli-spacing-6) var(--veli-spacing-4);
+    align-items: flex-start;
+  }
+  .veli-service-detail-guideline-sheet-header h2 {
+    flex: 1;
+    font-size: var(--veli-typography-en-title-2-semibold-font-size);
+    font-weight: var(--veli-typography-en-title-2-semibold-font-weight);
+    line-height: var(--veli-typography-en-title-2-semibold-line-height);
+  }
+  .veli-service-detail-guideline-sheet-header h2:lang(dv) {
+    font-family: var(--veli-typography-dv-title-2-medium-font-family);
+    font-size: var(--veli-typography-dv-title-2-medium-font-size);
+    font-weight: var(--veli-typography-dv-title-2-medium-font-weight);
+    line-height: var(--veli-typography-dv-title-2-medium-line-height);
+  }
+  .veli-service-detail-guideline-layout {
+    gap: 0;
+  }
+  .veli-service-detail-guideline-sidebar {
+    display: none;
+  }
+  .veli-service-detail-guideline-scroll {
+    padding-inline: var(--veli-spacing-6);
+  }
+  .veli-service-detail-guideline-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--veli-spacing-12);
+    padding-block: var(--veli-spacing-6) calc(var(--veli-spacing-24) + var(--veli-spacing-6));
+  }
+  .veli-service-detail-guideline-content > * {
+    margin-block: 0;
+  }
+  .veli-service-detail-guideline-actions,
+  .veli-service-detail-guideline-header {
+    gap: var(--veli-spacing-3);
+  }
+  .veli-service-detail-guideline-actions button {
+    width: var(--veli-spacing-11);
+    height: var(--veli-spacing-11);
+  }
+  .veli-service-detail-mobile-toc-button {
+    display: inline-flex;
+    position: absolute;
+    z-index: 2;
+    inset-inline-end: var(--veli-spacing-5);
+    bottom: var(--veli-spacing-8);
+    filter: drop-shadow(0 8px 10px rgb(0 0 0 / 12%)) drop-shadow(0 0 1.5px rgb(0 0 0 / 6%));
+  }
+}
+@media (width >= 768px) {
+  .veli-service-detail-mobile-toc-panel {
+    display: none;
+  }
+}
+
+/* With no optional form details, preserve Figma's compact two-CTA manual panel. */
+.veli-service-detail-download-list-simple {
+  gap: var(--veli-spacing-2);
+}
+.veli-service-detail-download-list-simple
+  .veli-service-detail-download-row
+  + .veli-service-detail-download-row {
+  border: 0;
+  padding-block-start: 0;
+}
+
+@media (width < 768px) {
+  .veli-service-detail-rich-text .veli-service-detail-fee-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--veli-radius-2xl);
+    overflow: hidden;
+    background: var(--veli-color-neutral-alpha-200);
+  }
+  .veli-service-detail-fee-table :is(th, td) {
+    border: 0;
+    border-block-end: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+    padding-block: var(--veli-spacing-3-5);
+  }
+  .veli-service-detail-fee-table th[scope='row'] {
+    text-align: start;
+    font-weight: var(--veli-typography-en-body-lg-regular-font-weight);
+    padding-inline: var(--veli-spacing-5) 0;
+  }
+  .veli-service-detail-fee-table td {
+    text-align: end;
+    white-space: nowrap;
+    font-weight: var(--veli-typography-en-body-lg-medium-font-weight);
+    padding-inline: var(--veli-spacing-3) var(--veli-spacing-5);
+  }
+  .veli-service-detail-fee-table tr:last-child :is(th, td) {
+    border-block-end: 0;
+  }
+}

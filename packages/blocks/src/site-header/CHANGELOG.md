@@ -1,8 +1,15 @@
-## 0.6.0
+## 0.7.0
 
 ### Changed
 
 - Official-banner language control shows the other language as a direct caption-medium text switch (no caret or dropdown), matching the gov.mv two-language Figma. The banner control renders only when exactly two languages are supplied.
+
+## 0.6.0
+
+### Changed
+
+- Adopt Veli UI 0.17.x and tokens 0.10.x as the supported core package baseline. Upgrade the applicable core packages together before adding or updating this copied block; earlier block versions retain their previous dependency contracts.
+- Record the tested core candidate versions for the bilingual typography and subtle-button color update. Block APIs and authored source are unchanged.
 
 ## 0.5.0
 

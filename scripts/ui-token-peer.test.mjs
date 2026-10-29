@@ -47,3 +47,11 @@ test('planned tokens release satisfies the UI peer before package versioning', a
     plan.releases.find(({ name }) => name === tokens.name)?.newVersion ?? tokens.version;
   assertCompatibleTokensPeer(ui, candidate);
 });
+
+test('UI requires tokens with high-contrast Button colors', async () => {
+  const ui = JSON.parse(await readFile(new URL('../packages/ui/package.json', import.meta.url)));
+  for (const version of ['0.9.0', '0.9.1', '0.9.99', '0.10.0-rc.0', '0.11.0'])
+    assert.throws(() => assertCompatibleTokensPeer(ui, version), /must satisfy UI peer/);
+  for (const version of ['0.10.0', '0.10.1', '0.10.99'])
+    assert.doesNotThrow(() => assertCompatibleTokensPeer(ui, version));
+});

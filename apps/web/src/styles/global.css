@@ -2063,7 +2063,7 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 .docs-overview-copy h2,
 .docs-list-section h2,
 .foundation-section h2,
-.docs-prose h2 {
+.docs-prose h2:not(:where(.preview *)) {
   font-size: 32px;
   line-height: 1.36;
   letter-spacing: -0.01em;
@@ -2646,7 +2646,7 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   margin-top: 0;
 }
 
-.docs-prose h2 {
+.docs-prose h2:not(:where(.preview *)) {
   margin-top: 72px;
   color: var(--veli-color-text-base-emphasis);
   font-family: var(--veli-font-sans, 'Inter', sans-serif);
@@ -2670,7 +2670,7 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
 .docs-prose p,
 .docs-prose ul,
 .docs-prose ol,
-.docs-prose table,
+.docs-prose table:not(:where(.preview *)),
 .docs-prose pre {
   margin-top: 16px;
 }
@@ -2717,7 +2717,7 @@ html[data-color-scheme='dark'] .docs-page-header__art-lottie--shared {
   font: revert-layer;
 }
 
-.docs-prose table {
+.docs-prose table:not(:where(.preview *)) {
   margin-bottom: 32px;
 }
 

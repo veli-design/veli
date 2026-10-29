@@ -56,6 +56,9 @@ test('menu keyboard behavior, controlled filtering, pending mutation and live up
   await options.click();
   await expect(page.getByRole('menuitem', { name: 'Marking all as read…' })).toBeDisabled();
   await page.keyboard.press('Escape');
+  await expect(page.getByRole('menu')).toBeHidden();
+  await expect(options).toHaveAttribute('aria-expanded', 'false');
+  await expect(options).toBeFocused();
   // Simulates the app receiving a completed mutation while the overlay is open.
   await page.locator('#complete-mark').evaluate((button: HTMLButtonElement) => button.click());
   await expect(tray.getByText('You have no unread notifications.')).toBeVisible();

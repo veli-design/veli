@@ -159,3 +159,21 @@ test('custom navigation render owns href mapping while native links use the prov
     assert.match(html, custom ? /href="\/account"/ : /href="\/base\/account"/);
   }
 });
+
+test('highContrast is opt-in, secondary-only and never forwarded to the native element', () => {
+  for (const mode of [{}, { as: 'a', href: '/account' }]) {
+    for (const intent of ['primary', 'secondary', 'danger', 'accent']) {
+      for (const appearance of ['fill', 'transparent', 'ghost']) {
+        const props = { ...mode, intent, appearance };
+        const normal = render(props);
+        assert.equal(render({ ...props, highContrast: false }), normal);
+        const contrast = render({ ...props, highContrast: true });
+        assert.doesNotMatch(contrast, /highcontrast=/i);
+        if (intent === 'secondary') {
+          assert.match(contrast, /button-onhighcontrast/);
+          assert.doesNotMatch(contrast, /bg-button-disabled|text-disabled/);
+        } else assert.equal(contrast, normal);
+      }
+    }
+  }
+});
