@@ -5,17 +5,18 @@ release prerequisites. It is not legal assurance.
 
 ## Licensing prerequisites
 
-Copyright holder, year and authority to license original work must be verified
-before distribution. The root MIT licence retains explicit
-`[YEAR] [COPYRIGHT HOLDER — TO BE CONFIRMED]` placeholders. Complete copyright and
-attribution notices consistently across the root sources and generated package notices. The standard MIT grant
-and disclaimer remain unchanged. The supported root publication script rejects
-unresolved templates and draft notices; local tarballs are for validation only.
+Original project work and documentation attribution use © 2026 Government of the
+Republic of Maldives. Developed by MINDCo. The brand permission contact and applicable asset permissions
+remain unresolved. The standard MIT grant and disclaimer remain unchanged.
+The supported publication script rejects unresolved fields; existing saved
+tarballs are earlier validation rehearsals and must be regenerated when release
+notices are completed.
 
 `LICENSING.md` separates MIT original software/code examples from CC BY 4.0
-original non-software documentation, with unresolved attribution placeholders.
+original non-software documentation, with the government copyright attribution.
 `LICENSES/CC-BY-4.0.txt` supplies the standard legal text. `ASSET_LICENSES.md`
-records the known 86 source assets and their unresolved rights.
+defines category-level asset licensing scope and unresolved font, asset and
+notice requirements.
 `BRAND_POLICY.md` defines separate asset exclusions, without adding restrictions
 to the MIT software grant. `THIRD_PARTY_NOTICES.md` records installed direct
 runtime dependencies and reproduces the verified Phosphor MIT notice. These are
@@ -33,56 +34,64 @@ not claims of ownership or a complete transitive licence audit.
   source archives and docs/Storybook sites need a separate distribution review.
   No private workspace identities or directory names change in this bundle.
 
-The asset inventory contains 86 files across the two apps' public directories and
-seven standalone Block SVGs. Those files are outside the npm allowlists. No new
-claim to redistribution rights is made for any of them. Specifically:
+App fonts, branding and artwork are outside the npm allowlists. Their separate
+distribution requires applicable rights and notices; the category-level asset
+policy does not independently establish redistribution clearance. Specifically:
 
-| Materials                                                                    | Required evidence                                                                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Inter Latin/Latin-ext WOFF2 and IBM Plex Mono 400/500/600 WOFF2 in web fonts | Identify exact upstream files/version, attach matching upstream copyright and font licence, verify modification/subsetting terms. A known family name alone does not verify these binaries. |
-| MV Faseyha Regular, MV A Waheed Bold 2, MV Aaamu FK Bold TTF in both apps    | Obtain verified rights holder and explicit redistribution licence for these exact files. No licence was present beside them.                                                                |
-| Veli logos, favicon variants, home artwork                                   | Verify ownership/brand-use policy and who can authorise redistribution; excluded from proposed code grant.                                                                                  |
-| gov.mv logos, Maldives flag and example organisation emblem in both apps     | Verify source, applicable rights and permitted uses; do not treat government artwork as public domain.                                                                                      |
-| Remaining SVG/PNG/WebP/Lottie art and animation in app public directories    | Record source and applicable terms before public deployment; not automatically relicensed MIT.                                                                                              |
-| Six service-detail SVGs and notification-tray cursor-click.svg               | Verify origin and applicable notices before releasing Blocks archives; no upstream provenance assumed.                                                                                      |
+| Materials                                                                    | Required evidence                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Inter Latin/Latin-ext WOFF2 and IBM Plex Mono 400/500/600 WOFF2 in web fonts | OFL-1.1 permits use under its conditions; add matching copyright and full OFL text to the web font distribution. Verify supplied-binary provenance and applicable reserved-name/subsetting conditions. |
+| MV Faseyha Regular, MV A Waheed Bold 2, MV Aaamu FK Bold TTF in both apps    | Obtain verified rights holder and explicit redistribution licence for these exact files. No licence was present beside them.                                                                           |
+| Veli Design logos, favicon variants, home artwork                            | Government copyright; confirm permission contact and permitted use; logos remain reserved.                                                                                                             |
+| gov.mv logos, Maldives flag and example organisation emblem in both apps     | Verify source, applicable rights and permitted uses; do not treat government artwork as public domain.                                                                                                 |
+| Remaining SVG/PNG/WebP/Lottie art and animation in app public directories    | Original documentation illustration/animation content follows CC BY; implementation code MIT; verify per-file classification and third-party terms.                                                    |
+| Replaced standalone Phosphor copies                                          | Current imports verified; hosted MIT notice staged; historical copied archives require separate notice review.                                                                                         |
 
 The local verification evidence outside the repository records per-file byte
 counts and SHA-256 hashes, all eleven manifest identities, actual tarball contents
-and findings. No fonts/assets were removed from current app previews or production.
+and findings. Fonts, branding and unrelated artwork are unchanged; the verified icon
+replacements preserve their rendered appearance. Existing production is unchanged.
 
-## Seven Block SVG distribution findings
+## Operational font notice checks
 
-An exclusion from the MIT code grant is not permission to redistribute an asset.
-All seven assets below have unverified upstream provenance, copyright holder,
-licence/version and redistribution conditions. Similarity to an icon library is
-not evidence of a matching upstream file. Obtain source/rights evidence and the
-required notices, or agree an explicit removal/replacement, before distributing
-an affected artifact. No artwork is silently removed by this change.
+Inter and IBM Plex Mono are OFL-1.1 families. Their self-hosted web binaries
+currently carry copyright and an OFL URL in metadata, but no full embedded
+licence text was found and no accompanying OFL text is included in the built
+web output. This is a notice-distribution task, not a blanket requirement to
+obtain new permission for uses already allowed by the OFL. Include the relevant
+upstream copyright and complete OFL text with the font distribution, preserving
+reserved-font-name conditions where applicable. The five web binaries are copied
+unchanged into the current build. Their exact supply source has not been
+independently matched in this check. Storybook obtains Inter through its Google
+Fonts stylesheet; its dependency-supplied font notices need their own check.
 
-| Exact repository file                                     | Public npm tarballs | Copy-source registry                           | Hosted docs / Storybook                                                                 |
-| --------------------------------------------------------- | ------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `packages/blocks/src/service-detail/hand-coins.svg`       | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/service-detail/hand-deposit.svg`     | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/service-detail/hourglass-medium.svg` | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/service-detail/list-numbers.svg`     | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/service-detail/note-pencil.svg`      | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/service-detail/list-bullets.svg`     | Absent              | Included in service-detail manifest/archive    | CSS mask; included in rendered examples and downloadable source                         |
-| `packages/blocks/src/notification-tray/cursor-click.svg`  | Absent              | Included in notification-tray manifest/archive | Imported by notification-tray-content.tsx; included in examples and downloadable source |
+Dhivehi-font replacement and licence verification are deferred until the planned
+replacement and its terms are available. Existing files and embedded metadata
+remain unchanged; a planned purchase is not treated as completed rights clearance.
+These are operational checks, separate from the public policy and npm packages.
 
-`service-detail.css` references all six service-detail SVGs; the notification-tray
-content module imports cursor-click. Both block manifests enumerate those files.
-The catalog's `sourceBundleFiles` / `sourceArchive` preserve the manifest files,
-and `blockMarkdown` embeds their bytes into generated documentation. The web app
-serves the catalog, archives and block-source docs; Storybook renders the shared
-Blocks examples. These facts establish distribution surfaces, not permission.
-Actual npm tarball inspection confirms no SVG/font/image asset is included in
-React, tokens or CLI. Those packages do not embed the fetched Block archives.
+## Verified Phosphor replacement boundary
 
-New Blocks-registry publication and public docs/Storybook deployment remain
-blocked for these assets as well as the other unverified public assets. Keep the deployment
-gate disabled until the registry and asset requirements are satisfied; an MIT exclusion must never be treated as clearance to
-activate it. Npm publication separately remains blocked by copyright templates
-and the existing rollout prerequisites.
+Sixteen confirmed standalone copies are removed: seven Block SVGs, six footer
+icons (also used by the homepage) and three code-control icons. Current Service
+Detail `0.5.1` and Notification Tray `0.6.1` manifests retain the declared Phosphor
+dependency and no longer ship those files. Named library icons preserve weight,
+size, colour and decorative semantics. Astro uses SSR modules without icon-only
+hydration. Moon deliberately uses the upstream bold geometry.
+
+The completed regression verification recorded the pre-icon PD-595 baseline plus its existing
+licensing source, loaded fonts, fixed browser/DPR, 40 paired captures, overlays,
+pixel counts and keyboard checks. A genuine caret-spacing regression was found
+and fixed. Final pairs have no layout/colour mismatch or changed pixels outside
+icon regions; tiny geometry/antialiasing differences remain explicit.
+
+The installed Phosphor MIT notice is staged in hosted web/Storybook artifacts.
+Historical Git-derived archives may retain copied SVGs and still need notice
+review before a separate public registry transition. No historical source or
+receipt hashes are rewritten. Fonts, composite illustrations, branding and old
+screenshots retain their separately recorded evidence gaps. None enters the
+three npm tarballs. Those website-only gaps remain separate from the completed
+copyright and documentation attribution in package notices.
 
 ## Publication and rollout gates
 
@@ -98,7 +107,7 @@ organisation role/publish permissions, initial authentication and any later trus
 provisioning through separately authorised steps. Do not claim provenance while
 the source repository is private. Validate a compatible new-scope Blocks registry
 and define the old-consumer support period before activating docs/registry deployment.
-Public npm CLI installation does not grant registry access through MINDCo WFA.
+Public npm CLI installation does not grant access through the existing registry access controls.
 
 Repository URLs truthfully retain `tradenetcorp/veli`; they have not been changed
 to the future GitHub organisation.
@@ -115,7 +124,7 @@ to the future GitHub organisation.
 The root licence and governance files are canonical. Packages have no tracked
 MIT or governance copies. pnpm supplies root `LICENSE`; `prepack` stages only
 `licensing/LICENSING.md`, `licensing/CC-BY-4.0.txt` and applicable third-party
-notice sections. Full brand policy and asset register stay root-only; package
+notice sections. Full brand and asset policies stay root-only; package
 scope notices include self-contained exclusions and absolute source references.
 The generated `licensing/` path avoids suppressing pnpm's root licence fallback.
 Actual tarball checks, not source-copy equality, enforce this distribution shape.

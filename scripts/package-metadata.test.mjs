@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { gzipSync, gunzipSync } from 'node:zlib';
 import fs from 'node:fs/promises';
 import test from 'node:test';
 import { execFileSync, execFile } from 'node:child_process';
@@ -85,9 +86,9 @@ test('canonical standard licence terms stay intact', async () => {
   );
 });
 
-test('incomplete copyright and attribution templates continue to block publication', () => {
+test('repository copyright and attribution notices are complete', () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
-  assert.throws(() => assertReleaseLegal(root), /unresolved legal template/);
+  assert.doesNotThrow(() => assertReleaseLegal(root));
 });
 
 test('real workspace tarballs inherit MIT and contain only applicable self-contained notices', async () => {
@@ -109,7 +110,81 @@ test('real workspace tarballs inherit MIT and contain only applicable self-conta
       });
     }
     checkPackageLicensingArtifacts(target);
+    assert.doesNotThrow(() => checkPackageLicensingArtifacts(target, { release: true }));
+    // Mutate only this test's own tarball: an excluded asset must still fail
+    // even when all licence/reference checks succeed.
+    const plainTar = join(target, 'ui.tar');
+    const injected = join(target, 'injected');
+    await fs.writeFile(plainTar, gunzipSync(await fs.readFile(join(target, 'ui.tgz'))));
+    await fs.mkdir(join(injected, 'package'), { recursive: true });
+    await fs.writeFile(join(injected, 'package/font.woff2'), 'fixture, not a real font');
+    execFileSync('tar', ['-rf', plainTar, '-C', injected, 'package/font.woff2']);
+    await fs.writeFile(join(target, 'ui.tgz'), gzipSync(await fs.readFile(plainTar)));
+    assert.throws(() => checkPackageLicensingArtifacts(target), /excluded asset/);
   } finally {
     await fs.rm(target, { recursive: true, force: true });
+  }
+});
+
+test('npm legal gate checks shipped material while website asset decisions remain separate', async () => {
+  const root = await fs.mkdtemp(join(tmpdir(), 'veli-legal-scope-'));
+  try {
+    const paths = [
+      'LICENSE',
+      'LICENSES/CC-BY-4.0.txt',
+      'packaging/LICENSING.md',
+      'THIRD_PARTY_NOTICES.md',
+      ...licensingPackages.map((pkg) => `packages/${pkg.directory}/README.md`),
+    ];
+    for (const path of paths) {
+      let source = await fs.readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+      // These values are test data only, never applied to repository legal files.
+      source = source
+        .replaceAll('[YEAR]', '2030')
+        .replaceAll(
+          '[CREATOR / ATTRIBUTION IDENTITY — TO BE CONFIRMED]',
+          'Example documentation author',
+        )
+        .replaceAll('**TO BE CONFIRMED**', 'complete in fixture')
+        .replace(/draft\s+notice/gi, 'notice')
+        .replace(
+          /unresolved fields block publication\./g,
+          'completed notices accompany this fixture.',
+        )
+        .replace(
+          /The copyright year and documentation attribution remain unresolved and block publication\./g,
+          'See the completed scope notice.',
+        );
+      const destination = join(root, path);
+      await fs.mkdir(join(destination, '..'), { recursive: true });
+      await fs.writeFile(destination, source);
+    }
+    await fs.writeFile(
+      join(root, 'ASSET_LICENSES.md'),
+      'Draft inventory: website font permissions TO BE CONFIRMED',
+    );
+    await fs.writeFile(
+      join(root, 'BRAND_POLICY.md'),
+      'Engineering draft: website brand contact TO BE CONFIRMED',
+    );
+    assert.doesNotThrow(() => assertReleaseLegal(root));
+    const licence = await fs.readFile(join(root, 'LICENSE'), 'utf8');
+    await fs.writeFile(
+      join(root, 'LICENSE'),
+      licence.replace(/Copyright \(c\) \d{4}(?:-\d{4})?/, 'Copyright (c) [YEAR]'),
+    );
+    assert.throws(() => assertReleaseLegal(root), /unresolved legal template/);
+    await fs.writeFile(join(root, 'LICENSE'), licence);
+    const scope = await fs.readFile(join(root, 'packaging/LICENSING.md'), 'utf8');
+    await fs.writeFile(
+      join(root, 'packaging/LICENSING.md'),
+      scope.replace(
+        '© 2026 Government of the Republic of Maldives.',
+        '[CREATOR — TO BE CONFIRMED]',
+      ),
+    );
+    assert.throws(() => assertReleaseLegal(root), /unresolved legal template/);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
   }
 });

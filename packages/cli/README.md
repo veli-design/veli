@@ -1,6 +1,6 @@
-# Veli CLI
+# Veli Design CLI
 
-Install and manage editable Veli Blocks in an application while retaining the exact upstream source used for three-way updates.
+Install and manage editable Veli Design Blocks in an application while retaining the exact upstream source used for three-way updates.
 
 ## Installation
 
@@ -10,13 +10,13 @@ The prepared public npm package is `@veli-design/cli`; installation needs no pac
 corepack pnpm dlx @veli-design/cli init
 ```
 
-The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Web URL and block destination in `.veli/config.json`.
+The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Design Web URL and block destination in `.veli/config.json`.
 
-Package installation and Blocks registry access are separate. Configure the compatible new-scope Veli Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
+Package installation and Blocks registry access are separate. Configure the compatible new-scope Veli Design Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
 
 ## WFA access
 
-Before using Veli Web, request access at [MINDCo WFA](https://wfa.mindco.mv/) with your company account. Choose one of the available durations (at most 24 hours) and enter the required reason. WFA grants access to your requesting IP, so run the CLI from the same network. To check access or get guided recovery instructions, run:
+Before using Veli Design Web, request access at [workforce access](https://wfa.mindco.mv/) with your company account. Choose one of the available durations (at most 24 hours) and enter the required reason. WFA grants access to your requesting IP, so run the CLI from the same network. To check access or get guided recovery instructions, run:
 
 ```sh
 corepack pnpm dlx @veli-design/cli auth login
@@ -50,6 +50,7 @@ uses CC BY 4.0. Installed packages include the root `LICENSE` and
 CC BY text, and applicable third-party notices. See the
 [repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
 for source policy and asset details (repository access required).
-Copyright/attribution identities remain unresolved and block publication.
+Original project work is copyright © 2026 Government of the Republic of Maldives.
+Developed by MINDCo.
 Fonts, government/brand imagery and copied Block SVGs are not included or
 licensed by these npm packages; registry/hosted-site assets are separate.

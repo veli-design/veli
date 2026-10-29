@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build": "node ../../scripts/stage-phosphor-notice.mjs storybook && storybook build"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",

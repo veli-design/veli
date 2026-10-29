@@ -1,16 +1,17 @@
 ---
+import DocsPhosphorIcon from './DocsPhosphorIcon.astro';
 import { externalResources } from '../lib/site';
 
 const resourceIcons = {
-  figma: '/images/docs-footer/figma.svg',
-  github: '/images/docs-footer/github.svg',
-  package: '/images/docs-footer/package.svg',
-};
+  figma: 'figma',
+  github: 'github',
+  package: 'package',
+} as const;
 
 const themeChoices = [
-  { id: 'light', icon: '/images/docs-footer/sun.svg' },
-  { id: 'dark', icon: '/images/docs-footer/moon.svg' },
-  { id: 'system', icon: '/images/docs-footer/monitor.svg' },
+  { id: 'light', icon: 'sun' },
+  { id: 'dark', icon: 'moon' },
+  { id: 'system', icon: 'monitor' },
 ] as const;
 ---
 
@@ -30,11 +31,7 @@ const themeChoices = [
               aria-disabled="true"
               tabindex="0"
             >
-              <span
-                class="docs-control-icon"
-                style={`--docs-control-icon: url('${icon}')`}
-                aria-hidden="true"
-              />
+              <DocsPhosphorIcon name={icon} />
               <span class="docs-control-tooltip" aria-hidden="true">
                 {tooltip}
               </span>
@@ -50,11 +47,7 @@ const themeChoices = [
             rel="noreferrer"
             aria-label={item.label}
           >
-            <span
-              class="docs-control-icon"
-              style={`--docs-control-icon: url('${icon}')`}
-              aria-hidden="true"
-            />
+            <DocsPhosphorIcon name={icon} />
             <span class="docs-control-tooltip" aria-hidden="true">
               {tooltip}
             </span>
@@ -74,14 +67,7 @@ const themeChoices = [
   >
     {
       themeChoices.map((choice) => {
-        return (
-          <span
-            class="docs-control-icon"
-            style={`--docs-control-icon: url('${choice.icon}')`}
-            aria-hidden="true"
-            data-theme-icon={choice.id}
-          />
-        );
+        return <DocsPhosphorIcon name={choice.icon} data-theme-icon={choice.id} />;
       })
     }
     <span class="docs-control-tooltip" aria-hidden="true" data-theme-label> Use system theme </span>

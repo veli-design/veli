@@ -1,3 +1,9 @@
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { FileTsxIcon } from '@phosphor-icons/react/dist/ssr/FileTsx';
+import { TerminalIcon } from '@phosphor-icons/react/dist/ssr/Terminal';
+import { fromHtml } from 'hast-util-from-html';
+
 const collapsibleLineCount = 24;
 
 const languageNames = {
@@ -48,6 +54,19 @@ function icon(paths) {
     { viewBox: '0 0 20 20', ariaHidden: 'true', focusable: 'false' },
     paths.map((path) => element('path', { d: path })),
   );
+}
+
+function libraryIcon(component, className) {
+  const markup = renderToStaticMarkup(
+    createElement(component, {
+      weight: 'fill',
+      size: 24,
+      className,
+      'aria-hidden': 'true',
+      focusable: 'false',
+    }),
+  );
+  return fromHtml(markup, { fragment: true }).children[0];
 }
 
 function copyIcon() {
@@ -132,7 +151,7 @@ function enhanceCodeBlocks(tree) {
       if (typeof fileTitle === 'string') {
         wrapperClasses.push('docs-code-file');
         toolbar.children.unshift(
-          element('span', { className: ['docs-code-file__icon'], ariaHidden: 'true' }),
+          libraryIcon(FileTsxIcon, 'docs-code-file__icon'),
           element('span', { className: ['docs-code-file__name'] }, [text(fileTitle)]),
         );
       }
@@ -148,7 +167,7 @@ function enhanceCodeBlocks(tree) {
         };
         code.children = [text(source)];
         toolbar.children.unshift(
-          element('span', { className: ['docs-code-command__icon'], ariaHidden: 'true' }),
+          libraryIcon(TerminalIcon, 'docs-code-command__icon'),
           element(
             'div',
             { role: 'tablist', ariaLabel: 'Package manager' },

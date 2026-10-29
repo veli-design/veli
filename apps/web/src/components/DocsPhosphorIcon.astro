@@ -1,0 +1,29 @@
+---
+import { FigmaLogoIcon } from '@phosphor-icons/react/dist/ssr/FigmaLogo';
+import { GithubLogoIcon } from '@phosphor-icons/react/dist/ssr/GithubLogo';
+import { MonitorIcon } from '@phosphor-icons/react/dist/ssr/Monitor';
+import { MoonIcon } from '@phosphor-icons/react/dist/ssr/Moon';
+import { PackageIcon } from '@phosphor-icons/react/dist/ssr/Package';
+import { SunIcon } from '@phosphor-icons/react/dist/ssr/Sun';
+
+// Preserve the occupied bounds of the former cropped footer assets.
+// Moon now uses the maintained bold geometry rather than the flattened derivative.
+const icons = {
+  figma: { component: FigmaLogoIcon, weight: 'fill', viewBox: '56 24 152 216' },
+  github: { component: GithubLogoIcon, weight: 'fill', viewBox: '0 24 216 216' },
+  package: { component: PackageIcon, weight: 'fill', viewBox: '24 16 208 224' },
+  sun: { component: SunIcon, weight: 'fill', viewBox: '8 8 240 240' },
+  moon: { component: MoonIcon, weight: 'bold', viewBox: '28 16 212 212' },
+  monitor: { component: MonitorIcon, weight: 'bold', viewBox: '20 36 216 204' },
+} as const;
+interface Props {
+  name: keyof typeof icons;
+  'data-theme-icon'?: string;
+}
+const { name, ...attributes } = Astro.props;
+const { component: Icon, weight, viewBox } = icons[name];
+---
+
+<span class="docs-control-icon" aria-hidden="true" {...attributes}>
+  <Icon weight={weight} viewBox={viewBox} size={16} aria-hidden="true" focusable="false" />
+</span>

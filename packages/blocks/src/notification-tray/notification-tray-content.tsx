@@ -1,10 +1,10 @@
 'use client';
 
 import { useId, type ReactNode } from 'react';
-import emptyIcon from './cursor-click.svg';
 import {
   BellSimpleIcon,
   CheckCircleIcon,
+  CursorClickIcon,
   DotsThreeIcon,
   WarningCircleIcon,
   XIcon,
@@ -81,8 +81,6 @@ const intentStyles = {
   warning: 'bg-warning-300 text-icon-warning-muted',
   danger: 'bg-bg-danger-subtle text-icon-danger',
 };
-
-const emptyIconUrl = typeof emptyIcon === 'string' ? emptyIcon : emptyIcon.src;
 
 // One coordinate system keeps the highlight aligned across every shape in a row.
 // Without a viewBox, shapes retain pixel sizes while bar widths follow the viewport.
@@ -416,9 +414,11 @@ export function NotificationTrayContent({
             className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-inactive"
           >
             <span aria-hidden className="flex size-8 items-center justify-center">
-              <span
-                className="size-6 bg-current text-icon-base-inactive mask-size-contain mask-no-repeat"
-                style={{ maskImage: `url("${emptyIconUrl}")` }}
+              <CursorClickIcon
+                weight="fill"
+                aria-hidden
+                focusable="false"
+                className="size-6 text-icon-base-inactive"
               />
             </span>
             <div className="flex min-h-27 max-w-77 flex-col items-center gap-2">

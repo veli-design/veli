@@ -5,9 +5,27 @@ import { fileURLToPath } from 'node:url';
 
 export const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const licensingPackages = [
-  { directory: 'react', name: '@veli-design/react', tarball: 'ui.tgz', notices: true },
-  { directory: 'tokens', name: '@veli-design/tokens', tarball: 'tokens.tgz', notices: false },
-  { directory: 'cli', name: '@veli-design/cli', tarball: 'cli.tgz', notices: true },
+  {
+    directory: 'react',
+    name: '@veli-design/react',
+    productName: 'Veli Design React component library',
+    tarball: 'ui.tgz',
+    notices: true,
+  },
+  {
+    directory: 'tokens',
+    name: '@veli-design/tokens',
+    productName: 'Veli Design tokens',
+    tarball: 'tokens.tgz',
+    notices: false,
+  },
+  {
+    directory: 'cli',
+    name: '@veli-design/cli',
+    productName: 'Veli Design CLI',
+    tarball: 'cli.tgz',
+    notices: true,
+  },
 ];
 
 export function packageNotices(source, directory) {
@@ -42,12 +60,13 @@ export async function stagePackageLicensing(packageRoot = process.cwd()) {
   const template = await readFile(resolve(repositoryRoot, 'packaging/LICENSING.md'), 'utf8');
   const scope = template
     .replaceAll('{{PACKAGE_NAME}}', pkg.name)
+    .replaceAll('{{PRODUCT_NAME}}', pkg.productName)
     .replaceAll('{{SOURCE_URL}}', manifest.homepage)
     .replaceAll(
       '{{THIRD_PARTY_NOTICE}}',
       pkg.notices
         ? 'See [third-party notices](THIRD_PARTY_NOTICES.md) beside this notice. External dependencies retain their own installed licence files.'
-        : 'This package has no runtime dependencies or bundled third-party implementations. Build tools retain their own licences and are not included.',
+        : 'The Veli Design tokens package has no runtime dependencies or bundled third-party implementations. Build tools retain their own licences and are not included.',
     );
   assert.ok(!/\{\{/.test(scope), 'Unresolved staging template');
   await writeFile(resolve(target, 'LICENSING.md'), scope);

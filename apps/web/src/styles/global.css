@@ -1687,9 +1687,12 @@ body {
   display: block;
   width: 16px;
   height: 16px;
-  background: currentColor;
-  -webkit-mask: var(--docs-control-icon) center / contain no-repeat;
-  mask: var(--docs-control-icon) center / contain no-repeat;
+}
+
+.docs-control-icon > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .docs-footer-control:hover,

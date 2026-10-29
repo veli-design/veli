@@ -1,3 +1,4 @@
+import { CaretUpDownIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@veli-design/react/button';
 
@@ -41,7 +42,15 @@ export function DocsCodeExpandButton({
       aria-expanded={expanded}
       onPress={toggle}
     >
-      <span className="docs-code-block__expand-icon" aria-hidden="true" />
+      <span className="docs-code-block__expand-icon" aria-hidden="true">
+        <CaretUpDownIcon
+          weight="bold"
+          size={12}
+          className="block"
+          aria-hidden="true"
+          focusable="false"
+        />
+      </span>
       {expanded ? 'Collapse' : `Expand (${currentLineCount} lines)`}
     </Button>
   );

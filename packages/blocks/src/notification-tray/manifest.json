@@ -1,10 +1,10 @@
 {
   "id": "notification-tray",
   "title": "Notification tray",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "status": "experimental",
   "description": "Responsive notification tray with app-owned data, filtering and actions.",
-  "files": ["notification-tray.tsx", "notification-tray-content.tsx", "cursor-click.svg"],
+  "files": ["notification-tray.tsx", "notification-tray-content.tsx"],
   "dependencies": {
     "@veli-design/react": "^0.17.0",
     "react": "^19.0.0",

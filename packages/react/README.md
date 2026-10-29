@@ -1,6 +1,8 @@
-# @veli-design/react
+# Veli Design React component library
 
-Accessible React primitives for the Veli Design System. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme).
+Package: `@veli-design/react`.
+
+Accessible React primitives for the Veli Design. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme).
 
 ## Install
 
@@ -63,20 +65,20 @@ export function CreateAction() {
 
 The installed package includes version-matched guidance and semantic component metadata:
 
-- `AGENT_GUIDE.md` — setup, lookup order, and Veli-wide implementation rules
+- `AGENT_GUIDE.md` — setup, lookup order, and implementation rules for Veli Design
 - `agent/manifest.json` — component discovery and links to semantic sidecars
 - `agent/components/*.json` — when to use each component, limitations, and relationships
 - `agent/recipes/` — type-checked integration examples
 
 Use the published TypeScript declarations for props and variants. Use
 `@veli-design/tokens/tokens`, `/tailwind`, and `/css` as the token authorities.
-Do not infer unsupported Veli APIs from the metadata.
+Do not infer unsupported Veli Design APIs from the metadata.
 
 ## Next.js and Vitest
 
-The React package ships explicit `.js` relative imports. After migrating, remove `@veli-design/react` from Next.js `transpilePackages` and Vitest `test.server.deps.inline` if those entries were added to work around Veli module resolution. Keep entries required by other packages.
+The Veli Design React component library ships explicit `.js` relative imports. After migrating, remove `@veli-design/react` from Next.js `transpilePackages` and Vitest `test.server.deps.inline` if those entries were added to work around Veli Design module resolution. Keep entries required by other packages.
 
-Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
+Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli Design releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
 
 See the [consumer investigation and reproduction matrix](https://github.com/tradenetcorp/veli/blob/main/docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
 
@@ -101,6 +103,7 @@ uses CC BY 4.0. Installed packages include the root `LICENSE` and
 CC BY text, and applicable third-party notices. See the
 [repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
 for source policy and asset details (repository access required).
-Copyright/attribution identities remain unresolved and block publication.
+Original project work is copyright © 2026 Government of the Republic of Maldives.
+Developed by MINDCo.
 Fonts, government/brand imagery and copied Block SVGs are not included or
 licensed by these npm packages; registry/hosted-site assets are separate.

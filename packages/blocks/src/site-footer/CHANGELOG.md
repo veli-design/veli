@@ -1,10 +1,10 @@
-## 0.4.0
-
 ## 0.5.0
 
 ### Changed
 
 - Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
+## 0.4.0
 
 ### Changed
 

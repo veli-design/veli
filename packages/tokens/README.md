@@ -1,6 +1,8 @@
-# @veli-design/tokens
+# Veli Design tokens
 
-Veli tokens for plain CSS, Tailwind v4 and DTCG integrations. All artifacts come from one normalized graph.
+Package: `@veli-design/tokens`.
+
+Veli Design tokens for plain CSS, Tailwind v4 and DTCG integrations. All artefacts come from one normalised graph.
 
 ## Installation
 
@@ -33,13 +35,13 @@ Generic font-size utilities `text-xs` through `text-9xl` follow Figma's `text` c
 
 ### Loading the Latin font
 
-The host app loads Inter; Veli supplies the family choice and a system sans fallback through `--veli-font-sans`. This one token drives `font-sans`, English `type-*` utilities, and the English typography CSS variables. Dhivehi styles continue to use their own font tokens.
+The host app loads Inter; Veli Design supplies the family choice and a system sans fallback through `--veli-font-sans`. This one token drives `font-sans`, English `type-*` utilities, and the English typography CSS variables. Dhivehi styles continue to use their own font tokens.
 
 Dhivehi styles use the Figma font roles `--veli-font-dhivehi-regular`, `--veli-font-dhivehi-medium`, and `--veli-font-dhivehi-bold`. The older `--veli-font-dhivehi-faseyha`, `--veli-font-dhivehi-waheed`, and `--veli-font-dhivehi-aaamu` variables remain as aliases for existing consumers.
 
 Figma's `font-weight/dhivehi-regular` stores the MV Faseyha style name `Regular`; its CSS token `--veli-font-weight-dhivehi-regular` aliases numeric weight 400. The export also provides `--veli-radius-field` (10px) for field controls.
 
-Apps that load an `Inter`-named face with `@font-face` or a font package need no font token setup. This applies to Vite + React, TanStack Start, and React Router; import the font CSS and Veli CSS from the app entry or root route so they are available on the first render. For a locally hosted font, the CSS can look like this:
+Apps that load an `Inter`-named face with `@font-face` or a font package need no font token setup. This applies to Vite + React, TanStack Start, and React Router; import the font CSS and Veli Design CSS from the app entry or root route so they are available on the first render. For a locally hosted font, the CSS can look like this:
 
 ```css
 @font-face {
@@ -83,7 +85,7 @@ Set `.light` or `.dark` on the root or a theme boundary. Plain CSS and Tailwind 
 4. Run `corepack pnpm --filter @veli-design/tokens tokens:sync` and review both input and canonical `src/design.tokens.json` changes.
 5. Run `tokens:check`, `test` and `build` through the same package filter.
 
-Normal package builds read committed canonical data and never rewrite source. Terrazzo 2.7.1 validates the graph and its CSS plugin generates canonical declarations. The Veli adapter plugin generates Tailwind mappings, utilities, JSON exports and coverage. There are no prebuild/postbuild hooks or generated CSS rewrites. Query thresholds are the deliberate exception to variable references: viewport/container conditions use literals generated from the same graph because CSS variables cannot supply their query values.
+Normal package builds read committed canonical data and never rewrite source. Terrazzo 2.7.1 validates the graph and its CSS plugin generates canonical declarations. The Veli Design adapter plugin generates Tailwind mappings, utilities, JSON exports and coverage. There are no prebuild/postbuild hooks or generated CSS rewrites. Query thresholds are the deliberate exception to variable references: viewport/container conditions use literals generated from the same graph because CSS variables cannot supply their query values.
 
 Storybook and Astro development use the shared Vite playground plugin. It regenerates ignored CSS automatically and watches token inputs; UI changes use source modules. No manual package build or release is necessary. Invalid input produces a Vite error overlay while retaining the last successful output.
 
@@ -107,6 +109,7 @@ uses CC BY 4.0. Installed packages include the root `LICENSE` and
 CC BY text, and applicable third-party notices. See the
 [repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
 for source policy and asset details (repository access required).
-Copyright/attribution identities remain unresolved and block publication.
+Original project work is copyright © 2026 Government of the Republic of Maldives.
+Developed by MINDCo.
 Fonts, government/brand imagery and copied Block SVGs are not included or
 licensed by these npm packages; registry/hosted-site assets are separate.

@@ -21,12 +21,13 @@ are migration inputs, not installation instructions for the new package set.
 
 The three npm packages include standard software/documentation licence texts,
 a concise scope/attribution notice and applicable third-party notices.
-The full brand policy and asset register remain root-only. Seven workspaces
+The full brand and asset policies remain root-only. Seven workspaces
 contain discovery and mixed licence metadata; four fixture/sample manifests
 remain private software inputs. The React, tokens and CLI READMEs document
 public npm installation and the website/Storybook examples use the same names.
 
-Copyright, attribution and asset permissions remain unresolved. The publication
+The copyright year is 2026. Brand permission contact and remaining asset
+permissions are unresolved. The publication
 script rejects incomplete legal templates through `assertReleaseLegal`;
 packing for local validation remains available. See
 [release readiness](RELEASE_READINESS.md) for artifact requirements.
@@ -46,11 +47,27 @@ accepts both the retained 0.10 line and the planned 0.11 line. If the migration 
 ranges and tested versions against those versioned tarballs before activation;
 the current fixtures deliberately test the retained versions.
 
-`NPM_TOKEN` authenticates npm publication only. `GITHUB_TOKEN` remains responsible
-for release PRs, tags and assets. The source
-repository remains private, so these releases must not claim public-source provenance. A future
-trusted publisher configuration and first-publication bootstrap need separate
-authorization. Public npm package installation requires no token.
+The recurring release workflow uses GitHub Actions OIDC with `id-token: write`;
+no npm publish token is passed. Changesets 2.31.1 selects `pnpm publish` in this
+workspace, and pinned pnpm 11.18.0 implements the npm OIDC token exchange.
+`GITHUB_TOKEN` remains responsible for release PRs, tags, assets and validation.
+The private source repository cannot produce public-source provenance, so the
+workflow explicitly disables it.
+
+Before recurring OIDC publication, publish the first audited release using an
+authenticated npm account with permission for `veli-design`. Do not create empty
+placeholder versions. Configure a trusted publisher separately for each of
+`@veli-design/react`, `@veli-design/tokens` and `@veli-design/cli`: GitHub owner
+`tradenetcorp`, repository `veli`, workflow filename `release.yml`. Permit direct
+publication for the Changesets flow. This does not require a repository move.
+Set `VELI_NPM_TRUSTED_PUBLISHING_READY=true` only after all three first
+publications and trusted publishers are verified. Until then, CI can prepare a
+release PR but refuses the publication path before attempting OIDC. Bootstrap
+uses the same audited local publication script with account authentication; it
+does not use the recurring CI workflow.
+
+The publication entry point rejects any other public package or registry,
+including personal scopes. Public npm installation requires no token.
 
 ## Registry and deployment transition
 

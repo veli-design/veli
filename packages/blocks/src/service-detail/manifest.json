@@ -1,22 +1,16 @@
 {
   "id": "service-detail",
   "title": "Service detail",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "status": "experimental",
   "description": "Service summary, application options and accessible guideline sheet with host-owned content and actions.",
   "files": [
     "applying-info-dialog.tsx",
     "dialog-surface.tsx",
     "guideline-sheet.tsx",
-    "hand-coins.svg",
-    "hand-deposit.svg",
-    "hourglass-medium.svg",
-    "list-numbers.svg",
-    "note-pencil.svg",
     "service-detail.css",
     "service-detail.tsx",
-    "types.ts",
-    "list-bullets.svg"
+    "types.ts"
   ],
   "dependencies": {
     "@veli-design/react": "^0.17.0",

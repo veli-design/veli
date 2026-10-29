@@ -1,4 +1,4 @@
-# Using Veli with coding agents
+# Using Veli Design with coding agents
 
 This guide applies to the installed versions of `@veli-design/react` and
 `@veli-design/tokens`.
@@ -16,7 +16,7 @@ This guide applies to the installed versions of `@veli-design/react` and
    - `@veli-design/tokens/css` for CSS custom properties
 5. Use `agent/recipes/` for shared integration patterns.
 
-Package exports and declarations override prose when they disagree. Do not invent a Veli component,
+Package exports and declarations override prose when they disagree. Do not invent a Veli Design component,
 prop, variant, token, slot, or interaction that is not present in those authorities.
 
 ## Setup
@@ -27,7 +27,7 @@ Install both packages and the React Aria peer:
 pnpm add @veli-design/react @veli-design/tokens react-aria-components
 ```
 
-Import Tailwind and Veli sources once in the application stylesheet:
+Import Tailwind and Veli Design sources once in the application stylesheet:
 
 ```css
 @import 'tailwindcss';
@@ -35,7 +35,7 @@ Import Tailwind and Veli sources once in the application stylesheet:
 @import '@veli-design/react/tailwind';
 ```
 
-Wrap the application or Veli subtree with `VeliProvider` when language, direction, or color scheme
+Wrap the application or Veli Design subtree with `VeliProvider` when language, direction, or colour scheme
 must be coordinated. The provider synchronizes `.dark`, `data-theme`, and `color-scheme` on
 `document.documentElement`. Use `@veli-design/react/theme-script` when injecting the blocking
 theme script outside the provider.
@@ -55,13 +55,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 Pass `navigate` (and optional `useHref`) when Link, Tabs, Menu, or Breadcrumbs use `href` with a
 client-side router.
 
-All interactive Veli modules are client components. Keep the provider and interactive imports below
+All interactive Veli Design modules are client components. Keep the provider and interactive imports below
 the client boundary in React Server Component applications.
 
 ## Implementation rules
 
 - Import every component from its documented subpath. There is no root component barrel.
-- Use `onPress` for Veli and React Aria actions in approved examples.
+- Use `onPress` for Veli Design and React Aria actions in approved examples.
 - Choose components by semantics before appearance. Use `Button` for actions and `Link` for
   navigation.
 - Prefer `Select` for fixed choices and `ComboBox` when users need to search choices.
@@ -91,7 +91,7 @@ the client boundary in React Server Component applications.
 
 ## Responsive behavior
 
-Veli components generally size within their container; responsive page composition belongs to the
+Veli Design components generally size within their container; responsive page composition belongs to the
 consumer. Do not invent responsive component props. Use documented component behavior and semantic
 layout utilities, then verify narrow and wide viewports.
 
@@ -99,10 +99,10 @@ layout utilities, then verify narrow and wide viewports.
 
 Before presenting generated code as complete:
 
-1. Confirm every Veli import exists in `agent/manifest.json`.
+1. Confirm every Veli Design import exists in `agent/manifest.json`.
 2. Typecheck against the installed declarations.
 3. Confirm token utilities exist in the installed token output.
 4. Check accessible names, keyboard behavior, loading/disabled behavior, and form errors.
 5. Check narrow layout, dark mode, English LTR, and Dhivehi RTL where relevant.
-6. If Veli does not support the requested capability, say so and suggest the nearest documented
+6. If Veli Design does not support the requested capability, say so and suggest the nearest documented
    component or an application-owned composition.

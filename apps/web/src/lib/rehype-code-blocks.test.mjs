@@ -169,3 +169,21 @@ test('explicit preview expansion overrides the threshold without affecting subse
     assert.equal(expandControls(tree.children[1]).length, 1);
   }
 });
+
+test('file and command headers render decorative library SVGs without client islands', () => {
+  const tree = render(
+    codeBlock('export const example = true;', { dataCodeTitle: 'example.tsx' }),
+    codeBlock('pnpm add @veli-design/react', { dataLanguage: 'bash' }),
+  );
+  for (const className of ['docs-code-file__icon', 'docs-code-command__icon']) {
+    const icons = findAll(tree, hasClass(className));
+    assert.equal(icons.length, 1);
+    const [icon] = icons;
+    assert.equal(icon.tagName, 'svg');
+    assert.equal(icon.properties.ariaHidden, 'true');
+    assert.equal(icon.properties.focusable, 'false');
+    assert.equal(icon.properties.fill, 'currentColor');
+    assert.ok(findAll(icon, (node) => node.tagName === 'path').length > 0);
+  }
+  assert.equal(findAll(tree, (node) => node.tagName === 'astro-island').length, 0);
+});

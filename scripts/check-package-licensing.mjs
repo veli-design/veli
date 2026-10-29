@@ -3,10 +3,11 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertCompleteLegalText } from './release-legal.mjs';
 import { licensingPackages, repositoryRoot, packageNotices } from './package-licensing.mjs';
 
 // Read entries to stdout only; never extract an archive into the filesystem.
-export function checkPackageLicensingArtifacts(candidate) {
+export function checkPackageLicensingArtifacts(candidate, { release = false } = {}) {
   for (const pkg of licensingPackages) {
     const archive = resolve(candidate, pkg.tarball);
     const files = execFileSync('tar', ['-tzf', archive], { encoding: 'utf8' }).trim().split('\n');
@@ -31,14 +32,28 @@ export function checkPackageLicensingArtifacts(candidate) {
       get('licensing/CC-BY-4.0.txt'),
       readFileSync(resolve(repositoryRoot, 'LICENSES/CC-BY-4.0.txt')),
     );
+    if (release) {
+      for (const path of [
+        'LICENSE',
+        'licensing/LICENSING.md',
+        'README.md',
+        ...(pkg.notices ? ['licensing/THIRD_PARTY_NOTICES.md'] : []),
+      ]) {
+        assertCompleteLegalText(get(path).toString(), `${pkg.name} ${path}`);
+      }
+    }
     const manifest = JSON.parse(get('package.json'));
     assert.equal(manifest.name, pkg.name);
     assert.equal(manifest.license, '(MIT AND CC-BY-4.0)');
     const scope = get('licensing/LICENSING.md').toString();
-    assert.ok(scope.includes(pkg.name) && scope.includes(manifest.homepage));
+    assert.ok(
+      scope.includes(pkg.productName) &&
+        scope.includes(pkg.name) &&
+        scope.includes(manifest.homepage),
+    );
     assert.match(scope, /software.*code examples.*MIT/s);
     assert.match(scope, /non-software documentation.*CC BY 4\.0/s);
-    assert.match(scope, /## Documentation attribution[\s\S]*Copyright ©[\s\S]*Source:/);
+    assert.match(scope, /## Documentation attribution[\s\S]*(?:Copyright )?©[\s\S]*Source:/);
     assert.match(scope, /Exclusion alone grants no permission/);
     assert.ok(!/\{\{/.test(scope), 'Staging tokens must be resolved');
     if (pkg.notices) {
@@ -90,6 +105,6 @@ export function checkPackageLicensingArtifacts(candidate) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   assert.ok(process.argv[2], 'Expected candidate tarball directory');
-  checkPackageLicensingArtifacts(process.argv[2]);
+  checkPackageLicensingArtifacts(process.argv[2], { release: process.argv.includes('--release') });
   console.log('All three package licence/notice/reference checks passed.');
 }
