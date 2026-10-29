@@ -1,3 +1,9 @@
+## 0.5.2
+
+### Fixed
+
+- Include the total unread-count property documentation in the downloadable source and CLI archive.
+
 ## 0.5.1
 
 ### Fixed
