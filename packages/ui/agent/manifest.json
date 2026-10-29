@@ -289,6 +289,14 @@
           "metadata": "./components/modal.json"
         },
         {
+          "id": "sheet",
+          "name": "Sheet",
+          "summary": "Swipeable modal surfaces with logical edge placement and width presets.",
+          "importPath": "@tradenetcorp/veli-ui/sheet",
+          "declaration": "../dist/sheet.d.ts",
+          "metadata": "./components/sheet.json"
+        },
+        {
           "id": "popover",
           "name": "Popover",
           "summary": "Anchored interactive panel for contextual controls and rich content.",

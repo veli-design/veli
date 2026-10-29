@@ -222,6 +222,11 @@
       "types": "./dist/loading-text.d.ts",
       "import": "./dist/loading-text.js",
       "default": "./dist/loading-text.js"
+    },
+    "./sheet": {
+      "types": "./dist/sheet.d.ts",
+      "import": "./dist/sheet.js",
+      "default": "./dist/sheet.js"
     }
   },
   "scripts": {
@@ -234,14 +239,14 @@
   "peerDependencies": {
     "@tradenetcorp/veli-tokens": "^0.10.0",
     "react": "^19.0.0",
-    "react-aria-components": "^1.18.0",
+    "react-aria-components": "^1.22.0",
     "react-dom": "^19.0.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
     "@phosphor-icons/react": "^2.1.10",
     "class-variance-authority": "^0.7.1",
-    "react-aria": "3.49.0",
+    "react-aria": "3.53.0",
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
@@ -249,7 +254,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "react": "^19.0.0",
-    "react-aria-components": "^1.18.0",
+    "react-aria-components": "1.22.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.7.2"
   },
