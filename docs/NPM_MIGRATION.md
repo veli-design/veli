@@ -45,7 +45,13 @@ versions are React 0.17.0, tokens 0.10.0 and CLI 0.1.1; pending Changesets descr
 subsequent releases without applying version changes here. The React tokens peer
 accepts both the retained 0.10 line and the planned 0.11 line. If the migration Changeset is applied before first publication, refresh Block dependency
 ranges and tested versions against those versioned tarballs before activation;
-the current fixtures deliberately test the retained versions.
+the current fixtures deliberately test the retained versions. The rehearsal reads
+actual installed tarball versions, checks every Block runtime/setup range and
+requires its tested versions to match. It also rejects missing or incompatible
+dependencies reported by the installed CLI. After versioning, update affected
+Block ranges and tested versions with the required Block version/changelog bumps
+in the release PR, then rerun the same tarball rehearsal; do not relax the gate
+or rewrite historical archive hashes.
 
 The recurring release workflow uses GitHub Actions OIDC with `id-token: write`;
 no npm publish token is passed. Changesets 2.31.1 selects `pnpm publish` in this

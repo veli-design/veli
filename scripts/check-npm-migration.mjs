@@ -8,6 +8,11 @@ import { promisify } from 'node:util';
 import { getBlocks, sourceArchive } from '../packages/blocks/scripts/catalog.mjs';
 import { corepackSpawnTarget } from './corepack.mjs';
 import { checkPackageLicensingArtifacts } from './check-package-licensing.mjs';
+import {
+  fixtureDependencies,
+  assertBlockDependencies,
+  assertCliDependencyReport,
+} from './npm-migration-dependencies.mjs';
 
 // Local tarballs and a localhost registry only; this never publishes or deploys.
 const [targetArgument, candidateArgument] = process.argv.slice(2);
@@ -17,6 +22,7 @@ assert.ok(
 );
 const target = resolve(targetArgument);
 const candidate = resolve(candidateArgument);
+const blocks = getBlocks();
 checkPackageLicensingArtifacts(candidate);
 await mkdir(target); // Refuse to overwrite any existing consumer.
 const run = promisify(execFile);
@@ -27,18 +33,32 @@ await writeFile(
     type: 'module',
     packageManager: 'pnpm@11.18.0',
     dependencies: {
+      ...fixtureDependencies(blocks),
       '@veli-design/react': `file:${candidate}/ui.tgz`,
       '@veli-design/tokens': `file:${candidate}/tokens.tgz`,
       '@veli-design/cli': `file:${candidate}/cli.tgz`,
-      react: '19.2.6',
-      'react-dom': '19.2.6',
-      tailwindcss: '4.1.17',
     },
   }),
 );
 await writeFile(resolve(target, 'pnpm-workspace.yaml'), 'minimumReleaseAge: 1440\n');
 const invocation = corepackSpawnTarget(['pnpm', 'install']);
 await run(invocation.command, invocation.args, { cwd: target, ...invocation.options });
+// file: declarations do not expose SemVer to the CLI planner. Check actual
+// installed manifests, then give the planner exact versions without reinstalling.
+const consumerPath = resolve(target, 'package.json');
+const consumer = JSON.parse(await readFile(consumerPath, 'utf8'));
+const installed = {};
+for (const name of Object.keys(consumer.dependencies)) {
+  const pkg = JSON.parse(
+    await readFile(resolve(target, 'node_modules', name, 'package.json'), 'utf8'),
+  );
+  assert.equal(pkg.name, name);
+  installed[name] = pkg.version;
+}
+assertBlockDependencies(blocks, installed);
+consumer.dependencies = installed;
+await writeFile(consumerPath, JSON.stringify(consumer, null, 2) + '\n');
+
 await run(
   process.execPath,
   [
@@ -67,7 +87,6 @@ await run(
 const executable = resolve(target, 'node_modules/.bin/veli');
 assert.match((await run(executable, ['--help'], { cwd: target })).stdout, /Veli|veli/);
 const provenance = { sourceCommit: 'a'.repeat(40), dirty: false };
-const blocks = getBlocks();
 const archives = new Map(
   blocks.map((block) => [block.manifest.id, sourceArchive(block, provenance)]),
 );
@@ -107,7 +126,16 @@ try {
     'init',
   ]);
   for (const { manifest, files } of blocks) {
-    await run(executable, ['--cwd', target, '--json', 'add', manifest.id, '--yes', '--no-install']);
+    const { stdout } = await run(executable, [
+      '--cwd',
+      target,
+      '--json',
+      'add',
+      manifest.id,
+      '--yes',
+      '--no-install',
+    ]);
+    assertCliDependencyReport(JSON.parse(stdout), manifest.id);
     for (const file of files) {
       const source = await readFile(resolve(target, 'components/blocks', manifest.id, file.path));
       const baseline = await readFile(resolve(target, '.veli/blocks', manifest.id, file.path));
