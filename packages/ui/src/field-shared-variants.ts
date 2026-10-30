@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import * as React from 'react';
 import { cva } from 'class-variance-authority';
 
 /**
@@ -186,6 +186,13 @@ export function hasRenderableMessage(message: React.ReactNode): boolean {
 
   if (Array.isArray(message)) {
     return message.some(hasRenderableMessage);
+  }
+
+  if (
+    React.isValidElement<{ children?: React.ReactNode }>(message) &&
+    message.type === React.Fragment
+  ) {
+    return hasRenderableMessage(message.props.children);
   }
 
   return true;
