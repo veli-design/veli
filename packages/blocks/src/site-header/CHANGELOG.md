@@ -1,3 +1,9 @@
+## 0.7.0
+
+### Changed
+
+- Official-banner language control shows the other language as a direct caption-medium text switch (no caret or dropdown), matching the gov.mv two-language Figma. The banner control renders only when exactly two languages are supplied.
+
 ## 0.6.0
 
 ### Changed

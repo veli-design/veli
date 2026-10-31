@@ -2,14 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 import { Button as AriaButton, Radio, RadioGroup, type Selection } from 'react-aria-components';
-import {
-  CaretDownIcon,
-  CheckIcon,
-  GlobeSimpleIcon,
-  MonitorIcon,
-  MoonIcon,
-  SunIcon,
-} from '@phosphor-icons/react';
+import { CheckIcon, GlobeSimpleIcon, MonitorIcon, MoonIcon, SunIcon } from '@phosphor-icons/react';
 import { Button } from '@tradenetcorp/veli-ui/button';
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@tradenetcorp/veli-ui/menu';
 
@@ -87,9 +80,27 @@ export function HeaderLanguageMenu({
   };
 
   const isPill = variant === 'pill';
-  const isBanner = variant === 'banner';
   const selected = languages.find((entry) => entry.id === language) ?? languages[0];
-  const selectedDir = selected?.dir ?? 'ltr';
+
+  // Banner is the two-language gov.mv switch: show the other language and flip on click.
+  if (variant === 'banner') {
+    const target =
+      languages.length === 2 ? languages.find((entry) => entry.id !== language) : undefined;
+    if (!target) return null;
+    const targetDir = target.dir ?? 'ltr';
+    return (
+      <AriaButton
+        className="text-text-links focus-visible:ring-border-focus flex cursor-pointer items-center rounded-lg bg-transparent focus-visible:ring-2 focus-visible:outline-none"
+        aria-label={labels.languageChange}
+        isDisabled={isDisabled}
+        onPress={() => onLanguageChange(target.id)}
+      >
+        <span lang={target.id} dir={targetDir} className="type-caption-medium whitespace-nowrap">
+          {target.label}
+        </span>
+      </AriaButton>
+    );
+  }
 
   return (
     <MenuTrigger>
@@ -100,29 +111,6 @@ export function HeaderLanguageMenu({
         >
           <GlobeSimpleIcon size={16} weight="regular" aria-hidden />
           <span className="tracking-[0.3px]">{selected?.label}</span>
-        </AriaButton>
-      ) : isBanner ? (
-        <AriaButton
-          className="type-caption-medium text-text-links focus-visible:ring-border-focus flex h-4 cursor-pointer items-center gap-1 rounded-lg bg-transparent leading-4 focus-visible:ring-2 focus-visible:outline-none"
-          aria-label={labels.languageChange}
-        >
-          <span
-            lang="en"
-            dir="ltr"
-            className={`flex h-4 items-center leading-4 ${
-              selectedDir === 'rtl' ? 'translate-y-[3px]' : ''
-            }`}
-          >
-            {language.toUpperCase()}
-          </span>
-          <span
-            className={`flex size-4 shrink-0 items-center justify-center ${
-              selectedDir === 'rtl' ? '-translate-y-px' : ''
-            }`}
-            aria-hidden
-          >
-            <CaretDownIcon className="block" size={12} weight="regular" />
-          </span>
         </AriaButton>
       ) : (
         <Button
@@ -138,7 +126,7 @@ export function HeaderLanguageMenu({
       )}
       <MenuPopover
         placement={isPill ? 'top end' : 'bottom end'}
-        className={isPill || isBanner ? 'z-70' : undefined}
+        className={isPill ? 'z-70' : undefined}
       >
         <Menu
           aria-label={labels.languageLabel}
