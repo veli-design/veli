@@ -74,12 +74,19 @@ function Example({
             type="button"
             size="sm"
             intent="secondary"
-            appearance={appearance === 'light' ? 'fill' : 'transparent'}
+            appearance="fill"
+            highContrast={appearance === 'highContrast'}
           >
             {text.primary}
           </Button>
           {layout !== 'compact' ? (
-            <Button type="button" size="sm" intent="secondary" appearance="ghost">
+            <Button
+              type="button"
+              size="sm"
+              intent="secondary"
+              appearance="ghost"
+              highContrast={appearance === 'highContrast'}
+            >
               {text.secondary}
             </Button>
           ) : null}
@@ -157,7 +164,8 @@ export function AlertDismissibleDemo() {
             type="button"
             size="sm"
             intent="secondary"
-            appearance="transparent"
+            appearance="fill"
+            highContrast
             onPress={() => setActed(true)}
           >
             {text.primary}
@@ -167,6 +175,7 @@ export function AlertDismissibleDemo() {
             size="sm"
             intent="secondary"
             appearance="ghost"
+            highContrast
             onPress={() => setVisible(false)}
           >
             {text.secondary}
