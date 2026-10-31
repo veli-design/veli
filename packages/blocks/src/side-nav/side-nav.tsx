@@ -79,8 +79,8 @@ function ExpandingCopy({
   return (
     <span
       aria-hidden={collapsed || undefined}
-      className={`min-w-0 overflow-hidden whitespace-nowrap transition-opacity ${
-        collapsed ? 'max-w-0 opacity-0' : 'max-w-[12rem] opacity-100'
+      className={`min-w-0 max-w-[12rem] overflow-hidden whitespace-nowrap transition-opacity ${
+        collapsed ? 'opacity-0' : 'opacity-100'
       } ${className}`}
       style={{
         transitionDuration: prefersReducedMotion ? REDUCED_MOTION_OPACITY_MS : PANEL_DURATION_MS,
@@ -94,13 +94,14 @@ function ExpandingCopy({
 
 function navItemClassName(selected: boolean, collapsed: boolean) {
   return [
-    'type-body-md-medium flex h-11 cursor-pointer items-center border-0 font-sans no-underline outline-none',
+    'type-body-md-medium flex h-11 w-full max-w-full cursor-pointer items-center border-0 px-3 py-2 text-start font-sans no-underline outline-none',
+    // Color only — rail width + flex-shrink on the label move icons without
+    // layout-property tweens on the pill (gap/width/max-width).
     'rounded-full transition-[background-color,color]',
     'data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-raised',
     'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
-    collapsed
-      ? 'w-11 max-w-11 shrink-0 justify-center self-center px-0 py-2'
-      : 'w-full max-w-full gap-3 px-3 py-2 text-start',
+    // Snap gap when collapsed so a 44px rail is not eaten by gap-3; do not tween.
+    collapsed ? 'gap-0' : 'gap-3',
     selected
       ? 'bg-button-primary-subtle text-primary-strong [&_svg]:text-icon-primary'
       : 'bg-transparent text-base-strong [&_svg]:text-icon-base data-[hovered]:bg-neutral-alpha-200 data-[pressed]:bg-neutral-alpha-300',
@@ -227,10 +228,10 @@ export function SideNavHeaderRow({
   inset = false,
   className = '',
 }: SideNavHeaderRowProps) {
+  // Avoid overflow-hidden here: Veli Button press scale (1.045) would clip on the
+  // start edge. Label truncation lives on ExpandingCopy / the back-button text.
   return (
-    <div
-      className={`flex w-full items-center justify-between overflow-hidden ${inset ? 'ps-3' : ''} ${className}`}
-    >
+    <div className={`flex w-full items-center justify-between ${inset ? 'ps-3' : ''} ${className}`}>
       {children}
     </div>
   );
@@ -305,7 +306,10 @@ export function SideNavBackButton({ children, onPress, className = '' }: SideNav
       intent="primary"
       appearance="ghost"
       size="sm"
-      className={`min-w-0 ${className}`}
+      // This control sits flush in the overflow-hidden rounded SideNav shell.
+      // Veli Button’s default press scale (1.045) + overflow-hidden clip the
+      // leading caret’s left edge; kill both for this part only.
+      className={`min-w-0 overflow-visible data-[pressed]:!scale-100 ${className}`}
       onPress={onPress}
     >
       <CaretLeftIcon size={16} weight="bold" aria-hidden="true" />
@@ -494,13 +498,8 @@ export type SideNavMenuProps = {
 
 /** Navigation list (`ul`) with the panel's 4px item gap. */
 export function SideNavMenu({ children, className = '' }: SideNavMenuProps) {
-  const { collapsed } = useSideNav();
   return (
-    <ul
-      className={`m-0 flex w-full list-none flex-col gap-1 p-0 ${collapsed ? 'items-center' : ''} ${className}`}
-    >
-      {children}
-    </ul>
+    <ul className={`m-0 flex w-full list-none flex-col gap-1 p-0 ${className}`}>{children}</ul>
   );
 }
 
@@ -511,18 +510,7 @@ export type SideNavMenuItemProps = {
 
 /** Single navigation list item (`li`). */
 export function SideNavMenuItem({ children, className = '' }: SideNavMenuItemProps) {
-  const { collapsed } = useSideNav();
-  return (
-    <li
-      className={
-        collapsed
-          ? `flex w-full items-center justify-center ${className}`
-          : `min-w-0 w-full ${className}`
-      }
-    >
-      {children}
-    </li>
-  );
+  return <li className={`min-w-0 w-full ${className}`}>{children}</li>;
 }
 
 export type SideNavMenuButtonProps = {
@@ -551,12 +539,9 @@ export function SideNavMenuButton({
   className = '',
 }: SideNavMenuButtonProps) {
   const { collapsed, renderLink } = useSideNav();
+  const prefersReducedMotion = useReducedMotion();
 
-  const labelText = Children.toArray(children).reduce<string | undefined>((found, child) => {
-    if (found != null || !isValidElement<{ children?: ReactNode }>(child)) return found;
-    if (child.type !== SideNavMenuLabel) return found;
-    return textFromNode(child.props.children);
-  }, undefined);
+  const labelText = findMenuLabelText(children);
 
   const content = Children.map(children, (child) => {
     // Skip empty slots so optional badges / JSX whitespace do not become
@@ -581,7 +566,7 @@ export function SideNavMenuButton({
   });
 
   const itemStyle = {
-    transitionDuration: PANEL_DURATION_MS,
+    transitionDuration: prefersReducedMotion ? '0ms' : PANEL_DURATION_MS,
     transitionTimingFunction: PANEL_EASE_CSS,
   };
   const resolvedAriaLabel = ariaLabel ?? (collapsed ? labelText : undefined);
@@ -629,11 +614,24 @@ export function SideNavMenuLabel({ children, className = '' }: SideNavMenuLabelP
   return (
     <ExpandingCopy
       collapsed={collapsed}
-      className={`min-w-0 truncate ${collapsed ? 'pointer-events-none' : 'flex-1'} ${className}`}
+      className={`min-w-0 flex-1 truncate ${collapsed ? 'pointer-events-none' : ''} ${className}`}
     >
       {children}
     </ExpandingCopy>
   );
+}
+
+/** Walk children (including wrappers) for the first `SideNavMenuLabel` text. */
+function findMenuLabelText(node: ReactNode): string | undefined {
+  for (const child of Children.toArray(node)) {
+    if (!isValidElement<{ children?: ReactNode }>(child)) continue;
+    if (child.type === SideNavMenuLabel) {
+      return textFromNode(child.props.children);
+    }
+    const nested = findMenuLabelText(child.props.children);
+    if (nested != null) return nested;
+  }
+  return undefined;
 }
 
 export type SideNavMenuBadgeProps = {
@@ -647,8 +645,11 @@ export function SideNavMenuBadge({ children, className = '' }: SideNavMenuBadgeP
   const prefersReducedMotion = useReducedMotion();
   return (
     <span
-      className={`inline-flex shrink-0 items-center overflow-hidden transition-opacity ${
-        collapsed ? 'max-w-0 min-w-0 opacity-0' : 'max-w-10 opacity-100'
+      aria-hidden={collapsed || undefined}
+      className={`inline-flex shrink-0 items-center transition-[opacity,transform] ${
+        collapsed
+          ? 'pointer-events-none w-0 scale-90 overflow-hidden opacity-0'
+          : 'scale-100 opacity-100'
       } ${className}`}
       style={{
         transitionDuration: prefersReducedMotion ? REDUCED_MOTION_OPACITY_MS : PANEL_DURATION_MS,
@@ -718,33 +719,52 @@ export function SideNavLevelSwap({
 }: SideNavLevelSwapProps) {
   const prefersReducedMotion = useReducedMotion();
   const axis = writingDirection === 'rtl' ? -1 : 1;
-  const enterX = sideNavLevelTravelPx * direction * axis;
-  const exitX = -sideNavLevelTravelPx * direction * axis;
   const transition: Transition = prefersReducedMotion
     ? { duration: 0.15 }
     : { duration: sideNavLevelDuration, ease: sideNavEaseDrawer };
 
+  // Exit must read AnimatePresence's current `custom` direction. A static exit
+  // object would keep the direction from the outgoing child's last render.
+  const variants = prefersReducedMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1, pointerEvents: 'auto' as const },
+        exit: { opacity: 0, pointerEvents: 'none' as const },
+      }
+    : {
+        initial: (dir: number) => ({
+          opacity: 0,
+          transform: `translateX(${sideNavLevelTravelPx * dir * axis}px)`,
+        }),
+        animate: {
+          opacity: 1,
+          transform: 'translateX(0px)',
+          pointerEvents: 'auto' as const,
+        },
+        exit: (dir: number) => ({
+          opacity: 0,
+          transform: `translateX(${-sideNavLevelTravelPx * dir * axis}px)`,
+          pointerEvents: 'none' as const,
+        }),
+      };
+
   return (
-    <div className="relative w-full overflow-hidden">
-      <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+    // Stack both levels in one grid cell so enter/exit can overlap without
+    // `popLayout` (which layout-scales the exiting panel) or a local
+    // `overflow-hidden` (which clips Veli Button’s 1.045 press scale on Back).
+    // Horizontal travel still masks at the root SideNav overflow. Exiting
+    // layers disable pointer events so they cannot steal clicks mid-swap.
+    <div className="relative grid w-full grid-cols-1 grid-rows-1">
+      <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={level}
           custom={direction}
-          initial={
-            prefersReducedMotion
-              ? { opacity: 0 }
-              : { opacity: 0, transform: `translateX(${enterX}px)` }
-          }
-          animate={
-            prefersReducedMotion ? { opacity: 1 } : { opacity: 1, transform: 'translateX(0px)' }
-          }
-          exit={
-            prefersReducedMotion
-              ? { opacity: 0 }
-              : { opacity: 0, transform: `translateX(${exitX}px)` }
-          }
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
           transition={transition}
-          className="flex w-full flex-col gap-1"
+          className="col-start-1 row-start-1 flex w-full flex-col gap-1"
         >
           {children}
         </motion.div>

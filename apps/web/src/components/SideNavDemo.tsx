@@ -108,7 +108,7 @@ const organizationItems: NavItem[] = [
     id: 'access',
     label: 'Access',
     icon: <ShieldCheckIcon weight="bold" />,
-    href: '#access',
+    // Drill-in only — omit `href` so the row is a button, not a navigation link.
   },
   {
     id: 'representation',
@@ -312,74 +312,71 @@ function DemoLevels({
     </SideNavMenu>
   );
 
-  if (collapsed) {
-    return (
-      <>
-        <SideNavTrigger collapseLabel={labels.collapse} expandLabel={labels.expand} />
-        <OrganizationMenu organization={organization} onSelectionChange={onOrganizationSelection}>
-          <SideNavCollapsedOrgButton aria-label={labels.organizationSwitcher}>
-            <SideNavOrgAvatar
-              alt={organization.name}
-              size="36"
-              initials={organization.avatar.initials}
-              appearance={organization.avatar.appearance}
-            />
-          </SideNavCollapsedOrgButton>
-        </OrganizationMenu>
-        <div aria-hidden="true" className="h-1 w-2.5 shrink-0" />
-        {menu}
-      </>
-    );
-  }
-
-  // Trigger stays outside the level swap — it does not change between org and Access.
+  // Keep one trigger mounted across collapse so keyboard focus is not discarded.
   return (
-    <div className="relative flex w-full flex-col">
-      <div className="absolute end-0 top-0 z-10">
+    <div className={`relative flex w-full flex-col ${collapsed ? 'items-center' : ''}`}>
+      <div className={collapsed ? 'shrink-0' : 'absolute end-0 top-0 z-10'}>
         <SideNavTrigger collapseLabel={labels.collapse} expandLabel={labels.expand} />
       </div>
-      <SideNavLevelSwap
-        level={level}
-        direction={levelDirection}
-        writingDirection={writingDirection}
-      >
-        {level === 'access' ? (
-          <SideNavHeader>
-            <SideNavHeaderRow>
-              <SideNavBackButton onPress={onBack}>{organization.name}</SideNavBackButton>
-              <span aria-hidden="true" className="inline-block size-9 shrink-0" />
-            </SideNavHeaderRow>
-            <SideNavTitle>Access</SideNavTitle>
-          </SideNavHeader>
-        ) : (
-          <SideNavHeader>
-            <SideNavHeaderRow inset>
-              <SideNavSectionLabel>{labels.section}</SideNavSectionLabel>
-              <span aria-hidden="true" className="inline-block size-9 shrink-0" />
-            </SideNavHeaderRow>
-            <OrganizationMenu
-              organization={organization}
-              onSelectionChange={onOrganizationSelection}
-            >
-              <SideNavOrgSwitcher aria-label={labels.organizationSwitcher}>
-                <SideNavOrgAvatar
-                  alt={organization.name}
-                  size="44"
-                  initials={organization.avatar.initials}
-                  appearance={organization.avatar.appearance}
-                />
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden">
-                  <SideNavOrgName>{organization.name}</SideNavOrgName>
-                  <SideNavOrgSecondary>{organization.secondaryText}</SideNavOrgSecondary>
-                </span>
-                <SideNavOrgCaret />
-              </SideNavOrgSwitcher>
-            </OrganizationMenu>
-            <div aria-hidden="true" className="h-2 w-full shrink-0" />
-          </SideNavHeader>
-        )}
-        {menu}
-      </SideNavLevelSwap>
+      {collapsed ? (
+        <>
+          <OrganizationMenu organization={organization} onSelectionChange={onOrganizationSelection}>
+            <SideNavCollapsedOrgButton aria-label={labels.organizationSwitcher}>
+              <SideNavOrgAvatar
+                alt={organization.name}
+                size="36"
+                initials={organization.avatar.initials}
+                appearance={organization.avatar.appearance}
+              />
+            </SideNavCollapsedOrgButton>
+          </OrganizationMenu>
+          <div aria-hidden="true" className="h-1 w-2.5 shrink-0" />
+          {menu}
+        </>
+      ) : (
+        <SideNavLevelSwap
+          level={level}
+          direction={levelDirection}
+          writingDirection={writingDirection}
+        >
+          {level === 'access' ? (
+            <SideNavHeader>
+              <SideNavHeaderRow>
+                <SideNavBackButton onPress={onBack}>{organization.name}</SideNavBackButton>
+                <span aria-hidden="true" className="inline-block size-9 shrink-0" />
+              </SideNavHeaderRow>
+              <SideNavTitle>Access</SideNavTitle>
+            </SideNavHeader>
+          ) : (
+            <SideNavHeader>
+              <SideNavHeaderRow inset>
+                <SideNavSectionLabel>{labels.section}</SideNavSectionLabel>
+                <span aria-hidden="true" className="inline-block size-9 shrink-0" />
+              </SideNavHeaderRow>
+              <OrganizationMenu
+                organization={organization}
+                onSelectionChange={onOrganizationSelection}
+              >
+                <SideNavOrgSwitcher aria-label={labels.organizationSwitcher}>
+                  <SideNavOrgAvatar
+                    alt={organization.name}
+                    size="44"
+                    initials={organization.avatar.initials}
+                    appearance={organization.avatar.appearance}
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden">
+                    <SideNavOrgName>{organization.name}</SideNavOrgName>
+                    <SideNavOrgSecondary>{organization.secondaryText}</SideNavOrgSecondary>
+                  </span>
+                  <SideNavOrgCaret />
+                </SideNavOrgSwitcher>
+              </OrganizationMenu>
+              <div aria-hidden="true" className="h-2 w-full shrink-0" />
+            </SideNavHeader>
+          )}
+          {menu}
+        </SideNavLevelSwap>
+      )}
     </div>
   );
 }

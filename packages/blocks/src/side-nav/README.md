@@ -37,7 +37,7 @@ If the copied directory is outside Tailwind's automatically scanned tree, add an
 
 ```text
 SideNav
-├── SideNavTrigger (pin outside level swap so it stays put)
+├── SideNavTrigger (one instance across collapse; pin outside level swap)
 ├── SideNavLevelSwap (optional host-owned nested levels)
 │   ├── SideNavHeader
 │   │   ├── SideNavHeaderRow
@@ -56,7 +56,7 @@ SideNav
 │               └── SideNavMenuBadge
 ```
 
-Collapsed rail: compose `SideNavTrigger`, `SideNavCollapsedOrgButton` + `SideNavOrgAvatar` (size `36`), an optional spacer (`h-1 w-2.5`), then `SideNavMenu` as siblings under `SideNav`. Hide nested header chrome while collapsed. Expanded spacers between chrome and menu are ordinary markup (`h-2`).
+Collapsed rail: keep the same `SideNavTrigger` mounted, then compose `SideNavCollapsedOrgButton` + `SideNavOrgAvatar` (size `36`), an optional spacer (`h-1 w-2.5`), and `SideNavMenu`. Do not remount a second trigger when collapsing — that drops keyboard focus. Hide nested header chrome while collapsed. Expanded spacers between chrome and menu are ordinary markup (`h-2`).
 
 ## API
 
@@ -79,40 +79,40 @@ Expanded width is **264px**; collapsed icon rail is **68px**. Width transitions 
 
 ### Header and chrome
 
-| Part                        | Contract                                                                                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SideNavHeader`             | Stacks header children with the panel gap; centers children when collapsed.                                                                                                           |
-| `SideNavHeaderRow`          | Horizontal row. Optional `inset` adds start padding to align section labels with content.                                                                                             |
-| `SideNavTrigger`            | Required `collapseLabel` and `expandLabel`. Toggles collapse via context; exposes `aria-expanded`. Prefer pinning outside `SideNavLevelSwap` so it does not slide with nested levels. |
-| `SideNavSectionLabel`       | Uppercase section caption; opacity-fades when collapsed.                                                                                                                              |
-| `SideNavBackButton`         | Primary ghost back control with leading caret. Host supplies `onPress` and label children (often the parent organization name).                                                       |
-| `SideNavTitle`              | Nested-level title block (for example Access).                                                                                                                                        |
-| `SideNavOrgSwitcher`        | Bordered switcher row. Required `aria-label`. Prefer wrapping in Veli `MenuTrigger`; optional `onPress` / `isDisabled` for custom overlays.                                           |
-| `SideNavOrgAvatar`          | Ringed avatar. Required `alt`. `size` is `44` (expanded switcher) or `36` (collapsed rail). Optional `src`, `initials`, `appearance` (Veli Avatar appearance; default `teal`).        |
-| `SideNavOrgName`            | Primary switcher label; hides when collapsed. Optional `lang` / `dir` (`ltr` \| `rtl` \| `auto`).                                                                                     |
-| `SideNavOrgSecondary`       | Secondary membership line; hides when collapsed. Optional `lang` / `dir`.                                                                                                             |
-| `SideNavOrgCaret`           | Trailing caret; hides when collapsed.                                                                                                                                                 |
-| `SideNavCollapsedOrgButton` | Icon-only collapsed-rail press target. Required `aria-label`. Prefer `MenuTrigger` wrapping; optional `onPress` / `isDisabled`.                                                       |
+| Part                        | Contract                                                                                                                                                                                                                            |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SideNavHeader`             | Stacks header children with the panel gap; centers children when collapsed.                                                                                                                                                         |
+| `SideNavHeaderRow`          | Horizontal row. Optional `inset` adds start padding to align section labels with content.                                                                                                                                           |
+| `SideNavTrigger`            | Required `collapseLabel` and `expandLabel`. Toggles collapse via context; exposes `aria-expanded`. Keep one instance mounted across collapse/expand, and pin it outside `SideNavLevelSwap` so it does not slide with nested levels. |
+| `SideNavSectionLabel`       | Uppercase section caption; opacity-fades when collapsed.                                                                                                                                                                            |
+| `SideNavBackButton`         | Primary ghost back control with leading caret. Host supplies `onPress` and label children (often the parent organization name).                                                                                                     |
+| `SideNavTitle`              | Nested-level title block (for example Access).                                                                                                                                                                                      |
+| `SideNavOrgSwitcher`        | Bordered switcher row. Required `aria-label`. Prefer wrapping in Veli `MenuTrigger`; optional `onPress` / `isDisabled` for custom overlays.                                                                                         |
+| `SideNavOrgAvatar`          | Ringed avatar. Required `alt`. `size` is `44` (expanded switcher) or `36` (collapsed rail). Optional `src`, `initials`, `appearance` (Veli Avatar appearance; default `teal`).                                                      |
+| `SideNavOrgName`            | Primary switcher label; hides when collapsed. Optional `lang` / `dir` (`ltr` \| `rtl` \| `auto`).                                                                                                                                   |
+| `SideNavOrgSecondary`       | Secondary membership line; hides when collapsed. Optional `lang` / `dir`.                                                                                                                                                           |
+| `SideNavOrgCaret`           | Trailing caret; hides when collapsed.                                                                                                                                                                                               |
+| `SideNavCollapsedOrgButton` | Icon-only collapsed-rail press target. Required `aria-label`. Prefer `MenuTrigger` wrapping; optional `onPress` / `isDisabled`.                                                                                                     |
 
 ### Menu
 
-| Part                | Contract                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SideNavMenu`       | Navigation `ul` with 4px item gap; centers items when collapsed.                                                                                                                                                                                                                                                                                                                                                                                   |
-| `SideNavMenuItem`   | Single `li` wrapper.                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `SideNavMenuButton` | Link or button row. Optional `href`, `target`, `rel`, `onPress`, `isActive`, `render`, `aria-label`, `className`. With `href`, renders React Aria `Link` (`aria-current="page"` when active). Without `href`, renders a button. Children: icon node(s), `SideNavMenuLabel`, optional `SideNavMenuBadge`. Empty/optional children are skipped so collapsed icons stay centered. When collapsed, `aria-label` defaults to the label text if omitted. |
-| `SideNavMenuLabel`  | Row label; opacity-fades when collapsed.                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `SideNavMenuBadge`  | Trailing counter Badge (`subtle` / `neutral`); opacity-fades when collapsed.                                                                                                                                                                                                                                                                                                                                                                       |
+| Part                | Contract                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SideNavMenu`       | Navigation `ul` with 4px item gap.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `SideNavMenuItem`   | Single `li` wrapper.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `SideNavMenuButton` | Link or button row. Optional `href`, `target`, `rel`, `onPress`, `isActive`, `render`, `aria-label`, `className`. With `href`, renders React Aria `Link` (`aria-current="page"` when active). Without `href`, renders a button — use that for drill-in rows that only call `onPress` to open a nested level. Children: icon node(s), `SideNavMenuLabel`, optional `SideNavMenuBadge`. Empty/optional children are skipped so collapsed icons stay at the start padding. When collapsed, `aria-label` defaults to the label text if omitted. |
+| `SideNavMenuLabel`  | Row label; `flex-1` + opacity fade when collapsed (no max-width tween).                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `SideNavMenuBadge`  | Trailing counter Badge (`subtle` / `neutral`); opacity/scale fade when collapsed, snaps out of flow with `w-0` (no max-width tween).                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 ### Nested levels and motion
 
-| Export / part          | Contract                                                                                                                                                                                                                                                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `SideNavLevelSwap`     | Host helper for push/pop between levels. Required `level` (stable key) and `direction` (`1` drill in, `-1` back). Optional `writingDirection` (`ltr` \| `rtl`, default `ltr`) flips the physical axis. Uses `popLayout`, `transform` translate (±16px), and drawer ease; reduced motion is opacity-only (`150ms`). |
-| `sideNavEaseDrawer`    | Shared ease `[0.32, 0.72, 0, 1]`.                                                                                                                                                                                                                                                                                  |
-| `sideNavPanelDuration` | Collapse duration in seconds (`0.4`).                                                                                                                                                                                                                                                                              |
-| `sideNavLevelDuration` | Level-swap duration in seconds (`0.22`).                                                                                                                                                                                                                                                                           |
-| `sideNavLevelTravelPx` | Level-swap travel in pixels (`16`).                                                                                                                                                                                                                                                                                |
+| Export / part          | Contract                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SideNavLevelSwap`     | Host helper for push/pop between levels. Required `level` (stable key) and `direction` (`1` drill in, `-1` back). Optional `writingDirection` (`ltr` \| `rtl`, default `ltr`) flips the physical axis. Stacks enter/exit in one grid cell (no `popLayout`) with direction-aware `transform` translate (±16px) and drawer ease; exiting layers set `pointer-events: none`. Reduced motion is opacity-only (`150ms`). |
+| `sideNavEaseDrawer`    | Shared ease `[0.32, 0.72, 0, 1]`.                                                                                                                                                                                                                                                                                                                                                                                   |
+| `sideNavPanelDuration` | Collapse duration in seconds (`0.4`).                                                                                                                                                                                                                                                                                                                                                                               |
+| `sideNavLevelDuration` | Level-swap duration in seconds (`0.22`).                                                                                                                                                                                                                                                                                                                                                                            |
+| `sideNavLevelTravelPx` | Level-swap travel in pixels (`16`).                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ## Host adapter pattern
 
@@ -210,30 +210,38 @@ import {
 
 ### Collapsed rail
 
-When `useSideNav().collapsed` is true, render trigger, collapsed org control, spacer, and the same menu (icons only) as direct children of `SideNav` — not the expanded header tree:
+Keep one `SideNavTrigger` in a stable tree slot across both layouts so focus survives toggle. When `useSideNav().collapsed` is true, swap only the body under that trigger — collapsed org control, spacer, and the same menu (icons only) — not a second trigger or the expanded header tree:
 
 ```tsx
-<>
-  <SideNavTrigger collapseLabel={labels.collapse} expandLabel={labels.expand} />
-  <MenuTrigger>
-    <SideNavCollapsedOrgButton aria-label={labels.organizationSwitcher}>
-      <SideNavOrgAvatar
-        alt={org.name}
-        size="36"
-        initials={org.initials}
-        appearance={org.appearance}
-      />
-    </SideNavCollapsedOrgButton>
-    {/* same MenuPopover / Menu as expanded */}
-  </MenuTrigger>
-  <div aria-hidden="true" className="h-1 w-2.5 shrink-0" />
-  <SideNavMenu>{/* same items */}</SideNavMenu>
-</>
+<div className={`relative flex w-full flex-col ${collapsed ? 'items-center' : ''}`}>
+  <div className={collapsed ? 'shrink-0' : 'absolute end-0 top-0 z-10'}>
+    <SideNavTrigger collapseLabel={labels.collapse} expandLabel={labels.expand} />
+  </div>
+  {
+    collapsed ? (
+      <>
+        <MenuTrigger>
+          <SideNavCollapsedOrgButton aria-label={labels.organizationSwitcher}>
+            <SideNavOrgAvatar
+              alt={org.name}
+              size="36"
+              initials={org.initials}
+              appearance={org.appearance}
+            />
+          </SideNavCollapsedOrgButton>
+          {/* same MenuPopover / Menu as expanded */}
+        </MenuTrigger>
+        <div aria-hidden="true" className="h-1 w-2.5 shrink-0" />
+        <SideNavMenu>{/* same items */}</SideNavMenu>
+      </>
+    ) : null /* expanded header + menu; trigger stays above */
+  }
+</div>
 ```
 
 ### Nested level (for example Access)
 
-Track host state for `level` and semantic `direction` (`1` into a submenu, `-1` back). Wrap the level body in `SideNavLevelSwap` and keep `SideNavTrigger` pinned outside the swap. Pass `writingDirection` from `useVeliLanguage().direction` so enter/exit follow inline-end.
+Track host state for `level` and semantic `direction` (`1` into a submenu, `-1` back). Wrap the level body in `SideNavLevelSwap` and keep `SideNavTrigger` pinned outside the swap. Pass `writingDirection` from `useVeliLanguage().direction` so enter/exit follow inline-end. For the row that opens a nested level, omit `href` and handle the swap in `onPress` so it stays a button rather than a half-navigating link.
 
 ```tsx
 import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
@@ -267,9 +275,9 @@ const { direction } = useVeliLanguage();
 
 ## Accessibility and responsive behavior
 
-The root is a `nav` labelled by the host. `SideNavTrigger` exposes `aria-expanded` and the host-owned collapse/expand name. Organization switcher, collapsed org control, back control, and each navigation item are keyboard-focusable with visible focus rings (`ring-border-focus`). Active items set `aria-current="page"`. When collapsed, menu buttons use `aria-label` from the menu label text unless the host passes one.
+The root is a `nav` labelled by the host. `SideNavTrigger` exposes `aria-expanded` and the host-owned collapse/expand name. Keep that trigger mounted across collapse so Enter/Space can expand again without restoring focus manually. Organization switcher, collapsed org control, back control, and each navigation item are keyboard-focusable with visible focus rings (`ring-border-focus`). Active items set `aria-current="page"`. When collapsed, menu buttons use `aria-label` from the menu label text unless the host passes one.
 
-Geometry is fixed to the floating nav frames: **264px** expanded and **68px** collapsed. Labels, section captions, switcher text, and badges hide with a short opacity fade (`400ms` drawer ease; `150ms` under reduced motion). Panel width snaps under `prefers-reduced-motion`; level travel is dropped and only opacity remains. Item pills do not tween width, padding, or gap on collapse.
+Geometry is fixed to the floating nav frames: **264px** expanded and **68px** collapsed. Labels, section captions, switcher text, and badges hide with opacity fades (`400ms` drawer ease; `150ms` under reduced motion) while the panel width CSS-transitions; flex-shrink on labels (not max-width tweens) keeps menu icons on their start padding. Badges snap out of flow when collapsed. Panel width snaps under `prefers-reduced-motion`; level travel is dropped and only opacity remains.
 
 Logical CSS (`ps-3`, `end-0`, text-start) supports LTR and RTL. `SideNavLevelSwap` flips the physical enter/exit axis from `writingDirection` so drill-in moves toward inline-end. Organization name and secondary lines accept optional `lang` / `dir` for mixed-script content.
 

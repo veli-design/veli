@@ -1,3 +1,11 @@
+## 0.1.1
+
+### Fixed
+
+- Collapse label and badge fades use opacity (and badge scale) instead of max-width layout tweens; menu pills transition color only and snap gap when collapsed.
+- Nested level exit layers disable pointer events so they cannot steal clicks during `SideNavLevelSwap`.
+- Drill-in host examples omit `href` on nested-level openers so rows stay buttons driven by `onPress`.
+
 ## 0.1.0
 
 ### Added
