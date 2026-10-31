@@ -1,5 +1,5 @@
 {
-  "name": "@tradenetcorp/veli",
+  "name": "@veli-design/cli",
   "version": "0.1.1",
   "description": "Install and manage application-owned Veli Blocks.",
   "repository": {
@@ -17,13 +17,15 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "licensing"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
     "test": "corepack pnpm run build && node --test tests/*.test.mjs",
-    "prepublishOnly": "corepack pnpm run build"
+    "prepublishOnly": "corepack pnpm run build",
+    "prepack": "node ../../scripts/package-licensing.mjs"
   },
   "engines": {
     "node": ">=24"
@@ -41,7 +43,14 @@
     "typescript": "^5.9.3"
   },
   "publishConfig": {
-    "@tradenetcorp:registry": "https://npm.pkg.github.com",
-    "access": "restricted"
-  }
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "keywords": [
+    "veli",
+    "design-system",
+    "cli",
+    "blocks"
+  ]
 }

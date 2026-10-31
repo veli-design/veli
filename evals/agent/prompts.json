@@ -18,13 +18,13 @@
       "requireImports": ["provider"],
       "forbidImports": [],
       "requireSnippets": [
-        "@tradenetcorp/veli-tokens/tailwind",
-        "@tradenetcorp/veli-ui/tailwind",
+        "@veli-design/tokens/tailwind",
+        "@veli-design/react/tailwind",
         "VeliProvider",
         "colorScheme"
       ],
       "requirePatterns": ["@import\\s+['\"]tailwindcss['\"]"],
-      "requirePackages": ["@tradenetcorp/veli-ui", "@tradenetcorp/veli-tokens"],
+      "requirePackages": ["@veli-design/react", "@veli-design/tokens"],
       "requireProvider": true,
       "judgeChecks": [
         "Both Veli packages are added as dependencies.",
@@ -220,7 +220,7 @@
       "requireProvider": false,
       "judgeChecks": [
         "It uses React Hook Form useForm with a required rule on the name.",
-        "It shows the error through FieldError errors or a helper from @tradenetcorp/veli-ui/form."
+        "It shows the error through FieldError errors or a helper from @veli-design/react/form."
       ]
     },
     {

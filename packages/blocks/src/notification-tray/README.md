@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.5.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.7.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -13,14 +13,14 @@ Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and pr
 
 ## Installation
 
-Initialize Veli Blocks once per application, using your team's Veli Web URL, then add the tray:
+Initialize Veli Blocks once per application, using the compatible Veli Web URL, then add the tray:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add notification-tray
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add notification-tray
 ```
 
-The CLI reports required dependencies and incompatible installed versions. Import `NotificationTray` from the copied `notification-tray.tsx` and keep its source files and `cursor-click.svg` together. Ensure Tailwind scans the copied directory, adding an `@source` path if needed. Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
+The CLI reports required dependencies and incompatible installed versions. Import `NotificationTray` from the copied `notification-tray.tsx` and keep its source files together. Decorative icons use the declared `@phosphor-icons/react` dependency; no separate SVG files are required. Ensure Tailwind scans the copied directory, adding an `@source` path if needed. Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
 
 ## API
 
@@ -62,7 +62,7 @@ Pending retry and paging actions use the shared `Spinner` button variant. The ma
 
 Version 0.5.1 replaces the default unread dot with a numeric counter aligned to the header reference. Continue supplying the total unread count across all pages; the displayed count is capped at `99+`. Custom triggers are unchanged.
 
-Version 0.3.0 requires `@tradenetcorp/veli-ui@^0.16.0` for the shared loading components. Existing loading and mutation props control the indicators.
+Version 0.3.0 requires `@veli-design/react@^0.16.0` for the shared loading components. Existing loading and mutation props control the indicators.
 
 Version 0.2.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/react@^2.1.10` as a direct dependency when upgrading the copied source. Review whether your application still needs its legacy icon dependency before removing it.
 

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "test": "node --test src/lib/*.test.mjs",
-    "build": "node --test src/lib/*.test.mjs && astro sync && astro-check && astro build && node scripts/validate-docs-artifacts.mjs",
+    "build": "node ../../scripts/stage-phosphor-notice.mjs web && node --test src/lib/*.test.mjs && astro sync && astro-check && astro build && node scripts/validate-docs-artifacts.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -17,8 +17,8 @@
     "@lottiefiles/dotlottie-web": "^0.80.0",
     "@phosphor-icons/react": "^2.1.10",
     "@tradenetcorp/veli-blocks": "workspace:*",
-    "@tradenetcorp/veli-tokens": "workspace:*",
-    "@tradenetcorp/veli-ui": "workspace:*",
+    "@veli-design/react": "workspace:*",
+    "@veli-design/tokens": "workspace:*",
     "astro": "^5.18.2",
     "dialkit": "^1.4.3",
     "motion": "^13.1.0",
@@ -32,10 +32,26 @@
     "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "hast-util-from-html": "2.0.3",
     "mdast-util-gfm-table": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.2",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "apps/web"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/apps/web#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "description": "Documentation website for the Veli Design System.",
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

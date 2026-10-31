@@ -1,21 +1,25 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      dist-tag:
+        description: Separately approved npm dist-tag
+        required: true
+        type: string
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
+    if: vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
       pull-requests: write
       actions: read
+      id-token: write
     outputs:
       published: ${{ steps.changesets.outputs.published }}
     steps:
@@ -33,6 +37,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Require completed npm bootstrap and trusted publishers
+        if: steps.plan.outputs.mode == 'publish'
+        run: test "$TRUSTED_PUBLISHING_READY" = 'true'
+        env:
+          TRUSTED_PUBLISHING_READY: ${{ vars.VELI_NPM_TRUSTED_PUBLISHING_READY }}
+
       - name: Verify approved validation of the actual merged release tree
         if: steps.plan.outputs.mode == 'publish'
         run: node scripts/release-ci.mjs verify
@@ -49,8 +59,8 @@ jobs:
         with:
           node-version: 24
           cache: 'pnpm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@tradenetcorp'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@veli-design'
 
       - name: Install Dependencies
         if: steps.plan.outputs.mode != 'none'
@@ -67,8 +77,10 @@ jobs:
           title: 'chore: release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The private source repository cannot generate npm provenance.
+          NPM_CONFIG_PROVENANCE: false
+          VELI_NPM_PUBLICATION_APPROVED: ${{ vars.VELI_NPM_PUBLICATION_APPROVED }}
+          VELI_NPM_DIST_TAG: ${{ inputs.dist-tag }}
 
       - name: Record published release snapshot
         if: steps.changesets.outputs.published == 'true'
@@ -96,7 +108,7 @@ jobs:
 
   deploy-sites:
     needs: release
-    if: needs.release.outputs.published == 'true'
+    if: needs.release.outputs.published == 'true' && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
     permissions:
       contents: read
       packages: read

@@ -16,8 +16,8 @@ function listChangedFiles() {
       '--name-only',
       `${baseRef}...HEAD`,
       '--',
-      'packages/ui/src',
-      'packages/ui/agent/components',
+      'packages/react/src',
+      'packages/react/agent/components',
     ],
     { cwd: repoDir, encoding: 'utf8' },
   );
@@ -27,7 +27,7 @@ function listChangedFiles() {
 
   const againstWorktree = spawnSync(
     'git',
-    ['diff', '--name-only', 'HEAD', '--', 'packages/ui/src', 'packages/ui/agent/components'],
+    ['diff', '--name-only', 'HEAD', '--', 'packages/react/src', 'packages/react/agent/components'],
     { cwd: repoDir, encoding: 'utf8' },
   );
   if (againstWorktree.status !== 0) {
@@ -43,14 +43,14 @@ const changedSidecarIds = new Set();
 
 for (const filePath of changed) {
   const normalized = filePath.replaceAll('\\', '/');
-  const srcMatch = normalized.match(/^packages\/ui\/src\/([a-z0-9-]+)\.tsx$/);
+  const srcMatch = normalized.match(/^packages\/react\/src\/([a-z0-9-]+)\.tsx$/);
   if (srcMatch) changedSrcIds.add(srcMatch[1]);
-  const sidecarMatch = normalized.match(/^packages\/ui\/agent\/components\/([a-z0-9-]+)\.json$/);
+  const sidecarMatch = normalized.match(/^packages\/react\/agent\/components\/([a-z0-9-]+)\.json$/);
   if (sidecarMatch) changedSidecarIds.add(sidecarMatch[1]);
 }
 
 const missing = [...changedSrcIds].filter((id) => {
-  const sidecarPath = path.join(repoDir, 'packages/ui/agent/components', `${id}.json`);
+  const sidecarPath = path.join(repoDir, 'packages/react/agent/components', `${id}.json`);
   return existsSync(sidecarPath) && !changedSidecarIds.has(id);
 });
 
@@ -62,7 +62,7 @@ if (missing.length === 0) {
 console.warn('Agent sidecar drift warning:');
 for (const id of missing) {
   console.warn(
-    `- packages/ui/src/${id}.tsx changed without packages/ui/agent/components/${id}.json`,
+    `- packages/react/src/${id}.tsx changed without packages/react/agent/components/${id}.json`,
   );
 }
 console.warn(

@@ -969,10 +969,7 @@
   display: block;
   width: var(--veli-spacing-6);
   height: var(--veli-spacing-6);
-  background: var(--veli-color-icon-base-muted);
-  mask-size: contain;
-  mask-position: center;
-  mask-repeat: no-repeat;
+  color: var(--veli-color-icon-base-muted);
 }
 .veli-service-detail-guideline-section > h2 {
   margin: 0 0 var(--veli-spacing-4);
@@ -1004,21 +1001,6 @@
 }
 .veli-service-detail-step-number {
   font-size: var(--veli-typography-en-caption-medium-font-size);
-}
-.veli-service-detail-art-note-pencil {
-  mask-image: url('./note-pencil.svg');
-}
-.veli-service-detail-art-hand-coins {
-  mask-image: url('./hand-coins.svg');
-}
-.veli-service-detail-art-hourglass-medium {
-  mask-image: url('./hourglass-medium.svg');
-}
-.veli-service-detail-art-hand-deposit {
-  mask-image: url('./hand-deposit.svg');
-}
-.veli-service-detail-art-list-numbers {
-  mask-image: url('./list-numbers.svg');
 }
 
 .veli-service-detail-rich-text :is(h1, h2, h3, h4, h5, h6) {
@@ -1101,10 +1083,6 @@
   flex: none;
   width: var(--veli-spacing-5);
   height: var(--veli-spacing-5);
-}
-.veli-service-detail-art-list-bullets {
-  background: currentColor;
-  mask: url('./list-bullets.svg') center / contain no-repeat;
 }
 .veli-service-detail-mobile-toc-panel {
   z-index: 60;

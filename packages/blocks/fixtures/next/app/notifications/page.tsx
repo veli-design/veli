@@ -4,8 +4,8 @@ import { useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RouterProvider } from 'react-aria-components';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 import {
   NotificationTray,
   type NotificationItem,

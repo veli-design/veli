@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { I18nProvider } from 'react-aria-components';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
-import { FieldLabel, FieldDescription } from '@tradenetcorp/veli-ui/field';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
+import { FieldLabel, FieldDescription } from '@veli-design/react/field';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 export function RadioUsageDemo() {

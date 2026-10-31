@@ -1,6 +1,6 @@
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Button } from '@veli-design/react/button';
+import { Input } from '@veli-design/react/input';
+import { Skeleton } from '@veli-design/react/skeleton';
 
 export function ProfileForm({ isLoading, isSaving }: { isLoading: boolean; isSaving: boolean }) {
   return (

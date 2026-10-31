@@ -16,8 +16,8 @@ import {
   DropzoneTrigger,
   useDropzone,
   type DropzoneProps,
-} from '@tradenetcorp/veli-ui/dropzone';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/dropzone';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { CloudArrowUpIcon } from '@phosphor-icons/react';
 
 const collapsedControlGroups = ['Content', 'State'] as const;

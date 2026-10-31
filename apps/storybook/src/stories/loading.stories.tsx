@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
-import { Spinner } from '@tradenetcorp/veli-ui/spinner';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { LoadingText } from '@veli-design/react/loading-text';
+import { Spinner } from '@veli-design/react/spinner';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const panelClassName =
   'flex min-w-0 flex-col gap-6 rounded-2xl border border-base-subtle bg-surface-raised p-6';

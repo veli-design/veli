@@ -96,12 +96,12 @@ importers:
       '@tradenetcorp/veli-blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
-      '@tradenetcorp/veli-tokens':
+      '@veli-design/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@tradenetcorp/veli-ui':
+      '@veli-design/react':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../../packages/react
       motion:
         specifier: ^12.42.2
         version: 12.43.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -187,12 +187,12 @@ importers:
       '@tradenetcorp/veli-blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
-      '@tradenetcorp/veli-tokens':
+      '@veli-design/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@tradenetcorp/veli-ui':
+      '@veli-design/react':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../../packages/react
       astro:
         specifier: ^5.18.2
         version: 5.18.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.62.3)(sass@1.94.2)(supports-color@10.2.2)(terser@5.44.1)(typescript@5.9.3)(yaml@2.9.0)
@@ -227,6 +227,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.2.4(@types/react@19.2.18)
+      hast-util-from-html:
+        specifier: 2.0.3
+        version: 2.0.3
       mdast-util-gfm-table:
         specifier: ^2.0.0
         version: 2.0.0(supports-color@10.2.2)
@@ -248,9 +251,9 @@ importers:
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@tradenetcorp/veli-ui':
+      '@veli-design/react':
         specifier: workspace:*
-        version: link:../ui
+        version: link:../react
       motion:
         specifier: ^12.42.2
         version: 12.43.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -326,7 +329,7 @@ importers:
         specifier: 3.8.3
         version: 3.8.3
 
-  packages/ui:
+  packages/react:
     dependencies:
       '@internationalized/date':
         specifier: ^3.12.2
@@ -344,7 +347,7 @@ importers:
         specifier: ^2.5.5
         version: 2.6.0
     devDependencies:
-      '@tradenetcorp/veli-tokens':
+      '@veli-design/tokens':
         specifier: workspace:*
         version: link:../tokens
       '@types/react':

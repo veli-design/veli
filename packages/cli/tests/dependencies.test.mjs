@@ -21,14 +21,11 @@ test('identical and independent requirements keep their declared ranges', () => 
 });
 
 test('disjoint requirements fail in either order instead of downgrading a block', () => {
-  const requirements = [
-    { '@tradenetcorp/veli-ui': '^0.13.0' },
-    { '@tradenetcorp/veli-ui': '^0.10.0' },
-  ];
+  const requirements = [{ '@veli-design/react': '^0.13.0' }, { '@veli-design/react': '^0.10.0' }];
   for (const order of [requirements, [...requirements].reverse()])
     assert.throws(
       () => mergeDependencyRequirements(order),
-      /Conflicting block requirements.*veli-ui/,
+      /Conflicting block requirements.*veli-design\/react/,
     );
 });
 

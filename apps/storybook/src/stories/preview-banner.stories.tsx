@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { addons } from 'storybook/internal/preview-api';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { PreviewBanner } from '@tradenetcorp/veli-blocks/preview-banner';
 import { providerSwitcherUpdatedEvent } from '../../.storybook/custom-addons/provider/shared';
 

@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import type { Selection, SortDescriptor } from '@tradenetcorp/veli-ui/table';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import type { Selection, SortDescriptor } from '@veli-design/react/table';
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
   TableColumnResizer,
   TableRow,
   useDragAndDrop,
-} from '@tradenetcorp/veli-ui/table';
+} from '@veli-design/react/table';
 
 type PermitRow = {
   id: string;

@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
 import { CaretDownIcon, ListIcon, XIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 import { motion, useReducedMotion } from 'motion/react';
 
 import { AppSwitcher, type SiteHeaderAppSwitcherLabels } from './app-switcher';

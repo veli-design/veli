@@ -1,3 +1,5 @@
+Version 0.3.0 targets Veli React 0.18.x, tokens 0.11.x and React Aria Components 1.22.x.
+
 ## Ownership and prerequisites
 
 A floating organization side navigation shell with collapse-to-icon-rail behavior and host-composed header and menu parts. This experimental block is portable, editable React source. The hosting application supplies organizations, nested route levels, translations, switcher menus, selection, and router links. It owns fetching, authorization, persistence, analytics, and every network side effect.
@@ -18,15 +20,15 @@ The CLI checks dependencies and copies `side-nav.tsx` into your configured Block
 Install the block's peer stack when it is not already present:
 
 ```sh
-corepack pnpm add @phosphor-icons/react@2.1.10 @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
+corepack pnpm add @phosphor-icons/react@2.1.10 @veli-design/react@0.18.0 @veli-design/tokens@0.11.0 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0
 ```
 
 Your stylesheet must import Tailwind and the Veli token and UI themes:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 ```
 
 If the copied directory is outside Tailwind's automatically scanned tree, add an `@source` path relative to your stylesheet.
@@ -124,8 +126,8 @@ Executable Next-oriented adapter: `packages/blocks/examples/side-nav-next.tsx`. 
 
 ```tsx
 import { UsersIcon } from '@phosphor-icons/react';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@tradenetcorp/veli-ui/menu';
-import { Avatar } from '@tradenetcorp/veli-ui/avatar';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@veli-design/react/menu';
+import { Avatar } from '@veli-design/react/avatar';
 import {
   SideNav,
   SideNavHeader,
@@ -244,7 +246,7 @@ Keep one `SideNavTrigger` in a stable tree slot across both layouts so focus sur
 Track host state for `level` and semantic `direction` (`1` into a submenu, `-1` back). Wrap the level body in `SideNavLevelSwap` and keep `SideNavTrigger` pinned outside the swap. Pass `writingDirection` from `useVeliLanguage().direction` so enter/exit follow inline-end. For the row that opens a nested level, omit `href` and handle the swap in `onPress` so it stays a button rather than a half-navigating link.
 
 ```tsx
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   SideNavLevelSwap,
   SideNavBackButton,

@@ -1,7 +1,7 @@
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { Popover, PopoverDialog, PopoverTrigger } from '@tradenetcorp/veli-ui/popover';
+import { Button } from '@veli-design/react/button';
+import { Input } from '@veli-design/react/input';
+import { Link } from '@veli-design/react/link';
+import { Popover, PopoverDialog, PopoverTrigger } from '@veli-design/react/popover';
 
 export function ReferenceNumberField() {
   return (

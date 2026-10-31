@@ -21,7 +21,7 @@ async function ready(url) {
 try {
   // Prove cold source development with no pre-existing package build outputs.
   await mkdir(`${root}/.cache/playground-check`, { recursive: true });
-  for (const name of ['ui', 'tokens']) {
+  for (const name of ['react', 'tokens']) {
     const source = `${root}/packages/${name}/dist`;
     const backup = `${root}/.cache/playground-check/${name}`;
     try {

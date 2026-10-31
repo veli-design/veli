@@ -1,9 +1,9 @@
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
+import { Button } from '@veli-design/react/button';
+import { Tooltip, TooltipTrigger } from '@veli-design/react/tooltip';
 
 // Keep release regressions in the existing States story without adding demo-only APIs.
 export async function verifyButtonRegressions(canvasElement: HTMLElement) {

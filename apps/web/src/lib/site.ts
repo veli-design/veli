@@ -14,6 +14,8 @@ export const docsOverview = {
   label: 'Components overview',
   title: 'Veli Components',
   description: 'Accessible building blocks for consistent, dependable public-service interfaces.',
+  packageGuidance:
+    'Examples use @veli-design/react and @veli-design/tokens. These names are prepared for an approved public npm release. Existing applications should migrate dependencies, imports and copied Blocks together once matching packages and registry are available.',
   documentTitle: 'Documentation | Veli Design System',
   documentDescription: 'Foundations and component documentation for the Veli Design System.',
   htmlPath: '/docs/',
@@ -61,7 +63,7 @@ export const externalResources: readonly ExternalResource[] = [
   { label: 'GitHub', href: 'https://github.com/tradenetcorp/veli', icon: 'github' },
   {
     label: 'npm',
-    href: 'https://www.npmjs.com/package/@tradenetcorp/veli-ui',
+    href: 'https://www.npmjs.com/package/@veli-design/react',
     icon: 'package',
   },
 ] as const;

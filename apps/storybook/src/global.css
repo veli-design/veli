@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 
 @font-face {
   font-family: 'MV Typewriter';
@@ -52,5 +52,5 @@ html[data-veli-view-mode='story'][data-veli-surface='raised'] body {
   background: var(--veli-color-bg-surface-raised) !important;
 }
 
-@source "../../../packages/ui";
+@source "../../../packages/react";
 @source "../../../packages/blocks/src";

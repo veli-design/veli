@@ -5,7 +5,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from '@tradenetcorp/veli-ui/table';
+} from '@veli-design/react/table';
 
 const applications = Array.from({ length: 50 }, (_, index) => ({
   id: `app-${index + 1}`,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import {
   ServiceDetail,
   type ServiceGuideline,

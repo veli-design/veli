@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Skeleton } from '@veli-design/react/skeleton';
 
 const storyPanelClassName = 'rounded-2xl border border-base-subtle bg-surface-raised p-4';
 

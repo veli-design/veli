@@ -1,5 +1,5 @@
 ---
-'@tradenetcorp/veli-ui': patch
+'@veli-design/react': patch
 ---
 
 ### Changed

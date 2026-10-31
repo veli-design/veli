@@ -40,7 +40,7 @@ body:
     id: affected-area
     attributes:
       label: Affected package or component
-      description: For example, @tradenetcorp/veli-ui Button, tokens, documentation website, or Storybook.
+      description: For example, @veli-design/react Button, tokens, documentation website, or Storybook.
     validations:
       required: true
   - type: textarea

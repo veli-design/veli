@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { Button, type ButtonProps } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider, useVeliLanguage, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { Button, type ButtonProps } from '@veli-design/react/button';
+import { VeliProvider, useVeliLanguage, useVeliColorScheme } from '@veli-design/react/provider';
 import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 import {

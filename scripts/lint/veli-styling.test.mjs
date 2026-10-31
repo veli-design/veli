@@ -15,15 +15,15 @@ const root = path.resolve(import.meta.dirname, '../..');
 const linter = new Linter();
 const config = [{ languageOptions: { parser: tseslint.parser } }, veliStyling];
 const imports = `
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
-import { Search } from '@tradenetcorp/veli-ui/search';
-import { TextArea } from '@tradenetcorp/veli-ui/textarea';
-import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
-import { ComboBox } from '@tradenetcorp/veli-ui/combobox';
-import { DateField } from '@tradenetcorp/veli-ui/date-field';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { Button } from '@veli-design/react/button';
+import { Input } from '@veli-design/react/input';
+import { PasswordInput } from '@veli-design/react/password-input';
+import { Search } from '@veli-design/react/search';
+import { TextArea } from '@veli-design/react/textarea';
+import { Select, SelectItem } from '@veli-design/react/select';
+import { ComboBox } from '@veli-design/react/combobox';
+import { DateField } from '@veli-design/react/date-field';
+import { DatePicker } from '@veli-design/react/date-picker';
 `;
 
 test('copied policy passes the reviewed Oxlint quality config while real errors still fail', async () => {
@@ -175,7 +175,7 @@ test('core contracts close the Tailwind v4 CSS-variable shorthand escape hatch',
   assert.deepEqual(
     messages(
       '<Skeleton className="w-(--loading-width) h-(--loading-height)" />',
-      "import {Skeleton} from '@tradenetcorp/veli-ui/skeleton';",
+      "import {Skeleton} from '@veli-design/react/skeleton';",
     ),
     [],
   );
@@ -187,14 +187,12 @@ test('upstream handles conditional helpers, variables, aliases and namespace imp
   assert.ok(
     messages(
       '<Action className="h-12" />',
-      "import { Button as Action } from '@tradenetcorp/veli-ui/button';",
+      "import { Button as Action } from '@veli-design/react/button';",
     ).length,
   );
   assert.ok(
-    messages(
-      '<UI.Button className="h-12" />',
-      "import * as UI from '@tradenetcorp/veli-ui/button';",
-    ).length,
+    messages('<UI.Button className="h-12" />', "import * as UI from '@veli-design/react/button';")
+      .length,
   );
 });
 
@@ -210,13 +208,13 @@ test('internal class props never inherit root width allowances', () => {
   assert.ok(
     messages(
       '<Field inputClassName={classes} />',
-      "import {DateField as Field} from '@tradenetcorp/veli-ui/date-field';",
+      "import {DateField as Field} from '@veli-design/react/date-field';",
     ).some((message) => message.messageId === 'internal'),
   );
   assert.ok(
     messages(
       '<UI.DateField inputClassName="w-full" />',
-      "import * as UI from '@tradenetcorp/veli-ui/date-field';",
+      "import * as UI from '@veli-design/react/date-field';",
     ).some((message) => message.messageId === 'internal'),
   );
   assert.deepEqual(messages('<DateField inputClassName="" />'), []);
@@ -275,7 +273,7 @@ test('shadowed named and namespace imports do not report unrelated local compone
   assert.deepEqual(
     messages(
       'function Local(UI) { return <UI.Button className="p-8 m-[13px]" />; }',
-      "import * as UI from '@tradenetcorp/veli-ui/button';",
+      "import * as UI from '@veli-design/react/button';",
     ),
     [],
   );
@@ -353,7 +351,7 @@ test('boundary warnings never suppress independent core violations', () => {
 });
 
 test('namespace compound parts retain boundary warnings and respect shadowing', () => {
-  const preamble = "import * as UI from '@tradenetcorp/veli-ui/card';";
+  const preamble = "import * as UI from '@veli-design/react/card';";
   const result = messages('<UI.Card.Content style={{padding:8}} />', preamble);
   assert.equal(result.filter((m) => m.messageId === 'style').length, 1);
   assert.deepEqual(
@@ -393,13 +391,13 @@ test('documented limits: descendant width selectors and class callbacks can pass
 test('documented limit: consumer re-exports are missed in this package-import setup', async () => {
   const directory = await mkdtemp(path.join(root, '.cache/veli-lint-'));
   try {
-    const packageDirectory = path.join(directory, 'node_modules/@tradenetcorp/veli-ui');
+    const packageDirectory = path.join(directory, 'node_modules/@veli-design/react');
     await mkdir(packageDirectory, { recursive: true });
     await writeFile(path.join(directory, 'package.json'), '{"private":true}');
     await writeFile(
       path.join(packageDirectory, 'package.json'),
       JSON.stringify({
-        name: '@tradenetcorp/veli-ui',
+        name: '@veli-design/react',
         type: 'module',
         exports: { './button': './button.tsx' },
       }),
@@ -410,7 +408,7 @@ test('documented limit: consumer re-exports are missed in this package-import se
     );
     await writeFile(
       path.join(directory, 'barrel.ts'),
-      'export { Button as Action } from "@tradenetcorp/veli-ui/button";',
+      'export { Button as Action } from "@veli-design/react/button";',
     );
     const filename = path.join(directory, 'consumer.tsx');
     const verify = (source) => linter.verify(source, config, { filename });
@@ -441,7 +439,7 @@ test('warning-only config reports core classes, preserves narrow directives, and
   assert.equal(exception.warningCount, 0);
   assert.equal(exception.errorCount, 0);
   const [implementation] = await eslint.lintText(code, {
-    filePath: 'packages/ui/src/policy-test.tsx',
+    filePath: 'packages/react/src/policy-test.tsx',
   });
   assert.equal(implementation.warningCount, 0);
   assert.equal(implementation.errorCount, 0);
@@ -473,7 +471,7 @@ for (const entry of veliContracts) {
     test(`${name} has a warning contract protecting padding`, () => {
       const result = messages(
         `<${name} className="p-9" />`,
-        `import {${name}} from '@tradenetcorp/veli-ui/${entry.module}';`,
+        `import {${name}} from '@veli-design/react/${entry.module}';`,
       );
       assert.ok(
         result.some((message) => message.ruleId === 'shadcn/no-restyle' && message.severity === 1),
@@ -484,7 +482,7 @@ for (const entry of veliContracts) {
 }
 
 test('every configured component is a real public runtime export', async () => {
-  const packageRoot = path.join(root, 'packages/ui');
+  const packageRoot = path.join(root, 'packages/react');
   const manifest = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
   const modules = new Map();
   for (const entry of veliContracts) {
@@ -570,7 +568,7 @@ test('new complete-field and surface roots have explicit positive allowances', (
     assert.deepEqual(
       messages(
         `<${name} className="${classes}" />`,
-        `import {${name}} from '@tradenetcorp/veli-ui/${module}';`,
+        `import {${name}} from '@veli-design/react/${module}';`,
       ),
       [],
     );
@@ -582,7 +580,7 @@ test('content flex-group matching retains its current scope without broad layout
     ['modal', 'Modal'],
     ['popover', 'Popover'],
   ]) {
-    const preamble = `import {${name}} from '@tradenetcorp/veli-ui/${module}';`;
+    const preamble = `import {${name}} from '@veli-design/react/${module}';`;
     assert.deepEqual(messages(`<${name}.Content className="flex-1 flex-auto" />`, preamble), []);
     for (const className of ['basis-1', 'shrink-0'])
       assert.ok(messages(`<${name}.Content className="${className}" />`, preamble).length);
@@ -597,7 +595,7 @@ test('compound parts and namespace aliases use their actual slot contracts', () 
     ['table', 'Table', 'Cell', 'text-center whitespace-normal'],
     ['alert', 'Alert', 'Actions', 'justify-end flex-wrap'],
   ]) {
-    const preamble = `import {${rootName} as Surface} from '@tradenetcorp/veli-ui/${module}';`;
+    const preamble = `import {${rootName} as Surface} from '@veli-design/react/${module}';`;
     assert.deepEqual(messages(`<Surface.${part} className="${valid}" />`, preamble), []);
     assert.ok(
       messages(`<Surface.${part} className="p-8" />`, preamble).some(
@@ -608,14 +606,14 @@ test('compound parts and namespace aliases use their actual slot contracts', () 
   assert.deepEqual(
     messages(
       '<C.CardContent className="grid gap-4" />',
-      "import * as C from '@tradenetcorp/veli-ui/card';",
+      "import * as C from '@veli-design/react/card';",
     ),
     [],
   );
   assert.ok(
     messages(
       '<Surface.Content style={styles} />',
-      "import {Card as Surface} from '@tradenetcorp/veli-ui/card';",
+      "import {Card as Surface} from '@veli-design/react/card';",
     ).some((message) => message.messageId === 'style'),
   );
 });
@@ -627,7 +625,7 @@ test('portal sizing and orientation-dependent Divider lengths remain review deci
   ]) {
     const result = messages(
       `<${name} className="${classes}" />`,
-      `import {${name}} from '@tradenetcorp/veli-ui/${module}';`,
+      `import {${name}} from '@veli-design/react/${module}';`,
     );
     assert.ok(result.length > 0 && result.every((message) => message.severity === 1));
   }
@@ -677,12 +675,12 @@ test('actual CLI verifies diagnostics, severity, shadowing, parse failures and e
   ];
   for (const [source, expected, expectedRules] of [
     [
-      'import {Button} from \'@tradenetcorp/veli-ui/button\'; <Button className="p-8" />',
+      'import {Button} from \'@veli-design/react/button\'; <Button className="p-8" />',
       0,
       ['shadcn/no-restyle'],
     ],
     [
-      'import {Badge} from \'@tradenetcorp/veli-ui/badge\'; <Badge className="p-8" />',
+      'import {Badge} from \'@veli-design/react/badge\'; <Badge className="p-8" />',
       0,
       ['shadcn/no-restyle'],
     ],
@@ -695,7 +693,7 @@ test('actual CLI verifies diagnostics, severity, shadowing, parse failures and e
     [`${imports}<Button className="mt-(--gap)" />`, 0, ['shadcn/no-restyle']],
     [`${imports}<Button className="m-[13px]" />`, 0, ['shadcn/no-arbitrary-values']],
     [
-      'import * as UI from "@tradenetcorp/veli-ui/card"; <UI.Card.Content style={{padding:8}} />',
+      'import * as UI from "@veli-design/react/card"; <UI.Card.Content style={{padding:8}} />',
       0,
       ['veli/review-styling-boundaries'],
     ],
@@ -804,10 +802,10 @@ test('documented consumer config works outside the workspace with copied policy 
     for (const name of ['eslint', 'typescript-eslint', '@shadcn/lint']) {
       await symlink(path.join(root, 'node_modules', name), path.join(modules, name), 'dir');
     }
-    const ui = path.join(modules, '@tradenetcorp/veli-ui');
+    const ui = path.join(modules, '@veli-design/react');
     await mkdir(ui, { recursive: true });
-    await cp(path.join(root, 'packages/ui/package.json'), path.join(ui, 'package.json'));
-    await cp(path.join(root, 'packages/ui/dist'), path.join(ui, 'dist'), { recursive: true });
+    await cp(path.join(root, 'packages/react/package.json'), path.join(ui, 'package.json'));
+    await cp(path.join(root, 'packages/react/dist'), path.join(ui, 'dist'), { recursive: true });
     const docs = await readFile(path.join(root, 'docs/VELI_STYLING.md'), 'utf8');
     const example = docs.match(/3\. Reuse[\s\S]*?```js\n([\s\S]*?)\n {3}```/);
     assert.ok(example, 'consumer config must remain executable documentation');
@@ -830,16 +828,16 @@ test('documented consumer config works outside the workspace with copied policy 
       [`${imports}<><Button className="mt-4 w-full" /><Input className="w-full" /></>`, 0, 0],
       [`${imports}<><Button className="p-8" /><Input className="mt-4" /></>`, 0, 2],
       [
-        'import {Card} from \'@tradenetcorp/veli-ui/card\'; <Card.Content className="grid gap-4" />',
+        'import {Card} from \'@veli-design/react/card\'; <Card.Content className="grid gap-4" />',
         0,
         0,
       ],
-      ['import {Card} from \'@tradenetcorp/veli-ui/card\'; <Card.Content className="p-8" />', 0, 1],
+      ['import {Card} from \'@veli-design/react/card\'; <Card.Content className="p-8" />', 0, 1],
       [`${imports}<Button className="ring-2" />`, 0, 1],
       [`${imports}<Button className="mt-(--custom-gap)" />`, 0, 1],
       [`${imports}function Local(Button) {return <Button className="p-8 m-[13px]" />;}`, 0, 0],
       [
-        'import * as UI from "@tradenetcorp/veli-ui/card"; <UI.Card.Content style={{padding:8}} />',
+        'import * as UI from "@veli-design/react/card"; <UI.Card.Content style={{padding:8}} />',
         0,
         1,
       ],

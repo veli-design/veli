@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Link } from '@veli-design/react/link';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import { PlusIcon } from '@phosphor-icons/react';
 import { DirectionalArrow } from '../utils/directional-arrow';
 

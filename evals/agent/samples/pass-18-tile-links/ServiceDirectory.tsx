@@ -1,5 +1,5 @@
-import { Card, CardDescription, CardHeader, CardTitle } from '@tradenetcorp/veli-ui/card';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Card, CardDescription, CardHeader, CardTitle } from '@veli-design/react/card';
+import { Link } from '@veli-design/react/link';
 
 const services = [
   { slug: 'permits', title: 'Permits', description: 'Apply for and renew permits.' },

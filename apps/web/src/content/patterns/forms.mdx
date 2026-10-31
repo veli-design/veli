@@ -5,7 +5,7 @@ description: Integrate Veli fields with React Hook Form, TanStack Form, and sche
 
 # Forms
 
-Veli field components are built on react-aria-components and already accept the controlled props form libraries need: `name`, `value` / `onChange`, `onBlur`, `isInvalid`, and `isRequired`. For most fields you spread the library's field object directly. The `@tradenetcorp/veli-ui/form` subpath adds a `Form` wrapper, helpers that turn library or schema errors into field messages, and ISO date codecs for forms that store dates as strings.
+Veli field components are built on react-aria-components and already accept the controlled props form libraries need: `name`, `value` / `onChange`, `onBlur`, `isInvalid`, and `isRequired`. For most fields you spread the library's field object directly. The `@veli-design/react/form` subpath adds a `Form` wrapper, helpers that turn library or schema errors into field messages, and ISO date codecs for forms that store dates as strings.
 
 ## Import
 
@@ -16,7 +16,7 @@ import {
   getErrorMessages,
   isoDateToDateValue,
   toErrorMessage,
-} from '@tradenetcorp/veli-ui/form';
+} from '@veli-design/react/form';
 ```
 
 ## React Hook Form
@@ -29,11 +29,11 @@ Search supports the same field validation props and optional label as Input. For
 
 ```tsx
 import { Controller, useForm } from 'react-hook-form';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { Form, dateValueToIsoDate, isoDateToDateValue } from '@tradenetcorp/veli-ui/form';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
+import { Checkbox } from '@veli-design/react/checkbox';
+import { DatePicker } from '@veli-design/react/date-picker';
+import { Form, dateValueToIsoDate, isoDateToDateValue } from '@veli-design/react/form';
+import { Input } from '@veli-design/react/input';
+import { Select, SelectItem } from '@veli-design/react/select';
 
 function ProfileForm() {
   const { control, handleSubmit } = useForm({
@@ -123,9 +123,9 @@ Show errors only once the field is touched (`isTouched && !isValid`), so users a
 ```tsx
 import { useForm } from '@tanstack/react-form';
 import * as z from 'zod';
-import { Form, toErrorMessage } from '@tradenetcorp/veli-ui/form';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
+import { Form, toErrorMessage } from '@veli-design/react/form';
+import { Input } from '@veli-design/react/input';
+import { Select, SelectItem } from '@veli-design/react/select';
 
 const schema = z.object({
   fullName: z.string().trim().min(1, 'Name is required'),
@@ -216,7 +216,7 @@ Both accept strings, `{ message }` objects (React Hook Form's `fieldState.error`
 `CheckboxGroup` holds a `string[]` value, so it takes a form field directly in both libraries. Give each `Checkbox` a `value`. For a visible group label, compose [Field](/docs/field/) children inside the group, or keep `aria-label` with the group's `description` / `errorMessage` props — not both styles at once.
 
 ```tsx
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { FieldLabel } from '@veli-design/react/field';
 
 <form.Field name="channels">
   {(field) => (
@@ -297,7 +297,7 @@ When you keep field values in your own state (for example a schema-driven render
 Example select wired from a string enum:
 
 ```tsx
-import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
+import { Select, SelectItem } from '@veli-design/react/select';
 
 <Select
   name={field.name}
@@ -319,8 +319,8 @@ import { Select, SelectItem } from '@tradenetcorp/veli-ui/select';
 For dates stored as ISO strings:
 
 ```tsx
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { dateValueToIsoDate, isoDateToDateValue } from '@tradenetcorp/veli-ui/form';
+import { DatePicker } from '@veli-design/react/date-picker';
+import { dateValueToIsoDate, isoDateToDateValue } from '@veli-design/react/form';
 
 <DatePicker
   name={field.name}

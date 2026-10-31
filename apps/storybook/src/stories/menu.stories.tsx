@@ -4,7 +4,7 @@ import { expect, userEvent, within, waitFor } from '@storybook/test';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { DownloadSimpleIcon, GearIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 import {
   Menu,
   MenuItem,
@@ -13,8 +13,8 @@ import {
   MenuSeparator,
   MenuSubmenuTrigger,
   MenuTrigger,
-} from '@tradenetcorp/veli-ui/menu';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/menu';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 

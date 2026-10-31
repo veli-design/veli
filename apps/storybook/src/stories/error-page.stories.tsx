@@ -3,7 +3,7 @@ import { ErrorPage } from '@tradenetcorp/veli-blocks/error-page';
 import { PageNavigationFooter } from '@tradenetcorp/veli-blocks/page-navigation-footer';
 import { ErrorPagePreview } from '@tradenetcorp/veli-blocks/examples/error-page-preview';
 import { pageNavigationFooterContent } from '@tradenetcorp/veli-blocks/examples/page-navigation-footer-content';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const meta = {
   title: 'Blocks/Error page',

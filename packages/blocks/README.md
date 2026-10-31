@@ -1,6 +1,6 @@
 # Veli Blocks
 
-Private authoring workspace for editable React source. Consumers install Veli tokens and primitives, then use the `@tradenetcorp/veli` CLI to copy blocks into their application. Blocks are not published to npm and Veli does not operate a third-party or shadcn-compatible registry.
+Private authoring workspace for editable React source. Consumers install Veli tokens and primitives, then use the `@veli-design/cli` CLI to copy blocks into their application. Blocks are not published to npm and Veli does not operate a third-party or shadcn-compatible registry.
 
 ## Authoring
 
@@ -20,6 +20,6 @@ Use block changelogs, not npm changesets, for this private workspace. Published 
 
 - `corepack pnpm test:blocks`: source/manifest validation, archives, and update rehearsal.
 - `corepack pnpm --filter @tradenetcorp/veli-blocks build`: source checks and TypeScript.
-- `corepack pnpm test:blocks:consumer`: materialize and build an isolated Next.js app against published packages, then run browser checks. Requires GitHub Packages credentials through `NODE_AUTH_TOKEN` (or `GITHUB_TOKEN`) and network access. Set `BLOCKS_CONSUMER_DIR` to retain the fixture in a chosen empty directory.
+- `corepack pnpm test:blocks:consumer`: materialize and build an isolated Next.js app against published packages, then run browser checks. Use `VELI_TARBALLS` for unpublished candidate packages; public npm installation requires network access but no package-read credentials. Set `BLOCKS_CONSUMER_DIR` to retain the fixture in a chosen empty directory.
 
 See `docs/BLOCKS_ARCHITECTURE.md` for scope and follow-up boundaries.

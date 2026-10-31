@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.3.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.5.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -16,12 +16,12 @@ Logos, organization details, link labels, icons and destinations come from the c
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 @phosphor-icons/react@2.1.10
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add page-navigation-footer
+corepack pnpm add @veli-design/react@0.18.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0 @phosphor-icons/react@2.1.10
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add page-navigation-footer
 ```
 
-Import the copied `page-navigation-footer.tsx` directly. Use Tailwind 4 and import `tailwindcss`, `@tradenetcorp/veli-tokens/tailwind` and `@tradenetcorp/veli-ui/tailwind` in your global stylesheet. Files outside Tailwind’s normal source tree require an explicit `@source` path.
+Import the copied `page-navigation-footer.tsx` directly. Use Tailwind 4 and import `tailwindcss`, `@veli-design/tokens/tailwind` and `@veli-design/react/tailwind` in your global stylesheet. Files outside Tailwind’s normal source tree require an explicit `@source` path.
 
 Wrap the application in `VeliProvider`. Follow the [provider guide](/docs/provider/) for fonts, direction and theme initialization. This block inherits language and color scheme without changing document attributes or persisting preferences. It does not require the error-page block.
 

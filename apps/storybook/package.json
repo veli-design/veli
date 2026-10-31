@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build": "node ../../scripts/stage-phosphor-notice.mjs storybook && storybook build"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
     "@phosphor-icons/react": "^2.1.10",
     "@tradenetcorp/veli-blocks": "workspace:*",
-    "@tradenetcorp/veli-tokens": "workspace:*",
-    "@tradenetcorp/veli-ui": "workspace:*",
+    "@veli-design/tokens": "workspace:*",
+    "@veli-design/react": "workspace:*",
     "motion": "^12.42.2",
     "react": "^19.0.0",
     "react-aria-components": "1.22.0",
@@ -36,5 +36,20 @@
     "typescript": "^5.7.2",
     "vite": "^6.4.3",
     "wrangler": "^4.116.0"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "apps/storybook"
+  },
+  "homepage": "https://github.com/tradenetcorp/veli/tree/main/apps/storybook#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "description": "Interactive component and Blocks examples for the Veli Design System.",
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

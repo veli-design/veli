@@ -1,5 +1,5 @@
 import { SiteFooter } from '@tradenetcorp/veli-blocks/site-footer';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function SiteFooterDemo() {
   return (

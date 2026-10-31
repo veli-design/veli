@@ -10,10 +10,10 @@ import {
   parseDate,
   today,
 } from '@internationalized/date';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Calendar, RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { DatePicker } from '@veli-design/react/date-picker';
+import { Button } from '@veli-design/react/button';
+import { Calendar, RangeCalendar } from '@veli-design/react/calendar';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const now = parseDate('2026-10-12');
 const disabledRanges = [

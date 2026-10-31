@@ -148,9 +148,9 @@ export function validateBlock(directory) {
             : specifier.split('/')[0];
           if (!manifest.dependencies[name] || /^(next|astro)(\/|$)/.test(specifier))
             fail(`Undeclared/framework import ${specifier}`);
-          if (name === '@tradenetcorp/veli-ui') {
+          if (name === '@veli-design/react') {
             const uiPackage = json(
-              createRequire(import.meta.url).resolve('@tradenetcorp/veli-ui/package.json'),
+              createRequire(import.meta.url).resolve('@veli-design/react/package.json'),
             );
             if (!isRecord(uiPackage) || !isRecord(uiPackage.exports))
               fail('Invalid Veli UI export map');

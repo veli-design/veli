@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.6.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.8.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -13,11 +13,11 @@ Follow the [Veli setup guide](/docs/) for package access, Tailwind, fonts and pr
 
 ## Installation
 
-Configure access to Veli's restricted npm packages through your existing setup; keep credentials outside committed files. Initialize Blocks once, using your team's Veli Web URL, then install:
+Install the public npm packages and configure the compatible Blocks registry URL. Initialize Blocks once, using the compatible Veli Web URL, then install:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add account-panel
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add account-panel
 ```
 
 The CLI checks dependencies and copies `account-panel.tsx` into your configured Blocks directory. Import `AccountPanel` and its types directly from that working copy. Commit both the source and `.veli/blocks/account-panel/`, which retains the original source and receipt for updates.
@@ -26,8 +26,8 @@ Your stylesheet must import Tailwind and the Veli token and UI themes:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 ```
 
 If the copied directory is outside Tailwind's automatically scanned tree, add an `@source` path relative to your stylesheet.

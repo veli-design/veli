@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
-import { Sheet, type SheetProps } from '@tradenetcorp/veli-ui/sheet';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
+import { Sheet, type SheetProps } from '@veli-design/react/sheet';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 function subscribeTheme(onChange: () => void) {

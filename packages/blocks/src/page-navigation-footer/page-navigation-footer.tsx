@@ -2,10 +2,10 @@
 
 import type { ReactNode } from 'react';
 import { ArrowUpRightIcon } from '@phosphor-icons/react';
-import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Link, type LinkProps } from '@veli-design/react/link';
+import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 export type PageNavigationFooterLink = {
   id: string;

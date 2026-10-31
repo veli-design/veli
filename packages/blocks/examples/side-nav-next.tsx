@@ -15,9 +15,9 @@ import {
   UsersIcon,
 } from '@phosphor-icons/react';
 import type { Selection } from 'react-aria-components';
-import { Avatar, type AvatarAppearance } from '@tradenetcorp/veli-ui/avatar';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@tradenetcorp/veli-ui/menu';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Avatar, type AvatarAppearance } from '@veli-design/react/avatar';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@veli-design/react/menu';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   SideNav,
   SideNavBackButton,

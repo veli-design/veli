@@ -12,7 +12,7 @@ blind. Use the judge steps below.
 Local Task subagents share the parent workspace. They can still open the Veli
 monorepo if they ignore the forbid rule. For `baseline`, that ruins the run.
 
-If a subject opens `packages/ui` or other monorepo agent docs, mark that run
+If a subject opens `packages/react` or other monorepo agent docs, mark that run
 invalid and run the cell again.
 
 ## Steps

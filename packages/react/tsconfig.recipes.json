@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@veli-design/react/*": ["src/*"]
+    }
+  },
+  "include": ["agent/recipes/**/*.tsx"]
+}

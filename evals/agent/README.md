@@ -87,7 +87,7 @@ corepack pnpm eval:agent:matrix score
 For the full set, run `prepare --bare` so `01-setup` starts from a bare fixture.
 
 Local Task subagents still share the parent workspace. If a subject opens
-`packages/ui` in this monorepo, the `baseline` run is invalid. Follow
+`packages/react` in this monorepo, the `baseline` run is invalid. Follow
 `ORCHESTRATOR.md`. Do not send that file to subjects.
 
 A model writes judgment through the blind judge. A human checks a sample of
@@ -109,7 +109,7 @@ node evals/agent/prepare.mjs metadata  /tmp/veli-eval-metadata
 ```
 
 Do not put a fixture inside this repository. If the fixture is inside the repo,
-the agent can open `packages/ui` and read the agent docs. That breaks
+the agent can open `packages/react` and read the agent docs. That breaks
 `baseline`.
 
 What each prepare step does:
@@ -254,8 +254,8 @@ Use the same agent product, model, and settings for every run in one comparison.
 
 ## Drift guard
 
-When you change `packages/ui/src/<id>.tsx`, update
-`packages/ui/agent/components/<id>.json` in the same pull request if the public
+When you change `packages/react/src/<id>.tsx`, update
+`packages/react/agent/components/<id>.json` in the same pull request if the public
 API guidance changes.
 
 CI warns through `scripts/check-agent-sidecar-drift.mjs`.

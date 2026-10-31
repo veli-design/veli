@@ -1,9 +1,9 @@
 import { useState, useSyncExternalStore, type ReactNode } from 'react';
 import { parseDate } from '@internationalized/date';
-import { VeliProvider, type VeliColorScheme } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 import { I18nProvider } from 'react-aria-components';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { DatePicker } from '@veli-design/react/date-picker';
 
 /** Match Storybook / VeliProvider `language="en"` → `en-GB` date segments. */
 function DocsEnGbLocale({ children }: { children: ReactNode }) {

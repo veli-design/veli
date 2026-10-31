@@ -123,7 +123,7 @@ test('manifest fields must match the typed runtime contract', () => {
     { id: 'site-footer', version: '0.1.0' },
     { ...block.manifest, status: 'preview' },
     { ...block.manifest, files: ['site-footer.tsx', 42] },
-    { ...block.manifest, dependencies: ['@tradenetcorp/veli-ui'] },
+    { ...block.manifest, dependencies: ['@veli-design/react'] },
   ])
     fixture((dir) => {
       writeFileSync(resolve(dir, 'manifest.json'), JSON.stringify(manifest));
@@ -141,7 +141,7 @@ test('external symlinks cannot leak files into a download', () =>
     assert.throws(() => validateBlock(dir), /escapes/);
   }));
 
-for (const specifier of ['@/auth', 'next/link', '@tradenetcorp/veli-ui/src/link', './missing']) {
+for (const specifier of ['@/auth', 'next/link', '@veli-design/react/src/link', './missing']) {
   test(`rejects nonportable import ${specifier}`, () =>
     fixture((dir) => {
       writeFileSync(resolve(dir, 'site-footer.tsx'), `import x from '${specifier}'; export { x };`);

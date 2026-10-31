@@ -1,4 +1,4 @@
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 // Fictional, local example data. These are not service requirements or live applications.
 export const sheetExampleCopy = {

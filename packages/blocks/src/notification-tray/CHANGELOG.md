@@ -1,3 +1,27 @@
+## 0.7.0
+
+### Changed
+
+- Support the verified public package baseline: @veli-design/react@^0.18.0, react-aria-components@^1.22.0, @veli-design/tokens@^0.11.0. The copied-source rendering API is unchanged.
+
+## 0.6.2
+
+### Fixed
+
+- Include the merged numeric unread counter and total-count documentation in the public-package source archive.
+
+## 0.6.1
+
+### Changed
+
+- Render decorative icons from the declared Phosphor library dependency instead of copied SVG files, preserving their weights and accessible semantics.
+
+## 0.6.0
+
+### Changed
+
+- Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
 ## 0.5.2
 
 ### Fixed
@@ -46,7 +70,7 @@
 
 ### Changed
 
-- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@tradenetcorp/veli-ui` to `^0.16.0` when updating copied source.
+- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@veli-design/react` to `^0.16.0` when updating copied source.
 
 ### Fixed
 

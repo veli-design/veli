@@ -17,7 +17,7 @@ Use DatePicker when people need to type a date or choose one from a calendar. It
 ## Import
 
 ```tsx
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { DatePicker } from '@veli-design/react/date-picker';
 ```
 
 ## Usage
@@ -66,7 +66,7 @@ When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `m
 
 Give the field a `name` to submit its completed value as an ISO string. Use `value` and `onChange` for a controlled value, or `defaultValue` for an initial value. `granularity` adds editable time segments for date-time values.
 
-When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@tradenetcorp/veli-ui/form`. You can also hold `DateValue` objects in form state. See [Forms](/patterns/forms/) for form-library integration.
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@veli-design/react/form`. You can also hold `DateValue` objects in form state. See [Forms](/patterns/forms/) for form-library integration.
 
 ## API Reference
 
@@ -144,8 +144,8 @@ Set `language` on `VeliProvider`. English and caller-supplied locales keep their
 
 ```tsx
 import { parseDate } from '@internationalized/date';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { DatePicker } from '@veli-design/react/date-picker';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function DatePickerLanguageDemo() {
   return (

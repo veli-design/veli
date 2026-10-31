@@ -1,4 +1,4 @@
-# Veli UI ESM consumer compatibility
+# React package ESM consumer compatibility
 
 PD-1041 belongs with the token/package refactor because the same release must work through native Node, framework bundlers and isolated package consumers. The source imports in this PR use explicit `.js` specifiers, which TypeScript preserves in emitted JavaScript.
 
@@ -6,12 +6,12 @@ PD-1041 belongs with the token/package refactor because the same release must wo
 
 The following configurations and installed dependencies were checked on 2026-10-09. Neither consumer repository was modified.
 
-| Consumer  | Next.js | Router | Installed Veli UI | Vitest coverage                                                                  |
-| --------- | ------- | ------ | ----------------- | -------------------------------------------------------------------------------- |
-| OnePass   | 15.5.18 | Pages  | 0.13.0            | 4.1.11, jsdom, UI tests, Veli dependency inlining                                |
-| govmv-web | 16.2.6  | App    | 0.10.0            | 4.0.18, Node, Payload integration tests; search regression mocks Veli pagination |
+| Consumer  | Next.js | Router | Installed React package | Vitest coverage                                                                  |
+| --------- | ------- | ------ | ----------------------- | -------------------------------------------------------------------------------- |
+| OnePass   | 15.5.18 | Pages  | 0.13.0                  | 4.1.11, jsdom, UI tests, Veli dependency inlining                                |
+| govmv-web | 16.2.6  | App    | 0.10.0                  | 4.0.18, Node, Payload integration tests; search regression mocks Veli pagination |
 
-Both installed Veli versions fail `import('@tradenetcorp/veli-ui/modal')` in native Node with `ERR_MODULE_NOT_FOUND` for the extensionless `dist/a11y` import. govmv-web therefore has the same invalid package graph even though its bundler accepts it.
+Both installed Veli versions fail `import('@veli-design/react/modal')` in native Node with `ERR_MODULE_NOT_FOUND` for the extensionless `dist/a11y` import. govmv-web therefore has the same invalid package graph even though its bundler accepts it.
 
 OnePass explicitly transpiles Veli in `next.config.ts` and inlines it in `vitest.config.mts`. Its production `next build` uses webpack. govmv-web uses client Veli components inside App Router, has no explicit Veli transpilation entry, and uses Next 16's default Turbopack build. Its Payload wrapper does not explicitly configure Veli transpilation. The webpack `extensionAlias` configuration maps explicit extensions; it does not repair extensionless ESM for native Node.
 
@@ -39,16 +39,16 @@ The Pages fixture uses `getServerSideProps`, so the HTTP check exercises product
 
 ## Permanent verification and migration
 
-`packages/ui/scripts/check-esm.mjs` parses every emitted `dist/**/*.js` file, including files outside the package export map. Static imports, reexports and literal dynamic imports must use `.js` relative specifiers whose targets exist. Fixtures verify extensionless imports, missing targets and empty output fail. Native Node tests independently import all 38 public JavaScript entries.
+`packages/react/scripts/check-esm.mjs` parses every emitted `dist/**/*.js` file, including files outside the package export map. Static imports, reexports and literal dynamic imports must use `.js` relative specifiers whose targets exist. Fixtures verify extensionless imports, missing targets and empty output fail. Native Node tests independently import all 38 public JavaScript entries.
 
 UI `prepublishOnly` builds and runs `package:check`. The repository release command also rebuilds UI and runs that check before invoking Changesets, so publication does not depend on lifecycle hook behavior. The normal UI suite runs the all-output guard in CI.
 
 CI also runs the isolated packed-package Pages/Vitest fixture on both Next versions:
 
 ```sh
-corepack pnpm --filter @tradenetcorp/veli-ui --filter @tradenetcorp/veli-tokens build
-corepack pnpm --filter @tradenetcorp/veli-ui pack --out /tmp/ui.tgz
-corepack pnpm --filter @tradenetcorp/veli-tokens pack --out /tmp/tokens.tgz
+corepack pnpm --filter @veli-design/react --filter @veli-design/tokens build
+corepack pnpm --filter @veli-design/react pack --out /tmp/ui.tgz
+corepack pnpm --filter @veli-design/tokens pack --out /tmp/tokens.tgz
 node scripts/check-ui-consumer.mjs /tmp/veli-next15 /tmp/ui.tgz /tmp/tokens.tgz 15.5.18
 node scripts/check-ui-consumer.mjs /tmp/veli-next16 /tmp/ui.tgz /tmp/tokens.tgz 16.2.6
 ```
@@ -56,6 +56,6 @@ node scripts/check-ui-consumer.mjs /tmp/veli-next16 /tmp/ui.tgz /tmp/tokens.tgz 
 Use new output directories. These fixtures install only public dependencies plus the local UI and
 tokens tarballs, without Veli transpilation, dependency inlining, aliases or mocks. Both use
 webpack to hold the bundler constant. Tokens must come from the packed tarball because
-`@tradenetcorp/veli-tokens` is a UI peer and is not fetched from the public npm registry in CI.
+`@veli-design/tokens` is a UI peer and is not fetched from the public npm registry in CI.
 
 After upgrading to the release containing this fix (planned UI **0.15.0**), OnePass can remove only its Veli entry from `transpilePackages` and Vitest `server.deps.inline`. Keep the separate `osm-ws-client` transpilation entry and other application-specific configuration. govmv-web needs no Veli-specific workaround. Removing the existing workarounds before upgrading still leaves the old package broken.

@@ -182,8 +182,7 @@
     flex-shrink: 0;
     width: 24px;
     height: 24px;
-    background: var(--veli-color-text-base-default);
-    mask: url('/images/docs/terminal.svg') center / contain no-repeat;
+    color: var(--veli-color-text-base-default);
   }
 
   .docs-code-command [role='tablist'] {
@@ -307,10 +306,6 @@
     padding-block: var(--veli-spacing-6);
   }
 
-  .docs-code-file__icon {
-    mask-image: url('/images/docs/file-tsx.svg');
-  }
-
   .docs-code-file__name {
     min-width: 0;
     overflow: hidden;
@@ -392,8 +387,7 @@
   .docs-code-block__expand-icon {
     width: 12px;
     height: 12px;
-    background: currentColor;
-    mask: url('/images/docs/caret-up-down.svg') center / contain no-repeat;
+    flex-shrink: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {

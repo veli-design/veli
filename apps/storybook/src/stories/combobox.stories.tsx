@@ -3,9 +3,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { ComboBox, ComboBoxItem, ComboBoxSection } from '@tradenetcorp/veli-ui/combobox';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { ComboBox, ComboBoxItem, ComboBoxSection } from '@veli-design/react/combobox';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const collapsedControlGroups = [
   'Content',

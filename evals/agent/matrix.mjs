@@ -55,7 +55,7 @@ const SUBJECT_INSTRUCTIONS = `You are the subject agent for one Veli eval run.
 ## Rules
 
 1. Work only in this project directory. Do not read, search, or open files outside it.
-2. Do not open the Veli monorepo or any \`packages/ui\` tree outside this project.
+2. Do not open the Veli monorepo or any \`packages/react\` tree outside this project.
 3. Put new components in \`src/\`. Do not create a separate project.
 4. Use only public Veli APIs. Do not invent components, props, or token names.
 5. If the request is not supported, say so clearly. Write the explanation in \`notes.md\` in this project directory.
@@ -305,7 +305,7 @@ function sidecarGuidance(task) {
   ];
   return slugs
     .map((slug) => {
-      const sidecarPath = path.join(repoDir, 'packages/ui/agent/components', `${slug}.json`);
+      const sidecarPath = path.join(repoDir, 'packages/react/agent/components', `${slug}.json`);
       if (!existsSync(sidecarPath)) return null;
       const sidecar = JSON.parse(readFileSync(sidecarPath, 'utf8'));
       const lines = [

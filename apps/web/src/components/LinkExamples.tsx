@@ -1,10 +1,6 @@
 import { useState, useSyncExternalStore } from 'react';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import {
-  VeliProvider,
-  useVeliLanguage,
-  type VeliColorScheme,
-} from '@tradenetcorp/veli-ui/provider';
+import { Link } from '@veli-design/react/link';
+import { VeliProvider, useVeliLanguage, type VeliColorScheme } from '@veli-design/react/provider';
 import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@phosphor-icons/react';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 

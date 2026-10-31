@@ -1,10 +1,10 @@
 import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Avatar } from '@tradenetcorp/veli-ui/avatar';
-import { Badge, type BadgeAppearance, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Avatar } from '@veli-design/react/avatar';
+import { Badge, type BadgeAppearance, type BadgeIntent } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   BellIcon,
   CheckCircleIcon,

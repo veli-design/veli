@@ -21,7 +21,7 @@ Figma variables and styles
      dist/motion.tokens.json, dist/coverage.json
 ```
 
-Consuming apps import the Tailwind theme CSS from `@tradenetcorp/veli-tokens/tailwind` after `@import "tailwindcss"`.
+Consuming apps import the Tailwind theme CSS from `@veli-design/tokens/tailwind` after `@import "tailwindcss"`.
 
 Veli is Tailwind-aligned, not Tailwind-default-valued. We use Tailwind v4's native variable namespaces and utility model, while preserving Veli's government design system values and semantic design intent.
 
@@ -33,7 +33,7 @@ Put `suppressHydrationWarning` on `<html>`. Key canvas colours off `html` / `htm
 
 ```tsx
 // Next.js App Router: app/layout.tsx
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function RootLayout({ children }) {
   return (
@@ -46,11 +46,11 @@ export default function RootLayout({ children }) {
 }
 ```
 
-If `VeliProvider` is not the first node in `<body>`, inline the script in `<head>` with `getVeliThemeScript()` from `@tradenetcorp/veli-ui/theme-script`.
+If `VeliProvider` is not the first node in `<body>`, inline the script in `<head>` with `getVeliThemeScript()` from `@veli-design/react/theme-script`.
 
 ```astro
 ---
-import { getVeliThemeScript } from '@tradenetcorp/veli-ui/theme-script';
+import { getVeliThemeScript } from '@veli-design/react/theme-script';
 ---
 
 <head>
@@ -77,7 +77,7 @@ The typography alignment work was implemented on 2026-05-07.
 The following build verification was recorded after the May 2026 typography alignment export:
 
 - `pnpm build` in `packages/tokens` passes.
-- `pnpm --filter @tradenetcorp/veli-ui lint` passes.
+- `pnpm --filter @veli-design/react lint` passes.
 - `pnpm --filter @tradenetcorp/veli-web build` passes.
 - `pnpm --filter @tradenetcorp/veli-storybook build` passes.
 - `tailwind-theme.css` emits non-zero `--text-*` variables and paired `--text-*--line-height` variables.
@@ -251,7 +251,7 @@ Figma `1%` letter spacing and CSS `0.01em` both scale against the element's own 
 
 ## Export refreshes
 
-Replace `packages/tokens/src/figma.tokens.json` with the fresh TokensBruecke DTCG export, including typography, grid, effect, and color styles. Keep its Figma names and metadata intact. Then run `corepack pnpm --filter @tradenetcorp/veli-tokens tokens:sync` and review the generated changes to `src/design.tokens.json`. Run `tokens:check`, `test`, and `build` before publishing. Do not edit generated CSS.
+Replace `packages/tokens/src/figma.tokens.json` with the fresh TokensBruecke DTCG export, including typography, grid, effect, and color styles. Keep its Figma names and metadata intact. Then run `corepack pnpm --filter @veli-design/tokens tokens:sync` and review the generated changes to `src/design.tokens.json`. Run `tokens:check`, `test`, and `build` before publishing. Do not edit generated CSS.
 
 `lib/normalize.mjs` excludes Figma-only `_docs` annotations, converts `Grid-styles` to standard number and dimension tokens, and validates product colors. Code-owned motion primitives live in `src/motion.tokens.json` and are merged into the canonical graph; Figma wins if it supplies the same key. The public `/tokens` and `/motion-tokens` entries expose generated JSON from that graph. A normal package build reads the committed canonical file; it does not rewrite either source file.
 

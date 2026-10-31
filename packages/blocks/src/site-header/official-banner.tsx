@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef } from 'react';
 import { BankIcon, CaretDownIcon, LockSimpleIcon } from '@phosphor-icons/react';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
+import { Divider } from '@veli-design/react/divider';
 import { motion } from 'motion/react';
 
 import { HeaderLanguageMenu, type SiteHeaderLanguageOption } from './header-controls';

@@ -231,6 +231,8 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     );
   } else {
     lines.push(
+      docsOverview.packageGuidance,
+      '',
       markdownListItem(
         'Foundations',
         foundationsOverview.htmlPath,

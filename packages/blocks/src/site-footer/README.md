@@ -1,35 +1,35 @@
 ## Core package baseline
 
-Version 0.4.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.6.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's restricted GitHub Packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace. Applications own translations, URLs, and changes to their copy.
+This experimental block is editable source for applications using Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace. Applications own translations, URLs, and changes to their copy.
 
 ## Installation
 
-Configure `@tradenetcorp:registry=https://npm.pkg.github.com` and use your existing package-read credentials. Never commit credentials.
+Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0
+corepack pnpm add @veli-design/react@0.18.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0
 ```
 
 Use Tailwind 4 with your framework's integration. In your global stylesheet:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
-@import '@tradenetcorp/veli-ui/tailwind';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
 ```
 
 Initialize Veli Blocks and add the footer:
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add site-footer
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add site-footer
 ```
 
 The CLI copies `site-footer.tsx` into the configured Blocks directory and retains its exact original source and receipt under `.veli/blocks/site-footer/`. Import the editable working copy directly from your application and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.

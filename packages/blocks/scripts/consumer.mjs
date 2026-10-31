@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { spawnSyncCorepack } from '../../../scripts/corepack.mjs';
 import { tokenFixture } from './token-fixture.mjs';
+import { parse as parseYAML, stringify as stringifyYAML } from 'yaml';
 import { getBlocks, bundleFiles, packageRoot } from './catalog.mjs';
 
 const target = process.env.BLOCKS_CONSUMER_DIR
@@ -103,7 +104,6 @@ if (process.argv.includes('--prepare')) {
 /** @type {NodeJS.ProcessEnv} */
 const env = {
   ...process.env,
-  NODE_AUTH_TOKEN: process.env.NODE_AUTH_TOKEN || process.env.GITHUB_TOKEN,
   NEXT_TELEMETRY_DISABLED: '1',
   NPM_CONFIG_USERCONFIG: undefined,
 };
@@ -113,24 +113,22 @@ if (tarballs) {
   const manifest = JSON.parse(readFileSync(filename, 'utf8'));
   for (const [name, path] of Object.entries(tarballs))
     manifest.dependencies[name] = `file:${resolve(path)}`;
-  manifest.pnpm = {
-    overrides: Object.fromEntries(
+  const workspacePath = resolve(target, 'pnpm-workspace.yaml');
+  const workspace = parseYAML(readFileSync(workspacePath, 'utf8'));
+  workspace.minimumReleaseAge ??= 1440;
+  workspace.overrides = {
+    ...workspace.overrides,
+    ...Object.fromEntries(
       Object.entries(tarballs).map(([name, path]) => [name, `file:${resolve(path)}`]),
     ),
   };
+  writeFileSync(workspacePath, stringifyYAML(workspace));
   writeFileSync(filename, `${JSON.stringify(manifest, null, 2)}\n`);
 }
-if (!env.NODE_AUTH_TOKEN && !tarballs)
-  throw new Error(`Set NODE_AUTH_TOKEN with package-read access. Fixture retained at ${target}`);
 const npmConfigDirectory = mkdtempSync(resolve(tmpdir(), 'veli-blocks-npmrc-'));
 const npmConfigPath = resolve(npmConfigDirectory, 'npmrc');
-// pnpm intentionally ignores environment expansion in a project .npmrc. A temporary
-// user-level config keeps the token out of the fixture while allowing CI authentication.
-writeFileSync(
-  npmConfigPath,
-  '@tradenetcorp:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n',
-  { mode: 0o600 },
-);
+// Isolate public installation from any developer-level private-registry configuration.
+writeFileSync(npmConfigPath, '@veli-design:registry=https://registry.npmjs.org\n', { mode: 0o600 });
 env.NPM_CONFIG_USERCONFIG = npmConfigPath;
 console.log(`Isolated consumer: ${target}`);
 for (const args of [

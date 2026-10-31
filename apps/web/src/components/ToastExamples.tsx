@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { createToastQueue, ToastRegion, type VeliToastContent } from '@tradenetcorp/veli-ui/toast';
-import {
-  VeliProvider,
-  useVeliLanguage,
-  type VeliColorScheme,
-} from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { createToastQueue, ToastRegion, type VeliToastContent } from '@veli-design/react/toast';
+import { VeliProvider, useVeliLanguage, type VeliColorScheme } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 const usageCopy = {

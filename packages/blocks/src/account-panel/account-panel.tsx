@@ -10,14 +10,14 @@ import {
   Radio,
   RadioGroup,
 } from 'react-aria-components';
-import { Avatar } from '@tradenetcorp/veli-ui/avatar';
-import { Badge, type BadgeIntent } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Popover, PopoverDialog, PopoverTrigger } from '@tradenetcorp/veli-ui/popover';
+import { Avatar } from '@veli-design/react/avatar';
+import { Badge, type BadgeIntent } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
+import { Skeleton } from '@veli-design/react/skeleton';
+import { Alert } from '@veli-design/react/alert';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Popover, PopoverDialog, PopoverTrigger } from '@veli-design/react/popover';
 
 export type AccountPanelState = {
   isPending?: boolean;

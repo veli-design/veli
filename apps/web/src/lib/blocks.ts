@@ -10,7 +10,7 @@ export const blocksOverviewMarkdown = `# Veli Blocks
 
 Editable compositions built from Veli primitives. Install tokens and primitives through npm; copy block source into your application and own its adaptations and updates.
 
-Initialize a consuming application with \`pnpm dlx @tradenetcorp/veli init\`. Run \`veli add\` to browse and install blocks interactively, or \`veli add <id>\` for a specific block.
+Initialize a consuming application with \`pnpm dlx @veli-design/cli init\`. Run \`veli add\` to browse and install blocks interactively, or \`veli add <id>\` for a specific block.
 
 ## Available blocks
 

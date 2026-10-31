@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { MenuItem } from '@tradenetcorp/veli-ui/menu';
+import { MenuItem } from '@veli-design/react/menu';
 import { Button, Menu, MenuTrigger, Popover } from 'react-aria-components';
 import { CaretDownIcon } from '@phosphor-icons/react';
 import styles from './DocsPreview.module.css';

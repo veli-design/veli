@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   NotificationTray,
   NotificationTrayContent,

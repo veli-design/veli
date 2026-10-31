@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ErrorPagePreview } from '@tradenetcorp/veli-blocks/examples/error-page-preview';
 import type { ErrorPageKind } from '@tradenetcorp/veli-blocks/error-page';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function ErrorPageDemo() {
   const [kind, setKind] = useState<ErrorPageKind>('404');

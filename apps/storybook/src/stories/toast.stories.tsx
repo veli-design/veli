@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { UNSTABLE_ToastStateContext as ToastStateContext } from 'react-aria-components';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   createToastQueue,
   Toast,
@@ -13,7 +13,7 @@ import {
   type ToastIntent,
   type ToastRegionProps,
   type VeliToastContent,
-} from '@tradenetcorp/veli-ui/toast';
+} from '@veli-design/react/toast';
 
 const appearances: ToastAppearance[] = ['subtle', 'emphasis'];
 const intents: ToastIntent[] = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];

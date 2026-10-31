@@ -15,7 +15,7 @@ Aria or public component APIs.
 
 ```sh
 # In a fresh local checkout, build public entries for compound-part resolution.
-corepack pnpm --filter @tradenetcorp/veli-ui build
+corepack pnpm --filter @veli-design/react build
 corepack pnpm test:veli-lint
 corepack pnpm lint:veli
 ```
@@ -29,7 +29,7 @@ resolve consistently. The normal code-quality lint retains its existing rules.
 
 Keep styling lint separate from the existing `--max-warnings 0` invocation:
 review-level warnings must remain non-blocking. Existing implementation and build
-ignores are reused; `packages/ui/**` owns its internals and is excluded. Public
+ignores are reused; `packages/react/**` owns its internals and is excluded. Public
 examples and copied Blocks are checked, with reviewed local exceptions below.
 Astro templates, MDX/code snippets, CSS and plain JS files are outside this scan.
 
@@ -265,12 +265,11 @@ installation succeeded with a peer warning. The reviewed 2026-10-25 main baselin
 installed candidate fixtures with that pair pass `pnpm peers check`. Lint
 validation does not approve package publication or consumer runtime upgrades.
 
-As checked on 2026-10-25, [PR #291](https://github.com/tradenetcorp/veli/pull/291)
-is an unmerged draft proposing `@veli-design/react` and `packages/react`. This
-policy still targets the current `@tradenetcorp/veli-ui` public imports. Coordinate
-the import matchers, test package paths, implementation exclusions and setup docs
-with that rename, then repeat installed-package checks; do not assume the draft's
-package names are already available on main.
+This branch's policy targets `@veli-design/react` public imports and excludes
+`packages/react/**` implementation files. Import matchers, test package paths,
+implementation exclusions and setup commands use the same names. Historical
+investigation excerpts above retain their original version context; package
+publication and consumer upgrades remain separate from lint validation.
 
 - Descendant selectors can bypass a root allowance: `[&_input]:w-full` can pass.
   Parent selectors, `*:`/`**:`, CSS files and ancestor variables are not traced to

@@ -1,8 +1,19 @@
 # @tradenetcorp/veli-storybook
 
 The local component workbench for the Veli Design System. It renders the
-components from [`@tradenetcorp/veli-ui`](../../packages/ui) with the shared
-styles and design tokens from [`@tradenetcorp/veli-tokens`](../../packages/tokens).
+components from [`@veli-design/react`](../../packages/react) with the shared
+styles and design tokens from [`@veli-design/tokens`](../../packages/tokens).
+
+## Package names
+
+Stories, docs snippets and help examples use `@veli-design/react` and
+`@veli-design/tokens`. Their public npm publication is gated by the
+release prerequisites. Existing applications must migrate dependencies,
+imports and copied Blocks together against the matching registry; see the
+[migration runbook](../../docs/NPM_MIGRATION.md).
+
+The React source directory is `packages/react`. `@tradenetcorp/veli-storybook`
+remains the private workbench workspace name and is not an npm consumer package.
 
 ## Prerequisites
 

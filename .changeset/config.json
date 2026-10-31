@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["@tradenetcorp/veli-web", "@tradenetcorp/veli-storybook", "@tradenetcorp/veli-blocks"],

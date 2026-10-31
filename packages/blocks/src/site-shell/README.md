@@ -1,29 +1,29 @@
 ## Core package baseline
 
-Version 0.3.0 targets tokens 0.10.x. Install the applicable new core versions
+Version 0.5.0 targets tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-This experimental block is editable source for internal teams with access to Veli's restricted GitHub Packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
+This experimental block is editable source for applications using Veli's public npm packages. Install tokens and primitives through the existing [Veli setup guide](/docs/). Do not install the private blocks workspace.
 
 `SiteShell` is the page frame only: raised viewport column, rounded main surface, and overlay chrome fade. Applications own the site header, footer, session, search palette, routing, draft-mode notices, translations, and persistence. Compose the [site-header](/blocks/site-header/), [site-footer](/blocks/site-footer/), and [preview-banner](/blocks/preview-banner/) blocks (or your own equivalents) through the `header`, `footer`, and `notices` slots.
 
 ## Installation
 
-Configure `@tradenetcorp:registry=https://npm.pkg.github.com` and use your existing package-read credentials. Never commit credentials.
+Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
-corepack pnpm add react@19.2.6 react-dom@19.2.6 motion@12.42.2 @tradenetcorp/veli-tokens@0.10.0
+corepack pnpm add react@19.2.6 react-dom@19.2.6 motion@12.42.2 @veli-design/tokens@0.11.0
 ```
 
 Use Tailwind 4 with your framework's integration. In your global stylesheet:
 
 ```css
 @import 'tailwindcss';
-@import '@tradenetcorp/veli-tokens/tailwind';
+@import '@veli-design/tokens/tailwind';
 ```
 
 The composed header, footer, and preview banner blocks list their own Veli UI requirements.
@@ -31,9 +31,9 @@ The composed header, footer, and preview banner blocks list their own Veli UI re
 Initialize Veli Blocks and add the shell (and usually the preview banner):
 
 ```sh
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add site-shell
-corepack pnpm dlx @tradenetcorp/veli add preview-banner
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add site-shell
+corepack pnpm dlx @veli-design/cli add preview-banner
 ```
 
 The CLI copies the inventory into the configured Blocks directory and retains originals under `.veli/blocks/site-shell/`. Import the editable working copy directly and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.

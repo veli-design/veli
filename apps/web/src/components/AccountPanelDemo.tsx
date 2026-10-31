@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AccountPanel } from '@tradenetcorp/veli-blocks/account-panel';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function AccountPanelDemo() {
   const [open, setOpen] = useState(false);

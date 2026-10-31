@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const app = process.argv[2];
+assert.ok(['web', 'storybook'].includes(app), 'Expected web or storybook');
+const root = fileURLToPath(new URL('../', import.meta.url));
+const appRoot = resolve(root, 'apps', app);
+const require = createRequire(resolve(appRoot, 'package.json'));
+const upstreamRoot = dirname(dirname(require.resolve('@phosphor-icons/react')));
+const manifest = JSON.parse(await readFile(resolve(upstreamRoot, 'package.json'), 'utf8'));
+assert.equal(manifest.name, '@phosphor-icons/react');
+assert.equal(manifest.license, 'MIT');
+const notice = await readFile(resolve(upstreamRoot, 'LICENSE'));
+assert.match(notice.toString(), /MIT License/);
+assert.match(notice.toString(), /Copyright.*Phosphor Icons/);
+const destination = resolve(appRoot, 'public/third-party/PHOSPHOR-LICENSE.txt');
+await mkdir(dirname(destination), { recursive: true });
+await writeFile(destination, notice);
+console.log(`Staged ${manifest.name}@${manifest.version} MIT notice for ${app}`);

@@ -1,8 +1,8 @@
 import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Avatar, type AvatarAppearance, type AvatarSize } from '@tradenetcorp/veli-ui/avatar';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Avatar, type AvatarAppearance, type AvatarSize } from '@veli-design/react/avatar';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const appearances: AvatarAppearance[] = [
   'blue',

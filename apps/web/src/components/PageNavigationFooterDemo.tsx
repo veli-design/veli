@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PageNavigationFooter } from '@tradenetcorp/veli-blocks/page-navigation-footer';
 import { pageNavigationFooterContent } from '@tradenetcorp/veli-blocks/examples/page-navigation-footer-content';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function PageNavigationFooterDemo() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');

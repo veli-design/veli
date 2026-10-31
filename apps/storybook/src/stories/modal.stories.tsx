@@ -1,8 +1,8 @@
 import { type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { Modal } from '@veli-design/react/modal';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const enModalText = {
   openModal: 'Open modal',

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 
 export function CreateHelp() {
   return (

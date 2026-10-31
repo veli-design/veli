@@ -1,5 +1,5 @@
-import { Table } from '@tradenetcorp/veli-ui/table';
-import { Tabs } from '@tradenetcorp/veli-ui/tabs';
+import { Table } from '@veli-design/react/table';
+import { Tabs } from '@veli-design/react/tabs';
 
 const applications = [
   { id: 'a1', name: 'Building permit', status: 'In review' },

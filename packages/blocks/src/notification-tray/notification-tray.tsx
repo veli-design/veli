@@ -2,10 +2,10 @@
 
 import { useRef, useState, useSyncExternalStore, type ReactElement } from 'react';
 import { BellSimpleIcon } from '@phosphor-icons/react';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { Popover, PopoverDialog, PopoverTrigger } from '@tradenetcorp/veli-ui/popover';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import { Modal } from '@veli-design/react/modal';
+import { Popover, PopoverDialog, PopoverTrigger } from '@veli-design/react/popover';
 import {
   NotificationTrayContent,
   notificationTrayLabels,

@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.3.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.5.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -14,12 +14,12 @@ An experimental composition of Veli typography and links with artwork from Basim
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @tradenetcorp/veli-ui@0.17.0 @tradenetcorp/veli-tokens@0.10.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.19.0 motion@12.42.2
-corepack pnpm dlx @tradenetcorp/veli init
-corepack pnpm dlx @tradenetcorp/veli add error-page
+corepack pnpm add @veli-design/react@0.18.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0 motion@12.42.2
+corepack pnpm dlx @veli-design/cli init
+corepack pnpm dlx @veli-design/cli add error-page
 ```
 
-Import the copied `error-page.tsx` directly. Use Tailwind 4 and import `tailwindcss`, `@tradenetcorp/veli-tokens/tailwind` and `@tradenetcorp/veli-ui/tailwind` in your global stylesheet. Add an explicit `@source` if copied files are outside Tailwind’s source tree. Keep every artwork module listed in the manifest; no JSON-module compiler setting or runtime font sampling is needed.
+Import the copied `error-page.tsx` directly. Use Tailwind 4 and import `tailwindcss`, `@veli-design/tokens/tailwind` and `@veli-design/react/tailwind` in your global stylesheet. Add an explicit `@source` if copied files are outside Tailwind’s source tree. Keep every artwork module listed in the manifest; no JSON-module compiler setting or runtime font sampling is needed.
 
 Wrap the application in `VeliProvider` and follow the [provider guide](/docs/provider/) for language, direction, fonts and theme initialization. The block inherits `en`/`dv` and light/dark/system behavior without changing document attributes or saving preferences.
 

@@ -3,7 +3,7 @@ import { SunIcon, MoonIcon, MonitorIcon } from '@phosphor-icons/react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { AccountPanel, type AccountPanelProps } from '@tradenetcorp/veli-blocks/account-panel';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const labels = {
   trigger: 'Open account panel',

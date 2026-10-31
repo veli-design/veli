@@ -20,14 +20,14 @@
     "eval:agent:prepare": "node evals/agent/prepare.mjs",
     "eval:agent:matrix": "node evals/agent/matrix.mjs",
     "check:agent-sidecar-drift": "node scripts/check-agent-sidecar-drift.mjs",
-    "test:ui": "pnpm --filter @tradenetcorp/veli-ui test",
+    "test:ui": "pnpm --filter @veli-design/react test",
     "version-packages": "node scripts/version-packages.mjs",
     "release": "node scripts/publish-packages.mjs",
     "prepare": "husky",
     "test:blocks": "corepack pnpm --filter @tradenetcorp/veli-blocks test",
     "test:blocks:consumer": "corepack pnpm --filter @tradenetcorp/veli-blocks test:consumer",
-    "test:cli": "corepack pnpm --filter @tradenetcorp/veli test",
-    "test:tokens": "corepack pnpm --filter @tradenetcorp/veli-tokens test",
+    "test:cli": "corepack pnpm --filter @veli-design/cli test",
+    "test:tokens": "corepack pnpm --filter @veli-design/tokens test",
     "lint:veli": "eslint --config eslint.veli.config.mjs --no-warn-ignored apps packages/blocks/src",
     "test:veli-lint": "node --test scripts/lint/*.test.mjs"
   },
@@ -68,5 +68,19 @@
   "packageManager": "pnpm@11.18.0",
   "engines": {
     "node": ">=24"
-  }
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "directory": "."
+  },
+  "homepage": "https://github.com/tradenetcorp/veli#readme",
+  "bugs": {
+    "url": "https://github.com/tradenetcorp/veli/issues"
+  },
+  "keywords": [
+    "veli",
+    "design-system"
+  ]
 }

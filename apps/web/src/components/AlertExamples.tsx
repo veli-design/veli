@@ -4,13 +4,9 @@ import {
   type AlertAppearance,
   type AlertIntent,
   type AlertLayout,
-} from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import {
-  VeliProvider,
-  useVeliLanguage,
-  type VeliColorScheme,
-} from '@tradenetcorp/veli-ui/provider';
+} from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider, useVeliLanguage, type VeliColorScheme } from '@veli-design/react/provider';
 import {
   CheckCircleIcon,
   InfoIcon,

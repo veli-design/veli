@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage } from '@veli-design/react/provider';
 import {
   Tag,
   TagButton,
@@ -10,8 +10,8 @@ import {
   TagGroup,
   type TagGroupProps,
   type TagSize,
-} from '@tradenetcorp/veli-ui/tags';
-import { MenuItem } from '@tradenetcorp/veli-ui/menu';
+} from '@veli-design/react/tags';
+import { MenuItem } from '@veli-design/react/menu';
 import type { Selection } from 'react-aria-components';
 import { UserIcon } from '@phosphor-icons/react';
 

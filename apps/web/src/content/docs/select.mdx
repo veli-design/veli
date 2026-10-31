@@ -17,7 +17,7 @@ Use Select to choose one value from a short, known list. For long or searchable 
 ## Import
 
 ```tsx
-import { Select, SelectItem, SelectSection } from '@tradenetcorp/veli-ui/select';
+import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ Control the selection with `value` and `onChange`. With React Hook Form, pass `r
 Select has no `isReadOnly`. When a chosen option must stay visible but locked, show the option label in a read-only [Input](/docs/input/) and submit the option id separately. Leave `name` off the Input so the label is not the form payload. A disabled Select is the wrong stand-in: it reads as unavailable and is omitted from native form submission.
 
 ```tsx
-import { Input } from '@tradenetcorp/veli-ui/input';
+import { Input } from '@veli-design/react/input';
 
 const atoll = { id: '26', name: 'Kaafu Atoll' };
 

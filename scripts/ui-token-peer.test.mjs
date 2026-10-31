@@ -5,7 +5,7 @@ import test from 'node:test';
 import getReleasePlan from '@changesets/get-release-plan';
 import { assertCompatibleTokensPeer } from './ui-token-peer.mjs';
 
-const uiPackage = { peerDependencies: { '@tradenetcorp/veli-tokens': '^0.9.0' } };
+const uiPackage = { peerDependencies: { '@veli-design/tokens': '^0.9.0' } };
 
 test('tokens peer accepts its supported minimum and compatible patch releases', () => {
   for (const version of ['0.9.0', '0.9.1', '0.9.7'])
@@ -21,10 +21,7 @@ test('tokens peer requires present, nonempty and valid range metadata', () => {
   for (const range of [undefined, null, '', ' ', 'workspace:*', 'invalid', 42, {}])
     assert.throws(
       () =>
-        assertCompatibleTokensPeer(
-          { peerDependencies: { '@tradenetcorp/veli-tokens': range } },
-          '0.9.1',
-        ),
+        assertCompatibleTokensPeer({ peerDependencies: { '@veli-design/tokens': range } }, '0.9.1'),
       /must declare a valid .* peer range/,
     );
   for (const metadata of [undefined, null, {}, { peerDependencies: {} }])
@@ -38,7 +35,7 @@ test('tokens peer requires valid exact package version metadata', () => {
 
 test('planned tokens release satisfies the UI peer before package versioning', async () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
-  const ui = JSON.parse(await readFile(new URL('../packages/ui/package.json', import.meta.url)));
+  const ui = JSON.parse(await readFile(new URL('../packages/react/package.json', import.meta.url)));
   const tokens = JSON.parse(
     await readFile(new URL('../packages/tokens/package.json', import.meta.url)),
   );
@@ -49,7 +46,7 @@ test('planned tokens release satisfies the UI peer before package versioning', a
 });
 
 test('UI requires tokens with Tag and high-contrast Button colors', async () => {
-  const ui = JSON.parse(await readFile(new URL('../packages/ui/package.json', import.meta.url)));
+  const ui = JSON.parse(await readFile(new URL('../packages/react/package.json', import.meta.url)));
   for (const version of ['0.9.0', '0.9.99', '0.10.0', '0.10.99', '0.11.0-rc.0', '0.12.0'])
     assert.throws(() => assertCompatibleTokensPeer(ui, version), /must satisfy UI peer/);
   for (const version of ['0.11.0', '0.11.1', '0.11.99'])

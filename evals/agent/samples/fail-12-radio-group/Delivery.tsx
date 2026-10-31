@@ -1,6 +1,6 @@
 'use client';
 
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
 
 export function DeliveryMethod() {
   return (

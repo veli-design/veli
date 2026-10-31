@@ -16,9 +16,15 @@ import {
   Heading,
   Popover,
 } from 'react-aria-components';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
-import { CaretRightIcon, ShareIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage, useVeliColorScheme } from '@veli-design/react/provider';
+import {
+  CaretRightIcon,
+  ListBulletsIcon,
+  ShareIcon,
+  SparkleIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import type { ServiceDetailProps, ServiceGuideline } from './types';
 import { DialogSurface } from './dialog-surface';
 
@@ -310,9 +316,11 @@ function GuidelineContentView({
             {tocOpen ? (
               <XIcon aria-hidden className="veli-service-detail-toc-icon" />
             ) : (
-              <span
+              <ListBulletsIcon
+                weight="bold"
                 aria-hidden
-                className="veli-service-detail-toc-icon veli-service-detail-art-list-bullets"
+                focusable="false"
+                className="veli-service-detail-toc-icon"
               />
             )}
           </Button>

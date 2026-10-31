@@ -1,3 +1,15 @@
+## 0.5.0
+
+### Changed
+
+- Support the verified public package baseline: @veli-design/react@^0.18.0, react-aria-components@^1.22.0, @veli-design/tokens@^0.11.0. The copied-source rendering API is unchanged.
+
+## 0.4.0
+
+### Changed
+
+- Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
 ## 0.3.0
 
 ### Changed

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import NextLink from 'next/link';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
 import { ErrorPage, type ErrorPageKind } from '../../components/blocks/error-page/error-page';
 import { PageNavigationFooter } from '../../components/blocks/page-navigation-footer/page-navigation-footer';
 import { SiteFooter } from '../../components/blocks/site-footer/site-footer';

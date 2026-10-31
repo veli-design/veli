@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
-import { Sheet, type SheetProps } from '@tradenetcorp/veli-ui/sheet';
+import { Button } from '@veli-design/react/button';
+import { FieldLabel } from '@veli-design/react/field';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
+import { Sheet, type SheetProps } from '@veli-design/react/sheet';
 import {
   ApplicationSummary,
   PreparationGuide,
@@ -108,8 +108,8 @@ function BasicExample({
 
 // Static usage samples intentionally omit the demo layout and localized copy.
 function basicUsage(props: string, content = '<p>Your application summary goes here.</p>') {
-  return `import { Button } from '@tradenetcorp/veli-ui/button';
-import { Sheet } from '@tradenetcorp/veli-ui/sheet';
+  return `import { Button } from '@veli-design/react/button';
+import { Sheet } from '@veli-design/react/sheet';
 
 <Sheet.Trigger>
   <Button>Open sheet</Button>
@@ -121,10 +121,10 @@ import { Sheet } from '@tradenetcorp/veli-ui/sheet';
 
 function filterUsage(props: string, showReset = false) {
   return `import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
-import { Sheet } from '@tradenetcorp/veli-ui/sheet';
+import { Button } from '@veli-design/react/button';
+import { FieldLabel } from '@veli-design/react/field';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
+import { Sheet } from '@veli-design/react/sheet';
 
 export function ServiceFilters() {
   const [filter, setFilter] = useState('all');

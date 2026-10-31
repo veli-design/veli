@@ -1,7 +1,7 @@
 'use client';
 
-import { Card } from '@tradenetcorp/veli-ui/card';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Card } from '@veli-design/react/card';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export function Services() {
   return (

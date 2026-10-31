@@ -97,8 +97,8 @@ if (existsSync(target)) {
   process.exit(1);
 }
 
-await run('corepack', ['pnpm', '--filter', '@tradenetcorp/veli-tokens', 'build'], repoDir);
-await run('corepack', ['pnpm', '--filter', '@tradenetcorp/veli-ui', 'build'], repoDir);
+await run('corepack', ['pnpm', '--filter', '@veli-design/tokens', 'build'], repoDir);
+await run('corepack', ['pnpm', '--filter', '@veli-design/react', 'build'], repoDir);
 
 mkdirSync(target, { recursive: true });
 cpSync(fixtureTemplate, target, {
@@ -109,7 +109,7 @@ mkdirSync(path.join(target, 'vendor'), { recursive: true });
 
 const uiTarball = path.join(target, 'vendor/veli-ui.tgz');
 const tokensTarball = path.join(target, 'vendor/veli-tokens.tgz');
-await packWorkspacePackage(path.join(repoDir, 'packages/ui'), uiTarball);
+await packWorkspacePackage(path.join(repoDir, 'packages/react'), uiTarball);
 await packWorkspacePackage(path.join(repoDir, 'packages/tokens'), tokensTarball);
 
 if (condition === 'baseline') {
@@ -119,8 +119,8 @@ if (condition === 'baseline') {
 if (bare) {
   const manifestPath = path.join(target, 'package.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  delete manifest.dependencies['@tradenetcorp/veli-ui'];
-  delete manifest.dependencies['@tradenetcorp/veli-tokens'];
+  delete manifest.dependencies['@veli-design/react'];
+  delete manifest.dependencies['@veli-design/tokens'];
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   writeFileSync(path.join(target, 'src/styles.css'), "@import 'tailwindcss';\n");
 }

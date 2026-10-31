@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { SignOutIcon } from '@phosphor-icons/react';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
 
 export type PreviewBannerNotice = {
   id: string;

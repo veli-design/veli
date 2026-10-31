@@ -1,0 +1,240 @@
+/* Tailwind v4: register this package's built files for class detection.
+   In the app: @import "@veli-design/react/tailwind"; */
+@source "./dist";
+
+/* Snapshot pseudos inherit from the document, not the original Toast element. */
+::view-transition-new(.toast-from-left),
+::view-transition-old(.toast-from-left) {
+  --toast-enter-x: -100%;
+  --toast-exit-x: -100%;
+  --toast-enter-y: 0;
+  --toast-exit-y: 0;
+}
+
+::view-transition-new(.toast-from-right),
+::view-transition-old(.toast-from-right) {
+  --toast-enter-x: 100%;
+  --toast-exit-x: 100%;
+  --toast-enter-y: 0;
+  --toast-exit-y: 0;
+}
+
+::view-transition-new(.toast-from-top),
+::view-transition-old(.toast-from-top) {
+  --toast-enter-x: 0;
+  --toast-exit-x: 0;
+  --toast-enter-y: -100%;
+  --toast-exit-y: -100%;
+}
+
+::view-transition-new(.toast-from-bottom),
+::view-transition-old(.toast-from-bottom) {
+  --toast-enter-x: 0;
+  --toast-exit-x: 0;
+  --toast-enter-y: 100%;
+  --toast-exit-y: 100%;
+}
+
+.veli-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    light-dark(
+      color-mix(in srgb, var(--veli-color-white) 65%, transparent),
+      color-mix(in srgb, var(--veli-color-white) 8%, transparent)
+    ),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: veli-skeleton-sweep 2000ms var(--veli-ease-linear, linear) infinite;
+}
+
+.veli-skeleton:dir(rtl)::after {
+  animation-name: veli-skeleton-sweep-rtl;
+}
+
+/* Sweep for 1500ms, then hold fully outside the clip for 500ms. */
+@keyframes veli-skeleton-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  75%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes veli-skeleton-sweep-rtl {
+  0% {
+    transform: translateX(100%);
+  }
+  75%,
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veli-skeleton::after,
+  .veli-skeleton:dir(rtl)::after {
+    animation: none;
+    background: none;
+  }
+}
+
+::view-transition-new(.toast):only-child {
+  animation: toast-enter 400ms ease;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: toast-exit 400ms ease forwards;
+}
+
+@keyframes toast-enter {
+  from {
+    translate: var(--toast-enter-x, 100%) var(--toast-enter-y, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes toast-exit {
+  to {
+    translate: var(--toast-exit-x, 100%) var(--toast-exit-y, 0);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Queue updates remain immediate when users reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(.toast),
+  ::view-transition-old(.toast) {
+    animation: none;
+  }
+}
+
+/* Settling text: supplied 1600ms drift followed by staggered grain lift/settle. */
+.veli-loading-text {
+  --veli-loading-loop: 1600ms;
+  --veli-loading-rest: var(--veli-color-text-base-muted);
+  --veli-loading-lit: var(--veli-color-text-primary-strong);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+}
+.veli-loading-text__label {
+  min-inline-size: 0;
+  color: var(--veli-loading-rest);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .veli-loading-text__label {
+    background: linear-gradient(
+        90deg,
+        var(--veli-loading-rest) 44%,
+        var(--veli-loading-lit) 50%,
+        var(--veli-loading-rest) 56%
+      )
+      100% 0 / 300% 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: veli-loading-drift var(--veli-loading-loop) linear infinite;
+  }
+}
+.veli-loading-text:dir(rtl) .veli-loading-text__label {
+  animation-direction: reverse;
+}
+@keyframes veli-loading-drift {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.veli-loading-text__grains {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 0.16em;
+}
+.veli-loading-text__grain {
+  inline-size: 0.2em;
+  block-size: 0.2em;
+  border-radius: 50%;
+  background: var(--veli-loading-lit);
+  animation: veli-loading-settle var(--veli-loading-loop) cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  animation-delay: -480ms;
+}
+.veli-loading-text__grain:nth-child(2) {
+  animation-delay: -380ms;
+}
+.veli-loading-text__grain:nth-child(3) {
+  animation-delay: -280ms;
+}
+@keyframes veli-loading-settle {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.8);
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(-0.18em) scale(1);
+  }
+  22% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  55%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(0.8);
+  }
+}
+@keyframes veli-loading-breathe {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .veli-loading-text__label {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+  .veli-loading-text__grain {
+    animation: veli-loading-breathe 1600ms ease-in-out infinite alternate;
+    animation-delay: 0s;
+  }
+}
+
+/* Native scroll snapping supplies Sheet motion and honours reduced motion.
+   Normally the body scrolls; the dialog also scrolls when its chrome cannot fit. */
+@keyframes veli-sheet-scrim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Keep the scrim steady where native swipe timelines are unavailable. */
+@supports not (animation-timeline: view()) {
+  .veli-sheet-backdrop {
+    animation: none !important;
+  }
+}
+
+/* Native scroll padding and safe areas are shared by every placement and direction. */
+.veli-sheet-content {
+  padding-block-end: max(env(safe-area-inset-bottom), var(--sheet-scroll-padding-y));
+  padding-left: env(safe-area-inset-left);
+  padding-right: max(env(safe-area-inset-right), var(--sheet-scroll-padding-x));
+}

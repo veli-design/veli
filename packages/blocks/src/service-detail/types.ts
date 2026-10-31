@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { LinkProps } from '@tradenetcorp/veli-ui/link';
+import type { LinkProps } from '@veli-design/react/link';
 
 export type ServiceAction = {
   id: string;

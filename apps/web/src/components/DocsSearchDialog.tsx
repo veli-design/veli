@@ -8,12 +8,12 @@ import {
   CircleNotchIcon,
   MagnifyingGlassIcon,
 } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Divider } from '@tradenetcorp/veli-ui/divider';
-import { Kbd } from '@tradenetcorp/veli-ui/kbd';
-import { Menu, MenuItem } from '@tradenetcorp/veli-ui/menu';
-import { Modal } from '@tradenetcorp/veli-ui/modal';
-import { Search } from '@tradenetcorp/veli-ui/search';
+import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
+import { Kbd } from '@veli-design/react/kbd';
+import { Menu, MenuItem } from '@veli-design/react/menu';
+import { Modal } from '@veli-design/react/modal';
+import { Search } from '@veli-design/react/search';
 import type { DocsSearchItem } from '../lib/docs-search';
 
 type DocsSearchDialogProps = {

@@ -2,10 +2,10 @@ import { useEffect, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
-import { Checkbox, CheckboxGroup } from '@tradenetcorp/veli-ui/checkbox';
-import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { Checkbox, CheckboxGroup } from '@veli-design/react/checkbox';
+import { FieldDescription, FieldError, FieldLabel } from '@veli-design/react/field';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 

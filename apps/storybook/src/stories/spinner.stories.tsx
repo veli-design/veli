@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Spinner } from '@tradenetcorp/veli-ui/spinner';
+import { Button } from '@veli-design/react/button';
+import { Spinner } from '@veli-design/react/spinner';
 
 const meta = {
   title: 'Components/Spinner',

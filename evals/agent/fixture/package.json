@@ -6,8 +6,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@tradenetcorp/veli-tokens": "file:./vendor/veli-tokens.tgz",
-    "@tradenetcorp/veli-ui": "file:./vendor/veli-ui.tgz",
+    "@veli-design/tokens": "file:./vendor/veli-tokens.tgz",
+    "@veli-design/react": "file:./vendor/veli-ui.tgz",
     "react": "^19.0.0",
     "react-aria-components": "^1.18.0",
     "react-dom": "^19.0.0",
@@ -22,5 +22,6 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.0"
-  }
+  },
+  "license": "MIT"
 }

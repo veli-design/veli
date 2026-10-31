@@ -4,9 +4,9 @@ import { resolve } from 'node:path';
 /** @param {string} target */
 export async function tokenFixture(target) {
   const consumerRequire = createRequire(resolve(target, 'package.json'));
-  const tokenPath = consumerRequire.resolve('@tradenetcorp/veli-tokens/css');
+  const tokenPath = consumerRequire.resolve('@veli-design/tokens/css');
   const css = readFileSync(tokenPath, 'utf8');
-  const theme = readFileSync(consumerRequire.resolve('@tradenetcorp/veli-tokens/tailwind'), 'utf8');
+  const theme = readFileSync(consumerRequire.resolve('@veli-design/tokens/tailwind'), 'utf8');
   const { compile } = consumerRequire('tailwindcss');
   const compiler = await compile(
     theme.replace("@import './tokens.css';", '') + '\n@tailwind utilities;',

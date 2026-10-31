@@ -44,10 +44,11 @@ branch commits do not need to follow this format because they are squashed away.
 
 ## Releases
 
-Package releases are managed by Changesets. Feature PRs that change published
-packages should include a `.changeset/*.md` file. When that PR merges to `main`,
-the release workflow opens a version PR. Merging the version PR publishes the
-packages to GitHub Packages.
+Package releases use Changesets. Feature PRs that change published packages
+include a `.changeset/*.md` file. The packages-first npm migration keeps release
+execution manual and gated pending license, namespace, version/channel and
+registry-transition approvals. Merging a feature or version PR does not publish
+packages automatically. See [the migration runbook](NPM_MIGRATION.md).
 
-Do not publish package versions manually. If an accidental package version is
-published, delete the GitHub Package version before reusing that version number.
+Do not publish manually or assume an npm version can be deleted and reused.
+Public publication requires its own approval and verification step.

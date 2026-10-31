@@ -312,23 +312,34 @@ test('workflow keeps native approval, all release suites and publication orderin
   const ci = parse(read('../.github/workflows/ci.yml'));
   const release = parse(read('../.github/workflows/release.yml'));
   assert.deepEqual(Object.keys(ci.on), ['pull_request']);
-  assert.deepEqual(Object.keys(release.on), ['push']);
+  assert.deepEqual(Object.keys(release.on), ['workflow_dispatch']);
   const gate = ci.jobs['blocks-consumer'];
   assert.ok(gate.needs.includes('build'));
   const record = gate.steps.find((step) => step.run?.includes('release-ci.mjs stamp'));
   assert.equal(record.if, "needs.changes.outputs.release == 'true'");
   const publish = release.jobs.release;
   assert.equal(publish.permissions.actions, 'read');
+  assert.equal(publish.permissions['id-token'], 'write');
+  const trustIndex = publish.steps.findIndex(
+    (step) =>
+      step.env?.TRUSTED_PUBLISHING_READY === '${{ vars.VELI_NPM_TRUSTED_PUBLISHING_READY }}',
+  );
+  assert.ok(trustIndex >= 0);
+  assert.equal(publish.steps[trustIndex].if, "steps.plan.outputs.mode == 'publish'");
+  assert.equal(publish.steps[trustIndex].run, `test "$TRUSTED_PUBLISHING_READY" = 'true'`);
   const verifyIndex = publish.steps.findIndex((step) =>
     step.run?.includes('release-ci.mjs verify'),
   );
   const installIndex = publish.steps.findIndex((step) =>
     step.run?.includes('install --frozen-lockfile'),
   );
-  assert.ok(verifyIndex >= 0 && verifyIndex < installIndex);
+  assert.ok(trustIndex < verifyIndex && verifyIndex < installIndex);
   assert.ok(!publish.steps.some((step) => step.run === 'pnpm build'));
   const action = publish.steps.find((step) => step.uses === 'changesets/action@v1');
   assert.equal(action.env.GITHUB_TOKEN, '${{ secrets.GITHUB_TOKEN }}');
+  assert.equal(action.env.NPM_TOKEN, undefined);
+  assert.equal(action.env.NODE_AUTH_TOKEN, undefined);
+  assert.equal(action.env.NPM_CONFIG_PROVENANCE, false);
   assert.equal(
     action.with.publish,
     "${{ steps.plan.outputs.mode == 'publish' && 'corepack pnpm release' || '' }}",
@@ -351,5 +362,8 @@ test('workflow keeps native approval, all release suites and publication orderin
   assert.ok(
     publisher.indexOf('await verifyCurrentPublication()') < publisher.indexOf("await run(['pnpm'"),
   );
-  assert.equal(release.jobs['deploy-sites'].if, "needs.release.outputs.published == 'true'");
+  assert.equal(
+    release.jobs['deploy-sites'].if,
+    "needs.release.outputs.published == 'true' && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'",
+  );
 });

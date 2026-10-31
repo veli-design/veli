@@ -56,15 +56,15 @@ ${content
 }
 
 const alertImports = `import { InfoIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';
-import { Button } from '@tradenetcorp/veli-ui/button';`;
-const providerImport = `import { VeliProvider } from '@tradenetcorp/veli-ui/provider';`;
+import { Alert } from '@veli-design/react/alert';
+import { Button } from '@veli-design/react/button';`;
+const providerImport = `import { VeliProvider } from '@veli-design/react/provider';`;
 
 function alertAppearances(appearance) {
   return component(
     'AlertAppearancesDemo',
     `import { CheckCircleIcon, InfoIcon, WarningIcon, WarningCircleIcon, WarningOctagonIcon } from '@phosphor-icons/react';
-import { Alert } from '@tradenetcorp/veli-ui/alert';`,
+import { Alert } from '@veli-design/react/alert';`,
     `<div className="flex flex-col gap-4">
   {[
     { intent: 'neutral', Icon: InfoIcon },
@@ -121,7 +121,7 @@ function buttonLanguage(language) {
   return component(
     'ButtonLanguageDemo',
     `import { ${Arrow}, PlusIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
+import { Button } from '@veli-design/react/button';
 ${providerImport}`,
     `<VeliProvider language="${language}">
   <div className="flex flex-wrap items-center justify-center gap-3">
@@ -142,7 +142,7 @@ function linkLanguage(language) {
   return component(
     'LinkLanguageDemo',
     `import { ${Arrow} } from '@phosphor-icons/react';
-import { Link } from '@tradenetcorp/veli-ui/link';
+import { Link } from '@veli-design/react/link';
 ${providerImport}`,
     `<VeliProvider language="${language}">
   <Link href="/account" size="md">
@@ -155,7 +155,7 @@ ${providerImport}`,
 function switchLanguage(language) {
   return component(
     'SwitchLanguageDemo',
-    `import { Switch } from '@tradenetcorp/veli-ui/switch';\n${providerImport}`,
+    `import { Switch } from '@veli-design/react/switch';\n${providerImport}`,
     `<VeliProvider language="${language}">\n  <Switch>${language === 'dv' ? 'ނޯޓިފިކޭޝަންސް' : 'Notifications'}</Switch>\n</VeliProvider>`,
   );
 }
@@ -203,7 +203,7 @@ const accordionItems = {
 function accordionLanguage(language) {
   return component(
     'AccordionLanguageDemo',
-    `import { Accordion } from '@tradenetcorp/veli-ui/accordion';
+    `import { Accordion } from '@veli-design/react/accordion';
 ${providerImport}`,
     `<VeliProvider language="${language}">
   <Accordion
@@ -218,7 +218,7 @@ ${providerImport}`,
 function paginationExample(language, variant) {
   return component(
     'PaginationLanguageDemo',
-    `${variant === 'loadmore' ? "import { useState } from 'react';\n" : ''}import { Pagination } from '@tradenetcorp/veli-ui/pagination';\n${providerImport}`,
+    `${variant === 'loadmore' ? "import { useState } from 'react';\n" : ''}import { Pagination } from '@veli-design/react/pagination';\n${providerImport}`,
     `<VeliProvider language="${language}">
   <Pagination
     variant="${variant}"${
@@ -254,7 +254,7 @@ function comboBoxLanguage(language) {
       };
   return component(
     'ComboBoxLanguageDemo',
-    "import { ComboBox, ComboBoxItem } from '@tradenetcorp/veli-ui/combobox';",
+    "import { ComboBox, ComboBoxItem } from '@veli-design/react/combobox';",
     `<ComboBox
   lang="${language}"
   dir="${isDhivehi ? 'rtl' : 'ltr'}"
@@ -292,7 +292,7 @@ function tableLanguage(language) {
   return component(
     'TableRtlDemo',
     `import { useState } from 'react';
-import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
+import { Table, type Selection } from '@veli-design/react/table';
 ${providerImport}`,
     `<VeliProvider language="${language}">
   <Table aria-label="${dv ? 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް' : 'Permit applications'}" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} disabledKeys={['business']}>
@@ -320,7 +320,7 @@ export const previewCodeGroups = {
         `kbd-shortcut-${id}`,
         component(
           'KbdUsageDemo',
-          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          "import { Kbd, KbdGroup } from '@veli-design/react/kbd';",
           keys.length === 1
             ? `<Kbd>${keys[0]}</Kbd>`
             : `<KbdGroup dir="ltr" aria-label="${label}">\n${keys.map((key) => `  <Kbd>${key}</Kbd>`).join('\n')}\n</KbdGroup>`,
@@ -335,7 +335,7 @@ export const previewCodeGroups = {
         `kbd-variant-${variant}`,
         component(
           'KbdVariantsDemo',
-          "import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';",
+          "import { Kbd, KbdGroup } from '@veli-design/react/kbd';",
           `<KbdGroup variant="${variant}" dir="ltr" aria-label="Command Enter">\n  <Kbd>⌘</Kbd>\n  <Kbd>Enter</Kbd>\n</KbdGroup>`,
         ),
       ]),
@@ -347,7 +347,7 @@ export const previewCodeGroups = {
       component(
         'DatePickerLanguageDemo',
         `import { parseDate } from '@internationalized/date';
-import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+import { DatePicker } from '@veli-design/react/date-picker';
 ${providerImport}`,
         `<VeliProvider language="${language}">
   <DatePicker
@@ -367,7 +367,7 @@ ${providerImport}`,
         `calendar-state-${state.toLowerCase()}`,
         component(
           'CalendarStateDemo',
-          "import { parseDate } from '@internationalized/date';\nimport { Calendar } from '@tradenetcorp/veli-ui/calendar';",
+          "import { parseDate } from '@internationalized/date';\nimport { Calendar } from '@veli-design/react/calendar';",
           `<Calendar
   aria-label="Booking availability calendar"
   defaultValue={parseDate('2026-10-15')}${state === 'Constrained' ? "\n  minValue={parseDate('2026-10-12')}\n  maxValue={parseDate('2026-10-28')}" : ''}${state === 'Unavailable' ? '\n  isDateUnavailable={(date) => date.day === 16 || date.day === 23}' : ''}${state === 'Disabled' ? '\n  isDisabled' : ''}${state === 'Read only' ? '\n  isReadOnly' : ''}
@@ -382,7 +382,7 @@ ${providerImport}`,
       component(
         'CalendarLanguageDemo',
         `import { parseDate } from '@internationalized/date';
-import { RangeCalendar } from '@tradenetcorp/veli-ui/calendar';
+import { RangeCalendar } from '@veli-design/react/calendar';
 ${providerImport}`,
         `<VeliProvider language="${language}">
   <RangeCalendar

@@ -3,8 +3,8 @@
 import { useSyncExternalStore } from 'react';
 import { Button as AriaButton, Radio, RadioGroup, type Selection } from 'react-aria-components';
 import { CheckIcon, GlobeSimpleIcon, MonitorIcon, MoonIcon, SunIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@tradenetcorp/veli-ui/menu';
+import { Button } from '@veli-design/react/button';
+import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@veli-design/react/menu';
 
 export type SiteHeaderColorScheme = 'light' | 'dark' | 'system';
 export type SiteHeaderThemeOption = 'light' | 'dark' | 'auto';

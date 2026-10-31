@@ -1,7 +1,7 @@
 'use client';
 
-import { FieldDescription, FieldError, FieldLabel } from '@tradenetcorp/veli-ui/field';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { FieldDescription, FieldError, FieldLabel } from '@veli-design/react/field';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
 
 export function DeliveryMethod() {
   return (

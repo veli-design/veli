@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Checkbox } from '@tradenetcorp/veli-ui/checkbox';
+import { Button } from '@veli-design/react/button';
+import { Checkbox } from '@veli-design/react/checkbox';
 
 export function NotificationPreferences({
   onSave,

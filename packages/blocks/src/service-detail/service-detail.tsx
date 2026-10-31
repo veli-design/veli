@@ -1,10 +1,17 @@
 'use client';
 
 import { useId, useState, type ReactNode } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Link } from '@tradenetcorp/veli-ui/link';
-import { Alert, AlertDescription, AlertTitle } from '@tradenetcorp/veli-ui/alert';
-import { InfoIcon } from '@phosphor-icons/react';
+import { Button } from '@veli-design/react/button';
+import { Link } from '@veli-design/react/link';
+import { Alert, AlertDescription, AlertTitle } from '@veli-design/react/alert';
+import {
+  HandCoinsIcon,
+  HandDepositIcon,
+  HourglassMediumIcon,
+  InfoIcon,
+  ListNumbersIcon,
+  NotePencilIcon,
+} from '@phosphor-icons/react';
 import { GuidelineSheet } from './guideline-sheet';
 import { ApplyingInfoDialog } from './applying-info-dialog';
 import type { ServiceAction, ServiceDetailProps } from './types';
@@ -92,11 +99,33 @@ function DisplayText({ text }: { text: string }) {
     );
 }
 
-function Meta({ icon, label, children }: { icon: string; label: string; children: ReactNode }) {
+const metadataIcons = {
+  'note-pencil': NotePencilIcon,
+  'hand-coins': HandCoinsIcon,
+  'hourglass-medium': HourglassMediumIcon,
+  'hand-deposit': HandDepositIcon,
+  'list-numbers': ListNumbersIcon,
+} as const;
+
+function Meta({
+  icon,
+  label,
+  children,
+}: {
+  icon: keyof typeof metadataIcons;
+  label: string;
+  children: ReactNode;
+}) {
+  const Icon = metadataIcons[icon];
   return (
     <div className="veli-service-detail-meta-item">
       <span aria-hidden className="veli-service-detail-meta-icon">
-        <span className={`veli-service-detail-meta-art veli-service-detail-art-${icon}`} />
+        <Icon
+          weight="fill"
+          aria-hidden
+          focusable="false"
+          className={`veli-service-detail-meta-art veli-service-detail-art-${icon}`}
+        />
       </span>
       <div className="veli-service-detail-meta-text">
         <dt className="veli-service-detail-meta-label">{label}</dt>

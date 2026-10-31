@@ -17,10 +17,10 @@ import {
   useReducedMotion,
   type Transition,
 } from 'motion/react';
-import { Avatar, type AvatarAppearance, type AvatarSize } from '@tradenetcorp/veli-ui/avatar';
-import { Badge } from '@tradenetcorp/veli-ui/badge';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import type { LinkProps } from '@tradenetcorp/veli-ui/link';
+import { Avatar, type AvatarAppearance, type AvatarSize } from '@veli-design/react/avatar';
+import { Badge } from '@veli-design/react/badge';
+import { Button } from '@veli-design/react/button';
+import type { LinkProps } from '@veli-design/react/link';
 
 const ROOT_NAME = 'SideNav';
 

@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { type DateValue, parseDate, parseDateTime } from '@internationalized/date';
-import { DatePicker, type DatePickerProps } from '@tradenetcorp/veli-ui/date-picker';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { DatePicker, type DatePickerProps } from '@veli-design/react/date-picker';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const collapsedControlGroups = ['Content', 'State'] as const;
 

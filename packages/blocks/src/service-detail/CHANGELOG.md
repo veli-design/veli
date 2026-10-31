@@ -1,3 +1,27 @@
+## 0.6.0
+
+### Changed
+
+- Support the verified public package baseline: @veli-design/react@^0.18.0, react-aria-components@^1.22.0, @veli-design/tokens@^0.11.0. The copied-source rendering API is unchanged.
+
+## 0.5.2
+
+### Fixed
+
+- Include the merged Dhivehi fee alignment and final-row separator fixes in the public-package source archive.
+
+## 0.5.1
+
+### Changed
+
+- Render decorative icons from the declared Phosphor library dependency instead of copied SVG files, preserving their weights and accessible semantics.
+
+## 0.5.0
+
+### Changed
+
+- Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
 ## 0.4.1
 
 ### Fixed

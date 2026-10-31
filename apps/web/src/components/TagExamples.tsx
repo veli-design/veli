@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Selection } from 'react-aria-components';
-import { MenuItem } from '@tradenetcorp/veli-ui/menu';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Tag, TagButton, TagDropdown, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { MenuItem } from '@veli-design/react/menu';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Tag, TagButton, TagDropdown, TagGroup } from '@veli-design/react/tags';
 
 const copy = {
   en: {

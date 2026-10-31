@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within, waitFor } from '@storybook/test';
-import { Kbd, KbdGroup } from '@tradenetcorp/veli-ui/kbd';
+import { Kbd, KbdGroup } from '@veli-design/react/kbd';
 import { useEffect, useRef } from 'react';
 import type { ComponentProps } from 'react';
 import { useArgs } from 'storybook/internal/preview-api';
 import { CopyIcon, TrashIcon } from '@phosphor-icons/react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Tooltip, TooltipTrigger } from '@tradenetcorp/veli-ui/tooltip';
+import { Button } from '@veli-design/react/button';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Tooltip, TooltipTrigger } from '@veli-design/react/tooltip';
 
 const TOOLTIP_PLACEMENTS = [
   'bottom',

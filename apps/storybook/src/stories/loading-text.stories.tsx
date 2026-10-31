@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LoadingText } from '@tradenetcorp/veli-ui/loading-text';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
+import { LoadingText } from '@veli-design/react/loading-text';
+import { useVeliLanguage } from '@veli-design/react/provider';
 
 const meta = {
   title: 'Components/Loading text',

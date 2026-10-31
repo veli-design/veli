@@ -1,4 +1,4 @@
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import { PreviewBanner } from '@tradenetcorp/veli-blocks/preview-banner';
 
 export function PreviewBannerDemo() {

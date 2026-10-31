@@ -1,0 +1,350 @@
+{
+  "$schema": "./manifest.schema.json",
+  "schemaVersion": 1,
+  "system": {
+    "name": "Veli Design System",
+    "framework": "React",
+    "language": "TypeScript",
+    "packages": {
+      "ui": "@veli-design/react",
+      "tokens": "@veli-design/tokens"
+    },
+    "supportedLanguages": ["en", "dv"]
+  },
+  "sources": {
+    "componentApi": "Published TypeScript declarations",
+    "tokens": "@veli-design/tokens/tokens",
+    "tailwind": "@veli-design/tokens/tailwind",
+    "css": "@veli-design/tokens/css"
+  },
+  "groups": [
+    {
+      "id": "actions-navigation",
+      "title": "Actions & navigation",
+      "components": [
+        {
+          "id": "button",
+          "name": "Button",
+          "summary": "Primary, secondary, danger, icon-only, and loading actions.",
+          "importPath": "@veli-design/react/button",
+          "declaration": "../dist/button.d.ts",
+          "metadata": "./components/button.json"
+        },
+        {
+          "id": "link",
+          "name": "Link",
+          "summary": "Accessible navigation with icon and typography inheritance guidance.",
+          "importPath": "@veli-design/react/link",
+          "declaration": "../dist/link.d.ts",
+          "metadata": "./components/link.json"
+        },
+        {
+          "id": "breadcrumbs",
+          "name": "Breadcrumbs",
+          "summary": "Hierarchical navigation for deep service surfaces.",
+          "importPath": "@veli-design/react/breadcrumbs",
+          "declaration": "../dist/breadcrumbs.d.ts",
+          "metadata": "./components/breadcrumbs.json"
+        },
+        {
+          "id": "pagination",
+          "name": "Pagination",
+          "summary": "Page navigation with compact and explicit variants.",
+          "importPath": "@veli-design/react/pagination",
+          "declaration": "../dist/pagination.d.ts",
+          "metadata": "./components/pagination.json"
+        },
+        {
+          "id": "menu",
+          "name": "Menu",
+          "summary": "Popover list of actions with icons, shortcuts, and submenus.",
+          "importPath": "@veli-design/react/menu",
+          "declaration": "../dist/menu.d.ts",
+          "metadata": "./components/menu.json"
+        },
+        {
+          "id": "tabs",
+          "name": "Tabs",
+          "summary": "Inline tabbed sections with optional overflow menu.",
+          "importPath": "@veli-design/react/tabs",
+          "declaration": "../dist/tabs.d.ts",
+          "metadata": "./components/tabs.json"
+        }
+      ]
+    },
+    {
+      "id": "forms",
+      "title": "Forms",
+      "components": [
+        {
+          "id": "field",
+          "name": "Field",
+          "summary": "Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.",
+          "importPath": "@veli-design/react/field",
+          "declaration": "../dist/field.d.ts",
+          "metadata": "./components/field.json"
+        },
+        {
+          "id": "input",
+          "name": "Input",
+          "summary": "Text fields with description, validation, and token styling.",
+          "importPath": "@veli-design/react/input",
+          "declaration": "../dist/input.d.ts",
+          "metadata": "./components/input.json"
+        },
+        {
+          "id": "textarea",
+          "name": "TextArea",
+          "summary": "Multi-line input with character counter and resize control.",
+          "importPath": "@veli-design/react/textarea",
+          "declaration": "../dist/textarea.d.ts",
+          "metadata": "./components/textarea.json"
+        },
+        {
+          "id": "password-input",
+          "name": "PasswordInput",
+          "summary": "Password entry with visibility toggle and requirement checklist.",
+          "importPath": "@veli-design/react/password-input",
+          "declaration": "../dist/password-input.d.ts",
+          "metadata": "./components/password-input.json"
+        },
+        {
+          "id": "search",
+          "name": "Search",
+          "summary": "Search field with leading icon and shared field shell.",
+          "importPath": "@veli-design/react/search",
+          "declaration": "../dist/search.d.ts",
+          "metadata": "./components/search.json"
+        },
+        {
+          "id": "dropzone",
+          "name": "Dropzone",
+          "summary": "Drag-and-drop and browse-to-upload file workflow.",
+          "importPath": "@veli-design/react/dropzone",
+          "declaration": "../dist/dropzone.d.ts",
+          "metadata": "./components/dropzone.json"
+        },
+        {
+          "id": "select",
+          "name": "Select",
+          "summary": "Accessible select menus for structured choices.",
+          "importPath": "@veli-design/react/select",
+          "declaration": "../dist/select.d.ts",
+          "metadata": "./components/select.json"
+        },
+        {
+          "id": "combobox",
+          "name": "ComboBox",
+          "summary": "Searchable selection with grouped options.",
+          "importPath": "@veli-design/react/combobox",
+          "declaration": "../dist/combobox.d.ts",
+          "metadata": "./components/combobox.json"
+        },
+        {
+          "id": "checkbox",
+          "name": "Checkbox",
+          "summary": "Boolean and indeterminate selection states.",
+          "importPath": "@veli-design/react/checkbox",
+          "declaration": "../dist/checkbox.d.ts",
+          "metadata": "./components/checkbox.json"
+        },
+        {
+          "id": "radio",
+          "name": "Radio",
+          "summary": "Single-choice groups with semantic geometry.",
+          "importPath": "@veli-design/react/radio",
+          "declaration": "../dist/radio.d.ts",
+          "metadata": "./components/radio.json"
+        },
+        {
+          "id": "switch",
+          "name": "Switch",
+          "summary": "Binary settings with clear selected and disabled states.",
+          "importPath": "@veli-design/react/switch",
+          "declaration": "../dist/switch.d.ts",
+          "metadata": "./components/switch.json"
+        }
+      ]
+    },
+    {
+      "id": "date-time",
+      "title": "Date & time",
+      "components": [
+        {
+          "id": "calendar",
+          "name": "Calendar",
+          "summary": "Standalone date and range selection surface.",
+          "importPath": "@veli-design/react/calendar",
+          "declaration": "../dist/calendar.d.ts",
+          "metadata": "./components/calendar.json"
+        },
+        {
+          "id": "date-field",
+          "name": "DateField",
+          "summary": "Segment-based date and time entry.",
+          "importPath": "@veli-design/react/date-field",
+          "declaration": "../dist/date-field.d.ts",
+          "metadata": "./components/date-field.json"
+        },
+        {
+          "id": "date-picker",
+          "name": "DatePicker",
+          "summary": "Date field trigger plus calendar popover composition.",
+          "importPath": "@veli-design/react/date-picker",
+          "declaration": "../dist/date-picker.d.ts",
+          "metadata": "./components/date-picker.json"
+        }
+      ]
+    },
+    {
+      "id": "structure-feedback",
+      "title": "Structure & feedback",
+      "components": [
+        {
+          "id": "accordion",
+          "name": "Accordion",
+          "summary": "Collapsible disclosure group for progressive content.",
+          "importPath": "@veli-design/react/accordion",
+          "declaration": "../dist/accordion.d.ts",
+          "metadata": "./components/accordion.json"
+        },
+        {
+          "id": "avatar",
+          "name": "Avatar",
+          "summary": "Person, agency, or service representation with initials, icon, or image.",
+          "importPath": "@veli-design/react/avatar",
+          "declaration": "../dist/avatar.d.ts",
+          "metadata": "./components/avatar.json"
+        },
+        {
+          "id": "badge",
+          "name": "Badge",
+          "summary": "Status and counter indicator with semantic intents.",
+          "importPath": "@veli-design/react/badge",
+          "declaration": "../dist/badge.d.ts",
+          "metadata": "./components/badge.json"
+        },
+        {
+          "id": "card",
+          "name": "Card",
+          "summary": "Raised surface container with header, content, and footer slots.",
+          "importPath": "@veli-design/react/card",
+          "declaration": "../dist/card.d.ts",
+          "metadata": "./components/card.json"
+        },
+        {
+          "id": "alert",
+          "name": "Alert",
+          "summary": "Inline status banners with semantic intents and dismiss actions.",
+          "importPath": "@veli-design/react/alert",
+          "declaration": "../dist/alert.d.ts",
+          "metadata": "./components/alert.json"
+        },
+        {
+          "id": "divider",
+          "name": "Divider",
+          "summary": "Content separation for page and component layouts.",
+          "importPath": "@veli-design/react/divider",
+          "declaration": "../dist/divider.d.ts",
+          "metadata": "./components/divider.json"
+        },
+        {
+          "id": "spinner",
+          "name": "Spinner",
+          "summary": "Indeterminate loading indicator for pending content and busy controls.",
+          "importPath": "@veli-design/react/spinner",
+          "declaration": "../dist/spinner.d.ts",
+          "metadata": "./components/spinner.json"
+        },
+        {
+          "id": "loading-text",
+          "name": "LoadingText",
+          "summary": "Settling pending label with decorative grains for indeterminate actions.",
+          "importPath": "@veli-design/react/loading-text",
+          "declaration": "../dist/loading-text.d.ts",
+          "metadata": "./components/loading-text.json"
+        },
+        {
+          "id": "skeleton",
+          "name": "Skeleton",
+          "summary": "Generic loading placeholder for composing loading states.",
+          "importPath": "@veli-design/react/skeleton",
+          "declaration": "../dist/skeleton.d.ts",
+          "metadata": "./components/skeleton.json"
+        },
+        {
+          "id": "kbd",
+          "name": "Kbd",
+          "summary": "Keyboard key and shortcut display for affordances.",
+          "importPath": "@veli-design/react/kbd",
+          "declaration": "../dist/kbd.d.ts",
+          "metadata": "./components/kbd.json"
+        },
+        {
+          "id": "modal",
+          "name": "Modal",
+          "summary": "Blocking dialog surfaces with dismissal and sizing guidance.",
+          "importPath": "@veli-design/react/modal",
+          "declaration": "../dist/modal.d.ts",
+          "metadata": "./components/modal.json"
+        },
+        {
+          "id": "sheet",
+          "name": "Sheet",
+          "summary": "Swipeable modal surfaces with logical edge placement and width presets.",
+          "importPath": "@veli-design/react/sheet",
+          "declaration": "../dist/sheet.d.ts",
+          "metadata": "./components/sheet.json"
+        },
+        {
+          "id": "popover",
+          "name": "Popover",
+          "summary": "Anchored interactive panel for contextual controls and rich content.",
+          "importPath": "@veli-design/react/popover",
+          "declaration": "../dist/popover.d.ts",
+          "metadata": "./components/popover.json"
+        },
+        {
+          "id": "table",
+          "name": "Table",
+          "summary": "Sortable, selectable data tables with Veli styling.",
+          "importPath": "@veli-design/react/table",
+          "declaration": "../dist/table.d.ts",
+          "metadata": "./components/table.json"
+        },
+        {
+          "id": "tags",
+          "name": "Tags",
+          "summary": "Tag groups for compact categorization, selection, and removal.",
+          "importPath": "@veli-design/react/tags",
+          "declaration": "../dist/tags.d.ts",
+          "metadata": "./components/tags.json"
+        },
+        {
+          "id": "toast",
+          "name": "Toast",
+          "summary": "Temporary notifications via a shared toast queue.",
+          "importPath": "@veli-design/react/toast",
+          "declaration": "../dist/toast.d.ts",
+          "metadata": "./components/toast.json"
+        },
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "summary": "Hover and focus help with sizes and tones.",
+          "importPath": "@veli-design/react/tooltip",
+          "declaration": "../dist/tooltip.d.ts",
+          "metadata": "./components/tooltip.json"
+        },
+        {
+          "id": "provider",
+          "name": "VeliProvider",
+          "summary": "Language, direction, and color-scheme runtime contract.",
+          "importPath": "@veli-design/react/provider",
+          "declaration": "../dist/provider.d.ts",
+          "metadata": "./components/provider.json"
+        }
+      ]
+    }
+  ]
+}

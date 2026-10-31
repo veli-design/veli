@@ -1,6 +1,6 @@
 'use client';
 
-import { Link, type LinkProps } from '@tradenetcorp/veli-ui/link';
+import { Link, type LinkProps } from '@veli-design/react/link';
 
 export type FooterLink = {
   id: string;

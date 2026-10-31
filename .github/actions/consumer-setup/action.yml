@@ -23,6 +23,6 @@ runs:
     - run: node scripts/consumer-ci.mjs verify "$RUNNER_TEMP/candidate"
       if: inputs.candidate-artifact-id != ''
       shell: bash
-    - run: echo "VELI_TARBALLS={\"@tradenetcorp/veli-ui\":\"$RUNNER_TEMP/candidate/ui.tgz\",\"@tradenetcorp/veli-tokens\":\"$RUNNER_TEMP/candidate/tokens.tgz\"}" >> "$GITHUB_ENV"
+    - run: echo "VELI_TARBALLS={\"@veli-design/react\":\"$RUNNER_TEMP/candidate/ui.tgz\",\"@veli-design/tokens\":\"$RUNNER_TEMP/candidate/tokens.tgz\"}" >> "$GITHUB_ENV"
       if: inputs.candidate-artifact-id != ''
       shell: bash

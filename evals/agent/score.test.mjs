@@ -48,7 +48,7 @@ test('DatePicker calendarButtonLabel is a public prop, not a forbidden API', asy
   const result = scoreSource({
     task: { ...task, sharedForbidSnippets: prompts.sharedForbidSnippets },
     codeSource: `
-      import { DatePicker } from '@tradenetcorp/veli-ui/date-picker';
+      import { DatePicker } from '@veli-design/react/date-picker';
       export function AppointmentForm() {
         return <DatePicker label="Appointment date" calendarButtonLabel="Choose date" />;
       }
@@ -133,8 +133,8 @@ test('raw palette utilities fail the token check', async () => {
   const result = scoreSource({
     task: { ...task, sharedForbidSnippets: prompts.sharedForbidSnippets },
     codeSource: `
-      import { Button } from '@tradenetcorp/veli-ui/button';
-      import { Link } from '@tradenetcorp/veli-ui/link';
+      import { Button } from '@veli-design/react/button';
+      import { Link } from '@veli-design/react/link';
       export function CreateHelp() {
         return (
           <div className="bg-blue-500 text-slate-700" style={{ color: '#ff0000' }}>
@@ -210,4 +210,16 @@ test('quote-style and breakpoint patterns still pass setup and rtl tasks', async
   assert.equal(setup.checks.requiredSnippets, true);
   const rtl = await scoreSample('pass-10-rtl', '10-rtl');
   assert.equal(rtl.mechanical, 1);
+});
+
+test('invented picker imports use the public React scope even without JSX', async () => {
+  const { prompts, allowedSlugs } = await loadEvalConfig();
+  const task = prompts.tasks.find((item) => item.id === '11-range');
+  const result = scoreSource({
+    task: { ...task, sharedForbidSnippets: prompts.sharedForbidSnippets },
+    codeSource: "import { DateRangePicker } from '@veli-design/react/date-picker';",
+    proseSource: '',
+    allowedSlugs,
+  });
+  assert.equal(result.inventedRange, true);
 });

@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, type ComponentProps } from 'react';
 import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
 import { useArgs } from 'storybook/internal/preview-api';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Switch } from '@tradenetcorp/veli-ui/switch';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Switch } from '@veli-design/react/switch';
 
 const localizedText = {
   en: {

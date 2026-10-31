@@ -12,7 +12,7 @@ so consumers can compare upstream changes with their customized copy. See
 lifecycle statuses.
 
 Veli Web publishes the authenticated catalog and immutable, content-addressed
-archives under `/api/blocks/v1`. The `@tradenetcorp/veli` CLI validates the
+archives under `/api/blocks/v1`. The `@veli-design/cli` CLI validates the
 catalog, archive, receipt, and individual file hashes before placing editable
 source in an application-selected directory. It retains canonical originals in
 `.veli/blocks/<id>` and uses them as the base for three-way updates.

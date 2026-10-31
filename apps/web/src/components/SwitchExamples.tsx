@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { I18nProvider } from 'react-aria-components';
-import { Switch } from '@tradenetcorp/veli-ui/switch';
+import { Switch } from '@veli-design/react/switch';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
 export function SwitchUsageDemo() {

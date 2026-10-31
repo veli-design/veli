@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from '@tradenetcorp/veli-ui/button';
-import { Input } from '@tradenetcorp/veli-ui/input';
-import { Skeleton } from '@tradenetcorp/veli-ui/skeleton';
+import { Button } from '@veli-design/react/button';
+import { Input } from '@veli-design/react/input';
+import { Skeleton } from '@veli-design/react/skeleton';
 
 type Profile = { fullName: string; email: string };
 

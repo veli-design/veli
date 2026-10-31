@@ -17,7 +17,7 @@ Use Tags for categories, filters, saved topics, and linked metadata. Compose `Ta
 ## Import
 
 ```tsx
-import { Tag, TagButton, TagDropdown, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { Tag, TagButton, TagDropdown, TagGroup } from '@veli-design/react/tags';
 ```
 
 ## Usage
@@ -71,7 +71,7 @@ Use `TagButton` for an action, or supply `isSelected` and update it in `onPress`
 
 ```tsx
 import { useState } from 'react';
-import { TagButton } from '@tradenetcorp/veli-ui/tags';
+import { TagButton } from '@veli-design/react/tags';
 
 function DocumentActions() {
   const [selected, setSelected] = useState(false);
@@ -100,8 +100,8 @@ Use `TagDropdown` when a selected filter has optional sub-labels. Your applicati
 ```tsx
 import { useState } from 'react';
 import type { Selection } from 'react-aria-components';
-import { MenuItem } from '@tradenetcorp/veli-ui/menu';
-import { TagDropdown } from '@tradenetcorp/veli-ui/tags';
+import { MenuItem } from '@veli-design/react/menu';
+import { TagDropdown } from '@veli-design/react/tags';
 
 const items = [
   { id: 'forms', label: 'Forms' },
@@ -158,7 +158,7 @@ Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to sho
 
 ```tsx
 import { useState } from 'react';
-import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { Tag, TagGroup } from '@veli-design/react/tags';
 
 function SavedTopics() {
   const [topics, setTopics] = useState([
@@ -192,7 +192,7 @@ A non-empty `errorMessage` replaces `description`. Tags do not validate selectio
 
 ```tsx
 import { useState } from 'react';
-import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { Tag, TagGroup } from '@veli-design/react/tags';
 
 function Departments() {
   const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(new Set());
@@ -438,8 +438,8 @@ Switch between Dhivehi and English to compare tag order, selection, removal and 
 
 ```tsx
 import { useState } from 'react';
-import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Tag, TagGroup } from '@veli-design/react/tags';
+import { VeliProvider } from '@veli-design/react/provider';
 
 function DhivehiTags() {
   const [topics, setTopics] = useState([

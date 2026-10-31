@@ -1,10 +1,10 @@
 import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fireEvent, userEvent, waitFor, within } from '@storybook/test';
-import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { FieldLabel } from '@veli-design/react/field';
 import { useArgs } from 'storybook/internal/preview-api';
-import { useVeliLanguage } from '@tradenetcorp/veli-ui/provider';
-import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { useVeliLanguage } from '@veli-design/react/provider';
+import { Radio, RadioGroup } from '@veli-design/react/radio';
 
 const englishRadioButtonText = {
   options: {

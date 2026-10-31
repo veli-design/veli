@@ -1,5 +1,5 @@
 ---
-'@tradenetcorp/veli-ui': minor
+'@veli-design/react': minor
 ---
 
 ### Changed

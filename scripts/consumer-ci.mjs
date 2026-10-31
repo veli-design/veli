@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { approvedReleaseEvent } from './release-ci.mjs';
@@ -18,7 +18,7 @@ export function classify(paths) {
       )
     )
       continue;
-    if (/^packages\/(ui|tokens)\//.test(path)) include();
+    if (/^packages\/(react|tokens)\//.test(path)) include();
     else if (/^packages\/blocks\//.test(path)) include(['blocks', 'sites', 'cold']);
     else if (/^apps\/storybook\//.test(path)) include(['blocks', 'sites', 'cold']);
     else if (/^apps\/web\//.test(path)) include(['sites', 'cold']);
@@ -67,7 +67,12 @@ export function candidateManifest(directory, sha) {
   return {
     sha,
     hashes: Object.fromEntries(
-      ['ui.tgz', 'tokens.tgz'].map((file) => [
+      [
+        'ui.tgz',
+        'tokens.tgz',
+        'cli.tgz',
+        ...(existsSync(resolve(directory, 'preparation.json')) ? ['preparation.json'] : []),
+      ].map((file) => [
         file,
         createHash('sha256')
           .update(readFileSync(resolve(directory, file)))

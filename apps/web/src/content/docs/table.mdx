@@ -28,7 +28,7 @@ import {
   TableCell,
   TableResizableContainer,
   TableColumnResizer,
-} from '@tradenetcorp/veli-ui/table';
+} from '@veli-design/react/table';
 ```
 
 ## Usage
@@ -45,7 +45,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from '@tradenetcorp/veli-ui/table';
+} from '@veli-design/react/table';
 
 export default function PermitTable() {
   const rows = [
@@ -84,7 +84,7 @@ Sorting is controlled: set `allowsSorting` on individual columns, provide `sortD
 
 ```tsx
 import { useState } from 'react';
-import { Table, type SortDescriptor } from '@tradenetcorp/veli-ui/table';
+import { Table, type SortDescriptor } from '@veli-design/react/table';
 
 export default function SortableTable() {
   const [sort, setSort] = useState<SortDescriptor>({ column: 'name', direction: 'ascending' });
@@ -131,7 +131,7 @@ export default function SortableTable() {
 
 ```tsx
 import { useState } from 'react';
-import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
+import { Table, type Selection } from '@veli-design/react/table';
 
 export default function SelectableTable() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['fishing']));
@@ -174,7 +174,7 @@ Wrap the table in `TableResizableContainer` (or `Table.ResizableContainer`) and 
 </div>
 
 ```tsx
-import { Table } from '@tradenetcorp/veli-ui/table';
+import { Table } from '@veli-design/react/table';
 
 export default function ResizableTable() {
   const rows = [
@@ -215,7 +215,7 @@ The default message follows the provider language. Override `emptyMessage` with 
 </div>
 
 ```tsx
-import { Table } from '@tradenetcorp/veli-ui/table';
+import { Table } from '@veli-design/react/table';
 
 export default function EmptyTable() {
   return (
@@ -261,8 +261,8 @@ Use `VeliProvider language="dv"` for Dhivehi fonts, direction, localized selecti
 'use client';
 
 import { useState } from 'react';
-import { Table, type Selection } from '@tradenetcorp/veli-ui/table';
-import { VeliProvider } from '@tradenetcorp/veli-ui/provider';
+import { Table, type Selection } from '@veli-design/react/table';
+import { VeliProvider } from '@veli-design/react/provider';
 
 export default function TableRtlDemo() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['fishing']));

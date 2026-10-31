@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DropzoneField } from '@tradenetcorp/veli-ui/dropzone';
+import { DropzoneField } from '@veli-design/react/dropzone';
 
 export function SupportingDocuments() {
   const [files, setFiles] = useState<File[]>([]);

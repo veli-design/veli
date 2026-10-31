@@ -32,8 +32,8 @@ validation and why. -->
 ## Agent docs
 
 <!--
-If this PR changes packages/ui/src/<id>.tsx public API or behavior that agents
-need to know, update packages/ui/agent/components/<id>.json (and AGENT_GUIDE.md
+If this PR changes packages/react/src/<id>.tsx public API or behavior that agents
+need to know, update packages/react/agent/components/<id>.json (and AGENT_GUIDE.md
 when the system-wide rules change).
 -->
 

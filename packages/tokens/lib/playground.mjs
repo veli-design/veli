@@ -7,7 +7,7 @@ const root = new URL('../', import.meta.url);
 /** Shared by Astro and Storybook; development never requires package builds. */
 export default function tokenPlayground() {
   const directory = new URL('.cache/playground/', root);
-  const sourceUI = fileURLToPath(new URL('../ui/src/', root));
+  const sourceUI = fileURLToPath(new URL('../react/src/', root));
   const inputs = ['src/figma.tokens.json', 'src/design.tokens.json', 'src/motion.tokens.json'].map(
     (name) => fileURLToPath(new URL(name, root)),
   );
@@ -24,14 +24,14 @@ export default function tokenPlayground() {
         resolve: {
           alias: [
             {
-              find: /^@tradenetcorp\/veli-tokens(?:\/tailwind)?$/,
+              find: /^@veli-design\/tokens(?:\/tailwind)?$/,
               replacement: fileURLToPath(new URL('tailwind-theme.css', directory)),
             },
             {
-              find: '@tradenetcorp/veli-tokens/css',
+              find: '@veli-design/tokens/css',
               replacement: fileURLToPath(new URL('tokens.css', directory)),
             },
-            { find: /^@tradenetcorp\/veli-ui\/(?!tailwind$)(.+)$/, replacement: `${sourceUI}$1` },
+            { find: /^@veli-design\/react\/(?!tailwind$)(.+)$/, replacement: `${sourceUI}$1` },
           ],
         },
         server: { fs: { allow: [fileURLToPath(new URL('../../', root))] } },
