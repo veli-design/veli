@@ -1,3 +1,16 @@
+## 0.5.2
+
+### Fixed
+
+- Include the total unread-count property documentation in the downloadable source and CLI archive.
+
+## 0.5.1
+
+### Fixed
+
+- Show the total unread count on the default bell trigger using the numeric header badge. Hide it at zero, use the standard `99+` overflow display, and keep the full total in the accessible name.
+- Align the 20px counter and 16px bell with the header reference, keeping the counter centered on its anchor as counts widen and mirroring its placement in RTL.
+
 ## 0.5.0
 
 ### Changed

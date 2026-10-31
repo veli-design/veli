@@ -142,16 +142,23 @@ export function NotificationTray({
           iconOnly
           className="relative overflow-visible"
         >
-          <BellSimpleIcon className="size-5" />
-          {contentProps.unreadCount > 0 ? (
-            <Badge
-              size="xs"
-              intent="danger"
-              appearance="emphasis"
-              aria-hidden
-              className="absolute -top-1 -end-2"
-            />
-          ) : null}
+          <span className="relative inline-flex size-4 shrink-0">
+            <BellSimpleIcon className="size-4" aria-hidden />
+            {contentProps.unreadCount > 0 ? (
+              <span
+                aria-hidden
+                className="absolute -top-1.5 start-full ms-1 flex w-max -translate-x-1/2 -translate-y-1/2 rtl:translate-x-1/2"
+              >
+                <Badge
+                  size="sm"
+                  intent="danger"
+                  appearance="emphasis"
+                  count={contentProps.unreadCount}
+                  dir="ltr"
+                />
+              </span>
+            ) : null}
+          </span>
         </Button>
       )}
       {mobile ? (
