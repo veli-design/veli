@@ -42,6 +42,22 @@ test('every source token is represented or explicitly excluded, including hybrid
   assert.equal(Object.keys(canonical.grid).length, 6);
   assert.equal(entries(canonical.typography).length, entries(raw['Typography-styles']).length);
 });
+test('button subtle fills alias alpha brand steps', () => {
+  const scales = { primary: 'primary', secondary: 'neutral', danger: 'danger' };
+  const steps = { default: '300', hover: '400', pressed: '500' };
+  for (const [intent, scale] of Object.entries(scales)) {
+    for (const [state, step] of Object.entries(steps)) {
+      const alias = `{color.${scale}.alpha.${step}}`;
+      const token = canonical.color.button[intent].subtle[state];
+      assert.equal(token.$value, alias, `color.button.${intent}.subtle.${state}`);
+      assert.equal(
+        token.$extensions.mode.Dark,
+        alias,
+        `color.button.${intent}.subtle.${state} dark`,
+      );
+    }
+  }
+});
 test('DTCG exports contain standard types, typed motion, canonical paths and both modes', async () => {
   const exported = JSON.parse(files['tokens.json']);
   assert.deepEqual(exported, canonical);

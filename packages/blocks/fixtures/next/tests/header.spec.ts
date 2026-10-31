@@ -58,6 +58,21 @@ test('floating header hides on scroll down and returns on scroll up', async ({ p
   await expect(surface).not.toHaveAttribute('aria-hidden', 'true');
 });
 
+test('banner language switch toggles to the target language', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+
+  const languageSwitch = page.getByRole('button', { name: 'Change language' });
+  await expect(languageSwitch).toHaveText('ދިވެހި');
+  await languageSwitch.click();
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'rtl');
+  await expect(languageSwitch).toHaveText('English');
+
+  await languageSwitch.click();
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'ltr');
+  await expect(languageSwitch).toHaveText('ދިވެހި');
+});
+
 test('RTL layout does not overflow and passes axe', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
