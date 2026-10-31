@@ -1,3 +1,9 @@
+## 0.5.0
+
+### Changed
+
+- Support the verified public package baseline: @veli-design/tokens@^0.11.0. The copied-source rendering API is unchanged.
+
 ## 0.4.0
 
 ### Changed

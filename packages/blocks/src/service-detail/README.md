@@ -1,11 +1,11 @@
-Experimental `0.5.1` copied-source block for service details, fees, prerequisites,
+Experimental `0.6.0` copied-source block for service details, fees, prerequisites,
 application options and guidelines. The default and only presentation preserves
 Web2's approved summary/card and guideline sheet. A separate govmv article/sidebar
 presentation requires product approval; this block does not migrate either app.
 
 ## Core package baseline
 
-Version 0.4.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.6.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -112,7 +112,7 @@ contacts and its summary worker. A small client adapter supplies callbacks from
 server-fetched display data; functions are not serialized across an RSC boundary.
 Do not pass API/auth/CMS models into the block.
 
-This experimental contract targets Veli UI 0.17 and tokens 0.10. Earlier core minor
+This experimental contract targets Veli React 0.18 and tokens 0.11. Earlier core minor
 lines retain their previously published block archives; migrating an application
 to this baseline requires consumer testing.
 The deferred C1 hydration/useId issue remains unresolved and is outside this task.

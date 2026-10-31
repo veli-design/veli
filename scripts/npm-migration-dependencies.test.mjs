@@ -7,14 +7,30 @@ import {
   assertCliDependencyReport,
 } from './npm-migration-dependencies.mjs';
 
-const blocks = getBlocks();
+// Freeze the historical regression contract independently of future Block releases.
+const blocks = [
+  {
+    manifest: {
+      id: 'historical-example',
+      dependencies: { '@veli-design/react': '^0.17.0' },
+      setupDependencies: { '@veli-design/tokens': '^0.10.0', tailwindcss: '^4.3.2' },
+      testedDependencies: {
+        '@veli-design/react': '0.17.0',
+        '@veli-design/tokens': '0.10.0',
+        tailwindcss: '4.3.2',
+      },
+    },
+  },
+];
 const installed = fixtureDependencies(blocks);
 
 test('the fixture supplies all runtime and setup dependencies at tested compatible versions', () => {
-  assert.doesNotThrow(() => assertBlockDependencies(blocks, installed));
-  assert.equal(installed.tailwindcss, '4.3.2');
+  const current = getBlocks();
+  const fixture = fixtureDependencies(current);
+  assert.doesNotThrow(() => assertBlockDependencies(current, fixture));
+  assert.equal(fixture.tailwindcss, '4.3.2');
   for (const name of ['react-aria-components', '@phosphor-icons/react', 'motion'])
-    assert.ok(installed[name]);
+    assert.ok(fixture[name]);
 });
 
 for (const [name, version] of [

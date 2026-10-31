@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.6.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.8.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
