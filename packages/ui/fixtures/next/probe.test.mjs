@@ -6,6 +6,7 @@ import { renderToString } from 'react-dom/server';
 import { VeliProvider, useVeliColorScheme } from '@tradenetcorp/veli-ui/provider';
 import { Input } from '@tradenetcorp/veli-ui/input';
 import { PasswordInput } from '@tradenetcorp/veli-ui/password-input';
+import { Sheet } from '@tradenetcorp/veli-ui/sheet';
 import { Modal } from '@tradenetcorp/veli-ui/modal';
 import { createToastQueue, ToastRegion } from '@tradenetcorp/veli-ui/toast';
 test('published UI resolves and renders without dependency inlining', async () => {
@@ -22,6 +23,7 @@ test('published UI resolves and renders without dependency inlining', async () =
           React.createElement(Input, { label: 'Name' }),
           React.createElement(PasswordInput, { label: 'Password' }),
           React.createElement(Modal, { isOpen: false }, 'Hello'),
+          React.createElement(Sheet, { title: 'Details', isOpen: false }, 'Content'),
         ),
       );
     });

@@ -321,6 +321,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Dialog surfaces with dismissal and sizing guidance.',
       },
       {
+        title: 'Sheet',
+        slug: 'sheet',
+        description: 'Swipeable modal surfaces for focused tasks and supplementary content.',
+      },
+      {
         title: 'Popover',
         slug: 'popover',
         description: 'Anchored dialog with header, content, footer, intents, and an arrow.',
