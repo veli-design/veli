@@ -106,8 +106,59 @@ function BasicExample({
   );
 }
 
+// Static usage samples intentionally omit the demo layout and localized copy.
+function basicUsage(props: string, content = '<p>Your application summary goes here.</p>') {
+  return `import { Button } from '@tradenetcorp/veli-ui/button';
+import { Sheet } from '@tradenetcorp/veli-ui/sheet';
+
+<Sheet.Trigger>
+  <Button>Open sheet</Button>
+  <Sheet ${props}>
+    ${content}
+  </Sheet>
+</Sheet.Trigger>`;
+}
+
+function filterUsage(props: string, showReset = false) {
+  return `import { useState } from 'react';
+import { Button } from '@tradenetcorp/veli-ui/button';
+import { FieldLabel } from '@tradenetcorp/veli-ui/field';
+import { Radio, RadioGroup } from '@tradenetcorp/veli-ui/radio';
+import { Sheet } from '@tradenetcorp/veli-ui/sheet';
+
+export function ServiceFilters() {
+  const [filter, setFilter] = useState('all');
+  const [applied, setApplied] = useState('all');
+
+  return (
+    <>
+      <Sheet.Trigger>
+        <Button>Filter services</Button>
+        <Sheet
+          title="Filter services"
+          ${props}${
+            showReset
+              ? `
+          headerActions={<Button onPress={() => setFilter('all')}>Reset</Button>}`
+              : ''
+          }
+          footer={<Button slot="close" onPress={() => setApplied(filter)}>Apply filters</Button>}
+        >
+          <RadioGroup value={filter} onChange={setFilter}>
+            <FieldLabel>Service category</FieldLabel>
+            <Radio value="all">All services</Radio>
+            <Radio value="selected">A service category</Radio>
+          </RadioGroup>
+        </Sheet>
+      </Sheet.Trigger>
+      <p role="status">Showing: {applied === 'all' ? 'All services' : 'A service category'}</p>
+    </>
+  );
+}`;
+}
+
 const meta = {
-  title: 'Components/Sheets',
+  title: 'Components/Sheet',
   component: Sheet,
   tags: ['autodocs'],
   parameters: {
@@ -124,9 +175,14 @@ const meta = {
       ],
     },
     docs: {
+      source: {
+        type: 'code',
+        language: 'tsx',
+        code: basicUsage('title="Application summary" position="bottom" size="md"'),
+      },
       description: {
         component:
-          'Small, fictional service tasks that explain the Sheet props: preview an application, filter a service search, or read preparation guidance. Change one prop at a time in Controls. All actions stay local. Use the Veli toolbar for language and theme; preview at mobile width to see the handle.',
+          'Small, fictional service tasks that explain the Sheet props: preview an application, filter a service search, or read preparation guidance. Change one prop at a time in Controls. All actions stay local. Use the Veli toolbar for language and theme; preview at mobile width to see the handle. Code samples are static usage examples with illustrative content; Controls update the preview, not the samples.',
       },
     },
   },
@@ -238,11 +294,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
 export const Placement: Story = {
-  args: { position: 'end', size: 'sm', showFooter: true, title: sheetExampleCopy.en.filters.title },
+  args: {
+    position: 'end',
+    size: 'sm',
+    showFooter: true,
+    title: sheetExampleCopy.en.filters.title,
+  },
   render: (args) => <BasicExample {...args} example="filters" />,
   parameters: {
     controls: { include: ['position'] },
     docs: {
+      source: { code: filterUsage('position="end" size="sm"') },
       description: {
         story:
           'A short service-category filter suits a bottom sheet on mobile or an end drawer beside search results. Change position to compare; start/end mirror in Dhivehi. Apply filters updates the local result summary.',
@@ -255,6 +317,7 @@ export const Width: Story = {
   parameters: {
     controls: { include: ['size', 'position'] },
     docs: {
+      source: { code: basicUsage('title="Application summary" size="lg"') },
       description: {
         story:
           'The same four application details reflow as width changes. Sm suits a quick summary, md a focused task, and lg gives related fields room side by side. Full is available for broader workflows; use Height with size full to see wider guidance. Size always means width, independently of height.',
@@ -263,11 +326,21 @@ export const Width: Story = {
   },
 };
 export const Height: Story = {
-  args: { height: 'viewport', showFooter: true, title: sheetExampleCopy.en.guide.title },
+  args: {
+    height: 'viewport',
+    showFooter: true,
+    title: sheetExampleCopy.en.guide.title,
+  },
   render: (args) => <BasicExample {...args} example="guide" />,
   parameters: {
     controls: { include: ['height', 'size', 'showHandle'] },
     docs: {
+      source: {
+        code: basicUsage(
+          'title="Preparation guide" height="viewport" footer={<Button slot="close">Back</Button>}',
+          '<p>Your preparation guidance goes here.</p>',
+        ),
+      },
       description: {
         story:
           'Read a three-part preparation guide. Content height fits the guide up to the viewport limit; viewport height gives longer reading a stable surface. Normally the body scrolls with actions outside it. When space is constrained, the whole dialog scrolls so the content and return action remain reachable.',
@@ -286,6 +359,7 @@ export const Dismissal: Story = {
   parameters: {
     controls: { include: ['isDismissable'] },
     docs: {
+      source: { code: filterUsage('size="sm" isDismissable={false}') },
       description: {
         story:
           'Try a filter selection with isDismissable=false: Escape, backdrop and swipe do not close the sheet, but Apply filters and the close button do. This prop does not save edits or provide an unsaved-changes confirmation.',
@@ -302,8 +376,13 @@ export const ContentSlots: Story = {
   },
   render: (args) => <BasicExample {...args} example="filters" />,
   parameters: {
-    controls: { include: ['title', 'description', 'showFooter', 'showHeaderAction'] },
+    controls: {
+      include: ['title', 'description', 'showFooter', 'showHeaderAction'],
+    },
     docs: {
+      source: {
+        code: filterUsage('description="Choose which services to show."', true),
+      },
       description: {
         story:
           'Header action: Reset clears the draft selection. Footer: Apply filters updates the local summary and closes. Toggle each slot and edit the title/description to see their roles. The toggles are story helpers, not Sheet props.',
