@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "id": "tags",
   "apiPattern": "compound",
-  "purpose": "Presents compact labels, filters, choices, removable items, or linked metadata as a group.",
+  "purpose": "Presents compact labels, filters, choices, removable collections, standalone buttons and links, or selected tags with sub-label menus.",
   "runtime": {
     "clientComponent": true,
     "provider": "recommended",
@@ -29,25 +29,33 @@
     "Remove items.",
     "Navigate from link tags.",
     "Disable a group or individual items.",
-    "Render data-driven collections and empty states."
+    "Render data-driven collections and empty states.",
+    "Standalone action or controlled filter buttons and native navigation links.",
+    "Split selected tags with separate deselection and multi-select sub-label menus."
   ],
   "approvedPatterns": [
     "Compose Tag Group with Tag children.",
     "Use selection mode when tags act as filters or choices.",
     "Use onRemove with data-driven items for removable collections.",
     "Use href when a tag navigates instead of selecting.",
-    "Provide label, description, and error message for field-like groups."
+    "Provide label, description, and error message for field-like groups.",
+    "Use TagButton with onPress and optional controlled isSelected outside a collection.",
+    "Use TagButton as=\"a\" for standalone navigation with native href, target and rel.",
+    "Keep TagDropdown mounted with controlled isSelected and onSelect to animate parent selection; render the single sub-label or count with renderSelection."
   ],
   "limitations": [
-    "Link and removable behavior should not be combined for the same tag.",
-    "Complex or render-function content may not yield a useful remove label automatically."
+    "Link tags are neither selectable nor removable.",
+    "Complex or render-function content may not yield a useful remove label automatically.",
+    "TagDropdown is a standalone split control; do not place it inside TagGroup. Parent-tag membership is consumer owned; deselection clears the sub-label selection first.",
+    "Selection callbacks omit link keys; select-all expands to a set of selectable non-link keys when links are present."
   ],
   "accessibility": [
     "Give each group a visible label or accessible name.",
     "Provide textValue or removeButtonLabel for icon-only or complex removable tags.",
     "Decorative leading content is hidden from assistive technology.",
     "Error text takes precedence over description text.",
-    "Selected disabled tags expose both selected and disabled states; linked tags remain grid rows and describe their destination."
+    "Selected disabled tags expose both selected and disabled states; linked tags remain grid rows and describe their destination.",
+    "External deselection or disabling closes an open dropdown and restores focus to its label or disabled group; ArrowDown opens the first enabled menu option."
   ],
   "responsive": [
     "Tag lists wrap within the available width.",

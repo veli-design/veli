@@ -1,7 +1,7 @@
 {
   "id": "notification-tray",
   "title": "Notification tray",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "status": "experimental",
   "description": "Responsive notification tray with app-owned data, filtering and actions.",
   "files": ["notification-tray.tsx", "notification-tray-content.tsx", "cursor-click.svg"],

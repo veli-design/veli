@@ -49,14 +49,15 @@ queue.add(
 
 ## Appearances
 
-`outline` uses a raised surface, `subtle` uses a tinted surface, and `emphasis` uses a solid status color. Choose an intent to match the message: `neutral`, `info`, `positive`, `cautious`, `warning`, or `danger`.
+`subtle` uses the same light surface as Alert, and `emphasis` uses Alert's high-contrast surface. The default is `subtle`. Choose an intent to match the message: `neutral`, `info`, `positive`, `cautious`, `warning`, or `danger`. On `emphasis`, secondary actions and the close control use Button `highContrast` (onHighContrast) styles.
+
+Each toast shows a leading icon for its intent. Pass `leadingIcon` to replace that icon, or set `showLeadingIcon` to `false` to hide it.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <ToastAppearancesDemo client:load />
 </div>
 
 ```tsx
-queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'outline' });
 queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'subtle' });
 queue.add({ title: 'Draft saved', intent: 'positive', appearance: 'emphasis' });
 ```
@@ -121,15 +122,17 @@ Region styling callbacks can read `visibleToasts`, `isHovered`, `isFocused`, and
 
 The content passed to `queue.add()`.
 
-| Prop              | Type                                                                       | Default     | Description                                           |
-| :---------------- | :------------------------------------------------------------------------- | :---------- | :---------------------------------------------------- |
-| `title`           | `ReactNode`                                                                | -           | Required primary message.                             |
-| `description`     | `ReactNode`                                                                | -           | Supporting content, including numeric values.         |
-| `intent`          | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                             |
-| `appearance`      | `'outline' \| 'subtle' \| 'emphasis'`                                      | `'outline'` | Surface treatment.                                    |
-| `actions`         | `VeliToastAction[]`                                                        | -           | Actions in supplied order.                            |
-| `showCloseButton` | `boolean`                                                                  | `true`      | Includes the close button in the default composition. |
-| `showProgress`    | `boolean`                                                                  | `false`     | Shows the countdown for a positive timeout.           |
+| Prop              | Type                                                                       | Default     | Description                                                                              |
+| :---------------- | :------------------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------- |
+| `title`           | `ReactNode`                                                                | -           | Required primary message.                                                                |
+| `description`     | `ReactNode`                                                                | -           | Supporting content, including numeric values.                                            |
+| `intent`          | `'neutral' \| 'info' \| 'positive' \| 'cautious' \| 'warning' \| 'danger'` | `'neutral'` | Semantic color treatment.                                                                |
+| `appearance`      | `'subtle' \| 'emphasis'`                                                   | `'subtle'`  | Surface treatment. `subtle` matches Alert light. `emphasis` matches Alert high contrast. |
+| `leadingIcon`     | `ReactNode`                                                                | -           | Replaces the default intent icon.                                                        |
+| `showLeadingIcon` | `boolean`                                                                  | `true`      | Shows the default intent icon when `leadingIcon` is omitted.                             |
+| `actions`         | `VeliToastAction[]`                                                        | -           | Actions in supplied order.                                                               |
+| `showCloseButton` | `boolean`                                                                  | `true`      | Includes the close button in the default composition.                                    |
+| `showProgress`    | `boolean`                                                                  | `false`     | Shows the countdown for a positive timeout.                                              |
 
 ### VeliToastAction
 
@@ -146,14 +149,16 @@ The content passed to `queue.add()`.
 
 Used by `ToastRegion` or in a custom region renderer.
 
-| Prop         | Type                                                       | Default                          | Description                                            |
-| :----------- | :--------------------------------------------------------- | :------------------------------- | :----------------------------------------------------- |
-| `toast`      | `QueuedToast<T>`                                           | -                                | Required queue entry.                                  |
-| `intent`     | `ToastIntent`                                              | Queued intent or `'neutral'`     | Overrides the queued intent.                           |
-| `appearance` | `ToastAppearance`                                          | Queued appearance or `'outline'` | Overrides the queued appearance.                       |
-| `children`   | `ReactNode \| (state) => ReactNode`                        | Default composition              | Replaces content, actions, close button, and progress. |
-| `className`  | `string \| (state) => string`                              | -                                | Additional toast classes.                              |
-| `style`      | `CSSProperties \| ((state) => CSSProperties \| undefined)` | -                                | Styles merged with Toast's transition styles.          |
+| Prop              | Type                                                       | Default                         | Description                                                              |
+| :---------------- | :--------------------------------------------------------- | :------------------------------ | :----------------------------------------------------------------------- |
+| `toast`           | `QueuedToast<T>`                                           | -                               | Required queue entry.                                                    |
+| `intent`          | `ToastIntent`                                              | Queued intent or `'neutral'`    | Overrides the queued intent.                                             |
+| `appearance`      | `ToastAppearance`                                          | Queued appearance or `'subtle'` | Overrides the queued appearance.                                         |
+| `leadingIcon`     | `ReactNode`                                                | Queued icon                     | Overrides the queued leading icon.                                       |
+| `showLeadingIcon` | `boolean`                                                  | Queued value or `true`          | Overrides whether the default intent icon is shown.                      |
+| `children`        | `ReactNode \| (state) => ReactNode`                        | Default composition             | Replaces the leading icon, content, actions, close button, and progress. |
+| `className`       | `string \| (state) => string`                              | -                               | Additional toast classes.                                                |
+| `style`           | `CSSProperties \| ((state) => CSSProperties \| undefined)` | -                               | Styles merged with Toast's transition styles.                            |
 
 Toast callbacks can read `toast`, `isFocused`, and `isFocusVisible`. With custom `children`, you choose which parts to include; `showCloseButton` controls only the default composition.
 
@@ -195,7 +200,7 @@ These parts render the queued content, actions, and countdown inside a `Toast`.
 | `aria-label` | `string` | Localized string | Accessible close-button name.    |
 | `className`  | `string` | -                | Additional close-button classes. |
 
-The parts expose only the props listed above. They do not inherit the underlying React Aria content/button props, native attributes, `children`, `style`, or refs as public props.
+The close control is an icon-only ghost Button. On `emphasis` toasts it sets `highContrast` so the control uses onHighContrast secondary styles. The parts expose only the props listed above. They do not inherit the underlying React Aria content/button props, native attributes, `children`, `style`, or refs as public props.
 
 ### createToastQueue
 

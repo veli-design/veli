@@ -17,6 +17,7 @@ export default [
       '**/dist/**',
       '**/.astro/**',
       '**/.cache/**',
+      '**/.cursor/**',
       '**/.next/**',
       '**/.turbo/**',
       '**/coverage/**',

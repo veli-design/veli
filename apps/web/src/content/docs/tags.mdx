@@ -4,18 +4,30 @@ description: Compact labels, selectable filters, and removable collections.
 ---
 
 import { TagsRtlDemo, TagsUsageDemo, TagsVariantsDemo } from '../../components/DocsExamples';
+import {
+  TagsAppearancesDemo,
+  TagsDropdownDemo,
+  TagsStandaloneDemo,
+} from '../../components/TagExamples';
 
 # Tags
 
-Use `TagGroup` and `Tag` for categories, filters, saved topics, and linked metadata. Tags can be static, selectable, removable, or links.
+Use Tags for categories, filters, saved topics, and linked metadata. Compose `TagGroup` and `Tag` for a keyboard-navigable collection, or use `TagButton` and `TagDropdown` independently.
 
 ## Import
 
 ```tsx
-import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+import { Tag, TagButton, TagDropdown, TagGroup } from '@tradenetcorp/veli-ui/tags';
 ```
 
 ## Usage
+
+| Use case                                                     | Component                               |
+| :----------------------------------------------------------- | :-------------------------------------- |
+| A collection with arrow-key navigation, selection or removal | `TagGroup` with `Tag`                   |
+| A standalone action or controlled filter                     | `TagButton`                             |
+| A native navigation link                                     | `TagButton as="a"`                      |
+| A filter with selectable sub-labels                          | `TagDropdown` alongside standalone tags |
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TagsUsageDemo client:visible />
@@ -30,11 +42,102 @@ import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 </TagGroup>
 ```
 
-Give each tag a stable `id`. Use `items` with function children for a dynamic collection.
+Give each tag a stable `id`. Use `items` with function children for a dynamic collection. `Tag` belongs inside `TagGroup`; standalone controls, including `TagDropdown`, belong outside the collection.
 
-## Variations
+## Appearances
 
-Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to show remove controls, and update the collection in that callback. Use `href` for navigation. Disable individual tags with `disabledKeys` or `Tag isDisabled`, or the whole group with `TagGroup isDisabled`.
+`fill` uses a filled background. `outline` draws a border. Both appearances support five sizes: `xs` (28px), `sm` (32px), `md` (36px), `lg` (40px), and `xl` (44px). The default is `fill` at `sm`.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsAppearancesDemo client:visible />
+</div>
+
+```tsx
+<TagGroup label="Departments" appearance="outline" size="md" selectionMode="multiple">
+  <Tag id="tourism">Tourism</Tag>
+  <Tag id="fisheries">Fisheries</Tag>
+</TagGroup>
+```
+
+Set size and appearance on the group, or override either on an individual `Tag`.
+
+## Standalone buttons and links
+
+Use `TagButton` for an action, or supply `isSelected` and update it in `onPress` for a controlled filter. Use `TagButton as="a"` with `href` for native navigation. Navigation tags have no selected or removal state. Selected filters show a built-in check; there is no public prop to hide or replace that indicator.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsStandaloneDemo client:visible />
+</div>
+
+```tsx
+import { useState } from 'react';
+import { TagButton } from '@tradenetcorp/veli-ui/tags';
+
+function DocumentActions() {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <>
+      <TagButton isSelected={selected} onPress={() => setSelected((value) => !value)}>
+        Documents
+      </TagButton>
+      <TagButton as="a" appearance="outline" href="/guidance">
+        Related guidance
+      </TagButton>
+    </>
+  );
+}
+```
+
+## Dropdown filters
+
+Use `TagDropdown` when a selected filter has optional sub-labels. Your application owns parent membership. Keep `TagDropdown` mounted with `isSelected` and `onSelect` to animate between the plain filter and split dropdown. Omitting `isSelected` preserves the selected-only mode. The label clears the sub-label selection and calls `onDeselect`; the separate arrow opens the multiple-selection menu. Clearing sub-labels in the menu leaves the parent selected.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <TagsDropdownDemo client:visible />
+</div>
+
+```tsx
+import { useState } from 'react';
+import type { Selection } from 'react-aria-components';
+import { MenuItem } from '@tradenetcorp/veli-ui/menu';
+import { TagDropdown } from '@tradenetcorp/veli-ui/tags';
+
+const items = [
+  { id: 'forms', label: 'Forms' },
+  { id: 'permits', label: 'Permits' },
+  { id: 'reports', label: 'Reports' },
+];
+
+function DocumentFilter() {
+  const [selected, setSelected] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+
+  return (
+    <TagDropdown
+      isSelected={selected}
+      onSelect={() => setSelected(true)}
+      label="Documents"
+      items={items}
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      onDeselect={() => setSelected(false)}
+      renderSelection={(selection) => {
+        const values = items.filter((item) => selection === 'all' || selection.has(item.id));
+        return values.length === 1 ? values[0].label : values.length > 1 ? values.length : null;
+      }}
+    >
+      {(item) => <MenuItem id={item.id}>{item.label}</MenuItem>}
+    </TagDropdown>
+  );
+}
+```
+
+`renderSelection` controls the summary: show the selected sub-label for one item, a count for two or more, and nothing for an empty selection. Dropdown tags have no remove icon. Use `defaultSelectedKeys` for uncontrolled sub-labels, and `isOpen` / `onOpenChange` when the menu's open state needs to be controlled.
+
+## Collections
+
+Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to show remove controls, and update the collection in that callback. An existing `Tag href` remains a link in the group; link tags are neither selectable nor removable. Disable individual tags with `disabledKeys` or `Tag isDisabled`, or the whole group with `TagGroup isDisabled`.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TagsVariantsDemo client:visible />
@@ -51,26 +154,37 @@ Use `selectionMode="single"` or `"multiple"` for choices. Pass `onRemove` to sho
   <Tag id="transport">Transport</Tag>
   <Tag id="education">Education</Tag>
 </TagGroup>
-
-<TagGroup label="Saved topics" items={topics} onRemove={removeTopics}>
-  {(topic) => <Tag id={topic.id}>{topic.label}</Tag>}
-</TagGroup>
 ```
-
-Add decorative icons or badges with `leading`. Include meaningful leading information in `textValue` because the leading slot is hidden from assistive technology.
-
-## Sizes
-
-Tags have five sizes: `xs` (28px), `sm` (32px), `md` (36px), `lg` (40px), and `xl` (44px). Set the group size once, or override it on an individual tag.
 
 ```tsx
-<TagGroup label="Departments" size="md">
-  <Tag id="tourism">Tourism</Tag>
-  <Tag id="fisheries" size="sm">
-    Fisheries
-  </Tag>
-</TagGroup>
+import { useState } from 'react';
+import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
+
+function SavedTopics() {
+  const [topics, setTopics] = useState([
+    { id: 'documents', label: 'Documents' },
+    { id: 'forms', label: 'Forms' },
+  ]);
+
+  return (
+    <TagGroup
+      label="Saved topics"
+      items={topics}
+      onRemove={(keys) => setTopics((items) => items.filter((item) => !keys.has(item.id)))}
+    >
+      {(topic) => <Tag id={topic.id}>{topic.label}</Tag>}
+    </TagGroup>
+  );
+}
 ```
+
+Removal requests do not update your data: remove the requested keys from `items` in `onRemove`. An empty collection shows a localized message; customize it with `renderEmptyState`.
+
+Link keys are ignored in supplied selections and excluded from selection callbacks, including range selection and select-all. When a collection contains links, select-all reports an explicit set of selectable non-link keys.
+
+Collection links remain grid rows and navigate programmatically. Use `TagButton as="a"` when you need native anchor behavior such as a browser context menu or copying the link address. Use `onAction` for collection actions; avoid running an additional navigation handler alongside `href`.
+
+Add decorative icons or badges with `leading`. Include meaningful leading information in `textValue` because the leading slot is hidden from assistive technology.
 
 ## Validation
 
@@ -78,6 +192,7 @@ A non-empty `errorMessage` replaces `description`. Tags do not validate selectio
 
 ```tsx
 import { useState } from 'react';
+import { Tag, TagGroup } from '@tradenetcorp/veli-ui/tags';
 
 function Departments() {
   const [selectedKeys, setSelectedKeys] = useState<Set<string | number>>(new Set());
@@ -102,11 +217,22 @@ function Departments() {
 
 ## API Reference
 
-Tags compose React Aria [`TagGroup`, `TagList`, and `Tag`](https://react-spectrum.adobe.com/react-aria/TagGroup.html). `Key` is `string | number`. Props below follow that stack.
+The collection components compose React Aria [`TagGroup`, `TagList`, and `Tag`](https://react-spectrum.adobe.com/react-aria/TagGroup.html). Standalone actions use React Aria [`Button`](https://react-spectrum.adobe.com/react-aria/Button.html), navigation uses its link hooks, and dropdowns compose Veli [Menu](/docs/menu/). `Key` is `string | number`; `Selection` is `'all' | Set<Key>`.
 
 ### TagGroup
 
 Veli props for the composed group. `items`, `children`, `renderEmptyState`, and `listClassName` configure its internal tag list.
+
+#### Appearance
+
+| Prop            | Type                                   | Default  | Description                               |
+| :-------------- | :------------------------------------- | :------- | :---------------------------------------- |
+| `appearance`    | `'fill' \| 'outline'`                  | `'fill'` | Default appearance for tags in the group. |
+| `size`          | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'sm'`   | Default tag size.                         |
+| `className`     | `string`                               | -        | Class merged onto the group root.         |
+| `listClassName` | `string`                               | -        | Class merged onto the wrapping tag list.  |
+
+#### Content and state
 
 | Prop               | Type                                       | Default           | Description                                 |
 | :----------------- | :----------------------------------------- | :---------------- | :------------------------------------------ |
@@ -114,32 +240,29 @@ Veli props for the composed group. `items`, `children`, `renderEmptyState`, and 
 | `description`      | `ReactNode`                                | -                 | Helper text below the list.                 |
 | `errorMessage`     | `ReactNode`                                | -                 | Replaces the helper when non-empty.         |
 | `isDisabled`       | `boolean`                                  | `false`           | Disables all tags and remove controls.      |
-| `size`             | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`     | `'sm'`            | Default size for tags in the group.         |
 | `items`            | `Iterable<T>`                              | -                 | Items for a dynamic collection.             |
 | `children`         | `ReactNode \| ((item: T) => ReactNode)`    | -                 | Static tags or a renderer for `items`.      |
 | `renderEmptyState` | `(state: TagListRenderProps) => ReactNode` | Localized message | Content shown when the collection is empty. |
-| `className`        | `string`                                   | -                 | Class merged onto the group root.           |
-| `listClassName`    | `string`                                   | -                 | Class merged onto the wrapping tag list.    |
 
-### React Aria TagGroup
+#### Selection and interaction
 
-These React Aria [`TagGroup`](https://react-spectrum.adobe.com/react-aria/TagGroup.html#props) props pass to the group. Veli protects disabled tags when handling removal requests.
+These React Aria [`TagGroup`](https://react-spectrum.adobe.com/react-aria/TagGroup.html#props) props pass to the group. Veli excludes disabled tags and links when handling removal requests.
 
-| Prop                     | Type                                | Default            | Description                                                       |
-| :----------------------- | :---------------------------------- | :----------------- | :---------------------------------------------------------------- |
-| `selectionMode`          | `'none' \| 'single' \| 'multiple'`  | `'none'`           | Whether and how many tags can be selected.                        |
-| `selectionBehavior`      | `'toggle' \| 'replace'`             | `'toggle'`         | How multiple selection responds to interaction.                   |
-| `selectedKeys`           | `'all' \| Iterable<Key>`            | -                  | Controlled selection.                                             |
-| `defaultSelectedKeys`    | `'all' \| Iterable<Key>`            | -                  | Uncontrolled initial selection.                                   |
-| `onSelectionChange`      | `(keys: 'all' \| Set<Key>) => void` | -                  | Called when selection changes.                                    |
-| `disallowEmptySelection` | `boolean`                           | `false`            | Prevents clearing the last selected tag.                          |
-| `disabledKeys`           | `Iterable<Key>`                     | -                  | Keys of tags to disable.                                          |
-| `onRemove`               | `(keys: Set<Key>) => void`          | -                  | Enables removal and requests collection updates for enabled keys. |
-| `onAction`               | `(key: Key) => void`                | -                  | Called when a tag performs an action.                             |
-| `shouldSelectOnPressUp`  | `boolean`                           | `false`            | Selects on release rather than press down.                        |
-| `escapeKeyBehavior`      | `'clearSelection' \| 'none'`        | `'clearSelection'` | Whether Escape clears selection.                                  |
-| `aria-label`             | `string`                            | -                  | Accessible name when no visible label is used.                    |
-| `aria-labelledby`        | `string`                            | -                  | ID of an element that labels the group.                           |
+| Prop                     | Type                                | Default            | Description                                                      |
+| :----------------------- | :---------------------------------- | :----------------- | :--------------------------------------------------------------- |
+| `selectionMode`          | `'none' \| 'single' \| 'multiple'`  | `'none'`           | Whether and how many tags can be selected.                       |
+| `selectionBehavior`      | `'toggle' \| 'replace'`             | `'toggle'`         | How multiple selection responds to interaction.                  |
+| `selectedKeys`           | `'all' \| Iterable<Key>`            | -                  | Controlled selection.                                            |
+| `defaultSelectedKeys`    | `'all' \| Iterable<Key>`            | -                  | Uncontrolled initial selection.                                  |
+| `onSelectionChange`      | `(keys: 'all' \| Set<Key>) => void` | -                  | Called when selection changes.                                   |
+| `disallowEmptySelection` | `boolean`                           | `false`            | Prevents clearing the last selected tag.                         |
+| `disabledKeys`           | `Iterable<Key>`                     | -                  | Keys of tags to disable.                                         |
+| `onRemove`               | `(keys: Set<Key>) => void`          | -                  | Enables removal and requests updates for enabled, non-link tags. |
+| `onAction`               | `(key: Key) => void`                | -                  | Called when a tag performs an action.                            |
+| `shouldSelectOnPressUp`  | `boolean`                           | `false`            | Selects on release rather than press down.                       |
+| `escapeKeyBehavior`      | `'clearSelection' \| 'none'`        | `'clearSelection'` | Whether Escape clears selection.                                 |
+| `aria-label`             | `string`                            | -                  | Accessible name when no visible label is used.                   |
+| `aria-labelledby`        | `string`                            | -                  | ID of an element that labels the group.                          |
 
 Other supported root DOM and ARIA props pass through. Not forwarded unchanged:
 
@@ -156,15 +279,16 @@ React Aria `TagList` is internal. Its arbitrary `style`, `slot`, `render`, and o
 
 Veli props for each tag.
 
-| Prop                | Type                                                   | Default              | Description                                      |
-| :------------------ | :----------------------------------------------------- | :------------------- | :----------------------------------------------- |
-| `size`              | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`                 | Group size or `'sm'` | Overrides the group size.                        |
-| `leading`           | `ReactNode`                                            | -                    | Decorative icon or badge before the content.     |
-| `removeButtonLabel` | `string \| ((tagText: string \| undefined) => string)` | Localized label      | Accessible name for the built-in remove control. |
-| `children`          | `ReactNode \| ((state: TagRenderProps) => ReactNode)`  | -                    | Content, or a renderer receiving the tag state.  |
-| `className`         | `string`                                               | -                    | Class merged onto the tag.                       |
+| Prop                | Type                                                   | Default                      | Description                                      |
+| :------------------ | :----------------------------------------------------- | :--------------------------- | :----------------------------------------------- |
+| `appearance`        | `'fill' \| 'outline'`                                  | Group appearance or `'fill'` | Overrides the group appearance.                  |
+| `size`              | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`                 | Group size or `'sm'`         | Overrides the group size.                        |
+| `leading`           | `ReactNode`                                            | -                            | Decorative icon or badge before the content.     |
+| `removeButtonLabel` | `string \| ((tagText: string \| undefined) => string)` | Localized label              | Accessible name for the built-in remove control. |
+| `children`          | `ReactNode \| ((state: TagRenderProps) => ReactNode)`  | -                            | Content, or a renderer receiving the tag state.  |
+| `className`         | `string`                                               | -                            | Class merged onto the tag.                       |
 
-### React Aria Tag
+#### Inherited Tag props
 
 These React Aria [`Tag`](https://react-spectrum.adobe.com/react-aria/TagGroup.html#tag) props pass to the tag.
 
@@ -188,16 +312,115 @@ Other supported DOM, ARIA, focus, hover, and press props pass to React Aria. Not
 | `ref`       | Not declared in the public wrapper types.                     |
 | `onClick`   | Not part of React Aria Tag; use `onAction`.                   |
 
+### Standalone appearance and content
+
+These props are shared by `TagButton` and `TagDropdown`.
+
+| Prop         | Type                                   | Default  | Description                                                   |
+| :----------- | :------------------------------------- | :------- | :------------------------------------------------------------ |
+| `appearance` | `'fill' \| 'outline'`                  | `'fill'` | Filled or bordered tag.                                       |
+| `size`       | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'sm'`   | Tag size.                                                     |
+| `leading`    | `ReactNode`                            | -        | Decorative leading content, hidden from assistive technology. |
+| `className`  | `string`                               | -        | Class merged onto the root.                                   |
+
+### TagButton
+
+`as` selects a discriminated prop type: omit it or use `as="button"` for an action or controlled filter; use `as="a"` for navigation. Both modes support the shared appearance and content props above, React Aria press, focus, and hover behavior, and `isDisabled`.
+
+#### Action and filter (`as="button"`)
+
+Renders a native `<button>` through React Aria Button.
+
+| Prop         | Type                                                     | Default    | Description                                                                                           |
+| :----------- | :------------------------------------------------------- | :--------- | :---------------------------------------------------------------------------------------------------- |
+| `as`         | `'button'`                                               | `'button'` | Action or filter mode.                                                                                |
+| `children`   | `ReactNode \| ((state: ButtonRenderProps) => ReactNode)` | -          | Label or button state renderer.                                                                       |
+| `isSelected` | `boolean`                                                | -          | Controlled filter state; sets `aria-pressed` and shows the selected check. Omit for an action button. |
+| `isDisabled` | `boolean`                                                | `false`    | Disables the button.                                                                                  |
+| `isPending`  | `boolean`                                                | `false`    | React Aria pending state; prevents press actions.                                                     |
+| `onPress`    | `(event: PressEvent) => void`                            | -          | Handles pointer, touch, and keyboard activation.                                                      |
+| `type`       | `'button' \| 'submit' \| 'reset'`                        | `'button'` | Native button behavior.                                                                               |
+| `ref`        | `Ref<HTMLButtonElement>`                                 | -          | Ref to the button element.                                                                            |
+
+Other React Aria [Button props](https://react-spectrum.adobe.com/react-aria/Button.html#props), including supported native form, DOM, ARIA, press, focus, and hover props, pass through. `className` accepts a string; `style` is not exposed. `isSelected` has no uncontrolled counterpart. Navigation props such as `href`, `target`, and `rel` are not available in button mode.
+
+#### Navigation (`as="a"`)
+
+Renders a native `<a>` using React Aria's link, focus, and hover hooks. Supply `href` or a `render` callback that returns a compatible router anchor. Use `href` with React Aria `RouterProvider` for client-side navigation, or use `render` to integrate a router link directly.
+
+| Prop           | Type                                                   | Default  | Description                                                           |
+| :------------- | :----------------------------------------------------- | :------- | :-------------------------------------------------------------------- |
+| `as`           | `'a'`                                                  | Required | Navigation mode.                                                      |
+| `children`     | `ReactNode \| ((state: LinkRenderProps) => ReactNode)` | -        | Label or link state renderer.                                         |
+| `href`         | `string`                                               | -        | Destination URL; required unless `render` supplies the router anchor. |
+| `target`       | `string`                                               | -        | Browsing context for the destination.                                 |
+| `rel`          | `string`                                               | -        | Link relationship metadata.                                           |
+| `download`     | `boolean \| string`                                    | -        | Requests a download rather than navigation.                           |
+| `aria-current` | `AriaAttributes['aria-current']`                       | -        | Identifies the current destination; does not add selection.           |
+| `isDisabled`   | `boolean`                                              | `false`  | Prevents navigation and exposes the disabled state.                   |
+| `onPress`      | `(event: PressEvent) => void`                          | -        | Handles activation.                                                   |
+| `render`       | `(props, state) => ReactElement`                       | -        | Returns a compatible router anchor; required when `href` is omitted.  |
+| `ref`          | `Ref<HTMLAnchorElement>`                               | -        | Ref to the anchor element.                                            |
+
+Navigation mode accepts other supported React Aria [Link props](https://react-spectrum.adobe.com/react-aria/Link.html#props), including DOM, ARIA, press, focus, hover, and router props. It excludes `onPressUp`, `onPressChange`, `isSelected`, `aria-pressed`, `isPending`, and button submit/form props such as `type`, `name`, `value`, `form`, and `formAction`. `className` accepts a string; `style` is not exposed.
+
+When disabled, navigation mode renders an anchor without `href` and suppresses a custom `render` callback so a router cannot navigate around the disabled state. Refs point to the rendered anchor in navigation mode and the rendered button in action mode.
+
+```tsx
+<TagButton as="a" href="/guidance" appearance="outline">
+  Related guidance
+</TagButton>
+
+<TagButton as="a" render={(props) => <RouterLink {...props} to="/guidance" />}>
+  Related guidance
+</TagButton>
+```
+
+The custom router component must render an anchor and forward the native anchor props (including `children`) and ref. It receives `LinkRenderProps` as the second argument. A custom renderer owns navigation and URL mapping; avoid also navigating from `onPress` or `onClick`. Configure your router's navigation and URL handling on `RouterProvider` when using the `href` approach.
+
+### TagDropdown
+
+A parent filter with separate deselection and menu buttons while selected. Place it alongside standalone tags; it is not a `TagGroup` collection item.
+
+#### Content
+
+| Prop              | Type                                    | Default         | Description                                                              |
+| :---------------- | :-------------------------------------- | :-------------- | :----------------------------------------------------------------------- |
+| `label`           | `ReactNode`                             | Required        | Parent tag label.                                                        |
+| `dropdownLabel`   | `string`                                | Localized label | Accessible name for the arrow and menu. Provide one for a complex label. |
+| `items`           | `Iterable<T>`                           | -               | Dynamic menu collection.                                                 |
+| `children`        | `ReactNode \| ((item: T) => ReactNode)` | Required        | `MenuItem` children or an item renderer.                                 |
+| `renderSelection` | `(selection: Selection) => ReactNode`   | Required        | Summary of the selected sub-labels.                                      |
+
+#### Selection and state
+
+| Prop                  | Type                        | Default   | Description                                                                |
+| :-------------------- | :-------------------------- | :-------- | :------------------------------------------------------------------------- |
+| `selectedKeys`        | `'all' \| Iterable<Key>`    | -         | Controlled sub-label selection.                                            |
+| `defaultSelectedKeys` | `'all' \| Iterable<Key>`    | Empty set | Initial uncontrolled sub-label selection.                                  |
+| `onSelectionChange`   | `(keys: Selection) => void` | -         | Called when sub-labels change, including an empty set before `onDeselect`. |
+| `isSelected`          | `boolean`                   | `true`    | Parent selection; keep mounted to animate the attached caret.              |
+| `onSelect`            | `() => void`                | -         | Required when `isSelected` may be false; selects the parent.               |
+| `onDeselect`          | `() => void`                | Required  | Removes parent membership in your application.                             |
+| `disabledKeys`        | `Iterable<Key>`             | -         | Menu item keys that cannot be selected.                                    |
+| `isDisabled`          | `boolean`                   | `false`   | Disables both buttons and keeps the menu closed.                           |
+| `isOpen`              | `boolean`                   | -         | Controlled menu visibility.                                                |
+| `defaultOpen`         | `boolean`                   | `false`   | Initial uncontrolled menu visibility.                                      |
+| `onOpenChange`        | `(isOpen: boolean) => void` | -         | Called when menu visibility changes.                                       |
+
+When `isSelected` is false, only the plain filter label is available; its caret is inert and hidden from assistive technology. The menu opens only for a selected, enabled parent, even if `isOpen` is true. Deselecting or disabling the parent closes the menu and requests `onOpenChange(false)`; when controlling `isOpen`, reflect that request in your state. The menu always uses multiple selection and stays open while choosing sub-labels. `TagDropdown` exposes the props above and the shared standalone appearance props; it does not forward arbitrary button, menu, popover, DOM, ARIA, `style`, or `ref` props.
+
 ### DOM structure
 
-By default, the group root and tag rows are `<div>` elements, with a grid for keyboard interaction. Tags are not native form inputs; include `selectedKeys` in your form data explicitly when submitting.
+The group root and tag rows are `<div>` elements, with a grid for keyboard interaction. `TagButton` renders a `<button>` by default or an `<a>` with `as="a"`, and `TagDropdown` wraps its two buttons in a labelled `<span role="group">`. Selection is application state; include it in your form data explicitly when submitting.
 
 ## Accessibility
 
 - Give the group a visible `label`, or use `aria-label` / `aria-labelledby`.
 - Arrow keys navigate tags; selection follows `selectionMode`. Delete or Backspace removes enabled selected tags, or the focused tag when it is unselected.
 - Clicking a remove control removes that tag without selecting it. Disabled tags remain in the collection during bulk removal.
-- A selected disabled tag retains `aria-selected="true"` alongside `aria-disabled="true"`. Link tags retain grid-row keyboard navigation and announce their destination through an accessible description.
+- A selected disabled tag retains `aria-selected="true"` alongside `aria-disabled="true"`. Group link tags retain grid-row keyboard navigation and announce their destination through an accessible description; links are excluded from selection and removal.
+- Standalone filters expose `aria-pressed`. In a selected `TagDropdown`, Tab reaches the label and arrow independently; Enter or Space activates the focused control. ArrowDown on either the selected label or arrow opens the menu and focuses its first enabled option. The menu supports arrow-key navigation and Escape to close. If external state deselects a focused open dropdown, focus returns to its label; if the whole dropdown becomes disabled, its labelled group receives programmatic focus without adding a tab stop.
 - Plain and nested text supply the tag name automatically. Provide `textValue` for complex or function content, and a useful `removeButtonLabel` for custom removal wording.
 - `description` is the accessible helper; a non-empty `errorMessage` replaces it. Focus remains visible in forced-colors mode, and reduced motion makes color changes immediate.
 
@@ -205,13 +428,13 @@ By default, the group root and tag rows are `<div>` elements, with a grid for ke
 
 Use [VeliProvider](/docs/provider/) with `language="dv"` for Dhivehi and RTL, or `language="en"` for English and LTR. Dhivehi tags use `MV A Waheed`; labels and messages follow the provider typography. Leading content and removal controls follow the text direction.
 
-Built-in empty messages and remove labels follow the provider language. Localize your visible tag content and custom remove labels in your application. Local `lang` and `dir` attributes do not change the built-in translated copy.
+Built-in empty messages, remove labels, and dropdown menu labels follow the provider language. Localize your visible tag content and custom remove labels in your application. Local `lang` and `dir` attributes do not change the built-in translated copy.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <TagsRtlDemo client:visible />
 </div>
 
-Switch between Dhivehi and English to compare tag order, selection, and the built-in remove controls. Removing a saved topic updates the preview collection.
+Switch between Dhivehi and English to compare tag order, selection, removal and the mirrored dropdown. Removing a saved topic updates the preview collection; selecting Documents reveals its sub-label menu.
 
 ```tsx
 import { useState } from 'react';
@@ -237,3 +460,9 @@ function DhivehiTags() {
   );
 }
 ```
+
+## Motion
+
+Tag color changes, caret reshaping and summary transitions use `duration-normal` (200ms). Pressing a button or either dropdown segment grows the whole control over `duration-fast` (80ms), without a ripple. Collection additions/removals fade and scale while remaining rows slide into place; a summary slides in when it appears and fades when its text changes.
+
+Keep stable item IDs and the dropdown mounted for continuous transitions. TagGroup owns motion within its collection; a surrounding layout owns transitions between standalone controls and the exit of any standalone control it unmounts. Reduced motion disables these decorative effects, including press growth.

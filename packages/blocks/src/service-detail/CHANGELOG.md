@@ -1,3 +1,10 @@
+## 0.4.1
+
+### Fixed
+
+- Right-align Dhivehi fee labels and values while preserving the fee grid's column order.
+- Hide the bottom borders across the final row of the two-column fee grid, while preserving separators on mobile and above an incomplete final row.
+
 ## 0.4.0
 
 ### Changed

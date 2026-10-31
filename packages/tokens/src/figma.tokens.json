@@ -7797,6 +7797,388 @@
       }
     },
     "components": {
+      "tag": {
+        "fill": {
+          "bg": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.alpha.200}",
+              "$description": "Fill tag background, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.alpha.200}",
+                  "Dark": "{color.brand.neutral.alpha.400}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.alpha.300}",
+              "$description": "Fill tag background on hover, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.alpha.300}",
+                  "Dark": "{color.brand.neutral.alpha.500}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.alpha.400}",
+              "$description": "Fill tag background when pressed, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.alpha.400}",
+                  "Dark": "{color.brand.neutral.alpha.600}"
+                }
+              }
+            }
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{color.semantics.text.base.strong}",
+            "$description": "Label and icons on a fill tag, not selected. text/base/strong in Light, text/base/emphasis in Dark so pressed keeps 4.5:1.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.semantics.text.base.strong}",
+                "Dark": "{color.semantics.text.base.emphasis}"
+              }
+            }
+          },
+          "selected": {
+            "bg": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1100}",
+                "$description": "Selected fill tag background (charcoal in Light). Same values as the secondary button.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1100}",
+                    "Dark": "{color.brand.neutral.1200}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1200}",
+                "$description": "Selected fill tag background on hover.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1200}",
+                    "Dark": "{color.brand.neutral.1100}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1000}",
+                "$description": "Selected fill tag background when pressed.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1000}",
+                    "Dark": "{color.brand.neutral.1000}"
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "$type": "color",
+              "$value": "{color.semantics.text.base.inverted}",
+              "$description": "Label, check and icons on a selected fill tag.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.text.base.inverted}",
+                  "Dark": "{color.semantics.text.base.inverted}"
+                }
+              }
+            },
+            "value": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.500}",
+              "$description": "Sub-label value text on a selected fill tag with a dropdown.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.500}",
+                  "Dark": "{color.brand.neutral.500}"
+                }
+              }
+            },
+            "divider": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.700}",
+              "$description": "Divider before the value on a selected fill tag with a dropdown.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.700}",
+                  "Dark": "{color.brand.neutral.700}"
+                }
+              }
+            },
+            "remove": {
+              "hover": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.1000}",
+                "$description": "Remove button background on hover, on a selected fill tag.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.1000}",
+                    "Dark": "{color.brand.neutral.1000}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.900}",
+                "$description": "Remove button background when pressed, on a selected fill tag.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.900}",
+                    "Dark": "{color.brand.neutral.900}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "outline": {
+          "bg": {
+            "hover": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.alpha.200}",
+              "$description": "Outline tag background on hover, not selected. No background at rest.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.alpha.200}",
+                  "Dark": "{color.brand.neutral.alpha.400}"
+                }
+              }
+            },
+            "pressed": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.alpha.300}",
+              "$description": "Outline tag background when pressed, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.alpha.300}",
+                  "Dark": "{color.brand.neutral.alpha.500}"
+                }
+              }
+            }
+          },
+          "border": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.semantics.border.base.strong}",
+              "$description": "Outline tag border, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.border.base.strong}",
+                  "Dark": "{color.semantics.border.base.strong}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.semantics.border.base.emphasis}",
+              "$description": "Outline tag border on hover and when pressed, not selected.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.border.base.emphasis}",
+                  "Dark": "{color.semantics.border.base.emphasis}"
+                }
+              }
+            }
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{color.semantics.text.base.strong}",
+            "$description": "Label and icons on an outline tag, not selected. text/base/strong in Light, text/base/emphasis in Dark so pressed keeps 4.5:1.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.semantics.text.base.strong}",
+                "Dark": "{color.semantics.text.base.emphasis}"
+              }
+            }
+          },
+          "selected": {
+            "bg": {
+              "default": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.alpha.200}",
+                "$description": "Selected outline tag background.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.alpha.200}",
+                    "Dark": "{color.brand.neutral.alpha.400}"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.alpha.300}",
+                "$description": "Selected outline tag background on hover.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.alpha.300}",
+                    "Dark": "{color.brand.neutral.alpha.500}"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{color.brand.neutral.alpha.400}",
+                "$description": "Selected outline tag background when pressed.",
+                "$extensions": {
+                  "mode": {
+                    "Light": "{color.brand.neutral.alpha.400}",
+                    "Dark": "{color.brand.neutral.alpha.600}"
+                  }
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{color.brand.neutral.1100}",
+              "$description": "Selected outline tag border (charcoal in Light).",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.neutral.1100}",
+                  "Dark": "{color.brand.neutral.1200}"
+                }
+              }
+            },
+            "foreground": {
+              "$type": "color",
+              "$value": "{color.semantics.text.base.emphasis}",
+              "$description": "Label, check and icons on a selected outline tag.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.text.base.emphasis}",
+                  "Dark": "{color.semantics.text.base.emphasis}"
+                }
+              }
+            },
+            "value": {
+              "$type": "color",
+              "$value": "{color.semantics.text.base.muted}",
+              "$description": "Sub-label value text on a selected outline tag with a dropdown. text/base/muted in Light, text/base/DEFAULT in Dark for 4.5:1.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.text.base.muted}",
+                  "Dark": "{color.semantics.text.base.DEFAULT}"
+                }
+              }
+            },
+            "divider": {
+              "$type": "color",
+              "$value": "{color.semantics.border.base.strong}",
+              "$description": "Divider before the value on a selected outline tag with a dropdown.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.semantics.border.base.strong}",
+                  "Dark": "{color.semantics.border.base.strong}"
+                }
+              }
+            }
+          }
+        },
+        "remove": {
+          "hover": {
+            "$type": "color",
+            "$value": "{color.brand.neutral.alpha.300}",
+            "$description": "Remove button background on hover (every tag except a selected fill tag).",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.brand.neutral.alpha.300}",
+                "Dark": "{color.brand.neutral.alpha.500}"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{color.brand.neutral.alpha.400}",
+            "$description": "Remove button background when pressed (every tag except a selected fill tag).",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.brand.neutral.alpha.400}",
+                "Dark": "{color.brand.neutral.alpha.600}"
+              }
+            }
+          }
+        },
+        "disabled": {
+          "bg": {
+            "$type": "color",
+            "$value": "{color.brand.neutral.300}",
+            "$description": "Disabled fill tag background. Same values as the disabled button.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.brand.neutral.300}",
+                "Dark": "{color.brand.neutral.400}"
+              }
+            }
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{color.semantics.border.base.muted}",
+            "$description": "Disabled outline tag border.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.semantics.border.base.muted}",
+                "Dark": "{color.semantics.border.base.muted}"
+              }
+            }
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{color.semantics.text.disabled}",
+            "$description": "Label and icons on a disabled tag.",
+            "$extensions": {
+              "mode": {
+                "Light": "{color.semantics.text.disabled}",
+                "Dark": "{color.semantics.text.disabled}"
+              }
+            }
+          }
+        },
+        "link": {
+          "foreground": {
+            "default": {
+              "$type": "color",
+              "$value": "{color.brand.primary.900}",
+              "$description": "Label and icons on a link tag. One step darker than text/links/default in Light, so it keeps 4.5:1 on the tag fill.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.primary.900}",
+                  "Dark": "{color.brand.primary.900}"
+                }
+              }
+            },
+            "hover": {
+              "$type": "color",
+              "$value": "{color.brand.primary.1000}",
+              "$description": "Link tag label on hover and when pressed. primary/1000 in Light, primary/1100 in Dark, because text/links/hover is too dark there.",
+              "$extensions": {
+                "mode": {
+                  "Light": "{color.brand.primary.1000}",
+                  "Dark": "{color.brand.primary.1100}"
+                }
+              }
+            }
+          }
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "{color.semantics.border.focus}",
+          "$description": "Focus ring on tags, the remove button and the dropdown caret.",
+          "$extensions": {
+            "mode": {
+              "Light": "{color.semantics.border.focus}",
+              "Dark": "{color.semantics.border.focus}"
+            }
+          }
+        }
+      },
       "button": {
         "primary": {
           "default": {
