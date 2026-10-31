@@ -6,58 +6,11 @@ import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { Button, type ButtonProps } from './button.js';
 import { useVeliLanguage } from './provider-shared.js';
+import { alertIntentClasses, type AlertIntent } from './alert-intent-classes.js';
 
-export type AlertIntent = 'neutral' | 'info' | 'positive' | 'cautious' | 'warning' | 'danger';
+export type { AlertIntent };
 export type AlertAppearance = 'light' | 'highContrast';
 export type AlertLayout = 'default' | 'stacked' | 'compact';
-
-const alertIntentClasses = {
-  neutral: {
-    light: 'bg-alert-light-neutral-bg',
-    highContrast: 'bg-alert-high-contrast-neutral-bg',
-    icon: 'text-alert-light-neutral-icon',
-    foreground: 'text-alert-high-contrast-neutral-foreground',
-    description: 'text-alert-high-contrast-neutral-description',
-  },
-  info: {
-    light: 'bg-alert-light-info-bg',
-    highContrast: 'bg-alert-high-contrast-info-bg',
-    icon: 'text-alert-light-info-icon',
-    foreground: 'text-alert-high-contrast-info-foreground',
-    description: 'text-alert-high-contrast-info-description',
-  },
-  positive: {
-    light: 'bg-alert-light-positive-bg',
-    highContrast: 'bg-alert-high-contrast-positive-bg',
-    icon: 'text-alert-light-positive-icon',
-    foreground: 'text-alert-high-contrast-positive-foreground',
-    description: 'text-alert-high-contrast-positive-description',
-  },
-  cautious: {
-    light: 'bg-alert-light-cautious-bg',
-    highContrast: 'bg-alert-high-contrast-cautious-bg',
-    icon: 'text-alert-light-cautious-icon',
-    foreground: 'text-alert-high-contrast-cautious-foreground',
-    description: 'text-alert-high-contrast-cautious-description',
-  },
-  warning: {
-    light: 'bg-alert-light-warning-bg',
-    highContrast: 'bg-alert-high-contrast-warning-bg',
-    icon: 'text-alert-light-warning-icon',
-    foreground: 'text-alert-high-contrast-warning-foreground',
-    description: 'text-alert-high-contrast-warning-description',
-  },
-  danger: {
-    light: 'bg-alert-light-danger-bg',
-    highContrast: 'bg-alert-high-contrast-danger-bg',
-    icon: 'text-alert-light-danger-icon',
-    foreground: 'text-alert-high-contrast-danger-foreground',
-    description: 'text-alert-high-contrast-danger-description',
-  },
-} satisfies Record<
-  AlertIntent,
-  Record<'light' | 'highContrast' | 'icon' | 'foreground' | 'description', string>
->;
 
 const alertVariants = cva(
   'relative flex w-full gap-3 rounded-3xl font-sans antialiased text-start [&:has(>[data-slot=alert-body]>[data-slot=alert-close])>[data-slot=alert-body]]:pe-8',
@@ -210,36 +163,28 @@ export interface AlertActionsProps {
   className?: string;
 }
 
-// Only direct Veli ghost Buttons (including fragments) receive Alert's foreground.
-// Other actions retain their own colour, event handlers, and application semantics.
-function styleGhostActions(children: React.ReactNode, foreground: string): React.ReactNode {
+// High-contrast Alerts opt direct Veli Buttons into Button's highContrast styles.
+// Other controls keep their own colour, event handlers, and application semantics.
+function withHighContrastActions(children: React.ReactNode): React.ReactNode {
   return React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return child;
     if (child.type === React.Fragment) {
       const fragment = child as React.ReactElement<{ children?: React.ReactNode }>;
       return React.cloneElement(fragment, {
-        children: styleGhostActions(fragment.props.children, foreground),
+        children: withHighContrastActions(fragment.props.children),
       });
     }
     if (child.type !== Button) return child;
     const button = child as React.ReactElement<ButtonProps>;
-    if (button.props.appearance !== 'ghost') return child;
-    return React.cloneElement(button, {
-      className: twMerge(
-        foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
-        button.props.className,
-      ),
-    });
+    if (button.props.highContrast) return child;
+    return React.cloneElement(button, { highContrast: true });
   });
 }
 export function AlertActions({ children, className }: AlertActionsProps) {
-  const { appearance, intent, layout } = React.useContext(AlertContext);
+  const { appearance, layout } = React.useContext(AlertContext);
   return (
     <div data-slot="alert-actions" className={twMerge(alertActionsVariants({ layout }), className)}>
-      {appearance === 'highContrast'
-        ? styleGhostActions(children, alertIntentClasses[intent].foreground)
-        : children}
+      {appearance === 'highContrast' ? withHighContrastActions(children) : children}
     </div>
   );
 }
@@ -249,7 +194,7 @@ export interface AlertCloseButtonProps {
   className?: string;
 }
 export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCloseButtonProps) {
-  const { appearance, intent, layout, dismiss } = React.useContext(AlertContext);
+  const { appearance, layout, dismiss } = React.useContext(AlertContext);
   const { language } = useVeliLanguage();
   return (
     <Button
@@ -258,13 +203,13 @@ export function AlertCloseButton({ 'aria-label': ariaLabel, className }: AlertCl
       appearance="ghost"
       size="sm"
       iconOnly
+      highContrast={appearance === 'highContrast'}
       data-slot="alert-close"
       aria-label={ariaLabel ?? (language === 'dv' ? 'އެލާޓް ލައްޕާ' : 'Dismiss alert')}
       className={twMerge(
         'absolute end-2 shrink-0',
         layout === 'compact' ? 'top-1/2 -translate-y-1/2' : 'top-2 [&:lang(dv)]:top-3',
-        appearance === 'highContrast' && alertIntentClasses[intent].foreground,
-        'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
+        appearance === 'light' && 'data-[hovered]:text-base-strong data-[pressed]:text-base-strong',
         className,
       )}
       onPress={() => dismiss?.()}

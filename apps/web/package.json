@@ -23,7 +23,7 @@
     "dialkit": "^1.4.3",
     "motion": "^13.1.0",
     "react": "^19.0.0",
-    "react-aria-components": "^1.18.0",
+    "react-aria-components": "^1.22.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {

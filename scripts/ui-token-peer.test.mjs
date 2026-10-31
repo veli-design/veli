@@ -45,10 +45,10 @@ test('planned tokens release satisfies the UI peer before package versioning', a
   assertCompatibleTokensPeer(ui, candidate);
 });
 
-test('UI requires tokens with high-contrast Button colors', async () => {
+test('UI requires tokens with Tag and high-contrast Button colors', async () => {
   const ui = JSON.parse(await readFile(new URL('../packages/react/package.json', import.meta.url)));
-  for (const version of ['0.9.0', '0.9.1', '0.9.99', '0.10.0-rc.0', '0.12.0'])
+  for (const version of ['0.9.0', '0.9.99', '0.10.0', '0.10.99', '0.11.0-rc.0', '0.12.0'])
     assert.throws(() => assertCompatibleTokensPeer(ui, version), /must satisfy UI peer/);
-  for (const version of ['0.10.0', '0.10.1', '0.10.99', '0.11.0', '0.11.99'])
+  for (const version of ['0.11.0', '0.11.1', '0.11.99'])
     assert.doesNotThrow(() => assertCompatibleTokensPeer(ui, version));
 });

@@ -7,7 +7,7 @@
     "next": "15.5.18",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "react-aria-components": "1.18.0",
+    "react-aria-components": "1.22.0",
     "@veli-design/react": "file:ui.tgz",
     "vitest": "4.1.11",
     "jsdom": "30.0.1"

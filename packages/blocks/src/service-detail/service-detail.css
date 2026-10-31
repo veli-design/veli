@@ -213,6 +213,11 @@
 .veli-service-detail-fee-row:last-child {
   border: 0;
 }
+@media (width >= 768px) {
+  .veli-service-detail-fee-row:nth-last-child(2):nth-child(odd) {
+    border-block-end: 0;
+  }
+}
 .veli-service-detail-services-meta {
   min-width: 0;
 }
@@ -737,6 +742,10 @@
 .veli-service-detail-fees:lang(dv) {
   direction: ltr;
   font-family: var(--veli-font-sans);
+}
+.veli-service-detail-fee-row:lang(dv) {
+  direction: rtl;
+  text-align: start;
 }
 
 /* Conditions mirror canonical md/lg breakpoints; custom properties are not valid here. */

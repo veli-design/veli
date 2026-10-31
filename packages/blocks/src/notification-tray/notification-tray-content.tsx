@@ -58,6 +58,7 @@ export const notificationTrayLabels = {
 export type NotificationTrayContentProps = {
   /** Already filtered by the app; may be one page of a larger result. */
   items: readonly NotificationItem[];
+  /** Total unread notifications across all pages, independent of the filtered items. */
   unreadCount: number;
   filter: NotificationFilter;
   onFilterChange: (filter: NotificationFilter) => void;

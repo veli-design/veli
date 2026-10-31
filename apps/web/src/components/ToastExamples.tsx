@@ -51,7 +51,7 @@ export function ToastAppearancesDemo() {
   const queue = useToastQueue();
   return (
     <div className="flex flex-wrap gap-3">
-      {(['outline', 'subtle', 'emphasis'] as const).map((appearance) => (
+      {(['subtle', 'emphasis'] as const).map((appearance) => (
         <Button
           key={appearance}
           appearance="transparent"
@@ -66,7 +66,7 @@ export function ToastAppearancesDemo() {
             )
           }
         >
-          {appearance === 'outline' ? 'Outline' : appearance === 'subtle' ? 'Subtle' : 'Emphasis'}
+          {appearance === 'subtle' ? 'Subtle' : 'Emphasis'}
         </Button>
       ))}
       <ToastRegion queue={queue} />

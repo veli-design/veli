@@ -5,6 +5,7 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSyncCorepack } from './corepack.mjs';
+import { candidateInventory } from './prepare-consumer-candidate.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const packageDirectories = {
   '@veli-design/react': 'react',
@@ -131,7 +132,14 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (command === 'manifest') {
     const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
     await mkdir(dirname(resolve(target)), { recursive: true });
-    await writeFile(target, `${JSON.stringify(await createManifest(sha), null, 2)}\n`);
+    const manifest = await createManifest(sha);
+    if (process.env.VELI_TARBALLS) {
+      const tarballs = JSON.parse(process.env.VELI_TARBALLS);
+      const candidate = dirname(tarballs['@veli-design/react']);
+      manifest.packages = candidateInventory(candidate, sha).packages;
+      validateManifest(manifest);
+    }
+    await writeFile(target, `${JSON.stringify(manifest, null, 2)}\n`);
   } else if (command === 'stage') {
     await stageConsumer(
       target,

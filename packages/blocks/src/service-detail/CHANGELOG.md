@@ -1,3 +1,9 @@
+## 0.5.2
+
+### Fixed
+
+- Include the merged Dhivehi fee alignment and final-row separator fixes in the public-package source archive.
+
 ## 0.5.1
 
 ### Changed
@@ -9,6 +15,13 @@
 ### Changed
 
 - Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
+## 0.4.1
+
+### Fixed
+
+- Right-align Dhivehi fee labels and values while preserving the fee grid's column order.
+- Hide the bottom borders across the final row of the two-column fee grid, while preserving separators on mobile and above an incomplete final row.
 
 ## 0.4.0
 

@@ -9,6 +9,7 @@ dist
 .astro
 .turbo
 .cache
+.tmp
 out
 storybook-static
 

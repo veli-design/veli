@@ -418,12 +418,18 @@ export const Outline: Story = {
 };
 
 export const Sizes: Story = {
+  parameters: {
+    layout: 'padded',
+  },
   render: () => {
     const language = useSelectLanguage();
     const text = useSelectText();
 
     return (
-      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div
+        key={language}
+        className="mx-auto grid w-full max-w-[680px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-[24px]"
+      >
         {(['default', 'outline'] as const).map((appearance) => (
           <div key={appearance} className="flex flex-col gap-8">
             <span className="text-xs font-bold uppercase tracking-wider text-base-muted">
@@ -454,12 +460,18 @@ export const Sizes: Story = {
 };
 
 export const States: Story = {
+  parameters: {
+    layout: 'padded',
+  },
   render: () => {
     const language = useSelectLanguage();
     const text = useSelectText();
 
     return (
-      <div key={language} className="grid w-[680px] grid-cols-2 gap-[24px]">
+      <div
+        key={language}
+        className="mx-auto grid w-full max-w-[680px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-[24px]"
+      >
         {(['default', 'outline'] as const).map((appearance) => (
           <div key={appearance} className="flex flex-col gap-4">
             <Select

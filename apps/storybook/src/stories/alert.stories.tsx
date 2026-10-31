@@ -23,6 +23,10 @@ import { useVeliLanguage } from '@veli-design/react/provider';
 const intents: AlertIntent[] = ['neutral', 'info', 'positive', 'cautious', 'warning', 'danger'];
 const appearances: AlertAppearance[] = ['light', 'highContrast'];
 const layouts: AlertLayout[] = ['default', 'stacked', 'compact'];
+/** Cap demo width at the desktop sample, and never exceed the viewport. */
+const alertDemoWidth = 'w-[min(35rem,calc(100vw-2rem))]';
+const alertStackedWidth = 'w-[min(343px,calc(100vw-2rem))]';
+
 const text = {
   en: {
     title: 'Permit review in progress',
@@ -30,11 +34,15 @@ const text = {
     actionLabel: 'Track application',
     secondaryActionLabel: 'Remind me later',
     reset: 'Reset alert',
-    dismissed: 'Alert dismissed.',
-    dismissRequested: 'Dismiss requested. The parent keeps the alert visible.',
-    show: 'Show alert',
-    hide: 'Hide alert',
-    hidden: 'The alert is hidden.',
+    default: 'Default',
+    urgentAnnouncement: 'Urgent dynamic announcement',
+    customLandmark: 'Custom landmark',
+    customRegionLabel: 'Custom alert region',
+    waitingForApproval: 'Waiting for approval',
+    longTitle: 'An important update about your permit application and supporting documents',
+    longDescription:
+      'Review the information carefully before continuing. The alert grows with its content and reserves a separate space for the close control.',
+    longActionLabel: 'Review supporting documents and application details',
   },
   dv: {
     title: 'ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ',
@@ -42,22 +50,34 @@ const text = {
     actionLabel: 'ޝެޑިއުލް ބައްލަވާ',
     secondaryActionLabel: 'ކުރިއަށް',
     reset: 'އެލާޓް އަލުން ދައްކާ',
-    dismissed: 'އެލާޓް ލެއްޕިއްޖެ.',
-    dismissRequested: 'ލައްޕާލަން އެދިއްޖެ. އެލާޓް އަދިވެސް ފެންނަނީ.',
-    show: 'އެލާޓް ދައްކާ',
-    hide: 'އެލާޓް ފޮރުވާ',
-    hidden: 'އެލާޓް ފޮރުވިފައި.',
+    default: 'އާދައިގެ',
+    urgentAnnouncement: 'އަވަސް އެނައުންސްމަންޓް',
+    customLandmark: 'ކަސްޓަމް ލޭންޑްމާކް',
+    customRegionLabel: 'ކަސްޓަމް އެލާޓް ރީޖަން',
+    waitingForApproval: 'އެޕްރޫވަލް އިންތިޒާރުކުރަނީ',
+    longTitle: 'ތިޔަ ޕާމިޓް އެޕްލިކޭޝަނާއި ގުޅޭ ލިޔެކިޔުންތަކުގެ މުހިންމު އަޕްޑޭޓެއް',
+    longDescription:
+      'ކުރިއަށްދާންފަހު މަޢުލޫމާތު ސަމާލުކަންބަލާ. އެލާޓް ކޮންޓެންޓްއާ އެކު ބޮޑުވެ، ލައްޕާ ކޮންޓްރޯލަށް ވަކި ޖާގައެއް ރިޒާވްކުރެއެވެ.',
+    longActionLabel: 'ގުޅޭ ލިޔެކިޔުންތަކާއި އެޕްލިކޭޝަން ޑިޓޭލް ބައްލަވާ',
   },
 } as const;
+
 type Language = keyof typeof text;
 const textKeys = ['title', 'description', 'actionLabel', 'secondaryActionLabel'] as const;
 type TextKey = (typeof textKeys)[number];
+
 const useLanguage = (): Language => useVeliLanguage().language;
+
 function localize(key: TextKey, value: string, language: Language) {
   return !value.trim() || Object.values(text).some((copy) => copy[key] === value)
     ? text[language][key]
     : value;
 }
+
+const getAlertPreviewKey = (language: Language, defaultVisible: boolean | undefined) =>
+  `${language}:${defaultVisible === false ? 'hidden' : 'visible'}`;
+
+const collapsedControlGroups = ['Content', 'State'] as const;
 
 function AlertDocsContainer(props: DocsContainerProps) {
   useEffect(() => {
@@ -65,9 +85,8 @@ function AlertDocsContainer(props: DocsContainerProps) {
     let attempts = 0;
     const collapse = () => {
       if (cancelled) return;
-      const groups = ['Content', 'State'];
       if (
-        groups.some(
+        collapsedControlGroups.some(
           (group) =>
             !document.querySelector(
               `tr[title^="Hide ${group} item"], tr[title^="Show ${group} item"]`,
@@ -78,7 +97,7 @@ function AlertDocsContainer(props: DocsContainerProps) {
         requestAnimationFrame(collapse);
         return;
       }
-      groups.forEach((group) =>
+      collapsedControlGroups.forEach((group) =>
         document
           .querySelector<HTMLElement>(`tr[title^="Hide ${group} item"] [tabindex="0"]`)
           ?.click(),
@@ -100,6 +119,7 @@ const icons = {
   warning: WarningIcon,
   danger: WarningOctagonIcon,
 };
+
 function AlertIcon({ intent, custom = false }: { intent: AlertIntent; custom?: boolean }) {
   const Icon = custom ? ClockIcon : icons[intent];
   return <Icon size={20} weight="fill" />;
@@ -119,6 +139,7 @@ type AlertStoryArgs = ComponentProps<typeof Alert> & {
   onAction: () => void;
   onSecondaryAction: () => void;
 };
+
 function AlertExample({
   title,
   description,
@@ -132,7 +153,7 @@ function AlertExample({
   showCloseButton,
   onAction,
   onSecondaryAction,
-  intent = 'info',
+  intent = 'neutral',
   appearance = 'light',
   layout = 'default',
   ...props
@@ -156,7 +177,8 @@ function AlertExample({
             type="button"
             size="sm"
             intent="secondary"
-            appearance={appearance === 'light' ? 'fill' : 'transparent'}
+            appearance="fill"
+            highContrast={appearance === 'highContrast'}
             onPress={onAction}
           >
             {localize('actionLabel', actionLabel, language)}
@@ -167,6 +189,7 @@ function AlertExample({
               size="sm"
               intent="secondary"
               appearance="ghost"
+              highContrast={appearance === 'highContrast'}
               onPress={onSecondaryAction}
             >
               {localize('secondaryActionLabel', secondaryActionLabel, language)}
@@ -178,17 +201,77 @@ function AlertExample({
     </Alert>
   );
 }
-const group = <T extends Record<string, object>>(category: string, fields: T) =>
+
+const withArgCategory = <T extends Record<string, object>>(category: string, argTypes: T) =>
   Object.fromEntries(
-    Object.entries(fields).map(([key, value]) => [key, { ...value, table: { category } }]),
-  );
+    Object.entries(argTypes).map(([name, argType]) => [
+      name,
+      {
+        ...argType,
+        table: {
+          ...('table' in argType && argType.table && typeof argType.table === 'object'
+            ? argType.table
+            : {}),
+          category,
+        },
+      },
+    ]),
+  ) as { [K in keyof T]: T[K] & { table: { category: string } } };
+
+const hiddenHtmlAlertArgTypes = {
+  about: { table: { disable: true } },
+  accessKey: { table: { disable: true } },
+  autoFocus: { table: { disable: true } },
+  contentEditable: { table: { disable: true } },
+  contextMenu: { table: { disable: true } },
+  dangerouslySetInnerHTML: { table: { disable: true } },
+  datatype: { table: { disable: true } },
+  defaultChecked: { table: { disable: true } },
+  defaultValue: { table: { disable: true } },
+  dir: { table: { disable: true } },
+  draggable: { table: { disable: true } },
+  hidden: { table: { disable: true } },
+  id: { table: { disable: true } },
+  inlist: { table: { disable: true } },
+  inputMode: { table: { disable: true } },
+  is: { table: { disable: true } },
+  itemID: { table: { disable: true } },
+  itemProp: { table: { disable: true } },
+  itemRef: { table: { disable: true } },
+  itemScope: { table: { disable: true } },
+  itemType: { table: { disable: true } },
+  lang: { table: { disable: true } },
+  nonce: { table: { disable: true } },
+  placeholder: { table: { disable: true } },
+  prefix: { table: { disable: true } },
+  property: { table: { disable: true } },
+  radioGroup: { table: { disable: true } },
+  resource: { table: { disable: true } },
+  results: { table: { disable: true } },
+  role: { table: { disable: true } },
+  security: { table: { disable: true } },
+  slot: { table: { disable: true } },
+  spellCheck: { table: { disable: true } },
+  style: { table: { disable: true } },
+  suppressContentEditableWarning: { table: { disable: true } },
+  suppressHydrationWarning: { table: { disable: true } },
+  tabIndex: { table: { disable: true } },
+  translate: { table: { disable: true } },
+  typeof: { table: { disable: true } },
+  unselectable: { table: { disable: true } },
+  vocab: { table: { disable: true } },
+} as const;
+
 const meta = {
   title: 'Components/Alert',
   component: Alert,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
-    controls: { sort: 'none' },
+    controls: {
+      sort: 'none',
+      exclude: /^(on[A-Z]|aria-|data-)/,
+    },
     docs: { container: AlertDocsContainer },
   },
   decorators: [
@@ -212,15 +295,15 @@ const meta = {
     },
   ],
   args: {
-    intent: 'info',
+    intent: 'neutral',
     appearance: 'light',
     layout: 'default',
     live: 'status',
     defaultVisible: true,
-    title: text.en.title,
-    description: text.en.description,
-    actionLabel: text.en.actionLabel,
-    secondaryActionLabel: text.en.secondaryActionLabel,
+    title: '',
+    description: '',
+    actionLabel: '',
+    secondaryActionLabel: '',
     showLeadingIcon: true,
     customIcon: false,
     showDescription: true,
@@ -232,13 +315,15 @@ const meta = {
     onDismiss: fn(),
   },
   argTypes: {
-    ...group('Appearance', {
+    ...withArgCategory('Appearance', {
       intent: { control: 'select', options: intents },
       appearance: { control: 'select', options: appearances },
       layout: { control: 'select', options: layouts },
     }),
-    ...group('Content', {
+    ...withArgCategory('Label', {
       title: { control: 'text' },
+    }),
+    ...withArgCategory('Content', {
       description: { control: 'text' },
       actionLabel: { control: 'text' },
       secondaryActionLabel: { control: 'text' },
@@ -249,52 +334,48 @@ const meta = {
       showSecondaryAction: { control: 'boolean', if: { arg: 'layout', neq: 'compact' } },
       showCloseButton: { control: 'boolean' },
     }),
-    ...group('State', {
+    ...withArgCategory('State', {
       live: { control: 'select', options: ['status', 'alert'] },
       defaultVisible: { control: 'boolean' },
       isVisible: { control: 'boolean' },
     }),
-    ...Object.fromEntries(
-      [
-        'children',
-        'className',
-        'leadingIcon',
-        'role',
-        'onDismiss',
-        'onAction',
-        'onSecondaryAction',
-      ].map((key) => [key, { table: { disable: true } }]),
-    ),
+    children: { table: { disable: true } },
+    className: { table: { disable: true } },
+    leadingIcon: { control: false, table: { disable: true } },
+    onDismiss: { table: { disable: true } },
+    onAction: { table: { disable: true } },
+    onSecondaryAction: { table: { disable: true } },
+    ...hiddenHtmlAlertArgTypes,
   },
 } satisfies Meta<AlertStoryArgs>;
+
 export default meta;
 type Story = StoryObj<AlertStoryArgs>;
 
-function PlaygroundExample(args: AlertStoryArgs) {
-  const [generation, setGeneration] = useState(0);
-  const copy = text[useLanguage()];
-  return (
-    <div className="flex w-140 max-w-full flex-col items-start gap-4">
-      <AlertExample key={`${generation}-${args.defaultVisible}`} {...args} />
-      <Button
-        type="button"
-        size="sm"
-        intent="secondary"
-        appearance="ghost"
-        onPress={() => setGeneration((value) => value + 1)}
-      >
-        {copy.reset}
-      </Button>
-    </div>
-  );
-}
-export const Playground: Story = { render: (args) => <PlaygroundExample {...args} /> };
 export const Default: Story = {
-  render: (args) => (
-    <div className="w-140 max-w-full">
-      <AlertExample {...args} />
-    </div>
-  ),
+  render: (args) => {
+    const language = useLanguage();
+    const [generation, setGeneration] = useState(0);
+    const copy = text[language];
+
+    return (
+      <div className={`flex ${alertDemoWidth} flex-col items-start gap-4`}>
+        <AlertExample
+          key={`${getAlertPreviewKey(language, args.defaultVisible)}-${generation}`}
+          {...args}
+        />
+        <Button
+          type="button"
+          size="sm"
+          intent="secondary"
+          appearance="ghost"
+          onPress={() => setGeneration((value) => value + 1)}
+        >
+          {copy.reset}
+        </Button>
+      </div>
+    );
+  },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByRole('status');
@@ -306,238 +387,121 @@ export const Default: Story = {
     await expect(canvas.getByRole('status')).toBeVisible();
   },
 };
-export const TitleOnly: Story = {
-  args: { showDescription: false, showActions: false, showCloseButton: false },
-  render: Default.render,
-};
+
 export const Stacked: Story = {
   args: { layout: 'stacked' },
-  render: (args) => (
-    <div className="w-[343px] max-w-[calc(100vw-2rem)]">
-      <AlertExample {...args} />
-    </div>
-  ),
-};
-export const Compact: Story = { args: { layout: 'compact' }, render: Default.render };
-export const CustomIcon: Story = {
-  args: { intent: 'cautious', customIcon: true, title: 'Waiting for approval' },
-  render: Default.render,
-};
-export const WithoutIcon: Story = { args: { showLeadingIcon: false }, render: Default.render };
-export const OneAction: Story = { args: { showSecondaryAction: false }, render: Default.render };
-export const WithoutActions: Story = { args: { showActions: false }, render: Default.render };
-export const LongContent: Story = {
-  args: {
-    layout: 'stacked',
-    title: 'An important update about your permit application and supporting documents',
-    description:
-      'Review the information carefully before continuing. The alert grows with its content and reserves a separate space for the close control.',
-    actionLabel: 'Review supporting documents and application details',
+  render: (args) => {
+    const language = useLanguage();
+
+    return (
+      <div key={getAlertPreviewKey(language, args.defaultVisible)} className={alertStackedWidth}>
+        <AlertExample {...args} />
+      </div>
+    );
   },
-  render: Stacked.render,
+};
+
+export const Compact: Story = {
+  args: { layout: 'compact' },
+  render: (args) => {
+    const language = useLanguage();
+
+    return (
+      <div key={getAlertPreviewKey(language, args.defaultVisible)} className={alertDemoWidth}>
+        <AlertExample {...args} />
+      </div>
+    );
+  },
+};
+
+export const CustomIcon: Story = {
+  args: { intent: 'cautious', customIcon: true },
+  render: (args) => {
+    const language = useLanguage();
+
+    return (
+      <div key={getAlertPreviewKey(language, args.defaultVisible)} className={alertDemoWidth}>
+        <AlertExample {...args} title={text[language].waitingForApproval} />
+      </div>
+    );
+  },
+};
+
+export const LongContent: Story = {
+  args: { layout: 'stacked' },
+  render: (args) => {
+    const language = useLanguage();
+    const copy = text[language];
+
+    return (
+      <div key={getAlertPreviewKey(language, args.defaultVisible)} className={alertStackedWidth}>
+        <AlertExample
+          {...args}
+          title={copy.longTitle}
+          description={copy.longDescription}
+          actionLabel={copy.longActionLabel}
+        />
+      </div>
+    );
+  },
 };
 
 export const AllVariants: Story = {
   parameters: { layout: 'padded' },
-  render: (args) => (
-    <div className="flex w-full flex-col items-center gap-8">
-      {layouts.map((layout) => (
-        <section key={layout} className="flex w-full max-w-full flex-col items-center gap-4">
-          <h2 className="type-body-md-medium text-base-emphasis">{layout}</h2>
-          {appearances.map((appearance) => (
-            <div key={appearance} className="flex w-full max-w-full flex-col items-center gap-4">
-              <h3 className="type-body-sm-medium text-base-strong">{appearance}</h3>
-              {intents.map((intent) => (
-                <div
-                  key={intent}
-                  className={layout === 'stacked' ? 'w-[343px] max-w-full' : 'w-140 max-w-full'}
-                  data-variant={`${layout}-${appearance}-${intent}`}
-                >
-                  <AlertExample {...args} layout={layout} appearance={appearance} intent={intent} />
-                </div>
-              ))}
-            </div>
-          ))}
-        </section>
-      ))}
-    </div>
-  ),
-};
+  render: (args) => {
+    const language = useLanguage();
 
-const dismissalInstructions = {
-  dismissible: {
-    title: 'Dismissible',
-    demonstrates: 'The Alert manages its own visibility. Closing it hides it and calls onDismiss.',
-    steps: [
-      'Click the close icon. The Alert disappears and “Alert dismissed” appears below.',
-      'Select “Reset alert” to restore it, then use Tab to focus the close button and press Enter or Space. It should dismiss again.',
-    ],
-  },
-  controlledDismissal: {
-    title: 'Controlled dismissal',
-    demonstrates:
-      'The parent owns isVisible. The close button calls onDismiss, and this example’s parent responds by setting isVisible to false.',
-    steps: [
-      'Click the close icon. The parent hides the Alert after receiving the dismissal callback.',
-      'Select “Reset alert” to set the parent’s visibility back to true. Focus the close button with Tab and press Enter or Space to repeat.',
-    ],
-  },
-  controlledVisibility: {
-    title: 'Controlled visibility',
-    demonstrates:
-      'The parent keeps isVisible true. A dismissal callback alone cannot hide a controlled Alert.',
-    steps: [
-      'Click the close icon, or focus it with Tab and press Enter or Space.',
-      '“Dismiss requested” appears below, but the Alert stays visible because the parent has not changed isVisible.',
-      'Select “Reset alert” to clear the callback feedback and try again.',
-    ],
-  },
-  initiallyHidden: {
-    title: 'Initially hidden',
-    demonstrates:
-      'The parent starts with isVisible false. The Alert is absent until the parent reveals it.',
-    steps: [
-      'Select “Show alert”. The parent sets isVisible to true and the Alert appears.',
-      'Select “Hide alert” to return to the starting state, or close the Alert to test its dismissal callback.',
-      'Select “Show alert” again to repeat. You can also reach these buttons with Tab and activate them with Enter or Space.',
-    ],
-  },
-} as const;
-
-function DismissalExample({
-  scenario,
-  ...args
-}: AlertStoryArgs & { scenario: keyof typeof dismissalInstructions }) {
-  const copy = text[useLanguage()];
-  const instructions = dismissalInstructions[scenario];
-  const controlled = scenario !== 'dismissible';
-  const keepVisible = scenario === 'controlledVisibility';
-  const initiallyHidden = scenario === 'initiallyHidden';
-  const [visible, setVisible] = useState(args.defaultVisible ?? true);
-  const [generation, setGeneration] = useState(0);
-  const [dismissed, setDismissed] = useState(false);
-  return (
-    <div className="flex w-140 max-w-full flex-col items-start gap-4">
-      <aside
-        aria-label="Story instructions"
-        lang="en"
-        dir="ltr"
-        className="w-full space-y-2 text-start"
-      >
-        <h2 className="type-body-md-semibold">{instructions.title}</h2>
-        <p className="type-body-sm-regular">{instructions.demonstrates}</p>
-        <p className="type-body-sm-semibold">Try it</p>
-        <ol className="type-body-sm-regular list-decimal space-y-1 ps-5">
-          {instructions.steps.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
-        <p className="type-caption-regular text-base-muted">
-          The controls and feedback below the Alert belong to this story, not the Alert API.
-          Automated interaction checks run when this story opens and restore its starting state.
-        </p>
-      </aside>
-      <AlertExample
-        key={generation}
-        {...args}
-        isVisible={controlled ? visible : undefined}
-        onDismiss={() => {
-          args.onDismiss?.();
-          setDismissed(true);
-          if (controlled && !keepVisible) setVisible(false);
-        }}
-      />
-      {dismissed ? (
-        <p className="type-body-sm-regular text-base-strong">
-          {keepVisible ? copy.dismissRequested : copy.dismissed}
-        </p>
-      ) : null}
-      {initiallyHidden && !visible && !dismissed ? (
-        <p className="type-body-sm-regular text-base-strong">{copy.hidden}</p>
-      ) : null}
-      <Button
-        type="button"
-        size="sm"
-        intent="secondary"
-        appearance="ghost"
-        onPress={() => {
-          setGeneration((value) => value + 1);
-          setVisible(initiallyHidden ? !visible : true);
-          setDismissed(false);
-        }}
-      >
-        {initiallyHidden ? (visible ? copy.hide : copy.show) : copy.reset}
-      </Button>
-    </div>
-  );
-}
-async function dismissAndReset({
-  canvasElement,
-  args,
-}: {
-  canvasElement: HTMLElement;
-  args: AlertStoryArgs;
-}) {
-  const canvas = within(canvasElement);
-  const close = canvasElement.querySelector<HTMLButtonElement>('[data-slot="alert-close"]')!;
-  close.focus();
-  await userEvent.keyboard('{Enter}');
-  await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
-  await expect(args.onDismiss).toHaveBeenCalledOnce();
-  await userEvent.click(canvas.getByRole('button'));
-  await expect(canvas.getByRole('status')).toBeVisible();
-  canvasElement.querySelector<HTMLButtonElement>('[data-slot="alert-close"]')!.focus();
-  await userEvent.keyboard(' ');
-  await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
-  await expect(args.onDismiss).toHaveBeenCalledTimes(2);
-  await userEvent.click(canvas.getByRole('button'));
-  await expect(canvas.getByRole('status')).toBeVisible();
-}
-export const Dismissible: Story = {
-  render: (args) => <DismissalExample {...args} scenario="dismissible" />,
-  play: dismissAndReset,
-};
-export const ControlledDismissal: Story = {
-  render: (args) => <DismissalExample {...args} scenario="controlledDismissal" />,
-  play: dismissAndReset,
-};
-export const ControlledVisibility: Story = {
-  render: (args) => <DismissalExample {...args} scenario="controlledVisibility" />,
-  play: async ({ canvasElement, args }) => {
-    await userEvent.click(
-      canvasElement.querySelector<HTMLButtonElement>('[data-slot="alert-close"]')!,
+    return (
+      <div key={language} className="flex w-full flex-col items-center gap-8">
+        {layouts.map((layout) => (
+          <section key={layout} className="flex w-full max-w-full flex-col items-center gap-4">
+            <h2 className="type-body-md-medium text-base-emphasis">{layout}</h2>
+            {appearances.map((appearance) => (
+              <div key={appearance} className="flex w-full max-w-full flex-col items-center gap-4">
+                <h3 className="type-body-sm-medium text-base-strong">
+                  {appearance === 'highContrast' ? 'High contrast' : 'Default'}
+                </h3>
+                {intents.map((intent) => (
+                  <div
+                    key={intent}
+                    className={layout === 'stacked' ? alertStackedWidth : alertDemoWidth}
+                    data-variant={`${layout}-${appearance}-${intent}`}
+                  >
+                    <AlertExample
+                      {...args}
+                      layout={layout}
+                      appearance={appearance}
+                      intent={intent}
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </section>
+        ))}
+      </div>
     );
-    await expect(args.onDismiss).toHaveBeenCalledOnce();
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('status')).toBeVisible();
-    await userEvent.click(canvas.getAllByRole('button').at(-1)!);
-    await expect(canvas.getByRole('status')).toBeVisible();
   },
 };
-export const InitiallyHidden: Story = {
-  args: { defaultVisible: false },
-  render: (args) => <DismissalExample {...args} scenario="initiallyHidden" />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
-    await userEvent.click(canvas.getByRole('button'));
-    await expect(canvas.getByRole('status')).toBeVisible();
-    await userEvent.click(canvas.getAllByRole('button').at(-1)!);
-    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
+
+export const States: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const language = useLanguage();
+    const copy = text[language];
+
+    return (
+      <div key={language} className={`flex ${alertDemoWidth} flex-col gap-4`}>
+        <Alert live="status">
+          <Alert.Title>{copy.default}</Alert.Title>
+        </Alert>
+        <Alert live="alert">
+          <Alert.Title>{copy.urgentAnnouncement}</Alert.Title>
+        </Alert>
+        <Alert role="region" aria-label={copy.customRegionLabel}>
+          <Alert.Title>{copy.customLandmark}</Alert.Title>
+        </Alert>
+      </div>
+    );
   },
-};
-export const Announcements: Story = {
-  render: () => (
-    <div className="flex w-140 max-w-full flex-col gap-4">
-      <Alert live="status">
-        <Alert.Title>Status banner</Alert.Title>
-      </Alert>
-      <Alert live="alert">
-        <Alert.Title>Urgent dynamic announcement</Alert.Title>
-      </Alert>
-      <Alert role="region" aria-label="Custom alert region">
-        <Alert.Title>Custom landmark</Alert.Title>
-      </Alert>
-    </div>
-  ),
 };

@@ -1,6 +1,7 @@
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
+import { TagsDropdownDemo } from './TagExamples';
 import { Accordion } from '@veli-design/react/accordion';
 import { Avatar } from '@veli-design/react/avatar';
 import { Badge } from '@veli-design/react/badge';
@@ -487,6 +488,7 @@ function TagsRtlContent() {
       >
         {(item) => <Tag id={item.id}>{item.label}</Tag>}
       </TagGroup>
+      <TagsDropdownDemo />
     </div>
   );
 }

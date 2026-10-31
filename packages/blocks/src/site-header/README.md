@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.6.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
+Version 0.7.0 targets Veli UI 0.17.x and tokens 0.10.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -98,7 +98,7 @@ Keep labels, routing, authentication, API calls, account panels, and persistence
 
 ## Accessibility and responsive behavior
 
-Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Link groups and language menus must keep readable names in English/LTR and Dhivehi/RTL. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

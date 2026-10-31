@@ -41,7 +41,7 @@ await writeFile(
   }),
 );
 await writeFile(resolve(target, 'pnpm-workspace.yaml'), 'minimumReleaseAge: 1440\n');
-const invocation = corepackSpawnTarget(['pnpm', 'install']);
+const invocation = corepackSpawnTarget(['pnpm', 'install', '--strict-peer-dependencies']);
 await run(invocation.command, invocation.args, { cwd: target, ...invocation.options });
 // file: declarations do not expose SemVer to the CLI planner. Check actual
 // installed manifests, then give the planner exact versions without reinstalling.

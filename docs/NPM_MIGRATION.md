@@ -42,16 +42,29 @@ licence and artifact requirements are satisfied, npm namespace/publish permissio
 are verified, bootstrap authentication is available, and the release branch,
 exact versions and dist-tag are configured. The existing supported
 versions are React 0.17.0, tokens 0.10.0 and CLI 0.1.1; pending Changesets describe
-subsequent releases without applying version changes here. The React tokens peer
-accepts both the retained 0.10 line and the planned 0.11 line. If the migration Changeset is applied before first publication, refresh Block dependency
-ranges and tested versions against those versioned tarballs before activation;
-the current fixtures deliberately test the retained versions. The rehearsal reads
-actual installed tarball versions, checks every Block runtime/setup range and
-requires its tested versions to match. It also rejects missing or incompatible
-dependencies reported by the installed CLI. After versioning, update affected
-Block ranges and tested versions with the required Block version/changelog bumps
-in the release PR, then rerun the same tarball rehearsal; do not relax the gate
-or rewrite historical archive hashes.
+subsequent releases without applying version changes here. Main's React changes require the planned tokens 0.11 line. Pending Changesets
+remain unapplied in this PR. Before the package release, locally test the real
+unreleased packages and review a separate Block preparation PR. Update only the
+affected supported ranges and tested versions, with Block version/changelog bumps
+when its distributed source or dependency contract changes. Include visual and
+interaction validation in that review; a successful version bump is not proof of
+compatibility.
+
+CI recognizes a preparation PR when Block tested package versions point forward
+from the checkout's package versions. They must exactly match the Changesets
+plan. It clones the committed source into a disposable checkout, installs the
+locked tools, applies `version-packages`, builds and packs the actual prospective
+packages, then runs the same strict installed-package rehearsal. It neither edits
+Block declarations nor widens supported ranges. Partial or incompatible
+preparation fails. Ordinary PRs without forward declarations test current versions.
+
+The authenticated bot release PR always tests its already-versioned exact tree;
+it never reapplies pending Changesets. Its final full consumer checks and
+release-validation artifact remain mandatory. Preparation inventory and tests
+cannot authorize publication, and edits after final validation require fresh
+bot-triggered validation of the final head. Do not put human Block preparation
+commits into the final release PR or reuse stale validation. Do not rewrite
+historical archive hashes.
 
 The recurring release workflow uses GitHub Actions OIDC with `id-token: write`;
 no npm publish token is passed. Changesets 2.31.1 selects `pnpm publish` in this
@@ -104,7 +117,12 @@ restores the old dependency graph, lockfile and registry URL together.
 
 Run `node scripts/check-npm-migration.mjs <new-consumer-directory> <tarball-directory>`
 with `ui.tgz`, `tokens.tgz`, and `cli.tgz`. CI packs all three once and runs this
-check against the same immutable candidate artifact.
+check against the same immutable candidate artifact. For a committed local
+preparation branch, run `node scripts/prepare-consumer-candidate.mjs <new-tarball-directory> false`
+first. `preparation.json` records source, mode and actual package versions; it is
+inventory, not a test-success or release-authorization record. Candidate digests
+bind that inventory and every tarball to the checked source. Packaged docs use
+the actual candidate versions, including in preparation mode.
 
 Use `corepack pnpm` throughout. Build and pack all three packages to temporary
 files, install them in a consumer outside this repository, resolve public exports,

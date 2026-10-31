@@ -1,0 +1,31 @@
+{
+  "id": "side-nav",
+  "title": "Side nav",
+  "version": "0.2.0",
+  "status": "experimental",
+  "description": "Composable floating organization side navigation with collapse context, header chrome, menu parts, and shared level-swap motion.",
+  "files": ["side-nav.tsx"],
+  "dependencies": {
+    "@veli-design/react": "^0.17.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "motion": "^12.42.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-aria-components": "^1.19.0"
+  },
+  "setupDependencies": {
+    "@veli-design/tokens": "^0.10.0",
+    "tailwindcss": "^4.3.2"
+  },
+  "testedDependencies": {
+    "@veli-design/react": "0.17.0",
+    "@phosphor-icons/react": "2.1.10",
+    "@veli-design/tokens": "0.10.0",
+    "motion": "12.42.2",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-aria-components": "1.19.0",
+    "tailwindcss": "4.3.2",
+    "next": "16.2.11"
+  }
+}

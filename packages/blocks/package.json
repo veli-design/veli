@@ -16,6 +16,7 @@
     "./account-panel": "./src/account-panel/account-panel.tsx",
     "./error-page": "./src/error-page/error-page.tsx",
     "./page-navigation-footer": "./src/page-navigation-footer/page-navigation-footer.tsx",
+    "./side-nav": "./src/side-nav/side-nav.tsx",
     "./examples/error-page-messages": "./examples/error-page-messages.ts",
     "./examples/page-navigation-footer-content": "./examples/page-navigation-footer-content.tsx",
     "./examples/error-page-preview": "./examples/error-page-preview.tsx",
@@ -37,7 +38,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "react": "^19.0.0",
-    "react-aria-components": "^1.19.0",
+    "react-aria-components": "^1.22.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.9.3"
   },

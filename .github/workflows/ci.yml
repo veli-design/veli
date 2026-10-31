@@ -114,12 +114,10 @@ jobs:
       - uses: ./.github/actions/consumer-setup
       - name: Build and pack once
         run: |
-          mkdir -p "$RUNNER_TEMP/candidate"
-          corepack pnpm exec turbo build --filter=@veli-design/react --filter=@veli-design/tokens --filter=@veli-design/cli
-          corepack pnpm --filter @veli-design/react pack --out "$RUNNER_TEMP/candidate/ui.tgz"
-          corepack pnpm --filter @veli-design/tokens pack --out "$RUNNER_TEMP/candidate/tokens.tgz"
-          corepack pnpm --filter @veli-design/cli pack --out "$RUNNER_TEMP/candidate/cli.tgz"
+          node scripts/prepare-consumer-candidate.mjs "$RUNNER_TEMP/candidate" "$RELEASE_CANDIDATE"
           node scripts/consumer-ci.mjs stamp "$RUNNER_TEMP/candidate"
+        env:
+          RELEASE_CANDIDATE: ${{ needs.changes.outputs.release }}
       - name: Rehearse installed npm packages and CLI Blocks
         run: node scripts/check-npm-migration.mjs "$RUNNER_TEMP/npm-migration-consumer" "$RUNNER_TEMP/candidate"
       - uses: actions/upload-artifact@v4

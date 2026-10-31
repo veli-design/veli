@@ -1,3 +1,9 @@
+## 0.6.2
+
+### Fixed
+
+- Include the merged numeric unread counter and total-count documentation in the public-package source archive.
+
 ## 0.6.1
 
 ### Changed
@@ -9,6 +15,19 @@
 ### Changed
 
 - Use the public @veli-design React and tokens package names. Migrate application and copied source imports together.
+
+## 0.5.2
+
+### Fixed
+
+- Include the total unread-count property documentation in the downloadable source and CLI archive.
+
+## 0.5.1
+
+### Fixed
+
+- Show the total unread count on the default bell trigger using the numeric header badge. Hide it at zero, use the standard `99+` overflow display, and keep the full total in the accessible name.
+- Align the 20px counter and 16px bell with the header reference, keeping the counter centered on its anchor as counts widen and mirroring its placement in RTL.
 
 ## 0.5.0
 
@@ -45,7 +64,7 @@
 
 ### Changed
 
-- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@tradenetcorp/veli-ui` to `^0.16.0` when updating copied source.
+- Show Veli Skeleton placeholders during initial loading, shared spinners for pending retry/paging actions, and settling text while marking all notifications as read. Upgrade `@veli-design/react` to `^0.16.0` when updating copied source.
 
 ### Fixed
 

@@ -1,0 +1,58 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "sheet",
+  "apiPattern": "compound",
+  "purpose": "Presents focused content in a modal surface entering from a screen edge.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": ["Provider language and direction are applied to the overlay and dialog."]
+  },
+  "useWhen": [
+    "A task or decision requires focused interaction without leaving the page.",
+    "A confirmation requires explicit actions."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The content is brief contextual help anchored to a control.",
+      "guidance": "Use an anchored overlay.",
+      "useInstead": ["popover", "tooltip"]
+    },
+    {
+      "situation": "The information can remain inline without interrupting the user.",
+      "guidance": "Keep it in page content or use an inline alert.",
+      "useInstead": ["alert"]
+    }
+  ],
+  "supportedInteractions": [
+    "Trigger-managed or controlled opening, focus containment and return.",
+    "Escape, backdrop and native swipe dismissal when enabled.",
+    "Scrollable body with whole-dialog scrolling on constrained screens."
+  ],
+  "approvedPatterns": [
+    "Supply a meaningful title and short task content.",
+    "Put trigger-managed state on Sheet.Trigger; otherwise control Sheet itself.",
+    "Use Veli Button slot=\"close\" for an explicit dismissal action."
+  ],
+  "limitations": [
+    "Requires React Aria Components 1.22 or later.",
+    "Side sheets retain a narrow backdrop rail.",
+    "No snap points, nested-sheet API, forwarded ref or arbitrary DOM prop pass-through."
+  ],
+  "accessibility": [
+    "A nonempty title is required and labels the dialog.",
+    "The labelled body region is keyboard-focusable for scrolling.",
+    "Protected dismissal still permits the visible close button."
+  ],
+  "responsive": [
+    "Width presets shrink to the available viewport.",
+    "Bottom height fits content or the viewport; side sheets fill viewport height.",
+    "Header, body and footer remain reachable in constrained layouts."
+  ],
+  "rtl": [
+    "Logical start/end mirror with VeliProvider direction.",
+    "The visible close label is localized in Dhivehi."
+  ],
+  "relatedComponents": ["alert", "divider", "popover", "provider", "tooltip"]
+}

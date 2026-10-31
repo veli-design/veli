@@ -2,20 +2,20 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawnCorepack } from './corepack.mjs';
 
 import getReleasePlan from '@changesets/get-release-plan';
 import { getPackages } from '@manypkg/get-packages';
 
 import { readChangesets, updateChangelog } from './changeset-format.mjs';
 
-function run(command, args, cwd) {
+function run(args, cwd) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd, stdio: 'inherit' });
+    const child = spawnCorepack(['pnpm', ...args], { cwd, stdio: 'inherit' });
     child.on('error', reject);
     child.on('exit', (code) => {
       if (code === 0) resolve();
-      else reject(new Error(`${command} ${args.join(' ')} exited with ${code}.`));
+      else reject(new Error(`corepack pnpm ${args.join(' ')} exited with ${code}.`));
     });
   });
 }
@@ -25,7 +25,7 @@ const pendingChangesets = await readChangesets(cwd);
 const changesetsById = new Map(pendingChangesets.map((changeset) => [changeset.id, changeset]));
 const releasePlan = await getReleasePlan(cwd);
 
-await run('pnpm', ['exec', 'changeset', 'version', ...process.argv.slice(2)], cwd);
+await run(['exec', 'changeset', 'version', ...process.argv.slice(2)], cwd);
 
 const { packages } = await getPackages(cwd);
 const packagesByName = new Map(packages.map((pkg) => [pkg.packageJson.name, pkg]));

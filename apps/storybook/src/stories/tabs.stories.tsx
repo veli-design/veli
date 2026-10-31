@@ -5,7 +5,7 @@ import { DocsContainer, type DocsContainerProps } from '@storybook/blocks';
 import { useArgs } from 'storybook/internal/preview-api';
 import { GearIcon, HouseIcon, SquaresFourIcon } from '@phosphor-icons/react';
 import { Badge } from '@veli-design/react/badge';
-import { useVeliLanguage, VeliProvider } from '@veli-design/react/provider';
+import { useVeliColorScheme, useVeliLanguage, VeliProvider } from '@veli-design/react/provider';
 import { Tabs } from '@veli-design/react/tabs';
 
 const collapsedControlGroups = ['State'] as const;
@@ -459,13 +459,15 @@ export const Navigation: Story = {
   render: () => {
     const language = useTabsLanguage();
     const text = useTabsText();
+    const { language: providerLanguage } = useVeliLanguage();
+    const { colorScheme } = useVeliColorScheme();
     const [selectedKey, setSelectedKey] = React.useState<string | number>('/overview');
     const navigate = React.useCallback((href: string) => {
       setSelectedKey(href);
     }, []);
 
     return (
-      <VeliProvider navigate={navigate}>
+      <VeliProvider language={providerLanguage} colorScheme={colorScheme} navigate={navigate}>
         <div key={language} className="flex w-full max-w-[520px] flex-col gap-4">
           <Tabs
             listAriaLabel={text.listAriaLabel}

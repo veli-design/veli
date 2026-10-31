@@ -239,7 +239,7 @@ function ShellStory({
             sites={[]}
             labels={labels}
             languages={[
-              { id: 'en', label: isDv ? 'އިނގިރޭސި' : 'English', dir: 'ltr' },
+              { id: 'en', label: 'English', dir: 'ltr' },
               { id: 'dv', label: 'ދިވެހި', dir: 'rtl' },
             ]}
             language={lang}

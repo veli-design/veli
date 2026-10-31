@@ -15,7 +15,7 @@
     "motion": "12.42.2",
     "next": "16.2.11",
     "react": "19.2.6",
-    "react-aria-components": "1.19.0",
+    "react-aria-components": "1.22.0",
     "react-dom": "19.2.6"
   },
   "devDependencies": {
