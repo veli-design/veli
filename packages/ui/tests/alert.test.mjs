@@ -94,6 +94,10 @@ test('the close Button has a localized name and never submits a form', () => {
   const en = render({}, content);
   assert.match(en, /type="button"/);
   assert.match(en, /aria-label="Dismiss alert"/);
+  assert.match(en, /data-\[hovered\]:text-base-strong/);
+  const highContrast = render({ appearance: 'highContrast', intent: 'neutral' }, content);
+  assert.match(highContrast, /text-alert-high-contrast-neutral-foreground/);
+  assert.doesNotMatch(highContrast, /data-\[hovered\]:text-base-strong/);
   const dv = renderToStaticMarkup(h(VeliProvider, { language: 'dv' }, h(Alert, {}, content)));
   assert.match(dv, /lang="dv" dir="rtl"/);
   assert.match(dv, /aria-label="އެލާޓް ލައްޕާ"/);
@@ -136,7 +140,7 @@ test('highContrast applies foreground to Veli ghost actions without tinting othe
   const ghost = html.match(/<button[^>]*data-test="ghost"[^>]*>/)?.[0];
   assert.doesNotMatch(primary, /text-alert-/);
   assert.match(ghost, /text-alert-high-contrast-info-foreground/);
-  assert.match(ghost, /data-\[hovered\]:text-base-strong/);
+  assert.doesNotMatch(ghost, /data-\[hovered\]:text-base-strong/);
   assert.match(ghost, /disabled/);
   assert.match(html, /<a href="\/track" class="text-primary">/);
 });
