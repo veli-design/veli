@@ -1,3 +1,9 @@
+## 0.9.0
+
+### Changed
+
+- Support the verified public package baseline: @veli-design/react@^0.18.0, react-aria-components@^1.22.0, @veli-design/tokens@^0.11.0. The copied-source rendering API is unchanged.
+
 ## 0.8.0
 
 ### Changed

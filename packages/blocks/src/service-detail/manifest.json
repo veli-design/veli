@@ -1,7 +1,7 @@
 {
   "id": "service-detail",
   "title": "Service detail",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "status": "experimental",
   "description": "Service summary, application options and accessible guideline sheet with host-owned content and actions.",
   "files": [
@@ -13,22 +13,22 @@
     "types.ts"
   ],
   "dependencies": {
-    "@veli-design/react": "^0.17.0",
+    "@veli-design/react": "^0.18.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-aria-components": "^1.19.0",
+    "react-aria-components": "^1.22.0",
     "@phosphor-icons/react": "^2.1.10"
   },
   "setupDependencies": {
-    "@veli-design/tokens": "^0.10.0",
+    "@veli-design/tokens": "^0.11.0",
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.17.0",
-    "@veli-design/tokens": "0.10.0",
+    "@veli-design/react": "0.18.0",
+    "@veli-design/tokens": "0.11.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "react-aria-components": "1.19.0",
+    "react-aria-components": "1.22.0",
     "tailwindcss": "4.3.2",
     "next": "16.2.11",
     "@phosphor-icons/react": "2.1.10"
