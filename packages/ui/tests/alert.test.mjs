@@ -94,6 +94,11 @@ test('the close Button has a localized name and never submits a form', () => {
   const en = render({}, content);
   assert.match(en, /type="button"/);
   assert.match(en, /aria-label="Dismiss alert"/);
+  assert.match(en, /data-\[hovered\]:text-base-strong/);
+  const highContrast = render({ appearance: 'highContrast', intent: 'neutral' }, content);
+  assert.match(highContrast, /text-button-onhighcontrast-secondary-transparent-foreground/);
+  assert.doesNotMatch(highContrast, /text-alert-/);
+  assert.doesNotMatch(highContrast, /data-\[hovered\]:text-base-strong/);
   const dv = renderToStaticMarkup(h(VeliProvider, { language: 'dv' }, h(Alert, {}, content)));
   assert.match(dv, /lang="dv" dir="rtl"/);
   assert.match(dv, /aria-label="އެލާޓް ލައްޕާ"/);
