@@ -321,7 +321,7 @@ const rootVariants = cva('flex w-full flex-col gap-1 font-sans antialiased');
  * shrinks by 1px to keep the outer box fixed.
  */
 const areaVariants = cva(
-  'relative flex w-full rounded-2xl border border-dashed bg-text-input-bg-default px-[15px] py-[19px] outline-none transition-[background-color,border-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
+  'relative flex w-full rounded-2xl border border-dashed bg-dropzone-area-bg-default px-[15px] py-[19px] outline-none transition-[background-color,border-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       layout: {
@@ -329,11 +329,12 @@ const areaVariants = cva(
         vertical: 'flex-col items-center justify-center gap-3 text-center',
       },
       state: {
-        default: 'border-base-subtle',
-        hover: 'border-2 border-base-strong px-[14px] py-[18px]',
-        dropTarget: 'border-2 border-focus bg-button-primary-subtle-default px-[14px] py-[18px]',
-        invalid: 'border-2 border-danger px-[14px] py-[18px]',
-        disabled: 'cursor-not-allowed border-base-subtle',
+        default: 'border-dropzone-area-border-default',
+        hover: 'border-2 border-dropzone-area-border-hover px-[14px] py-[18px]',
+        dropTarget:
+          'border-2 border-dropzone-area-border-focus bg-dropzone-area-bg-drop-target px-[14px] py-[18px]',
+        invalid: 'border-2 border-dropzone-area-border-invalid px-[14px] py-[18px]',
+        disabled: 'cursor-not-allowed border-dropzone-area-border-default',
       },
       isFocusVisible: {
         true: 'ring-2 ring-border-focus ring-offset-2 ring-offset-bg-surface-raised',
@@ -427,14 +428,14 @@ const areaSecondaryVariants = cva('type-caption-regular', {
 
 const metaDividerVariants = cva('h-1.5 w-px shrink-0 bg-border-base-strong');
 
-const listVariants = cva('flex flex-col gap-1');
+const listVariants = cva('flex flex-col gap-4');
 
 /**
  * Items keep one outer height across statuses: bordered statuses trade 1px of
  * padding for the stroke, and statuses with a progress bar reserve 4px below.
  */
 const itemVariants = cva(
-  'relative flex items-center gap-3 overflow-hidden rounded-2xl bg-text-input-bg-default transition-[border-color] duration-normal ease-out motion-reduce:transition-none',
+  'relative flex items-center gap-3 overflow-hidden rounded-2xl bg-dropzone-item-bg-default transition-[border-color] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       status: {
@@ -451,7 +452,7 @@ const itemVariants = cva(
 );
 
 const previewVariants = cva(
-  'relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-button-secondary-subtle-default',
+  'relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-dropzone-item-preview-bg',
 );
 
 const previewImageVariants = cva('absolute inset-0 size-full object-cover');
@@ -479,11 +480,11 @@ const metadataStatusVariants = cva('inline-flex min-w-0 items-center gap-1 type-
 });
 
 const progressTrackVariants = cva(
-  'pointer-events-none absolute inset-x-0 bottom-0 h-1 overflow-hidden bg-border-base-subtle',
+  'pointer-events-none absolute inset-x-0 bottom-0 h-1 overflow-hidden bg-dropzone-progress-track',
 );
 
 const progressBarVariants = cva(
-  'absolute inset-y-0 start-0 bg-icon-success-subtle transition-[inline-size] duration-slow ease-out motion-reduce:transition-none',
+  'absolute inset-y-0 start-0 bg-dropzone-progress-bar transition-[inline-size] duration-slow ease-out motion-reduce:transition-none',
 );
 
 const srOnlyVariants = cva('sr-only');
