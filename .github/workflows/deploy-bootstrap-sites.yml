@@ -15,9 +15,9 @@ on:
         type: boolean
 permissions:
   contents: read
-concurrency: veli-public-release-sites
+concurrency: veli-bootstrap-entry
 jobs:
-  bootstrap:
+  verify:
     if: github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -42,16 +42,10 @@ jobs:
         run: corepack pnpm --dir release-source install --frozen-lockfile
       - name: Verify strict installed packages and all copied Blocks
         run: node release-source/scripts/check-npm-migration.mjs "$RUNNER_TEMP/bootstrap-consumer" "$RUNNER_TEMP/bootstrap-release"
-      - name: Stage sites against the verified public tarballs
-        env:
-          VELI_TARBALLS: '{"@veli-design/react":"${{ runner.temp }}/bootstrap-release/ui.tgz","@veli-design/tokens":"${{ runner.temp }}/bootstrap-release/tokens.tgz"}'
-        run: node release-source/scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/bootstrap-release/release-manifest.json"
-      - name: Build packaged Web and Storybook
-        run: node release-source/scripts/release-sites.mjs build "$RUNNER_TEMP/veli-release-sites"
       - name: Retain verified release snapshot and artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: verified-bootstrap-release-${{ github.run_id }}-${{ github.run_attempt }}
+          name: release-manifest
           path: ${{ runner.temp }}/bootstrap-release
           retention-days: 90
           if-no-files-found: error
@@ -60,21 +54,16 @@ jobs:
         env:
           REGISTRY_TRANSITION_APPROVED: ${{ vars.VELI_REGISTRY_TRANSITION_APPROVED }}
         run: test "$REGISTRY_TRANSITION_APPROVED" = 'true'
-      - name: Deploy web docs and current internal catalog
-        if: inputs.deploy-sites
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/web
-          environment: production
-          command: deploy
-      - name: Deploy Storybook
-        if: inputs.deploy-sites
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/storybook
-          environment: production
-          command: deploy
+  sites:
+    needs: verify
+    permissions:
+      contents: read
+      actions: read
+      packages: read
+    uses: ./.github/workflows/deploy-release-sites.yml
+    with:
+      source-ref: ${{ inputs.source-ref }}
+      manifest-run-id: ${{ github.run_id }}
+      bootstrap-tarballs: true
+      verification-only: ${{ !inputs.deploy-sites }}
+    secrets: inherit

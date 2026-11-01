@@ -116,7 +116,7 @@ test('changed registry identity, integrity, URL or payload cannot authorize depl
     /Public npm read failed/,
   );
 });
-test('bootstrap can validate without deployment; explicit deployment cannot bypass the existing gate', async () => {
+test('temporary entry reuses the existing site workflow and cannot publish or bypass rollout approval', async () => {
   const text = await readFile(
     new URL('../.github/workflows/deploy-bootstrap-sites.yml', import.meta.url),
     'utf8',
@@ -125,27 +125,71 @@ test('bootstrap can validate without deployment; explicit deployment cannot bypa
   assert.equal(workflow.on.push, undefined);
   assert.equal(workflow.on.workflow_dispatch.inputs['deploy-sites'].default, false);
   assert.deepEqual(workflow.permissions, { contents: 'read' });
-  assert.match(workflow.jobs.bootstrap.if, /refs\/heads\/main/);
-  const steps = workflow.jobs.bootstrap.steps;
+  assert.match(workflow.jobs.verify.if, /refs\/heads\/main/);
+  const steps = workflow.jobs.verify.steps;
   const verify = steps.findIndex(
     (s) => s.name === 'Verify exact source and anonymously download approved npm artifacts',
   );
   assert.ok(verify < steps.findIndex((s) => s.uses === 'pnpm/action-setup@v6'));
-  const gate = steps.findIndex((s) => s.name === 'Require explicit internal deployment approval');
-  assert.match(steps[gate].env.REGISTRY_TRANSITION_APPROVED, /VELI_REGISTRY_TRANSITION_APPROVED/);
-  assert.match(steps[gate].run, /= 'true'/);
-  for (const s of steps.filter((s) => s.uses === 'cloudflare/wrangler-action@v3')) {
-    assert.ok(steps.indexOf(s) > gate);
-    assert.equal(s.if, 'inputs.deploy-sites');
-    assert.equal(s.with.environment, 'production');
-    assert.equal(s.with.command, 'deploy');
-  }
-  assert.equal(steps.filter((s) => s.uses === 'cloudflare/wrangler-action@v3').length, 2);
-  assert.ok(steps.findIndex((s) => s.name === 'Build packaged Web and Storybook') < gate);
-  assert.ok(
-    !/npm publish|pnpm release|changesets\/action|id-token:|NODE_AUTH_TOKEN|NPM_TOKEN/.test(text),
+  const gate = steps.find((s) => s.name === 'Require explicit internal deployment approval');
+  assert.equal(gate.if, 'inputs.deploy-sites');
+  assert.match(gate.env.REGISTRY_TRANSITION_APPROVED, /VELI_REGISTRY_TRANSITION_APPROVED/);
+  assert.match(gate.run, /= 'true'/);
+  assert.equal(
+    steps.find((s) => s.uses === 'actions/upload-artifact@v4').with.name,
+    'release-manifest',
   );
-  const stage = steps.find((s) => s.name === 'Stage sites against the verified public tarballs');
-  assert.match(stage.env.VELI_TARBALLS, /bootstrap-release\/ui.tgz/);
-  assert.match(stage.env.VELI_TARBALLS, /bootstrap-release\/tokens.tgz/);
+  assert.equal(workflow.jobs.sites.needs, 'verify');
+  assert.equal(workflow.jobs.sites.uses, './.github/workflows/deploy-release-sites.yml');
+  assert.equal(workflow.jobs.sites.with['bootstrap-tarballs'], true);
+  assert.equal(workflow.jobs.sites.with['verification-only'], '${{ !inputs.deploy-sites }}');
+  assert.ok(
+    !/npm publish|pnpm release|changesets\/action|id-token:|NODE_AUTH_TOKEN|NPM_TOKEN|wrangler-action/.test(
+      text,
+    ),
+  );
+  const common = parse(
+    await readFile(
+      new URL('../.github/workflows/deploy-release-sites.yml', import.meta.url),
+      'utf8',
+    ),
+  );
+  for (const input of ['bootstrap-tarballs', 'verification-only'])
+    assert.equal(common.on.workflow_call.inputs[input].default, false);
+  assert.equal(
+    common.jobs.deploy.if,
+    "inputs.verification-only || vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'",
+  );
+  for (const approved of [false, true])
+    for (const onlyVerify of [false, true]) {
+      const runs = onlyVerify || approved;
+      const deploys = runs && !onlyVerify;
+      assert.equal(deploys, approved && !onlyVerify);
+    }
+  const commonSteps = common.jobs.deploy.steps;
+  const deploys = commonSteps.filter((s) => s.uses === 'cloudflare/wrangler-action@v3');
+  assert.equal(deploys.length, 2);
+  for (const step of deploys) {
+    assert.equal(step.if, '${{ !inputs.verification-only }}');
+    assert.equal(step.with.environment, 'production');
+    assert.equal(step.with.command, 'deploy');
+  }
+  assert.deepEqual(
+    deploys.map((s) => s.with.workingDirectory),
+    [
+      '${{ runner.temp }}/veli-release-sites/apps/web',
+      '${{ runner.temp }}/veli-release-sites/apps/storybook',
+    ],
+  );
+  const stage = commonSteps.find((s) => s.name === 'Stage verified bootstrap artifacts');
+  assert.match(stage.env.VELI_TARBALLS, /release-manifest\/ui.tgz/);
+  assert.match(stage.env.VELI_TARBALLS, /release-manifest\/tokens.tgz/);
+  assert.equal(
+    stage.run,
+    commonSteps.find((s) => s.name === 'Stage isolated released-package consumers').run,
+  );
+  assert.ok(
+    commonSteps.findIndex((s) => s.name === 'Build against published packages') <
+      commonSteps.indexOf(deploys[0]),
+  );
 });

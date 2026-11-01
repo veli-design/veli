@@ -31,8 +31,9 @@ handoff. It runs only from `main` and accepts the exact release source commit
 `releases/npm-bootstrap-2026-11-01.json` records its tree, package versions and
 reviewed public tarball SHA-256/SHA-512 values. The workflow anonymously downloads
 those exact artifacts, rejects changed source/identity/bytes, runs the strict
-installed-package and all-Block rehearsal, and builds both sites using the
-verified tarballs. It never publishes npm packages and needs no npm token or OIDC.
+installed-package and all-Block rehearsal, and calls the existing `deploy-release-sites.yml` for both site builds and
+deployment using the verified tarballs. The shared checkout, builder, historical
+archives, production Worker configurations and destinations are unchanged. It never publishes npm packages and needs no npm token or OIDC.
 
 With **deploy-sites** unchecked (the default), dispatch performs verification and
 builds only. To deploy the existing internal Web, Storybook and current Blocks
@@ -52,8 +53,8 @@ source and receipts are not rewritten by deploying a catalog.
 The exact manifest, downloaded tarballs and verification record are retained as a
 90-day Actions artifact. After successful deployment, check the internal catalog
 and both sites at their existing URLs before describing the new catalog as live.
-Then remove this temporary workflow, its verifier, dedicated tests and bootstrap
-record, and replace this section with the completed handoff note. Keep the run
+Then remove this temporary workflow, its verifier, dedicated tests, bootstrap
+record and the shared workflow’s temporary bootstrap/verification-only inputs, and replace this section with the completed handoff note. Keep the run
 and artifact evidence; this is not a permanent redeployment path. No deployment
 occurs merely by merging this workflow PR.
 

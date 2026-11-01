@@ -13,13 +13,22 @@ on:
         required: false
         default: ''
         type: string
+      # Temporary bootstrap bridge; remove after the catch-up deployment is verified.
+      bootstrap-tarballs:
+        required: false
+        default: false
+        type: boolean
+      verification-only:
+        required: false
+        default: false
+        type: boolean
 permissions:
   contents: read
   packages: read
   actions: read
 jobs:
   deploy:
-    if: vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
+    if: inputs.verification-only || vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
     runs-on: ubuntu-latest
     concurrency: veli-public-release-sites
     steps:
@@ -54,10 +63,17 @@ jobs:
       - name: Install locked staging tools
         run: corepack pnpm install --frozen-lockfile
       - name: Stage isolated released-package consumers
+        if: ${{ !inputs.bootstrap-tarballs }}
+        run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/release-manifest/release-manifest.json"
+      - name: Stage verified bootstrap artifacts
+        if: inputs.bootstrap-tarballs
+        env:
+          VELI_TARBALLS: '{"@veli-design/react":"${{ runner.temp }}/release-manifest/ui.tgz","@veli-design/tokens":"${{ runner.temp }}/release-manifest/tokens.tgz"}'
         run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/release-manifest/release-manifest.json"
       - name: Build against published packages
         run: node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-release-sites"
       - name: Deploy web docs
+        if: ${{ !inputs.verification-only }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -66,6 +82,7 @@ jobs:
           environment: production
           command: deploy
       - name: Deploy Storybook
+        if: ${{ !inputs.verification-only }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
