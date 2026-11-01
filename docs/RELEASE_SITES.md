@@ -19,13 +19,13 @@ Local `corepack pnpm --filter @tradenetcorp/veli-storybook dev` and `corepack pn
 
 For candidate validation, pack UI and token artifacts, set `VELI_TARBALLS` to a JSON map from package names to absolute tarball paths, then run the isolated site builder or block consumer. Overrides ensure transitive imports use those exact artifacts too. CI validates candidates this way without publishing packages or deploying a preview.
 
-## Deploy the already published npm bootstrap
+## Temporary catch-up for the already published npm bootstrap
 
 The first account-authenticated npm publication did not run the recurring release
 workflow, so it did not create that workflow's deployment output or GitHub release
 asset. Do not republish packages or use an older release snapshot to trigger sites.
 
-**Deploy published bootstrap sites** (`deploy-bootstrap-sites.yml`) bridges that
+**Temporary bootstrap site catch-up** (`deploy-bootstrap-sites.yml`) bridges that
 handoff. It runs only from `main` and accepts the exact release source commit
 `c36ca062456bbaeddb2a45a48954ebaaec637c1b`. The tracked
 `releases/npm-bootstrap-2026-11-01.json` records its tree, package versions and
@@ -50,11 +50,12 @@ package/import updates before requesting those newer Block versions. Installed
 source and receipts are not rewritten by deploying a catalog.
 
 The exact manifest, downloaded tarballs and verification record are retained as a
-90-day Actions artifact. The tracked immutable bootstrap record allows later
-verification/redeployment without depending on that artifact's expiry. After a
-successful deployment, check the internal catalog and both sites at their existing
-URLs before describing the new catalog as live. No deployment occurs merely by
-merging this workflow PR.
+90-day Actions artifact. After successful deployment, check the internal catalog
+and both sites at their existing URLs before describing the new catalog as live.
+Then remove this temporary workflow, its verifier, dedicated tests and bootstrap
+record, and replace this section with the completed handoff note. Keep the run
+and artifact evidence; this is not a permanent redeployment path. No deployment
+occurs merely by merging this workflow PR.
 
 For later approved releases, the existing `Release` workflow already calls site
 deployment after successful publication when the registry rollout gate is enabled.

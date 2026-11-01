@@ -1,4 +1,5 @@
-name: Deploy published bootstrap sites
+name: Temporary bootstrap site catch-up
+# Remove this catch-up workflow after both sites and the current catalog are verified live.
 on:
   workflow_dispatch:
     inputs:

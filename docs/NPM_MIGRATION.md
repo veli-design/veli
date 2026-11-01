@@ -110,7 +110,7 @@ existing installed source and receipts are not rewritten by a site deployment.
 Full-history builds retain earlier versioned archive URLs.
 
 The initial account-authenticated publication does not trigger the recurring CI
-release handoff. Use the [deployment-only bootstrap path](RELEASE_SITES.md#deploy-the-already-published-npm-bootstrap)
+release handoff. Use the [temporary deployment-only bootstrap path](RELEASE_SITES.md#temporary-catch-up-for-the-already-published-npm-bootstrap)
 to verify the exact published artifacts, build and deploy both internal sites
 without republishing. It requires a separate explicit deployment option as well
 as the rollout flag. Keep existing internal domain and WFA access settings.
