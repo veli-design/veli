@@ -34,6 +34,15 @@ packing for local validation remains available. See
 
 ## Publication hold
 
+To create or refresh the bot's `changeset-release/main` PR without enabling
+publication, run **Prepare release** (`prepare-release.yml`) manually on `main`.
+The workflow must first exist on the default branch. It runs Changesets versioning
+only, with no publish command, npm credentials, OIDC permission or dist-tag input.
+It uses the repository token so the PR retains the authenticated bot identity;
+approve its pending CI workflows and require fresh validation of the final head.
+Do not manually merge stale versioning output or add human commits to the bot PR.
+This preparation does not change the publication or registry-transition gates below.
+
 Release is manual and requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository
 variable and in the publishing process. It also requires an explicit
 `VELI_RELEASE_BRANCH` repository variable and a manual `dist-tag` input (passed

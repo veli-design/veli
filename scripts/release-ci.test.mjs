@@ -306,6 +306,49 @@ test('release preparation stays cheap and unrelated main pushes cannot publish',
   assert.equal(await releaseMode(false, f.api, f.env), 'none');
 });
 
+test('preparation workflow can only version the main snapshot with repository bot credentials', async () => {
+  const { parse } = await import('yaml');
+  const preparation = parse(
+    readFileSync(new URL('../.github/workflows/prepare-release.yml', import.meta.url), 'utf8'),
+  );
+  assert.deepEqual(preparation.on, { workflow_dispatch: null });
+  assert.deepEqual(preparation.permissions, { contents: 'read' });
+  assert.equal(preparation.concurrency, 'Release-${{ github.ref }}');
+  assert.deepEqual(Object.keys(preparation.jobs), ['prepare']);
+  const job = preparation.jobs.prepare;
+  assert.equal(
+    job.if,
+    "github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'",
+  );
+  assert.deepEqual(job.permissions, { contents: 'write', 'pull-requests': 'write' });
+  assert.equal(preparation.env, undefined);
+  assert.equal(job.env, undefined);
+  assert.deepEqual(
+    job.steps.filter((step) => step.run).map((step) => step.run),
+    ['corepack pnpm install --frozen-lockfile'],
+  );
+  assert.deepEqual(
+    job.steps.filter((step) => step.uses).map((step) => step.uses),
+    [
+      'actions/checkout@v4',
+      'pnpm/action-setup@v6',
+      'actions/setup-node@v4',
+      'changesets/action@v1',
+    ],
+  );
+  const checkout = job.steps.find((step) => step.uses === 'actions/checkout@v4');
+  assert.equal(checkout.with, undefined, 'Checkout must use the restricted event snapshot');
+  const action = job.steps.find((step) => step.uses === 'changesets/action@v1');
+  assert.deepEqual(action.with, {
+    version: 'corepack pnpm version-packages',
+    commit: 'chore: release packages',
+    title: 'chore: release packages',
+  });
+  assert.deepEqual(action.env, { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' });
+  for (const step of job.steps.filter((step) => step !== action))
+    assert.equal(step.env, undefined, 'Preparation must not receive npm credentials or approvals');
+});
+
 test('workflow keeps native approval, all release suites and publication ordering', async () => {
   const { parse } = await import('yaml');
   const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -318,6 +361,10 @@ test('workflow keeps native approval, all release suites and publication orderin
   const record = gate.steps.find((step) => step.run?.includes('release-ci.mjs stamp'));
   assert.equal(record.if, "needs.changes.outputs.release == 'true'");
   const publish = release.jobs.release;
+  assert.equal(
+    publish.if,
+    "vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH",
+  );
   assert.equal(publish.permissions.actions, 'read');
   assert.equal(publish.permissions['id-token'], 'write');
   const trustIndex = publish.steps.findIndex(
