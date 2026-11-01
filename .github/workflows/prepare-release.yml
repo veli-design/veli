@@ -1,0 +1,43 @@
+name: Prepare release
+
+on:
+  workflow_dispatch:
+
+# Serialize writes to the bot branch with the existing Release workflow.
+concurrency: Release-${{ github.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Prepare release pull request
+    if: github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout main snapshot
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Create or refresh release pull request
+        uses: changesets/action@v1
+        with:
+          version: corepack pnpm version-packages
+          commit: 'chore: release packages'
+          title: 'chore: release packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
