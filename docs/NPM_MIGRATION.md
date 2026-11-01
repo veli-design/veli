@@ -99,17 +99,24 @@ including personal scopes. Public npm installation requires no token.
 
 ## Registry and deployment transition
 
-The live docs Worker also serves the Blocks catalog and source archives. Leave
-its existing deployment running for old-scope consumers. The release-site deploy
-workflow requires `VELI_REGISTRY_TRANSITION_APPROVED=true`; do not enable this
-until an independently hosted new-scope registry URL and the old registry support
-period are configured and validated. Any manual deployment of this branch to the existing Workers
-would replace their catalogs, so it must remain on hold as well.
+The live docs Worker also serves the Blocks catalog and source archives. The
+release-site deployment requires `VELI_REGISTRY_TRANSITION_APPROVED=true` after
+explicit approval to roll out the current catalog. Current Blocks have been tested
+with the published React 0.18.0/tokens 0.11.0 baseline; no new public endpoint,
+public domain or repository transfer is required for an approved internal rollout.
+Deploying the current catalog advertises new-scope dependencies. Applications
+must coordinate package/import updates before requesting those newer versions;
+existing installed source and receipts are not rewritten by a site deployment.
+Full-history builds retain earlier versioned archive URLs.
 
-New CLI consumers must explicitly configure the new compatible registry URL via
-`veli init`; npm access does not bypass registry access controls. Validate retrieval
-and application builds before activating a public endpoint. This branch changes
-local catalog output only, and does not provision a new endpoint.
+The initial account-authenticated publication does not trigger the recurring CI
+release handoff. Use the [deployment-only bootstrap path](RELEASE_SITES.md#deploy-the-already-published-npm-bootstrap)
+to verify the exact published artifacts, build and deploy both internal sites
+without republishing. It requires a separate explicit deployment option as well
+as the rollout flag. Keep existing internal domain and WFA access settings.
+CLI consumers still configure their compatible Veli Web URL through `veli init`;
+public npm installation does not bypass registry access controls. A later public
+endpoint or domain transition remains a separate decision.
 
 ## Consumer migration
 
