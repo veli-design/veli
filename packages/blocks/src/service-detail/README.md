@@ -1,11 +1,11 @@
-Experimental `0.6.0` copied-source block for service details, fees, prerequisites,
-application options and guidelines. The default and only presentation preserves
-Web2's approved summary/card and guideline sheet. A separate govmv article/sidebar
-presentation requires product approval; this block does not migrate either app.
+Experimental `0.7.0` copied-source block for service details, fees, prerequisites,
+application options and guidelines. The props-based default preserves the existing
+summary/card and guideline sheet. Composable parts let consumers arrange their own
+fields, sections and actions. This block does not migrate either app.
 
 ## Core package baseline
 
-Version 0.6.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.7.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -22,6 +22,94 @@ English and Dhivehi fonts. Import Veli token CSS globally before application CSS
 Register the full MV A Waheed character coverage, including digits and punctuation,
 so localized values use its Figma glyphs rather than larger fallback numerals.
 
+## Default or composed
+
+Keep `<ServiceDetail {...existingProps} />` for the standard page. Its props and
+exported data types remain supported; no consumer migration is required for this
+refactor. The wrapper uses the same public parts shown below. Import parts from
+that same copied `service-detail` entry, which also loads the existing styles.
+
+```tsx
+import {
+  ServiceDetailRoot,
+  ServiceDetailHeader,
+  ServiceDetailCard,
+  ServiceDetailContent,
+  ServiceDetailSummary,
+  ServiceDetailSummaryItem,
+  ServiceDetailActions,
+  ServiceDetailSection,
+} from './components/blocks/service-detail/service-detail';
+
+<ServiceDetailRoot>
+  <ServiceDetailHeader title={title} description={description} />
+  <ServiceDetailCard>
+    <ServiceDetailSummary label="Service summary">
+      <ServiceDetailSummaryItem label="Available places">
+        <AvailabilityIndicator available={12} />
+      </ServiceDetailSummaryItem>
+      <ServiceDetailSummaryItem label="Processing time" icon={<ClockIcon />}>
+        3 working days
+      </ServiceDetailSummaryItem>
+    </ServiceDetailSummary>
+    <ServiceDetailContent>
+      <ServiceDetailSection title="Before you start">{consumerContent}</ServiceDetailSection>
+      <ServiceDetailActions label="Apply">
+        <Button onPress={startApplication}>Apply online</Button>
+        <Link href="/appointments">Book an appointment</Link>
+      </ServiceDetailActions>
+    </ServiceDetailContent>
+  </ServiceDetailCard>
+</ServiceDetailRoot>;
+```
+
+Use one `ServiceDetailContent` for the continuous raised surface below the summary.
+It owns the background, padding and rounding. Sections and action groups provide
+content and spacing inside it, so reordering them does not create stacked cards.
+
+Composition follows DOM order. Supply headings in the correct order using
+`headingLevel` on Header (default 1), Section (2), and Download (3). Root owns the
+responsive grid and typography, not a `<main>` landmark. There is no service-model
+context or implicit action handling. Tailwind source scanning must include the
+copied files, as with other Veli blocks; new layout utilities use Veli's tokens.
+
+| Part                                     | Props and content                                                                                                                                                                                                    |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ServiceDetailRoot`, `ServiceDetailCard` | `children`, `id?`, `className?`.                                                                                                                                                                                     |
+| `ServiceDetailHeader`                    | `title`, inline `description?` and `provider?`, `headingLevel?`; children add badges/status or other content.                                                                                                        |
+| `ServiceDetailSummary`                   | Accessible `label`, children that render SummaryItems; supports maps and fragments.                                                                                                                                  |
+| `ServiceDetailSummaryItem`               | `label`, decorative `icon?`, `information?: { label, content }`, `span?: 'single' \| 'full'`, `startRow?`; children supply the value.                                                                                |
+| `ServiceDetailContent`                   | `children`, `id?`, `className?`; one shared raised surface for sections, actions, notices and downloads.                                                                                                             |
+| `ServiceDetailActions`                   | Accessible `label`, children for branding and actions. Place inside Content.                                                                                                                                         |
+| `ServiceDetailSection`                   | `title`, `headingLevel?`, children. Place inside Content; no separate background or rounding.                                                                                                                        |
+| `ServiceDetailDownload`                  | `title`, inline `metadata?`, `headingLevel?`, `hideTitle?` (false); children supply actions and optional guidelines.                                                                                                 |
+| `ServiceDetailGuideline`                 | `guideline`, `labels: ServiceDetailGuidelineLabels`, `isOpen?`, `defaultOpen?`, `onOpenChange?`, `dialogClassName?`, `overlayClassName?`.                                                                            |
+| `ServiceDetailApplyingInformation`       | `title`, non-interactive inline `trigger`, `closeLabel`, arbitrary dialog children, `dialogClassName?`, `overlayClassName?`. The part provides the trigger button, information icon, named dialog and close control. |
+
+Layout parts also accept `id` and `className`. Optional information content remains
+non-interactive for tooltip compatibility. Custom summary children may contain
+controls: the part never silently wraps them in a button.
+
+For an expandable item, provide `disclosure` with either:
+
+- `{ triggerStyle: 'value', value: '3 working days', content: <Breakdown /> }`:
+  value and caret form the trigger; omit children. The value is a string to avoid
+  nesting interactive controls inside the trigger.
+- `{ triggerStyle: 'text', showLabel: 'Show details', hideLabel: 'Hide details',
+content: <Breakdown /> }`: children remain the summary value alongside a separate
+  text-and-caret trigger.
+
+Each disclosure starts collapsed and owns its state. Omit `disclosure` when there
+are no details. Its content can be a description list, rich text or consumer UI;
+Veli does not inspect it. Strings retain mixed-script isolation; consumer elements
+own their own language/direction semantics. `ServiceDetailGuideline` keeps the
+existing document/TOC, summary and copy-link contract, with only its own labels
+required. Existing full label dictionaries also work.
+
+See `examples/service-detail-composition.tsx` and Storybook **Custom Composition**
+for arbitrary fields, a custom control, reordered sections, downloads and dialog
+content. The web demo's **Custom composition** option runs the same example.
+
 ## Content and actions
 
 `ServiceDetailProps` in `types.ts` is the full typed contract. Supply `title`, `apply`
@@ -31,7 +119,9 @@ when the product needs placeholders; the block invents no metadata or destinatio
 Fees are formatted display values; it does not calculate amounts or currencies.
 Service names wrap when no expansion action is needed; expandable lists retain the
 collapsed Figma treatment and reveal all names on expansion, including long words.
-The host owns its main landmark and service page heading hierarchy.
+This is a page-level block: it renders `title` as the page's `<h1>` and owns its
+internal heading levels. The host supplies the surrounding `<main>` landmark and
+should not add a second page title above the block.
 
 `apply.mode` is `online`, `mixed`, `external` or `manual`. Online/mixed/external
 accept an optional action. Each action has an ID, visible label and either a URL,
@@ -133,3 +223,47 @@ Storybook covers all four apply types and the four combinations of fees/services
 expansion; the web demo exposes the apply types in its service-example selector. Release/test evidence and
 exact versions are recorded in the local PD-1149 implementation report; manifest
 `testedDependencies` lists only versions actually exercised.
+
+### Supplementary-service summaries
+
+Keep existing `metadata.applicationTime`, `processingTime`, `feeSummary`, `fees`, and
+`labels` inputs. Optionally pass `summaryOptions.applicationTime` and
+`summaryOptions.processingTime` with `details: [{ id, label, value }]`.
+Each non-empty list gets an independent, initially collapsed caret control. Fees
+use their existing text trigger and now expand directly beneath the fee value.
+Empty lists show only the summary. Time details require the corresponding summary
+value. Lists have one level; IDs must be unique within each list.
+
+All five summary fields accept `summaryOptions[field].icon` (a decorative React
+node; `null` removes the icon) and `.information: { label, content }`. The label
+names the information button; use a localized, descriptive phrase. Information
+content must be non-interactive. The large secondary Veli tooltip opens on hover
+or keyboard focus and is associated through `aria-describedby`. Clicking, tapping,
+or pressing Enter/Space opens a compact, named Veli popover with the same content
+and appearance instead. React Aria manages popover focus, Escape/outside dismissal
+and focus return. The hover tooltip is disabled while the popover is open. Existing
+dialog overrides continue to apply only to the applying-information and guideline
+surfaces.
+
+See `serviceDetailSummaryOptions` in the shared examples and the Supplementary
+Service Summaries story for EN/DV examples. Consumers own translations, fetching,
+CMS mappings, fee/time formatting and summary calculations. Mobile uses the
+existing single-column layout; this is an implementation choice, not an approved
+mobile design. No govmv-web or Web2 integration is included in this repository.
+
+The Desktop English Figma Reference story uses the exact summary sample from
+Figma 9224:74489 for visual review. It does not assert parity for the surrounding
+page, mobile, or Dhivehi, for which this reference supplies no matching design.
+The collapsed fee action reads “Show fees” per the confirmed product decision,
+correcting the reference's inconsistent “Hide fees” label in collapsed states.
+
+### Guideline summary state
+
+The host owns summary fetching and updates `guideline.summary` after `onRequest`.
+The callback is a request notification; the block does not await it or catch request
+errors. Handle those in the consumer and update the props.
+
+Display precedence is loading (`isPending`), then a non-blank `error`, then
+`content`. Loading hides stale errors/content; errors hide stale content. A
+requestable summary without content or an error shows the loading placeholder
+until the host supplies a result. Only the loading state sets `aria-busy`.

@@ -25,7 +25,7 @@ import {
   SparkleIcon,
   XIcon,
 } from '@phosphor-icons/react';
-import type { ServiceDetailProps, ServiceGuideline } from './types';
+import type { ServiceDetailGuidelineLabels, ServiceGuideline } from './types';
 import { DialogSurface } from './dialog-surface';
 
 /** Opaque host-rendered elements own their content; normalize only known-empty nodes. */
@@ -38,6 +38,16 @@ function hasDisplayContent(content: ReactNode): boolean {
   return true;
 }
 
+export type ServiceDetailGuidelineProps = {
+  guideline: ServiceGuideline;
+  labels: ServiceDetailGuidelineLabels;
+  isOpen?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  dialogClassName?: string;
+  overlayClassName?: string;
+};
+
 export function GuidelineSheet({
   guideline,
   labels,
@@ -46,15 +56,7 @@ export function GuidelineSheet({
   onOpenChange,
   dialogClassName,
   overlayClassName,
-}: {
-  guideline: ServiceGuideline;
-  labels: ServiceDetailProps['labels'];
-  isOpen?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  dialogClassName?: string;
-  overlayClassName?: string;
-}) {
+}: ServiceDetailGuidelineProps) {
   const [localOpen, setLocalOpen] = useState(defaultOpen);
   const open = isOpen ?? localOpen;
   const changeOpen = (next: boolean) => {
@@ -90,7 +92,7 @@ function GuidelineContentView({
   labels,
 }: {
   guideline: ServiceGuideline;
-  labels: ServiceDetailProps['labels'];
+  labels: ServiceDetailGuidelineLabels;
 }) {
   const id = useId();
   const language = useVeliLanguage();
@@ -124,6 +126,11 @@ function GuidelineContentView({
       ? guideline.summary
       : undefined;
   const showingSummary = summaryOpen && Boolean(summary);
+  // Loading supersedes an old error/content; errors supersede stale content.
+  const summaryError = summary?.error?.trim();
+  const summaryPending = Boolean(
+    summary?.isPending || (!summaryError && !hasDisplayContent(summary?.content)),
+  );
   const navigateTo = (domId: string) => {
     tocSelection.current = true;
     setActiveSection(domId);
@@ -274,13 +281,14 @@ function GuidelineContentView({
               <p className="veli-service-detail-guideline-description">{guideline.description}</p>
             )}
             {showingSummary ? (
-              <div className="veli-service-detail-rich-text" aria-busy={summary?.isPending}>
-                {(summary?.isPending ||
-                  (!hasDisplayContent(summary?.content) && !summary?.error?.trim())) && (
+              <div className="veli-service-detail-rich-text" aria-busy={summaryPending}>
+                {summaryPending ? (
                   <p role="status">{labels.summaryPending}</p>
+                ) : summaryError ? (
+                  <p role="alert">{summaryError}</p>
+                ) : (
+                  summary?.content
                 )}
-                {summary?.error?.trim() && <p role="alert">{summary.error}</p>}
-                {summary?.content}
               </div>
             ) : sections.length ? (
               sections.map((section) => (

@@ -7,7 +7,9 @@
   "files": [
     "applying-info-dialog.tsx",
     "dialog-surface.tsx",
+    "display-text.tsx",
     "guideline-sheet.tsx",
+    "parts.tsx",
     "service-detail.css",
     "service-detail.tsx",
     "types.ts"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useState } from 'react';
 import { Button } from '@veli-design/react/button';
 import { Link } from '@veli-design/react/link';
 import { Alert, AlertDescription, AlertTitle } from '@veli-design/react/alert';
@@ -14,10 +14,32 @@ import {
 } from '@phosphor-icons/react';
 import { GuidelineSheet } from './guideline-sheet';
 import { ApplyingInfoDialog } from './applying-info-dialog';
-import type { ServiceAction, ServiceDetailProps } from './types';
+import { DisplayText } from './display-text';
+import {
+  ServiceDetailRoot,
+  ServiceDetailHeader,
+  ServiceDetailCard,
+  ServiceDetailContent,
+  ServiceDetailSummary,
+  ServiceDetailSummaryItem,
+  ServiceDetailActions,
+  ServiceDetailSection,
+  ServiceDetailDownload,
+} from './parts';
+import type {
+  ServiceAction,
+  ServiceDetailProps,
+  ServiceSummaryOptions,
+  ServiceSummaryDetail,
+} from './types';
 import './service-detail.css';
 
 export type * from './types';
+export * from './parts';
+export { GuidelineSheet as ServiceDetailGuideline } from './guideline-sheet';
+export type { ServiceDetailGuidelineProps } from './guideline-sheet';
+export { ServiceDetailApplyingInformation } from './applying-info-dialog';
+export type { ServiceDetailApplyingInformationProps } from './applying-info-dialog';
 
 function ServiceActionButton({
   action,
@@ -78,27 +100,6 @@ function ServiceActionButton({
   );
 }
 
-/** Isolate Latin runs so amounts and references retain their reading order in RTL content. */
-function DisplayText({ text }: { text: string }) {
-  // Keep word-separating spaces outside the LTR isolate so they separate RTL neighbours.
-  return text
-    .split(/([A-Za-z0-9](?:[A-Za-z0-9 .,–—−+/%()·:-]*[A-Za-z0-9.,–—−+/%()·:-])?)/g)
-    .map((part, index) =>
-      /^[A-Za-z0-9]/.test(part) ? (
-        <bdi
-          key={index}
-          dir="ltr"
-          lang={/[A-Za-z]/.test(part) ? 'en' : undefined}
-          className={/[A-Za-z]/.test(part) ? 'veli-service-detail-latin' : undefined}
-        >
-          {part}
-        </bdi>
-      ) : (
-        part
-      ),
-    );
-}
-
 const metadataIcons = {
   'note-pencil': NotePencilIcon,
   'hand-coins': HandCoinsIcon,
@@ -107,40 +108,64 @@ const metadataIcons = {
   'list-numbers': ListNumbersIcon,
 } as const;
 
-function Meta({
-  icon,
-  label,
-  children,
-}: {
-  icon: keyof typeof metadataIcons;
-  label: string;
-  children: ReactNode;
-}) {
+function summaryPresentation(icon: keyof typeof metadataIcons, options?: ServiceSummaryOptions) {
   const Icon = metadataIcons[icon];
-  return (
-    <div className="veli-service-detail-meta-item">
-      <span aria-hidden className="veli-service-detail-meta-icon">
+  return {
+    // Preserve the wrapper's reserved icon gutter, including an explicitly hidden icon.
+    icon:
+      options?.icon !== undefined ? (
+        <>{options.icon}</>
+      ) : (
         <Icon
           weight="fill"
-          aria-hidden
           focusable="false"
           className={`veli-service-detail-meta-art veli-service-detail-art-${icon}`}
         />
-      </span>
-      <div className="veli-service-detail-meta-text">
-        <dt className="veli-service-detail-meta-label">{label}</dt>
-        <dd className="veli-service-detail-meta-value">{children}</dd>
-      </div>
-    </div>
+      ),
+    information: options?.information,
+  };
+}
+
+function SummaryDetails({
+  details,
+  label,
+}: {
+  details: readonly ServiceSummaryDetail[];
+  label: string;
+}) {
+  return (
+    <dl className="veli-service-detail-breakdown" aria-label={label}>
+      {details.map((detail) => (
+        <div key={detail.id} className="veli-service-detail-fee-row">
+          <dt>{detail.label}</dt>
+          <dd>
+            <DisplayText text={detail.value} />
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
-/** Approved summary/card presentation. The host owns its page landmark and application workflows. */
+function timeValue(value: string, label: string, details?: readonly ServiceSummaryDetail[]) {
+  return details?.length
+    ? {
+        disclosure: {
+          triggerStyle: 'value' as const,
+          value,
+          content: <SummaryDetails details={details} label={label} />,
+        },
+      }
+    : { children: value };
+}
+
+/** Convenience layout built from the same public parts available to custom consumers. */
 export function ServiceDetail({
   title,
   description,
   provider,
   metadata,
+  summaryOptions,
   services = [],
   prerequisites,
   apply,
@@ -154,9 +179,7 @@ export function ServiceDetail({
   dialogClassName,
   overlayClassName,
 }: ServiceDetailProps) {
-  const [feesOpen, setFeesOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const feesId = useId();
   const servicesId = useId();
   const hasMetadata = Boolean(
     metadata?.applicationTime ||
@@ -168,13 +191,13 @@ export function ServiceDetail({
   const hiddenServices = Math.max(services.length - 3, 0);
   const portalClasses = { dialogClassName, overlayClassName };
   return (
-    <div className={`veli-service-detail-root ${className ?? ''}`}>
-      <div className="veli-service-detail-page">
-        <header className="veli-service-detail-header">
-          <h1 className="veli-service-detail-title">{title}</h1>
-          {description && <p className="veli-service-detail-description">{description}</p>}
-          {provider && (
-            <p className="veli-service-detail-provider">
+    <ServiceDetailRoot className={className}>
+      <ServiceDetailHeader
+        title={title}
+        description={description || undefined}
+        provider={
+          provider ? (
+            <>
               {labels.providedBy}{' '}
               {provider.href ? (
                 <Link href={provider.href} render={renderLink}>
@@ -183,195 +206,178 @@ export function ServiceDetail({
               ) : (
                 provider.name
               )}
-            </p>
-          )}
-        </header>
-        <div className="veli-service-detail-card">
-          {(hasMetadata || services.length > 0) && (
-            <section className="veli-service-detail-summary" aria-label={labels.serviceSummary}>
-              {(metadata?.applicationTime || metadata?.feeSummary || !!metadata?.fees?.length) && (
-                <dl className="veli-service-detail-metadata">
-                  {metadata?.applicationTime && (
-                    <Meta icon="note-pencil" label={labels.applicationTime}>
-                      <DisplayText text={metadata.applicationTime} />
-                    </Meta>
-                  )}
-                  {(metadata?.feeSummary || !!metadata?.fees?.length) && (
-                    <Meta icon="hand-coins" label={labels.fees}>
-                      <span className="veli-service-detail-meta-value-row">
-                        <span>
-                          {metadata.feeSummary && <DisplayText text={metadata.feeSummary} />}
-                        </span>
-                        {!!metadata.fees?.length && (
-                          <button
-                            type="button"
-                            className="veli-service-detail-inline-action"
-                            aria-expanded={feesOpen}
-                            aria-controls={feesOpen ? feesId : undefined}
-                            onClick={() => setFeesOpen(!feesOpen)}
-                          >
-                            {feesOpen ? labels.hideFees : labels.showFees}
-                          </button>
-                        )}
-                      </span>
-                    </Meta>
-                  )}
-                </dl>
-              )}
-              {feesOpen && !!metadata?.fees?.length && (
-                <dl id={feesId} className="veli-service-detail-fees" aria-label={labels.feesByType}>
-                  {metadata?.fees?.map((fee) => (
-                    <div key={fee.id} className="veli-service-detail-fee-row">
-                      <dt>{fee.label}</dt>
-                      <dd>
-                        <DisplayText text={fee.value} />
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-              {(metadata?.processingTime || metadata?.eligibility) && (
-                <dl className="veli-service-detail-metadata">
-                  {metadata.processingTime && (
-                    <Meta icon="hourglass-medium" label={labels.processingTime}>
-                      <DisplayText text={metadata.processingTime} />
-                    </Meta>
-                  )}
-                  {metadata.eligibility && (
-                    <Meta icon="hand-deposit" label={labels.eligibility}>
-                      <DisplayText text={metadata.eligibility} />
-                    </Meta>
-                  )}
-                </dl>
-              )}
-              {services.length > 0 && (
-                <dl className="veli-service-detail-services-meta">
-                  <Meta icon="list-numbers" label={labels.services}>
-                    <div className="veli-service-detail-service-summary" id={servicesId}>
-                      <span>
-                        {services
-                          .slice(0, servicesOpen ? services.length : 3)
-                          .map((service) => service.name)
-                          .join(', ')}
-                      </span>
-                      {servicesOpen && hiddenServices > 0 ? ' ' : null}
-                      {hiddenServices > 0 && (
-                        <button
-                          type="button"
-                          className="veli-service-detail-inline-action"
-                          aria-expanded={servicesOpen}
-                          aria-controls={servicesId}
-                          onClick={() => setServicesOpen(!servicesOpen)}
-                        >
-                          {servicesOpen ? labels.showLess : labels.moreServices(hiddenServices)}
-                        </button>
-                      )}
-                    </div>
-                  </Meta>
-                </dl>
-              )}
-            </section>
-          )}
-          <section className="veli-service-detail-apply" aria-label={labels.apply}>
-            <div className="veli-service-detail-action-group">
-              {apply.information ? (
-                <ApplyingInfoDialog
-                  information={apply.information}
-                  platform={apply.platform}
-                  labels={labels}
-                  {...portalClasses}
-                />
-              ) : (
-                apply.platform && (
-                  <div className="veli-service-detail-platform-trigger">
-                    <span>{labels.applyOn}</span>
-                    {apply.platform.logo}
-                    <strong>{apply.platform.name}</strong>
-                  </div>
-                )
-              )}
-              {apply.mode === 'manual' ? (
-                <div
-                  className={`veli-service-detail-download-list ${apply.forms.every((form) => !form.fileMeta && !form.guideline) ? 'veli-service-detail-download-list-simple' : ''}`}
-                >
-                  {apply.forms.map((form) => (
-                    <div
-                      key={form.id}
-                      role="group"
-                      aria-label={form.title}
-                      className="veli-service-detail-download-row"
-                    >
-                      <h3
-                        className={
-                          form.fileMeta || form.guideline
-                            ? 'veli-service-detail-section-title'
-                            : 'veli-service-detail-sr-only'
-                        }
-                      >
-                        {form.title}
-                      </h3>
-                      {form.fileMeta && (
-                        <p className="veli-service-detail-muted">
-                          <DisplayText text={form.fileMeta} />
-                        </p>
-                      )}
-                      {form.action && (
-                        <ServiceActionButton action={form.action} renderLink={renderLink} />
-                      )}
-                      {form.guideline && (
-                        <GuidelineSheet
-                          guideline={form.guideline}
-                          labels={labels}
-                          {...portalClasses}
-                        />
-                      )}
-                    </div>
-                  ))}
-                  {apply.downloadAll && (
-                    <ServiceActionButton action={apply.downloadAll} renderLink={renderLink} />
-                  )}
-                  {apply.submissionDetails}
-                </div>
-              ) : (
-                apply.action && (
-                  <ServiceActionButton action={apply.action} renderLink={renderLink} />
-                )
-              )}
-            </div>
-            {apply.notice && (
-              <Alert intent="info" appearance="light" leadingIcon={<InfoIcon weight="fill" />}>
-                <AlertTitle>{apply.notice.title}</AlertTitle>
-                <AlertDescription>{apply.notice.description}</AlertDescription>
-              </Alert>
+            </>
+          ) : undefined
+        }
+      />
+      <ServiceDetailCard>
+        {(hasMetadata || services.length > 0) && (
+          <ServiceDetailSummary label={labels.serviceSummary}>
+            {metadata?.applicationTime && (
+              <ServiceDetailSummaryItem
+                label={labels.applicationTime}
+                {...summaryPresentation('note-pencil', summaryOptions?.applicationTime)}
+                {...timeValue(
+                  metadata.applicationTime,
+                  labels.applicationTime,
+                  summaryOptions?.applicationTime?.details,
+                )}
+              />
             )}
-            <div className="veli-service-detail-stack">
-              <h2 className="veli-service-detail-section-title">{labels.beforeYouStart}</h2>
-              {guideline ? (
-                <GuidelineSheet
-                  guideline={guideline}
-                  labels={labels}
-                  isOpen={isGuidelineOpen}
-                  defaultOpen={defaultGuidelineOpen}
-                  onOpenChange={onGuidelineOpenChange}
-                  {...portalClasses}
-                />
-              ) : (
-                <p className="veli-service-detail-body-text">{labels.guidelineUnavailable}</p>
-              )}
-              {!!prerequisites?.length && (
-                <>
-                  <p className="veli-service-detail-body-text">{labels.prerequisiteIntroduction}</p>
-                  <ul className="veli-service-detail-prerequisites">
-                    {prerequisites.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
+            {(metadata?.feeSummary || !!metadata?.fees?.length) && (
+              <ServiceDetailSummaryItem
+                label={labels.fees}
+                {...summaryPresentation('hand-coins', summaryOptions?.fees)}
+                disclosure={
+                  metadata.fees?.length
+                    ? {
+                        triggerStyle: 'text',
+                        showLabel: labels.showFees,
+                        hideLabel: labels.hideFees,
+                        content: (
+                          <SummaryDetails details={metadata.fees} label={labels.feesByType} />
+                        ),
+                      }
+                    : undefined
+                }
+              >
+                {metadata.feeSummary}
+              </ServiceDetailSummaryItem>
+            )}
+            {metadata?.processingTime && (
+              <ServiceDetailSummaryItem
+                label={labels.processingTime}
+                startRow
+                {...summaryPresentation('hourglass-medium', summaryOptions?.processingTime)}
+                {...timeValue(
+                  metadata.processingTime,
+                  labels.processingTime,
+                  summaryOptions?.processingTime?.details,
+                )}
+              />
+            )}
+            {metadata?.eligibility && (
+              <ServiceDetailSummaryItem
+                label={labels.eligibility}
+                startRow={!metadata.processingTime}
+                {...summaryPresentation('hand-deposit', summaryOptions?.eligibility)}
+              >
+                {metadata.eligibility}
+              </ServiceDetailSummaryItem>
+            )}
+            {services.length > 0 && (
+              <ServiceDetailSummaryItem
+                label={labels.services}
+                span="full"
+                className="veli-service-detail-services-meta"
+                {...summaryPresentation('list-numbers', summaryOptions?.services)}
+              >
+                <div className="veli-service-detail-service-summary" id={servicesId}>
+                  <span>
+                    {services
+                      .slice(0, servicesOpen ? services.length : 3)
+                      .map((service) => service.name)
+                      .join(', ')}
+                  </span>
+                  {servicesOpen && hiddenServices > 0 ? ' ' : null}
+                  {hiddenServices > 0 && (
+                    <button
+                      type="button"
+                      className="veli-service-detail-inline-action"
+                      aria-expanded={servicesOpen}
+                      aria-controls={servicesId}
+                      onClick={() => setServicesOpen(!servicesOpen)}
+                    >
+                      {servicesOpen ? labels.showLess : labels.moreServices(hiddenServices)}
+                    </button>
+                  )}
+                </div>
+              </ServiceDetailSummaryItem>
+            )}
+          </ServiceDetailSummary>
+        )}
+        <ServiceDetailContent>
+          <ServiceDetailActions label={labels.apply}>
+            {apply.information ? (
+              <ApplyingInfoDialog
+                information={apply.information}
+                platform={apply.platform}
+                labels={labels}
+                {...portalClasses}
+              />
+            ) : (
+              apply.platform && (
+                <div className="veli-service-detail-platform-trigger">
+                  <span>{labels.applyOn}</span>
+                  {apply.platform.logo}
+                  <strong>{apply.platform.name}</strong>
+                </div>
+              )
+            )}
+            {apply.mode === 'manual' ? (
+              <div
+                className={`veli-service-detail-download-list ${apply.forms.every((form) => !form.fileMeta && !form.guideline) ? 'veli-service-detail-download-list-simple' : ''}`}
+              >
+                {apply.forms.map((form) => (
+                  <ServiceDetailDownload
+                    key={form.id}
+                    title={form.title}
+                    metadata={form.fileMeta || undefined}
+                    hideTitle={!form.fileMeta && !form.guideline}
+                  >
+                    {form.action && (
+                      <ServiceActionButton action={form.action} renderLink={renderLink} />
+                    )}
+                    {form.guideline && (
+                      <GuidelineSheet
+                        guideline={form.guideline}
+                        labels={labels}
+                        {...portalClasses}
+                      />
+                    )}
+                  </ServiceDetailDownload>
+                ))}
+                {apply.downloadAll && (
+                  <ServiceActionButton action={apply.downloadAll} renderLink={renderLink} />
+                )}
+                {apply.submissionDetails}
+              </div>
+            ) : (
+              apply.action && <ServiceActionButton action={apply.action} renderLink={renderLink} />
+            )}
+          </ServiceDetailActions>
+          {apply.notice && (
+            <Alert intent="info" appearance="light" leadingIcon={<InfoIcon weight="fill" />}>
+              <AlertTitle>{apply.notice.title}</AlertTitle>
+              <AlertDescription>{apply.notice.description}</AlertDescription>
+            </Alert>
+          )}
+          <ServiceDetailSection title={labels.beforeYouStart}>
+            {guideline ? (
+              <GuidelineSheet
+                guideline={guideline}
+                labels={labels}
+                isOpen={isGuidelineOpen}
+                defaultOpen={defaultGuidelineOpen}
+                onOpenChange={onGuidelineOpenChange}
+                {...portalClasses}
+              />
+            ) : (
+              <p className="veli-service-detail-body-text">{labels.guidelineUnavailable}</p>
+            )}
+            {!!prerequisites?.length && (
+              <>
+                <p className="veli-service-detail-body-text">{labels.prerequisiteIntroduction}</p>
+                <ul className="veli-service-detail-prerequisites">
+                  {prerequisites.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </ServiceDetailSection>
+        </ServiceDetailContent>
+      </ServiceDetailCard>
+    </ServiceDetailRoot>
   );
 }

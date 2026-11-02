@@ -1,3 +1,22 @@
+## 0.7.0
+
+### Added
+
+- Compose service pages from reusable layout, summary, content, action, section, download and dialog parts, with consumer-owned fields, ordering and actions. The existing props-based `ServiceDetail` remains available and uses the same parts.
+- Add optional per-service application and processing time breakdowns, independently expandable with keyboard and touch controls.
+- Supply custom summary icons, accessible information controls and either value/caret or show/hide disclosure triggers.
+
+### Changed
+
+- Show fee details beneath the fee summary in a nested description list, with a caret on the existing show/hide control and reduced-motion support.
+- Keep custom sections and actions inside one shared content surface, avoiding repeated rounded edges between sections.
+- Require only guideline-specific labels when using the guideline part directly; existing complete label dictionaries remain supported.
+
+### Fixed
+
+- Show one guideline summary state at a time: loading takes precedence over errors, and errors over stale content.
+- Open summary information in a native Veli popover on press or touch, retaining the hover/focus tooltip and accessible dismissal and focus return.
+
 ## 0.6.0
 
 ### Changed
