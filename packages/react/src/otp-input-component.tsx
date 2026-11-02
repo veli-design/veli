@@ -33,7 +33,6 @@ import {
 } from './field-shared.js';
 import {
   alphabetSpec,
-  composeOTPValidate,
   createOTPDocument,
   planOTPClipboard,
   projectOTPTrack,
@@ -432,7 +431,7 @@ export function OTPInput({
         setIsFocused(focused);
         onFocusChange?.(focused);
       }}
-      validate={composeOTPValidate(layout, languageConfig.language, validate)}
+      validate={validate}
       className={twMerge(otpInputRootVariants(), className)}
     >
       {({ isDisabled, isInvalid, isReadOnly, isRequired }) => {

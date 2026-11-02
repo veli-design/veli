@@ -8,7 +8,7 @@
     "clientComponent": true,
     "provider": "recommended",
     "notes": [
-      "Use VeliProvider for the localized completeness message, Optional caption, and direction."
+      "Use VeliProvider for the Optional caption and direction. Pass composeOTPValidate when a live completeness message is wanted."
     ]
   },
   "useWhen": [
@@ -50,7 +50,7 @@
   "accessibility": [
     "Uses React Aria TextField, Label, and one Input, so assistive technology hears a single labelled text field.",
     "Slots and separators are aria-hidden.",
-    "A partial code reports a localized completeness error; an empty field is left to isRequired."
+    "An empty required field uses isRequired. Partial codes are not live-invalid unless the caller passes validate."
   ],
   "responsive": [
     "The field fills its container and the slots keep a fixed size on the start edge."

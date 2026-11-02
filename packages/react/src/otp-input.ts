@@ -6,3 +6,4 @@ export type {
   OTPInputSlotProps,
   OTPSlotView,
 } from './otp-input-component.js';
+export { composeOTPValidate, otpIncompleteMessages } from './otp-input-model.js';

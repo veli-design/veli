@@ -98,20 +98,25 @@ const [code, setCode] = useState('');
 
 ## Validation
 
-An empty required field uses `isRequired`. A partial code fails the field's completeness check and shows a localized message. A consumer `validate` that returns an error wins. Inside `Form`, server errors keyed by `name` show under the slots. Leave `errorMessage` unset so they can.
+An empty required field uses `isRequired`. Partial codes are not marked invalid while typing. Check length on submit, or pass `validate` (including the exported `composeOTPValidate` helper) when you want a completeness message. Inside `Form`, server errors keyed by `name` show under the slots. Leave `errorMessage` unset so they can.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <OTPInputFormDemo client:visible />
 </div>
 
 ```tsx
-<Form validationErrors={serverErrors} onSubmit={onVerify}>
-  <OTPInput name="code" label="Verification code" isRequired />
-  <Button type="submit">Verify</Button>
-</Form>
-```
+import { composeOTPValidate, OTPInput } from '@veli-design/react/otp-input';
 
-Veli `Form` validates as the user types, so the completeness message appears while a code is still partial.
+<Form validationErrors={serverErrors} onSubmit={onVerify}>
+  <OTPInput
+    name="code"
+    label="Verification code"
+    isRequired
+    validate={composeOTPValidate({ slotCount: 6, groupSizes: [6] }, 'en')}
+  />
+  <Button type="submit">Verify</Button>
+</Form>;
+```
 
 ## Keyboard and pointer
 
@@ -177,4 +182,4 @@ OTPInput is a Veli field on React Aria [`TextField`](https://react-spectrum.adob
 
 ## RTL and Language
 
-In RTL, the label, helper, and error follow `dir`. The slot row and the value stay left to right and sit on the start edge of the field. On `lang="dv"` pages, the completeness message and Optional caption use Dhivehi.
+In RTL, the label, helper, and error follow `dir`. The slot row and the value stay left to right and sit on the start edge of the field. On `lang="dv"` pages, the Optional caption and any `composeOTPValidate` message use Dhivehi.

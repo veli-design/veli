@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Form } from '@veli-design/react/form';
 import { OTPInput, OTPInputSeparator, OTPInputSlot } from '@veli-design/react/otp-input';
 import { VeliProvider } from '@veli-design/react/provider';
+import { composeOTPValidate, resolveOTPLayout } from '../src/otp-input-model.ts';
 
 const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const render = (props, wrap = (field) => field) =>
@@ -22,22 +23,20 @@ test('Form validationErrors reach FieldError without an explicit errorMessage', 
   assert.equal(attr(inputTag(html)[0], 'aria-invalid'), 'true');
 });
 
-test('a partial code fails completeness and an empty field is left to isRequired', () => {
+test('a partial code is not live-invalid; empty required still sets aria-required', () => {
   const partial = render({ defaultValue: '123' }, (field) => h(Form, null, field));
-  assert.match(partial, />Enter all 6 characters\.</);
+  assert.doesNotMatch(partial, /Enter all/);
+  assert.notEqual(attr(inputTag(partial)[0], 'aria-invalid'), 'true');
   const empty = render({ isRequired: true }, (field) => h(Form, null, field));
-  assert.doesNotMatch(empty, /Enter all/);
   assert.equal(attr(inputTag(empty)[0], 'aria-required'), 'true');
-  const full = render({ defaultValue: '123456' }, (field) => h(Form, null, field));
-  assert.doesNotMatch(full, /slot="errorMessage"/);
 });
 
-test('completeness copy follows the Veli language', () => {
-  const html = render({ defaultValue: '1' }, (field) =>
-    h(VeliProvider, { language: 'dv' }, h(Form, null, field)),
+test('opt-in composeOTPValidate shows the localized completeness message', () => {
+  const html = render(
+    { defaultValue: '12', validate: composeOTPValidate(resolveOTPLayout({}), 'en') },
+    (field) => h(Form, null, field),
   );
-  assert.doesNotMatch(html, /Enter all/);
-  assert.match(html, /slot="errorMessage"[^>]*>[^<]*6[^<]*</);
+  assert.match(html, />Enter all 6 characters\.</);
 });
 
 test('one named input holds the sanitized code with no separators', () => {
