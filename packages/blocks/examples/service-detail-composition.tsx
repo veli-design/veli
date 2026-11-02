@@ -23,8 +23,6 @@ import { serviceDetailContent } from './service-detail-content';
 const messages = {
   en: {
     availability: 'Available places',
-    check: 'Check availability',
-    checked: 'Availability checked — preview only.',
     apply: 'Apply online',
     applied: 'Application selected — preview only.',
     appointments: 'Appointments',
@@ -41,8 +39,6 @@ const messages = {
   },
   dv: {
     availability: 'ލިބެންހުރި ޖާގަ',
-    check: 'ޖާގަ ބަލާ',
-    checked: 'ޖާގަ ބެލިއްޖެ — މިއީ ނަމޫނާއެއް.',
     apply: 'އޮންލައިން ހުށަހަޅާ',
     applied: 'އެދުން ހުށަހެޅުން ހޮވިއްޖެ — މިއީ ނަމޫނާއެއް.',
     appointments: 'އެޕޮއިންޓްމަންޓް',
@@ -68,7 +64,6 @@ export function ServiceDetailComposition({
 }) {
   const data = serviceDetailContent(language);
   const copy = messages[language];
-  const [places, setPlaces] = useState(12);
   const [status, setStatus] = useState('');
   return (
     <ServiceDetailRoot id={id}>
@@ -84,19 +79,7 @@ export function ServiceDetailComposition({
             icon={<UsersIcon />}
             information={{ label: copy.availability, content: copy.appointmentBody }}
           >
-            <div className="flex flex-wrap items-center gap-3">
-              <output aria-label={copy.availability}>{places}</output>
-              <Button
-                size="sm"
-                intent="secondary"
-                onPress={() => {
-                  setPlaces(11);
-                  setStatus(copy.checked);
-                }}
-              >
-                {copy.check}
-              </Button>
-            </div>
+            12
           </ServiceDetailSummaryItem>
           <ServiceDetailSummaryItem
             label={data.labels.fees}

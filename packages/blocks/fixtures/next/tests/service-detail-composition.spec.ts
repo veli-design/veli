@@ -14,13 +14,7 @@ for (const language of ['en', 'dv']) {
         await page.getByRole('button', { name: 'Fixture language', exact: true }).click();
       const first = page.locator('#first');
       const second = page.locator('#second');
-      const availability = first.locator('output');
-      await expect(availability).toHaveText('12');
-      // The custom value contains its own button; it must not be nested inside a disclosure trigger.
-      const check = first.locator('.veli-service-detail-meta-value button').first();
-      await check.click();
-      await expect(availability).toHaveText('11');
-      await expect(second.locator('output')).toHaveText('12');
+      await expect(first.getByText('12', { exact: true })).toBeVisible();
 
       const triggers = first.locator('.veli-service-detail-breakdown-trigger');
       await triggers.first().focus();
@@ -126,7 +120,7 @@ test('composed content renders on the server without duplicate IDs', async ({ br
     await expect(
       page.locator('#first').getByText('Available places', { exact: true }),
     ).toBeVisible();
-    await expect(page.locator('#first output')).toHaveText('12');
+    await expect(page.locator('#first').getByText('12', { exact: true })).toBeVisible();
     const ids = await page.locator('[id]').evaluateAll((nodes) => nodes.map((node) => node.id));
     expect(new Set(ids).size).toBe(ids.length);
   } finally {

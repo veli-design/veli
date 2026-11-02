@@ -176,9 +176,11 @@ export const CustomComposition: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: /Check availability|ޖާގަ ބަލާ/ }));
-    await expect(
-      canvas.getByRole('status', { name: /Available places|ލިބެންހުރި ޖާގަ/ }),
-    ).toHaveTextContent('11');
+    await userEvent.click(
+      canvas.getByRole('button', { name: /Apply online|އޮންލައިން ހުށަހަޅާ/, exact: true }),
+    );
+    await expect(canvas.getByRole('status')).toHaveTextContent(
+      /Application selected|އެދުން ހުށަހެޅުން ހޮވިއްޖެ/,
+    );
   },
 };
