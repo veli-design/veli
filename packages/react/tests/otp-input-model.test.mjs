@@ -15,7 +15,7 @@ import {
 } from '../src/otp-input-model.ts';
 
 const six = resolveOTPLayout({});
-const doc = (text, gap = text.length) => ({ text, gap });
+const doc = (text, caret = text.length) => ({ text, caret });
 const reduce = (prev, event, alphabet = 'digits', layout = six) =>
   reduceOTPDocument(prev, event, layout, alphabet);
 const value = (raw) => ({ type: 'value', raw });
@@ -57,7 +57,7 @@ test('typing at the end appends and typing on a filled slot replaces and moves r
   assert.deepEqual(reduce(doc('AB'), value('ABc'), 'alphanumeric-upper').document, doc('ABC', 3));
 });
 
-test('backspace deletes before an end gap and deletes the selected filled slot', () => {
+test('backspace deletes before an end caret and deletes the selected filled slot', () => {
   assert.deepEqual(reduce(doc('123'), value('12')).document, doc('12', 2));
   assert.deepEqual(reduce(doc('123', 1), value('13')).document, doc('13', 1));
   assert.deepEqual(reduce(doc('122', 1), value('12')).document, doc('12', 1));
@@ -72,13 +72,13 @@ test('rejected characters and overflow leave the document untouched', () => {
   assert.equal(reduce(full, value('123456')).document, full);
 });
 
-test('short paste inserts at the gap and SMS autofill parks the gap at the end', () => {
+test('short paste inserts at the caret and SMS autofill parks the caret at the end', () => {
   assert.deepEqual(reduce(doc('123', 1), value('14-53')).document, doc('1453', 3));
   assert.deepEqual(reduce(doc('12'), value('123-456')).document, doc('123456', 6));
   assert.deepEqual(reduce(doc('98'), value('123 456')).document, doc('123456', 6));
 });
 
-test('same-character overtype advances the gap without changing the text', () => {
+test('same-character overtype advances the caret without changing the text', () => {
   const prev = doc('123', 1);
   assert.deepEqual(reduce(prev, { type: 'insert', data: '2' }), {
     document: doc('123', 2),
@@ -104,14 +104,14 @@ test('completed is true only for a user edit that fills an incomplete code', () 
   assert.equal(reduce(doc('999999'), { type: 'replace', raw: '123456' }).completed, false);
 });
 
-test('external values keep the gap for the same text and park it at the new end', () => {
+test('external values keep the caret for the same text and park it at the new end', () => {
   const prev = doc('123', 1);
   assert.equal(reduce(prev, { type: 'external', raw: '1-2-3' }).document, prev);
   assert.deepEqual(reduce(prev, { type: 'external', raw: '98765' }).document, doc('98765', 5));
   assert.deepEqual(reduce(prev, { type: 'external', raw: '' }).document, doc('', 0));
 });
 
-test('motion moves the gap inside the text and never past it', () => {
+test('motion moves the caret inside the text and never past it', () => {
   const prev = doc('123', 1);
   const move = (from, motion) => reduce(from, { type: 'motion', motion }).document;
   assert.deepEqual(move(prev, 'left'), doc('123', 0));
@@ -124,7 +124,7 @@ test('motion moves the gap inside the text and never past it', () => {
   assert.equal(move(atEnd, 'right'), atEnd);
 });
 
-test('pointing at a filled slot overtypes it and an empty slot parks at the append gap', () => {
+test('pointing at a filled slot overtypes it and an empty slot parks at the append caret', () => {
   const prev = doc('123');
   const point = (slotIndex) => reduce(prev, { type: 'point', slotIndex }).document;
   assert.deepEqual(point(1), doc('123', 1));
@@ -140,7 +140,7 @@ test('paste plan replaces on a full code, ignores nothing usable, and defers oth
   });
   assert.deepEqual(planOTPClipboard(' - ', six, 'digits'), { kind: 'ignore' });
   assert.deepEqual(planOTPClipboard('abc', six, 'digits'), { kind: 'ignore' });
-  assert.deepEqual(planOTPClipboard('12', six, 'digits'), { kind: 'browser' });
+  assert.deepEqual(planOTPClipboard('12', six, 'digits'), { kind: 'nativeInsert' });
   assert.deepEqual(reduce(doc('456'), { type: 'replace', raw: '123-456' }).document, doc('123456'));
 });
 
@@ -192,7 +192,7 @@ test('completeness validation leaves empty to isRequired and lets consumer error
   assert.deepEqual(composeOTPValidate(six, 'en', () => ['A', 'B'])('12'), ['A', 'B']);
 });
 
-test('createOTPDocument seeds a sanitized document with the gap at the end', () => {
+test('createOTPDocument seeds a sanitized document with the caret at the end', () => {
   assert.deepEqual(createOTPDocument('12-3', six, 'digits'), doc('123', 3));
   assert.deepEqual(createOTPDocument(undefined, six, 'digits'), doc('', 0));
 });

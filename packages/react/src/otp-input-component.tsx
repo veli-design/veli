@@ -128,9 +128,7 @@ const otpShellVariants = cva(
   },
 );
 
-// The input is the hit target, the form value, and the accessible text field.
-// Its glyphs, caret, selection, and autofill paint stay invisible so the slots
-// are the only visible text. 16px keeps iOS from zooming on focus.
+// 16px keeps iOS from zooming on focus.
 const otpNativeInputClassName =
   'absolute inset-0 z-[2] size-full border-0 bg-transparent p-0 text-[16px] text-transparent caret-transparent outline-none selection:bg-transparent disabled:cursor-not-allowed autofill:[transition:background-color_0s_600000s] autofill:[-webkit-text-fill-color:transparent] [&:-webkit-autofill]:[transition:background-color_0s_600000s] [&:-webkit-autofill]:[-webkit-text-fill-color:transparent]';
 
@@ -276,7 +274,6 @@ export type OTPInputProps = OTPAriaProps &
     infoTooltipAriaLabel?: string;
     /** Shows a localized Optional caption beside the label. Hidden when `isRequired` is set. */
     isOptional?: boolean;
-    /** Label-row action. Verification screens put Resend here. */
     action?: React.ReactNode;
     description?: React.ReactNode;
     errorMessage?: React.ReactNode;
@@ -519,7 +516,7 @@ export function OTPInput({
                     layout,
                     alphabet,
                   );
-                  if (plan.kind === 'browser') return;
+                  if (plan.kind === 'nativeInsert') return;
                   event.preventDefault();
                   if (plan.kind === 'replace' && isEditable) {
                     dispatch({ type: 'replace', raw: plan.raw });

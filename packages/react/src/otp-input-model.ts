@@ -4,10 +4,6 @@ import type { VeliLanguage } from './provider-shared.js';
 declare const otpTextBrand: unique symbol;
 declare const otpSlotViewBrand: unique symbol;
 
-/**
- * Sanitized dense prefix. Slot `i` is filled iff `i < text.length`.
- * Only `sanitizeOTPText` creates one.
- */
 export type OTPText = string & { readonly [otpTextBrand]: true };
 
 const otpAlphabets = {
@@ -79,14 +75,9 @@ export function sanitizeOTPText(raw: string, layout: OTPLayout, alphabet: OTPAlp
   return cased.replace(disallowed, '').slice(0, layout.slotCount) as OTPText;
 }
 
-/**
- * The only stored domain value. `0 <= gap <= text.length`.
- * `gap < text.length` overtypes `text[gap]`; `gap === text.length` appends,
- * or sits after the last slot when the code is full.
- */
 export interface OTPDocument {
   readonly text: OTPText;
-  readonly gap: number;
+  readonly caret: number;
 }
 
 export function createOTPDocument(
@@ -95,29 +86,20 @@ export function createOTPDocument(
   alphabet: OTPAlphabet,
 ): OTPDocument {
   const text = sanitizeOTPText(raw ?? '', layout, alphabet);
-  return { text, gap: text.length };
+  return { text, caret: text.length };
 }
 
 export type OTPMotion = 'left' | 'right' | 'start' | 'end';
 
-/**
- * - `value`: whatever the input now holds after a browser edit (typing,
- *   deletion, short paste, SMS autofill).
- * - `insert`: a character about to be typed. Only consumed when it overtypes
- *   the same character, because the browser leaves the value unchanged and
- *   React then reports no change.
- * - `replace`: a user paste of a complete code.
- * - `external`: a controlled `value` from the parent.
- */
 export type OTPDocumentEvent =
   | { readonly type: 'value'; readonly raw: string }
+  /** Same-character overtype leaves the browser value unchanged, so React reports no change. */
   | { readonly type: 'insert'; readonly data: string }
   | { readonly type: 'replace'; readonly raw: string }
   | { readonly type: 'external'; readonly raw: string }
   | { readonly type: 'motion'; readonly motion: OTPMotion }
   | { readonly type: 'point'; readonly slotIndex: number };
 
-/** `completed` is true only when a user edit moved the text from incomplete to full. */
 export interface OTPReduceResult {
   readonly document: OTPDocument;
   readonly completed: boolean;
@@ -127,14 +109,19 @@ function unchanged(document: OTPDocument): OTPReduceResult {
   return { document, completed: false };
 }
 
-function withGap(prev: OTPDocument, gap: number): OTPDocument {
-  return gap === prev.gap ? prev : { text: prev.text, gap };
+function withCaret(prev: OTPDocument, caret: number): OTPDocument {
+  return caret === prev.caret ? prev : { text: prev.text, caret };
 }
 
-function edited(prev: OTPDocument, text: OTPText, gap: number, layout: OTPLayout): OTPReduceResult {
+function edited(
+  prev: OTPDocument,
+  text: OTPText,
+  caret: number,
+  layout: OTPLayout,
+): OTPReduceResult {
   if (text === prev.text) return unchanged(prev);
   return {
-    document: { text, gap: Math.min(gap, text.length) },
+    document: { text, caret: Math.min(caret, text.length) },
     completed: text.length === layout.slotCount && prev.text.length < layout.slotCount,
   };
 }
@@ -151,11 +138,9 @@ export function reduceOTPDocument(
     case 'value': {
       const before = prev.text;
       const raw = event.raw;
-      // Edits start at the selection written from `gap`, so capping the shared
-      // prefix there keeps repeated characters from shifting the edit point.
-      const maxPrefix = Math.min(prev.gap, before.length, raw.length);
+      const compareBound = Math.min(prev.caret, before.length, raw.length);
       let prefix = 0;
-      while (prefix < maxPrefix && before[prefix] === raw[prefix]) prefix++;
+      while (prefix < compareBound && before[prefix] === raw[prefix]) prefix++;
       const maxSuffix = Math.min(before.length, raw.length) - prefix;
       let suffix = 0;
       while (
@@ -171,8 +156,8 @@ export function reduceOTPDocument(
     }
     case 'insert': {
       const char = sanitize(event.data);
-      if (prev.gap < prev.text.length && char === prev.text[prev.gap]) {
-        return unchanged(withGap(prev, prev.gap + 1));
+      if (prev.caret < prev.text.length && char === prev.text[prev.caret]) {
+        return unchanged(withCaret(prev, prev.caret + 1));
       }
       return unchanged(prev);
     }
@@ -182,31 +167,26 @@ export function reduceOTPDocument(
     }
     case 'external': {
       const text = sanitize(event.raw);
-      return unchanged(text === prev.text ? prev : { text, gap: text.length });
+      return unchanged(text === prev.text ? prev : { text, caret: text.length });
     }
     case 'motion': {
       const end = prev.text.length;
-      const gaps = {
-        left: Math.max(0, prev.gap - 1),
-        right: Math.min(end, prev.gap + 1),
+      const carets = {
+        left: Math.max(0, prev.caret - 1),
+        right: Math.min(end, prev.caret + 1),
         start: 0,
         end,
       } satisfies Record<OTPMotion, number>;
-      return unchanged(withGap(prev, gaps[event.motion]));
+      return unchanged(withCaret(prev, carets[event.motion]));
     }
     case 'point':
-      return unchanged(withGap(prev, Math.min(Math.max(0, event.slotIndex), prev.text.length)));
+      return unchanged(withCaret(prev, Math.min(Math.max(0, event.slotIndex), prev.text.length)));
   }
 }
 
-/**
- * `replace` takes over a paste that fills the code. `ignore` blocks a paste
- * with nothing usable. `browser` lets the input insert at the written
- * selection, then a `value` event sanitizes it.
- */
 export type OTPClipboardPlan =
   | { readonly kind: 'replace'; readonly raw: string }
-  | { readonly kind: 'browser' }
+  | { readonly kind: 'nativeInsert' }
   | { readonly kind: 'ignore' };
 
 export function planOTPClipboard(
@@ -217,7 +197,7 @@ export function planOTPClipboard(
   const length = sanitizeOTPText(clipboard, layout, alphabet).length;
   if (length === 0) return { kind: 'ignore' };
   if (length === layout.slotCount) return { kind: 'replace', raw: clipboard };
-  return { kind: 'browser' };
+  return { kind: 'nativeInsert' };
 }
 
 export interface OTPNativeSelection {
@@ -226,9 +206,9 @@ export interface OTPNativeSelection {
 }
 
 export function selectionForDocument(doc: OTPDocument): OTPNativeSelection {
-  return doc.gap < doc.text.length
-    ? { start: doc.gap, end: doc.gap + 1 }
-    : { start: doc.gap, end: doc.gap };
+  return doc.caret < doc.text.length
+    ? { start: doc.caret, end: doc.caret + 1 }
+    : { start: doc.caret, end: doc.caret };
 }
 
 export type OTPSlotCaret = 'none' | 'append' | 'overtype' | 'trailing';
@@ -255,9 +235,9 @@ export function projectOTPTrack(
   layout: OTPLayout,
   focused: boolean,
 ): OTPTrackView {
-  const caretIndex = focused ? Math.min(doc.gap, layout.slotCount - 1) : -1;
+  const caretIndex = focused ? Math.min(doc.caret, layout.slotCount - 1) : -1;
   const caret: OTPSlotCaret =
-    doc.gap < doc.text.length ? 'overtype' : doc.gap < layout.slotCount ? 'append' : 'trailing';
+    doc.caret < doc.text.length ? 'overtype' : doc.caret < layout.slotCount ? 'append' : 'trailing';
   let index = 0;
 
   return {
@@ -275,7 +255,6 @@ export function projectOTPTrack(
   };
 }
 
-// Dhivehi copy is a draft pending content-owner review.
 export const otpIncompleteMessages = {
   en: (slotCount: number) => `Enter all ${slotCount} characters.`,
   dv: (slotCount: number) => `ހުރިހާ ${slotCount} އަކުރު ލިޔުއްވާ.`,

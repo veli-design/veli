@@ -146,7 +146,6 @@ export const FormServerError: Story = {
   },
 };
 
-/** Keyboard, overtype, deletion, rejection, and paste through the real input. */
 export const Editing: Story = {
   args: { label: 'Code' },
   play: async ({ args, canvasElement }) => {
