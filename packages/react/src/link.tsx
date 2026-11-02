@@ -31,7 +31,7 @@ const linkVariants = cva(
       },
       isDisabled: {
         false: '',
-        true: 'pointer-events-none text-disabled [&_svg]:text-icon-disabled',
+        true: 'cursor-not-allowed text-disabled [&_svg]:text-icon-disabled',
       },
       isFocusVisible: {
         true: 'inset-ring-2 inset-ring-border-focus forced-colors:outline-2 forced-colors:outline-solid forced-colors:outline-offset-2 forced-colors:outline-[Highlight]',

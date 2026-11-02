@@ -205,7 +205,7 @@ const triggerButtonVariants = cva(
       isDisabled: {
         true: 'cursor-not-allowed text-disabled',
         false:
-          'text-icon-base hover:bg-ash-alpha-100 hover:text-base-default data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base-default',
+          'cursor-pointer text-icon-base hover:bg-ash-alpha-100 hover:text-base-default data-[pressed]:bg-ash-alpha-200 data-[open]:bg-ash-alpha-100 data-[open]:text-base-default',
       },
     },
     defaultVariants: {
@@ -221,7 +221,7 @@ const popoverVariants = cva(
 const listBoxVariants = cva('max-h-60 overflow-auto outline-none');
 
 const itemVariants = cva(
-  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-4 py-2 text-start text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:pointer-events-none data-[disabled]:text-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[selected]:text-base-strong motion-reduce:transition-none forced-colors:data-[focused]:outline forced-colors:data-[focused]:outline-[Highlight] [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
+  'group flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-4 py-2 text-start text-base-strong outline-none transition-colors duration-normal ease-out data-[disabled]:cursor-not-allowed data-[disabled]:text-disabled data-[focused]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[selected]:text-base-strong motion-reduce:transition-none forced-colors:data-[focused]:outline forced-colors:data-[focused]:outline-[Highlight] [&:lang(dv)]:!pt-2.5 [&:lang(dv)]:!pb-1',
 );
 
 const itemLabelVariants = cva('wrap-anywhere type-body-sm-regular');

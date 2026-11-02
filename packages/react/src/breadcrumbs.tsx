@@ -330,7 +330,7 @@ export function BreadcrumbOverflow({
                 rel={item.rel}
                 isDisabled={item.isDisabled}
                 size="sm"
-                className="cursor-pointer px-4"
+                className="px-4"
               >
                 {item.label}
               </MenuItem>

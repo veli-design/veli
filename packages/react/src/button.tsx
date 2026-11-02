@@ -38,7 +38,7 @@ const buttonVariants = cva(
     '[transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
     'focus-visible:outline-none focus-visible:border-base-subtle focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg-surface-base',
     'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
-    'disabled:pointer-events-none data-[pending]:cursor-wait',
+    'disabled:cursor-not-allowed data-[disabled]:cursor-not-allowed data-[pending]:cursor-wait',
     'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
     "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
     'after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)]',
