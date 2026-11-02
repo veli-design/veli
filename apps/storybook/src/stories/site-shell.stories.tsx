@@ -31,6 +31,17 @@ const labelsEn: SiteHeaderLabels = {
   searchAppsAndSites: 'Search apps and sites',
   search: 'Search',
   filter: 'Filter',
+  showAll: 'Show all',
+  appsOnly: 'Apps only',
+  sitesOnly: 'Sites only',
+  showingApps: (count) => ({
+    lead: 'Showing all Apps: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
+  showingSites: (count) => ({
+    lead: 'Showing all Sites: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
   searchSummary: (query, appCount, siteCount) => ({
     countLabel: appCount + siteCount === 1 ? '1 result' : `${appCount + siteCount} results`,
     rest: ` for “${query}”`,
@@ -73,6 +84,11 @@ const labelsDv: SiteHeaderLabels = {
   searchAppsAndSites: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ',
   search: 'ހޯއްދަވާ',
   filter: 'ފިލްޓަރ',
+  showAll: 'ހުރިހާ',
+  appsOnly: 'އެޕްތައް އެކަނި',
+  sitesOnly: 'ސައިޓުތައް އެކަނި',
+  showingApps: (count) => ({ lead: 'ހުރިހާ އެޕެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
   searchSummary: (query, appCount, siteCount) => {
     const parts: string[] = [];
     if (appCount > 0) parts.push(`އެޕް ${appCount}`);
@@ -187,7 +203,10 @@ function ShellStory({
   const labels = isDv ? labelsDv : labelsEn;
   const apps = isDv ? appsDv : appsEn;
   const navHome = isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home';
+  const navMedia = isDv ? 'މީޑިއާ' : 'Media';
+  const navServices = isDv ? 'ޚިދުމަތްތައް' : 'Services';
   const navAbout = isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About';
+  const navContact = isDv ? 'ގުޅުއްވުމަށް' : 'Contact';
   const signIn = isDv ? 'ސައިންއިން' : 'Sign In';
   const mainCopy = withPreviewBanner
     ? 'Open the app switcher to fade the main column and hide the preview banner.'
@@ -229,11 +248,17 @@ function ShellStory({
             pathname="/"
             desktopNavItems={[
               { href: '/', label: navHome, current: true },
+              { href: '/media', label: navMedia },
+              { href: '/services', label: navServices },
               { href: '/about', label: navAbout },
+              { href: '/contact', label: navContact },
             ]}
             mobileNavItems={[
               { href: '/', label: navHome, current: true },
+              { href: '/media', label: navMedia },
+              { href: '/services', label: navServices },
               { href: '/about', label: navAbout },
+              { href: '/contact', label: navContact },
             ]}
             apps={apps}
             sites={[]}

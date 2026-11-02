@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 import { SignInIcon } from '@phosphor-icons/react';
-import { Button as AriaButton } from 'react-aria-components';
 
 /** Fallback when the host has not set --veli-header-site-tile-gradient. */
 export const SITE_TILE_GRADIENT_FALLBACK =
@@ -67,12 +66,24 @@ function SignInBadge() {
 function TileIconWithBadge({
   item,
   selected,
+  size = 'tile',
 }: {
   item: SiteHeaderSwitcherItem;
   selected?: boolean;
+  size?: 'tile' | 'row';
 }) {
-  const icon = <SwitcherTileIcon item={item} selected={selected} />;
+  const icon = <SwitcherTileIcon item={item} selected={selected} size={size} />;
   if (item.badge !== 'signin') return icon;
+  if (size === 'row') {
+    return (
+      <span className="relative inline-grid size-8 shrink-0 place-items-start">
+        <span className="col-start-1 row-start-1">{icon}</span>
+        <span className="bg-status-neutral-emphasis col-start-1 row-start-1 ms-5 -mt-0.5 flex rounded-full p-0.5 text-white shadow-sm">
+          <SignInIcon size={8} weight="bold" aria-hidden />
+        </span>
+      </span>
+    );
+  }
   return (
     <span className="relative inline-grid size-14 place-items-start">
       <span className="col-start-1 row-start-1">{icon}</span>
@@ -86,23 +97,26 @@ function AppIconShell({
   gradient,
   darkGradient,
   selected,
+  size = 'tile',
   className = '',
 }: {
   children?: ReactNode;
   gradient?: string;
   darkGradient?: string;
   selected?: boolean;
+  size?: 'tile' | 'row';
   className?: string;
 }) {
-  const shellRadius = selected ? 'rounded-[18px]' : 'rounded-[20px]';
+  const shellRadius =
+    size === 'row' ? 'rounded-[8px]' : selected ? 'rounded-[18px]' : 'rounded-[20px]';
+  const box = size === 'row' ? 'size-8 rounded-[9px]' : 'size-14 rounded-[20px]';
+  const chrome = selected
+    ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-teal-500)]'
+    : size === 'row'
+      ? 'border border-transparent'
+      : 'border border-base-subtle';
   return (
-    <div
-      className={`relative size-14 shrink-0 rounded-[20px] ${
-        selected
-          ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-teal-500)]'
-          : 'border border-base-subtle'
-      } ${className}`}
-    >
+    <div className={`relative shrink-0 ${box} ${chrome} ${className}`}>
       <div
         className={`absolute inset-0 overflow-hidden shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)] ${shellRadius}`}
       >
@@ -148,9 +162,11 @@ function DualToneFill({ light, dark }: { light: string; dark?: string }) {
 export function SwitcherTileIcon({
   item,
   selected,
+  size = 'tile',
 }: {
   item: SiteHeaderSwitcherItem;
   selected?: boolean;
+  size?: 'tile' | 'row';
 }) {
   if (item.tileGradient || item.emblemSrc) {
     const gradient = item.tileGradient;
@@ -165,10 +181,15 @@ export function SwitcherTileIcon({
             : `var(--veli-header-site-tile-gradient, ${SITE_TILE_GRADIENT_DARK_FALLBACK})`
         }
         selected={selected}
+        size={size}
       >
         {item.emblemSrc ? (
           <span
-            className="absolute start-2.5 top-[7px] block h-[42px] w-9 bg-contain bg-center bg-no-repeat"
+            className={
+              size === 'row'
+                ? 'absolute inset-0 m-auto block h-[22px] w-5 bg-contain bg-center bg-no-repeat'
+                : 'absolute start-2.5 top-[7px] block h-[42px] w-9 bg-contain bg-center bg-no-repeat'
+            }
             style={{ backgroundImage: `url('${item.emblemSrc}')` }}
             aria-hidden
           />
@@ -179,7 +200,7 @@ export function SwitcherTileIcon({
 
   if (item.iconSrc) {
     return (
-      <AppIconShell selected={selected}>
+      <AppIconShell selected={selected} size={size}>
         <DualToneFill light={item.iconSrc} dark={item.iconDarkSrc} />
       </AppIconShell>
     );
@@ -189,6 +210,7 @@ export function SwitcherTileIcon({
     <AppIconShell
       gradient={`var(--veli-header-govmv-tile-gradient, ${GOVMV_TILE_GRADIENT_FALLBACK})`}
       selected={selected}
+      size={size}
     />
   );
 }
@@ -233,26 +255,35 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
 const tileGridClass =
   'grid grid-cols-3 gap-x-2 gap-y-4 md:grid-cols-4 xl:grid-cols-5 xl:gap-x-14 xl:gap-y-4';
 
-export function ItemTile({
+/** Presentational tile/row chrome for a ListBoxItem. */
+export function SwitcherItemContent({
   item,
-  selected,
   youAreHereLabel,
-  onPreview,
-  onActivate,
+  layout,
 }: {
   item: SiteHeaderSwitcherItem;
-  selected: boolean;
   youAreHereLabel: string;
-  onPreview: () => void;
-  onActivate?: () => void;
+  layout: 'grid' | 'list';
 }) {
   const isCurrent = Boolean(item.current);
-  const isHover = selected && !isCurrent;
-  const className = `flex min-h-[132px] w-full cursor-pointer flex-col items-center gap-1 px-1 py-4 text-center transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] xl:rounded-[28px] ${
-    isHover ? 'xl:bg-surface-base' : 'xl:bg-transparent'
-  }`;
 
-  const body = (
+  if (layout === 'list') {
+    return (
+      <>
+        <TileIconWithBadge item={item} selected={isCurrent} size="row" />
+        <p className="type-body-md-medium text-text-base-strong min-w-0 flex-1 truncate">
+          {item.name}
+        </p>
+        {isCurrent ? (
+          <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong shrink-0 rounded-3xl px-1.5 py-0.5 tracking-[0.18px]">
+            {youAreHereLabel}
+          </span>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
     <>
       <TileIconWithBadge item={item} selected={isCurrent} />
       <p
@@ -269,60 +300,24 @@ export function ItemTile({
       ) : null}
     </>
   );
-
-  if (item.external) {
-    return (
-      <a
-        href={item.href}
-        onMouseEnter={onPreview}
-        onFocus={onPreview}
-        className={`${className} no-underline`}
-      >
-        {body}
-      </a>
-    );
-  }
-
-  return (
-    <AriaButton
-      onHoverStart={onPreview}
-      onFocus={onPreview}
-      onPress={onActivate}
-      aria-pressed={selected}
-      className={className}
-    >
-      {body}
-    </AriaButton>
-  );
 }
 
-export function TileGrid({
-  items,
-  selectedId,
-  youAreHereLabel,
-  onPreview,
-  onActivate,
+export function switcherItemClassName({
+  layout,
+  highlighted,
 }: {
-  items: SiteHeaderSwitcherItem[];
-  selectedId: string;
-  youAreHereLabel: string;
-  onPreview: (id: string) => void;
-  onActivate: (item: SiteHeaderSwitcherItem) => void;
+  layout: 'grid' | 'list';
+  highlighted: boolean;
 }) {
-  return (
-    <div className={tileGridClass}>
-      {items.map((item) => (
-        <ItemTile
-          key={item.id}
-          item={item}
-          selected={selectedId === item.id}
-          youAreHereLabel={youAreHereLabel}
-          onPreview={() => onPreview(item.id)}
-          onActivate={() => onActivate(item)}
-        />
-      ))}
-    </div>
-  );
+  if (layout === 'list') {
+    return `flex w-full cursor-pointer items-center gap-3 rounded-2xl p-2 text-start outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
+      highlighted ? 'bg-neutral-alpha-200' : 'bg-transparent'
+    }`;
+  }
+
+  return `flex min-h-[132px] w-full cursor-pointer flex-col items-center gap-1 rounded-[28px] px-1 py-4 text-center outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
+    highlighted ? 'bg-neutral-alpha-200' : 'bg-transparent'
+  }`;
 }
 
 export { tileGridClass };

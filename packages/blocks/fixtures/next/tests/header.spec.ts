@@ -20,9 +20,9 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
   await search.fill('Locker');
-  await expect(page.getByRole('button', { name: 'Locker' })).toBeVisible();
+  await expect(page.getByRole('option', { name: 'Locker' })).toBeVisible();
   await search.fill('Applications');
-  await expect(page.getByRole('button', { name: 'My Applications' })).toBeVisible();
+  await expect(page.getByRole('option', { name: 'My Applications' })).toBeVisible();
 
   await page.keyboard.press('Escape');
   await expect(
@@ -84,6 +84,37 @@ test('RTL layout does not overflow and passes axe', async ({ page }) => {
   );
   const results = await new AxeBuilder({ page }).analyze();
   await warnAccessibilityViolations(results);
+});
+
+test('app switcher filters to a site list and moves the highlight with arrows', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  await expect(page.getByRole('listbox', { name: 'Apps' })).toBeVisible();
+  const govmv = page.getByRole('option', { name: /Gov\.mv/ });
+  const applications = page.getByRole('option', { name: 'My Applications' });
+  await expect(govmv).toHaveAttribute('data-highlighted', 'true');
+  await page.keyboard.press('ArrowRight');
+  await expect(applications).toHaveAttribute('data-highlighted', 'true');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/about$/);
+
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+  await page.getByRole('button', { name: 'Filter' }).click();
+  await page.getByRole('menuitemradio', { name: 'Sites only' }).click();
+  const summary = page.locator('p', { hasText: 'Showing all Sites:' });
+  await expect(summary).toContainText('15 results');
+
+  const defence = page.getByRole('option', { name: 'Minister of Defence and National Service' });
+  const foreign = page.getByRole('option', { name: 'Minister of Foreign Affairs' });
+  await expect(defence).toHaveAttribute('data-highlighted', 'true');
+  await page.keyboard.press('ArrowDown');
+  await expect(foreign).toHaveAttribute('data-highlighted', 'true');
+  await expect(defence).not.toHaveAttribute('data-highlighted', 'true');
 });
 
 test('reduced motion still opens the app switcher', async ({ page }) => {

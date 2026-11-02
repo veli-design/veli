@@ -27,6 +27,11 @@ const labels: SiteHeaderLabels = {
   searchAppsAndSites: 'Search apps and sites',
   search: 'Search',
   filter: 'Filter',
+  showAll: 'Show all',
+  appsOnly: 'Apps only',
+  sitesOnly: 'Sites only',
+  showingApps: (count) => ({ lead: 'Showing all Apps: ', countLabel: `${count} result` }),
+  showingSites: (count) => ({ lead: 'Showing all Sites: ', countLabel: `${count} result` }),
   searchSummary: (query, appCount, siteCount) => ({
     countLabel: appCount + siteCount === 1 ? '1 result' : `${appCount + siteCount} results`,
     rest: ` for “${query}”`,
