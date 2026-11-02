@@ -1,7 +1,7 @@
 {
   "id": "service-detail",
   "title": "Service detail",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "experimental",
   "description": "Service summary, application options and accessible guideline sheet with host-owned content and actions.",
   "files": [

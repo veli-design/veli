@@ -140,7 +140,6 @@
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: var(--veli-spacing-2);
 }
 .veli-service-detail-small-icon {
   width: var(--veli-spacing-4);
@@ -176,9 +175,23 @@
 .veli-service-detail-inline-action:focus-visible,
 .veli-service-detail-platform-trigger:focus-visible,
 .veli-service-detail-guideline-trigger:focus-visible,
-.veli-service-detail-toc-link:focus-visible {
+.veli-service-detail-toc-link:focus-visible,
+.veli-service-detail-close-button:focus-visible {
   outline: none;
-  box-shadow: var(--veli-shadow-focus-ring);
+  /* Match Veli Button: a 2px ring outside a 2px surface-colored gap. */
+  box-shadow:
+    0 0 0 2px var(--veli-color-bg-surface-base),
+    0 0 0 4px var(--veli-color-border-focus);
+}
+@media (forced-colors: active) {
+  .veli-service-detail-inline-action:focus-visible,
+  .veli-service-detail-platform-trigger:focus-visible,
+  .veli-service-detail-guideline-trigger:focus-visible,
+  .veli-service-detail-toc-link:focus-visible,
+  .veli-service-detail-close-button:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
 }
 .veli-service-detail-breakdown {
   display: grid;
@@ -1061,10 +1074,6 @@
   color: var(--veli-color-text-base-default);
   background: var(--veli-color-neutral-alpha-200);
   cursor: pointer;
-}
-.veli-service-detail-close-button:focus-visible {
-  outline: 2px solid var(--veli-color-border-focus);
-  outline-offset: 2px;
 }
 
 .veli-service-detail-small-icon > svg {

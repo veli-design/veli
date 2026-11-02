@@ -14,6 +14,10 @@
 
 ### Fixed
 
+- Reserve space around inline disclosure controls so focus rings stay clear of labels and adjacent values.
+
+- Match custom controls and dialog close buttons to Veli’s 2px focus ring and surface-colored gap, with a visible outline in forced-colors mode.
+
 - Show one guideline summary state at a time: loading takes precedence over errors, and errors over stale content.
 - Open summary information in a native Veli popover on press or touch, retaining the hover/focus tooltip and accessible dismissal and focus return.
 

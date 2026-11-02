@@ -140,12 +140,12 @@ export function ServiceDetailSummaryItem({
         {label}
         {information && <SummaryInformation information={information} />}
       </dt>
-      <dd className="veli-service-detail-meta-value">
+      <dd className={`veli-service-detail-meta-value ${disclosure ? 'pt-2' : ''}`}>
         {disclosure ? (
           <Disclosure>
             {({ isExpanded }) => (
               <>
-                <div className="veli-service-detail-meta-value-row">
+                <div className="veli-service-detail-meta-value-row gap-4">
                   {disclosure.triggerStyle === 'text' && (
                     <SummaryContent>{children}</SummaryContent>
                   )}
