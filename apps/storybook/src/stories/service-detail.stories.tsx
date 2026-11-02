@@ -6,7 +6,12 @@ import {
   type ServiceApply,
   type ServiceDetailProps,
 } from '@tradenetcorp/veli-blocks/service-detail';
-import { serviceDetailContent } from '@tradenetcorp/veli-blocks/examples/service-detail-content';
+import {
+  serviceDetailContent,
+  serviceDetailSummaryOptions,
+  serviceDetailFigmaContent,
+} from '@tradenetcorp/veli-blocks/examples/service-detail-content';
+import { ServiceDetailComposition } from '@tradenetcorp/veli-blocks/examples/service-detail-composition';
 import { useVeliLanguage } from '@veli-design/react/provider';
 
 function ServicePreview({
@@ -127,4 +132,53 @@ export const MissingData: Story = {
     },
   },
   render: (args) => <ServicePreview {...args} missing />,
+};
+
+export const SupplementaryServiceSummaries: Story = {
+  render: () => {
+    const { language } = useVeliLanguage();
+    return <ServicePreview summaryOptions={serviceDetailSummaryOptions(language)} />;
+  },
+};
+
+export const ServiceChanges: Story = {
+  name: 'Service Changes',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Service changes with expandable time and fee breakdowns. Use the language toolbar to switch between English/LTR and Dhivehi/RTL. English summary content follows the desktop design; Dhivehi content is illustrative placeholder copy, pending translation and design review.',
+      },
+    },
+  },
+  render: () => {
+    const { language } = useVeliLanguage();
+    return language === 'dv' ? (
+      <ServicePreview summaryOptions={serviceDetailSummaryOptions('dv')} />
+    ) : (
+      <ServiceDetail {...serviceDetailFigmaContent()} />
+    );
+  },
+};
+
+export const CustomComposition: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Consumer-owned availability, reordered guidelines, an extra appointments section and custom actions. Uses the same parts as the default wrapper. Dhivehi copy is illustrative, pending translation review.',
+      },
+    },
+  },
+  render: () => {
+    const { language } = useVeliLanguage();
+    return <ServiceDetailComposition key={language} language={language} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /Check availability|ޖާގަ ބަލާ/ }));
+    await expect(
+      canvas.getByRole('status', { name: /Available places|ލިބެންހުރި ޖާގަ/ }),
+    ).toHaveTextContent('11');
+  },
 };

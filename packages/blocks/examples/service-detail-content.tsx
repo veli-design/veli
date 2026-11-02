@@ -65,7 +65,11 @@ export function serviceDetailContent(
     text('Request a registration extract', 'ރަޖިސްޓްރީގެ ކޮޕީއެއް އެދުން'),
   ];
   const amounts = ['2,000', '200', '250', '150', '100', '200', '100', '250', '100'];
-  const fees = names.map((label, i) => ({ id: `fee-${i}`, label, value: `MVR ${amounts[i]}` }));
+  const fees = names.map((label, i) => ({
+    id: `fee-${i}`,
+    label,
+    value: dv ? `${amounts[i]} ރުފިޔާ` : `MVR ${amounts[i]}`,
+  }));
   const prerequisites = [
     text(
       'You are the business owner or an authorized representative with permission to submit this request.',
@@ -512,5 +516,99 @@ export function serviceDetailContent(
                 : {},
             ),
           },
+  };
+}
+
+/** Optional illustrative breakdowns; production consumers supply localized service data. */
+export function serviceDetailSummaryOptions(
+  language: 'en' | 'dv' = 'en',
+): ServiceDetailProps['summaryOptions'] {
+  const content = serviceDetailContent(language);
+  const dv = language === 'dv';
+  return {
+    applicationTime: {
+      information: {
+        label: content.labels.applicationTime,
+        content: dv
+          ? 'ހުށަހެޅުމަށް ނަގާ ވަގުތު ޚިދުމަތާއެކު ތަފާތުވެދާނެ.'
+          : 'The time needed to complete the application varies by service.',
+      },
+      details: content.services?.map((service, index) => ({
+        id: service.id,
+        label: service.name,
+        value: dv ? `${index === 0 ? 15 : 5} މިނެޓް` : `${index === 0 ? 15 : 5} minutes`,
+      })),
+    },
+    processingTime: {
+      information: {
+        label: content.labels.processingTime,
+        content: dv
+          ? 'ހުށަހެޅުމަށްފަހު މުއާމަލާތް ނިމުމަށް ނަގާ ވަގުތު.'
+          : 'How long we usually take to process your application after you submit it. We may contact you if we need more information.',
+      },
+      details: content.services?.map((service, index) => ({
+        id: service.id,
+        label: service.name,
+        value: dv
+          ? `${index === 0 ? 5 : 1} މަސައްކަތު ދުވަސް`
+          : index === 0
+            ? '5 working days'
+            : '1 working day',
+      })),
+    },
+  };
+}
+
+/** Desktop English reference data from Figma 9224:74489; not a production service catalogue. */
+export function serviceDetailFigmaContent(): ServiceDetailProps {
+  const content = serviceDetailContent('en');
+  const names = [
+    'Register a New Company',
+    'Change Directors',
+    'Change Managing Director',
+    'Change Company Secretary',
+    'Amend Constitution',
+    'Change Company Name',
+    'Change Company Type',
+    'Increase Capital',
+    'Decrease Capital',
+  ];
+  const details = (values: readonly string[]) =>
+    names.map((label, index) => ({ id: `reference-${index}`, label, value: values[index] }));
+  return {
+    ...content,
+    labels: { ...content.labels, applicationTime: 'Time to apply' },
+    metadata: {
+      applicationTime: 'Up to 15 minutes',
+      processingTime: '1 to 5 working days',
+      eligibility: 'Businesses & Individuals',
+      feeSummary: 'MVR 100 – 2,000',
+      fees: details(names.map((_, index) => (index === 0 ? 'MVR 2,000' : 'MVR 100'))),
+    },
+    services: names.map((name, index) => ({ id: `reference-${index}`, name })),
+    summaryOptions: {
+      applicationTime: {
+        information: {
+          label: 'About time to apply',
+          content:
+            'About how long it takes to fill in the form and attach your documents. Have your documents ready to finish faster.',
+        },
+        details: details(names.map((_, index) => (index === 3 ? '15 minutes' : '5 minutes'))),
+      },
+      processingTime: {
+        information: {
+          label: 'About processing time',
+          content:
+            'How long we usually take to process your application after you submit it. We may contact you if we need more information.',
+        },
+        details: details([
+          '5 working days',
+          '8 hours',
+          '5 working days',
+          '15 minutes',
+          ...Array<string>(5).fill('5 minutes'),
+        ]),
+      },
+    },
   };
 }
