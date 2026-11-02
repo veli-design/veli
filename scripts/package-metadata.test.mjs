@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { corepackSpawnTarget } from './corepack.mjs';
 import { licensingPackages } from './package-licensing.mjs';
 import { checkPackageLicensingArtifacts } from './check-package-licensing.mjs';
+import { tarSync } from './windows-safe-tar.mjs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { assertReleaseLegal } from './release-legal.mjs';
@@ -57,15 +58,15 @@ test('published package metadata points to package-specific monorepo locations',
 });
 
 test('publishing refuses to run without explicit approval and an approved dist-tag', () => {
-  const script = new URL('./publish-packages.mjs', import.meta.url);
+  const script = fileURLToPath(new URL('./publish-packages.mjs', import.meta.url));
   const env = { ...process.env, VELI_NPM_PUBLICATION_APPROVED: '', VELI_NPM_DIST_TAG: '' };
   assert.throws(
-    () => execFileSync(process.execPath, [script.pathname], { env, stdio: 'pipe' }),
+    () => execFileSync(process.execPath, [script], { env, stdio: 'pipe' }),
     /separate rollout approval/,
   );
   env.VELI_NPM_PUBLICATION_APPROVED = 'true';
   assert.throws(
-    () => execFileSync(process.execPath, [script.pathname], { env, stdio: 'pipe' }),
+    () => execFileSync(process.execPath, [script], { env, stdio: 'pipe' }),
     /approved VELI_NPM_DIST_TAG/,
   );
 });
@@ -118,7 +119,7 @@ test('real workspace tarballs inherit MIT and contain only applicable self-conta
     await fs.writeFile(plainTar, gunzipSync(await fs.readFile(join(target, 'ui.tgz'))));
     await fs.mkdir(join(injected, 'package'), { recursive: true });
     await fs.writeFile(join(injected, 'package/font.woff2'), 'fixture, not a real font');
-    execFileSync('tar', ['-rf', plainTar, '-C', injected, 'package/font.woff2']);
+    tarSync(['-rf', plainTar, '-C', injected, 'package/font.woff2']);
     await fs.writeFile(join(target, 'ui.tgz'), gzipSync(await fs.readFile(plainTar)));
     assert.throws(() => checkPackageLicensingArtifacts(target), /excluded asset/);
   } finally {

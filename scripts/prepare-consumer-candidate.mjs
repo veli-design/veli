@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import getReleasePlan from '@changesets/get-release-plan';
 import { getBlocks } from '../packages/blocks/scripts/catalog.mjs';
 import { spawnSyncCorepack } from './corepack.mjs';
+import { tarSync } from './windows-safe-tar.mjs';
 
 export const packageDirectories = {
   '@veli-design/react': 'react',
@@ -41,7 +42,7 @@ export function packedVersions(directory) {
     Object.keys(packageDirectories).map((name, index) => {
       const filename = ['ui.tgz', 'tokens.tgz', 'cli.tgz'][index];
       const pkg = JSON.parse(
-        execFileSync('tar', ['-xOf', resolve(directory, filename), 'package/package.json'], {
+        tarSync(['-xOf', resolve(directory, filename), 'package/package.json'], {
           encoding: 'utf8',
         }),
       );

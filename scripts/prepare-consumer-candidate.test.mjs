@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { candidateInventory, candidateMode } from './prepare-consumer-candidate.mjs';
+import { tarSync } from './windows-safe-tar.mjs';
 const current = { '@veli-design/react': '0.17.0', '@veli-design/tokens': '0.10.0' };
 const planned = { '@veli-design/react': '0.18.0', '@veli-design/tokens': '0.11.0' };
 const blocks = (testedDependencies) => [{ manifest: { id: 'example', testedDependencies } }];
@@ -43,7 +43,7 @@ test('site inventory uses actual packed package versions and rejects stale sourc
   try {
     for (const [index, [name, version]] of Object.entries(packages).entries()) {
       writeFileSync(resolve(directory, 'package/package.json'), JSON.stringify({ name, version }));
-      execFileSync('tar', [
+      tarSync([
         '-czf',
         resolve(directory, ['ui.tgz', 'tokens.tgz', 'cli.tgz'][index]),
         '-C',
@@ -63,13 +63,7 @@ test('site inventory uses actual packed package versions and rejects stale sourc
       resolve(directory, 'package/package.json'),
       JSON.stringify({ name: '@fazofazaal/react', version: '0.18.0' }),
     );
-    execFileSync('tar', [
-      '-czf',
-      resolve(directory, 'ui.tgz'),
-      '-C',
-      directory,
-      'package/package.json',
-    ]);
+    tarSync(['-czf', resolve(directory, 'ui.tgz'), '-C', directory, 'package/package.json']);
     assert.throws(() => candidateInventory(directory, sha), /Unexpected package/);
   } finally {
     rmSync(directory, { recursive: true, force: true });
