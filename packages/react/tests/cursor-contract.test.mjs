@@ -82,11 +82,6 @@ const CURSOR_RULES = [
       'data-[pending]:cursor-wait',
     ],
     forbid: ['disabled:pointer-events-none'],
-    // Different utilities, so twMerge keeps every one. Source order is not the CSS cascade.
-    order: [
-      ['disabled:cursor-not-allowed', 'data-[pending]:cursor-wait'],
-      ['data-[disabled]:cursor-not-allowed', 'data-[pending]:cursor-wait'],
-    ],
   },
   {
     kind: 'binding',
