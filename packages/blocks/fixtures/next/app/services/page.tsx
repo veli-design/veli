@@ -6,10 +6,16 @@ import {
   ServiceDetail,
   type ServiceGuideline,
 } from '../../components/blocks/service-detail/service-detail';
-import { serviceDetailContent } from '../../service-detail-content';
+import {
+  serviceDetailContent,
+  serviceDetailSummaryOptions,
+  serviceDetailFigmaContent,
+} from '../../service-detail-content';
 
 export default function ServicesFixture() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');
+  const [figmaReference, setFigmaReference] = useState(false);
+  const [breakdowns, setBreakdowns] = useState(false);
   const [dark, setDark] = useState(false);
   const [mode, setMode] = useState<'online' | 'mixed' | 'external' | 'manual'>('online');
   const [copyFails, setCopyFails] = useState(false);
@@ -22,7 +28,9 @@ export default function ServicesFixture() {
   const [serviceCount, setServiceCount] = useState('default');
   const [guidelineState, setGuidelineState] = useState('supplied');
   const [metadataSet, setMetadataSet] = useState('default');
-  const content = serviceDetailContent(language, mode);
+  const content = figmaReference
+    ? serviceDetailFigmaContent()
+    : serviceDetailContent(language, mode);
   const metadata =
     metadataSet === 'fees only'
       ? { fees: content.metadata?.fees }
@@ -99,9 +107,17 @@ export default function ServicesFixture() {
       summaryState === 'supplied'
         ? content.guideline?.summary
         : {
-            content: summaryState === 'blank' ? '   ' : summaryState === 'zero' ? 0 : undefined,
-            isPending: summaryState === 'pending',
-            error: summaryState === 'error' ? 'Fixture summary error' : undefined,
+            content: ['overlap', 'error-content'].includes(summaryState)
+              ? 'Stale summary'
+              : summaryState === 'blank'
+                ? '   '
+                : summaryState === 'zero'
+                  ? 0
+                  : undefined,
+            isPending: ['pending', 'overlap'].includes(summaryState),
+            error: ['error', 'overlap', 'error-content'].includes(summaryState)
+              ? 'Fixture summary error'
+              : undefined,
             onRequest: summaryState === 'request' ? () => setRequested(requested + 1) : undefined,
           },
   };
@@ -111,6 +127,8 @@ export default function ServicesFixture() {
         <button onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}>
           Fixture language
         </button>
+        <button onClick={() => setFigmaReference(!figmaReference)}>Figma summary reference</button>
+        <button onClick={() => setBreakdowns(!breakdowns)}>Summary breakdowns</button>
         <button onClick={() => setDark(!dark)}>Fixture theme</button>
         <button onClick={() => setCopyFails(!copyFails)}>Copy failure</button>
         <button onClick={() => setMissing(!missing)}>Missing data</button>
@@ -168,7 +186,17 @@ export default function ServicesFixture() {
         <label>
           Summary{' '}
           <select value={summaryState} onChange={(event) => setSummaryState(event.target.value)}>
-            {['supplied', 'pending', 'error', 'request', 'empty', 'blank', 'zero'].map((value) => (
+            {[
+              'supplied',
+              'pending',
+              'error',
+              'request',
+              'empty',
+              'blank',
+              'zero',
+              'overlap',
+              'error-content',
+            ].map((value) => (
               <option key={value}>{value}</option>
             ))}
           </select>
@@ -179,6 +207,7 @@ export default function ServicesFixture() {
       </div>
       <VeliProvider language={language} colorScheme={dark ? 'dark' : 'light'}>
         <ServiceDetail
+          summaryOptions={breakdowns ? serviceDetailSummaryOptions(language) : undefined}
           {...content}
           metadata={missing ? {} : metadata}
           services={

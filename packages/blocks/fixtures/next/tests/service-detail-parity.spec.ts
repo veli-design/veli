@@ -32,24 +32,24 @@ test('repaired layouts reflow at breakpoints and Show less keeps only its inline
             indent: rtl ? box.right - button.right : button.left - box.left,
             gap: rtl ? tail.left - button.right : button.left - tail.right,
             columns: getComputedStyle(
-              document.querySelector('.veli-service-detail-fees')!,
+              document.querySelector('.veli-service-detail-breakdown')!,
             ).gridTemplateColumns.split(' ').length,
           };
         });
       expect(result.overflow).toBe(false);
-      expect(result.columns).toBe(width < 768 ? 1 : 2);
+      expect(result.columns).toBe(1);
       if (result.wrapped) expect(Math.abs(result.indent)).toBeLessThan(1);
       else expect(result.gap).toBeGreaterThan(0);
     }
   }
 });
 
-test('summary fees follow the first metadata row and retain the Figma responsive columns', async ({
+test('summary fees expand under their value in one column in EN/DV and both themes', async ({
   page,
 }) => {
   for (const language of ['en', 'dv']) {
     for (const theme of ['light', 'dark']) {
-      for (const width of [440, 1512]) {
+      for (const width of [320, 440, 1512]) {
         await page.setViewportSize({ width, height: 982 });
         await page.goto('/services');
         if (language === 'dv')
@@ -57,51 +57,26 @@ test('summary fees follow the first metadata row and retain the Figma responsive
         if (theme === 'dark')
           await page.getByRole('button', { name: 'Fixture theme', exact: true }).click();
         await page.locator('.veli-service-detail-meta-value-row button').click();
-        const geometry = await page.locator('.veli-service-detail-summary').evaluate((node) => {
-          const fees = node.querySelector('.veli-service-detail-fees')!;
-          const processing = node
-            .querySelector('.veli-service-detail-art-hourglass-medium')!
-            .closest('.veli-service-detail-meta-item')!;
-          const first = node.querySelector('.veli-service-detail-metadata')!;
-          const style = getComputedStyle(fees);
-          const rows = Array.from(fees.children)
-            .slice(0, 2)
-            .map((n) => n.getBoundingClientRect());
-          const panel = fees.getBoundingClientRect();
+        const geometry = await page.locator('.veli-service-detail-breakdown').evaluate((node) => {
+          const rows = Array.from(node.children);
+          const item = node.closest('.veli-service-detail-meta-item')!;
           return {
-            before:
-              first.getBoundingClientRect().bottom <= panel.top &&
-              panel.bottom <= processing.getBoundingClientRect().top,
-            widths: rows.map((n) => n.width),
-            offsets: rows.map((n) => n.x - panel.x),
-            start: style.paddingInlineStart,
-            end: style.paddingInlineEnd,
-            columns: style.gridTemplateColumns.split(' ').length,
+            nested: !!node.closest('dd'),
+            columns: getComputedStyle(node).gridTemplateColumns.split(' ').length,
+            below:
+              node.getBoundingClientRect().top >=
+              item.querySelector('button')!.getBoundingClientRect().bottom - 4,
+            borders: rows.map((row) => getComputedStyle(row).borderBottomWidth),
+            overflow: document.documentElement.scrollWidth > innerWidth,
           };
         });
-        expect(geometry.before).toBe(true);
-        if (width === 1512) {
-          expect(geometry.widths).toEqual([276, 276]);
-          expect(geometry.offsets).toEqual([32, 332]);
-          expect(geometry.start).toBe('32px');
-          expect(geometry.end).toBe('40px');
-        } else {
-          expect(geometry.columns).toBe(1);
-          expect(geometry.start).toBe('20px');
-          expect(geometry.end).toBe('20px');
-        }
+        expect(geometry.nested).toBe(true);
+        expect(geometry.columns).toBe(1);
+        expect(geometry.below).toBe(true);
+        expect(geometry.overflow).toBe(false);
+        expect(geometry.borders.at(-1)).toBe('0px');
+        expect(geometry.borders.slice(0, -1).every((border) => border !== '0px')).toBe(true);
       }
-    }
-  }
-  for (const variant of ['fees only', 'processing only', 'without fees']) {
-    await page.getByRole('combobox', { name: 'Metadata', exact: true }).selectOption(variant);
-    await expect(page.locator('.veli-service-detail-metadata')).toHaveCount(
-      variant === 'without fees' ? 2 : 1,
-    );
-    await expect(page.locator('.veli-service-detail-metadata:empty')).toHaveCount(0);
-    if (variant === 'fees only') {
-      await expect(page.locator('.veli-service-detail-fees')).toBeVisible();
-      await expect(page.locator('.veli-service-detail-meta-item')).toHaveCount(2);
     }
   }
 });

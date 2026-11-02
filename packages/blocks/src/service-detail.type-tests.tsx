@@ -51,3 +51,42 @@ void [
   externalForms,
   ambiguousContent,
 ];
+
+// Additive summary settings leave the legacy string metadata contract intact.
+const summary: import('./service-detail/types').ServiceSummaryOptions = {
+  icon: null,
+  information: { label: 'About processing time', content: 'Host-owned explanation' },
+  details: [{ id: 'registration', label: 'Registration', value: '5 working days' }],
+};
+const invalidSummary: import('./service-detail/types').ServiceSummaryOptions = {
+  // @ts-expect-error Information controls require a host-supplied accessible label.
+  information: { content: 'Explanation' },
+};
+void [summary, invalidSummary];
+
+// Public composition must not require the wrapper's service data or whole label dictionary.
+import {
+  ServiceDetailSummaryItem,
+  type ServiceDetailSummaryItemProps,
+} from './service-detail/service-detail';
+
+const customValue = (
+  <ServiceDetailSummaryItem label="Availability">
+    <button>Check places</button>
+  </ServiceDetailSummaryItem>
+);
+const valueDisclosure: ServiceDetailSummaryItemProps = {
+  label: 'Time',
+  disclosure: { triggerStyle: 'value', value: '3 days', content: <p>Details</p> },
+};
+// @ts-expect-error Arbitrary children cannot be nested in a value trigger.
+const nestedControl: ServiceDetailSummaryItemProps = {
+  ...valueDisclosure,
+  children: <button>Check</button>,
+};
+const incompleteDisclosure: ServiceDetailSummaryItemProps = {
+  label: 'Details',
+  // @ts-expect-error Text triggers require both localized state labels.
+  disclosure: { triggerStyle: 'text', showLabel: 'Show', content: 'Details' },
+};
+void [customValue, valueDisclosure, nestedControl, incompleteDisclosure];
