@@ -1,0 +1,180 @@
+---
+title: OTPInput
+description: One-time code field with per-character slots, optional groups, and the same label, validation, and form behavior as Input.
+---
+
+import {
+  OTPInputAppearancesDemo,
+  OTPInputBackupCodeDemo,
+  OTPInputFormDemo,
+  OTPInputUsageDemo,
+} from '../../components/DocsExamples';
+
+# OTPInput
+
+Use OTPInput for SMS, email, authenticator, and backup codes. It has the same label row, shell, message line, and `Form` behavior as [Input](/docs/input/). The value is one string on one named input. The slots and groups are a view of that string.
+
+## Import
+
+```tsx
+import { OTPInput, OTPInputSeparator, OTPInputSlot } from '@veli-design/react/otp-input';
+```
+
+## Usage
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <OTPInputUsageDemo client:visible />
+</div>
+
+```tsx
+<OTPInput
+  name="code"
+  label="Verification code"
+  description="We sent a 6-digit code by SMS."
+  groups={[3, 3]}
+  action={
+    <Button type="button" appearance="ghost" size="sm">
+      Resend
+    </Button>
+  }
+/>
+```
+
+The submitted value is the characters only, with no separator.
+
+## Layout and alphabet
+
+Pass `length` or `groups`, not both. The type rejects a call that sets both. Omitted, the field is 6 slots in one group. `groups={[3, 3]}` is 6 slots, because the slot count is the sum.
+
+`alphabet` defaults to `digits`.
+
+- `digits` keeps `0-9` and asks for a numeric keypad.
+- `alphanumeric` keeps letters and digits as typed.
+- `alphanumeric-upper` keeps letters and digits and stores them in upper case.
+
+Spaces and `-` are stripped first, so a paste of `123-456` becomes `123456`. Other characters are dropped. The field never grows past the slot count.
+
+## Appearances
+
+`default` uses the underline shell. `outline` draws a bordered field. Size the field with `sm`, `md`, or `lg`, the same 36, 44, and 52 pixel shells as Input.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <OTPInputAppearancesDemo client:visible />
+</div>
+
+```tsx
+<OTPInput label="Default" length={6} />
+<OTPInput appearance="outline" label="Outline" length={6} />
+```
+
+## Custom slots and separator
+
+The root creates every slot in order. `renderSlot` restyles a cell and cannot add, drop, or reorder cells. Return `OTPInputSlot` for the slot you receive so the cell keeps its caret. `separator` sets the glyph between groups. `separator={null}` hides the glyph and keeps the gap.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <OTPInputBackupCodeDemo client:visible />
+</div>
+
+```tsx
+<OTPInput
+  name="backup"
+  label="Backup code"
+  alphabet="alphanumeric-upper"
+  groups={[4, 4]}
+  separator={<OTPInputSeparator>·</OTPInputSeparator>}
+  renderSlot={(slot) => <OTPInputSlot slot={slot} className="font-mono" />}
+/>
+```
+
+## Auto-submit
+
+`onChange` receives the sanitized string. `onComplete` fires once for each user edit that fills the code, including a pasted code. It does not fire when the parent changes `value`, so resetting to `''` after a failed attempt is safe.
+
+```tsx
+const [code, setCode] = useState('');
+
+<OTPInput label="Authenticator code" value={code} onChange={setCode} onComplete={verify} />;
+```
+
+## Validation
+
+An empty required field uses `isRequired`. A partial code fails the field's completeness check and shows a localized message. A consumer `validate` that returns an error wins. Inside `Form`, server errors keyed by `name` show under the slots. Leave `errorMessage` unset so they can.
+
+<div className="preview mb-4 rounded-lg border p-4">
+  <OTPInputFormDemo client:visible />
+</div>
+
+```tsx
+<Form validationErrors={serverErrors} onSubmit={onVerify}>
+  <OTPInput name="code" label="Verification code" isRequired />
+  <Button type="submit">Verify</Button>
+</Form>
+```
+
+Veli `Form` validates as the user types, so the completeness message appears while a code is still partial.
+
+## Keyboard and pointer
+
+- Typing at the end appends. Typing on a filled slot replaces that character and moves right.
+- Backspace at the end deletes the previous character. Backspace on a filled slot deletes it, and later characters shift left.
+- Arrow keys, Home, and End move the caret. They do not extend a selection, and select-all is ignored.
+- Clicking a filled slot moves the caret there. Clicking an empty slot moves it to the end of the code.
+- A paste that fills the code replaces the value. A shorter paste is inserted at the caret.
+
+## API Reference
+
+OTPInput is a Veli field on React Aria [`TextField`](https://react-spectrum.adobe.com/react-aria/TextField.html), which wraps one native `<input>`.
+
+### OTPInput
+
+| Prop                    | Type                                                 | Default           | Description                                                         |
+| :---------------------- | :--------------------------------------------------- | :---------------- | :------------------------------------------------------------------ |
+| `length`                | `number`                                             | `6`               | Slot count in one group. Not with `groups`.                         |
+| `groups`                | `[number, ...number[]]`                              | -                 | Group sizes. The slot count is the sum. Not with `length`.          |
+| `alphabet`              | `'digits' \| 'alphanumeric' \| 'alphanumeric-upper'` | `'digits'`        | Accepted characters and keyboard hints.                             |
+| `value`                 | `string`                                             | -                 | Controlled value. Sanitized before display.                         |
+| `defaultValue`          | `string`                                             | -                 | Uncontrolled initial value.                                         |
+| `onChange`              | `(value: string) => void`                            | -                 | Called with the sanitized string when it changes.                   |
+| `onComplete`            | `(code: string) => void`                             | -                 | Called once per user edit that fills the code.                      |
+| `renderSlot`            | `(slot: OTPSlotView) => ReactNode`                   | -                 | Renders one cell. Return `OTPInputSlot`.                            |
+| `separator`             | `ReactNode`                                          | hyphen            | Glyph between groups. `null` hides it and keeps the gap.            |
+| `appearance`            | `'default' \| 'outline'`                             | `'default'`       | Underline or bordered field.                                        |
+| `size`                  | `'sm' \| 'md' \| 'lg'`                               | `'md'`            | Field size.                                                         |
+| `label`                 | `ReactNode`                                          | -                 | Visible label.                                                      |
+| `infoTooltip`           | `ReactNode`                                          | -                 | Info tooltip beside the label.                                      |
+| `infoTooltipAriaLabel`  | `string`                                             | localized         | Accessible name of the tooltip trigger.                             |
+| `isOptional`            | `boolean`                                            | `false`           | Shows a localized Optional caption. Hidden when `isRequired`.       |
+| `action`                | `ReactNode`                                          | -                 | Right-aligned header content, such as Resend.                       |
+| `description`           | `ReactNode`                                          | -                 | Helper text beneath the field.                                      |
+| `errorMessage`          | `ReactNode`                                          | -                 | Error text. Replaces Form and `validate` errors when set.           |
+| `showRequiredIndicator` | `boolean`                                            | `true`            | Shows the required asterisk when `isRequired`.                      |
+| `autoComplete`          | `string`                                             | `'one-time-code'` | Browser autocomplete token. Override to keep password managers out. |
+| `enterKeyHint`          | `string`                                             | `'done'`          | Virtual-keyboard enter-key label.                                   |
+| `className`             | `string`                                             | -                 | Width class on the complete field.                                  |
+| `ref`                   | `Ref<HTMLInputElement>`                              | -                 | Forwarded to the native input.                                      |
+
+`isDisabled`, `isReadOnly`, `isRequired`, `isInvalid`, `name`, `validate`, and `autoFocus` pass through to `TextField`. The alphabet owns `type`, `inputMode`, `pattern`, `autoCapitalize`, `autoCorrect`, and `spellCheck`, so those are not props.
+
+### OTPInputSlot
+
+| Prop        | Type          | Description                     |
+| :---------- | :------------ | :------------------------------ |
+| `slot`      | `OTPSlotView` | The view `renderSlot` received. |
+| `className` | `string`      | Classes for this cell.          |
+
+### OTPInputSeparator
+
+| Prop        | Type        | Default | Description                |
+| :---------- | :---------- | :------ | :------------------------- |
+| `children`  | `ReactNode` | `-`     | Glyph between groups.      |
+| `className` | `string`    | -       | Classes for the separator. |
+
+## Accessibility
+
+- Give the field a visible `label`, or pass `aria-label` / `aria-labelledby` when the label is hidden.
+- Screen readers hear one text field. The slots and separators are hidden from assistive technology.
+- `autoComplete="one-time-code"` lets iOS and Android offer the code from an SMS.
+
+## RTL and Language
+
+In RTL, the label, helper, and error follow `dir`. The slot row and the value stay left to right and sit on the start edge of the field. On `lang="dv"` pages, the completeness message and Optional caption use Dhivehi.

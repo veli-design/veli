@@ -1,0 +1,63 @@
+{
+  "$schema": "../component.schema.json",
+  "schemaVersion": 1,
+  "id": "otp-input",
+  "apiPattern": "flat",
+  "purpose": "Collect a one-time verification code in one named text field drawn as per-character slots, with Input's label, validation, and form behavior.",
+  "runtime": {
+    "clientComponent": true,
+    "provider": "recommended",
+    "notes": [
+      "Use VeliProvider for the localized completeness message, Optional caption, and direction."
+    ]
+  },
+  "useWhen": [
+    "A sign-in, verification, or recovery flow asks for an SMS, email, authenticator, or backup code of known length."
+  ],
+  "avoidWhen": [
+    {
+      "situation": "The value has no fixed length or is free text.",
+      "guidance": "Use the general single-line field.",
+      "useInstead": ["input"]
+    },
+    {
+      "situation": "The value is a credential the user chose.",
+      "guidance": "Use the password field.",
+      "useInstead": ["password-input"]
+    }
+  ],
+  "supportedInteractions": [
+    "Typing appends or overtypes one slot and moves right",
+    "Backspace and Delete remove a character and later characters shift left",
+    "Arrow keys, Home, End, and slot clicks move the caret",
+    "Pasting a full code replaces the value; a shorter paste inserts at the caret",
+    "SMS one-time-code autofill",
+    "Controlled or uncontrolled value changes"
+  ],
+  "approvedPatterns": [
+    "Use the flat props. Pass length or groups, never both; groups sets the slot count.",
+    "Use renderSlot and separator only to restyle the track the root maps. renderSlot should return OTPInputSlot for the slot it receives.",
+    "Use onComplete for auto-submit. It fires from the user edit that fills the code, never from a controlled value change.",
+    "Inside Form, leave errorMessage unset so validationErrors keyed by name show through the field error.",
+    "Put a Resend button in action."
+  ],
+  "limitations": [
+    "The value is a dense string. There are no empty slots between filled ones.",
+    "Range selection, including select-all, is not supported.",
+    "Alphabets are digits, alphanumeric, and alphanumeric-upper. The alphabet owns inputMode and pattern.",
+    "Root className only changes complete-field width."
+  ],
+  "accessibility": [
+    "Uses React Aria TextField, Label, and one Input, so assistive technology hears a single labelled text field.",
+    "Slots and separators are aria-hidden.",
+    "A partial code reports a localized completeness error; an empty field is left to isRequired."
+  ],
+  "responsive": [
+    "The field fills its container and the slots keep a fixed size on the start edge."
+  ],
+  "rtl": [
+    "The label, helper, and error follow the active direction.",
+    "The slot row and the value stay left to right on Dhivehi pages."
+  ],
+  "relatedComponents": ["input", "password-input"]
+}

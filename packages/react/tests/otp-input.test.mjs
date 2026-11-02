@@ -3,9 +3,9 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Form } from '../dist/form.js';
-import { OTPInput, OTPInputSeparator, OTPInputSlot } from '../dist/otp-input.js';
-import { VeliProvider } from '../dist/provider.js';
+import { Form } from '@veli-design/react/form';
+import { OTPInput, OTPInputSeparator, OTPInputSlot } from '@veli-design/react/otp-input';
+import { VeliProvider } from '@veli-design/react/provider';
 
 const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const render = (props, wrap = (field) => field) =>

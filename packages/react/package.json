@@ -144,6 +144,11 @@
       "import": "./dist/popover.js",
       "default": "./dist/popover.js"
     },
+    "./otp-input": {
+      "types": "./dist/otp-input.d.ts",
+      "import": "./dist/otp-input.js",
+      "default": "./dist/otp-input.js"
+    },
     "./password-input": {
       "types": "./dist/password-input.d.ts",
       "import": "./dist/password-input.js",

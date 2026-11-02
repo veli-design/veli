@@ -68,6 +68,7 @@ const contract = (module, names, allow, guidance, coverage = 'classes') => ({
 const completeFields = [
   ['input', 'Input'],
   ['password-input', 'PasswordInput'],
+  ['otp-input', 'OTPInput'],
   ['search', 'Search'],
   ['textarea', 'TextArea'],
   ['select', 'Select'],
