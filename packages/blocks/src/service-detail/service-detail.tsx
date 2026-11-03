@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { Button } from '@veli-design/react/button';
 import { Link } from '@veli-design/react/link';
 import { Alert, AlertDescription, AlertTitle } from '@veli-design/react/alert';
@@ -22,6 +22,7 @@ import {
   ServiceDetailContent,
   ServiceDetailSummary,
   ServiceDetailSummaryItem,
+  ServiceDetailExpandableList,
   ServiceDetailActions,
   ServiceDetailSection,
   ServiceDetailDownload,
@@ -179,8 +180,6 @@ export function ServiceDetail({
   dialogClassName,
   overlayClassName,
 }: ServiceDetailProps) {
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const servicesId = useId();
   const hasMetadata = Boolean(
     metadata?.applicationTime ||
     metadata?.processingTime ||
@@ -188,7 +187,6 @@ export function ServiceDetail({
     metadata?.feeSummary ||
     metadata?.fees?.length,
   );
-  const hiddenServices = Math.max(services.length - 3, 0);
   const portalClasses = { dialogClassName, overlayClassName };
   return (
     <ServiceDetailRoot className={className}>
@@ -272,26 +270,11 @@ export function ServiceDetail({
                 className="veli-service-detail-services-meta"
                 {...summaryPresentation('list-numbers', summaryOptions?.services)}
               >
-                <div className="veli-service-detail-service-summary" id={servicesId}>
-                  <span>
-                    {services
-                      .slice(0, servicesOpen ? services.length : 3)
-                      .map((service) => service.name)
-                      .join(', ')}
-                  </span>
-                  {servicesOpen && hiddenServices > 0 ? ' ' : null}
-                  {hiddenServices > 0 && (
-                    <button
-                      type="button"
-                      className="veli-service-detail-inline-action"
-                      aria-expanded={servicesOpen}
-                      aria-controls={servicesId}
-                      onClick={() => setServicesOpen(!servicesOpen)}
-                    >
-                      {servicesOpen ? labels.showLess : labels.moreServices(hiddenServices)}
-                    </button>
-                  )}
-                </div>
+                <ServiceDetailExpandableList
+                  items={services.map((service) => ({ id: service.id, label: service.name }))}
+                  moreLabel={labels.moreServices}
+                  lessLabel={labels.showLess}
+                />
               </ServiceDetailSummaryItem>
             )}
           </ServiceDetailSummary>

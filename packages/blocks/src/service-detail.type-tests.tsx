@@ -67,6 +67,8 @@ void [summary, invalidSummary];
 // Public composition must not require the wrapper's service data or whole label dictionary.
 import {
   ServiceDetailSummary,
+  ServiceDetailTable,
+  ServiceDetailExpandableList,
   ServiceDetailSummaryItem,
   type ServiceDetailSummaryItemProps,
 } from './service-detail/service-detail';
@@ -96,3 +98,24 @@ const compactSummary = <ServiceDetailSummary label="Supplementary metadata" vari
 // @ts-expect-error Only the default and compact summary presentations are supported.
 const unknownSummary = <ServiceDetailSummary label="Metadata" variant="dense" />;
 void [compactSummary, unknownSummary];
+
+const detailTable = (
+  <ServiceDetailTable
+    label="Times"
+    items={[{ id: 'one', label: 'Apply', value: <strong>15 minutes</strong> }]}
+  />
+);
+// @ts-expect-error The table requires an accessible name.
+const unnamedTable = <ServiceDetailTable items={[]} />;
+void [detailTable, unnamedTable];
+
+const expandableNames = (
+  <ServiceDetailExpandableList
+    items={[{ id: 'a', label: 'Service' }]}
+    moreLabel={(count) => `+${count} more`}
+    lessLabel="Show less"
+  />
+);
+// @ts-expect-error Consumers must supply the localized collapsed label.
+const missingMoreLabel = <ServiceDetailExpandableList items={[]} lessLabel="Show less" />;
+void [expandableNames, missingMoreLabel];

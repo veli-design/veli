@@ -1,3 +1,11 @@
+## 0.9.0
+
+### Added
+
+- Reuse `ServiceDetailExpandableList` for inline names with a configurable initial count and localized more/less controls. The standard wrapper now uses the same part.
+
+- Compose service label/value rows with `ServiceDetailTable`, an accessible caption and a rounded, divided surface across desktop and mobile layouts.
+
 ## 0.8.0
 
 ### Added

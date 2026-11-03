@@ -328,3 +328,78 @@ function SummaryInformation({
     </TooltipTrigger>
   );
 }
+
+export type ServiceDetailTableProps = Omit<PartProps, 'children'> & {
+  /** Accessible table name, rendered as a visually hidden caption. */
+  label: string;
+  items: ReadonlyArray<{ id: string; label: string; value: ReactNode }>;
+};
+
+/** Consumer-owned label/value rows. The surrounding section supplies the visible heading. */
+export function ServiceDetailTable({ label, items, id, className = '' }: ServiceDetailTableProps) {
+  if (items.length === 0) return null;
+  return (
+    <table id={id} className={`veli-service-detail-table ${className}`}>
+      <caption className="veli-service-detail-sr-only">{label}</caption>
+      <tbody>
+        {items.map((item) => (
+          <tr key={item.id}>
+            <th scope="row">
+              <DisplayText text={item.label} />
+            </th>
+            <td>
+              <SummaryContent>{item.value}</SummaryContent>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export type ServiceDetailExpandableListProps = Omit<PartProps, 'children'> & {
+  items: ReadonlyArray<{ id: string; label: string }>;
+  /** Number of items shown while collapsed. Defaults to three. */
+  visibleCount?: number;
+  moreLabel: (hiddenCount: number) => string;
+  lessLabel: string;
+};
+
+/** Inline names with a consumer-localized reveal control. */
+export function ServiceDetailExpandableList({
+  items,
+  visibleCount = 3,
+  moreLabel,
+  lessLabel,
+  id,
+  className = '',
+}: ServiceDetailExpandableListProps) {
+  const [expanded, setExpanded] = useState(false);
+  const contentId = useId();
+  const count = Number.isFinite(visibleCount) ? Math.max(0, Math.floor(visibleCount)) : 3;
+  const hiddenCount = Math.max(items.length - count, 0);
+  if (items.length === 0) return null;
+  return (
+    <div id={id} className={`veli-service-detail-service-summary ${className}`}>
+      <span id={contentId}>
+        {(expanded ? items : items.slice(0, count)).map((item, index) => (
+          <span key={item.id}>
+            {index > 0 ? ', ' : null}
+            <DisplayText text={item.label} />
+          </span>
+        ))}
+      </span>
+      {expanded && hiddenCount > 0 ? ' ' : null}
+      {hiddenCount > 0 && (
+        <AriaButton
+          className="veli-service-detail-inline-action"
+          aria-expanded={expanded}
+          aria-controls={contentId}
+          onPress={() => setExpanded((value) => !value)}
+        >
+          {expanded ? lessLabel : moreLabel(hiddenCount)}
+        </AriaButton>
+      )}
+    </div>
+  );
+}

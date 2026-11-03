@@ -1315,3 +1315,49 @@
 .veli-service-detail-prerequisites > li {
   white-space: pre-line;
 }
+
+/* Standalone label/value table, including when nested in guideline prose. */
+table.veli-service-detail-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--veli-radius-2xl);
+  overflow: hidden;
+  background: var(--veli-color-neutral-alpha-200);
+  font-family: var(--veli-typography-en-body-lg-regular-font-family);
+  font-size: var(--veli-typography-en-body-lg-regular-font-size);
+  line-height: var(--veli-typography-en-body-lg-regular-line-height);
+}
+table.veli-service-detail-table:lang(dv) {
+  font-family: var(--veli-typography-dv-body-lg-regular-font-family);
+  font-size: var(--veli-typography-dv-body-lg-regular-font-size);
+  line-height: var(--veli-typography-dv-body-lg-regular-line-height);
+}
+.veli-service-detail-table :is(th, td) {
+  border: 0;
+  border-block-end: var(--veli-service-detail-hairline) solid var(--veli-color-border-base-muted);
+  padding: var(--veli-spacing-3-5) var(--veli-spacing-5);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.veli-service-detail-table th[scope='row'] {
+  text-align: start;
+  font-weight: var(--veli-typography-en-body-lg-regular-font-weight);
+  color: var(--veli-color-text-base-default);
+}
+.veli-service-detail-table td {
+  text-align: end;
+  font-weight: var(--veli-typography-en-body-lg-medium-font-weight);
+  color: var(--veli-color-text-base-strong);
+  width: 1%;
+  white-space: nowrap;
+}
+.veli-service-detail-table tr:last-child :is(th, td) {
+  border-block-end: 0;
+}
+@media (width < 768px) {
+  .veli-service-detail-table td {
+    width: auto;
+    white-space: normal;
+  }
+}
