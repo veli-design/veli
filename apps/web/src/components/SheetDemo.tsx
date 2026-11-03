@@ -1,4 +1,5 @@
-import { useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore, type ReactNode } from 'react';
+import { Divider } from '@veli-design/react/divider';
 import { Button } from '@veli-design/react/button';
 import { VeliProvider } from '@veli-design/react/provider';
 import { Sheet, type SheetProps } from '@veli-design/react/sheet';
@@ -17,23 +18,43 @@ function getTheme() {
 function ExampleSheet({
   language = 'en',
   triggerLabel = 'Open sheet',
+  title,
+  description,
+  footer,
+  children,
   ...props
-}: SheetProps & { language?: 'en' | 'dv'; triggerLabel?: string }) {
+}: SheetProps & {
+  language?: 'en' | 'dv';
+  triggerLabel?: string;
+  title: string;
+  description?: string;
+  footer?: ReactNode;
+}) {
   const theme = useSyncExternalStore(subscribeTheme, getTheme, () => 'system' as const);
   return (
     <VeliProvider language={language} colorScheme={theme}>
       <Sheet.Trigger>
         <Button>{triggerLabel}</Button>
-        <Sheet
-          {...props}
-          footer={
-            props.footer ?? (
+        <Sheet {...props}>
+          <Sheet.Handle />
+          <Sheet.Header>
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <Sheet.Title>{title}</Sheet.Title>
+              {description && <Sheet.Description>{description}</Sheet.Description>}
+            </div>
+            <Sheet.Close />
+          </Sheet.Header>
+          <Divider />
+          <Sheet.Body>{children}</Sheet.Body>
+          <Sheet.Footer>
+            <Divider className="mb-2" />
+            {footer ?? (
               <Button slot="close">
                 {language === 'dv' ? 'އެޕްލިކޭޝަންތަކަށް އަނބުރާ ދާ' : 'Done'}
               </Button>
-            )
-          }
-        />
+            )}
+          </Sheet.Footer>
+        </Sheet>
       </Sheet.Trigger>
     </VeliProvider>
   );

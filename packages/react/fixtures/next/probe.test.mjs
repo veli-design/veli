@@ -23,7 +23,12 @@ test('published UI resolves and renders without dependency inlining', async () =
           React.createElement(Input, { label: 'Name' }),
           React.createElement(PasswordInput, { label: 'Password' }),
           React.createElement(Modal, { isOpen: false }, 'Hello'),
-          React.createElement(Sheet, { title: 'Details', isOpen: false }, 'Content'),
+          React.createElement(
+            Sheet,
+            { isOpen: false },
+            React.createElement(Sheet.Title, null, 'Details'),
+            React.createElement(Sheet.Body, null, 'Content'),
+          ),
         ),
       );
     });
