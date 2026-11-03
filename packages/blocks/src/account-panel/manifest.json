@@ -1,7 +1,7 @@
 {
   "id": "account-panel",
   "title": "Account panel",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "status": "experimental",
   "description": "Responsive profile and account panel with host-owned identity data and actions.",
   "files": ["account-panel.tsx"],

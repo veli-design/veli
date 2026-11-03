@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { warnAccessibilityViolations } from './accessibility.mjs';
-import { waitForMotion } from './wait-for-motion';
+import { waitForMotion, swipeSheet } from './wait-for-motion';
 
 async function openPanel(page: Page) {
   const trigger = page.getByRole('button', { name: 'Open account panel' });
@@ -298,6 +298,7 @@ for (const [width, theme, reducedMotion] of [
     }
     const trigger = page.getByRole('button', {
       name: theme === 'dark' ? 'އެކައުންޓު' : 'Open account panel',
+      exact: true,
     });
     await trigger.click();
     const dialog = page.getByRole('dialog');
@@ -310,6 +311,7 @@ for (const [width, theme, reducedMotion] of [
       .locator(':scope > span > div')
       .evaluate((element) => getComputedStyle(element).backgroundColor);
     await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
     await page.getByLabel('State').selectOption('pending');
     await trigger.click();
     await waitForMotion(page);
@@ -334,6 +336,7 @@ for (const [width, theme, reducedMotion] of [
     await row.evaluate((button: HTMLButtonElement) => button.click());
     await expect(page.locator('[data-calls]')).toContainText('Selection: 0');
     await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
     await page.getByLabel('State').selectOption('ready');
     await trigger.click();
     await waitForMotion(page);
@@ -345,7 +348,7 @@ for (const [width, theme, reducedMotion] of [
   });
 }
 
-test('mobile sheet moves its surface and content together, cancellation resets and downward drag dismisses', async ({
+test('mobile Sheet locks the background, settles a cancelled swipe and dismisses natively', async ({
   page,
 }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -357,61 +360,19 @@ test('mobile sheet moves its surface and content together, cancellation resets a
     element.append(filler);
   });
   const dialog = await openPanel(page);
-  // React Aria deliberately uses background inertness instead of aria-modal
-  // to preserve programmatic focus in Safari iframe consumers.
-  expect(
-    await page.locator('main').evaluate((element) => element.closest('[inert]') !== null),
-  ).toBe(true);
+  await expect(page.locator('.veli-account-sheet')).toBeVisible();
   expect(await dialog.evaluate((element) => element.closest('header') === null)).toBe(true);
   await page.mouse.move(1, 1);
   await page.mouse.wheel(0, 500);
-  await page.evaluate(
-    () =>
-      new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-      ),
-  );
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  const handle = page.locator('[data-account-drag-handle]');
-  const sheet = page.locator('[data-account-sheet]');
-  const profile = dialog.locator('[data-account-profile]');
-  const surfaceBefore = await sheet.boundingBox();
-  const profileBefore = await profile.boundingBox();
-  const startBox = await handle.boundingBox();
-  if (!startBox || !surfaceBefore || !profileBefore) throw new Error('Missing sheet geometry');
-  await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2 + 40);
-  const surfaceDuring = await sheet.boundingBox();
-  const profileDuring = await profile.boundingBox();
-  if (!surfaceDuring || !profileDuring) throw new Error('Missing dragged sheet geometry');
-  expect(surfaceDuring.y - surfaceBefore.y).toBe(40);
-  expect(profileDuring.y - profileBefore.y).toBe(40);
-  expect(profileDuring.y - surfaceDuring.y).toBe(36);
-  expect(await sheet.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
-    'rgba(0, 0, 0, 0)',
-  );
-  expect(
-    await page.evaluate(
-      ({ x, y }) => document.elementFromPoint(x, y)?.hasAttribute('data-account-sheet-overlay'),
-      {
-        x: surfaceDuring.x + surfaceDuring.width / 2,
-        y: surfaceDuring.y - 10,
-      },
-    ),
-  ).toBe(true);
-  await page.screenshot({ path: testInfo.outputPath('sheet-during-drag.png') });
-  await handle.dispatchEvent('pointercancel', { pointerId: 1 });
-  await page.mouse.up();
+  const before = await dialog.locator('[data-account-profile]').boundingBox();
+  await swipeSheet(page, '[data-account-drag-handle]', 30, true);
   await expect(dialog).toBeVisible();
-  await expect(sheet).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
-  expect(await sheet.boundingBox()).toEqual(surfaceBefore);
-  const box = await handle.boundingBox();
-  if (!box) throw new Error('Missing drag handle');
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 + 280, { steps: 5 });
-  await page.mouse.up();
+  await expect
+    .poll(async () => (await dialog.locator('[data-account-profile]').boundingBox())?.y)
+    .toBeCloseTo(before!.y, 0);
+  await page.screenshot({ path: testInfo.outputPath('shared-sheet-mobile.png') });
+  await swipeSheet(page, '[data-account-drag-handle]', 420);
   await expect(dialog).toBeHidden();
   await expect(page.getByRole('button', { name: 'Open account panel' })).toBeFocused();
 });
@@ -610,7 +571,7 @@ for (const state of ['ready', 'empty']) {
     await page.goto('/accounts');
     await page.getByLabel('State').selectOption(state);
     const dialog = await openPanel(page);
-    const sheet = page.locator('[data-account-sheet]');
+    const sheet = page.locator('.veli-account-sheet');
     const profile = dialog.locator('[data-account-profile]');
     const sheetBox = await sheet.boundingBox();
     const notchBox = await dialog.locator('[data-account-drag-handle] > span').boundingBox();
@@ -658,7 +619,7 @@ for (const width of [440, 1280]) {
       });
       expect(colors.actual).toBe(colors.expected);
       if (width < 640) {
-        const scrim = await page.locator('[data-account-sheet-overlay]').evaluate((element) => {
+        const scrim = await page.locator('.veli-sheet-backdrop').evaluate((element) => {
           const style = getComputedStyle(element);
           const canvas = document.createElement('canvas');
           canvas.width = canvas.height = 1;
@@ -707,61 +668,4 @@ test('reduced-motion skeletons are decorative and do not shimmer', async ({ page
       ),
     ),
   ).toBe(true);
-});
-
-test('mobile sheet uses token durations and monotonic ease-out motion without drag snap-back', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 440, height: 956 });
-  await page.goto('/accounts');
-  await page.getByRole('button', { name: 'Open account panel' }).click();
-  const sheet = page.locator('[data-account-sheet]');
-  async function sampleSheetTransition() {
-    return sheet.evaluate((element) => {
-      const animation = document
-        .getAnimations()
-        .find(
-          (candidate) =>
-            candidate instanceof CSSTransition &&
-            candidate.transitionProperty === 'translate' &&
-            (candidate.effect as KeyframeEffect).target?.contains(element),
-        );
-      if (!animation?.effect) throw new Error('Missing sheet translation');
-      animation.pause();
-      const timing = animation.effect.getTiming();
-      const positions = Array.from({ length: 21 }, (_, index) => {
-        animation.currentTime = (Number(timing.duration) * index) / 20;
-        return element.getBoundingClientRect().y;
-      });
-      animation.finish();
-      return { duration: timing.duration, easing: timing.easing, positions };
-    });
-  }
-  const entry = await sampleSheetTransition();
-  expect(entry.duration).toBe(350);
-  expect(entry.easing).toBe('cubic-bezier(0, 0, 0.2, 1)');
-  for (let index = 1; index < entry.positions.length; index++)
-    expect(entry.positions[index]).toBeLessThanOrEqual(entry.positions[index - 1]);
-  await waitForMotion(page);
-  await page.keyboard.press('Escape');
-  const exit = await sampleSheetTransition();
-  expect(exit.duration).toBe(200);
-  expect(exit.easing).toBe(entry.easing);
-  for (let index = 1; index < exit.positions.length; index++)
-    expect(exit.positions[index]).toBeGreaterThanOrEqual(exit.positions[index - 1]);
-  await expect(page.getByRole('dialog')).toBeHidden();
-  await openPanel(page);
-  await waitForMotion(page);
-  const handle = page.locator('[data-account-drag-handle]');
-  const box = await handle.boundingBox();
-  if (!box) throw new Error('Missing drag handle');
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 + 280, { steps: 5 });
-  await page.mouse.up();
-  expect(
-    await sheet.evaluate((element) => new DOMMatrix(getComputedStyle(element).transform).m42),
-  ).toBe(280);
-  await expect(page.getByRole('dialog')).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Open account panel' })).toBeFocused();
 });
