@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, type ReactNode } from 'react';
+import { Heading } from 'react-aria-components';
 import {
   BellSimpleIcon,
   CheckCircleIcon,
@@ -278,9 +279,14 @@ export function NotificationTrayContent({
       className={`veli-notification-tray flex min-h-0 w-full flex-1 flex-col gap-1 overflow-hidden bg-surface-raised px-4 pt-4 text-start text-base-strong [&:has(.veli-notification-row:first-child:focus-within)>.veli-notification-divider]:opacity-0 [@media(hover:hover)]:[&:has(.veli-notification-row:first-child:hover)>.veli-notification-divider]:opacity-0 ${className}`}
     >
       <div className="veli-notification-header flex min-h-11 shrink-0 items-center justify-between gap-2">
-        <h2 id={titleId} className="type-body-md-semibold min-w-0 flex-1 wrap-anywhere">
+        <Heading
+          slot="title"
+          level={2}
+          id={titleId}
+          className="type-body-md-semibold min-w-0 flex-1 wrap-anywhere"
+        >
           {labels.title}
-        </h2>
+        </Heading>
         <MenuTrigger>
           <Button
             aria-label={labels.options}

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { warnAccessibilityViolations } from './accessibility.mjs';
-import { waitForMotion } from './wait-for-motion';
+import { waitForMotion, swipeSheet } from './wait-for-motion';
 
 async function openTray(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: /^Notifications/ }).click();
@@ -221,3 +221,46 @@ for (const width of [320, 1280])
         await expect(trigger).toBeFocused();
       });
     }
+
+test('mobile tray preserves its header and uses shared Sheet dismissal and focus return', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/notifications');
+  const trigger = page.getByRole('button', { name: /^Notifications/ });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Notifications', exact: true });
+  await expect(dialog).toBeVisible();
+  await waitForMotion(page);
+  await expect(page.locator('.veli-notification-sheet')).toBeVisible();
+  await expect(dialog.getByRole('heading', { name: 'Notifications', exact: true })).toHaveCount(1);
+  await expect(
+    dialog.getByRole('button', { name: 'Notification options', exact: true }),
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole('button', { name: 'Close notifications', exact: true }),
+  ).toBeVisible();
+  const geometry = await dialog.evaluate((element) => {
+    const handle = element
+      .querySelector('[data-notification-drag-handle] > span')!
+      .getBoundingClientRect();
+    const header = element.querySelector('.veli-notification-header')!.getBoundingClientRect();
+    return {
+      handleWidth: handle.width,
+      handleHeight: handle.height,
+      headerHeight: header.height,
+      inset: header.x - element.getBoundingClientRect().x,
+    };
+  });
+  expect(geometry).toEqual({ handleWidth: 40, handleHeight: 4, headerHeight: 44, inset: 16 });
+  await dialog.getByRole('button', { name: 'Close notifications', exact: true }).click();
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await expect(dialog).toBeVisible();
+  await waitForMotion(page);
+  await swipeSheet(page, '[data-notification-drag-handle]', 480);
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
