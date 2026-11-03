@@ -57,16 +57,26 @@ export function ServiceDetailCard({ children, id, className = '' }: ServiceDetai
   );
 }
 
-export type ServiceDetailSummaryProps = PartProps & { label: string };
+export type ServiceDetailSummaryProps = PartProps & {
+  label: string;
+  /** Compact standalone surface for metadata inside a guideline. */
+  variant?: 'default' | 'compact';
+};
 /** Direct children must produce SummaryItems (dt/dd groups), including through fragments/maps. */
 export function ServiceDetailSummary({
   children,
   label,
+  variant = 'default',
   id,
   className = '',
 }: ServiceDetailSummaryProps) {
   return (
-    <section id={id} className={`veli-service-detail-summary ${className}`} aria-label={label}>
+    <section
+      id={id}
+      className={`veli-service-detail-summary ${className}`}
+      data-variant={variant}
+      aria-label={label}
+    >
       <dl className="veli-service-detail-metadata m-0">{children}</dl>
     </section>
   );

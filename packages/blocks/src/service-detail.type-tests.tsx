@@ -66,6 +66,7 @@ void [summary, invalidSummary];
 
 // Public composition must not require the wrapper's service data or whole label dictionary.
 import {
+  ServiceDetailSummary,
   ServiceDetailSummaryItem,
   type ServiceDetailSummaryItemProps,
 } from './service-detail/service-detail';
@@ -90,3 +91,8 @@ const incompleteDisclosure: ServiceDetailSummaryItemProps = {
   disclosure: { triggerStyle: 'text', showLabel: 'Show', content: 'Details' },
 };
 void [customValue, valueDisclosure, nestedControl, incompleteDisclosure];
+
+const compactSummary = <ServiceDetailSummary label="Supplementary metadata" variant="compact" />;
+// @ts-expect-error Only the default and compact summary presentations are supported.
+const unknownSummary = <ServiceDetailSummary label="Metadata" variant="dense" />;
+void [compactSummary, unknownSummary];

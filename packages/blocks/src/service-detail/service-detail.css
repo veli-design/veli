@@ -1299,3 +1299,19 @@
     fill: Canvas;
   }
 }
+
+/* A standalone supplementary metadata surface; default page summaries stay unchanged. */
+.veli-service-detail-summary[data-variant='compact'] {
+  padding: var(--veli-spacing-4) var(--veli-spacing-6);
+  border-radius: var(--veli-radius-2xl);
+  background: var(--veli-color-neutral-alpha-200);
+  font-size: var(--veli-typography-en-body-md-regular-font-size);
+  line-height: var(--veli-typography-en-body-md-regular-line-height);
+}
+.veli-service-detail-summary[data-variant='compact']:lang(dv) {
+  font-size: var(--veli-typography-dv-body-md-regular-font-size);
+  line-height: var(--veli-typography-dv-body-md-regular-line-height);
+}
+.veli-service-detail-prerequisites > li {
+  white-space: pre-line;
+}

@@ -1,3 +1,14 @@
+## 0.8.0
+
+### Added
+
+- Optional compact summary surface for supplementary metadata, with responsive columns and host-owned values.
+- Ordered supplementary guideline composition and migration examples, including omitted metadata and multiline checklists.
+
+### Fixed
+
+- Preserve line breaks within prerequisite items without creating additional list entries.
+
 ## 0.7.0
 
 ### Added
