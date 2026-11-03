@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon } from '@phosphor-icons/react';
+import { ArrowUpRightIcon, HandCoinsIcon, HourglassMediumIcon } from '@phosphor-icons/react';
 import type {
   ServiceApply,
   ServiceDetailLabels,
@@ -7,8 +7,71 @@ import type {
   ServiceGuideline,
 } from '../src/service-detail/types';
 
+import {
+  ServiceDetailTable,
+  ServiceDetailSummary,
+  ServiceDetailSummaryItem,
+} from '../src/service-detail/parts';
+
+/** Shared consumer composition used by the standard and Figma-reference stories. */
+function withSupplementaryGuideline(
+  guideline: ServiceGuideline,
+  fees: readonly { id: string; label: string; value: string }[],
+  labels: ServiceDetailLabels,
+  processingTimes: readonly string[],
+): ServiceGuideline {
+  const sections = guideline.content.sections ?? [];
+  const registration = sections.find((section) => section.id === 'register');
+  const core = sections.filter(
+    (section) =>
+      !['before', 'fees', 'register'].includes(section.id) &&
+      !section.id.startsWith('supplementary-'),
+  );
+  return {
+    ...guideline,
+    content: {
+      sections: [
+        ...sections.filter((section) => section.id === 'before'),
+        {
+          id: 'fees',
+          title: labels.fees,
+          body: <ServiceDetailTable label={labels.feesByType} items={fees} />,
+        },
+        ...core,
+        ...fees.map((fee, index) => ({
+          id: `supplementary-${fee.id}`,
+          title: fee.label,
+          body: (
+            <>
+              <ServiceDetailSummary variant="compact" label={fee.label}>
+                <ServiceDetailSummaryItem
+                  label={labels.fees}
+                  icon={<HandCoinsIcon weight="fill" className="veli-service-detail-meta-art" />}
+                >
+                  {fee.value}
+                </ServiceDetailSummaryItem>
+                <ServiceDetailSummaryItem
+                  label={labels.processingTime}
+                  icon={
+                    <HourglassMediumIcon weight="fill" className="veli-service-detail-meta-art" />
+                  }
+                >
+                  {processingTimes[index]}
+                </ServiceDetailSummaryItem>
+              </ServiceDetailSummary>
+              {index === 0
+                ? registration?.body
+                : sections.find((section) => section.id === 'changes')?.body}
+            </>
+          ),
+        })),
+      ],
+    },
+  };
+}
+
 /** Fictional public-service examples. Amounts, agencies and timeframes are illustrative. */
-export function serviceDetailContent(
+function createServiceDetailContent(
   language: 'en' | 'dv' = 'en',
   mode: ServiceApply['mode'] = 'online',
   onAction?: (label: string) => void,
@@ -109,37 +172,6 @@ export function serviceDetailContent(
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-            </>
-          ),
-        },
-        {
-          id: 'fees',
-          title: text('Service fees', 'ޚިދުމަތުގެ ފީ'),
-          body: (
-            <>
-              <p>
-                {text(
-                  'The following sample amounts demonstrate how fees are presented for each request. Confirm the applicable fee with the service provider before applying.',
-                  'މި އަދަދުތަކަކީ މިސާލެކެވެ. ހުށަހެޅުމުގެ ކުރިން ފީ ކަށަވަރުކުރައްވާ.',
-                )}
-              </p>
-              <table className="veli-service-detail-fee-table">
-                <caption className="veli-service-detail-sr-only">
-                  {text('Illustrative fees by request', 'އެދުމުގެ ބާވަތުން ފީގެ މިސާލު')}
-                </caption>
-                <tbody>
-                  {fees.map((fee) => (
-                    <tr key={fee.id}>
-                      <th scope="row">{fee.label}</th>
-                      <td>
-                        <bdi dir="ltr" lang="en" className="veli-service-detail-latin">
-                          {fee.value}
-                        </bdi>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </>
           ),
         },
@@ -519,6 +551,33 @@ export function serviceDetailContent(
   };
 }
 
+/** Compose the standard guideline once from its original authored sections. */
+export function serviceDetailContent(
+  language: 'en' | 'dv' = 'en',
+  mode: ServiceApply['mode'] = 'online',
+  onAction?: (label: string) => void,
+): ServiceDetailProps {
+  const content = createServiceDetailContent(language, mode, onAction);
+  const fees = content.metadata!.fees!;
+  return {
+    ...content,
+    guideline: withSupplementaryGuideline(
+      content.guideline!,
+      fees,
+      content.labels,
+      fees.map((_, index) =>
+        language === 'dv'
+          ? index === 0
+            ? 'އެ މަސައްކަތު ދުވަހު'
+            : '5 މަސައްކަތު ދުވަސް'
+          : index === 0
+            ? 'Same working day'
+            : '5 working days',
+      ),
+    ),
+  };
+}
+
 /** Optional illustrative breakdowns; production consumers supply localized service data. */
 export function serviceDetailSummaryOptions(
   language: 'en' | 'dv' = 'en',
@@ -561,7 +620,7 @@ export function serviceDetailSummaryOptions(
 
 /** Desktop English reference data from Figma 9224:74489; not a production service catalogue. */
 export function serviceDetailFigmaContent(): ServiceDetailProps {
-  const content = serviceDetailContent('en');
+  const content = createServiceDetailContent('en');
   const names = [
     'Register a New Company',
     'Change Directors',
@@ -578,6 +637,18 @@ export function serviceDetailFigmaContent(): ServiceDetailProps {
   return {
     ...content,
     labels: { ...content.labels, applicationTime: 'Time to apply' },
+    guideline: withSupplementaryGuideline(
+      content.guideline!,
+      details(names.map((_, index) => (index === 0 ? 'MVR 2,000' : 'MVR 100'))),
+      content.labels,
+      [
+        '5 working days',
+        '8 hours',
+        '5 working days',
+        '15 minutes',
+        ...Array<string>(5).fill('5 minutes'),
+      ],
+    ),
     metadata: {
       applicationTime: 'Up to 15 minutes',
       processingTime: '1 to 5 working days',

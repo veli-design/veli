@@ -10,6 +10,8 @@ import {
   ServiceDetailCard,
   ServiceDetailContent,
   ServiceDetailSummary,
+  ServiceDetailTable,
+  ServiceDetailExpandableList,
   ServiceDetailSummaryItem,
   ServiceDetailActions,
   ServiceDetailSection,
@@ -117,7 +119,9 @@ export function ServiceDetailComposition({
     body: copy.instructions,
   }));
   const feeRows = supplementary.filter((service) => service.fee != null);
-  const originalSections = data.guideline!.content.sections!;
+  const originalSections = data.guideline!.content.sections!.filter(
+    (section) => !section.id.startsWith('supplementary-'),
+  );
   // Stable IDs identify this example's preparation/fees sections; never match translated titles.
   const guideline: ServiceGuideline = {
     ...data.guideline!,
@@ -128,17 +132,14 @@ export function ServiceDetailComposition({
           id: 'fees',
           title: data.labels.fees,
           body: (
-            <table className="veli-service-detail-fee-table">
-              <caption className="sr-only">{data.labels.feesByType}</caption>
-              <tbody>
-                {feeRows.map((service) => (
-                  <tr key={service.id}>
-                    <th scope="row">{service.name}</th>
-                    <td>{service.fee}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ServiceDetailTable
+              label={data.labels.feesByType}
+              items={feeRows.map((service) => ({
+                id: service.id,
+                label: service.name,
+                value: service.fee,
+              }))}
+            />
           ),
         },
         ...originalSections.filter((section) => section.id !== 'before' && section.id !== 'fees'),
@@ -206,6 +207,14 @@ export function ServiceDetailComposition({
               content: <p className="m-0 pt-5">{copy.instructions}</p>,
             }}
           />
+          <ServiceDetailSummaryItem label={data.labels.services} span="full">
+            <ServiceDetailExpandableList
+              items={data.services!.map((service) => ({ id: service.id, label: service.name }))}
+              visibleCount={2}
+              moreLabel={data.labels.moreServices}
+              lessLabel={data.labels.showLess}
+            />
+          </ServiceDetailSummaryItem>
         </ServiceDetailSummary>
         <ServiceDetailContent>
           {/* Reorder content within one shared surface, rather than stacking rounded cards. */}

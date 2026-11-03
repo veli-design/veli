@@ -13,6 +13,17 @@ for (const language of ['en', 'dv']) {
       if (language === 'dv')
         await page.getByRole('button', { name: 'Fixture language', exact: true }).click();
       const first = page.locator('#first');
+      const more = first.locator('.veli-service-detail-service-summary').getByRole('button');
+      await expect(more).toHaveText(/^\+7 /);
+      await more.focus();
+      await page.keyboard.press('Enter');
+      await expect(more).toHaveAttribute('aria-expanded', 'true');
+      const names = first.locator('.veli-service-detail-service-summary > span > span');
+      await expect(names).toHaveCount(9);
+      await page.keyboard.press('Space');
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(names).toHaveCount(2);
+
       const second = page.locator('#second');
       await expect(first.getByText('12', { exact: true })).toBeVisible();
 
@@ -166,6 +177,13 @@ for (const [language, width] of [
     expect(headings.slice(0, 2)).toEqual(
       language === 'en' ? ['Before you start', 'Fees'] : ['ފެށުމުގެ ކުރިން', 'ފީ'],
     );
+    const table = sheet.getByRole('table');
+    await expect(table).toHaveAccessibleName(language === 'en' ? 'Fees by application type' : /.+/);
+    await expect(table.getByRole('rowheader')).toHaveCount(2);
+    await expect(table).toHaveCSS('border-radius', '16px');
+    await expect(table.getByRole('cell').first()).toHaveCSS('padding', '14px 20px');
+    await expect(table.getByRole('cell').last()).toHaveCSS('border-bottom-width', '0px');
+    expect(await table.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
     const supplementary = sections.filter({ has: page.locator('[data-variant="compact"]') });
     await expect(supplementary).toHaveCount(3);
     const lastSections = await sections.all();
@@ -220,3 +238,21 @@ for (const [language, width] of [
     await expect(trigger).toBeFocused();
   });
 }
+
+test('Figma reference guideline retains the original registration instructions', async ({
+  page,
+}) => {
+  await page.goto(
+    '/storybook/iframe.html?id=blocks-service-detail--service-changes&viewMode=story',
+  );
+  await page.getByRole('button', { name: /^Read the guideline/ }).click();
+  const registration = page.locator('.veli-service-detail-guideline-section').filter({
+    has: page.getByRole('heading', { name: 'Register a New Company', exact: true }),
+  });
+  await expect(registration).toHaveCount(1);
+  await expect(registration).toContainText(
+    'Enter the proposed business name, contact address and principal activities.',
+  );
+  await expect(registration).not.toContainText('Identify the registration record');
+  await expect(registration.locator('[data-variant="compact"]')).toHaveCount(1);
+});

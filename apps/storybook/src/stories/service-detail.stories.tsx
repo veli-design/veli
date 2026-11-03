@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import {
   ServiceDetail,
+  ServiceDetailTable,
   type ServiceApply,
   type ServiceDetailProps,
 } from '@tradenetcorp/veli-blocks/service-detail';
@@ -181,6 +182,50 @@ export const CustomComposition: Story = {
     );
     await expect(canvas.getByRole('status')).toHaveTextContent(
       /Application selected|އެދުން ހުށަހެޅުން ހޮވިއްޖެ/,
+    );
+  },
+};
+
+export const Table: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Label/value table matching Figma 6607:116474 at 696px desktop width. English rows and amounts match the reference. Dhivehi copy is illustrative and pending translation review; narrow layouts are responsive adaptations.',
+      },
+    },
+    controls: { disable: true },
+  },
+  render: () => {
+    const { language } = useVeliLanguage();
+    const rows = [
+      ['register', 'Register a New Company', 'އާ ކުންފުންޏެއް ރަޖިސްޓްރީކުރުން'],
+      ['directors', 'Change Directors', 'ޑިރެކްޓަރުން ބަދަލުކުރުން'],
+      ['managing-director', 'Change Managing Director', 'މެނޭޖިންގ ޑިރެކްޓަރު ބަދަލުކުރުން'],
+      ['secretary', 'Change Company Secretary', 'ކުންފުނީގެ ސެކްރެޓަރީ ބަދަލުކުރުން'],
+      ['constitution', 'Amend Constitution', 'ޤަވާއިދު އިސްލާހުކުރުން'],
+      ['name', 'Change Company Name', 'ކުންފުނީގެ ނަން ބަދަލުކުރުން'],
+      ['type', 'Change Company Type', 'ކުންފުނީގެ ބާވަތް ބަދަލުކުރުން'],
+      ['increase-capital', 'Increase Capital', 'ރައުސުލްމާލު އިތުރުކުރުން'],
+      ['decrease-capital', 'Decrease Capital', 'ރައުސުލްމާލު ކުޑަކުރުން'],
+    ];
+    return (
+      <div
+        className="veli-service-detail-root"
+        style={{ width: 'min(696px, calc(100vw - 32px))', display: 'block', padding: 0 }}
+      >
+        <ServiceDetailTable
+          label={language === 'dv' ? 'އެޕްލިކޭޝަނުގެ ބާވަތުން ފީ' : 'Fees by application type'}
+          items={rows.map(([id, en, dv], index) => ({
+            id,
+            label: language === 'dv' ? dv : en,
+            value:
+              language === 'dv'
+                ? `${index === 0 ? '2,000' : '100'} ރުފިޔާ`
+                : `MVR ${index === 0 ? '2,000' : '100'}`,
+          }))}
+        />
+      </div>
     );
   },
 };

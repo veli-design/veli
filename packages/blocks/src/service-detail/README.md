@@ -1,11 +1,11 @@
-Experimental `0.8.0` copied-source block for service details, fees, prerequisites,
+Experimental `0.9.0` copied-source block for service details, fees, prerequisites,
 application options and guidelines. The props-based default preserves the existing
 summary/card and guideline sheet. Composable parts let consumers arrange their own
 fields, sections and actions. This block does not migrate either app.
 
 ## Core package baseline
 
-Version 0.8.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.9.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -78,6 +78,8 @@ copied files, as with other Veli blocks; new layout utilities use Veli's tokens.
 | `ServiceDetailRoot`, `ServiceDetailCard` | `children`, `id?`, `className?`.                                                                                                                                                                                     |
 | `ServiceDetailHeader`                    | `title`, inline `description?` and `provider?`, `headingLevel?`; children add badges/status or other content.                                                                                                        |
 | `ServiceDetailSummary`                   | Accessible `label`, optional `variant` (`default` or `compact`); children render SummaryItems, including maps and fragments.                                                                                         |
+| `ServiceDetailExpandableList`            | `items: { id, label }[]`, optional `visibleCount` (default 3), `moreLabel(count)`, `lessLabel`, optional `id` and `className`.                                                                                       |
+| `ServiceDetailTable`                     | Accessible `label`, `items: { id, label, value }[]`, optional `id` and `className`; empty items render nothing.                                                                                                      |
 | `ServiceDetailSummaryItem`               | `label`, decorative `icon?`, `information?: { label, content }`, `span?: 'single' \| 'full'`, `startRow?`; children supply the value.                                                                                |
 | `ServiceDetailContent`                   | `children`, `id?`, `className?`; one shared raised surface for sections, actions, notices and downloads.                                                                                                             |
 | `ServiceDetailActions`                   | Accessible `label`, children for branding and actions. Place inside Content.                                                                                                                                         |
@@ -274,7 +276,7 @@ Keep the existing wrapper for its standard page, or compose the exported parts
 without changing the copied source. These parts are imported from
 `./components/blocks/service-detail/service-detail`, not from `@veli-design/react`.
 Continue using the public Veli UI/token packages and the installation steps above.
-The 0.8.0 block remains unreleased until its catalog is published.
+The 0.9.0 block remains unreleased until its catalog is published.
 
 `ServiceDetailSummary` accepts `variant="compact"` for a standalone tinted
 metadata card inside a guideline. It uses the same SummaryItems, with 16px vertical
@@ -343,3 +345,50 @@ zero/one/two-value cards, with EN/DV placeholder copy. Use Storybook's language 
 theme controls and narrow viewport to review RTL, dark and mobile presentation.
 Dhivehi copy still needs translation review. No govmv or Web2 app migration is
 performed by this block change.
+
+### Label/value table
+
+Use `ServiceDetailTable` inside a section body or another custom composition.
+The section owns the visible title; `label` provides a visually hidden table caption.
+Pass stable row IDs, translated labels and already formatted values. Values accept
+React nodes; strings receive mixed-script isolation. An empty array renders nothing.
+
+```tsx
+<ServiceDetailTable
+  label="Fees by service"
+  items={services.map((service) => ({
+    id: service.id,
+    label: service.name,
+    value: service.formattedFee,
+  }))}
+/>
+```
+
+The same part can display processing times or other label/value data. It does not
+calculate amounts, filter missing values or add sorting. `id` and `className` are
+optional. The desktop surface follows Figma `6607:116474`; narrow layouts allow
+values to wrap. The existing fee-table CSS class remains available for older copies.
+
+### Expandable inline list
+
+Use `ServiceDetailExpandableList` inside a SummaryItem or custom content. The
+standard wrapper uses the same part with three names initially visible.
+
+```tsx
+<ServiceDetailSummaryItem label={labels.services} span="full">
+  <ServiceDetailExpandableList
+    items={services.map(({ id, name }) => ({ id, label: name }))}
+    visibleCount={3}
+    moreLabel={(count) => `+${count} more`}
+    lessLabel="Show less"
+  />
+</ServiceDetailSummaryItem>
+```
+
+The consumer supplies translated button labels and stable item IDs. `visibleCount`
+defaults to 3; nonnegative whole counts are recommended (fractions are rounded down,
+negative counts become zero, non-finite counts fall back to 3). All names expand
+inline, without a caret. No button appears when every item is already shown;
+empty items render nothing. Each instance starts collapsed and owns its state.
+Optional `id` and `className` apply to the container. Custom Composition demonstrates
+an initial count of two; the standard stories retain three.
