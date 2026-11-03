@@ -127,3 +127,96 @@ test('composed content renders on the server without duplicate IDs', async ({ br
     await context.close();
   }
 });
+
+for (const [language, width] of [
+  ['en', 1512],
+  ['dv', 390],
+] as const) {
+  test(`supplementary guideline composition and multiline checklist: ${language}`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 982 });
+    await page.goto('/services/composition');
+    if (language === 'dv') {
+      await page.getByRole('button', { name: 'Fixture language', exact: true }).click();
+      await page.getByRole('button', { name: 'Fixture theme', exact: true }).click();
+    }
+    const multiline = page.locator('#controlled .veli-service-detail-prerequisites > li').last();
+    await expect(multiline).toContainText('\n');
+    expect(
+      await multiline.evaluate((node) => {
+        const text = node.firstChild!;
+        const next = text.textContent!.indexOf('\n') + 1;
+        const line = document.createRange();
+        line.setStart(text, 0);
+        line.setEnd(text, 1);
+        const first = line.getBoundingClientRect().top;
+        line.setStart(text, next);
+        line.setEnd(text, next + 1);
+        return line.getBoundingClientRect().top > first;
+      }),
+    ).toBe(true);
+
+    const trigger = page.locator('#first .veli-service-detail-guideline-trigger');
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const sheet = page.locator('.veli-service-detail-guideline-sheet');
+    const sections = sheet.locator('.veli-service-detail-guideline-section');
+    const headings = await sections.locator(':scope > h2').allTextContents();
+    expect(headings.slice(0, 2)).toEqual(
+      language === 'en' ? ['Before you start', 'Fees'] : ['ފެށުމުގެ ކުރިން', 'ފީ'],
+    );
+    const supplementary = sections.filter({ has: page.locator('[data-variant="compact"]') });
+    await expect(supplementary).toHaveCount(3);
+    const lastSections = await sections.all();
+    const cards = sheet.locator('[data-variant="compact"]');
+    await expect(cards).toHaveCount(3);
+    for (const [index, count] of [2, 1, 1, 0].entries()) {
+      const section = lastSections[lastSections.length - 4 + index];
+      await expect(section.locator('[data-variant="compact"] dt')).toHaveCount(count);
+      await expect(section.locator(':scope > h2')).toHaveCount(1);
+    }
+    await expect(sheet.locator('.veli-service-detail-prerequisites > li').last()).toHaveCSS(
+      'white-space',
+      'pre-line',
+    );
+    await cards.first().scrollIntoViewIfNeeded();
+    await expect(cards.first()).toHaveCSS('padding', '16px 24px');
+    await expect(cards.first()).toHaveCSS('border-radius', '16px');
+    const geometry = await cards
+      .first()
+      .locator('.veli-service-detail-meta-item')
+      .evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const r = node.getBoundingClientRect();
+          return { x: r.x, y: r.y };
+        }),
+      );
+    if (width === 1512) expect(geometry[0].y).toBe(geometry[1].y);
+    else expect(geometry[1].y).toBeGreaterThan(geometry[0].y);
+    expect(await cards.first().evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    const audit = await new AxeBuilder({ page })
+      .include('.veli-service-detail-guideline-sheet')
+      .withRules(['definition-list', 'dlitem', 'region', 'aria-dialog-name'])
+      .analyze();
+    expect(audit.violations).toEqual([]);
+    await cards.first().screenshot({ path: info.outputPath('compact-card.png') });
+
+    if (width < 768) await page.locator('.veli-service-detail-mobile-toc-button').click();
+    const toc = page.locator(
+      width < 768
+        ? '.veli-service-detail-mobile-toc-panel .veli-service-detail-toc-link'
+        : '.veli-service-detail-guideline-sidebar .veli-service-detail-toc-link',
+    );
+    await expect(toc).toHaveText(headings);
+    await toc.last().focus();
+    await page.keyboard.press('Enter');
+    if (width < 768) {
+      await expect(page.locator('.veli-service-detail-mobile-toc-panel')).toHaveCount(0);
+      await expect(page.locator('.veli-service-detail-mobile-toc-button')).toBeFocused();
+    } else await expect(toc.last()).toHaveAttribute('aria-current', 'location');
+    await page.keyboard.press('Escape');
+    await expect(sheet).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+}

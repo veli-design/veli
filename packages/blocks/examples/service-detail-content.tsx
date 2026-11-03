@@ -76,8 +76,8 @@ export function serviceDetailContent(
       'މި ހުށަހެޅުމަށް ހުއްދަ ލިބިފައިވާ ވިޔަފާރީގެ ވެރިފަރާތް ނުވަތަ މަންދޫބެއް ކަމަށްވުން.',
     ),
     text(
-      'Have the registration reference and supporting documents ready for the change you want to make.',
-      'ބަދަލުކުރަން ބޭނުންވާ ކަމާއި ގުޅޭ ރަޖިސްޓްރީ ނަންބަރާއި ލިޔެކިޔުންތައް ތައްޔާރުކޮށްފައިވުން.',
+      'Have the registration reference ready.\nPrepare supporting documents for the change you want to make.',
+      'ރަޖިސްޓްރީ ނަންބަރު ތައްޔާރުކޮށްފައިވުން.\nބޭނުންވާ ލިޔެކިޔުންތައް ތައްޔާރުކުރުން.',
     ),
   ];
   const guideline: ServiceGuideline = {
@@ -104,7 +104,7 @@ export function serviceDetailContent(
                   'ބޭނުންވާ ބަދަލަށް ފެތޭ އެދުން ހޮއްވަވާ. ފެށުމުގެ ކުރިން ލިޔެކިޔުންތަކުގެ ސާފު ކޮޕީތައް ތައްޔާރުކުރައްވާ.',
                 )}
               </p>
-              <ul>
+              <ul className="veli-service-detail-prerequisites">
                 {prerequisites.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

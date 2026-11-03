@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@veli-design/react/button';
 import { Link } from '@veli-design/react/link';
-import { ClockIcon, UsersIcon } from '@phosphor-icons/react';
+import { ClockIcon, UsersIcon, HandCoinsIcon, HourglassMediumIcon } from '@phosphor-icons/react';
 import {
   ServiceDetailRoot,
   ServiceDetailHeader,
@@ -17,7 +17,46 @@ import {
   ServiceDetailGuideline,
   ServiceDetailApplyingInformation,
 } from '../src/service-detail/service-detail';
+import type { ServiceDetailProps, ServiceGuideline } from '../src/service-detail/types';
 import { serviceDetailContent } from './service-detail-content';
+
+/** Consumer example: omit unavailable values, and omit the surface when neither exists. */
+function SupplementaryMetadata({
+  title,
+  fee,
+  processingTime,
+  labels,
+}: {
+  title: string;
+  fee?: string;
+  processingTime?: string;
+  labels: ServiceDetailProps['labels'];
+}) {
+  if (fee == null && processingTime == null) return null;
+  const single = fee == null || processingTime == null;
+  return (
+    <ServiceDetailSummary variant="compact" label={title}>
+      {fee != null && (
+        <ServiceDetailSummaryItem
+          label={labels.fees}
+          icon={<HandCoinsIcon weight="fill" className="veli-service-detail-meta-art" />}
+          span={single ? 'full' : 'single'}
+        >
+          {fee}
+        </ServiceDetailSummaryItem>
+      )}
+      {processingTime != null && (
+        <ServiceDetailSummaryItem
+          label={labels.processingTime}
+          icon={<HourglassMediumIcon weight="fill" className="veli-service-detail-meta-art" />}
+          span={single ? 'full' : 'single'}
+        >
+          {processingTime}
+        </ServiceDetailSummaryItem>
+      )}
+    </ServiceDetailSummary>
+  );
+}
 
 // Illustrative consumer-owned copy. Dhivehi copy is pending translation review.
 const messages = {
@@ -65,6 +104,63 @@ export function ServiceDetailComposition({
   const data = serviceDetailContent(language);
   const copy = messages[language];
   const [status, setStatus] = useState('');
+  // Already formatted consumer data. Missing values are not inferred as free or Instant.
+  const supplementary = data.services!.slice(0, 4).map((service, index) => ({
+    ...service,
+    fee: index < 2 ? data.metadata!.fees![index].value : undefined,
+    processingTime:
+      index === 0 || index === 2
+        ? language === 'dv'
+          ? 'އެ މަސައްކަތު ދުވަހު'
+          : 'Same working day'
+        : undefined,
+    body: copy.instructions,
+  }));
+  const feeRows = supplementary.filter((service) => service.fee != null);
+  const originalSections = data.guideline!.content.sections!;
+  // Stable IDs identify this example's preparation/fees sections; never match translated titles.
+  const guideline: ServiceGuideline = {
+    ...data.guideline!,
+    content: {
+      sections: [
+        ...originalSections.filter((section) => section.id === 'before'),
+        {
+          id: 'fees',
+          title: data.labels.fees,
+          body: (
+            <table className="veli-service-detail-fee-table">
+              <caption className="sr-only">{data.labels.feesByType}</caption>
+              <tbody>
+                {feeRows.map((service) => (
+                  <tr key={service.id}>
+                    <th scope="row">{service.name}</th>
+                    <td>{service.fee}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ),
+        },
+        ...originalSections.filter((section) => section.id !== 'before' && section.id !== 'fees'),
+        ...supplementary.map((service) => ({
+          id: `supplementary-${service.id}`,
+          title: service.name,
+          body: (
+            <>
+              <SupplementaryMetadata
+                title={service.name}
+                fee={service.fee}
+                processingTime={service.processingTime}
+                labels={data.labels}
+              />
+              <p>{service.body}</p>
+            </>
+          ),
+        })),
+      ],
+    },
+  };
+
   return (
     <ServiceDetailRoot id={id}>
       <ServiceDetailHeader title={data.title} description={data.description}>
@@ -89,16 +185,16 @@ export function ServiceDetailComposition({
               hideLabel: data.labels.hideFees,
               content: (
                 <ul className="m-0 pt-5">
-                  {data.metadata?.fees?.map((fee) => (
+                  {feeRows.map((fee) => (
                     <li key={fee.id}>
-                      {fee.label}: {fee.value}
+                      {fee.name}: {fee.fee}
                     </li>
                   ))}
                 </ul>
               ),
             }}
           >
-            {data.metadata?.feeSummary}
+            {language === 'dv' ? '200 – 2,000 ރުފިޔާ' : 'MVR 200 – 2,000'}
           </ServiceDetailSummaryItem>
           <ServiceDetailSummaryItem
             label={data.labels.processingTime}
@@ -114,7 +210,7 @@ export function ServiceDetailComposition({
         <ServiceDetailContent>
           {/* Reorder content within one shared surface, rather than stacking rounded cards. */}
           <ServiceDetailSection title={data.labels.beforeYouStart}>
-            <ServiceDetailGuideline guideline={data.guideline!} labels={data.labels} />
+            <ServiceDetailGuideline guideline={guideline} labels={data.labels} />
           </ServiceDetailSection>
           <ServiceDetailSection title={copy.appointments}>
             <p className="m-0">{copy.appointmentBody}</p>

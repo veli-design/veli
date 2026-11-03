@@ -1,11 +1,11 @@
-Experimental `0.7.0` copied-source block for service details, fees, prerequisites,
+Experimental `0.8.0` copied-source block for service details, fees, prerequisites,
 application options and guidelines. The props-based default preserves the existing
 summary/card and guideline sheet. Composable parts let consumers arrange their own
 fields, sections and actions. This block does not migrate either app.
 
 ## Core package baseline
 
-Version 0.7.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.8.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -77,7 +77,7 @@ copied files, as with other Veli blocks; new layout utilities use Veli's tokens.
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ServiceDetailRoot`, `ServiceDetailCard` | `children`, `id?`, `className?`.                                                                                                                                                                                     |
 | `ServiceDetailHeader`                    | `title`, inline `description?` and `provider?`, `headingLevel?`; children add badges/status or other content.                                                                                                        |
-| `ServiceDetailSummary`                   | Accessible `label`, children that render SummaryItems; supports maps and fragments.                                                                                                                                  |
+| `ServiceDetailSummary`                   | Accessible `label`, optional `variant` (`default` or `compact`); children render SummaryItems, including maps and fragments.                                                                                         |
 | `ServiceDetailSummaryItem`               | `label`, decorative `icon?`, `information?: { label, content }`, `span?: 'single' \| 'full'`, `startRow?`; children supply the value.                                                                                |
 | `ServiceDetailContent`                   | `children`, `id?`, `className?`; one shared raised surface for sections, actions, notices and downloads.                                                                                                             |
 | `ServiceDetailActions`                   | Accessible `label`, children for branding and actions. Place inside Content.                                                                                                                                         |
@@ -267,3 +267,79 @@ Display precedence is loading (`isPending`), then a non-blank `error`, then
 `content`. Loading hides stale errors/content; errors hide stale content. A
 requestable summary without content or an error shows the loading placeholder
 until the host supplies a result. Only the loading state sets `aria-busy`.
+
+## Supplementary guideline integration
+
+Keep the existing wrapper for its standard page, or compose the exported parts
+without changing the copied source. These parts are imported from
+`./components/blocks/service-detail/service-detail`, not from `@veli-design/react`.
+Continue using the public Veli UI/token packages and the installation steps above.
+The 0.8.0 block remains unreleased until its catalog is published.
+
+`ServiceDetailSummary` accepts `variant="compact"` for a standalone tinted
+metadata card inside a guideline. It uses the same SummaryItems, with 16px vertical
+and 24px horizontal padding and a 16px radius. The default page summary is unchanged.
+Do not wrap the compact summary in another ServiceDetailCard.
+
+```tsx
+const fields = [
+  {
+    id: 'fee',
+    label: labels.fees,
+    value: formattedFee,
+    icon: <HandCoinsIcon weight="fill" className="veli-service-detail-meta-art" />,
+  },
+  {
+    id: 'processing',
+    label: labels.processingTime,
+    value: formattedProcessingTime,
+    icon: <HourglassMediumIcon weight="fill" className="veli-service-detail-meta-art" />,
+  },
+].filter((field) => field.value != null);
+
+const metadata = fields.length ? (
+  <ServiceDetailSummary variant="compact" label={supplementaryTitle}>
+    {fields.map((field) => (
+      <ServiceDetailSummaryItem
+        key={field.id}
+        label={field.label}
+        icon={field.icon}
+        span={fields.length === 1 ? 'full' : 'single'}
+      >
+        {field.value}
+      </ServiceDetailSummaryItem>
+    ))}
+  </ServiceDetailSummary>
+) : null;
+```
+
+The host supplies localized, already formatted values; missing data is `null` or
+`undefined`, not inferred as Free or Instant. Keep explicit zero values. One value
+uses the full row; two values share desktop columns and stack below 768px. The
+single-value/mobile arrangement is an implementation convention, not a separately
+approved Figma frame. The desktop reference is Figma `6607:116507`.
+
+Build `guideline.content.sections` in the desired order:
+
+1. Preparation/checklist, preserving existing core preparation content.
+2. A generated supplementary fees table.
+3. Remaining core sections in authored order.
+4. Each supplementary section: set its `title`, then put `metadata` before its
+   guideline body. Do not repeat the title in the body.
+
+The sheet and TOC preserve this supplied order; known-empty sections are omitted,
+untitled sections do not create TOC entries, and `content.body` has no generated TOC.
+Use stable section IDs, not translated heading text, when adapting CMS content.
+Veli does not group, deduplicate, fetch or calculate content. The consumer owns
+filtering unfinished draft checklist rows and any CMS item limits or migrations.
+
+The default `prerequisites` string array preserves newlines within each item.
+For a consumer-rendered checklist inside the sheet, use
+`<ul className="veli-service-detail-prerequisites">` with one `<li>` per item, or
+provide your own equivalent multiline styling. Newlines do not create extra items.
+
+See the shared Custom Composition example for the complete ordered sheet and
+zero/one/two-value cards, with EN/DV placeholder copy. Use Storybook's language and
+theme controls and narrow viewport to review RTL, dark and mobile presentation.
+Dhivehi copy still needs translation review. No govmv or Web2 app migration is
+performed by this block change.

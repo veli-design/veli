@@ -166,7 +166,7 @@ export const CustomComposition: Story = {
     docs: {
       description: {
         story:
-          'Consumer-owned availability, reordered guidelines, an extra appointments section and custom actions. Uses the same parts as the default wrapper. Dhivehi copy is illustrative, pending translation review.',
+          'Consumer-owned availability and actions, plus an ordered guideline with multiline preparation, a fees table, core content and compact supplementary metadata cards (two, one or no values). Uses the same parts as the default wrapper. Dhivehi copy is illustrative, pending translation review.',
       },
     },
   },
