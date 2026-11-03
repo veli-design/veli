@@ -219,3 +219,199 @@ test('Toast actions avoid duplicate client keys for repeated labels and ids', as
     host.remove();
   }
 });
+
+// Reuse the installed-package DOM suite for Sheet composition. jsdom has no
+// layout observers or scrolling; native gestures and focus still need a browser.
+async function withComposedSheet(language, verify) {
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+  const previousAttributes = ['class', 'data-theme', 'data-color-scheme', 'style'].map((name) => [
+    name,
+    document.documentElement.getAttribute(name),
+  ]);
+  const previousScrollTo = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTo');
+  class LayoutObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  vi.stubGlobal('IntersectionObserver', LayoutObserver);
+  vi.stubGlobal('ResizeObserver', LayoutObserver);
+  vi.stubGlobal('matchMedia', () => ({
+    matches: false,
+    addEventListener() {},
+    removeEventListener() {},
+    addListener() {},
+    removeListener() {},
+  }));
+  Element.prototype.scrollTo = () => {};
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  const render = async (children, props = {}) => {
+    await act(async () => {
+      root.render(
+        React.createElement(
+          React.StrictMode,
+          null,
+          React.createElement(
+            VeliProvider,
+            { language, colorScheme: 'light' },
+            React.createElement(Sheet, { isOpen: true, ...props }, children),
+          ),
+        ),
+      );
+    });
+    return document.querySelector('[role="dialog"]');
+  };
+  try {
+    await verify(render);
+  } finally {
+    await act(async () => root.unmount());
+    host.remove();
+    vi.unstubAllGlobals();
+    if (previousScrollTo) Object.defineProperty(Element.prototype, 'scrollTo', previousScrollTo);
+    else delete Element.prototype.scrollTo;
+    for (const [name, value] of previousAttributes) {
+      if (value == null) document.documentElement.removeAttribute(name);
+      else document.documentElement.setAttribute(name, value);
+    }
+  }
+}
+
+test.each([
+  ['en', 'Close sheet'],
+  ['dv', 'ލައްޕާ'],
+])('Sheet retains its optional close label and cleans up refs (%s)', async (language, label) => {
+  await withComposedSheet(language, async (render) => {
+    const attached = new Map();
+    const cleaned = new Set();
+    const refs = Object.fromEntries(
+      ['Header', 'Title', 'Description', 'Body', 'Footer', 'Handle', 'Close'].map((part) => [
+        part,
+        (node) => {
+          if (!node) return;
+          attached.set(part, node);
+          return () => {
+            attached.delete(part);
+            cleaned.add(part);
+          };
+        },
+      ]),
+    );
+    const onPress = vi.fn();
+    const onOpenChange = vi.fn();
+    const props = { onOpenChange, isDismissable: false };
+    const content = (closeLabel) => [
+      React.createElement(Sheet.Handle, { key: 'handle', ref: refs.Handle }),
+      React.createElement(
+        Sheet.Header,
+        { key: 'header', ref: refs.Header },
+        React.createElement(Sheet.Title, { ref: refs.Title }, 'Details'),
+        React.createElement(Sheet.Description, { ref: refs.Description }, 'Supporting text'),
+        React.createElement(Sheet.Close, { ref: refs.Close, 'aria-label': closeLabel, onPress }),
+      ),
+      React.createElement(Sheet.Body, { key: 'body', ref: refs.Body }, 'Task content'),
+      React.createElement(Sheet.Footer, { key: 'footer', ref: refs.Footer }, 'Actions'),
+    ];
+    let dialog = await render(content(undefined), props);
+    expect(dialog.getAttribute('lang')).toBe(language);
+    expect(dialog.getAttribute('dir')).toBe(language === 'dv' ? 'rtl' : 'ltr');
+    expect(attached.size).toBe(7);
+    expect(dialog.querySelector('button[slot="close"]').getAttribute('aria-label')).toBe(label);
+    dialog = await render(content('Dismiss details'), props);
+    expect(dialog.querySelector('button[slot="close"]').getAttribute('aria-label')).toBe(
+      'Dismiss details',
+    );
+    dialog = await render(content(undefined), props);
+    const close = dialog.querySelector('button[slot="close"]');
+    expect(close.getAttribute('aria-label')).toBe(label);
+    await act(async () => close.click());
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    await render(content(undefined), { isOpen: false });
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(attached.size).toBe(0);
+    expect(cleaned.size).toBe(7);
+  });
+});
+
+test('Sheet descriptions follow DOM order after remounts, memoized moves and ID changes', async () => {
+  await withComposedSheet('en', async (render) => {
+    function Descriptions({ first, reverse, revision }) {
+      const nodes = React.useMemo(
+        () => ({
+          first: React.createElement(
+            Sheet.Description,
+            { key: 'first', id: `first-${revision}` },
+            'First paragraph.',
+          ),
+          second: React.createElement(
+            Sheet.Description,
+            { key: 'second', id: `second-${revision}` },
+            'Second paragraph.',
+          ),
+        }),
+        [revision],
+      );
+      const order = reverse ? ['second', 'first'] : ['first', 'second'];
+      return order.map((part) => (part === 'first' && !first ? null : nodes[part]));
+    }
+    const content = ({ first = true, reverse = false, revision = 0, descriptions = true } = {}) => [
+      React.createElement(Sheet.Title, { key: 'title', id: `title-${revision}` }, 'Details'),
+      descriptions &&
+        React.createElement(Descriptions, { key: 'descriptions', first, reverse, revision }),
+      React.createElement(Sheet.Body, { key: 'body' }, 'Task content'),
+    ];
+    const expectDescription = (dialog, ids, text) => {
+      expect(dialog.getAttribute('aria-describedby')).toBe(ids);
+      const description = ids
+        ?.split(' ')
+        .map((id) => document.getElementById(id).textContent)
+        .join(' ');
+      expect(description).toBe(text);
+    };
+    expectDescription(
+      await render(content()),
+      'first-0 second-0',
+      'First paragraph. Second paragraph.',
+    );
+    expectDescription(await render(content({ first: false })), 'second-0', 'Second paragraph.');
+    expectDescription(
+      await render(content()),
+      'first-0 second-0',
+      'First paragraph. Second paragraph.',
+    );
+    expectDescription(
+      await render(content({ reverse: true })),
+      'second-0 first-0',
+      'Second paragraph. First paragraph.',
+    );
+    const dialog = await render(content({ reverse: true, revision: 1 }));
+    expectDescription(dialog, 'second-1 first-1', 'Second paragraph. First paragraph.');
+    expect(dialog.getAttribute('aria-labelledby')).toBe('title-1');
+    expect(dialog.querySelector('[role="region"]').getAttribute('aria-labelledby')).toBe('title-1');
+    expect((await render(content({ descriptions: false }))).hasAttribute('aria-describedby')).toBe(
+      false,
+    );
+  });
+});
+
+test('Sheet supports conditional parts and custom body labels', async () => {
+  await withComposedSheet('en', async (render) => {
+    const content = (footer, bodyLabel) => [
+      React.createElement(Sheet.Handle, { key: 'handle', 'data-handle': true }),
+      React.createElement(Sheet.Title, { key: 'title' }, 'Details'),
+      React.createElement(Sheet.Body, { key: 'body', 'aria-label': bodyLabel }, 'Task content'),
+      footer && React.createElement(Sheet.Footer, { key: 'footer' }, 'Actions'),
+    ];
+    let dialog = await render(content(true, 'Task content'));
+    expect(dialog.querySelector('[role="region"]').getAttribute('aria-label')).toBe('Task content');
+    expect(dialog.querySelector('[role="region"]').hasAttribute('aria-labelledby')).toBe(false);
+    expect(dialog.querySelector('footer')).not.toBeNull();
+    dialog = await render(content(false));
+    expect(dialog.querySelector('footer')).toBeNull();
+    dialog = await render(content(true), { position: 'end' });
+    expect(dialog.querySelector('footer')).not.toBeNull();
+    expect(dialog.querySelector('[data-handle]')).toBeNull();
+  });
+});
