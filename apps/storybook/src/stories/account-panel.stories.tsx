@@ -259,6 +259,10 @@ export const Mobile: Story = {
     const dialog = await page.findByRole('dialog', {
       name: playText(canvasElement, labels.dialog),
     });
+    const sheetBackdrop = canvasElement.ownerDocument.querySelector('.veli-sheet-backdrop');
+    if (sheetBackdrop) {
+      await waitFor(() => expect(sheetBackdrop).not.toHaveAttribute('data-entering'));
+    }
     await userEvent.keyboard('{Tab}');
     await expect(dialog.contains(canvasElement.ownerDocument.activeElement)).toBe(true);
     await userEvent.keyboard('{Escape}');

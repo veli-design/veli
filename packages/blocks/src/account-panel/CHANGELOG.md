@@ -1,3 +1,10 @@
+## 0.10.0
+
+### Changed
+
+- Use Veli Sheet for the mobile account panel, sharing its native swipe, motion, dismissal and focus management. Preserve the profile header, grabber spacing, account content, pinned sign-out and anchored desktop panel.
+- Require `@veli-design/react@^0.19.0`. The account-panel rendering and host callback API is unchanged.
+
 ## 0.9.0
 
 ### Changed
