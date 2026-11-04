@@ -12,21 +12,21 @@ on:
         description: Independently recorded SHA-256 from the exact snapshot reviewed
         required: true
         type: string
-      visual-review-approved:
-        description: Confirm visual review and production authorization for this exact bundle
+      review-comment-id:
+        description: ID of a human write-access GitHub issue/PR comment approving this exact source and snapshot SHA-256
         required: true
-        default: false
-        type: boolean
+        type: string
 
 permissions:
   contents: read
   actions: read
+  issues: read
 
 concurrency: veli-public-release-sites
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main' && inputs.visual-review-approved && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
+    if: github.ref == 'refs/heads/main' && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
     runs-on: ubuntu-latest
     env:
       SNAPSHOT_RUN_ID: ${{ inputs.snapshot-run-id }}
@@ -60,6 +60,11 @@ jobs:
         run: |
           node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256"
           node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const s=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/site-snapshot/snapshot.json")); assert.equal(s.plan.siteRelease.mode,"published"); assert.ok(s.plan.siteRelease.publication,"Published artifact evidence is required"); assert.match(s.tools.wrangler,/^\d+\.\d+\.\d+$/); fs.appendFileSync(process.env.GITHUB_OUTPUT,"wrangler-version="+s.tools.wrangler+"\n");'
+      - name: Verify recorded human visual review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
+        run: node scripts/release-ci.mjs verify-site-review "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$REVIEW_COMMENT_ID"
       - name: Deploy retained Web output
         uses: cloudflare/wrangler-action@v3
         with:

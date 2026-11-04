@@ -60,8 +60,15 @@ occurs merely by merging this workflow PR.
 
 For later approved releases, the existing `Release` workflow already calls site
 deployment after successful publication when the registry rollout gate is enabled.
-This bootstrap path does not enable automatic npm publication or alter the manual
-publication, exact-tree validation or trusted-publisher prerequisites.
+This temporary bootstrap path does not publish. Routine publication is triggered by
+merging the validated release PR; exact-tree validation, real human visual approval
+and trusted-publisher prerequisites still apply.
 
 For the current release preparation, publication approval, site snapshot and
 deployment-only recovery procedures, see [CI release operations](CI_RELEASE_RUNBOOK.md).
+
+Eligible Web/docs, Storybook and Blocks-only merges also use **Deploy site changes**
+without waiting for npm version bumps. Pending Changesets and unpublished package
+source/build dependencies hold that path. Ordinary pre-merge approval and exact
+merged-source checks apply; recovery still uses an explicitly reviewed retained
+bundle. See [CI release operations](CI_RELEASE_RUNBOOK.md#independent-site-changes).

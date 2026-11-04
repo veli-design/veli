@@ -75,8 +75,14 @@ test('release deployment only follows successful publication and has durable red
     'utf8',
   );
   const releaseWorkflow = parse(release);
-  assert.equal(releaseWorkflow.on.push, undefined);
-  assert.equal(releaseWorkflow.on.workflow_dispatch.inputs['dist-tag'].required, true);
+  assert.deepEqual(releaseWorkflow.on.push, { branches: ['main'] });
+  assert.equal(releaseWorkflow.on.workflow_dispatch, null);
+  assert.equal(
+    releaseWorkflow.jobs.release.steps.find((s) => s.uses === 'changesets/action@v1').env
+      .VELI_NPM_DIST_TAG,
+    '${{ vars.VELI_NPM_DIST_TAG }}',
+  );
+  assert.equal(parse(web).jobs.deploy.with['verification-only'], true);
   assert.match(releaseWorkflow.jobs.release.if, /VELI_NPM_PUBLICATION_APPROVED/);
   assert.match(releaseWorkflow.jobs.release.if, /github.ref_name == vars.VELI_RELEASE_BRANCH/);
   assert.match(parse(reusable).jobs.deploy.if, /VELI_REGISTRY_TRANSITION_APPROVED/);

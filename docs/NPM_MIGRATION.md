@@ -35,7 +35,8 @@ packing for local validation remains available. See
 ## Publication hold
 
 To create or refresh the bot's `changeset-release/main` PR without enabling
-publication, run **Prepare release** (`prepare-release.yml`) manually on `main`.
+publication, **Prepare release** (`prepare-release.yml`) runs on main pushes; it
+can also be dispatched manually on `main`.
 The workflow must first exist on the default branch. It runs Changesets versioning
 only, with no publish command, npm credentials, OIDC permission or dist-tag input.
 It uses the repository token so the PR retains the authenticated bot identity;
@@ -43,17 +44,18 @@ approve its pending CI workflows and require fresh validation of the final head.
 Do not manually merge stale versioning output or add human commits to the bot PR.
 This preparation does not change the publication or registry-transition gates below.
 
-Release is manual and requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository
+Merging the validated bot release PR automatically starts publication, which requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository
 variable and in the publishing process. It also requires an explicit
-`VELI_RELEASE_BRANCH` repository variable and a manual `dist-tag` input (passed
-as `VELI_NPM_DIST_TAG` locally); neither has a default. Keep this unset until the
+`VELI_RELEASE_BRANCH` repository variable and an approved `VELI_NPM_DIST_TAG`
+repository variable (the same environment variable is used locally); neither has a default. Keep this unset until the
 licence and artifact requirements are satisfied, npm namespace/publish permissions
 are verified, bootstrap authentication is available, and the release branch,
-exact versions and dist-tag are configured. The existing supported
-versions are React 0.17.0, tokens 0.10.0 and CLI 0.1.1; pending Changesets describe
-subsequent releases without applying version changes here. Main's React changes require the planned tokens 0.11 line. Pending Changesets
-remain unapplied in this PR. Before the package release, locally test the real
-unreleased packages and review a separate Block preparation PR. Update only the
+exact versions and dist-tag are configured. The recorded bootstrap baseline is
+React 0.18.0, tokens 0.11.0 and CLI 0.2.0. The pending Sheet Changeset plans React
+0.19.0. Include the separately merged catalog alignment and Sheet migrations when
+refreshing the final release PR; do not manufacture another package bump to test
+publication. Before a package release, locally test the real unreleased artifacts
+and review the Block preparation. Update only the
 affected supported ranges and tested versions, with Block version/changelog bumps
 when its distributed source or dependency contract changes. Include visual and
 interaction validation in that review; a successful version bump is not proof of
@@ -82,14 +84,15 @@ workspace, and pinned pnpm 11.18.0 implements the npm OIDC token exchange.
 The private source repository cannot produce public-source provenance, so the
 workflow explicitly disables it.
 
-Before recurring OIDC publication, publish the first audited release using an
-authenticated npm account with permission for `veli-design`. Do not create empty
-placeholder versions. Configure a trusted publisher separately for each of
+The initial audited bootstrap release was published using an
+authenticated npm account with permission for `veli-design`. Do not repeat bootstrap publication or create empty placeholder versions. Configure a trusted publisher separately for each of
 `@veli-design/react`, `@veli-design/tokens` and `@veli-design/cli`: GitHub owner
 `tradenetcorp`, repository `veli`, workflow filename `release.yml`. Permit direct
 publication for the Changesets flow. This does not require a repository move.
-Set `VELI_NPM_TRUSTED_PUBLISHING_READY=true` only after all three first
-publications and trusted publishers are verified. Until then, CI can prepare a
+Set `VELI_NPM_TRUSTED_PUBLISHING_READY=true` only after bootstrap is verified and
+the trusted publishers for every package selected in the release are confirmed.
+All three packages remain supported; recheck this hold whenever another package
+is scheduled rather than assuming an earlier readiness check covers it. Until then, CI can prepare a
 release PR but refuses the publication path before attempting OIDC. Bootstrap
 uses the same audited local publication script with account authentication; it
 does not use the recurring CI workflow.

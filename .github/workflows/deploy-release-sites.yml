@@ -102,8 +102,14 @@ jobs:
           include-hidden-files: true
           retention-days: 90
           if-no-files-found: error
+      - name: Reject superseded or duplicate automatic handoff
+        id: current
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/site-auto.mjs gate
       - name: Deploy web docs
-        if: ${{ !inputs.verification-only }}
+        if: ${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -112,7 +118,7 @@ jobs:
           environment: production
           command: deploy
       - name: Deploy Storybook
-        if: ${{ !inputs.verification-only }}
+        if: ${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -120,3 +126,13 @@ jobs:
           workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/storybook
           environment: production
           command: deploy
+      - name: Record successful paired deployment
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
+        run: node scripts/site-auto.mjs receipt "$RUNNER_TEMP/site-deployed"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
+        with:
+          name: site-deployed-${{ github.sha }}
+          path: ${{ runner.temp }}/site-deployed
+          retention-days: 90
+          if-no-files-found: error

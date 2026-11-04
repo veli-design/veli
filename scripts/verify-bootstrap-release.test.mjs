@@ -170,7 +170,10 @@ test('temporary entry reuses the existing site workflow and cannot publish or by
   const deploys = commonSteps.filter((s) => s.uses === 'cloudflare/wrangler-action@v3');
   assert.equal(deploys.length, 2);
   for (const step of deploys) {
-    assert.equal(step.if, '${{ !inputs.verification-only }}');
+    assert.equal(
+      step.if,
+      "${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}",
+    );
     assert.equal(step.with.environment, 'production');
     assert.equal(step.with.command, 'deploy');
   }

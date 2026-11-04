@@ -1,0 +1,119 @@
+name: Deploy site changes
+
+on:
+  push:
+    branches: [main]
+  # Catch up a site merge that arrived while publication was still finishing.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  plan:
+    if: github.repository_id == '1115705061' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    outputs:
+      eligible: ${{ steps.plan.outputs.eligible }}
+      baseline: ${{ steps.plan.outputs.baseline }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: plan
+        run: node scripts/site-auto.mjs plan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    needs: plan
+    if: needs.plan.outputs.eligible == 'true' && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
+    runs-on: ubuntu-latest
+    # Shared with publication handoff and recovery. Do not cancel a partial deploy.
+    concurrency: veli-public-release-sites
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      PACKAGE_RELEASE_TAG: ${{ needs.plan.outputs.baseline }}
+      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli-web.onegov.mv' }}
+      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://veli-storybook.onegov.mv' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Read durable published baseline
+        run: |
+          mkdir "$RUNNER_TEMP/site-baseline"
+          if [ "$PACKAGE_RELEASE_TAG" = 'bootstrap-2026-11-01' ]; then
+            cp releases/npm-bootstrap-2026-11-01.json "$RUNNER_TEMP/site-baseline/publication.json"
+          else
+            gh release download "$PACKAGE_RELEASE_TAG" --pattern publication.json --dir "$RUNNER_TEMP/site-baseline"
+          fi
+      - name: Install frozen validation tools
+        run: corepack pnpm install --frozen-lockfile
+      - name: Require reviewed source without pending or unpublished packages
+        run: node scripts/site-auto.mjs verify "$RUNNER_TEMP/site-baseline/publication.json"
+      - name: Validate the exact merged source
+        run: corepack pnpm check
+      - name: Verify anonymous npm package identity and bytes
+        run: node scripts/published-packages.mjs verify "$RUNNER_TEMP/site-baseline/publication.json" "$RUNNER_TEMP/verified-publication"
+      - name: Build compatible isolated installed-package sites
+        run: |
+          node scripts/site-release.mjs plan published "$RUNNER_TEMP/verified-publication/release-manifest.json" "$PUBLIC_SITE_URL" "$STORYBOOK_ORIGIN" "$GITHUB_SHA" "$RUNNER_TEMP/site-plan.json" "$PACKAGE_RELEASE_TAG"
+          node scripts/site-release.mjs stage "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/site-consumers"
+          node scripts/release-sites.mjs build "$RUNNER_TEMP/site-consumers"
+          node scripts/site-release.mjs capture "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/site-consumers" "$RUNNER_TEMP/site-snapshot" > "$RUNNER_TEMP/site-digest.txt"
+          node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$(cat "$RUNNER_TEMP/site-digest.txt")"
+          echo "Site snapshot: run $GITHUB_RUN_ID; source $GITHUB_SHA; SHA-256 $(cat "$RUNNER_TEMP/site-digest.txt")" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-snapshot-${{ github.run_id }}
+          path: ${{ runner.temp }}/site-snapshot
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: error
+      - name: Recheck current main under the deployment lock
+        id: current
+        run: node scripts/site-auto.mjs gate
+      - name: Deploy Web
+        if: steps.current.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ runner.temp }}/site-consumers/apps/web
+          environment: production
+          command: deploy
+      - name: Deploy Storybook
+        if: steps.current.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ runner.temp }}/site-consumers/apps/storybook
+          environment: production
+          command: deploy
+      - name: Record successful paired deployment
+        if: steps.current.outputs.ready == 'true'
+        run: node scripts/site-auto.mjs receipt "$RUNNER_TEMP/site-deployed"
+      - uses: actions/upload-artifact@v4
+        if: steps.current.outputs.ready == 'true'
+        with:
+          name: site-deployed-${{ github.sha }}
+          path: ${{ runner.temp }}/site-deployed
+          retention-days: 90
+          if-no-files-found: error

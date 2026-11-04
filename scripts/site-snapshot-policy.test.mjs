@@ -29,3 +29,36 @@ test('only completed authorized producers can supply deployment bytes', () => {
       ),
     );
 });
+
+test('automatic publication snapshots can retry without accepting arbitrary push artifacts', () => {
+  assert.doesNotThrow(() =>
+    assertSnapshotProducer(
+      { ...run, path: '.github/workflows/release.yml', event: 'push' },
+      'tradenetcorp/veli',
+    ),
+  );
+  assert.throws(() => assertSnapshotProducer({ ...run, event: 'push' }, 'tradenetcorp/veli'));
+  assert.throws(() =>
+    assertSnapshotProducer(
+      { ...run, path: '.github/workflows/deploy-web.yml', event: 'push' },
+      'tradenetcorp/veli',
+    ),
+  );
+});
+
+test('automatic site snapshots retain recovery after a partial deployment, never from a PR', () => {
+  for (const event of ['push', 'workflow_run'])
+    for (const conclusion of ['success', 'failure'])
+      assert.doesNotThrow(() =>
+        assertSnapshotProducer(
+          { ...run, path: '.github/workflows/deploy-site-changes.yml', event, conclusion },
+          'tradenetcorp/veli',
+        ),
+      );
+  assert.throws(() =>
+    assertSnapshotProducer(
+      { ...run, path: '.github/workflows/deploy-site-changes.yml', event: 'pull_request' },
+      'tradenetcorp/veli',
+    ),
+  );
+});

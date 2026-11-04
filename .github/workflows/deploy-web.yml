@@ -1,4 +1,4 @@
-name: Redeploy public release sites
+name: Prepare published site rebuild
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +12,7 @@ permissions:
   actions: read
 jobs:
   snapshot:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       source-ref: ${{ steps.manifest.outputs.source-ref }}
@@ -42,6 +43,7 @@ jobs:
     needs: snapshot
     uses: ./.github/workflows/deploy-release-sites.yml
     with:
+      verification-only: true
       source-ref: ${{ needs.snapshot.outputs.source-ref }}
       release-tag: ${{ needs.snapshot.outputs.release-tag }}
     secrets: inherit

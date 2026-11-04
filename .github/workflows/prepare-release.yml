@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Serialize writes to the bot branch with the existing Release workflow.
+# Serialize versioning writes to the bot branch; publication locks its immutable commit.
 concurrency: Release-${{ github.ref }}
 
 permissions:
@@ -14,7 +14,7 @@ permissions:
 jobs:
   prepare:
     name: Prepare release pull request
-    if: github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'
+    if: github.repository_id == '1115705061' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
