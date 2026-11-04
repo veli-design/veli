@@ -34,7 +34,10 @@ jobs:
       RELEASE_BRANCH: ${{ vars.VELI_RELEASE_BRANCH || 'main' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Verify the originating workflow before downloading
+        id: producer
         uses: actions/github-script@v7
         with:
           script: |
@@ -44,6 +47,7 @@ jobs:
             const {pathToFileURL} = await import('node:url');
             const {assertSnapshotProducer} = await import(pathToFileURL(process.env.GITHUB_WORKSPACE+'/scripts/site-snapshot-policy.mjs'));
             assertSnapshotProducer(run,context.repo.owner+'/'+context.repo.repo,process.env.RELEASE_BRANCH);
+            core.setOutput('requires-independence', run.path === '.github/workflows/prepare-site-release.yml');
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v4
         with:
@@ -64,7 +68,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
+          SITE_INDEPENDENCE_REQUIRED: ${{ steps.producer.outputs.requires-independence }}
         run: node scripts/release-ci.mjs verify-site-review "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$REVIEW_COMMENT_ID"
+      - name: Bind verified recovery and current-main acknowledgement
+        id: receipt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
+        run: node scripts/site-auto.mjs prepare-recovery-receipt "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$RUNNER_TEMP/site-deployed"
       - name: Deploy retained Web output
         uses: cloudflare/wrangler-action@v3
         with:
@@ -83,3 +94,10 @@ jobs:
           workingDirectory: ${{ runner.temp }}/site-snapshot/apps/storybook
           environment: production
           command: deploy
+      - name: Record paired recovery only after both deployments succeed
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-deployed-${{ steps.receipt.outputs.source-commit }}-recovery-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/site-deployed
+          retention-days: 90
+          if-no-files-found: error

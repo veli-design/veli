@@ -27,6 +27,13 @@ export function validatePublishedSnapshot(snapshot) {
     assert.match(item.sha256, /^[a-f0-9]{64}$/);
     assert.match(item.integrity, /^sha512-[A-Za-z0-9+/]{86}==$/);
   }
+  if (snapshot.execution) {
+    assert.match(snapshot.execution.repository, /^[^/]+\/[^/]+$/);
+    assert.match(snapshot.execution.controllerCommit, /^[a-f0-9]{40}$/);
+    assert.equal(snapshot.execution.validatedCommit, snapshot.sourceCommit);
+    for (const key of ['run', 'attempt'])
+      assert.ok(Number.isSafeInteger(snapshot.execution[key]) && snapshot.execution[key] > 0);
+  }
   return snapshot;
 }
 
@@ -120,6 +127,17 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
     assert.equal(value.sourceCommit, git('rev-parse', 'HEAD'));
     const { snapshot, artifacts } = await recordPublication(value, git('rev-parse', 'HEAD^{tree}'));
+    if (process.env.GITHUB_ACTIONS === 'true' && process.env.RELEASE_SOURCE) {
+      assert.equal(process.env.RELEASE_SOURCE, snapshot.sourceCommit);
+      snapshot.execution = {
+        repository: process.env.GITHUB_REPOSITORY,
+        controllerCommit: process.env.GITHUB_SHA,
+        validatedCommit: snapshot.sourceCommit,
+        run: Number(process.env.GITHUB_RUN_ID),
+        attempt: Number(process.env.GITHUB_RUN_ATTEMPT),
+      };
+      validatePublishedSnapshot(snapshot);
+    }
     await writePublication(output, snapshot, artifacts);
   } else throw new Error('Expected record or verify; this tool never publishes');
   console.log('Verified all three public npm artifacts; no publication performed.');

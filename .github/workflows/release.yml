@@ -28,7 +28,7 @@ jobs:
   release:
     name: Release
     needs: plan
-    concurrency: Release-Publish-${{ github.sha }}
+    concurrency: Release-Publish
     if: needs.plan.outputs.mode == 'publish' && vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH
     runs-on: ubuntu-latest
     permissions:
@@ -38,6 +38,7 @@ jobs:
       id-token: write
     outputs:
       published: ${{ steps.changesets.outputs.published }}
+      source: ${{ steps.source.outputs.source }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -47,6 +48,16 @@ jobs:
         with:
           node-version: 24
 
+      - name: Select latest merged release under the publication lock
+        id: source
+        run: node scripts/release-order.mjs publication-source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout selected immutable release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.source }}
+          fetch-depth: 0
       - name: Require completed npm bootstrap and trusted publishers
         if: needs.plan.outputs.mode == 'publish'
         run: test "$TRUSTED_PUBLISHING_READY" = 'true'
@@ -55,7 +66,7 @@ jobs:
 
       - name: Verify approved validation of the actual merged release tree
         if: needs.plan.outputs.mode == 'publish'
-        run: node scripts/release-ci.mjs verify
+        run: node scripts/release-order.mjs verify-selected
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -81,7 +92,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: corepack pnpm release
+          publish: node scripts/release-order.mjs publish
+          commitMode: git-cli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The private source repository cannot generate npm provenance.
@@ -126,6 +138,6 @@ jobs:
       actions: read
     uses: ./.github/workflows/deploy-release-sites.yml
     with:
-      source-ref: ${{ github.sha }}
+      source-ref: ${{ needs.release.outputs.source }}
       manifest-run-id: ${{ github.run_id }}
     secrets: inherit

@@ -51,6 +51,7 @@ export function validateSitePlan(plan) {
     'Web and Storybook require distinct root origins',
   );
   assert.equal(typeof data.canonical, 'boolean');
+  if (data.manualOverride !== undefined) assert.equal(data.manualOverride, true);
   if (data.publication) {
     validatePublishedSnapshot(data.publication);
     assert.deepEqual(versionManifest(data.publication).packages, plan.packages);
@@ -101,6 +102,7 @@ export async function createSitePlan({
   packageReleaseTag = '',
   sourceCommit = git(root, 'rev-parse', 'HEAD').trim(),
   canonical = false,
+  manualOverride = false,
   publication,
 }) {
   const baseline = validateManifest(JSON.parse(packageManifest));
@@ -125,6 +127,7 @@ export async function createSitePlan({
       webOrigin: siteOrigin(webOrigin),
       storybookOrigin: siteOrigin(storybookOrigin),
       canonical,
+      ...(manualOverride ? { manualOverride: true } : {}),
       ...(publication ? { publication } : {}),
       sourceLockSha256: digest(sourceLock),
       packageManifestSha256: digest(packageManifest),
@@ -381,6 +384,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     ] = args;
     const plan = await createSitePlan({
       mode,
+      manualOverride: process.env.VELI_MANUAL_SITE_OVERRIDE === 'true',
       packageManifest: await readFile(baseline),
       ...(mode === 'published'
         ? {

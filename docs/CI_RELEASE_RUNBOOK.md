@@ -10,7 +10,12 @@ account-authenticated bootstrap publication was a one-time prerequisite.
 Every main push runs **Prepare release PR** with versioning-only Changesets actions.
 It creates or refreshes the bot release PR; it never publishes. Approve the native
 GitHub Actions run for a bot-created PR when requested. Existing exact-head release
-validation, required reviews and branch protections still apply.
+validation, required reviews and branch protections still apply. Preparation checks
+that the immutable event SHA is still main before invoking Changesets (which resets
+to that SHA internally). An obsolete event never versions or pushes the bot branch.
+It checks freshness again after preparation; a small dependency-free catch-up job
+can dispatch preparation of current main. Only that job has `actions: write`; the
+job installing project dependencies retains no workflow-dispatch permission.
 
 Before publication, complete PD-1289: verify the actual repository identity and npm
 trusted-publisher mapping for all three `@veli-design` packages and `release.yml`.
@@ -29,16 +34,30 @@ Visual review approved.
 The review must belong to the final release head. A stale, dismissed, bot or read-only
 review does not qualify; neither labels nor workflow inputs count as approval.
 A later changes-request or dismissal invalidates approval; a comment does not grant or revoke it. Merge then
-triggers **Release** on the exact push commit. Ordinary main pushes and pending
+triggers **Release**. The publisher revalidates the actual selected merged release commit. Ordinary main pushes and pending
 Changesets are handled by preparation only and cannot publish. Set the separately
 approved repository variables `VELI_RELEASE_BRANCH=main`, `VELI_NPM_DIST_TAG`
 (for example `latest` only when authorized), `VELI_NPM_PUBLICATION_APPROVED=true`
 and `VELI_NPM_TRUSTED_PUBLISHING_READY=true` after completing their prerequisites.
 No default dist-tag is assumed. No npm environment identity changes are introduced.
-The read-only plan is separate from the privileged publisher, with a per-commit
-publication lock so a versioning run or unrelated push cannot replace a queued
-publication for another commit. Coordinate one release at a time; the lock is not a
-general cross-version publication queue.
+The read-only event plan is separate from the privileged publisher. One shared
+`Release-Publish` lock serializes all release commits. After acquiring it, the
+publisher selects the newest authenticated merged Changesets PR in current main
+history, checks out that immutable commit, rejects remaining Changesets/dirty source,
+and verifies its full native CI and human visual approval. A delayed older event
+therefore services the latest release instead of publishing an older version last.
+Immediately before the publication command, all three public npm dist-tags are read
+anonymously; a failed registry read, invalid existing tag or version regression fails closed.
+Only the approved configured tag is considered. Do not publish concurrently outside
+this controlled workflow.
+
+The action is explicitly pinned to Git CLI commit mode so locally created package
+tags reference the selected checkout, rather than an older triggering event. The
+publication descriptor records both the triggering controller commit and validated
+source commit/run/attempt; they may differ. The private repository still disables
+npm source provenance. Reassess that identity distinction before enabling provenance.
+Published baseline selection follows immutable tag ancestry on main, never GitHub
+release creation timestamps, so a later backfill cannot displace a newer baseline.
 
 After successful publication, the workflow anonymously verifies each exact npm
 version and tarball, retaining `publication.json`, `release-manifest.json` and the
@@ -108,21 +127,33 @@ failure can temporarily split the rollout. No running deployment is cancelled;
 the newer eligible run converges both sites after validation. Failed publication
 or pending package work continues to hold automatic site delivery.
 
-For explicit preparation/inspection or recovery, the existing manual path remains:
+## Manual site-only override while a release is pending
+
+The automatic global hold is intentional. Maintainers may use the manual path when
+they have determined the entire selected Web/Storybook snapshot is independent of
+unpublished packages. Automated builds cannot prove that documentation prose or
+story descriptions describe released behavior. This path does not filter held
+content out of main or compose independent PR patches; choose a reviewed compatible
+source, or wait if that whole source contains dependent content.
 
 Dispatch **Prepare site-only release snapshot** on main with a full reviewed source
 commit already on main and an explicit package release tag containing
 `publication.json`. The temporary `bootstrap-2026-11-01` baseline is supported from
 its retained reviewed record. Old scoped release assets cannot be selected silently.
-Preparation verifies anonymous npm metadata and tarball bytes, stages isolated
-published-package consumers and builds both sites. Source and package-release
+Preparation is allowed with pending Changesets. It never publishes npm packages,
+uses no local candidate tarballs, and does not substitute unpublished workspace UI.
+It verifies anonymous npm metadata and tarball bytes, stages isolated
+published-package consumers and builds both sites. The plan marks this as a manual
+override; that metadata is not approval. Source and package-release
 commits may differ; both are retained in the plan.
 
 Catalog declarations must satisfy the selected versions and `testedDependencies`
 must record those exact versions. A new React minor therefore requires a separately
 rehearsed and reviewed catalog baseline. Do not widen ranges to bypass this check.
 The merged React 0.19 catalog baseline must be included when refreshing the final
-release PR; older React 0.18 declarations cannot authorize that output.
+release PR; older React 0.18 declarations cannot authorize that output. The manual
+override does not bypass this safeguard: a forward 0.19 catalog cannot deploy using
+published React 0.18, even when the intended design edit is unrelated.
 
 Preparation uploads an immutable bundle with static outputs, Wrangler configuration,
 source and consumer lockfiles, installed versions, tool versions and file hashes.
@@ -143,7 +174,14 @@ access posts a comment on a GitHub issue or PR in this repository containing:
 Site visual review approved.
 Source: <full source commit from the verified snapshot>
 Snapshot: <independently recorded SHA-256>
+Independent of unpublished package changes.
 ```
+
+The independence line is required for bundles from **Prepare site-only release
+snapshot**, including when Changesets are pending. It is a real maintainer statement,
+not an automated semantic determination or a workflow-input checkbox. Review the
+whole selected source/content before making it. Other recovery producers retain the
+existing source/digest visual-review requirement.
 
 Use that comment's numeric ID in the dispatch. The input only locates the record;
 the workflow verifies the real author, current write permission, repository, source
@@ -158,6 +196,17 @@ checks all retained bytes and installed versions before using deployment secrets
 It deploys the retained outputs without rebuilding or publishing. A failed Release
 or redeploy producer is accepted only if it already retained a complete valid bundle;
 a failed preparation, cancelled run or unrelated workflow cannot supply one.
+
+After both deployments succeed, recovery uploads a verified paired-delivery receipt
+binding the source, snapshot digest, originating run, approval comment and current
+main acknowledged before deployment. Automatic catch-up recognizes that success and
+does not redeploy it. A rollback acknowledges outstanding main work through that
+watermark, preventing immediate automatic undo. A newer eligible site change or
+package publication can resume delivery; revert/fix the bad source on main before
+that next promotion. Failed or partial recovery never records success. Receipt names include the recovery
+attempt; old receipts are not overwritten. Historical successful attempts remain
+recognized even if a later rerun fails. Snapshot bundles retain their original names;
+start a fresh preparation dispatch rather than overwrite a retained bundle.
 
 Web and Storybook deploy sequentially. A second-site failure can leave a partial
 rollout; retry the same reviewed bundle to converge both sites. A previously approved

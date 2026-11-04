@@ -1,11 +1,25 @@
 // Main-only site delivery. No publication permissions or workflow input approvals.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, readFileSync, readdirSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import {
+  appendFileSync,
+  readFileSync,
+  readdirSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { githubAPI, mergedRelease, verifyCurrentPublication } from './release-ci.mjs';
+import { newestPublicationRelease } from './release-order.mjs';
+import {
+  recoveryReceipt,
+  validateRecoveryReceipt,
+  readRecoveryReceipt,
+} from './site-recovery-receipt.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 export const sitePaths = (files) =>
@@ -29,22 +43,40 @@ async function pages(api, path, key) {
   }
   throw new Error('Incomplete site-delivery evidence');
 }
-async function successfulDelivery(api, artifact, source, readGit = git) {
+async function deliveryAnchor(
+  api,
+  artifact,
+  source,
+  readGit = git,
+  readReceipt = readRecoveryReceipt,
+) {
   if (artifact.expired || !/^[a-f0-9]{40}$/.test(artifact.workflow_run?.head_sha ?? ''))
     return false;
   const run = await api(`/actions/runs/${artifact.workflow_run.id}`);
   if (
-    run.status !== 'completed' ||
-    run.conclusion !== 'success' ||
     run.head_branch !== 'main' ||
     run.head_sha !== artifact.workflow_run.head_sha ||
-    !['.github/workflows/release.yml', '.github/workflows/deploy-site-changes.yml'].includes(
-      run.path,
-    ) ||
+    ![
+      '.github/workflows/release.yml',
+      '.github/workflows/deploy-site-changes.yml',
+      '.github/workflows/deploy-site-snapshot.yml',
+    ].includes(run.path) ||
     !['push', 'workflow_run', 'workflow_dispatch'].includes(run.event)
   )
     return false;
-  if (run.path === '.github/workflows/release.yml') return run.head_sha === source;
+  if (run.path === '.github/workflows/deploy-site-snapshot.yml') {
+    assert.equal(run.event, 'workflow_dispatch');
+    const receipt = await readReceipt(api, artifact);
+    const attempt =
+      receipt.attempt === run.run_attempt
+        ? run
+        : await api(`/actions/runs/${run.id}/attempts/${receipt.attempt}`);
+    if (attempt.status !== 'completed' || attempt.conclusion !== 'success') return false;
+    const namedAttempt = /-recovery-([1-9][0-9]*)$/.exec(artifact.name)?.[1];
+    if (namedAttempt) assert.equal(Number(namedAttempt), receipt.attempt);
+    return validateRecoveryReceipt(receipt, source, attempt, readGit);
+  }
+  if (run.status !== 'completed' || run.conclusion !== 'success') return false;
   // Ordinary delivery resolves current main AFTER acquiring the lock. The event
   // commit can be older than the actual built/deployed source named by its receipt.
   if (run.head_sha !== source) {
@@ -55,31 +87,41 @@ async function successfulDelivery(api, artifact, source, readGit = git) {
       throw error;
     }
   }
-  return true;
+  return source;
 }
-export async function alreadyDelivered(api, source, readGit = git) {
-  const artifacts = await pages(
-    api,
-    `/actions/artifacts?name=site-deployed-${source}`,
-    'artifacts',
-  );
+export async function alreadyDelivered(
+  api,
+  source,
+  readGit = git,
+  readReceipt = readRecoveryReceipt,
+) {
+  const artifacts = await pages(api, '/actions/artifacts', 'artifacts');
   for (const artifact of artifacts)
     if (
-      artifact.name === `site-deployed-${source}` &&
-      (await successfulDelivery(api, artifact, source, readGit))
+      new RegExp(`^site-deployed-${source}(?:-recovery-[1-9][0-9]*)?$`).test(artifact.name ?? '') &&
+      (await deliveryAnchor(api, artifact, source, readGit, readReceipt))
     )
       return true;
   return false;
 }
-export async function latestDelivery(api, source, readGit = git) {
+export async function latestDelivery(
+  api,
+  source,
+  readGit = git,
+  readReceipt = readRecoveryReceipt,
+) {
   const history = readGit('rev-list', '--first-parent', source).split('\n');
   const rank = new Map(history.map((commit, index) => [commit, index]));
   const artifacts = await pages(api, '/actions/artifacts', 'artifacts');
   let latest = null;
   for (const artifact of artifacts) {
-    const commit = /^site-deployed-([a-f0-9]{40})$/.exec(artifact.name ?? '')?.[1];
-    if (!commit || !rank.has(commit) || (latest && rank.get(commit) >= rank.get(latest))) continue;
-    if (await successfulDelivery(api, artifact, commit, readGit)) latest = commit;
+    const commit = /^site-deployed-([a-f0-9]{40})(?:-recovery-[1-9][0-9]*)?$/.exec(
+      artifact.name ?? '',
+    )?.[1];
+    if (!commit) continue;
+    const anchor = await deliveryAnchor(api, artifact, commit, readGit, readReceipt);
+    if (anchor && rank.has(anchor) && (!latest || rank.get(anchor) < rank.get(latest)))
+      latest = anchor;
   }
   return latest;
 }
@@ -87,13 +129,14 @@ export async function planSiteDelivery(
   api,
   { source, pending, release, packageSource, bootstrap },
   readGit = git,
+  readReceipt = readRecoveryReceipt,
 ) {
   if (pending) return { eligible: false, reason: 'Pending Changesets' };
   if (release && packageSource !== source)
     return { eligible: false, reason: 'Release has no matching publication record' };
   assert.match(packageSource, /^[a-f0-9]{40}$/);
   readGit('merge-base', '--is-ancestor', packageSource, source);
-  const delivered = await latestDelivery(api, source, readGit);
+  const delivered = await latestDelivery(api, source, readGit, readReceipt);
   const base = delivered ?? packageSource;
   const changed = readGit('diff', '--name-only', '--no-renames', base, source)
     .split('\n')
@@ -168,9 +211,9 @@ export async function verifyMergedSiteReview(api, repository, source) {
       p.merged_at &&
       p.merge_commit_sha === source &&
       p.base?.ref === 'main' &&
-      p.head?.repo?.full_name === repository,
+      p.base?.repo?.full_name === repository,
   );
-  assert.ok(pr, 'Automatic site delivery requires a merged same-repository PR');
+  assert.ok(pr, 'Automatic site delivery requires a PR merged into this repository');
   const reviews = await pages(api, `/pulls/${pr.number}/reviews`);
   const latest = new Map();
   for (const r of reviews)
@@ -183,7 +226,7 @@ export async function verifyMergedSiteReview(api, repository, source) {
   }
   throw new Error('A pre-merge human approval of the final PR head is required');
 }
-export async function selectBaseline(api) {
+export async function selectBaseline(api, source = git('rev-parse', 'HEAD'), readGit = git) {
   const releases = (await pages(api, '/releases')).filter(
     (r) =>
       !r.draft &&
@@ -191,10 +234,8 @@ export async function selectBaseline(api) {
       r.assets.some((a) => a.name === 'publication.json') &&
       r.assets.some((a) => a.name === 'release-manifest.json'),
   );
-  releases.sort((a, b) => b.published_at.localeCompare(a.published_at));
   if (!releases.length) return 'bootstrap-2026-11-01';
-  assert.match(releases[0].tag_name, /^[A-Za-z0-9@_][A-Za-z0-9@._/-]*$/);
-  return releases[0].tag_name;
+  return (await newestPublicationRelease(api, releases, source, readGit)).tag_name;
 }
 export function packageLockClosure(lock) {
   const result = {};
@@ -325,6 +366,37 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       console.log(error.message);
       appendFileSync(process.env.GITHUB_OUTPUT, 'ready=false\n');
     }
+  } else if (command === 'prepare-recovery-receipt') {
+    const { verifySiteBundle } = await import('./site-release.mjs');
+    const snapshot = await verifySiteBundle(target, process.argv[4]);
+    assert.equal(snapshot.plan.siteRelease.mode, 'published');
+    assert.ok(snapshot.plan.siteRelease.publication);
+    const main = (await api('/git/ref/heads/main')).object.sha;
+    assert.match(main, /^[a-f0-9]{40}$/);
+    git('fetch', '--no-tags', 'origin', main);
+    const value = recoveryReceipt({
+      source: snapshot.plan.sourceCommit,
+      main,
+      controller: git('rev-parse', 'HEAD'),
+      run: process.env.GITHUB_RUN_ID,
+      attempt: process.env.GITHUB_RUN_ATTEMPT,
+      producer: process.env.SNAPSHOT_RUN_ID,
+      digest: process.argv[4],
+      review: process.env.REVIEW_COMMENT_ID,
+    });
+    validateRecoveryReceipt(
+      value,
+      value.sourceCommit,
+      {
+        id: Number(process.env.GITHUB_RUN_ID),
+        run_attempt: Number(process.env.GITHUB_RUN_ATTEMPT),
+        head_sha: process.env.GITHUB_SHA,
+      },
+      git,
+    );
+    mkdirSync(process.argv[5], { recursive: true });
+    writeFileSync(resolve(process.argv[5], 'delivery.json'), JSON.stringify(value, null, 2) + '\n');
+    appendFileSync(process.env.GITHUB_OUTPUT, `source-commit=${value.sourceCommit}\n`);
   } else if (command === 'receipt') {
     mkdirSync(target, { recursive: true });
     appendFileSync(resolve(target, 'source.txt'), `${source}\n`);

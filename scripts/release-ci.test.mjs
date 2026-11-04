@@ -326,7 +326,12 @@ test('preparation workflow can only version the main snapshot with repository bo
   assert.deepEqual(preparation.on, { push: { branches: ['main'] }, workflow_dispatch: null });
   assert.deepEqual(preparation.permissions, { contents: 'read' });
   assert.equal(preparation.concurrency, 'Release-${{ github.ref }}');
-  assert.deepEqual(Object.keys(preparation.jobs), ['prepare']);
+  assert.deepEqual(Object.keys(preparation.jobs), ['prepare', 'catchup']);
+  assert.deepEqual(preparation.jobs.catchup.permissions, { actions: 'write', contents: 'read' });
+  assert.deepEqual(
+    preparation.jobs.catchup.steps.map((s) => s.uses),
+    ['actions/github-script@v7'],
+  );
   const job = preparation.jobs.prepare;
   assert.equal(job.if, "github.repository_id == '1115705061' && github.ref == 'refs/heads/main'");
   assert.deepEqual(job.permissions, { contents: 'write', 'pull-requests': 'write' });
@@ -334,12 +339,17 @@ test('preparation workflow can only version the main snapshot with repository bo
   assert.equal(job.env, undefined);
   assert.deepEqual(
     job.steps.filter((step) => step.run).map((step) => step.run),
-    ['corepack pnpm install --frozen-lockfile'],
+    [
+      'node scripts/release-order.mjs prepare-check',
+      'corepack pnpm install --frozen-lockfile',
+      'node scripts/release-order.mjs prepare-check',
+    ],
   );
   assert.deepEqual(
     job.steps.filter((step) => step.uses).map((step) => step.uses),
     [
       'actions/checkout@v4',
+      'actions/setup-node@v4',
       'pnpm/action-setup@v6',
       'actions/setup-node@v4',
       'changesets/action@v1',
@@ -354,8 +364,11 @@ test('preparation workflow can only version the main snapshot with repository bo
     title: 'chore: release packages',
   });
   assert.deepEqual(action.env, { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' });
-  for (const step of job.steps.filter((step) => step !== action))
-    assert.equal(step.env, undefined, 'Preparation must not receive npm credentials or approvals');
+  for (const step of job.steps)
+    assert.ok(
+      Object.keys(step.env ?? {}).every((key) => key === 'GITHUB_TOKEN'),
+      'Preparation must not receive npm credentials or publication approvals',
+    );
 });
 
 test('workflow keeps native approval, all release suites and publication ordering', async () => {
@@ -367,7 +380,7 @@ test('workflow keeps native approval, all release suites and publication orderin
   assert.deepEqual(release.on, { push: { branches: ['main'] }, workflow_dispatch: null });
   assert.equal(release.jobs.plan.if, "github.repository_id == '1115705061'");
   assert.equal(release.jobs.release.needs, 'plan');
-  assert.equal(release.jobs.release.concurrency, 'Release-Publish-${{ github.sha }}');
+  assert.equal(release.jobs.release.concurrency, 'Release-Publish');
   assert.equal(release.jobs.plan.permissions['id-token'], undefined);
   const gate = ci.jobs['blocks-consumer'];
   assert.ok(gate.needs.includes('build'));
@@ -389,7 +402,7 @@ test('workflow keeps native approval, all release suites and publication orderin
   assert.equal(publish.steps[trustIndex].if, "needs.plan.outputs.mode == 'publish'");
   assert.equal(publish.steps[trustIndex].run, `test "$TRUSTED_PUBLISHING_READY" = 'true'`);
   const verifyIndex = publish.steps.findIndex((step) =>
-    step.run?.includes('release-ci.mjs verify'),
+    step.run?.includes('release-order.mjs verify-selected'),
   );
   const installIndex = publish.steps.findIndex((step) =>
     step.run?.includes('install --frozen-lockfile'),
@@ -401,7 +414,7 @@ test('workflow keeps native approval, all release suites and publication orderin
   assert.equal(action.env.NPM_TOKEN, undefined);
   assert.equal(action.env.NODE_AUTH_TOKEN, undefined);
   assert.equal(action.env.NPM_CONFIG_PROVENANCE, false);
-  assert.equal(action.with.publish, 'corepack pnpm release');
+  assert.equal(action.with.publish, 'node scripts/release-order.mjs publish');
   assert.equal(action.if, "needs.plan.outputs.mode != 'none'");
   const publisher = read('./publish-packages.mjs');
   const { packages } = await getPackages(fileURLToPath(new URL('..', import.meta.url)));

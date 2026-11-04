@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: veli-public-release-sites
     env:
+      SITE_SOURCE_COMMIT: ${{ inputs.source-ref }}
       PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli-web.onegov.mv' }}
       STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://veli-storybook.onegov.mv' }}
     steps:
@@ -132,7 +133,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
         with:
-          name: site-deployed-${{ github.sha }}
+          name: site-deployed-${{ inputs.source-ref }}
           path: ${{ runner.temp }}/site-deployed
           retention-days: 90
           if-no-files-found: error

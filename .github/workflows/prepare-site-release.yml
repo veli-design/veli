@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       source-commit:
-        description: Full reviewed site source commit already on main
+        description: Reviewed main source; maintainer must confirm independence from unpublished package changes
         required: true
         type: string
       package-release-tag:
@@ -31,6 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
+      VELI_MANUAL_SITE_OVERRIDE: 'true'
       SOURCE_COMMIT: ${{ inputs.source-commit }}
       PACKAGE_RELEASE_TAG: ${{ inputs.package-release-tag }}
       PUBLIC_SITE_URL: ${{ inputs.web-origin }}
@@ -78,7 +79,9 @@ jobs:
           node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$(cat "$RUNNER_TEMP/site-digest.txt")"
           echo "Snapshot run: $GITHUB_RUN_ID. Source: $SOURCE_COMMIT." >> "$GITHUB_STEP_SUMMARY"
           echo "Snapshot SHA-256: $(cat "$RUNNER_TEMP/site-digest.txt")" >> "$GITHUB_STEP_SUMMARY"
-          echo 'Preparation only. Download, preview and visually review this exact bundle before an authorized deployment.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Manual override: pending Changesets do not block preparation. No npm publication is performed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Automated checks verify published packages and Blocks compatibility, but cannot prove docs/stories prose is release-independent.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Preview this exact bundle. The deployment approval comment must also state: Independent of unpublished package changes.' >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: site-snapshot-${{ github.run_id }}

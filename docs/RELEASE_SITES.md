@@ -72,3 +72,10 @@ without waiting for npm version bumps. Pending Changesets and unpublished packag
 source/build dependencies hold that path. Ordinary pre-merge approval and exact
 merged-source checks apply; recovery still uses an explicitly reviewed retained
 bundle. See [CI release operations](CI_RELEASE_RUNBOOK.md#independent-site-changes).
+
+Maintainers can override the automatic pending-release hold through **Prepare
+site-only release snapshot**, then **Deploy reviewed site snapshot**. The selected
+whole source must be independent of unpublished package changes; CI cannot establish
+that for prose. Published npm identity/bytes and exact Block compatibility remain
+mandatory. The actual human approval comment must confirm independence as documented
+in the runbook. No package publication occurs on this path.

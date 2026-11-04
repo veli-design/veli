@@ -113,3 +113,24 @@ test('unavailable versions, changed bytes, identity, registry URL and integrity 
   snapshot.packages['@veli-design/react'].sha256 = '0'.repeat(64);
   await assert.rejects(verifyPublishedPackages(snapshot, request), /changed bytes/);
 });
+
+test('publication records distinguish delayed controller from the actual validated source', () => {
+  const { snapshot } = fixture();
+  snapshot.execution = {
+    repository: 'veli-design/veli',
+    controllerCommit: 'f'.repeat(40),
+    validatedCommit: snapshot.sourceCommit,
+    run: 123,
+    attempt: 2,
+  };
+  validatePublishedSnapshot(snapshot);
+  for (const change of [
+    { validatedCommit: 'a'.repeat(40) },
+    { controllerCommit: 'bad' },
+    { run: 0 },
+    { attempt: NaN },
+  ])
+    assert.throws(() =>
+      validatePublishedSnapshot({ ...snapshot, execution: { ...snapshot.execution, ...change } }),
+    );
+});

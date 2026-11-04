@@ -214,3 +214,42 @@ test('corrupt, extra, missing, symlink and duplicate artifact members cannot ver
   ])
     assert.throws(() => safeArtifactPath(path));
 });
+
+test('manual published snapshot can bind a reviewed pending-release tree without using unpublished packages', async (t) => {
+  const f = await fixture(t);
+  await put(
+    f.root,
+    '.changeset/pending.md',
+    '---\n"@veli-design/react": minor\n---\n\n### Added\n\n- Pending package change.\n',
+  );
+  git(f.root, 'add', '.');
+  git(
+    f.root,
+    '-c',
+    'user.name=Fixture',
+    '-c',
+    'user.email=fixture@example.invalid',
+    'commit',
+    '-qm',
+    'pending package',
+  );
+  const source = git(f.root, 'rev-parse', 'HEAD');
+  const plan = await createSitePlan({
+    ...f.input,
+    sourceCommit: source,
+    requiredAncestor: source,
+    mode: 'published',
+    webOrigin: 'https://docs.example.com',
+    storybookOrigin: 'https://stories.example.com',
+    packageReleaseTag: 'bootstrap-2026-11-01',
+    manualOverride: true,
+  });
+  assert.equal(plan.sourceCommit, source);
+  assert.equal(plan.siteRelease.manualOverride, true);
+  assert.equal(plan.packages['@veli-design/react'], '0.18.0');
+  assert.notEqual(
+    plan.packages['@veli-design/react'],
+    JSON.parse(await readFile(join(f.root, 'packages/react/package.json'), 'utf8')).version,
+  );
+  await assertSiteSource(plan, f.root);
+});

@@ -179,7 +179,7 @@ export async function verifyVisualApproval(api, pr) {
 // The comment ID locates evidence; its input value is never approval by itself.
 export async function verifySiteReview(
   api,
-  { repository, sourceCommit, snapshotSha256, commentId },
+  { repository, sourceCommit, snapshotSha256, commentId, requiresIndependence = false },
 ) {
   assert.match(sourceCommit, sha);
   assert.match(snapshotSha256, /^[a-f0-9]{64}$/);
@@ -196,6 +196,7 @@ export async function verifySiteReview(
     'Site visual review approved.',
     `Source: ${sourceCommit}`,
     `Snapshot: ${snapshotSha256}`,
+    ...(requiresIndependence ? ['Independent of unpublished package changes.'] : []),
   ])
     assert.ok(
       lines.includes(line),
@@ -308,6 +309,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       sourceCommit: snapshot.plan.sourceCommit,
       snapshotSha256: process.argv[4],
       commentId: process.argv[5],
+      requiresIndependence: process.env.SITE_INDEPENDENCE_REQUIRED === 'true',
     });
   } else if (command === 'verify') {
     await verifyCurrentPublication();

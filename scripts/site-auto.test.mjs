@@ -27,7 +27,7 @@ const pr = {
   number: 9,
   merged_at: 'now',
   merge_commit_sha: source,
-  base: { ref: 'main' },
+  base: { ref: 'main', repo: { full_name: 'veli-design/veli' } },
   head: { sha: approved.commit_id, repo: { full_name: 'veli-design/veli' } },
 };
 const apiFor =
@@ -119,7 +119,15 @@ test('baseline chooses durable non-draft non-prerelease snapshot, bootstrap only
       assets: [asset('publication.json'), asset('release-manifest.json')],
     },
   ];
-  assert.equal(await selectBaseline(async () => releases), '@veli-design/react@0.19.0');
+  assert.equal(
+    await selectBaseline(
+      async (path) =>
+        path.startsWith('/releases') ? releases : { object: { type: 'commit', sha: source } },
+      source,
+      () => source,
+    ),
+    '@veli-design/react@0.19.0',
+  );
   assert.equal(await selectBaseline(async () => []), 'bootstrap-2026-11-01');
 });
 test('automatic workflow validates merged source and installed artifacts, serializes and captures before deploy', () => {
@@ -323,11 +331,11 @@ test('queued older event builds latest main; receipt binds actual source and anc
   ]);
   assert.equal(await latestDelivery(api, h.workflow, h.read), h.workflow);
   await assert.rejects(assertCurrent(api, h.workflow, h.read), /already deployed/);
-  // A release handoff must still bind its own exact publication commit.
+  // A delayed publisher can select a newer validated release under its shared lock.
   const wrongRelease = deliveryAPI(h.workflow, [
     { source: h.workflow, eventSource: h.site, path: '.github/workflows/release.yml' },
   ]);
-  assert.equal(await latestDelivery(wrongRelease, h.workflow, h.read), null);
+  assert.equal(await latestDelivery(wrongRelease, h.workflow, h.read), h.workflow);
 });
 test('latest delivery follows main ancestry, ignores failed/expired/foreign receipts and older reruns', async (t) => {
   const h = historyFixture(t);
@@ -450,4 +458,29 @@ test('a late queued event cannot lose the publication handoff: matching release 
     /publication.sourceCommit, source, 'Release has no matching publication record'/,
   );
   assert.match(script, /verifyCurrentPublication\(\{ \.\.\.process.env, GITHUB_SHA: source \}\)/);
+});
+
+test('merged fork contribution is accepted only with target-repository identity and a final-head maintainer review', async () => {
+  const fork = { ...pr, head: { ...pr.head, repo: { full_name: 'contributor/veli' } } };
+  const api = async (path) => (path.startsWith('/commits/') ? [fork] : apiFor([approved])(path));
+  await verifyMergedSiteReview(api, 'veli-design/veli', source);
+  await assert.rejects(
+    verifyMergedSiteReview(
+      async (path) => (path.startsWith('/commits/') ? [{ ...fork, merged_at: null }] : api(path)),
+      'veli-design/veli',
+      source,
+    ),
+    /merged into this repository/,
+  );
+  await assert.rejects(
+    verifyMergedSiteReview(
+      async (path) =>
+        path.startsWith('/commits/')
+          ? [{ ...fork, base: { ref: 'main', repo: { full_name: 'wrong/repo' } } }]
+          : api(path),
+      'veli-design/veli',
+      source,
+    ),
+    /merged into this repository/,
+  );
 });
