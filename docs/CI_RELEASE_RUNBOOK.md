@@ -153,7 +153,11 @@ rehearsed and reviewed catalog baseline. Do not widen ranges to bypass this chec
 The merged React 0.19 catalog baseline must be included when refreshing the final
 release PR; older React 0.18 declarations cannot authorize that output. The manual
 override does not bypass this safeguard: a forward 0.19 catalog cannot deploy using
-published React 0.18, even when the intended design edit is unrelated.
+published React 0.18, even when the intended design edit is unrelated. In particular,
+`account-panel` requires React `^0.19.0`; preparing current main against the retained
+0.18.0 bootstrap baseline fails compatibility validation. The manual workflow is
+not guaranteed to succeed for every source: it builds the whole selected source,
+not just the independent edit.
 
 Preparation uploads an immutable bundle with static outputs, Wrangler configuration,
 source and consumer lockfiles, installed versions, tool versions and file hashes.
@@ -198,12 +202,15 @@ or redeploy producer is accepted only if it already retained a complete valid bu
 a failed preparation, cancelled run or unrelated workflow cannot supply one.
 
 After both deployments succeed, recovery uploads a verified paired-delivery receipt
-binding the source, snapshot digest, originating run, approval comment and current
-main acknowledged before deployment. Automatic catch-up recognizes that success and
-does not redeploy it. A rollback acknowledges outstanding main work through that
-watermark, preventing immediate automatic undo. A newer eligible site change or
-package publication can resume delivery; revert/fix the bad source on main before
-that next promotion. Failed or partial recovery never records success. Receipt names include the recovery
+binding the actual deployed source, snapshot digest, originating run and approval
+comment. It never acknowledges newer main commits as delivered. Delivery order is
+based on successful receipt creation under the shared deployment lock, including
+restoration of an older source after a newer deployment. Automatic catch-up can
+therefore promote outstanding eligible main work after a recovery or rollback.
+Snapshot approval does not authorize suppressing that work. An intentional rollback
+hold requires separate explicit maintainer authorization and coordination of
+automatic delivery and pending release handoffs; this workflow does not implicitly
+pause either. Failed or partial recovery never records success. Receipt names include the recovery
 attempt; old receipts are not overwritten. Historical successful attempts remain
 recognized even if a later rerun fails. Snapshot bundles retain their original names;
 start a fresh preparation dispatch rather than overwrite a retained bundle.

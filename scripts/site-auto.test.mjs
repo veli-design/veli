@@ -92,11 +92,13 @@ test('duplicate guard is checked inside deployment lock', async () => {
                   {
                     name: `site-deployed-${source}`,
                     expired: false,
+                    created_at: '2026-01-01T00:00:00Z',
                     workflow_run: { head_sha: source, id: 42 },
                   },
                 ],
               },
       source,
+      () => '',
     ),
     /already deployed/,
   );
@@ -256,6 +258,8 @@ function deliveryAPI(main, records = []) {
   const artifacts = records.map((r, index) => ({
     name: `site-deployed-${r.source}`,
     expired: r.expired ?? false,
+    created_at:
+      r.createdAt ?? new Date(Date.UTC(2026, 0, 1, 0, 0, records.length - index)).toISOString(),
     workflow_run: { id: index + 1, head_sha: r.eventSource ?? r.source },
   }));
   return async (path) => {
@@ -337,12 +341,12 @@ test('queued older event builds latest main; receipt binds actual source and anc
   ]);
   assert.equal(await latestDelivery(wrongRelease, h.workflow, h.read), h.workflow);
 });
-test('latest delivery follows main ancestry, ignores failed/expired/foreign receipts and older reruns', async (t) => {
+test('latest delivery follows actual promotion order and ignores failed/expired/foreign receipts', async (t) => {
   const h = historyFixture(t);
   const api = deliveryAPI(h.prose, [
-    { source: h.baseline },
-    { source: h.workflow },
-    { source: h.site },
+    { source: h.baseline, createdAt: '2026-01-01T00:00:00Z' },
+    { source: h.workflow, createdAt: '2026-03-01T00:00:00Z' },
+    { source: h.site, createdAt: '2026-02-01T00:00:00Z' },
   ]);
   assert.equal(await latestDelivery(api, h.prose, h.read), h.workflow);
   const invalid = deliveryAPI(h.prose, [
@@ -482,5 +486,25 @@ test('merged fork contribution is accepted only with target-repository identity 
       source,
     ),
     /merged into this repository/,
+  );
+});
+
+test('ambiguous or missing receipt creation order fails closed', async (t) => {
+  const h = historyFixture(t);
+  const same = '2026-01-01T00:00:00Z';
+  await assert.rejects(
+    latestDelivery(
+      deliveryAPI(h.site, [
+        { source: h.site, createdAt: same },
+        { source: h.baseline, createdAt: same },
+      ]),
+      h.site,
+      h.read,
+    ),
+    /Ambiguous delivery order/,
+  );
+  await assert.rejects(
+    latestDelivery(deliveryAPI(h.site, [{ source: h.site, createdAt: 'invalid' }]), h.site, h.read),
+    /no trustworthy creation time/,
   );
 });

@@ -95,14 +95,17 @@ export async function alreadyDelivered(
   readGit = git,
   readReceipt = readRecoveryReceipt,
 ) {
-  const artifacts = await pages(api, '/actions/artifacts', 'artifacts');
-  for (const artifact of artifacts)
-    if (
-      new RegExp(`^site-deployed-${source}(?:-recovery-[1-9][0-9]*)?$`).test(artifact.name ?? '') &&
-      (await deliveryAnchor(api, artifact, source, readGit, readReceipt))
-    )
-      return true;
-  return false;
+  const latest = await latestDelivery(api, source, readGit, readReceipt);
+  if (!latest) return false;
+  // Only the latest actual promotion counts. A historical success for this SHA
+  // cannot mask a later rollback/recovery to older bytes.
+  try {
+    readGit('merge-base', '--is-ancestor', source, latest);
+    return true;
+  } catch (error) {
+    if (error.status === 1) return false;
+    throw error;
+  }
 }
 export async function latestDelivery(
   api,
@@ -110,20 +113,37 @@ export async function latestDelivery(
   readGit = git,
   readReceipt = readRecoveryReceipt,
 ) {
-  const history = readGit('rev-list', '--first-parent', source).split('\n');
-  const rank = new Map(history.map((commit, index) => [commit, index]));
   const artifacts = await pages(api, '/actions/artifacts', 'artifacts');
-  let latest = null;
+  const successful = [];
   for (const artifact of artifacts) {
     const commit = /^site-deployed-([a-f0-9]{40})(?:-recovery-[1-9][0-9]*)?$/.exec(
       artifact.name ?? '',
     )?.[1];
     if (!commit) continue;
-    const anchor = await deliveryAnchor(api, artifact, commit, readGit, readReceipt);
-    if (anchor && rank.has(anchor) && (!latest || rank.get(anchor) < rank.get(latest)))
-      latest = anchor;
+    const deployed = await deliveryAnchor(api, artifact, commit, readGit, readReceipt);
+    if (!deployed) continue;
+    try {
+      readGit('merge-base', '--is-ancestor', deployed, source);
+    } catch (error) {
+      if (error.status === 1) continue;
+      throw error;
+    }
+    const time = Date.parse(artifact.created_at);
+    assert.ok(Number.isFinite(time), 'Delivery receipt has no trustworthy creation time');
+    successful.push({ source: deployed, time });
   }
-  return latest;
+  // Receipts are uploaded after both deployments under the same non-cancelling
+  // lock. Use completed promotion order, not the greatest historical main SHA:
+  // the most recent promotion may intentionally have restored an older source.
+  successful.sort((a, b) => b.time - a.time);
+  if (!successful.length) return null;
+  assert.ok(
+    successful
+      .filter((item) => item.time === successful[0].time)
+      .every((item) => item.source === successful[0].source),
+    'Ambiguous delivery order; refusing to infer which source is live',
+  );
+  return successful[0].source;
 }
 export async function planSiteDelivery(
   api,
@@ -371,12 +391,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const snapshot = await verifySiteBundle(target, process.argv[4]);
     assert.equal(snapshot.plan.siteRelease.mode, 'published');
     assert.ok(snapshot.plan.siteRelease.publication);
-    const main = (await api('/git/ref/heads/main')).object.sha;
-    assert.match(main, /^[a-f0-9]{40}$/);
-    git('fetch', '--no-tags', 'origin', main);
     const value = recoveryReceipt({
       source: snapshot.plan.sourceCommit,
-      main,
       controller: git('rev-parse', 'HEAD'),
       run: process.env.GITHUB_RUN_ID,
       attempt: process.env.GITHUB_RUN_ATTEMPT,
@@ -397,6 +413,10 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     mkdirSync(process.argv[5], { recursive: true });
     writeFileSync(resolve(process.argv[5], 'delivery.json'), JSON.stringify(value, null, 2) + '\n');
     appendFileSync(process.env.GITHUB_OUTPUT, `source-commit=${value.sourceCommit}\n`);
+    appendFileSync(
+      process.env.GITHUB_STEP_SUMMARY,
+      `Recovery deploys source ${value.sourceCommit}. It does not acknowledge or suppress newer main work. An intentional rollback hold requires separate authorization and coordination of automatic delivery.\n`,
+    );
   } else if (command === 'receipt') {
     mkdirSync(target, { recursive: true });
     appendFileSync(resolve(target, 'source.txt'), `${source}\n`);

@@ -10,7 +10,7 @@ import {
   validateRecoveryReceipt,
   readRecoveryReceipt,
 } from './site-recovery-receipt.mjs';
-import { latestDelivery, planSiteDelivery } from './site-auto.mjs';
+import { latestDelivery, planSiteDelivery, alreadyDelivered } from './site-auto.mjs';
 import { verifySiteReview } from './release-ci.mjs';
 const digest = 'd'.repeat(64);
 function fixture(t) {
@@ -42,6 +42,7 @@ function recoveryAPI(records) {
     id: index + 1,
     name: `site-deployed-${r.source}`,
     expired: false,
+    created_at: new Date(Date.UTC(2026, 0, 1, 0, 0, index)).toISOString(),
     workflow_run: { id: index + 1, head_sha: r.controller ?? r.source },
   }));
   return async (path) => {
@@ -71,7 +72,6 @@ test('successful manual retry is recognized and does not select a duplicate auto
   const api = recoveryAPI(records);
   const value = recoveryReceipt({
     source: h.site,
-    main: h.site,
     controller: h.controller,
     run: 2,
     attempt: 1,
@@ -91,40 +91,103 @@ test('successful manual retry is recognized and does not select a duplicate auto
   );
   assert.equal(selected.eligible, false);
 });
-test('rollback acknowledgement suppresses immediate reapplication; a subsequent site change resumes', async (t) => {
+test('recovering S after M merges never claims M was deployed, including after a workflow-only successor', async (t) => {
   const h = fixture(t);
+  const newer = h.commit('new site M');
   const value = recoveryReceipt({
-    source: h.base,
-    main: h.site,
-    controller: h.controller,
-    run: 1,
+    source: h.site,
+    controller: newer,
+    run: 2,
     attempt: 1,
     producer: 9,
     digest,
     review: 17,
   });
-  const api = recoveryAPI([{ source: h.base, recovery: true, controller: h.controller }]);
-  assert.equal(await latestDelivery(api, h.site, h.git, async () => value), h.site);
-  const next = h.commit('reviewed next site change');
-  const anchor = await latestDelivery(api, next, h.git, async () => value);
-  assert.equal(anchor, h.site);
-  assert.match(h.git('diff', '--name-only', anchor, next), /apps\/web/);
-  const run = { id: 1, run_attempt: 1, head_sha: h.controller };
-  assert.equal(validateRecoveryReceipt(value, h.base, run, h.git), h.site);
+  const api = recoveryAPI([
+    { source: h.base },
+    { source: h.site, recovery: true, controller: newer },
+  ]);
+  assert.equal(
+    validateRecoveryReceipt(value, h.site, { id: 2, run_attempt: 1, head_sha: newer }, h.git),
+    h.site,
+  );
+  assert.equal(await latestDelivery(api, newer, h.git, async () => value), h.site);
+  const options = {
+    source: newer,
+    pending: false,
+    release: false,
+    packageSource: h.base,
+    bootstrap: false,
+  };
+  assert.equal((await planSiteDelivery(api, options, h.git, async () => value)).eligible, true);
+  mkdirSync(resolve(h.root, '.github/workflows'), { recursive: true });
+  writeFileSync(resolve(h.root, '.github/workflows/ci.yml'), 'workflow-only');
+  h.git('add', '.');
+  h.git('commit', '-qm', 'workflow successor');
+  const workflow = h.git('rev-parse', 'HEAD');
+  assert.equal(
+    (await planSiteDelivery(api, { ...options, source: workflow }, h.git, async () => value))
+      .eligible,
+    true,
+  );
+  assert.throws(() =>
+    validateRecoveryReceipt(
+      { ...value, acknowledgedMain: newer },
+      h.site,
+      { id: 2, run_attempt: 1, head_sha: newer },
+      h.git,
+    ),
+  );
+});
+test('latest physical rollback source wins over an older receipt for newer code; no implicit suppression', async (t) => {
+  const h = fixture(t);
+  const value = recoveryReceipt({
+    source: h.base,
+    controller: h.site,
+    run: 2,
+    attempt: 1,
+    producer: 9,
+    digest,
+    review: 17,
+  });
+  const api = recoveryAPI([
+    { source: h.site },
+    { source: h.base, recovery: true, controller: h.site },
+  ]);
+  assert.equal(await latestDelivery(api, h.site, h.git, async () => value), h.base);
+  assert.equal(await alreadyDelivered(api, h.site, h.git, async () => value), false);
+  assert.equal(
+    (
+      await planSiteDelivery(
+        api,
+        { source: h.site, pending: false, release: false, packageSource: h.base, bootstrap: false },
+        h.git,
+        async () => value,
+      )
+    ).eligible,
+    true,
+  );
   for (const change of [
-    { run: 2 },
+    { run: 3 },
     { attempt: 2 },
     { sourceCommit: h.site },
     { controllerCommit: h.base },
     { snapshotSha256: 'bad' },
+    { schema: 1 },
   ])
-    assert.throws(() => validateRecoveryReceipt({ ...value, ...change }, h.base, run, h.git));
+    assert.throws(() =>
+      validateRecoveryReceipt(
+        { ...value, ...change },
+        h.base,
+        { id: 2, run_attempt: 1, head_sha: h.site },
+        h.git,
+      ),
+    );
 });
 test('receipt ZIP reader only reads bounded JSON and fails on altered identity', async (t) => {
   const h = fixture(t),
     value = recoveryReceipt({
       source: h.site,
-      main: h.site,
       controller: h.controller,
       run: 1,
       attempt: 1,
@@ -194,7 +257,6 @@ test('a later failed rerun does not invalidate a successful recovery receipt fro
   const h = fixture(t);
   const value = recoveryReceipt({
     source: h.base,
-    main: h.site,
     controller: h.site,
     run: 7,
     attempt: 1,
@@ -206,6 +268,7 @@ test('a later failed rerun does not invalidate a successful recovery receipt fro
     id: 3,
     name: `site-deployed-${h.base}-recovery-1`,
     expired: false,
+    created_at: '2026-01-01T00:00:00Z',
     workflow_run: { id: 7, head_sha: h.site },
   };
   const run = {
@@ -224,7 +287,8 @@ test('a later failed rerun does not invalidate a successful recovery receipt fro
       : path.endsWith('/attempts/1')
         ? { ...run, run_attempt: 1, conclusion: 'success' }
         : run;
-  assert.equal(await latestDelivery(api, h.site, h.git, async () => value), h.site);
+  assert.equal(await latestDelivery(api, h.site, h.git, async () => value), h.base);
+  assert.equal(await alreadyDelivered(api, h.site, h.git, async () => value), false);
   const wrong = async (path) =>
     path.startsWith('/actions/artifacts')
       ? { artifacts: [artifact] }

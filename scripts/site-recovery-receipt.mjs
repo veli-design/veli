@@ -4,21 +4,11 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 const sha = /^[a-f0-9]{40}$/;
-export function recoveryReceipt({
-  source,
-  main,
-  controller,
-  run,
-  attempt,
-  producer,
-  digest,
-  review,
-}) {
+export function recoveryReceipt({ source, controller, run, attempt, producer, digest, review }) {
   const value = {
-    schema: 1,
+    schema: 2,
     kind: 'recovery',
     sourceCommit: source,
-    acknowledgedMain: main,
     controllerCommit: controller,
     run: Number(run),
     attempt: Number(attempt),
@@ -26,8 +16,7 @@ export function recoveryReceipt({
     snapshotSha256: digest,
     reviewCommentId: String(review),
   };
-  for (const key of ['sourceCommit', 'acknowledgedMain', 'controllerCommit'])
-    assert.match(value[key], sha);
+  for (const key of ['sourceCommit', 'controllerCommit']) assert.match(value[key], sha);
   for (const key of ['run', 'attempt', 'snapshotRun'])
     assert.ok(Number.isSafeInteger(value[key]) && value[key] > 0);
   assert.match(value.snapshotSha256, /^[a-f0-9]{64}$/);
@@ -39,7 +28,6 @@ export function validateRecoveryReceipt(value, source, run, readGit) {
     value,
     recoveryReceipt({
       source: value.sourceCommit,
-      main: value.acknowledgedMain,
       controller: value.controllerCommit,
       run: value.run,
       attempt: value.attempt,
@@ -52,9 +40,8 @@ export function validateRecoveryReceipt(value, source, run, readGit) {
   assert.equal(value.run, run.id);
   assert.equal(value.attempt, run.run_attempt);
   assert.equal(value.controllerCommit, run.head_sha);
-  readGit('merge-base', '--is-ancestor', source, value.acknowledgedMain);
-  readGit('merge-base', '--is-ancestor', value.controllerCommit, value.acknowledgedMain);
-  return value.acknowledgedMain;
+  readGit('merge-base', '--is-ancestor', source, value.controllerCommit);
+  return value.sourceCommit;
 }
 export async function readRecoveryReceipt(api, artifact) {
   assert.ok(

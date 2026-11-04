@@ -70,7 +70,7 @@ jobs:
           REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
           SITE_INDEPENDENCE_REQUIRED: ${{ steps.producer.outputs.requires-independence }}
         run: node scripts/release-ci.mjs verify-site-review "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$REVIEW_COMMENT_ID"
-      - name: Bind verified recovery and current-main acknowledgement
+      - name: Bind verified actual recovery source
         id: receipt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
