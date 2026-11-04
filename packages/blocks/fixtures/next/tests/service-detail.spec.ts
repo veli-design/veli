@@ -91,7 +91,9 @@ test('service details retain EN/DV, themes, four application modes and responsiv
         await page.waitForTimeout(500);
         await expect(toc.last()).toHaveAttribute('aria-current', 'location');
         await page.locator(scroll).hover();
-        await page.mouse.wheel(0, -2500);
+        const scrollDistance = await page.locator(scroll).evaluate((node) => node.scrollHeight);
+        await page.mouse.wheel(0, -scrollDistance);
+        await expect.poll(() => page.locator(scroll).evaluate((node) => node.scrollTop)).toBe(0);
         await expect(toc.first()).toHaveAttribute('aria-current', 'location');
         await page.screenshot({
           path: info.outputPath(`${language}-${dark ? 'dark' : 'light'}-${width}-sheet.png`),
