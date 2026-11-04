@@ -1,0 +1,88 @@
+name: Prepare site-only release snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      source-commit:
+        description: Full reviewed site source commit already on main
+        required: true
+        type: string
+      package-release-tag:
+        description: Published GitHub release with publication.json, or bootstrap-2026-11-01
+        required: true
+        type: string
+      web-origin:
+        description: Existing intended Web origin (does not change routing)
+        default: https://veli-web.onegov.mv
+        required: true
+        type: string
+      storybook-origin:
+        description: Existing intended Storybook origin (does not change routing)
+        default: https://veli-storybook.onegov.mv
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_COMMIT: ${{ inputs.source-commit }}
+      PACKAGE_RELEASE_TAG: ${{ inputs.package-release-tag }}
+      PUBLIC_SITE_URL: ${{ inputs.web-origin }}
+      STORYBOOK_ORIGIN: ${{ inputs.storybook-origin }}
+    steps:
+      - name: Validate immutable inputs
+        run: |
+          node --input-type=module -e 'import assert from "node:assert/strict"; assert.match(process.env.SOURCE_COMMIT,/^[a-f0-9]{40}$/); assert.match(process.env.PACKAGE_RELEASE_TAG,/^[A-Za-z0-9@_][A-Za-z0-9@._/-]*$/);'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require reviewed main history
+        run: |
+          git merge-base --is-ancestor "$SOURCE_COMMIT" origin/main
+          git checkout --detach "$SOURCE_COMMIT"
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Read the explicit published baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir "$RUNNER_TEMP/package-baseline"
+          if [ "$PACKAGE_RELEASE_TAG" = 'bootstrap-2026-11-01' ]; then
+            cp releases/npm-bootstrap-2026-11-01.json "$RUNNER_TEMP/package-baseline/publication.json"
+          else
+            gh release view "$PACKAGE_RELEASE_TAG" --json isDraft,tagName > "$RUNNER_TEMP/package-baseline/release.json"
+            node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/package-baseline/release.json")); assert.equal(r.isDraft,false); assert.equal(r.tagName,process.env.PACKAGE_RELEASE_TAG);'
+            gh release download "$PACKAGE_RELEASE_TAG" --pattern publication.json --dir "$RUNNER_TEMP/package-baseline"
+          fi
+      - name: Install frozen staging tools
+        run: corepack pnpm install --frozen-lockfile
+      - name: Verify public package identity and bytes
+        run: node scripts/published-packages.mjs verify "$RUNNER_TEMP/package-baseline/publication.json" "$RUNNER_TEMP/verified-publication"
+      - name: Plan and build the selected site source with published packages
+        run: |
+          node scripts/site-release.mjs plan published "$RUNNER_TEMP/verified-publication/release-manifest.json" "$PUBLIC_SITE_URL" "$STORYBOOK_ORIGIN" "$SOURCE_COMMIT" "$RUNNER_TEMP/site-plan.json" "$PACKAGE_RELEASE_TAG"
+          node scripts/site-release.mjs stage "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/site-consumers"
+          node scripts/release-sites.mjs build "$RUNNER_TEMP/site-consumers"
+      - name: Capture immutable site outputs for human review
+        run: |
+          node scripts/site-release.mjs capture "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/site-consumers" "$RUNNER_TEMP/site-snapshot" > "$RUNNER_TEMP/site-digest.txt"
+          node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$(cat "$RUNNER_TEMP/site-digest.txt")"
+          echo "Snapshot run: $GITHUB_RUN_ID. Source: $SOURCE_COMMIT." >> "$GITHUB_STEP_SUMMARY"
+          echo "Snapshot SHA-256: $(cat "$RUNNER_TEMP/site-digest.txt")" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Preparation only. Download, preview and visually review this exact bundle before an authorized deployment.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-snapshot-${{ github.run_id }}
+          path: ${{ runner.temp }}/site-snapshot
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: error

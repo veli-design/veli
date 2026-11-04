@@ -8,6 +8,7 @@ import test from 'node:test';
 import { getPackages } from '@manypkg/get-packages';
 import {
   approvedReleaseEvent,
+  assertPublicationSelection,
   isReleasePR,
   requireReleaseChecks,
   releaseMode,
@@ -22,6 +23,23 @@ const head = 'b'.repeat(40);
 const candidateSHA = 'c'.repeat(40);
 const commitSHA = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim();
+
+test('manual publication requires explicit human review of the exact dispatch commit', () => {
+  const env = { VISUAL_REVIEW_APPROVED: 'true', REVIEWED_COMMIT: commitSHA, GITHUB_SHA: commitSHA };
+  assert.doesNotThrow(() => assertPublicationSelection(env));
+  assert.throws(
+    () => assertPublicationSelection({ ...env, VISUAL_REVIEW_APPROVED: 'false' }),
+    /human visual review/,
+  );
+  assert.throws(
+    () => assertPublicationSelection({ ...env, REVIEWED_COMMIT: 'main' }),
+    /full reviewed/,
+  );
+  assert.throws(
+    () => assertPublicationSelection({ ...env, GITHUB_SHA: 'f'.repeat(40) }),
+    /HEAD changed/,
+  );
+});
 
 function releaseJobs() {
   const jobs = Object.fromEntries(
@@ -312,7 +330,7 @@ test('preparation workflow can only version the main snapshot with repository bo
   const preparation = parse(
     readFileSync(new URL('../.github/workflows/prepare-release.yml', import.meta.url), 'utf8'),
   );
-  assert.deepEqual(preparation.on, { workflow_dispatch: null });
+  assert.deepEqual(preparation.on, { push: { branches: ['main'] }, workflow_dispatch: null });
   assert.deepEqual(preparation.permissions, { contents: 'read' });
   assert.equal(preparation.concurrency, 'Release-${{ github.ref }}');
   assert.deepEqual(Object.keys(preparation.jobs), ['prepare']);

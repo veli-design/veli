@@ -150,6 +150,16 @@ export async function releaseMode(pending, api, env) {
   return (await mergedRelease(api, env.GITHUB_REPOSITORY, env.GITHUB_SHA)) ? 'publish' : 'none';
 }
 
+export function assertPublicationSelection(env) {
+  assert.equal(env.VISUAL_REVIEW_APPROVED, 'true', 'Explicit human visual review is required');
+  assert.match(env.REVIEWED_COMMIT ?? '', sha, 'Select the full reviewed release commit');
+  assert.equal(
+    env.REVIEWED_COMMIT,
+    env.GITHUB_SHA,
+    'Dispatch HEAD changed since review; select and validate the exact release commit',
+  );
+}
+
 // This runs before installing dependencies or invoking any publication command.
 // Evidence is JSON data, never an executable artifact or build-output cache.
 export async function verifyPublication(api, env, readEvidence) {
@@ -238,6 +248,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     );
     const api = githubAPI();
     const mode = await releaseMode(pending, api, process.env);
+    if (mode === 'publish') assertPublicationSelection(process.env);
     appendFileSync(process.env.GITHUB_OUTPUT, `mode=${mode}\n`);
     console.log(`Release mode: ${mode}`);
   } else if (command === 'verify') {

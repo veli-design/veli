@@ -1,6 +1,8 @@
 name: Prepare release
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 # Serialize writes to the bot branch with the existing Release workflow.

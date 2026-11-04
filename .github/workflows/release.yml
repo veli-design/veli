@@ -7,6 +7,15 @@ on:
         description: Separately approved npm dist-tag
         required: true
         type: string
+      reviewed-commit:
+        description: Full merged release commit reviewed and validated for publication
+        required: true
+        type: string
+      visual-review-approved:
+        description: Confirm human review of the exact candidate and its visual evidence
+        required: true
+        default: false
+        type: boolean
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -36,6 +45,8 @@ jobs:
         run: node scripts/release-ci.mjs plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REVIEWED_COMMIT: ${{ inputs.reviewed-commit }}
+          VISUAL_REVIEW_APPROVED: ${{ inputs.visual-review-approved }}
 
       - name: Require completed npm bootstrap and trusted publishers
         if: steps.plan.outputs.mode == 'publish'
@@ -84,13 +95,15 @@ jobs:
 
       - name: Record published release snapshot
         if: steps.changesets.outputs.published == 'true'
-        run: node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
+        run: |
+          node scripts/release-sites.mjs manifest "$RUNNER_TEMP/published-versions.json"
+          node scripts/published-packages.mjs record "$RUNNER_TEMP/published-versions.json" "$RUNNER_TEMP/publication"
 
       - uses: actions/upload-artifact@v4
         if: steps.changesets.outputs.published == 'true'
         with:
           name: release-manifest
-          path: ${{ runner.temp }}/release-manifest.json
+          path: ${{ runner.temp }}/publication
           retention-days: 90
 
       - name: Retain snapshot with the published release
@@ -104,7 +117,9 @@ jobs:
             const published = JSON.parse(process.env.PUBLISHED_PACKAGES);
             const { name, version } = published[0];
             const { data: release } = await github.rest.repos.getReleaseByTag({ ...context.repo, tag: `${name}@${version}` });
-            await github.rest.repos.uploadReleaseAsset({ ...context.repo, release_id: release.id, name: 'release-manifest.json', data: fs.readFileSync(`${process.env.RUNNER_TEMP}/release-manifest.json`) });
+            for (const name of ['release-manifest.json', 'publication.json']) {
+              await github.rest.repos.uploadReleaseAsset({ ...context.repo, release_id: release.id, name, data: fs.readFileSync(`${process.env.RUNNER_TEMP}/publication/${name}`) });
+            }
 
   deploy-sites:
     needs: release

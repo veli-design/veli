@@ -4,6 +4,7 @@ import { getBlocks } from '../packages/blocks/scripts/catalog.mjs';
 import {
   fixtureDependencies,
   assertBlockDependencies,
+  assertBlockCoreCompatibility,
   assertCliDependencyReport,
 } from './npm-migration-dependencies.mjs';
 
@@ -96,4 +97,21 @@ test('CLI reports must confirm the block and have no missing or incompatible req
     { added: valid.added },
   ])
     assert.throws(() => assertCliDependencyReport(report, 'account-panel'));
+});
+
+test('site baselines require both a compatible range and rehearsed exact version', () => {
+  assert.doesNotThrow(() =>
+    assertBlockCoreCompatibility(blocks, {
+      '@veli-design/react': '0.17.0',
+      '@veli-design/tokens': '0.10.0',
+    }),
+  );
+  assert.throws(
+    () => assertBlockCoreCompatibility(blocks, { '@veli-design/react': '0.18.0' }),
+    /does not satisfy/,
+  );
+  assert.throws(
+    () => assertBlockCoreCompatibility(blocks, { '@veli-design/react': '0.17.1' }),
+    /has not been rehearsed/,
+  );
 });

@@ -184,9 +184,10 @@ test('temporary entry reuses the existing site workflow and cannot publish or by
   const stage = commonSteps.find((s) => s.name === 'Stage verified bootstrap artifacts');
   assert.match(stage.env.VELI_TARBALLS, /release-manifest\/ui.tgz/);
   assert.match(stage.env.VELI_TARBALLS, /release-manifest\/tokens.tgz/);
-  assert.equal(
-    stage.run,
+  assert.match(stage.run, /release-manifest\/release-manifest.json/);
+  assert.match(
     commonSteps.find((s) => s.name === 'Stage isolated released-package consumers').run,
+    /verified-publication\/release-manifest.json/,
   );
   assert.ok(
     commonSteps.findIndex((s) => s.name === 'Build against published packages') <

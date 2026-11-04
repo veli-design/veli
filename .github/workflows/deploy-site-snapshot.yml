@@ -1,0 +1,80 @@
+name: Deploy reviewed site snapshot
+
+# Deployment-only recovery and rollback: never rebuild or publish packages.
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot-run-id:
+        description: Successful Prepare site-only or Deploy release sites run containing the reviewed bundle
+        required: true
+        type: string
+      snapshot-sha256:
+        description: Independently recorded SHA-256 from the exact snapshot reviewed
+        required: true
+        type: string
+      visual-review-approved:
+        description: Confirm visual review and production authorization for this exact bundle
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency: veli-public-release-sites
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && inputs.visual-review-approved && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
+    runs-on: ubuntu-latest
+    env:
+      SNAPSHOT_RUN_ID: ${{ inputs.snapshot-run-id }}
+      SNAPSHOT_SHA256: ${{ inputs.snapshot-sha256 }}
+      RELEASE_BRANCH: ${{ vars.VELI_RELEASE_BRANCH || 'main' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the originating workflow before downloading
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (!/^[1-9][0-9]*$/.test(process.env.SNAPSHOT_RUN_ID)) throw new Error('Expected run ID');
+            if (!/^[a-f0-9]{64}$/.test(process.env.SNAPSHOT_SHA256)) throw new Error('Expected reviewed snapshot digest');
+            const {data: run} = await github.rest.actions.getWorkflowRun({...context.repo,run_id:Number(process.env.SNAPSHOT_RUN_ID)});
+            const {pathToFileURL} = await import('node:url');
+            const {assertSnapshotProducer} = await import(pathToFileURL(process.env.GITHUB_WORKSPACE+'/scripts/site-snapshot-policy.mjs'));
+            assertSnapshotProducer(run,context.repo.owner+'/'+context.repo.repo,process.env.RELEASE_BRANCH);
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-snapshot-${{ inputs.snapshot-run-id }}
+          path: ${{ runner.temp }}/site-snapshot
+          run-id: ${{ inputs.snapshot-run-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify exact retained bytes and published mode
+        id: snapshot
+        run: |
+          node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256"
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const s=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/site-snapshot/snapshot.json")); assert.equal(s.plan.siteRelease.mode,"published"); assert.ok(s.plan.siteRelease.publication,"Published artifact evidence is required"); assert.match(s.tools.wrangler,/^\d+\.\d+\.\d+$/); fs.appendFileSync(process.env.GITHUB_OUTPUT,"wrangler-version="+s.tools.wrangler+"\n");'
+      - name: Deploy retained Web output
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ steps.snapshot.outputs.wrangler-version }}
+          workingDirectory: ${{ runner.temp }}/site-snapshot/apps/web
+          environment: production
+          command: deploy
+      - name: Deploy retained Storybook output
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ steps.snapshot.outputs.wrangler-version }}
+          workingDirectory: ${{ runner.temp }}/site-snapshot/apps/storybook
+          environment: production
+          command: deploy
