@@ -68,6 +68,7 @@ jobs:
         if: needs.plan.outputs.mode == 'publish'
         run: node scripts/release-order.mjs verify-selected
         env:
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
@@ -96,12 +97,15 @@ jobs:
           commitMode: git-cli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
           # The private source repository cannot generate npm provenance.
           NPM_CONFIG_PROVENANCE: false
           VELI_NPM_PUBLICATION_APPROVED: ${{ vars.VELI_NPM_PUBLICATION_APPROVED }}
           VELI_NPM_DIST_TAG: ${{ vars.VELI_NPM_DIST_TAG }}
 
       - name: Record published release snapshot
+        env:
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
         if: steps.changesets.outputs.published == 'true'
         run: |
           node scripts/release-sites.mjs manifest "$RUNNER_TEMP/published-versions.json"

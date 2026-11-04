@@ -199,6 +199,16 @@ test('workflow locks and privilege boundaries prevent stale writes and retagging
   );
   const publish = publisher.steps.find((s) => s.uses === 'changesets/action@v1');
   assert.ok(select < checkout);
+  assert.equal(publish.env.RELEASE_SOURCE, '${{ steps.source.outputs.source }}');
+  assert.equal(
+    publisher.steps.find((s) => s.run === 'node scripts/release-order.mjs verify-selected').env
+      .RELEASE_SOURCE,
+    '${{ steps.source.outputs.source }}',
+  );
+  assert.equal(
+    publisher.steps.find((s) => s.name === 'Record published release snapshot').env.RELEASE_SOURCE,
+    '${{ steps.source.outputs.source }}',
+  );
   assert.equal(publish.with.commitMode, 'git-cli');
   assert.equal(publish.with.publish, 'node scripts/release-order.mjs publish');
 });
