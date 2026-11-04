@@ -19,9 +19,11 @@ jobs:
     steps:
       - uses: actions/github-script@v7
         id: release
+        env:
+          REQUESTED_RELEASE_TAG: ${{ inputs.release-tag }}
         with:
           script: |
-            const requested = ${{ toJSON(inputs.release-tag) }};
+            const requested = process.env.REQUESTED_RELEASE_TAG;
             if (requested && !/^[A-Za-z0-9@_][A-Za-z0-9@._/-]*$/.test(requested)) throw new Error('Invalid release tag');
             const releases = await github.paginate(github.rest.repos.listReleases, { ...context.repo, per_page: 100 });
             const release = releases.filter(r => !r.draft && !r.prerelease && (!requested || r.tag_name === requested) && r.assets.some(a => a.name === 'release-manifest.json') && r.assets.some(a => a.name === 'publication.json')).sort((a,b) => b.published_at.localeCompare(a.published_at))[0];

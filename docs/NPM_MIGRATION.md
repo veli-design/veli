@@ -147,3 +147,6 @@ Block against a local catalog fixture. Existing CLI tests exercise archive recei
 and updates; package consumer checks must also use the tarballs. Do not run
 `pnpm release` as a test. Publication and live retrieval verification remain
 separate operational gates.
+
+For the current release preparation, publication approval, site snapshot and
+deployment-only recovery procedures, see [CI release operations](CI_RELEASE_RUNBOOK.md).

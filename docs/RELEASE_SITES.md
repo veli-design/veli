@@ -62,3 +62,6 @@ For later approved releases, the existing `Release` workflow already calls site
 deployment after successful publication when the registry rollout gate is enabled.
 This bootstrap path does not enable automatic npm publication or alter the manual
 publication, exact-tree validation or trusted-publisher prerequisites.
+
+For the current release preparation, publication approval, site snapshot and
+deployment-only recovery procedures, see [CI release operations](CI_RELEASE_RUNBOOK.md).
