@@ -36,6 +36,13 @@ jobs:
       PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli-web.onegov.mv' }}
       STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://veli-storybook.onegov.mv' }}
     steps:
+      - name: Checkout trusted workflow controller
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.workflow_sha }}
+      - name: Retain bootstrap retirement guard outside source checkout
+        if: inputs.bootstrap-tarballs
+        run: cp scripts/bootstrap-site-gate.mjs "$RUNNER_TEMP/bootstrap-site-gate.mjs"
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.source-ref }}
@@ -109,6 +116,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/site-auto.mjs gate
+      - name: Reject retired bootstrap immediately before deployment
+        if: ${{ !inputs.verification-only && inputs.bootstrap-tarballs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node "$RUNNER_TEMP/bootstrap-site-gate.mjs"
       - name: Deploy web docs
         if: ${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}
         uses: cloudflare/wrangler-action@v3

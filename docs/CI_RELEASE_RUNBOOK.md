@@ -106,7 +106,10 @@ latest main rather than reusing its event SHA, so an older event queued late can
 lose work from a newer main commit. A final cumulative selection also skips changes
 already delivered by a preceding run. Receipt sources bind the actual checked-out
 commit; for ordinary site runs the trigger commit must be that source or its ancestor.
-The latest receipt is selected by main ancestry, never artifact creation time.
+The latest successful receipt is selected by promotion timestamp (artifact creation
+after both deployments under the shared lock), with source ancestry checked against
+main. Missing timestamps or conflicting sources at the same latest timestamp fail
+closed; selecting the greatest historical commit would miss a later rollback.
 
 Completing Release, reviewed snapshot recovery, published-site rebuild or the
 temporary bootstrap catch-up triggers another evaluation. This recovers a site job
@@ -259,3 +262,11 @@ independent source snapshot against a reviewed compatible catalog baseline.
 This PR cannot finish account trust setup, configure approval settings, approve visual output, or authorize a real
 publication/deployment. Automatic publication is the agreed routine flow.
 Keep PD-1318 open until those operational checks and the PD-1121 follow-up are done.
+
+The temporary bootstrap deployment is retired as soon as any recurring publication
+record or site-delivery receipt exists. Its read-only guard runs immediately before
+production deployment under the shared site lock, using code retained from the
+workflow controller rather than the frozen bootstrap source. Even expired receipt
+metadata retires it; API failures and incomplete pagination fail closed. Verification-
+only bootstrap rehearsals remain available. Use reviewed snapshot recovery after
+retirement; the bootstrap entry cannot override newer delivery.
