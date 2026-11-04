@@ -47,7 +47,7 @@ test('mobile guideline matches Figma and manual scroll reaches terminal TOC with
           animations: 'disabled',
         });
       if (width < 768) {
-        await expect(page.locator('.veli-service-detail-fee-table')).toHaveCSS(
+        await expect(sheet.locator('table.veli-service-detail-table')).toHaveCSS(
           'border-radius',
           '16px',
         );

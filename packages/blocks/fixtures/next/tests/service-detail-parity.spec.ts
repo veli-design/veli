@@ -18,10 +18,21 @@ test('repaired layouts reflow at breakpoints and Show less keeps only its inline
         .locator('.veli-service-detail-service-summary button')
         .evaluate((node) => {
           const summary = node.parentElement!;
-          const text = summary.querySelector('span')!.firstChild!;
+          // DisplayText isolates Latin runs in bdi elements, so the final visible
+          // character may be nested rather than a direct child of the span.
+          const walker = document.createTreeWalker(
+            summary.querySelector('span')!,
+            NodeFilter.SHOW_TEXT,
+          );
+          let text: Node | null = null;
+          while (walker.nextNode()) {
+            if (walker.currentNode.textContent!.trimEnd()) text = walker.currentNode;
+          }
+          if (!text) throw new Error('Missing expanded summary text');
+          const length = text.textContent!.trimEnd().length;
           const range = document.createRange();
-          range.setStart(text, text.textContent!.length - 1);
-          range.setEnd(text, text.textContent!.length);
+          range.setStart(text, length - 1);
+          range.setEnd(text, length);
           const tail = range.getBoundingClientRect(),
             button = node.getBoundingClientRect(),
             box = summary.getBoundingClientRect();

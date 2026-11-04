@@ -1,11 +1,11 @@
-Experimental `0.9.0` copied-source block for service details, fees, prerequisites,
+Experimental `0.10.0` copied-source block for service details, fees, prerequisites,
 application options and guidelines. The props-based default preserves the existing
 summary/card and guideline sheet. Composable parts let consumers arrange their own
 fields, sections and actions. This block does not migrate either app.
 
 ## Core package baseline
 
-Version 0.9.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.10.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
