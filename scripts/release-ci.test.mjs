@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import test from 'node:test';
+import { getPackages } from '@manypkg/get-packages';
 import {
   approvedReleaseEvent,
   isReleasePR,
@@ -393,14 +394,10 @@ test('workflow keeps native approval, all release suites and publication orderin
   );
   assert.equal(action.if, "steps.plan.outputs.mode != 'none'");
   const publisher = read('./publish-packages.mjs');
-  const publishedPackages = readdirSync(new URL('../packages/', import.meta.url))
-    .map((directory) =>
-      JSON.parse(
-        readFileSync(new URL(`../packages/${directory}/package.json`, import.meta.url), 'utf8'),
-      ),
-    )
-    .filter((pkg) => !pkg.private)
-    .map((pkg) => pkg.name)
+  const { packages } = await getPackages(fileURLToPath(new URL('..', import.meta.url)));
+  const publishedPackages = packages
+    .filter(({ packageJson }) => !packageJson.private)
+    .map(({ packageJson }) => packageJson.name)
     .sort();
   const buildFilters = [...publisher.matchAll(/--filter=(@[^']+)/g)]
     .map((match) => match[1])

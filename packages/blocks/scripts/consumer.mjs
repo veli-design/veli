@@ -64,15 +64,16 @@ for (const name of [
   'error-page-messages.ts',
   'page-navigation-footer-content.tsx',
   'service-detail-content.tsx',
+  'service-detail-composition.tsx',
 ]) {
   cpSync(resolve(packageRoot, 'examples', name), resolve(target, name));
-  if (name === 'service-detail-content.tsx') {
+  if (name.startsWith('service-detail-')) {
     const path = resolve(target, name);
     writeFileSync(
       path,
-      readFileSync(path, 'utf8').replace(
-        "'../src/service-detail/types'",
-        "'./components/blocks/service-detail/types'",
+      readFileSync(path, 'utf8').replaceAll(
+        "'../src/service-detail/",
+        "'./components/blocks/service-detail/",
       ),
     );
   }

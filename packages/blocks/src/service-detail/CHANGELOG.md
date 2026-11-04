@@ -1,3 +1,45 @@
+## 0.9.0
+
+### Added
+
+- Reuse `ServiceDetailExpandableList` for inline names with a configurable initial count and localized more/less controls. The standard wrapper now uses the same part.
+
+- Compose service label/value rows with `ServiceDetailTable`, an accessible caption and a rounded, divided surface across desktop and mobile layouts.
+
+## 0.8.0
+
+### Added
+
+- Optional compact summary surface for supplementary metadata, with responsive columns and host-owned values.
+- Ordered supplementary guideline composition and migration examples, including omitted metadata and multiline checklists.
+
+### Fixed
+
+- Preserve line breaks within prerequisite items without creating additional list entries.
+
+## 0.7.0
+
+### Added
+
+- Compose service pages from reusable layout, summary, content, action, section, download and dialog parts, with consumer-owned fields, ordering and actions. The existing props-based `ServiceDetail` remains available and uses the same parts.
+- Add optional per-service application and processing time breakdowns, independently expandable with keyboard and touch controls.
+- Supply custom summary icons, accessible information controls and either value/caret or show/hide disclosure triggers.
+
+### Changed
+
+- Show fee details beneath the fee summary in a nested description list, with a caret on the existing show/hide control and reduced-motion support.
+- Keep custom sections and actions inside one shared content surface, avoiding repeated rounded edges between sections.
+- Require only guideline-specific labels when using the guideline part directly; existing complete label dictionaries remain supported.
+
+### Fixed
+
+- Reserve space around inline disclosure controls so focus rings stay clear of labels and adjacent values.
+
+- Match custom controls and dialog close buttons to Veli’s 2px focus ring and surface-colored gap, with a visible outline in forced-colors mode.
+
+- Show one guideline summary state at a time: loading takes precedence over errors, and errors over stale content.
+- Open summary information in a native Veli popover on press or touch, retaining the hover/focus tooltip and accessible dismissal and focus return.
+
 ## 0.6.0
 
 ### Changed

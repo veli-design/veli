@@ -21,7 +21,8 @@
     "./examples/page-navigation-footer-content": "./examples/page-navigation-footer-content.tsx",
     "./examples/error-page-preview": "./examples/error-page-preview.tsx",
     "./service-detail": "./src/service-detail/service-detail.tsx",
-    "./examples/service-detail-content": "./examples/service-detail-content.tsx"
+    "./examples/service-detail-content": "./examples/service-detail-content.tsx",
+    "./examples/service-detail-composition": "./examples/service-detail-composition.tsx"
   },
   "scripts": {
     "build": "node scripts/check.mjs && tsc --noEmit",

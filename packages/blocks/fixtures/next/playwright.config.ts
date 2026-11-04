@@ -6,12 +6,20 @@ export default defineConfig({
     { name: 'chromium', use: { browserName: 'chromium' } },
     {
       name: 'firefox',
-      testMatch: ['**/token-architecture.spec.ts', '**/service-detail-parity.spec.ts'],
+      testMatch: [
+        '**/token-architecture.spec.ts',
+        '**/service-detail-parity.spec.ts',
+        '**/service-detail-summaries.spec.ts',
+      ],
       use: { browserName: 'firefox' },
     },
     {
       name: 'webkit',
-      testMatch: ['**/token-architecture.spec.ts', '**/service-detail-parity.spec.ts'],
+      testMatch: [
+        '**/token-architecture.spec.ts',
+        '**/service-detail-parity.spec.ts',
+        '**/service-detail-summaries.spec.ts',
+      ],
       use: { browserName: 'webkit' },
     },
   ],
