@@ -269,9 +269,9 @@ async function readArtifact(api, artifact) {
   }
 }
 
-export async function verifyCurrentPublication() {
-  const api = githubAPI();
-  await verifyPublication(api, process.env, (artifact) => readArtifact(api, artifact));
+export async function verifyCurrentPublication(env = process.env) {
+  const api = githubAPI(env);
+  await verifyPublication(api, env, (artifact) => readArtifact(api, artifact));
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

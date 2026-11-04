@@ -1,15 +1,20 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { resolve, dirname } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { parse } from 'yaml';
 import {
-  eligible,
   packagePaths,
   sitePaths,
   assertCurrent,
   verifyMergedSiteReview,
   selectBaseline,
   packageLockClosure,
+  latestDelivery,
+  planSiteDelivery,
+  assertPublishedSource,
 } from './site-auto.mjs';
 
 const source = 'a'.repeat(40);
@@ -33,26 +38,16 @@ const apiFor =
     if (path.startsWith('/collaborators/')) return { permission };
     throw new Error(path);
   };
-test('site delivery excludes pending, mixed and release/no-op-publication commits', () => {
-  const base = {
-    pending: false,
-    release: false,
-    changed: ['apps/web/src/content/docs/test.mdx'],
-    unpublished: [],
-  };
-  assert.equal(eligible(base), true);
-  assert.equal(eligible({ ...base, pending: true }), false);
-  assert.equal(eligible({ ...base, release: true }), false);
-  assert.equal(eligible({ ...base, unpublished: ['packages/react/src/Sheet.tsx'] }), false);
-  assert.equal(eligible({ ...base, changed: ['docs/CI_RELEASE_RUNBOOK.md'] }), false);
-  assert.equal(eligible({ ...base, changed: ['apps/storybook/src/Sheet.stories.tsx'] }), true);
-  assert.equal(
-    eligible({ ...base, changed: ['packages/blocks/src/new-block/manifest.json'] }),
-    true,
-  );
+test('site paths include deployed docs, Storybook and Blocks; contributor prose is inert', () => {
+  for (const path of [
+    'apps/web/src/content/docs/test.mdx',
+    'apps/storybook/src/Sheet.stories.tsx',
+    'packages/blocks/src/new-block/manifest.json',
+  ])
+    assert.equal(sitePaths([path]), true);
+  assert.equal(sitePaths(['docs/CI_RELEASE_RUNBOOK.md']), false);
   for (const name of ['react', 'tokens', 'cli'])
     assert.equal(packagePaths([`packages/${name}/package.json`]), true);
-  assert.equal(sitePaths(['apps/web/src/styles/global.css']), true);
 });
 test('ordinary approval requires final head, human, current write permission; no new marker', async () => {
   await verifyMergedSiteReview(apiFor([approved]), 'veli-design/veli', source);
@@ -87,10 +82,20 @@ test('duplicate guard is checked inside deployment lock', async () => {
               conclusion: 'success',
               path: '.github/workflows/deploy-site-changes.yml',
               event: 'push',
+              head_sha: source,
+              head_branch: 'main',
             }
           : path === '/git/ref/heads/main'
             ? { object: { sha: source } }
-            : { artifacts: [{ expired: false, workflow_run: { head_sha: source, id: 42 } }] },
+            : {
+                artifacts: [
+                  {
+                    name: `site-deployed-${source}`,
+                    expired: false,
+                    workflow_run: { head_sha: source, id: 42 },
+                  },
+                ],
+              },
       source,
     ),
     /already deployed/,
@@ -124,7 +129,18 @@ test('automatic workflow validates merged source and installed artifacts, serial
   );
   const data = parse(workflow);
   assert.equal(data.on.push.branches[0], 'main');
-  assert.deepEqual(data.on.workflow_run.workflows, ['Release']);
+  assert.deepEqual(data.on.workflow_run.workflows, [
+    'Release',
+    'Deploy reviewed site snapshot',
+    'Prepare published site rebuild',
+    'Temporary bootstrap site catch-up',
+  ]);
+  assert.deepEqual(Object.keys(data.jobs), ['deploy']);
+  assert.equal(data.jobs.deploy.steps[0].with.ref, 'main');
+  assert.ok(
+    data.jobs.deploy.steps.findIndex((s) => s.id === 'source') <
+      data.jobs.deploy.steps.findIndex((s) => s.id === 'plan'),
+  );
   assert.equal(data.jobs.deploy.concurrency, 'veli-public-release-sites');
   assert.equal(data.permissions.contents, 'read');
   const steps = data.jobs.deploy.steps;
@@ -135,7 +151,14 @@ test('automatic workflow validates merged source and installed artifacts, serial
   assert.match(commands, /corepack pnpm check/);
   assert.match(commands, /published-packages.mjs verify/);
   assert.equal(steps.filter((s) => s.run?.includes('site-auto.mjs verify')).length, 1);
-  assert.equal(steps.find((s) => s.id === 'current').run, 'node scripts/site-auto.mjs gate');
+  assert.equal(
+    steps.find((s) => s.id === 'current').run,
+    'node scripts/site-auto.mjs gate "$RUNNER_TEMP/site-baseline/publication.json"',
+  );
+  assert.equal(
+    steps.find((s) => s.with?.name?.startsWith('site-deployed-')).with.name,
+    'site-deployed-${{ steps.source.outputs.source }}',
+  );
   for (const step of steps.filter((s) => s.uses?.startsWith('cloudflare/')))
     assert.equal(step.if, "steps.current.outputs.ready == 'true'");
   assert.ok(
@@ -192,4 +215,239 @@ test('concurrent successors permit only contributor prose; package/release/site 
     }, source),
     /HTTP 503/,
   );
+});
+
+function historyFixture(t) {
+  const root = mkdtempSync(resolve(tmpdir(), 'veli-site-queue-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const git = (...args) =>
+    execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+  git('init', '-q');
+  git('config', 'user.name', 'Fixture');
+  git('config', 'user.email', 'fixture@example.invalid');
+  const commit = (path, text) => {
+    mkdirSync(dirname(resolve(root, path)), { recursive: true });
+    writeFileSync(resolve(root, path), text);
+    git('add', '.');
+    git('commit', '-qm', path);
+    return git('rev-parse', 'HEAD');
+  };
+  const baseline = commit('apps/web/src/page.mdx', 'original');
+  const site = commit('apps/web/src/page.mdx', 'updated');
+  const workflow = commit('.github/workflows/ci.yml', 'workflow-only successor');
+  const prose = commit('docs/contributing.md', 'prose successor');
+  const pending = commit('.changeset/pending.md', 'package release pending');
+  const read = (...args) => (args[0] === 'fetch' ? '' : git(...args));
+  return { root, git, commit, baseline, site, workflow, prose, pending, read };
+}
+function deliveryAPI(main, records = []) {
+  const artifacts = records.map((r, index) => ({
+    name: `site-deployed-${r.source}`,
+    expired: r.expired ?? false,
+    workflow_run: { id: index + 1, head_sha: r.eventSource ?? r.source },
+  }));
+  return async (path) => {
+    if (path === '/git/ref/heads/main') return { object: { sha: main } };
+    if (path.startsWith('/actions/artifacts')) {
+      const name = new URL('https://example.invalid' + path).searchParams.get('name');
+      return { artifacts: name ? artifacts.filter((a) => a.name === name) : artifacts };
+    }
+    if (path.startsWith('/actions/runs/')) {
+      const r = records[Number(path.split('/').at(-1)) - 1];
+      return {
+        head_sha: r.eventSource ?? r.source,
+        head_branch: r.branch ?? 'main',
+        status: 'completed',
+        conclusion: r.conclusion ?? 'success',
+        event: 'push',
+        path: r.path ?? '.github/workflows/deploy-site-changes.yml',
+      };
+    }
+    throw new Error(path);
+  };
+}
+test('site update followed by workflow-only/prose commits is carried forward from last successful delivery', async (t) => {
+  const h = historyFixture(t);
+  const api = deliveryAPI(h.workflow, [{ source: h.baseline }]);
+  const options = { pending: false, release: false, packageSource: h.baseline, bootstrap: false };
+  assert.equal(
+    (await planSiteDelivery(api, { ...options, source: h.site }, h.read)).eligible,
+    true,
+  );
+  await assert.rejects(assertCurrent(api, h.site, h.read), /Superseded source/);
+  const latest = await planSiteDelivery(api, { ...options, source: h.workflow }, h.read);
+  assert.equal(latest.eligible, true);
+  assert.equal(latest.base, h.baseline);
+  assert.ok(latest.changed.includes('apps/web/src/page.mdx'));
+  assert.equal(
+    (await planSiteDelivery(api, { ...options, source: h.prose }, h.read)).eligible,
+    true,
+  );
+  // Once an earlier run actually delivered the site update, a workflow-only or
+  // prose successor has no outstanding site delta and final re-selection skips it.
+  const delivered = deliveryAPI(h.workflow, [{ source: h.site }, { source: h.baseline }]);
+  assert.equal(
+    (await planSiteDelivery(delivered, { ...options, source: h.workflow }, h.read)).eligible,
+    false,
+  );
+});
+test('pending changesets and release commits without a matching publication hold catch-up', async (t) => {
+  const h = historyFixture(t);
+  const api = async () => {
+    throw new Error('Must not inspect delivery or schedule a deployment');
+  };
+  for (const state of [
+    { pending: true, release: false },
+    { pending: false, release: true },
+  ])
+    assert.equal(
+      (
+        await planSiteDelivery(
+          api,
+          { source: h.pending, packageSource: h.baseline, bootstrap: false, ...state },
+          h.read,
+        )
+      ).eligible,
+      false,
+    );
+});
+test('queued older event builds latest main; receipt binds actual source and ancestry rather than event SHA', async (t) => {
+  const h = historyFixture(t);
+  const api = deliveryAPI(h.workflow, [
+    { source: h.workflow, eventSource: h.site },
+    { source: h.baseline },
+  ]);
+  assert.equal(await latestDelivery(api, h.workflow, h.read), h.workflow);
+  await assert.rejects(assertCurrent(api, h.workflow, h.read), /already deployed/);
+  // A release handoff must still bind its own exact publication commit.
+  const wrongRelease = deliveryAPI(h.workflow, [
+    { source: h.workflow, eventSource: h.site, path: '.github/workflows/release.yml' },
+  ]);
+  assert.equal(await latestDelivery(wrongRelease, h.workflow, h.read), null);
+});
+test('latest delivery follows main ancestry, ignores failed/expired/foreign receipts and older reruns', async (t) => {
+  const h = historyFixture(t);
+  const api = deliveryAPI(h.prose, [
+    { source: h.baseline },
+    { source: h.workflow },
+    { source: h.site },
+  ]);
+  assert.equal(await latestDelivery(api, h.prose, h.read), h.workflow);
+  const invalid = deliveryAPI(h.prose, [
+    { source: h.workflow, conclusion: 'failure' },
+    { source: h.prose, expired: true },
+    { source: h.site, branch: 'unreviewed' },
+    { source: h.workflow, path: '.github/workflows/ci.yml' },
+    { source: h.baseline },
+  ]);
+  assert.equal(await latestDelivery(invalid, h.prose, h.read), h.baseline);
+});
+test('publication advancement catches up identical app source; bootstrap/no-change fallback stays inert', async (t) => {
+  const h = historyFixture(t);
+  const options = {
+    source: h.workflow,
+    pending: false,
+    release: false,
+    packageSource: h.site,
+    bootstrap: false,
+  };
+  const oldDelivery = deliveryAPI(h.workflow, [{ source: h.baseline }]);
+  // Model a library-only publication after the deployed commit: no app delta is
+  // needed once a verified package baseline is newer than the delivery receipt.
+  const read = (...args) => (args[0] === 'diff' ? '.github/workflows/ci.yml' : h.read(...args));
+  const next = await planSiteDelivery(oldDelivery, options, read);
+  assert.equal(next.packageAdvanced, true);
+  assert.equal(next.eligible, true);
+  const noReceipts = deliveryAPI(h.workflow);
+  assert.equal(
+    (await planSiteDelivery(noReceipts, { ...options, packageSource: h.workflow }, h.read))
+      .eligible,
+    true,
+  );
+  assert.equal(
+    (
+      await planSiteDelivery(
+        noReceipts,
+        { ...options, packageSource: h.workflow, bootstrap: true },
+        h.read,
+      )
+    ).eligible,
+    false,
+  );
+});
+test('source command binds checked-out main even when queued event SHA is older', (t) => {
+  const h = historyFixture(t);
+  const output = resolve(h.root, 'step-output');
+  const envFile = resolve(h.root, 'step-env');
+  execFileSync(process.execPath, [new URL('./site-auto.mjs', import.meta.url).pathname, 'source'], {
+    cwd: h.root,
+    env: {
+      ...process.env,
+      GITHUB_SHA: h.site,
+      GITHUB_TOKEN: 'fixture',
+      GITHUB_REPOSITORY: 'veli-design/veli',
+      GITHUB_OUTPUT: output,
+      GITHUB_ENV: envFile,
+    },
+  });
+  assert.equal(readFileSync(output, 'utf8'), `source=${h.pending}\n`);
+  assert.equal(readFileSync(envFile, 'utf8'), `SITE_SOURCE_COMMIT=${h.pending}\n`);
+});
+
+test('failed/no-op publication cannot authorize unpublished source; successful baseline permits later catch-up', async (t) => {
+  const h = historyFixture(t);
+  const importers = Object.fromEntries(
+    ['.', 'packages/react', 'packages/tokens', 'packages/cli'].map((name) => [name, {}]),
+  );
+  h.commit('pnpm-lock.yaml', JSON.stringify({ importers, packages: {}, snapshots: {} }));
+  for (const name of ['react', 'tokens', 'cli'])
+    h.commit(`packages/${name}/package.json`, JSON.stringify({ version: '1.0.0' }));
+  const base = h.git('rev-parse', 'HEAD');
+  const publication = (commit, react) => ({
+    sourceCommit: commit,
+    sourceTree: h.git('rev-parse', `${commit}^{tree}`),
+    packages: {
+      '@veli-design/react': { version: react },
+      '@veli-design/tokens': { version: '1.0.0' },
+      '@veli-design/cli': { version: '1.0.0' },
+    },
+  });
+  const old = publication(base, '1.0.0');
+  const released = h.commit('packages/react/package.json', JSON.stringify({ version: '2.0.0' }));
+  const next = h.commit('apps/web/src/page.mdx', 'post-release site');
+  await assert.rejects(assertPublishedSource(old, next, h.read), /Unpublished package source/);
+  await assertPublishedSource(publication(released, '2.0.0'), next, h.read);
+});
+
+test('a late queued event cannot lose the publication handoff: matching release record recovers sites only', async (t) => {
+  const h = historyFixture(t);
+  const api = deliveryAPI(h.workflow, [{ source: h.baseline }]);
+  const options = { source: h.workflow, pending: false, release: true, bootstrap: false };
+  assert.equal(
+    (await planSiteDelivery(api, { ...options, packageSource: h.baseline }, h.read)).eligible,
+    false,
+  );
+  assert.equal(
+    (await planSiteDelivery(api, { ...options, packageSource: h.workflow }, h.read)).eligible,
+    true,
+  );
+  const deployed = deliveryAPI(h.workflow, [
+    { source: h.workflow, path: '.github/workflows/release.yml' },
+  ]);
+  assert.equal(
+    (await planSiteDelivery(deployed, { ...options, packageSource: h.workflow }, h.read)).eligible,
+    false,
+  );
+  // This path must retain full release evidence + visual approval, while actual
+  // registry identity/bytes remain checked before either Cloudflare step.
+  const script = readFileSync(new URL('./site-auto.mjs', import.meta.url), 'utf8');
+  assert.match(
+    script,
+    /publication.sourceCommit, source, 'Release has no matching publication record'/,
+  );
+  assert.match(script, /verifyCurrentPublication\(\{ \.\.\.process.env, GITHUB_SHA: source \}\)/);
 });

@@ -52,17 +52,25 @@ from the exact released checkout with `release-sites.mjs manifest` followed by
 
 ## Independent site changes
 
-**Deploy site changes** runs automatically on main pushes for changes under
-`apps/web`, `apps/storybook` and `packages/blocks`. This includes deployed MDX/docs,
+**Deploy site changes** evaluates every main push under the shared deployment lock.
+It checks out current main only after obtaining that lock, then compares against the
+latest verified successful paired-deployment receipt in main history. Outstanding
+changes under `apps/web`, `apps/storybook` and `packages/blocks` select delivery. This includes deployed MDX/docs,
 website design, Storybook stories and the Blocks registry. Contributor-only prose
-under `docs/` or root contributor Markdown does not deploy. There is no additional
+under `docs/` or root contributor Markdown does not independently select delivery,
+but carries forward any earlier undeployed site update. There is no additional
 post-merge approval input: a real human write-access approval of the final source PR
 head supplies the normal pre-merge review. The exact merged source runs the full
 check command and builds both isolated consumers against anonymously verified npm
 packages, including the catalog's exact tested-version compatibility contract.
 
-Pending Changesets hold delivery. A merged release PR, including failed or no-op
-publication, cannot use this path as an implicit publication retry. The newest
+Pending Changesets hold delivery. A merged release PR without a publication record
+for its exact source cannot use this path as an implicit publication retry. If a
+late queued event displaces the publication handoff, site-only catch-up can recover
+the already published release: it requires that exact publication record, verified
+npm artifacts and the original full release CI plus release-specific human visual
+approval again. It never invokes publication. Failed/no-op publication without a
+matching existing record remains blocked. The newest
 non-draft/non-prerelease durable publication record supplies the package baseline;
 until one exists, the retained verified bootstrap record is used. Source package
 versions, package trees, shared package build configuration and the package build
@@ -74,9 +82,23 @@ Publication handoff, ordinary site delivery and deployment recovery share a sing
 non-cancelling deployment lock. Immediately before deployment, the workflow checks
 current main and successful paired-deployment receipts. A newer executable/site or
 release change supersedes the old source; a contributor-prose-only successor may
-safely let it finish. Duplicate/stale automatic handoffs skip. Completing Release
-also triggers a catch-up evaluation of current main, covering site merges while
-publication was in progress. New pending Changesets still hold that catch-up.
+safely let it finish. Duplicate/stale automatic handoffs skip. Whichever queued run survives resolves
+latest main rather than reusing its event SHA, so an older event queued late cannot
+lose work from a newer main commit. A final cumulative selection also skips changes
+already delivered by a preceding run. Receipt sources bind the actual checked-out
+commit; for ordinary site runs the trigger commit must be that source or its ancestor.
+The latest receipt is selected by main ancestry, never artifact creation time.
+
+Completing Release, reviewed snapshot recovery, published-site rebuild or the
+temporary bootstrap catch-up triggers another evaluation. This recovers a site job
+displaced in the shared queue by those workflows. The site workflow does not trigger
+itself. A newer verified package baseline also selects delivery even if app files
+are unchanged. Without a valid recurring receipt, the published source is the diff
+base; a non-bootstrap publication is treated as not yet delivered. Expired, failed,
+foreign-branch and unrelated-workflow receipts cannot suppress delivery. Evidence
+pagination is bounded and fails closed if incomplete. New pending Changesets still
+hold every catch-up. Recovery does not clear outstanding main changes; automatic
+delivery can resume those changes after recovery completes.
 Receipts are written only after both sites deploy. Snapshots are retained before
 either deployment, so a partial failure can use deployment-only recovery.
 

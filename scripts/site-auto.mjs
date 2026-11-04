@@ -1,14 +1,13 @@
 // Main-only site delivery. No publication permissions or workflow input approvals.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, readFileSync, readdirSync, mkdirSync } from 'node:fs';
+import { appendFileSync, readFileSync, readdirSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { githubAPI, mergedRelease } from './release-ci.mjs';
+import { githubAPI, mergedRelease, verifyCurrentPublication } from './release-ci.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
-const paths = (base, head) =>
-  git('diff', '--name-only', '--no-renames', base, head).split('\n').filter(Boolean);
 export const sitePaths = (files) =>
   files.some((p) => /^(apps\/(web|storybook)|packages\/blocks)\//.test(p));
 export const packagePaths = (files) =>
@@ -17,9 +16,6 @@ export const packagePaths = (files) =>
       p,
     ),
   );
-export function eligible({ pending, release, changed, unpublished }) {
-  return !pending && !release && sitePaths(changed) && !packagePaths(unpublished);
-}
 export function pendingChangesets() {
   return readdirSync('.changeset').some((name) => name.endsWith('.md') && name !== 'README.md');
 }
@@ -33,26 +29,112 @@ async function pages(api, path, key) {
   }
   throw new Error('Incomplete site-delivery evidence');
 }
-export async function alreadyDelivered(api, source) {
+async function successfulDelivery(api, artifact, source, readGit = git) {
+  if (artifact.expired || !/^[a-f0-9]{40}$/.test(artifact.workflow_run?.head_sha ?? ''))
+    return false;
+  const run = await api(`/actions/runs/${artifact.workflow_run.id}`);
+  if (
+    run.status !== 'completed' ||
+    run.conclusion !== 'success' ||
+    run.head_branch !== 'main' ||
+    run.head_sha !== artifact.workflow_run.head_sha ||
+    !['.github/workflows/release.yml', '.github/workflows/deploy-site-changes.yml'].includes(
+      run.path,
+    ) ||
+    !['push', 'workflow_run', 'workflow_dispatch'].includes(run.event)
+  )
+    return false;
+  if (run.path === '.github/workflows/release.yml') return run.head_sha === source;
+  // Ordinary delivery resolves current main AFTER acquiring the lock. The event
+  // commit can be older than the actual built/deployed source named by its receipt.
+  if (run.head_sha !== source) {
+    try {
+      readGit('merge-base', '--is-ancestor', run.head_sha, source);
+    } catch (error) {
+      if (error.status === 1) return false;
+      throw error;
+    }
+  }
+  return true;
+}
+export async function alreadyDelivered(api, source, readGit = git) {
   const artifacts = await pages(
     api,
     `/actions/artifacts?name=site-deployed-${source}`,
     'artifacts',
   );
-  for (const artifact of artifacts) {
-    if (artifact.expired || artifact.workflow_run?.head_sha !== source) continue;
-    const run = await api(`/actions/runs/${artifact.workflow_run.id}`);
+  for (const artifact of artifacts)
     if (
-      run.status === 'completed' &&
-      run.conclusion === 'success' &&
-      ['.github/workflows/release.yml', '.github/workflows/deploy-site-changes.yml'].includes(
-        run.path,
-      ) &&
-      ['push', 'workflow_run', 'workflow_dispatch'].includes(run.event)
+      artifact.name === `site-deployed-${source}` &&
+      (await successfulDelivery(api, artifact, source, readGit))
     )
       return true;
-  }
   return false;
+}
+export async function latestDelivery(api, source, readGit = git) {
+  const history = readGit('rev-list', '--first-parent', source).split('\n');
+  const rank = new Map(history.map((commit, index) => [commit, index]));
+  const artifacts = await pages(api, '/actions/artifacts', 'artifacts');
+  let latest = null;
+  for (const artifact of artifacts) {
+    const commit = /^site-deployed-([a-f0-9]{40})$/.exec(artifact.name ?? '')?.[1];
+    if (!commit || !rank.has(commit) || (latest && rank.get(commit) >= rank.get(latest))) continue;
+    if (await successfulDelivery(api, artifact, commit, readGit)) latest = commit;
+  }
+  return latest;
+}
+export async function planSiteDelivery(
+  api,
+  { source, pending, release, packageSource, bootstrap },
+  readGit = git,
+) {
+  if (pending) return { eligible: false, reason: 'Pending Changesets' };
+  if (release && packageSource !== source)
+    return { eligible: false, reason: 'Release has no matching publication record' };
+  assert.match(packageSource, /^[a-f0-9]{40}$/);
+  readGit('merge-base', '--is-ancestor', packageSource, source);
+  const delivered = await latestDelivery(api, source, readGit);
+  const base = delivered ?? packageSource;
+  const changed = readGit('diff', '--name-only', '--no-renames', base, source)
+    .split('\n')
+    .filter(Boolean);
+  // A new publication can change the rendered library even with identical app
+  // source. Without a recurring receipt, only bootstrap is assumed previously live.
+  const packageAdvanced = delivered
+    ? readGit('merge-base', packageSource, delivered) !== packageSource
+    : !bootstrap;
+  return {
+    eligible: sitePaths(changed) || packageAdvanced,
+    delivered,
+    base,
+    changed,
+    packageAdvanced,
+  };
+}
+async function baselineSource(tag, repository) {
+  if (tag === 'bootstrap-2026-11-01')
+    return JSON.parse(readFileSync('releases/npm-bootstrap-2026-11-01.json')).sourceCommit;
+  const directory = mkdtempSync(resolve(tmpdir(), 'veli-site-baseline-'));
+  try {
+    execFileSync(
+      'gh',
+      [
+        'release',
+        'download',
+        tag,
+        '--repo',
+        repository,
+        '--pattern',
+        'publication.json',
+        '--dir',
+        directory,
+      ],
+      { stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+    return JSON.parse(readFileSync(resolve(directory, 'publication.json'))).sourceCommit;
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 }
 export async function assertCurrent(api, source, readGit = git) {
   const main = await api('/git/ref/heads/main');
@@ -73,7 +155,11 @@ export async function assertCurrent(api, source, readGit = git) {
       'Superseded source: newer main requires fresh site/release validation',
     );
   }
-  assert.equal(await alreadyDelivered(api, source), false, 'This source was already deployed');
+  assert.equal(
+    await alreadyDelivered(api, source, readGit),
+    false,
+    'This source was already deployed',
+  );
 }
 export async function verifyMergedSiteReview(api, repository, source) {
   const prs = await pages(api, `/commits/${source}/pulls`);
@@ -135,10 +221,10 @@ export function packageLockClosure(lock) {
   }
   return result;
 }
-export async function assertPublishedSource(publication, source) {
+export async function assertPublishedSource(publication, source, readGit = git) {
   const { parse } = await import('yaml');
-  const before = parse(git('show', `${publication.sourceCommit}:pnpm-lock.yaml`));
-  const after = parse(git('show', `${source}:pnpm-lock.yaml`));
+  const before = parse(readGit('show', `${publication.sourceCommit}:pnpm-lock.yaml`));
+  const after = parse(readGit('show', `${source}:pnpm-lock.yaml`));
   for (const name of ['react', 'tokens', 'cli'])
     assert.deepEqual(
       after.importers[`packages/${name}`],
@@ -151,49 +237,68 @@ export async function assertPublishedSource(publication, source) {
     packageLockClosure(before),
     'Unpublished package build dependency closure changed',
   );
-  git('merge-base', '--is-ancestor', publication.sourceCommit, source);
+  readGit('merge-base', '--is-ancestor', publication.sourceCommit, source);
   assert.equal(
-    git('rev-parse', `${publication.sourceCommit}^{tree}`),
+    readGit('rev-parse', `${publication.sourceCommit}^{tree}`),
     publication.sourceTree,
     'Publication source tree mismatch',
   );
   assert.equal(
-    packagePaths(paths(publication.sourceCommit, source)),
+    packagePaths(
+      readGit('diff', '--name-only', '--no-renames', publication.sourceCommit, source)
+        .split('\n')
+        .filter(Boolean),
+    ),
     false,
     'Unpublished package source or build changes must wait for publication',
   );
   for (const [name, item] of Object.entries(publication.packages)) {
     const directory = name.split('/')[1];
-    const current = JSON.parse(git('show', `${source}:packages/${directory}/package.json`));
+    const current = JSON.parse(readGit('show', `${source}:packages/${directory}/package.json`));
     assert.equal(current.version, item.version, `${name}: source requires an unpublished version`);
   }
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [command, target] = process.argv.slice(2);
   const api = githubAPI();
-  const source = process.env.GITHUB_SHA;
+  const source =
+    command === 'source'
+      ? git('rev-parse', 'HEAD')
+      : process.env.SITE_SOURCE_COMMIT || process.env.GITHUB_SHA;
   assert.match(source, /^[a-f0-9]{40}$/);
   assert.equal(git('rev-parse', 'HEAD'), source);
-  if (command === 'plan') {
-    const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH));
-    const before =
-      process.env.GITHUB_EVENT_NAME === 'push' ? event.before : event.workflow_run?.head_sha;
-    assert.match(before, /^[a-f0-9]{40}$/);
+  if (command === 'source') {
+    appendFileSync(process.env.GITHUB_ENV, `SITE_SOURCE_COMMIT=${source}\n`);
+    appendFileSync(process.env.GITHUB_OUTPUT, `source=${source}\n`);
+  } else if (command === 'plan') {
+    const pending = pendingChangesets();
     const release = await mergedRelease(api, process.env.GITHUB_REPOSITORY, source);
-    const ready = eligible({
-      pending: pendingChangesets(),
-      release: Boolean(release),
-      changed: paths(before, source),
-      unpublished: [],
-    });
-    appendFileSync(process.env.GITHUB_OUTPUT, `eligible=${ready}\n`);
-    if (ready) appendFileSync(process.env.GITHUB_OUTPUT, `baseline=${await selectBaseline(api)}\n`);
+    let selected = { eligible: false };
+    if (!pending) {
+      const baseline = await selectBaseline(api);
+      selected = await planSiteDelivery(api, {
+        source,
+        pending,
+        release: Boolean(release),
+        packageSource: await baselineSource(baseline, process.env.GITHUB_REPOSITORY),
+        bootstrap: baseline === 'bootstrap-2026-11-01',
+      });
+      appendFileSync(process.env.GITHUB_OUTPUT, `baseline=${baseline}\n`);
+    }
+    console.log(JSON.stringify({ source, pending, release: Boolean(release), ...selected }));
+    appendFileSync(process.env.GITHUB_OUTPUT, `eligible=${selected.eligible}\n`);
   } else if (command === 'verify') {
     assert.equal(pendingChangesets(), false, 'A Changeset release is pending');
-    // Never use ordinary delivery to recover a failed/no-op release publication.
-    assert.equal(await mergedRelease(api, process.env.GITHUB_REPOSITORY, source), null);
-    await assertPublishedSource(JSON.parse(readFileSync(target)), source);
-    await verifyMergedSiteReview(api, process.env.GITHUB_REPOSITORY, source);
+    const publication = JSON.parse(readFileSync(target));
+    await assertPublishedSource(publication, source);
+    const release = await mergedRelease(api, process.env.GITHUB_REPOSITORY, source);
+    if (release) {
+      // An older queued site event can displace the release handoff. Recover
+      // sites ONLY from a publication record for this exact release; re-check
+      // the original full CI and release-specific visual approval. Never publish.
+      assert.equal(publication.sourceCommit, source, 'Release has no matching publication record');
+      await verifyCurrentPublication({ ...process.env, GITHUB_SHA: source });
+    } else await verifyMergedSiteReview(api, process.env.GITHUB_REPOSITORY, source);
   } else if (command === 'guard') {
     await assertCurrent(api, source);
   } else if (command === 'gate') {
@@ -201,7 +306,20 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     // retry publication. Unexpected API/network failures remain failures.
     try {
       await assertCurrent(api, source);
-      appendFileSync(process.env.GITHUB_OUTPUT, 'ready=true\n');
+      let ready = true;
+      if (target) {
+        const publication = JSON.parse(readFileSync(target));
+        const selected = await planSiteDelivery(api, {
+          source,
+          pending: pendingChangesets(),
+          release: Boolean(await mergedRelease(api, process.env.GITHUB_REPOSITORY, source)),
+          packageSource: publication.sourceCommit,
+          bootstrap: process.env.PACKAGE_RELEASE_TAG === 'bootstrap-2026-11-01',
+        });
+        ready = selected.eligible;
+        console.log(JSON.stringify(selected));
+      }
+      appendFileSync(process.env.GITHUB_OUTPUT, `ready=${ready}\n`);
     } catch (error) {
       if (!/Superseded source:|already deployed/.test(error.message)) throw error;
       console.log(error.message);
@@ -210,5 +328,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   } else if (command === 'receipt') {
     mkdirSync(target, { recursive: true });
     appendFileSync(resolve(target, 'source.txt'), `${source}\n`);
-  } else throw new Error('Expected plan, verify, gate, guard or receipt');
+  } else throw new Error('Expected source, plan, verify, gate, guard or receipt');
 }
