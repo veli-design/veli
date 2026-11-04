@@ -19,13 +19,14 @@ Use Sheet to review related information or complete a short task without leaving
 ```tsx
 import { Sheet } from '@veli-design/react/sheet';
 import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
 ```
 
 Sheet requires React Aria Components 1.22 or later and the Veli UI Tailwind stylesheet. Render within [VeliProvider](/docs/provider/) for language, direction and theme.
 
 ## Usage
 
-Pair an opening Button with Sheet inside `Sheet.Trigger`. Supply a visible title and put the task content in its body.
+Pair an opening Button with Sheet inside `Sheet.Trigger`. Compose its layout with `Sheet.Header`, `Sheet.Body` and `Sheet.Footer`. Supply a visible `Sheet.Title` to name the dialog.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <SheetDemo client:visible />
@@ -34,24 +35,39 @@ Pair an opening Button with Sheet inside `Sheet.Trigger`. Supply a visible title
 ```tsx
 <Sheet.Trigger>
   <Button>View application</Button>
-  <Sheet
-    title="Application details"
-    description="A quick view of your request."
-    footer={<Button slot="close">Back to applications</Button>}
-  >
-    <dl>
-      <dt>Reference</dt>
-      <dd>
-        <bdi>DEMO-1042</bdi>
-      </dd>
-      <dt>Status</dt>
-      <dd>In review</dd>
-    </dl>
+  <Sheet>
+    <Sheet.Handle />
+    <Sheet.Header>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <Sheet.Title>Application details</Sheet.Title>
+        <Sheet.Description>A quick view of your request.</Sheet.Description>
+      </div>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      <dl>
+        <dt>Reference</dt>
+        <dd>
+          <bdi>DEMO-1042</bdi>
+        </dd>
+        <dt>Status</dt>
+        <dd>In review</dd>
+      </dl>
+    </Sheet.Body>
+    <Sheet.Footer>
+      <Divider className="mb-2" />
+      <Button slot="close">Back to applications</Button>
+    </Sheet.Footer>
   </Sheet>
 </Sheet.Trigger>
 ```
 
-Use `headerActions` for a compact action such as Reset, and `footer` for task actions. A Veli Button with `slot="close"` dismisses the sheet. Ordinary action buttons remain open unless their handler changes the open state.
+Place compact actions such as Reset inside `Sheet.Header`, and task actions inside `Sheet.Footer`. `Sheet.Close` renders the localized close icon. A Veli Button with `slot="close"` also dismisses the sheet; ordinary action buttons stay open unless their handler changes the open state.
+
+The header, handle, description and footer are optional. Place `Divider` explicitly where needed. Inside the wrapping footer, `className="mb-2"` gives a divider the existing full-width separation above the actions. Group the title and description with `flex min-w-0 flex-1 flex-col gap-2` to preserve their spacing.
+
+Each layout part accepts its own `className`, DOM attributes and ref. Custom components and fragments can wrap the parts; they do not need to be direct children of Sheet.
 
 ## Placement
 
@@ -64,20 +80,29 @@ Use `headerActions` for a compact action such as Reset, and `footer` for task ac
 ```tsx
 <Sheet.Trigger>
   <Button>View details</Button>
-  <Sheet
-    title="Application details"
-    position="end"
-    size="sm"
-    footer={<Button slot="close">Done</Button>}
-  >
-    <dl>
-      <dt>Reference</dt>
-      <dd>
-        <bdi>DEMO-1042</bdi>
-      </dd>
-      <dt>Status</dt>
-      <dd>In review</dd>
-    </dl>
+  <Sheet position="end" size="sm">
+    <Sheet.Handle />
+    <Sheet.Header>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <Sheet.Title>Application details</Sheet.Title>
+      </div>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      <dl>
+        <dt>Reference</dt>
+        <dd>
+          <bdi>DEMO-1042</bdi>
+        </dd>
+        <dt>Status</dt>
+        <dd>In review</dd>
+      </dl>
+    </Sheet.Body>
+    <Sheet.Footer>
+      <Divider className="mb-2" />
+      <Button slot="close">Done</Button>
+    </Sheet.Footer>
   </Sheet>
 </Sheet.Trigger>
 ```
@@ -102,18 +127,27 @@ For bottom sheets, `height="content"` fits the content up to the viewport limit.
 ```tsx
 <Sheet.Trigger>
   <Button>Read guidance</Button>
-  <Sheet
-    title="Before you apply"
-    size="lg"
-    height="viewport"
-    footer={<Button slot="close">Done</Button>}
-  >
-    <p>Prepare your information before starting a request.</p>
-    <ol>
-      <li>Check that you have selected the right service.</li>
-      <li>Prepare clear copies of the required documents.</li>
-      <li>Review your answers before submitting.</li>
-    </ol>
+  <Sheet size="lg" height="viewport">
+    <Sheet.Handle />
+    <Sheet.Header>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <Sheet.Title>Before you apply</Sheet.Title>
+      </div>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      <p>Prepare your information before starting a request.</p>
+      <ol>
+        <li>Check that you have selected the right service.</li>
+        <li>Prepare clear copies of the required documents.</li>
+        <li>Review your answers before submitting.</li>
+      </ol>
+    </Sheet.Body>
+    <Sheet.Footer>
+      <Divider className="mb-2" />
+      <Button slot="close">Done</Button>
+    </Sheet.Footer>
   </Sheet>
 </Sheet.Trigger>
 ```
@@ -122,7 +156,7 @@ Normally the body scrolls with the header and footer outside it. On short screen
 
 ## Dismissal
 
-By default, Escape, backdrop interaction and swipe close the sheet. `isDismissable={false}` requires an explicit close action. Try both settings below; Done and the visible close button always work.
+By default, Escape, backdrop interaction and swipe close the sheet. `isDismissable={false}` requires an explicit close action. Try both settings below; Done and `Sheet.Close` always work. Include an explicit close action when disabling dismissal.
 
 <div className="preview mb-4 rounded-lg border p-4">
   <SheetDismissalDemo client:visible />
@@ -131,19 +165,29 @@ By default, Escape, backdrop interaction and swipe close the sheet. `isDismissab
 ```tsx
 <Sheet.Trigger>
   <Button>Review details</Button>
-  <Sheet
-    title="Application details"
-    isDismissable={false}
-    footer={<Button slot="close">Done</Button>}
-  >
-    <dl>
-      <dt>Reference</dt>
-      <dd>
-        <bdi>DEMO-1042</bdi>
-      </dd>
-      <dt>Status</dt>
-      <dd>In review</dd>
-    </dl>
+  <Sheet isDismissable={false}>
+    <Sheet.Handle />
+    <Sheet.Header>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <Sheet.Title>Application details</Sheet.Title>
+      </div>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      <dl>
+        <dt>Reference</dt>
+        <dd>
+          <bdi>DEMO-1042</bdi>
+        </dd>
+        <dt>Status</dt>
+        <dd>In review</dd>
+      </dl>
+    </Sheet.Body>
+    <Sheet.Footer>
+      <Divider className="mb-2" />
+      <Button slot="close">Done</Button>
+    </Sheet.Footer>
   </Sheet>
 </Sheet.Trigger>
 ```
@@ -159,8 +203,18 @@ const [isOpen, setOpen] = useState(false);
 
 <Sheet.Trigger isOpen={isOpen} onOpenChange={setOpen}>
   <Button>View application</Button>
-  <Sheet title="Application details">
-    <p>Your application is in review.</p>
+  <Sheet>
+    <Sheet.Handle />
+    <Sheet.Header>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <Sheet.Title>Application details</Sheet.Title>
+      </div>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      <p>Your application is in review.</p>
+    </Sheet.Body>
   </Sheet>
 </Sheet.Trigger>;
 ```
@@ -173,39 +227,108 @@ The `SheetProps` interface uses React Aria [Sheet](https://react-aria.adobe.com/
 
 ### Sheet
 
-| Prop               | Type                             | Default      | Description                                                                                                   |
-| :----------------- | :------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------ |
-| `position`         | `'bottom' \| 'start' \| 'end'`   | `'bottom'`   | Opening edge. Logical sides mirror in RTL.                                                                    |
-| `size`             | `'sm' \| 'md' \| 'lg' \| 'full'` | `'md'`       | Width preset in every placement.                                                                              |
-| `height`           | `'content' \| 'viewport'`        | `'content'`  | Bottom height. Ignored for side placements.                                                                   |
-| `showHandle`       | `boolean`                        | `true`       | Show the decorative grabber on bottom sheets below the `lg` breakpoint. Hiding it does not disable swipe.     |
-| `isDismissable`    | `boolean`                        | `true`       | Allow Escape, backdrop and swipe dismissal. Explicit close remains available.                                 |
-| `title`            | `string`                         | Required     | Visible accessible dialog title. Whitespace is normalized; blank values trigger a development error.          |
-| `description`      | `string`                         | —            | Optional supporting text, linked as the dialog description.                                                   |
-| `children`         | `ReactNode`                      | Required     | Scrollable body content.                                                                                      |
-| `headerActions`    | `ReactNode`                      | —            | Compact actions before the close button.                                                                      |
-| `footer`           | `ReactNode`                      | —            | Footer content; actions wrap and align to the logical end. Scrolls with the dialog when space is constrained. |
-| `isOpen`           | `boolean`                        | Uncontrolled | Controlled state when Sheet owns state.                                                                       |
-| `defaultOpen`      | `boolean`                        | `false`      | Initial uncontrolled state when Sheet owns state.                                                             |
-| `onOpenChange`     | `(isOpen: boolean) => void`      | —            | Receives state changes when Sheet owns state.                                                                 |
-| `className`        | `string`                         | —            | Surface classes merged with the variants. Preserve native overflow behavior.                                  |
-| `overlayClassName` | `string`                         | —            | Classes on the overlay, not the backdrop element.                                                             |
-| `contentClassName` | `string`                         | —            | Body layout classes, such as spacing for a compact list.                                                      |
+| Prop               | Type                             | Default      | Description                                                                          |
+| :----------------- | :------------------------------- | :----------- | :----------------------------------------------------------------------------------- |
+| `position`         | `'bottom' \| 'start' \| 'end'`   | `'bottom'`   | Opening edge. Logical sides mirror in RTL.                                           |
+| `size`             | `'sm' \| 'md' \| 'lg' \| 'full'` | `'md'`       | Width preset in every placement.                                                     |
+| `height`           | `'content' \| 'viewport'`        | `'content'`  | Bottom height. Ignored for side placements.                                          |
+| `isDismissable`    | `boolean`                        | `true`       | Allow Escape, backdrop and swipe dismissal. Explicit close actions remain available. |
+| `children`         | `ReactNode`                      | Required     | Composed sheet parts.                                                                |
+| `isOpen`           | `boolean`                        | Uncontrolled | Controlled state when Sheet owns state.                                              |
+| `defaultOpen`      | `boolean`                        | `false`      | Initial uncontrolled state when Sheet owns state.                                    |
+| `onOpenChange`     | `(isOpen: boolean) => void`      | —            | Receives state changes when Sheet owns state.                                        |
+| `className`        | `string`                         | —            | Surface classes merged with the variants. Preserve native overflow behavior.         |
+| `overlayClassName` | `string`                         | —            | Classes on the overlay, not the backdrop element.                                    |
 
 ### Sheet.Trigger
 
 `Sheet.Trigger` is React Aria’s `SheetTrigger`. Pair one opening Button with the Sheet as children. Its `isOpen`, `defaultOpen` and `onOpenChange` props have the state behavior described above.
 
-Sheet does not expose snap points, physical left/right placement, a hidden close button, independent Escape/swipe switches, a custom backdrop, a forwarded ref, or arbitrary DOM prop pass-through. Do not assume Modal props such as `isKeyboardDismissDisabled` work here.
+### Composition
+
+Assemble the surface with `Sheet.Trigger`, `Sheet.Header`, `Sheet.Title`, `Sheet.Description`, `Sheet.Body`, `Sheet.Footer`, `Sheet.Handle`, and `Sheet.Close`.
+
+| Part                | Notes                                                                                        |
+| :------------------ | :------------------------------------------------------------------------------------------- |
+| `Sheet.Trigger`     | Wraps the opener and sheet; manages open state and focus return.                             |
+| `Sheet.Header`      | Header layout for the title, supporting text and compact actions.                            |
+| `Sheet.Title`       | Required visible heading and accessible name for the dialog.                                 |
+| `Sheet.Description` | Optional supporting text automatically linked to the dialog, in reading order.               |
+| `Sheet.Body`        | Scrollable task content, labelled by the title by default.                                   |
+| `Sheet.Footer`      | Wrapping action row aligned to the logical end. Add dividers explicitly.                     |
+| `Sheet.Handle`      | Decorative mobile grabber for bottom sheets. Omit it to hide the grabber; swipe still works. |
+| `Sheet.Close`       | Optional dismiss control. Default icon and accessible label are supplied.                    |
+
+Render the content parts inside Sheet. Header, footer, handle and close controls are explicit children; Sheet does not insert them automatically.
+
+### Layout part props
+
+`Sheet.Header` and `Sheet.Footer` accept native `header` and `footer` attributes. `Sheet.Body` and `Sheet.Handle` accept native `div` attributes. These include `id`, `style`, event handlers, and `aria-*` / `data-*` attributes. `Sheet.Title` and `Sheet.Description` inherit React Aria Heading and Text props, with their `slot` managed internally.
+
+| Prop        | Type        | Default                             | Description                                                                                                                                                                        |
+| :---------- | :---------- | :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `children`  | `ReactNode` | —                                   | Content for the part. Not supported by `Sheet.Handle`, which supplies its own grabber.                                                                                             |
+| `className` | `string`    | —                                   | Classes merged with the part's existing styling.                                                                                                                                   |
+| `id`        | `string`    | Generated for title and description | Native element ID. Custom title and description IDs retain their accessible associations.                                                                                          |
+| `ref`       | `Ref<T>`    | —                                   | Ref to the rendered element: `HTMLElement` for header/footer, `HTMLHeadingElement` for title, `HTMLSpanElement` for the default description, and `HTMLDivElement` for body/handle. |
+
+### Sheet.Title
+
+| Prop       | Type        | Default  | Description                                                           |
+| :--------- | :---------- | :------- | :-------------------------------------------------------------------- |
+| `children` | `ReactNode` | Required | Meaningful, nonempty visible dialog title.                            |
+| `level`    | `number`    | `2`      | Heading level, from 1 to 6. Does not change the title's visual style. |
+
+### Sheet.Description
+
+| Prop          | Type        | Default  | Description                                                                       |
+| :------------ | :---------- | :------- | :-------------------------------------------------------------------------------- |
+| `children`    | `ReactNode` | —        | Supporting text included in the dialog's accessible description.                  |
+| `elementType` | `string`    | `'span'` | Rendered text element. Changing it also changes the DOM node received by the ref. |
+
+### Sheet.Body
+
+| Prop              | Type       | Default    | Description                                                                                  |
+| :---------------- | :--------- | :--------- | :------------------------------------------------------------------------------------------- |
+| `role`            | `AriaRole` | `'region'` | Semantic role of the content container.                                                      |
+| `tabIndex`        | `number`   | `0`        | Makes the scroll region keyboard-focusable.                                                  |
+| `aria-label`      | `string`   | —          | Custom region name; replaces the automatic title association.                                |
+| `aria-labelledby` | `string`   | Title ID   | ID of the element naming the region. Supply an ID to override the default title association. |
+
+### Sheet.Close
+
+Inherits the action-mode [Button props](/docs/button/#api-reference), except `as`, `slot` and `iconOnly`. It renders an icon-only button with the close slot. These defaults apply when the props are omitted:
+
+| Prop         | Type                          | Default              | Description                                                     |
+| :----------- | :---------------------------- | :------------------- | :-------------------------------------------------------------- |
+| `aria-label` | `string`                      | Localized Close name | Accessible name: `Close sheet` in English, `ލައްޕާ` in Dhivehi. |
+| `children`   | `ReactNode`                   | X icon               | Custom icon content.                                            |
+| `onPress`    | `(event: PressEvent) => void` | —                    | Additional press handler; the close action still runs.          |
+| `isDisabled` | `boolean`                     | `false`              | Disables the close button.                                      |
+| `intent`     | `ButtonProps['intent']`       | `'secondary'`        | Button emphasis.                                                |
+| `appearance` | `ButtonProps['appearance']`   | `'ghost'`            | Button surface treatment.                                       |
+| `size`       | `ButtonProps['size']`         | `'sm'`               | Icon-button size.                                               |
+| `className`  | `string`                      | —                    | Classes merged onto the button.                                 |
+| `ref`        | `Ref<HTMLButtonElement>`      | —                    | Ref to the close button.                                        |
+
+### Migrating from the content-prop API
+
+- Move `title` into `Sheet.Title` and `description` into `Sheet.Description`.
+- Move `headerActions` into `Sheet.Header` and `footer` into `Sheet.Footer`.
+- Wrap task content in `Sheet.Body`; move `contentClassName` to its `className`.
+- Replace `showHandle` with conditional rendering of `Sheet.Handle`.
+- Include `Sheet.Close` and the desired dividers explicitly.
+
+Sheet does not expose snap points, physical left/right placement, independent Escape/swipe switches, a custom backdrop, a root forwarded ref, or arbitrary root DOM prop pass-through. Do not assume Modal props such as `isKeyboardDismissDisabled` work here.
 
 ## Accessibility
 
-- Supply a meaningful `title` to name the dialog. Optional `description` supplies its accessible description.
+- Supply a meaningful, nonempty `Sheet.Title` to name the dialog. `Sheet.Description` supplies its accessible description when rendered.
 - React Aria contains focus, locks background scrolling and returns focus to the opening control when the sheet closes.
-- The visible close button is always available, including with `isDismissable={false}`. Its label is localized by VeliProvider.
+- Include `Sheet.Close` or a Button with `slot="close"`, especially with `isDismissable={false}`. The default close icon label is localized by VeliProvider.
 - The labelled body region is keyboard-focusable for scrolling. Content and actions remain reachable on constrained screens.
-- The mobile handle is decorative; hiding it does not disable swipe. Reduced-motion preferences are respected.
-- Forced-colors mode retains surface and keyboard-focus outlines. Blank titles trigger a development error.
+- The mobile handle is decorative; omitting it does not disable swipe. Reduced-motion preferences are respected.
+- Forced-colors mode retains surface and keyboard-focus outlines. Missing or blank titles trigger a development error when the dialog mounts.
 
 ## RTL and Language
 

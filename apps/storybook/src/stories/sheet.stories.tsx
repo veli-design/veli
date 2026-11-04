@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { Divider } from '@veli-design/react/divider';
 import { Button } from '@veli-design/react/button';
 import { FieldLabel } from '@veli-design/react/field';
 import { Radio, RadioGroup } from '@veli-design/react/radio';
@@ -12,6 +13,9 @@ import {
 } from './sheet-example-content';
 
 type ExampleArgs = SheetProps & {
+  title: string;
+  description?: string;
+  showHandle: boolean;
   showFooter: boolean;
   showHeaderAction: boolean;
 };
@@ -20,6 +24,9 @@ type Example = 'summary' | 'filters' | 'guide';
 function ExampleSheet({
   showFooter,
   showHeaderAction,
+  showHandle,
+  title,
+  description,
   example = 'summary',
   onApply,
   ...args
@@ -27,50 +34,61 @@ function ExampleSheet({
   const text = useSheetExampleCopy();
   const [filter, setFilter] = useState('all');
   const content = text[example];
+  const heading =
+    !title?.trim() || title.trim() === sheetExampleCopy.en[example].title
+      ? content.title
+      : title.trim();
+  const supportingText =
+    description === sheetExampleCopy.en[example].description ? content.description : description;
   return (
-    <Sheet
-      {...args}
-      title={
-        !args.title?.trim() || args.title.trim() === sheetExampleCopy.en[example].title
-          ? content.title
-          : args.title.trim()
-      }
-      description={
-        args.description === sheetExampleCopy.en[example].description
-          ? content.description
-          : args.description
-      }
-      headerActions={
-        showHeaderAction && example === 'filters' ? (
-          <Button intent="secondary" appearance="ghost" size="sm" onPress={() => setFilter('all')}>
-            {text.reset}
-          </Button>
-        ) : undefined
-      }
-      footer={
-        showFooter ? (
+    <Sheet {...args}>
+      {showHandle && <Sheet.Handle />}
+      <Sheet.Header>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <Sheet.Title>{heading}</Sheet.Title>
+          {supportingText && <Sheet.Description>{supportingText}</Sheet.Description>}
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {showHeaderAction && example === 'filters' && (
+            <Button
+              intent="secondary"
+              appearance="ghost"
+              size="sm"
+              onPress={() => setFilter('all')}
+            >
+              {text.reset}
+            </Button>
+          )}
+          <Sheet.Close />
+        </div>
+      </Sheet.Header>
+      <Divider />
+      <Sheet.Body>
+        {example === 'filters' ? (
+          <RadioGroup value={filter} onChange={setFilter}>
+            <FieldLabel>{text.filters.label}</FieldLabel>
+            {text.filters.options.map((option) => (
+              <Radio key={option.id} value={option.id} size="lg">
+                {option.label}
+              </Radio>
+            ))}
+          </RadioGroup>
+        ) : example === 'guide' ? (
+          <PreparationGuide />
+        ) : (
+          <ApplicationSummary />
+        )}
+      </Sheet.Body>
+      {showFooter && (
+        <Sheet.Footer>
+          <Divider className="mb-2" />
           <Button
             slot="close"
             onPress={example === 'filters' ? () => onApply?.(filter) : undefined}
           >
             {example === 'filters' ? text.apply : example === 'guide' ? text.back : text.done}
           </Button>
-        ) : undefined
-      }
-    >
-      {example === 'filters' ? (
-        <RadioGroup value={filter} onChange={setFilter}>
-          <FieldLabel>{text.filters.label}</FieldLabel>
-          {text.filters.options.map((option) => (
-            <Radio key={option.id} value={option.id} size="lg">
-              {option.label}
-            </Radio>
-          ))}
-        </RadioGroup>
-      ) : example === 'guide' ? (
-        <PreparationGuide />
-      ) : (
-        <ApplicationSummary />
+        </Sheet.Footer>
       )}
     </Sheet>
   );
@@ -107,14 +125,36 @@ function BasicExample({
 }
 
 // Static usage samples intentionally omit the demo layout and localized copy.
-function basicUsage(props: string, content = '<p>Your application summary goes here.</p>') {
+function basicUsage(
+  props: string,
+  content = '<p>Your application summary goes here.</p>',
+  title = 'Application summary',
+  footer?: string,
+) {
   return `import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
 import { Sheet } from '@veli-design/react/sheet';
 
 <Sheet.Trigger>
   <Button>Open sheet</Button>
   <Sheet ${props}>
-    ${content}
+    <Sheet.Handle />
+    <Sheet.Header>
+      <Sheet.Title>${title}</Sheet.Title>
+      <Sheet.Close />
+    </Sheet.Header>
+    <Divider />
+    <Sheet.Body>
+      ${content}
+    </Sheet.Body>${
+      footer
+        ? `
+    <Sheet.Footer>
+      <Divider className="mb-2" />
+      ${footer}
+    </Sheet.Footer>`
+        : ''
+    }
   </Sheet>
 </Sheet.Trigger>`;
 }
@@ -122,6 +162,7 @@ import { Sheet } from '@veli-design/react/sheet';
 function filterUsage(props: string, showReset = false) {
   return `import { useState } from 'react';
 import { Button } from '@veli-design/react/button';
+import { Divider } from '@veli-design/react/divider';
 import { FieldLabel } from '@veli-design/react/field';
 import { Radio, RadioGroup } from '@veli-design/react/radio';
 import { Sheet } from '@veli-design/react/sheet';
@@ -134,21 +175,38 @@ export function ServiceFilters() {
     <>
       <Sheet.Trigger>
         <Button>Filter services</Button>
-        <Sheet
-          title="Filter services"
-          ${props}${
-            showReset
-              ? `
-          headerActions={<Button onPress={() => setFilter('all')}>Reset</Button>}`
-              : ''
-          }
-          footer={<Button slot="close" onPress={() => setApplied(filter)}>Apply filters</Button>}
-        >
-          <RadioGroup value={filter} onChange={setFilter}>
-            <FieldLabel>Service category</FieldLabel>
-            <Radio value="all">All services</Radio>
-            <Radio value="selected">A service category</Radio>
-          </RadioGroup>
+        <Sheet ${props}>
+          <Sheet.Handle />
+          <Sheet.Header>
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <Sheet.Title>Filter services</Sheet.Title>${
+                showReset
+                  ? `
+              <Sheet.Description>Choose which services to show.</Sheet.Description>`
+                  : ''
+              }
+            </div>
+            <div className="flex shrink-0 items-center gap-2">${
+              showReset
+                ? `
+              <Button intent="secondary" appearance="ghost" size="sm" onPress={() => setFilter('all')}>Reset</Button>`
+                : ''
+            }
+              <Sheet.Close />
+            </div>
+          </Sheet.Header>
+          <Divider />
+          <Sheet.Body>
+            <RadioGroup value={filter} onChange={setFilter}>
+              <FieldLabel>Service category</FieldLabel>
+              <Radio value="all">All services</Radio>
+              <Radio value="selected">A service category</Radio>
+            </RadioGroup>
+          </Sheet.Body>
+          <Sheet.Footer>
+            <Divider className="mb-2" />
+            <Button slot="close" onPress={() => setApplied(filter)}>Apply filters</Button>
+          </Sheet.Footer>
         </Sheet>
       </Sheet.Trigger>
       <p role="status">Showing: {applied === 'all' ? 'All services' : 'A service category'}</p>
@@ -178,7 +236,7 @@ const meta = {
       source: {
         type: 'code',
         language: 'tsx',
-        code: basicUsage('title="Application summary" position="bottom" size="md"'),
+        code: basicUsage('position="bottom" size="md"'),
       },
       description: {
         component:
@@ -210,23 +268,26 @@ const meta = {
     showHandle: {
       control: 'boolean',
       if: { arg: 'position', eq: 'bottom' },
-      description: 'Show the grabber below the lg breakpoint. Hiding it does not disable swiping.',
+      description:
+        'Example toggle: renders Sheet.Handle below the lg breakpoint. Not a Sheet prop.',
       table: { category: 'Layout', defaultValue: { summary: 'true' } },
     },
     isDismissable: {
       control: 'boolean',
-      description: 'Allow Escape, backdrop and swipe dismissal. The close button always works.',
+      description:
+        'Allow Escape, backdrop and swipe dismissal. Composed close actions remain available.',
       table: { category: 'Behavior', defaultValue: { summary: 'true' } },
     },
     title: {
       control: 'text',
-      description: 'Visible dialog title. Default example text follows the language toolbar.',
-      table: { category: 'Content' },
+      description:
+        'Example text for Sheet.Title. Default text follows the language toolbar. Not a Sheet prop.',
+      table: { category: 'Example content' },
     },
     description: {
       control: 'text',
-      description: 'Optional text below the title. Clear it to hide.',
-      table: { category: 'Content' },
+      description: 'Example text for Sheet.Description. Clear it to hide. Not a Sheet prop.',
+      table: { category: 'Example content' },
     },
     showFooter: {
       control: 'boolean',
@@ -260,19 +321,8 @@ const meta = {
         'Short task content: an application summary, a service filter, or preparation guidance.',
       table: { category: 'Content' },
     },
-    footer: {
-      control: false,
-      description: 'Optional fixed footer. Demonstrated in Content Slots.',
-      table: { category: 'Content' },
-    },
-    headerActions: {
-      control: false,
-      description: 'Optional actions beside the title. Demonstrated in Content Slots.',
-      table: { category: 'Content' },
-    },
     className: { control: false, table: { category: 'Styling' } },
     overlayClassName: { control: false, table: { category: 'Styling' } },
-    contentClassName: { control: false, table: { category: 'Styling' } },
   },
   args: {
     position: 'bottom',
@@ -317,7 +367,7 @@ export const Width: Story = {
   parameters: {
     controls: { include: ['size', 'position'] },
     docs: {
-      source: { code: basicUsage('title="Application summary" size="lg"') },
+      source: { code: basicUsage('size="lg"') },
       description: {
         story:
           'The same four application details reflow as width changes. Sm suits a quick summary, md a focused task, and lg gives related fields room side by side. Full is available for broader workflows; use Height with size full to see wider guidance. Size always means width, independently of height.',
@@ -337,8 +387,10 @@ export const Height: Story = {
     docs: {
       source: {
         code: basicUsage(
-          'title="Preparation guide" height="viewport" footer={<Button slot="close">Back</Button>}',
+          'height="viewport"',
           '<p>Your preparation guidance goes here.</p>',
+          'Preparation guide',
+          '<Button slot="close">Back</Button>',
         ),
       },
       description: {
@@ -381,7 +433,7 @@ export const ContentSlots: Story = {
     },
     docs: {
       source: {
-        code: filterUsage('description="Choose which services to show."', true),
+        code: filterUsage('', true),
       },
       description: {
         story:
