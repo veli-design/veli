@@ -6,6 +6,8 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSyncCorepack } from './corepack.mjs';
 import { candidateInventory } from './prepare-consumer-candidate.mjs';
+import { getBlocks } from '../packages/blocks/scripts/catalog.mjs';
+import { assertBlockCoreCompatibility } from './npm-migration-dependencies.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const packageDirectories = {
   '@veli-design/react': 'react',
@@ -151,6 +153,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const manifest = validateManifest(
       JSON.parse(await readFile(resolve(target, 'release-manifest.json'), 'utf8')),
     );
+    assertBlockCoreCompatibility(getBlocks(), manifest.packages);
     // Every UI/token import must resolve to an installed package, never checkout source.
     for (const name of packages) {
       const result = spawnSync(

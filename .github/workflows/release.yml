@@ -1,27 +1,44 @@
 name: Release
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      dist-tag:
-        description: Separately approved npm dist-tag
-        required: true
-        type: string
-
-concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  plan:
+    if: github.repository_id == '1115705061'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Select authenticated merged release
+        id: plan
+        run: node scripts/release-ci.mjs plan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   release:
     name: Release
-    if: vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH
+    needs: plan
+    concurrency: Release-Publish
+    if: needs.plan.outputs.mode == 'publish' && vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
+      pull-requests: read
       actions: read
       id-token: write
     outputs:
       published: ${{ steps.changesets.outputs.published }}
+      source: ${{ steps.source.outputs.source }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -31,30 +48,35 @@ jobs:
         with:
           node-version: 24
 
-      - name: Select release preparation or publication
-        id: plan
-        run: node scripts/release-ci.mjs plan
+      - name: Select latest merged release under the publication lock
+        id: source
+        run: node scripts/release-order.mjs publication-source
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Checkout selected immutable release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.source }}
+          fetch-depth: 0
       - name: Require completed npm bootstrap and trusted publishers
-        if: steps.plan.outputs.mode == 'publish'
+        if: needs.plan.outputs.mode == 'publish'
         run: test "$TRUSTED_PUBLISHING_READY" = 'true'
         env:
           TRUSTED_PUBLISHING_READY: ${{ vars.VELI_NPM_TRUSTED_PUBLISHING_READY }}
 
       - name: Verify approved validation of the actual merged release tree
-        if: steps.plan.outputs.mode == 'publish'
-        run: node scripts/release-ci.mjs verify
+        if: needs.plan.outputs.mode == 'publish'
+        run: node scripts/release-order.mjs verify-selected
         env:
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
-        if: steps.plan.outputs.mode != 'none'
+        if: needs.plan.outputs.mode != 'none'
         uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        if: steps.plan.outputs.mode != 'none'
+        if: needs.plan.outputs.mode != 'none'
         uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -63,34 +85,37 @@ jobs:
           scope: '@veli-design'
 
       - name: Install Dependencies
-        if: steps.plan.outputs.mode != 'none'
+        if: needs.plan.outputs.mode != 'none'
         run: corepack pnpm install --frozen-lockfile
 
-      - name: Create Release Pull Request or Publish to npm
-        if: steps.plan.outputs.mode != 'none'
+      - name: Publish validated packages to npm
+        if: needs.plan.outputs.mode != 'none'
         id: changesets
         uses: changesets/action@v1
         with:
-          version: corepack pnpm version-packages
-          publish: ${{ steps.plan.outputs.mode == 'publish' && 'corepack pnpm release' || '' }}
-          commit: 'chore: release packages'
-          title: 'chore: release packages'
+          publish: node scripts/release-order.mjs publish
+          commitMode: git-cli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
           # The private source repository cannot generate npm provenance.
           NPM_CONFIG_PROVENANCE: false
           VELI_NPM_PUBLICATION_APPROVED: ${{ vars.VELI_NPM_PUBLICATION_APPROVED }}
-          VELI_NPM_DIST_TAG: ${{ inputs.dist-tag }}
+          VELI_NPM_DIST_TAG: ${{ vars.VELI_NPM_DIST_TAG }}
 
       - name: Record published release snapshot
+        env:
+          RELEASE_SOURCE: ${{ steps.source.outputs.source }}
         if: steps.changesets.outputs.published == 'true'
-        run: node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
+        run: |
+          node scripts/release-sites.mjs manifest "$RUNNER_TEMP/published-versions.json"
+          node scripts/published-packages.mjs record "$RUNNER_TEMP/published-versions.json" "$RUNNER_TEMP/publication"
 
       - uses: actions/upload-artifact@v4
         if: steps.changesets.outputs.published == 'true'
         with:
           name: release-manifest
-          path: ${{ runner.temp }}/release-manifest.json
+          path: ${{ runner.temp }}/publication
           retention-days: 90
 
       - name: Retain snapshot with the published release
@@ -104,7 +129,9 @@ jobs:
             const published = JSON.parse(process.env.PUBLISHED_PACKAGES);
             const { name, version } = published[0];
             const { data: release } = await github.rest.repos.getReleaseByTag({ ...context.repo, tag: `${name}@${version}` });
-            await github.rest.repos.uploadReleaseAsset({ ...context.repo, release_id: release.id, name: 'release-manifest.json', data: fs.readFileSync(`${process.env.RUNNER_TEMP}/release-manifest.json`) });
+            for (const name of ['release-manifest.json', 'publication.json']) {
+              await github.rest.repos.uploadReleaseAsset({ ...context.repo, release_id: release.id, name, data: fs.readFileSync(`${process.env.RUNNER_TEMP}/publication/${name}`) });
+            }
 
   deploy-sites:
     needs: release
@@ -115,6 +142,6 @@ jobs:
       actions: read
     uses: ./.github/workflows/deploy-release-sites.yml
     with:
-      source-ref: ${{ github.sha }}
+      source-ref: ${{ needs.release.outputs.source }}
       manifest-run-id: ${{ github.run_id }}
     secrets: inherit

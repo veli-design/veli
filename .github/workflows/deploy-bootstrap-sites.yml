@@ -18,7 +18,7 @@ permissions:
 concurrency: veli-bootstrap-entry
 jobs:
   verify:
-    if: github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'
+    if: github.repository_id == '1115705061' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

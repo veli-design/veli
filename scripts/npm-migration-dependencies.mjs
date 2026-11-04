@@ -37,6 +37,28 @@ export function assertBlockDependencies(blocks, installed) {
   }
 }
 
+// Site-only releases may select newer site source with older published core
+// packages. Never advertise a catalog that excludes that selected baseline.
+export function assertBlockCoreCompatibility(blocks, versions) {
+  for (const { manifest } of blocks)
+    for (const [name, range] of Object.entries({
+      ...manifest.dependencies,
+      ...manifest.setupDependencies,
+    })) {
+      if (!(name in versions)) continue;
+      const version = versions[name];
+      assert.ok(
+        semver.valid(version) && semver.satisfies(version, range),
+        `${manifest.id}: published ${name}@${version} does not satisfy ${range}`,
+      );
+      assert.equal(
+        version,
+        manifest.testedDependencies[name],
+        `${manifest.id}: selected ${name}@${version} has not been rehearsed; prepare and review the catalog baseline`,
+      );
+    }
+}
+
 export function assertCliDependencyReport(report, id) {
   assert.deepEqual(report.added, [id], `${id}: unexpected CLI installation report`);
   assert.deepEqual(report.dependencies?.missing, [], `${id}: missing CLI dependencies`);
