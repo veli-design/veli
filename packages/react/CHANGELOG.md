@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.19.0
+
+_Released 2026-11-04._
+
+### Changed
+
+- Replace Sheet content props with composable `Sheet.Header`, `Sheet.Title`, `Sheet.Description`, `Sheet.Body`, `Sheet.Footer`, `Sheet.Handle` and `Sheet.Close` parts.
+- Move `title`, `description`, `headerActions` and `footer` into children, move `contentClassName` to `Sheet.Body.className`, and replace `showHandle` with conditional `Sheet.Handle`. Include close controls and dividers explicitly.
+
 ## 0.18.0
 
 _Released 2026-11-01._
