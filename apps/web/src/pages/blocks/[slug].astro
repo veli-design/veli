@@ -13,6 +13,7 @@ import { ErrorPageDemo } from '../../components/ErrorPageDemo';
 import { PageNavigationFooterDemo } from '../../components/PageNavigationFooterDemo';
 import { SideNavDemo } from '../../components/SideNavDemo';
 import { ServiceDetailDemo } from '../../components/ServiceDetailDemo';
+import { FilterBarDemo } from '../../components/FilterBarDemo';
 import rehypeCodeBlocks from '../../lib/rehype-code-blocks.mjs';
 
 // Cache one processor/highlighter for all block pages — Shiki is a singleton and
@@ -54,5 +55,6 @@ const slug = Astro.params.slug;
   {slug === 'page-navigation-footer' && <PageNavigationFooterDemo client:visible />}
   {slug === 'side-nav' && <SideNavDemo client:visible />}
   {slug === 'service-detail' && <ServiceDetailDemo client:visible />}
+  {slug === 'filter-bar' && <FilterBarDemo client:visible />}
   <article class="docs-prose" set:html={rendered.code} />
 </DocsLayout>
