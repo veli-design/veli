@@ -24,6 +24,12 @@ Set language through `VeliProvider` so components receive a supported combinatio
 
 Do not pass direction independently from language unless a contained piece of authored content genuinely uses another writing direction.
 
+## Mark content that uses another language
+
+An untranslated English field can appear inside a Dhivehi interface. Keep its actual language with the selected value and set `lang="en"` and `dir="ltr"` on the text element carrying its `type-*` utility. The surrounding interface can stay Dhivehi. The same rule applies to Dhivehi content inside an English interface.
+
+See [mixed-language typography](/foundations/typography/#mixed-language-content-and-english-fallbacks) for examples, inherited typography pitfalls and numeric content guidance. Veli does not infer the language of CMS values.
+
 ## Design logical layouts
 
 Use logical properties such as `margin-inline-start`, `padding-inline`, and `inset-inline-end`. Directional icons should mirror only when their meaning depends on reading direction.

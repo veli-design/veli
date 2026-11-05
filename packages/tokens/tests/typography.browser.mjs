@@ -76,6 +76,52 @@ try {
       );
     }
   }
+  // Language boundaries must restore the complete role, including nested switches back.
+  const mixed = await browser.newPage();
+  await mixed.setContent(`<style>${css}</style>
+    <main lang="dv" dir="rtl">
+      <p id="dv" class="type-body-lg-regular">ޚިދުމަތް</p>
+      <section lang="en" dir="ltr">
+        <p id="en" class="type-body-lg-regular">Attestation service (2026)</p>
+        <p id="dv-nested" lang="dv-MV" dir="rtl" class="type-body-lg-regular">ޚިދުމަތް</p>
+      </section>
+      <p id="en-direct" lang="en-GB" dir="ltr" class="type-body-lg-regular">Attestation service (2026)</p>
+      <p class="type-body-lg-regular"><span id="en-inline" lang="en" dir="ltr" class="type-body-lg-regular">2635 with new guideline</span></p>
+      <p class="type-body-lg-regular"><span id="en-inherited" lang="en" dir="ltr">English without its own role</span></p>
+    </main>`);
+  for (const dark of [false, true]) {
+    await mixed.evaluate((dark) => document.documentElement.classList.toggle('dark', dark), dark);
+    const styles = await mixed.evaluate(() => {
+      const result = {};
+      for (const id of ['dv', 'en', 'dv-nested', 'en-direct', 'en-inline', 'en-inherited']) {
+        const style = getComputedStyle(document.getElementById(id));
+        result[id] = Object.fromEntries(
+          ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'direction'].map(
+            (property) => [property, style[property]],
+          ),
+        );
+      }
+      return result;
+    });
+    assert.match(styles.en.fontFamily, /Inter/);
+    assert.equal(styles.en.fontSize, '18px');
+    assert.equal(styles.en.lineHeight, '28px');
+    assert.equal(styles.en.direction, 'ltr');
+    assert.match(styles.dv.fontFamily, /Faseyha/);
+    assert.equal(styles.dv.fontSize, '19px');
+    assert.equal(styles.dv.lineHeight, '36px');
+    assert.equal(styles.dv.direction, 'rtl');
+    assert.deepEqual(styles['en-direct'], styles.en);
+    assert.deepEqual(styles['en-inline'], styles.en);
+    assert.deepEqual(styles['dv-nested'], styles.dv);
+    // Native lang changes do not retroactively restyle a parent's applied role.
+    assert.equal(styles['en-inherited'].fontFamily, styles.dv.fontFamily);
+    assert.equal(styles['en-inherited'].fontSize, styles.dv.fontSize);
+  }
+  await mixed.close();
+  console.log(
+    'PASS mixed-language boundaries in Light and Dark: complete English/Dhivehi roles, regional language tags, inline isolation and inherited-role pitfall.',
+  );
   // A consumer font-size override must also leave the Figma pixel line-height unchanged.
   const overridden = await page.evaluate(() => {
     const element = document.querySelector('.type-body-lg-regular');
