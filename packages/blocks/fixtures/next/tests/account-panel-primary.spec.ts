@@ -34,7 +34,7 @@ for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     for (const args of ['', '&args=isLoading:true', '&args=error:Could%20not%20load']) {
       await page.goto(
-        `/storybook/iframe.html?id=blocks-account-panel--primary-user&viewMode=story${args}`,
+        `/storybook/iframe.html?id=blocks-account-panel--without-profile-switching&viewMode=story${args}`,
       );
       await page.getByRole('button', { name: 'Open account panel' }).click();
       const dialog = page.getByRole('dialog');

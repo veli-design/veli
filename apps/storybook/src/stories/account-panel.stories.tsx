@@ -342,8 +342,8 @@ export const DelegateSelected: Story = {
   },
 };
 
-export const PrimaryUser: Story = {
-  render: function PrimaryUserStory(args) {
+export const WithoutProfileSwitching: Story = {
+  render: function WithoutProfileSwitchingStory(args) {
     const [open, setOpen] = useState(false);
     const [appearance, setAppearance] = useState(args.appearance?.value ?? 'system');
     return (
