@@ -52,7 +52,7 @@ export type AccountPanelLabels = {
   pending: string;
 };
 
-export type AccountPanelProps = {
+type AccountPanelBaseProps = {
   selectedAccount: AccountPanelAccount;
   /** Already filtered and ordered; exclude the selected account. */
   accountGroups?: readonly AccountPanelGroup[];
@@ -63,8 +63,6 @@ export type AccountPanelProps = {
   isLoading?: boolean;
   /** Account-list retrieval failure. Action failures are presented by the host. */
   error?: string;
-  /** The host owns account switching and updates selectedAccount after success. */
-  onAccountSelect: (id: string) => void;
   signOut: AccountPanelAction;
   accountManagement?: AccountPanelAction;
   emptyState?: { title: string; description?: string; action?: AccountPanelAction };
@@ -78,6 +76,13 @@ export type AccountPanelProps = {
   className?: string;
   panelClassName?: string;
 };
+
+/** Default preserves account-list hosts. Profile-only hosts supply their primary person. */
+export type AccountPanelProps = AccountPanelBaseProps &
+  (
+    | { profileOnly: true; onAccountSelect?: never }
+    | { profileOnly?: false; onAccountSelect: (id: string) => void }
+  );
 
 // Matches the default Tailwind sm breakpoint used by the extraction baseline.
 const mobileQuery = '(width < 640px)';
@@ -272,81 +277,91 @@ function PanelContent(props: AccountPanelProps) {
             </div>
           )}
         </div>
-        {props.isLoading && (
+        {!props.profileOnly && (
           <>
-            <p role="status" className="sr-only">
-              {labels.loading}
-            </p>
-            <section aria-label={labels.otherAccounts} aria-busy="true">
-              <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
-                {labels.otherAccounts}
-              </p>
-              {Array.from({ length: 3 }, (_, index) => (
-                <div
-                  key={index}
-                  data-account-skeleton
-                  className="flex items-center gap-3 p-3"
-                  aria-hidden="true"
-                >
-                  <Skeleton className="size-11 shrink-0 rounded-full motion-reduce:animate-none" />
-                  <div className="flex flex-1 flex-col gap-1">
-                    <Skeleton className="h-6 w-3/4 motion-reduce:animate-none" />
-                    <Skeleton className="h-5 w-1/2 motion-reduce:animate-none" />
+            {props.isLoading && (
+              <>
+                <p role="status" className="sr-only">
+                  {labels.loading}
+                </p>
+                <section aria-label={labels.otherAccounts} aria-busy="true">
+                  <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
+                    {labels.otherAccounts}
+                  </p>
+                  {Array.from({ length: 3 }, (_, index) => (
+                    <div
+                      key={index}
+                      data-account-skeleton
+                      className="flex items-center gap-3 p-3"
+                      aria-hidden="true"
+                    >
+                      <Skeleton className="size-11 shrink-0 rounded-full motion-reduce:animate-none" />
+                      <div className="flex flex-1 flex-col gap-1">
+                        <Skeleton className="h-6 w-3/4 motion-reduce:animate-none" />
+                        <Skeleton className="h-5 w-1/2 motion-reduce:animate-none" />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+            {props.error && (
+              <Alert intent="danger" live="alert">
+                <Alert.Title>{props.error}</Alert.Title>
+              </Alert>
+            )}
+            {!props.isLoading && groups.length > 0 ? (
+              <section aria-label={labels.otherAccounts}>
+                <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
+                  {labels.otherAccounts}
+                </p>
+                {groups.map((group, index) => (
+                  <div key={group.id}>
+                    {index > 0 && <Divider className="my-1 w-full" />}
+                    {group.label && (
+                      <p className="type-body-sm-medium px-3 py-2 text-base-muted">{group.label}</p>
+                    )}
+                    <ul aria-label={group.label ?? labels.otherAccounts} className="flex flex-col">
+                      {group.accounts.map((account) => (
+                        <AccountRow
+                          key={account.id}
+                          account={account}
+                          onSelect={props.onAccountSelect}
+                          labels={labels}
+                        />
+                      ))}
+                    </ul>
                   </div>
+                ))}
+              </section>
+            ) : !props.isLoading && !props.error && props.emptyState ? (
+              <div className="flex flex-col items-center gap-4 py-10 text-center sm:py-6">
+                <div className="flex flex-col gap-2">
+                  <p className="type-body-md-semibold text-base-strong">{props.emptyState.title}</p>
+                  {props.emptyState.description && (
+                    <p className="type-body-sm-regular text-base-muted">
+                      {props.emptyState.description}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </section>
+                {props.emptyState.action && (
+                  <PanelAction action={props.emptyState.action} labels={labels} />
+                )}
+              </div>
+            ) : null}
+            {props.accountManagement && (
+              <PanelAction action={props.accountManagement} labels={labels} />
+            )}
           </>
         )}
-        {props.error && (
-          <Alert intent="danger" live="alert">
-            <Alert.Title>{props.error}</Alert.Title>
-          </Alert>
-        )}
-        {!props.isLoading && groups.length > 0 ? (
-          <section aria-label={labels.otherAccounts}>
-            <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
-              {labels.otherAccounts}
-            </p>
-            {groups.map((group, index) => (
-              <div key={group.id}>
-                {index > 0 && <Divider className="my-1 w-full" />}
-                {group.label && (
-                  <p className="type-body-sm-medium px-3 py-2 text-base-muted">{group.label}</p>
-                )}
-                <ul aria-label={group.label ?? labels.otherAccounts} className="flex flex-col">
-                  {group.accounts.map((account) => (
-                    <AccountRow
-                      key={account.id}
-                      account={account}
-                      onSelect={props.onAccountSelect}
-                      labels={labels}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </section>
-        ) : !props.isLoading && !props.error && props.emptyState ? (
-          <div className="flex flex-col items-center gap-4 py-10 text-center sm:py-6">
-            <div className="flex flex-col gap-2">
-              <p className="type-body-md-semibold text-base-strong">{props.emptyState.title}</p>
-              {props.emptyState.description && (
-                <p className="type-body-sm-regular text-base-muted">
-                  {props.emptyState.description}
-                </p>
-              )}
-            </div>
-            {props.emptyState.action && (
-              <PanelAction action={props.emptyState.action} labels={labels} />
-            )}
-          </div>
-        ) : null}
-        {props.accountManagement && (
-          <PanelAction action={props.accountManagement} labels={labels} />
-        )}
       </div>
-      <div className="-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:px-4">
+      <div
+        className={
+          props.profileOnly
+            ? '-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:border-0 sm:px-4 sm:pt-4'
+            : '-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:px-4'
+        }
+      >
         {appearance && (
           <div className="hidden shrink-0 flex-col sm:flex">
             <RadioGroup
@@ -394,7 +409,13 @@ function PanelContent(props: AccountPanelProps) {
             </RadioGroup>
           </div>
         )}
-        <PanelAction action={props.signOut} labels={labels} danger />
+        {props.profileOnly ? (
+          <div className="sm:pt-4">
+            <PanelAction action={props.signOut} labels={labels} danger />
+          </div>
+        ) : (
+          <PanelAction action={props.signOut} labels={labels} danger />
+        )}
       </div>
     </div>
   );

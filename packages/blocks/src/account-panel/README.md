@@ -73,6 +73,18 @@ Wire the existing `session.selectTenant` through `onAccountSelect`. Hosts must s
 
 Mount this block only in the signed-in branch of the header adapter. Preserve the existing signed-out sign-in control and loading/likely-signed-in placeholders outside it. Coordinate `isOpen` and trigger disabling with the rest of the shell. Govmv-web adoption and real identity regression tests are tracked separately in PD-988.
 
+## gov.Account and gov.CorpID: primary-user presentation
+
+Use `profileOnly: true` and supply the authenticated primary person as `selectedAccount` for gov.Account and gov.CorpID. Their selected business, tenant or delegated individual is separate host workflow state and must not replace the top-navigation identity. These apps do not switch accounts from the panel, as clarified in [ENG-4118](https://linear.app/onegov/issue/ENG-4118/update-onepass-navigation-and-tenant-handling).
+
+Profile-only mode hides account groups, loading/errors, delegation empty states and account-management actions. It does not require or accept `onAccountSelect`. Sign-out, optional desktop appearance preferences, avatar fallback, focus/dismissal and shared Sheet behavior remain available. The host determines the primary user; the generic block neither discovers nor infers session identities.
+
+Keep `profileOnly` omitted for gov.mv. Its existing selected-account mapping, account rows, selection callback, loading/errors, delegation CTA, account-management action and layout remain unchanged. The original `ApplicationAccountPanel` example retains that contract; `ApplicationPrimaryAccountPanel` demonstrates the separate primary-person adapter.
+
+This option adds no external switching flow. The existing default `accountManagement` callback is unchanged; this update adds no external action.
+
+The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.11.0 with the existing React 0.19.x baseline. Existing default-mode consumers require no changes.
+
 ## Accessibility and responsive behavior
 
 The default Tailwind `sm` boundary is 640 CSS pixels. At and above it, the panel is 389px wide (constrained by the available viewport) and uses Veli Popover's default React Aria focus containment and outside dismissal. Below it, a custom bottom sheet is built directly with React Aria `ModalOverlay`, `Modal`, and `Dialog`. React Aria provides contained focus, restoration, background scroll protection, and scrim dismissal. The block authors the sheet surface and gestures without overriding Veli Modal internals; it can migrate to a Veli sheet primitive when one becomes available. Supply optional 16px appearance icons from your host icon library. The desktop appearance selector is omitted from the mobile layout.

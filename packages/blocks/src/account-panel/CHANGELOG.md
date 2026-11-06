@@ -1,3 +1,10 @@
+## 0.11.0
+
+### Added
+
+- Add opt-in `profileOnly` presentation for hosts such as gov.Account and gov.CorpID. These hosts supply their authenticated primary person independently of selected business context. Hide account lists, retrieval/empty states and account-management actions in this mode while retaining sign-out, desktop appearance controls and Veli Sheet.
+- Preserve the default account-list API, rendering, callbacks and states used by gov.mv. Existing consumers require no adapter changes.
+
 ## 0.10.0
 
 ### Changed
