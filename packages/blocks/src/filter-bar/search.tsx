@@ -71,7 +71,7 @@ export function FilterBarSearch({
             setSearchOpen(true);
           }}
         >
-          <MagnifyingGlassIcon aria-hidden className="size-4" />
+          <MagnifyingGlassIcon aria-hidden weight="bold" className="size-4" />
         </Button>
       </span>
       <div

@@ -1436,6 +1436,13 @@ test('first panel selection enters advanced mode and adding another category pre
     'data-filter-tag-mode',
     'advanced',
   );
+  const divider = page.locator('[data-filter-category="reports"] .bg-border-base-strong');
+  await expect(divider).toHaveCSS('height', '12px');
+  await expect(divider).toHaveCSS('width', '1px');
+  await expect(page.locator('[data-filter-chip] .bg-border-base-strong')).toHaveCSS(
+    'height',
+    '8px',
+  );
   await page.getByRole('button', { name: 'Remove Reports | Annual Reports', exact: true }).click();
   await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute(
     'aria-pressed',

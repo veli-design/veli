@@ -216,7 +216,7 @@ const AppliedChip = forwardRef<
       <span className="truncate">{item.label}</span>
       {item.description ? (
         <>
-          <span aria-hidden className="h-2 w-px shrink-0 bg-border-base-muted" />
+          <span aria-hidden className="h-2 w-px shrink-0 bg-border-base-strong" />
           <span className="truncate">{item.description}</span>
         </>
       ) : null}

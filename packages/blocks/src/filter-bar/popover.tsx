@@ -49,12 +49,12 @@ export function FilterBarTrigger({ label, children }: { label: string; children?
     <div className="relative shrink-0">
       {children || mobile ? (
         <Button {...buttonProps}>
-          <FunnelSimpleIcon aria-hidden className="size-4" />
+          <FunnelSimpleIcon aria-hidden weight="bold" className="size-4" />
           {children ?? label}
         </Button>
       ) : (
         <Button {...buttonProps} iconOnly>
-          <FunnelSimpleIcon aria-hidden className="size-4" />
+          <FunnelSimpleIcon aria-hidden weight="bold" className="size-4" />
         </Button>
       )}
       {count ? (

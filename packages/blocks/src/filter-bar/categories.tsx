@@ -336,8 +336,11 @@ export function FilterBarCategories({
                     >
                       {category.label}
                       {advanced && selected && selectionText(category) ? (
-                        <span className="ms-2 border-s border-base-subtle ps-2 type-body-sm-regular text-base-muted">
-                          {selectionText(category)}
+                        <span className="ms-2 inline-flex items-center gap-2">
+                          <span aria-hidden className="h-3 w-px shrink-0 bg-border-base-strong" />
+                          <span className="type-body-sm-regular text-base-muted">
+                            {selectionText(category)}
+                          </span>
                         </span>
                       ) : null}
                     </TagButton>
