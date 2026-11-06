@@ -29,7 +29,11 @@ interface FilterBarController {
   panelOpen: boolean;
   setPanelOpen: (open: boolean) => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
-  setSelection: (category: FilterCategory, selection: true | readonly string[] | null) => void;
+  setSelection: (
+    category: FilterCategory,
+    selection: true | readonly string[] | null,
+    source?: 'panel' | 'quick',
+  ) => void;
   browse: (id: string | null) => void;
   setQuery: (query: string) => void;
   clear: () => void;
@@ -76,7 +80,11 @@ export function FilterBarRoot({
       rootRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')
     )?.focus();
   const commit = (next: FilterBarValue) => onValueChange(normalizeFilterValue(categories, next));
-  const setSelection: FilterBarController['setSelection'] = (category, selection) => {
+  const setSelection: FilterBarController['setSelection'] = (
+    category,
+    selection,
+    source = 'panel',
+  ) => {
     if (isDisabled || category.isDisabled) return;
     const selections = Object.assign(Object.create(null), value.selections) as Record<
       string,
@@ -84,7 +92,7 @@ export function FilterBarRoot({
     >;
     if (selection === true || (selection && selection.length)) selections[category.id] = selection;
     else delete selections[category.id];
-    commit({ ...value, selections });
+    commit({ ...value, selections, mode: source === 'panel' ? 'advanced' : value.mode });
   };
   const clear = () => {
     if (isDisabled) return;

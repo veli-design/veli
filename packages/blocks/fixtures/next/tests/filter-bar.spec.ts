@@ -28,6 +28,7 @@ test('copied block drives real results; clearing labels retains browse scope and
   page,
 }) => {
   await page.goto('/filters');
+  await page.waitForLoadState('networkidle');
   await page.getByRole('button', { name: 'Reports', exact: true }).click();
   await expect(page.getByText('Showing 2 of 5')).toBeVisible();
   const caret = page.getByRole('button', { name: 'Choose labels for Reports', exact: true });
@@ -73,7 +74,7 @@ test('quick menu contains only category labels and shares individual selections'
   );
 });
 
-test('multiple categories become outlined and the last remaining category returns to solid', async ({
+test('advanced filtering retains its last category until every filter is removed', async ({
   page,
 }) => {
   await openStory(page, 'advanced');
@@ -83,12 +84,16 @@ test('multiple categories become outlined and the last remaining category return
   await expect(page.getByText('2 filters applied, Showing 9 of 55')).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Choose labels for Announcements', exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
+  await expect(page.locator('[data-filter-category="announcements"]')).toHaveAttribute(
+    'data-filter-tag-mode',
+    'advanced',
+  );
   await expect(page.getByRole('button', { name: /^Announcements/ })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await page.getByRole('button', { name: 'Clear labels', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear all', exact: true }).click();
   await expect(page.locator('[data-filter-active-dot]')).toHaveCount(0);
 });
 
@@ -496,9 +501,15 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     );
     await waitForMotion(page);
     await page.getByRole('button', { name: 'Remove Guidelines', exact: true }).click();
-    await expect(
-      page.getByRole('button', { name: 'Choose labels for Market Prices', exact: true }),
-    ).toBeVisible();
+    await expect(page.locator('[data-filter-category="market-prices"]')).toHaveAttribute(
+      'data-filter-tag-mode',
+      'advanced',
+    );
+    await page.getByRole('button', { name: 'Remove Market Prices | Fuel', exact: true }).click();
+    await expect(page.locator('[data-filter-category="market-prices"]')).toHaveAttribute(
+      'data-filter-tag-mode',
+      'browse',
+    );
     const samples = await page.evaluate(
       () =>
         (window as unknown as { categoryMotionSamples: { mode: string; durations: number[] }[] })
@@ -508,7 +519,10 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     for (const sample of samples)
       expect(sample.durations).toEqual(reducedMotion === 'reduce' ? [] : [200]);
     await waitForMotion(page);
-    await expect(page.getByText('1 filter applied, Showing 9 of 209')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 }
 
@@ -1080,6 +1094,7 @@ for (const language of ['en', 'dv']) {
 test('copied block mobile sheets filter real consumer results', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/filters');
+  await page.waitForLoadState('networkidle');
   await expect(page.getByRole('button', { name: 'Reports', exact: true })).toHaveAttribute(
     'aria-haspopup',
     'dialog',
@@ -1356,3 +1371,95 @@ for (const language of ['en', 'dv']) {
     await expect(page.getByRole('button', { name: label, exact: true })).toBeFocused();
   });
 }
+
+for (const width of [1280, 390]) {
+  test(`${width}px panel clearing retains focus, remembered browse scope and query`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/filters');
+    await page.waitForLoadState('networkidle');
+    if (width > 600) await page.getByRole('button', { name: 'Search', exact: true }).click();
+    await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('Report');
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Filters', exact: true });
+    await waitForMotion(page);
+    const annual = dialog.getByRole('checkbox', { name: 'Annual Reports', exact: true });
+    await annual.focus();
+    await annual.press('Space');
+    await expect(annual).toBeChecked();
+    const clear = dialog.getByRole('button', { name: 'Clear all', exact: true });
+    await clear.focus();
+    await clear.press('Enter');
+    await expect(clear).toBeDisabled();
+    await expect(dialog).toBeVisible();
+    await expect
+      .poll(() => dialog.evaluate((element) => element.contains(document.activeElement)))
+      .toBe(true);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(page.getByRole('searchbox', { name: 'Search', exact: true })).toHaveValue(
+      'Report',
+    );
+    await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('');
+    await expect(page.getByText('Showing 5 of 5')).toBeVisible();
+    await page.screenshot({ path: `/tmp/filter-review-clear-${width}.png` });
+  });
+}
+
+test('first panel selection enters advanced mode and adding another category preserves it', async ({
+  page,
+}) => {
+  await openStory(page);
+  await page.getByRole('button', { name: 'Filters', exact: true }).click();
+  const annual = page
+    .getByRole('dialog', { name: 'Filters', exact: true })
+    .getByRole('checkbox', { name: 'Annual Reports', exact: true });
+  await annual.focus();
+  await annual.press('Space');
+  await expect(annual).toBeChecked();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-filter-category="reports"]')).toHaveAttribute(
+    'data-filter-tag-mode',
+    'advanced',
+  );
+  await page.getByRole('button', { name: 'Guidelines', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Remove Reports | Annual Reports', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove Guidelines', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Remove Guidelines', exact: true }).click();
+  await expect(page.locator('[data-filter-category="reports"]')).toHaveAttribute(
+    'data-filter-tag-mode',
+    'advanced',
+  );
+  await page.getByRole('button', { name: 'Remove Reports | Annual Reports', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+});
+
+test('panel filtering restores an explicit remembered category when cleared', async ({ page }) => {
+  await openStory(page);
+  await page.getByRole('button', { name: 'Resources', exact: true }).click();
+  await page.getByRole('button', { name: 'Filters', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Filters', exact: true });
+  const annual = dialog.getByRole('checkbox', { name: 'Annual Reports', exact: true });
+  await annual.focus();
+  await annual.press('Space');
+  await expect(annual).toBeChecked();
+  await dialog.getByRole('button', { name: 'Clear all', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Resources', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+});

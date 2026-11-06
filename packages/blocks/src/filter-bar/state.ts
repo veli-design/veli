@@ -29,8 +29,8 @@ export function normalizeFilterValue(
   const ids = Object.keys(selections);
   return {
     ...value,
-    categoryId: ids.length === 1 ? ids[0] : categoryId,
+    categoryId,
     selections,
-    mode: ids.length > 1 ? 'advanced' : 'browse',
+    mode: ids.length && (value.mode === 'advanced' || ids.length > 1) ? 'advanced' : 'browse',
   };
 }

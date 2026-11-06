@@ -168,6 +168,7 @@ export function FilterBarCategories({
       keys === 'all'
         ? (category.children?.filter((item) => !item.isDisabled).map((item) => item.id) ?? [])
         : [...keys].map(String),
+      'quick',
     );
   };
   return (

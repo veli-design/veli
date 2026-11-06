@@ -97,3 +97,30 @@ test('the public entry point explicitly exports composition APIs without interna
     assert.ok(!exported.has(name), `Internal or example-only export: ${name}`);
   }
 });
+
+test('normalization preserves advanced mode and remembered scope while removing stale selections', async () => {
+  const source = ts.transpileModule(readFileSync(new URL('state.ts', directory), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const { normalizeFilterValue } = await import(
+    `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
+  );
+  const categories = [{ id: 'reports', children: [{ id: 'annual' }] }, { id: 'resources' }];
+  const initial = {
+    categoryId: null,
+    selections: { reports: ['annual', 'stale'] },
+    mode: 'advanced',
+    query: 'Annual',
+  };
+  const one = normalizeFilterValue(categories, initial);
+  assert.equal(one.mode, 'advanced');
+  assert.equal(one.categoryId, null);
+  assert.deepEqual(one.selections.reports, ['annual']);
+  const cleared = normalizeFilterValue(categories, { ...one, selections: {} });
+  assert.equal(cleared.mode, 'browse');
+  assert.equal(cleared.categoryId, null);
+  assert.equal(cleared.query, 'Annual');
+  const remembered = normalizeFilterValue(categories, { ...initial, categoryId: 'resources' });
+  assert.equal(remembered.categoryId, 'resources');
+  assert.equal(normalizeFilterValue(categories, { ...initial, mode: 'browse' }).mode, 'browse');
+});

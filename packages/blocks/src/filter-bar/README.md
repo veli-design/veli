@@ -133,7 +133,9 @@ pagination and URL persistence belong to the application.
 | `className`        | `string`                                    | Layout on the block-owned root.                                    |
 
 `categoryId: null` means All. `selections` maps category IDs to child ID arrays or
-`true` for a whole category. The block derives `mode` from the selected categories.
+`true` for a whole category. Panel filtering enters advanced `mode`, which remains
+active until all category filters are removed. Quick label selection retains browse mode.
+Panel selections never replace the remembered `categoryId` browse scope.
 Use `query: ''` and `selections: {}` for an empty initial state.
 
 ### Composition structure
@@ -351,9 +353,10 @@ Use stable unique category IDs and category-local option IDs. Empty or absent
 children represent whole categories. Unknown IDs are ignored when rendering and
 removed on the next user change; prop changes alone do not emit callbacks.
 `selections` maps categories to child arrays or `true` for a whole category.
-`mode` is derived from the number of selected categories: multiple categories use
-outlined Tags; a single category returns to its solid browse form. Multiple
-sub-labels inside that category remain selected. Browsing/search do not count as
+Panel filtering enters advanced `mode`: selected categories use outlined Tags,
+including the last remaining category. Removing every category filter restores
+browse mode and the remembered `categoryId`; only explicit browsing changes that
+scope. Quick sub-label selection stays in browse mode. Browsing/search do not count as
 filters. Each selected child counts once, while a standalone category counts once.
 A category chip removes its complete selection.
 

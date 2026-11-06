@@ -16,7 +16,7 @@ export interface FilterBarValue {
   categoryId: string | null;
   /** Child IDs for grouped categories; true for a category without children. */
   selections: Readonly<Record<string, true | readonly string[]>>;
-  /** Derived from selected categories: multiple categories are outlined; one is solid. */
+  /** Panel filtering stays advanced until every category selection is removed. */
   mode: 'browse' | 'advanced';
   query: string;
 }

@@ -240,15 +240,27 @@ export interface FilterBarClearProps {
 }
 export function FilterBarClear({ children, showArrow = false, size = 'md' }: FilterBarClearProps) {
   const { count, clear, focusTrigger, isDisabled } = useFilterBar();
+  const buttonRef = useRef<HTMLButtonElement>(null);
   return (
     <Button
+      ref={buttonRef}
       intent="primary"
       appearance="ghost"
       size={size}
       isDisabled={isDisabled || !count}
       onPress={() => {
+        const dialog = buttonRef.current?.closest('[role="dialog"]');
+        if (dialog) {
+          // Move focus before clearing disables this control; stay in the active focus scope.
+          const target = Array.from(
+            dialog.querySelectorAll<HTMLElement>(
+              'button:not(:disabled), input:not(:disabled), [tabindex="0"]',
+            ),
+          ).find((element) => element !== buttonRef.current && !element.closest('[inert]'));
+          target?.focus({ preventScroll: true });
+        }
         clear();
-        focusTrigger();
+        if (!dialog) focusTrigger();
       }}
     >
       <span className="whitespace-nowrap">{children}</span>
