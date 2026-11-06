@@ -1,3 +1,11 @@
+## 0.1.1
+
+### Fixed
+
+- Preserve advanced filtering until every category selection is removed, and restore the remembered browse scope when clearing.
+- Keep keyboard focus inside desktop and mobile filter panels when Clear all disables itself.
+- Align block-owned category and applied-chip dividers with strong border tokens and use Bold search/filter trigger icons.
+
 ## 0.1.0
 
 ### Added
