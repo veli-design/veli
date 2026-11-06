@@ -270,3 +270,23 @@ workflow controller rather than the frozen bootstrap source. Even expired receip
 metadata retires it; API failures and incomplete pagination fail closed. Verification-
 only bootstrap rehearsals remain available. Use reviewed snapshot recovery after
 retirement; the bootstrap entry cannot override newer delivery.
+
+### Release handoff receipt token
+
+The successful paired-deployment receipt step requires the built-in `GITHUB_TOKEN`:
+`site-auto.mjs` initializes its shared read-only GitHub client before dispatching
+commands, including the local receipt writer. Supply the token only to that step;
+keep `contents`, `actions` and `packages` read-only. No new secret or write permission
+is needed. This fixes the missing-token failure in run 41984033897; catch-up run
+41985499378 subsequently succeeded. Those are historical hosted observations, not
+hosted validation of this fix.
+
+Keep receipt creation and upload after both production deployments. A failed or
+missing receipt does not establish successful paired delivery, so a later catch-up
+may redeploy the retained compatible source. A valid matching release receipt skips
+that duplicate; mismatched source identity cannot authorize the skip. Never recover
+this bookkeeping failure by republishing immutable npm versions. Partial deployment
+and receipt-upload failures retain the existing reviewed-snapshot recovery path.
+
+A separate [release-control review](CI_RELEASE_CONTROL_REVIEW.md) records follow-up
+recommendations; this token fix does not remove visual approval or change variables.
