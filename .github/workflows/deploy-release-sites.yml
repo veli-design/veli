@@ -140,6 +140,8 @@ jobs:
           environment: production
           command: deploy
       - name: Record successful paired deployment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
         run: node scripts/site-auto.mjs receipt "$RUNNER_TEMP/site-deployed"
       - uses: actions/upload-artifact@v4

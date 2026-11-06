@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { resolve, dirname } from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { parse } from 'yaml';
 import {
   packagePaths,
@@ -507,4 +508,74 @@ test('ambiguous or missing receipt creation order fails closed', async (t) => {
     latestDelivery(deliveryAPI(h.site, [{ source: h.site, createdAt: 'invalid' }]), h.site, h.read),
     /no trustworthy creation time/,
   );
+});
+
+test('release handoff receipt gets the built-in token after both deployments with read-only permissions', () => {
+  const workflow = parse(
+    readFileSync(new URL('../.github/workflows/deploy-release-sites.yml', import.meta.url), 'utf8'),
+  );
+  assert.deepEqual(workflow.permissions, { contents: 'read', packages: 'read', actions: 'read' });
+  assert.equal(workflow.jobs.deploy.concurrency, 'veli-public-release-sites');
+  const steps = workflow.jobs.deploy.steps;
+  const receipt = steps.find((step) => step.name === 'Record successful paired deployment');
+  assert.equal(receipt.env?.GITHUB_TOKEN, '${{ secrets.GITHUB_TOKEN }}');
+  assert.equal(
+    receipt.if,
+    "${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}",
+  );
+  assert.ok(steps.indexOf(receipt) > steps.findIndex((step) => step.name === 'Deploy Storybook'));
+  assert.ok(
+    steps.indexOf(receipt) <
+      steps.findIndex((step) => step.with?.name?.startsWith('site-deployed-')),
+  );
+});
+
+test('actual receipt CLI token contract writes exact source; successful release receipt skips catch-up, absent/failed/mismatched receipts recover', async (t) => {
+  const h = historyFixture(t);
+  h.git('checkout', '--detach', h.site);
+  const script = fileURLToPath(new URL('./site-auto.mjs', import.meta.url));
+  const output = resolve(h.root, 'receipt');
+  const env = {
+    ...process.env,
+    GITHUB_SHA: h.site,
+    SITE_SOURCE_COMMIT: h.site,
+    GITHUB_REPOSITORY: 'tradenetcorp/veli',
+    GITHUB_TOKEN: '',
+  };
+  const run = (overrides = {}, target = output) =>
+    spawnSync(process.execPath, [script, 'receipt', target], {
+      cwd: h.root,
+      env: { ...env, ...overrides },
+      encoding: 'utf8',
+    });
+  const missing = run();
+  assert.notEqual(missing.status, 0);
+  assert.match(missing.stderr, /GITHUB_TOKEN is required/);
+  const written = run({ GITHUB_TOKEN: 'fixture-not-a-credential' });
+  assert.equal(written.status, 0, written.stderr);
+  assert.equal(readFileSync(resolve(output, 'source.txt'), 'utf8'), h.site + '\n');
+  const mismatch = run(
+    { GITHUB_TOKEN: 'fixture-not-a-credential', SITE_SOURCE_COMMIT: h.workflow },
+    resolve(h.root, 'wrong-receipt'),
+  );
+  assert.notEqual(mismatch.status, 0);
+  const options = {
+    source: h.site,
+    pending: false,
+    release: true,
+    packageSource: h.site,
+    bootstrap: false,
+  };
+  const record = { source: h.site, path: '.github/workflows/release.yml' };
+  const success = deliveryAPI(h.site, [record]);
+  assert.equal((await planSiteDelivery(success, options, h.read)).eligible, false);
+  for (const records of [
+    [],
+    [{ ...record, conclusion: 'failure' }],
+    [{ ...record, eventSource: h.workflow }],
+  ])
+    assert.equal(
+      (await planSiteDelivery(deliveryAPI(h.site, records), options, h.read)).eligible,
+      true,
+    );
 });

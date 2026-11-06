@@ -4,15 +4,26 @@ Install and manage editable Veli Design Blocks in an application while retaining
 
 ## Installation
 
-The prepared public npm package is `@veli-design/cli`; installation needs no package-read token after publication. Until then, use the local tarball rehearsal described in [the migration runbook](https://github.com/tradenetcorp/veli/blob/main/docs/NPM_MIGRATION.md). After publication, run:
+The public npm package is `@veli-design/cli`. Installing it needs no
+package-read token or repository access:
 
 ```sh
-corepack pnpm dlx @veli-design/cli init
+npx @veli-design/cli --help
 ```
 
-The CLI requires Node.js 24 or newer. It stores only the non-secret Veli Design Web URL and block destination in `.veli/config.json`.
+The CLI requires Node.js 24 or newer. Package installation and Blocks registry
+access are separate: Blocks and hosted documentation remain internal and require
+WFA access. React and tokens can be used anonymously without the CLI or registry.
 
-Package installation and Blocks registry access are separate. Configure the compatible new-scope Veli Design Web URL with `veli --web-url <url> init`. Do not point migrated consumers at the old-scope production catalog. Existing copied source and `.veli` baselines need the coordinated migration described in the runbook.
+After obtaining WFA access, initialize against the deployed internal registry:
+
+```sh
+npx @veli-design/cli --web-url https://veli-web.onegov.mv init
+```
+
+The CLI stores only the non-secret Veli Design Web URL and block destination in
+`.veli/config.json`. Existing copied source and `.veli` baselines require a
+coordinated migration; consult your internal maintainer before switching them.
 
 ## WFA access
 
