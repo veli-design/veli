@@ -310,6 +310,17 @@ const CURSOR_RULES = [
     forbid: ['cursor-pointer'],
   },
   {
+    kind: 'opening-tag',
+    id: 'otp-input-info-trigger',
+    file: 'packages/react/src/otp-input-component.tsx',
+    component: 'AriaButton',
+    require: [
+      'className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}',
+      'isDisabled={isDisabled}',
+    ],
+    forbid: ['pointer-events-none'],
+  },
+  {
     kind: 'binding',
     id: 'select-trigger',
     file: 'packages/react/src/select.tsx',
@@ -1009,4 +1020,23 @@ test('cursor contract matches the source and the contributor doc', () => {
   const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
   const result = checkCursorContract(repoRoot);
   assert.equal(result.ok, true, formatViolations(result));
+});
+
+test('OTP info trigger must preserve its shared help cursor and disabled state', () => {
+  const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+  const files = new Map();
+  for (const rel of ['CONTRIBUTING.md', DOC_LINK]) files.set(rel, readRepoFile(repoRoot, rel));
+  walkSrc(repoRoot, files);
+  const path = 'packages/react/src/otp-input-component.tsx';
+  const source = files.get(path);
+  for (const required of [
+    'className={fieldHeaderInfoTooltipTriggerVariants({ isDisabled })}',
+    'isDisabled={isDisabled}',
+  ]) {
+    assert.ok(source.includes(required));
+    files.set(path, source.replace(required, ''));
+    const result = evaluateCursorContract(files);
+    assert.equal(result.ok, false);
+    assert.ok(result.violations.some((item) => item.ruleId === 'otp-input-info-trigger'));
+  }
 });
