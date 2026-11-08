@@ -52,9 +52,7 @@
     "Slots and separators are aria-hidden.",
     "An empty required field uses isRequired. Partial codes are not live-invalid unless the caller passes validate."
   ],
-  "responsive": [
-    "The field fills its container and the slots keep a fixed size on the start edge."
-  ],
+  "responsive": ["The label row fills its container. The slot row is only as wide as its boxes."],
   "rtl": [
     "The label, helper, and error follow the active direction.",
     "The slot row and the value stay left to right on Dhivehi pages."

@@ -119,6 +119,38 @@ test('invalid slot counts are rejected', () => {
   assert.throws(() => render({ groups: [3, 1.5] }), RangeError);
 });
 
+test('slots are separate boxes and the track is not one Input shell', () => {
+  const html = render({});
+  const wrapper = html.match(
+    /<div[^>]*class="([^"]*)"[^>]*>\s*<div aria-hidden="true" dir="ltr"/,
+  )?.[1];
+  assert.ok(wrapper);
+  assert.match(wrapper, /\bw-fit\b/);
+  assert.doesNotMatch(wrapper, /\bw-full\b/);
+  assert.doesNotMatch(wrapper, /\boverflow-hidden\b/);
+  assert.doesNotMatch(wrapper, /\bh-11\b/);
+  assert.doesNotMatch(wrapper, /rounded-field/);
+
+  const slots = [...html.matchAll(/<span[^>]*data-otp-index="\d+"[^>]*>/g)].map(
+    (match) => match[0],
+  );
+  assert.equal(slots.length, 6);
+  for (const slot of slots) {
+    assert.match(slot, /\bh-11\b/);
+    assert.match(slot, /\bw-11\b/);
+    assert.match(slot, /rounded-field/);
+    assert.match(slot, /bg-text-input-bg/);
+    assert.doesNotMatch(slot, /data-caret=/);
+  }
+  assert.equal(html.match(/h-0\.5/g), null);
+
+  const outline = render({ appearance: 'outline' });
+  assert.match(outline, /shadow-\[inset_0_0_0_1px_var\(--veli-color-text-input-stroke-default\)\]/);
+  const disabled = render({ isDisabled: true });
+  assert.match(disabled, /bg-text-input-bg-hover/);
+  assert.doesNotMatch(disabled, /after:bg-text-input-stroke/);
+});
+
 test('the package does not depend on input-otp', () => {
   for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
     assert.equal(packageJson[field]?.['input-otp'], undefined, field);

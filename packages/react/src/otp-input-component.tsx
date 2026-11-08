@@ -14,8 +14,8 @@ import { InfoIcon } from '@phosphor-icons/react';
 import { twMerge } from 'tailwind-merge';
 import {
   defaultFieldUnderlineError,
-  defaultFieldUnderlineErrorFocusPressed,
-  defaultFieldUnderlineFocusPressed,
+  defaultFieldUnderlineErrorPressed,
+  defaultFieldUnderlinePressed,
   defaultFieldUnderlineRest,
   defaultFieldUnderlineShell,
   FieldMessage,
@@ -26,9 +26,8 @@ import {
   fieldHeaderSupplementaryVariants,
   fieldHelperTone,
   getFieldOptionalLabel,
-  outlineFieldStrokeError,
-  outlineFieldStrokeFocusVisibleHide,
-  outlineFieldStrokeRest,
+  outlineFieldStrokeErrorPressed,
+  outlineFieldStrokePressed,
   shouldShowFieldOptional,
 } from './field-shared.js';
 import {
@@ -58,28 +57,43 @@ export type OTPInputAppearance = 'default' | 'outline';
 
 const otpInputRootVariants = cva('flex w-full flex-col font-sans antialiased');
 
-const otpShellVariants = cva(
-  'relative flex w-full items-center rounded-field overflow-hidden transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none has-[input[data-focus-visible]]:ring-2 has-[input[data-focus-visible]]:ring-border-focus has-[input[data-focus-visible]]:ring-offset-2 has-[input[data-focus-visible]]:ring-offset-bg-surface-raised',
+// Transparent row. Slot rings sit outside the boxes, so this must not clip or paint a shell.
+const otpGroupClassName = 'group relative flex w-fit items-center';
+
+// 16px keeps iOS from zooming on focus.
+const otpNativeInputClassName =
+  'absolute inset-0 z-[2] size-full border-0 bg-transparent p-0 text-[16px] text-transparent caret-transparent outline-none selection:bg-transparent disabled:cursor-not-allowed autofill:[transition:background-color_0s_600000s] autofill:[-webkit-text-fill-color:transparent] [&:-webkit-autofill]:[transition:background-color_0s_600000s] [&:-webkit-autofill]:[-webkit-text-fill-color:transparent]';
+
+// The native input covers the row, so slot :hover never fires. group-hover paints every rest box.
+const otpSlotFocusRing =
+  'group-has-[input[data-focus-visible]]:data-[caret]:ring-2 group-has-[input[data-focus-visible]]:data-[caret]:ring-border-focus group-has-[input[data-focus-visible]]:data-[caret]:ring-offset-2 group-has-[input[data-focus-visible]]:data-[caret]:ring-offset-bg-surface-raised';
+
+const otpSlotVariants = cva(
+  `relative flex shrink-0 items-center justify-center rounded-field transition-[background-color,box-shadow] duration-normal ease-out motion-reduce:transition-none ${otpSlotFocusRing}`,
   {
     variants: {
       appearance: {
         default: '',
-        outline: '',
+        outline: 'group-has-[input[data-focus-visible]]:data-[caret]:shadow-none',
       },
       size: {
-        sm: 'h-9 py-2 px-3',
-        md: 'h-11 py-3 px-4',
-        lg: 'h-13 py-3.5 px-4',
+        sm: 'h-9 w-9 type-body-sm-regular',
+        md: 'h-11 w-11 type-body-sm-regular',
+        lg: 'h-13 w-13 type-body-md-regular',
       },
       isDisabled: {
-        true: 'cursor-not-allowed bg-text-input-bg-hover',
-        false: 'cursor-text',
+        true: 'cursor-not-allowed bg-text-input-bg-hover text-disabled',
+        false: 'text-base-strong',
       },
       isInvalid: {
         true: '',
         false: '',
       },
       isReadOnly: {
+        true: '',
+        false: '',
+      },
+      isActive: {
         true: '',
         false: '',
       },
@@ -90,28 +104,72 @@ const otpShellVariants = cva(
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} ${defaultFieldUnderlineFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed focus-within:hover:bg-text-input-bg-pressed`,
+        isActive: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineRest} bg-text-input-bg group-hover:bg-text-input-bg-hover group-hover:after:bg-text-input-stroke-hover`,
       },
       {
         appearance: 'default',
-        isInvalid: true,
         isDisabled: false,
-        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} ${defaultFieldUnderlineErrorFocusPressed} bg-text-input-bg hover:bg-text-input-bg-hover`,
+        isInvalid: false,
+        isReadOnly: false,
+        isActive: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlinePressed} bg-text-input-bg-pressed`,
+      },
+      {
+        appearance: 'default',
+        isDisabled: false,
+        isInvalid: true,
+        isActive: false,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineError} bg-text-input-bg group-hover:bg-text-input-bg-hover`,
+      },
+      {
+        appearance: 'default',
+        isDisabled: false,
+        isInvalid: true,
+        isActive: true,
+        className: `${defaultFieldUnderlineShell} ${defaultFieldUnderlineErrorPressed} bg-text-input-bg group-hover:bg-text-input-bg-hover`,
+      },
+      {
+        appearance: 'default',
+        isDisabled: false,
+        isInvalid: false,
+        isReadOnly: true,
+        className: 'bg-text-input-bg-hover',
       },
       {
         appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: false,
-        className: `${outlineFieldStrokeRest.input} ${outlineFieldStrokeFocusVisibleHide.input} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg-pressed`,
+        isActive: false,
+        className:
+          'bg-text-input-bg shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-default)] group-hover:bg-text-input-bg-hover group-hover:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-hover)]',
       },
       {
         appearance: 'outline',
-        isInvalid: true,
         isDisabled: false,
-        className: `${outlineFieldStrokeError} bg-text-input-bg [&:hover:not(:focus-within)]:bg-text-input-bg-hover focus-within:bg-text-input-bg`,
+        isInvalid: false,
+        isReadOnly: false,
+        isActive: true,
+        className: `bg-text-input-bg-pressed ${outlineFieldStrokePressed}`,
       },
       {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: true,
+        isActive: false,
+        className:
+          'bg-text-input-bg shadow-[inset_0_0_0_1px_var(--veli-color-text-input-stroke-error)] group-hover:bg-text-input-bg-hover group-hover:shadow-[inset_0_0_0_1.5px_var(--veli-color-text-input-stroke-error)]',
+      },
+      {
+        appearance: 'outline',
+        isDisabled: false,
+        isInvalid: true,
+        isActive: true,
+        className: `bg-text-input-bg ${outlineFieldStrokeErrorPressed}`,
+      },
+      {
+        appearance: 'outline',
         isDisabled: false,
         isInvalid: false,
         isReadOnly: true,
@@ -124,44 +182,7 @@ const otpShellVariants = cva(
       isDisabled: false,
       isInvalid: false,
       isReadOnly: false,
-    },
-  },
-);
-
-// 16px keeps iOS from zooming on focus.
-const otpNativeInputClassName =
-  'absolute inset-0 z-[2] size-full border-0 bg-transparent p-0 text-[16px] text-transparent caret-transparent outline-none selection:bg-transparent disabled:cursor-not-allowed autofill:[transition:background-color_0s_600000s] autofill:[-webkit-text-fill-color:transparent] [&:-webkit-autofill]:[transition:background-color_0s_600000s] [&:-webkit-autofill]:[-webkit-text-fill-color:transparent]';
-
-const otpSlotVariants = cva('relative flex shrink-0 items-center justify-center', {
-  variants: {
-    size: {
-      sm: 'size-5 type-body-sm-regular',
-      md: 'size-5 type-body-sm-regular',
-      lg: 'size-6 type-body-md-regular',
-    },
-    isDisabled: {
-      true: 'text-disabled',
-      false: 'text-base-strong',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-    isDisabled: false,
-  },
-});
-
-const otpSlotMarkVariants = cva(
-  'pointer-events-none absolute inset-x-0.5 bottom-0 h-0.5 rounded-full',
-  {
-    variants: {
-      tone: {
-        rest: 'bg-text-input-stroke',
-        disabled: 'bg-text-disabled',
-        active: 'bg-text-base-strong animate-pulse motion-reduce:animate-none',
-      },
-    },
-    defaultVariants: {
-      tone: 'rest',
+      isActive: false,
     },
   },
 );
@@ -199,7 +220,10 @@ const metaKeyMotions: Partial<Record<string, OTPMotion>> = {
 
 interface OTPSlotChrome {
   size: OTPInputSize;
+  appearance: OTPInputAppearance;
   isDisabled: boolean;
+  isInvalid: boolean;
+  isReadOnly: boolean;
 }
 
 const OTPSlotChromeContext = React.createContext<OTPSlotChrome | null>(null);
@@ -482,10 +506,10 @@ export function OTPInput({
               </div>
             ) : null}
 
-            <Group
-              className={otpShellVariants({ appearance, size, isDisabled, isInvalid, isReadOnly })}
-            >
-              <OTPSlotChromeContext.Provider value={{ size, isDisabled }}>
+            <Group className={otpGroupClassName}>
+              <OTPSlotChromeContext.Provider
+                value={{ size, appearance, isDisabled, isInvalid, isReadOnly }}
+              >
                 <OTPTrack track={track} renderSlot={renderSlot} separator={separator} />
               </OTPSlotChromeContext.Provider>
               <AriaInput
@@ -555,18 +579,23 @@ export interface OTPInputSlotProps {
 }
 
 export function OTPInputSlot({ slot, className }: OTPInputSlotProps) {
-  const { size, isDisabled } = useOTPSlotChrome();
-  const markTone = isDisabled ? 'disabled' : slot.caret === 'overtype' ? 'active' : 'rest';
+  const { size, appearance, isDisabled, isInvalid, isReadOnly } = useOTPSlotChrome();
+  const isActive = slot.caret !== 'none';
 
   return (
     <span
       aria-hidden
       data-otp-index={slot.index}
       data-caret={slot.caret === 'none' ? undefined : slot.caret}
-      className={twMerge(otpSlotVariants({ size, isDisabled }), className)}
+      className={twMerge(
+        otpSlotVariants({ appearance, size, isDisabled, isInvalid, isReadOnly, isActive }),
+        className,
+      )}
     >
       {slot.char}
-      <span className={otpSlotMarkVariants({ tone: markTone })} />
+      {slot.caret === 'overtype' ? (
+        <span className="pointer-events-none absolute inset-x-0.5 bottom-0 z-[1] h-0.5 rounded-full bg-text-base-strong animate-pulse motion-reduce:animate-none" />
+      ) : null}
       {slot.caret === 'append' || slot.caret === 'trailing' ? (
         <span className={otpCaretBarVariants({ position: slot.caret })} />
       ) : null}
