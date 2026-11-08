@@ -13,11 +13,16 @@ import {
 import { latestDelivery, planSiteDelivery, alreadyDelivered } from './site-auto.mjs';
 const digest = 'd'.repeat(64);
 function fixture(t) {
+  // Hooks export GIT_* variables; temporary repositories must not inherit them.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
   const root = mkdtempSync(resolve(tmpdir(), 'veli-recovery-order-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const git = (...args) =>
     execFileSync('git', args, {
       cwd: root,
+      env,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     }).trim();
