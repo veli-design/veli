@@ -13,12 +13,21 @@ import {
 } from './release-order.mjs';
 const repository = 'veli-design/veli';
 function fixture(t) {
+  // Hooks export GIT_* variables; temporary repositories must not inherit them.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
   const directory = mkdtempSync(resolve(tmpdir(), 'veli-release-order-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const source = resolve(directory, 'source');
   mkdirSync(source);
   const run = (cmd, args, cwd = source) =>
-    execFileSync(cmd, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+    execFileSync(cmd, args, {
+      cwd,
+      env,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
   const git = (...args) => run('git', args);
   git('init', '-q', '-b', 'main');
   git('config', 'user.name', 'Fixture');
