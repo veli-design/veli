@@ -55,7 +55,7 @@ export function warnDev(condition: unknown, message: string) {
   }
 }
 
-function isDevelopment() {
+export function isDevelopment() {
   const env = (import.meta as ImportMetaWithEnv).env;
 
   if (typeof env?.DEV === 'boolean') {

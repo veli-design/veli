@@ -2,43 +2,106 @@
 
 Package: `@veli-design/react`.
 
-Accessible React primitives for the Veli Design. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme).
+Accessible React primitives for the Veli Design. Built on [React Aria Components](https://react-spectrum.adobe.com/react-aria/) and Tailwind v4, using tokens from [`@veli-design/tokens`](https://www.npmjs.com/package/@veli-design/tokens).
 
 ## Install
 
-These package names are prepared for public npm publication. Until
-publication, use the local tarball rehearsal in the repository migration runbook.
-After publication, the default npm registry needs no extra configuration. If your
-application overrides registries, route the scope explicitly in `.npmrc`:
+The packages are available on the public npm registry. Installation needs no
+package-read token or repository access. If your application overrides registries,
+route the scope explicitly in `.npmrc`:
 
 ```ini
 @veli-design:registry=https://registry.npmjs.org
 ```
 
-Public npm installation needs no token. See the migration runbook before switching an existing application.
-
-**Packages:**
-
 ```bash
-pnpm add @veli-design/react @veli-design/tokens
+npm install @veli-design/react @veli-design/tokens react-aria-components
 ```
 
 Peers (`@veli-design/tokens`, `react`, `react-dom`, `react-aria-components`) are
 required. The React package installs `@phosphor-icons/react` automatically for its internal icons. If your app imports icons directly, add the package as a direct dependency:
 
 ```bash
-pnpm add @phosphor-icons/react@^2.1.10
+npm install @phosphor-icons/react@^2.1.10
 ```
 
-## Tailwind setup
+## Fresh Vite + React + TypeScript app
 
-In your global CSS (import once from app entry):
+Use Node.js 24 or newer. Create the React/TypeScript template and install the
+public packages and Tailwind v4 Vite integration:
+
+```bash
+npm create vite@latest my-veli-app -- --template react-ts
+cd my-veli-app
+npm install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+npm install -D tailwindcss@^4 @tailwindcss/vite@^4
+```
+
+In `vite.config.ts`, register Tailwind alongside React:
+
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+```
+
+Replace the template's `src/index.css` with these imports, in this order. The
+token adapter includes the CSS variables; the React adapter registers component
+sources for Tailwind. No extra `@source` directive is needed.
 
 ```css
 @import 'tailwindcss';
 @import '@veli-design/tokens/tailwind';
 @import '@veli-design/react/tailwind';
 ```
+
+Keep `import './index.css'` in `src/main.tsx`. Replace `src/App.tsx` with:
+
+```tsx
+import { useState } from 'react';
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
+
+export default function App() {
+  const [dark, setDark] = useState(false);
+
+  return (
+    <VeliProvider language="en" colorScheme={dark ? 'dark' : 'light'}>
+      <main className="min-h-screen bg-bg-surface-base p-6 text-base-default">
+        <h1 className="type-heading-3-bold mb-4">Hello Veli</h1>
+        <Button onPress={() => setDark((value) => !value)}>
+          Switch to {dark ? 'light' : 'dark'} mode
+        </Button>
+      </main>
+    </VeliProvider>
+  );
+}
+```
+
+Remove the template's `import './App.css'` if retaining your own `App.tsx`.
+Those starter styles constrain the page and can override the intended layout.
+
+```bash
+npm run build
+npm run dev
+```
+
+Check that the button is styled and switches the page between light and dark.
+`VeliProvider` synchronizes the theme on the document root. Use
+`colorScheme="system"` to follow the system preference (or the saved Veli theme),
+and `language="dv"` for Dhivehi language and RTL direction. Fonts are host-owned:
+the app must load Inter for the intended Latin typography and its licensed
+Dhivehi fonts when needed; system fallbacks work without font downloads.
+
+For existing apps, apply the same Tailwind plugin, CSS imports and provider setup.
+See the public [Vite guide](https://vite.dev/guide/) and
+[Tailwind Vite guide](https://tailwindcss.com/docs/installation/using-vite)
+for framework prerequisites.
 
 ## Usage
 
@@ -80,20 +143,25 @@ The Veli Design React component library ships explicit `.js` relative imports. A
 
 Pages Router production SSR on Next **15.5.18** and **16.2.6**, and Vitest **4.1.11** with jsdom, are tested against a packed package without those workarounds. Existing Next 16 App Router browser tests also consume packed packages. Older Veli Design releases still contain invalid native ESM; an App Router build can hide that defect by bundling the package.
 
-See the [consumer investigation and reproduction matrix](https://github.com/tradenetcorp/veli/blob/main/docs/ESM_CONSUMER_COMPATIBILITY.md). The tests cover package compatibility; validate your application's own build and tests after updating its dependency and configuration.
+These checks cover package compatibility; validate your application's own build and tests after updating its dependency and configuration. No private repository guide is needed for this setup.
 
 ## Troubleshooting
 
-| Problem                            | Fix                                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------------------- |
-| Unstyled UI                        | Add `@import "@veli-design/react/tailwind"` (or equivalent `@source` to the package). |
-| Can't resolve `@veli-design/react` | Use a subpath, e.g. `@veli-design/react/button`.                                      |
-| Install 401/403                    | Check that the public npm registry is selected.                                       |
-| Wrong colors / dark mode           | Keep token import after `tailwindcss`.                                                |
+| Problem                            | Fix                                                                        |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| Unstyled UI                        | Register the Tailwind Vite plugin and include all three CSS imports above. |
+| Can't resolve `@veli-design/react` | Use a subpath, e.g. `@veli-design/react/button`.                           |
+| Install 401/403                    | Check that the public npm registry is selected.                            |
+| Wrong colors / dark mode           | Keep the CSS import order above and wrap the app in `VeliProvider`.        |
 
 ## Related
 
-- [`@veli-design/tokens`](https://github.com/tradenetcorp/veli/tree/main/packages/tokens#readme) — design tokens
+The token reference is also included locally at
+`node_modules/@veli-design/tokens/README.md`; the setup above is self-contained
+and does not require hosted documentation. Hosted Web/Storybook and the Blocks
+registry require WFA access and are not part of this anonymous npm setup.
+
+- [`@veli-design/tokens`](https://www.npmjs.com/package/@veli-design/tokens) — design tokens
 
 ## Licence and assets
 

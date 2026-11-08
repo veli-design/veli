@@ -1,3 +1,9 @@
+## 0.10.0
+
+### Changed
+
+- Require Veli React ^0.19.0 and record the exact 0.19.0 candidate baseline. The copied-source rendering API and token baseline are unchanged; previous block archives retain their existing requirements.
+
 ## 0.9.0
 
 ### Changed

@@ -1,3 +1,7 @@
+> Historical migration-readiness snapshot. Bootstrap has since completed; use
+> [CI release operations](CI_RELEASE_RUNBOOK.md) for current automatic publication,
+> verified human approval and recovery procedures.
+
 # Npm release readiness
 
 This document records artifact boundaries, unresolved rights and operational

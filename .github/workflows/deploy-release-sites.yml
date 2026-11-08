@@ -31,7 +31,18 @@ jobs:
     if: inputs.verification-only || vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'
     runs-on: ubuntu-latest
     concurrency: veli-public-release-sites
+    env:
+      SITE_SOURCE_COMMIT: ${{ inputs.source-ref }}
+      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli.design' }}
+      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://storybook.veli.design' }}
     steps:
+      - name: Checkout trusted workflow controller
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.workflow_sha }}
+      - name: Retain bootstrap retirement guard outside source checkout
+        if: inputs.bootstrap-tarballs
+        run: cp scripts/bootstrap-site-gate.mjs "$RUNNER_TEMP/bootstrap-site-gate.mjs"
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.source-ref }}
@@ -54,7 +65,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ inputs.release-tag }}
-        run: gh release download "$RELEASE_TAG" --pattern release-manifest.json --dir "$RUNNER_TEMP/release-manifest"
+        run: gh release download "$RELEASE_TAG" --pattern release-manifest.json --pattern publication.json --dir "$RUNNER_TEMP/release-manifest"
       - name: Verify release snapshot
         env:
           SOURCE_REF: ${{ inputs.source-ref }}
@@ -62,9 +73,16 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs'; const m=JSON.parse(fs.readFileSync('${{ runner.temp }}/release-manifest/release-manifest.json')); if(m.sourceCommit!==process.env.SOURCE_REF) throw new Error('Release snapshot mismatch');"
       - name: Install locked staging tools
         run: corepack pnpm install --frozen-lockfile
+      - name: Verify published package identity and artifact bytes
+        if: ${{ !inputs.bootstrap-tarballs }}
+        env:
+          SOURCE_REF: ${{ inputs.source-ref }}
+        run: |
+          node scripts/published-packages.mjs verify "$RUNNER_TEMP/release-manifest/publication.json" "$RUNNER_TEMP/verified-publication"
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; import {execFileSync} from "node:child_process"; const p=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/release-manifest/publication.json")); assert.equal(p.sourceCommit,process.env.SOURCE_REF); assert.equal(p.sourceTree,execFileSync("git",["rev-parse","HEAD^{tree}"],{encoding:"utf8"}).trim());'
       - name: Stage isolated released-package consumers
         if: ${{ !inputs.bootstrap-tarballs }}
-        run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/release-manifest/release-manifest.json"
+        run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/verified-publication/release-manifest.json"
       - name: Stage verified bootstrap artifacts
         if: inputs.bootstrap-tarballs
         env:
@@ -72,8 +90,39 @@ jobs:
         run: node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/release-manifest/release-manifest.json"
       - name: Build against published packages
         run: node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-release-sites"
+      - name: Retain exact site bundle before either deployment
+        if: ${{ !inputs.bootstrap-tarballs }}
+        env:
+          SOURCE_REF: ${{ inputs.source-ref }}
+          SNAPSHOT_BASELINE: ${{ inputs.release-tag || format('publication-run-{0}', inputs.manifest-run-id) }}
+        run: |
+          node scripts/site-release.mjs plan published "$RUNNER_TEMP/verified-publication/release-manifest.json" "$PUBLIC_SITE_URL" "$STORYBOOK_ORIGIN" "$SOURCE_REF" "$RUNNER_TEMP/site-plan.json" "$SNAPSHOT_BASELINE"
+          cp "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/veli-release-sites/release-manifest.json"
+          node scripts/site-release.mjs capture "$RUNNER_TEMP/site-plan.json" "$RUNNER_TEMP/veli-release-sites" "$RUNNER_TEMP/site-snapshot" > "$RUNNER_TEMP/site-digest.txt"
+          node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$(cat "$RUNNER_TEMP/site-digest.txt")"
+          echo "Site snapshot run: $GITHUB_RUN_ID. SHA-256: $(cat "$RUNNER_TEMP/site-digest.txt")" >> "$GITHUB_STEP_SUMMARY"
+          echo 'If deployment fails, use Deploy reviewed site snapshot with this run and digest; do not republish.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !inputs.bootstrap-tarballs }}
+        with:
+          name: site-snapshot-${{ github.run_id }}
+          path: ${{ runner.temp }}/site-snapshot
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: error
+      - name: Reject superseded or duplicate automatic handoff
+        id: current
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/site-auto.mjs gate
+      - name: Reject retired bootstrap immediately before deployment
+        if: ${{ !inputs.verification-only && inputs.bootstrap-tarballs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node "$RUNNER_TEMP/bootstrap-site-gate.mjs"
       - name: Deploy web docs
-        if: ${{ !inputs.verification-only }}
+        if: ${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -82,7 +131,7 @@ jobs:
           environment: production
           command: deploy
       - name: Deploy Storybook
-        if: ${{ !inputs.verification-only }}
+        if: ${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -90,3 +139,15 @@ jobs:
           workingDirectory: ${{ runner.temp }}/veli-release-sites/apps/storybook
           environment: production
           command: deploy
+      - name: Record successful paired deployment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
+        run: node scripts/site-auto.mjs receipt "$RUNNER_TEMP/site-deployed"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !inputs.verification-only && !inputs.bootstrap-tarballs && steps.current.outputs.ready == 'true' }}
+        with:
+          name: site-deployed-${{ inputs.source-ref }}
+          path: ${{ runner.temp }}/site-deployed
+          retention-days: 90
+          if-no-files-found: error

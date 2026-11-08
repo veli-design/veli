@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { ServiceDetail, type ServiceApply } from '@tradenetcorp/veli-blocks/service-detail';
 import { serviceDetailContent } from '@tradenetcorp/veli-blocks/examples/service-detail-content';
+import { ServiceDetailComposition } from '@tradenetcorp/veli-blocks/examples/service-detail-composition';
 import { VeliProvider } from '@veli-design/react/provider';
 
 export function ServiceDetailDemo() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');
   const [dark, setDark] = useState(false);
+  const [composed, setComposed] = useState(false);
   const [mode, setMode] = useState<ServiceApply['mode']>('online');
   const [action, setAction] = useState('');
   return (
@@ -13,9 +15,18 @@ export function ServiceDetailDemo() {
       <div className="type-body-sm-regular grid gap-3 border-b border-border-base-muted p-4">
         <div className="flex flex-wrap items-center gap-4">
           <label>
+            <input
+              type="checkbox"
+              checked={composed}
+              onChange={(event) => setComposed(event.target.checked)}
+            />{' '}
+            Custom composition
+          </label>
+          <label>
             Service example{' '}
             <select
               value={mode}
+              disabled={composed}
               onChange={(event) => {
                 setMode(event.target.value as ServiceApply['mode']);
                 setAction('');
@@ -54,10 +65,14 @@ export function ServiceDetailDemo() {
         </p>
       </div>
       <VeliProvider language={language} colorScheme={dark ? 'dark' : 'light'}>
-        <ServiceDetail
-          key={`${language}-${mode}`}
-          {...serviceDetailContent(language, mode, setAction)}
-        />
+        {composed ? (
+          <ServiceDetailComposition key={language} language={language} />
+        ) : (
+          <ServiceDetail
+            key={`${language}-${mode}`}
+            {...serviceDetailContent(language, mode, setAction)}
+          />
+        )}
       </VeliProvider>
     </div>
   );

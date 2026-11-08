@@ -1,9 +1,11 @@
 name: Prepare release
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
-# Serialize writes to the bot branch with the existing Release workflow.
+# Serialize versioning writes to the bot branch; publication locks its immutable commit.
 concurrency: Release-${{ github.ref }}
 
 permissions:
@@ -12,28 +14,42 @@ permissions:
 jobs:
   prepare:
     name: Prepare release pull request
-    if: github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'
+    if: github.repository_id == '1115705061' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      catchup: ${{ steps.after.outputs.catchup == 'true' || steps.before.outputs.catchup == 'true' }}
     steps:
       - name: Checkout main snapshot
         uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Reject an obsolete event before Changesets can reset or push
+        id: before
+        run: node scripts/release-order.mjs prepare-check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup pnpm
+        if: steps.before.outputs.fresh == 'true'
         uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
+        if: steps.before.outputs.fresh == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'pnpm'
 
       - name: Install Dependencies
+        if: steps.before.outputs.fresh == 'true'
         run: corepack pnpm install --frozen-lockfile
 
       - name: Create or refresh release pull request
+        if: steps.before.outputs.fresh == 'true'
         uses: changesets/action@v1
         with:
           version: corepack pnpm version-packages
@@ -41,3 +57,23 @@ jobs:
           title: 'chore: release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Detect main advancing during preparation
+        id: after
+        if: always()
+        run: node scripts/release-order.mjs prepare-check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  catchup:
+    needs: prepare
+    if: always() && needs.prepare.outputs.catchup == 'true' && github.repository_id == '1115705061' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Queue preparation of current main without stale writes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({...context.repo, workflow_id: 'prepare-release.yml', ref: 'main'});

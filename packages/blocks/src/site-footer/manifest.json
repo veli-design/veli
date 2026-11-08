@@ -1,12 +1,12 @@
 {
   "id": "site-footer",
   "title": "Site footer",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "experimental",
   "description": "Responsive, bilingual footer link groups composed from Veli Link.",
   "files": ["site-footer.tsx"],
   "dependencies": {
-    "@veli-design/react": "^0.18.0",
+    "@veli-design/react": "^0.19.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.22.0"
@@ -16,7 +16,7 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.18.0",
+    "@veli-design/react": "0.19.0",
     "@veli-design/tokens": "0.11.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
