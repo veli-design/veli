@@ -35,7 +35,8 @@ packing for local validation remains available. See
 ## Publication hold
 
 To create or refresh the bot's `changeset-release/main` PR without enabling
-publication, run **Prepare release** (`prepare-release.yml`) manually on `main`.
+publication, **Prepare release** (`prepare-release.yml`) runs on main pushes; it
+can also be dispatched manually on `main`.
 The workflow must first exist on the default branch. It runs Changesets versioning
 only, with no publish command, npm credentials, OIDC permission or dist-tag input.
 It uses the repository token so the PR retains the authenticated bot identity;
@@ -43,17 +44,18 @@ approve its pending CI workflows and require fresh validation of the final head.
 Do not manually merge stale versioning output or add human commits to the bot PR.
 This preparation does not change the publication or registry-transition gates below.
 
-Release is manual and requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository
+Merging the validated bot release PR automatically starts publication, which requires `VELI_NPM_PUBLICATION_APPROVED=true` as a repository
 variable and in the publishing process. It also requires an explicit
-`VELI_RELEASE_BRANCH` repository variable and a manual `dist-tag` input (passed
-as `VELI_NPM_DIST_TAG` locally); neither has a default. Keep this unset until the
+`VELI_RELEASE_BRANCH` repository variable and an approved `VELI_NPM_DIST_TAG`
+repository variable (the same environment variable is used locally); neither has a default. Keep this unset until the
 licence and artifact requirements are satisfied, npm namespace/publish permissions
 are verified, bootstrap authentication is available, and the release branch,
-exact versions and dist-tag are configured. The existing supported
-versions are React 0.17.0, tokens 0.10.0 and CLI 0.1.1; pending Changesets describe
-subsequent releases without applying version changes here. Main's React changes require the planned tokens 0.11 line. Pending Changesets
-remain unapplied in this PR. Before the package release, locally test the real
-unreleased packages and review a separate Block preparation PR. Update only the
+exact versions and dist-tag are configured. The recorded bootstrap baseline is
+React 0.18.0, tokens 0.11.0 and CLI 0.2.0. The pending Sheet Changeset plans React
+0.19.0. Include the separately merged catalog alignment and Sheet migrations when
+refreshing the final release PR; do not manufacture another package bump to test
+publication. Before a package release, locally test the real unreleased artifacts
+and review the Block preparation. Update only the
 affected supported ranges and tested versions, with Block version/changelog bumps
 when its distributed source or dependency contract changes. Include visual and
 interaction validation in that review; a successful version bump is not proof of
@@ -82,14 +84,15 @@ workspace, and pinned pnpm 11.18.0 implements the npm OIDC token exchange.
 The private source repository cannot produce public-source provenance, so the
 workflow explicitly disables it.
 
-Before recurring OIDC publication, publish the first audited release using an
-authenticated npm account with permission for `veli-design`. Do not create empty
-placeholder versions. Configure a trusted publisher separately for each of
+The initial audited bootstrap release was published using an
+authenticated npm account with permission for `veli-design`. Do not repeat bootstrap publication or create empty placeholder versions. Configure a trusted publisher separately for each of
 `@veli-design/react`, `@veli-design/tokens` and `@veli-design/cli`: GitHub owner
 `tradenetcorp`, repository `veli`, workflow filename `release.yml`. Permit direct
 publication for the Changesets flow. This does not require a repository move.
-Set `VELI_NPM_TRUSTED_PUBLISHING_READY=true` only after all three first
-publications and trusted publishers are verified. Until then, CI can prepare a
+Set `VELI_NPM_TRUSTED_PUBLISHING_READY=true` only after bootstrap is verified and
+the trusted publishers for every package selected in the release are confirmed.
+All three packages remain supported; recheck this hold whenever another package
+is scheduled rather than assuming an earlier readiness check covers it. Until then, CI can prepare a
 release PR but refuses the publication path before attempting OIDC. Bootstrap
 uses the same audited local publication script with account authentication; it
 does not use the recurring CI workflow.
@@ -99,17 +102,24 @@ including personal scopes. Public npm installation requires no token.
 
 ## Registry and deployment transition
 
-The live docs Worker also serves the Blocks catalog and source archives. Leave
-its existing deployment running for old-scope consumers. The release-site deploy
-workflow requires `VELI_REGISTRY_TRANSITION_APPROVED=true`; do not enable this
-until an independently hosted new-scope registry URL and the old registry support
-period are configured and validated. Any manual deployment of this branch to the existing Workers
-would replace their catalogs, so it must remain on hold as well.
+The live docs Worker also serves the Blocks catalog and source archives. The
+release-site deployment requires `VELI_REGISTRY_TRANSITION_APPROVED=true` after
+explicit approval to roll out the current catalog. Current Blocks have been tested
+with the published React 0.18.0/tokens 0.11.0 baseline; no new public endpoint,
+public domain or repository transfer is required for an approved internal rollout.
+Deploying the current catalog advertises new-scope dependencies. Applications
+must coordinate package/import updates before requesting those newer versions;
+existing installed source and receipts are not rewritten by a site deployment.
+Full-history builds retain earlier versioned archive URLs.
 
-New CLI consumers must explicitly configure the new compatible registry URL via
-`veli init`; npm access does not bypass registry access controls. Validate retrieval
-and application builds before activating a public endpoint. This branch changes
-local catalog output only, and does not provision a new endpoint.
+The initial account-authenticated publication does not trigger the recurring CI
+release handoff. Use the [temporary deployment-only bootstrap path](RELEASE_SITES.md#temporary-catch-up-for-the-already-published-npm-bootstrap)
+to verify the exact published artifacts, build and deploy both internal sites
+without republishing. It requires a separate explicit deployment option as well
+as the rollout flag. Keep existing internal domain and WFA access settings.
+CLI consumers still configure their compatible Veli Web URL through `veli init`;
+public npm installation does not bypass registry access controls. A later public
+endpoint or domain transition remains a separate decision.
 
 ## Consumer migration
 
@@ -140,3 +150,6 @@ Block against a local catalog fixture. Existing CLI tests exercise archive recei
 and updates; package consumer checks must also use the tarballs. Do not run
 `pnpm release` as a test. Publication and live retrieval verification remain
 separate operational gates.
+
+For the current release preparation, publication approval, site snapshot and
+deployment-only recovery procedures, see [CI release operations](CI_RELEASE_RUNBOOK.md).

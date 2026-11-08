@@ -6,9 +6,17 @@ Veli Design tokens for plain CSS, Tailwind v4 and DTCG integrations. All artefac
 
 ## Installation
 
-After public npm publication, install with `pnpm add @veli-design/tokens`.
-The default npm registry requires no package-read token. Before release, use the
-local tarball rehearsal in the repository migration runbook.
+Install from public npm without a package-read token or repository access:
+
+```bash
+npm install @veli-design/tokens
+```
+
+For a fresh React app, follow the self-contained
+[React package setup](https://www.npmjs.com/package/@veli-design/react).
+Tailwind v4 requires its build integration as well as the CSS imports below;
+for Vite, install `tailwindcss@^4` and `@tailwindcss/vite@^4`, then register
+`tailwindcss()` from `@tailwindcss/vite` in your Vite plugins.
 
 ## Consumption
 

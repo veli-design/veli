@@ -61,18 +61,41 @@ for (const block of getBlocks()) {
 
 // Application-owned example content is shared by docs, stories and the copied adapters.
 for (const name of [
+  'filter-bar-content.ts',
+  'filter-bar-composition.tsx',
   'error-page-messages.ts',
   'page-navigation-footer-content.tsx',
   'service-detail-content.tsx',
+  'service-detail-composition.tsx',
 ]) {
   cpSync(resolve(packageRoot, 'examples', name), resolve(target, name));
-  if (name === 'service-detail-content.tsx') {
+  if (name.startsWith('service-detail-')) {
+    const path = resolve(target, name);
+    writeFileSync(
+      path,
+      readFileSync(path, 'utf8').replaceAll(
+        "'../src/service-detail/",
+        "'./components/blocks/service-detail/",
+      ),
+    );
+  }
+  if (name === 'filter-bar-composition.tsx') {
+    const path = resolve(target, name);
+    writeFileSync(
+      path,
+      readFileSync(path, 'utf8').replaceAll(
+        "'../src/filter-bar/",
+        "'./components/blocks/filter-bar/",
+      ),
+    );
+  }
+  if (name === 'filter-bar-content.ts') {
     const path = resolve(target, name);
     writeFileSync(
       path,
       readFileSync(path, 'utf8').replace(
-        "'../src/service-detail/types'",
-        "'./components/blocks/service-detail/types'",
+        "'../src/filter-bar/types'",
+        "'./components/blocks/filter-bar/types'",
       ),
     );
   }

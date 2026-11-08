@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import test from 'node:test';
+import { getPackages } from '@manypkg/get-packages';
 import {
   approvedReleaseEvent,
   isReleasePR,
@@ -299,7 +300,7 @@ test('release preparation stays cheap and unrelated main pushes cannot publish',
       },
       f.env,
     ),
-    'prepare',
+    'none',
   );
   assert.equal(await releaseMode(false, f.api, f.env), 'publish');
   f.responses[`/commits/${commitSHA}/pulls?per_page=100&page=1`] = [];
@@ -311,26 +312,33 @@ test('preparation workflow can only version the main snapshot with repository bo
   const preparation = parse(
     readFileSync(new URL('../.github/workflows/prepare-release.yml', import.meta.url), 'utf8'),
   );
-  assert.deepEqual(preparation.on, { workflow_dispatch: null });
+  assert.deepEqual(preparation.on, { push: { branches: ['main'] }, workflow_dispatch: null });
   assert.deepEqual(preparation.permissions, { contents: 'read' });
   assert.equal(preparation.concurrency, 'Release-${{ github.ref }}');
-  assert.deepEqual(Object.keys(preparation.jobs), ['prepare']);
-  const job = preparation.jobs.prepare;
-  assert.equal(
-    job.if,
-    "github.repository == 'tradenetcorp/veli' && github.ref == 'refs/heads/main'",
+  assert.deepEqual(Object.keys(preparation.jobs), ['prepare', 'catchup']);
+  assert.deepEqual(preparation.jobs.catchup.permissions, { actions: 'write', contents: 'read' });
+  assert.deepEqual(
+    preparation.jobs.catchup.steps.map((s) => s.uses),
+    ['actions/github-script@v7'],
   );
+  const job = preparation.jobs.prepare;
+  assert.equal(job.if, "github.repository_id == '1115705061' && github.ref == 'refs/heads/main'");
   assert.deepEqual(job.permissions, { contents: 'write', 'pull-requests': 'write' });
   assert.equal(preparation.env, undefined);
   assert.equal(job.env, undefined);
   assert.deepEqual(
     job.steps.filter((step) => step.run).map((step) => step.run),
-    ['corepack pnpm install --frozen-lockfile'],
+    [
+      'node scripts/release-order.mjs prepare-check',
+      'corepack pnpm install --frozen-lockfile',
+      'node scripts/release-order.mjs prepare-check',
+    ],
   );
   assert.deepEqual(
     job.steps.filter((step) => step.uses).map((step) => step.uses),
     [
       'actions/checkout@v4',
+      'actions/setup-node@v4',
       'pnpm/action-setup@v6',
       'actions/setup-node@v4',
       'changesets/action@v1',
@@ -345,8 +353,11 @@ test('preparation workflow can only version the main snapshot with repository bo
     title: 'chore: release packages',
   });
   assert.deepEqual(action.env, { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' });
-  for (const step of job.steps.filter((step) => step !== action))
-    assert.equal(step.env, undefined, 'Preparation must not receive npm credentials or approvals');
+  for (const step of job.steps)
+    assert.ok(
+      Object.keys(step.env ?? {}).every((key) => key === 'GITHUB_TOKEN'),
+      'Preparation must not receive npm credentials or publication approvals',
+    );
 });
 
 test('workflow keeps native approval, all release suites and publication ordering', async () => {
@@ -355,7 +366,11 @@ test('workflow keeps native approval, all release suites and publication orderin
   const ci = parse(read('../.github/workflows/ci.yml'));
   const release = parse(read('../.github/workflows/release.yml'));
   assert.deepEqual(Object.keys(ci.on), ['pull_request']);
-  assert.deepEqual(Object.keys(release.on), ['workflow_dispatch']);
+  assert.deepEqual(release.on, { push: { branches: ['main'] }, workflow_dispatch: null });
+  assert.equal(release.jobs.plan.if, "github.repository_id == '1115705061'");
+  assert.equal(release.jobs.release.needs, 'plan');
+  assert.equal(release.jobs.release.concurrency, 'Release-Publish');
+  assert.equal(release.jobs.plan.permissions['id-token'], undefined);
   const gate = ci.jobs['blocks-consumer'];
   assert.ok(gate.needs.includes('build'));
   const record = gate.steps.find((step) => step.run?.includes('release-ci.mjs stamp'));
@@ -363,19 +378,20 @@ test('workflow keeps native approval, all release suites and publication orderin
   const publish = release.jobs.release;
   assert.equal(
     publish.if,
-    "vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH",
+    "needs.plan.outputs.mode == 'publish' && vars.VELI_NPM_PUBLICATION_APPROVED == 'true' && vars.VELI_RELEASE_BRANCH != '' && github.ref_name == vars.VELI_RELEASE_BRANCH",
   );
   assert.equal(publish.permissions.actions, 'read');
+  assert.equal(publish.permissions['pull-requests'], 'read');
   assert.equal(publish.permissions['id-token'], 'write');
   const trustIndex = publish.steps.findIndex(
     (step) =>
       step.env?.TRUSTED_PUBLISHING_READY === '${{ vars.VELI_NPM_TRUSTED_PUBLISHING_READY }}',
   );
   assert.ok(trustIndex >= 0);
-  assert.equal(publish.steps[trustIndex].if, "steps.plan.outputs.mode == 'publish'");
+  assert.equal(publish.steps[trustIndex].if, "needs.plan.outputs.mode == 'publish'");
   assert.equal(publish.steps[trustIndex].run, `test "$TRUSTED_PUBLISHING_READY" = 'true'`);
   const verifyIndex = publish.steps.findIndex((step) =>
-    step.run?.includes('release-ci.mjs verify'),
+    step.run?.includes('release-order.mjs verify-selected'),
   );
   const installIndex = publish.steps.findIndex((step) =>
     step.run?.includes('install --frozen-lockfile'),
@@ -387,21 +403,19 @@ test('workflow keeps native approval, all release suites and publication orderin
   assert.equal(action.env.NPM_TOKEN, undefined);
   assert.equal(action.env.NODE_AUTH_TOKEN, undefined);
   assert.equal(action.env.NPM_CONFIG_PROVENANCE, false);
-  assert.equal(
-    action.with.publish,
-    "${{ steps.plan.outputs.mode == 'publish' && 'corepack pnpm release' || '' }}",
-  );
-  assert.equal(action.if, "steps.plan.outputs.mode != 'none'");
+  assert.equal(action.with.publish, 'node scripts/release-order.mjs publish');
+  assert.equal(action.if, "needs.plan.outputs.mode != 'none'");
   const publisher = read('./publish-packages.mjs');
-  const publishedPackages = readdirSync(new URL('../packages/', import.meta.url))
-    .map((directory) =>
-      JSON.parse(
-        readFileSync(new URL(`../packages/${directory}/package.json`, import.meta.url), 'utf8'),
-      ),
-    )
-    .filter((pkg) => !pkg.private)
-    .map((pkg) => pkg.name)
+  const { packages } = await getPackages(fileURLToPath(new URL('..', import.meta.url)));
+  const publishedPackages = packages
+    .filter(({ packageJson }) => !packageJson.private)
+    .map(({ packageJson }) => packageJson.name)
     .sort();
+  assert.deepEqual(publishedPackages, [
+    '@veli-design/cli',
+    '@veli-design/react',
+    '@veli-design/tokens',
+  ]);
   const buildFilters = [...publisher.matchAll(/--filter=(@[^']+)/g)]
     .map((match) => match[1])
     .sort();
@@ -413,4 +427,61 @@ test('workflow keeps native approval, all release suites and publication orderin
     release.jobs['deploy-sites'].if,
     "needs.release.outputs.published == 'true' && vars.VELI_REGISTRY_TRANSITION_APPROVED == 'true'",
   );
+});
+
+test('release publication validates exact CI evidence without reading review comments', async () => {
+  const f = fixture();
+  // The fixture has no review/comment/permission endpoint: any such dependency fails.
+  await verifyPublication(f.api, f.env, async () => f.evidence);
+});
+
+test('manual recovery uses immutable inputs and verification, with no comment gate', async () => {
+  const { parse } = await import('yaml');
+  const source = readFileSync(
+    new URL('../.github/workflows/deploy-site-snapshot.yml', import.meta.url),
+    'utf8',
+  );
+  const snapshot = parse(source);
+  assert.deepEqual(Object.keys(snapshot.on.workflow_dispatch.inputs), [
+    'snapshot-run-id',
+    'snapshot-sha256',
+  ]);
+  assert.deepEqual(snapshot.permissions, { contents: 'read', actions: 'read' });
+  assert.equal(snapshot.concurrency, 'veli-public-release-sites');
+  assert.match(snapshot.jobs.deploy.if, /github.ref == 'refs\/heads\/main'/);
+  const steps = snapshot.jobs.deploy.steps;
+  const deployment = steps.findIndex((s) => s.uses === 'cloudflare/wrangler-action@v3');
+  for (const command of [
+    'assertSnapshotProducer(',
+    'site-release.mjs verify',
+    'prepare-recovery-receipt',
+  ]) {
+    const index = steps.findIndex((s) => (s.run ?? s.with?.script ?? '').includes(command));
+    assert.ok(index >= 0 && index < deployment, command);
+  }
+  assert.doesNotMatch(
+    source,
+    /review-comment-id|REVIEW_COMMENT|verify-site-review|issues:|pull-requests:/,
+  );
+  assert.ok(!steps.some((s) => s.run?.includes('pnpm release')));
+});
+
+test('transfer retains authenticated identity while old repository evidence cannot be reused', () => {
+  const f = fixture();
+  const moved = 'veli-design/veli';
+  const pr = {
+    ...f.context.pr,
+    head: { ...f.context.pr.head, repo: { full_name: moved } },
+    base: { ...f.context.pr.base, repo: { full_name: moved } },
+  };
+  assert.ok(isReleasePR(pr, moved));
+  assert.equal(isReleasePR(f.context.pr, moved), false);
+  const context = {
+    ...f.context,
+    repository: moved,
+    pr,
+    run: { ...f.context.run, head_repository: { full_name: moved } },
+  };
+  assert.doesNotThrow(() => verifyEvidence({ ...f.evidence, repository: moved }, context));
+  assert.throws(() => verifyEvidence(f.evidence, context));
 });

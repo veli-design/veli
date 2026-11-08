@@ -1,12 +1,18 @@
-name: Redeploy public release sites
+name: Prepare published site rebuild
 on:
   workflow_dispatch:
+    inputs:
+      release-tag:
+        description: Explicit public release with publication.json; empty selects the latest verified-format public snapshot
+        required: false
+        type: string
 permissions:
   contents: read
   packages: read
   actions: read
 jobs:
   snapshot:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       source-ref: ${{ steps.manifest.outputs.source-ref }}
@@ -14,11 +20,15 @@ jobs:
     steps:
       - uses: actions/github-script@v7
         id: release
+        env:
+          REQUESTED_RELEASE_TAG: ${{ inputs.release-tag }}
         with:
           script: |
+            const requested = process.env.REQUESTED_RELEASE_TAG;
+            if (requested && !/^[A-Za-z0-9@_][A-Za-z0-9@._/-]*$/.test(requested)) throw new Error('Invalid release tag');
             const releases = await github.paginate(github.rest.repos.listReleases, { ...context.repo, per_page: 100 });
-            const release = releases.filter(r => !r.draft && r.assets.some(a => a.name === 'release-manifest.json')).sort((a,b) => b.published_at.localeCompare(a.published_at))[0];
-            if (!release) throw new Error('No published release snapshot exists.');
+            const release = releases.filter(r => !r.draft && !r.prerelease && (!requested || r.tag_name === requested) && r.assets.some(a => a.name === 'release-manifest.json') && r.assets.some(a => a.name === 'publication.json')).sort((a,b) => b.published_at.localeCompare(a.published_at))[0];
+            if (!release) throw new Error('No verified-format public release snapshot exists. Use Prepare site-only release snapshot with the reviewed bootstrap baseline until the first recurring release.');
             core.setOutput('release-tag', release.tag_name);
       - name: Read snapshot source commit
         id: manifest
@@ -33,6 +43,7 @@ jobs:
     needs: snapshot
     uses: ./.github/workflows/deploy-release-sites.yml
     with:
+      verification-only: true
       source-ref: ${{ needs.snapshot.outputs.source-ref }}
       release-tag: ${{ needs.snapshot.outputs.release-tag }}
     secrets: inherit

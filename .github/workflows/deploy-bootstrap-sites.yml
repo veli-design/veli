@@ -1,0 +1,69 @@
+name: Temporary bootstrap site catch-up
+# Remove this catch-up workflow after both sites and the current catalog are verified live.
+on:
+  workflow_dispatch:
+    inputs:
+      source-ref:
+        description: Exact reviewed bootstrap release commit
+        required: true
+        default: c36ca062456bbaeddb2a45a48954ebaaec637c1b
+        type: string
+      deploy-sites:
+        description: Deploy the verified Web, Storybook and current internal Blocks catalog
+        required: true
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency: veli-bootstrap-entry
+jobs:
+  verify:
+    if: github.repository_id == '1115705061' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout frozen release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source-ref }}
+          path: release-source
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify exact source and anonymously download approved npm artifacts
+        env:
+          SOURCE_REF: ${{ inputs.source-ref }}
+        run: node scripts/verify-bootstrap-release.mjs "$SOURCE_REF" "$GITHUB_WORKSPACE/release-source" "$RUNNER_TEMP/bootstrap-release"
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: release-source/package.json
+      - name: Install locked validation tools
+        run: corepack pnpm --dir release-source install --frozen-lockfile
+      - name: Verify strict installed packages and all copied Blocks
+        run: node release-source/scripts/check-npm-migration.mjs "$RUNNER_TEMP/bootstrap-consumer" "$RUNNER_TEMP/bootstrap-release"
+      - name: Retain verified release snapshot and artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest
+          path: ${{ runner.temp }}/bootstrap-release
+          retention-days: 90
+          if-no-files-found: error
+      - name: Require explicit internal deployment approval
+        if: inputs.deploy-sites
+        env:
+          REGISTRY_TRANSITION_APPROVED: ${{ vars.VELI_REGISTRY_TRANSITION_APPROVED }}
+        run: test "$REGISTRY_TRANSITION_APPROVED" = 'true'
+  sites:
+    needs: verify
+    permissions:
+      contents: read
+      actions: read
+      packages: read
+    uses: ./.github/workflows/deploy-release-sites.yml
+    with:
+      source-ref: ${{ inputs.source-ref }}
+      manifest-run-id: ${{ github.run_id }}
+      bootstrap-tarballs: true
+      verification-only: ${{ !inputs.deploy-sites }}
+    secrets: inherit

@@ -1,3 +1,16 @@
+## 0.9.0
+
+### Changed
+
+- Use Veli Sheet for the mobile notification tray, sharing its native swipe, motion, dismissal and focus management. Preserve the title, options and close controls, 40px grabber, notification states, scrolling list and desktop popover.
+- Require `@veli-design/react@^0.19.0`. Notification data, rendering props and host callbacks are unchanged.
+
+## 0.8.0
+
+### Changed
+
+- Require Veli React ^0.19.0 and record the exact 0.19.0 candidate baseline. The copied-source rendering API and token baseline are unchanged; previous block archives retain their existing requirements.
+
 ## 0.7.0
 
 ### Changed

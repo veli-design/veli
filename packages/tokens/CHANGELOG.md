@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.11.0
+
+_Released 2026-11-01._
+
+### Added
+
+- Add fill and outline Tag appearances, standalone button and link tags, split sub-label dropdowns, and dedicated theme-aware Tag tokens.
+
+### Changed
+
+- Transparent and ghost button backgrounds use alpha brand steps again so underlying surfaces show through.
+- Migrate to public @veli-design packages; update dependencies, imports and copied Blocks together while retaining the veli executable.
+- Include MIT software and CC BY 4.0 documentation licence texts with concise scope/attribution and applicable third-party notices in npm packages; keep full asset/brand governance at the repository root and complete package discovery metadata.
+- Use maintained Phosphor icons in copied Blocks, with updated source versions and dependency declarations.
+
 ## 0.10.0
 
 _Released 2026-10-22._

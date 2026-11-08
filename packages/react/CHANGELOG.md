@@ -6,6 +6,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.19.0
+
+_Released 2026-11-04._
+
+### Changed
+
+- Replace Sheet content props with composable `Sheet.Header`, `Sheet.Title`, `Sheet.Description`, `Sheet.Body`, `Sheet.Footer`, `Sheet.Handle` and `Sheet.Close` parts.
+- Move `title`, `description`, `headerActions` and `footer` into children, move `contentClassName` to `Sheet.Body.className`, and replace `showHandle` with conditional `Sheet.Handle`. Include close controls and dividers explicitly.
+
+## 0.18.0
+
+_Released 2026-11-01._
+
+### Added
+
+- Add fill and outline Tag appearances, standalone button and link tags, split sub-label dropdowns, and dedicated theme-aware Tag tokens.
+- Add Sheet with width presets, logical edge placement, accessible focus management and swipe dismissal.
+
+### Changed
+
+- Match the ComboBox option popover to the Select and Menu Figma treatment with a 0.5px `border-base-muted` stroke on `menu/bg`.
+- Use the 10px `radius/field` token for Input, TextArea, Search (default), Select, ComboBox, DateField, DatePicker, and PasswordInput corners. Search outline stays fully rounded.
+- Migrate to public @veli-design packages; update dependencies, imports and copied Blocks together while retaining the veli executable.
+- Include MIT software and CC BY 4.0 documentation licence texts with concise scope/attribution and applicable third-party notices in npm packages; keep full asset/brand governance at the repository root and complete package discovery metadata.
+- Use maintained Phosphor icons in copied Blocks, with updated source versions and dependency declarations.
+- Require React Aria Components 1.22 or later when upgrading Veli UI.
+- Point agents from Select to a read-only Input when a chosen value must stay visible but locked. Show the option label in a nameless read-only Input and submit the option id separately. Select has no read-only state.
+- Toast `subtle` and `emphasis` now use Alert light and high-contrast colours, a 24px radius, semibold titles, and strong description text. The default appearance is `subtle`, and each toast shows a per-intent leading icon unless `showLeadingIcon` is `false` or a custom `leadingIcon` is set. The close control is an icon-only Button.
+- Emphasis Toast actions and the close control use Button `highContrast` (Figma onHighContrast secondary tokens) instead of toast-interactive colour overrides. Subtle Toast actions keep the default Button surfaces.
+
+### Removed
+
+- Remove the `outline` toast appearance. Use `subtle` or `emphasis`.
+
+### Fixed
+
+- High-contrast Alert actions and close use Button `highContrast` styles instead of colour overrides. Compose the primary action as secondary `fill` (not `transparent`) with `highContrast`, and secondary or close actions as secondary `ghost` with `highContrast`. `Alert.Actions` and `Alert.CloseButton` apply `highContrast` to direct Veli Buttons when the Alert appearance is `highContrast`.
+- Align Dropzone area, preview, and progress colours with the Figma dropzone component tokens, and space multiple file items 16px apart.
+- Disabled field labels use the muted text colour, helper text uses muted text and switches to the disabled colour when the field is disabled, and the required asterisk stays danger when the field is disabled.
+- `FieldDescription` accepts `isDisabled` so its helper can follow an inner control when that control disagrees with the surrounding field.
+- Treat whitespace-only `React.Fragment` trees as empty in shared message helpers, so empty Fragment descriptions no longer keep Modal header dividers and related field chrome.
+- Correct tag colors and dark link hover contrast, disabled links, removal labels, narrow-content wrapping, and keyboard focus visibility; respect reduced motion.
+- Keep disabled tags when Delete or Backspace removes a mixed selection.
+- Restore readable contrast for built-in empty-state text.
+- Expose selected disabled tags and link destinations to assistive technology.
+- Keep Calendar and RangeCalendar within narrow mobile containers, localize navigation labels, disable year selection with the calendar, and respect reduced motion in the year menu.
+- Prevent Dhivehi Calendar and RangeCalendar hydration mismatches in WebKit while retaining RTL keyboard navigation.
+- Match Figma's selected Today indicator and Calendar error-icon tokens, and use the DatePicker field radius and header/helper/disabled text tokens from the current Changelog.
+- Restore DatePicker's 44-pixel calendar days and Figma popover geometry, align filled and focused field tokens, and keep Dhivehi numeric date segments consistent across browsers and hydration.
+- Use the approved white text and Today indicator for selected Calendar dates and range endpoints, including invalid selections, so dark-mode selected dates meet AA text contrast.
+- Show full weekday names at the Calendar's design column width, truncating them only when a narrow container shrinks the columns.
+- Restore Table semantic text, selection and hover colours, correct disabled cell colours and keyboard cell focus, respect reduced motion for row feedback, and localize selection labels and empty text with the Veli provider.
+- Round the final table row and edge-cell focus rings to match the frame corners in both LTR and RTL.
+- Align selection checkboxes with table header and row text by removing the inline baseline gap.
+- Round the outer top header focus corners to follow the table frame in LTR and RTL.
+- Size `Modal.CloseButton` at `sm` (36px) by default so it matches the Figma Modal close control.
+- Keep `Modal.CloseButton` on the logical end of the header row when `Modal.Title` is omitted.
+- Draw the Modal header divider only when `Modal.Description` has renderable content, so an empty description no longer leaves a lone rule under the title.
+- Mirror PasswordInput labels, helpers, padding, and the visibility or error icon in right-to-left layouts. Password values stay left-to-right with English type, aligned to the start edge of the field.
+
 ## 0.17.0
 
 _Released 2026-10-22._

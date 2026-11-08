@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "sourceCommit": "c36ca062456bbaeddb2a45a48954ebaaec637c1b",
+  "sourceTree": "31577d9055bf3c94ee22a374872aa95b5e7e8079",
+  "packages": {
+    "@veli-design/react": {
+      "version": "0.18.0",
+      "file": "ui.tgz",
+      "sha256": "e2f55279865b6e2f638c5d50d34cb965bd30b8f031b82b59771355c87f8356cd",
+      "integrity": "sha512-OqDgEslWhVkv/gLXW00ZTveYXL2sQkUTKLONMQMRyFj9hYTAQAEGhaNNz7u7oS88pgQKkbodJY74ZlnZ29vTVw=="
+    },
+    "@veli-design/tokens": {
+      "version": "0.11.0",
+      "file": "tokens.tgz",
+      "sha256": "f6265383daf2707f4c376fdde32b06e3d58a7c5dc8199f3ae0f545c002ae43ec",
+      "integrity": "sha512-htL9Dam1nOYOy7lxq5pa3dS1vhw109KWy7EWXn/jA0+UZ7SjWltjaUlq6UXzH7c7JRtRg53uqNLz3rnkhNCaWg=="
+    },
+    "@veli-design/cli": {
+      "version": "0.2.0",
+      "file": "cli.tgz",
+      "sha256": "4b1b77085c5256ec053e8f81585efdb8d6ce9175d8a69acd461af717b78e7493",
+      "integrity": "sha512-oS+hWdkuVmuQ5+e6slIsubz2lCPUGDeK9Bih7TF7tHiRVxmRgX4VHMF3099VgAFfdJTG1PVVj82zoQIeKUnsGg=="
+    }
+  }
+}
