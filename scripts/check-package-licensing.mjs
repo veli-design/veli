@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertCompleteLegalText } from './release-legal.mjs';
 import { licensingPackages, repositoryRoot, packageNotices } from './package-licensing.mjs';
+import { tarSync } from './windows-safe-tar.mjs';
 
 // Read entries to stdout only; never extract an archive into the filesystem.
 export function checkPackageLicensingArtifacts(candidate, { release = false } = {}) {
   for (const pkg of licensingPackages) {
     const archive = resolve(candidate, pkg.tarball);
-    const files = execFileSync('tar', ['-tzf', archive], { encoding: 'utf8' }).trim().split('\n');
+    const files = tarSync(['-tzf', archive], { encoding: 'utf8' }).trim().split('\n');
     assert.equal(new Set(files).size, files.length, `${pkg.name}: duplicate archive paths`);
     assert.ok(
       files.every(
@@ -19,7 +19,7 @@ export function checkPackageLicensingArtifacts(candidate, { release = false } = 
     );
     const get = (path) => {
       assert.ok(files.includes(`package/${path}`), `${pkg.name}: missing ${path}`);
-      return execFileSync('tar', ['-xOf', archive, `package/${path}`], {
+      return tarSync(['-xOf', archive, `package/${path}`], {
         maxBuffer: 10 * 1024 * 1024,
       });
     };

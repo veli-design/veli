@@ -18,6 +18,7 @@ const imports = `
 import { Button } from '@veli-design/react/button';
 import { Input } from '@veli-design/react/input';
 import { PasswordInput } from '@veli-design/react/password-input';
+import { OTPInput } from '@veli-design/react/otp-input';
 import { Search } from '@veli-design/react/search';
 import { TextArea } from '@veli-design/react/textarea';
 import { Select, SelectItem } from '@veli-design/react/select';
@@ -111,6 +112,7 @@ for (const className of [
 for (const name of [
   'Input',
   'PasswordInput',
+  'OTPInput',
   'Search',
   'TextArea',
   'Select',
@@ -520,6 +522,7 @@ test('contract table has exactly the reviewed extra-value coverage and no broad 
     'Button',
     'Input',
     'PasswordInput',
+    'OTPInput',
     'Search',
     'TextArea',
     'Select',
@@ -528,7 +531,7 @@ test('contract table has exactly the reviewed extra-value coverage and no broad 
     'DatePicker',
   ]);
   const names = veliContracts.flatMap((entry) => entry.names);
-  assert.equal(names.length, 96);
+  assert.equal(names.length, 97);
   assert.equal(
     veliContracts.filter((entry) => entry.coverage === 'classes').flatMap((entry) => entry.names)
       .length,

@@ -216,6 +216,11 @@ export const componentGroups: ComponentGroup[] = [
         description: 'Password entry with visibility toggle and requirement checklist.',
       },
       {
+        title: 'OTPInput',
+        slug: 'otp-input',
+        description: 'One-time code field with per-character slots and optional groups.',
+      },
+      {
         title: 'Search',
         slug: 'search',
         description: 'Search field with leading icon and shared field shell.',

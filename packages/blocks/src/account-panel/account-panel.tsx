@@ -1,20 +1,14 @@
 'use client';
 
-import { useCallback, useId, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { useCallback, useId, useRef, useSyncExternalStore, type ReactNode } from 'react';
 import { CircleNotchIcon } from '@phosphor-icons/react';
-import {
-  Button as AriaButton,
-  Dialog,
-  Modal as AriaModal,
-  ModalOverlay,
-  Radio,
-  RadioGroup,
-} from 'react-aria-components';
+import { Button as AriaButton, Radio, RadioGroup } from 'react-aria-components';
 import { Avatar } from '@veli-design/react/avatar';
 import { Badge, type BadgeIntent } from '@veli-design/react/badge';
 import { Button } from '@veli-design/react/button';
 import { Divider } from '@veli-design/react/divider';
 import { Skeleton } from '@veli-design/react/skeleton';
+import { Sheet } from '@veli-design/react/sheet';
 import { Alert } from '@veli-design/react/alert';
 import { useVeliLanguage } from '@veli-design/react/provider';
 import { Popover, PopoverDialog, PopoverTrigger } from '@veli-design/react/popover';
@@ -58,7 +52,7 @@ export type AccountPanelLabels = {
   pending: string;
 };
 
-export type AccountPanelProps = {
+type AccountPanelBaseProps = {
   selectedAccount: AccountPanelAccount;
   /** Already filtered and ordered; exclude the selected account. */
   accountGroups?: readonly AccountPanelGroup[];
@@ -69,8 +63,6 @@ export type AccountPanelProps = {
   isLoading?: boolean;
   /** Account-list retrieval failure. Action failures are presented by the host. */
   error?: string;
-  /** The host owns account switching and updates selectedAccount after success. */
-  onAccountSelect: (id: string) => void;
   signOut: AccountPanelAction;
   accountManagement?: AccountPanelAction;
   emptyState?: { title: string; description?: string; action?: AccountPanelAction };
@@ -84,6 +76,13 @@ export type AccountPanelProps = {
   className?: string;
   panelClassName?: string;
 };
+
+/** Default preserves account-list hosts. Profile-only hosts supply their primary person. */
+export type AccountPanelProps = AccountPanelBaseProps &
+  (
+    | { profileOnly: true; onAccountSelect?: never }
+    | { profileOnly?: false; onAccountSelect: (id: string) => void }
+  );
 
 // Matches the default Tailwind sm breakpoint used by the extraction baseline.
 const mobileQuery = '(width < 640px)';
@@ -243,7 +242,7 @@ function PanelContent(props: AccountPanelProps) {
     appearance?.options.findIndex((option) => option.id === appearance.value) ?? -1;
   return (
     <div className="flex min-h-0 flex-1 flex-col px-6 pb-6 sm:p-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [&>*]:shrink-0">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto sm:overscroll-contain pb-4 [&>*]:shrink-0">
         <div
           data-account-profile
           className="flex shrink-0 flex-col items-center gap-3 rounded-2xl bg-neutral-alpha-200 px-2 pt-7 pb-8 text-center"
@@ -278,81 +277,91 @@ function PanelContent(props: AccountPanelProps) {
             </div>
           )}
         </div>
-        {props.isLoading && (
+        {!props.profileOnly && (
           <>
-            <p role="status" className="sr-only">
-              {labels.loading}
-            </p>
-            <section aria-label={labels.otherAccounts} aria-busy="true">
-              <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
-                {labels.otherAccounts}
-              </p>
-              {Array.from({ length: 3 }, (_, index) => (
-                <div
-                  key={index}
-                  data-account-skeleton
-                  className="flex items-center gap-3 p-3"
-                  aria-hidden="true"
-                >
-                  <Skeleton className="size-11 shrink-0 rounded-full motion-reduce:animate-none" />
-                  <div className="flex flex-1 flex-col gap-1">
-                    <Skeleton className="h-6 w-3/4 motion-reduce:animate-none" />
-                    <Skeleton className="h-5 w-1/2 motion-reduce:animate-none" />
+            {props.isLoading && (
+              <>
+                <p role="status" className="sr-only">
+                  {labels.loading}
+                </p>
+                <section aria-label={labels.otherAccounts} aria-busy="true">
+                  <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
+                    {labels.otherAccounts}
+                  </p>
+                  {Array.from({ length: 3 }, (_, index) => (
+                    <div
+                      key={index}
+                      data-account-skeleton
+                      className="flex items-center gap-3 p-3"
+                      aria-hidden="true"
+                    >
+                      <Skeleton className="size-11 shrink-0 rounded-full motion-reduce:animate-none" />
+                      <div className="flex flex-1 flex-col gap-1">
+                        <Skeleton className="h-6 w-3/4 motion-reduce:animate-none" />
+                        <Skeleton className="h-5 w-1/2 motion-reduce:animate-none" />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+            {props.error && (
+              <Alert intent="danger" live="alert">
+                <Alert.Title>{props.error}</Alert.Title>
+              </Alert>
+            )}
+            {!props.isLoading && groups.length > 0 ? (
+              <section aria-label={labels.otherAccounts}>
+                <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
+                  {labels.otherAccounts}
+                </p>
+                {groups.map((group, index) => (
+                  <div key={group.id}>
+                    {index > 0 && <Divider className="my-1 w-full" />}
+                    {group.label && (
+                      <p className="type-body-sm-medium px-3 py-2 text-base-muted">{group.label}</p>
+                    )}
+                    <ul aria-label={group.label ?? labels.otherAccounts} className="flex flex-col">
+                      {group.accounts.map((account) => (
+                        <AccountRow
+                          key={account.id}
+                          account={account}
+                          onSelect={props.onAccountSelect}
+                          labels={labels}
+                        />
+                      ))}
+                    </ul>
                   </div>
+                ))}
+              </section>
+            ) : !props.isLoading && !props.error && props.emptyState ? (
+              <div className="flex flex-col items-center gap-4 py-10 text-center sm:py-6">
+                <div className="flex flex-col gap-2">
+                  <p className="type-body-md-semibold text-base-strong">{props.emptyState.title}</p>
+                  {props.emptyState.description && (
+                    <p className="type-body-sm-regular text-base-muted">
+                      {props.emptyState.description}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </section>
+                {props.emptyState.action && (
+                  <PanelAction action={props.emptyState.action} labels={labels} />
+                )}
+              </div>
+            ) : null}
+            {props.accountManagement && (
+              <PanelAction action={props.accountManagement} labels={labels} />
+            )}
           </>
         )}
-        {props.error && (
-          <Alert intent="danger" live="alert">
-            <Alert.Title>{props.error}</Alert.Title>
-          </Alert>
-        )}
-        {!props.isLoading && groups.length > 0 ? (
-          <section aria-label={labels.otherAccounts}>
-            <p className="type-body-sm-regular pt-3 pb-2 text-base-default">
-              {labels.otherAccounts}
-            </p>
-            {groups.map((group, index) => (
-              <div key={group.id}>
-                {index > 0 && <Divider className="my-1 w-full" />}
-                {group.label && (
-                  <p className="type-body-sm-medium px-3 py-2 text-base-muted">{group.label}</p>
-                )}
-                <ul aria-label={group.label ?? labels.otherAccounts} className="flex flex-col">
-                  {group.accounts.map((account) => (
-                    <AccountRow
-                      key={account.id}
-                      account={account}
-                      onSelect={props.onAccountSelect}
-                      labels={labels}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </section>
-        ) : !props.isLoading && !props.error && props.emptyState ? (
-          <div className="flex flex-col items-center gap-4 py-10 text-center sm:py-6">
-            <div className="flex flex-col gap-2">
-              <p className="type-body-md-semibold text-base-strong">{props.emptyState.title}</p>
-              {props.emptyState.description && (
-                <p className="type-body-sm-regular text-base-muted">
-                  {props.emptyState.description}
-                </p>
-              )}
-            </div>
-            {props.emptyState.action && (
-              <PanelAction action={props.emptyState.action} labels={labels} />
-            )}
-          </div>
-        ) : null}
-        {props.accountManagement && (
-          <PanelAction action={props.accountManagement} labels={labels} />
-        )}
       </div>
-      <div className="-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:px-4">
+      <div
+        className={
+          props.profileOnly
+            ? '-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:border-0 sm:px-4 sm:pt-4'
+            : '-mx-6 shrink-0 border-t border-border-base-subtle px-6 pt-6 sm:-mx-4 sm:px-4'
+        }
+      >
         {appearance && (
           <div className="hidden shrink-0 flex-col sm:flex">
             <RadioGroup
@@ -400,104 +409,46 @@ function PanelContent(props: AccountPanelProps) {
             </RadioGroup>
           </div>
         )}
-        <PanelAction action={props.signOut} labels={labels} danger />
+        {props.profileOnly ? (
+          <div className="sm:pt-4">
+            <PanelAction action={props.signOut} labels={labels} danger />
+          </div>
+        ) : (
+          <PanelAction action={props.signOut} labels={labels} danger />
+        )}
       </div>
     </div>
   );
 }
 
 function MobileSheet({ props }: { props: AccountPanelProps }) {
-  const { lang, direction } = useVeliLanguage();
   return (
-    <ModalOverlay
-      data-account-sheet-overlay
-      isDismissable
-      lang={lang}
-      dir={direction}
-      className="fixed inset-0 z-50 flex min-h-dvh items-end justify-center bg-black/60 backdrop-blur-[6px] transition-opacity duration-normal ease-out data-[entering]:opacity-0 data-[exiting]:opacity-0 motion-reduce:transition-none"
+    <Sheet
+      isOpen={props.isOpen}
+      onOpenChange={props.onOpenChange}
+      size="full"
+      overlayClassName="veli-account-sheet-overlay"
+      className={`veli-account-sheet relative max-h-[85svh] max-w-none bg-surface-raised [&>.veli-sheet-content]:pb-[env(safe-area-inset-bottom)] ${props.panelClassName ?? ''}`}
     >
-      <MobileSheetSurface props={props} />
-    </ModalOverlay>
-  );
-}
-
-// The headless Modal is the one physical sheet: its background, notch, content and
-// footer share both the drag transform and entry/exit translation.
-function MobileSheetSurface({ props }: { props: AccountPanelProps }) {
-  const { lang, direction } = useVeliLanguage();
-  const drag = useRef<{ id: number; y: number; time: number } | null>(null);
-  const [offset, setOffset] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  function cancel() {
-    if (!drag.current) return;
-    drag.current = null;
-    setDragging(false);
-    setOffset(0);
-  }
-  return (
-    <AriaModal
-      data-account-sheet
-      lang={lang}
-      dir={direction}
-      className={`relative flex max-h-[85svh] w-full flex-col overflow-hidden rounded-t-4xl bg-surface-raised text-base-default shadow-sm outline-none transition-[translate,transform,opacity] [transition-duration:var(--veli-duration-slow),var(--veli-duration-normal),var(--veli-duration-slow)] ease-out data-[entering]:translate-y-full data-[entering]:opacity-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0 data-[exiting]:[transition-duration:var(--veli-duration-normal)] data-[dragging=true]:transition-none motion-reduce:transition-none ${props.panelClassName ?? ''}`}
-      style={{ transform: `translateY(${offset}px)` }}
-      data-dragging={dragging}
-    >
-      <Dialog
-        aria-label={props.labels.dialog}
-        lang={lang}
-        dir={direction}
-        className="relative flex min-h-0 max-h-[inherit] w-full flex-1 flex-col pb-[env(safe-area-inset-bottom)] outline-none"
+      <Sheet.Title className="sr-only">{props.labels.dialog}</Sheet.Title>
+      {/* Preserve the account grabber's dimensions; Sheet owns all swipe behavior. */}
+      <div
+        data-account-drag-handle
+        aria-hidden="true"
+        className="flex shrink-0 justify-center pt-2 pb-6"
       >
-        <div
-          data-account-drag-handle
-          aria-hidden="true"
-          className="flex shrink-0 touch-none justify-center pt-2 pb-6"
-          onPointerDown={(event) => {
-            if (!event.isPrimary || event.button !== 0 || drag.current) return;
-            drag.current = { id: event.pointerId, y: event.clientY, time: event.timeStamp };
-            setDragging(true);
-            setOffset(0);
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }}
-          onPointerMove={(event) => {
-            if (drag.current?.id === event.pointerId)
-              setOffset(Math.max(0, event.clientY - drag.current.y));
-          }}
-          onPointerUp={(event) => {
-            const start = drag.current;
-            if (!start || start.id !== event.pointerId) return;
-            const distance = Math.max(0, event.clientY - start.y);
-            const height = event.currentTarget.parentElement?.clientHeight ?? Infinity;
-            if (
-              distance > height * 0.35 ||
-              (distance > 40 && distance / Math.max(1, event.timeStamp - start.time) > 0.11)
-            ) {
-              // Keep the released offset during the overlay's exit; do not snap home first.
-              drag.current = null;
-              setOffset(distance);
-              setDragging(false);
-              props.onOpenChange(false);
-            } else {
-              cancel();
-            }
-          }}
-          onPointerCancel={cancel}
-          onLostPointerCapture={cancel}
+        <span className="h-1 w-15 rounded-full bg-neutral-400" />
+      </div>
+      <div className="absolute end-6 top-2 z-10">
+        <AriaButton
+          slot="close"
+          className="type-body-sm-medium sr-only cursor-pointer rounded-full border-0 bg-button-secondary-subtle font-sans text-base-strong outline-none data-[focus-visible]:not-sr-only data-[focus-visible]:px-2 data-[focus-visible]:py-1 data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2"
         >
-          <span className="h-1 w-15 rounded-full bg-neutral-400" />
-        </div>
-        <div className="absolute end-6 top-2 z-10">
-          <AriaButton
-            className="type-body-sm-medium sr-only cursor-pointer rounded-full border-0 bg-button-secondary-subtle font-sans text-base-strong outline-none data-[focus-visible]:not-sr-only data-[focus-visible]:px-2 data-[focus-visible]:py-1 data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2"
-            onPress={() => props.onOpenChange(false)}
-          >
-            {props.labels.close}
-          </AriaButton>
-        </div>
-        <PanelContent {...props} />
-      </Dialog>
-    </AriaModal>
+          {props.labels.close}
+        </AriaButton>
+      </div>
+      <PanelContent {...props} />
+    </Sheet>
   );
 }
 

@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./filter-bar": "./src/filter-bar/filter-bar.tsx",
+    "./examples/filter-bar-content": "./examples/filter-bar-content.ts",
     "./notification-tray": "./src/notification-tray/notification-tray.tsx",
     "./site-footer": "./src/site-footer/site-footer.tsx",
     "./site-header": "./src/site-header/site-header.tsx",
@@ -21,7 +23,9 @@
     "./examples/page-navigation-footer-content": "./examples/page-navigation-footer-content.tsx",
     "./examples/error-page-preview": "./examples/error-page-preview.tsx",
     "./service-detail": "./src/service-detail/service-detail.tsx",
-    "./examples/service-detail-content": "./examples/service-detail-content.tsx"
+    "./examples/service-detail-content": "./examples/service-detail-content.tsx",
+    "./examples/service-detail-composition": "./examples/service-detail-composition.tsx",
+    "./examples/filter-bar-composition": "./examples/filter-bar-composition.tsx"
   },
   "scripts": {
     "build": "node scripts/check.mjs && tsc --noEmit",

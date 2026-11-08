@@ -37,10 +37,12 @@ export type ServiceGuideline = {
   updatedText?: string;
   content: GuidelineContent;
   onCopyLink?: () => Promise<void>;
+  /** Display precedence: pending, non-blank error, content; empty requestable content shows loading. */
   summary?: {
     content?: ReactNode;
     isPending?: boolean;
     error?: string;
+    /** Host handles fetching/errors and updates summary props; this notification is not awaited. */
     onRequest?: () => void;
   };
 };
@@ -103,6 +105,33 @@ export type ServiceDetailLabels = {
   linkCopied: string;
   linkCopyFailed: string;
 };
+
+/** Only the labels used by the reusable guideline surface. */
+export type ServiceDetailGuidelineLabels = Pick<
+  ServiceDetailLabels,
+  | 'readGuideline'
+  | 'guidelineIntroduction'
+  | 'guidelineUnavailable'
+  | 'closeGuideline'
+  | 'guidelineContents'
+  | 'guidelineCaption'
+  | 'showSummary'
+  | 'showFullGuideline'
+  | 'summaryPending'
+  | 'copyGuidelineLink'
+  | 'linkCopied'
+  | 'linkCopyFailed'
+>;
+/** One flat, host-formatted breakdown; values are never calculated by the block. */
+export type ServiceSummaryDetail = { id: string; label: string; value: string };
+export type ServiceSummaryOptions = {
+  /** Decorative replacement; null hides the default icon. */
+  icon?: ReactNode;
+  /** Non-interactive explanation: tooltip on hover/focus, popover on press/tap. */
+  information?: { label: string; content: ReactNode };
+  details?: readonly ServiceSummaryDetail[];
+};
+
 export type ServiceDetailProps = {
   title: string;
   description?: string;
@@ -113,6 +142,14 @@ export type ServiceDetailProps = {
     eligibility?: string;
     feeSummary?: string;
     fees?: readonly { id: string; label: string; value: string }[];
+  };
+  /** Optional presentation overrides. Existing metadata values and labels remain unchanged. */
+  summaryOptions?: {
+    applicationTime?: ServiceSummaryOptions;
+    processingTime?: ServiceSummaryOptions;
+    fees?: Omit<ServiceSummaryOptions, 'details'>;
+    eligibility?: Pick<ServiceSummaryOptions, 'icon' | 'information'>;
+    services?: Pick<ServiceSummaryOptions, 'icon' | 'information'>;
   };
   services?: readonly { id: string; name: string }[];
   prerequisites?: readonly string[];

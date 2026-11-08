@@ -170,7 +170,10 @@ test('temporary entry reuses the existing site workflow and cannot publish or by
   const deploys = commonSteps.filter((s) => s.uses === 'cloudflare/wrangler-action@v3');
   assert.equal(deploys.length, 2);
   for (const step of deploys) {
-    assert.equal(step.if, '${{ !inputs.verification-only }}');
+    assert.equal(
+      step.if,
+      "${{ !inputs.verification-only && (inputs.bootstrap-tarballs || steps.current.outputs.ready == 'true') }}",
+    );
     assert.equal(step.with.environment, 'production');
     assert.equal(step.with.command, 'deploy');
   }
@@ -184,9 +187,10 @@ test('temporary entry reuses the existing site workflow and cannot publish or by
   const stage = commonSteps.find((s) => s.name === 'Stage verified bootstrap artifacts');
   assert.match(stage.env.VELI_TARBALLS, /release-manifest\/ui.tgz/);
   assert.match(stage.env.VELI_TARBALLS, /release-manifest\/tokens.tgz/);
-  assert.equal(
-    stage.run,
+  assert.match(stage.run, /release-manifest\/release-manifest.json/);
+  assert.match(
     commonSteps.find((s) => s.name === 'Stage isolated released-package consumers').run,
+    /verified-publication\/release-manifest.json/,
   );
   assert.ok(
     commonSteps.findIndex((s) => s.name === 'Build against published packages') <

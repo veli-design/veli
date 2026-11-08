@@ -4,8 +4,11 @@ A modern, accessible design system monorepo built with Turbo, React Aria, and Ta
 
 ## Packages
 
-The `@veli-design` packages below are prepared for public npm publication.
-Publication remains on hold; see [the migration runbook](docs/NPM_MIGRATION.md) before switching an existing application.
+The `@veli-design` packages below are available on public npm without a package-read token.
+The repository remains private under `tradenetcorp`; hosted documentation, Storybook
+and the Blocks registry require WFA access. For a new application, follow the
+[React package setup](https://www.npmjs.com/package/@veli-design/react).
+Existing applications should consult [the migration runbook](docs/NPM_MIGRATION.md).
 
 | Package                                            | Purpose                                                               | Install                        | Release history                           |
 | -------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------ | ----------------------------------------- |
@@ -17,6 +20,12 @@ Follow the package links above for package-specific installation and usage. Rele
 artifacts include the matching changelog notes in their README; the same notes
 are used for the corresponding GitHub Release. The repository remains under
 `tradenetcorp` during this packages-first migration.
+
+To copy Blocks into an application, run `pnpm dlx @veli-design/cli init` from its
+package directory, then `pnpm dlx @veli-design/cli add`. New CLI setups default to
+`https://veli.design`; existing project registry configuration is preserved.
+See the [CLI guide](packages/cli/README.md) for URL overrides, access requirements
+and instructions for CLI 0.2.0 or older.
 
 ## Structure
 
@@ -122,7 +131,7 @@ Standalone Storybook app for component development and testing.
 
 ## Releases & Publishing
 
-This monorepo uses [Changesets](https://github.com/changesets/changesets) for versioning and gated releases to public npm. See [the migration runbook](docs/NPM_MIGRATION.md) for publication holds. Design tokens are synced from Figma via Veli Bridge (Figma Plugin) and Veli Bridge Bot (GitHub App).
+This monorepo uses [Changesets](https://github.com/changesets/changesets) for versioning and gated releases to public npm. See [the migration runbook](docs/NPM_MIGRATION.md) for release procedures and migration checks. Design tokens are synced from Figma via Veli Bridge (Figma Plugin) and Veli Bridge Bot (GitHub App).
 
 **Documentation:**
 

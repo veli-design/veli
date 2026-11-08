@@ -21,9 +21,11 @@ import semver from 'semver';
 import { AccessError, VeliWebClient, WFA_URL } from './client.js';
 import {
   defaultBlocksDir,
+  DEFAULT_WEB_URL,
   normalizeBlocksDir,
-  normalizeWebUrl,
   readConfig,
+  readOptionalConfig,
+  resolveWebUrl,
   writeConfig,
   type VeliConfig,
 } from './config.js';
@@ -56,7 +58,7 @@ const program = new Command()
   .description('Install and manage application-owned Veli Blocks.')
   .version(packageJson.version)
   .option('-c, --cwd <path>', 'application directory', process.cwd())
-  .option('--web-url <url>', 'override the configured Veli Web origin')
+  .option('--web-url <url>', `override the saved Veli Web origin (new setup: ${DEFAULT_WEB_URL})`)
   .option('--json', 'write machine-readable JSON')
   .option('--no-color', 'disable color output');
 
@@ -82,8 +84,11 @@ function cancelled(value: unknown): value is symbol {
 async function projectConfig(command: Command): Promise<{ cwd: string; config: VeliConfig }> {
   const cwd = cwdFor(command);
   const config = await readConfig(cwd);
-  const override = globalOptions(command).webUrl ?? process.env.VELI_WEB_URL;
-  if (override) config.webUrl = normalizeWebUrl(override);
+  config.webUrl = resolveWebUrl(
+    globalOptions(command).webUrl,
+    process.env.VELI_WEB_URL,
+    config.webUrl,
+  );
   return { cwd, config };
 }
 
@@ -95,12 +100,9 @@ async function clientFor(command: Command) {
 async function authClientFor(command: Command) {
   const cwd = cwdFor(command);
   const override = globalOptions(command).webUrl ?? process.env.VELI_WEB_URL;
-  if (override) {
-    const webUrl = normalizeWebUrl(override);
-    return { cwd, webUrl, client: new VeliWebClient(webUrl) };
-  }
-  const config = await readConfig(cwd);
-  return { cwd, webUrl: config.webUrl, client: new VeliWebClient(config.webUrl) };
+  const config = override === undefined ? await readOptionalConfig(cwd) : undefined;
+  const webUrl = resolveWebUrl(override, undefined, config?.webUrl);
+  return { cwd, webUrl, client: new VeliWebClient(webUrl) };
 }
 
 async function requestWfaAccess(client: VeliWebClient): Promise<boolean> {
@@ -146,17 +148,9 @@ program
   .action(async (options, command) => {
     const cwd = cwdFor(command);
     await ensurePackage(cwd);
-    let webUrl = globalOptions(command).webUrl ?? process.env.VELI_WEB_URL;
-    if (!webUrl) {
-      if (!process.stdin.isTTY || globalOptions(command).json)
-        throw new Error('Provide --web-url or VELI_WEB_URL in non-interactive mode.');
-      const answer = await text({
-        message: 'Veli Web URL',
-        placeholder: 'https://veli.example.com',
-      });
-      if (cancelled(answer)) return;
-      webUrl = answer;
-    }
+    if (await readOptionalConfig(cwd))
+      throw new Error('Veli Blocks is already initialized in this project.');
+    const webUrl = resolveWebUrl(globalOptions(command).webUrl, process.env.VELI_WEB_URL);
     const inferred = await defaultBlocksDir(cwd);
     let blocksDir = options.blocksDir as string | undefined;
     if (!blocksDir && process.stdin.isTTY && !globalOptions(command).json) {
@@ -170,7 +164,7 @@ program
     blocksDir ??= inferred;
     const config: VeliConfig = {
       schemaVersion: 1,
-      webUrl: normalizeWebUrl(webUrl),
+      webUrl,
       blocksDir: normalizeBlocksDir(cwd, blocksDir),
     };
     const client = new VeliWebClient(config.webUrl);

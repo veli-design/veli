@@ -109,6 +109,14 @@
           "metadata": "./components/password-input.json"
         },
         {
+          "id": "otp-input",
+          "name": "OTPInput",
+          "summary": "One-time code field with per-character slots and optional groups.",
+          "importPath": "@veli-design/react/otp-input",
+          "declaration": "../dist/otp-input.d.ts",
+          "metadata": "./components/otp-input.json"
+        },
+        {
           "id": "search",
           "name": "Search",
           "summary": "Search field with leading icon and shared field shell.",

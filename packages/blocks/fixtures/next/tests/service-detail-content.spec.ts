@@ -140,7 +140,7 @@ test('Dhivehi fee numbers use the Figma Waheed glyphs and keep the currency word
   await client.detach();
 });
 
-test('requestable summary announces loading until the host supplies content', async ({ page }) => {
+test('summary precedence handles loading, errors and host-supplied content', async ({ page }) => {
   await page.goto('/services');
   await page.getByRole('combobox', { name: 'Summary', exact: true }).selectOption('request');
   await page.locator('.veli-service-detail-root .veli-service-detail-guideline-trigger').click();
@@ -154,6 +154,17 @@ test('requestable summary announces loading until the host supplies content', as
     exact: true,
     includeHidden: true,
   });
+  for (const state of ['overlap', 'error-content']) {
+    await summarySelect.evaluate((node, value) => {
+      (node as HTMLSelectElement).value = value;
+      node.dispatchEvent(new Event('change', { bubbles: true }));
+    }, state);
+    const body = page.locator('.veli-service-detail-rich-text');
+    await expect(body).not.toContainText('Stale summary');
+    await expect(body).toHaveAttribute('aria-busy', String(state === 'overlap'));
+    await expect(body.getByRole('status')).toHaveCount(state === 'overlap' ? 1 : 0);
+    await expect(body.getByRole('alert')).toHaveCount(state === 'error-content' ? 1 : 0);
+  }
   await summarySelect.evaluate((node) => {
     (node as HTMLSelectElement).value = 'supplied';
     node.dispatchEvent(new Event('change', { bubbles: true }));

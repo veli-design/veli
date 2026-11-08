@@ -1,3 +1,23 @@
+## 0.11.0
+
+### Added
+
+- Add opt-in `profileOnly` presentation for hosts such as gov.Account and gov.CorpID. These hosts supply their authenticated primary person independently of selected business context. Hide account lists, retrieval/empty states and account-management actions in this mode while retaining sign-out, desktop appearance controls and Veli Sheet.
+- Preserve the default account-list API, rendering, callbacks and states used by gov.mv. Existing consumers require no adapter changes.
+
+## 0.10.0
+
+### Changed
+
+- Use Veli Sheet for the mobile account panel, sharing its native swipe, motion, dismissal and focus management. Preserve the profile header, grabber spacing, account content, pinned sign-out and anchored desktop panel.
+- Require `@veli-design/react@^0.19.0`. The account-panel rendering and host callback API is unchanged.
+
+## 0.9.0
+
+### Changed
+
+- Require Veli React ^0.19.0 and record the exact 0.19.0 candidate baseline. The copied-source rendering API and token baseline are unchanged; previous block archives retain their existing requirements.
+
 ## 0.8.0
 
 ### Changed

@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.8.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.11.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -34,13 +34,13 @@ If the copied directory is outside Tailwind's automatically scanned tree, add an
 
 ## API
 
-`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, `onAccountSelect`, and `signOut`. All visible and assistive copy comes from the host; there are no built-in product translations.
+`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, and `signOut`. In the default switching mode (`profileOnly` omitted or `false`), also supply `onAccountSelect`; omit that callback when `profileOnly` is `true`. All visible and assistive copy comes from the host; there are no built-in product translations.
 
 | Prop                          | Contract                                                                                                                                                                                                            |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `selectedAccount`             | `AccountPanelAccount` for the profile and avatar trigger. The host updates it after selection succeeds.                                                                                                             |
 | `accountGroups`               | Ordered `{ id, label?, accounts }` groups. Empty groups are omitted and nonempty groups have separators. The host filters accounts, excludes the selected account, and supplies stable unique group/account IDs.    |
-| `onAccountSelect`             | Required `(id: string) => void`. The host performs switching and updates the selected account after success.                                                                                                        |
+| `onAccountSelect`             | Required `(id: string) => void` when `profileOnly` is omitted or `false`; not accepted when `profileOnly` is `true`. The host performs switching and updates the selected account after success.                    |
 | `labels`                      | Required localized `trigger`, `dialog`, `close`, `otherAccounts`, `loading` and `pending` strings.                                                                                                                  |
 | `isOpen`, `onOpenChange`      | Required overlay state and change callback. Actions do not automatically close the panel. The host can close it on navigation or successful completion.                                                             |
 | `isDisabled`                  | Disables the avatar trigger, for example while another shell overlay is active.                                                                                                                                     |
@@ -73,21 +73,35 @@ Wire the existing `session.selectTenant` through `onAccountSelect`. Hosts must s
 
 Mount this block only in the signed-in branch of the header adapter. Preserve the existing signed-out sign-in control and loading/likely-signed-in placeholders outside it. Coordinate `isOpen` and trigger disabling with the rest of the shell. Govmv-web adoption and real identity regression tests are tracked separately in PD-988.
 
+## gov.Account and gov.CorpID: primary-user presentation
+
+Use `profileOnly: true` and supply the authenticated primary person as `selectedAccount` for gov.Account and gov.CorpID. Their selected business, tenant or delegated individual is separate host workflow state and must not replace the top-navigation identity. These apps do not switch accounts from the panel, as clarified in [ENG-4118](https://linear.app/onegov/issue/ENG-4118/update-onepass-navigation-and-tenant-handling).
+
+Profile-only mode hides account groups, loading/errors, delegation empty states and account-management actions. It does not require or accept `onAccountSelect`. Sign-out, optional desktop appearance preferences, avatar fallback, focus/dismissal and shared Sheet behavior remain available. The host determines the primary user; the generic block neither discovers nor infers session identities.
+
+Keep `profileOnly` omitted for gov.mv. Its existing selected-account mapping, account rows, selection callback, loading/errors, delegation CTA, account-management action and layout remain unchanged. The original `ApplicationAccountPanel` example retains that contract; `ApplicationPrimaryAccountPanel` demonstrates the separate primary-person adapter.
+
+This option adds no external switching flow. The existing default `accountManagement` callback is unchanged; this update adds no external action.
+
+The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.11.0 with the existing React 0.19.x baseline. Existing default-mode consumers require no changes.
+
 ## Accessibility and responsive behavior
 
 The default Tailwind `sm` boundary is 640 CSS pixels. At and above it, the panel is 389px wide (constrained by the available viewport) and uses Veli Popover's default React Aria focus containment and outside dismissal. Below it, a custom bottom sheet is built directly with React Aria `ModalOverlay`, `Modal`, and `Dialog`. React Aria provides contained focus, restoration, background scroll protection, and scrim dismissal. The block authors the sheet surface and gestures without overriding Veli Modal internals; it can migrate to a Veli sheet primitive when one becomes available. Supply optional 16px appearance icons from your host icon library. The desktop appearance selector is omitted from the mobile layout.
 
 The trigger exposes its dialog state and localized accessible name, with a persistent focus-token ring while open. Both panel surfaces use `surface-raised` in light and dark modes. Escape, outside/scrim press, and mobile grabber drag dismiss through `onOpenChange`; keyboard users also have a mobile close button. Focus returns to the trigger. Changing between mobile and desktop closes an open panel; the trigger and its avatar remain mounted. Closed overlays are removed from the keyboard and accessibility trees.
 
-The mobile scrim matches Veli Modal: hard black at 60% opacity with uniform 6px backdrop blur in both themes. This designer-approved treatment uses `bg-black/60` and `backdrop-blur-[6px]` directly; it does not add a design token.
+Veli Sheet supplies the mobile scrim: black at 60% opacity with uniform 6px backdrop blur in both themes.
 
-Drag starts only on the grabber. A downward drag exceeding 35% of sheet height, or more than 40 pixels at over 0.11 pixels/ms, dismisses it. Cancelled gestures reset without dismissing. Scrollable accounts and pinned sign-out remain independently usable. The sheet respects safe areas and a maximum height of 85svh; desktop content is constrained to the viewport. Its top corners use the 32px radius token. The notch starts 8px below the sheet top and is 4px high, followed by 24px to the active profile container (36px total). The headless close button is positioned outside normal layout flow and appears only on keyboard-visible focus, so pointer opening keeps it hidden and keyboard focus does not shift content. Sheet opening uses `duration-slow` and closing uses `duration-normal`, both with non-spring `ease-out`; drag dismissal continues from the released offset. The sheet background, notch, profile, and pinned footer move together on the headless Modal surface, so dragging cannot expose a stationary panel background above the content. CSS transitions handle the token-based motion; no additional motion dependency is required. Skeleton pulsing and sheet transitions stop under reduced motion.
+The mobile surface uses the shared Veli Sheet. Native swipe motion, settling, dismissal, background scroll locking and focus containment follow Sheet; the block does not define separate drag thresholds or animation durations. Swipe from the grabber or content boundaries as supported by Sheet. The account list scrolls independently and sign-out stays pinned. The panel retains its 85svh maximum height, safe-area handling, 32px top corners and existing header: a 60×4px notch starts 8px below the sheet top, followed by 24px to the profile card. The close button stays outside normal layout and appears on keyboard-visible focus. Reduced motion follows the shared component.
+
+Version 0.9.0 requires the composable Sheet API in `@veli-design/react@^0.19.0`. Update the core dependency before adopting this block version. Older block archives retain their original dependency requirements.
 
 Names and secondary text truncate visually while retaining their full accessible text. Host-provided language/direction metadata and logical layout support mixed English/LTR and Dhivehi/RTL. Loading, pending, and error meanings include text rather than relying on color. Motion respects reduced-motion preferences. Keep the default `sm` breakpoint when adopting, or update both the media query and responsive utilities in your copy.
 
 The profile name and secondary text stay centered beneath the avatar in both LTR and RTL layouts. Account-row text aligns right in RTL. The Storybook language toolbar translates the sample accounts, labels, theme options and state messages into Dhivehi while preserving email addresses. Use its theme and language controls on any Account Panel story; there are no separate Dark or Dhivehi stories. Production translations remain host-owned.
 
-Account rows use a custom React Aria button for their avatar/text layout, rather than overriding Veli Button's internal structure. Hover and pressing use `bg-neutral-alpha-200`, matching notification rows, with no scaling or ripple. Secondary text uses `text-base-muted`, as specified in Figma. Keyboard focus remains visible, and pending rows retain their names and cannot invoke selection again. Profile/account actions continue to use the public Veli Button; the custom sheet dismissal control uses a headless React Aria button.
+Account rows use a custom React Aria button for their avatar/text layout, rather than overriding Veli Button's internal structure. Hover and pressing use `bg-neutral-alpha-200`, matching notification rows, with no scaling or ripple. Secondary text uses `text-base-muted`, as specified in Figma. Keyboard focus remains visible, and pending rows retain their names and cannot invoke selection again. Profile/account actions continue to use the public Veli Button; the keyboard-only sheet close control uses React Aria’s close slot.
 
 The appearance control moves a single background pill between the selected options using Veli's `duration-slow` (350ms) and a damped variant of `ease-spring`: `cubic-bezier(0.34, 1.2, 0.64, 1)`. This retains a small bounce while limiting overshoot on the longer Light/Auto movement. It follows logical RTL order and updates immediately when reduced motion is requested. Theme application still belongs to the host.
 

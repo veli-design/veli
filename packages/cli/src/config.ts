@@ -9,6 +9,11 @@ export interface VeliConfig {
 }
 
 export const configPath = (cwd: string) => path.join(cwd, '.veli', 'config.json');
+export const DEFAULT_WEB_URL = 'https://veli.design';
+
+export function resolveWebUrl(flag?: string, environment?: string, configured?: string): string {
+  return normalizeWebUrl(flag ?? environment ?? configured ?? DEFAULT_WEB_URL);
+}
 
 export function normalizeWebUrl(input: string): string {
   const url = new URL(input);
@@ -42,13 +47,12 @@ export async function defaultBlocksDir(cwd: string): Promise<string> {
   }
 }
 
-export async function readConfig(cwd: string): Promise<VeliConfig> {
+export async function readOptionalConfig(cwd: string): Promise<VeliConfig | undefined> {
   let value: unknown;
   try {
     value = JSON.parse(await readFile(configPath(cwd), 'utf8'));
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT')
-      throw new Error('Veli Blocks is not initialized. Run `veli init` first.');
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
     throw error;
   }
   if (
@@ -64,6 +68,12 @@ export async function readConfig(cwd: string): Promise<VeliConfig> {
     webUrl: normalizeWebUrl((value as VeliConfig).webUrl),
     blocksDir: normalizeBlocksDir(cwd, (value as VeliConfig).blocksDir),
   };
+}
+
+export async function readConfig(cwd: string): Promise<VeliConfig> {
+  const config = await readOptionalConfig(cwd);
+  if (!config) throw new Error('Veli Blocks is not initialized. Run `veli init` first.');
+  return config;
 }
 
 export async function writeConfig(cwd: string, config: VeliConfig): Promise<void> {

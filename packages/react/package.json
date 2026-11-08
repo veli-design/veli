@@ -1,6 +1,6 @@
 {
   "name": "@veli-design/react",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Accessible React primitives for the Veli Design System.",
   "keywords": [
     "design-system",
@@ -143,6 +143,11 @@
       "types": "./dist/popover.d.ts",
       "import": "./dist/popover.js",
       "default": "./dist/popover.js"
+    },
+    "./otp-input": {
+      "types": "./dist/otp-input.d.ts",
+      "import": "./dist/otp-input.js",
+      "default": "./dist/otp-input.js"
     },
     "./password-input": {
       "types": "./dist/password-input.d.ts",

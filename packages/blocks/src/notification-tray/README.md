@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.7.0 targets Veli React 0.18.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.9.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -46,7 +46,7 @@ Use `NotificationTrayContent` inside an application-owned overlay. It accepts th
 
 ## Accessibility and responsive behavior
 
-Notifications are a list of links or static content. The tray provides keyboard focus management, Escape dismissal and focus restoration. On mobile, close it with the close button, backdrop or a downward drag from the handle or non-interactive header. Longer lists scroll beneath the header; reduced motion is supported.
+Notifications are a list of links or static content. The tray provides keyboard focus management, Escape dismissal and focus restoration. The mobile surface uses the shared Veli Sheet for native swipe motion, settling, dismissal and scroll locking, with no block-specific gesture thresholds or animation durations. Close it with Escape, the close button, backdrop or supported native swipe. The existing title, options, close icon, 40×4px grabber and 85svh height are retained. Longer lists scroll beneath the header; reduced motion follows Sheet.
 
 Supply translated labels, messages and timestamps for English/LTR and Dhivehi/RTL. Include status meaning in the message because icons are decorative. Loading, separate all/unread empty states, errors and pending updates have accessible text. Coordinate controlled overlays with your application shell and close them on navigation.
 
@@ -59,6 +59,8 @@ Initial loading uses local notification-shaped placeholders with one shared high
 Pending retry and paging actions use the shared `Spinner` button variant. The mark-all-read menu action uses `LoadingText`. These components support Veli themes and reduced motion; loading labels remain application-owned and translated through `labels`.
 
 ## Updating your copy
+
+Version 0.8.0 requires the composable Sheet API in `@veli-design/react@^0.19.0`. Upgrade the core dependency before adopting this block version. Existing notification props and host callbacks are unchanged; previous archives retain their original requirements.
 
 Version 0.5.1 replaces the default unread dot with a numeric counter aligned to the header reference. Continue supplying the total unread count across all pages; the displayed count is capped at `99+`. Custom triggers are unchanged.
 
