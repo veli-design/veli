@@ -58,7 +58,7 @@ Example target shape (replace all placeholders with verified values):
 ```
 
 The runner rejects the selected snapshot's canonical origins and all four known
-current/historical Veli production origins listed below. This is an accident
+current/historical Veli production origins guarded by `scripts/site-hosted-smoke.mjs`. This is an accident
 check, not an authorization system: the operator must also exclude **all** current
 and historical production aliases, and verify Access protection independently.
 The runner does not inspect Access configuration. A local server must use `local-fixture` and
@@ -136,19 +136,3 @@ runner or production deploy workflows to provision a preview environment.
    records. Retain the bundle digests and producer/artifact references together.
    A failed/partial leg, local fixture, or static-only check is not a successful
    hosted rollback rehearsal. Do not proceed to claim completion while blocked.
-
-## Independently identified bundles (2026-11-08)
-
-These are historical inputs for the pending rehearsal, not a request to redeploy:
-
-| Input             | Candidate                                                          | Actual previous production                                         |
-| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| Source            | `5342b5652395cee6583b3df7780e4b97cb678d6b`                         | `d284bd674904bb10c87ffdd97ef8f8585bd4487f`                         |
-| Original producer | `42471698178`                                                      | `41985499378` (successful)                                         |
-| Snapshot SHA-256  | `9f7d2f08643d11ca53841a0cae6fd767e71afd7c8780f2637d9e3b56832b0b5b` | `36100671ca43ce566257eb020c8276aa2aa39d5aab31b600517621c6ef7edc09` |
-| Inventory files   | 644                                                                | 633                                                                |
-| Canonical origins | `veli.design`, `storybook.veli.design`                             | `veli-web.onegov.mv`, `veli-storybook.onegov.mv`                   |
-
-Both use Astro 5.18.2 and Wrangler 4.116.0. Keep this rehearsal independent of any
-Astro upgrade. Gate-removal PR #332 already deployed the paired current Filter
-source in run `42483360680`; there is no need to repeat that production deployment.

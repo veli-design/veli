@@ -8,7 +8,7 @@ The `@veli-design` packages below are available on public npm without a package-
 The repository remains private under `tradenetcorp`; hosted documentation, Storybook
 and the Blocks registry require WFA access. For a new application, follow the
 [React package setup](https://www.npmjs.com/package/@veli-design/react).
-Existing applications should consult [the migration runbook](docs/NPM_MIGRATION.md).
+Existing applications should follow [the package migration notes](#migrating-from-private-package-names).
 
 | Package                                            | Purpose                                                               | Install                        | Release history                           |
 | -------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------ | ----------------------------------------- |
@@ -26,6 +26,24 @@ package directory, then `pnpm dlx @veli-design/cli add`. New CLI setups default 
 `https://veli.design`; existing project registry configuration is preserved.
 See the [CLI guide](packages/cli/README.md) for URL overrides, access requirements
 and instructions for CLI 0.2.0 or older.
+
+## Migrating from private package names
+
+- Replace `@tradenetcorp/veli-ui` with `@veli-design/react`.
+- Replace `@tradenetcorp/veli-tokens` with `@veli-design/tokens`.
+- Replace `@tradenetcorp/veli` with `@veli-design/cli`; the executable remains `veli`.
+
+Update dependencies, application imports, token CSS and copied Block imports together.
+Remove obsolete private-registry npmrc entries and regenerate the application lockfile.
+Do not install both React package names or load both token stylesheets. Preserve
+existing `.veli` receipts and baseline source without rewriting hashes; review
+three-way Block updates to keep application customizations. A rollback restores
+the previous dependency graph, lockfile and registry URL together.
+
+Public npm installation does not grant access to a protected Blocks registry.
+Configure a compatible Veli Web registry through `veli init`. See the
+[CLI guide](packages/cli/README.md) for current registry configuration and the
+[consumer CI guide](docs/CONSUMER_CI.md) for installed-package validation.
 
 ## Structure
 
@@ -131,13 +149,14 @@ Standalone Storybook app for component development and testing.
 
 ## Releases & Publishing
 
-This monorepo uses [Changesets](https://github.com/changesets/changesets) for versioning and gated releases to public npm. See [the migration runbook](docs/NPM_MIGRATION.md) for release procedures and migration checks. Design tokens are synced from Figma via Veli Bridge (Figma Plugin) and Veli Bridge Bot (GitHub App).
+This monorepo uses [Changesets](https://github.com/changesets/changesets) for versioning and releases to public npm. See [CI and release operations](docs/CI_RELEASE_RUNBOOK.md) for the current publication, site delivery and recovery procedures. Design tokens use the [canonical token pipeline](docs/TOKEN_ARCHITECTURE.md).
 
 **Documentation:**
 
 - [Contributing Guide](CONTRIBUTING.md) - Development setup, changesets, commit convention, and pull request format
 - [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards and reporting
-- [Release Setup Guide](docs/RELEASE_SETUP.md) - Architecture, workflow, and troubleshooting
+- [CI and Release Operations](docs/CI_RELEASE_RUNBOOK.md) - Publication, site delivery, and recovery
+- [Consumer CI](docs/CONSUMER_CI.md) - Installed-package validation and check selection
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
 - [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and trunk-based development conventions
 
@@ -150,4 +169,4 @@ original non-software documentation uses CC BY 4.0 in `LICENSES/CC-BY-4.0.txt`.
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) keep excluded assets and upstream
 rights separate. Original project work is copyright © 2026 Government of the
 Republic of Maldives. Developed by MINDCo. Brand permission contact and applicable asset permissions
-remain unresolved. See [release readiness](docs/RELEASE_READINESS.md).
+remain unresolved. See [asset distribution requirements](ASSET_LICENSES.md#distribution-requirements).

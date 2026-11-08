@@ -1,14 +1,10 @@
 # Veli Token Architecture
 
-Architecture and historical typography notes for Veli Design System variables, DTCG tokens, Tailwind CSS v4, and Figma text styles.
-
-Last updated: 2026-10-16
+Architecture and typography guidance for Veli Design System variables, DTCG tokens, Tailwind CSS v4, and Figma text styles.
 
 ## Summary
 
 Veli uses Figma as the design authoring surface. TokensBruecke's untouched export lives in `packages/tokens/src/figma.tokens.json`. The normalization boundary merges code-owned motion tokens, resolves exporter-specific shapes and aliases, and writes the validated canonical DTCG graph to `packages/tokens/src/design.tokens.json`. Terrazzo's CSS plugin and Veli adapter build all published outputs from that graph.
-
-The current architecture was implemented in [PR #248](https://github.com/tradenetcorp/veli/pull/248) and released as tokens 0.9.0 in [PR #249](https://github.com/tradenetcorp/veli/pull/249):
 
 ```text
 Figma variables and styles
@@ -62,8 +58,6 @@ Frameworks that manage their own theme persistence (e.g. `next-themes`) can cont
 
 ## Current State
 
-The typography alignment work was implemented on 2026-05-07.
-
 - Tailwind-native primitive namespaces are canonical for CSS theme output: `font`, `font-weight`, `text`, `leading`, `tracking`, `spacing`, `radius`, `blur`, `breakpoint`, and `container`.
 - Semantic Figma text styles are canonical for designer usage: `Type/Heading/1/Semibold`, `Type/Body/md/Regular`, `Type/Caption/12/Regular`, etc.
 - Generated semantic utilities bridge Figma and code: `type-heading-1-semibold`, `type-body-md-regular`, `type-caption-12-regular`, etc.
@@ -73,23 +67,6 @@ The typography alignment work was implemented on 2026-05-07.
 - Motion primitives now map to Tailwind-aligned `ease-*`, `duration-*`, and `delay-*` utility names. `ease-*` is native Tailwind theme output, while Veli generates named `duration-*` and `delay-*` utilities that reference token CSS variables.
 - Foundation groups `radius`, `spacing`, `blur`, `breakpoints`, and `container` map into the Tailwind theme so utilities use Veli tokens instead of Tailwind defaults. The DTCG `breakpoints` collection remaps to Tailwind's singular `--breakpoint-*` namespace.
 - The former Figma `typography` variable collection is not present in the checked-in export; font families now live under `font/sans`, `font/mono`, and `font/dhivehi`.
-
-The following build verification was recorded after the May 2026 typography alignment export:
-
-- `pnpm build` in `packages/tokens` passes.
-- `pnpm --filter @veli-design/react lint` passes.
-- `pnpm --filter @tradenetcorp/veli-web build` passes.
-- `pnpm --filter @tradenetcorp/veli-storybook build` passes.
-- `tailwind-theme.css` emits non-zero `--text-*` variables and paired `--text-*--line-height` variables.
-- `tailwind-theme.css` emits motion primitives and named duration/delay utilities. Composite `animate-*` recipes are intentionally deferred until designers finalize motion aliases.
-- `--font-weight-semibold` emits `600`, not `600px`.
-- `--tracking-caption` emits `0.01em`.
-- 52 `@utility type-*` classes are generated from exported Figma typography composites.
-- 52 Dhivehi `:lang(dv)` typography overrides are generated from exported `Typography-styles/Dhivehi` composites.
-
-Warning recorded during that verification:
-
-- Web and Storybook builds showed a CSS optimizer warning near generated color token CSS around `--color-inputs-checkbox-container-*`. Generated CSS braces were checked and balanced at the time.
 
 ## Figma Model
 
@@ -290,7 +267,7 @@ Delay values:
 | `delay/normal` |    `80ms` | `delay-normal`   |
 | `delay/slow`   |   `120ms` | `delay-slow`     |
 
-Composite `animate-*` recipes and Motion for React transition helpers are intentionally not shipped in this update. The research and implementation notes for that follow-up are captured in `docs/MOTION_COMPOSITE_RESEARCH.md`.
+Composite `animate-*` recipes and Motion for React transition helpers are not part of the token package. Compose application-specific motion from the published easing, duration and delay primitives.
 
 ## DTCG Source Shape
 

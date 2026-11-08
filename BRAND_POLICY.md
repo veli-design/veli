@@ -52,4 +52,4 @@ None of those app asset directories is part of the three npm packages' file
 allowlists. Separate rights and notice requirements apply to documentation sites
 and Block source distributions; this npm scope does not clear those assets for
 redistribution.
-See `docs/RELEASE_READINESS.md` in the repository for outstanding requirements.
+See [asset distribution requirements](ASSET_LICENSES.md#distribution-requirements) for outstanding permissions.

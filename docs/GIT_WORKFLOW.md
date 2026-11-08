@@ -48,7 +48,7 @@ Package releases use Changesets. Feature PRs that change published packages
 include a `.changeset/*.md` file. The packages-first npm migration keeps release
 execution manual and gated pending license, namespace, version/channel and
 registry-transition approvals. Merging a feature or version PR does not publish
-packages automatically. See [the migration runbook](NPM_MIGRATION.md).
+packages automatically. See [CI and release operations](CI_RELEASE_RUNBOOK.md).
 
 Do not publish manually or assume an npm version can be deleted and reused.
 Public publication requires its own approval and verification step.

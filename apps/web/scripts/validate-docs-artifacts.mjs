@@ -19,6 +19,25 @@ function collectFiles(directory, extension) {
   });
 }
 
+function validateFontNotices() {
+  const files = [
+    'Inter-OFL.txt',
+    'IBM-Plex-Mono-OFL.txt',
+    'inter-latin.woff2',
+    'inter-latin-ext.woff2',
+    'ibm-plex-mono-latin-400.woff2',
+    'ibm-plex-mono-latin-500.woff2',
+    'ibm-plex-mono-latin-600.woff2',
+  ];
+  for (const file of files) {
+    const source = resolve(appRoot, 'public/fonts', file);
+    const output = resolve(distRoot, 'fonts', file);
+    if (!existsSync(output) || !readFileSync(source).equals(readFileSync(output))) {
+      fail(`fonts/${file} must be distributed unchanged with its accompanying OFL notice`);
+    }
+  }
+}
+
 function validateMarkdown(filePath) {
   const markdown = readFileSync(filePath, 'utf8');
   const displayPath = relative(distRoot, filePath);
@@ -63,6 +82,7 @@ function validateMarkdown(filePath) {
 }
 
 if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first');
+validateFontNotices();
 
 const markdownFiles = [
   ...collectFiles(resolve(distRoot, 'docs'), '.md'),

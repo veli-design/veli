@@ -1,6 +1,5 @@
 # CI and release operations
 
-Ref [PD-1318](https://linear.app/onegov/issue/PD-1318/restore-veli-ci-and-release-workflows).
 Routine flow: merge the validated Changesets release PR, automatically publish new npm
 versions, then deploy Web and Storybook from that same release snapshot. The first
 account-authenticated bootstrap publication was a one-time prerequisite.
@@ -161,14 +160,15 @@ commits may differ; both are retained in the plan.
 Catalog declarations must satisfy the selected versions and `testedDependencies`
 must record those exact versions. A new React minor therefore requires a separately
 rehearsed and reviewed catalog baseline. Do not widen ranges to bypass this check.
-The merged React 0.19 catalog baseline must be included when refreshing the final
-release PR; older React 0.18 declarations cannot authorize that output. The manual
-override does not bypass this safeguard: a forward 0.19 catalog cannot deploy using
-published React 0.18, even when the intended design edit is unrelated. In particular,
-`account-panel` requires React `^0.19.0`; preparing current main against the retained
-0.18.0 bootstrap baseline fails compatibility validation. The manual workflow is
-not guaranteed to succeed for every source: it builds the whole selected source,
-not just the independent edit.
+Include the catalog baseline rehearsed against the release PR's actual selected
+React/token versions when refreshing that PR. Older tested-version declarations
+cannot authorize a newer output. The manual override does not bypass this
+safeguard: a catalog requiring a newer React minor cannot deploy with an older
+published version, even when the intended design edit is unrelated. Recompute the
+pending Changesets plan and verify each Block's supported ranges and exact
+`testedDependencies`; do not assume an earlier rehearsal covers later releases.
+The manual workflow builds the whole selected source, not just the independent
+edit, so not every source can use an older retained package baseline.
 
 Preparation uploads an immutable bundle with static outputs, Wrangler configuration,
 source and consumer lockfiles, installed versions, tool versions and file hashes.
@@ -276,9 +276,7 @@ The successful paired-deployment receipt step requires the built-in `GITHUB_TOKE
 `site-auto.mjs` initializes its shared read-only GitHub client before dispatching
 commands, including the local receipt writer. Supply the token only to that step;
 keep `contents`, `actions` and `packages` read-only. No new secret or write permission
-is needed. This fixes the missing-token failure in run 41984033897; catch-up run
-41985499378 subsequently succeeded. Those are historical hosted observations, not
-hosted validation of this fix.
+is needed.
 
 Keep receipt creation and upload after both production deployments. A failed or
 missing receipt does not establish successful paired delivery, so a later catch-up
@@ -287,6 +285,5 @@ that duplicate; mismatched source identity cannot authorize the skip. Never reco
 this bookkeeping failure by republishing immutable npm versions. Partial deployment
 and receipt-upload failures retain the existing reviewed-snapshot recovery path.
 
-A separate [release-control review](CI_RELEASE_CONTROL_REVIEW.md) records follow-up
-recommendations. Mandatory visual-approval comments have since been removed under
-PD-1121; publication variables and exact-artifact safety checks remain unchanged.
+Mandatory visual-approval comments have been removed under PD-1121;
+publication variables and exact-artifact safety checks remain unchanged.
