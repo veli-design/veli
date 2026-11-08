@@ -164,10 +164,9 @@ export function ApplicationHeader({
       withCurrent(
         [
           { href: '/', label: 'Home' },
-          { href: '/media', label: 'Media' },
           { href: '/services', label: 'Services' },
           { href: '/about', label: 'About' },
-          { href: '/contact', label: 'Contact' },
+          { href: '/privacy', label: 'Privacy' },
         ],
         pathname,
       ),

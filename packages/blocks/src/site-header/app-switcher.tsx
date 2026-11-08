@@ -715,7 +715,11 @@ function isTextEntryTarget(target: EventTarget | null) {
 }
 
 function isMenuTriggerTarget(target: EventTarget | null) {
-  return target instanceof Element && Boolean(target.closest('button[aria-haspopup="menu"]'));
+  // React Aria emits `true`, which has the same ARIA meaning as `menu`.
+  return (
+    target instanceof Element &&
+    Boolean(target.closest('button[aria-haspopup="menu"], button[aria-haspopup="true"]'))
+  );
 }
 
 function isInteractiveChromeTarget(target: EventTarget | null) {

@@ -112,6 +112,8 @@ test('app switcher filters to a site list and moves the highlight with arrows', 
   const defence = page.getByRole('option', { name: 'Minister of Defence and National Service' });
   const foreign = page.getByRole('option', { name: 'Minister of Foreign Affairs' });
   await expect(defence).toHaveAttribute('data-highlighted', 'true');
+  // Selecting a filter returns focus to its trigger, whose arrows open the menu.
+  await defence.focus();
   await page.keyboard.press('ArrowDown');
   await expect(foreign).toHaveAttribute('data-highlighted', 'true');
   await expect(defence).not.toHaveAttribute('data-highlighted', 'true');
@@ -162,10 +164,12 @@ test('app switcher leaves host textarea and header actions keys alone while open
   ).toBeVisible();
 
   // Faded host actions stay inert; keys must not redirect into Search.
-  await page.getByRole('button', { name: 'Sign In' }).evaluate((el: HTMLButtonElement) => {
-    el.focus();
-    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'x', bubbles: true, cancelable: true }));
-  });
+  await page
+    .getByRole('button', { name: 'Sign In', includeHidden: true })
+    .evaluate((el: HTMLButtonElement) => {
+      el.focus();
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'x', bubbles: true, cancelable: true }));
+    });
   await expect(search).toHaveValue('');
 });
 
@@ -209,6 +213,7 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
 
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   const filter = page.getByRole('button', { name: 'Filter' });
+  await expect(filter).toHaveAttribute('aria-haspopup', /^(true|menu)$/);
   await filter.focus();
   await page.keyboard.press('ArrowDown');
   await expect(page.getByRole('menuitemradio', { name: 'Show all' })).toBeVisible();
