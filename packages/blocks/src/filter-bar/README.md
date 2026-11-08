@@ -1,10 +1,10 @@
-Experimental `0.1.0` copied-source block for category browsing, grouped checkbox
+Experimental `0.2.0` copied-source block for category browsing, grouped checkbox
 selections, search and applied-filter summaries. Use the ready-made layout or
 compose its public parts around application-owned controls.
 
 ## Core package baseline
 
-Version 0.1.0 targets Veli React 0.19.x and tokens 0.11.x. Install the manifest
+Version 0.2.0 targets Veli React 0.20.x and tokens 0.11.x. Install the manifest
 requirements before adding the source; mobile overlays use the released
 composable Sheet. The tested dependency versions are listed below the guide.
 
@@ -293,7 +293,7 @@ No date input or date-specific types are exported by the block. Veli DatePicker
 accepts one `DateValue | null`; it does not select ranges.
 The sample consumer maps that day to equal start/end boundaries for its query.
 
-**The supported Veli React 0.19.0 baseline does not provide DateRangePicker.** When it is released,
+**The supported Veli React 0.20.0 baseline does not provide DateRangePicker.** When it is released,
 consumers can compose it into `panelStart` or `FilterBarPanelBody` in place of
 DatePicker. Keep its range state in the consumer and connect it through
 `FilterExtension` for summary, count, remove and clear. No core block redesign or
@@ -382,7 +382,7 @@ Hidden mobile chips are excluded from keyboard navigation and the accessibility 
 
 ### Mobile layout
 
-Requires `@veli-design/react@^0.19.0` for the released composable Sheet.
+Requires `@veli-design/react@^0.20.0` for the released composable Sheet.
 At 600px and below, category choices open a content-height bottom Sheet and
 advanced filters open a viewport-height Sheet. Desktop retains the existing
 popovers. Both surfaces use the same controlled selections and consumer content.

@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.9.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.10.0 targets Veli React 0.20.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -60,7 +60,7 @@ Pending retry and paging actions use the shared `Spinner` button variant. The ma
 
 ## Updating your copy
 
-Version 0.8.0 requires the composable Sheet API in `@veli-design/react@^0.19.0`. Upgrade the core dependency before adopting this block version. Existing notification props and host callbacks are unchanged; previous archives retain their original requirements.
+Version 0.10.0 requires `@veli-design/react@^0.20.0`, including the composable Sheet API. Upgrade the core dependency before adopting this block version. Existing notification props and host callbacks are unchanged; previous archives retain their original requirements.
 
 Version 0.5.1 replaces the default unread dot with a numeric counter aligned to the header reference. Continue supplying the total unread count across all pages; the displayed count is capped at `99+`. Custom triggers are unchanged.
 

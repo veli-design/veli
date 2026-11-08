@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.11.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.12.0 targets Veli React 0.20.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -83,7 +83,7 @@ Keep `profileOnly` omitted for gov.mv. Its existing selected-account mapping, ac
 
 This option adds no external switching flow. The existing default `accountManagement` callback is unchanged; this update adds no external action.
 
-The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.11.0 with the existing React 0.19.x baseline. Existing default-mode consumers require no changes.
+The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.12.0 with the React 0.20.x baseline. Existing default-mode consumers require no changes.
 
 ## Accessibility and responsive behavior
 
@@ -95,7 +95,7 @@ Veli Sheet supplies the mobile scrim: black at 60% opacity with uniform 6px back
 
 The mobile surface uses the shared Veli Sheet. Native swipe motion, settling, dismissal, background scroll locking and focus containment follow Sheet; the block does not define separate drag thresholds or animation durations. Swipe from the grabber or content boundaries as supported by Sheet. The account list scrolls independently and sign-out stays pinned. The panel retains its 85svh maximum height, safe-area handling, 32px top corners and existing header: a 60×4px notch starts 8px below the sheet top, followed by 24px to the profile card. The close button stays outside normal layout and appears on keyboard-visible focus. Reduced motion follows the shared component.
 
-Version 0.9.0 requires the composable Sheet API in `@veli-design/react@^0.19.0`. Update the core dependency before adopting this block version. Older block archives retain their original dependency requirements.
+Version 0.12.0 requires `@veli-design/react@^0.20.0`, including the composable Sheet API. Update the core dependency before adopting this block version. Older block archives retain their original dependency requirements.
 
 Names and secondary text truncate visually while retaining their full accessible text. Host-provided language/direction metadata and logical layout support mixed English/LTR and Dhivehi/RTL. Loading, pending, and error meanings include text rather than relying on color. Motion respects reduced-motion preferences. Keep the default `sm` breakpoint when adopting, or update both the media query and responsive utilities in your copy.
 

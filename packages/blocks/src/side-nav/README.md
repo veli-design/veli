@@ -1,4 +1,4 @@
-Version 0.4.0 targets Veli React 0.19.x, tokens 0.11.x and React Aria Components 1.22.x.
+Version 0.5.0 targets Veli React 0.20.x, tokens 0.11.x and React Aria Components 1.22.x.
 
 ## Ownership and prerequisites
 
@@ -20,7 +20,7 @@ The CLI checks dependencies and copies `side-nav.tsx` into your configured Block
 Install the block's peer stack when it is not already present:
 
 ```sh
-corepack pnpm add @phosphor-icons/react@2.1.10 @veli-design/react@0.19.0 @veli-design/tokens@0.11.0 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0
+corepack pnpm add @phosphor-icons/react@2.1.10 @veli-design/react@0.20.0 @veli-design/tokens@0.11.0 motion@12.42.2 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0
 ```
 
 Your stylesheet must import Tailwind and the Veli token and UI themes:
