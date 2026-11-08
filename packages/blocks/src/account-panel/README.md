@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.10.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.11.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -34,13 +34,13 @@ If the copied directory is outside Tailwind's automatically scanned tree, add an
 
 ## API
 
-`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, `onAccountSelect`, and `signOut`. All visible and assistive copy comes from the host; there are no built-in product translations.
+`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, and `signOut`. In the default switching mode (`profileOnly` omitted or `false`), also supply `onAccountSelect`; omit that callback when `profileOnly` is `true`. All visible and assistive copy comes from the host; there are no built-in product translations.
 
 | Prop                          | Contract                                                                                                                                                                                                            |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `selectedAccount`             | `AccountPanelAccount` for the profile and avatar trigger. The host updates it after selection succeeds.                                                                                                             |
 | `accountGroups`               | Ordered `{ id, label?, accounts }` groups. Empty groups are omitted and nonempty groups have separators. The host filters accounts, excludes the selected account, and supplies stable unique group/account IDs.    |
-| `onAccountSelect`             | Required `(id: string) => void`. The host performs switching and updates the selected account after success.                                                                                                        |
+| `onAccountSelect`             | Required `(id: string) => void` when `profileOnly` is omitted or `false`; not accepted when `profileOnly` is `true`. The host performs switching and updates the selected account after success.                    |
 | `labels`                      | Required localized `trigger`, `dialog`, `close`, `otherAccounts`, `loading` and `pending` strings.                                                                                                                  |
 | `isOpen`, `onOpenChange`      | Required overlay state and change callback. Actions do not automatically close the panel. The host can close it on navigation or successful completion.                                                             |
 | `isDisabled`                  | Disables the avatar trigger, for example while another shell overlay is active.                                                                                                                                     |
@@ -72,6 +72,18 @@ For govmv-web, keep `useFrontendSession`, tenant filtering, and `useCopy` in the
 Wire the existing `session.selectTenant` through `onAccountSelect`. Hosts must supply account switching for any additional accounts they expose; filter out accounts that cannot be selected. Keep `logoutSession(markSessionSignedOut)` in the sign-out callback. The host resolves the configured delegation/account URL and opens it from the empty-state action; the block accepts no service-specific URL or navigation policy. Map theme preference to `appearance.value` and wire the app's preference setter to `onChange`. The mobile navigation's external theme control stays app-owned.
 
 Mount this block only in the signed-in branch of the header adapter. Preserve the existing signed-out sign-in control and loading/likely-signed-in placeholders outside it. Coordinate `isOpen` and trigger disabling with the rest of the shell. Govmv-web adoption and real identity regression tests are tracked separately in PD-988.
+
+## gov.Account and gov.CorpID: primary-user presentation
+
+Use `profileOnly: true` and supply the authenticated primary person as `selectedAccount` for gov.Account and gov.CorpID. Their selected business, tenant or delegated individual is separate host workflow state and must not replace the top-navigation identity. These apps do not switch accounts from the panel, as clarified in [ENG-4118](https://linear.app/onegov/issue/ENG-4118/update-onepass-navigation-and-tenant-handling).
+
+Profile-only mode hides account groups, loading/errors, delegation empty states and account-management actions. It does not require or accept `onAccountSelect`. Sign-out, optional desktop appearance preferences, avatar fallback, focus/dismissal and shared Sheet behavior remain available. The host determines the primary user; the generic block neither discovers nor infers session identities.
+
+Keep `profileOnly` omitted for gov.mv. Its existing selected-account mapping, account rows, selection callback, loading/errors, delegation CTA, account-management action and layout remain unchanged. The original `ApplicationAccountPanel` example retains that contract; `ApplicationPrimaryAccountPanel` demonstrates the separate primary-person adapter.
+
+This option adds no external switching flow. The existing default `accountManagement` callback is unchanged; this update adds no external action.
+
+The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.11.0 with the existing React 0.19.x baseline. Existing default-mode consumers require no changes.
 
 ## Accessibility and responsive behavior
 
