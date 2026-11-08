@@ -77,5 +77,6 @@ Maintainers can override the automatic pending-release hold through **Prepare
 site-only release snapshot**, then **Deploy reviewed site snapshot**. The selected
 whole source must be independent of unpublished package changes; CI cannot establish
 that for prose. Published npm identity/bytes and exact Block compatibility remain
-mandatory. The actual human approval comment must confirm independence as documented
-in the runbook. No package publication occurs on this path.
+mandatory. The maintainer assesses the whole snapshot's independence before dispatch;
+no approval comment or special review phrase is required. See the runbook for the
+retained snapshot and digest inputs. No package publication occurs on this path.
