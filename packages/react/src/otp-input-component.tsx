@@ -390,6 +390,10 @@ export function OTPInput({
     layout,
     alphabet,
   ).document;
+  // Keep stored aligned while controlled so dropping `value` does not revive a stale draft.
+  if (value !== undefined && doc !== stored) {
+    setStored(doc);
+  }
   const [isFocused, setIsFocused] = React.useState(false);
   const isEditable = !props.isDisabled && !props.isReadOnly;
   const inputRef = React.useRef<HTMLInputElement | null>(null);
@@ -418,8 +422,15 @@ export function OTPInput({
   const beforeInputRef = React.useRef<(event: InputEvent) => void>(() => {});
   React.useLayoutEffect(() => {
     beforeInputRef.current = (event) => {
-      if (!isEditable || event.inputType !== 'insertText' || event.data == null) return;
-      if (dispatch({ type: 'insert', data: event.data })) event.preventDefault();
+      if (!isEditable || event.data == null) return;
+      if (event.inputType === 'insertText') {
+        if (dispatch({ type: 'insert', data: event.data })) event.preventDefault();
+        return;
+      }
+      // Some mobile autofill paths use this without a following change event.
+      if (event.inputType === 'insertReplacementText') {
+        if (dispatch({ type: 'replace', raw: event.data })) event.preventDefault();
+      }
     };
   });
 

@@ -197,12 +197,13 @@ export const Editing: Story = {
 export const Controlled: Story = {
   render: function Render(args) {
     const [code, setCode] = useState('');
+    const [controlled, setControlled] = useState(true);
     return (
       <div className="flex w-[320px] flex-col gap-4">
         <OTPInput
           {...args}
           label="Authenticator code"
-          value={code}
+          value={controlled ? code : undefined}
           onChange={(next) => {
             setCode(next);
             args.onChange?.(next);
@@ -214,15 +215,23 @@ export const Controlled: Story = {
         <Button type="button" appearance="transparent" onPress={() => setCode('654321')}>
           Fill from parent
         </Button>
+        <Button type="button" appearance="transparent" onPress={() => setControlled(false)}>
+          Release control
+        </Button>
       </div>
     );
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
+    const input = () => canvas.getByRole('textbox');
     await userEvent.click(canvas.getByRole('button', { name: 'Fill from parent' }));
-    await expect(canvas.getByRole('textbox')).toHaveValue('654321');
+    await expect(input()).toHaveValue('654321');
     await expect(args.onComplete).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
-    await expect(canvas.getByRole('textbox')).toHaveValue('');
+    await expect(input()).toHaveValue('');
+    await userEvent.click(canvas.getByRole('button', { name: 'Fill from parent' }));
+    await expect(input()).toHaveValue('654321');
+    await userEvent.click(canvas.getByRole('button', { name: 'Release control' }));
+    await expect(input()).toHaveValue('654321');
   },
 };
