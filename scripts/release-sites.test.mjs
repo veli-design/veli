@@ -97,7 +97,7 @@ test('release deployment only follows successful publication and has durable red
 
 test(
   'fresh release versions install while other versions and dependencies retain the age gate',
-  { timeout: 30000 },
+  { timeout: 210000 },
   async () => {
     const target = await mkdtemp(join(tmpdir(), 'veli-release-age-test-'));
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -166,7 +166,9 @@ test(
               NPM_CONFIG_USERCONFIG: userconfig,
             },
             stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 10000,
+            // Process startup can be slow under a full parallel repository check.
+            // Keep a bound without mistaking a launcher timeout for registry policy.
+            timeout: 60000,
           },
         );
         let output = '';

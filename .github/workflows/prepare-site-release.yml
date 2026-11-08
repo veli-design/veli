@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       source-commit:
-        description: Reviewed main source; maintainer must confirm independence from unpublished package changes
+        description: Main source compatible with published packages; maintainer determines content independence
         required: true
         type: string
       package-release-tag:
@@ -13,12 +13,12 @@ on:
         type: string
       web-origin:
         description: Existing intended Web origin (does not change routing)
-        default: https://veli-web.onegov.mv
+        default: https://veli.design
         required: true
         type: string
       storybook-origin:
         description: Existing intended Storybook origin (does not change routing)
-        default: https://veli-storybook.onegov.mv
+        default: https://storybook.veli.design
         required: true
         type: string
 
@@ -81,7 +81,7 @@ jobs:
           echo "Snapshot SHA-256: $(cat "$RUNNER_TEMP/site-digest.txt")" >> "$GITHUB_STEP_SUMMARY"
           echo 'Manual override: pending Changesets do not block preparation. No npm publication is performed.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Automated checks verify published packages and Blocks compatibility, but cannot prove docs/stories prose is release-independent.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Preview this exact bundle. The deployment approval comment must also state: Independent of unpublished package changes.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Preview this exact bundle and assess content independence before dispatching deployment. No approval comment is required.' >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: site-snapshot-${{ github.run_id }}

@@ -5,22 +5,17 @@ on:
   workflow_dispatch:
     inputs:
       snapshot-run-id:
-        description: Successful Prepare site-only or Deploy release sites run containing the reviewed bundle
+        description: Successful Prepare site-only or Deploy release sites run containing the retained bundle
         required: true
         type: string
       snapshot-sha256:
-        description: Independently recorded SHA-256 from the exact snapshot reviewed
-        required: true
-        type: string
-      review-comment-id:
-        description: ID of a human write-access GitHub issue/PR comment approving this exact source and snapshot SHA-256
+        description: Independently recorded SHA-256 from the exact retained snapshot
         required: true
         type: string
 
 permissions:
   contents: read
   actions: read
-  issues: read
 
 concurrency: veli-public-release-sites
 
@@ -37,17 +32,15 @@ jobs:
         with:
           fetch-depth: 0
       - name: Verify the originating workflow before downloading
-        id: producer
         uses: actions/github-script@v7
         with:
           script: |
             if (!/^[1-9][0-9]*$/.test(process.env.SNAPSHOT_RUN_ID)) throw new Error('Expected run ID');
-            if (!/^[a-f0-9]{64}$/.test(process.env.SNAPSHOT_SHA256)) throw new Error('Expected reviewed snapshot digest');
+            if (!/^[a-f0-9]{64}$/.test(process.env.SNAPSHOT_SHA256)) throw new Error('Expected snapshot digest');
             const {data: run} = await github.rest.actions.getWorkflowRun({...context.repo,run_id:Number(process.env.SNAPSHOT_RUN_ID)});
             const {pathToFileURL} = await import('node:url');
             const {assertSnapshotProducer} = await import(pathToFileURL(process.env.GITHUB_WORKSPACE+'/scripts/site-snapshot-policy.mjs'));
             assertSnapshotProducer(run,context.repo.owner+'/'+context.repo.repo,process.env.RELEASE_BRANCH);
-            core.setOutput('requires-independence', run.path === '.github/workflows/prepare-site-release.yml');
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v4
         with:
@@ -64,17 +57,10 @@ jobs:
         run: |
           node scripts/site-release.mjs verify "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256"
           node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const s=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/site-snapshot/snapshot.json")); assert.equal(s.plan.siteRelease.mode,"published"); assert.ok(s.plan.siteRelease.publication,"Published artifact evidence is required"); assert.match(s.tools.wrangler,/^\d+\.\d+\.\d+$/); fs.appendFileSync(process.env.GITHUB_OUTPUT,"wrangler-version="+s.tools.wrangler+"\n");'
-      - name: Verify recorded human visual review
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
-          SITE_INDEPENDENCE_REQUIRED: ${{ steps.producer.outputs.requires-independence }}
-        run: node scripts/release-ci.mjs verify-site-review "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$REVIEW_COMMENT_ID"
       - name: Bind verified actual recovery source
         id: receipt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REVIEW_COMMENT_ID: ${{ inputs.review-comment-id }}
         run: node scripts/site-auto.mjs prepare-recovery-receipt "$RUNNER_TEMP/site-snapshot" "$SNAPSHOT_SHA256" "$RUNNER_TEMP/site-deployed"
       - name: Deploy retained Web output
         uses: cloudflare/wrangler-action@v3

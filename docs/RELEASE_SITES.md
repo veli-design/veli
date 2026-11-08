@@ -61,7 +61,7 @@ occurs merely by merging this workflow PR.
 For later approved releases, the existing `Release` workflow already calls site
 deployment after successful publication when the registry rollout gate is enabled.
 This temporary bootstrap path does not publish. Routine publication is triggered by
-merging the validated release PR; exact-tree validation, real human visual approval
+merging the validated release PR; exact-tree validation, normal repository review requirements
 and trusted-publisher prerequisites still apply.
 
 For the current release preparation, publication approval, site snapshot and

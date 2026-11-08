@@ -50,6 +50,46 @@ test('site paths include deployed docs, Storybook and Blocks; contributor prose 
   for (const name of ['react', 'tokens', 'cli'])
     assert.equal(packagePaths([`packages/${name}/package.json`]), true);
 });
+test('only package-root README prose is excluded from unpublished-source checks', () => {
+  for (const name of ['react', 'tokens', 'cli']) {
+    assert.equal(packagePaths([`packages/${name}/README.md`]), false);
+    for (const path of [
+      'package.json',
+      'tsconfig.json',
+      'src/README.md',
+      'src/index.ts',
+      'README.mdx',
+      'build.mjs',
+    ])
+      assert.equal(packagePaths([`packages/${name}/${path}`]), true);
+    assert.equal(
+      packagePaths([`packages/${name}/README.md`, `packages/${name}/src/index.ts`]),
+      true,
+    );
+  }
+  for (const path of [
+    'package.json',
+    'turbo.json',
+    'pnpm-workspace.yaml',
+    'scripts/build-react.mjs',
+  ])
+    assert.equal(packagePaths([path]), true);
+});
+test('site builds default to the established domains while retaining explicit overrides', () => {
+  for (const name of ['deploy-site-changes', 'deploy-release-sites']) {
+    const workflow = parse(readFileSync(`.github/workflows/${name}.yml`, 'utf8'));
+    const env = Object.values(workflow.jobs).find((job) => job.env?.PUBLIC_SITE_URL).env;
+    assert.equal(env.PUBLIC_SITE_URL, "${{ vars.VELI_WEB_ORIGIN || 'https://veli.design' }}");
+    assert.equal(
+      env.STORYBOOK_ORIGIN,
+      "${{ vars.VELI_STORYBOOK_ORIGIN || 'https://storybook.veli.design' }}",
+    );
+  }
+  const inputs = parse(readFileSync('.github/workflows/prepare-site-release.yml', 'utf8')).on
+    .workflow_dispatch.inputs;
+  assert.equal(inputs['web-origin'].default, 'https://veli.design');
+  assert.equal(inputs['storybook-origin'].default, 'https://storybook.veli.design');
+});
 test('ordinary approval requires final head, human, current write permission; no new marker', async () => {
   await verifyMergedSiteReview(apiFor([approved]), 'veli-design/veli', source);
   for (const reviews of [
@@ -455,7 +495,7 @@ test('a late queued event cannot lose the publication handoff: matching release 
     (await planSiteDelivery(deployed, { ...options, packageSource: h.workflow }, h.read)).eligible,
     false,
   );
-  // This path must retain full release evidence + visual approval, while actual
+  // This path must retain full release evidence, while actual
   // registry identity/bytes remain checked before either Cloudflare step.
   const script = readFileSync(new URL('./site-auto.mjs', import.meta.url), 'utf8');
   assert.match(
