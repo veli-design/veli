@@ -11,14 +11,18 @@ import {
   readRecoveryReceipt,
 } from './site-recovery-receipt.mjs';
 import { latestDelivery, planSiteDelivery, alreadyDelivered } from './site-auto.mjs';
-import { verifySiteReview } from './release-ci.mjs';
 const digest = 'd'.repeat(64);
 function fixture(t) {
+  // Hooks export GIT_* variables; temporary repositories must not inherit them.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
   const root = mkdtempSync(resolve(tmpdir(), 'veli-recovery-order-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const git = (...args) =>
     execFileSync('git', args, {
       cwd: root,
+      env,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     }).trim();
@@ -77,7 +81,6 @@ test('successful manual retry is recognized and does not select a duplicate auto
     attempt: 1,
     producer: 9,
     digest,
-    review: 17,
   });
   const read = async () => value;
   assert.equal(await latestDelivery(api, h.site, h.git, read), h.site);
@@ -101,7 +104,6 @@ test('recovering S after M merges never claims M was deployed, including after a
     attempt: 1,
     producer: 9,
     digest,
-    review: 17,
   });
   const api = recoveryAPI([
     { source: h.base },
@@ -148,7 +150,6 @@ test('latest physical rollback source wins over an older receipt for newer code;
     attempt: 1,
     producer: 9,
     digest,
-    review: 17,
   });
   const api = recoveryAPI([
     { source: h.site },
@@ -193,7 +194,6 @@ test('receipt ZIP reader only reads bounded JSON and fails on altered identity',
       attempt: 1,
       producer: 9,
       digest,
-      review: 17,
     });
   writeFileSync(resolve(h.root, 'delivery.json'), JSON.stringify(value));
   execFileSync('zip', ['-q', 'receipt.zip', 'delivery.json'], { cwd: h.root });
@@ -207,27 +207,36 @@ test('receipt ZIP reader only reads bounded JSON and fails on altered identity',
     /Unexpected/,
   );
 });
-test('manual independent preparation requires a real write-access independence declaration', async () => {
-  const source = 'a'.repeat(40),
-    body = `Site visual review approved.\nSource: ${source}\nSnapshot: ${digest}`;
-  let comment = {
-    user: { type: 'User', login: 'maintainer' },
-    issue_url: 'https://api.github.com/repos/veli-design/veli/issues/1',
-    body,
-  };
-  const api = async (path) => (path.startsWith('/issues/') ? comment : { permission: 'write' });
-  const args = {
-    repository: 'veli-design/veli',
-    sourceCommit: source,
-    snapshotSha256: digest,
-    commentId: '17',
-    requiresIndependence: true,
-  };
-  await assert.rejects(verifySiteReview(api, args), /Human review/);
-  comment = { ...comment, body: body + '\nIndependent of unpublished package changes.' };
-  await verifySiteReview(api, args);
-  comment = { ...comment, user: { type: 'Bot', login: 'bot' } };
-  await assert.rejects(verifySiteReview(api, args), /human/);
+test('new no-comment receipts and historical comment receipts both validate', async (t) => {
+  const h = fixture(t);
+  const run = { id: 2, run_attempt: 1, head_sha: h.site };
+  const current = recoveryReceipt({
+    source: h.base,
+    controller: h.site,
+    run: 2,
+    attempt: 1,
+    producer: 9,
+    digest,
+  });
+  assert.equal(current.schema, 3);
+  assert.equal(Object.hasOwn(current, 'reviewCommentId'), false);
+  const historical = { ...current, schema: 2, reviewCommentId: '17' };
+  for (const value of [current, historical]) {
+    assert.equal(validateRecoveryReceipt(value, h.base, run, h.git), h.base);
+    const api = recoveryAPI([
+      { source: h.site },
+      { source: h.base, recovery: true, controller: h.site },
+    ]);
+    assert.equal(await latestDelivery(api, h.site, h.git, async () => value), h.base);
+    assert.equal(await alreadyDelivered(api, h.site, h.git, async () => value), false);
+  }
+  for (const value of [
+    { ...current, reviewCommentId: '17' },
+    { ...current, schema: 2 },
+    { ...historical, reviewCommentId: 'invalid' },
+    { ...current, schema: 4 },
+  ])
+    assert.throws(() => validateRecoveryReceipt(value, h.base, run, h.git));
 });
 test('manual override remains publication-free, compatible-package-only, and records receipt after both deploys', () => {
   const prepare = readFileSync('.github/workflows/prepare-site-release.yml', 'utf8'),
@@ -246,11 +255,11 @@ test('manual override remains publication-free, compatible-package-only, and rec
   const steps = deploy.jobs.deploy.steps,
     receipt = steps.findIndex((s) => s.with?.name?.startsWith('site-deployed-'));
   assert.ok(receipt > steps.findLastIndex((s) => s.uses === 'cloudflare/wrangler-action@v3'));
-  assert.equal(
-    steps.find((s) => s.name === 'Verify recorded human visual review').env
-      .SITE_INDEPENDENCE_REQUIRED,
-    '${{ steps.producer.outputs.requires-independence }}',
-  );
+  assert.deepEqual(Object.keys(deploy.on.workflow_dispatch.inputs), [
+    'snapshot-run-id',
+    'snapshot-sha256',
+  ]);
+  assert.doesNotMatch(JSON.stringify(deploy), /review-comment|REVIEW_COMMENT|verify-site-review/);
 });
 
 test('a later failed rerun does not invalidate a successful recovery receipt from an earlier attempt', async (t) => {
@@ -262,7 +271,6 @@ test('a later failed rerun does not invalidate a successful recovery receipt fro
     attempt: 1,
     producer: 9,
     digest,
-    review: 17,
   });
   const artifact = {
     id: 3,

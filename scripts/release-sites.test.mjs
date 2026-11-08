@@ -7,7 +7,14 @@ import { createServer } from 'node:http';
 import test from 'node:test';
 import { parse, stringify } from 'yaml';
 import { spawnCorepack } from './corepack.mjs';
-import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
+// This isolated test-file process calls helpers that clone/configure temporary
+// repositories. Clear hook-exported Git paths before loading those helpers and
+// before spawning Git or Corepack, so none can target the caller's repository.
+for (const key of Object.keys(process.env)) {
+  if (key.startsWith('GIT_')) delete process.env[key];
+}
+
+const { createManifest, stageConsumer, validateManifest } = await import('./release-sites.mjs');
 
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -97,7 +104,7 @@ test('release deployment only follows successful publication and has durable red
 
 test(
   'fresh release versions install while other versions and dependencies retain the age gate',
-  { timeout: 30000 },
+  { timeout: 210000 },
   async () => {
     const target = await mkdtemp(join(tmpdir(), 'veli-release-age-test-'));
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -166,7 +173,9 @@ test(
               NPM_CONFIG_USERCONFIG: userconfig,
             },
             stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 10000,
+            // Process startup can be slow under a full parallel repository check.
+            // Keep a bound without mistaking a launcher timeout for registry policy.
+            timeout: 60000,
           },
         );
         let output = '';

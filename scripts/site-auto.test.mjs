@@ -50,6 +50,46 @@ test('site paths include deployed docs, Storybook and Blocks; contributor prose 
   for (const name of ['react', 'tokens', 'cli'])
     assert.equal(packagePaths([`packages/${name}/package.json`]), true);
 });
+test('only package-root README prose is excluded from unpublished-source checks', () => {
+  for (const name of ['react', 'tokens', 'cli']) {
+    assert.equal(packagePaths([`packages/${name}/README.md`]), false);
+    for (const path of [
+      'package.json',
+      'tsconfig.json',
+      'src/README.md',
+      'src/index.ts',
+      'README.mdx',
+      'build.mjs',
+    ])
+      assert.equal(packagePaths([`packages/${name}/${path}`]), true);
+    assert.equal(
+      packagePaths([`packages/${name}/README.md`, `packages/${name}/src/index.ts`]),
+      true,
+    );
+  }
+  for (const path of [
+    'package.json',
+    'turbo.json',
+    'pnpm-workspace.yaml',
+    'scripts/build-react.mjs',
+  ])
+    assert.equal(packagePaths([path]), true);
+});
+test('site builds default to the established domains while retaining explicit overrides', () => {
+  for (const name of ['deploy-site-changes', 'deploy-release-sites']) {
+    const workflow = parse(readFileSync(`.github/workflows/${name}.yml`, 'utf8'));
+    const env = Object.values(workflow.jobs).find((job) => job.env?.PUBLIC_SITE_URL).env;
+    assert.equal(env.PUBLIC_SITE_URL, "${{ vars.VELI_WEB_ORIGIN || 'https://veli.design' }}");
+    assert.equal(
+      env.STORYBOOK_ORIGIN,
+      "${{ vars.VELI_STORYBOOK_ORIGIN || 'https://storybook.veli.design' }}",
+    );
+  }
+  const inputs = parse(readFileSync('.github/workflows/prepare-site-release.yml', 'utf8')).on
+    .workflow_dispatch.inputs;
+  assert.equal(inputs['web-origin'].default, 'https://veli.design');
+  assert.equal(inputs['storybook-origin'].default, 'https://storybook.veli.design');
+});
 test('ordinary approval requires final head, human, current write permission; no new marker', async () => {
   await verifyMergedSiteReview(apiFor([approved]), 'veli-design/veli', source);
   for (const reviews of [
@@ -229,11 +269,16 @@ test('concurrent successors permit only contributor prose; package/release/site 
 });
 
 function historyFixture(t) {
+  // Hooks export GIT_* variables; temporary repositories must not inherit them.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
   const root = mkdtempSync(resolve(tmpdir(), 'veli-site-queue-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const git = (...args) =>
     execFileSync('git', args, {
       cwd: root,
+      env,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     }).trim();
@@ -253,7 +298,7 @@ function historyFixture(t) {
   const prose = commit('docs/contributing.md', 'prose successor');
   const pending = commit('.changeset/pending.md', 'package release pending');
   const read = (...args) => (args[0] === 'fetch' ? '' : git(...args));
-  return { root, git, commit, baseline, site, workflow, prose, pending, read };
+  return { root, env, git, commit, baseline, site, workflow, prose, pending, read };
 }
 function deliveryAPI(main, records = []) {
   const artifacts = records.map((r, index) => ({
@@ -399,7 +444,7 @@ test('source command binds checked-out main even when queued event SHA is older'
   execFileSync(process.execPath, [new URL('./site-auto.mjs', import.meta.url).pathname, 'source'], {
     cwd: h.root,
     env: {
-      ...process.env,
+      ...h.env,
       GITHUB_SHA: h.site,
       GITHUB_TOKEN: 'fixture',
       GITHUB_REPOSITORY: 'veli-design/veli',
@@ -455,7 +500,7 @@ test('a late queued event cannot lose the publication handoff: matching release 
     (await planSiteDelivery(deployed, { ...options, packageSource: h.workflow }, h.read)).eligible,
     false,
   );
-  // This path must retain full release evidence + visual approval, while actual
+  // This path must retain full release evidence, while actual
   // registry identity/bytes remain checked before either Cloudflare step.
   const script = readFileSync(new URL('./site-auto.mjs', import.meta.url), 'utf8');
   assert.match(
@@ -536,7 +581,7 @@ test('actual receipt CLI token contract writes exact source; successful release 
   const script = fileURLToPath(new URL('./site-auto.mjs', import.meta.url));
   const output = resolve(h.root, 'receipt');
   const env = {
-    ...process.env,
+    ...h.env,
     GITHUB_SHA: h.site,
     SITE_SOURCE_COMMIT: h.site,
     GITHUB_REPOSITORY: 'tradenetcorp/veli',

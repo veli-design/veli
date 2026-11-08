@@ -399,16 +399,16 @@ export function blockMarkdown(block) {
   const example = readFileSync(resolve(packageRoot, 'examples', `${manifest.id}-next.tsx`), 'utf8');
   /** @type {Record<string, string[]>} */
   const exampleFiles = {
+    'filter-bar': ['filter-bar-content.ts', 'filter-bar-composition.tsx'],
     'error-page': ['error-page-messages.ts'],
     'service-detail': ['service-detail-content.tsx'],
     'page-navigation-footer': ['page-navigation-footer-content.tsx'],
   };
   const supportingExamples = (exampleFiles[manifest.id] ?? [])
     .map((name) => {
-      const content = readFileSync(resolve(packageRoot, 'examples', name), 'utf8').replace(
-        "'../src/service-detail/types'",
-        "'../components/blocks/service-detail/types'",
-      );
+      const content = readFileSync(resolve(packageRoot, 'examples', name), 'utf8')
+        .replace("'../src/service-detail/types'", "'../components/blocks/service-detail/types'")
+        .replaceAll("'../src/filter-bar/", "'../components/blocks/filter-bar/");
       return `### ${name}\n\n\`\`\`tsx\n${content.trimEnd()}\n\`\`\``;
     })
     .join('\n\n');
