@@ -110,6 +110,7 @@ function DesktopNav({
       style={{ pointerEvents: hidden ? 'none' : 'auto' }}
       aria-label={primaryNavLabel}
       aria-hidden={hidden || undefined}
+      inert={hidden || undefined}
     >
       {navItems.map((item) => {
         const { href, label, external, current } = item;
@@ -266,6 +267,7 @@ function HeaderActions({
         transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
         aria-hidden={isOpen || undefined}
+        inert={isOpen || undefined}
       >
         {actions}
         <span className="lg:hidden">

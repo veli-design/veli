@@ -271,14 +271,14 @@ export function SwitcherItemContent({
     return (
       <>
         <TileIconWithBadge item={item} selected={isCurrent} size="row" />
-        <p className="type-body-md-medium text-text-base-strong min-w-0 flex-1 truncate">
-          {item.name}
-        </p>
-        {isCurrent ? (
-          <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong shrink-0 rounded-3xl px-1.5 py-0.5 tracking-[0.18px]">
-            {youAreHereLabel}
-          </span>
-        ) : null}
+        <span className="flex min-w-0 flex-1 items-center gap-3">
+          <p className="type-body-md-medium text-text-base-strong min-w-0 truncate">{item.name}</p>
+          {isCurrent ? (
+            <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong shrink-0 rounded-3xl px-1.5 py-0.5 tracking-[0.18px]">
+              {youAreHereLabel}
+            </span>
+          ) : null}
+        </span>
       </>
     );
   }

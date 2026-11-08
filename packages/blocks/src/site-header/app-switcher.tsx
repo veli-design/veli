@@ -714,6 +714,36 @@ function isTextEntryTarget(target: EventTarget | null) {
   );
 }
 
+function isMenuTriggerTarget(target: EventTarget | null) {
+  return target instanceof Element && Boolean(target.closest('button[aria-haspopup="menu"]'));
+}
+
+function isInteractiveChromeTarget(target: EventTarget | null) {
+  return (
+    target instanceof Element &&
+    Boolean(
+      target.closest(
+        'button, a, [role="button"], [role="link"], [role="menuitem"], [role="menuitemradio"]',
+      ),
+    )
+  );
+}
+
+/**
+ * Keys from the switcher panel, or the dialog surface itself (initial focus).
+ * Nav/actions outside the panel stay out of scope; mark them inert while open.
+ */
+function isSwitcherKeyboardScope(panel: HTMLElement, target: Node) {
+  if (panel.contains(target)) return true;
+  const dialog = panel.closest('[role="dialog"]');
+  if (!dialog) return false;
+  if (target === dialog) return true;
+  // Logo/close lives in the dialog chrome outside the panel. Skip inert subtrees
+  // (faded nav / host actions) so their keys are never redirected into Search.
+  if (target instanceof Element && target.closest('[inert]')) return false;
+  return dialog.contains(target);
+}
+
 function visibleSearchInput(candidates: Array<HTMLInputElement | null>) {
   return candidates.find((input) => input && input.getClientRects().length > 0) ?? null;
 }
@@ -877,42 +907,54 @@ export function AppSwitcher({
   const pendingCaretRef = useRef<number | null>(null);
   const pendingScrollRef = useRef<string | null>(null);
 
+  // Sync highlight to a new default selection without wiping in-progress search/filter
+  // (AppSwitcher remounts on close→open, which resets those).
   if (initialId !== trackedInitialId) {
     setTrackedInitialId(initialId);
     setSelectedId(initialId);
-    setQuery('');
-    setFilter('all');
   }
 
   useEffect(() => {
+    // Capture so printable keys / Backspace reach Search before RAC listbox consumes them.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing) return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (event.key.length !== 1) return;
-      if (isTextEntryTarget(event.target)) return;
-      if (
-        event.key === ' ' &&
-        event.target instanceof Element &&
-        event.target.closest('button, a, [role="button"], [role="link"]')
-      ) {
-        return;
-      }
+
+      const isPrintable = event.key.length === 1;
+      const isBackspace = event.key === 'Backspace';
+      if (!isPrintable && !isBackspace) return;
 
       const panel = panelRef.current;
       if (!panel || panel.closest('[inert]')) return;
+      const target = event.target;
+      // Dialog surface holds initial focus; it's an ancestor of the panel, not inside it.
+      if (!(target instanceof Node) || !isSwitcherKeyboardScope(panel, target)) return;
+      // Search (and any other field) keeps native editing while focused.
+      if (isTextEntryTarget(target)) return;
+      if (isMenuTriggerTarget(target)) return;
+      if (isPrintable && event.key === ' ' && isInteractiveChromeTarget(target)) return;
 
       const input = visibleSearchInput([mobileSearchRef.current, desktopSearchRef.current]);
       if (!input) return;
 
       event.preventDefault();
+      event.stopPropagation();
       input.focus();
+      if (isBackspace) {
+        if (!input.value) return;
+        const next = input.value.slice(0, -1);
+        pendingCaretRef.current = next.length;
+        setQuery(next);
+        return;
+      }
+
       const next = input.value + event.key;
       pendingCaretRef.current = next.length;
       setQuery(next);
     };
 
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
   }, []);
 
   useLayoutEffect(() => {
@@ -1074,15 +1116,24 @@ export function AppSwitcher({
       const panel = panelRef.current;
       if (!panel || panel.closest('[inert]')) return;
       const target = event.target;
+      // Host page controls (e.g. a sibling textarea) must keep their own keys.
+      // Dialog surface holds initial focus and must still drive arrows/Enter.
+      if (!(target instanceof Node) || !isSwitcherKeyboardScope(panel, target)) return;
       if (target instanceof Element && target.closest('[role="menu"]')) return;
+      // Filter menu trigger owns ArrowDown/Up/Enter for opening the menu.
+      if (isMenuTriggerTarget(target)) return;
+
+      const input = visibleSearchInput([mobileSearchRef.current, desktopSearchRef.current]);
+      const inSearch = target === input;
+      const inTextEntry = isTextEntryTarget(target);
+      // Non-search fields inside the panel keep native editing (and host slots if any).
+      if (inTextEntry && !inSearch) return;
+
       // View more lives outside the listboxes so Tab can reach it. Arrow keys still
       // move across apps/sites via navigable order (including while an option is focused).
       const inSwitcherOption =
         target instanceof Element && target.closest('[role="listbox"], [role="option"]');
 
-      const input = visibleSearchInput([mobileSearchRef.current, desktopSearchRef.current]);
-      const inSearch = target === input;
-      const inTextEntry = isTextEntryTarget(target);
       const arrow =
         event.key === 'ArrowUp' ||
         event.key === 'ArrowDown' ||
@@ -1091,10 +1142,7 @@ export function AppSwitcher({
 
       if (arrow) {
         if (navigable.length === 0) return;
-        // Keep Left/Right for caret movement while typing in search (or any text field).
-        if (inTextEntry && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
-          return;
-        }
+        // Arrows always move the highlight (including while Search is focused).
         event.preventDefault();
         event.stopPropagation();
         const rtl = getComputedStyle(panel).direction === 'rtl';
@@ -1119,15 +1167,7 @@ export function AppSwitcher({
 
       if (inSwitcherOption) return;
       if (event.key !== 'Enter') return;
-      if (
-        !inSearch &&
-        target instanceof Element &&
-        target.closest(
-          'button, a, [role="button"], [role="link"], [role="menuitem"], [role="menuitemradio"]',
-        )
-      ) {
-        return;
-      }
+      if (!inSearch && isInteractiveChromeTarget(target)) return;
       const item = navigable.find((entry) => entry.id === activeSelectedId) ?? navigable[0];
       if (!item) return;
       event.preventDefault();

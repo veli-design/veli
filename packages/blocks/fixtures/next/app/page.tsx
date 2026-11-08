@@ -43,6 +43,11 @@ export default function Page() {
           </button>{' '}
           <button onClick={() => setDark(!dark)}>Fixture theme</button>{' '}
           <button onClick={() => setLong(!long)}>Long labels</button>
+          {/* Host editable outside the switcher panel — keyboard capture must not steal keys. */}
+          <label className="mt-4 block">
+            Host notes
+            <textarea aria-label="Host notes" className="mt-1 block w-full border p-2" rows={3} />
+          </label>
           <div className="h-[120vh]" aria-hidden />
         </main>
         {language === 'en' && !long ? (
