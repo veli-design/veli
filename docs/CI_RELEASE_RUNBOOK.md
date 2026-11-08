@@ -94,6 +94,17 @@ files and dependency changes still fail closed. App-only lock entries may change
 Missing Changesets therefore cannot quietly ship unpublished package source.
 Shared build-tool changes conservatively wait for publication too.
 
+Standalone automatic delivery also verifies the exact merged PR against GitHub.
+It accepts either a final-head approval from a human with current repository
+write/maintain/admin permission, or a merge performed by a human account with
+current repository admin permission. The latter supports a sole admin's own PR
+and deliberate admin review bypass without self-approval or a special comment.
+PR author, commit author, workflow actor, rerun actor and organization membership
+are not merge authorization. Direct pushes, mismatched merge sources and missing
+or failed permission evidence remain blocked. This alternative does not bypass
+pending Changesets, unpublished-package checks or release publication evidence.
+Repository branch rules still govern whether GitHub permits the merge itself.
+
 Publication handoff, ordinary site delivery and deployment recovery share a single
 non-cancelling deployment lock. Immediately before deployment, the workflow checks
 current main and successful paired-deployment receipts. A newer executable/site or
