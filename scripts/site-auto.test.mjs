@@ -269,11 +269,16 @@ test('concurrent successors permit only contributor prose; package/release/site 
 });
 
 function historyFixture(t) {
+  // Hooks export GIT_* variables; temporary repositories must not inherit them.
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+  );
   const root = mkdtempSync(resolve(tmpdir(), 'veli-site-queue-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const git = (...args) =>
     execFileSync('git', args, {
       cwd: root,
+      env,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     }).trim();
@@ -293,7 +298,7 @@ function historyFixture(t) {
   const prose = commit('docs/contributing.md', 'prose successor');
   const pending = commit('.changeset/pending.md', 'package release pending');
   const read = (...args) => (args[0] === 'fetch' ? '' : git(...args));
-  return { root, git, commit, baseline, site, workflow, prose, pending, read };
+  return { root, env, git, commit, baseline, site, workflow, prose, pending, read };
 }
 function deliveryAPI(main, records = []) {
   const artifacts = records.map((r, index) => ({
@@ -439,7 +444,7 @@ test('source command binds checked-out main even when queued event SHA is older'
   execFileSync(process.execPath, [new URL('./site-auto.mjs', import.meta.url).pathname, 'source'], {
     cwd: h.root,
     env: {
-      ...process.env,
+      ...h.env,
       GITHUB_SHA: h.site,
       GITHUB_TOKEN: 'fixture',
       GITHUB_REPOSITORY: 'veli-design/veli',
@@ -576,7 +581,7 @@ test('actual receipt CLI token contract writes exact source; successful release 
   const script = fileURLToPath(new URL('./site-auto.mjs', import.meta.url));
   const output = resolve(h.root, 'receipt');
   const env = {
-    ...process.env,
+    ...h.env,
     GITHUB_SHA: h.site,
     SITE_SOURCE_COMMIT: h.site,
     GITHUB_REPOSITORY: 'tradenetcorp/veli',

@@ -167,7 +167,7 @@ navigation, responsive/RTL behavior and relevant interaction/accessibility flows
 Preparation is not a production deploy; maintainers still assess the whole selected
 source, including prose, before choosing a manual override. No comment, phrase or
 visual-review workflow input is required.
-Automated hosted browser smoke and production verification remain PD-1121 work.
+Read-only hosted smoke tooling and the [protected preview rehearsal runbook](SITE_HOSTED_REHEARSAL.md) are available. Protected hosted execution and production browser verification remain PD-1121 work.
 
 ## Deployment-only retry and rollback
 

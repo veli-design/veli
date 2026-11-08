@@ -7,7 +7,14 @@ import { createServer } from 'node:http';
 import test from 'node:test';
 import { parse, stringify } from 'yaml';
 import { spawnCorepack } from './corepack.mjs';
-import { createManifest, stageConsumer, validateManifest } from './release-sites.mjs';
+// This isolated test-file process calls helpers that clone/configure temporary
+// repositories. Clear hook-exported Git paths before loading those helpers and
+// before spawning Git or Corepack, so none can target the caller's repository.
+for (const key of Object.keys(process.env)) {
+  if (key.startsWith('GIT_')) delete process.env[key];
+}
+
+const { createManifest, stageConsumer, validateManifest } = await import('./release-sites.mjs');
 
 test('release manifests require exact versions and immutable commit IDs', async () => {
   const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
