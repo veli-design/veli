@@ -226,16 +226,32 @@ export async function assertCurrent(api, source, readGit = git) {
     'This source was already deployed',
   );
 }
-export async function verifyMergedSiteReview(api, repository, source) {
+export async function verifyMergedSiteAuthorization(api, repository, source) {
   const prs = await pages(api, `/commits/${source}/pulls`);
-  const pr = prs.find(
-    (p) =>
-      p.merged_at &&
-      p.merge_commit_sha === source &&
-      p.base?.ref === 'main' &&
-      p.base?.repo?.full_name === repository,
+  const matchesSource = (pr) =>
+    pr.merged_at &&
+    pr.merge_commit_sha === source &&
+    pr.base?.ref === 'main' &&
+    pr.base?.repo?.full_name === repository;
+  const candidate = prs.find(matchesSource);
+  assert.ok(candidate, 'Automatic site delivery requires a PR merged into this repository');
+  assert.ok(Number.isSafeInteger(candidate.number) && candidate.number > 0);
+  // Resolve authoritative PR details rather than trusting the commit association
+  // summary, a workflow actor, commit author, or whoever reruns this workflow.
+  const pr = await api(`/pulls/${candidate.number}`);
+  assert.ok(
+    pr.number === candidate.number && pr.merged === true && matchesSource(pr),
+    'PR details do not match the exact merged site source',
   );
-  assert.ok(pr, 'Automatic site delivery requires a PR merged into this repository');
+  assert.match(pr.head?.sha ?? '', /^[a-f0-9]{40}$/);
+  // An intentional human admin merge is sufficient authorization, including a
+  // solo maintainer's own PR. Ordinary writers/maintainers still need review.
+  if (pr.merged_by?.type === 'User' && pr.merged_by.login) {
+    const permission = await api(
+      `/collaborators/${encodeURIComponent(pr.merged_by.login)}/permission`,
+    );
+    if (permission.permission === 'admin') return;
+  }
   const reviews = await pages(api, `/pulls/${pr.number}/reviews`);
   const latest = new Map();
   for (const r of reviews)
@@ -246,7 +262,9 @@ export async function verifyMergedSiteReview(api, repository, source) {
     const permission = await api(`/collaborators/${encodeURIComponent(r.user.login)}/permission`);
     if (['write', 'maintain', 'admin'].includes(permission.permission)) return;
   }
-  throw new Error('A pre-merge human approval of the final PR head is required');
+  throw new Error(
+    'A final-head human maintainer approval or a human repository-admin merge is required',
+  );
 }
 export async function selectBaseline(api, source = git('rev-parse', 'HEAD'), readGit = git) {
   const releases = (await pages(api, '/releases')).filter(
@@ -361,7 +379,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       // the original full CI evidence. Never publish.
       assert.equal(publication.sourceCommit, source, 'Release has no matching publication record');
       await verifyCurrentPublication({ ...process.env, GITHUB_SHA: source });
-    } else await verifyMergedSiteReview(api, process.env.GITHUB_REPOSITORY, source);
+    } else await verifyMergedSiteAuthorization(api, process.env.GITHUB_REPOSITORY, source);
   } else if (command === 'guard') {
     await assertCurrent(api, source);
   } else if (command === 'gate') {
