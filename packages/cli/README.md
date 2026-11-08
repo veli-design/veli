@@ -12,28 +12,65 @@ npx @veli-design/cli --help
 ```
 
 The CLI requires Node.js 24 or newer. Package installation and Blocks registry
-access are separate: Blocks and hosted documentation remain internal and require
-WFA access. React and tokens can be used anonymously without the CLI or registry.
+access are separate. The registry is hosted with the documentation at
+`https://veli.design`; while Cloudflare/WFA protection remains enabled, obtain
+access from the network you will use for the CLI. React and tokens can be used
+anonymously without the CLI or registry.
 
-After obtaining WFA access, initialize against the deployed internal registry:
+From your application's package directory, initialize the project:
 
 ```sh
-npx @veli-design/cli --web-url https://veli-web.onegov.mv init
+npx @veli-design/cli init
+```
+
+New projects default to `https://veli.design` without asking for a registry URL.
+Choose where to copy Blocks, then browse and install them:
+
+```sh
+npx @veli-design/cli list
+npx @veli-design/cli add
 ```
 
 The CLI stores only the non-secret Veli Design Web URL and block destination in
-`.veli/config.json`. Existing copied source and `.veli` baselines require a
-coordinated migration; consult your internal maintainer before switching them.
+`.veli/config.json`. Initialization does not install or configure Veli React,
+tokens, styles or providers; follow the [React setup guide](https://www.npmjs.com/package/@veli-design/react)
+for those requirements.
 
-## WFA access
+### Registry overrides and existing projects
 
-Before using Veli Design Web, request access at [workforce access](https://wfa.mindco.mv/) with your company account. Choose one of the available durations (at most 24 hours) and enter the required reason. WFA grants access to your requesting IP, so run the CLI from the same network. To check access or get guided recovery instructions, run:
+The URL precedence is `--web-url`, then `VELI_WEB_URL`, then the existing
+`.veli/config.json` URL. The public default applies only when no URL is configured
+for new setup or a pre-initialization access check. Existing projects keep their
+saved registry and are not silently migrated. An override on a later command is
+temporary; it does not rewrite configuration or installed Block baselines.
+
+Use an explicit override for a local, preview or alternate registry:
+
+```sh
+npx @veli-design/cli --web-url http://localhost:4321 init
+```
+
+HTTPS is required except for localhost. Review existing copied source and `.veli`
+baselines before deliberately switching an established project to another
+registry. CLI 0.2.0 and older have no default; with those versions, pass
+`--web-url https://veli.design` to `init` explicitly.
+
+## Access while the registry is protected
+
+The default URL does not grant or bypass access. While the site is protected,
+request access at [workforce access](https://wfa.mindco.mv/) with an eligible
+account. Choose one of the available durations (at most 24 hours) and enter the
+required reason. WFA grants access to your requesting IP, so run the CLI from the
+same network. To check access before or after initialization, run:
 
 ```sh
 corepack pnpm dlx @veli-design/cli auth login
 ```
 
-The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared` login or Access token is required for developers. Request another WFA grant if it expires or your network/IP changes. The CLI stores no authentication secrets in the project.
+The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared`
+login or Access token is required for developers. Request another WFA grant if it
+expires or your network/IP changes. Once the site is publicly accessible, no WFA
+step is needed. The CLI stores no authentication secrets in the project.
 
 For CI, configure a Cloudflare Access **Service Auth** policy if service-token access is available, then inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. CI cannot use an interactive WFA approval.
 
