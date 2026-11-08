@@ -368,8 +368,7 @@ function getTabClassName(
   return twMerge(
     tabBaseClassName,
     tabSizeClassName[size],
-    options?.isDisabled &&
-      'pointer-events-none cursor-not-allowed text-disabled [&_svg]:text-icon-disabled',
+    options?.isDisabled && 'cursor-not-allowed text-disabled [&_svg]:text-icon-disabled',
     options?.isHovered && 'bg-tabs-hover',
     options?.isPressed && 'bg-tabs-pressed',
     isSelected && '[&_svg]:text-icon-base-strong',
@@ -473,7 +472,6 @@ export function TabsOverflow({
                 id={item.id}
                 isDisabled={item.isDisabled}
                 size={size}
-                className="cursor-pointer"
                 startIcon={item.leading}
                 endIcon={item.trailing}
                 {...getTabsItemLinkProps(item)}

@@ -47,7 +47,7 @@ const infoTooltipLabels = {
 } as const;
 
 const calendarButtonClassName =
-  'relative z-[1] flex size-5 shrink-0 items-center justify-center rounded-xs text-icon-base outline-none data-[disabled]:text-icon-disabled data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus';
+  'relative z-[1] flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-xs text-icon-base outline-none data-[disabled]:cursor-not-allowed data-[disabled]:text-icon-disabled data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus';
 
 const popoverSurfaceClassName =
   'w-[19.75rem] max-w-[calc(100vw-1rem)] rounded-xl bg-calendar-bg p-1 shadow-md outline-none';

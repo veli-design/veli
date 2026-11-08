@@ -321,7 +321,7 @@ const rootVariants = cva('flex w-full flex-col gap-1 font-sans antialiased');
  * shrinks by 1px to keep the outer box fixed.
  */
 const areaVariants = cva(
-  'relative flex w-full rounded-2xl border border-dashed bg-dropzone-area-bg-default px-[15px] py-[19px] outline-none transition-[background-color,border-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
+  'relative flex w-full cursor-pointer rounded-2xl border border-dashed bg-dropzone-area-bg-default px-[15px] py-[19px] outline-none transition-[background-color,border-color,box-shadow] duration-normal ease-out motion-reduce:transition-none',
   {
     variants: {
       layout: {

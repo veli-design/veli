@@ -196,13 +196,7 @@ function PaginationEllipsis({
           onAction={(key) => onSelectPage(Number(key))}
         >
           {hiddenPages.map((page) => (
-            <MenuItem
-              key={page}
-              id={page}
-              size="sm"
-              className="cursor-pointer"
-              aria-label={pageLabel(page)}
-            >
+            <MenuItem key={page} id={page} size="sm" aria-label={pageLabel(page)}>
               <PaginationNumber>{page}</PaginationNumber>
             </MenuItem>
           ))}

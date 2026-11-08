@@ -331,6 +331,7 @@ const tagVariants = cva(
         isDisabled: true,
         className: 'border-tag-disabled-border bg-transparent text-tag-disabled-foreground',
       },
+      { isDisabled: true, className: 'cursor-not-allowed' },
     ],
     defaultVariants: {
       size: 'sm',
@@ -392,7 +393,7 @@ const removeButtonVariants = cva(
       isDisabled: {
         true: 'cursor-not-allowed text-tag-disabled-foreground',
         false:
-          'text-current data-[hovered]:bg-tag-remove-hover data-[pressed]:bg-tag-remove-pressed',
+          'cursor-pointer text-current data-[hovered]:bg-tag-remove-hover data-[pressed]:bg-tag-remove-pressed',
       },
       onSelectedFill: {
         true: 'data-[hovered]:bg-tag-fill-selected-remove-hover data-[pressed]:bg-tag-fill-selected-remove-pressed',
@@ -909,6 +910,10 @@ const dropdownLabelVariants = cva('shrink', {
       lg: 'rounded-[calc(var(--veli-spacing-10)/2)]',
       xl: 'rounded-[calc(var(--veli-spacing-11)/2)]',
     },
+    isDisabled: {
+      true: 'cursor-not-allowed',
+      false: 'cursor-pointer',
+    },
   },
 });
 const dropdownCaretVariants = cva('justify-center rounded-s-sm ps-0 pe-0.5', {
@@ -919,6 +924,10 @@ const dropdownCaretVariants = cva('justify-center rounded-s-sm ps-0 pe-0.5', {
       md: 'w-8 rounded-e-[calc(var(--veli-spacing-9)/2)]',
       lg: 'w-9 pe-1 rounded-e-[calc(var(--veli-spacing-10)/2)]',
       xl: 'w-10 pe-1 rounded-e-[calc(var(--veli-spacing-11)/2)]',
+    },
+    isDisabled: {
+      true: 'cursor-not-allowed',
+      false: 'cursor-pointer',
     },
   },
 });
@@ -1128,7 +1137,11 @@ export function TagDropdown<T extends object>({
             menuStateRef.current?.open('first');
           }
         }}
-        className={twMerge(colors, dropdownLabelVariants({ size }), isSelected && 'rounded-e-sm')}
+        className={twMerge(
+          colors,
+          dropdownLabelVariants({ size, isDisabled }),
+          isSelected && 'rounded-e-sm',
+        )}
       >
         <TagContent size={size} leading={leading} isSelected={isSelected}>
           {label}
@@ -1181,7 +1194,7 @@ export function TagDropdown<T extends object>({
             aria-label={menuLabel}
             className={twMerge(
               colors,
-              dropdownCaretVariants({ size }),
+              dropdownCaretVariants({ size, isDisabled }),
               filled ? 'data-[focus-visible]:ring-offset-1' : 'data-[focus-visible]:ring-offset-2',
               open &&
                 (filled ? 'bg-tag-fill-selected-bg-hover' : 'bg-tag-outline-selected-bg-hover'),

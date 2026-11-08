@@ -116,7 +116,7 @@ const calendarPickerItemVariants = cva(
         false: '',
       },
       isDisabled: {
-        true: 'pointer-events-none text-disabled',
+        true: 'cursor-not-allowed text-disabled',
         false: '',
       },
     },

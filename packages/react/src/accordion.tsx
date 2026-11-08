@@ -25,7 +25,7 @@ const accordionItemVariants = cva(
 );
 
 const accordionTriggerVariants = cva(
-  'flex w-full items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
+  'flex w-full cursor-pointer items-center gap-0 rounded-xl text-base-strong outline-none motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[hovered]:bg-accordion-hover data-[pressed]:bg-accordion-pressed data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-bg-surface-base',
   {
     variants: {
       size: {

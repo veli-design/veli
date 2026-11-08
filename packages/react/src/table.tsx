@@ -373,7 +373,7 @@ export function TableRow<T = unknown>({
         <AriaCell className={tableDragCellClassName} data-drag-handle>
           <AriaButton
             slot="drag"
-            className="inline-flex rounded-md p-1 outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+            className="inline-flex cursor-grab rounded-md p-1 outline-none group-data-[dragging]/row:cursor-grabbing focus-visible:ring-2 focus-visible:ring-border-focus"
           >
             <DotsSixVerticalIcon aria-hidden="true" className="size-4 text-icon-base-muted" />
           </AriaButton>

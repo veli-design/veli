@@ -102,6 +102,10 @@ CI checks the **PR title**, not local feature-branch commits. Those commits
 can stay informal because squash merge discards them. Branching, rebase, and
 merge conventions are in the [Git workflow](docs/GIT_WORKFLOW.md).
 
+## Interactive cursor
+
+Read [Cursor affordances](docs/CURSOR_AFFORDANCES.md) before you add or change an interactive host in `@veli-design/react`.
+
 ## Changesets
 
 Changes that affect a published Veli package (`@veli-design/react` or
