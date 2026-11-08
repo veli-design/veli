@@ -8,8 +8,6 @@ import test from 'node:test';
 import { getPackages } from '@manypkg/get-packages';
 import {
   approvedReleaseEvent,
-  verifyVisualApproval,
-  verifySiteReview,
   isReleasePR,
   requireReleaseChecks,
   releaseMode,
@@ -108,15 +106,6 @@ function fixture() {
     [`/git/commits/${commitSHA}`]: commit,
     [`/commits/${commitSHA}/pulls?per_page=100&page=1`]: [pr],
     '/pulls/290': pr,
-    '/pulls/290/reviews?per_page=100&page=1': [
-      {
-        user: { login: 'human', type: 'User' },
-        state: 'APPROVED',
-        commit_id: head,
-        body: 'Visual review approved.',
-      },
-    ],
-    '/collaborators/human/permission': { permission: 'write' },
     '/actions/workflows/ci.yml': { id: 42 },
     [`/actions/workflows/42/runs?event=pull_request&head_sha=${head}&status=success&per_page=100&page=1`]:
       { workflow_runs: [run] },
@@ -440,99 +429,41 @@ test('workflow keeps native approval, all release suites and publication orderin
   );
 });
 
-test('visual approval requires a current human approval with write permission, not workflow inputs', async () => {
+test('release publication validates exact CI evidence without reading review comments', async () => {
   const f = fixture();
-  const key = '/pulls/290/reviews?per_page=100&page=1';
-  const approved = f.responses[key][0];
-  await verifyVisualApproval(f.api, f.context.pr);
-  for (const change of [
-    { state: 'COMMENTED' },
-    { state: 'DISMISSED' },
-    { commit_id: base },
-    { body: 'Looks good' },
-    { user: { login: 'human', type: 'Bot' } },
-  ]) {
-    f.responses[key] = [{ ...approved, ...change }];
-    await assert.rejects(
-      () => verifyVisualApproval(f.api, f.context.pr),
-      /human write-access review/,
-    );
-  }
-  f.responses[key] = [approved, { ...approved, state: 'COMMENTED', body: 'Additional note' }];
-  await verifyVisualApproval(f.api, f.context.pr);
-  f.responses[key] = [approved, { ...approved, state: 'CHANGES_REQUESTED' }];
-  await assert.rejects(() => verifyVisualApproval(f.api, f.context.pr));
-  f.responses[key] = [approved];
-  f.responses['/collaborators/human/permission'] = { permission: 'read' };
-  await assert.rejects(() => verifyVisualApproval(f.api, f.context.pr));
-  f.responses['/collaborators/human/permission'] = { permission: 'maintain' };
-  f.responses[key] = [{ ...approved, body: 'Evidence reviewed\r\nVisual review approved.\r\n' }];
-  await verifyVisualApproval(f.api, f.context.pr);
-  f.responses[key] = [];
-  await assert.rejects(() => verifyVisualApproval(f.api, f.context.pr));
+  // The fixture has no review/comment/permission endpoint: any such dependency fails.
+  await verifyPublication(f.api, f.env, async () => f.evidence);
 });
 
-test('manual site recovery requires a real human comment bound to exact bytes', async () => {
-  const selection = {
-    repository,
-    sourceCommit: head,
-    snapshotSha256: 'd'.repeat(64),
-    commentId: '7',
-  };
-  const valid = {
-    user: { login: 'reviewer', type: 'User' },
-    issue_url: `https://api.github.com/repos/${repository}/issues/290`,
-    body: `Site visual review approved.\nSource: ${head}\nSnapshot: ${'d'.repeat(64)}`,
-  };
-  let comment = valid;
-  let permission = 'write';
-  const api = async (path) => {
-    if (path === '/issues/comments/7') return comment;
-    if (path === '/collaborators/reviewer/permission') return { permission };
-    throw new Error('Unexpected API');
-  };
-  await verifySiteReview(api, selection);
-  for (const patch of [
-    { user: { login: 'reviewer', type: 'Bot' } },
-    { body: 'Approved' },
-    { body: valid.body.replace(head, base) },
-    { body: valid.body.replace('d'.repeat(64), 'e'.repeat(64)) },
-    { issue_url: 'https://api.github.com/repos/fork/veli/issues/290' },
-  ]) {
-    comment = { ...valid, ...patch };
-    await assert.rejects(() => verifySiteReview(api, selection));
-  }
-  comment = valid;
-  permission = 'read';
-  await assert.rejects(() => verifySiteReview(api, selection));
-  permission = 'write';
-  await assert.rejects(() => verifySiteReview(api, { ...selection, commentId: 'true' }));
-  comment = { ...valid, body: 'Request submitted' };
-  await assert.rejects(() =>
-    verifySiteReview(api, { ...selection, VISUAL_REVIEW_APPROVED: 'true' }),
-  );
-});
-
-test('manual recovery workflows require verified comment evidence before deployment', async () => {
+test('manual recovery uses immutable inputs and verification, with no comment gate', async () => {
   const { parse } = await import('yaml');
-  const snapshot = parse(
-    readFileSync(new URL('../.github/workflows/deploy-site-snapshot.yml', import.meta.url), 'utf8'),
+  const source = readFileSync(
+    new URL('../.github/workflows/deploy-site-snapshot.yml', import.meta.url),
+    'utf8',
   );
-  assert.equal(snapshot.on.workflow_dispatch.inputs['review-comment-id'].required, true);
-  assert.equal(snapshot.permissions.issues, 'read');
+  const snapshot = parse(source);
+  assert.deepEqual(Object.keys(snapshot.on.workflow_dispatch.inputs), [
+    'snapshot-run-id',
+    'snapshot-sha256',
+  ]);
+  assert.deepEqual(snapshot.permissions, { contents: 'read', actions: 'read' });
+  assert.equal(snapshot.concurrency, 'veli-public-release-sites');
+  assert.match(snapshot.jobs.deploy.if, /github.ref == 'refs\/heads\/main'/);
   const steps = snapshot.jobs.deploy.steps;
-  assert.ok(
-    steps.findIndex((s) => s.run?.includes('verify-site-review')) <
-      steps.findIndex((s) => s.uses === 'cloudflare/wrangler-action@v3'),
+  const deployment = steps.findIndex((s) => s.uses === 'cloudflare/wrangler-action@v3');
+  for (const command of [
+    'assertSnapshotProducer(',
+    'site-release.mjs verify',
+    'prepare-recovery-receipt',
+  ]) {
+    const index = steps.findIndex((s) => (s.run ?? s.with?.script ?? '').includes(command));
+    assert.ok(index >= 0 && index < deployment, command);
+  }
+  assert.doesNotMatch(
+    source,
+    /review-comment-id|REVIEW_COMMENT|verify-site-review|issues:|pull-requests:/,
   );
-  assert.ok(steps.some((s) => s.run?.includes('verify-site-review')));
   assert.ok(!steps.some((s) => s.run?.includes('pnpm release')));
-  const f = fixture();
-  f.responses['/pulls/290/reviews?per_page=100&page=1'] = [];
-  await assert.rejects(
-    () => verifyPublication(f.api, f.env, async () => f.evidence),
-    /human write-access review/,
-  );
 });
 
 test('transfer retains authenticated identity while old repository evidence cannot be reused', () => {

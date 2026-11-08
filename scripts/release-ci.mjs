@@ -150,65 +150,6 @@ export async function releaseMode(pending, api, env) {
   return (await mergedRelease(api, env.GITHUB_REPOSITORY, env.GITHUB_SHA)) ? 'publish' : 'none';
 }
 
-export async function verifyVisualApproval(api, pr) {
-  const reviews = await pages(api, `/pulls/${pr.number}/reviews`);
-  const latest = new Map();
-  for (const review of reviews) {
-    // A comment does not revoke an existing approval; decisive later reviews do.
-    if (['APPROVED', 'CHANGES_REQUESTED', 'DISMISSED'].includes(review.state))
-      latest.set(review.user?.login, review);
-  }
-  for (const review of latest.values()) {
-    if (
-      review.user?.type !== 'User' ||
-      review.state !== 'APPROVED' ||
-      review.commit_id !== pr.head.sha ||
-      !(review.body ?? '').split(/\r?\n/).some((line) => line.trim() === 'Visual review approved.')
-    )
-      continue;
-    const permission = await api(
-      `/collaborators/${encodeURIComponent(review.user.login)}/permission`,
-    );
-    if (['admin', 'maintain', 'write'].includes(permission.permission)) return;
-  }
-  throw new Error(
-    'Publication requires a human write-access review of the final release head containing: Visual review approved.',
-  );
-}
-
-// The comment ID locates evidence; its input value is never approval by itself.
-export async function verifySiteReview(
-  api,
-  { repository, sourceCommit, snapshotSha256, commentId, requiresIndependence = false },
-) {
-  assert.match(sourceCommit, sha);
-  assert.match(snapshotSha256, /^[a-f0-9]{64}$/);
-  assert.match(commentId ?? '', /^[1-9][0-9]*$/);
-  const comment = await api(`/issues/comments/${commentId}`);
-  assert.equal(comment.user?.type, 'User', 'A human must approve the site snapshot');
-  const issue = new URL(comment.issue_url);
-  assert.equal(issue.origin, 'https://api.github.com');
-  const prefix = `/repos/${repository}/issues/`;
-  assert.ok(issue.pathname.startsWith(prefix));
-  assert.match(issue.pathname.slice(prefix.length), /^[1-9][0-9]*$/);
-  const lines = (comment.body ?? '').split(/\r?\n/).map((line) => line.trim());
-  for (const line of [
-    'Site visual review approved.',
-    `Source: ${sourceCommit}`,
-    `Snapshot: ${snapshotSha256}`,
-    ...(requiresIndependence ? ['Independent of unpublished package changes.'] : []),
-  ])
-    assert.ok(
-      lines.includes(line),
-      'Human review must identify the exact source and snapshot digest',
-    );
-  const access = await api(`/collaborators/${encodeURIComponent(comment.user.login)}/permission`);
-  assert.ok(
-    ['admin', 'maintain', 'write'].includes(access.permission),
-    'Site reviewer needs write access',
-  );
-}
-
 // This runs before installing dependencies or invoking any publication command.
 // Evidence is JSON data, never an executable artifact or build-output cache.
 export async function verifyPublication(api, env, readEvidence) {
@@ -242,7 +183,6 @@ export async function verifyPublication(api, env, readEvidence) {
       workflowId: workflow.id,
       candidate,
     });
-    await verifyVisualApproval(api, pr);
     console.log(
       `Release PR #${pr.number}: validated tree ${commit.tree.sha} in run ${run.id}, attempt ${run.run_attempt}`,
     );
@@ -300,18 +240,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const mode = await releaseMode(pending, api, process.env);
     appendFileSync(process.env.GITHUB_OUTPUT, `mode=${mode}\n`);
     console.log(`Release mode: ${mode}`);
-  } else if (command === 'verify-site-review') {
-    const { verifySiteBundle } = await import('./site-release.mjs');
-    const snapshot = await verifySiteBundle(target, process.argv[4]);
-    assert.equal(snapshot.plan.siteRelease.mode, 'published');
-    await verifySiteReview(githubAPI(), {
-      repository: process.env.GITHUB_REPOSITORY,
-      sourceCommit: snapshot.plan.sourceCommit,
-      snapshotSha256: process.argv[4],
-      commentId: process.argv[5],
-      requiresIndependence: process.env.SITE_INDEPENDENCE_REQUIRED === 'true',
-    });
   } else if (command === 'verify') {
     await verifyCurrentPublication();
-  } else throw new Error('Expected stamp, plan, verify or verify-site-review');
+  } else throw new Error('Expected stamp, plan or verify');
 }

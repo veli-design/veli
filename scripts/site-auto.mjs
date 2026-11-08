@@ -25,10 +25,12 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 export const sitePaths = (files) =>
   files.some((p) => /^(apps\/(web|storybook)|packages\/blocks)\//.test(p));
 export const packagePaths = (files) =>
-  files.some((p) =>
-    /^(packages\/(react|tokens|cli)\/|scripts\/(build|publish|version|prepare-consumer)|(?:turbo|package)\.json$|pnpm-workspace\.yaml$)/.test(
-      p,
-    ),
+  files.some(
+    (p) =>
+      !/^packages\/(react|tokens|cli)\/README\.md$/.test(p) &&
+      /^(packages\/(react|tokens|cli)\/|scripts\/(build|publish|version|prepare-consumer)|(?:turbo|package)\.json$|pnpm-workspace\.yaml$)/.test(
+        p,
+      ),
   );
 export function pendingChangesets() {
   return readdirSync('.changeset').some((name) => name.endsWith('.md') && name !== 'README.md');
@@ -356,7 +358,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     if (release) {
       // An older queued site event can displace the release handoff. Recover
       // sites ONLY from a publication record for this exact release; re-check
-      // the original full CI and release-specific visual approval. Never publish.
+      // the original full CI evidence. Never publish.
       assert.equal(publication.sourceCommit, source, 'Release has no matching publication record');
       await verifyCurrentPublication({ ...process.env, GITHUB_SHA: source });
     } else await verifyMergedSiteReview(api, process.env.GITHUB_REPOSITORY, source);
@@ -398,7 +400,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       attempt: process.env.GITHUB_RUN_ATTEMPT,
       producer: process.env.SNAPSHOT_RUN_ID,
       digest: process.argv[4],
-      review: process.env.REVIEW_COMMENT_ID,
     });
     validateRecoveryReceipt(
       value,

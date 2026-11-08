@@ -23,17 +23,9 @@ Do not configure trust for a speculative repository move. The existing publicati
 release-branch and trusted-publishing repository-variable gates remain required.
 
 Before merging the final bot release PR, approve its native CI run and wait for the
-full exact-head/base consumer validation. A human with current repository write,
-maintain or admin access must review the visual evidence and submit an APPROVED
-GitHub PR review containing this exact line:
-
-```text
-Visual review approved.
-```
-
-The review must belong to the final release head. A stale, dismissed, bot or read-only
-review does not qualify; neither labels nor workflow inputs count as approval.
-A later changes-request or dismissal invalidates approval; a comment does not grant or revoke it. Merge then
+full exact-head/base consumer validation. Normal repository reviews and branch
+protections still apply, but publication does not require special review text or
+an additional visual-approval comment. Merge then
 triggers **Release**. The publisher revalidates the actual selected merged release commit. Ordinary main pushes and pending
 Changesets are handled by preparation only and cannot publish. Set the separately
 approved repository variables `VELI_RELEASE_BRANCH=main`, `VELI_NPM_DIST_TAG`
@@ -44,7 +36,7 @@ The read-only event plan is separate from the privileged publisher. One shared
 `Release-Publish` lock serializes all release commits. After acquiring it, the
 publisher selects the newest authenticated merged Changesets PR in current main
 history, checks out that immutable commit, rejects remaining Changesets/dirty source,
-and verifies its full native CI and human visual approval. A delayed older event
+and verifies its full native CI evidence. A delayed older event
 therefore services the latest release instead of publishing an older version last.
 Immediately before the publication command, all three public npm dist-tags are read
 anonymously; a failed registry read, invalid existing tag or version regression fails closed.
@@ -71,6 +63,10 @@ from the exact released checkout with `release-sites.mjs manifest` followed by
 
 ## Independent site changes
 
+Site builds default to `https://veli.design` and `https://storybook.veli.design`.
+`VELI_WEB_ORIGIN` and `VELI_STORYBOOK_ORIGIN` remain explicit overrides. These
+settings control generated links and origins, not Cloudflare routing or access.
+
 **Deploy site changes** evaluates every main push under the shared deployment lock.
 It checks out current main only after obtaining that lock, then compares against the
 latest verified successful paired-deployment receipt in main history. Outstanding
@@ -87,13 +83,14 @@ Pending Changesets hold delivery. A merged release PR without a publication reco
 for its exact source cannot use this path as an implicit publication retry. If a
 late queued event displaces the publication handoff, site-only catch-up can recover
 the already published release: it requires that exact publication record, verified
-npm artifacts and the original full release CI plus release-specific human visual
-approval again. It never invokes publication. Failed/no-op publication without a
+npm artifacts and the original full release CI evidence again. It never invokes publication. Failed/no-op publication without a
 matching existing record remains blocked. The newest
 non-draft/non-prerelease durable publication record supplies the package baseline;
 until one exists, the retained verified bootstrap record is used. Source package
-versions, package trees, shared package build configuration and the package build
-dependency closure must match that baseline. App-only lock entries may change.
+versions, package source, shared package build configuration and the package build
+dependency closure must match that baseline. Only package-root `README.md` prose
+is excluded from the source-change hold; nested Markdown, executable docs, build
+files and dependency changes still fail closed. App-only lock entries may change.
 Missing Changesets therefore cannot quietly ship unpublished package source.
 Shared build-tool changes conservatively wait for publication too.
 
@@ -167,37 +164,26 @@ source and consumer lockfiles, installed versions, tool versions and file hashes
 The plan retains the full verified publication record. Record the external snapshot
 SHA-256 from the producer summary. Download and preview the exact outputs; check
 navigation, responsive/RTL behavior and relevant interaction/accessibility flows.
-Preparation does not constitute human visual approval or a production deploy.
+Preparation is not a production deploy; maintainers still assess the whole selected
+source, including prose, before choosing a manual override. No comment, phrase or
+visual-review workflow input is required.
 Automated hosted browser smoke and production verification remain PD-1121 work.
 
 ## Deployment-only retry and rollback
 
-Dispatch **Deploy reviewed site snapshot** with the producer run ID, independently
-recorded snapshot digest and a `review-comment-id`.
-After reviewing the exact bundle, a human with current repository write/maintain/admin
-access posts a comment on a GitHub issue or PR in this repository containing:
+Dispatch **Deploy reviewed site snapshot** on main with the producer run ID and
+independently recorded snapshot digest. GitHub restricts workflow dispatch to
+repository writers; normal branch protection and repository access remain the
+permission boundary. No GitHub approval comment, numeric comment ID or special
+review phrase is required. The retained workflow display name is unchanged so
+existing catch-up subscriptions continue to work.
 
-```text
-Site visual review approved.
-Source: <full source commit from the verified snapshot>
-Snapshot: <independently recorded SHA-256>
-Independent of unpublished package changes.
-```
+For an independent override, the maintainer chooses a source whose whole content
+is appropriate for the published package baseline. Automated compatibility checks
+do not establish that documentation describes released behavior. This remains a
+maintainer decision, not a replacement checkbox or scripted approval gate.
 
-The independence line is required for bundles from **Prepare site-only release
-snapshot**, including when Changesets are pending. It is a real maintainer statement,
-not an automated semantic determination or a workflow-input checkbox. Review the
-whole selected source/content before making it. Other recovery producers retain the
-existing source/digest visual-review requirement.
-
-Use that comment's numeric ID in the dispatch. The input only locates the record;
-the workflow verifies the real author, current write permission, repository, source
-and digest through GitHub before using deployment credentials. Bots, missing or
-edited approval text, different hashes and read-only authors fail closed. No paid
-Environment-review feature is assumed: the current private repository is on GitHub
-Team, where required Environment reviewers are unavailable.
-
-It authenticates
+The workflow authenticates
 the producer workflow, branch, event and completed state before downloading. It
 checks all retained bytes and installed versions before using deployment secrets.
 It deploys the retained outputs without rebuilding or publishing. A failed Release
@@ -205,12 +191,14 @@ or redeploy producer is accepted only if it already retained a complete valid bu
 a failed preparation, cancelled run or unrelated workflow cannot supply one.
 
 After both deployments succeed, recovery uploads a verified paired-delivery receipt
-binding the actual deployed source, snapshot digest, originating run and approval
-comment. It never acknowledges newer main commits as delivered. Delivery order is
+binding the actual deployed source, controller commit, snapshot digest, originating
+run and successful attempt. New schema-3 receipts contain no comment metadata.
+Historical schema-2 receipts are validated in their original form, without fetching
+the old comment, so successful prior deployments and rollbacks remain recognized. It never acknowledges newer main commits as delivered. Delivery order is
 based on successful receipt creation under the shared deployment lock, including
 restoration of an older source after a newer deployment. Automatic catch-up can
 therefore promote outstanding eligible main work after a recovery or rollback.
-Snapshot approval does not authorize suppressing that work. An intentional rollback
+Manual dispatch does not suppress that work. An intentional rollback
 hold requires separate explicit maintainer authorization and coordination of
 automatic delivery and pending release handoffs; this workflow does not implicitly
 pause either. Failed or partial recovery never records success. Receipt names include the recovery
@@ -226,8 +214,8 @@ an unlimited rollback archive. Do not delete successful run artifacts prematurel
 **Prepare published site rebuild** (`deploy-web.yml`) accepts an explicit release
 tag, or selects the latest non-prerelease with both new provenance assets. It only
 rebuilds and retains the original release source, with `verification-only: true`;
-it does not deploy. Review the resulting bundle, record its approval comment, then
-use **Deploy reviewed site snapshot**. Successful new package publication still
+it does not deploy. Inspect the resulting bundle, then use **Deploy reviewed site
+snapshot** with its run ID and digest. Successful new package publication still
 hands off automatically to both sites through the original reusable workflow.
 
 ## Repository transfer
@@ -259,9 +247,9 @@ only after verifying recurring release preparation, approved exact-head publicat
 retained publication evidence, both deployed sites, a deployment-only retry and an
 independent source snapshot against a reviewed compatible catalog baseline.
 
-This PR cannot finish account trust setup, configure approval settings, approve visual output, or authorize a real
-publication/deployment. Automatic publication is the agreed routine flow.
-Keep PD-1318 open until those operational checks and the PD-1121 follow-up are done.
+Account trust setup and repository settings remain separate operations. Automatic
+publication is the agreed routine flow. PD-1121 tracks the remaining hosted
+smoke/rollback evidence; gate removal alone does not establish those results.
 
 The temporary bootstrap deployment is retired as soon as any recurring publication
 record or site-delivery receipt exists. Its read-only guard runs immediately before
@@ -289,4 +277,5 @@ this bookkeeping failure by republishing immutable npm versions. Partial deploym
 and receipt-upload failures retain the existing reviewed-snapshot recovery path.
 
 A separate [release-control review](CI_RELEASE_CONTROL_REVIEW.md) records follow-up
-recommendations; this token fix does not remove visual approval or change variables.
+recommendations. Mandatory visual-approval comments have since been removed under
+PD-1121; publication variables and exact-artifact safety checks remain unchanged.

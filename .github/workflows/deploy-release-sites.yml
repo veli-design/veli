@@ -33,8 +33,8 @@ jobs:
     concurrency: veli-public-release-sites
     env:
       SITE_SOURCE_COMMIT: ${{ inputs.source-ref }}
-      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli-web.onegov.mv' }}
-      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://veli-storybook.onegov.mv' }}
+      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli.design' }}
+      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://storybook.veli.design' }}
     steps:
       - name: Checkout trusted workflow controller
         uses: actions/checkout@v6

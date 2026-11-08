@@ -4,9 +4,9 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 const sha = /^[a-f0-9]{40}$/;
-export function recoveryReceipt({ source, controller, run, attempt, producer, digest, review }) {
+export function recoveryReceipt({ source, controller, run, attempt, producer, digest }) {
   const value = {
-    schema: 2,
+    schema: 3,
     kind: 'recovery',
     sourceCommit: source,
     controllerCommit: controller,
@@ -14,28 +14,31 @@ export function recoveryReceipt({ source, controller, run, attempt, producer, di
     attempt: Number(attempt),
     snapshotRun: Number(producer),
     snapshotSha256: digest,
-    reviewCommentId: String(review),
   };
   for (const key of ['sourceCommit', 'controllerCommit']) assert.match(value[key], sha);
   for (const key of ['run', 'attempt', 'snapshotRun'])
     assert.ok(Number.isSafeInteger(value[key]) && value[key] > 0);
   assert.match(value.snapshotSha256, /^[a-f0-9]{64}$/);
-  assert.match(value.reviewCommentId, /^[1-9][0-9]*$/);
   return value;
 }
 export function validateRecoveryReceipt(value, source, run, readGit) {
-  assert.deepEqual(
-    value,
-    recoveryReceipt({
-      source: value.sourceCommit,
-      controller: value.controllerCommit,
-      run: value.run,
-      attempt: value.attempt,
-      producer: value.snapshotRun,
-      digest: value.snapshotSha256,
-      review: value.reviewCommentId,
-    }),
-  );
+  // Old successful deployments remain evidence. Schema 2 records a historical
+  // comment ID; schema 3 has no comment dependency. Never rewrite old receipts.
+  assert.ok([2, 3].includes(value.schema), 'Unknown recovery receipt schema');
+  const expected = recoveryReceipt({
+    source: value.sourceCommit,
+    controller: value.controllerCommit,
+    run: value.run,
+    attempt: value.attempt,
+    producer: value.snapshotRun,
+    digest: value.snapshotSha256,
+  });
+  if (value.schema === 2) {
+    assert.match(value.reviewCommentId, /^[1-9][0-9]*$/);
+    expected.schema = 2;
+    expected.reviewCommentId = value.reviewCommentId;
+  }
+  assert.deepEqual(value, expected);
   assert.equal(value.sourceCommit, source);
   assert.equal(value.run, run.id);
   assert.equal(value.attempt, run.run_attempt);

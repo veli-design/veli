@@ -1,5 +1,10 @@
 # Release control review (PD-1344)
 
+**Historical review:** PD-1121 supersedes the visual-comment recommendation below.
+Mandatory publication and site-deployment approval comments are now removed, with
+no replacement phrase or visual-review input. Normal repository reviews and exact
+CI/artifact validation remain. See [the current runbook](CI_RELEASE_RUNBOOK.md).
+
 This is a review record, not authorization to change release policy. The immediate
 fix is step-scoped built-in token wiring for the release-site receipt. Keep all
 existing controls for this fix; evaluate the proposals below separately before

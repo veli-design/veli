@@ -27,8 +27,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli-web.onegov.mv' }}
-      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://veli-storybook.onegov.mv' }}
+      PUBLIC_SITE_URL: ${{ vars.VELI_WEB_ORIGIN || 'https://veli.design' }}
+      STORYBOOK_ORIGIN: ${{ vars.VELI_STORYBOOK_ORIGIN || 'https://storybook.veli.design' }}
     steps:
       - uses: actions/checkout@v4
         with:
