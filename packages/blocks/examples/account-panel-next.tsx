@@ -86,3 +86,57 @@ export function ApplicationAccountPanel({
     />
   );
 }
+
+/** gov.Account/CorpID adapter: business selection is intentionally not an identity input. */
+export function ApplicationPrimaryAccountPanel({
+  primaryUser,
+  labels,
+  primaryLabel,
+  signOutLabel,
+  logout,
+  failureLabel,
+  onActionError,
+  appearance,
+}: {
+  primaryUser: IdentityRecord;
+  appearance?: Parameters<typeof AccountPanel>[0]['appearance'];
+  labels: AccountPanelLabels;
+  primaryLabel: string;
+  signOutLabel: string;
+  logout: () => Promise<void>;
+  failureLabel: string;
+  onActionError: (message: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  return (
+    <AccountPanel
+      profileOnly
+      appearance={appearance}
+      selectedAccount={{
+        id: primaryUser.id,
+        displayName: primaryUser.name,
+        secondaryText: primaryUser.email,
+        secondaryTextLang: 'en',
+        secondaryTextDir: 'ltr',
+        avatar: { src: primaryUser.photo, initials: primaryUser.name },
+        badge: primaryLabel,
+      }}
+      labels={labels}
+      isOpen={open}
+      onOpenChange={setOpen}
+      signOut={{
+        label: signOutLabel,
+        isPending: pending,
+        onPress: () => {
+          if (pending) return;
+          setPending(true);
+          void logout()
+            .then(() => setOpen(false))
+            .catch(() => onActionError(failureLabel))
+            .finally(() => setPending(false));
+        },
+      }}
+    />
+  );
+}
