@@ -21,6 +21,12 @@ artifacts include the matching changelog notes in their README; the same notes
 are used for the corresponding GitHub Release. The repository remains under
 `tradenetcorp` during this packages-first migration.
 
+To copy Blocks into an application, run `pnpm dlx @veli-design/cli init` from its
+package directory, then `pnpm dlx @veli-design/cli add`. New CLI setups default to
+`https://veli.design`; existing project registry configuration is preserved.
+See the [CLI guide](packages/cli/README.md) for URL overrides, access requirements
+and instructions for CLI 0.2.0 or older.
+
 ## Structure
 
 ```
