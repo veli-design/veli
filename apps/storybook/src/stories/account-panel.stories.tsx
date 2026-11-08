@@ -116,6 +116,7 @@ function Playground(args: AccountPanelProps) {
       </p>
       <AccountPanel
         {...args}
+        profileOnly={false}
         selectedAccount={localizeAccount(selected)}
         labels={
           Object.fromEntries(
@@ -338,5 +339,32 @@ export const DelegateSelected: Story = {
   args: {
     selectedAccount: { ...groups[0].accounts[0], badge: 'Delegate user', badgeIntent: 'neutral' },
     accountGroups: [{ id: 'primary', label: 'Primary account', accounts: [account] }, ...groups],
+  },
+};
+
+export const WithoutProfileSwitching: Story = {
+  render: function WithoutProfileSwitchingStory(args) {
+    const [open, setOpen] = useState(false);
+    const [appearance, setAppearance] = useState(args.appearance?.value ?? 'system');
+    return (
+      <div className="flex min-h-96 justify-end p-6">
+        <AccountPanel
+          profileOnly
+          selectedAccount={account}
+          labels={labels}
+          isOpen={open}
+          onOpenChange={setOpen}
+          signOut={args.signOut}
+          appearance={
+            args.appearance && { ...args.appearance, value: appearance, onChange: setAppearance }
+          }
+          accountGroups={groups}
+          isLoading={args.isLoading}
+          error={args.error}
+          emptyState={args.emptyState}
+          accountManagement={{ label: 'Manage account', onPress: () => {} }}
+        />
+      </div>
+    );
   },
 };

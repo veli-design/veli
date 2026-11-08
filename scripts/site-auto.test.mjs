@@ -10,7 +10,7 @@ import {
   packagePaths,
   sitePaths,
   assertCurrent,
-  verifyMergedSiteReview,
+  verifyMergedSiteAuthorization,
   selectBaseline,
   packageLockClosure,
   latestDelivery,
@@ -27,6 +27,7 @@ const approved = {
 const pr = {
   number: 9,
   merged_at: 'now',
+  merged: true,
   merge_commit_sha: source,
   base: { ref: 'main', repo: { full_name: 'veli-design/veli' } },
   head: { sha: approved.commit_id, repo: { full_name: 'veli-design/veli' } },
@@ -35,6 +36,7 @@ const apiFor =
   (reviews, permission = 'write') =>
   async (path) => {
     if (path.startsWith('/commits/')) return [pr];
+    if (path === `/pulls/${pr.number}`) return pr;
     if (path.startsWith('/pulls/')) return reviews;
     if (path.startsWith('/collaborators/')) return { permission };
     throw new Error(path);
@@ -91,7 +93,7 @@ test('site builds default to the established domains while retaining explicit ov
   assert.equal(inputs['storybook-origin'].default, 'https://storybook.veli.design');
 });
 test('ordinary approval requires final head, human, current write permission; no new marker', async () => {
-  await verifyMergedSiteReview(apiFor([approved]), 'veli-design/veli', source);
+  await verifyMergedSiteAuthorization(apiFor([approved]), 'veli-design/veli', source);
   for (const reviews of [
     [],
     [{ ...approved, commit_id: source }],
@@ -99,16 +101,123 @@ test('ordinary approval requires final head, human, current write permission; no
     [approved, { ...approved, state: 'CHANGES_REQUESTED' }],
     [approved, { ...approved, state: 'DISMISSED' }],
   ]) {
-    await assert.rejects(verifyMergedSiteReview(apiFor(reviews), 'veli-design/veli', source));
+    await assert.rejects(
+      verifyMergedSiteAuthorization(apiFor(reviews), 'veli-design/veli', source),
+    );
   }
   await assert.rejects(
-    verifyMergedSiteReview(apiFor([approved], 'read'), 'veli-design/veli', source),
+    verifyMergedSiteAuthorization(apiFor([approved], 'read'), 'veli-design/veli', source),
   );
-  await verifyMergedSiteReview(
+  await verifyMergedSiteAuthorization(
     apiFor([approved, { ...approved, state: 'COMMENTED' }]),
     'veli-design/veli',
     source,
   );
+});
+test('human repository-admin merge authorizes own PR without a review or marker', async () => {
+  const merged = {
+    ...pr,
+    user: { login: 'solo-admin', type: 'User' },
+    merged_by: { login: 'solo-admin', type: 'User' },
+  };
+  const calls = [];
+  await verifyMergedSiteAuthorization(
+    async (path) => {
+      calls.push(path);
+      if (path === `/pulls/${pr.number}`) return merged;
+      if (path === '/collaborators/solo-admin/permission') return { permission: 'admin' };
+      return apiFor([])(path);
+    },
+    'veli-design/veli',
+    source,
+  );
+  assert.ok(!calls.some((path) => path.includes('/reviews')));
+});
+test('merge authority is not inferred from author, bot, writer or unknown permission', async () => {
+  for (const [merger, permission] of [
+    [null, 'admin'],
+    [{ login: 'merger', type: 'Bot' }, 'admin'],
+    [{ login: 'merger', type: 'User' }, 'write'],
+    [{ login: 'merger', type: 'User' }, 'maintain'],
+    [{ login: 'merger', type: 'User', site_admin: true }, 'read'],
+    [{ login: 'merger', type: 'User' }, undefined],
+  ]) {
+    const api = async (path) => {
+      if (path === `/pulls/${pr.number}`)
+        return { ...pr, user: { login: 'admin-author', type: 'User' }, merged_by: merger };
+      if (path.startsWith('/collaborators/')) return { permission };
+      return apiFor([])(path);
+    };
+    await assert.rejects(
+      verifyMergedSiteAuthorization(api, 'veli-design/veli', source),
+      /approval or a human repository-admin merge/,
+    );
+  }
+});
+test('authoritative merged PR must bind exact source, repository and branch', async () => {
+  const adminMerge = { ...pr, merged_by: { login: 'admin', type: 'User' } };
+  for (const invalid of [
+    { ...adminMerge, number: 10 },
+    { ...adminMerge, merged: false },
+    { ...adminMerge, merged_at: null },
+    { ...adminMerge, merge_commit_sha: 'c'.repeat(40) },
+    { ...adminMerge, base: { ...pr.base, ref: 'dev' } },
+    { ...adminMerge, base: { ...pr.base, repo: { full_name: 'other/veli' } } },
+    { ...adminMerge, head: {} },
+  ]) {
+    await assert.rejects(
+      verifyMergedSiteAuthorization(
+        async (path) => {
+          if (path === `/pulls/${pr.number}`) return invalid;
+          return apiFor([], 'admin')(path);
+        },
+        'veli-design/veli',
+        source,
+      ),
+    );
+  }
+  await assert.rejects(
+    verifyMergedSiteAuthorization(async () => [], 'veli-design/veli', source),
+    /requires a PR merged/,
+  );
+});
+test('authorization API failures fail closed rather than using workflow identity', async () => {
+  for (const failure of [`/pulls/${pr.number}`, '/collaborators/admin/permission']) {
+    await assert.rejects(
+      verifyMergedSiteAuthorization(
+        async (path) => {
+          if (path === failure) throw new Error('HTTP 403');
+          if (path === `/pulls/${pr.number}`)
+            return { ...pr, merged_by: { login: 'admin', type: 'User' } };
+          return apiFor([])(path);
+        },
+        'veli-design/veli',
+        source,
+      ),
+      /HTTP 403/,
+    );
+  }
+});
+test('admin merge does not bypass pending Changesets or published-package validation', async () => {
+  const script = readFileSync(new URL('./site-auto.mjs', import.meta.url), 'utf8');
+  const verify = script.slice(
+    script.indexOf("command === 'verify'"),
+    script.indexOf("command === 'guard'"),
+  );
+  assert.ok(
+    verify.indexOf('pendingChangesets()') < verify.indexOf('verifyMergedSiteAuthorization('),
+  );
+  assert.ok(
+    verify.indexOf('assertPublishedSource(') < verify.indexOf('verifyMergedSiteAuthorization('),
+  );
+  assert.match(verify, /verifyCurrentPublication/);
+  const result = await planSiteDelivery(
+    async () => {
+      throw new Error('must not access evidence');
+    },
+    { source, pending: true, release: false, packageSource: source, bootstrap: false },
+  );
+  assert.deepEqual(result, { eligible: false, reason: 'Pending Changesets' });
 });
 test('duplicate guard is checked inside deployment lock', async () => {
   const api = async (path) =>
@@ -512,10 +621,15 @@ test('a late queued event cannot lose the publication handoff: matching release 
 
 test('merged fork contribution is accepted only with target-repository identity and a final-head maintainer review', async () => {
   const fork = { ...pr, head: { ...pr.head, repo: { full_name: 'contributor/veli' } } };
-  const api = async (path) => (path.startsWith('/commits/') ? [fork] : apiFor([approved])(path));
-  await verifyMergedSiteReview(api, 'veli-design/veli', source);
+  const api = async (path) =>
+    path.startsWith('/commits/')
+      ? [fork]
+      : path === `/pulls/${pr.number}`
+        ? fork
+        : apiFor([approved])(path);
+  await verifyMergedSiteAuthorization(api, 'veli-design/veli', source);
   await assert.rejects(
-    verifyMergedSiteReview(
+    verifyMergedSiteAuthorization(
       async (path) => (path.startsWith('/commits/') ? [{ ...fork, merged_at: null }] : api(path)),
       'veli-design/veli',
       source,
@@ -523,7 +637,7 @@ test('merged fork contribution is accepted only with target-repository identity 
     /merged into this repository/,
   );
   await assert.rejects(
-    verifyMergedSiteReview(
+    verifyMergedSiteAuthorization(
       async (path) =>
         path.startsWith('/commits/')
           ? [{ ...fork, base: { ref: 'main', repo: { full_name: 'wrong/repo' } } }]
