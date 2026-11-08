@@ -4,7 +4,14 @@ import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/pr
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import test from 'node:test';
-import {
+// Node's test runner isolates this file in its own process. Clear hook-exported
+// Git paths before loading helpers: they also spawn Git/Corepack subprocesses, so
+// filtering only this file's git() wrapper would not protect the caller's repo.
+for (const key of Object.keys(process.env)) {
+  if (key.startsWith('GIT_')) delete process.env[key];
+}
+
+const {
   assertSiteSource,
   captureSiteBundle,
   createSitePlan,
@@ -13,7 +20,7 @@ import {
   stageSitePlan,
   validateSitePlan,
   verifySiteBundle,
-} from './site-release.mjs';
+} = await import('./site-release.mjs');
 
 const packages = {
   '@veli-design/react': '0.18.0',
