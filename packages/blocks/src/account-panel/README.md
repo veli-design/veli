@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.10.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.11.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -34,13 +34,13 @@ If the copied directory is outside Tailwind's automatically scanned tree, add an
 
 ## API
 
-`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, `onAccountSelect`, and `signOut`. All visible and assistive copy comes from the host; there are no built-in product translations.
+`AccountPanel` is controlled. Supply `selectedAccount`, `labels`, `isOpen`, `onOpenChange`, and `signOut`. In the default switching mode (`profileOnly` omitted or `false`), also supply `onAccountSelect`; omit that callback when `profileOnly` is `true`. All visible and assistive copy comes from the host; there are no built-in product translations.
 
 | Prop                          | Contract                                                                                                                                                                                                            |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `selectedAccount`             | `AccountPanelAccount` for the profile and avatar trigger. The host updates it after selection succeeds.                                                                                                             |
 | `accountGroups`               | Ordered `{ id, label?, accounts }` groups. Empty groups are omitted and nonempty groups have separators. The host filters accounts, excludes the selected account, and supplies stable unique group/account IDs.    |
-| `onAccountSelect`             | Required `(id: string) => void`. The host performs switching and updates the selected account after success.                                                                                                        |
+| `onAccountSelect`             | Required `(id: string) => void` when `profileOnly` is omitted or `false`; not accepted when `profileOnly` is `true`. The host performs switching and updates the selected account after success.                    |
 | `labels`                      | Required localized `trigger`, `dialog`, `close`, `otherAccounts`, `loading` and `pending` strings.                                                                                                                  |
 | `isOpen`, `onOpenChange`      | Required overlay state and change callback. Actions do not automatically close the panel. The host can close it on navigation or successful completion.                                                             |
 | `isDisabled`                  | Disables the avatar trigger, for example while another shell overlay is active.                                                                                                                                     |
