@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.10.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.11.1 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -84,7 +84,7 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
 - `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
-- `labels`: every user-facing string, including `searchSummary`, `noAppsMatch`, `noSitesMatch`, and `noAppsOrSitesMatch` functions.
+- `labels`: every user-facing string, including `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, and `noAppsOrSitesMatch` functions. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. Sites render in the order supplied; that order is the default directory order.
 - `languages`, `language`, `onLanguageChange`.
 - `colorScheme`, `onColorSchemeChange` (`light` | `dark` | `system`).
 - `onNavigate(href)` for in-app switcher tiles.
@@ -98,7 +98,7 @@ Keep labels, routing, authentication, API calls, account panels, and persistence
 
 ## Accessibility and responsive behavior
 
-Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. The switcher apps and sites are a React Aria listbox: Show all uses a grid layout, Apps only and Sites only use a stack. Arrow keys move the highlight (hover treatment, without a focus ring) and Enter opens the highlighted app or site. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

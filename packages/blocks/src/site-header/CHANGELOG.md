@@ -1,3 +1,20 @@
+## 0.11.1
+
+### Fixed
+
+- Keep the filter menu's keyboard controls available when React Aria renders its trigger with `aria-haspopup="true"`.
+
+## 0.11.0
+
+### Added
+
+- Filter the app switcher with Show all, Apps only, or Sites only. Show all keeps the grid. Apps only and Sites only switch to a list, with a result count and a dot on the filter when a subset is active.
+- Move through the visible apps and sites with the arrow keys and open the highlighted item with Enter. The highlight uses the hover treatment. Apps and sites render as a React Aria listbox (grid for Show all, stack for Apps only and Sites only).
+
+### Changed
+
+- Supply `showAll`, `appsOnly`, `sitesOnly`, `showingApps`, and `showingSites` on switcher labels. Sites stay in the order the application provides.
+
 ## 0.10.0
 
 ### Changed

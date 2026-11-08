@@ -27,6 +27,17 @@ const labels: SiteHeaderLabels = {
   searchAppsAndSites: 'Search apps and sites',
   search: 'Search',
   filter: 'Filter',
+  showAll: 'Show all',
+  appsOnly: 'Apps only',
+  sitesOnly: 'Sites only',
+  showingApps: (count) => ({
+    lead: 'Showing all Apps: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
+  showingSites: (count) => ({
+    lead: 'Showing all Sites: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
   searchSummary: (query, appCount, siteCount) => {
     const total = appCount + siteCount;
     return {
@@ -105,24 +116,29 @@ const apps: SiteHeaderSwitcherItem[] = [
 ];
 
 const sites: SiteHeaderSwitcherItem[] = [
-  {
-    id: 'tourism',
-    name: 'Ministry of Tourism',
-    kind: 'site',
-    href: 'https://tourism.gov.mv',
-    external: true,
-    description: 'Official site for the Ministry of Tourism.',
-  },
-  {
-    id: 'secure-inbox',
-    name: 'Secure Inbox',
-    kind: 'site',
-    href: 'https://inbox.gov.mv',
-    external: true,
-    badge: 'signin',
-    description: 'Sign in required to open messages from government services.',
-  },
-];
+  ['defence', 'Minister of Defence and National Service'],
+  ['foreign-affairs', 'Minister of Foreign Affairs'],
+  ['homeland', 'Minister of Homeland Security, Labour and Technology'],
+  ['finance', 'Minister of Finance And Public Enterprises'],
+  ['education', 'Minister of Education, Higher Education and Skills Development'],
+  ['health', 'Minister of Health, Family and Welfare'],
+  ['economy', 'Minister of Economic Development, Transport and Trade'],
+  ['fisheries', 'Minister of Fisheries, Agriculture and Ocean Resources'],
+  ['attorney-general', 'Attorney General'],
+  ['islamic-affairs', 'Minister of Islamic Affairs and Endowments'],
+  ['tourism', 'Minister of Tourism and Civil Aviation'],
+  ['youth', 'Minister of Youth Empowerment, Sports and Fitness'],
+  ['arts', 'Minister of Arts, Culture and Heritage'],
+  ['infrastructure', 'Minister of Infrastructure, Housing and Urban Development'],
+  ['climate', 'Minister of Climate Change, Environment and Energy'],
+].map(([id, name]) => ({
+  id,
+  name,
+  kind: 'site' as const,
+  href: `https://${id}.gov.mv`,
+  external: true,
+  description: `Official site for the ${name}.`,
+}));
 
 export function ApplicationHeader({
   colorScheme = 'light',
@@ -148,6 +164,7 @@ export function ApplicationHeader({
       withCurrent(
         [
           { href: '/', label: 'Home' },
+          { href: '/services', label: 'Services' },
           { href: '/about', label: 'About' },
           { href: '/privacy', label: 'Privacy' },
         ],

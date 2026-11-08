@@ -27,6 +27,17 @@ const labelsEn: SiteHeaderLabels = {
   searchAppsAndSites: 'Search apps and sites',
   search: 'Search',
   filter: 'Filter',
+  showAll: 'Show all',
+  appsOnly: 'Apps only',
+  sitesOnly: 'Sites only',
+  showingApps: (count) => ({
+    lead: 'Showing all Apps: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
+  showingSites: (count) => ({
+    lead: 'Showing all Sites: ',
+    countLabel: count === 1 ? '1 result' : `${count} results`,
+  }),
   searchSummary: (query, appCount, siteCount) => ({
     countLabel: appCount + siteCount === 1 ? '1 result' : `${appCount + siteCount} results`,
     rest: ` for “${query}”`,
@@ -70,6 +81,11 @@ const labelsDv: SiteHeaderLabels = {
   searchAppsAndSites: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ',
   search: 'ހޯއްދަވާ',
   filter: 'ފިލްޓަރ',
+  showAll: 'ހުރިހާ',
+  appsOnly: 'އެޕްތައް އެކަނި',
+  sitesOnly: 'ސައިޓުތައް އެކަނި',
+  showingApps: (count) => ({ lead: 'ހުރިހާ އެޕެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
   searchSummary: (query, appCount, siteCount) => {
     const parts: string[] = [];
     if (appCount > 0) parts.push(`އެޕް ${appCount}`);
@@ -153,41 +169,100 @@ const appsDv: SiteHeaderSwitcherItem[] = [
   },
 ];
 
-const sitesEn: SiteHeaderSwitcherItem[] = [
+/** Default ministry order from the app-switcher design, English then Dhivehi. */
+const ministrySites: Array<{ id: string; en: string; dv: string }> = [
   {
-    id: 'tourism',
-    name: 'Ministry of Tourism',
-    kind: 'site',
-    href: '/tourism',
-    description: 'Official site for the Ministry of Tourism.',
+    id: 'defence',
+    en: 'Minister of Defence and National Service',
+    dv: 'މިނިސްޓަރ އޮފް ޑިފެންސް އެންޑް ނޭޝަނަލް ސަރވިސް',
   },
   {
-    id: 'secure-inbox',
-    name: 'Secure Inbox',
-    kind: 'site',
-    href: '/inbox',
-    badge: 'signin',
-    description: 'Sign in required to open messages from government services.',
+    id: 'foreign-affairs',
+    en: 'Minister of Foreign Affairs',
+    dv: 'މިނިސްޓަރ އޮފް ފޮރިން އެފެއާޒް',
+  },
+  {
+    id: 'homeland',
+    en: 'Minister of Homeland Security, Labour and Technology',
+    dv: 'މިނިސްޓަރ އޮފް ހޯމްލޭންޑް ސެކިއުރިޓީ، ލޭބަރ އެންޑް ޓެކްނޯލޮޖީ',
+  },
+  {
+    id: 'finance',
+    en: 'Minister of Finance And Public Enterprises',
+    dv: 'މިނިސްޓަރ އޮފް ފިނޭންސް އެންޑް ޕަބްލިކް އެންޓަރޕްރައިޒަސް',
+  },
+  {
+    id: 'education',
+    en: 'Minister of Education, Higher Education and Skills Development',
+    dv: 'މިނިސްޓަރ އޮފް އެޑިޔުކޭޝަން، ހަޔަރ އެޑިޔުކޭޝަން އެންޑް ސްކިލްސް ޑިވެލޮޕްމަންޓް',
+  },
+  {
+    id: 'health',
+    en: 'Minister of Health, Family and Welfare',
+    dv: 'މިނިސްޓަރ އޮފް ހެލްތު، ފެމިލީ އެންޑް ވެލްފެއަރ',
+  },
+  {
+    id: 'economy',
+    en: 'Minister of Economic Development, Transport and Trade',
+    dv: 'މިނިސްޓަރ އޮފް އިކޮނޮމިކް ޑިވެލޮޕްމަންޓް، ޓްރާންސްޕޯޓް އެންޑް ޓްރޭޑް',
+  },
+  {
+    id: 'fisheries',
+    en: 'Minister of Fisheries, Agriculture and Ocean Resources',
+    dv: 'މިނިސްޓަރ އޮފް ފިޝަރީޒް، އެގްރިކަލްޗަރ އެންޑް އޯޝަން ރިސޯސަސް',
+  },
+  {
+    id: 'attorney-general',
+    en: 'Attorney General',
+    dv: 'ބަންޑާރަނައިބު',
+  },
+  {
+    id: 'islamic-affairs',
+    en: 'Minister of Islamic Affairs and Endowments',
+    dv: 'މިނިސްޓަރ އޮފް އިސްލާމިކް އެފެއާޒް އެންޑް އެންޑައުމަންޓްސް',
+  },
+  {
+    id: 'tourism',
+    en: 'Minister of Tourism and Civil Aviation',
+    dv: 'މިނިސްޓަރ އޮފް ޓޫރިޒަމް އެންޑް ސިވިލް އޭވިއޭޝަން',
+  },
+  {
+    id: 'youth',
+    en: 'Minister of Youth Empowerment, Sports and Fitness',
+    dv: 'މިނިސްޓަރ އޮފް ޔޫތު އެމްޕަވަރމަންޓް، ސްޕޯޓްސް އެންޑް ފިޓްނަސް',
+  },
+  {
+    id: 'arts',
+    en: 'Minister of Arts, Culture and Heritage',
+    dv: 'މިނިސްޓަރ އޮފް އާޓްސް، ކަލްޗަރ އެންޑް ހެރިޓޭޖް',
+  },
+  {
+    id: 'infrastructure',
+    en: 'Minister of Infrastructure, Housing and Urban Development',
+    dv: 'މިނިސްޓަރ އޮފް އިންފްރާސްޓްރަކްޗަރ، ހައުސިންގ އެންޑް އަރބަން ޑިވެލޮޕްމަންޓް',
+  },
+  {
+    id: 'climate',
+    en: 'Minister of Climate Change, Environment and Energy',
+    dv: 'މިނިސްޓަރ އޮފް ކްލައިމެޓް ޗޭންޖް، އެންވަޔަރަންމަންޓް އެންޑް އެނަރޖީ',
   },
 ];
 
-const sitesDv: SiteHeaderSwitcherItem[] = [
-  {
-    id: 'tourism',
-    name: 'ޓޫރިޒަމް މިނިސްޓްރީ',
-    kind: 'site',
-    href: '/tourism',
-    description: 'ޓޫރިޒަމް މިނިސްޓްރީގެ ރަސްމީ ވެބްސައިޓް.',
-  },
-  {
-    id: 'secure-inbox',
-    name: 'ސެކިއަރ އިންބޮކްސް',
-    kind: 'site',
-    href: '/inbox',
-    badge: 'signin',
-    description: 'ސަރުކާރުގެ ޚިދުމަތްތަކުން ލިބޭ މެސެޖު ހުޅުވުމަށް ސައިންއިން ކުރަން ޖެހޭ.',
-  },
-];
+const sitesEn: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
+  id: site.id,
+  name: site.en,
+  kind: 'site',
+  href: `/${site.id}`,
+  description: `Official site for the ${site.en}.`,
+}));
+
+const sitesDv: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
+  id: site.id,
+  name: site.dv,
+  kind: 'site',
+  href: `/${site.id}`,
+  description: 'ރަސްމީ ވެބްސައިޓް.',
+}));
 
 function GovmvLogo() {
   return (
@@ -259,13 +334,19 @@ function HeaderStory({
   const apps = isDv ? appsDv : appsEn;
   const sites = isDv ? sitesDv : sitesEn;
   const navHome = isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home';
+  const navMedia = isDv ? 'މީޑިއާ' : 'Media';
+  const navServices = isDv ? 'ޚިދުމަތްތައް' : 'Services';
   const navAbout = isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About';
   const navContact = isDv ? 'ގުޅުއްވުމަށް' : 'Contact';
   const signIn = isDv ? 'ސައިންއިން' : 'Sign In';
   const scrollHint = isDv
     ? 'ފްލޯޓިންގ ހެޑަރ ބޭނުންކުރުމަށް ސްކްރޯލް ކުރައްވާ.'
     : 'Scroll to exercise the floating header.';
-  const ministryTitle = title ? (isDv ? 'ޓޫރިޒަމް މިނިސްޓްރީ' : title) : undefined;
+  const ministryTitle = title
+    ? isDv
+      ? 'މިނިސްޓަރ އޮފް ޓޫރިޒަމް އެންޑް ސިވިލް އޭވިއޭޝަން'
+      : title
+    : undefined;
   const logo: ReactNode = title ? <MinistryLogo /> : <GovmvLogo />;
 
   return (
@@ -276,11 +357,15 @@ function HeaderStory({
         pathname="/"
         desktopNavItems={[
           { href: '/', label: navHome, current: true },
+          { href: '/media', label: navMedia },
+          { href: '/services', label: navServices },
           { href: '/about', label: navAbout },
           { href: '/contact', label: navContact },
         ]}
         mobileNavItems={[
           { href: '/', label: navHome, current: true },
+          { href: '/media', label: navMedia },
+          { href: '/services', label: navServices },
           { href: '/about', label: navAbout },
           { href: '/contact', label: navContact },
         ]}
@@ -327,5 +412,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-export const Ministry: Story = { args: { title: 'Ministry of Tourism' } };
+export const Ministry: Story = {
+  args: { title: 'Minister of Tourism and Civil Aviation' },
+};
 export const EmptySites: Story = { args: { emptySites: true } };
