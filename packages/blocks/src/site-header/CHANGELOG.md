@@ -1,3 +1,9 @@
+## 0.11.1
+
+### Fixed
+
+- Keep the filter menu's keyboard controls available when React Aria renders its trigger with `aria-haspopup="true"`.
+
 ## 0.11.0
 
 ### Added
