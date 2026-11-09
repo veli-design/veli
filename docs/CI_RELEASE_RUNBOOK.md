@@ -50,6 +50,13 @@ npm source provenance. Reassess that identity distinction before enabling proven
 Published baseline selection follows immutable tag ancestry on main, never GitHub
 release creation timestamps, so a later backfill cannot displace a newer baseline.
 
+Only the **Publish validated packages to npm** step sets `HUSKY=0`. Changesets
+pushes package tags concurrently; running the local pre-push check for each tag
+would race builds against the same Storybook output directory. Full native release
+validation and the selected-source, approval and version guards remain required,
+and publication still builds every distributable package. Local pre-commit and
+pre-push hooks remain enabled.
+
 After successful publication, the workflow anonymously verifies each exact npm
 version and tarball, retaining `publication.json`, `release-manifest.json` and the
 three package tarballs. The first two descriptors are also GitHub release assets.

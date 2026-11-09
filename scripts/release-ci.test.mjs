@@ -429,6 +429,28 @@ test('workflow keeps native approval, all release suites and publication orderin
   );
 });
 
+test('only validated publication disables local hooks for parallel Changesets tag pushes', async () => {
+  const { parse } = await import('yaml');
+  const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
+  const release = parse(read('../.github/workflows/release.yml'));
+  const publish = release.jobs.release.steps.find(
+    (step) => step.name === 'Publish validated packages to npm',
+  );
+  assert.equal(publish.uses, 'changesets/action@v1');
+  assert.equal(publish.with.publish, 'node scripts/release-order.mjs publish');
+  assert.equal(publish.env.HUSKY, '0');
+  assert.equal(release.env?.HUSKY, undefined, 'Hooks must not be disabled for the workflow');
+  for (const job of Object.values(release.jobs)) {
+    assert.equal(job.env?.HUSKY, undefined, 'Hooks must not be disabled for a whole job');
+    for (const step of job.steps ?? []) {
+      if (step !== publish)
+        assert.equal(step.env?.HUSKY, undefined, 'Hook bypass belongs only to publication');
+    }
+  }
+  assert.equal(read('../.husky/pre-push').trim(), 'corepack pnpm check');
+  assert.equal(read('../.husky/pre-commit').trim(), 'corepack pnpm lint-staged');
+});
+
 test('release publication validates exact CI evidence without reading review comments', async () => {
   const f = fixture();
   // The fixture has no review/comment/permission endpoint: any such dependency fails.
