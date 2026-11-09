@@ -9,12 +9,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "url": "git+https://github.com/veli-design/veli.git",
     "directory": "packages/react"
   },
-  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/react#readme",
+  "homepage": "https://veli.design",
   "bugs": {
-    "url": "https://github.com/tradenetcorp/veli/issues"
+    "url": "https://github.com/veli-design/veli/issues"
   },
   "type": "module",
   "sideEffects": false,

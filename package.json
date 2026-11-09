@@ -72,12 +72,12 @@
   "license": "(MIT AND CC-BY-4.0)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "url": "git+https://github.com/veli-design/veli.git",
     "directory": "."
   },
-  "homepage": "https://github.com/tradenetcorp/veli#readme",
+  "homepage": "https://veli.design",
   "bugs": {
-    "url": "https://github.com/tradenetcorp/veli/issues"
+    "url": "https://github.com/veli-design/veli/issues"
   },
   "keywords": [
     "veli",

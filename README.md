@@ -5,7 +5,7 @@ A modern, accessible design system monorepo built with Turbo, React Aria, and Ta
 ## Packages
 
 The `@veli-design` packages below are available on public npm without a package-read token.
-The repository remains private under `tradenetcorp`; hosted documentation, Storybook
+The repository is private at `veli-design/veli`; hosted documentation, Storybook
 and the Blocks registry require WFA access. For a new application, follow the
 [React package setup](https://www.npmjs.com/package/@veli-design/react).
 Existing applications should follow [the package migration notes](#migrating-from-private-package-names).
@@ -18,8 +18,8 @@ Existing applications should follow [the package migration notes](#migrating-fro
 
 Follow the package links above for package-specific installation and usage. Release
 artifacts include the matching changelog notes in their README; the same notes
-are used for the corresponding GitHub Release. The repository remains under
-`tradenetcorp` during this packages-first migration.
+are used for the corresponding GitHub Release. Source and issue links now use
+[veli-design/veli](https://github.com/veli-design/veli).
 
 To copy Blocks into an application, run `pnpm dlx @veli-design/cli init` from its
 package directory, then `pnpm dlx @veli-design/cli add`. New CLI setups default to

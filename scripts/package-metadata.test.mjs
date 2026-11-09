@@ -32,7 +32,7 @@ const packages = [
   },
 ];
 
-test('published package metadata points to package-specific monorepo locations', async () => {
+test('published package metadata points to the Veli website and transferred repository', async () => {
   for (const expected of packages) {
     const manifest = JSON.parse(await fs.readFile(expected.manifest, 'utf8'));
 
@@ -46,14 +46,11 @@ test('published package metadata points to package-specific monorepo locations',
     assert.ok(manifest.keywords.length);
     assert.deepEqual(manifest.repository, {
       type: 'git',
-      url: 'git+https://github.com/tradenetcorp/veli.git',
+      url: 'git+https://github.com/veli-design/veli.git',
       directory: expected.directory,
     });
-    assert.equal(
-      manifest.homepage,
-      `https://github.com/tradenetcorp/veli/tree/main/${expected.directory}#readme`,
-    );
-    assert.equal(manifest.bugs.url, 'https://github.com/tradenetcorp/veli/issues');
+    assert.equal(manifest.homepage, 'https://veli.design');
+    assert.equal(manifest.bugs.url, 'https://github.com/veli-design/veli/issues');
   }
 });
 

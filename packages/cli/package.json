@@ -4,12 +4,12 @@
   "description": "Install and manage application-owned Veli Blocks.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "url": "git+https://github.com/veli-design/veli.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/cli#readme",
+  "homepage": "https://veli.design",
   "bugs": {
-    "url": "https://github.com/tradenetcorp/veli/issues"
+    "url": "https://github.com/veli-design/veli/issues"
   },
   "type": "module",
   "bin": {

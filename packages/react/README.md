@@ -169,7 +169,7 @@ Original software and code examples use MIT; original non-software documentation
 uses CC BY 4.0. Installed packages include the root `LICENSE` and
 `licensing/LICENSING.md` with scope and attribution information, the complete
 CC BY text, and applicable third-party notices. See the
-[repository licensing map](https://github.com/tradenetcorp/veli/blob/main/LICENSING.md)
+[repository licensing map](https://github.com/veli-design/veli/blob/main/LICENSING.md)
 for source policy and asset details (repository access required).
 Original project work is copyright © 2026 Government of the Republic of Maldives.
 Developed by MINDCo.

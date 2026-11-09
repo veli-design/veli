@@ -44,7 +44,7 @@ Attribution for original documentation:
 
 > Veli Design documentation.
 > © 2026 Government of the Republic of Maldives. Developed by MINDCo.
-> Source: https://github.com/tradenetcorp/veli (repository access currently required).
+> Source: https://github.com/veli-design/veli (repository access currently required).
 > Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 > Indicate modifications when adapting the documentation.
 > Warranty disclaimer: see section 5 of the linked licence.
@@ -81,9 +81,9 @@ attribution information and exclusions without requiring access to repository
 policy links. No app font, brand image or Block SVG is included; registry and
 hosted examples are separate.
 
-The repository currently remains private at `tradenetcorp/veli`; repository and
-issue links require access. Public npm publication, repository transfer and
-public site/registry deployment require separate rollout approvals. Website-only
+The repository is now at `veli-design/veli`; repository and issue links require
+access while it remains private. Public npm publication and public site/registry
+deployment require separate rollout approvals. Website-only
 font/brand permissions are not evidence about the asset-free npm tarballs;
 completed distributed notices and attribution remain npm prerequisites.
 
