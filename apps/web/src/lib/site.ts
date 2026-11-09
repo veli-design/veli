@@ -373,6 +373,27 @@ export const patterns = [
   },
 ] as const;
 
+// The locale is pinned to `en` so the sidebar order does not depend on the machine that builds the site.
+const componentTitleCollator = new Intl.Collator('en', {
+  usage: 'sort',
+  sensitivity: 'base',
+});
+
+function compareComponentTitles(left: ComponentItem, right: ComponentItem) {
+  return componentTitleCollator.compare(left.title, right.title);
+}
+
+function componentsSectionItems(components: readonly ComponentItem[]): DocsNavigationItem[] {
+  const sorted = [...components].sort(compareComponentTitles);
+  const links = sorted.map((item) => ({
+    title: item.title,
+    href: `/docs/${item.slug}/`,
+    description: item.description,
+  }));
+
+  return [{ title: 'Overview', href: '/docs/' }, ...links];
+}
+
 export function getComponentGroupSlug(title: string) {
   return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
 }
@@ -400,14 +421,7 @@ export const docsSections: readonly DocsNavigationSection[] = [
     id: 'components',
     title: 'Components',
     href: '/docs/',
-    items: [
-      { title: 'Overview', href: '/docs/' },
-      ...allComponents.map((item) => ({
-        title: item.title,
-        href: `/docs/${item.slug}/`,
-        description: item.description,
-      })),
-    ],
+    items: componentsSectionItems(allComponents),
   },
   {
     id: 'patterns',
