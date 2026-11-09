@@ -32,8 +32,9 @@ Its duplicate visual entries are hidden from assistive technology. Brand and
 government identifiers retain the exclusions in the repository's brand policy.
 
 The Design page follows frame `2382:89507` in the same Figma file. Its editorial
-spacing and footer live in `src/styles/design.css` and `DesignFooter.astro`,
-independently of the homepage prototype. The composed atoll and Thaana plates
+spacing lives in `src/styles/design.css`, independently of the homepage prototype.
+Both marketing pages reuse `MarketingFooter.astro`, including its navigation
+and theme/motion preferences. The composed atoll and Thaana plates
 keep their native layer coordinates and scale together inside their clips.
 `src/lib/design-fields.json` records the visible particle centres and dot sizes
 relative to the five frame clips; each field draws the original exported SVG dot

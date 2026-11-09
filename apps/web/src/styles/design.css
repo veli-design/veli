@@ -492,128 +492,6 @@
   border-radius: 48px;
   background: #0f2528;
 }
-.marketing-page--design .design-footer {
-  position: relative;
-  margin: 146.991px auto 0;
-  width: min(1512px, 100%);
-  padding: 0 72px 72px;
-  color: var(--marketing-ink);
-}
-.marketing-page--design .design-footer-inner {
-  border-top: 1px solid var(--marketing-border);
-  padding-top: 72px;
-  display: flex;
-  flex-direction: column;
-  gap: 104px;
-}
-.marketing-page--design .design-footer-top {
-  display: flex;
-  align-items: start;
-  gap: 190px;
-}
-.marketing-page--design .design-footer-emblem {
-  width: 48.696px;
-  height: 56px;
-  flex: none;
-  position: relative;
-}
-.marketing-page--design .design-footer-emblem > div {
-  position: absolute;
-  top: 0.39%;
-  left: 0.02%;
-  width: 100%;
-  height: 98.22%;
-  mask: url('/images/marketing/073ac.svg') 0 0.002px / 48.696px 55.002px no-repeat;
-}
-.marketing-page--design .design-footer-emblem img {
-  display: block;
-  width: 48.696px;
-  height: 55.002px;
-}
-.marketing-page--design .design-footer-brands {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  flex: 1;
-}
-.marketing-page--design .design-footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 24px;
-  color: var(--marketing-muted);
-  font-size: 16px;
-  line-height: 24px;
-}
-.marketing-page--design .design-footer-brand img {
-  display: block;
-  width: 201.621px;
-  height: 32.31px;
-}
-.marketing-page--design .design-footer-credit {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 16px;
-  color: var(--marketing-muted);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-}
-.marketing-page--design .design-footer-credit img {
-  display: block;
-  width: 153.913px;
-  height: 31px;
-}
-.marketing-page--design .design-footer-nav {
-  display: flex;
-  align-items: start;
-  gap: 96px;
-  font-size: 14px;
-  line-height: 20px;
-}
-.marketing-page--design .design-footer-nav > div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.marketing-page--design .design-footer-nav > div:nth-child(2) {
-  flex: 1;
-}
-.marketing-page--design .design-footer-nav h2 {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-  color: var(--marketing-muted);
-}
-.marketing-page--design .design-footer-nav a {
-  color: inherit;
-}
-.marketing-page--design .design-footer-nav a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.marketing-page--design .design-footer-dev-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 32px;
-}
-.marketing-page--design .design-footer-socials {
-  display: flex;
-  gap: 12px;
-  height: 20px;
-}
-.marketing-page--design .design-footer-socials a,
-.marketing-page--design .design-footer-socials img {
-  display: block;
-  width: 20px;
-  height: 20px;
-}
-:root[data-theme='dark'] .design-footer-brand img,
-:root[data-theme='dark'] .design-footer-socials img {
-  filter: invert(1);
-}
 :root[data-theme='dark'] .design-responds > p {
   color: #9af366;
 }
@@ -683,15 +561,6 @@
   .marketing-page--design .design-closing p {
     font-size: 30px;
     line-height: 42px;
-  }
-  .marketing-page--design .design-footer-top {
-    gap: 64px;
-  }
-  .marketing-page--design .design-footer-brands {
-    gap: 48px;
-  }
-  .marketing-page--design .design-footer-brand span {
-    max-width: 280px;
   }
 }
 @media (max-width: 760px) {
@@ -919,36 +788,6 @@
     min-height: 0;
     aspect-ratio: 613/537;
     border-radius: 32px;
-  }
-  .marketing-page--design .design-footer {
-    margin-top: 80px;
-    padding: 0 20px 40px;
-  }
-  .marketing-page--design .design-footer-inner {
-    padding-top: 40px;
-    gap: 48px;
-  }
-  .marketing-page--design .design-footer-top {
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .marketing-page--design .design-footer-brands {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    min-width: 200px;
-  }
-  .marketing-page--design .design-footer-brand {
-    gap: 16px;
-  }
-  .marketing-page--design .design-footer-brand span {
-    max-width: 240px;
-  }
-  .marketing-page--design .design-footer-nav {
-    flex-wrap: wrap;
-    gap: 40px;
-  }
-  .marketing-page--design .design-footer-nav > div:nth-child(2) {
-    flex: auto;
   }
 }
 @media (min-width: 1281px) {
