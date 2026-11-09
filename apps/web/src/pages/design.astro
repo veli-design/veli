@@ -78,9 +78,18 @@ const forces = [
         <div class="design-force-grid">
           {
             forces.map((force) => (
-              <article class="design-force-card" data-design-field={force.name}>
+              <article
+                class="design-force-card"
+                data-design-field={force.name}
+                data-design-preview-host
+              >
                 <>
                   <canvas aria-hidden="true" />
+                  <div
+                    class="design-preview-animation design-preview-force"
+                    data-design-animation={force.name}
+                    aria-hidden="true"
+                  />
                   <div class="design-force-icon">
                     <img src={`${a}${force.icon}`} width="100" height="100" alt="" />
                   </div>
@@ -108,11 +117,13 @@ const forces = [
             is built in layers, the same way the islands are. To form one unified nation.
           </p>
         </div>
-        <figure class="design-atoll">
+        <figure class="design-atoll" data-design-preview-host>
           <div class="design-atoll-canvas"><AtollIllustration /></div><figcaption class="sr-only">
             Veli foundations grow into coral components, reef patterns, island blocks, and atolls of
             services.
           </figcaption>
+          <div class="design-preview-animation" data-design-animation="atoll" aria-hidden="true">
+          </div>
         </figure>
         <p class="design-atoll-key" aria-hidden="true">
           Foundations → Components → Patterns → Blocks → Services
@@ -127,27 +138,37 @@ const forces = [
           The Crystalline Sand philosophy dictates how light, texture and motion function across
           government networks.
         </p><div class="design-crystalline-grid">
-          <div class="design-light-art" data-design-scene="light">
+          <div class="design-light-art" data-design-scene="light" data-design-preview-host>
             <img
               src={`${a}444e0.svg`}
               width="338"
               height="301"
               alt="Light: soft blue, teal, and white illumination"
             />
-          </div><div data-design-scene="texture">
+            <div class="design-preview-animation" data-design-animation="light" aria-hidden="true">
+            </div>
+          </div><div data-design-scene="texture" data-design-preview-host>
             <img
               src={`${a}2894e.svg`}
               width="385"
               height="404"
               alt="Texture: grains of sand flowing through a field"
             />
-          </div><div data-design-scene="curve">
+            <div
+              class="design-preview-animation"
+              data-design-animation="texture"
+              aria-hidden="true"
+            >
+            </div>
+          </div><div data-design-scene="curve" data-design-preview-host>
             <img
               src={`${a}c7c33.svg`}
               width="386"
               height="404"
               alt="Motion: a smooth curve with measured control points"
             />
+            <div class="design-preview-animation" data-design-animation="curve" aria-hidden="true">
+            </div>
           </div>
         </div>
       </section>
@@ -172,17 +193,20 @@ const forces = [
               width="1665"
               height="684"
               alt=""
-            /><div class="design-guide" aria-hidden="true">
+            /><div class="design-guide" aria-hidden="true" data-design-preview-host>
               {[0, 1, 2, 3].map((i) => <span style={{ '--i': i }} />)}
-            </div><div class="design-connect" aria-hidden="true">
+              <div class="design-preview-animation" data-design-animation="guide"></div>
+            </div><div class="design-connect" aria-hidden="true" data-design-preview-host>
               <img src={`${a}12e9b.svg`} width="64" height="64" alt="" /><img
                 src={`${a}d02dc.svg`}
                 width="64"
                 height="64"
                 alt=""
               /><img src={`${a}f8b0a.svg`} width="64" height="64" alt="" />
-            </div><div class="design-ripple" aria-hidden="true">
+              <div class="design-preview-animation" data-design-animation="connect"></div>
+            </div><div class="design-ripple" aria-hidden="true" data-design-preview-host>
               <img src={`${a}b4bb8.svg`} width="382" height="260" alt="" />
+              <div class="design-preview-animation" data-design-animation="respond"></div>
             </div>
           </div>
         </div>
@@ -215,9 +239,19 @@ const forces = [
             everyone can use government services in the language they know best.
           </p>
         </div>
-        <div class="design-thaana" data-design-scene="thaana">
+        <div class="design-thaana" data-design-scene="thaana" data-design-preview-host>
+          <p class="sr-only" id="thaana-preview-instructions">
+            Use arrow keys to explore the letters. Press Enter or Space, or tap a letter, to pin or
+            release its green bloom.
+          </p>
           <div class="design-thaana-art" lang="dv" aria-hidden="true">
-            <div class="design-thaana-native"><ThaanaIllustration /></div>
+            <div class="design-thaana-native">
+              <ThaanaIllustration /><div
+                class="design-preview-animation"
+                data-design-animation="thaana"
+              >
+              </div>
+            </div>
           </div>
           <div class="design-thaana-meta">
             <p>Dhivehi typefaces<br />Veli Design System<br />Script No. 001</p><p>

@@ -1037,3 +1037,91 @@
 .marketing-page--design .design-atoll-canvas p[data-node-id='2382:106841'] {
   color: #0c3a47;
 }
+/* The motion prototype is mounted inside the existing illustration slots.
+   Figma stills remain the fallback during loading and for reduced motion. */
+.marketing-page--design .design-preview-animation {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+.marketing-page--design .design-preview-animation > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+.marketing-page--design .design-preview-force {
+  inset: -1px;
+  z-index: -1;
+}
+.marketing-page--design .design-connect {
+  width: 304px;
+  height: 64px;
+}
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  [data-design-preview-ready='true']
+  > .design-preview-animation {
+  display: block;
+}
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-force-card[data-design-preview-ready='true']
+  > canvas,
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-atoll[data-design-preview-ready='true']
+  > .design-atoll-canvas,
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-crystalline-grid
+  > [data-design-preview-ready='true']
+  > img,
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-guide[data-design-preview-ready='true']
+  > span,
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-connect[data-design-preview-ready='true']
+  > img,
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-ripple[data-design-preview-ready='true']
+  > img {
+  opacity: 0;
+}
+.marketing-page--design .design-thaana[data-design-preview-ready='true'] .design-preview-animation {
+  display: block;
+  background: transparent;
+  z-index: 1;
+}
+.marketing-page--design
+  .design-thaana[data-design-preview-ready='true']
+  [data-node-id='2382:110952']
+  > p {
+  visibility: hidden;
+}
+.marketing-page--design .design-thaana [data-node-id='2382:111019'] {
+  position: relative;
+  z-index: 2;
+}
+.marketing-page--design .design-thaana [data-design-svg] {
+  overflow: visible;
+}
+.marketing-page--design .design-thaana [data-design-svg] [role='button'] {
+  cursor: pointer;
+  pointer-events: bounding-box;
+}
+.marketing-page--design .design-thaana [data-design-svg] [role='button']:focus-visible {
+  outline: 2px solid #19767e;
+  outline-offset: 8px;
+}
+.marketing-page--design .design-force-card,
+.marketing-page--design .design-thaana [data-design-svg] {
+  touch-action: pan-y;
+}
+
+.marketing-page--design .design-thaana[data-design-preview-ready='true'] .design-thaana-art {
+  cursor: crosshair;
+}

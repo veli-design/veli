@@ -1,21 +1,9 @@
 import fields from '../lib/design-fields.json';
 
 // Artwork coordinates are read from Figma 2382:89507, relative to each clip.
-// Keep the resting composition separate from the designer prototype's motion
-// parameters so future timing changes cannot change the illustration itself.
-const motion = {
-  period: 16,
-  drift: 2.2,
-  lightReach: 130,
-  lightLean: 11,
-  waveSpeed: 240,
-  waveWidth: 20,
-  waveLife: 1.7,
-  waveAmplitude: 7,
-  windReach: 100,
-  windShift: 35,
-};
-
+// These canvases provide the resting force fields and ambient hero/closing.
+// Interactive card motion is owned by the deferred designer preview module.
+const ambient = { period: 16, drift: 2.2 };
 export function initDesignMotion() {
   const root = document.documentElement;
   const reduced = () =>
@@ -35,7 +23,13 @@ export function initDesignMotion() {
     for (const scene of scenes) {
       if (visible.has(scene.element)) scene.draw(timestamp / 1000, still);
     }
-    if (!still && visible.size) raf = requestAnimationFrame(frame);
+    if (
+      !still &&
+      scenes.some(
+        (scene) => visible.has(scene.element) && scene.element instanceof HTMLCanvasElement,
+      )
+    )
+      raf = requestAnimationFrame(frame);
   }
   const observer = new IntersectionObserver(
     (entries) => {
@@ -55,85 +49,24 @@ export function initDesignMotion() {
     if (!data || !canvas || !context) return;
     const sprite = new Image();
     sprite.src = `/images/marketing/${data.sprite}`;
-    let pointer: { x: number; y: number } | null = null;
-    const ripples: Array<{ x: number; y: number; time: number }> = [];
-    const point = (event: PointerEvent) => {
-      const box = element.getBoundingClientRect();
-      return {
-        x: ((event.clientX - box.left) / box.width) * data.width,
-        y: ((event.clientY - box.top) / box.height) * data.height,
-      };
-    };
-    let lastDrop = { x: -1000, y: -1000 };
-    element.addEventListener('pointermove', (event) => {
-      pointer = point(event);
-      if (
-        data.name === 'ocean' &&
-        Math.hypot(pointer.x - lastDrop.x, pointer.y - lastDrop.y) > 46
-      ) {
-        ripples.push({ ...pointer, time: performance.now() / 1000 });
-        lastDrop = pointer;
-      }
-      wake();
-    });
-    element.addEventListener('pointerleave', () => {
-      pointer = null;
-    });
-    element.addEventListener('pointerdown', (event) => {
-      ripples.push({ ...point(event), time: performance.now() / 1000 });
-      wake();
-    });
     const scene = {
       element,
       draw(time: number, still: boolean) {
+        if (!still && element.dataset.designPreviewReady === 'true') return;
         context.setTransform(canvas.width / data.width, 0, 0, canvas.height / data.height, 0, 0);
         context.clearRect(0, 0, data.width, data.height);
         if (!sprite.complete || !sprite.naturalWidth) return;
-        while (ripples.length && time - ripples[0].time > motion.waveLife) ripples.shift();
+        const animate = !still && element instanceof HTMLCanvasElement;
         for (let i = 0; i < data.points.length; i++) {
           const [x, y] = data.points[i];
-          let ox = still
-            ? 0
-            : Math.sin((time / motion.period) * Math.PI * 2 + y * 0.013 + i * 0.1) * motion.drift;
-          let oy = still
-            ? 0
-            : Math.cos((time / motion.period) * Math.PI * 2 + x * 0.017) * motion.drift;
-          let size = 1;
-          if (!still && pointer) {
-            const dx = pointer.x - x,
-              dy = pointer.y - y,
-              distance = Math.hypot(dx, dy) || 1;
-            if (data.name === 'reef') {
-              const amount = Math.max(0, 1 - distance / motion.lightReach);
-              ox += (dx / distance) * amount * motion.lightLean;
-              oy += (dy / distance) * amount * motion.lightLean;
-              size += amount * 0.85;
-            }
-            if (data.name === 'wind') {
-              const amount = Math.max(0, 1 - distance / motion.windReach);
-              ox += amount * motion.windShift;
-              oy -= amount * 10;
-            }
-          }
-          if (!still && data.name === 'ocean') {
-            for (const ripple of ripples) {
-              const age = time - ripple.time,
-                dx = x - ripple.x,
-                dy = y - ripple.y,
-                distance = Math.hypot(dx, dy) || 1;
-              const u = (distance - motion.waveSpeed * age) / motion.waveWidth;
-              const wave =
-                -u *
-                Math.exp(-u * u) *
-                1.65 *
-                motion.waveAmplitude *
-                Math.max(0, 1 - age / motion.waveLife) ** 2;
-              ox += (dx / distance) * wave;
-              oy += (dy / distance) * wave;
-            }
-          }
-          const width = data.dotWidth * size,
-            height = data.dotHeight * size;
+          const ox = animate
+            ? Math.sin((time / ambient.period) * Math.PI * 2 + y * 0.013 + i * 0.1) * ambient.drift
+            : 0;
+          const oy = animate
+            ? Math.cos((time / ambient.period) * Math.PI * 2 + x * 0.017) * ambient.drift
+            : 0;
+          const width = data.dotWidth,
+            height = data.dotHeight;
           context.drawImage(sprite, x + ox - width / 2, y + oy - height / 2, width, height);
         }
       },
@@ -174,11 +107,31 @@ export function initDesignMotion() {
   }
   document.addEventListener('visibilitychange', wake);
   window.addEventListener('veli:motion-change', wake);
+  window.addEventListener('veli:design-previews-ready', wake);
   window.addEventListener('veli:color-scheme-change', wake);
   window.addEventListener('pagehide', () => {
     cancelAnimationFrame(raf);
     raf = 0;
   });
   window.addEventListener('pageshow', wake);
+  // Fetch the interactive layers as the first previews approach the viewport.
+  // Stills preserve the composition while loading and when motion is reduced.
+  const previews = document.querySelectorAll(
+    '.design-forces, .design-atoll, .design-crystalline, .design-motion-demo, .design-thaana',
+  );
+  if (previews.length) {
+    const preload = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          preload.disconnect();
+          void import('./design-previews.js').then(({ initDesignPreviews }) =>
+            initDesignPreviews(),
+          );
+        }
+      },
+      { rootMargin: '600px' },
+    );
+    previews.forEach((preview) => preload.observe(preview));
+  }
   wake();
 }

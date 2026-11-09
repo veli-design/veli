@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="123.977 5148.69 385 404" width="385" height="404" fill="none" data-design-svg="light"><defs><filter id="design-light-filter0_f_2382_89507" x="147.316" y="5217.08" width="338.32" height="283.857" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="16.2324" result="effect1_foregroundBlur_2382_89507" />
+</filter>
+<filter id="design-light-filter1_f_2382_89507" x="180.09" y="5263.72" width="272.781" height="231.193" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="16.2324" result="effect1_foregroundBlur_2382_89507" />
+</filter>
+<filter id="design-light-filter2_f_2382_89507" x="201.395" y="5291.2" width="230.164" height="214.041" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="16.2324" result="effect1_foregroundBlur_2382_89507" />
+</filter>
+<filter id="design-light-filter3_f_2382_89507" x="220.176" y="5336.02" width="192.617" height="181.289" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="16.2324" result="effect1_foregroundBlur_2382_89507" />
+</filter>
+</defs><g><g filter="url(#design-light-filter0_f_2382_89507)" data-a="sand:glow0">
+<ellipse cx="316.478" cy="5359" rx="136.697" ry="109.464" fill="#16395F" />
+</g>
+<g filter="url(#design-light-filter1_f_2382_89507)" data-a="sand:glow1">
+<ellipse cx="316.482" cy="5379.32" rx="103.927" ry="83.1322" fill="#008EFF" />
+</g>
+<g filter="url(#design-light-filter2_f_2382_89507)" data-a="sand:glow2">
+<ellipse cx="316.478" cy="5398.22" rx="82.6188" ry="74.556" fill="#2CF0F7" />
+</g>
+<g filter="url(#design-light-filter3_f_2382_89507)" data-a="sand:glow3">
+<ellipse cx="316.482" cy="5426.67" rx="63.8418" ry="58.1795" fill="#F7F8E9" />
+</g>
+</g></svg>

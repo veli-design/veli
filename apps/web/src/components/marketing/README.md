@@ -38,7 +38,31 @@ keep their native layer coordinates and scale together inside their clips.
 `src/lib/design-fields.json` records the visible particle centres and dot sizes
 relative to the five frame clips; each field draws the original exported SVG dot
 from `public/images/marketing/`. The resting composition matches Figma, while
-`src/scripts/design-motion.ts` retains the supplied preview's Reef, Ocean, and
-Wind pointer interactions. Reduced motion keeps the exact resting composition.
+`src/scripts/design-motion.ts` supplies those resting fields and ambient hero/closing
+artwork. The deferred preview module below owns the interactive card motion.
+Reduced motion keeps the exact resting composition.
 The designer has not provided mobile frames for this page; its smaller layouts
 adapt the same content and artwork without changing the desktop reference.
+
+Design preview animation now follows the motion designer's `Designing Veli -
+interactive preview (1).html`. The page layout still comes from Figma. Its
+animation-only SVG layers are in `public/animations/design/`; `design-preview.json`
+keeps their original coordinate metadata. Do not replace these with a screenshot
+or embed the prototype's full page layout. `design-previews.js` preserves the
+prototype's timings and easing for the three force fields, atoll orbit streams
+and layer pulses, breathing light, waving texture, morphing curve and loose
+particles, Guide → Connect → Respond sequence, and Thaana pointer lens/pinning.
+
+The preview code and layers load when the first cards approach the viewport.
+Frames stop outside the viewport and while the page is hidden. Reduced motion
+keeps the Figma stills; Thaana pinning remains available without animated scaling
+or drift. Thaana adds one tab stop with arrow-key navigation and Enter/Space to
+pin/release; pointer and touch activation share that state.
+
+The curve's particle collision simulation is baked ahead of time to avoid
+blocking interaction on the browser main thread. After changing its geometry or
+motion settings in `design-preview-curve.js` / `design-preview.json`, regenerate
+it with `corepack pnpm --filter @tradenetcorp/veli-web exec node scripts/generate-design-curve.mjs`.
+The result is 360 frames for 104 grains, interpolated during playback. Preserve
+the original SVG IDs' per-illustration prefixes when updating artwork: multiple
+inline previews must not share gradient, mask, filter, or clip-path IDs.
