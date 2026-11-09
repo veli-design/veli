@@ -191,6 +191,8 @@ for (const language of ['en', 'dv']) {
     await page.setViewportSize({ width: 780, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await openStory(page, 'default', language);
+    // Font swaps can change the scroll endpoint after the one-shot edge scroll.
+    await page.evaluate(() => document.fonts.ready);
     const rail = page.locator('div.overflow-x-auto');
     const previous = page.getByRole('button', {
       name: language === 'dv' ? 'ކުރީގެ ބައިތައް' : 'Previous categories',

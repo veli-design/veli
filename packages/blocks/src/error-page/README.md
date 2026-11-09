@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.6.0 targets Veli React 0.19.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.7.0 targets Veli React 0.20.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -14,7 +14,7 @@ An experimental composition of Veli typography and links with artwork from Basim
 Follow the [Veli setup guide](/docs/), then install dependencies and copy the block:
 
 ```sh
-corepack pnpm add @veli-design/react@0.19.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0 motion@12.42.2
+corepack pnpm add @veli-design/react@0.20.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0 motion@12.42.2
 corepack pnpm dlx @veli-design/cli init
 corepack pnpm dlx @veli-design/cli add error-page
 ```

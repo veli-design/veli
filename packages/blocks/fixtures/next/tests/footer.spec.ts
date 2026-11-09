@@ -18,6 +18,8 @@ test('copied footer renders, hydrates, preserves keyboard focus and Next navigat
   const about = footer.getByRole('link', { name: 'About', exact: true });
   await page.getByRole('button', { name: 'Long labels' }).focus();
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('textbox', { name: 'Host notes' })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(about).toBeFocused();
   await expect(about).toHaveAttribute('data-focus-visible', 'true');
   await page.evaluate(() => {
