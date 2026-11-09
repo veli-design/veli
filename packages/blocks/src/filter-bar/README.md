@@ -104,7 +104,8 @@ categories. Replace sample copy with approved application wording.
 
 See `filter-bar-composition.tsx` below for a complete alternate arrangement with
 consumer-owned publication-period presets, a custom header/footer, a 512px panel,
-and a separate category row. Storybook **Custom Composition** uses that example. **Figma Reference** demonstrates a 1208px layout.
+and a separate category row. Storybook **Custom Composition** uses that example. **Figma Reference** uses the 1208px width, content and spacing
+from [7493:199351](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7493-199351).
 
 ## API
 
@@ -522,3 +523,8 @@ older component internals. Agreed differences remain visible: leading Tag checks
 standard Menu selected states, Veli Popover radius/header typography, native
 DatePicker segments, and the new select-all/standalone section checkboxes. The
 reference story does not fake those controls to conceal differences.
+
+- [PD-1315](https://linear.app/onegov/issue/PD-1315/create-filter-ui-block-for-veli)
+- [Figma Media / Filters](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7493-76508)
+- The attached Media Filters and Search HTML supplies interaction reference.
+  Dhivehi examples exercise RTL and sample copy, not approved Dhivehi Figma parity.

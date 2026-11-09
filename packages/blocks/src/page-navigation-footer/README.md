@@ -49,7 +49,7 @@ The fixture exercises standalone use, composition with error content and the uti
 
 ## Design reference and updates
 
-Ministry details and the emblem in the examples are application-owned content.
+Based on the [inner navigation footer](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=6811-247349) and its mobile/Dhivehi counterparts. Ministry details and the emblem shown there are example application content.
 
 Commit the editable source and `.veli/blocks/page-navigation-footer` baseline together. Run `veli status`, review the changelog, and apply `veli update page-navigation-footer`. Resolve conflicts and use `veli update --continue page-navigation-footer`, or `--abort` to restore the previous copy. Validate your application after updating.
 
@@ -57,10 +57,18 @@ Commit the editable source and `.veli/blocks/page-navigation-footer` baseline to
 
 Navigation links use the existing Veli Link `secondary` intent and `hover` underline. The block does not override label or arrow colors; Link controls their default, hover, pressed and disabled styling. Directional mirroring remains part of the footer’s RTL composition.
 
-## Social controls
+The GOV.MV Figma footer differs: its EN instances override the shared Default Link to use strong label text and base icon colors; desktop DV rows are detached frames with that treatment, while mobile DV instances retain link-colored arrows. The block deliberately follows the current Veli Link variant rather than reproducing these local design overrides. No Link primitive change is included.
 
-Social/contact destinations use Veli `Button as="a"`, `iconOnly`, `size="md"`, `intent="secondary"`, and `appearance="transparent"`. Standard Button styling owns the background, foreground, focus, hover and pressed states. `renderLink` is forwarded to these anchors for application routing. Supply explicit icon dimensions to prevent language-specific typography from changing icon size; the Phosphor examples supply `size={16}`.
+## Social control design differences
 
-## Divider
+Social/contact destinations use Veli `Button as="a"`, `iconOnly`, `size="md"`, `intent="secondary"`, and `appearance="transparent"`. Standard Button styling owns the background, foreground, focus, hover and pressed states; the block does not override primitive styles. `renderLink` is also forwarded to these anchors for application routing.
 
-The block uses the existing Veli `Divider appearance="muted"` without a color, opacity or thickness override.
+Designer follow-up (2026-10-18): GOV.MV Figma uses secondary/transparent/md Button instances with hidden labels, but overrides their sizes and fills. Facebook/X are 48px controls with 20px icons; email/website are 44px controls with 16px icons. Stock Veli md is 44px; lg is 52px, so there is no stock 48px size. The block uses md consistently. Icon content belongs to the application. Supply explicit dimensions to prevent language-specific typography from changing icon size; the Phosphor examples supply `size={16}`.
+
+Figma desktop EN/DV and mobile DV override the background to neutral/alpha/200 (light 5%, dark 4%). Mobile EN instead uses neutral/alpha/300 (light 9%, dark 38%). Veli secondary/transparent uses the opaque button-secondary-subtle semantic token. The block retains that default pending design-system reconciliation. Figma Facebook is Regular while the other three are Bold; examples retain all Bold following product review. Mobile EN also has a legacy icon foreground binding that does not switch correctly with dark mode.
+
+## Divider design review
+
+The block uses the existing Veli `Divider appearance="muted"` without a color, opacity or thickness override. Figma also uses the shared horizontal Divider, no text, Muted variant (component 3677:34419). Both bind to semantics/border/base/muted → brand/neutral/alpha/400 → sage/alpha/400: approximately rgba(17,32,0,0.13) in light and rgba(60,63,61,0.39) in dark.
+
+The desktop EN/DV references additionally apply a 1px inside top stroke with the same muted token to the Navigation Container at the exact Divider position. This overlapping border/Divider treatment can make the reference appear stronger. Mobile references use a single Divider, and fractional Figma coordinates can affect raster sharpness. Retain one standard Veli Divider pending designer confirmation of the intended desktop layering; do not compensate with a stronger token or primitive override.

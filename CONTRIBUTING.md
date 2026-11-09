@@ -99,11 +99,8 @@ chore: release packages
 ```
 
 CI checks the **PR title**, not local feature-branch commits. Those commits
-can stay informal because squash merge discards them. Keep `main` releasable
-and land changes through reviewed pull requests. Use squash merge for normal
-feature and fix PRs; use rebase merge only for an intentional sequence of
-commits. Avoid merge commits, and delete feature branches after merging. See the
-[Git workflow](docs/GIT_WORKFLOW.md) for repository maintenance and release guidance.
+can stay informal because squash merge discards them. Branching, rebase, and
+merge conventions are in the [Git workflow](docs/GIT_WORKFLOW.md).
 
 ## Interactive cursor
 
@@ -134,9 +131,11 @@ a Changelog categories and SemVer bump rules.
 
 - Branch from the latest `main` and keep the change focused on one coherent
   outcome.
-- Use a descriptive, short-lived branch name, such as `fix/button-focus`.
-- Rebase on `main` before review if the branch has drifted.
-- Reference a GitHub issue when one exists.
+- Internal contributors should use the Linear-generated branch name, such as
+  `feature/pd-444-adopt-a-pr-template-format`. Its `PD-###` identifier links
+  the pull request to the primary Linear issue.
+- External contributors may use a descriptive branch name and should open or
+  reference a GitHub issue when one exists.
 
 ## Pull request format
 
@@ -146,7 +145,32 @@ the relevant information.
 
 ### Issue links
 
-Use a GitHub closing keyword only when this pull request should close the issue:
+For internal work, the `PD-###` identifier in the branch name automatically
+links the primary Linear issue. Choose the Linear magic word by intent, and
+use one keyword per issue:
+
+```text
+Resolves PD-123
+Related to PD-456
+Ref PD-789
+```
+
+- `Resolves PD-###` (or another closing word such as `Fixes`) when this
+  pull request should close the issue.
+- `Related to PD-###` when the pull request should relate to an issue
+  without closing it.
+- `Ref PD-###` for a partial contribution that must not close the issue.
+
+Do not use a closing keyword unless the pull request should close that
+issue. Linear's [GitHub magic words](https://linear.app/docs/github)
+document the full closing, non-closing, and relation variants.
+
+If a branch contains `PD-###` but this pull request must not auto-link or
+auto-close that issue, add `Ignore PD-###` or `Skip PD-###` in the PR
+description.
+
+For external work, use a GitHub closing keyword only when this pull
+request should close the issue:
 
 ```text
 Closes #123

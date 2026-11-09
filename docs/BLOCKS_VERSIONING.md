@@ -11,7 +11,7 @@ compatible fix and a minor for additions or breaking changes. Promotion to
 
 Allowed manifest statuses are:
 
-- `experimental`: the default for a new block; it may change as consuming applications
+- `experimental`: the default for a new block; it may change as internal teams
   adopt it.
 - `stable`: approved for broad use after source, accessibility, and consumer
   integration review; it must be version `1.0.0` or later.

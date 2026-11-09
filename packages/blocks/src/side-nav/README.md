@@ -304,6 +304,6 @@ The block does not fetch organizations, open a switcher menu, own nested route t
 
 Presentation follows the V3 floating organization nav geometry: expanded **264px**, collapsed icon rail **68px**, `rounded-3xl` raised surface with `shadow-md`, primary-emphasis avatar ring, and primary-subtle active pills. Collapse and level motion use drawer ease `cubic-bezier(0.32, 0.72, 0, 1)` (400ms panel, 220ms level, 16px travel).
 
-Use shared Veli tokens. Compare surface, text, neutral interaction colors, typography, radii, and shadow against its current variables in both color modes when adopting.
+Token authority: [Veli Design System](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1940-872). Compare surface, text, neutral interaction colors, typography, radii, and shadow against its current variables in both color modes when adopting.
 
 Interactive reference: Storybook **Blocks/Side nav** (Default, Nested, Collapsed) and the docs block page demo. Organization imagery and menu destinations remain host data.

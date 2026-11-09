@@ -1,7 +1,7 @@
 {
   "id": "side-nav",
   "title": "Side nav",
-  "version": "0.5.1",
+  "version": "0.5.0",
   "status": "experimental",
   "description": "Composable floating organization side navigation with collapse context, header chrome, menu parts, and shared level-swap motion.",
   "files": ["side-nav.tsx"],

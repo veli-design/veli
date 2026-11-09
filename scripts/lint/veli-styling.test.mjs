@@ -435,7 +435,7 @@ test('warning-only config reports core classes, preserves narrow directives, and
   assert.equal(result.errorCount, 0);
   assert.equal(result.warningCount, 1);
   const [exception] = await eslint.lintText(
-    `${imports}\n// eslint-disable-next-line shadcn/no-restyle -- preserve accessibility repair pending Veli support\n<Button className="h-12" />`,
+    `${imports}\n// eslint-disable-next-line shadcn/no-restyle -- PD-809: preserve accessibility repair pending Veli support\n<Button className="h-12" />`,
     { filePath: 'apps/consumer.tsx' },
   );
   assert.equal(exception.warningCount, 0);
@@ -642,10 +642,7 @@ test('repository exceptions are closed, exact-file and Button-only', async () =>
   });
   for (const exception of compositionExceptions) {
     assert.ok(
-      typeof exception.reason === 'string' &&
-        exception.reason.trim().length > 0 &&
-        exception.status &&
-        !exception.file.includes('*'),
+      exception.reason.includes('PD-809') && exception.status && !exception.file.includes('*'),
     );
     const [allowed] = await eslint.lintText(
       `${imports}\n<Button className="${exception.classes.join(' ')}" />`,
@@ -759,13 +756,13 @@ test('actual CLI still fails malformed contracts, invalid rule options, missing 
       ],
       [{ 'shadcn/no-arbitrary-values': ['warn', { allow: 42 }] }, /should be array/],
       [{ 'missing-plugin/no-restyle': 'warn' }, /could not find plugin/i],
-      [null, /Styling configuration load failure/],
+      [null, /PD-809 configuration load failure/],
     ]) {
       await writeFile(
         file,
         rules
           ? `import base from '../../eslint.veli.config.mjs'; export default [...base, {rules:${JSON.stringify(rules)}}];`
-          : 'throw new Error("Styling configuration load failure");',
+          : 'throw new Error("PD-809 configuration load failure");',
       );
       const result = spawnSync(
         process.execPath,

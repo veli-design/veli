@@ -1,4 +1,4 @@
-// Baked from Basim Abdullah's prototype.
+// Baked from Basim Abdullah's ENG-3733 prototype; govmv-web PR #134.
 import type { BakedArtwork } from '../error-artwork-engine';
 
 const artwork: BakedArtwork = {

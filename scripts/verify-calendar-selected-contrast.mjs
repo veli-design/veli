@@ -1,5 +1,5 @@
 /* global getComputedStyle, document */
-/** Verify selected current-month date text, endpoint fills, and Today indicators. */
+/** PD-1164 only: selected current-month date text, endpoint fills, and Today indicators. */
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 const require = createRequire(resolve(process.argv[2], 'package.json'));
 const { chromium, webkit, expect } = require('@playwright/test');
 const base = process.argv[3] ?? 'http://127.0.0.1:6034';
-const evidence = resolve(process.argv[4] ?? '.cache/calendar-contrast');
+const evidence = resolve(process.argv[4] ?? '.cache/pd1164');
 await mkdir(evidence, { recursive: true });
 const results = [];
 const errors = [];

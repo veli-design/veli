@@ -106,6 +106,7 @@ export async function createSitePlan({
   publication,
 }) {
   const baseline = validateManifest(JSON.parse(packageManifest));
+  // Adapted from PD-1121's retained site-release validation implementation.
   // The package-release asset is a small public provenance descriptor, never credentials.
   assert.deepEqual(Object.keys(baseline).sort(), ['packages', 'schema', 'sourceCommit']);
   assert.match(sourceCommit, sha);

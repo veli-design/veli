@@ -61,7 +61,7 @@ test('site inventory uses actual packed package versions and rejects stale sourc
     save(inventory);
     writeFileSync(
       resolve(directory, 'package/package.json'),
-      JSON.stringify({ name: '@example/react', version: '0.18.0' }),
+      JSON.stringify({ name: '@fazofazaal/react', version: '0.18.0' }),
     );
     tarSync(['-czf', resolve(directory, 'ui.tgz'), '-C', directory, 'package/package.json']);
     assert.throws(() => candidateInventory(directory, sha), /Unexpected package/);

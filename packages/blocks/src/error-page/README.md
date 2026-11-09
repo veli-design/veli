@@ -7,7 +7,7 @@ block archives retain their existing requirements.
 
 ## Ownership and prerequisites
 
-An experimental composition of Veli typography and links with artwork adapted from Basim Abdullah’s prototype. The block contains no application routes, translations, authentication or connectivity policy. It never reloads the browser automatically or displays exception details.
+An experimental composition of Veli typography and links with artwork from Basim Abdullah’s ENG-3733 prototype, adapted from [govmv-web PR #134](https://github.com/tradenetcorp/govmv-web/pull/134) at `e590a6786325fcda0c508e9fe8ca279e46670fd2`. The block contains no application routes, translations, authentication or connectivity policy. It never reloads the browser automatically or displays exception details.
 
 ## Installation
 
@@ -61,6 +61,6 @@ The consumer fixture covers all six states, EN/DV, themes, narrow screens, enlar
 
 ## Source and updates
 
-The checked-in distance fields preserve the supplied prototype’s five styles; do not replace the artwork with generated glyphs or remote Figma images.
+[Design reference](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=6811-253046). The checked-in distance fields preserve the supplied prototype’s five styles; do not replace the artwork with generated glyphs or remote Figma images.
 
 Commit both the editable source and `.veli/blocks/error-page` receipt/baseline. Review the changelog, run `veli status`, then `veli update error-page`. Resolve any conflicts before `veli update --continue error-page`, or use `--abort` to restore your previous copy. Run your application’s checks after updates.

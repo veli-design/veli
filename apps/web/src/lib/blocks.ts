@@ -31,7 +31,7 @@ ${blocks
 
 ## Ownership and updates
 
-Check each block’s lifecycle status and dependency requirements before adoption. The CLI retains the exact source and receipt used for installation, reports available versions with \`veli status\`, and performs recoverable three-way updates with \`veli update\`.
+Blocks are experimental and initially supported for internal teams with Veli package access. The CLI retains the exact source and receipt used for installation, reports available versions with \`veli status\`, and performs recoverable three-way updates with \`veli update\`.
 
 Primitives remain maintained npm dependencies. Updating a primitive does not automatically update copied composition logic. Application changes remain owned by the consuming project and are never silently overwritten.
 `;

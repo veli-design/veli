@@ -1,9 +1,3 @@
-## 0.7.1
-
-### Changed
-
-- Make the block documentation self-contained for public consumers while preserving API and integration guidance. Retain artwork attribution in source comments.
-
 ## 0.7.0
 
 ### Changed

@@ -1,7 +1,7 @@
 {
   "id": "preview-banner",
   "title": "Preview banner",
-  "version": "0.7.1",
+  "version": "0.7.0",
   "status": "experimental",
   "description": "Floating fixed bottom preview banner with a scroll spacer for draft and published preview states.",
   "files": ["preview-banner.tsx"],

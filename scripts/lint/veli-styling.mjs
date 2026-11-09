@@ -172,7 +172,7 @@ export const veliStyling = {
   settings: {
     shadcn: {
       componentImports: [importPattern],
-      note: 'See docs/VELI_STYLING.md for enforcement levels and reviewed exceptions.',
+      note: 'PD-809 contract. See docs/VELI_STYLING.md for enforcement levels and reviewed exceptions.',
     },
   },
   rules: {

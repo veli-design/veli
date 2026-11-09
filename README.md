@@ -113,7 +113,7 @@ pnpm format:check
 # Run ESLint
 pnpm lint
 
-# Report warning-only Veli styling findings
+# Report warning-only Veli styling findings (PD-809)
 corepack pnpm lint:veli
 
 # Run the same quality gates used before pushing
@@ -156,9 +156,9 @@ This monorepo uses [Changesets](https://github.com/changesets/changesets) for ve
 - [Contributing Guide](CONTRIBUTING.md) - Development setup, changesets, commit convention, and pull request format
 - [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards and reporting
 - [CI and Release Operations](docs/CI_RELEASE_RUNBOOK.md) - Publication, site delivery, and recovery
-- [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and repository maintenance
 - [Consumer CI](docs/CONSUMER_CI.md) - Installed-package validation and check selection
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
+- [Git Workflow](docs/GIT_WORKFLOW.md) - Branching, merge strategy, and trunk-based development conventions
 
 ## Licensing
 
