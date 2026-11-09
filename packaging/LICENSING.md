@@ -34,8 +34,8 @@ licences. Third-party material retains its own terms.
 
 {{THIRD_PARTY_NOTICE}}
 
-The full repository [brand policy](https://github.com/tradenetcorp/veli/blob/main/BRAND_POLICY.md)
-and [asset policy](https://github.com/tradenetcorp/veli/blob/main/ASSET_LICENSES.md)
+The full repository [brand policy](https://github.com/veli-design/veli/blob/main/BRAND_POLICY.md)
+and [asset policy](https://github.com/veli-design/veli/blob/main/ASSET_LICENSES.md)
 require repository access. They provide additional source-asset information;
 the exclusions above are self-contained and do not depend on access to those
 links. Exclusion alone grants no permission to redistribute an unverified asset.

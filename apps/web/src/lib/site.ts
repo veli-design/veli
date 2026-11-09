@@ -60,7 +60,7 @@ export const externalResources: readonly ExternalResource[] = [
     icon: 'figma',
     status: 'coming-soon',
   },
-  { label: 'GitHub', href: 'https://github.com/tradenetcorp/veli', icon: 'github' },
+  { label: 'GitHub', href: 'https://github.com/veli-design/veli', icon: 'github' },
   {
     label: 'npm',
     href: 'https://www.npmjs.com/package/@veli-design/react',

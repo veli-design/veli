@@ -49,12 +49,12 @@
   "license": "(MIT AND CC-BY-4.0)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tradenetcorp/veli.git",
+    "url": "git+https://github.com/veli-design/veli.git",
     "directory": "packages/blocks"
   },
-  "homepage": "https://github.com/tradenetcorp/veli/tree/main/packages/blocks#readme",
+  "homepage": "https://github.com/veli-design/veli/tree/main/packages/blocks#readme",
   "bugs": {
-    "url": "https://github.com/tradenetcorp/veli/issues"
+    "url": "https://github.com/veli-design/veli/issues"
   },
   "description": "Private authoring workspace for application-owned Veli Blocks.",
   "keywords": [
