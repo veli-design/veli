@@ -1,3 +1,9 @@
+## 0.8.1
+
+### Fixed
+
+- Refresh the exact tested dependency baseline to Veli React 0.20.1 and tokens 0.11.1 for the repository-transfer metadata release. Copied source and supported dependency ranges are unchanged; previous block archives retain their existing baselines.
+
 ## 0.8.0
 
 ### Changed

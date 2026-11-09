@@ -1,7 +1,7 @@
 {
   "id": "filter-bar",
   "title": "Filter bar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "experimental",
   "description": "Controlled category browsing, sub-label selection, advanced filters and search with responsive overlays and application-owned results.",
   "files": [
@@ -29,12 +29,12 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.0",
+    "@veli-design/react": "0.20.1",
     "@phosphor-icons/react": "2.1.10",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.22.0",
-    "@veli-design/tokens": "0.11.0",
+    "@veli-design/tokens": "0.11.1",
     "tailwindcss": "4.3.2",
     "next": "16.2.11",
     "motion": "12.42.2"
