@@ -45,10 +45,16 @@ branch commits do not need to follow this format because they are squashed away.
 ## Releases
 
 Package releases use Changesets. Feature PRs that change published packages
-include a `.changeset/*.md` file. The packages-first npm migration keeps release
-execution manual and gated pending license, namespace, version/channel and
-registry-transition approvals. Merging a feature or version PR does not publish
-packages automatically. See [the migration runbook](NPM_MIGRATION.md).
+include a `.changeset/*.md` file. The preparation workflow creates or updates the
+Changesets release PR. After its exact candidate passes the required validation
+and normal repository review, merging that release PR triggers automatic npm
+publication and delivery of the matching released-site snapshot. Ordinary
+feature merges do not publish npm packages.
 
-Do not publish manually or assume an npm version can be deleted and reused.
-Public publication requires its own approval and verification step.
+Pending Changesets hold the standalone site-delivery path. Any manual site-only
+override still requires compatible published packages and a rehearsed catalog;
+it does not publish npm packages. See [CI and release operations](CI_RELEASE_RUNBOOK.md)
+for the current workflow and recovery procedures.
+
+Published npm versions are immutable. Use the documented recovery procedure
+rather than attempting to delete and reuse an existing version.

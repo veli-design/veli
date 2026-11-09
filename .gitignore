@@ -57,3 +57,6 @@ playground/
 # Local visual-regression evidence
 /output/playwright/
 /output/icon-regression/
+
+# One-off audits and review evidence belong outside repository source
+/docs/audits/

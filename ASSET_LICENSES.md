@@ -39,6 +39,14 @@ embedded licensing metadata and any required accompanying copyright, licence
 and notice information when redistributing fonts. Inclusion in Veli Design
 documentation or examples does not relicense a font.
 
+The self-hosted Inter and IBM Plex Mono web fonts use the SIL Open Font License
+1.1. Their copyright notices and complete licence texts are distributed beside
+the binaries as [Inter-OFL.txt](apps/web/public/fonts/Inter-OFL.txt) and
+[IBM-Plex-Mono-OFL.txt](apps/web/public/fonts/IBM-Plex-Mono-OFL.txt). Preserve the
+reserved font name "Plex" and the OFL's modification and redistribution conditions.
+[Third-party notices](THIRD_PARTY_NOTICES.md#self-hosted-web-fonts) identifies the
+covered files and upstream sources. These notices do not apply to the Dhivehi fonts.
+
 ## Distribution requirements
 
 Apply the terms to material actually distributed, whether supplied in a package,
@@ -49,3 +57,23 @@ permissions and preserve its required copyright, licence, attribution and notice
 Distribute material only when its applicable licence or permission allows the
 intended use.
 This policy does not expand the MIT or CC BY grants or waive third-party rights.
+
+### Outstanding asset permissions
+
+- `MV_Aaamu_FK_Bold.ttf`, `MV_A_Waheed_Bold_2.ttf` and
+  `MV_Faseyha_Regular.ttf` in both apps still need verified redistribution terms
+  for the exact files. MV Aaamu FK's embedded notice restricts copying to its
+  licence agreement; MV A Waheed's notice restricts derivative glyph work.
+  MV Faseyha's general-use statement is not treated as a complete redistribution
+  licence. No replacement purchase or broader permission is assumed.
+- Veli Design branding, government/organisation identifiers and other app artwork
+  retain the separate permission and classification requirements in
+  [the brand policy](BRAND_POLICY.md). Adding font notices does not clear them.
+- Historical Git commits and versioned Block archives can retain removed assets
+  and internal documents. Removing current files does not remove those copies or
+  establish permission to publish repository history. Review the intended history
+  and archive distribution before the repository transition.
+
+These app font and image directories are outside the three npm packages' file
+allowlists. Outstanding app-asset permissions remain separate from the packages'
+original-software licences.

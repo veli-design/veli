@@ -226,23 +226,9 @@ package and modifies no consumer repository. To opt in:
 Upstream documents Oxlint >=1.80, but this local boundary rule is an ESLint
 integration. Verify adapter support independently before adopting it with Oxlint.
 The copied policy modules pass an isolated Oxlint 1.72.0 quality smoke test using
-the config preserved in the independent govmv source-copy review. Oxlint is pinned
+the configuration in the regression fixture. Oxlint is pinned
 as a Veli test dependency for that regression, not used to run the styling rules.
 This does not establish installed govmv compatibility or a supported Oxlint adapter.
-Current remote govmv-web/one-fleet reads returned 404. A local govmv snapshot
-`b0215c3` uses Veli UI 0.14.0 and Oxlint `^1.72.0`, below upstream's documented
-Oxlint minimum; this snapshot does not establish the current remote version.
-
-An earlier mixed-severity, read-only source trial on 2026-10-22 linted 73
-direct-importing files in that local govmv snapshot: 37 core errors and 224
-warnings, plus two unresolved foreign lint directives in the Veli-only test config. OnePass snapshot `2788627` had seven
-files, four Button `flex-1` errors and 14 warnings; login/OIDC fields passed.
-Those class findings now warn under this rollout; the historical audit was not
-rerun as an installed app integration. Source hashes were unchanged after the
-audit. These trials run source in memory against this policy and current public Veli entries, not the apps' real installed
-lint/config/import graphs. They are migration evidence, not production audits.
-Web2's checked checkout imports Veli tokens but no Veli UI; its unrelated local
-changes were preserved and no component-policy pass is claimed for it.
 
 ## Verified limits and sources
 
@@ -253,23 +239,9 @@ named contracts, warning severity, coverage separation, compound parts, direct
 import aliases and namespaces, CLI exit behavior, exact-file exceptions and known blind spots.
 The documented consumer config is also executed in a temporary project outside
 the workspace using copied Veli public entries and no repository exceptions.
-A separate clean install used actual packed UI/token tarballs, ESLint 9.39.4,
-typescript-eslint 8.59.3 and React 19.2.8, with no workspace links. Allowed and
-locally shadowed examples passed; protected Button/Input classes and a Badge
-override warn and exit successfully under the refreshed warning-only policy.
-All nine core public entries imported.
-The earlier 2026-10-22 snapshot had an inherited peer mismatch: UI 0.16.0
-required tokens `^0.10.0`, while the token source was 0.9.1. That historical
-installation succeeded with a peer warning. The reviewed 2026-10-25 main baseline
-(`a8eca75`), now integrated into this branch, contains UI 0.17.0 and tokens 0.10.0;
-installed candidate fixtures with that pair pass `pnpm peers check`. Lint
-validation does not approve package publication or consumer runtime upgrades.
-
-This branch's policy targets `@veli-design/react` public imports and excludes
+The policy targets `@veli-design/react` public imports and excludes
 `packages/react/**` implementation files. Import matchers, test package paths,
-implementation exclusions and setup commands use the same names. Historical
-investigation excerpts above retain their original version context; package
-publication and consumer upgrades remain separate from lint validation.
+implementation exclusions and setup commands use the same names. Package publication and consumer upgrades remain separate from lint validation.
 
 - Descendant selectors can bypass a root allowance: `[&_input]:w-full` can pass.
   Parent selectors, `*:`/`**:`, CSS files and ancestor variables are not traced to

@@ -7,9 +7,9 @@ Reusable interactive examples live in `src/components/`.
 ## Package references
 
 Website code examples use `@veli-design/react` and `@veli-design/tokens`;
-React source lives in `packages/react`. These package names are prepared for public npm publication. Coordinate application and copied-Block
-imports with the matching registry before migration; see the
-[migration runbook](../../docs/NPM_MIGRATION.md).
+React source lives in `packages/react`. Both packages are available on public npm.
+Coordinate application and copied-Block imports with the matching registry; see the
+[package migration notes](../../README.md#migrating-from-private-package-names).
 
 `@tradenetcorp/veli-web` remains the private documentation workspace name.
 

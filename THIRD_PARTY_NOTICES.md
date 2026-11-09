@@ -36,9 +36,30 @@ licensing metadata and any accompanying copyright, licence and notice informatio
 required for redistribution. Font binaries are not included in these npm packages.
 See `ASSET_LICENSES.md` for the category-level asset policy.
 
+## Self-hosted web fonts
+
+The following unchanged font binaries in `apps/web/public/fonts/` use the
+SIL Open Font License, Version 1.1. The complete notices are copied into the
+website's `/fonts/` directory with the binaries:
+
+| Font              | Files                                                                                             | Copyright and licence                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Inter 4.001       | `inter-latin.woff2`, `inter-latin-ext.woff2`                                                      | Copyright (c) 2016 The Inter Project Authors. [Full OFL notice](apps/web/public/fonts/Inter-OFL.txt).                       |
+| IBM Plex Mono 2.3 | `ibm-plex-mono-latin-400.woff2`, `ibm-plex-mono-latin-500.woff2`, `ibm-plex-mono-latin-600.woff2` | Copyright © 2017 IBM Corp., with Reserved Font Name "Plex". [Full OFL notice](apps/web/public/fonts/IBM-Plex-Mono-OFL.txt). |
+
+Inter's embedded version identifies source revision `66647c0bb`; its notice is
+preserved from [that upstream revision](https://github.com/rsms/inter/blob/66647c0bb/LICENSE.txt).
+IBM Plex Mono's notice is preserved from [IBM Plex](https://github.com/IBM/plex/blob/master/LICENSE.txt).
+Keep the accompanying notices, embedded metadata and applicable reserved-font-name
+conditions when redistributing or modifying these fonts. These notices cover only
+the listed open-source fonts; they do not grant rights to the Dhivehi font files.
+See [the asset policy](ASSET_LICENSES.md#outstanding-asset-permissions) for those
+unresolved permissions. Storybook's externally loaded Google Fonts stylesheet
+is separate from these self-hosted web binaries.
+
 ## Notice scope and obligations
 
-The table above covers inspected direct runtime dependencies of the three npm
+The runtime-dependency table covers inspected direct dependencies of the three npm
 packages. It does not claim that development or transitive dependencies are
 licence-free. The React framework, React DOM and React Aria Components retain their own
 upstream terms. Blocks' motion and Phosphor dependencies, apps' dependencies,
