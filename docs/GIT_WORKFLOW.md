@@ -32,9 +32,11 @@ issue. Choose the magic word by intent:
 - Completes the issue: Resolves PD-123
 - Relates without closing: Related to PD-123
 - Partial contribution without closing: Ref PD-123
-  Do not use a closing keyword (Resolves, Fixes, Closes) unless this PR should
-  close that issue.
-  External (GitHub): Closes #123 only when this PR should close the issue;
+
+Do not use a closing keyword (Resolves, Fixes, Closes) unless this PR should
+close that issue.
+
+External (GitHub): Closes #123 only when this PR should close the issue;
 
 ## Commit Messages
 
