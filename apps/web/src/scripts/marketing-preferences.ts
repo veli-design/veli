@@ -1,7 +1,7 @@
 export function initMarketingPreferences() {
   const root = document.documentElement;
   const media = matchMedia('(prefers-reduced-motion: reduce)');
-  const inputs = document.querySelectorAll<HTMLInputElement>('[data-reduce-motion]');
+  const controls = document.querySelectorAll<HTMLButtonElement>('[data-reduce-motion]');
   let choice: boolean | null = null;
   try {
     const saved = localStorage.getItem('veli-reduced-motion');
@@ -12,14 +12,15 @@ export function initMarketingPreferences() {
   const apply = () => {
     const reduced = choice ?? media.matches;
     root.dataset.reducedMotion = String(reduced);
-    inputs.forEach((input) => {
-      input.checked = reduced;
+    controls.forEach((control) => {
+      control.setAttribute('aria-checked', String(reduced));
     });
+    root.classList.toggle('low-motion', reduced);
     window.dispatchEvent(new CustomEvent('veli:motion-change', { detail: { reduced } }));
   };
-  inputs.forEach((input) =>
-    input.addEventListener('change', () => {
-      choice = input.checked;
+  controls.forEach((control) =>
+    control.addEventListener('click', () => {
+      choice = control.getAttribute('aria-checked') !== 'true';
       try {
         localStorage.setItem('veli-reduced-motion', String(choice));
       } catch {

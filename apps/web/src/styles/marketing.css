@@ -86,7 +86,6 @@
   object-fit: contain;
 }
 :root[data-theme='dark'] .marketing-logo,
-:root[data-theme='dark'] .marketing-hero-logo,
 :root[data-theme='dark'] .marketing-resource-links img {
   filter: invert(1);
 }
@@ -124,14 +123,14 @@
   position: relative;
   z-index: 1;
   margin-top: 160px;
-  padding-bottom: 40px;
+  padding-bottom: 72px;
 }
 .marketing-footer-top {
   border-top: 1px solid var(--marketing-border);
   padding-top: 72px;
   padding-bottom: 104px;
   display: grid;
-  grid-template-columns: 368px 1fr;
+  grid-template-columns: minmax(260px, 1.2fr) 3fr;
   gap: 64px;
 }
 .marketing-footer-brand {
@@ -172,7 +171,8 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 24px;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 20px;
   color: var(--marketing-muted);
 }
 .marketing-government,
@@ -183,6 +183,10 @@
 }
 .marketing-government {
   max-width: 360px;
+  gap: 16px;
+}
+.marketing-credit {
+  font-weight: 500;
 }
 .marketing-preferences {
   display: flex;
@@ -192,13 +196,16 @@
 }
 .marketing-theme {
   display: flex;
-  padding: 2px;
+  padding: 3px;
+  gap: 2px;
   border-radius: 32px;
   background: var(--marketing-soft);
 }
 .marketing-theme button {
-  padding: 3px 10px;
-  font-size: 12px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
   border: 0;
   border-radius: 24px;
   background: none;
@@ -210,38 +217,43 @@
   box-shadow: 0 1px 4px #0002;
 }
 .marketing-motion {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  border: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--marketing-muted);
+  background: none;
   cursor: pointer;
 }
-.marketing-motion input {
-  appearance: none;
-  width: 32px;
-  height: 16px;
-  border: 1px solid #8b8d87;
-  border-radius: 16px;
+.marketing-motion > span {
+  width: 34px;
+  height: 20px;
+  background: var(--veli-color-border-base-strong, #0e18034a);
+  border-radius: 10px;
   position: relative;
-  cursor: pointer;
+  transition: background 160ms;
 }
-.marketing-motion input::after {
+.marketing-motion > span::after {
   content: '';
-  width: 10px;
-  height: 10px;
-  background: #696b66;
+  width: 16px;
+  height: 16px;
+  background: #fff;
   border-radius: 50%;
   position: absolute;
   left: 2px;
   top: 2px;
   transition: transform 160ms;
+  box-shadow: 0 1px 2px #0003;
 }
-.marketing-motion input:checked {
+.marketing-motion[aria-checked='true'] > span {
   background: #19767e;
-  border-color: #19767e;
 }
-.marketing-motion input:checked::after {
-  background: #fff;
-  transform: translateX(15px);
+.marketing-motion[aria-checked='true'] > span::after {
+  transform: translateX(14px);
 }
 .marketing-home {
   position: relative;

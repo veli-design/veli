@@ -1,10 +1,17 @@
 ---
 import MarketingLayout from '../layouts/marketing-layout.astro';
+import HomeHeroLogo from '../components/marketing/HomeHeroLogo.astro';
+import HomeExploreIcon from '../components/marketing/HomeExploreIcon.astro';
+import govmv from '../assets/marketing/home-govmv.svg?raw';
 import { Button } from '@veli-design/react/button';
+import '../styles/home-experience.css';
+
 const a = '/images/marketing/';
 const features = [
   {
     title: 'Ready to use',
+    name: 'ready-to-use',
+    solids: 'rtu-search rtu-filter rtu-label',
     description: 'Pre-built components and templates, so teams never start from scratch.',
     image: 'c11d0.png',
     width: 717,
@@ -12,6 +19,8 @@ const features = [
   },
   {
     title: 'Consistent by design',
+    name: 'consistent-by-design',
+    solids: 'cbd-sheet',
     description: 'Shared guidelines give every government service a familiar look and feel.',
     image: 'e221e.png',
     width: 699,
@@ -19,6 +28,8 @@ const features = [
   },
   {
     title: 'Built for everyone',
+    name: 'built-for-everyone',
+    solids: 'bfe-card',
     description: 'Access services on any device, in Dhivehi or English.',
     image: '9ab51.png',
     width: 919,
@@ -29,85 +40,29 @@ const explore = [
   {
     title: 'Foundations',
     slug: 'foundations',
-    icon: '7cc01.svg',
     description: 'Colour, type, spacing and motion: the shared tokens behind every service.',
   },
   {
     title: 'Components',
     slug: 'components',
-    icon: '00a3c.svg',
     description: 'Accessible, bilingual building blocks, from buttons to date pickers.',
   },
   {
     title: 'Patterns',
     slug: 'patterns',
-    icon: '075b1.svg',
     description: 'Tested ways to ask questions, check answers and handle errors.',
   },
   {
     title: 'Blocks',
     slug: 'blocks',
-    icon: '0aced.svg',
     description: 'Ready-made page sections, like start pages, to assemble a service fast.',
   },
-];
-const palettes = [
-  [
-    '#f0ffef',
-    '#d5ffd3',
-    '#bdfdb4',
-    '#9af366',
-    '#5ed423',
-    '#2fb31e',
-    '#0fa320',
-    '#227b0d',
-    '#225d04',
-    '#1a3d02',
-    '#0e2801',
-    '#051500',
-  ],
-  [
-    '#f9fdfc',
-    '#eaf7f5',
-    '#d6f3f0',
-    '#b0ecea',
-    '#5bccca',
-    '#3babae',
-    '#309a9f',
-    '#19767e',
-    '#055964',
-    '#0c3a47',
-    '#0f2528',
-    '#051214',
-  ],
-  [
-    '#f8fdff',
-    '#e6f7ff',
-    '#d4f2ff',
-    '#b7e9fe',
-    '#5ac6fd',
-    '#13a4f4',
-    '#0091ed',
-    '#0065de',
-    '#003fd1',
-    '#002a8f',
-    '#001d58',
-    '#010f2d',
-  ],
-  [
-    '#fcfbff',
-    '#f6f4ff',
-    '#eeeaff',
-    '#e4ddff',
-    '#c1b0ff',
-    '#a28afe',
-    '#9177fd',
-    '#6d4bf0',
-    '#4934c5',
-    '#301f86',
-    '#21125f',
-    '#10053b',
-  ],
+] as const;
+const foundations = [
+  ['colour', 'color', 'Explore Veli colour'],
+  ['type', 'typography', 'Explore Veli typography'],
+  ['motion', 'motion', 'Explore purposeful motion'],
+  ['grid', 'spacing', 'Explore Veli spacing'],
 ];
 ---
 
@@ -115,175 +70,220 @@ const palettes = [
   title="Veli Design — Maldives Government Design System"
   description="Veli gives every government team the same building blocks, so services are faster to build and easier to use."
 >
+  <script is:inline>
+    (() => {
+      const root = document.documentElement;
+      let preference = null;
+      try {
+        preference = localStorage.getItem('veli-reduced-motion');
+      } catch {
+        /* Use the system preference. */
+      }
+      const reduced =
+        preference === null
+          ? matchMedia('(prefers-reduced-motion: reduce)').matches
+          : preference === 'true';
+      if (!reduced && window.scrollY < 40) root.classList.add('home-intro');
+      setTimeout(() => {
+        if (!root.dataset.homeReady) root.classList.remove('home-intro');
+      }, 8000);
+    })();
+  </script>
   <div class="marketing-home">
     <canvas id="field" aria-hidden="true"></canvas>
     <section class="marketing-home-hero" aria-labelledby="home-title" data-field-cover>
-      <h1 id="home-title">
-        <img
-          class="marketing-hero-logo"
-          src={`${a}veli-design-hero.svg`}
-          width="961"
-          height="154"
-          alt="Veli Design"
-          data-solid="rect"
-          data-group="logo"
-        />
-      </h1>
+      <h1 id="home-title"><HomeHeroLogo /></h1>
     </section>
     <div class="marketing-container marketing-home-content">
       <section class="marketing-statement" aria-labelledby="home-statement">
-        <h2 id="home-statement" data-field-stop>
+        <h2 id="home-statement" data-intro data-solid="text" data-group="text" data-field-stop>
           Helping teams deliver consistent digital experiences.
         </h2>
-        <p>
+        <p data-intro data-solid="text" data-group="text">
           Veli gives every government team the same building blocks, so services are faster to build
           and easier to use.
         </p>
-        <Button as="a" href="/docs/" intent="accent" size="xl">Documentation</Button>
+        <div data-intro data-solid="rect" data-group="text">
+          <Button as="a" href="/docs/" intent="accent" size="xl">Documentation</Button>
+        </div>
       </section>
-      <div class="marketing-feature-grid">
+      <section class="marketing-feature-grid cards-v2" aria-label="Principles" data-reveal>
         {
           features.map((feature, index) => (
-            <article class:list={['marketing-feature', index === 2 && 'marketing-feature-wide']}>
-              <div class="marketing-feature-art" aria-hidden="true">
+            <article
+              class:list={[
+                'marketing-feature',
+                'pcard',
+                index === 2 && 'marketing-feature-wide',
+                index === 2 && 'wide',
+              ]}
+              data-card={index + 1}
+              data-reveal-item
+              data-solid="rect"
+              data-group="cards"
+            >
+              <div
+                class="marketing-feature-art anim"
+                aria-hidden="true"
+                data-lottie={feature.name}
+                data-lottie-solids={feature.solids}
+                data-lottie-align={index === 2 ? 'xMidYMin' : undefined}
+                data-stipple
+                data-stipple-key={`stPattern${index + 1}`}
+                data-stipple-color-key={`cardHover${index + 1}`}
+              >
                 <img
+                  class="marketing-animation-fallback"
                   src={`${a}${feature.image}`}
                   width={feature.width}
                   height={feature.height}
                   loading="lazy"
                   alt=""
                 />
+                <div class="lottie-box" />
               </div>
-              <div class="marketing-feature-copy">
-                <>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.description}</p>
-                </>
+              <button
+                class="lt-replay"
+                type="button"
+                aria-label={`Replay the ${feature.title} animation`}
+                hidden
+              >
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+                  <path
+                    d="M16.7 10a6.7 6.7 0 1 1-1.9-4.7M15 2v4h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <div class="marketing-feature-copy head">
+                <h3 data-cf-avoid>{feature.title}</h3>
+                <p data-cf-avoid>{feature.description}</p>
               </div>
             </article>
           ))
         }
-      </div>
-      <section class="marketing-foundations" aria-labelledby="foundation-title">
-        <div class="marketing-statement">
-          <h2 id="foundation-title">Unified foundation,<br />Streamlined Design</h2><p>
+      </section>
+      <section class="marketing-foundations foundation" aria-labelledby="foundation-title">
+        <div class="marketing-statement" data-reveal>
+          <h2 id="foundation-title" data-reveal-item>
+            Unified foundation,<br />Streamlined Design
+          </h2>
+          <p data-reveal-item>
             Veli design system foundations focus on consistent colors, clear typography, and
             purposeful motion inspired by the Maldives islands and its formation.
-          </p><Button as="a" href="/docs/foundations/" intent="accent" size="xl">Foundation</Button>
+          </p>
+          <div data-reveal-item>
+            <Button as="a" href="/docs/foundations/" intent="accent" size="xl">Foundation</Button>
+          </div>
         </div>
-        <div class="marketing-foundation-grid">
-          <a
-            class="marketing-foundation-tile marketing-palette"
-            href="/docs/foundations/color/"
-            aria-label="Explore Veli colour"
-            ><div aria-hidden="true">
-              {
-                palettes.map((row) => (
-                  <div>
-                    {row.map((color) => (
-                      <span style={{ backgroundColor: color }} />
-                    ))}
-                  </div>
-                ))
-              }
-            </div></a
-          >
-          <a
-            class="marketing-foundation-tile marketing-type"
-            href="/docs/foundations/typography/"
-            aria-label="Explore Veli typography"
-            ><img src={`${a}eabed.svg`} width="316" height="56" alt="Dhivehi Raajje" /><span
-              >Maldives</span
-            ></a
-          >
-          <a
-            class="marketing-foundation-tile marketing-motion-art"
-            href="/docs/foundations/motion/"
-            aria-label="Explore purposeful motion"
-            ><img src={`${a}b0208.svg`} width="180" height="180" alt="" /><span
-              class="marketing-motion-track"
-              ><img src={`${a}5d2fc.svg`} width="239" height="8" alt="" /><img
-                class="marketing-motion-ball"
-                src={`${a}6a7aa.svg`}
-                width="24"
-                height="24"
-                alt=""
-              /></span
-            ></a
-          >
-          <a
-            class="marketing-foundation-tile marketing-spacing"
-            href="/docs/foundations/spacing/"
-            aria-label="Explore Veli spacing"
-            >{Array.from({ length: 8 }, () => <span aria-hidden="true" />)}</a
-          >
-        </div>
-      </section>
-      <section class="marketing-adoption" aria-label="Government adoption">
-        <p>
-          Veli Design System launches with 15+ services already on board, across every ministry in
-          the Cabinet.
-        </p><div class="marketing-logo-strip">
-          <img src={`${a}govmv-wordmark.svg`} width="132" height="34" alt="gov.mv" />{
-            Array.from({ length: 4 }, () => (
-              <div>
-                <>
-                  <img src={`${a}government-emblem.svg`} width="40" height="46" alt="" />
-                  <span>
-                    Ministry of Homeland Security,
-                    <br />
-                    Labour and Technology
-                  </span>
-                </>
-              </div>
+        <div class="marketing-foundation-grid fd-grid">
+          {
+            foundations.map(([kind, slug, label]) => (
+              <article class="fcard">
+                <div
+                  class="fd-panel"
+                  data-fd={kind}
+                  role="button"
+                  tabindex="0"
+                  aria-label={`${label} preview; replay animation`}
+                />
+                <a class="home-foundation-fallback" href={`/docs/foundations/${slug}/`}>
+                  {label}
+                </a>
+              </article>
             ))
           }
         </div>
       </section>
-      <section class="marketing-explore" aria-labelledby="explore-title">
-        <div class="marketing-statement">
+      <section class="marketing-adoption logos" aria-label="Government adoption">
+        <p class="lg-line">
+          Veli Design System launches with 15+ services already on board, across every ministry in
+          the Cabinet.
+        </p>
+        <div class="lg-window">
+          <ul class="lg-track">
+            <li class="lg-item"><Fragment set:html={govmv} /></li>
+            {
+              Array.from({ length: 5 }, (_, index) => (
+                <li class="lg-item" aria-hidden={index > 0 ? 'true' : undefined}>
+                  <img
+                    class="lg-emblem"
+                    src={`${a}adoption-emblem.png`}
+                    width="35"
+                    height="40"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <span>Minister of Homeland Security, Labour and Technology</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+      <section class="marketing-explore" aria-labelledby="explore-title" data-reveal>
+        <div class="marketing-statement" data-reveal-item>
           <h2 id="explore-title">Everything you need,<br />all in one place</h2>
-        </div><div class="marketing-explore-grid">
+        </div>
+        <div class="marketing-explore-grid explore">
           {
             explore.map((item) => (
-              <a href={`/docs/${item.slug}/`}>
-                <>
-                  <div class="marketing-explore-icon">
-                    <img
-                      src={`${a}${item.icon}`}
-                      width={item.slug === 'components' || item.slug === 'blocks' ? 148 : 144}
-                      height={item.slug === 'components' ? 142 : item.slug === 'blocks' ? 136 : 144}
-                      loading="lazy"
-                      alt=""
-                    />
-                  </div>
-                  <h3>{item.title}</h3>
+              <a class="xcol" href={`/docs/${item.slug}/`} data-reveal-item>
+                <span class="xi-box">
+                  <HomeExploreIcon kind={item.slug} />
+                </span>
+                <span class="head">
+                  <h3>
+                    {item.title}
+                    <svg class="xc" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+                      <path
+                        d="m7.5 5 5 5-5 5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </h3>
                   <p>{item.description}</p>
-                </>
+                </span>
               </a>
             ))
           }
         </div>
       </section>
-      <section class="marketing-contribute" aria-labelledby="contribute-title">
-        <img src={`${a}30c84.svg`} width="2058" height="1644" loading="lazy" alt="" /><div>
-          <h2 id="contribute-title">Let’s build it<br />together</h2><p>
+      <section class="marketing-contribute" aria-labelledby="contribute-title" data-cta="light">
+        <div class="cta-light-src" aria-hidden="true">
+          <img src={`${a}30c84.svg`} width="2058" height="1644" loading="lazy" alt="" />
+        </div>
+        <div class="marketing-contribute-copy">
+          <h2 id="contribute-title">Let’s build it<br />together</h2>
+          <p>
             Whether you’re a designer, developer, or government team,<br
               class="marketing-desktop-break"
-            /> your contributions can help make public services clearer, more consistent, and accessible
+            />
+            your contributions can help make public services clearer, more consistent, and accessible
             to everyone.
-          </p><Button
-            as="a"
-            href="https://github.com/veli-design/veli/blob/main/CONTRIBUTING.md"
-            intent="accent"
-            size="xl">Contribute to Veli</Button
-          >
+          </p>
+          <div data-cta-item>
+            <Button
+              as="a"
+              href="https://github.com/veli-design/veli/blob/main/CONTRIBUTING.md"
+              intent="accent"
+              size="xl">Contribute to Veli</Button
+            >
+          </div>
         </div>
       </section>
     </div>
   </div>
 </MarketingLayout>
 <script>
-  import { initHomeStipple } from '../scripts/home-stipple.js';
-  initHomeStipple();
+  import { initHomeExperience } from '../scripts/home-experience.js';
+  initHomeExperience();
 </script>

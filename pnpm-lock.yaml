@@ -196,6 +196,9 @@ importers:
       astro:
         specifier: ^5.18.2
         version: 5.18.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.62.3)(sass@1.94.2)(supports-color@10.2.2)(terser@5.44.1)(typescript@5.9.3)(yaml@2.9.0)
+      lottie-web:
+        specifier: 5.12.2
+        version: 5.12.2
       react:
         specifier: ^19.0.0
         version: 19.2.8
@@ -7087,6 +7090,12 @@ packages:
         integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==,
       }
     hasBin: true
+
+  lottie-web@5.12.2:
+    resolution:
+      {
+        integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==,
+      }
 
   loupe@3.2.1:
     resolution:
@@ -14316,6 +14325,8 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  lottie-web@5.12.2: {}
 
   loupe@3.2.1: {}
 

@@ -3,7 +3,12 @@ const path = Astro.url.pathname;
 const github = 'https://github.com/veli-design/veli';
 ---
 
-<div class="marketing-official">
+<div
+  class="marketing-official"
+  data-intro={path === '/' ? '' : undefined}
+  data-solid="rect"
+  data-group="banner"
+>
   <img src="/blocks/maldives-flag.svg" width="24" height="16" alt="Maldives flag" />
   <span>An official website of the Maldives Government</span>
   <details>
@@ -15,7 +20,7 @@ const github = 'https://github.com/veli-design/veli';
     </p>
   </details>
 </div>
-<header class="marketing-header">
+<header class="marketing-header" data-nav-after={path === '/' ? '.marketing-hero-logo' : undefined}>
   <a href="/" aria-label="Veli Design home"
     ><img
       class="marketing-logo"
@@ -56,6 +61,15 @@ const github = 'https://github.com/veli-design/veli';
   </details>
 </header>
 <script>
+  const header = document.querySelector<HTMLElement>('.marketing-header');
+  const hero = header?.dataset.navAfter ? document.querySelector(header.dataset.navAfter) : null;
+  if (header && hero) {
+    const update = () =>
+      header.classList.toggle('is-shown', hero.getBoundingClientRect().bottom < 40);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
   const menu = document.querySelector<HTMLDetailsElement>('.marketing-mobile-menu');
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && menu?.open) {

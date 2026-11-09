@@ -1,6 +1,7 @@
+import { homeMotionSettings } from './home-motion-settings.js';
 // Adapted from the designer’s veli-home-v2.html prototype in PD-1326.
 // Keep the designer’s field parameters here so future motion revisions stay local.
-export function initHomeStipple() {
+export function initHomeStipple(reveal = { active: false, r: 0, cx: 0, cy: 0, feather: 260 }) {
   const canvasElement = document.getElementById('field');
   if (!canvasElement || !canvasElement.getContext('2d')) return;
   const html = document.documentElement;
@@ -377,7 +378,8 @@ export function initHomeStipple() {
         );
       if (kind === 'mask') {
         s.mask = buildMask(maskImageFor(el), r.width, r.height);
-        if (!s.mask) s.kind = 'rect';
+        // A loading image must never become an invisible rectangular obstacle.
+        if (!s.mask) continue;
       }
       solids.push(s);
     }
@@ -394,6 +396,7 @@ export function initHomeStipple() {
       im = new Image();
       im.onload = () => {
         layoutDirty = true;
+        wake();
       };
       im.src = el.dataset.maskSrc;
       maskImages.set(el, im);
@@ -1220,7 +1223,7 @@ export function initHomeStipple() {
     layoutDirty = true;
   }
   const bucketLists = Array.from({ length: 6 * ALEV }, () => []);
-  const REVEAL = { active: true, r: 0, cx: 0, cy: 0, feather: 260 };
+  const REVEAL = reveal;
   function render() {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1380,33 +1383,8 @@ export function initHomeStipple() {
   });
   FRAME.push(heroFrame);
 
-  defineDefaults({
-    ctaMode: 'light',
-    introSpeed: 0.701,
-    bgSpeed: 0.76,
-    scrollLag: 0.031,
-    coverage: 0.24,
-    heroHeight: 1060,
-    falloff: 170,
-    tail: 0.06,
-    stDot: 1.82,
-    stPitch: 0.725,
-    stLoose: 3.63,
-    stSpeed: 0.0423,
-    stEvolve: 0.534,
-    stClear: 0,
-    stScatter: 0.86,
-    stScatterRadius: 65,
-    stHoverSpeed: 1.93,
-    stColorTime: 0.194,
-    iconDot: 4.18,
-    iconSpacing: 4.36,
-    iconDepth: 65,
-    iconLayers: 4,
-    iconSpring: 0.541,
-  });
+  defineDefaults(homeMotionSettings);
 
-  REVEAL.active = false;
   for (const boot of ONBOOT) boot();
   let raf = 0,
     previous = 0;
@@ -1415,13 +1393,27 @@ export function initHomeStipple() {
     document.querySelector('[data-field-stop]').getBoundingClientRect().bottom > 0;
   function tick(time) {
     raf = 0;
+    if (!visible()) {
+      clearField();
+      return;
+    }
     const dt = previous ? clamp((time - previous) / 1000, 1 / 240, 1 / 30) : 1 / 60;
     previous = time;
     heroFrame(dt);
     if (!LOW && visible()) raf = requestAnimationFrame(tick);
   }
+  function clearField() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
   function wake() {
-    if (!raf && visible()) {
+    if (!visible()) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      clearField();
+      return;
+    }
+    if (!raf) {
       previous = 0;
       raf = requestAnimationFrame(tick);
     }
@@ -1444,4 +1436,5 @@ export function initHomeStipple() {
     raf = 0;
   });
   wake();
+  return { wake };
 }

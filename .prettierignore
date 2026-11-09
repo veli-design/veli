@@ -32,3 +32,6 @@ Thumbs.db
 # Local browser-tool output (not repository source)
 .playwright-cli
 .playwright-mcp
+
+# Designer-exported animation data (retain compact JSON)
+apps/web/public/animations/marketing/*.json
