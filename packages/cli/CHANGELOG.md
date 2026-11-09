@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.2.1
+
+_Released 2026-11-09._
+
+### Changed
+
+- Default new Blocks setup and pre-initialization access checks to https://veli.design without a URL prompt, while preserving explicit overrides and existing project registry configuration.
+
 ## 0.2.0
 
 _Released 2026-11-01._

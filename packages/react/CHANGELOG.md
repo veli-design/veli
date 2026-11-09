@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.20.0
+
+_Released 2026-11-09._
+
+### Added
+
+- Add `OTPInput` from `@veli-design/react/otp-input` for one-time codes, with a separate box per character, Input underline or outline, Input `sm`, `md`, and `lg` heights, optional groups, one-time-code autofill, and the same label, description, validation, and Form behaviour as `Input`.
+
+### Changed
+
+- Accordion triggers, dropzone areas, combobox disclosure buttons, tag remove buttons, tag dropdown controls, and the date picker calendar button show a pointer cursor when they can be used.
+- Pagination, tab overflow, and breadcrumb overflow menu rows use the menu default cursor.
+
+### Fixed
+
+- Disabled buttons, links, tabs, and tags show a not-allowed cursor while the pointer is over them.
+- Disabled menu, select, combobox, and calendar picker rows show a not-allowed cursor and stay under the pointer.
+
 ## 0.19.0
 
 _Released 2026-11-04._

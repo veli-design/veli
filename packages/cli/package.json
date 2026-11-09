@@ -1,6 +1,6 @@
 {
   "name": "@veli-design/cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Install and manage application-owned Veli Blocks.",
   "repository": {
     "type": "git",
