@@ -1,7 +1,7 @@
 {
   "id": "filter-bar",
   "title": "Filter bar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "experimental",
   "description": "Controlled category browsing, sub-label selection, advanced filters and search with responsive overlays and application-owned results.",
   "files": [

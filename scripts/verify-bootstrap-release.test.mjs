@@ -42,7 +42,7 @@ test('snapshot confines deployment to the three reviewed packages and safe artif
   assert.equal(validateBootstrapSnapshot(recorded), recorded);
   for (const change of [
     (s) => {
-      s.packages['@fazofazaal/react'] = s.packages['@veli-design/react'];
+      s.packages['@example/react'] = s.packages['@veli-design/react'];
     },
     (s) => {
       s.packages['@veli-design/react'].file = '../ui.tgz';
@@ -77,7 +77,7 @@ test('public reads verify all exact versions and downloaded bytes without authen
 test('changed registry identity, integrity, URL or payload cannot authorize deployment', async () => {
   for (const tamper of [
     (j) => {
-      j.name = '@fazofazaal/react';
+      j.name = '@example/react';
     },
     (j) => {
       j.version = '0.19.0';
@@ -131,7 +131,7 @@ test('temporary entry reuses the existing site workflow and cannot publish or by
     (s) => s.name === 'Verify exact source and anonymously download approved npm artifacts',
   );
   assert.ok(verify < steps.findIndex((s) => s.uses === 'pnpm/action-setup@v6'));
-  const gate = steps.find((s) => s.name === 'Require explicit internal deployment approval');
+  const gate = steps.find((s) => s.name === 'Require explicit deployment approval');
   assert.equal(gate.if, 'inputs.deploy-sites');
   assert.match(gate.env.REGISTRY_TRANSITION_APPROVED, /VELI_REGISTRY_TRANSITION_APPROVED/);
   assert.match(gate.run, /= 'true'/);

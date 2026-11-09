@@ -67,23 +67,23 @@ Callbacks are notifications, not promise handlers. Handle rejection, pending sta
 
 The executable example below maps generic identity records to display data and keeps asynchronous operations in the application adapter. Its English labels are demonstration content; translate them in production.
 
-For govmv-web, keep `useFrontendSession`, tenant filtering, and `useCopy` in the application. Map `tenant_uuid` to `id`, `tenant_name` to `displayName`, `tenant_photo` to `avatar.src`, and the appropriate translated subtitle to `secondaryText`. Map the current tenant to `selectedAccount`; supply the translated primary-user badge only when it matches the primary person. Build ordered personal/business groups in the adapter using the existing filtering policy; Veli sees only generic groups.
+Keep session discovery, tenant filtering, translations and identity mutations in the application. Map identity records to `id`, `displayName`, `avatar.src` and `secondaryText`, then supply the selected identity as `selectedAccount`. Build ordered personal/business groups using the host authorization policy.
 
-Wire the existing `session.selectTenant` through `onAccountSelect`. Hosts must supply account switching for any additional accounts they expose; filter out accounts that cannot be selected. Keep `logoutSession(markSessionSignedOut)` in the sign-out callback. The host resolves the configured delegation/account URL and opens it from the empty-state action; the block accepts no service-specific URL or navigation policy. Map theme preference to `appearance.value` and wire the app's preference setter to `onChange`. The mobile navigation's external theme control stays app-owned.
+Supply account switching through `onAccountSelect` and filter out accounts that cannot be selected. Keep sign-out, account-management navigation and preference persistence in host callbacks. Map theme preference to `appearance.value` and wire the app preference setter to `onChange`.
 
-Mount this block only in the signed-in branch of the header adapter. Preserve the existing signed-out sign-in control and loading/likely-signed-in placeholders outside it. Coordinate `isOpen` and trigger disabling with the rest of the shell. Govmv-web adoption and real identity regression tests are tracked separately in PD-988.
+Mount this block only in the signed-in branch of the header adapter. Preserve the existing signed-out sign-in control and loading/likely-signed-in placeholders outside it. Coordinate `isOpen` and trigger disabling with the rest of the shell.
 
-## gov.Account and gov.CorpID: primary-user presentation
+## Primary-user presentation
 
-Use `profileOnly: true` and supply the authenticated primary person as `selectedAccount` for gov.Account and gov.CorpID. Their selected business, tenant or delegated individual is separate host workflow state and must not replace the top-navigation identity. These apps do not switch accounts from the panel, as clarified in [ENG-4118](https://linear.app/onegov/issue/ENG-4118/update-onepass-navigation-and-tenant-handling).
+Use `profileOnly: true` and supply the authenticated primary person as `selectedAccount` when the navigation should identify the primary user. The selected business, tenant or delegated individual is separate host workflow state and must not replace the top-navigation identity. Profile-only mode does not switch accounts from the panel.
 
 Profile-only mode hides account groups, loading/errors, delegation empty states and account-management actions. It does not require or accept `onAccountSelect`. Sign-out, optional desktop appearance preferences, avatar fallback, focus/dismissal and shared Sheet behavior remain available. The host determines the primary user; the generic block neither discovers nor infers session identities.
 
-Keep `profileOnly` omitted for gov.mv. Its existing selected-account mapping, account rows, selection callback, loading/errors, delegation CTA, account-management action and layout remain unchanged. The original `ApplicationAccountPanel` example retains that contract; `ApplicationPrimaryAccountPanel` demonstrates the separate primary-person adapter.
+Keep `profileOnly` omitted for account-switching applications. Their existing selected-account mapping, account rows, selection callback, loading/errors, delegation CTA, account-management action and layout remain unchanged. The original `ApplicationAccountPanel` example retains that contract; `ApplicationPrimaryAccountPanel` demonstrates the separate primary-person adapter.
 
 This option adds no external switching flow. The existing default `accountManagement` callback is unchanged; this update adds no external action.
 
-The compact reference is [GOV.MV Figma node 7913:138788](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=7913-138788). For profile-only updates, adopt block 0.12.0 with the React 0.20.x baseline. Existing default-mode consumers require no changes.
+For profile-only updates, adopt block 0.12.0 with the React 0.20.x baseline. Existing default-mode consumers require no changes.
 
 ## Accessibility and responsive behavior
 
@@ -101,7 +101,7 @@ Names and secondary text truncate visually while retaining their full accessible
 
 The profile name and secondary text stay centered beneath the avatar in both LTR and RTL layouts. Account-row text aligns right in RTL. The Storybook language toolbar translates the sample accounts, labels, theme options and state messages into Dhivehi while preserving email addresses. Use its theme and language controls on any Account Panel story; there are no separate Dark or Dhivehi stories. Production translations remain host-owned.
 
-Account rows use a custom React Aria button for their avatar/text layout, rather than overriding Veli Button's internal structure. Hover and pressing use `bg-neutral-alpha-200`, matching notification rows, with no scaling or ripple. Secondary text uses `text-base-muted`, as specified in Figma. Keyboard focus remains visible, and pending rows retain their names and cannot invoke selection again. Profile/account actions continue to use the public Veli Button; the keyboard-only sheet close control uses React Aria’s close slot.
+Account rows use a custom React Aria button for their avatar/text layout, rather than overriding Veli Button's internal structure. Hover and pressing use `bg-neutral-alpha-200`, matching notification rows, with no scaling or ripple. Secondary text uses `text-base-muted`, using the shared semantic token. Keyboard focus remains visible, and pending rows retain their names and cannot invoke selection again. Profile/account actions continue to use the public Veli Button; the keyboard-only sheet close control uses React Aria’s close slot.
 
 The appearance control moves a single background pill between the selected options using Veli's `duration-slow` (350ms) and a damped variant of `ease-spring`: `cubic-bezier(0.34, 1.2, 0.64, 1)`. This retains a small bounce while limiting overshoot on the longer Light/Auto movement. It follows logical RTL order and updates immediately when reduced motion is requested. Theme application still belongs to the host.
 
@@ -126,18 +126,18 @@ Version 0.4.0 uses `@phosphor-icons/react` for its icons. Add `@phosphor-icons/r
 
 Version 0.4.1 removes inline baseline spacing from the outer panel and shared avatar wrappers. The 44px trigger fits headers using `flex items-center` alongside 44px menu and search controls; profile and account-row avatars also retain their exact footprint. No adapter API changes or positional offsets are needed.
 
-For the GOV.MV follow-up (PD-1045 / PD-988), publish the canonical block snapshot first, then run `veli update account-panel` in govmv-web and commit the updated editable source and `.veli/blocks/account-panel/` receipt together. Review the intervening dependency and API changes when upgrading from 0.2.1. Recheck the real authenticated header at 390 × 844 and desktop sizes, including themes, RTL, focus/dismissal and avatar image/fallback behavior. Keep identity and preference handling in the host adapter; the Veli consumer fixture does not replace that integration acceptance.
+Run `veli update account-panel` in the consuming application and commit the updated editable source and `.veli/blocks/account-panel/` receipt together. Review the intervening dependency and API changes when upgrading from 0.2.1. Recheck the real authenticated header at 390 × 844 and desktop sizes, including themes, RTL, focus/dismissal and avatar image/fallback behavior. Keep identity and preference handling in the host adapter; the Veli consumer fixture does not replace that integration acceptance.
 
 Receipts contain source commit and SHA-256 hashes. A `dirty` receipt identifies a local preview rather than a released source snapshot. Updating a Veli npm package does not update copied block source.
 
 ## Non-goals
 
-The block does not discover sessions, sign users in, call an identity provider, implement account switching or logout, filter/authorize tenants, navigate, persist preferences, or send analytics. It contains no govmv-web, OneGov, Ory, Next.js, environment-variable or service-client imports. It introduces no registry, CLI capability, or npm package.
+The block does not discover sessions, sign users in, call an identity provider, implement account switching or logout, filter/authorize tenants, navigate, persist preferences, or send analytics. It contains no identity-provider, framework, environment-variable or service-client imports. It introduces no registry, CLI capability, or npm package.
 
 ## Visual references
 
-The account-panel presentation follows the supplied gov.mv Figma specs: [desktop panel](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1412-21044), [desktop account states](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1412-21192), [corrected desktop footer](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1412-21193), [desktop without delegated accounts](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1412-21274), [mobile accounts](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1424-27102), and [mobile without delegated accounts](https://www.figma.com/design/UJmgh6ihn8EsMuOnwEJrOn/gov.mv?node-id=1424-27283). Profile photos and organization imagery remain host data. The mobile close control becomes visible on keyboard-visible focus, preserving the compact pointer layout while offering a named dismissal action.
+Profile photos and organization imagery remain host data. The mobile close control becomes visible on keyboard-visible focus, preserving the compact pointer layout while offering a named dismissal action.
 
-Token authority: [Veli Design System](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1940-872). The Account Panel surface, text, neutral interaction colors, typography, radii, and small shadow were compared with its current variables and styles in both color modes for PD-1008; no token rebuild was needed.
+Use the shared Veli tokens for surface, text, neutral interaction colors, typography, radii and shadow in both color modes.
 
 The sheet structure follows [React Aria’s gesture-driven sheet example](https://react-aria.adobe.com/examples/sheet), adapted to Veli’s approved geometry, handle-only dragging, and non-spring motion. It preserves the host page layout rather than adopting the example’s page scaling or inertia.

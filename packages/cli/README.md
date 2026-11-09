@@ -13,8 +13,8 @@ npx @veli-design/cli --help
 
 The CLI requires Node.js 24 or newer. Package installation and Blocks registry
 access are separate. The registry is hosted with the documentation at
-`https://veli.design`; while Cloudflare/WFA protection remains enabled, obtain
-access from the network you will use for the CLI. React and tokens can be used
+`https://veli.design`. If the registry is protected, contact its administrator
+for access before using the CLI. React and tokens can be used
 anonymously without the CLI or registry.
 
 From your application's package directory, initialize the project:
@@ -57,22 +57,18 @@ registry. CLI 0.2.0 and older have no default; with those versions, pass
 
 ## Access while the registry is protected
 
-The default URL does not grant or bypass access. While the site is protected,
-request access at [workforce access](https://wfa.mindco.mv/) with an eligible
-account. Choose one of the available durations (at most 24 hours) and enter the
-required reason. WFA grants access to your requesting IP, so run the CLI from the
-same network. To check access before or after initialization, run:
+The default URL does not grant or bypass access. For a protected registry, contact
+its administrator for the required access method. Check access before or after
+initialization with:
 
 ```sh
+corepack pnpm dlx @veli-design/cli auth status
 corepack pnpm dlx @veli-design/cli auth login
 ```
 
-The CLI sends ordinary HTTPS requests once WFA has granted access. No `cloudflared`
-login or Access token is required for developers. Request another WFA grant if it
-expires or your network/IP changes. Once the site is publicly accessible, no WFA
-step is needed. The CLI stores no authentication secrets in the project.
-
-For CI, configure a Cloudflare Access **Service Auth** policy if service-token access is available, then inject both `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value. CI cannot use an interactive WFA approval.
+The CLI stores no authentication secrets in the project. For CI registries that
+support Cloudflare Access Service Auth, inject `CF_ACCESS_CLIENT_ID` and
+`CF_ACCESS_CLIENT_SECRET` from the CI secret store. Never commit either value.
 
 ## Commands
 

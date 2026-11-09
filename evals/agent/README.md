@@ -40,9 +40,6 @@ uses an invented Veli API, judgment is `0`.
 
 ## Signal set
 
-The first pass (`04`, `08`, `11`, `12`) gave the same score for all conditions.
-The installed types alone were enough. See `FIRST_PASS.md`.
-
 The signal set tests rules that only the docs state. The types allow each
 mistake:
 
@@ -57,9 +54,8 @@ mistake:
 
 Run these six tasks under all three conditions. That is 18 runs.
 
-`SCORER_CHECK.md` holds hand-written runs that check the scorer only. It is not
-evidence about agent behavior. `samples/` holds a pass and a fail sample for each
-signal task.
+`samples/` holds a pass and a fail sample for each signal task. Use these
+fixtures to check the scorer; they are not evidence about live agent behavior.
 
 ## Local handoff
 
@@ -239,10 +235,9 @@ Run the score command again. The report then includes totals.
 
 ### 5. Record the results
 
-Write the live results in a results file, for example `SIGNAL_PASS.md`. State
-the judge model and how many judgments a human checked.
-
-Keep `SCORER_CHECK.md` and `FIRST_PASS.md` unchanged.
+Write live results under the ignored `evals/agent/runs/` directory. State
+the judge model and how many judgments a human checked. Keep one-off run
+reports out of repository source.
 
 ## Full set
 

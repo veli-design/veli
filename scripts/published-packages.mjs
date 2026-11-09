@@ -1,4 +1,4 @@
-// Public-artifact verification extracted from the verified PD-595 bootstrap path.
+// Verify installed public artifacts against the expected release.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';

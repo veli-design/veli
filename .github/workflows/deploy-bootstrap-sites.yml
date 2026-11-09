@@ -9,7 +9,7 @@ on:
         default: c36ca062456bbaeddb2a45a48954ebaaec637c1b
         type: string
       deploy-sites:
-        description: Deploy the verified Web, Storybook and current internal Blocks catalog
+        description: Deploy the verified Web, Storybook and current Blocks catalog
         required: true
         default: false
         type: boolean
@@ -49,7 +49,7 @@ jobs:
           path: ${{ runner.temp }}/bootstrap-release
           retention-days: 90
           if-no-files-found: error
-      - name: Require explicit internal deployment approval
+      - name: Require explicit deployment approval
         if: inputs.deploy-sites
         env:
           REGISTRY_TRANSITION_APPROVED: ${{ vars.VELI_REGISTRY_TRANSITION_APPROVED }}

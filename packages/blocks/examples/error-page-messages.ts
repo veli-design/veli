@@ -1,4 +1,4 @@
-// Application-owned sample copy from the ENG-3733 Figma spec and govmv-web PR #134.
+// Application-owned sample copy for the error-page example.
 // Adapt these messages and accessibility labels to your product.
 
 export const ERROR_KINDS = ['404', '500', '503', '403', '401', 'offline'] as const;

@@ -45,7 +45,7 @@
     "The popover contains the single-date Calendar component, not RangeCalendar.",
     "Helper description is hidden while the picker is invalid.",
     "showTodayButton defaults to true.",
-    "The Figma skeleton variant has no component prop; loading UI belongs to the containing form (PD-589)."
+    "The Figma skeleton variant has no component prop; loading UI belongs to the containing form."
   ],
   "accessibility": [
     "The visible label is associated with the React Aria date picker.",

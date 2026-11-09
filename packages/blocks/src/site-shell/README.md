@@ -60,7 +60,9 @@ Wire site-header’s `onOverlayChange` into `overlay`. Pass `hidden={overlay.swi
 
 Keep session discovery, tenant filtering, sign-in/out, Cmd/Ctrl+K search, draft-mode notice resolution, and locale copy in the application. Map header overlay state into `overlay` and into the preview banner’s `hidden` prop. Put framework `Link` renderers on the header and footer adapters, not inside this block.
 
-For gov.mv, keep `useFrontendSession`, `SearchPalette`, `getDraftModeNotices`, and `useCopy` in the application. Mount site-header in `header`, site-footer (with the signed-out theme toggle) in `footer`, preview-banner in `notices`, and call the header handle’s `closeOverlays` / `focusLogo` from the search palette. Adoption and real identity regression tests remain tracked separately.
+Mount site-header in `header`, site-footer in `footer`, and preview-banner in
+`notices`. Call the header handle’s `closeOverlays` / `focusLogo` from application
+search controls. Validate authenticated identity flows in the consuming application.
 
 ## Accessibility and responsive behavior
 
@@ -75,4 +77,4 @@ Preserve the single `main` landmark and chrome fade that sets `aria-hidden`, `in
 
 ## Non-goals
 
-The block does not discover sessions, sign users in, implement account switching or logout, run site search, resolve draft-mode cookies, navigate, persist preferences, or send analytics. It contains no govmv-web, OneGov, Ory, Next.js, environment-variable or service-client imports. It does not embed site-header, site-footer, or preview-banner source; compose those blocks (or host equivalents) through slots. It introduces no registry, CLI capability, or npm package.
+The block does not discover sessions, sign users in, implement account switching or logout, run site search, resolve draft-mode cookies, navigate, persist preferences, or send analytics. It contains no identity-provider, framework, environment-variable or service-client imports. It does not embed site-header, site-footer, or preview-banner source; compose those blocks (or host equivalents) through slots. It introduces no registry, CLI capability, or npm package.

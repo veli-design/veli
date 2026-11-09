@@ -140,10 +140,8 @@ label; `information.title` supplies the additional accessible description.
 
 Manual `forms` are individual downloadable forms with titles, optional file
 metadata, action and per-form guideline. Download-all and submission contacts are
-host actions/content. External services do not accept forms. Govmv's inspected
-Document relation has no per-form guideline field: its adapter must leave it absent
-until authoritative content exists. No CMS migration is included. No claim is made
-that all g-services workflows are resolved.
+host actions/content. External services do not accept forms. Only supply per-form guidelines when authoritative content exists. CMS migrations
+and submission workflows remain the responsibility of the host application.
 
 ## Guidelines, summaries and routing
 
@@ -174,7 +172,7 @@ is added to force the final heading to the top.
 Manual scrolling at the native end selects the last section, including input that
 does not change the scroll position because the boundary is already reached.
 Below 768px, the 48px-inset sheet uses the floating TOC button and dismissible panel
-from Figma 8118:6055/6887. Choosing a link closes the panel; Escape closes the panel
+in the mobile layout. Choosing a link closes the panel; Escape closes the panel
 before the sheet. Hosts supply its localized name through `guidelineContents`.
 
 ## Providers, styling and accessibility
@@ -197,23 +195,20 @@ remains separate. Native scrollbar appearance belongs to browser/OS.
 
 ## Consumer boundary and limitations
 
-Web2 keeps fetching/model mapping, Next routes, draft/session/auth guards, Tiptap,
-clipboard/hash policy and assets. Govmv keeps CMS-first/OneGov resolution,
-tenancy/drafts, Lexical/Tiptap, locale dictionaries, document resolution, submission
-contacts and its summary worker. A small client adapter supplies callbacks from
+The host owns fetching/model mapping, routes, draft/session/auth guards, rich-text
+rendering, clipboard/hash policy, assets, tenancy, translations, document resolution,
+submission contacts and summary generation. A small client adapter supplies callbacks from
 server-fetched display data; functions are not serialized across an RSC boundary.
 Do not pass API/auth/CMS models into the block.
 
 This experimental contract targets Veli React 0.18 and tokens 0.11. Earlier core minor
 lines retain their previously published block archives; migrating an application
 to this baseline requires consumer testing.
-The deferred C1 hydration/useId issue remains unresolved and is outside this task.
-Ordinary fixture SSR checks do not establish its resolution. The user reopened the
-mobile guideline comparison with updated frames 8118:6055/6887; those now define
-the mobile sheet and TOC. The existing mobile service-card frames were also checked.
-D1–D9 design/content qualifications from the extraction plan remain open, including
-scrims, fixed measurements, missing state/dark references and production content.
-No production migrations, submissions, downloads, summary calls or publication.
+A known hydration/`useId` issue remains unresolved. Validate this behavior in the consuming application;
+ordinary fixture SSR checks do not establish correctness for every integration.
+Validate scrims, fixed measurements, state and dark-mode coverage, and production
+content before adoption. The block does not perform production migrations,
+submissions, downloads, summary calls or publication.
 
 ## Examples and validation
 
@@ -222,9 +217,7 @@ See `examples/service-detail-next.tsx` for a client adapter and
 The docs demo and Storybook use this canonical source, fictional service data and
 local feedback callbacks. They do not navigate to submission sites or download forms.
 Storybook covers all four apply types and the four combinations of fees/services
-expansion; the web demo exposes the apply types in its service-example selector. Release/test evidence and
-exact versions are recorded in the local PD-1149 implementation report; manifest
-`testedDependencies` lists only versions actually exercised.
+expansion; the web demo exposes the apply types in its service-example selector. Manifest `testedDependencies` lists only versions actually exercised.
 
 ### Supplementary-service summaries
 
@@ -251,13 +244,11 @@ See `serviceDetailSummaryOptions` in the shared examples and the Supplementary
 Service Summaries story for EN/DV examples. Consumers own translations, fetching,
 CMS mappings, fee/time formatting and summary calculations. Mobile uses the
 existing single-column layout; this is an implementation choice, not an approved
-mobile design. No govmv-web or Web2 integration is included in this repository.
+mobile design. Host application integrations are not included in this repository.
 
-The Desktop English Figma Reference story uses the exact summary sample from
-Figma 9224:74489 for visual review. It does not assert parity for the surrounding
+The Desktop English Figma Reference story provides a summary sample for visual review. It does not assert parity for the surrounding
 page, mobile, or Dhivehi, for which this reference supplies no matching design.
-The collapsed fee action reads “Show fees” per the confirmed product decision,
-correcting the reference's inconsistent “Hide fees” label in collapsed states.
+The collapsed fee action reads “Show fees”.
 
 ### Guideline summary state
 
@@ -319,7 +310,7 @@ The host supplies localized, already formatted values; missing data is `null` or
 `undefined`, not inferred as Free or Instant. Keep explicit zero values. One value
 uses the full row; two values share desktop columns and stack below 768px. The
 single-value/mobile arrangement is an implementation convention, not a separately
-approved Figma frame. The desktop reference is Figma `6607:116507`.
+verified mobile design. Validate this layout in the consuming application.
 
 Build `guideline.content.sections` in the desired order:
 
@@ -343,8 +334,8 @@ provide your own equivalent multiline styling. Newlines do not create extra item
 See the shared Custom Composition example for the complete ordered sheet and
 zero/one/two-value cards, with EN/DV placeholder copy. Use Storybook's language and
 theme controls and narrow viewport to review RTL, dark and mobile presentation.
-Dhivehi copy still needs translation review. No govmv or Web2 app migration is
-performed by this block change.
+Dhivehi copy still needs translation review. Application migrations are not
+performed by the block.
 
 ### Label/value table
 
@@ -366,7 +357,7 @@ React nodes; strings receive mixed-script isolation. An empty array renders noth
 
 The same part can display processing times or other label/value data. It does not
 calculate amounts, filter missing values or add sorting. `id` and `className` are
-optional. The desktop surface follows Figma `6607:116474`; narrow layouts allow
+optional. Narrow layouts allow
 values to wrap. The existing fee-table CSS class remains available for older copies.
 
 ### Expandable inline list

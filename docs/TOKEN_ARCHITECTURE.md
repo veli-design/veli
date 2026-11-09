@@ -109,25 +109,9 @@ Type/Body/md/Regular
 Type/Caption/12/Regular
 ```
 
-The full style set contains 52 `Type/...` styles: 13 type sizes times 4 weights. These are local CDS Foundation styles and are safe to update.
-
-Completed Figma cleanup:
-
-- Renamed local typography styles into the `Type/...` namespace.
-- Fixed naming issues such as `Display 2/Reguar`, `Title2/*`, and `Semi bold`.
-- Migrated 4,619 remote-style text node references to local `Type/...` styles.
-- Created 3 `Legacy Remote/...` local text styles for unmapped copyable remote styles.
-- Added `tracking/caption` with Figma value `1%` and WEB syntax `0.01em`.
-- Updated caption styles to use `1%` letter spacing.
-- Updated semantic line heights to use percentage units in Figma-facing styles.
+The full style set contains 52 `Type/...` styles: 13 type sizes times 4 weights. These styles are defined in the design system.
 
 The current styles bind font size, pixel line height, and letter spacing to `type-metrics/en` or `type-metrics/dv`. Font families bind to `font`; English weights bind to numeric `font-weight` variables. Dhivehi Body and Caption Regular styles use Figma's `font-weight/dhivehi-regular` style name (`Regular`) alongside a numeric weight of 400. The pipeline preserves the Figma name in metadata and emits `--veli-font-weight-dhivehi-regular` as an alias of `--veli-font-weight-regular` for CSS.
-
-Cleanup recorded during the May 2026 alignment:
-
-- Remote Dhivehi style references included the following because the required fonts were unavailable to the Figma automation:
-  - `Dhivehi/button/Waheed 19`
-  - `Dhivehi/Inputs/Faruma 17`
 
 The current export uses `{font.sans}` for the display style that once pointed to the former `typography` collection. The old font alias is no longer supported by the pipeline.
 
@@ -405,21 +389,3 @@ For developers:
 - Keep using the same `type-*` utility names in English and Dhivehi surfaces; `lang="dv"` switches those utilities to the exported Dhivehi composite values.
 - Keep using primitive utilities such as `text-base`, `leading-tight`, and `tracking-wide` when the design intentionally calls for a local override.
 - Do not use the deprecated `typography` token namespace for new code.
-
-## Future Work
-
-Near-term cleanup:
-
-- Recheck the remote Dhivehi text style references recorded in the May 2026 Figma inspection when the required fonts are available.
-- Recheck the old CSS optimizer warning if it recurs in a current build.
-
-Exporter/build improvements:
-
-- Update the TokensBruecke fork so font-family variables export as `$type: "fontFamily"` when scoped as `FONT_FAMILY`.
-- Move exporter-specific unit interpretation into TokensBruecke when its output can satisfy the canonical DTCG contract directly. Keep normalization and generated-output tests as the validation boundary.
-
-System questions:
-
-- Decide whether Dhivehi fonts should eventually be bundled with licensed `@font-face` assets instead of referenced by family name only.
-- Decide whether typography CSS output should eventually convert px values to rem values.
-- Decide how long to retain support for older color source aliases at the normalization boundary.

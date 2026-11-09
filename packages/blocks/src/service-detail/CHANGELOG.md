@@ -1,3 +1,9 @@
+## 0.11.1
+
+### Changed
+
+- Make the block documentation self-contained for public consumers while preserving API and integration guidance.
+
 ## 0.11.0
 
 ### Changed

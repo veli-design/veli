@@ -75,7 +75,7 @@ Rules for the parent:
 
 - Do not resume a subject. One Task equals one cell.
 - Run at most two Tasks at the same time.
-- Do not attach this file, `README.md`, `SCORER_CHECK.md`, or `prompts.json`.
+- Do not attach this file, `README.md` or `prompts.json`.
 - Do not tell the subject which Veli APIs to use.
 
 Use this Task prompt. Replace the placeholders:
@@ -163,6 +163,6 @@ Tell the human:
 1. Spot-check the model judgments. Read at least one run per task and every run
    where the conditions disagree.
 2. Write the live results in a results file, for example `SIGNAL_PASS.md`.
-3. Leave `SCORER_CHECK.md` and `FIRST_PASS.md` unchanged.
+3. Keep one-off run reports under the ignored `evals/agent/runs/` directory.
 
 Do not change judgment scores yourself.

@@ -18,7 +18,7 @@ Initialization saves the registry URL and destination in \`.veli/config.json\`. 
 
 Existing projects keep their saved registry URL. For local or preview registries, use \`--web-url\` or \`VELI_WEB_URL\`; the flag takes precedence over the environment, which takes precedence over saved configuration. Command overrides do not rewrite an existing configuration. CLI 0.2.0 and older require \`--web-url https://veli.design\` when initializing.
 
-While Cloudflare/WFA access protection is enabled, the CLI still needs access from your network. The default URL does not bypass that protection. Use \`pnpm dlx @veli-design/cli auth status\` to check access before or after initialization. No WFA step is needed once the site is public.
+Protected registries require authorized access from your network. The default URL does not bypass access protection. Use \`pnpm dlx @veli-design/cli auth status\` to check access before or after initialization. Public registries do not require an access grant.
 
 ## Available blocks
 
@@ -31,7 +31,7 @@ ${blocks
 
 ## Ownership and updates
 
-Blocks are experimental and initially supported for internal teams with Veli package access. The CLI retains the exact source and receipt used for installation, reports available versions with \`veli status\`, and performs recoverable three-way updates with \`veli update\`.
+Check each block’s lifecycle status and dependency requirements before adoption. The CLI retains the exact source and receipt used for installation, reports available versions with \`veli status\`, and performs recoverable three-way updates with \`veli update\`.
 
 Primitives remain maintained npm dependencies. Updating a primitive does not automatically update copied composition logic. Application changes remain owned by the consuming project and are never silently overwritten.
 `;

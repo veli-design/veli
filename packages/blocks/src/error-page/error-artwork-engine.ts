@@ -1,4 +1,4 @@
-// Animation and palette adapted from Basim's ENG-3733 prototype (2026-10-08).
+// Animation and palette adapted from Basim Abdullah's prototype.
 // Glyphs, icon masks and distance fields are baked; this runtime only draws dots.
 import { cubicBezier } from 'motion';
 

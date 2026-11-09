@@ -53,7 +53,7 @@ Notice actions use a native `Button as="a"` so exiting draft preview stays a ful
 
 ## Host adapter pattern
 
-Keep `draftMode()`, exit-preview routes, and locale copy in the application. For gov.mv, map `getDraftModeNotices` into `notices` and wire `hidden` from site-header’s `onOverlayChange` (`switcherRendered || mobileMenuVisible`). Mount the banner in site-shell’s `notices` slot so the spacer participates in the page flex column only when notices are present.
+Keep `draftMode()`, exit-preview routes, and locale copy in the application. Map draft-mode notices into `notices` and wire `hidden` from site-header’s `onOverlayChange` (`switcherRendered || mobileMenuVisible`). Mount the banner in site-shell’s `notices` slot so the spacer participates in the page flex column only when notices are present.
 
 ## Accessibility and responsive behavior
 
@@ -68,4 +68,4 @@ Each notice is an `aside` labelled by its title. Below `lg` the card stacks the 
 
 ## Non-goals
 
-The block does not enable draft mode, clear preview cookies, resolve CMS publication status, navigate, or translate copy. It contains no govmv-web, Payload, Next.js, environment-variable or service-client imports. It introduces no registry, CLI capability, or npm package.
+The block does not enable draft mode, clear preview cookies, resolve CMS publication status, navigate, or translate copy. It contains no CMS, framework, environment-variable or service-client imports. It introduces no registry, CLI capability, or npm package.

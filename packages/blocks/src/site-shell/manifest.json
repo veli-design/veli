@@ -1,7 +1,7 @@
 {
   "id": "site-shell",
   "title": "Site shell",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "status": "experimental",
   "description": "Page frame with raised viewport column, rounded main surface, and overlay chrome fade.",
   "files": ["site-shell.tsx"],
