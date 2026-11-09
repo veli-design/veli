@@ -8,7 +8,7 @@ lands through pull requests.
 
 - Keep `main` releasable.
 - Create short-lived branches named after the work, for example
-  `feature/pd-186-release-prep`.
+  `fix/button-focus`.
 - Rebase feature branches on `main` before review when they drift.
 - Delete feature branches after merge.
 
@@ -22,11 +22,21 @@ lands through pull requests.
 - PR titles must follow Conventional Commits because squash merge uses the PR
   title as the final commit message on `main`.
 - Use the repository PR template and follow the [contributing guide](../CONTRIBUTING.md)
-  for summary, issue-linking, and validation requirements. The `PD-###` branch
-  identifier links the primary Linear issue. Use `Resolves PD-###` only when
-  this PR should close a Linear issue, `Related to PD-###` or `Ref PD-###`
-  when it should not, and `Closes #123` only when this PR should close a
-  GitHub issue.
+  for summary, issue-linking, and validation requirements.
+
+### Issue linking
+
+Internal (Linear): a branch containing PD-### automatically links its primary
+issue. Choose the magic word by intent:
+
+- Completes the issue: Resolves PD-123
+- Relates without closing: Related to PD-123
+- Partial contribution without closing: Ref PD-123
+
+Do not use a closing keyword (Resolves, Fixes, Closes) unless this PR should
+close that issue.
+
+External (GitHub): Closes #123 only when this PR should close the issue;
 
 ## Commit Messages
 

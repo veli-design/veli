@@ -1,8 +1,7 @@
-# Veli component styling contracts (PD-809)
+# Veli component styling contracts
 
 Apps own outer layout; Veli owns appearance and internal behavior. All styling
-findings are **warnings** for this [PD-809](https://linear.app/onegov/issue/PD-809/decide-where-well-expose-all-react-aria-apis-and-expose-required-one)
-rollout. Findings stay visible without blocking existing consumer styling.
+findings are **warnings**. Findings stay visible without blocking existing consumer styling.
 
 The source of truth is `scripts/lint/veli-contracts.mjs`: **97 current components
 and parts**. All have class contracts; Button and nine reviewed complete fields
@@ -81,7 +80,6 @@ The following terms name **explicit class lists**, never the upstream broad
 | Divider                                                                                   | Margin. Length changes require orientation/interactive-variant review because name-only contracts cannot determine the safe axis. Preserve thickness and color. | Warn                                                                 |
 | ToastRegion, Toast, ToastContent, ToastActions, ToastTimeoutProgress, ToastCloseButton    | Supported placement/appearance/content APIs; direct styling needs review.                                                                                       | Warn                                                                 |
 
-Two corrections to the September issue proposal follow current implementation:
 **DropzoneField** now wraps the label, drop area/list and messages; its className
 is a complete-field root. **CheckboxGroup** is a current export and is included.
 **PageTab** is historical and has no current source/export, so no fictional rule
@@ -143,10 +141,7 @@ and preserve arbitrary-value enforcement and all other component contracts.
 | `packages/blocks/src/notification-tray/notification-tray.tsx` | `relative`, `overflow-visible`                                                  | Temporary: preserve unread decoration until clipping/ripple/RTL comparison establishes safe cleanup or a supported pattern. `relative` is redundant, not generally permitted.                                                                        |
 | `packages/blocks/src/service-detail/service-detail.tsx`       | `veli-service-detail-start-button`                                              | Reviewed alias for root `width:100%`; its descendant rule sizes an app-owned trailing-icon span. Changes to this CSS hook need renewed review.                                                                                                       |
 | `packages/blocks/src/service-detail/guideline-sheet.tsx`      | `veli-service-detail-mobile-toc-button`                                         | Temporary: preserve the existing floating contents trigger. Reviewed CSS changes visibility, position, z-index and drop shadows; Button dimensions stay owned by `size="lg"`/`iconOnly`. Shadow treatment needs a supported floating-action pattern. |
-| `apps/web/src/components/DocsSearch.tsx`                      | `docs-search-trigger`                                                           | Temporary: existing launcher significantly changes appearance and inner alignment; resolve a supported launcher treatment under PD-809. Custom CSS was manually reviewed.                                                                            |
-
-The obsolete Toast reference-preview exception was removed after the upstream
-story rewrite eliminated those Button classes.
+| `apps/web/src/components/DocsSearch.tsx`                      | `docs-search-trigger`                                                           | Temporary: existing launcher significantly changes appearance and inner alignment; resolve a supported launcher treatment. Custom CSS was manually reviewed.                                                                                         |
 
 These are **file-and-component** exceptions, covering every Button in that exact
 file; they are not restricted to a single JSX occurrence. Upstream normalization
@@ -158,11 +153,10 @@ This preserves distributable Block source/versions and avoids file-wide rule
 ignores or global custom-class permissions. Conservative boundary warnings can
 still appear in exception files. Review changes to these registries as policy
 changes, including any new Button usage in an excepted file. Temporary exceptions
-remain accepted migration debt owned by the Veli maintainers under PD-809.
+remain accepted migration debt owned by the Veli maintainers.
 
-Preserve forced-colors and truncation repairs identified in the issue until their
-Veli replacements are verified. This repository does not add consumer-wide
-exceptions for govmv-web or one-fleet, or alter their code.
+Preserve forced-colors and truncation repairs until their Veli replacements
+are verified. Repository exceptions do not apply to consuming applications.
 
 ## Consumer opt-in
 
@@ -172,8 +166,8 @@ package and modifies no consumer repository. To opt in:
 1. Copy `scripts/lint/veli-styling.mjs`, `veli-contracts.mjs` and this document.
    Keep `veli-exceptions.mjs` and repository-local overrides out of the consumer.
    Format the copied modules and new config with the app's formatter before its
-   normal checks. Veli's formatting can differ (for example, semicolons versus
-   govmv's Oxfmt settings); this is source adoption, not a drop-in formatted package.
+   normal checks. Veli's formatting can differ from an application's conventions; this is
+   source adoption, not a drop-in formatted package.
    With Oxfmt, target only these files:
    `corepack pnpm exec oxfmt scripts/lint/veli-styling.mjs scripts/lint/veli-contracts.mjs eslint.veli.config.mjs`.
 2. Install `@shadcn/lint@0.2.3`, ESLint >=9.30 and `typescript-eslint` >=8.40
@@ -228,7 +222,7 @@ integration. Verify adapter support independently before adopting it with Oxlint
 The copied policy modules pass an isolated Oxlint 1.72.0 quality smoke test using
 the configuration in the regression fixture. Oxlint is pinned
 as a Veli test dependency for that regression, not used to run the styling rules.
-This does not establish installed govmv compatibility or a supported Oxlint adapter.
+This does not establish installed consumer compatibility or a supported Oxlint adapter.
 
 ## Verified limits and sources
 
@@ -261,7 +255,7 @@ implementation exclusions and setup commands use the same names. Package publica
   reported when a later known prop replaces it. Prefer one final class prop or
   review the finding; this integration does not implement a new expression engine.
 - Consumer re-export barrels are missed by the tested package-import setup.
-  Prefer direct public imports for this rollout and verify application aliases.
+  Prefer direct public imports when adopting these rules and verify application aliases.
 - Compound-part resolution in this checkout requires built public UI entries.
   The local boundary guard handles direct named/namespace/compound imports and
   shadowing, not wrapper graphs, barrel exports or styling hidden inside spreads.

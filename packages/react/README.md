@@ -159,7 +159,7 @@ These checks cover package compatibility; validate your application's own build 
 The token reference is also included locally at
 `node_modules/@veli-design/tokens/README.md`; the setup above is self-contained
 and does not require hosted documentation. Hosted Web/Storybook and the Blocks
-registry require WFA access and are not part of this anonymous npm setup.
+registry may require separate access and are not part of this anonymous npm setup.
 
 - [`@veli-design/tokens`](https://www.npmjs.com/package/@veli-design/tokens) — design tokens
 
