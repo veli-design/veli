@@ -98,6 +98,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_SOURCE: ${{ steps.source.outputs.source }}
+          # Parallel tag pushes must not rerun local checks on the validated tree.
+          HUSKY: '0'
           # The private source repository cannot generate npm provenance.
           NPM_CONFIG_PROVENANCE: false
           VELI_NPM_PUBLICATION_APPROVED: ${{ vars.VELI_NPM_PUBLICATION_APPROVED }}
