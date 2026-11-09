@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import DocsComponentTabs from '../../../components/DocsComponentTabs.astro';
+import DocsStorybookLink from '../../../components/DocsStorybookLink.astro';
+import DocsLayout from '../../../layouts/docs-layout.astro';
+import { getComponentMeta } from '../../../lib/site';
+
+type Props = {
+  doc: CollectionEntry<'docs'>;
+};
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => ({
+    params: { slug: doc.slug },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props as Props;
+const { Content, headings } = await doc.render();
+const component = getComponentMeta(doc.slug);
+const pageDescription = doc.data.description ?? component?.description;
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const markdownPath = `/docs/components/${doc.slug}/index.md`;
+---
+
+<DocsLayout
+  title={`${doc.data.title} | Veli Design System`}
+  description={pageDescription}
+  activePath={`/docs/components/${doc.slug}/`}
+  {markdownPath}
+  headings={tocHeadings}
+  showPageActions={false}
+  contentLayout="component"
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1 class="type-display-2-medium">{doc.data.title}</h1>
+    {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
+  </header>
+
+  <DocsComponentTabs {markdownPath} />
+
+  <article class="docs-prose">
+    <Content components={{ DocsStorybookLink }} />
+  </article>
+</DocsLayout>

@@ -12,7 +12,7 @@ import {
 
 # Select
 
-Use Select to choose one value from a short, known list. For long or searchable lists, use [ComboBox](/docs/combobox/). For actions instead of values, use [Menu](/docs/menu/).
+Use Select to choose one value from a short, known list. For long or searchable lists, use [ComboBox](/docs/components/combobox/). For actions instead of values, use [Menu](/docs/components/menu/).
 
 ## Import
 
@@ -34,11 +34,11 @@ import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 </Select>
 ```
 
-Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/patterns/forms/) for recipes.
+Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/docs/patterns/forms/) for recipes.
 
 ## Locked value
 
-Select has no `isReadOnly`. When a chosen option must stay visible but locked, show the option label in a read-only [Input](/docs/input/) and submit the option id separately. Leave `name` off the Input so the label is not the form payload. A disabled Select is the wrong stand-in: it reads as unavailable and is omitted from native form submission.
+Select has no `isReadOnly`. When a chosen option must stay visible but locked, show the option label in a read-only [Input](/docs/components/input/) and submit the option id separately. Leave `name` off the Input so the label is not the form payload. A disabled Select is the wrong stand-in: it reads as unavailable and is omitted from native form submission.
 
 ```tsx
 import { Input } from '@veli-design/react/input';

@@ -4,12 +4,6 @@
 /docs/*.md
   Content-Type: text/markdown; charset=utf-8
 
-/foundations/*.md
-  Content-Type: text/markdown; charset=utf-8
-
-/blocks/*.md
-  Content-Type: text/markdown; charset=utf-8
-
-/blocks/*/source.tar.gz
+/docs/blocks/*/source.tar.gz
   Content-Type: application/gzip
   Content-Disposition: attachment

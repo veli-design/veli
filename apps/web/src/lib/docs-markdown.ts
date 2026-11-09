@@ -11,7 +11,7 @@ import {
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
+export type DocsSection = 'Overview' | 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
 
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
@@ -20,7 +20,7 @@ type EntrySource =
 
 type OverviewSource = {
   kind: 'overview';
-  overview: 'docs' | 'foundations';
+  overview: 'documentation' | 'docs' | 'foundations' | 'patterns';
 };
 
 export type DocsCatalogPage = {
@@ -132,6 +132,17 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
   );
   const pages: DocsCatalogPage[] = [
     {
+      id: 'documentation',
+      section: 'Overview',
+      label: 'Documentation overview',
+      title: 'Build with Veli',
+      description:
+        'Foundations, components, patterns, and blocks for accessible, bilingual public services.',
+      htmlPath: '/docs/',
+      markdownPath: '/docs/index.md',
+      source: { kind: 'overview', overview: 'documentation' },
+    },
+    {
       id: 'foundations',
       section: 'Foundations',
       label: foundationsOverview.label,
@@ -148,8 +159,8 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/foundations/${entry.slug}/`,
-        markdownPath: `/foundations/${entry.slug}/index.md`,
+        htmlPath: `/docs/foundations/${entry.slug}/`,
+        markdownPath: `/docs/foundations/${entry.slug}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
@@ -171,11 +182,21 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/docs/${entry.slug}/`,
-        markdownPath: `/docs/${entry.slug}/index.md`,
+        htmlPath: `/docs/components/${entry.slug}/`,
+        markdownPath: `/docs/components/${entry.slug}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
+    {
+      id: 'patterns',
+      section: 'Patterns',
+      label: 'Patterns overview',
+      title: 'Veli Patterns',
+      description: 'Reusable approaches for recurring service interactions and content flows.',
+      htmlPath: '/docs/patterns/',
+      markdownPath: '/docs/patterns/index.md',
+      source: { kind: 'overview', overview: 'patterns' },
+    },
     ...orderedPatterns.map(
       (entry): DocsCatalogPage => ({
         id: `patterns/${entry.slug}`,
@@ -183,8 +204,8 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/patterns/${entry.slug}/`,
-        markdownPath: `/patterns/${entry.slug}/index.md`,
+        htmlPath: `/docs/patterns/${entry.slug}/`,
+        markdownPath: `/docs/patterns/${entry.slug}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
@@ -196,8 +217,8 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         ...page,
         section: 'Blocks',
         label: page.title,
-        htmlPath: `/${page.id}/`,
-        markdownPath: `/${page.id}/index.md`,
+        htmlPath: `/docs/${page.id}/`,
+        markdownPath: `/docs/${page.id}/index.md`,
         source: { kind: 'block', markdown: page.markdown },
       }),
     ),
@@ -223,7 +244,30 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     throw new Error(`[docs-markdown] ${page.id} is not an overview page`);
   }
 
-  if (page.source.overview === 'foundations') {
+  if (page.source.overview === 'documentation') {
+    lines.push(
+      '## Explore the system',
+      '',
+      markdownListItem('Foundations', '/docs/foundations/', foundationsOverview.description),
+      markdownListItem('Components', '/docs/components/', docsOverview.description),
+      markdownListItem(
+        'Patterns',
+        '/docs/patterns/',
+        'Recurring service interactions and content flows.',
+      ),
+      markdownListItem(
+        'Blocks',
+        '/docs/blocks/',
+        'Editable compositions built from Veli primitives.',
+      ),
+    );
+  } else if (page.source.overview === 'patterns') {
+    lines.push(
+      '## Patterns',
+      '',
+      ...patterns.map((item) => markdownListItem(item.title, item.href, item.description)),
+    );
+  } else if (page.source.overview === 'foundations') {
     lines.push(
       '## Foundations',
       '',
@@ -246,7 +290,7 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
         `## ${group.title}`,
         '',
         ...group.items.map((item) =>
-          markdownListItem(item.title, `/docs/${item.slug}/`, item.description),
+          markdownListItem(item.title, `/docs/components/${item.slug}/`, item.description),
         ),
         '',
       );
@@ -311,6 +355,14 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
     '',
     '## Start here',
     '',
+    ...pages
+      .filter(
+        (page) =>
+          page.source.kind === 'overview' && ['documentation', 'patterns'].includes(page.id),
+      )
+      .map((page) =>
+        markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
+      ),
     markdownListItem(
       docsOverviewPage.label,
       artifactUrl(docsOverviewPage.markdownPath, origin),

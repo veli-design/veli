@@ -18,8 +18,8 @@ export const docsOverview = {
     'Examples use @veli-design/react and @veli-design/tokens. These names are prepared for an approved public npm release. Existing applications should migrate dependencies, imports and copied Blocks together once matching packages and registry are available.',
   documentTitle: 'Documentation | Veli Design System',
   documentDescription: 'Foundations and component documentation for the Veli Design System.',
-  htmlPath: '/docs/',
-  markdownPath: '/docs/index.md',
+  htmlPath: '/docs/components/',
+  markdownPath: '/docs/components/index.md',
 } as const;
 
 export const foundationsOverview = {
@@ -30,8 +30,8 @@ export const foundationsOverview = {
   documentTitle: 'Foundations | Veli Design System',
   documentDescription:
     'Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli.',
-  htmlPath: '/foundations/',
-  markdownPath: '/foundations/index.md',
+  htmlPath: '/docs/foundations/',
+  markdownPath: '/docs/foundations/index.md',
 } as const;
 
 export type DocsNavigationItem = {
@@ -72,7 +72,7 @@ export const foundations = [
   {
     title: 'Principles',
     slug: 'principles',
-    href: '/foundations/principles/',
+    href: '/docs/foundations/principles/',
     icon: '/images/foundation-icons/principles.svg',
     iconDark: '/images/foundation-icons-dark/principles.svg',
     iconWidth: 48,
@@ -84,7 +84,7 @@ export const foundations = [
   {
     title: 'Color',
     slug: 'color',
-    href: '/foundations/color/',
+    href: '/docs/foundations/color/',
     icon: '/images/foundation-icons/color.svg',
     iconDark: '/images/foundation-icons-dark/color.svg',
     iconWidth: 48,
@@ -96,7 +96,7 @@ export const foundations = [
   {
     title: 'Typography',
     slug: 'typography',
-    href: '/foundations/typography/',
+    href: '/docs/foundations/typography/',
     icon: '/images/foundation-icons/typography.svg',
     iconDark: '/images/foundation-icons-dark/typography.svg',
     iconWidth: 48,
@@ -108,7 +108,7 @@ export const foundations = [
   {
     title: 'Spacing',
     slug: 'spacing',
-    href: '/foundations/spacing/',
+    href: '/docs/foundations/spacing/',
     icon: '/images/foundation-icons/spacing.svg',
     iconDark: '/images/foundation-icons-dark/spacing.svg',
     iconWidth: 48,
@@ -120,7 +120,7 @@ export const foundations = [
   {
     title: 'Motion',
     slug: 'motion',
-    href: '/foundations/motion/',
+    href: '/docs/foundations/motion/',
     icon: '/images/foundation-icons/motion.svg',
     iconDark: '/images/foundation-icons-dark/motion.svg',
     iconWidth: 48,
@@ -132,7 +132,7 @@ export const foundations = [
   {
     title: 'Accessibility',
     slug: 'accessibility',
-    href: '/foundations/accessibility/',
+    href: '/docs/foundations/accessibility/',
     icon: '/images/foundation-icons/accessibility.svg',
     iconDark: '/images/foundation-icons-dark/accessibility.svg',
     iconWidth: 48,
@@ -144,7 +144,7 @@ export const foundations = [
   {
     title: 'Language & direction',
     slug: 'language-direction',
-    href: '/foundations/language-direction/',
+    href: '/docs/foundations/language-direction/',
     icon: '/images/foundation-icons/language-direction.svg',
     iconDark: '/images/foundation-icons-dark/language-direction.svg',
     iconWidth: 48,
@@ -368,7 +368,7 @@ export const patterns = [
   {
     title: 'Forms',
     slug: 'forms',
-    href: '/patterns/forms/',
+    href: '/docs/patterns/forms/',
     description: 'Recipes for React Hook Form, TanStack Form, and schema-driven renderers.',
   },
 ] as const;
@@ -386,9 +386,9 @@ export const docsSections: readonly DocsNavigationSection[] = [
   {
     id: 'foundations',
     title: 'Foundation',
-    href: '/foundations/',
+    href: '/docs/foundations/',
     items: [
-      { title: 'Overview', href: '/foundations/' },
+      { title: 'Overview', href: '/docs/foundations/' },
       ...foundations.map((item) => ({
         title: item.title === 'Language & direction' ? 'Language & Direction' : item.title,
         href: item.href,
@@ -399,12 +399,12 @@ export const docsSections: readonly DocsNavigationSection[] = [
   {
     id: 'components',
     title: 'Components',
-    href: '/docs/',
+    href: '/docs/components/',
     items: [
-      { title: 'Overview', href: '/docs/' },
+      { title: 'Overview', href: '/docs/components/' },
       ...allComponents.map((item) => ({
         title: item.title,
-        href: `/docs/${item.slug}/`,
+        href: `/docs/components/${item.slug}/`,
         description: item.description,
       })),
     ],
@@ -412,9 +412,9 @@ export const docsSections: readonly DocsNavigationSection[] = [
   {
     id: 'patterns',
     title: 'Patterns',
-    href: '/patterns/',
+    href: '/docs/patterns/',
     items: [
-      { title: 'Overview', href: '/patterns/' },
+      { title: 'Overview', href: '/docs/patterns/' },
       ...patterns.map((item) => ({
         title: item.title,
         href: item.href,
@@ -425,12 +425,12 @@ export const docsSections: readonly DocsNavigationSection[] = [
   {
     id: 'blocks',
     title: 'Blocks',
-    href: '/blocks/',
+    href: '/docs/blocks/',
     items: [
-      { title: 'Overview', href: '/blocks/' },
+      { title: 'Overview', href: '/docs/blocks/' },
       ...blocks.map(({ manifest }) => ({
         title: manifest.title,
-        href: `/blocks/${manifest.id}/`,
+        href: `/docs/blocks/${manifest.id}/`,
         description: manifest.description,
       })),
     ],

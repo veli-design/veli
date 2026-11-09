@@ -56,6 +56,11 @@ function isSectionActive(section: (typeof docsSections)[number]) {
         </a>
 
         <div class="docs-nav-filter">
+          <a
+            class="docs-nav-link"
+            href="/docs/"
+            aria-current={activePath === '/docs/' ? 'page' : undefined}>Getting started</a
+          >
           <DocsSearch client:load />
 
           <nav class="docs-nav" aria-label="Veli documentation">
@@ -114,6 +119,11 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           <ListIcon size={22} aria-hidden="true" />
         </summary>
         <div class="docs-mobile-menu__panel">
+          <a
+            class="docs-nav-link"
+            href="/docs/"
+            aria-current={activePath === '/docs/' ? 'page' : undefined}>Getting started</a
+          >
           <DocsSearch client:load enableShortcut={false} />
 
           <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">

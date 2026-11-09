@@ -6,13 +6,13 @@ node_modules
 dist
 .next
 .astro
+.wrangler
 .turbo
 .cache
 .tmp
 out
 storybook-static
 coverage
-apps/web/public/gradient-stipple.html
 
 # Environment
 .env

@@ -25,7 +25,7 @@ Protected registries require authorized access from your network. The default UR
 ${blocks
   .map(
     (block) =>
-      `- [${block.manifest.title}](/blocks/${block.manifest.id}/): ${block.manifest.description}${showLifecycleStatus(block) ? ` (${block.manifest.status})` : ''}`,
+      `- [${block.manifest.title}](/docs/blocks/${block.manifest.id}/): ${block.manifest.description}${showLifecycleStatus(block) ? ` (${block.manifest.status})` : ''}`,
   )
   .join('\n')}
 
@@ -47,7 +47,9 @@ export const blockPages = [
     title: block.manifest.title,
     description: block.manifest.description,
     markdown: showLifecycleStatus(block)
-      ? blockMarkdown(block)
-      : blockMarkdown(block).replace(/^Status: \*\*experimental\*\* · /m, ''),
+      ? blockMarkdown(block).replaceAll('](/blocks/', '](/docs/blocks/')
+      : blockMarkdown(block)
+          .replaceAll('](/blocks/', '](/docs/blocks/')
+          .replace(/^Status: \*\*experimental\*\* · /m, ''),
   })),
 ];

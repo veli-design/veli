@@ -16,6 +16,7 @@ export default [
       '**/node_modules/**',
       '**/dist/**',
       '**/.astro/**',
+      '**/.wrangler/**',
       '**/.cache/**',
       '**/.cursor/**',
       '**/.next/**',

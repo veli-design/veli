@@ -1,0 +1,86 @@
+---
+const columns = [
+  {
+    title: 'Build with Veli',
+    links: [
+      ['Components', '/docs/components/'],
+      ['Patterns', '/docs/patterns/'],
+      ['UI Blocks', '/docs/blocks/'],
+    ],
+  },
+  {
+    title: 'Develop',
+    links: [
+      ['GitHub', 'https://github.com/veli-design/veli'],
+      ['npm', 'https://www.npmjs.com/package/@veli-design/react'],
+      ['AI resources', '/llms.txt'],
+    ],
+  },
+  {
+    title: 'Design',
+    links: [
+      ['Figma', 'https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site'],
+      ['Foundations', '/docs/foundations/'],
+      ['Designing Veli', '/design/'],
+    ],
+  },
+  {
+    title: 'Community',
+    links: [
+      ['Contribute', 'https://github.com/veli-design/veli/blob/main/CONTRIBUTING.md'],
+      ['Changelog', 'https://github.com/veli-design/veli/releases'],
+      ['Contact', 'https://github.com/veli-design/veli/issues'],
+    ],
+  },
+];
+---
+
+<footer class="marketing-footer marketing-container">
+  <div class="marketing-footer-top">
+    <a class="marketing-footer-brand" href="/"
+      ><img
+        class="marketing-logo"
+        src="/images/marketing/veli-design-footer.svg"
+        width="202"
+        height="33"
+        alt="Veli Design"
+      /><span>Maldives Government Design System</span></a
+    >
+    <nav class="marketing-footer-columns" aria-label="Footer navigation">
+      {
+        columns.map((column) => (
+          <div>
+            <h2>{column.title}</h2>
+            {column.links.map(([label, href]) => (
+              <a href={href}>{label}</a>
+            ))}
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+  <div class="marketing-footer-bottom">
+    <p class="marketing-government">
+      <img src="/images/marketing/government-emblem-footer.svg" width="35" height="40" alt="" />An
+      official website of the Maldives Government
+    </p>
+    <a class="marketing-credit" href="https://mindco.mv"
+      >Designed and developed by <img
+        src="/images/marketing/mindco-wordmark.svg"
+        width="116"
+        height="24"
+        alt="MINDCo"
+      /></a
+    >
+    <div class="marketing-preferences">
+      <div class="marketing-theme" role="group" aria-label="Colour scheme">
+        <button type="button" data-theme-choice="system" aria-pressed="true">System</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <label class="marketing-motion"
+        ><input type="checkbox" data-reduce-motion />Reduce motion</label
+      >
+    </div>
+  </div>
+</footer>

@@ -19,7 +19,7 @@ export async function GET() {
   const componentItems = componentGroups.flatMap((group) => group.items);
   const foundationOverview = createOverviewSearchItem({
     id: 'foundations:overview',
-    href: '/foundations/',
+    href: '/docs/foundations/',
     category: 'Foundations',
     title: 'Foundations',
     description: 'Principles, color, typography, spacing, motion, accessibility, and language.',
@@ -30,7 +30,7 @@ export async function GET() {
   });
   const componentOverview = createOverviewSearchItem({
     id: 'components:overview',
-    href: '/docs/',
+    href: '/docs/components/',
     category: 'Components',
     title: 'Components',
     description: 'Accessible Veli components for building consistent public services.',
@@ -42,7 +42,7 @@ export async function GET() {
 
     return createOverviewSectionSearchItem({
       id: `components:overview:${slug}`,
-      href: `/docs/#${slug}`,
+      href: `/docs/components/#${slug}`,
       category: 'Components',
       pageTitle: 'Components',
       title: group.title,
@@ -54,27 +54,45 @@ export async function GET() {
   const [foundationItems, docsItems, patternItems] = await Promise.all([
     buildCollectionSearchItems({
       category: 'Foundations',
-      basePath: '/foundations/',
+      basePath: '/docs/foundations/',
       entries: foundationEntries,
       orderedSlugs: foundations.map((foundation) => foundation.slug),
       orderOffset: 10_100,
     }),
     buildCollectionSearchItems({
       category: 'Components',
-      basePath: '/docs/',
+      basePath: '/docs/components/',
       entries: docsEntries,
       orderedSlugs: componentItems.map((item) => item.slug),
       orderOffset: 100,
     }),
     buildCollectionSearchItems({
       category: 'Patterns',
-      basePath: '/patterns/',
+      basePath: '/docs/patterns/',
       entries: patternEntries,
       orderedSlugs: patterns.map((pattern) => pattern.slug),
       orderOffset: 20_000,
     }),
   ]);
   const index: DocsSearchItem[] = [
+    createOverviewSearchItem({
+      id: 'documentation:overview',
+      href: '/docs/',
+      category: 'Overview',
+      title: 'Getting started',
+      description: 'Start building with Veli foundations, components, patterns, and blocks.',
+      content: 'Documentation overview installation foundations components patterns blocks',
+      order: -1,
+    }),
+    createOverviewSearchItem({
+      id: 'patterns:overview',
+      href: '/docs/patterns/',
+      category: 'Patterns',
+      title: 'Patterns',
+      description: 'Reusable approaches for recurring service interactions and content flows.',
+      content: patterns.map((pattern) => `${pattern.title} ${pattern.description}`).join(' '),
+      order: 19_999,
+    }),
     componentOverview,
     ...componentOverviewSections,
     ...docsItems,
@@ -84,7 +102,7 @@ export async function GET() {
     ...blockPages.map((page, index) =>
       createOverviewSearchItem({
         id: page.id,
-        href: `/${page.id}/`,
+        href: `/docs/${page.id}/`,
         category: 'Blocks',
         title: page.title,
         description: page.description,

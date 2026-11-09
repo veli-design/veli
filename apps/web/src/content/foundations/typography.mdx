@@ -170,7 +170,7 @@ Use Veli's `type-*` utilities for component text and bilingual service interface
 
 The same class produces Inter at 14px with 1.45 leading for English, and MV Faseyha at 16px with 1.78 leading for Dhivehi. Weighted styles can also change family: `type-body-sm-medium` uses Inter at 14px/500 for English and MV A Waheed at 17px/700 for Dhivehi. Use the complete utility instead of assembling a role with `text-sm font-medium`.
 
-Set both language and direction. `lang` selects typography; `dir` controls direction and layout. `dir="rtl"` alone does not activate Dhivehi typography, and loading a Dhivehi font does not change the font size. In React applications, [VeliProvider](/docs/provider/) can set both through `language="dv"`. Ensure the required fonts are loaded by the host application; typography utilities select families but do not download font files.
+Set both language and direction. `lang` selects typography; `dir` controls direction and layout. `dir="rtl"` alone does not activate Dhivehi typography, and loading a Dhivehi font does not change the font size. In React applications, [VeliProvider](/docs/components/provider/) can set both through `language="dv"`. Ensure the required fonts are loaded by the host application; typography utilities select families but do not download font files.
 
 ### Generic Tailwind font-size utilities
 
