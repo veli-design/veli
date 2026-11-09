@@ -22,9 +22,19 @@ lands through pull requests.
 - PR titles must follow Conventional Commits because squash merge uses the PR
   title as the final commit message on `main`.
 - Use the repository PR template and follow the [contributing guide](../CONTRIBUTING.md)
-  for summary, issue-linking, and validation requirements. Use `Closes #123`
-  only when the pull request should close a GitHub issue; otherwise mention
-  `#123` without a closing keyword.
+  for summary, issue-linking, and validation requirements.
+
+### Issue linking
+
+Internal (Linear): a branch containing PD-### automatically links its primary
+issue. Choose the magic word by intent:
+
+- Completes the issue: Resolves PD-123
+- Relates without closing: Related to PD-123
+- Partial contribution without closing: Ref PD-123
+  Do not use a closing keyword (Resolves, Fixes, Closes) unless this PR should
+  close that issue.
+  External (GitHub): Closes #123 only when this PR should close the issue;
 
 ## Commit Messages
 
