@@ -63,7 +63,6 @@ initialization with:
 
 ```sh
 corepack pnpm dlx @veli-design/cli auth status
-corepack pnpm dlx @veli-design/cli auth login
 ```
 
 The CLI stores no authentication secrets in the project. For CI registries that

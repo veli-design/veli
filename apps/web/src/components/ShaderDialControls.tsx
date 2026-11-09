@@ -279,9 +279,9 @@ export default function ShaderDialControls() {
   const presetsRef = useRef<Record<ShaderMode, AppearanceValues> | null>(null);
   const presetsReadyRef = useRef(false);
   const controller = useDialKitController('WaveFormation BG', CONFIG, {
-    id: 'wave-formation-v2',
+    id: 'pd-901-wave-formation-v2',
     persist: {
-      key: 'veli-wave-formation-controls-v2',
+      key: 'veli-pd-901-wave-formation-controls-v2',
       storage: 'localStorage',
       presets: true,
     },

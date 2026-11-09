@@ -222,7 +222,7 @@ integration. Verify adapter support independently before adopting it with Oxlint
 The copied policy modules pass an isolated Oxlint 1.72.0 quality smoke test using
 the configuration in the regression fixture. Oxlint is pinned
 as a Veli test dependency for that regression, not used to run the styling rules.
-This does not establish installed govmv compatibility or a supported Oxlint adapter.
+This does not establish installed consumer compatibility or a supported Oxlint adapter.
 
 ## Verified limits and sources
 
