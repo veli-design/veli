@@ -1,7 +1,7 @@
 {
   "id": "account-panel",
   "title": "Account panel",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "status": "experimental",
   "description": "Responsive profile and account panel with host-owned identity data and actions.",
   "files": ["account-panel.tsx"],
@@ -17,9 +17,9 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.0",
+    "@veli-design/react": "0.20.1",
     "@phosphor-icons/react": "2.1.10",
-    "@veli-design/tokens": "0.11.0",
+    "@veli-design/tokens": "0.11.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.22.0",
