@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.2.2
+
+_Released 2026-11-09._
+
+### Fixed
+
+- Point package homepages to veli.design and repository, issue, and licensing links to the veli-design GitHub organisation.
+
 ## 0.2.1
 
 _Released 2026-11-09._

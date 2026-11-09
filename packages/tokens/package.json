@@ -1,6 +1,6 @@
 {
   "name": "@veli-design/tokens",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Design tokens for the Veli Design System in CSS, Tailwind, and DTCG formats.",
   "repository": {
     "type": "git",
