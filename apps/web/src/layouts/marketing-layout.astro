@@ -2,18 +2,20 @@
 import Layout from './layout.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import DesignFooter from '../components/marketing/DesignFooter.astro';
 import '../styles/marketing.css';
 interface Props {
   title: string;
   description: string;
+  variant?: 'home' | 'design';
 }
-const { title, description } = Astro.props;
+const { title, description, variant = 'home' } = Astro.props;
 ---
 
-<Layout {title} {description} pageClass="marketing-page">
-  <MarketingHeader />
+<Layout {title} {description} pageClass={`marketing-page marketing-page--${variant}`}>
+  <MarketingHeader {variant} />
   <main id="main"><slot /></main>
-  <MarketingFooter />
+  {variant === 'design' ? <DesignFooter /> : <MarketingFooter />}
 </Layout>
 <script>
   import { initMarketingPreferences } from '../scripts/marketing-preferences';

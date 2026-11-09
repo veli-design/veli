@@ -1,5 +1,10 @@
 ---
 const path = Astro.url.pathname;
+interface Props {
+  variant?: 'home' | 'design';
+}
+const { variant = 'home' } = Astro.props;
+const design = variant === 'design';
 const github = 'https://github.com/veli-design/veli';
 ---
 
@@ -9,10 +14,23 @@ const github = 'https://github.com/veli-design/veli';
   data-solid="rect"
   data-group="banner"
 >
-  <img src="/blocks/maldives-flag.svg" width="24" height="16" alt="Maldives flag" />
+  <img
+    src={design ? '/images/marketing/35ffe.png' : '/blocks/maldives-flag.svg'}
+    width="24"
+    height="16"
+    alt="Maldives flag"
+  />
   <span>An official website of the Maldives Government</span>
   <details>
-    <summary>Here’s how you know <span aria-hidden="true">⌄</span></summary>
+    <summary
+      >Here’s how you know {
+        design ? (
+          <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
+        ) : (
+          <span aria-hidden="true">⌄</span>
+        )
+      }</summary
+    >
     <p>
       Veli is the design system for Maldives government services. Check that you are visiting <strong
         >veli.design</strong
@@ -24,7 +42,7 @@ const github = 'https://github.com/veli-design/veli';
   <a href="/" aria-label="Veli Design home"
     ><img
       class="marketing-logo"
-      src="/images/marketing/veli-design-nav.svg"
+      src={design ? '/images/marketing/1c862.svg' : '/images/marketing/veli-design-nav.svg'}
       width="180"
       height="29"
       alt="Veli Design"
@@ -38,13 +56,28 @@ const github = 'https://github.com/veli-design/veli';
       <a
         href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site"
         aria-label="Veli in Figma"
-        ><img src="/images/marketing/figma-icon.svg" width="24" height="24" alt="" /></a
+        ><img
+          src={design ? '/images/marketing/7321c.svg' : '/images/marketing/figma-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
       >
       <a href={github} aria-label="Veli on GitHub"
-        ><img src="/images/marketing/github-icon.svg" width="24" height="24" alt="" /></a
+        ><img
+          src={design ? '/images/marketing/0e2f0.svg' : '/images/marketing/github-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
       >
       <a href="https://www.npmjs.com/package/@veli-design/react" aria-label="Veli React on npm"
-        ><img src="/images/marketing/package-icon.svg" width="24" height="24" alt="" /></a
+        ><img
+          src={design ? '/images/marketing/0b970.svg' : '/images/marketing/package-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
       >
     </span>
   </nav>

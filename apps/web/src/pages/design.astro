@@ -3,6 +3,7 @@ import MarketingLayout from '../layouts/marketing-layout.astro';
 import AtollIllustration from '../components/marketing/AtollIllustration.astro';
 import ThaanaIllustration from '../components/marketing/ThaanaIllustration.astro';
 import { Button } from '@veli-design/react/button';
+import '../styles/design.css';
 const a = '/images/marketing/';
 const forces = [
   {
@@ -29,15 +30,17 @@ const forces = [
 <MarketingLayout
   title="Designing Veli | Veli Design System"
   description="How the sand of the Maldives shaped a design system for government services."
+  variant="design"
 >
   <div class="design-page">
+    <canvas class="design-hero-field" data-design-field="hero" aria-hidden="true"></canvas>
     <section class="design-hero" aria-labelledby="design-title">
-      <canvas data-design-stipple aria-hidden="true"></canvas><h1 id="design-title">
-        Designing Veli
-      </h1><p>How the sand of the Maldives shaped a design system for government services</p>
+      <h1 id="design-title">Designing Veli</h1><p>
+        How the sand of the Maldives shaped a design system for government services
+      </p>
     </section>
-    <div class="marketing-container">
-      <section class="design-section" aria-labelledby="shared-ground">
+    <div class="design-container">
+      <section class="design-section design-shared" aria-labelledby="shared-ground">
         <div class="design-section-heading">
           <div>
             <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="shared-ground">
@@ -49,19 +52,21 @@ const forces = [
             has its own purpose and audience. But they don’t need their own foundation.
           </p>
         </div>
-        <div class="design-one-system" data-design-scene="one"><span>One system</span></div>
+        <figure class="design-one-system" aria-label="One system">
+          <div><img src={`${a}5673c.png`} alt="One system" /></div>
+        </figure>
       </section>
       <p class="design-reflection">
-        The challenge wasn’t designing another set of screens. It was creating something teams
+        The challenge wasn't designing another set of screens. It was creating something teams
         across every ministry could build on without losing their own purpose. Before choosing a
         single colour or component, we had to decide what kind of system this should be, and what it
         should be made of.
       </p>
-      <p class="design-interlude">Sand doesn’t exist in isolation.</p>
-      <section class="design-section" aria-labelledby="patient-forces">
+      <p class="design-interlude">Sand doesn't exist in isolation.</p>
+      <section class="design-section design-forces" aria-labelledby="patient-forces">
         <div class="design-section-heading">
           <div>
-            <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="patient-forces">
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="patient-forces">
               Shaped by<br />patient forces
             </h2>
           </div><p>
@@ -73,7 +78,7 @@ const forces = [
         <div class="design-force-grid">
           {
             forces.map((force) => (
-              <article class="design-force-card" data-force={force.name}>
+              <article class="design-force-card" data-design-field={force.name}>
                 <>
                   <canvas aria-hidden="true" />
                   <div class="design-force-icon">
@@ -92,14 +97,15 @@ const forces = [
           </ul>
         </div>
       </section>
-      <section class="design-section" aria-labelledby="sand-to-atoll">
+      <section class="design-section design-layers" aria-labelledby="sand-to-atoll">
         <div class="design-section-heading">
           <div>
-            <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="sand-to-atoll">
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="sand-to-atoll">
               From sand to<br />atoll
             </h2>
           </div><p>
-            Veli is built in layers, the same way the islands are. To form one unified nation.
+            Veli is built in layers, the same way the islands are. To form one unified nation. Veli
+            is built in layers, the same way the islands are. To form one unified nation.
           </p>
         </div>
         <figure class="design-atoll">
@@ -108,9 +114,12 @@ const forces = [
             services.
           </figcaption>
         </figure>
+        <p class="design-atoll-key" aria-hidden="true">
+          Foundations → Components → Patterns → Blocks → Services
+        </p>
       </section>
       <section class="design-crystalline" aria-labelledby="crystalline">
-        <img class="design-section-dots" src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2
+        <img class="design-section-dots" src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2
           id="crystalline"
         >
           Crystalline Sand<br />philosophy
@@ -142,35 +151,39 @@ const forces = [
           </div>
         </div>
       </section>
-      <section class="design-section" aria-labelledby="purposeful-motion">
+      <section class="design-section design-movement" aria-labelledby="purposeful-motion">
         <div class="design-section-heading">
           <div>
-            <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="purposeful-motion">
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="purposeful-motion">
               Movement with<br />purpose
             </h2>
           </div><p>
             Motion gives digital experiences a sense of direction. In Veli, every movement has a
-            purpose — guided by clarity and natural transitions.
+            purpose — guided by clarity and natural transitions. Motion gives digital experiences a
+            sense of direction. In Veli, every movement has a purpose — guided by clarity and
+            natural transitions.
           </p>
         </div>
         <div class="design-motion-demo" data-design-scene="motion">
-          <img
-            class="design-motion-backdrop"
-            src={`${a}33ffa.svg`}
-            width="1665"
-            height="684"
-            alt=""
-          /><div class="design-guide" aria-hidden="true">
-            {[0, 1, 2, 3].map((i) => <span style={{ '--i': i }} />)}
-          </div><div class="design-connect" aria-hidden="true">
-            <img src={`${a}12e9b.svg`} width="64" height="64" alt="" /><img
-              src={`${a}d02dc.svg`}
-              width="64"
-              height="64"
+          <div class="design-motion-native">
+            <img
+              class="design-motion-backdrop"
+              src={`${a}33ffa.svg`}
+              width="1665"
+              height="684"
               alt=""
-            /><img src={`${a}f8b0a.svg`} width="64" height="64" alt="" />
-          </div><div class="design-ripple" aria-hidden="true">
-            <img src={`${a}b4bb8.svg`} width="382" height="260" alt="" />
+            /><div class="design-guide" aria-hidden="true">
+              {[0, 1, 2, 3].map((i) => <span style={{ '--i': i }} />)}
+            </div><div class="design-connect" aria-hidden="true">
+              <img src={`${a}12e9b.svg`} width="64" height="64" alt="" /><img
+                src={`${a}d02dc.svg`}
+                width="64"
+                height="64"
+                alt=""
+              /><img src={`${a}f8b0a.svg`} width="64" height="64" alt="" />
+            </div><div class="design-ripple" aria-hidden="true">
+              <img src={`${a}b4bb8.svg`} width="382" height="260" alt="" />
+            </div>
           </div>
         </div>
         <div class="design-motion-captions">
@@ -180,19 +193,19 @@ const forces = [
             </p>
           </div><div>
             <h3>Connect</h3><p>
-              As sand settles into the tide, interfaces respond to people’s actions.
+              Like sand shifting with the tide, interfaces respond to people’s actions.
             </p>
           </div><div>
             <h3>Respond</h3><p>
-              Like a ripple on still water, every action gets an immediate response.
+              Like a ripple on still water, every action gets an immediate answer.
             </p>
           </div>
         </div>
       </section>
-      <section class="design-section" aria-labelledby="rooted-thaana">
+      <section class="design-section design-rooted" aria-labelledby="rooted-thaana">
         <div class="design-section-heading">
           <div>
-            <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="rooted-thaana">
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="rooted-thaana">
               Rooted in<br />Thaana
             </h2>
           </div><p>
@@ -203,7 +216,7 @@ const forces = [
           </p>
         </div>
         <div class="design-thaana" data-design-scene="thaana">
-          <div class="design-thaana-art" lang="dv" dir="rtl" aria-hidden="true">
+          <div class="design-thaana-art" lang="dv" aria-hidden="true">
             <div class="design-thaana-native"><ThaanaIllustration /></div>
           </div>
           <div class="design-thaana-meta">
@@ -224,9 +237,9 @@ const forces = [
             as="a"
             href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site"
             intent="accent"
-            size="md">Explore in Figma</Button
+            size="xl">Explore in Figma</Button
           >
-        </div><canvas data-design-stipple aria-hidden="true"></canvas>
+        </div><canvas data-design-field="closing" aria-hidden="true"></canvas>
       </section>
     </div>
   </div>

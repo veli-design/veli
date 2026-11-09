@@ -1,0 +1,61 @@
+---
+const a = '/images/marketing/';
+const figma = 'https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site';
+---
+
+<footer class="design-footer">
+  <div class="design-footer-inner">
+    <div class="design-footer-top">
+      <div class="design-footer-emblem" role="img" aria-label="Maldives Government">
+        <div><img src={`${a}aed0c.svg`} width="49" height="55" alt="" /></div>
+      </div>
+      <div class="design-footer-brands">
+        <a class="design-footer-brand" href="/"
+          ><img src={`${a}b15fc.svg`} width="202" height="33" alt="Veli Design" /><span
+            >Maldives Government Design System</span
+          ></a
+        >
+        <a class="design-footer-credit" href="https://mindco.mv"
+          ><span>Design &amp; Developed by</span><img
+            src={`${a}cce55.svg`}
+            width="154"
+            height="31"
+            alt="MINDCo"
+          /></a
+        >
+      </div>
+    </div>
+    <nav class="design-footer-nav" aria-label="Footer navigation">
+      <div>
+        <h2>Build with Veli</h2>
+        <a href="/docs/components/">Components</a><a href="/docs/patterns/">Patterns</a><a
+          href="/docs/blocks/">UI Blocks</a
+        >
+        <div class="design-footer-dev-links">
+          <a href="https://github.com/veli-design/veli">Github</a><a
+            href="https://www.npmjs.com/package/@veli-design/react">NPM</a
+          ><a href="/llms.txt">Ai Skills</a>
+        </div>
+      </div>
+      <div>
+        <h2>Design</h2><a href={figma}>Figma</a><a href="/docs/foundations/">Foundation</a><a
+          href="/docs/foundations/principles/">Design Principles</a
+        >
+      </div>
+      <div>
+        <div class="design-footer-socials">
+          <a href={figma} aria-label="Veli on Figma"
+            ><img src={`${a}7321c.svg`} width="24" height="24" alt="" /></a
+          ><a href="https://github.com/veli-design/veli" aria-label="Veli on GitHub"
+            ><img src={`${a}0e2f0.svg`} width="24" height="24" alt="" /></a
+          ><a href="https://www.npmjs.com/package/@veli-design/react" aria-label="Veli on npm"
+            ><img src={`${a}0b970.svg`} width="24" height="24" alt="" /></a
+          >
+        </div>
+        <a href={figma}>Figma</a><a href="/docs/foundations/">Foundation</a><a
+          href="/docs/foundations/principles/">Design Principles</a
+        >
+      </div>
+    </nav>
+  </div>
+</footer>

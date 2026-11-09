@@ -30,3 +30,15 @@ The agency strip uses the exact government emblem and repeated agency entries
 in the supplied prototype; it does not imply additional, distinct agency assets.
 Its duplicate visual entries are hidden from assistive technology. Brand and
 government identifiers retain the exclusions in the repository's brand policy.
+
+The Design page follows frame `2382:89507` in the same Figma file. Its editorial
+spacing and footer live in `src/styles/design.css` and `DesignFooter.astro`,
+independently of the homepage prototype. The composed atoll and Thaana plates
+keep their native layer coordinates and scale together inside their clips.
+`src/lib/design-fields.json` records the visible particle centres and dot sizes
+relative to the five frame clips; each field draws the original exported SVG dot
+from `public/images/marketing/`. The resting composition matches Figma, while
+`src/scripts/design-motion.ts` retains the supplied preview's Reef, Ocean, and
+Wind pointer interactions. Reduced motion keeps the exact resting composition.
+The designer has not provided mobile frames for this page; its smaller layouts
+adapt the same content and artwork without changing the desktop reference.
