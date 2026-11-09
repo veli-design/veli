@@ -15,7 +15,7 @@ export const docsOverview = {
   title: 'Veli Components',
   description: 'Accessible building blocks for consistent, dependable public-service interfaces.',
   packageGuidance:
-    'Examples use @veli-design/react and @veli-design/tokens. These names are prepared for an approved public npm release. Existing applications should migrate dependencies, imports and copied Blocks together once matching packages and registry are available.',
+    'Install @veli-design/react and @veli-design/tokens from public npm. React 19 and react-aria-components are required peers. When migrating from older package names, update dependencies, imports, token CSS, and copied Blocks together.',
   documentTitle: 'Documentation | Veli Design System',
   documentDescription: 'Foundations and component documentation for the Veli Design System.',
   htmlPath: '/docs/components/',

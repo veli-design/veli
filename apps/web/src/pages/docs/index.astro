@@ -1,51 +1,25 @@
 ---
+import { getEntry } from 'astro:content';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import DocsPageActions from '../../components/DocsPageActions.astro';
-import { docsSections } from '../../lib/site';
+import '../../styles/get-started.css';
+
+const guide = await getEntry('guides', 'get-started');
+if (!guide) throw new Error('Get Started guide is missing');
+const { Content, headings } = await guide.render();
 ---
 
 <DocsLayout
-  title="Documentation | Veli Design System"
-  description="Start building accessible, bilingual public services with Veli foundations, components, patterns, and blocks."
+  title="Get Started | Veli Design System"
+  description={guide.data.description}
   activePath="/docs/"
   markdownPath="/docs/index.md"
-  contentLayout="overview"
+  contentLayout="get-started"
+  headings={headings.filter((heading) => heading.depth === 2)}
+  showPageActions={false}
 >
-  <header class="docs-page-header docs-page-header--overview">
-    <div class="docs-page-header__content">
-      <h1>Build with Veli</h1>
-      <p>One shared foundation for accessible, bilingual public services.</p>
-      <DocsPageActions markdownPath="/docs/index.md" placement="inline" />
-    </div>
+  <header class="docs-page-header get-started-header">
+    <h1>{guide.data.title}</h1>
+    <p>{guide.data.description}</p>
   </header>
-  <div class="docs-overview-content">
-    <section class="docs-overview-copy">
-      <h2>Start with the system</h2>
-      <p>
-        Explore the foundations, choose accessible components, and bring them together with tested
-        patterns and ready-made blocks.
-      </p>
-    </section>
-    <div class="docs-link-list">
-      {
-        docsSections.map((section) => (
-          <a href={section.href}>
-            <span>{section.title}</span>
-            <p>
-              {
-                {
-                  foundations:
-                    'Principles, colour, typography, spacing, motion, and accessibility.',
-                  components:
-                    'Accessible React building blocks, usage guidance, and API references.',
-                  patterns: 'Recurring service interactions, forms, and content flows.',
-                  blocks: 'Editable page sections that you can copy into your application.',
-                }[section.id]
-              }
-            </p>
-          </a>
-        ))
-      }
-    </div>
-  </div>
+  <article class="docs-prose get-started-content"><Content /></article>
 </DocsLayout>

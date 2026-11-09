@@ -1,0 +1,145 @@
+---
+title: Get Started
+description: Everything you need to start building government services with Veli.
+---
+
+import { ButtonUsageDemo } from '../../components/ButtonExamples';
+import { FigmaLibraryPlaceholder } from '../../components/FigmaLibraryPlaceholder';
+import DocsStorybookLink from '../../components/DocsStorybookLink.astro';
+
+## What Veli gives you
+
+Veli is a shared foundation for Maldivian government digital services. It gives your team reusable building blocks and page layouts, so you can spend less time rebuilding the basics and more time on the service itself.
+
+- [**Foundations**](/docs/foundations/)
+
+  Colour, typography, spacing, and the other values every layer depends on.
+
+- [**Components**](/docs/components/)
+
+  Buttons, inputs, alerts, and other interface elements, ready to use.
+
+- [**Patterns**](/docs/patterns/)
+
+  Reusable solutions for signing in, filling in forms, and other tasks.
+
+- [**Blocks**](/docs/blocks/)
+
+  Editable page sections you can copy into your application.
+
+Veli's packages are available on public npm. Hosted resources and the Blocks registry may require separate access.
+
+Want to know how and why Veli was made? Read [Designing Veli →](/design/).
+
+## Using Veli
+
+Whether you design or build, here’s where to begin.
+
+- **Design**
+
+  Explore the foundations and component guidance, and prepare to design with Veli in Figma.
+
+  [Start designing →](#design)
+
+- **Develop**
+
+  Install Veli, connect the tokens and theme, and render your first component.
+
+  [Start building →](#develop)
+
+## Design
+
+### 1. Get the Veli library
+
+Figma library publication is coming soon. Start with the component reference and foundations.
+
+### 2. Use the shared foundations
+
+Start with Veli's colour, typography, spacing, and accessibility guidance. Use the shared values to keep services consistent. [Explore foundations →](/docs/foundations/)
+
+### 3. Design in Dhivehi and English
+
+Plan both languages from the start. Review reading direction, content length, and complete service flows in each language.
+
+<FigmaLibraryPlaceholder client:load data-docs-markdown="omit" />
+
+## Develop
+
+This short setup assumes an existing React 19 application. For a complete Vite walkthrough and framework notes, use the [React package setup guide](https://www.npmjs.com/package/@veli-design/react).
+
+### 1. Install Veli
+
+Install the React components, tokens, and React Aria peer dependency. Your application also needs React 19 and React DOM 19.
+
+```bash
+pnpm add @veli-design/react @veli-design/tokens react-aria-components
+```
+
+### 2. Set up tokens and theming
+
+Use Tailwind CSS 4 with its framework integration, then import these styles in order. Veli's React adapter registers the component sources with Tailwind. See the [Tailwind Vite guide](https://tailwindcss.com/docs/installation/using-vite) for plugin setup.
+
+```css title="src/index.css"
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+### 3. Configure language and direction
+
+Wrap your app in `VeliProvider`. Use `language="en"` for English and LTR, or `language="dv"` for Dhivehi and RTL. `colorScheme="system"` follows the saved Veli theme or system preference. Your app supplies translations and loads its fonts. [Language and direction →](/docs/foundations/language-direction/)
+
+### 4. Use your first component
+
+Import components from their package subpaths. This example renders a Veli Button inside the provider.
+
+<div className="preview">
+  <ButtonUsageDemo client:visible />
+</div>
+
+```tsx title="src/App.tsx"
+import { Button } from '@veli-design/react/button';
+import { VeliProvider } from '@veli-design/react/provider';
+
+export default function App() {
+  return (
+    <VeliProvider language="en" colorScheme="system">
+      <Button>Continue</Button>
+    </VeliProvider>
+  );
+}
+```
+
+<DocsStorybookLink slug="button" resource data-docs-markdown="omit" />
+
+## Build in both languages
+
+Build a complete experience in each language. Veli handles the supported language and direction context; your team owns the content and translations.
+
+- Switch the whole interface between Dhivehi and English, rather than showing both side by side.
+- Check layouts, content length, keyboard navigation, and service flows in both directions.
+- Write content that reads naturally in each language.
+
+## Before you launch
+
+Check accessibility, language, and responsive behaviour in the service you have built:
+
+- Test against [WCAG 2.2 AA](https://www.w3.org/TR/WCAG22/), including keyboard and screen reader use.
+- Review the complete service in both Dhivehi and English.
+- Test on mobile and desktop, including zoom, validation, and error states.
+
+Veli components provide a foundation; using them alone does not establish conformance. [Read the accessibility guidance →](/docs/foundations/accessibility/)
+
+## Get help and contribute
+
+**Ask a question.** Start with the component reference and the setup guidance in the [published React package](https://www.npmjs.com/package/@veli-design/react).
+
+**Report an issue.** If you have repository access, [report a bug or accessibility problem](https://github.com/veli-design/veli/issues) with a clear reproduction and the affected package version.
+
+**Contribute.** Team members with repository access can follow the [contribution guide](https://github.com/veli-design/veli/blob/main/CONTRIBUTING.md).
+
+**Licensing.** Original software and code examples use MIT; original non-software documentation uses CC BY 4.0. Fonts, government imagery, and brand assets have separate terms. See the licence and notices included in each published package.
+
+## What’s new
+
+Find the latest published version, release notes, and upgrade guidance in the [React package on npm →](https://www.npmjs.com/package/@veli-design/react).

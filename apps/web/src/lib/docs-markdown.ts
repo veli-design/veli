@@ -1,5 +1,5 @@
 import { blockPages } from './blocks';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import {
   componentGroups,
   docsOverview,
@@ -16,7 +16,8 @@ export type DocsSection = 'Overview' | 'Foundations' | 'Components' | 'Patterns'
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
   | { kind: 'entry'; entry: CollectionEntry<'foundations'> }
-  | { kind: 'entry'; entry: CollectionEntry<'patterns'> };
+  | { kind: 'entry'; entry: CollectionEntry<'patterns'> }
+  | { kind: 'entry'; entry: CollectionEntry<'guides'> };
 
 type OverviewSource = {
   kind: 'overview';
@@ -116,6 +117,8 @@ function validateCatalog(pages: readonly DocsCatalogPage[]) {
 }
 
 export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted) throw new Error('[docs-markdown] Get Started guide is missing');
   const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
@@ -134,13 +137,12 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
     {
       id: 'documentation',
       section: 'Overview',
-      label: 'Documentation overview',
-      title: 'Build with Veli',
-      description:
-        'Foundations, components, patterns, and blocks for accessible, bilingual public services.',
+      label: getStarted.data.title,
+      title: getStarted.data.title,
+      description: getStarted.data.description!,
       htmlPath: '/docs/',
       markdownPath: '/docs/index.md',
-      source: { kind: 'overview', overview: 'documentation' },
+      source: { kind: 'entry', entry: getStarted },
     },
     {
       id: 'foundations',
@@ -356,10 +358,7 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
     '## Start here',
     '',
     ...pages
-      .filter(
-        (page) =>
-          page.source.kind === 'overview' && ['documentation', 'patterns'].includes(page.id),
-      )
+      .filter((page) => ['documentation', 'patterns'].includes(page.id))
       .map((page) =>
         markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
       ),

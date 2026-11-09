@@ -1,5 +1,5 @@
 import { blockPages } from '../lib/blocks';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import {
   buildCollectionSearchItems,
   createOverviewSearchItem,
@@ -11,6 +11,16 @@ import { componentGroups, foundations, patterns } from '../lib/site';
 export const prerender = true;
 
 export async function GET() {
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted) throw new Error('Get Started guide is missing');
+  const getStartedItems = await buildCollectionSearchItems({
+    category: 'Overview',
+    basePath: '/docs/',
+    entries: [getStarted],
+    orderedSlugs: ['get-started'],
+    orderOffset: -100,
+    hrefForSlug: () => '/docs/',
+  });
   const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
@@ -75,15 +85,9 @@ export async function GET() {
     }),
   ]);
   const index: DocsSearchItem[] = [
-    createOverviewSearchItem({
-      id: 'documentation:overview',
-      href: '/docs/',
-      category: 'Overview',
-      title: 'Getting started',
-      description: 'Start building with Veli foundations, components, patterns, and blocks.',
-      content: 'Documentation overview installation foundations components patterns blocks',
-      order: -1,
-    }),
+    ...getStartedItems.map((item) =>
+      item.kind === 'page' ? { ...item, id: 'documentation:overview' } : item,
+    ),
     createOverviewSearchItem({
       id: 'patterns:overview',
       href: '/docs/patterns/',

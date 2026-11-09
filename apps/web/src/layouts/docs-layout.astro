@@ -14,7 +14,12 @@ type Heading = {
   text: string;
 };
 
-type DocsContentLayout = 'overview' | 'foundation-article' | 'component' | 'article';
+type DocsContentLayout =
+  | 'overview'
+  | 'foundation-article'
+  | 'component'
+  | 'article'
+  | 'get-started';
 
 interface Props {
   title: string;
@@ -63,7 +68,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
               class:list={['docs-nav-link', activePath === '/docs/' && 'is-active']}
               href="/docs/"
               aria-current={activePath === '/docs/' ? 'page' : undefined}
-              data-doc-link>Getting started</a
+              data-doc-link>Get Started</a
             >
             {
               docsSections.map((section) => {
@@ -127,7 +132,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
               class:list={['docs-nav-link', activePath === '/docs/' && 'is-active']}
               href="/docs/"
               aria-current={activePath === '/docs/' ? 'page' : undefined}
-              data-doc-link>Getting started</a
+              data-doc-link>Get Started</a
             >
             {
               docsSections.map((section) => {
