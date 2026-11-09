@@ -1435,6 +1435,8 @@ export function initHomeStipple() {
     wake();
   });
   window.addEventListener('scroll', wake, { passive: true });
+  window.addEventListener('resize', wake);
+  document.fonts?.ready.then(wake);
   document.addEventListener('visibilitychange', wake);
   window.addEventListener('pageshow', wake);
   window.addEventListener('pagehide', () => {
