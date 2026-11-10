@@ -70,14 +70,21 @@ function validateFilesArea(area) {
   }
 }
 
-/** H2 contract for the single Frameworks page, in order. Step detail lives in H3s. */
-export const frameworkGuideHeadings = [
-  'Vite',
-  'Next.js',
-  'React Router',
-  'TanStack Start',
-  'Astro',
+/**
+ * Framework tabs on `/getting-started/frameworks/`.
+ * `id` matches the Astro heading slug (github-slugger) so `#vite` / `#nextjs` keep working.
+ * H2 contract is the `label` list; step detail lives in H3s.
+ */
+export const frameworkGuideTabs = [
+  { id: 'vite', label: 'Vite' },
+  { id: 'nextjs', label: 'Next.js' },
+  { id: 'react-router', label: 'React Router' },
+  { id: 'tanstack-start', label: 'TanStack Start' },
+  { id: 'astro', label: 'Astro' },
 ];
+
+/** H2 text contract derived from frameworkGuideTabs. */
+export const frameworkGuideHeadings = frameworkGuideTabs.map((tab) => tab.label);
 
 /**
  * @param {readonly Record<string, unknown>[]} areas

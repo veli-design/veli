@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import DocsFrameworkTabs from '../../components/DocsFrameworkTabs.astro';
 import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
 import { docArea, pageMarkdownPath } from '../../lib/doc-areas.mjs';
@@ -34,9 +35,13 @@ const title = guide?.title ?? entry?.data.title;
 const description = guide?.description ?? entry?.data.description;
 if (!title) throw new Error('[getting-started] page is missing a title');
 
-const headings = (guide?.headings ?? renderedEntry?.headings ?? []).filter(
-  (heading) => heading.depth >= 2 && heading.depth <= 3,
-);
+const isFrameworks = entry?.slug === 'frameworks';
+const headings = (guide?.headings ?? renderedEntry?.headings ?? []).filter((heading) => {
+  if (heading.depth < 2 || heading.depth > 3) return false;
+  // Framework H2s are the tab labels; keep H3 steps in the TOC.
+  if (isFrameworks && heading.depth === 2) return false;
+  return true;
+});
 const markdownPath = pageMarkdownPath(area, projection?.slug ?? entry?.slug ?? '');
 ---
 
@@ -65,6 +70,6 @@ const markdownPath = pageMarkdownPath(area, projection?.slug ?? entry?.slug ?? '
 
   <article class="docs-prose">
     {guide && <Fragment set:html={guide.html} />}
-    {renderedEntry && <renderedEntry.Content />}
+    {renderedEntry && <renderedEntry.Content components={{ DocsFrameworkTabs }} />}
   </article>
 </DocsLayout>
