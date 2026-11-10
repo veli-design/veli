@@ -14,7 +14,11 @@ import { Kbd } from '@veli-design/react/kbd';
 import { Menu, MenuItem } from '@veli-design/react/menu';
 import { Modal } from '@veli-design/react/modal';
 import { Search } from '@veli-design/react/search';
+import { docAreas } from '../lib/doc-areas.mjs';
 import type { DocsSearchItem } from '../lib/docs-search';
+
+const docAreaTitles = docAreas.map((area) => area.title);
+const componentsTitle = docAreas.find((area) => area.id === 'components')?.title;
 
 type DocsSearchDialogProps = {
   isOpen: boolean;
@@ -39,7 +43,7 @@ function scoreSearchItem(item: DocsSearchItem, normalizedQuery: string, queryTok
 
   let score = item.kind === 'page' ? 80 : 0;
 
-  if (item.category === 'Components') score += 120;
+  if (item.category === componentsTitle) score += 120;
 
   if (pageTitle === normalizedQuery) score += 1_200;
   else if (pageTitle.startsWith(normalizedQuery)) score += 900;
@@ -96,6 +100,10 @@ function getSearchResults(index: DocsSearchItem[], query: string) {
   return results;
 }
 
+function isDocAreaTitle(value: unknown): value is (typeof docAreas)[number]['title'] {
+  return docAreaTitles.some((title) => title === value);
+}
+
 function isDocsSearchItem(value: unknown): value is DocsSearchItem {
   if (!value || typeof value !== 'object') return false;
 
@@ -103,10 +111,7 @@ function isDocsSearchItem(value: unknown): value is DocsSearchItem {
   return (
     typeof item.id === 'string' &&
     typeof item.href === 'string' &&
-    (item.category === 'Foundations' ||
-      item.category === 'Components' ||
-      item.category === 'Patterns' ||
-      item.category === 'Blocks') &&
+    isDocAreaTitle(item.category) &&
     (item.kind === 'page' || item.kind === 'section') &&
     typeof item.pageTitle === 'string' &&
     typeof item.title === 'string' &&
