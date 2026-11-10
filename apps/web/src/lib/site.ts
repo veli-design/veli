@@ -1,4 +1,10 @@
 import { blocks } from './blocks';
+import { areaNavTitle, docArea, docAreas, pageHref, pageMarkdownPath } from './doc-areas.mjs';
+
+const foundationsArea = docArea('foundations');
+const componentsArea = docArea('components');
+const patternsArea = docArea('patterns');
+
 export type ComponentItem = {
   title: string;
   slug: string;
@@ -18,8 +24,8 @@ export const docsOverview = {
     'Examples use @veli-design/react and @veli-design/tokens. These names are prepared for an approved public npm release. Existing applications should migrate dependencies, imports and copied Blocks together once matching packages and registry are available.',
   documentTitle: 'Documentation | Veli Design System',
   documentDescription: 'Foundations and component documentation for the Veli Design System.',
-  htmlPath: '/docs/',
-  markdownPath: '/docs/index.md',
+  htmlPath: pageHref(componentsArea),
+  markdownPath: pageMarkdownPath(componentsArea),
 } as const;
 
 export const foundationsOverview = {
@@ -30,8 +36,8 @@ export const foundationsOverview = {
   documentTitle: 'Foundations | Veli Design System',
   documentDescription:
     'Principles, color, typography, spacing, motion, accessibility, language, and direction in Veli.',
-  htmlPath: '/foundations/',
-  markdownPath: '/foundations/index.md',
+  htmlPath: pageHref(foundationsArea),
+  markdownPath: pageMarkdownPath(foundationsArea),
 } as const;
 
 export type DocsNavigationItem = {
@@ -41,7 +47,7 @@ export type DocsNavigationItem = {
 };
 
 export type DocsNavigationSection = {
-  id: 'foundations' | 'components' | 'patterns' | 'blocks';
+  id: (typeof docAreas)[number]['id'];
   title: string;
   href: string;
   items: readonly DocsNavigationItem[];
@@ -68,11 +74,10 @@ export const externalResources: readonly ExternalResource[] = [
   },
 ] as const;
 
-export const foundations = [
+const foundationRecords = [
   {
     title: 'Principles',
     slug: 'principles',
-    href: '/foundations/principles/',
     icon: '/images/foundation-icons/principles.svg',
     iconDark: '/images/foundation-icons-dark/principles.svg',
     iconWidth: 48,
@@ -84,7 +89,6 @@ export const foundations = [
   {
     title: 'Color',
     slug: 'color',
-    href: '/foundations/color/',
     icon: '/images/foundation-icons/color.svg',
     iconDark: '/images/foundation-icons-dark/color.svg',
     iconWidth: 48,
@@ -96,7 +100,6 @@ export const foundations = [
   {
     title: 'Typography',
     slug: 'typography',
-    href: '/foundations/typography/',
     icon: '/images/foundation-icons/typography.svg',
     iconDark: '/images/foundation-icons-dark/typography.svg',
     iconWidth: 48,
@@ -108,7 +111,6 @@ export const foundations = [
   {
     title: 'Spacing',
     slug: 'spacing',
-    href: '/foundations/spacing/',
     icon: '/images/foundation-icons/spacing.svg',
     iconDark: '/images/foundation-icons-dark/spacing.svg',
     iconWidth: 48,
@@ -120,7 +122,6 @@ export const foundations = [
   {
     title: 'Motion',
     slug: 'motion',
-    href: '/foundations/motion/',
     icon: '/images/foundation-icons/motion.svg',
     iconDark: '/images/foundation-icons-dark/motion.svg',
     iconWidth: 48,
@@ -132,7 +133,6 @@ export const foundations = [
   {
     title: 'Accessibility',
     slug: 'accessibility',
-    href: '/foundations/accessibility/',
     icon: '/images/foundation-icons/accessibility.svg',
     iconDark: '/images/foundation-icons-dark/accessibility.svg',
     iconWidth: 48,
@@ -143,8 +143,8 @@ export const foundations = [
   },
   {
     title: 'Language & direction',
+    navTitle: 'Language & Direction',
     slug: 'language-direction',
-    href: '/foundations/language-direction/',
     icon: '/images/foundation-icons/language-direction.svg',
     iconDark: '/images/foundation-icons-dark/language-direction.svg',
     iconWidth: 48,
@@ -154,6 +154,11 @@ export const foundations = [
     status: 'Available',
   },
 ] as const;
+
+export const foundations = foundationRecords.map((item) => ({
+  ...item,
+  href: pageHref(foundationsArea, item.slug),
+}));
 
 export const componentGroups: ComponentGroup[] = [
   {
@@ -364,78 +369,83 @@ export const componentGroups: ComponentGroup[] = [
 
 export const allComponents = componentGroups.flatMap((group) => group.items);
 
-export const patterns = [
+const patternRecords = [
   {
     title: 'Forms',
     slug: 'forms',
-    href: '/patterns/forms/',
     description: 'Recipes for React Hook Form, TanStack Form, and schema-driven renderers.',
   },
 ] as const;
+
+export const patterns = patternRecords.map((item) => ({
+  ...item,
+  href: pageHref(patternsArea, item.slug),
+}));
 
 export function getComponentGroupSlug(title: string) {
   return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
 }
 
-/**
- * The single source of truth for every documentation navigation surface.
- * Overview entries deliberately live alongside child pages so filtering and
- * active states behave identically on desktop and mobile.
- */
-export const docsSections: readonly DocsNavigationSection[] = [
-  {
-    id: 'foundations',
-    title: 'Foundation',
-    href: '/foundations/',
-    items: [
-      { title: 'Overview', href: '/foundations/' },
-      ...foundations.map((item) => ({
-        title: item.title === 'Language & direction' ? 'Language & Direction' : item.title,
+export type InventoryRecord = {
+  title: string;
+  slug: string;
+  description: string;
+  href: string;
+  navTitle?: string;
+};
+
+export function inventoryItems(
+  areaId: Extract<(typeof docAreas)[number], { membership: 'inventory' }>['id'],
+): readonly InventoryRecord[] {
+  switch (areaId) {
+    case 'foundations':
+      return foundations;
+    case 'components':
+      return allComponents.map((item) => ({
+        title: item.title,
+        slug: item.slug,
+        description: item.description,
+        href: pageHref(componentsArea, item.slug),
+      }));
+    case 'patterns':
+      return patterns;
+    default: {
+      const unexpected: never = areaId;
+      throw new Error(`[site] no inventory for ${String(unexpected)}`);
+    }
+  }
+}
+
+function sectionItems(area: (typeof docAreas)[number]): readonly DocsNavigationItem[] {
+  switch (area.id) {
+    case 'foundations':
+    case 'components':
+    case 'patterns':
+      return inventoryItems(area.id).map((item) => ({
+        title: item.navTitle ?? item.title,
         href: item.href,
         description: item.description,
-      })),
-    ],
-  },
-  {
-    id: 'components',
-    title: 'Components',
-    href: '/docs/',
-    items: [
-      { title: 'Overview', href: '/docs/' },
-      ...allComponents.map((item) => ({
-        title: item.title,
-        href: `/docs/${item.slug}/`,
-        description: item.description,
-      })),
-    ],
-  },
-  {
-    id: 'patterns',
-    title: 'Patterns',
-    href: '/patterns/',
-    items: [
-      { title: 'Overview', href: '/patterns/' },
-      ...patterns.map((item) => ({
-        title: item.title,
-        href: item.href,
-        description: item.description,
-      })),
-    ],
-  },
-  {
-    id: 'blocks',
-    title: 'Blocks',
-    href: '/blocks/',
-    items: [
-      { title: 'Overview', href: '/blocks/' },
-      ...blocks.map(({ manifest }) => ({
+      }));
+    case 'blocks':
+      return blocks.map(({ manifest }) => ({
         title: manifest.title,
-        href: `/blocks/${manifest.id}/`,
+        href: pageHref(area, manifest.id),
         description: manifest.description,
-      })),
-    ],
-  },
-];
+      }));
+    default: {
+      const unexpected: never = area;
+      throw new Error(`[site] no navigation for ${String(unexpected)}`);
+    }
+  }
+}
+
+// The section summary is not a link, so each index is reached through its Overview item.
+export const docsSections: readonly DocsNavigationSection[] = docAreas.map((area) => ({
+  id: area.id,
+  title: areaNavTitle(area),
+  href: pageHref(area),
+  items: [{ title: 'Overview', href: pageHref(area) }, ...sectionItems(area)],
+}));
 
 export function getComponentMeta(slug: string) {
   return allComponents.find((item) => item.slug === slug);

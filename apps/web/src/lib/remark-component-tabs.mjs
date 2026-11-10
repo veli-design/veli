@@ -1,3 +1,5 @@
+import { docArea, matchContentPath } from './doc-areas.mjs';
+
 export const docsTabIds = ['overview', 'design', 'code', 'accessibility'];
 
 const organizedDocSlugs = new Set(['accordion', 'menu', 'radio']);
@@ -194,10 +196,10 @@ export function partitionDocsTabNodes(
 
 export function remarkComponentTabs() {
   return (tree, file) => {
-    const path = String(file.path ?? file.history?.at(-1) ?? '').replaceAll('\\', '/');
-    if (!path.includes('/src/content/docs/')) return;
+    const matched = matchContentPath(String(file.path ?? file.history?.at(-1) ?? ''));
+    if (!matched || matched.collection !== docArea('components').collection) return;
 
-    const slug = path.match(/\/src\/content\/docs\/([^/]+)\.mdx$/)?.[1];
+    const slug = matched.slug;
 
     tree.children = partitionDocsTabNodes(tree.children, file.data.astro?.frontmatter ?? {}, {
       preserveTabOrganization: organizedDocSlugs.has(slug),

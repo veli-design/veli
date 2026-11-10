@@ -1,4 +1,5 @@
 import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
+import { assertHeadersCover, renderHeaders } from '../src/lib/doc-areas.mjs';
 import console from 'node:console';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
@@ -84,14 +85,23 @@ function validateMarkdown(filePath) {
 if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first');
 validateFontNotices();
 
-const markdownFiles = [
-  ...collectFiles(resolve(distRoot, 'docs'), '.md'),
-  ...collectFiles(resolve(distRoot, 'foundations'), '.md'),
-  ...collectFiles(resolve(distRoot, 'patterns'), '.md'),
-  ...collectFiles(resolve(distRoot, 'blocks'), '.md'),
-].sort();
-
 const catalogPaths = JSON.parse(readFileSync(resolve(distRoot, 'docs-catalog.json'), 'utf8'));
+const markdownDirectories = [
+  ...new Set(
+    catalogPaths.map((markdownPath) => {
+      const directory = markdownPath.split('/')[1];
+      if (!directory) fail(`catalog path "${markdownPath}" has no section directory`);
+      return directory;
+    }),
+  ),
+];
+const markdownFiles = markdownDirectories
+  .flatMap((directory) => {
+    const directoryPath = resolve(distRoot, directory);
+    if (!existsSync(directoryPath)) fail(`dist/${directory} does not exist`);
+    return collectFiles(directoryPath, '.md');
+  })
+  .sort();
 const actualPaths = markdownFiles.map(
   (file) => `/${relative(distRoot, file).split('\\').join('/')}`,
 );
@@ -133,12 +143,8 @@ for (const markdownPath of expectedLinks) {
 }
 
 const headers = readFileSync(resolve(distRoot, '_headers'), 'utf8');
-if (
-  !headers.includes('Content-Type: text/plain; charset=utf-8') ||
-  !headers.includes('Content-Type: text/markdown; charset=utf-8')
-) {
-  fail('_headers does not declare the expected Markdown MIME types');
-}
+if (headers !== renderHeaders()) fail('dist/_headers does not match the section registry');
+assertHeadersCover(headers, catalogPaths);
 
 console.log(`Validated ${markdownFiles.length} Markdown pages and llms.txt.`);
 
