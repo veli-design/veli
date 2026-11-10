@@ -2212,49 +2212,91 @@ html[data-color-scheme='system'] [data-theme-icon='system'] {
 }
 
 .docs-component-animation {
-  position: relative;
   width: 100%;
   margin-top: 32px;
-  aspect-ratio: 805 / 364;
+}
+
+.docs-component-animation__viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 805 / 476;
   overflow: hidden;
   border: 1px solid var(--veli-color-border-base-muted);
   border-radius: 24px;
   background: var(--veli-color-bg-surface-raised);
 }
 
-.docs-component-animation__frame,
-.docs-component-animation__placeholder {
+.docs-component-animation__canvas,
+.docs-prose .docs-component-animation__poster {
   display: block;
   width: 100%;
   height: 100%;
+  margin: 0;
   border: 0;
+  border-radius: 0;
+  object-fit: contain;
 }
 
-.docs-component-animation__placeholder {
+.docs-component-animation__canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.docs-component-animation__viewport.is-rendered .docs-component-animation__canvas {
+  opacity: 1;
+}
+
+.docs-component-animation__viewport.is-rendered .docs-component-animation__poster {
+  visibility: hidden;
+}
+
+.docs-prose .docs-component-animation__poster--dark,
+html[data-theme='dark'] .docs-prose .docs-component-animation__poster--light {
+  display: none;
+}
+
+html[data-theme='dark'] .docs-prose .docs-component-animation__poster--dark {
+  display: block;
+}
+
+.docs-component-animation__replay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 50% 44%, var(--veli-color-neutral-alpha-200), transparent 38%),
-    var(--veli-color-bg-surface-raised);
-  color: var(--veli-color-text-base-muted);
-}
-
-.docs-component-animation__placeholder p {
-  margin: 0;
-  font-size: 14px;
-}
-
-.docs-component-animation__label {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--veli-color-border-base-muted);
   border-radius: 999px;
   background: var(--veli-color-bg-surface-base);
-  padding: 6px 10px;
-  color: var(--veli-color-text-base-muted);
-  font-size: 12px;
-  line-height: 1.45;
-  pointer-events: none;
+  color: var(--veli-color-text-base-strong);
+  cursor: pointer;
+}
+
+.docs-component-animation__replay[hidden] {
+  display: none;
+}
+
+.docs-component-animation__replay:hover {
+  background: var(--veli-color-bg-surface-raised);
+}
+
+.docs-component-animation__replay:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 2px;
+}
+
+.docs-component-animation__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .docs-example {

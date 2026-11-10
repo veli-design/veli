@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import DocsComponentAnimation from '../../../components/DocsComponentAnimation.astro';
 import DocsComponentTabs from '../../../components/DocsComponentTabs.astro';
 import DocsStorybookLink from '../../../components/DocsStorybookLink.astro';
 import DocsLayout from '../../../layouts/docs-layout.astro';
@@ -43,6 +44,6 @@ const markdownPath = `/docs/components/${doc.id}/index.md`;
   <DocsComponentTabs {markdownPath} />
 
   <article class="docs-prose">
-    <Content components={{ DocsStorybookLink }} />
+    <Content components={{ DocsStorybookLink, DocsComponentAnimation }} />
   </article>
 </DocsLayout>

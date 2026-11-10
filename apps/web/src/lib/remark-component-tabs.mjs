@@ -29,67 +29,15 @@ function attribute(name, value) {
   return { type: 'mdxJsxAttribute', name, value };
 }
 
-function animationNode(frontmatter) {
-  const title = typeof frontmatter.title === 'string' ? frontmatter.title : 'Component';
-  const animation = frontmatter.animation;
-  const hasAnimation =
-    animation && typeof animation === 'object' && typeof animation.src === 'string';
-  const label =
-    hasAnimation && typeof animation.label === 'string'
-      ? animation.label
-      : `${title} component animation`;
-
-  const content = hasAnimation
-    ? {
-        type: 'mdxJsxFlowElement',
-        name: 'iframe',
-        attributes: [
-          attribute('className', 'docs-component-animation__frame'),
-          attribute('src', animation.src),
-          attribute('title', label),
-          attribute('loading', 'lazy'),
-          attribute('sandbox', 'allow-scripts'),
-        ],
-        children: [],
-      }
-    : {
-        type: 'mdxJsxFlowElement',
-        name: 'div',
-        attributes: [
-          attribute('className', 'docs-component-animation__placeholder'),
-          attribute('aria-hidden', 'true'),
-        ],
-        children: [
-          {
-            type: 'paragraph',
-            children: [{ type: 'text', value: title }],
-          },
-        ],
-      };
-
+function animationNode(frontmatter, slug) {
   return {
     type: 'mdxJsxFlowElement',
-    name: 'div',
+    name: 'DocsComponentAnimation',
     attributes: [
-      attribute('className', 'docs-component-animation'),
-      attribute('data-docs-markdown', 'omit'),
+      attribute('slug', slug ?? ''),
+      attribute('title', typeof frontmatter.title === 'string' ? frontmatter.title : 'Component'),
     ],
-    children: [
-      content,
-      {
-        type: 'mdxJsxFlowElement',
-        name: 'span',
-        attributes: [attribute('className', 'docs-component-animation__label')],
-        children: [
-          {
-            type: 'text',
-            value: hasAnimation
-              ? 'HTML · component animation'
-              : 'Component animation · Coming soon',
-          },
-        ],
-      },
-    ],
+    children: [],
   };
 }
 
@@ -184,7 +132,7 @@ export function partitionDocsTabNodes(
   overview.splice(
     firstSectionIndex < 0 ? overview.length : firstSectionIndex,
     0,
-    animationNode(frontmatter),
+    animationNode(frontmatter, slug),
   );
 
   appendStorybookLink(panels.code, slug);
