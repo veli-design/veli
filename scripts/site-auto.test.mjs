@@ -550,7 +550,7 @@ test('source command binds checked-out main even when queued event SHA is older'
   const h = historyFixture(t);
   const output = resolve(h.root, 'step-output');
   const envFile = resolve(h.root, 'step-env');
-  execFileSync(process.execPath, [new URL('./site-auto.mjs', import.meta.url).pathname, 'source'], {
+  execFileSync(process.execPath, [fileURLToPath(new URL('./site-auto.mjs', import.meta.url)), 'source'], {
     cwd: h.root,
     env: {
       ...h.env,
