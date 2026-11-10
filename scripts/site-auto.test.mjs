@@ -550,17 +550,21 @@ test('source command binds checked-out main even when queued event SHA is older'
   const h = historyFixture(t);
   const output = resolve(h.root, 'step-output');
   const envFile = resolve(h.root, 'step-env');
-  execFileSync(process.execPath, [fileURLToPath(new URL('./site-auto.mjs', import.meta.url)), 'source'], {
-    cwd: h.root,
-    env: {
-      ...h.env,
-      GITHUB_SHA: h.site,
-      GITHUB_TOKEN: 'fixture',
-      GITHUB_REPOSITORY: 'veli-design/veli',
-      GITHUB_OUTPUT: output,
-      GITHUB_ENV: envFile,
+  execFileSync(
+    process.execPath,
+    [fileURLToPath(new URL('./site-auto.mjs', import.meta.url)), 'source'],
+    {
+      cwd: h.root,
+      env: {
+        ...h.env,
+        GITHUB_SHA: h.site,
+        GITHUB_TOKEN: 'fixture',
+        GITHUB_REPOSITORY: 'veli-design/veli',
+        GITHUB_OUTPUT: output,
+        GITHUB_ENV: envFile,
+      },
     },
-  });
+  );
   assert.equal(readFileSync(output, 'utf8'), `source=${h.pending}\n`);
   assert.equal(readFileSync(envFile, 'utf8'), `SITE_SOURCE_COMMIT=${h.pending}\n`);
 });
