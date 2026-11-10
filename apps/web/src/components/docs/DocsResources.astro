@@ -1,0 +1,36 @@
+---
+import {
+  ArrowUpRightIcon,
+  FigmaLogoIcon,
+  GithubLogoIcon,
+  PackageIcon,
+} from '@phosphor-icons/react';
+interface Props {
+  figma?: string;
+  source: string;
+  storybook: string;
+}
+const { figma, source, storybook } = Astro.props;
+const links = [
+  { label: 'Figma', href: figma, Icon: FigmaLogoIcon },
+  { label: 'GitHub', href: source, Icon: GithubLogoIcon },
+  { label: 'Storybook', href: storybook, Icon: PackageIcon },
+];
+---
+
+<nav class="docs-component-resources" aria-label="Component resources">
+  {
+    links
+      .filter(({ href }) => href)
+      .map(({ label, href, Icon }) => (
+        <a {href} target="_blank" rel="noopener noreferrer">
+          <>
+            <Icon size={20} weight="fill" aria-hidden="true" />
+            <span>{label}</span>
+            <ArrowUpRightIcon size={16} aria-hidden="true" />
+            <span class="sr-only"> (opens in a new tab)</span>
+          </>
+        </a>
+      ))
+  }
+</nav>

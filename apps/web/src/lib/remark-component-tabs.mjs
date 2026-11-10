@@ -115,6 +115,11 @@ export function partitionDocsTabNodes(
       continue;
     }
 
+    if (frontmatter.__docsExplicitTabs) {
+      panels[node.data?.docsTab ?? 'overview'].push(node);
+      continue;
+    }
+
     if (node.type === 'heading' && node.depth === 2) {
       reachedFirstSection = true;
       currentTab = preserveTabOrganization ? getDocsTabForHeading(nodeText(node)) : 'code';
@@ -127,7 +132,7 @@ export function partitionDocsTabNodes(
 
   const overview = panels.overview;
   const firstSectionIndex = overview.findIndex(
-    (node) => node.type === 'heading' && node.depth === 2,
+    (node) => (node.type === 'heading' && node.depth === 2) || node.name === 'DocsResources',
   );
   overview.splice(
     firstSectionIndex < 0 ? overview.length : firstSectionIndex,
@@ -137,7 +142,16 @@ export function partitionDocsTabNodes(
 
   appendStorybookLink(panels.code, slug);
 
-  return [...imports, ...docsTabIds.map((tab) => panelNode(tab, panels[tab]))];
+  return [
+    ...imports,
+    ...docsTabIds.map((tab) => {
+      const panel = panelNode(tab, panels[tab]);
+      if (frontmatter.__docsExplicitTabs && tab !== 'code') {
+        panel.attributes.push(attribute('data-docs-editorial', ''));
+      }
+      return panel;
+    }),
+  ];
 }
 
 export function remarkComponentTabs() {
