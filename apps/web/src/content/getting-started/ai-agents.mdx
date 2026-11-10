@@ -1,0 +1,41 @@
+---
+title: AI agents
+description: Point a coding agent at llms.txt, per-page Markdown, and the installed package guide.
+order: 90
+---
+
+Use the guide shipped inside the installed package when you write Veli UI. Use this site when you need a page the package does not carry, such as a framework walkthrough.
+
+## Read the package guide
+
+Open `node_modules/@veli-design/react/AGENT_GUIDE.md` from the app that depends on `@veli-design/react`. That file matches the installed version. The [Agents](/getting-started/agents/) page on this site mirrors one published version, and the banner on that page names it. When the two copies differ, follow the installed file.
+
+The same package includes `agent/manifest.json`, `agent/components/*.json`, and `agent/recipes/`. The guide says which file to read first.
+
+## Start from llms.txt
+
+Fetch `/llms.txt`. Each link is the Markdown page for the same document as the HTML page. Getting started is the first group. Give that file to the agent when it needs the site map rather than one component.
+
+```text
+https://veli.design/llms.txt
+```
+
+Every HTML page also publishes `index.md` at the same path. The page head links that file as `text/markdown`.
+
+## Copy one page
+
+On a docs page, choose **Copy page**. The button copies that page's Markdown. Paste it into the agent when the task is about one component, foundation, or guide. Prefer that copy over scraping the HTML.
+
+## Add a Cursor rule
+
+Put this in the project's `.cursor/rules` or `AGENTS.md` so the agent reads the installed guide before it writes UI.
+
+```md
+# Veli
+
+Read node_modules/@veli-design/react/AGENT_GUIDE.md before writing Veli UI.
+When you need a site page, start at https://veli.design/llms.txt.
+Follow the installed guide when it disagrees with the site.
+```
+
+Replace the site URL when you are reading a preview deployment. Do not paste component APIs into the rule. The package files already carry them.

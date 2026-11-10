@@ -1,7 +1,10 @@
 ---
 import DocsPageActions from '../../components/DocsPageActions.astro';
 import DocsLayout from '../../layouts/docs-layout.astro';
+import { docArea, pageHref } from '../../lib/doc-areas.mjs';
 import { componentGroups, docsOverview, getComponentGroupSlug } from '../../lib/site';
+
+const installationHref = pageHref(docArea('getting-started'), 'installation');
 
 const headings = [
   { depth: 2, slug: 'overview', text: 'Overview' },
@@ -46,7 +49,10 @@ const markdownPath = docsOverview.markdownPath;
         foundations. Each reference covers the supported interface, states, and composition guidance
         needed to use a component with confidence.
       </p>
-      <p>{docsOverview.packageGuidance}</p>
+      <p>
+        Install <code>@veli-design/react</code> and <code>@veli-design/tokens</code> with the
+        <a href={installationHref}>Installation</a> guide.
+      </p>
       <p>
         Choose the component that communicates the interaction most directly, and prefer documented
         variants before creating local conventions.

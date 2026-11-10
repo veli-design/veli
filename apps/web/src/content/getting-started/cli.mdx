@@ -1,0 +1,71 @@
+---
+title: CLI
+description: Copy and update editable Blocks with @veli-design/cli.
+order: 80
+---
+
+The CLI copies editable Blocks into your app and keeps the upstream source for three-way updates. React and tokens do not need the CLI. Install those from [Installation](/getting-started/installation/).
+
+## Install the CLI
+
+Use Node.js 24 or newer. The public package is `@veli-design/cli`.
+
+```sh
+npx @veli-design/cli --help
+```
+
+Package installation and Blocks registry access are separate. The registry is hosted with the documentation at `https://veli.design`. If the registry is protected, ask its administrator for access before you initialize a project.
+
+## Initialize a project
+
+Run this from the application package directory.
+
+```sh setup=cli-init
+npx @veli-design/cli init
+```
+
+New projects default to `https://veli.design`. You do not pass a registry URL. Choose where to copy Blocks. Initialization writes the registry URL and the destination to `.veli/config.json`. It does not install React, tokens, styles, or the provider.
+
+Then browse the catalog and copy a block.
+
+```sh
+npx @veli-design/cli list
+npx @veli-design/cli add
+```
+
+Pass a block id to `add` when you already know which block you want.
+
+```sh
+npx @veli-design/cli add site-footer
+```
+
+## Point at another registry
+
+The URL precedence is `--web-url`, then `VELI_WEB_URL`, then the URL already saved in `.veli/config.json`. The public default applies only when no URL is configured. Existing projects keep their saved registry. An override on a later command does not rewrite the saved configuration or the installed baselines.
+
+```sh
+npx @veli-design/cli --web-url http://localhost:4321 init
+```
+
+HTTPS is required except for localhost. CLI 0.2.0 and older have no default. With those versions, pass `--web-url https://veli.design` to `init`.
+
+## Check access
+
+The default URL does not grant access. For a protected registry, check access before or after initialization.
+
+```sh
+npx @veli-design/cli auth status
+```
+
+The CLI stores no authentication secrets in the project. For CI registries that support Cloudflare Access Service Auth, inject `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` from the CI secret store. Do not commit either value.
+
+## Update a block
+
+```sh
+npx @veli-design/cli status --check
+npx @veli-design/cli update site-footer
+```
+
+`status` reports installed blocks and available updates. `update` performs a three-way merge. When an update conflicts, the CLI keeps the installed baseline and a rollback snapshot. Resolve the conflict markers, then run `npx @veli-design/cli update --continue site-footer`. Run `npx @veli-design/cli update --abort site-footer` to restore the pre-update working copy.
+
+`restore` discards managed customizations and returns the baseline. `doctor` checks configuration, access, and receipt integrity. Use `--cwd` for a package inside a monorepo, `--json` for automation, and `--dry-run` before a command that writes files.

@@ -1,0 +1,180 @@
+---
+import { frameworkGuideTabs } from '../lib/doc-areas.mjs';
+
+const tabs = frameworkGuideTabs;
+---
+
+<div class="docs-framework-tabs" data-framework-tabs>
+  <div class="docs-framework-tabs__list" role="tablist" aria-label="Framework setup">
+    {
+      tabs.map((tab, index) => (
+        <button
+          class="docs-framework-tabs__tab"
+          id={`framework-tab-${tab.id}`}
+          type="button"
+          role="tab"
+          aria-controls={`framework-panel-${tab.id}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-framework-tab={tab.id}
+        >
+          <span class="docs-framework-tabs__icon" aria-hidden="true" data-framework-icon={tab.id}>
+            {tab.id === 'vite' && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M4.01 15.67 11.99 0l7.99 15.67c.43.85-.31 1.83-1.24 1.64l-6.75-1.23-6.74 1.23c-.92.2-1.66-.79-1.23-1.64Zm7.98-4.47-1.95 4.54h3.9l-1.95-4.54Z" />
+              </svg>
+            )}
+            {tab.id === 'nextjs' && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.85 0 3.58-.5 5.07-1.38L8.3 8.24V16.5H6.9V6.9h1.5l10.05 12.34A9.96 9.96 0 0 0 22 12c0-5.52-4.48-10-10-10Zm3.1 10.88V6.9h1.4v8.88l-1.4-2.9Z" />
+              </svg>
+            )}
+            {tab.id === 'react-router' && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12.7 2.15a2.1 2.1 0 0 0-1.4 0L4.15 4.7A1.9 1.9 0 0 0 3 6.5v5.2c0 4.55 3.05 8.75 8.05 10.4a1.9 1.9 0 0 0 1.5 0C17.55 20.45 20.6 16.25 20.6 11.7V6.5a1.9 1.9 0 0 0-1.15-1.8l-6.75-2.55ZM8.2 8.1a1.55 1.55 0 1 1 0 3.1 1.55 1.55 0 0 1 0-3.1Zm3.7 7.85a1.55 1.55 0 1 1 0-3.1 1.55 1.55 0 0 1 0 3.1Zm3.85-4.75a1.55 1.55 0 1 1 0-3.1 1.55 1.55 0 0 1 0 3.1Z" />
+              </svg>
+            )}
+            {tab.id === 'tanstack-start' && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 2.2 3.8 6.5v11L12 21.8l8.2-4.3v-11L12 2.2Zm0 2.3 5.9 3.1v1.85L12 12.85 6.1 9.45V7.6L12 4.5Zm-5.9 7.05 5.15 2.95v5.05L6.1 16.6v-5.05Zm7.65 8v-5.05L18.9 11.55v5.05L13.75 19.55Z" />
+              </svg>
+            )}
+            {tab.id === 'astro' && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16.23 17.05c-.55 1.01-1.4 1.56-2.4 1.56-.85 0-1.5-.37-1.95-1.1-.3.54-.67.93-1.12 1.17-.47.25-.98.37-1.53.37-1.05 0-1.88-.48-2.48-1.43-.57-.93-.7-2.15-.32-3.66l2-7.1h2.35l-2 7c-.22.74-.23 1.32 0 1.75.2.43.55.65.97.65.55 0 1.05-.43 1.42-1.3l2.15-7.1h2.35l-3.3 10.55c.95.15 1.75-.25 2.35-1.15l.2-.35 1.3.45-.19.49Zm2.72-11.3-.85 2.95h-2.35l1.4-4.9H21l-.65 1.95h-1.4Z" />
+              </svg>
+            )}
+          </span>
+          <span class="docs-framework-tabs__label">{tab.label}</span>
+        </button>
+      ))
+    }
+  </div>
+  <div class="docs-framework-tabs__border" aria-hidden="true">
+    <span class="docs-framework-tabs__indicator"></span>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const init = () => {
+      const root = document.querySelector('[data-framework-tabs]');
+      if (!(root instanceof HTMLElement)) return;
+
+      const tabs = Array.from(root.querySelectorAll('[role="tab"][data-framework-tab]'));
+      const tabList = root.querySelector('.docs-framework-tabs__list');
+      const panels = Array.from(document.querySelectorAll('[data-framework-tab-panel]'));
+      const contentsLinks = Array.from(document.querySelectorAll('.docs-contents a[href^="#"]'));
+
+      const tabForHash = (hash) => {
+        const id = decodeURIComponent(hash.replace(/^#/, ''));
+        if (!id) return null;
+        if (tabs.some((tab) => tab.getAttribute('data-framework-tab') === id)) return id;
+        const target = document.getElementById(id);
+        return (
+          target?.closest('[data-framework-tab-panel]')?.getAttribute('data-framework-tab-panel') ??
+          null
+        );
+      };
+
+      const updateTabIndicator = (selected) => {
+        if (!(selected instanceof HTMLElement)) return;
+        const border = root.querySelector('.docs-framework-tabs__border');
+        if (!(border instanceof HTMLElement)) return;
+        const borderRect = border.getBoundingClientRect();
+        const selectedRect = selected.getBoundingClientRect();
+        root.style.setProperty(
+          '--docs-framework-tab-indicator-left',
+          `${selectedRect.left - borderRect.left}px`,
+        );
+        root.style.setProperty('--docs-framework-tab-indicator-width', `${selectedRect.width}px`);
+      };
+
+      const updateSelectedTabIndicator = () => {
+        updateTabIndicator(tabs.find((tab) => tab.getAttribute('aria-selected') === 'true'));
+      };
+
+      const selectTab = (tabId, { updateHash = false, focus = false } = {}) => {
+        const selected = tabs.find((tab) => tab.getAttribute('data-framework-tab') === tabId);
+        if (!(selected instanceof HTMLElement) || !tabId) return;
+
+        for (const tab of tabs) {
+          const isSelected = tab === selected;
+          tab.setAttribute('aria-selected', String(isSelected));
+          tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+        }
+
+        for (const panel of panels) {
+          const isSelected = panel.getAttribute('data-framework-tab-panel') === tabId;
+          panel.toggleAttribute('hidden', !isSelected);
+        }
+
+        for (const link of contentsLinks) {
+          const id = link.getAttribute('href')?.slice(1);
+          const heading = id ? document.getElementById(id) : null;
+          const panel = heading?.closest('[data-framework-tab-panel]');
+          if (!panel) continue;
+          const isSelected = panel.getAttribute('data-framework-tab-panel') === tabId;
+          link.toggleAttribute('hidden', !isSelected);
+          if (link.hidden) {
+            link.classList.remove('is-active');
+            link.removeAttribute('aria-current');
+          }
+        }
+
+        updateTabIndicator(selected);
+        if (focus) selected.focus();
+        if (updateHash) history.pushState(null, '', `#${tabId}`);
+        window.dispatchEvent(
+          new CustomEvent('veli:docs-framework-tab-change', { detail: { tabId } }),
+        );
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          selectTab(tab.getAttribute('data-framework-tab'), { updateHash: true });
+        });
+
+        tab.addEventListener('keydown', (event) => {
+          let nextIndex = index;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') nextIndex = 0;
+          else if (event.key === 'End') nextIndex = tabs.length - 1;
+          else return;
+
+          event.preventDefault();
+          selectTab(tabs[nextIndex].getAttribute('data-framework-tab'), {
+            updateHash: true,
+            focus: true,
+          });
+        });
+      });
+
+      const syncHash = () => {
+        selectTab(tabForHash(location.hash) ?? tabs[0]?.getAttribute('data-framework-tab'));
+        const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+        const isTabHash = tabs.some((tab) => tab.getAttribute('data-framework-tab') === id);
+        const target = id && !isTabHash ? document.getElementById(id) : null;
+        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+      };
+
+      window.addEventListener('hashchange', syncHash);
+      window.addEventListener('popstate', syncHash);
+      window.addEventListener('resize', updateSelectedTabIndicator);
+      tabList?.addEventListener('scroll', updateSelectedTabIndicator);
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(updateSelectedTabIndicator);
+        resizeObserver.observe(root);
+        for (const tab of tabs) resizeObserver.observe(tab);
+      }
+      syncHash();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>

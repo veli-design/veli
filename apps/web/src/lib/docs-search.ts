@@ -2,6 +2,7 @@ import type { DocsSearchSource } from './remark-docs-search';
 import { getCollection } from 'astro:content';
 import { blockPages } from './blocks';
 import { docAreas, pageHref } from './doc-areas.mjs';
+import { renderPackageGuide } from './package-guide-render';
 import { componentGroups, getComponentGroupSlug, inventoryItems } from './site';
 
 export type DocsSearchCategory = (typeof docAreas)[number]['title'];
@@ -196,6 +197,36 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
   for (const area of areas) {
     const band = area.searchBand * 10_000;
 
+    if (area.membership === 'files') {
+      const records = await fileSearchEntries(area);
+      if (area.catalogOverview) {
+        items.push(
+          createOverviewSearchItem({
+            id: `${area.id}:overview`,
+            href: pageHref(area),
+            category: area.title,
+            title: area.title,
+            description: area.intro,
+            content: records
+              .map((entry) => `${entry.data.title} ${entry.data.description ?? ''}`)
+              .join(' '),
+            order: band,
+          }),
+        );
+      }
+      items.push(
+        ...(await buildCollectionSearchItems({
+          category: area.title,
+          idPrefix: area.id,
+          basePath: pageHref(area),
+          entries: records,
+          orderedSlugs: records.map((entry) => entry.slug),
+          orderOffset: area.catalogOverview ? band + 100 : band,
+        })),
+      );
+      continue;
+    }
+
     if (area.membership === 'blocks') {
       items.push(
         ...blockPages.map((page, index) => {
@@ -267,6 +298,47 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
   }
 
   return items;
+}
+
+async function fileSearchEntries(
+  area: Extract<(typeof docAreas)[number], { membership: 'files' }>,
+): Promise<SearchableContentEntry[]> {
+  switch (area.collection) {
+    case 'getting-started': {
+      const entries = await getCollection('getting-started');
+      const authored = entries.map((entry) => ({
+        order: entry.data.order,
+        record: {
+          slug: entry.slug,
+          data: entry.data,
+          render: () => entry.render(),
+        } satisfies SearchableContentEntry,
+      }));
+      const projected = await Promise.all(
+        area.projections.map(async (projection) => {
+          const guide = await renderPackageGuide(projection);
+          return {
+            order: projection.order,
+            record: {
+              slug: projection.slug,
+              data: { title: guide.title, description: guide.description },
+              render: async () => ({
+                headings: guide.headings,
+                remarkPluginFrontmatter: guide.frontmatter,
+              }),
+            } satisfies SearchableContentEntry,
+          };
+        }),
+      );
+      return [...authored, ...projected]
+        .sort((first, second) => first.order - second.order)
+        .map((item) => item.record);
+    }
+    default: {
+      const unexpected: never = area.collection;
+      throw new Error(`[docs-search] no files collection for ${String(unexpected)}`);
+    }
+  }
 }
 
 function loadSearchEntries(collection: 'docs' | 'foundations' | 'patterns') {

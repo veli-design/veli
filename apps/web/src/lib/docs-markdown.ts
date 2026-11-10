@@ -1,13 +1,23 @@
 import { blockPages } from './blocks';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { docArea, docAreas, pageHref, pageId, pageMarkdownPath } from './doc-areas.mjs';
+import {
+  docArea,
+  docAreas,
+  frameworkGuideHeadings,
+  pageHref,
+  pageId,
+  pageMarkdownPath,
+} from './doc-areas.mjs';
+import { readPackageGuide } from './package-guide.mjs';
 import {
   componentGroups,
   docsOverview,
+  docsSections,
   externalResources,
   foundations,
   foundationsOverview,
   inventoryItems,
+  type DocsNavigationSection,
 } from './site';
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
@@ -17,18 +27,29 @@ export type DocsSection = (typeof docAreas)[number]['id'];
 type ProseEntry =
   | CollectionEntry<'docs'>
   | CollectionEntry<'foundations'>
-  | CollectionEntry<'patterns'>;
+  | CollectionEntry<'patterns'>
+  | CollectionEntry<'getting-started'>;
 
 type EntrySource = {
   kind: 'entry';
   entry: ProseEntry;
 };
 
-type OverviewAreaId = Extract<(typeof docAreas)[number], { catalogOverview: true }>['id'];
+type OverviewSource =
+  | {
+      kind: 'overview';
+      areaId: 'foundations' | 'components';
+    }
+  | {
+      kind: 'overview';
+      areaId: 'getting-started';
+      markdown: string;
+    };
 
-type OverviewSource = {
-  kind: 'overview';
-  areaId: OverviewAreaId;
+type PackageGuideSource = {
+  kind: 'package-guide';
+  markdown: string;
+  version: string;
 };
 
 export type DocsCatalogPage = {
@@ -40,7 +61,7 @@ export type DocsCatalogPage = {
   description: string;
   htmlPath: string;
   markdownPath: string;
-  source: EntrySource | OverviewSource | { kind: 'block'; markdown: string };
+  source: EntrySource | OverviewSource | PackageGuideSource | { kind: 'block'; markdown: string };
 };
 
 export type RenderedDocsPage = Omit<DocsCatalogPage, 'source'> & {
@@ -114,6 +135,7 @@ function validateCatalog(pages: readonly DocsCatalogPage[]) {
 }
 
 type InventoryArea = Extract<(typeof docAreas)[number], { membership: 'inventory' }>;
+type FileArea = Extract<(typeof docAreas)[number], { membership: 'files' }>;
 
 async function orderedInventoryEntries(area: InventoryArea) {
   const items = inventoryItems(area.id);
@@ -131,7 +153,9 @@ async function orderedInventoryEntries(area: InventoryArea) {
   }
 }
 
-function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview: true }>) {
+function overviewPage(
+  area: Extract<(typeof docAreas)[number], { id: 'foundations' | 'components' }>,
+) {
   if (area.id !== 'foundations' && area.id !== 'components') {
     const unexpected: never = area;
     throw new Error(`[docs-markdown] no overview copy for ${String(unexpected)}`);
@@ -150,7 +174,135 @@ function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview
   return page;
 }
 
-export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
+async function loadFileEntries(area: FileArea) {
+  if (area.collection !== 'getting-started') {
+    const unexpected: never = area.collection;
+    throw new Error(`[docs-markdown] no files collection for ${String(unexpected)}`);
+  }
+  return getCollection(area.collection);
+}
+
+async function assertFrameworkGuide(entry: CollectionEntry<'getting-started'>) {
+  const { headings } = await entry.render();
+  const actual = headings.filter((heading) => heading.depth === 2).map((heading) => heading.text);
+  const expected = [...frameworkGuideHeadings];
+  const matches =
+    actual.length === expected.length &&
+    expected.every((heading, index) => actual[index] === heading);
+  if (matches) return;
+
+  const missing = expected.filter((heading) => !actual.includes(heading));
+  throw new Error(
+    `[docs-markdown] getting-started/${entry.slug} must use the framework-guide headings: missing "${missing[0] ?? expected[0]}"`,
+  );
+}
+
+function entryPage(area: FileArea, entry: CollectionEntry<'getting-started'>): DocsCatalogPage {
+  return {
+    id: pageId(area, entry.slug),
+    section: area.id,
+    label: entry.data.navTitle ?? entry.data.title,
+    title: entry.data.title,
+    description: requireDescription(entry),
+    htmlPath: pageHref(area, entry.slug),
+    markdownPath: pageMarkdownPath(area, entry.slug),
+    source: { kind: 'entry', entry },
+  };
+}
+
+function projectionPage(
+  area: FileArea,
+  projection: FileArea['projections'][number],
+): DocsCatalogPage {
+  const guide = readPackageGuide(projection);
+  return {
+    id: pageId(area, projection.slug),
+    section: area.id,
+    label: projection.navTitle,
+    title: guide.title,
+    description: guide.description,
+    htmlPath: pageHref(area, projection.slug),
+    markdownPath: pageMarkdownPath(area, projection.slug),
+    source: { kind: 'package-guide', markdown: guide.markdown, version: guide.version },
+  };
+}
+
+async function fileAreaPages(area: FileArea) {
+  const entries = await loadFileEntries(area);
+  const projectionSlugs = new Set<string>(area.projections.map((projection) => projection.slug));
+  for (const entry of entries) {
+    if (projectionSlugs.has(entry.slug)) {
+      throw new Error(
+        `[docs-markdown] ${area.collection}/${entry.slug} is reserved for a package guide`,
+      );
+    }
+  }
+
+  const orders = new Map<number, string>();
+  for (const entry of entries) {
+    const previous = orders.get(entry.data.order);
+    if (previous) {
+      throw new Error(
+        `[docs-markdown] ${area.collection} order ${entry.data.order} is used by ${previous} and ${entry.slug}`,
+      );
+    }
+    orders.set(entry.data.order, entry.slug);
+  }
+  for (const projection of area.projections) {
+    const previous = orders.get(projection.order);
+    if (previous) {
+      throw new Error(
+        `[docs-markdown] ${area.collection}/${projection.slug} order ${projection.order} collides with ${previous}`,
+      );
+    }
+  }
+
+  for (const slug of area.frameworkGuides) {
+    const entry = entries.find((candidate) => candidate.slug === slug);
+    if (!entry) throw new Error(`[docs-markdown] ${area.collection}/${slug} is missing`);
+    await assertFrameworkGuide(entry);
+  }
+
+  const pages = [
+    ...entries.map((entry) => ({ order: entry.data.order, page: entryPage(area, entry) })),
+    ...area.projections.map((projection) => ({
+      order: projection.order,
+      page: projectionPage(area, projection),
+    })),
+  ];
+  return pages.sort((first, second) => first.order - second.order).map((item) => item.page);
+}
+
+function gettingStartedOverview(area: FileArea, children: readonly DocsCatalogPage[]) {
+  const lines = [`# ${area.title}`, '', area.intro, ''];
+  for (const child of children) {
+    lines.push(markdownListItem(child.label, child.htmlPath, child.description));
+  }
+  const page: DocsCatalogPage = {
+    id: pageId(area),
+    section: area.id,
+    label: area.title,
+    title: area.title,
+    description: area.intro,
+    htmlPath: pageHref(area),
+    markdownPath: pageMarkdownPath(area),
+    source: {
+      kind: 'overview',
+      areaId: 'getting-started',
+      markdown: `${lines.join('\n').replace(/\n+$/, '')}\n`,
+    },
+  };
+  return page;
+}
+
+let catalogPromise: Promise<DocsCatalogPage[]> | undefined;
+
+export function getDocsCatalog(): Promise<DocsCatalogPage[]> {
+  catalogPromise ??= buildDocsCatalog();
+  return catalogPromise;
+}
+
+async function buildDocsCatalog(): Promise<DocsCatalogPage[]> {
   const componentGroupBySlug = new Map(
     componentGroups.flatMap((group) =>
       group.items.map((item) => [item.slug, group.title] as const),
@@ -176,6 +328,13 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
           source: { kind: 'entry', entry },
         });
       }
+      continue;
+    }
+
+    if (area.membership === 'files') {
+      const children = await fileAreaPages(area);
+      if (area.catalogOverview) pages.push(gettingStartedOverview(area, children));
+      pages.push(...children);
       continue;
     }
 
@@ -221,6 +380,8 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     throw new Error(`[docs-markdown] ${page.id} is not an overview page`);
   }
 
+  if (page.source.areaId === 'getting-started') return page.source.markdown;
+
   if (page.source.areaId === 'foundations') {
     lines.push(
       `## ${docArea('foundations').title}`,
@@ -229,8 +390,9 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     );
   } else {
     const components = docArea('components');
+    const installation = pageHref(docArea('getting-started'), 'installation');
     lines.push(
-      docsOverview.packageGuidance,
+      `Install \`@veli-design/react\` and \`@veli-design/tokens\` with the [Installation](${installation}) guide.`,
       '',
       markdownListItem(
         'Foundations',
@@ -258,7 +420,7 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
 async function renderDocsPage(page: DocsCatalogPage): Promise<RenderedDocsPage> {
   let markdown: string;
 
-  if (page.source.kind === 'block') {
+  if (page.source.kind === 'block' || page.source.kind === 'package-guide') {
     markdown = page.source.markdown;
   } else if (page.source.kind === 'overview') {
     markdown = buildOverviewMarkdown(page);
@@ -278,6 +440,11 @@ async function renderDocsPage(page: DocsCatalogPage): Promise<RenderedDocsPage> 
 export async function getRenderedDocsCatalog(): Promise<RenderedDocsPage[]> {
   const pages = await getDocsCatalog();
   return Promise.all(pages.map((page) => renderDocsPage(page)));
+}
+
+function llmsDescription(page: DocsCatalogPage) {
+  if (page.source.kind !== 'package-guide') return page.description;
+  return `Mirrored from @veli-design/react ${page.source.version}. ${page.description}`;
 }
 
 function artifactUrl(path: string, origin?: URL) {
@@ -300,12 +467,21 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
     throw new Error('[docs-markdown] the llms.txt index requires both overview pages');
   }
 
+  const gettingStartedArea = docArea('getting-started');
+  const gettingStartedPages = pages.filter((page) => page.section === gettingStartedArea.id);
+
   const lines = [
     '# Veli Design System',
     '',
     '> Veli gives every Maldivian service one accessible, bilingual system to build from.',
     '',
-    'Use these clean Markdown resources for Veli foundations and component implementation guidance.',
+    'Start with Getting started. Each link is a Markdown page for the same document as the HTML.',
+    '',
+    `## ${gettingStartedArea.title}`,
+    '',
+    ...gettingStartedPages.map((page) =>
+      markdownListItem(page.label, artifactUrl(page.markdownPath, origin), llmsDescription(page)),
+    ),
     '',
     '## Start here',
     '',
@@ -345,7 +521,13 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
   }
 
   for (const area of docAreas) {
-    if (area.id === foundationsArea.id || area.id === componentsArea.id) continue;
+    if (
+      area.id === foundationsArea.id ||
+      area.id === componentsArea.id ||
+      area.id === gettingStartedArea.id
+    ) {
+      continue;
+    }
     const areaPages = pages.filter((page) => {
       if (page.section !== area.id) return false;
       return area.membership === 'blocks' || page.source.kind === 'entry';
@@ -377,4 +559,26 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
   );
 
   return `${lines.join('\n').replace(/\n+$/, '')}\n`;
+}
+
+export async function getNavigation(): Promise<readonly DocsNavigationSection[]> {
+  const pages = await getDocsCatalog();
+  return docsSections.map((section) => {
+    const area = docArea(section.id);
+    if (area.membership !== 'files') return section;
+    const children = pages.filter(
+      (page) => page.section === area.id && page.source.kind !== 'overview',
+    );
+    return {
+      ...section,
+      items: [
+        { title: 'Overview', href: pageHref(area) },
+        ...children.map((page) => ({
+          title: page.label,
+          href: page.htmlPath,
+          description: page.description,
+        })),
+      ],
+    };
+  });
 }

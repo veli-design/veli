@@ -54,248 +54,27 @@ The provider applies `data-theme`, `data-color-scheme`, the `.dark` class when r
 
 ## Framework Theme Runtimes
 
-Veli is compatible with framework-level theme runtimes that toggle `.dark` on the document root. In Next.js apps, especially shadcn/ui-style apps, prefer `next-themes` as the app-level theme manager and configure it with `attribute="class"` so Veli token CSS can respond to `<html class="dark">`.
-
-`VeliProvider colorScheme` is optional in that setup. Use it when Veli components need context awareness, but do not let it compete with the app shell for document-level theme state.
+Theme runtimes that set `.dark` on the document root stay compatible with Veli tokens. Set that up in [Frameworks](/getting-started/frameworks/).
 
 ## Integration Examples
 
-All examples should import Veli's Tailwind theme CSS after Tailwind so semantic utilities can resolve to Veli tokens:
-
-```css
-@import 'tailwindcss';
-@import '@veli-design/tokens/tailwind';
-@import '@veli-design/react/tailwind';
-```
+Framework samples now live in [Frameworks](/getting-started/frameworks/). Import order is in [Installation](/getting-started/installation/).
 
 ### Next.js with next-themes
 
-Use `next-themes` as the document-level theme runtime and configure it to write a class to `<html>`.
-
-```tsx
-// app/layout.tsx
-import { ThemeProvider } from '@/components/theme-provider';
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-`VeliProvider` can wrap the application for language and component context. It does not need to own document-level theme switching when `next-themes` already owns `<html class="dark">`.
-
-```tsx
-'use client';
-
-import { useTheme } from 'next-themes';
-import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
-
-function toVeliColorScheme(theme: string | undefined): VeliColorScheme {
-  return theme === 'light' || theme === 'dark' ? theme : 'system';
-}
-
-export function VeliThemeBridge({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
-
-  return <VeliProvider colorScheme={toVeliColorScheme(theme)}>{children}</VeliProvider>;
-}
-```
+The class-based theme bridge moved to [Next.js](/getting-started/frameworks/#nextjs).
 
 ### Astro
 
-Astro apps should set the root `.dark` class before first paint, then keep it in sync when the user changes modes. Put the inline script in the shared layout `<head>`.
-
-```astro
----
-import '../styles/global.css';
----
-
-<!doctype html>
-<html lang="en" data-color-scheme="system">
-  <head>
-    <script is:inline>
-      (() => {
-        const storageKey = 'veli-color-scheme';
-        const root = document.documentElement;
-        const stored = window.localStorage.getItem(storageKey);
-        const colorScheme =
-          stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
-        const isDark =
-          colorScheme === 'dark' ||
-          (colorScheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        const resolvedColorScheme = isDark ? 'dark' : 'light';
-
-        root.classList.toggle('dark', isDark);
-        root.dataset.theme = resolvedColorScheme;
-        root.dataset.colorScheme = colorScheme;
-        root.style.colorScheme = resolvedColorScheme;
-      })();
-    </script>
-  </head>
-  <body class="bg-surface-base text-base">
-    <slot />
-  </body>
-</html>
-```
-
-Toggle controls should update the same root contract and persist the requested mode:
-
-```html
-<button type="button" data-theme-choice="system">System</button>
-<button type="button" data-theme-choice="light">Light</button>
-<button type="button" data-theme-choice="dark">Dark</button>
-
-<script>
-  const storageKey = 'veli-color-scheme';
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-  function applyColorScheme(colorScheme) {
-    const isDark = colorScheme === 'dark' || (colorScheme === 'system' && media.matches);
-    const resolvedColorScheme = isDark ? 'dark' : 'light';
-
-    document.documentElement.classList.toggle('dark', isDark);
-    document.documentElement.dataset.theme = resolvedColorScheme;
-    document.documentElement.dataset.colorScheme = colorScheme;
-    document.documentElement.style.colorScheme = resolvedColorScheme;
-    window.localStorage.setItem(storageKey, colorScheme);
-  }
-
-  for (const button of document.querySelectorAll('[data-theme-choice]')) {
-    button.addEventListener('click', () => {
-      applyColorScheme(button.dataset.themeChoice);
-    });
-  }
-  media.addEventListener('change', () => {
-    if (document.documentElement.dataset.colorScheme === 'system') {
-      applyColorScheme('system');
-    }
-  });
-</script>
-```
+The document theme script and React island setup moved to [Astro](/getting-started/frameworks/#astro).
 
 ### Vite, React Router, and TanStack Router
 
-Client-rendered React apps can use a small app-shell theme provider. The important part is that the app shell writes `.dark` to `document.documentElement`; Veli components will inherit token values from that class.
-
-```tsx
-import * as React from 'react';
-import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
-
-const storageKey = 'veli-color-scheme';
-
-function resolveColorScheme(colorScheme: VeliColorScheme) {
-  return colorScheme === 'system'
-    ? window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light'
-    : colorScheme;
-}
-
-export function AppThemeProvider({ children }: { children: React.ReactNode }) {
-  const [colorScheme, setColorScheme] = React.useState<VeliColorScheme>(() => {
-    const stored = window.localStorage.getItem(storageKey);
-    return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
-  });
-
-  React.useEffect(() => {
-    const applyColorScheme = () => {
-      const resolvedColorScheme = resolveColorScheme(colorScheme);
-      document.documentElement.classList.toggle('dark', resolvedColorScheme === 'dark');
-      document.documentElement.dataset.theme = resolvedColorScheme;
-      document.documentElement.dataset.colorScheme = colorScheme;
-      document.documentElement.style.colorScheme = resolvedColorScheme;
-    };
-
-    window.localStorage.setItem(storageKey, colorScheme);
-    applyColorScheme();
-
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    media.addEventListener('change', applyColorScheme);
-
-    return () => {
-      media.removeEventListener('change', applyColorScheme);
-    };
-  }, [colorScheme]);
-
-  return (
-    <VeliProvider colorScheme={colorScheme}>
-      <button type="button" onClick={() => setColorScheme('system')}>
-        System
-      </button>
-      <button type="button" onClick={() => setColorScheme('light')}>
-        Light
-      </button>
-      <button type="button" onClick={() => setColorScheme('dark')}>
-        Dark
-      </button>
-      {children}
-    </VeliProvider>
-  );
-}
-```
+Client theme state and router wiring moved to [Vite](/getting-started/frameworks/#vite), [React Router](/getting-started/frameworks/#react-router), and [TanStack Start](/getting-started/frameworks/#tanstack-start).
 
 ## Client-side routing
 
-Pass `navigate` (and optionally `useHref`) to wrap the subtree in React Aria's `RouterProvider`. Every Veli component that accepts `href` — including Tabs, Link, MenuItem, and Breadcrumb — then uses client-side navigation instead of a full page load.
-
-```tsx
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { VeliProvider } from '@veli-design/react/provider';
-
-export function AppProviders({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-
-  return (
-    <VeliProvider navigate={(href, options) => router.push(href, options)}>{children}</VeliProvider>
-  );
-}
-```
-
-```tsx
-'use client';
-
-import { useRouter } from '@tanstack/react-router';
-import { VeliProvider } from '@veli-design/react/provider';
-
-export function AppProviders({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-
-  return (
-    <VeliProvider
-      navigate={(to, options) => router.navigate({ to, ...options })}
-      useHref={(to) => router.buildLocation({ to }).href}
-    >
-      {children}
-    </VeliProvider>
-  );
-}
-```
-
-To type `routerOptions` on individual links, augment React Aria's `RouterConfig`:
-
-```ts
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>;
-  }
-}
-```
-
-`navigate` is optional. When omitted, `href` falls back to the browser's default navigation.
+Pass `navigate` and `useHref` from the guide for your router. [Frameworks](/getting-started/frameworks/) shows the wiring for Next.js, React Router, and TanStack Start. `navigate` is optional. Without it, `href` uses a full page load.
 
 ## Helpers
 

@@ -15,10 +15,10 @@ import {
 } from './doc-areas.mjs';
 
 test('prose collections follow the registry and skip blocks', () => {
-  assert.deepEqual(proseCollections(), ['foundations', 'docs', 'patterns']);
+  assert.deepEqual(proseCollections(), ['getting-started', 'foundations', 'docs', 'patterns']);
   assert.deepEqual(
     docAreas.map((area) => area.id),
-    ['foundations', 'components', 'patterns', 'blocks'],
+    ['getting-started', 'foundations', 'components', 'patterns', 'blocks'],
   );
 });
 
@@ -41,6 +41,10 @@ test('content paths resolve for every prose collection, including Windows separa
     '/foundations/color/',
   );
   assert.equal(documentHref('/workspace/apps/web/src/content/docs/button.md'), '/docs/button/');
+  assert.equal(
+    documentHref('C:\\repo\\packages\\react\\AGENT_GUIDE.md'),
+    '/getting-started/agents/',
+  );
   assert.equal(matchContentPath('/workspace/apps/web/src/content/blog/post.mdx'), null);
   assert.equal(documentHref('/workspace/apps/web/src/pages/index.astro'), null);
 });
@@ -49,6 +53,7 @@ test('markdown header rules cover nested paths and the patterns section', () => 
   const headers = renderHeaders();
   assert.match(headers, /\/patterns\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(headers, /\/docs\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
+  assert.match(headers, /\/getting-started\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(headers, /\/foundations\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(headers, /\/blocks\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(
@@ -58,6 +63,8 @@ test('markdown header rules cover nested paths and the patterns section', () => 
   assert.match(headers, /\/llms\.txt\n {2}Content-Type: text\/plain; charset=utf-8\n$/);
 
   const paths = [
+    '/getting-started/installation/index.md',
+    '/getting-started/agents/index.md',
     '/foundations/index.md',
     '/foundations/color/index.md',
     '/docs/button/index.md',
@@ -68,8 +75,8 @@ test('markdown header rules cover nested paths and the patterns section', () => 
   assert.doesNotThrow(() => assertHeadersCover(headers, paths));
   assert.equal(headerRuleMatches('/docs/*.md', '/docs/button/index.md'), true);
   assert.throws(
-    () => assertHeadersCover(headers, ['/getting-started/installation/index.md']),
-    /getting-started\/installation\/index\.md/,
+    () => assertHeadersCover(headers, ['/blog/post/index.md']),
+    /blog\/post\/index\.md/,
   );
   assert.throws(() => assertHeadersCover(headers, ['/docs.md']), /\/docs\.md/);
 });
