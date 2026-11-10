@@ -100,27 +100,72 @@
 }
 .marketing-page--design .design-one-system {
   position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  display: grid;
+  place-items: center;
   aspect-ratio: 1349/766;
   margin: 80px 0 0;
   border-radius: 48px;
   overflow: hidden;
-  background: var(--marketing-soft);
+  background: #002226;
+  color: #f6fbfc;
 }
-.marketing-page--design .design-one-system > div {
+.marketing-page--design .design-one-system::before,
+.marketing-page--design .design-one-system::after {
   position: absolute;
-  width: 117.939%;
-  height: 105.187%;
-  left: -5.263%;
-  top: -4.124%;
-  overflow: hidden;
+  z-index: -1;
+  inset: -20% -15% -45%;
+  content: '';
+  pointer-events: none;
+  animation: design-system-tide 20s ease-in-out infinite alternate;
+  animation-play-state: paused;
 }
-.marketing-page--design .design-one-system img {
-  position: absolute;
-  max-width: none;
-  width: 90.74%;
-  height: 100.06%;
-  left: 3.26%;
-  top: 1.93%;
+.marketing-page--design .design-one-system::before {
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    #007ab9 0%,
+    #005c89 22%,
+    #003747 45%,
+    transparent 70%
+  );
+}
+.marketing-page--design .design-one-system::after {
+  background: radial-gradient(ellipse at 50% 78%, #007b7838, transparent 58%);
+  animation-duration: 27s;
+  animation-direction: alternate-reverse;
+}
+.marketing-page--design .design-one-system[data-animating]::before,
+.marketing-page--design .design-one-system[data-animating]::after {
+  animation-play-state: running;
+}
+.marketing-page--design .design-one-system figcaption {
+  padding: 32px;
+  font-size: clamp(36px, 7.1cqi, 96px);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  text-align: center;
+}
+@keyframes design-system-tide {
+  from {
+    transform: translate3d(-3%, 2%, 0) scale(0.96);
+    opacity: 0.8;
+  }
+  to {
+    transform: translate3d(3%, -3%, 0) scale(1.06);
+    opacity: 1;
+  }
+}
+:root[data-reduced-motion='true'] .design-one-system::before,
+:root[data-reduced-motion='true'] .design-one-system::after {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-reduced-motion='false']) .design-one-system::before,
+  :root:not([data-reduced-motion='false']) .design-one-system::after {
+    animation: none;
+  }
 }
 .marketing-page--design .design-reflection {
   height: 395px;
@@ -619,11 +664,6 @@
     margin-top: 0;
     border-radius: 32px;
     aspect-ratio: 1.25;
-  }
-  .marketing-page--design .design-one-system > div {
-    width: 167%;
-    left: -33.5%;
-    height: 105.187%;
   }
   .marketing-page--design .design-reflection {
     min-height: 0;

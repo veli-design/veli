@@ -1,8 +1,8 @@
 import INFO from '../lib/design-preview.json';
-import { C, SAND, DOTS, prepareCurve } from './design-preview-curve.js';
+import { bez, C, SAND, DOTS, prepareCurve } from './design-preview-curve.js';
 
 // Original preview layers/timings, mounted inside the existing Figma layout.
-export async function initDesignPreviews() {
+export async function initDesignPreviews(initialSeed = 7) {
   const svg = document.querySelector('.design-page');
   if (!svg) return;
   const reduced = () => document.documentElement.dataset.reducedMotion === 'true';
@@ -43,7 +43,7 @@ export async function initDesignPreviews() {
   const lerp = (a, b, p) => a + (b - a) * p;
   const centre = (b) => [b[0] + b[2] / 2, b[1] + b[3] / 2];
   const scaleAbout = (cx, cy, s) => `translate(${cx} ${cy}) scale(${s}) translate(${-cx} ${-cy})`;
-  let seed = 7;
+  let seed = initialSeed;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
   // ---- curves (motion grammar) ----
@@ -435,72 +435,71 @@ export async function initDesignPreviews() {
   })();
 
   // =============================================================================================
-  // From sand to atoll · dots stream along the orbits, the light on each orbit stays put;
-  // the five layers swell in order, sand → atoll
+  // From sand to atoll · scroll-driven.
+  //  · the white circles and labels never change
+  //  · the dotted orbits turn with the scroll (gently, neighbours in opposite directions)
+  //  · Veli's icon is always moving: its sand particles turn and breathe
+  //  · Coral, Reef, Islands and Atolls are static, exactly as designed
   // =============================================================================================
+  const ATOLL = {
+    turn: 20, // °, orbit rotation per screen of scroll (low)
+    follow: 6, // 1/s, how closely the rotation follows the scroll (lower = more glide)
+    rings: {
+      ring1: [1, 1],
+      ring2: [-1, 1.2],
+      ring3: [-1, 0.9],
+      ring4: [1, 0.8],
+      ring5: [-1, 0.65],
+      ring6: [1, 0.7],
+      ring7: [-1, 0.6],
+      ring8: [1, 0.6],
+      ring9: [-1, 0.85],
+    },
+    // Veli's particles: outer ring turns, inner ring counter-turns, both breathe
+    veli: { outerSpeed: 14, innerSpeed: -24, breath: 2.8, outerBreath: 0.07, innerBreath: 0.12 },
+  };
   (function () {
     const I = INFO.atoll,
-      T = 8;
-    const dirs = {
-      ring1: 1,
-      ring2: -1,
-      ring3: -1,
-      ring4: 1,
-      ring5: -1,
-      ring6: 1,
-      ring7: -1,
-      ring8: 1,
-      ring9: -1,
-    };
-    const rings = Object.keys(dirs).map((k) => {
-      const r = I[k],
-        stepPx = (r.r * r.step * Math.PI) / 180,
-        steps = Math.max(1, Math.round((14 * T) / stepPx));
-      return {
-        el: $('atoll:' + k),
-        grad: r.grad && document.getElementById(r.grad),
-        cx: r.cx,
-        cy: r.cy,
-        deg: dirs[k] * steps * r.step,
-      };
-    });
-    const vo = {
-      el: $('atoll:veliOuter'),
-      cx: I.veliOuter.cx,
-      cy: I.veliOuter.cy,
-      deg: I.veliOuter.step,
-    };
-    const vi = {
-      el: $('atoll:veliInner'),
-      cx: I.veliInner.cx,
-      cy: I.veliInner.cy,
-      deg: -I.veliInner.step,
-    };
-    const nodes = [0, 1, 2, 3, 4].map((i) => ({
-      el: $('atoll:node' + i),
-      c: centre(I['node' + i].bbox),
-    }));
-    add(svg.querySelector('.design-atoll'), (time) => {
-      const t = time % T,
-        p = t / T;
-      for (const r of rings) {
-        const a = r.deg * p;
-        r.el.setAttribute('transform', `rotate(${a} ${r.cx} ${r.cy})`);
-        if (r.grad) r.grad.setAttribute('gradientTransform', `rotate(${-a} ${r.cx} ${r.cy})`);
+      A = ATOLL;
+    const card = svg.querySelector('.design-atoll');
+    const rings = Object.entries(A.rings).map(([k, [dir, share]]) => {
+      const r = I[k];
+      if (r.grad) {
+        const g = document.getElementById(r.grad);
+        if (g) g.removeAttribute('gradientTransform');
       }
-      for (const v of [vo, vi])
-        if (v.el && isFinite(v.cx))
-          v.el.setAttribute('transform', `rotate(${v.deg * p} ${v.cx} ${v.cy})`);
-      nodes.forEach((n, i) => {
-        const t0 = 0.6 + i * 0.11;
-        let s = 1;
-        if (t >= t0 && t < t0 + 0.9)
-          s =
-            t < t0 + 0.3
-              ? lerp(1, 1.06, seg(t, t0, 0.3, C.press))
-              : lerp(1.06, 1, seg(t, t0 + 0.3, 0.6, C.settle));
-        n.el.setAttribute('transform', s === 1 ? '' : scaleAbout(n.c[0], n.c[1], s));
-      });
+      return { el: $('atoll:' + k), cx: r.cx, cy: r.cy, deg: dir * share * A.turn };
+    });
+    const vc = centre(I.node0.bbox);
+    const vo = $('atoll:veliOuter'),
+      vi = $('atoll:veliInner');
+    let su = null,
+      last = performance.now() / 1000;
+    add(card, (t) => {
+      const now = performance.now() / 1000,
+        dt = Math.min(0.05, now - last);
+      last = now;
+      const b = card.getBoundingClientRect(),
+        vh = innerHeight,
+        k = 1 - Math.exp(-A.follow * dt);
+      // orbits: signed distance of the card's centre from the screen's centre, in screens
+      const sTarget = Math.max(-1.5, Math.min(1.5, (b.top + b.height / 2 - vh / 2) / vh));
+      su = su === null ? sTarget : su + (sTarget - su) * k;
+      for (const r of rings)
+        r.el.setAttribute('transform', `rotate(${(r.deg * su).toFixed(3)} ${r.cx} ${r.cy})`);
+      // Veli: always there, its particles always moving
+      const V = A.veli,
+        br = Math.sin((TAU * t) / V.breath);
+      vo.setAttribute(
+        'transform',
+        scaleAbout(vc[0], vc[1], 1 + V.outerBreath * br) +
+          ` rotate(${(V.outerSpeed * t) % 360} ${vc[0]} ${vc[1]})`,
+      );
+      vi.setAttribute(
+        'transform',
+        scaleAbout(vc[0], vc[1], 1 - V.innerBreath * br) +
+          ` rotate(${(V.innerSpeed * t) % 360} ${vc[0]} ${vc[1]})`,
+      );
     });
   })();
 
@@ -602,34 +601,45 @@ export async function initDesignPreviews() {
   // =============================================================================================
   // Movement with purpose · Guide → Connect → Respond, then it all returns
   // =============================================================================================
+  const MOVE = {
+    T: 7,
+    // Guide: the pill drifts out with a soft start and a long settle; the trail lags further behind
+    guide: { start: 0.3, travel: 1.5, lag: 0.14, back: 5.5, backTravel: 1.2, backLag: 0.06 },
+    drift: bez(0.3, 0, 0.1, 1), // soft start, long glide into place
+    drift_back: bez(0.45, 0, 0.2, 1), // gentle return
+    // Connect: the outline draws, then fills, then the next steps settle in one by one
+    connect: {
+      draw: [1.3, 0.7],
+      fill: [2.0, 0.45],
+      step: 2.5,
+      stepGap: 0.26,
+      stepIn: 0.55,
+      clear: 5.7,
+      color: '#A3FFE6',
+    },
+  };
   const RIPPLE = {
-    press: 2.1,
+    press: 3.0,
     travel: 0.9,
     stagger: 0.16,
-    echoes: [3.35, 4.05],
+    echoes: [4.25, 4.95],
     echoLife: 1.5,
     echoTo: 1.2,
     echoPeak: 0.6,
-    fade: [4.8, 0.6],
+    fade: [5.8, 0.6],
     spread: 0.14,
   };
   (function () {
     const I = INFO.move,
-      T = 6;
-    const pills = [0, 1, 2, 3].map((i) => ({
-      el: $('move:p' + i),
-      off: -48 * i,
-    }));
+      T = MOVE.T;
+    const pills = [0, 1, 2, 3].map((i) => ({ el: $('move:p' + i), off: -48 * i }));
     // Connect: the outlined step draws itself, then the next two steps settle in
     const c0 = $('move:c0'),
       c0r = +c0.getAttribute('r'),
       circ = TAU * c0r;
     c0.setAttribute('stroke-dasharray', `${circ} ${circ}`);
     c0.setAttribute('transform', `rotate(-90 ${c0.getAttribute('cx')} ${c0.getAttribute('cy')})`);
-    const steps = [1, 2].map((i) => ({
-      el: $('move:c' + i),
-      c: centre(I['c' + i].bbox),
-    }));
+    const steps = [1, 2].map((i) => ({ el: $('move:c' + i), c: centre(I['c' + i].bbox) }));
     const blue = { el: $('move:blue'), c: centre(I.blue.bbox) };
     const rings = ['r1', 'r2', 'r3'].map((k, i) => {
       const r = I[k],
@@ -655,26 +665,41 @@ export async function initDesignPreviews() {
     add(svg.querySelector('.design-motion-demo'), (time) => {
       const t = time % T,
         p = t / T;
+      const G = MOVE.guide;
       pills.forEach((pl, i) => {
-        const lag = (3 - i) * 0.08;
-        const k =
-          t < 0.3 + lag
-            ? 1
-            : t < 4.6
-              ? 1 - seg(t, 0.3 + lag, 0.9, C.settle)
-              : seg(t, 4.6, 0.8, C.move);
+        const lag = (3 - i) * G.lag,
+          backLag = (3 - i) * G.backLag;
+        let k; // 1 = collapsed at the first slot, 0 = rest
+        if (t < G.start + lag) k = 1;
+        else if (t < G.back) k = 1 - seg(t, G.start + lag, G.travel, MOVE.drift);
+        else k = t < G.back + backLag ? 0 : seg(t, G.back + backLag, G.backTravel, MOVE.drift_back);
         pl.el.setAttribute('transform', `translate(${(pl.off * k).toFixed(2)} 0)`);
       });
-      const draw = t < 1.0 ? 0 : t < 4.7 ? seg(t, 1.0, 0.7, C.move) : 1 - seg(t, 4.7, 0.5, C.exit);
+      const CN = MOVE.connect;
+      const draw =
+        t < CN.draw[0]
+          ? 0
+          : t < CN.clear
+            ? seg(t, CN.draw[0], CN.draw[1], C.move)
+            : 1 - seg(t, CN.clear + 0.15, 0.5, C.exit);
       c0.setAttribute('stroke-dashoffset', (circ * (1 - draw)).toFixed(2));
+      // the drawn outline fills in before the next step arrives
+      const fill =
+        t < CN.fill[0]
+          ? 0
+          : t < CN.clear
+            ? seg(t, CN.fill[0], CN.fill[1], C.settle)
+            : 1 - seg(t, CN.clear, 0.3, C.exit);
+      c0.setAttribute('fill', CN.color);
+      c0.setAttribute('fill-opacity', fill.toFixed(3));
       steps.forEach((d, i) => {
-        const at = 1.45 + i * 0.22;
+        const at = CN.step + i * CN.stepGap;
         const k =
-          t < 4.7
+          t < CN.clear
             ? t < at
               ? 0
-              : seg(t, at, 0.45, C.settle)
-            : 1 - seg(t, 4.7 + (1 - i) * 0.1, 0.28, C.exit);
+              : seg(t, at, CN.stepIn, C.settle)
+            : 1 - seg(t, CN.clear + (1 - i) * 0.1, 0.28, C.exit);
         d.el.setAttribute('transform', scaleAbout(d.c[0], d.c[1], lerp(0.55, 1, k)));
         d.el.setAttribute('opacity', Math.min(1, k * 1.6).toFixed(3));
       });

@@ -77,9 +77,9 @@ pnpm add @veli-design/react @veli-design/tokens react-aria-components
 
 ### 2. Set up tokens and theming
 
-Use Tailwind CSS 4 with its framework integration, then import these styles in order. Veli's React adapter registers the component sources with Tailwind. See the [Tailwind Vite guide](https://tailwindcss.com/docs/installation/using-vite) for plugin setup.
+Use Tailwind CSS 4 with its framework integration, then add these imports to `src/index.css` in this order. Veli's React adapter registers the component sources with Tailwind. See the [Tailwind Vite guide](https://tailwindcss.com/docs/installation/using-vite) for plugin setup.
 
-```css title="src/index.css"
+```css
 @import 'tailwindcss';
 @import '@veli-design/tokens/tailwind';
 @import '@veli-design/react/tailwind';
@@ -91,13 +91,13 @@ Wrap your app in `VeliProvider`. Use `language="en"` for English and LTR, or `la
 
 ### 4. Use your first component
 
-Import components from their package subpaths. This example renders a Veli Button inside the provider.
+Import components from their package subpaths. This `src/App.tsx` example renders a Veli Button inside the provider.
 
-<div className="preview">
+<div className="preview mb-4 rounded-lg border border-base-subtle bg-surface-raised p-4">
   <ButtonUsageDemo client:visible />
 </div>
 
-```tsx title="src/App.tsx"
+```tsx
 import { Button } from '@veli-design/react/button';
 import { VeliProvider } from '@veli-design/react/provider';
 

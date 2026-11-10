@@ -45,14 +45,29 @@ Reduced motion keeps the exact resting composition.
 The designer has not provided mobile frames for this page; its smaller layouts
 adapt the same content and artwork without changing the desktop reference.
 
-Design preview animation now follows the motion designer's `Designing Veli -
-interactive preview (1).html`. The page layout still comes from Figma. Its
+The One system card intentionally replaces the reference PNG with live text and
+two CSS radial gradients. Its slow tide animation moves only the glow, pauses
+offscreen or in a hidden tab, and becomes a complete still with reduced motion.
+
+Design motion now follows the motion designer's `Designing Veli -
+interactive preview (2).html`. The page layout still comes from Figma. Its
 animation-only SVG layers are in `public/animations/design/`; `design-preview.json`
 keeps their original coordinate metadata. Do not replace these with a screenshot
 or embed the prototype's full page layout. `design-previews.js` preserves the
-prototype's timings and easing for the three force fields, atoll orbit streams
-and layer pulses, breathing light, waving texture, morphing curve and loose
+prototype's timings and easing for the three force fields, scroll-driven atoll
+orbits and breathing Veli particles, breathing light, waving texture, morphing curve and loose
 particles, Guide → Connect → Respond sequence, and Thaana pointer lens/pinning.
+
+The hero canvas uses the updated six-second traveling waves, per-grain wander,
+and crest lighting. Canvas fields rasterize each SVG dot once to an oversampled
+bitmap, rather than repainting the vector for every grain on every frame. Keep
+this cache when changing artwork: per-grain SVG draws are costly at Retina
+resolutions. Ambient canvases stop when they leave the viewport.
+Only the atoll's dotted orbits follow scroll; its white
+circles, labels, and Coral/Reef/Islands/Atolls icons remain still. Guide uses the
+new slower glide; Connect draws and fills before the next steps settle in, and
+Respond starts later within the shared seven-second sequence. Existing SVG
+layers and the baked curve simulation are unchanged by this revision.
 
 The preview code and layers load when the first cards approach the viewport.
 Frames stop outside the viewport and while the page is hidden. Reduced motion

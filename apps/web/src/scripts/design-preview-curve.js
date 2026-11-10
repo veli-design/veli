@@ -253,4 +253,4 @@ function simulate(centres, P0, P3, yLin, yCurve, polyParam, bendAt, T) {
   return { d: out, n, m };
 }
 
-export { C, SAND, DOTS, prepareCurve, simulate };
+export { bez, C, SAND, DOTS, prepareCurve, simulate };
