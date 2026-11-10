@@ -1,0 +1,85 @@
+---
+title: Fonts
+description: Host-owned Latin and Dhivehi faces, and the tokens that select them.
+order: 70
+---
+
+Veli selects font families through tokens. It does not ship font files. The host app loads every face it uses. npm packages do not include or license the Dhivehi faces, government imagery, or the font files this documentation site serves. Supply files your organization has the right to host. Do not copy paths from this site.
+
+## Set the Latin family
+
+`--veli-font-sans` selects the Latin family for `font-sans`, English `type-*` styles, and the English typography variables. The default is Inter with system sans fallbacks. When the loaded face is named Inter, you do not set another variable.
+
+For a self-hosted file, declare the family in the global stylesheet. Match `font-weight` to the file you serve.
+
+```css setup=font-sans
+@font-face {
+  font-family: Inter;
+  src: url('./Inter.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+```
+
+Import that stylesheet from the app entry or the root layout so the face exists on the first render. A font package that registers the family name Inter works the same way.
+
+When a loader gives the face a generated family name, bind that name to `--veli-font-sans` on the document root. The plain CSS typography tokens resolve there. No Tailwind `@theme` font reassignment is required.
+
+```tsx
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], variable: '--veli-font-sans' });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+The same root variable works for any loader that emits a generated family name. Put the generated class on `html`.
+
+## Set the Dhivehi families
+
+Dhivehi styles read three tokens.
+
+| Token                         | Role                    |
+| :---------------------------- | :---------------------- |
+| `--veli-font-dhivehi-regular` | Body and caption        |
+| `--veli-font-dhivehi-medium`  | Weighted interface text |
+| `--veli-font-dhivehi-bold`    | Headings and display    |
+
+`--veli-font-dhivehi-faseyha`, `--veli-font-dhivehi-waheed`, and `--veli-font-dhivehi-aaamu` remain as aliases. The style names Veli expects are `MV Faseyha` at weight 400, `MV A Waheed` at weight 700, and `MV Aaamu FK` at weight 700.
+
+```css setup=font-dhivehi
+@font-face {
+  font-family: 'MV Faseyha';
+  src: url('./fonts/faseyha.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MV A Waheed';
+  src: url('./fonts/waheed.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MV Aaamu FK';
+  src: url('./fonts/aaamu.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+```
+
+Replace the `src` paths with the files you host. Keep the `font-family` names. A computed `font-family` only reports the requested list. Check the browser network panel to confirm the file loaded.
+
+`lang="dv"` selects the Dhivehi type styles. `dir="rtl"` alone does not. [VeliProvider](/docs/provider/) sets both when `language="dv"`. The type scale itself stays on [Typography](/foundations/typography/).

@@ -74,86 +74,9 @@ The Caption typography style includes its own letter spacing: the English regula
 
 Standalone tracking overrides are tuned for Latin. Thaana is a connected script where letter spacing can separate joined forms, so retain the Dhivehi role's authored tracking unless an override has been reviewed by a designer and a fluent reader.
 
-## Font setup for developers
+## Loading fonts
 
-Veli selects font families through tokens but does not download font files. The host app must load the faces it uses. English `type-*` styles, `font-sans`, and plain CSS typography tokens all read `--veli-font-sans`; its default is Inter with system sans fallbacks. Dhivehi styles use separate tokens for MV Faseyha, MV A Waheed, and MV Aaamu FK. No Tailwind `@theme` font reassignment is needed.
-
-Import Veli once in the app's global stylesheet. Use the Tailwind entry below, or import `@veli-design/tokens/css` for plain CSS without Tailwind:
-
-```css
-@import 'tailwindcss';
-@import '@veli-design/tokens/tailwind';
-```
-
-### Vite + React, TanStack Start, and React Router
-
-When the app loads a face named `Inter`, Veli uses it without another variable assignment. For a self-hosted variable file in the app's `public/fonts` directory, add this to the global stylesheet and import that stylesheet from the Vite entry or the TanStack Start or React Router root route:
-
-```css
-@font-face {
-  font-family: Inter;
-  src: url('/fonts/Inter.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-```
-
-Match the declared weight range to the font file you serve. A font package that registers the family name `Inter` works the same way.
-
-### Next.js with `next/font`
-
-`next/font` generates a family name. Bind its variable to Veli's token and put the generated class on `<html>`, where the plain CSS typography tokens resolve. Import the global stylesheet in the root layout:
-
-```tsx
-import type { ReactNode } from 'react';
-import { Inter } from 'next/font/google';
-import './app.css';
-
-const inter = Inter({ subsets: ['latin'], variable: '--veli-font-sans' });
-
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en" className={inter.variable}>
-      <body>{children}</body>
-    </html>
-  );
-}
-```
-
-The same root token works with any font loader that gives the face a generated name.
-
-### Dhivehi faces
-
-Host the Dhivehi files in the app's public font directory and declare the families with the names and weights used by Veli's styles. The paths below match the font files in this documentation site:
-
-```css
-@font-face {
-  font-family: 'MV Faseyha';
-  src: url('/fonts/MV_Faseyha_Regular.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'MV A Waheed';
-  src: url('/fonts/MV_A_Waheed_Bold_2.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'MV Aaamu FK';
-  src: url('/fonts/MV_Aaamu_FK_Bold.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-```
-
-Check the browser's Network and rendered-font views to confirm the font file loaded. A computed `font-family` value only reports the requested family list; it does not prove which face drew the text.
+The host application loads the font files. Veli selects the families through tokens. [Fonts](/getting-started/fonts/) covers the Latin token, the Dhivehi family tokens, and the host setup. This page keeps the type scale and the roles.
 
 ## Development: bilingual typography
 

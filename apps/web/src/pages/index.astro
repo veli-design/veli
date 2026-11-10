@@ -4,6 +4,9 @@ import ShaderBackground from '../components/ShaderBackground.astro';
 import ShaderDialControls from '../components/ShaderDialControls';
 import HomeThemeControl from '../components/HomeThemeControl.astro';
 import VeliLogo from '../components/VeliLogo.astro';
+import { docArea, pageHref } from '../lib/doc-areas.mjs';
+
+const startBuildingHref = pageHref(docArea('getting-started'));
 ---
 
 <Layout
@@ -40,7 +43,7 @@ import VeliLogo from '../components/VeliLogo.astro';
         </div>
 
         <a
-          href="/foundations/"
+          href={startBuildingHref}
           data-home-cta
           class:list={[
             'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',

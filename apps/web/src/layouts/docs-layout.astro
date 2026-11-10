@@ -5,7 +5,7 @@ import DocsFooterControls from '../components/DocsFooterControls.astro';
 import DocsPageActions from '../components/DocsPageActions.astro';
 import { DocsSearch } from '../components/DocsSearch';
 import VeliLogo from '../components/VeliLogo.astro';
-import { docsSections } from '../lib/site';
+import { getNavigation } from '../lib/docs-markdown';
 import Layout from './layout.astro';
 
 type Heading = {
@@ -37,12 +37,13 @@ const {
   showPageActions = true,
   contentLayout,
 } = Astro.props;
+const sections = await getNavigation();
 
 function isActive(href: string) {
   return activePath === href;
 }
 
-function isSectionActive(section: (typeof docsSections)[number]) {
+function isSectionActive(section: (typeof sections)[number]) {
   return section.items.some((item) => isActive(item.href));
 }
 ---
@@ -60,7 +61,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
 
           <nav class="docs-nav" aria-label="Veli documentation">
             {
-              docsSections.map((section) => {
+              sections.map((section) => {
                 const sectionActive = isSectionActive(section);
                 return (
                   <details
@@ -118,7 +119,7 @@ function isSectionActive(section: (typeof docsSections)[number]) {
 
           <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">
             {
-              docsSections.map((section) => {
+              sections.map((section) => {
                 const sectionActive = isSectionActive(section);
                 return (
                   <details

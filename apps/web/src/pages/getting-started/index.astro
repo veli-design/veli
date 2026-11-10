@@ -1,0 +1,47 @@
+---
+import DocsPageActions from '../../components/DocsPageActions.astro';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import { docArea, pageId } from '../../lib/doc-areas.mjs';
+import { getDocsCatalog } from '../../lib/docs-markdown';
+
+const area = docArea('getting-started');
+const pages = await getDocsCatalog();
+const overview = pages.find((page) => page.id === pageId(area));
+const children = pages.filter((page) => page.section === area.id && page.id !== pageId(area));
+if (!overview) throw new Error('[getting-started] overview page is missing from the catalog');
+
+const headings = [{ depth: 2, slug: 'guides', text: 'Guides' }];
+---
+
+<DocsLayout
+  title={`${area.title} | Veli Design System`}
+  description={area.intro}
+  activePath={overview.htmlPath}
+  markdownPath={overview.markdownPath}
+  {headings}
+  contentLayout="overview"
+>
+  <header class="docs-page-header docs-page-header--overview docs-overview-header">
+    <div class="docs-page-header__content">
+      <h1>{area.title}</h1>
+      <p>{area.intro}</p>
+      <DocsPageActions markdownPath={overview.markdownPath} placement="inline" />
+    </div>
+  </header>
+
+  <div class="docs-overview-content">
+    <section class="docs-list-section" id="guides">
+      <h2>Guides</h2>
+      <div class="docs-link-list">
+        {
+          children.map((page) => (
+            <a href={page.htmlPath}>
+              <span>{page.label}</span>
+              <p>{page.description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</DocsLayout>

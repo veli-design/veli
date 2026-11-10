@@ -26,8 +26,18 @@ const patternsCollection = defineCollection({
   schema: pageSchema,
 });
 
+const gettingStartedCollection = defineCollection({
+  type: 'content',
+  schema: pageSchema.extend({
+    description: z.string(),
+    order: z.number().int().positive(),
+    navTitle: z.string().optional(),
+  }),
+});
+
 export const collections = {
   docs: docsCollection,
   foundations: foundationsCollection,
   patterns: patternsCollection,
+  'getting-started': gettingStartedCollection,
 };

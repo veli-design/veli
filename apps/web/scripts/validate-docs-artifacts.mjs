@@ -1,5 +1,6 @@
 import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
-import { assertHeadersCover, renderHeaders } from '../src/lib/doc-areas.mjs';
+import { assertHeadersCover, docAreas, renderHeaders } from '../src/lib/doc-areas.mjs';
+import { readPackageGuide } from '../src/lib/package-guide.mjs';
 import console from 'node:console';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
@@ -145,6 +146,30 @@ for (const markdownPath of expectedLinks) {
 const headers = readFileSync(resolve(distRoot, '_headers'), 'utf8');
 if (headers !== renderHeaders()) fail('dist/_headers does not match the section registry');
 assertHeadersCover(headers, catalogPaths);
+
+const repoRoot = resolve(appRoot, '../..');
+for (const area of docAreas) {
+  if (!('projections' in area)) continue;
+  for (const projection of area.projections) {
+    const guide = readPackageGuide(projection);
+    const markdownPath = resolve(distRoot, area.segment, projection.slug, 'index.md');
+    const htmlPath = resolve(distRoot, area.segment, projection.slug, 'index.html');
+    const published = readFileSync(markdownPath);
+    if (!published.equals(readFileSync(resolve(repoRoot, projection.markdownFile)))) {
+      fail(`${area.segment}/${projection.slug}/index.md must match ${projection.markdownFile}`);
+    }
+    const html = readFileSync(htmlPath, 'utf8');
+    if (!html.includes(guide.version)) {
+      fail(`${area.segment}/${projection.slug} HTML must name package version ${guide.version}`);
+    }
+    const agentsLine = llms
+      .split('\n')
+      .find((line) => line.includes(`/${area.segment}/${projection.slug}/index.md`));
+    if (!agentsLine?.includes(guide.version)) {
+      fail(`llms.txt description for ${projection.slug} must name version ${guide.version}`);
+    }
+  }
+}
 
 console.log(`Validated ${markdownFiles.length} Markdown pages and llms.txt.`);
 

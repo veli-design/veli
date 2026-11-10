@@ -1,0 +1,138 @@
+---
+title: Vite
+description: Create a Vite React app and register Tailwind, the provider, and a theme toggle.
+order: 20
+---
+
+## Create a project
+
+Use Node.js 24 or newer.
+
+```bash
+npm create vite@latest my-veli-app -- --template react-ts
+cd my-veli-app
+npm install
+```
+
+## Install packages
+
+Install the shared packages from [Installation](/getting-started/installation/).
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+Install the Tailwind Vite plugin.
+
+```bash
+npm install tailwindcss@^4 @tailwindcss/vite@^4
+```
+
+## Add styles
+
+Register Tailwind beside the React plugin.
+
+```ts setup=vite-plugin
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+```
+
+Replace `src/index.css` with the Veli imports. Keep `import './index.css'` in `src/main.tsx`.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+Remove `import './App.css'` from the template. Those starter styles constrain the page.
+
+## Add the provider
+
+`use client` marks this module as a client component in server-rendered React frameworks. Vite ignores that directive. The saved color scheme is read after mount so a server render and the first client render agree.
+
+```tsx setup=client-theme
+'use client';
+
+import { useEffect, useState } from 'react';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
+
+const storageKey = 'veli-color-scheme';
+
+function isColorScheme(value: string | null): value is VeliColorScheme {
+  return value === 'light' || value === 'dark' || value === 'system';
+}
+
+function resolvedScheme(colorScheme: VeliColorScheme) {
+  if (colorScheme === 'light' || colorScheme === 'dark') return colorScheme;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+export function AppThemeProvider({ children }: { children: React.ReactNode }) {
+  const [colorScheme, setColorScheme] = useState<VeliColorScheme>('system');
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(storageKey);
+    if (isColorScheme(stored) && stored !== colorScheme) setColorScheme(stored);
+  }, [colorScheme]);
+
+  useEffect(() => {
+    const resolved = resolvedScheme(colorScheme);
+    const root = document.documentElement;
+    root.classList.toggle('dark', resolved === 'dark');
+    root.dataset.theme = resolved;
+    root.dataset.colorScheme = colorScheme;
+    root.style.colorScheme = resolved;
+    window.localStorage.setItem(storageKey, colorScheme);
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      if (root.dataset.colorScheme !== 'system') return;
+      const next = media.matches ? 'dark' : 'light';
+      root.classList.toggle('dark', next === 'dark');
+      root.dataset.theme = next;
+      root.style.colorScheme = next;
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, [colorScheme]);
+
+  return (
+    <VeliProvider colorScheme={colorScheme}>
+      <button type="button" onClick={() => setColorScheme('system')}>
+        System
+      </button>
+      <button type="button" onClick={() => setColorScheme('light')}>
+        Light
+      </button>
+      <button type="button" onClick={() => setColorScheme('dark')}>
+        Dark
+      </button>
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+Render `AppThemeProvider` from `src/main.tsx` around `App`.
+
+## Connect the router
+
+A Vite app with no router uses full page loads. Leave `navigate` unset. When you add React Router, follow the [React Router](/getting-started/react-router/) guide.
+
+## Load fonts
+
+Name the Latin face Inter and `--veli-font-sans` selects it. [Fonts](/getting-started/fonts/) has the host rules for Inter and the Dhivehi faces. Import the font stylesheet from `src/main.tsx` or from `src/index.css`.
+
+## Verify
+
+```bash
+npm run dev
+```
+
+The page shows a styled button, not an unstyled browser button. Choose **Dark**. The document element gains the class `dark`, and the surface color changes. Choose **System**. The page follows the operating system preference.

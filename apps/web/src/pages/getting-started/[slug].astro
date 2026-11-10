@@ -1,0 +1,70 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import DocsPageActions from '../../components/DocsPageActions.astro';
+import DocsLayout from '../../layouts/docs-layout.astro';
+import { docArea, pageMarkdownPath } from '../../lib/doc-areas.mjs';
+import { renderPackageGuide } from '../../lib/package-guide-render';
+
+const area = docArea('getting-started');
+
+type Props = {
+  entry?: CollectionEntry<'getting-started'>;
+  projectionSlug?: (typeof area.projections)[number]['slug'];
+};
+
+export async function getStaticPaths() {
+  const started = docArea('getting-started');
+  const entries = await getCollection('getting-started');
+  const authored = entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry } satisfies Props,
+  }));
+  const projected = started.projections.map((projection) => ({
+    params: { slug: projection.slug },
+    props: { projectionSlug: projection.slug } satisfies Props,
+  }));
+  return [...authored, ...projected];
+}
+
+const { entry, projectionSlug } = Astro.props as Props;
+const projection = area.projections.find((item) => item.slug === projectionSlug);
+const guide = projection ? await renderPackageGuide(projection) : undefined;
+const renderedEntry = entry ? await entry.render() : undefined;
+const title = guide?.title ?? entry?.data.title;
+const description = guide?.description ?? entry?.data.description;
+if (!title) throw new Error('[getting-started] page is missing a title');
+
+const headings = (guide?.headings ?? renderedEntry?.headings ?? []).filter(
+  (heading) => heading.depth >= 2 && heading.depth <= 3,
+);
+const markdownPath = pageMarkdownPath(area, projection?.slug ?? entry?.slug ?? '');
+---
+
+<DocsLayout
+  title={`${title} | Veli Design System`}
+  {description}
+  activePath={`/${area.segment}/${projection?.slug ?? entry?.slug}/`}
+  {markdownPath}
+  {headings}
+  contentLayout="article"
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1>{title}</h1>
+    {
+      guide && (
+        <p class="docs-page-description">
+          This page mirrors <code>AGENT_GUIDE.md</code> from <code>@veli-design/react</code>{' '}
+          {guide.version}. The copy at <code>node_modules/@veli-design/react/AGENT_GUIDE.md</code>{' '}
+          matches the version you installed. Use that file when the two copies differ.
+        </p>
+      )
+    }
+    {!guide && description && <p class="docs-page-description">{description}</p>}
+    <DocsPageActions {markdownPath} placement="inline" />
+  </header>
+
+  <article class="docs-prose">
+    {guide && <Fragment set:html={guide.html} />}
+    {renderedEntry && <renderedEntry.Content />}
+  </article>
+</DocsLayout>

@@ -1,0 +1,68 @@
+---
+title: Installation
+description: Install @veli-design/react and @veli-design/tokens from the public npm registry and register Tailwind.
+order: 10
+---
+
+## Install the packages
+
+The packages are on the public npm registry. Installation needs no package-read token.
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+`@veli-design/tokens`, `react`, `react-dom`, and `react-aria-components` are peers. The React package installs `@phosphor-icons/react` for its own icons. If your app imports icons directly, install that package too.
+
+```bash
+npm install @phosphor-icons/react@^2.1.10
+```
+
+Use Node.js 24 or newer. Import each component from its subpath, such as `@veli-design/react/button`. There is no root component barrel.
+
+If your application overrides registries, route the scope in `.npmrc`.
+
+```ini setup=npmrc
+@veli-design:registry=https://registry.npmjs.org
+```
+
+## Register the styles
+
+Import Tailwind first, then the token adapter, then the React adapter. The token adapter includes the CSS variables. The React adapter registers component sources for Tailwind. No extra `@source` directive is needed.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+For plain CSS without Tailwind, import `@veli-design/tokens/css` instead of the Tailwind adapters. The [framework guides](/getting-started/) show where to register the Tailwind plugin.
+
+## Add the provider
+
+Wrap the tree that should share language, direction, and color scheme.
+
+```tsx
+import { VeliProvider } from '@veli-design/react/provider';
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <VeliProvider language="en" colorScheme="system">
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+Use `language="dv"` for Dhivehi and RTL. Use `colorScheme="light"` or `colorScheme="dark"` when the app should not follow the system preference. The [VeliProvider](/docs/provider/) reference lists the props. Font files stay in the host app. [Fonts](/getting-started/fonts/) shows how to load them.
+
+## Fix install failures
+
+| Problem                            | What to do                                                                                       |
+| :--------------------------------- | :----------------------------------------------------------------------------------------------- |
+| Unstyled UI                        | Register the Tailwind plugin and keep the three CSS imports in the order above.                  |
+| Can't resolve `@veli-design/react` | Import a subpath, such as `@veli-design/react/button`.                                           |
+| Install 401 or 403                 | Select the public npm registry. Add the `.npmrc` scope above when your app overrides registries. |
+| Wrong colors or dark mode          | Keep the CSS import order and wrap the app in `VeliProvider`.                                    |
+
+Continue with the guide for your framework, then load [Fonts](/getting-started/fonts/). Use the [CLI](/getting-started/cli/) only when you want editable Blocks.

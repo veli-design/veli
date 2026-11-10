@@ -4,11 +4,82 @@
  * `id` is the section key. `title` is the catalog and search label.
  * `navTitle` is the sidebar label when it differs from `title`.
  *
- * @typedef {'inventory' | 'blocks'} Membership
+ * @typedef {'inventory' | 'files' | 'blocks'} Membership
  * @typedef {{ pattern: string, headers: Readonly<Record<string, string>> }} AssetRule
+ * @typedef {{
+ *   slug: string,
+ *   navTitle: string,
+ *   order: number,
+ *   markdownFile: string,
+ *   versionFile: string,
+ * }} Projection
  */
 
-const memberships = new Set(['inventory', 'blocks']);
+const memberships = new Set(['inventory', 'files', 'blocks']);
+
+/**
+ * @param {Record<string, unknown>} area
+ */
+function validateFilesArea(area) {
+  if (typeof area.intro !== 'string' || area.intro.length === 0) {
+    throw new Error(`[doc-areas] ${area.id} files area needs an intro`);
+  }
+  if (!Array.isArray(area.projections)) {
+    throw new Error(`[doc-areas] ${area.id} files area needs projections`);
+  }
+  if (area.frameworkGuides !== undefined && !Array.isArray(area.frameworkGuides)) {
+    throw new Error(`[doc-areas] ${area.id} frameworkGuides must be an array`);
+  }
+
+  const slugs = new Set();
+  const orders = new Set();
+  for (const projection of area.projections) {
+    if (typeof projection?.slug !== 'string' || !/^[a-z0-9-]+$/.test(projection.slug)) {
+      throw new Error(`[doc-areas] ${area.id} has a projection with an invalid slug`);
+    }
+    if (slugs.has(projection.slug)) {
+      throw new Error(`[doc-areas] ${area.id} has a duplicate projection slug "${projection.slug}"`);
+    }
+    slugs.add(projection.slug);
+    if (!Number.isInteger(projection.order) || projection.order <= 0) {
+      throw new Error(`[doc-areas] ${area.id} projection "${projection.slug}" needs an order`);
+    }
+    if (orders.has(projection.order)) {
+      throw new Error(`[doc-areas] ${area.id} has a duplicate projection order ${projection.order}`);
+    }
+    orders.add(projection.order);
+    if (typeof projection.navTitle !== 'string' || projection.navTitle.length === 0) {
+      throw new Error(`[doc-areas] ${area.id} projection "${projection.slug}" needs a navTitle`);
+    }
+    if (typeof projection.markdownFile !== 'string' || !projection.markdownFile.endsWith('.md')) {
+      throw new Error(`[doc-areas] ${area.id} projection "${projection.slug}" needs a markdown file`);
+    }
+    if (typeof projection.versionFile !== 'string' || !projection.versionFile.endsWith('package.json')) {
+      throw new Error(`[doc-areas] ${area.id} projection "${projection.slug}" needs a version file`);
+    }
+  }
+
+  for (const slug of area.frameworkGuides ?? []) {
+    if (typeof slug !== 'string' || !/^[a-z0-9-]+$/.test(slug)) {
+      throw new Error(`[doc-areas] ${area.id} has an invalid framework guide slug`);
+    }
+    if (slugs.has(slug)) {
+      throw new Error(`[doc-areas] ${area.id} framework guide "${slug}" collides with a projection`);
+    }
+    slugs.add(slug);
+  }
+}
+
+/** H2 contract for a framework guide, in order. Extra H3s are allowed. */
+export const frameworkGuideHeadings = [
+  'Create a project',
+  'Install packages',
+  'Add styles',
+  'Add the provider',
+  'Connect the router',
+  'Load fonts',
+  'Verify',
+];
 
 /**
  * @param {readonly Record<string, unknown>[]} areas
@@ -59,7 +130,7 @@ export function defineDocAreas(areas) {
     }
     bands.add(area.searchBand);
 
-    if (area.membership === 'inventory') {
+    if (area.membership === 'inventory' || area.membership === 'files') {
       if (typeof area.collection !== 'string' || area.collection !== area.segment) {
         throw new Error(`[doc-areas] ${area.id} collection must equal its segment`);
       }
@@ -72,6 +143,10 @@ export function defineDocAreas(areas) {
     }
 
     if (area.membership === 'blocks') blocks += 1;
+    if (area.membership === 'files') validateFilesArea(area);
+    else if (area.projections !== undefined || area.frameworkGuides !== undefined) {
+      throw new Error(`[doc-areas] ${area.id} projections require files membership`);
+    }
 
     if (area.assetRules !== undefined) {
       if (!Array.isArray(area.assetRules)) {
@@ -93,6 +168,27 @@ export function defineDocAreas(areas) {
 }
 
 const areas = /** @type {const} */ ([
+  {
+    id: 'getting-started',
+    title: 'Getting started',
+    segment: 'getting-started',
+    collection: 'getting-started',
+    membership: 'files',
+    catalogOverview: true,
+    searchBand: 4,
+    intro:
+      'Install the React and token packages, load the typefaces in your app, and use the CLI only when you want editable Blocks.',
+    frameworkGuides: ['vite', 'nextjs', 'react-router', 'tanstack-start', 'astro'],
+    projections: [
+      {
+        slug: 'agents',
+        navTitle: 'Agents',
+        order: 100,
+        markdownFile: 'packages/react/AGENT_GUIDE.md',
+        versionFile: 'packages/react/package.json',
+      },
+    ],
+  },
   {
     id: 'foundations',
     title: 'Foundations',
@@ -145,7 +241,9 @@ defineDocAreas(areas);
 export const docAreas = areas;
 
 /**
- * @param {(typeof docAreas)[number]['id']} id
+ * @template {typeof docAreas[number]['id']} Id
+ * @param {Id} id
+ * @returns {Extract<(typeof docAreas)[number], { id: Id }>}
  */
 export function docArea(id) {
   const area = docAreas.find((candidate) => candidate.id === id);
@@ -211,6 +309,15 @@ export function proseCollections() {
  */
 export function matchContentPath(filePath) {
   const path = String(filePath ?? '').replaceAll('\\', '/');
+  for (const area of docAreas) {
+    if (!('projections' in area)) continue;
+    for (const projection of area.projections) {
+      const marker = `/${projection.markdownFile}`;
+      if (path.endsWith(marker)) {
+        return { collection: area.collection, slug: projection.slug };
+      }
+    }
+  }
   const collections = proseCollections();
   if (collections.length === 0) return null;
   const match = path.match(

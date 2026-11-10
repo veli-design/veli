@@ -20,8 +20,6 @@ export const docsOverview = {
   label: 'Components overview',
   title: 'Veli Components',
   description: 'Accessible building blocks for consistent, dependable public-service interfaces.',
-  packageGuidance:
-    'Examples use @veli-design/react and @veli-design/tokens. These names are prepared for an approved public npm release. Existing applications should migrate dependencies, imports and copied Blocks together once matching packages and registry are available.',
   documentTitle: 'Documentation | Veli Design System',
   documentDescription: 'Foundations and component documentation for the Veli Design System.',
   htmlPath: pageHref(componentsArea),
@@ -417,6 +415,8 @@ export function inventoryItems(
 }
 
 function sectionItems(area: (typeof docAreas)[number]): readonly DocsNavigationItem[] {
+  if (area.membership === 'files') return [];
+
   switch (area.id) {
     case 'foundations':
     case 'components':
