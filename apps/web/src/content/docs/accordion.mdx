@@ -11,9 +11,304 @@ import {
   AccordionRtlDemo,
 } from '../../components/AccordionExamples';
 
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsExampleFrame from '../../components/docs/DocsExampleFrame.astro';
+import DocsComparison from '../../components/docs/DocsComparison.astro';
+import AccordionDesignDemo from '../../components/AccordionDesignDemo';
+import DocsResources from '../../components/docs/DocsResources.astro';
+
 # Accordion
 
-The Accordion component groups collapsible sections built on React Aria's `DisclosureGroup`. Provide a data-driven `items` array for the common case, or compose `AccordionItem`, `AccordionHeader`, and `AccordionPanel` directly for full control.
+<DocsTab id="overview">
+
+An accordion stacks headers that each reveal a panel of content. Use it to shorten long pages by hiding detail until it is needed: FAQs, service requirements, submission history. This page covers when to use it and how to write for it. Design, Code and Accessibility have their own tabs.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/accordion.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-accordion--docs"
+/>
+
+## When to use
+
+When to use an accordion, and when to use something else.
+
+### Use an accordion when
+
+- Content can be split into clear, related sections that users scan by title.
+- Users need only one or two sections at a time, e.g. FAQs, application details, settings groups.
+- You need to shorten a long page on small screens without hiding the structure.
+- Content is secondary or supporting, not the main task on the page.
+
+### Don’t use an accordion when
+
+- Users must read all the content to finish a task. Show it on the page instead.
+- There is only one section. Use a disclosure link or show the content directly.
+- Users need to compare content across sections side by side. Use tabs or a table.
+- Panels would hold primary actions or form steps. Use a stepper or separate pages.
+
+## Anatomy
+
+The parts that make up an accordion item. Numbers match the list below.
+
+<DocsFigure
+  src="/images/docs/accordion/anatomy-light.png"
+  darkSrc="/images/docs/accordion/anatomy-dark.png"
+  alt="Accordion anatomy: 1 header, 2 title, 3 indicator, 4 content panel, 5 description, 6 divider."
+  width="805"
+  height="444"
+/>
+
+<DocsAnatomy>
+
+1. **Header · AccordionHeader**
+
+   A heading (h3 by default) that wraps a full-width button. The button opens and closes the panel and receives the hover and pressed backgrounds.
+
+2. **Title · header children**
+
+   Short, unique title for the section. Avoid titles that wrap.
+
+3. **Indicator · icon slot**
+
+   Decorative 16px icon in a 20 × 24 box. The default caret rotates when expanded. It trails the title with left alignment and leads it with right alignment. Replace it through the `icon` prop.
+
+4. **Content panel · AccordionPanel**
+
+   Animated outer panel (`className`) around the inner content (`contentClassName`). Its inset lines the body text up with the title.
+
+5. **Description · panel children**
+
+   Body content of any length. Keep interactive elements here, not in the header.
+
+6. **Divider · AccordionItem**
+
+   Bottom border of each AccordionItem, one header and panel pair. Separates stacked items.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+Common patterns and mistakes.
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/accordion/short-titles-light.png" darkSrc="/images/docs/accordion/short-titles-dark.png" alt="Short section titles: Overview, Required documents, Submission history." width="395" height="316">
+
+Keep titles short and scannable so users can find the right section at a glance.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/accordion/long-titles-light.png" darkSrc="/images/docs/accordion/long-titles-dark.png" alt="A long title wraps across several lines." width="395" height="316">
+
+Don’t write long titles that wrap onto several lines. Move the detail into the panel.
+
+</DocsGuideline>
+
+<DocsGuideline kind="do" src="/images/docs/accordion/consistent-light.png" darkSrc="/images/docs/accordion/consistent-dark.png" alt="Three accordion headers with matching size and indicator position." width="395" height="224">
+
+Use one size and one indicator position across the whole group.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/accordion/mixed-light.png" darkSrc="/images/docs/accordion/mixed-dark.png" alt="The last accordion header has a different size and indicator position." width="395" height="224">
+
+Don’t mix sizes, alignments or flushed items in the same group.
+
+</DocsGuideline>
+
+<DocsGuideline kind="do" src="/images/docs/accordion/one-open-light.png" darkSrc="/images/docs/accordion/one-open-dark.png" alt="Only the Overview panel is expanded." width="395" height="452">
+
+Open the most relevant item by default only when it helps the user get started.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/accordion/all-open-light.png" darkSrc="/images/docs/accordion/all-open-dark.png" alt="All three panels are expanded." width="395" height="452">
+
+Don’t open every item by default. If users must see all the content, don’t use an accordion.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+Keep headers to one line. Write them as topics, not questions, unless the page is an FAQ. Panels can hold paragraphs, lists, links and small tables. Put interactive controls in the panel, never in the header. Open the most important section by default when there is one.
+
+## Related components
+
+Alternatives to consider.
+
+| Component                         | Use it instead when                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| [Tabs](/docs/tabs/)               | Switch between views of equal importance when only one should be visible at a time.           |
+| [Link](/docs/link/) / “Show more” | For a single block of extra content, use a simple disclosure instead of a one-item accordion. |
+| [Modal](/docs/modal/)             | For focused detail or a task that needs the user’s full attention.                            |
+| [Table](/docs/table/)             | When users need to compare structured data across items.                                      |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the Accordion: variants, states, spacing and the tokens behind them.
+
+## Sizes
+
+`md` is the default and suits dense pages and cards. `lg` gives the header more height and a larger label for standalone content pages.
+
+<DocsExampleFrame>
+
+<DocsComparison label="Medium" value="md">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo size="md" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Large" value="lg">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo size="lg" client:visible />
+  </div>
+</DocsComparison>
+
+</DocsExampleFrame>
+
+## Alignment
+
+`left` places the indicator after the label on the trailing edge. `right` places it before the label. Both follow reading direction, so in Dhivehi the trailing edge is on the left.
+
+<DocsExampleFrame>
+
+<DocsComparison label="Left" value="left">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo alignment="left" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Right" value="right">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo alignment="right" client:visible />
+  </div>
+</DocsComparison>
+
+</DocsExampleFrame>
+
+## Flushed
+
+`flushed` reduces the outer inset so the header lines up with surrounding text. Use it inside a card or panel that already has its own padding. The label retains its 6px inline padding.
+
+<DocsExampleFrame>
+
+<DocsComparison label="Default">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Flushed" value="flushed">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo flushed client:visible />
+  </div>
+</DocsComparison>
+
+</DocsExampleFrame>
+
+## States
+
+Default, hover, pressed and keyboard focus. Hover and pressed backgrounds use the fast motion duration. The focus ring appears on keyboard focus. Accordion does not support `isDisabled`; a skeleton is not a built-in Accordion state.
+
+<DocsExampleFrame>
+
+<DocsComparison label="Default">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo state="default" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Hover">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo state="hover" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Pressed">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo state="pressed" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Focus">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo state="focus" client:visible />
+  </div>
+</DocsComparison>
+
+</DocsExampleFrame>
+
+## Language and direction
+
+The Dhivehi typography uses MV A Waheed for headers and MV Faseyha for body text. Use `VeliProvider language="dv"` to apply the language, fonts and right-to-left direction. In Figma, use the AccordionDv set.
+
+<DocsExampleFrame>
+
+<DocsComparison label="English" value="ltr">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo language="en" client:visible />
+  </div>
+</DocsComparison>
+
+<DocsComparison label="Dhivehi" value="rtl">
+  <div data-docs-markdown="interactive-example">
+    <AccordionDesignDemo language="dv" client:visible />
+  </div>
+</DocsComparison>
+
+</DocsExampleFrame>
+
+## Spacing and padding
+
+Measurements for one item at each size. Values below describe the shipped component; the panel’s leading inset follows the indicator position and reading direction.
+
+| Property                                      | lg                        | md                        |
+| --------------------------------------------- | ------------------------- | ------------------------- |
+| Header height (single line)                   | 56px                      | 44px                      |
+| Header vertical padding                       | 16px                      | 10px                      |
+| Horizontal inset                              | 16px                      | 16px                      |
+| Label inline padding                          | 6px                       | 6px                       |
+| Gap before panel content                      | 2px                       | 2px                       |
+| Indicator box                                 | 20 × 24px                 | 20 × 24px                 |
+| Icon size                                     | 16px                      | 16px                      |
+| Panel start inset, trailing indicator         | 22px                      | 22px                      |
+| Panel start inset, leading indicator          | 42px                      | 42px                      |
+| Panel start inset, flushed trailing indicator | 6px                       | 6px                       |
+| Panel start inset, flushed leading indicator  | 32px                      | 32px                      |
+| Panel bottom padding                          | 18px                      | 18px                      |
+| Hover / pressed radius                        | 12px                      | 12px                      |
+| Title type                                    | Body/md/Medium · 16/150%  | Body/sm/Medium · 14/145%  |
+| Body type                                     | Body/md/Regular · 16/150% | Body/sm/Regular · 14/145% |
+
+## Tokens
+
+Semantic tokens used by the shipped component. Use these when theming, rather than raw colours.
+
+| Part                      | Token                             |
+| ------------------------- | --------------------------------- |
+| Title                     | `--veli-color-text-base-strong`   |
+| Body text                 | `--veli-color-text-base-default`  |
+| Indicator icon            | `--veli-color-icon-base-default`  |
+| Divider                   | `--veli-color-border-base-subtle` |
+| Header hover background   | `--veli-color-accordion-hover`    |
+| Header pressed background | `--veli-color-accordion-pressed`  |
+| Focus ring                | `--veli-color-border-focus`       |
+
+## Motion
+
+Panels animate their height and built-in indicators rotate using the normal motion duration and ease-in-out. Hover and pressed colour feedback use the fast duration (80ms) and ease-out. With reduced motion enabled, these transitions are disabled. Apply the same preference to any custom indicator animation.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -90,7 +385,7 @@ Use `md` for compact sections and `lg` for larger text. `alignment="left"` place
 
 ## Right-to-left languages
 
-Set the language and direction on the Accordion's container. The indicator, text alignment, and panel insets follow the reading direction. This preview uses the Dhivehi content from the [Figma RTL example](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=4154-14239); switch between Dhivehi and English to compare both directions.
+Set the language and direction on the Accordion's container. The indicator, text alignment, and panel insets follow the reading direction. Switch between Dhivehi and English in the preview to compare both directions.
 
 <div className="preview mb-4">
   <AccordionRtlDemo client:load />
@@ -198,14 +493,56 @@ React Aria's `children` and `className` render functions are replaced by Veli's 
 
 Header and panel children are React nodes. Panel `className` is a string, not a React Aria render function. If overriding the header's size, alignment, or flushed setting, apply the same overrides to its panel.
 
-## Accessibility
+</DocsTab>
 
-- Each header contains a native button with `aria-expanded` and `aria-controls`, linked to its panel.
-- Use Tab and Shift+Tab to move between triggers, and Enter or Space to toggle. Arrow-key navigation is not part of this component.
-- Choose the heading `level` to fit the page hierarchy. Keep labels meaningful and unique.
-- Collapsed panel content is not focusable.
-- Keyboard focus uses the theme's focus ring. Hover and pressed states use semantic tokens.
+<DocsTab id="accessibility">
 
-## Motion
+<span id="accessibility" data-docs-markdown="omit" />
 
-Panels animate their height and built-in indicators rotate using the normal motion duration. Hover and pressed color feedback use the fast duration (80ms). With reduced motion enabled, these transitions are disabled. Apply the same preference to any custom indicator animation.
+How the Accordion works with keyboards, screen readers and reduced-motion settings, and what a page author still has to do. The component is built on React Aria Disclosure.
+
+## Keyboard
+
+Every header is a native button, so it joins the normal tab order. There is no arrow-key roving; that keeps behaviour predictable inside long forms.
+
+| Key                | Action                                                   |
+| ------------------ | -------------------------------------------------------- |
+| `Tab`              | Moves focus to the next header or focusable element.     |
+| `Shift + Tab`      | Moves focus to the previous header or focusable element. |
+| `Enter` or `Space` | Toggles the panel of the focused header.                 |
+
+## Screen readers
+
+Each header renders a button inside a heading, with `aria-expanded` reflecting the open state and `aria-controls` pointing at its panel. The panel is a region labelled by its header. Titles are announced verbatim. Write them as topics so they make sense out of context. The indicator icon is decorative and hidden from assistive technology.
+
+## Focus and disabled
+
+The focus ring uses the shared focus tokens and appears on keyboard focus. Accordion and AccordionItem do not support `isDisabled`. Keep required information visible instead of relying on a disabled accordion header. State is never conveyed by colour alone: the indicator changes orientation and the panel itself appears or disappears.
+
+## Hidden content
+
+Content in a collapsed panel can’t be focused and is hidden from assistive technology. Never put errors, required information or confirmations inside a closed panel.
+
+## Target size
+
+The single-line `md` header is 44px tall, and `lg` is 56px tall. Keep the provided header padding so the full-width button remains easy to activate.
+
+## Contrast
+
+Text, icons and backgrounds use the shared semantic tokens in light and dark themes. Check contrast again if you override colours; keep focus and expanded states distinguishable without relying on colour alone.
+
+## Heading level
+
+Set `level` on AccordionHeader so the headers fit the page outline. The default is 3, which suits an accordion placed under an h2 section. Data-driven items use the same default.
+
+## Reduced motion
+
+When the user prefers reduced motion, the panel opens and closes without the height transition and the indicator changes orientation without animating. Apply the same preference to any custom indicator animation.
+
+## Dhivehi and right-to-left
+
+Use `VeliProvider language="dv"` for Dhivehi. The same Accordion component follows the provider’s language and reading direction, with MV A Waheed for headers and MV Faseyha for body text. There is no separate AccordionDv code component.
+
+Logical padding and indicator placement mirror automatically. Keep meaningful, concise titles and check translated text at both sizes. See [Right-to-left languages](#right-to-left-languages) for the existing interactive example and code.
+
+</DocsTab>
