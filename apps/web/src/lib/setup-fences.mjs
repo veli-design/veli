@@ -14,8 +14,8 @@ export const requiredSetupFences = [
   { id: 'install', owner: 'installation.mdx' },
   { id: 'npmrc', owner: 'installation.mdx' },
   { id: 'css-imports', owner: 'installation.mdx' },
-  { id: 'vite-plugin', owner: 'vite.mdx' },
-  { id: 'client-theme', owner: 'vite.mdx' },
+  { id: 'vite-plugin', owner: 'frameworks.mdx' },
+  { id: 'client-theme', owner: 'frameworks.mdx' },
   { id: 'cli-init', owner: 'cli.mdx' },
   { id: 'font-sans', owner: 'fonts.mdx' },
   { id: 'font-dhivehi', owner: 'fonts.mdx' },
@@ -43,7 +43,7 @@ export const exclusiveSnippets = [
   {
     needle: 'next-themes',
     allowed: [
-      'apps/web/src/content/getting-started/nextjs.mdx',
+      'apps/web/src/content/getting-started/frameworks.mdx',
       // The provider stub heading keeps the anchor `#nextjs-with-next-themes` for one release.
       'apps/web/src/content/docs/provider.mdx',
     ],

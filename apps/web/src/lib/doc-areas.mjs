@@ -70,15 +70,13 @@ function validateFilesArea(area) {
   }
 }
 
-/** H2 contract for a framework guide, in order. Extra H3s are allowed. */
+/** H2 contract for the single Frameworks page, in order. Step detail lives in H3s. */
 export const frameworkGuideHeadings = [
-  'Create a project',
-  'Install packages',
-  'Add styles',
-  'Add the provider',
-  'Connect the router',
-  'Load fonts',
-  'Verify',
+  'Vite',
+  'Next.js',
+  'React Router',
+  'TanStack Start',
+  'Astro',
 ];
 
 /**
@@ -178,7 +176,7 @@ const areas = /** @type {const} */ ([
     searchBand: 4,
     intro:
       'Install the React and token packages, load the typefaces in your app, and use the CLI only when you want editable Blocks.',
-    frameworkGuides: ['vite', 'nextjs', 'react-router', 'tanstack-start', 'astro'],
+    frameworkGuides: ['frameworks'],
     projections: [
       {
         slug: 'agents',

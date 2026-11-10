@@ -1,0 +1,557 @@
+---
+title: Frameworks
+description: Wire Veli into Vite, Next.js, React Router, TanStack Start, and Astro after the shared install.
+order: 20
+---
+
+Install the packages and CSS imports from [Installation](/getting-started/installation/) first. This page covers what changes for each framework. Use Node.js 24 or newer.
+
+## Vite
+
+### Create a project
+
+```bash
+npm create vite@latest my-veli-app -- --template react-ts
+cd my-veli-app
+npm install
+```
+
+### Install packages
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+Install the Tailwind Vite plugin.
+
+```bash
+npm install tailwindcss@^4 @tailwindcss/vite@^4
+```
+
+### Add styles
+
+Register Tailwind beside the React plugin.
+
+```ts setup=vite-plugin
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+```
+
+Replace `src/index.css` with the Veli imports. Keep `import './index.css'` in `src/main.tsx`.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+Remove `import './App.css'` from the template. Those starter styles constrain the page.
+
+### Add the provider
+
+`use client` marks this module as a client component in server-rendered React frameworks. Vite ignores that directive. The saved color scheme is read after mount so a server render and the first client render agree.
+
+```tsx setup=client-theme
+'use client';
+
+import { useEffect, useState } from 'react';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
+
+const storageKey = 'veli-color-scheme';
+
+function isColorScheme(value: string | null): value is VeliColorScheme {
+  return value === 'light' || value === 'dark' || value === 'system';
+}
+
+function resolvedScheme(colorScheme: VeliColorScheme) {
+  if (colorScheme === 'light' || colorScheme === 'dark') return colorScheme;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+export function AppThemeProvider({ children }: { children: React.ReactNode }) {
+  const [colorScheme, setColorScheme] = useState<VeliColorScheme>('system');
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(storageKey);
+    if (isColorScheme(stored) && stored !== colorScheme) setColorScheme(stored);
+  }, [colorScheme]);
+
+  useEffect(() => {
+    const resolved = resolvedScheme(colorScheme);
+    const root = document.documentElement;
+    root.classList.toggle('dark', resolved === 'dark');
+    root.dataset.theme = resolved;
+    root.dataset.colorScheme = colorScheme;
+    root.style.colorScheme = resolved;
+    window.localStorage.setItem(storageKey, colorScheme);
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      if (root.dataset.colorScheme !== 'system') return;
+      const next = media.matches ? 'dark' : 'light';
+      root.classList.toggle('dark', next === 'dark');
+      root.dataset.theme = next;
+      root.style.colorScheme = next;
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, [colorScheme]);
+
+  return (
+    <VeliProvider colorScheme={colorScheme}>
+      <button type="button" onClick={() => setColorScheme('system')}>
+        System
+      </button>
+      <button type="button" onClick={() => setColorScheme('light')}>
+        Light
+      </button>
+      <button type="button" onClick={() => setColorScheme('dark')}>
+        Dark
+      </button>
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+Render `AppThemeProvider` from `src/main.tsx` around `App`.
+
+### Connect the router
+
+A Vite app with no router uses full page loads. Leave `navigate` unset. When you add React Router, follow the [React Router](#react-router) section.
+
+### Load fonts
+
+Name the Latin face Inter and `--veli-font-sans` selects it. [Fonts](/getting-started/fonts/) has the host rules for Inter and the Dhivehi faces. Import the font stylesheet from `src/main.tsx` or from `src/index.css`.
+
+### Verify
+
+```bash
+npm run dev
+```
+
+The page shows a styled button, not an unstyled browser button. Choose **Dark**. The document element gains the class `dark`, and the surface color changes. Choose **System**. The page follows the operating system preference.
+
+## Next.js
+
+### Create a project
+
+Choose TypeScript, Tailwind CSS, and the App Router.
+
+```bash
+npx create-next-app@latest my-veli-app
+cd my-veli-app
+```
+
+### Install packages
+
+The App Router template already includes Tailwind.
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+Remove `@veli-design/react` from `transpilePackages` if an older release added it. Current packages ship explicit `.js` imports and do not need that workaround.
+
+### Add styles
+
+Keep the Tailwind import the template generated. Add the two Veli imports after it, in `app/globals.css`.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+If the template's Tailwind import uses double quotes, change that line to the single-quoted import above so the three lines stay in this order.
+
+### Add the provider
+
+Use `next-themes` when the app already toggles `class="dark"` on `html`. Set `attribute="class"`. `VeliProvider` can still supply language and component context. Do not also let it own the document theme.
+
+```tsx
+import { ThemeProvider } from 'next-themes';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+Bridge the theme into `VeliProvider` from a client module.
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
+
+function toVeliColorScheme(theme: string | undefined): VeliColorScheme {
+  return theme === 'light' || theme === 'dark' ? theme : 'system';
+}
+
+export function VeliThemeBridge({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+
+  return <VeliProvider colorScheme={toVeliColorScheme(theme)}>{children}</VeliProvider>;
+}
+```
+
+Render `VeliThemeBridge` inside `ThemeProvider`. Interactive Veli components are client components. Import them from client modules.
+
+### Connect the router
+
+Pass `navigate` so `href` on Link, Tabs, Menu, and Breadcrumbs uses the App Router.
+
+```tsx
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { VeliProvider } from '@veli-design/react/provider';
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  return (
+    <VeliProvider navigate={(href, options) => router.push(href, options)}>{children}</VeliProvider>
+  );
+}
+```
+
+To type `routerOptions` on individual links, augment React Aria's `RouterConfig`.
+
+```ts
+import type { useRouter } from 'next/navigation';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>;
+  }
+}
+```
+
+`navigate` is optional. Without it, `href` uses a full page load.
+
+### Load fonts
+
+Bind the loader's CSS variable to `--veli-font-sans` and put the generated class on `html`. [Fonts](/getting-started/fonts/) has the App Router example and the Dhivehi family rules. Import the global stylesheet from the root layout.
+
+### Verify
+
+```bash
+npm run dev
+```
+
+Open the app. A Veli button uses Veli styles. Switch the theme. The document element gains or loses the class `dark`. Activate a Veli link that has an `href`. The App Router changes the address without a full page load.
+
+## React Router
+
+### Create a project
+
+The default template is framework mode, with routes in `app/routes` and the document shell in `app/root.tsx`.
+
+```bash
+npx create-react-router@latest my-veli-app
+cd my-veli-app
+npm install
+```
+
+### Install packages
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+If the template did not add Tailwind 4, install the Vite plugin.
+
+```bash
+npm install tailwindcss@^4 @tailwindcss/vite@^4
+```
+
+### Add styles
+
+Add `tailwindcss()` to the existing Vite plugins. Keep `reactRouter()` and `tsconfigPaths()`.
+
+```ts
+import { reactRouter } from '@react-router/dev/vite';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+});
+```
+
+Put the Veli imports at the top of `app/app.css`.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+### Add the provider
+
+Reuse the `AppThemeProvider` from the [Vite](#vite) section. Wrap `<Outlet />` in `app/root.tsx` with that provider.
+
+### Connect the router
+
+Pass `navigate` and `useHref` so links from Veli components stay inside the router. Call this component inside `AppThemeProvider`, or merge the two wrappers.
+
+```tsx
+'use client';
+
+import { useNavigate, useHref } from 'react-router';
+import { VeliProvider } from '@veli-design/react/provider';
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+
+  return (
+    <VeliProvider navigate={navigate} useHref={useHref}>
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+If you already wrap the tree in `AppThemeProvider`, pass `navigate` and `useHref` to that `VeliProvider` instead of mounting a second provider.
+
+### Load fonts
+
+Name the Latin face Inter and `--veli-font-sans` selects it. [Fonts](/getting-started/fonts/) has the host rules. Import the font stylesheet from `app/root.tsx` or from `app/app.css`.
+
+### Verify
+
+```bash
+npm run dev
+```
+
+Open a route that renders a Veli button. The button uses Veli styles. Choose **Dark**. The document element gains the class `dark`. Activate a Veli link that has an `href`. The address changes without a full page load.
+
+## TanStack Start
+
+### Create a project
+
+Choose the React Start template and Tailwind when the CLI asks.
+
+```bash
+npx @tanstack/cli@latest create my-veli-app
+cd my-veli-app
+npm install
+```
+
+A blank project omits Tailwind. If you used `--blank`, install `tailwindcss` and `@tailwindcss/vite` before the next step.
+
+### Install packages
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+### Add styles
+
+Add `tailwindcss()` to the Vite plugins the template already registered. Keep the TanStack Start plugin in that list.
+
+```ts
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+    // Keep the TanStack Start plugin from the template in this array.
+  ],
+});
+```
+
+Put the Veli imports at the top of the global stylesheet the root route loads.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+### Add the provider
+
+Reuse the `AppThemeProvider` from the [Vite](#vite) section. Wrap the document body from the root route. In the default Start template that file is `src/routes/__root.tsx`.
+
+### Connect the router
+
+Pass `navigate` and `useHref` from TanStack Router. Interactive Veli imports stay in a client module.
+
+```tsx
+'use client';
+
+import { useRouter } from '@tanstack/react-router';
+import { VeliProvider } from '@veli-design/react/provider';
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  return (
+    <VeliProvider
+      navigate={(to, options) => router.navigate({ to, ...options })}
+      useHref={(to) => router.buildLocation({ to }).href}
+    >
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+If you already wrap the tree in `AppThemeProvider`, pass `navigate` and `useHref` to that `VeliProvider` instead of mounting a second provider.
+
+### Load fonts
+
+Name the Latin face Inter and `--veli-font-sans` selects it. [Fonts](/getting-started/fonts/) has the host rules. Import the font stylesheet from the root route.
+
+### Verify
+
+```bash
+npm run dev
+```
+
+The dev server prints a local URL. Open it. A Veli button uses Veli styles. Choose **Dark**. The document element gains the class `dark`. Activate a Veli link that has an `href`. The address changes without a full page load.
+
+## Astro
+
+### Create a project
+
+```bash
+npm create astro@latest my-veli-app
+cd my-veli-app
+npx astro add react
+npm install tailwindcss @tailwindcss/vite
+```
+
+### Install packages
+
+```bash setup=install
+npm install @veli-design/react @veli-design/tokens react-aria-components
+```
+
+### Add styles
+
+Register the Tailwind Vite plugin. Keep the React integration.
+
+```js
+import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  integrations: [react()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+});
+```
+
+Create `src/styles/global.css`.
+
+```css setup=css-imports
+@import 'tailwindcss';
+@import '@veli-design/tokens/tailwind';
+@import '@veli-design/react/tailwind';
+```
+
+Import that file from the shared layout.
+
+### Add the provider
+
+Set the document class before first paint. Put this script in the layout `head`. It writes `.dark`, `data-theme`, and `color-scheme` on `document.documentElement`.
+
+```astro
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en" data-color-scheme="system">
+  <head>
+    <script is:inline>
+      (() => {
+        const storageKey = 'veli-color-scheme';
+        const root = document.documentElement;
+        const stored = window.localStorage.getItem(storageKey);
+        const colorScheme =
+          stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+        const isDark =
+          colorScheme === 'dark' ||
+          (colorScheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const resolvedColorScheme = isDark ? 'dark' : 'light';
+
+        root.classList.toggle('dark', isDark);
+        root.dataset.theme = resolvedColorScheme;
+        root.dataset.colorScheme = colorScheme;
+        root.style.colorScheme = resolvedColorScheme;
+      })();
+    </script>
+  </head>
+  <body class="bg-surface-base text-base">
+    <slot />
+  </body>
+</html>
+```
+
+Veli components are React client components. Astro renders them as static HTML unless you set a client directive. Hydrate each interactive component when the page loads. The sample below shows the directive.
+
+```astro
+---
+import { Button } from '@veli-design/react/button';
+---
+
+<Button client:load>Save</Button>
+```
+
+Wrap island state that needs language or color-scheme context in `VeliProvider`. The layout script owns the document class. The provider owns the React subtree.
+
+```tsx
+import { VeliProvider } from '@veli-design/react/provider';
+
+export function Island({ children }: { children: React.ReactNode }) {
+  return (
+    <VeliProvider language="en" colorScheme="system">
+      {children}
+    </VeliProvider>
+  );
+}
+```
+
+Theme buttons elsewhere on the page should write the same root contract and save `veli-color-scheme` to `localStorage`.
+
+### Connect the router
+
+Astro moves between pages with normal links. Leave `navigate` unset. Set it only inside a React island that uses a client router. The [React Router](#react-router) section shows that wiring.
+
+### Load fonts
+
+Import the font stylesheet from the layout, next to `global.css`. [Fonts](/getting-started/fonts/) has the family rules and the Dhivehi token names.
+
+### Verify
+
+```bash
+npm run dev
+```
+
+The button shows Veli styles and responds to a click. Without the load directive, the button paints and the click does nothing. Toggle the saved color scheme. The document element gains the class `dark` before the first paint, with no flash of the opposite theme.
