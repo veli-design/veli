@@ -1,0 +1,117 @@
+---
+const path = Astro.url.pathname;
+interface Props {
+  variant?: 'home' | 'design';
+}
+const { variant = 'home' } = Astro.props;
+const design = variant === 'design';
+const github = 'https://github.com/veli-design/veli';
+---
+
+<div
+  class="marketing-official"
+  data-intro={path === '/' ? '' : undefined}
+  data-solid="rect"
+  data-group="banner"
+>
+  <img
+    src={design ? '/images/marketing/35ffe.png' : '/blocks/maldives-flag.svg'}
+    width="24"
+    height="16"
+    alt="Maldives flag"
+  />
+  <span>An official website of the Maldives Government</span>
+  <details>
+    <summary
+      >Here’s how you know {
+        design ? (
+          <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
+        ) : (
+          <span aria-hidden="true">⌄</span>
+        )
+      }</summary
+    >
+    <p>
+      Veli is the design system for Maldives government services. Check that you are visiting <strong
+        >veli.design</strong
+      > and that your browser shows a secure HTTPS connection.
+    </p>
+  </details>
+</div>
+<header class="marketing-header" data-nav-after={path === '/' ? '.marketing-hero-logo' : undefined}>
+  <a href="/" aria-label="Veli Design home"
+    ><img
+      class="marketing-logo"
+      src={design ? '/images/marketing/1c862.svg' : '/images/marketing/veli-design-nav.svg'}
+      width="180"
+      height="29"
+      alt="Veli Design"
+    /></a
+  >
+  <nav class="marketing-desktop-nav" aria-label="Main navigation">
+    <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>Design</a>
+    <a href="/docs/">Documentation</a>
+    <a href="https://github.com/veli-design/veli/releases">What’s new</a>
+    <span class="marketing-resource-links">
+      <a
+        href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site"
+        aria-label="Veli in Figma"
+        ><img
+          src={design ? '/images/marketing/7321c.svg' : '/images/marketing/figma-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
+      >
+      <a href={github} aria-label="Veli on GitHub"
+        ><img
+          src={design ? '/images/marketing/0e2f0.svg' : '/images/marketing/github-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
+      >
+      <a href="https://www.npmjs.com/package/@veli-design/react" aria-label="Veli React on npm"
+        ><img
+          src={design ? '/images/marketing/0b970.svg' : '/images/marketing/package-icon.svg'}
+          width="24"
+          height="24"
+          alt=""
+        /></a
+      >
+    </span>
+  </nav>
+  <details class="marketing-mobile-menu">
+    <summary aria-label="Main navigation"><span aria-hidden="true">☰</span></summary>
+    <nav aria-label="Mobile main navigation">
+      <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>Design</a>
+      <a href="/docs/">Documentation</a>
+      <a href="https://github.com/veli-design/veli/releases">What’s new</a>
+      <a href={github}>GitHub</a>
+      <a href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site">Figma</a>
+      <a href="https://www.npmjs.com/package/@veli-design/react">Packages</a>
+    </nav>
+  </details>
+</header>
+<script>
+  const header = document.querySelector<HTMLElement>('.marketing-header');
+  const hero = header?.dataset.navAfter ? document.querySelector(header.dataset.navAfter) : null;
+  if (header && hero) {
+    const update = () =>
+      header.classList.toggle('is-shown', hero.getBoundingClientRect().bottom < 40);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+  const menu = document.querySelector<HTMLDetailsElement>('.marketing-mobile-menu');
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (menu?.open && event.target instanceof Node && !menu.contains(event.target))
+      menu.open = false;
+  });
+</script>

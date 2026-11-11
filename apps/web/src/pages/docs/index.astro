@@ -1,77 +1,25 @@
 ---
-import DocsPageActions from '../../components/DocsPageActions.astro';
+import { getEntry } from 'astro:content';
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { componentGroups, docsOverview, getComponentGroupSlug } from '../../lib/site';
+import '../../styles/get-started.css';
 
-const headings = [
-  { depth: 2, slug: 'overview', text: 'Overview' },
-  ...componentGroups.map((group) => ({
-    depth: 2,
-    slug: getComponentGroupSlug(group.title),
-    text: group.title,
-  })),
-];
-const markdownPath = docsOverview.markdownPath;
+const guide = await getEntry('guides', 'get-started');
+if (!guide) throw new Error('Get Started guide is missing');
+const { Content, headings } = await guide.render();
 ---
 
 <DocsLayout
-  title={docsOverview.documentTitle}
-  description={docsOverview.documentDescription}
-  activePath={docsOverview.htmlPath}
-  {markdownPath}
-  {headings}
-  fullBleedHeader
-  contentLayout="overview"
+  title="Get Started | Veli Design System"
+  description={guide.data.description}
+  activePath="/docs/"
+  markdownPath="/docs/index.md"
+  contentLayout="get-started"
+  headings={headings.filter((heading) => heading.depth === 2)}
+  showPageActions={false}
 >
-  <header class="docs-page-header docs-page-header--overview docs-overview-header">
-    <div class="docs-page-header__content">
-      <h1>Veli Components</h1>
-      <p>Accessible building blocks for consistent, dependable public-service interfaces.</p>
-      <DocsPageActions {markdownPath} placement="inline" />
-    </div>
-    <img
-      class="docs-overview-hero"
-      src="/images/components-overview.webp"
-      alt=""
-      width="2048"
-      height="1163"
-    />
+  <header class="docs-page-header get-started-header">
+    <h1>{guide.data.title}</h1>
+    <p>{guide.data.description}</p>
   </header>
-
-  <div class="docs-overview-content">
-    <section class="docs-overview-copy" id="overview">
-      <h2>Overview</h2>
-      <p>
-        Veli components pair accessible behavior with the visual decisions defined by the system’s
-        foundations. Each reference covers the supported interface, states, and composition guidance
-        needed to use a component with confidence.
-      </p>
-      <p>{docsOverview.packageGuidance}</p>
-      <p>
-        Choose the component that communicates the interaction most directly, and prefer documented
-        variants before creating local conventions.
-      </p>
-    </section>
-
-    <div class="docs-overview-directory">
-      {
-        componentGroups.map((group) => {
-          const id = getComponentGroupSlug(group.title);
-          return (
-            <section class="docs-list-section" id={id}>
-              <h2>{group.title}</h2>
-              <div class="docs-link-list">
-                {group.items.map((item) => (
-                  <a href={`/docs/${item.slug}/`}>
-                    <span>{item.title}</span>
-                    <p>{item.description}</p>
-                  </a>
-                ))}
-              </div>
-            </section>
-          );
-        })
-      }
-    </div>
-  </div>
+  <article class="docs-prose get-started-content"><Content /></article>
 </DocsLayout>

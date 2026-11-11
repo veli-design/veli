@@ -1,152 +1,289 @@
 ---
-import Layout from '../layouts/layout.astro';
-import ShaderBackground from '../components/ShaderBackground.astro';
-import ShaderDialControls from '../components/ShaderDialControls';
-import HomeThemeControl from '../components/HomeThemeControl.astro';
-import VeliLogo from '../components/VeliLogo.astro';
+import MarketingLayout from '../layouts/marketing-layout.astro';
+import HomeHeroLogo from '../components/marketing/HomeHeroLogo.astro';
+import HomeExploreIcon from '../components/marketing/HomeExploreIcon.astro';
+import govmv from '../assets/marketing/home-govmv.svg?raw';
+import { Button } from '@veli-design/react/button';
+import '../styles/home-experience.css';
+
+const a = '/images/marketing/';
+const features = [
+  {
+    title: 'Ready to use',
+    name: 'ready-to-use',
+    solids: 'rtu-search rtu-filter rtu-label',
+    description: 'Pre-built components and templates, so teams never start from scratch.',
+    image: 'c11d0.png',
+    width: 717,
+    height: 287,
+  },
+  {
+    title: 'Consistent by design',
+    name: 'consistent-by-design',
+    solids: 'cbd-sheet',
+    description: 'Shared guidelines give every government service a familiar look and feel.',
+    image: 'e221e.png',
+    width: 699,
+    height: 291,
+  },
+  {
+    title: 'Built for everyone',
+    name: 'built-for-everyone',
+    solids: 'bfe-card',
+    description: 'Access services on any device, in Dhivehi or English.',
+    image: '9ab51.png',
+    width: 919,
+    height: 432,
+  },
+];
+const explore = [
+  {
+    title: 'Foundations',
+    slug: 'foundations',
+    description: 'Colour, type, spacing and motion: the shared tokens behind every service.',
+  },
+  {
+    title: 'Components',
+    slug: 'components',
+    description: 'Accessible, bilingual building blocks, from buttons to date pickers.',
+  },
+  {
+    title: 'Patterns',
+    slug: 'patterns',
+    description: 'Tested ways to ask questions, check answers and handle errors.',
+  },
+  {
+    title: 'Blocks',
+    slug: 'blocks',
+    description: 'Ready-made page sections, like start pages, to assemble a service fast.',
+  },
+] as const;
+const foundations = [
+  ['colour', 'color', 'Explore Veli colour'],
+  ['type', 'typography', 'Explore Veli typography'],
+  ['motion', 'motion', 'Explore purposeful motion'],
+  ['grid', 'spacing', 'Explore Veli spacing'],
+];
 ---
 
-<Layout
-  title="Veli Design System"
-  description="Veli gives every Maldivian service one accessible, bilingual system to build from."
-  pageClass="home-page"
+<MarketingLayout
+  title="Veli Design — Maldives Government Design System"
+  description="Veli gives every government team the same building blocks, so services are faster to build and easier to use."
 >
-  <main id="main" class="home-hero antialiased">
-    <div class="home-frame">
-      <div class="home-shader-frame" aria-hidden="true">
-        <ShaderBackground class="home-hero__background" />
-      </div>
-
-      <div class="home-utility-controls" aria-label="Homepage controls">
-        <HomeThemeControl />
-      </div>
-
-      <section class="home-hero__content" aria-labelledby="home-title">
-        <div class="home-wordmark">
-          <span class="home-wordmark__logo">
-            <VeliLogo class="veli-logo" clipId="veli-logo-home" label="Veli Design" />
-          </span>
+  <script is:inline>
+    (() => {
+      const root = document.documentElement;
+      let preference = null;
+      try {
+        preference = localStorage.getItem('veli-reduced-motion');
+      } catch {
+        /* Use the system preference. */
+      }
+      const reduced =
+        preference === null
+          ? matchMedia('(prefers-reduced-motion: reduce)').matches
+          : preference === 'true';
+      if (!reduced && window.scrollY < 40) root.classList.add('home-intro');
+      setTimeout(() => {
+        if (!root.dataset.homeReady) root.classList.remove('home-intro');
+      }, 8000);
+    })();
+  </script>
+  <div class="marketing-home">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <section class="marketing-home-hero" aria-labelledby="home-title" data-field-cover>
+      <h1 id="home-title"><HomeHeroLogo /></h1>
+    </section>
+    <div class="marketing-container marketing-home-content">
+      <section class="marketing-statement" aria-labelledby="home-statement">
+        <h2 id="home-statement" data-intro data-solid="text" data-group="text" data-field-stop>
+          Helping teams deliver consistent digital experiences.
+        </h2>
+        <p data-intro data-solid="text" data-group="text">
+          Veli gives every government team the same building blocks, so services are faster to build
+          and easier to use.
+        </p>
+        <div data-intro data-solid="rect" data-group="text">
+          <Button as="a" href="/docs/" intent="accent" size="xl">Get Started</Button>
         </div>
-
-        <div class="home-copy">
-          <h1 id="home-title" class="type-heading-1-medium">
-            <span>One system.</span>
-            <span>Every service.</span><span>Built for everyone.</span>
-          </h1>
-          <p class="type-body-lg-medium">
-            The official design system powering Maldives' public services. Consistent, accessible,
-            and built to last.
+      </section>
+      <section class="marketing-feature-grid cards-v2" aria-label="Principles" data-reveal>
+        {
+          features.map((feature, index) => (
+            <article
+              class:list={[
+                'marketing-feature',
+                'pcard',
+                index === 2 && 'marketing-feature-wide',
+                index === 2 && 'wide',
+              ]}
+              data-card={index + 1}
+              data-reveal-item
+              data-solid="rect"
+              data-group="cards"
+            >
+              <div
+                class="marketing-feature-art anim"
+                aria-hidden="true"
+                data-lottie={feature.name}
+                data-lottie-solids={feature.solids}
+                data-lottie-align={index === 2 ? 'xMidYMin' : undefined}
+                data-stipple
+                data-stipple-key={`stPattern${index + 1}`}
+                data-stipple-color-key={`cardHover${index + 1}`}
+              >
+                <img
+                  class="marketing-animation-fallback"
+                  src={`${a}${feature.image}`}
+                  width={feature.width}
+                  height={feature.height}
+                  loading="lazy"
+                  alt=""
+                />
+                <div class="lottie-box" />
+              </div>
+              <button
+                class="lt-replay"
+                type="button"
+                aria-label={`Replay the ${feature.title} animation`}
+                hidden
+              >
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+                  <path
+                    d="M16.7 10a6.7 6.7 0 1 1-1.9-4.7M15 2v4h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <div class="marketing-feature-copy head">
+                <h3 data-cf-avoid>{feature.title}</h3>
+                <p data-cf-avoid>{feature.description}</p>
+              </div>
+            </article>
+          ))
+        }
+      </section>
+      <section class="marketing-foundations foundation" aria-labelledby="foundation-title">
+        <div class="marketing-statement" data-reveal>
+          <h2 id="foundation-title" data-reveal-item>
+            Unified foundation,<br />Streamlined Design
+          </h2>
+          <p data-reveal-item>
+            Veli design system foundations focus on consistent colors, clear typography, and
+            purposeful motion inspired by the Maldives islands and its formation.
           </p>
+          <div data-reveal-item>
+            <Button as="a" href="/docs/foundations/" intent="accent" size="xl">Foundation</Button>
+          </div>
         </div>
-
-        <a
-          href="/foundations/"
-          data-home-cta
-          class:list={[
-            'relative isolate inline-flex h-15 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border-transparent px-5 font-sans antialiased no-underline',
-            '[transition-property:background-color,color,scale] [transition-duration:var(--veli-duration-normal),var(--veli-duration-normal),var(--veli-duration-fast)] [transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
-            'focus-visible:border-base-subtle focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-            'data-[pressed]:scale-[1.045] motion-reduce:data-[pressed]:scale-100',
-            '[&>*]:origin-center [&>*]:[transition-property:scale] [&>*]:[transition-duration:var(--veli-duration-fast)] [&>*]:[transition-timing-function:var(--veli-ease-out-quad)]',
-            'data-[pressed]:[&>*]:scale-[calc(1/1.045)] motion-reduce:data-[pressed]:[&>*]:scale-100',
-            "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[radial-gradient(circle_var(--button-ripple-size,0px)_at_var(--button-ripple-x,50%)_var(--button-ripple-y,50%),var(--button-ripple-color)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-normal after:ease-out after:content-['']",
-            'data-[pressed]:after:opacity-100 data-[pressed]:after:duration-fast data-[pressed]:after:ease-out',
-            'bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed',
-            '[--button-ripple-color:rgb(255_255_255_/_0.4)] dark:[--button-ripple-color:rgb(255_255_255_/_0.98)]',
-          ]}
-        >
-          <span
-            class="relative z-[1] inline-flex items-center justify-center gap-2 px-1.5 font-sans antialiased type-subtitle-medium"
-          >
-            Start building
-          </span>
-        </a>
+        <div class="marketing-foundation-grid fd-grid">
+          {
+            foundations.map(([kind, slug, label]) => (
+              <article class="fcard">
+                <div
+                  class="fd-panel"
+                  data-fd={kind}
+                  role="button"
+                  tabindex="0"
+                  aria-label={`${label} preview; replay animation`}
+                />
+                <a class="home-foundation-fallback" href={`/docs/foundations/${slug}/`}>
+                  {label}
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+      <section class="marketing-adoption logos" aria-label="Government adoption">
+        <p class="lg-line">
+          Veli Design System launches with 15+ services already on board, across every ministry in
+          the Cabinet.
+        </p>
+        <div class="lg-window">
+          <ul class="lg-track">
+            <li class="lg-item"><Fragment set:html={govmv} /></li>
+            {
+              Array.from({ length: 5 }, (_, index) => (
+                <li class="lg-item" aria-hidden={index > 0 ? 'true' : undefined}>
+                  <img
+                    class="lg-emblem"
+                    src={`${a}adoption-emblem.png`}
+                    width="35"
+                    height="40"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <span>Minister of Homeland Security, Labour and Technology</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+      <section class="marketing-explore" aria-labelledby="explore-title" data-reveal>
+        <div class="marketing-statement" data-reveal-item>
+          <h2 id="explore-title">Everything you need,<br />all in one place</h2>
+        </div>
+        <div class="marketing-explore-grid explore">
+          {
+            explore.map((item) => (
+              <a class="xcol" href={`/docs/${item.slug}/`} data-reveal-item>
+                <span class="xi-box">
+                  <HomeExploreIcon kind={item.slug} />
+                </span>
+                <span class="head">
+                  <h3>
+                    {item.title}
+                    <svg class="xc" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+                      <path
+                        d="m7.5 5 5 5-5 5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </h3>
+                  <p>{item.description}</p>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+      <section class="marketing-contribute" aria-labelledby="contribute-title" data-cta="light">
+        <div class="cta-light-src" aria-hidden="true">
+          <img src={`${a}30c84.svg`} width="2058" height="1644" loading="lazy" alt="" />
+        </div>
+        <div class="marketing-contribute-copy">
+          <h2 id="contribute-title">Let’s build it<br />together</h2>
+          <p>
+            Whether you’re a designer, developer, or government team,<br
+              class="marketing-desktop-break"
+            />
+            your contributions can help make public services clearer, more consistent, and accessible
+            to everyone.
+          </p>
+          <div data-cta-item>
+            <Button
+              as="a"
+              href="https://github.com/veli-design/veli/blob/main/CONTRIBUTING.md"
+              intent="accent"
+              size="xl">Contribute to Veli</Button
+            >
+          </div>
+        </div>
       </section>
     </div>
-
-    <ShaderDialControls client:load />
-  </main>
-</Layout>
-
+  </div>
+</MarketingLayout>
 <script>
-  const rippleDuration = 420;
-  const rippleStartSize = 12;
-
-  function easeOutCubic(progress: number) {
-    return 1 - (1 - progress) ** 3;
-  }
-
-  document.querySelectorAll<HTMLElement>('[data-home-cta]').forEach((cta) => {
-    let animationFrame: number | null = null;
-    let pointerFrame: number | null = null;
-    let isPressing = false;
-    let rippleX = 0;
-    let rippleY = 0;
-    let rippleSize = 0;
-    let pendingPointer: { x: number; y: number } | null = null;
-
-    const writeRipple = () => {
-      cta.style.setProperty('--button-ripple-x', `${rippleX}px`);
-      cta.style.setProperty('--button-ripple-y', `${rippleY}px`);
-      cta.style.setProperty('--button-ripple-size', `${rippleSize}px`);
-    };
-
-    const beginPress = (x: number, y: number) => {
-      const { width, height } = cta.getBoundingClientRect();
-      const reach = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
-      const endSize = Math.round(Math.max(reach * 2.2, Math.max(width, height) * 1.35));
-
-      isPressing = true;
-      cta.dataset.pressed = '';
-      rippleX = x;
-      rippleY = y;
-      rippleSize = endSize;
-      writeRipple();
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      if (animationFrame !== null) cancelAnimationFrame(animationFrame);
-      const startTime = performance.now();
-
-      const tick = (time: number) => {
-        const progress = Math.min((time - startTime) / rippleDuration, 1);
-        rippleSize = rippleStartSize + (endSize - rippleStartSize) * easeOutCubic(progress);
-        writeRipple();
-        animationFrame = progress < 1 ? requestAnimationFrame(tick) : null;
-      };
-
-      animationFrame = requestAnimationFrame(tick);
-    };
-
-    cta.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0) return;
-      const rect = cta.getBoundingClientRect();
-      beginPress(event.clientX - rect.left, event.clientY - rect.top);
-      cta.setPointerCapture(event.pointerId);
-    });
-
-    cta.addEventListener('pointermove', (event) => {
-      if (!isPressing) return;
-      const rect = cta.getBoundingClientRect();
-      pendingPointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-      if (pointerFrame !== null) return;
-
-      pointerFrame = requestAnimationFrame(() => {
-        pointerFrame = null;
-        if (isPressing && pendingPointer) {
-          rippleX = pendingPointer.x;
-          rippleY = pendingPointer.y;
-          writeRipple();
-        }
-      });
-    });
-
-    const endPress = () => {
-      isPressing = false;
-      delete cta.dataset.pressed;
-    };
-
-    cta.addEventListener('pointerup', endPress);
-    cta.addEventListener('pointercancel', endPress);
-  });
+  import { initHomeExperience } from '../scripts/home-experience.js';
+  initHomeExperience();
 </script>

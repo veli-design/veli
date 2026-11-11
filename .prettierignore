@@ -6,13 +6,13 @@ node_modules
 dist
 .next
 .astro
+.wrangler
 .turbo
 .cache
 .tmp
 out
 storybook-static
 coverage
-apps/web/public/gradient-stipple.html
 
 # Environment
 .env
@@ -32,3 +32,6 @@ Thumbs.db
 # Local browser-tool output (not repository source)
 .playwright-cli
 .playwright-mcp
+
+# Designer-exported animation data (retain compact JSON)
+apps/web/public/animations/marketing/*.json

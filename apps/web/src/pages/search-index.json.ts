@@ -1,5 +1,5 @@
 import { blockPages } from '../lib/blocks';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import {
   buildCollectionSearchItems,
   createOverviewSearchItem,
@@ -11,6 +11,16 @@ import { componentGroups, foundations, patterns } from '../lib/site';
 export const prerender = true;
 
 export async function GET() {
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted) throw new Error('Get Started guide is missing');
+  const getStartedItems = await buildCollectionSearchItems({
+    category: 'Overview',
+    basePath: '/docs/',
+    entries: [getStarted],
+    orderedSlugs: ['get-started'],
+    orderOffset: -100,
+    hrefForSlug: () => '/docs/',
+  });
   const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
@@ -19,7 +29,7 @@ export async function GET() {
   const componentItems = componentGroups.flatMap((group) => group.items);
   const foundationOverview = createOverviewSearchItem({
     id: 'foundations:overview',
-    href: '/foundations/',
+    href: '/docs/foundations/',
     category: 'Foundations',
     title: 'Foundations',
     description: 'Principles, color, typography, spacing, motion, accessibility, and language.',
@@ -30,7 +40,7 @@ export async function GET() {
   });
   const componentOverview = createOverviewSearchItem({
     id: 'components:overview',
-    href: '/docs/',
+    href: '/docs/components/',
     category: 'Components',
     title: 'Components',
     description: 'Accessible Veli components for building consistent public services.',
@@ -42,7 +52,7 @@ export async function GET() {
 
     return createOverviewSectionSearchItem({
       id: `components:overview:${slug}`,
-      href: `/docs/#${slug}`,
+      href: `/docs/components/#${slug}`,
       category: 'Components',
       pageTitle: 'Components',
       title: group.title,
@@ -54,27 +64,39 @@ export async function GET() {
   const [foundationItems, docsItems, patternItems] = await Promise.all([
     buildCollectionSearchItems({
       category: 'Foundations',
-      basePath: '/foundations/',
+      basePath: '/docs/foundations/',
       entries: foundationEntries,
       orderedSlugs: foundations.map((foundation) => foundation.slug),
       orderOffset: 10_100,
     }),
     buildCollectionSearchItems({
       category: 'Components',
-      basePath: '/docs/',
+      basePath: '/docs/components/',
       entries: docsEntries,
       orderedSlugs: componentItems.map((item) => item.slug),
       orderOffset: 100,
     }),
     buildCollectionSearchItems({
       category: 'Patterns',
-      basePath: '/patterns/',
+      basePath: '/docs/patterns/',
       entries: patternEntries,
       orderedSlugs: patterns.map((pattern) => pattern.slug),
       orderOffset: 20_000,
     }),
   ]);
   const index: DocsSearchItem[] = [
+    ...getStartedItems.map((item) =>
+      item.kind === 'page' ? { ...item, id: 'documentation:overview' } : item,
+    ),
+    createOverviewSearchItem({
+      id: 'patterns:overview',
+      href: '/docs/patterns/',
+      category: 'Patterns',
+      title: 'Patterns',
+      description: 'Reusable approaches for recurring service interactions and content flows.',
+      content: patterns.map((pattern) => `${pattern.title} ${pattern.description}`).join(' '),
+      order: 19_999,
+    }),
     componentOverview,
     ...componentOverviewSections,
     ...docsItems,
@@ -84,7 +106,7 @@ export async function GET() {
     ...blockPages.map((page, index) =>
       createOverviewSearchItem({
         id: page.id,
-        href: `/${page.id}/`,
+        href: `/docs/${page.id}/`,
         category: 'Blocks',
         title: page.title,
         description: page.description,

@@ -101,6 +101,7 @@ function isInteractivePreview(node, importedNames, file) {
 
 function getDocumentPath(file) {
   const path = documentName(file).replaceAll('\\', '/');
+  if (path.endsWith('/src/content/guides/get-started.mdx')) return '/docs/';
   const match = path.match(/(?:^|\/)src\/content\/(docs|foundations|patterns)\/(.+)\.mdx?$/);
 
   if (!match) {

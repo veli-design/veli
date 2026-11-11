@@ -30,4 +30,5 @@ export const collections = {
   docs: docsCollection,
   foundations: foundationsCollection,
   patterns: patternsCollection,
+  guides: defineCollection({ type: 'content', schema: pageSchema }),
 };

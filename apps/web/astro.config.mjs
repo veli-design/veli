@@ -1,5 +1,8 @@
 // @ts-check
 import process from 'node:process';
+import { legacyRedirects } from './scripts/site-routes.mjs';
+import { redirectsIntegration } from './scripts/redirects-integration.mjs';
+
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
@@ -17,7 +20,12 @@ const site = process.env.PUBLIC_SITE_URL?.trim();
 // https://astro.build/config
 export default defineConfig({
   ...(site ? { site } : {}),
-  integrations: [mdx(), react()],
+  integrations: [mdx(), react(), redirectsIntegration()],
+  redirects: Object.fromEntries(
+    Object.entries(legacyRedirects)
+      .filter(([from]) => from.endsWith('/') || from.includes('.'))
+      .map(([from, to]) => [from, { destination: to, status: 301 }]),
+  ),
   markdown: {
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },

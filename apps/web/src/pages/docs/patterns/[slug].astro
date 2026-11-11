@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import DocsPageActions from '../../../components/DocsPageActions.astro';
+import DocsLayout from '../../../layouts/docs-layout.astro';
+
+type Props = {
+  pattern: CollectionEntry<'patterns'>;
+};
+
+export async function getStaticPaths() {
+  const patterns = await getCollection('patterns');
+  return patterns.map((pattern) => ({
+    params: { slug: pattern.slug },
+    props: { pattern },
+  }));
+}
+
+const { pattern } = Astro.props as Props;
+const { Content, headings } = await pattern.render();
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const markdownPath = `/docs/patterns/${pattern.slug}/index.md`;
+---
+
+<DocsLayout
+  title={`${pattern.data.title} | Veli Design System`}
+  description={pattern.data.description}
+  activePath={`/docs/patterns/${pattern.slug}/`}
+  {markdownPath}
+  headings={tocHeadings}
+  contentLayout="article"
+>
+  <header class="docs-page-header docs-page-header--article">
+    <h1>{pattern.data.title}</h1>
+    {pattern.data.description && <p class="docs-page-description">{pattern.data.description}</p>}
+    <DocsPageActions {markdownPath} placement="inline" />
+  </header>
+
+  <article class="docs-prose">
+    <Content />
+  </article>
+</DocsLayout>

@@ -1,0 +1,282 @@
+.docs-workspace:has(.docs-main--get-started) {
+  grid-template-columns: 264px minmax(0, 1fr);
+}
+/* Figma 1805:7588. Keep the landing page independent of article layouts. */
+.docs-main.docs-main--get-started {
+  height: calc(100svh - 16px);
+  margin: 8px 8px 8px 11px;
+  border-radius: 24px 8px 8px 24px;
+}
+.docs-main--get-started .docs-main__inner {
+  padding: 80px;
+}
+.docs-main--get-started .get-started-header {
+  padding: 0;
+}
+.docs-main--get-started .get-started-header h1 {
+  font-size: 82px;
+  line-height: 110px;
+  letter-spacing: -1.64px;
+}
+.docs-main--get-started .get-started-header > p {
+  max-width: 589px;
+  min-height: 48px;
+  margin: 24px 0 0;
+  font-size: 18px;
+  line-height: 1.53;
+}
+.docs-main--get-started .get-started-content {
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: 0;
+  padding-top: 80px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.docs-main--get-started .docs-contents a {
+  font-size: 14px;
+}
+.docs-main--get-started .get-started-content > h2 {
+  margin: 80px 0 24px;
+  font-size: 32px;
+  line-height: 1.36;
+  font-weight: 600;
+  letter-spacing: -0.32px;
+}
+.docs-main--get-started .get-started-content > h2:first-of-type {
+  margin-top: 0;
+}
+.docs-main--get-started .get-started-content > h3 {
+  margin: 24px 0 8px;
+  font-size: 18px;
+  line-height: 1.53;
+}
+.docs-main--get-started .get-started-content > :is(p, ul, ol) {
+  margin: 24px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.docs-main--get-started .get-started-content > :is(h2, h3) + p {
+  margin-top: 0;
+}
+.docs-main--get-started .get-started-content > ul:not(:first-of-type):not(:nth-of-type(2)) {
+  padding-inline-start: 24px;
+  list-style: disc;
+}
+.docs-main--get-started
+  .get-started-content
+  > ul:not(:first-of-type):not(:nth-of-type(2))
+  > li
+  + li {
+  margin-top: 0;
+}
+.docs-main--get-started .get-started-content > ul:is(:first-of-type, :nth-of-type(2)) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 0;
+  list-style: none;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type {
+  margin-top: 80px;
+}
+.docs-main--get-started .get-started-content > ul:is(:first-of-type, :nth-of-type(2)) > li {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  border-radius: 32px;
+  padding: 24px;
+  background: var(--veli-color-bg-surface-base);
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li:first-child,
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li {
+  background: var(--veli-color-neutral-alpha-100, rgba(155, 180, 155, 0.04));
+}
+.docs-main--get-started
+  .get-started-content
+  > ul:is(:first-of-type, :nth-of-type(2))
+  > li:has(a:hover),
+.docs-main--get-started
+  .get-started-content
+  > ul:is(:first-of-type, :nth-of-type(2))
+  > li:focus-within {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 3px;
+}
+.docs-main--get-started .get-started-content > ul:is(:first-of-type, :nth-of-type(2)) > li > p {
+  margin: 0;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li > p:first-child {
+  min-height: 60px;
+  padding-inline-end: 72px;
+  font-size: 28px;
+  line-height: 36px;
+  letter-spacing: -0.28px;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type a {
+  color: var(--veli-color-text-base-emphasis);
+  text-decoration: none;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type a strong {
+  font-weight: 600;
+}
+.docs-main--get-started .get-started-content > ul:is(:first-of-type, :nth-of-type(2)) a::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  content: '';
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li::after {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: center / contain no-repeat;
+  content: '';
+  pointer-events: none;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(1)::after {
+  background-image: url('/images/get-started/c04be.svg');
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(2)::after {
+  background-image: url('/images/get-started/ced3e.svg');
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(3)::after {
+  background-image: url('/images/get-started/e7f7a.svg');
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(4)::after {
+  background-image: url('/images/get-started/dbc38.svg');
+}
+.docs-main--get-started .get-started-content > ul:first-of-type > li > p + p {
+  margin-top: 32px;
+}
+.docs-main--get-started .get-started-content > ul:first-of-type + p,
+.docs-main--get-started .get-started-content > ul:first-of-type + p + p {
+  margin-top: 80px;
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li::before {
+  display: block;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 12px;
+  background: left center / auto no-repeat;
+  content: '';
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li:nth-child(1)::before {
+  background-image: url('/images/get-started/5a5c9.svg');
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li:nth-child(2)::before {
+  background-image: url('/images/get-started/97a9c.svg');
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li > p:first-child {
+  font-size: 24px;
+  line-height: 1.35;
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li > p:first-child strong {
+  font-weight: 500;
+}
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li > p + p {
+  margin-top: 12px;
+}
+.docs-main--get-started .get-started-resource {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(256px, 100%);
+  min-height: 48px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 16px;
+  padding: 12px 16px;
+  background: var(--veli-color-bg-surface-base);
+  color: var(--veli-color-text-base-strong);
+  font-family: var(--veli-font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  text-decoration: none;
+}
+.docs-main--get-started .get-started-resource[aria-disabled='true'] {
+  cursor: default;
+}
+.docs-main--get-started .get-started-resource > span:first-of-type {
+  flex: 1;
+}
+.docs-main--get-started .get-started-resource img {
+  display: block;
+  flex: none;
+}
+.docs-main--get-started .get-started-resource:focus-visible {
+  outline: 2px solid var(--veli-color-border-focus);
+  outline-offset: 4px;
+}
+[data-theme='dark']
+  .docs-main--get-started
+  .get-started-content
+  > ul:first-of-type
+  > li:not(:first-child)::after,
+[data-theme='dark'] .docs-main--get-started .get-started-resource img {
+  filter: invert(1);
+}
+@media (max-width: 1280px) {
+  .docs-main--get-started .docs-main__inner {
+    column-gap: 48px;
+    padding: 64px 48px 80px;
+  }
+  .docs-main--get-started .get-started-content > ul:first-of-type > li > p:first-child {
+    font-size: 24px;
+  }
+}
+@media (max-width: 1180px) {
+  .docs-main--get-started .docs-main__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 960px) {
+  .docs-main--get-started .get-started-content > ul:is(:first-of-type, :nth-of-type(2)) {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .docs-main.docs-main--get-started {
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+  }
+  .docs-main--get-started .docs-main__inner {
+    padding: 48px 20px 80px;
+  }
+  .docs-main--get-started .get-started-header h1 {
+    font-size: clamp(42px, 12vw, 58px);
+    line-height: 1.34;
+    letter-spacing: -0.02em;
+  }
+  .docs-main--get-started .get-started-header > p {
+    font-size: 16px;
+    min-height: 0;
+  }
+  .docs-main--get-started .get-started-content {
+    padding-top: 64px;
+  }
+  .docs-main--get-started .get-started-content > h2 {
+    margin-top: 64px;
+    font-size: 28px;
+  }
+  .docs-main--get-started .get-started-content > ul:first-of-type,
+  .docs-main--get-started .get-started-content > ul:first-of-type + p,
+  .docs-main--get-started .get-started-content > ul:first-of-type + p + p {
+    margin-top: 48px;
+  }
+}
+
+.docs-main--get-started .get-started-content > ul:nth-of-type(2) > li:nth-child(2)::before {
+  width: 79px;
+  height: 79px;
+}
+@media (max-width: 1180px) and (min-width: 761px) {
+  .docs-workspace:has(.docs-main--get-started) {
+    grid-template-columns: 252px minmax(0, 1fr);
+  }
+}

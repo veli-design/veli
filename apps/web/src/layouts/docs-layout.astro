@@ -14,7 +14,12 @@ type Heading = {
   text: string;
 };
 
-type DocsContentLayout = 'overview' | 'foundation-article' | 'component' | 'article';
+type DocsContentLayout =
+  | 'overview'
+  | 'foundation-article'
+  | 'component'
+  | 'article'
+  | 'get-started';
 
 interface Props {
   title: string;
@@ -59,6 +64,12 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           <DocsSearch client:load />
 
           <nav class="docs-nav" aria-label="Veli documentation">
+            <a
+              class:list={['docs-nav-link', activePath === '/docs/' && 'is-active']}
+              href="/docs/"
+              aria-current={activePath === '/docs/' ? 'page' : undefined}
+              data-doc-link>Get Started</a
+            >
             {
               docsSections.map((section) => {
                 const sectionActive = isSectionActive(section);
@@ -117,6 +128,12 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           <DocsSearch client:load enableShortcut={false} />
 
           <nav class="docs-mobile-nav" aria-label="Mobile documentation navigation">
+            <a
+              class:list={['docs-nav-link', activePath === '/docs/' && 'is-active']}
+              href="/docs/"
+              aria-current={activePath === '/docs/' ? 'page' : undefined}
+              data-doc-link>Get Started</a
+            >
             {
               docsSections.map((section) => {
                 const sectionActive = isSectionActive(section);

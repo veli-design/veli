@@ -1,0 +1,21 @@
+// Basim's final veli-home-v2.html overrides. Future designer tuning belongs here,
+// rather than in a production control panel or persisted browser settings.
+export const homeMotionSettings = {
+  introSpeed: 0.701,
+  bgSpeed: 0.76,
+  scrollLag: 0.031,
+  coverage: 0.24,
+  heroHeight: 1060,
+  falloff: 170,
+  tail: 0.06,
+  stDot: 1.82,
+  stPitch: 0.725,
+  stLoose: 3.63,
+  stSpeed: 0.0423,
+  stEvolve: 0.534,
+  stClear: 0,
+  stScatter: 0.86,
+  stScatterRadius: 65,
+  stHoverSpeed: 1.93,
+  stColorTime: 0.194,
+};

@@ -1,8 +1,10 @@
 import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
 import console from 'node:console';
+import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
+import { legacyRedirects } from './site-routes.mjs';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const distRoot = resolve(appRoot, 'dist');
@@ -84,12 +86,7 @@ function validateMarkdown(filePath) {
 if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first');
 validateFontNotices();
 
-const markdownFiles = [
-  ...collectFiles(resolve(distRoot, 'docs'), '.md'),
-  ...collectFiles(resolve(distRoot, 'foundations'), '.md'),
-  ...collectFiles(resolve(distRoot, 'patterns'), '.md'),
-  ...collectFiles(resolve(distRoot, 'blocks'), '.md'),
-].sort();
+const markdownFiles = [...collectFiles(resolve(distRoot, 'docs'), '.md')].sort();
 
 const catalogPaths = JSON.parse(readFileSync(resolve(distRoot, 'docs-catalog.json'), 'utf8'));
 const actualPaths = markdownFiles.map(
@@ -143,7 +140,7 @@ if (
 console.log(`Validated ${markdownFiles.length} Markdown pages and llms.txt.`);
 
 for (const block of getBlocks()) {
-  const directory = resolve(distRoot, 'blocks', block.manifest.id);
+  const directory = resolve(distRoot, 'docs/blocks', block.manifest.id);
   const downloaded = readFileSync(resolve(directory, 'source.tar.gz'));
   if (!downloaded.equals(archive(block)))
     fail(`${block.manifest.id}: archive differs from canonical source`);
@@ -153,3 +150,56 @@ for (const block of getBlocks()) {
       fail(`${block.manifest.id}: Markdown source differs from download`);
   }
 }
+
+// Check the URL migration against the actual output, including machine consumers.
+function requireBuiltPath(path) {
+  const pathname = new URL(path, 'https://veli.invalid').pathname;
+  const output = resolve(distRoot, `.${pathname}`, pathname.endsWith('/') ? 'index.html' : '');
+  if (!existsSync(output)) fail(`missing destination ${pathname}`);
+}
+for (const path of [
+  '/',
+  '/design/',
+  '/docs/',
+  '/docs/foundations/',
+  '/docs/components/',
+  '/docs/patterns/',
+  '/docs/blocks/',
+])
+  requireBuiltPath(path);
+const redirects = readFileSync(resolve(distRoot, '_redirects'), 'utf8');
+for (const [from, to] of Object.entries(legacyRedirects)) {
+  requireBuiltPath(to);
+  if (legacyRedirects[to]) fail(`redirect chain from ${from}`);
+  if (!redirects.split('\n').includes(`${from} ${to} 301`))
+    fail(`missing permanent redirect ${from}`);
+}
+if (legacyRedirects['/docs/'] || legacyRedirects['/blocks/govmv-logo.svg'])
+  fail('redirects shadow a current page or static asset');
+const search = JSON.parse(readFileSync(resolve(distRoot, 'search-index.json'), 'utf8'));
+for (const item of search) {
+  if (!item.href.startsWith('/docs/')) fail(`search has a legacy URL ${item.href}`);
+  requireBuiltPath(item.href);
+}
+const registry = JSON.parse(readFileSync(resolve(distRoot, 'api/blocks/v1/catalog.json'), 'utf8'));
+for (const block of registry.blocks) {
+  if (!block.documentationUrl.startsWith('/docs/blocks/'))
+    fail('registry has a legacy documentation URL');
+  requireBuiltPath(block.documentationUrl);
+  for (const version of block.versions) {
+    if (!version.archiveUrl.startsWith('/api/blocks/v1/'))
+      fail('versioned registry contract changed');
+    requireBuiltPath(version.archiveUrl);
+    const bytes = readFileSync(resolve(distRoot, `.${version.archiveUrl}`));
+    if (createHash('sha256').update(bytes).digest('hex') !== version.archiveSha256)
+      fail('versioned archive checksum differs from registry');
+  }
+}
+for (const path of ['/docs/', '/docs/components/button/', '/docs/foundations/color/']) {
+  const html = readFileSync(resolve(distRoot, `.${path}`, 'index.html'), 'utf8');
+  if (/home-stipple|design-motion|marketing-preferences|marketing-header/.test(html))
+    fail('marketing code leaked into documentation');
+}
+console.log(
+  `Validated ${Object.keys(legacyRedirects).length} permanent redirects, ${search.length} search entries, and the versioned block registry.`,
+);

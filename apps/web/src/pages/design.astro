@@ -1,0 +1,284 @@
+---
+import MarketingLayout from '../layouts/marketing-layout.astro';
+import AtollIllustration from '../components/marketing/AtollIllustration.astro';
+import ThaanaIllustration from '../components/marketing/ThaanaIllustration.astro';
+import { Button } from '@veli-design/react/button';
+import '../styles/design.css';
+const a = '/images/marketing/';
+const forces = [
+  {
+    name: 'reef',
+    title: 'Reef',
+    icon: '9709d.svg',
+    description: 'Light gives the interface depth, guiding the eye to what matters first.',
+  },
+  {
+    name: 'ocean',
+    title: 'Ocean',
+    icon: '8011b.svg',
+    description: 'Texture adds quiet tactility, the way sand grains catch the sun.',
+  },
+  {
+    name: 'wind',
+    title: 'Wind',
+    icon: '87dbe.svg',
+    description: 'Motion carries people forward, like water moving around an island.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Designing Veli | Veli Design System"
+  description="How the sand of the Maldives shaped a design system for government services."
+  variant="design"
+>
+  <div class="design-page">
+    <canvas class="design-hero-field" data-design-field="hero" aria-hidden="true"></canvas>
+    <section class="design-hero" aria-labelledby="design-title">
+      <h1 id="design-title">Designing Veli</h1><p>
+        How the sand of the Maldives shaped a design system for government services
+      </p>
+    </section>
+    <div class="design-container">
+      <section class="design-section design-shared" aria-labelledby="shared-ground">
+        <div class="design-section-heading">
+          <div>
+            <img src={`${a}bc7ff.svg`} width="46" height="5" alt="" /><h2 id="shared-ground">
+              Built on shared<br />ground
+            </h2>
+          </div><p>
+            People come to government online to get something done. Too often, every service looks
+            different, works differently, and has to be learned from scratch. Every digital service
+            has its own purpose and audience. But they don’t need their own foundation.
+          </p>
+        </div>
+        <figure class="design-one-system" data-design-one-system>
+          <figcaption>One system</figcaption>
+        </figure>
+      </section>
+      <p class="design-reflection">
+        The challenge wasn't designing another set of screens. It was creating something teams
+        across every ministry could build on without losing their own purpose. Before choosing a
+        single colour or component, we had to decide what kind of system this should be, and what it
+        should be made of.
+      </p>
+      <p class="design-interlude">Sand doesn't exist in isolation.</p>
+      <section class="design-section design-forces" aria-labelledby="patient-forces">
+        <div class="design-section-heading">
+          <div>
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="patient-forces">
+              Shaped by<br />patient forces
+            </h2>
+          </div><p>
+            People come to government online to get something done. Too often, every service looks
+            different, works differently, and has to be learned from scratch. Every digital service
+            has its own purpose and audience. But they don’t need their own foundation.
+          </p>
+        </div>
+        <div class="design-force-grid">
+          {
+            forces.map((force) => (
+              <article
+                class="design-force-card"
+                data-design-field={force.name}
+                data-design-preview-host
+              >
+                <>
+                  <canvas aria-hidden="true" />
+                  <div
+                    class="design-preview-animation design-preview-force"
+                    data-design-animation={force.name}
+                    aria-hidden="true"
+                  />
+                  <div class="design-force-icon">
+                    <img src={`${a}${force.icon}`} width="100" height="100" alt="" />
+                  </div>
+                  <h3>{force.title}</h3>
+                  <p>{force.description}</p>
+                </>
+              </article>
+            ))
+          }
+        </div>
+        <div class="design-responds">
+          <p>A design system responds to</p><ul>
+            <li>Human behaviour</li><li>Accessibility</li><li>Technology</li>
+          </ul>
+        </div>
+      </section>
+      <section class="design-section design-layers" aria-labelledby="sand-to-atoll">
+        <div class="design-section-heading">
+          <div>
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="sand-to-atoll">
+              From sand to<br />atoll
+            </h2>
+          </div><p>
+            Veli is built in layers, the same way the islands are. To form one unified nation. Veli
+            is built in layers, the same way the islands are. To form one unified nation.
+          </p>
+        </div>
+        <figure class="design-atoll" data-design-preview-host>
+          <div class="design-atoll-canvas"><AtollIllustration /></div><figcaption class="sr-only">
+            Veli foundations grow into coral components, reef patterns, island blocks, and atolls of
+            services.
+          </figcaption>
+          <div class="design-preview-animation" data-design-animation="atoll" aria-hidden="true">
+          </div>
+        </figure>
+        <p class="design-atoll-key" aria-hidden="true">
+          Foundations → Components → Patterns → Blocks → Services
+        </p>
+      </section>
+      <section class="design-crystalline" aria-labelledby="crystalline">
+        <img class="design-section-dots" src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2
+          id="crystalline"
+        >
+          Crystalline Sand<br />philosophy
+        </h2><p>
+          The Crystalline Sand philosophy dictates how light, texture and motion function across
+          government networks.
+        </p><div class="design-crystalline-grid">
+          <div class="design-light-art" data-design-scene="light" data-design-preview-host>
+            <img
+              src={`${a}444e0.svg`}
+              width="338"
+              height="301"
+              alt="Light: soft blue, teal, and white illumination"
+            />
+            <div class="design-preview-animation" data-design-animation="light" aria-hidden="true">
+            </div>
+          </div><div data-design-scene="texture" data-design-preview-host>
+            <img
+              src={`${a}2894e.svg`}
+              width="385"
+              height="404"
+              alt="Texture: grains of sand flowing through a field"
+            />
+            <div
+              class="design-preview-animation"
+              data-design-animation="texture"
+              aria-hidden="true"
+            >
+            </div>
+          </div><div data-design-scene="curve" data-design-preview-host>
+            <img
+              src={`${a}c7c33.svg`}
+              width="386"
+              height="404"
+              alt="Motion: a smooth curve with measured control points"
+            />
+            <div class="design-preview-animation" data-design-animation="curve" aria-hidden="true">
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="design-section design-movement" aria-labelledby="purposeful-motion">
+        <div class="design-section-heading">
+          <div>
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="purposeful-motion">
+              Movement with<br />purpose
+            </h2>
+          </div><p>
+            Motion gives digital experiences a sense of direction. In Veli, every movement has a
+            purpose — guided by clarity and natural transitions. Motion gives digital experiences a
+            sense of direction. In Veli, every movement has a purpose — guided by clarity and
+            natural transitions.
+          </p>
+        </div>
+        <div class="design-motion-demo" data-design-scene="motion">
+          <div class="design-motion-native">
+            <img
+              class="design-motion-backdrop"
+              src={`${a}33ffa.svg`}
+              width="1665"
+              height="684"
+              alt=""
+            /><div class="design-guide" aria-hidden="true" data-design-preview-host>
+              {[0, 1, 2, 3].map((i) => <span style={{ '--i': i }} />)}
+              <div class="design-preview-animation" data-design-animation="guide"></div>
+            </div><div class="design-connect" aria-hidden="true" data-design-preview-host>
+              <img src={`${a}12e9b.svg`} width="64" height="64" alt="" /><img
+                src={`${a}d02dc.svg`}
+                width="64"
+                height="64"
+                alt=""
+              /><img src={`${a}f8b0a.svg`} width="64" height="64" alt="" />
+              <div class="design-preview-animation" data-design-animation="connect"></div>
+            </div><div class="design-ripple" aria-hidden="true" data-design-preview-host>
+              <img src={`${a}b4bb8.svg`} width="382" height="260" alt="" />
+              <div class="design-preview-animation" data-design-animation="respond"></div>
+            </div>
+          </div>
+        </div>
+        <div class="design-motion-captions">
+          <div>
+            <h3>Guide</h3><p>
+              Like water moving around an island, transitions guide people through an experience.
+            </p>
+          </div><div>
+            <h3>Connect</h3><p>
+              Like sand shifting with the tide, interfaces respond to people’s actions.
+            </p>
+          </div><div>
+            <h3>Respond</h3><p>
+              Like a ripple on still water, every action gets an immediate answer.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="design-section design-rooted" aria-labelledby="rooted-thaana">
+        <div class="design-section-heading">
+          <div>
+            <img src={`${a}5f051.svg`} width="46" height="5" alt="" /><h2 id="rooted-thaana">
+              Rooted in<br />Thaana
+            </h2>
+          </div><p>
+            Language is part of accessibility. A service that only works well in English leaves out
+            many of the people it’s meant to serve, including the many citizens who are more
+            comfortable reading Dhivehi. In Veli, Dhivehi is a first language of the system, so
+            everyone can use government services in the language they know best.
+          </p>
+        </div>
+        <div class="design-thaana" data-design-scene="thaana" data-design-preview-host>
+          <p class="sr-only" id="thaana-preview-instructions">
+            Use arrow keys to explore the letters. Press Enter or Space, or tap a letter, to pin or
+            release its green bloom.
+          </p>
+          <div class="design-thaana-art" lang="dv" aria-hidden="true">
+            <div class="design-thaana-native">
+              <ThaanaIllustration /><div
+                class="design-preview-animation"
+                data-design-animation="thaana"
+              >
+              </div>
+            </div>
+          </div>
+          <div class="design-thaana-meta">
+            <p>Dhivehi typefaces<br />Veli Design System<br />Script No. 001</p><p>
+              Regular — MV Faseyha<br />Medium — MV A Waheed<br />Bold — MV Aaamu FK
+            </p><p>Thaana · written right to left<br />24 letters · 11 fili</p><p>
+              Thaana<br /><span lang="dv" dir="rtl">ތާނަ</span>
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="design-closing">
+        <div>
+          <p>
+            A shared language between government teams, designers, developers and the citizens they
+            serve — unified, calm, and recognisably Maldivian.
+          </p><Button
+            as="a"
+            href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site"
+            intent="accent"
+            size="xl">Explore in Figma</Button
+          >
+        </div><canvas data-design-field="closing" aria-hidden="true"></canvas>
+      </section>
+    </div>
+  </div>
+</MarketingLayout>
+<script>
+  import { initDesignMotion } from '../scripts/design-motion';
+  initDesignMotion();
+</script>

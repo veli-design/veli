@@ -11,9 +11,9 @@ import {
 
 # Field
 
-Use Field when a control has no built-in label slot. Today that means labelling [RadioGroup](/docs/radio/) and [CheckboxGroup](/docs/checkbox/). Place `FieldLabel` inside the group — not beside it.
+Use Field when a control has no built-in label slot. Today that means labelling [RadioGroup](/docs/components/radio/) and [CheckboxGroup](/docs/components/checkbox/). Place `FieldLabel` inside the group — not beside it.
 
-Controls such as [Input](/docs/input/) already ship label, description, and error props. Keep using those.
+Controls such as [Input](/docs/components/input/) already ship label, description, and error props. Keep using those.
 
 ## Import
 
@@ -76,7 +76,7 @@ When the group is invalid, render `FieldError` inside it. Do not also pass `erro
 </RadioGroup>
 ```
 
-`FieldError` also accepts an `errors` value from React Hook Form, TanStack Form, or Standard Schema issues. See [Forms](/patterns/forms/).
+`FieldError` also accepts an `errors` value from React Hook Form, TanStack Form, or Standard Schema issues. See [Forms](/docs/patterns/forms/).
 
 ## API Reference
 

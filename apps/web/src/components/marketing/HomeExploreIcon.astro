@@ -1,0 +1,13 @@
+---
+import foundations from '../../assets/marketing/home-foundations.svg?raw';
+import components from '../../assets/marketing/home-components.svg?raw';
+import patterns from '../../assets/marketing/home-patterns.svg?raw';
+import blocks from '../../assets/marketing/home-blocks.svg?raw';
+
+interface Props {
+  kind: 'foundations' | 'components' | 'patterns' | 'blocks';
+}
+const icons = { foundations, components, patterns, blocks };
+---
+
+<Fragment set:html={icons[Astro.props.kind]} />

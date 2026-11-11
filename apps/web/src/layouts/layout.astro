@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import DialKitRoot from '../components/DialKitRoot';
 
 interface Props {
   title: string;
@@ -27,6 +26,7 @@ const {
     {markdownPath && <link rel="alternate" type="text/markdown" href={markdownPath} />}
     <link rel="describedby" href="/llms.txt" />
     <meta name="description" content={description} />
+    {Astro.site && <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />}
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <script is:inline>
@@ -62,7 +62,6 @@ const {
   <body class:list={['min-h-screen bg-surface-base text-base', pageClass]}>
     <a class="skip-link" href="#main">Skip to main content</a>
     <slot />
-    <DialKitRoot client:load />
 
     <script is:inline>
       (() => {

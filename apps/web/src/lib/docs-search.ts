@@ -1,6 +1,6 @@
 import type { DocsSearchSource } from './remark-docs-search';
 
-export type DocsSearchCategory = 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
+export type DocsSearchCategory = 'Overview' | 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
 
 export type DocsSearchItem = {
   id: string;
@@ -40,6 +40,7 @@ type BuildCollectionSearchItemsOptions = {
   entries: SearchableContentEntry[];
   orderedSlugs: readonly string[];
   orderOffset?: number;
+  hrefForSlug?: (slug: string) => string;
 };
 
 type ParsedSection = {
@@ -105,6 +106,7 @@ export async function buildCollectionSearchItems({
   entries,
   orderedSlugs,
   orderOffset = 0,
+  hrefForSlug,
 }: BuildCollectionSearchItemsOptions): Promise<DocsSearchItem[]> {
   const entryBySlug = new Map(entries.map((entry) => [entry.slug, entry]));
   const orderedEntries = [
@@ -125,7 +127,7 @@ export async function buildCollectionSearchItems({
       remarkPluginFrontmatter,
       headings,
     );
-    const href = `${basePath}${entry.slug}/`;
+    const href = hrefForSlug?.(entry.slug) ?? `${basePath}${entry.slug}/`;
     const pageOrder = orderOffset + pageIndex * 100;
     const description = entry.data.description ?? makeExcerpt(preamble);
 
