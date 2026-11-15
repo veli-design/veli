@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
+    "images:optimize": "node scripts/optimize-doc-images.mjs",
     "test": "node --test src/lib/*.test.mjs",
     "build": "node ../../scripts/stage-phosphor-notice.mjs web && node --test src/lib/*.test.mjs && astro sync && astro-check && astro build && node scripts/validate-docs-artifacts.mjs",
     "preview": "astro preview",
@@ -39,6 +40,7 @@
     "mdast-util-gfm-table": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.2",
     "playwright": "1.58.2",
+    "sharp": "0.34.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"
