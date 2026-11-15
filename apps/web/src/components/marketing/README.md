@@ -59,22 +59,22 @@ prototype's timings and easing for the three force fields, scroll-driven atoll
 orbits and breathing Veli particles, breathing light, waving texture, morphing curve and loose
 particles, Guide → Connect → Respond sequence, and Thaana pointer lens/pinning.
 
-The hero canvas uses the updated six-second traveling waves, per-grain wander,
-and crest lighting. Canvas fields rasterize each SVG dot once to an oversampled
-bitmap, rather than repainting the vector for every grain on every frame. Keep
+The hero canvas uses six-second traveling waves, per-grain wander, and crest
+lighting. Canvas fields rasterize each SVG dot once to a 32px-wide bitmap for
+reuse on every frame. Keep
 this cache when changing artwork: per-grain SVG draws are costly at Retina
 resolutions. Ambient canvases stop when they leave the viewport.
-Only the atoll's dotted orbits follow scroll; its white
-circles, labels, and Coral/Reef/Islands/Atolls icons remain still. Guide uses the
+The atoll's dotted orbits follow scroll. Its white circles, outlined SVG labels,
+and Coral/Reef/Islands/Atolls icons remain fixed. The static HTML illustration
+has its own labels for reduced motion and before the SVG loads. Guide uses the
 new slower glide; Connect draws and fills before the next steps settle in, and
-Respond starts later within the shared seven-second sequence. Existing SVG
-layers and the baked curve simulation are unchanged by this revision.
+Respond starts later within the shared seven-second sequence.
 
 The preview code and layers load when the first cards approach the viewport.
 Frames stop outside the viewport and while the page is hidden. Reduced motion
-keeps the Figma stills; Thaana pinning remains available without animated scaling
-or drift. Thaana adds one tab stop with arrow-key navigation and Enter/Space to
-pin/release; pointer and touch activation share that state.
+shows the stills, including the HTML letters in the Thaana card. With motion
+enabled, Thaana adds one tab stop with arrow-key navigation and Enter/Space to
+pin or release the same letters available through pointer and touch.
 
 The curve's particle collision simulation is baked ahead of time to avoid
 blocking interaction on the browser main thread. After changing its geometry or

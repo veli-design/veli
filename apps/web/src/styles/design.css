@@ -970,12 +970,16 @@
   > img {
   opacity: 0;
 }
-.marketing-page--design .design-thaana[data-design-preview-ready='true'] .design-preview-animation {
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-thaana[data-design-preview-ready='true']
+  .design-preview-animation {
   display: block;
   background: transparent;
   z-index: 1;
 }
-.marketing-page--design
+:root[data-reduced-motion='false']
+  .marketing-page--design
   .design-thaana[data-design-preview-ready='true']
   [data-node-id='2382:110952']
   > p {
@@ -1001,6 +1005,9 @@
   touch-action: pan-y;
 }
 
-.marketing-page--design .design-thaana[data-design-preview-ready='true'] .design-thaana-art {
+:root[data-reduced-motion='false']
+  .marketing-page--design
+  .design-thaana[data-design-preview-ready='true']
+  .design-thaana-art {
   cursor: crosshair;
 }

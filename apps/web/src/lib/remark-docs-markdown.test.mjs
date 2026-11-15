@@ -103,7 +103,7 @@ test('creates clean GFM Markdown without changing the render tree', () => {
   assert.match(markdown, /^# Button\n\nAccessible button component\./);
   assert.match(
     markdown,
-    /\[View the interactive example in the rendered page\.\]\(\/docs\/button\/\)/,
+    /\[View the interactive example in the rendered page\.\]\(\/docs\/components\/button\/\)/,
   );
   assert.match(markdown, /```tsx\nimport \{ Button \} from '@veli\/ui';/);
   assert.match(markdown, /\| Prop/);
@@ -123,6 +123,21 @@ test('exports eagerly hydrated previews without changing their hydration directi
   assert.match(markdown, /View the interactive example in the rendered page/);
   assert.deepEqual(tree, originalTree);
 });
+
+for (const [source, url] of [
+  ['foundations/color.mdx', '/docs/foundations/color/'],
+  ['patterns/forms.mdx', '/docs/patterns/forms/'],
+]) {
+  test(`interactive examples in ${source} link to the canonical route`, () => {
+    const tree = { type: 'root', children: [importNode(), previewNode()] };
+    const markdown = createCanonicalMarkdown(
+      tree,
+      createFile(`/workspace/apps/web/src/content/${source}`),
+    );
+
+    assert.ok(markdown.includes(`[View the interactive example in the rendered page.](${url})`));
+  });
+}
 
 test('supports pages without an authored H1 and explicit visual-only omissions', () => {
   const tree = {

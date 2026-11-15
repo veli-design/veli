@@ -5,7 +5,7 @@ import { bez, C, SAND, DOTS, prepareCurve } from './design-preview-curve.js';
 export async function initDesignPreviews(initialSeed = 7) {
   const svg = document.querySelector('.design-page');
   if (!svg) return;
-  const reduced = () => document.documentElement.dataset.reducedMotion === 'true';
+  const motionEnabled = () => document.documentElement.dataset.reducedMotion === 'false';
   const mounts = [...svg.querySelectorAll('[data-design-animation]')];
   let simulation;
   try {
@@ -436,7 +436,7 @@ export async function initDesignPreviews(initialSeed = 7) {
 
   // =============================================================================================
   // From sand to atoll · scroll-driven.
-  //  · the white circles and labels never change
+  //  · the white circles and outlined SVG labels stay fixed
   //  · the dotted orbits turn with the scroll (gently, neighbours in opposite directions)
   //  · Veli's icon is always moving: its sand particles turn and breathe
   //  · Coral, Reef, Islands and Atolls are static, exactly as designed
@@ -798,9 +798,11 @@ export async function initDesignPreviews(initialSeed = 7) {
         .join('');
     let ptr = null,
       hot = null;
-    const toSvg = (e) => {
-      const p = svgPoint(card.querySelector('[data-design-svg]'), e);
-      return [p.x, p.y];
+    const glyphArt = card.querySelector('[data-design-svg="thaana"]');
+    const toSvg = (event) => {
+      if (!motionEnabled()) return null;
+      const point = svgPoint(glyphArt, event);
+      return point ? [point.x, point.y] : null;
     };
     const inCard = ([x, y]) =>
       x >= I.card[0] && x <= I.card[0] + I.card[2] && y >= I.card[1] && y <= I.card[1] + I.card[3];
@@ -818,6 +820,7 @@ export async function initDesignPreviews(initialSeed = 7) {
     };
     card.addEventListener('pointermove', (e) => {
       const p = toSvg(e);
+      if (!p) return;
       wake();
       ptr = inCard(p) ? p : null;
       hot = ptr && pick(ptr);
@@ -829,7 +832,7 @@ export async function initDesignPreviews(initialSeed = 7) {
     });
     card.addEventListener('click', (e) => {
       const p = toSvg(e);
-      if (!inCard(p)) return;
+      if (!p || !inCard(p)) return;
       const g = pick(p);
       if (g) {
         g.pinned = !g.pinned;
@@ -855,19 +858,18 @@ export async function initDesignPreviews(initialSeed = 7) {
       const now = performance.now() / 1000,
         dt = Math.min(0.05, now - last);
       last = now;
-      const still = reduced();
-      const k = still ? 1 : 1 - Math.exp(-THAANA.ease * dt);
+      const k = 1 - Math.exp(-THAANA.ease * dt);
       for (const g of glyphs) {
         let ts = 1;
-        if (ptr && !still) {
+        if (ptr) {
           const d = Math.hypot(g.c[0] - ptr[0], g.c[1] - ptr[1]);
           const f = Math.max(0, 1 - d / THAANA.lens);
           ts = 1 + THAANA.swell * f * f * (3 - 2 * f);
         }
-        const tb = (!still && g === hot) || g.pinned ? 1 : 0;
+        const tb = g === hot || g.pinned ? 1 : 0;
         g.b += (tb - g.b) * k;
         g.s += (ts - g.s) * k;
-        const s = still ? 1 : g.s * (1 + (THAANA.bloom - 1) * C.settle(g.b));
+        const s = g.s * (1 + (THAANA.bloom - 1) * C.settle(g.b));
         if (Math.abs(s - 1) < 0.002 && g.b < 0.002) {
           if (g.el.hasAttribute('transform')) {
             g.el.removeAttribute('transform');
@@ -887,7 +889,7 @@ export async function initDesignPreviews(initialSeed = 7) {
         let tx = 0,
           ty = 0,
           ts = 1;
-        if (ptr && !still) {
+        if (ptr) {
           const dx = b.c[0] - ptr[0],
             dy = b.c[1] - ptr[1],
             d = Math.hypot(dx, dy) || 1,
@@ -911,17 +913,15 @@ export async function initDesignPreviews(initialSeed = 7) {
   let raf = 0;
   const t0 = performance.now();
   function wake() {
-    if (!raf && !document.hidden) raf = requestAnimationFrame(frame);
+    if (!raf && !document.hidden && motionEnabled()) raf = requestAnimationFrame(frame);
   }
   function frame(now) {
     raf = 0;
-    if (document.hidden) return;
-    const still = reduced();
+    if (document.hidden || !motionEnabled()) return;
     for (const scene of scenes) {
-      if (visible.has(scene.card) && (!still || scene.card.classList.contains('design-thaana')))
-        scene.render((now - t0) / 1000);
+      if (visible.has(scene.card)) scene.render((now - t0) / 1000);
     }
-    if (!still && visible.size) raf = requestAnimationFrame(frame);
+    if (visible.size) raf = requestAnimationFrame(frame);
   }
   const observer = new IntersectionObserver(
     (entries) => {
@@ -938,12 +938,16 @@ export async function initDesignPreviews(initialSeed = 7) {
     const host = mount.closest('[data-design-preview-host]');
     host.dataset.designPreviewReady = 'true';
   }
-  svg.querySelector('.design-thaana-art').removeAttribute('aria-hidden');
-  svg
-    .querySelector('.design-thaana-native [data-node-id="2382:110952"]')
-    .setAttribute('aria-hidden', 'true');
+  const thaanaArt = svg.querySelector('.design-thaana-art');
+  const thaanaInstructions = svg.querySelector('#thaana-preview-instructions');
+  function syncMotionPreference() {
+    const interactive = motionEnabled();
+    thaanaArt.setAttribute('aria-hidden', String(!interactive));
+    thaanaInstructions.hidden = !interactive;
+    wake();
+  }
   window.dispatchEvent(new Event('veli:design-previews-ready'));
-  window.addEventListener('veli:motion-change', wake);
+  window.addEventListener('veli:motion-change', syncMotionPreference);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelAnimationFrame(raf);
@@ -955,7 +959,7 @@ export async function initDesignPreviews(initialSeed = 7) {
     raf = 0;
   });
   window.addEventListener('pageshow', wake);
-  wake();
+  syncMotionPreference();
 }
 
 function setupThaanaKeyboard(card, glyphs, activate) {
