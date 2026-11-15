@@ -1,6 +1,6 @@
 ---
 title: ComboBox
-description: Searchable single-choice field with a listbox popover and grouped options.
+description: 'A field that lets people choose one option from a long list by typing to narrow it down.'
 ---
 
 import {
@@ -11,9 +11,474 @@ import {
   ComboBoxValidationDemo,
 } from '../../components/ComboBoxExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # ComboBox
 
-Use ComboBox to search a list and choose one value. For a short list that does not need search, use [Select](/docs/components/select/).
+<DocsTab id="overview">
+
+A combobox lets people choose one option from a long list by typing to narrow it down, such as an island or a service centre. Use it in forms when the list is too long to scroll and people know the name of what they want. It can group options under titles and, when you allow it, accept a value that is not in the list.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/combobox.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-combobox--docs"
+/>
+
+## When to use
+
+### Use a combobox when
+
+- The list is long enough that typing to filter is faster than scrolling, such as islands or services.
+- People know the option they want and can type part of its name.
+- People choose one option from a known list, which may be grouped.
+- A value outside the list is allowed (allowsCustomValue).
+
+### Don't use a combobox when
+
+- The list is short and people should see every option at once. Use Radio button or Select.
+- People can choose more than one option. Use Checkbox.
+- People type free text with no list. Use Input.
+- The typed text searches content or results rather than choosing a value. Use Search.
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-intro-1.webp"
+  darkSrc="/images/docs/combobox/combobox-intro-1-dark.webp"
+  alt='A form card titled Book an appointment, Passport renewal. A required Island combobox holds Malé with the helper text "Start typing to narrow the list", a required Service centre combobox shows the placeholder Search location with the helper text "The centre where you will collect your passport", and a Continue button sits below.'
+  width="2400"
+  height="1320"
+  caption="A combobox for island and service centre in an appointment form."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-anatomy-1.svg"
+  darkSrc="/images/docs/combobox/combobox-anatomy-1-dark.svg"
+  alt="Two comboboxes at size md with eleven numbered markers. On a closed combobox: 1 on Label, 2 on the info icon, 3 on Optional, 4 on the red asterisk, 5 on the field holding Selected, 6 on the caret and 7 on Helper Text. On an open Location combobox: 8 on the list surface, 9 on the section title Fruits, 10 on the option Orange and 11 on the check next to Mango."
+  width="576"
+  height="700"
+  caption="The parts of a combobox and its list. Numbers match the list below. Optional and the required marker are shown together only to name the parts. A field never shows both."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   names the field. In code: label.
+
+2. **Info icon**
+
+   an optional 16px info icon that opens a tooltip. Its accessible name is More information by default. In code: infoTooltip and infoTooltipAriaLabel.
+
+3. **Optional**
+
+   shows Optional after the label when the field is marked isOptional. It is hidden when the field is required, and the word cannot be changed.
+
+4. **Required indicator**
+
+   the asterisk shown when the field is required. Set showRequiredIndicator to false to hide it. In code: isRequired.
+
+5. **Field**
+
+   the input shell. It holds the typed text or the placeholder, the line or border, the background and the focus ring.
+
+6. **Menu trigger**
+
+   a 20px caret button that opens the list. It flips while the list is open. Replace the icon with menuTriggerIcon.
+
+7. **Description**
+
+   helper text below the field. While the field is invalid, errorMessage takes its place.
+
+8. **Popover**
+
+   the list surface, 4 below the field and as wide as it. It scrolls past 240.
+
+9. **Section header**
+
+   groups options under a title. In code: ComboBoxSection title.
+
+10. **Option**
+
+one choice, with text and an optional description, icon and end content. In code: ComboBoxItem. 11. **Selected check**
+
+marks the selected option.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/combobox/combobox-do-1.webp" darkSrc="/images/docs/combobox/combobox-do-1-dark.webp" alt="A combobox labelled Location with the placeholder Search location and the helper text &quot;The centre where you will collect your passport&quot;." width="1136" height="376">
+
+Give every combobox a visible label. The placeholder only hints at what to type.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/combobox/combobox-dont-1.webp" darkSrc="/images/docs/combobox/combobox-dont-1-dark.webp" alt="A combobox with no label above it. The field shows only the word Location, with the helper text &quot;The centre where you will collect your passport&quot;." width="1136" height="320">
+
+Don't use the placeholder as the label. It disappears as soon as people type.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/combobox/combobox-do-2.webp" darkSrc="/images/docs/combobox/combobox-do-2-dark.webp" alt="A combobox labelled Location with the placeholder Search location and the helper text &quot;Start typing to narrow the list&quot;." width="1136" height="376">
+
+Say in the helper text that typing narrows the list.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/combobox/combobox-dont-2.webp" darkSrc="/images/docs/combobox/combobox-dont-2-dark.webp" alt="A combobox labelled Location in the error state, with a red line under the field and the error message Error." width="1136" height="376">
+
+Don't write vague errors. Say what is wrong and how to fix it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/combobox/combobox-do-3.webp" darkSrc="/images/docs/combobox/combobox-do-3-dark.webp" alt="Two comboboxes in the default appearance with a bottom line: Location with the placeholder Search location and Service with the placeholder Search service." width="1136" height="512">
+
+Use the same appearance as the other fields in the form.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/combobox/combobox-dont-3.webp" darkSrc="/images/docs/combobox/combobox-dont-3-dark.webp" alt="Two comboboxes that do not match: Location in the default appearance with a bottom line, and Service in the outline appearance with a border on every side." width="1136" height="512">
+
+Don't mix appearances in one form. An outline field among default fields looks out of place.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Name what is being chosen, in sentence case, with no colon.
+
+| Do             | Don't                                                        |
+| :------------- | :----------------------------------------------------------- |
+| Island         | Choose your island: (names the action and ends with a colon) |
+| Service centre |                                                              |
+
+### Placeholder
+
+Use the placeholder only to hint at what to type. Never put information people need only in the placeholder: it disappears as they type. Don't end it with punctuation or an ellipsis.
+
+| Do              | Don't                                                                                                     |
+| :-------------- | :-------------------------------------------------------------------------------------------------------- |
+| Search location | Choose the island where you live, as written on your ID card (information that disappears as people type) |
+| Search islands  |                                                                                                           |
+
+### Helper text
+
+Say what the list holds or that typing narrows it, in one short sentence with no full stop.
+
+| Do                                              | Don't                                                                     |
+| :---------------------------------------------- | :------------------------------------------------------------------------ |
+| Start typing to narrow the list                 | Start typing to narrow the list. (a one-sentence hint takes no full stop) |
+| The centre where you will collect your passport | Error (does not say what is wrong or how to fix it)                       |
+
+With allowsCustomValue, say that people can type a value that is not in the list.
+
+| Do                                                 | Don't                                                                      |
+| :------------------------------------------------- | :------------------------------------------------------------------------- |
+| Choose your island, or type it if it is not listed | Start typing to narrow the list (suggests only listed values are accepted) |
+
+### Error message
+
+Say what is wrong and how to fix it. Start with Choose when an answer is missing, don't say please, and leave the full stop off one sentence.
+
+| Do                                                             | Don't                                                                       |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| Choose a location from the list                                | Please choose a supported location. (says please and ends with a full stop) |
+| Choose the service centre where you will collect your passport | Invalid selection (does not say what to do)                                 |
+
+### Options
+
+Use the names people know, in sentence case, and keep options short and distinct so filtering finds them. Write Malé with an acute é, also in Hulhumalé. Write island and atoll in lower case except inside a name, and use the full form in forms: Naifaru, Lhaviyani Atoll.
+
+| Do        | Don't                                  |
+| :-------- | :------------------------------------- |
+| Malé      | K. Male' (never K. Malé)               |
+| Hulhumalé | MLE (a code, not the name people know) |
+| Addu City |                                        |
+
+### No matches
+
+Replace the default No matches found. with emptyState. Repeat the typed text exactly, in single curly quotes, and give one next step. Wrap the echoed text in bdi so it keeps its own direction.
+
+| Do                                                                   | Don't                                                      |
+| :------------------------------------------------------------------- | :--------------------------------------------------------- |
+| No islands match ‘Nayfaru’. Check the spelling or type another name. | No data (says nothing about the search or what to do next) |
+
+### Optional and required
+
+Mark whichever is rarer in the form: Optional on optional fields when most are required, or the asterisk on required fields when most are optional. Optional is hidden when the field is required.
+
+### Long text
+
+Truncate only non-essential text, and only when the full text is shown elsewhere. Truncation sits at the inline end, which is the left in Dhivehi.
+
+### Built-in strings and Dhivehi
+
+Combobox has three built-in strings in English and Dhivehi: Optional, which you cannot reword; the info button name More information (އިތުރު މަޢުލޫމާތު), which you set with infoTooltipAriaLabel so it names the topic, such as More information about service centres; and the empty message No matches found. (ނަތީޖާއެއް ނުފެނުނު.), which you replace with emptyState. The button name Show suggestions, the list name Suggestions, the option count and selection announcements and the hidden Dismiss buttons have no prop and stay in English on Dhivehi pages.
+
+Write Dhivehi labels natively rather than transliterating, and keep them as short as the English.
+
+## Related components
+
+| Component                              | When to use it                                                 |
+| :------------------------------------- | :------------------------------------------------------------- |
+| [Select](/docs/components/select/)     | choose one option from a short list, without typing.           |
+| [Search](/docs/components/search/)     | search content or results rather than a fixed list of options. |
+| [Input](/docs/components/input/)       | free text with no list to choose from.                         |
+| [Radio](/docs/components/radio/)       | a few options shown all at once.                               |
+| [Checkbox](/docs/components/checkbox/) | when people can choose more than one option.                   |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the combobox: appearances, sizes, states, the list, spacing and the tokens behind them.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-appearances-1.webp"
+  darkSrc="/images/docs/combobox/combobox-appearances-1-dark.webp"
+  alt='Two Location comboboxes with the placeholder Search location and the helper text "Start typing to narrow the list". Appearance default has a tinted background with a bottom line. Appearance outline has a border on every side. The captions say the line or border thickens on hover and while the field is active.'
+  width="2400"
+  height="616"
+  caption="Appearance default and appearance outline."
+/>
+
+- **default**: a tinted background with a bottom line. The line thickens on hover and while the field is active. It is the default.
+- **outline**: a tinted background with a 1px border on every side. The border thickens on hover and while the field is active.
+
+Use one appearance for every field in a form, matching Input and Select. Both appearances share the same text styles, icons and spacing.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-sizes-1.webp"
+  darkSrc="/images/docs/combobox/combobox-sizes-1-dark.webp"
+  alt='Three Location comboboxes at sizes sm, md and lg, with the placeholder Search location and the helper text "Start typing to narrow the list". The captions read: 36 high, body sm text, caption helper; 44 high, body sm text, caption helper, default; 52 high, body md text, body sm helper.'
+  width="2400"
+  height="600"
+  caption="Sizes sm, md and lg."
+/>
+
+| Size | Field height | Text                    | Use for                                                                    |
+| :--- | :----------- | :---------------------- | :------------------------------------------------------------------------- |
+| sm   | 36           | Body sm, caption helper | Dense layouts such as filters and table toolbars                           |
+| md   | 44           | Body sm, caption helper | Most forms. The default                                                    |
+| lg   | 52           | Body md, body sm helper | Fields that need more presence, such as a single-question page, and phones |
+
+Keep one size across a form, and match the size of buttons next to the field. The 20px caret stays the same at every size. The field fills the width of its container, and the list takes the same width.
+
+## Options
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-options-1.webp"
+  darkSrc="/images/docs/combobox/combobox-options-1-dark.webp"
+  alt="Two open Location comboboxes, appearance default and appearance outline. Each list groups options under Fruits (Mango, Orange, Apple, Strawberry) and Vegetables (Beetroot, Carrot, Spring Onion), with a check next to Mango. The list looks the same under both appearances."
+  width="2400"
+  height="1248"
+  caption="The open list looks the same under both appearances."
+/>
+
+- Group related options with ComboBoxSection and a short title. The selected option shows a check.
+- Options can carry a description, a leading icon or end content (description, startContent, endContent).
+- The field can also take startAddon, startContent and endContent, and a labelIcon or action in the header.
+- Typing filters the list. When nothing matches, the list shows the empty message.
+- The list is as wide as the field and scrolls past 240. Virtualise lists of more than about 50 rich options.
+
+## States
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-states-1.webp"
+  darkSrc="/images/docs/combobox/combobox-states-1-dark.webp"
+  alt='Nine Location comboboxes at size md in the default appearance, each with a caption: default with the placeholder Search location; hover with a darker fill and line; active with the list open, a cursor and the caret flipped; focus with the focus ring; filled with Malé; error with a red line and the message "Choose a location from the list"; read only with Malé and no field fill; disabled in muted colours; and a grey skeleton placeholder.'
+  width="2400"
+  height="2184"
+  caption="Combobox states in the default appearance at size md."
+/>
+
+| State     | When                   | Visual change                                                                           |
+| :-------- | :--------------------- | :-------------------------------------------------------------------------------------- |
+| Default   | Resting                | Shows the placeholder                                                                   |
+| Hover     | Pointer over the field | Background `text-input/bg-hover`, line `text-input/stroke-hover`                        |
+| Active    | The list is open       | Background `text-input/bg-pressed`, 2px line `text-input/stroke-pressed`, caret flipped |
+| Focus     | Keyboard focus         | Focus ring around the field                                                             |
+| Filled    | An option is selected  | Its text fills the field                                                                |
+| Error     | isInvalid              | Line `text-input/stroke-error`; the error message replaces the helper                   |
+| Read only | isReadOnly             | The value can be read and copied but not changed, and the list does not open            |
+| Disabled  | isDisabled             | Muted text and icon, removed from the tab order                                         |
+
+Combobox has no skeleton state in code. Compose Skeleton while the page loads.
+
+## Behaviour
+
+- **Filtering**: typing filters the list to options that contain the text, using the language's rules.
+- **Opening**: the list opens when people type, with the Down or Up arrow, or from the caret button. Escape closes it.
+- **Selection**: choosing an option fills the field with its text and closes the list. Choosing only sets the value: nothing navigates or submits, and people continue with a separate button, such as Continue.
+- **Leaving the field**: leaving with unmatched text restores the last selection, unless custom values are allowed.
+- **Custom value**: with allowsCustomValue the typed text is kept even when it matches no option, and the form stores that text.
+- **Empty state**: when nothing matches, the list shows No matches found. Pass emptyState with a message that repeats what was typed and says what to do next.
+- **Controlled**: control the typed text with inputValue and the choice with value or selectedKey, or leave both uncontrolled. Use one selection API.
+- **Width**: the field fills its container. Set the width on the root with className, which only sets outer layout. Combobox takes no direct children on the root and no style overrides.
+- **Language**: filtering follows the VeliProvider language. An explicit lang sets the filtering locale, and an explicit dir also sets the direction of the list and the tooltip.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-rtl-1.png"
+  darkSrc="/images/docs/combobox/combobox-rtl-1-dark.webp"
+  alt="Two open comboboxes side by side. On the left, LTR Combobox: label Location, with options under Fruits and Vegetables and a check next to Mango. On the right, RTL ComboboxDv, mirrored: label ތަން on the right, the caret on the left, sections މަޝްހޫރު (މާލެ, ހުޅުމާލެ, އައްޑޫ ސިޓީ) and ރީޖަނަލް (ފުވައްމުލައް ސިޓީ, ކުޅުދުއްފުށި ސިޓީ), and the check on the left of the selected option."
+  width="2400"
+  height="1136"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi everything mirrors: the label row starts on the right, the caret sits on the left, and the selected check moves to the left of each option.
+- Text uses the Dhivehi regular styles (MV Faseyha); section headers use the Dhivehi medium style (MV A Waheed).
+- The field stays 36, 44 or 52 high and the value is centred. The label row and helper grow with the taller Dhivehi line height: in Storybook the label row of the field family is 36 high at sm and md and 40 at lg, against 28, 28 and 32 in English (the label line is 28 or 32, plus 8 below). See Missing or unverified.
+- People may type Latin text in a Dhivehi combobox, and filtering accepts both scripts. Set dir auto on the input, and wrap typed text echoed back in emptyState in bdi.
+- In code, wrap the app in VeliProvider with language set to dv, or set lang on a single field. In Figma, design Dhivehi screens with ComboboxDv.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <ComboBoxRtlDemo client:visible />
+</div>
+
+Example configuration: size md, sections Popular and Regional.
+
+| Part           | English                                                          | Dhivehi                                                           |
+| :------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------- |
+| label          | Location                                                         | ތަން                                                              |
+| placeholder    | Search location                                                  | ތަނެއް ހޯދާ                                                       |
+| description    | Start typing to narrow the list                                  | ބޭނުން ވާ އައިޓަމެއް ސާރޗު ކުރައްވާ                               |
+| Section titles | Popular, Regional                                                | މަޝްހޫރު، ރީޖަނަލް                                                |
+| Options        | Malé, Hulhumalé, Addu City, Fuvahmulah City, Kulhudhuffushi City | މާލެ، ހުޅުމާލެ، އައްޑޫ ސިޓީ، ފުވައްމުލައް ސިޓީ، ކުޅުދުއްފުށި ސިޓީ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-spacing-1.svg"
+  darkSrc="/images/docs/combobox/combobox-spacing-1-dark.svg"
+  alt="Spacing redlines for a combobox at size sm: 8 between the label row and the field, 12 side padding, 8 between the value and the caret, 8 around the caret, a 20 caret, and 4 above the helper text."
+  width="391"
+  height="346"
+/>
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-spacing-2.svg"
+  darkSrc="/images/docs/combobox/combobox-spacing-2-dark.svg"
+  alt="The same redlines at size md: 8 below the label row, 16 side padding, 8 between the value and the caret, 12 around the caret, a 20 caret, and 4 above the helper text."
+  width="387"
+  height="346"
+/>
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-spacing-3.svg"
+  darkSrc="/images/docs/combobox/combobox-spacing-3-dark.svg"
+  alt="The same redlines at size lg: 8 below the label row, 16 side padding, 8 between the value and the caret, 14 around the caret, a 20 caret, and 4 above the helper text."
+  width="387"
+  height="346"
+  caption="All values in pixels at 1x."
+/>
+
+| Property                             | sm  | md  | lg  |
+| :----------------------------------- | :-- | :-- | :-- |
+| Field height                         | 36  | 44  | 52  |
+| Field padding, top and bottom        | 8   | 12  | 14  |
+| Field padding, sides                 | 12  | 16  | 16  |
+| Value to caret                       | 8   | 8   | 8   |
+| Caret                                | 20  | 20  | 20  |
+| Label row to field                   | 8   | 8   | 8   |
+| Field to helper text                 | 4   | 4   | 4   |
+| List offset below the field          | 4   | 4   | 4   |
+| List padding                         | 4   | 4   | 4   |
+| Option minimum height                | 36  | 36  | 36  |
+| Section title height                 | 36  | 36  | 36  |
+| List maximum height before scrolling | 240 | 240 | 240 |
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-radius-1.svg"
+  darkSrc="/images/docs/combobox/combobox-radius-1-dark.svg"
+  alt="Field md: a closed combobox field marked with a 10 corner radius. Popover md: its open list marked with a 12 corner radius."
+  width="1200"
+  height="568"
+  caption="The field uses radius 10 (`radius/field`). The list uses 12 and each option 8."
+/>
+
+## Typography
+
+| Element                          | English                              | Dhivehi                                   | Colour token                                               |
+| :------------------------------- | :----------------------------------- | :---------------------------------------- | :--------------------------------------------------------- |
+| Label, sm and md                 | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`                                        |
+| Label, lg                        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/DEFAULT`                                        |
+| Value and placeholder, sm and md | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | Value `text/base/strong`, placeholder `text/base/inactive` |
+| Value and placeholder, lg        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                               |
+| Optional, sm and md              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/subtle`                                         |
+| Optional, lg                     | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/subtle`                                         |
+| Required asterisk                | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/danger/muted`                                        |
+| Helper and error, sm and md      | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | Helper `text/base/muted`, error `text/danger/muted`        |
+| Helper and error, lg             | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | Helper `text/base/muted`, error `text/danger/muted`        |
+| Section header                   | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/emphasis`                                       |
+| Option                           | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`                                         |
+
+When disabled, the label uses `text/base/muted` and the value and helper use `text/disabled`.
+
+## Tokens
+
+Names leave out the `components/` prefix.
+
+| State    | Default: background and line                                  | Outline: background and border                                | Text and icon                                                                   |
+| :------- | :------------------------------------------------------------ | :------------------------------------------------------------ | :------------------------------------------------------------------------------ |
+| Default  | `text-input/bg-default`, line `text-input/stroke-default` 1.5 | `text-input/bg-default`, border `text-input/stroke-default` 1 | Placeholder `text/base/inactive`, icon `icon/base/default`                      |
+| Hover    | `text-input/bg-hover`, line `text-input/stroke-hover` 1.5     | `text-input/bg-hover`, border `text-input/stroke-hover` 1.5   | As default                                                                      |
+| Active   | `text-input/bg-pressed`, line `text-input/stroke-pressed` 2   | `text-input/bg-pressed`, border `text-input/stroke-pressed` 2 | Value `text/base/strong`, caret flipped                                         |
+| Focus    | As active, plus the focus ring                                | `text-input/bg-pressed`, no border, focus ring                | Value `text/base/strong`                                                        |
+| Filled   | `text-input/bg-default`, line `text-input/stroke-default` 1.5 | `text-input/bg-hover`, no border                              | Value `text/base/strong`                                                        |
+| Error    | `text-input/bg-default`, line `text-input/stroke-error` 1.5   | `text-input/bg-default`, border `text-input/stroke-error` 1   | Message `text/danger/muted`                                                     |
+| Disabled | `text-input/bg-hover`, no line                                | `text-input/bg-hover`, no border                              | Label `text/base/muted`, value and helper `text/disabled`, icon `icon/disabled` |
+
+| List part                      | Token                    |
+| :----------------------------- | :----------------------- |
+| List background                | `menu/bg`                |
+| List border                    | `border/base/muted`, 0.5 |
+| List shadow                    | Shadow md                |
+| Option hover and active option | `menu/hover`             |
+| Option pressed                 | `menu/pressed`           |
+| Section header                 | `text/base/emphasis`     |
+| Option                         | `text/base/strong`       |
+| Check                          | `icon/base/default`      |
+| Focus ring                     | `border/focus`           |
+
+## Motion
+
+| What moves                | Duration | Easing   |
+| :------------------------ | :------- | :------- |
+| Field background and line | Normal   | Ease out |
+| Caret button background   | Normal   | Ease out |
+| Option highlight          | Normal   | Ease out |
+
+Moving through options with the arrow keys is not animated. With reduced motion turned on, these transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -247,3 +712,75 @@ export default function ComboBoxLanguageDemo() {
 ```
 
 Explicit `lang` keeps filtering tied to that locale. Explicit `dir="ltr"` or `dir="rtl"` also controls the effective direction of popup and tooltip content, even when it differs from the locale direction.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the combobox works with keyboards, screen readers and assistive settings. The input has the combobox role and controls a listbox, built on React Aria ComboBox.
+
+## Keyboard
+
+Focus stays in the input while the arrow keys move through options. The caret button is not in the tab order.
+
+| Key                        | Action                                                                                             |
+| :------------------------- | :------------------------------------------------------------------------------------------------- |
+| Tab                        | Moves focus to the input. In the open list, commits the focused option and moves to the next field |
+| Typing                     | Filters the list and opens it                                                                      |
+| Down arrow and Up arrow    | Open the list and move through options                                                             |
+| Enter                      | Chooses the focused option and closes the list                                                     |
+| Escape                     | Closes the list and reverts to the last chosen option                                              |
+| Left arrow and Right arrow | Move the text caret in the input                                                                   |
+
+## Screen readers
+
+- The input has the combobox role, autocomplete list, and reports whether the list is open. The active option is announced as people move, through aria-activedescendant.
+- The list is a listbox named Suggestions, and each section is a group. The selected option reports that it is selected.
+- A live region announces the option count, the group entered and the selected option. This helps screen readers that handle aria-activedescendant poorly, such as VoiceOver on iOS. These announcements stay in English on Dhivehi pages.
+- The description and errorMessage are linked to the input and the field is marked invalid, so the message is read with the field. Required and disabled states are exposed too.
+- Optional and the required asterisk sit outside the label, so neither is part of the accessible name. isRequired still tells screen readers the field is required.
+- Options with icons or custom content need textValue or aria-label, so filtering, the selected value and screen readers get plain text.
+- The info button has its own accessible name, More information by default. Set infoTooltipAriaLabel so it names the topic.
+
+## Labels
+
+Every combobox needs a visible label. Never replace it with aria-label or the placeholder.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/combobox/combobox-focus-1.webp"
+  darkSrc="/images/docs/combobox/combobox-focus-1-dark.webp"
+  alt="Two focused comboboxes, appearance default and appearance outline, each with Label, the info icon, Optional, a red asterisk, the placeholder Placeholder and Helper Text. A teal ring surrounds each field."
+  width="2400"
+  height="504"
+  caption="The focus ring sits outside the field, so it doesn&#x27;t change its size."
+/>
+
+- Keyboard focus shows a 2px ring in `border/focus` with a 2px offset around the field. It follows the 10 radius and sits outside the field, so focusing does not change its size or move neighbours.
+- The ring shows for keyboard focus only. A pointer click shows the active state without the ring.
+- In the open list, the active option shows the `menu/hover` background. In forced colours mode it gets an outline.
+- Disabled fields cannot be focused. Read-only fields can be focused but not changed.
+
+## List roles
+
+Options look like menu items but keep the listbox and option roles. Never rebuild the list from Menu, and never put buttons, links or checkboxes inside an option.
+
+## Target size
+
+The minimum target size is 24 x 24, and 44 is recommended for touch. The md field is 44 high and the lg field 52, so both reach the touch size. The sm field, 36 high, passes the minimum; keep it to dense layouts. Options are at least 36 high. The info button is 16 x 16, below the 24 x 24 minimum; see Missing or unverified.
+
+## Contrast
+
+Placeholder text in Figma uses `text/base/inactive`, about 2.1 to 2.7:1, which is under 4.5:1. Keep everything people need in the label or helper text. Helper text in `text/base/muted` measures 4.96:1 in light and 5.23:1 in dark in Storybook, which meets 4.5:1.
+
+## Zoom and phones
+
+- Keep the list inside the viewport at high zoom.
+- Text inside the field must be at least 16 on phones, so iOS Safari does not zoom. Combobox text is 14 at sm and md and 16 at lg, so use lg on phones.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The field, placeholder, list, options and sections follow the language and direction. Pass Dhivehi labels, placeholders, options and emptyState yourself. Show suggestions, Suggestions and the live announcements stay in English.
+
+</DocsTab>

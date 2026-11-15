@@ -1,6 +1,6 @@
 ---
 title: Pagination
-description: Accessible compact and numbered page navigation, with an item-based load-more variant.
+description: 'Moves people through a long list or table one page at a time, or loads the next set of items.'
 ---
 
 import {
@@ -10,9 +10,428 @@ import {
   PaginationRtlDemo,
 } from '../../components/PaginationExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Pagination
 
-Use Pagination to navigate pages of data or reveal more items in an existing list. The component manages navigation controls; your application owns the data, requests, and result focus.
+<DocsTab id="overview">
+
+Pagination moves people through a long list or table one page at a time, or adds the next set of items with Load more. Use the compact or numbered variants when people compare pages or come back to a place in the list, and Load more for browsing where position matters less. Never use it for the steps of a form.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/pagination.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-pagination--docs"
+/>
+
+## When to use
+
+### Use pagination when
+
+- A list or table is split into discrete pages. Pages keep long lists fast to load and give people a place to come back to.
+- People step through pages with First, Previous, Next and Last.
+- People need direct access to page numbers, to jump back to a page they remember or compare pages.
+- People add the next set of results with a Load more button.
+
+### Don't use pagination when
+
+- People switch between named peer sections rather than numbered pages. Use Tabs.
+- People move through the steps of a form. Use Continue and Back buttons.
+- You would load more automatically as people scroll, with no button. Use the load more variant or page through the results instead.
+- The list is short enough to show in full, roughly 20 items or fewer. Show the whole list.
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-intro-1.webp"
+  darkSrc="/images/docs/pagination/pagination-intro-1-dark.webp"
+  alt="A white card titled Your applications, with the line Showing 81 to 100 of 400 applications and three rows: Business licence renewal, Submitted 21 October 2026; Import permit, Submitted 18 October 2026; and Vehicle registration transfer, Submitted 14 October 2026. Below the list, numbered pagination: First, a left caret, 1, an ellipsis, 4, 5 (current, filled), 6, an ellipsis, 20, a right caret and Last."
+  width="2400"
+  height="1384"
+  caption="Numbered pagination below the results it controls."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-anatomy-1.svg"
+  darkSrc="/images/docs/pagination/pagination-anatomy-1-dark.svg"
+  alt="Three paginations with eleven numbered markers. Variant explicit, First, a left caret, 1, an ellipsis, 4, 5 (current), 6, an ellipsis, 20, a right caret and Last: 1 on First, 2 on the left caret, 3 on page 1, 4 on the current page 5, 5 on the ellipsis, 6 on the right caret and 7 on Last. Variant button, First, Page 2 of 13 and Last: 8 on the page count. Variant loadmore: 9 on You&#x27;ve viewed 12 of 42 items, 10 on the progress bar and 11 on the Load more button."
+  width="1200"
+  height="550"
+  caption="The parts of a pagination: the page controls of explicit, the page count of button, and the count, bar and button of loadmore. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **First**
+
+   a small transparent button that goes to page 1. Disabled on the first page. In code: onFirst.
+
+2. **Previous**
+
+   an icon-only small button with a 16 caret icon. Disabled on the first page. In code: onPrevious.
+
+3. **Page**
+
+   a small transparent button with the page number. Screen readers hear Page 3, and so on. In code: onChange.
+
+4. **Current page**
+
+   a small button in primary fill, marked as the current page with aria-current="page". In code: value or defaultValue.
+
+5. **Ellipsis**
+
+   stands for pages left out. It is a button named Show hidden pages that opens a Hidden pages menu. In code, siblingCount and boundaryCount set which pages show.
+
+6. **Next**
+
+   mirrors Previous. Disabled on the last page. In code: onNext.
+
+7. **Last**
+
+   goes to the last page. Disabled on the last page. In code: maxValue and onLast.
+
+8. **Page count**
+
+   Page 2 of 13, shown by variant button instead of page numbers and announced politely when it changes.
+
+9. **Viewed count**
+
+   You've viewed 12 of 42 items, centred above the bar. A status message, so screen readers announce it. In code: loadedCount and totalCount.
+
+10. **Progress bar**
+
+4 high and rounded. Fills from the start edge in proportion to the items loaded, labelled by the count. In code it has role progressbar. 11. **Load more**
+
+a medium transparent button at full width. Shows a spinner while loading and turns disabled once everything has loaded. In code: onLoadMore and isLoading.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/pagination/pagination-do-1.webp" darkSrc="/images/docs/pagination/pagination-do-1-dark.webp" alt="A list of two applications, Business licence renewal and Import permit, with You&#x27;ve viewed 12 of 42 items, a progress bar about a quarter full and a Load more button below." width="1136" height="710">
+
+Use the Load more button, which people press, for long lists they browse.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/pagination/pagination-dont-1.webp" darkSrc="/images/docs/pagination/pagination-dont-1-dark.webp" alt="The same list of two applications with only the line More items load as you scroll below it, and no button." width="1136" height="710">
+
+Don't load the next set automatically as people scroll, with no button. Scrolling alone is no way through a long list: it pushes the footer out of reach and tells screen reader users nothing.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/pagination/pagination-do-2.webp" darkSrc="/images/docs/pagination/pagination-do-2-dark.webp" alt="Variant button: First, a left caret, Page 2 of 13, a right caret and Last." width="1136" height="352">
+
+Use Next and Previous only to page through content, such as results.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/pagination/pagination-dont-2.webp" darkSrc="/images/docs/pagination/pagination-dont-2-dark.webp" alt="A form step headed Step 2 of 4: Contact details, with a Previous button and a filled Next button." width="1136" height="352">
+
+Don't use Previous and Next for the steps of a form. Use Back and Continue.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/pagination/pagination-do-3.webp" darkSrc="/images/docs/pagination/pagination-do-3-dark.webp" alt="The result count Showing 21 to 40 of 120 applications." width="1136" height="240">
+
+Write the result count with the range, the total and the noun: Showing 21 to 40 of 120 applications.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/pagination/pagination-dont-3.webp" darkSrc="/images/docs/pagination/pagination-dont-3-dark.webp" alt="The result count Showing 21-40 of 120." width="1136" height="240">
+
+Don't use a hyphen for the range or leave out the noun. Showing 21-40 of 120 doesn't say what was counted.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Built-in labels
+
+Pagination supplies its own labels in English and Dhivehi from the VeliProvider language. Keep them as they ship, so paging is the same on every service. Only the landmark or group name can be changed, with aria-label.
+
+| Label                      | English                      | Dhivehi                        |
+| :------------------------- | :--------------------------- | :----------------------------- |
+| Landmark name              | Pagination                   | ޕޭޖިނޭޝަން                     |
+| First                      | First                        | ފުރަތަމަ                       |
+| Previous                   | Previous                     | ފަހަތަށް                       |
+| Next                       | Next                         | ކުރިއަށް                       |
+| Last                       | Last                         | ފަހުގެ                         |
+| Page count                 | Page 5 of 20                 | ޞަފްޙާ 5 / 20                  |
+| Page button name           | Page 3                       | ޞަފްޙާ 3                       |
+| Ellipsis button            | Show hidden pages            | ފޮރުވިފައިވާ ޞަފްޙާތައް ދައްކާ |
+| Ellipsis menu              | Hidden pages                 | ފޮރުވިފައިވާ ޞަފްޙާތައް        |
+| Load more button and group | Load more                    | އިތުރަށް ދައްކާ                |
+| Viewed count               | You've viewed 12 of 42 items | 42 ތަކެތިން 12 ތަކެތި ބަލާފައި |
+
+Next and Previous are only for paging through content, never for form steps.
+
+### Place it below the results
+
+Place one pagination directly below the results it controls. Add a second one above the results only on long pages.
+
+### Name each pagination by its list
+
+Keep the default name Pagination when a page has one. When a page has two, name each after the list it moves through.
+
+| Do                | Don't                                                                           |
+| :---------------- | :------------------------------------------------------------------------------ |
+| Pagination        | Pagination navigation (repeats the role, which screen readers already announce) |
+| Application pages | Pages (doesn't say which list when there are two)                               |
+
+### Name the load more group
+
+Name the load more group after its list with aria-label, because by default the group and its button are both called Load more.
+
+| Do                | Don't                                                                     |
+| :---------------- | :------------------------------------------------------------------------ |
+| More applications | Load more (same as the button inside it, and says nothing about the list) |
+
+### Write the result count
+
+Write the result count above the list, with the range, the total and the plural noun, in the active language. When the list shows everything loaded so far, write the count. Use tabular figures for numbers that change in place.
+
+| Do                                   | Don't                                                     |
+| :----------------------------------- | :-------------------------------------------------------- |
+| Showing 21 to 40 of 120 applications | Showing 21-40 of 120 (a hyphen for the range and no noun) |
+| Showing 1 to 20 of 1,250 payments    | 120 result(s) (bracketed plural)                          |
+| Showing 1 application                | Showing results (no numbers)                              |
+
+In Dhivehi, use Latin digits, keep numbers left to right, and write the count natively.
+
+### Page titles
+
+When each page of a paginated list has its own URL, add the page number to the page title.
+
+| Do                                       | Don't                                                                  |
+| :--------------------------------------- | :--------------------------------------------------------------------- |
+| Your applications, page 2 of 5 \| gov.mv | Your applications \| gov.mv (every page of results has the same title) |
+
+## Related components
+
+| Component                       | When to use it                                                                             |
+| :------------------------------ | :----------------------------------------------------------------------------------------- |
+| [Button](/docs/button/)         | pagination is built from small buttons. Use Button for Continue and Back in forms instead. |
+| [Menu](/docs/menu/)             | lists the hidden pages behind the ellipsis button.                                         |
+| [Table](/docs/table/)           | shows the rows that pagination moves through.                                              |
+| [Card](/docs/card/)             | cards can be the results pagination pages through, each a summary of one record.           |
+| [Skeleton](/docs/skeleton/)     | holds the shape of the results while the next page loads.                                  |
+| [Tabs](/docs/tabs/)             | switch between named sections instead.                                                     |
+| [VeliProvider](/docs/provider/) | sets the English or Dhivehi labels and the direction.                                      |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for pagination: variants, states, behaviour and the parts they are built from. Values match the shipped component.
+
+## Variants
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-variants-1.webp"
+  darkSrc="/images/docs/pagination/pagination-variants-1-dark.webp"
+  alt="Three examples stacked. Variant button: First, a left caret, Page 2 of 13, a right caret and Last. Variant explicit: First, a left caret, 1, an ellipsis, 4, 5 (current, filled), 6, an ellipsis, 20, a right caret and Last. Variant loadmore: You&#x27;ve viewed 12 of 42 items above a progress bar about a quarter full, and a full width Load more button."
+  width="2400"
+  height="1808"
+  caption="Variants button, explicit and loadmore."
+/>
+
+| Variant          | Shows                                                        | Use when                                               |
+| :--------------- | :----------------------------------------------------------- | :----------------------------------------------------- |
+| button (default) | First, Previous, the page count, Next and Last               | People read pages in order and don't need page numbers |
+| explicit         | First, Previous, numbered pages with ellipses, Next and Last | People need direct access to page numbers              |
+| loadmore         | The viewed count, a progress bar and Load more               | People browse and position matters less                |
+
+- In variant explicit, siblingCount sets how many pages show next to the current one and boundaryCount how many stay at each end. Both default to 1 and accept 0.
+- Variant loadmore counts items, not pages: pass loadedCount, totalCount, onLoadMore and isLoading.
+- Pagination has no size option. Page controls use the small button size (36 high); the Load more button is size md (44 high).
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-options-1.webp"
+  darkSrc="/images/docs/pagination/pagination-options-1-dark.webp"
+  alt="Three real uses. Paged list: Showing 81 to 100 of 400 applications, three application rows and variant explicit directly below. Few pages: variant button with Page 2 of 13. Phone screen: variant loadmore with You&#x27;ve viewed 12 of 42 items and Load more on a 320 screen."
+  width="2400"
+  height="1608"
+  caption="Real uses: a paged list with explicit, search results with button, and a long list on a phone screen with loadmore."
+/>
+
+## States
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-states-1.webp"
+  darkSrc="/images/docs/pagination/pagination-states-1-dark.webp"
+  alt="Two examples labelled firstPage and lastPage: Page 1 of 13 with First and Previous disabled, and Page 13 of 13 with Next and Last disabled."
+  width="2400"
+  height="576"
+/>
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-states-2.webp"
+  darkSrc="/images/docs/pagination/pagination-states-2-dark.webp"
+  alt="Two examples labelled current page and focus: pages 4, 5 and 6 with 5 filled as the current page, and the same with a focus ring around page 6."
+  width="2400"
+  height="624"
+/>
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-states-3.webp"
+  darkSrc="/images/docs/pagination/pagination-states-3-dark.webp"
+  alt="Two examples labelled loading and allLoaded: You&#x27;ve viewed 12 of 42 items with a spinner in the Load more button, and You&#x27;ve viewed 42 of 42 items with a full bar and Load more disabled."
+  width="2400"
+  height="656"
+  caption="End states, the current page, focus and the load more states."
+/>
+
+| State                 | When                                               | Visual change                                                                            |
+| :-------------------- | :------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| Current page          | The page people are on                             | Primary fill button, marked aria-current="page"                                          |
+| Other controls        | Default                                            | Secondary transparent buttons                                                            |
+| Hover, pressed, focus | Interaction                                        | The Button states of each control                                                        |
+| First page            | Page 1                                             | First and Previous disabled, kept in place                                               |
+| Last page             | The last page                                      | Next and Last disabled, kept in place                                                    |
+| Loading               | isLoading on load more                             | Load more shows the Button spinner, keeps its label and size, and ignores repeat presses |
+| All loaded            | loadedCount reaches totalCount, or totalCount is 0 | Load more disabled; counts clamped to the total                                          |
+
+Keep First, Previous, Next and Last in place at the ends rather than hiding them, so the controls don't move.
+
+## Behaviour
+
+- **Buttons, not links**: every control is a button (type="button") that changes the page through onChange. None navigates or changes the URL by itself, and pagination in a form doesn't submit it.
+- **Your app loads each page**: pagination doesn't slice data. Slice local data or fetch the selected page yourself. For load more, update loadedCount only after the items are added.
+- **Controlled or uncontrolled**: control the page with value and onChange, or set the starting page with defaultValue. maxValue, the total page count, must be at least 1.
+- **Hidden pages**: in variant explicit, the ellipsis opens a menu of the pages left out; choosing one goes to that page.
+- **Keep the page in the URL**: keep the page number in the URL, such as ?page=2, and treat an invalid page number as page 1. Add a history entry for each new page and restore the scroll position on Back.
+- **Move focus after paging**: after people choose another page, move focus to the heading of the results and bring it into view. After Load more, move focus to the first new item.
+- **Keep results visible while loading**: keep the current results on screen with aria-busy on the results region, or show Skeleton rows; don't empty the list first.
+- **Failed loads**: when a page or the next set fails to load, keep pagination where it is, keep the items already shown, and show the error with Try again in the results area. Don't show an empty state.
+- **Point at the results**: give the results region an id and a name, and pass the id to pagination with aria-controls.
+
+## Responsive
+
+Pagination must fit at 320px without horizontal scrolling. Variant explicit is about 572 wide at siblingCount 1 and boundaryCount 1 with page numbers up to 20; variant button is about 350. When the numbered controls don't fit, use variant button or loadmore, or lower siblingCount. The row wraps onto more lines when it runs out of room, and each line stays centred. The load more layout is 264 wide by default and shrinks to its container; set another width with className. Prefer variant button or loadmore on touch-first pages.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-rtl-1.webp"
+  darkSrc="/images/docs/pagination/pagination-rtl-1-dark.webp"
+  alt="Two examples labelled LTR pagination and RTL paginationDv. On the left, First, a left caret, Page 2 of 13, a right caret and Last. On the right, the mirrored Dhivehi row: ފުރަތަމަ on the right, then a caret, ޞަފްޙާ 2 / 13 with the digits in Latin, a caret and ފަހުގެ on the left."
+  width="2400"
+  height="432"
+  caption="Variant button in English and in Dhivehi."
+/>
+
+- Under VeliProvider language dv, every label and the viewed count are in Dhivehi, and the control order mirrors so Previous sits on the right.
+- The Previous and Next carets mirror with the direction.
+- Numbers stay left to right, isolated within the Dhivehi text, in tabular figures.
+- The Dhivehi page count reads ޞަފްޙާ 5 / 20, with a slash.
+- The load more progress bar fills from the right, the inline start.
+
+- In Figma, use paginationDv for Dhivehi. It has the same 9 variants as pagination, mirrored: First sits on the right, Last and Next on the left, and page numbers run from 1 on the right.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <PaginationRtlDemo client:visible />
+</div>
+
+Example configuration: variant explicit, defaultValue 3, maxValue 12. The labels come from the built-in strings in the table under Content guidelines.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-spacing-1.svg"
+  darkSrc="/images/docs/pagination/pagination-spacing-1-dark.svg"
+  alt="Spacing redlines for variant explicit: 8 padding inside First, a 16 gap between First and the Previous caret, an 8 gap between page numbers, and 36 for the control height."
+  width="1200"
+  height="292"
+/>
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-spacing-2.svg"
+  darkSrc="/images/docs/pagination/pagination-spacing-2-dark.svg"
+  alt="Spacing redlines for variant button and variant loadmore. Button: a 16 gap between the Previous caret and the page count, with 8 at the sides of the count. Loadmore: 4 at the sides of the count and bar, 12 between the count and the bar, 28 above the Load more button and a 264 width."
+  width="1200"
+  height="352"
+  caption="Spacing for each variant, in pixels at 1x."
+/>
+
+| Part                           | Size                                            | Padding                                                                  | Gaps                                                                      |
+| :----------------------------- | :---------------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| First, Last, Page and Ellipsis | 36 high, fully rounded; width follows the label | 8 (`spacing/2`) all round, plus 6 (`spacing/1,5`) each side of the label | None                                                                      |
+| Previous and Next              | 36 x 36                                         | 8 (`spacing/2`) around a 20 icon frame holding the 16 icon               | None                                                                      |
+| Controls row                   | 36 high                                         | None                                                                     | 16 (`spacing/4`) between controls; 8 (`spacing/2`) between page numbers   |
+| Page count                     | 20 high                                         | 8 (`spacing/2`) at the sides                                             | None                                                                      |
+| Load more                      | 264 wide by default; button 44 high (Button md) | 4 (`spacing/1`) at the sides of the count and bar                        | 28 (`spacing/7`) above the button; 12 (`spacing/3`) between count and bar |
+
+- Every page control is a small Button, so its padding, label inset and radius come from Button sm. Load more is Button md.
+- The Dhivehi version keeps these heights. Its Dhivehi labels sit in Button's Dhivehi padding of 4 top and bottom.
+- In the Dhivehi load more layout, the gap above the button is 20 (`spacing/5`), so the taller Dhivehi count keeps the 108 height.
+
+<DocsFigure
+  src="/images/docs/pagination/pagination-radius-1.svg"
+  darkSrc="/images/docs/pagination/pagination-radius-1-dark.svg"
+  alt="Corner radius callouts: a page button 4 marked 18, fully rounded, and the Load more button marked 22."
+  width="1200"
+  height="184"
+  caption="Every control is fully rounded (`radius/full`). The progress bar uses `radius/lg`, which renders fully rounded at 4 high."
+/>
+
+## Typography
+
+Page numbers stay in Latin digits, set in Inter, in both languages.
+
+| Element                   | English                                             | Dhivehi                                                              | Colour token                                                              |
+| :------------------------ | :-------------------------------------------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| First and Last            | Body sm medium, Inter Medium 14/20                  | Dhivehi body sm medium, MV A Waheed 17/28                            | `text/base/strong`; disabled `text/disabled`                              |
+| Page numbers and ellipsis | Body sm medium, Inter Medium 14/20, tabular figures | Same as English, Latin digits                                        | `text/base/strong`; the current page uses the Button primary label colour |
+| Page count                | Body sm medium, Inter Medium 14/20                  | Word in Dhivehi body sm medium 17/28, digits in Body sm medium       | `text/base/muted`                                                         |
+| Viewed count              | Body sm regular, Inter Regular 14/20                | Dhivehi body sm regular, MV Faseyha 16/28, digits in Body sm regular | `text/base/muted`                                                         |
+| Load more                 | Body md medium, Inter Medium 16/24                  | Dhivehi body md medium, MV A Waheed 19/32                            | `text/base/strong`; disabled `text/disabled`                              |
+
+Numbers use tabular figures, so they line up and don't shift as the page changes. Dhivehi lines are taller; the controls keep the English heights.
+
+## Tokens
+
+Hover, pressed and focus come from Button.
+
+| Part                                           | Default                                                                                              | Disabled                                                                       | Notes                                               |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- | :-------------------------------------------------- |
+| Page, ellipsis, First, Last, Previous and Next | Fill `components/button/secondary/subtle/default`; label `text/base/strong`; icon `icon/base/strong` | Fill `components/button/disabled`; label `text/disabled`; icon `icon/disabled` | Button secondary, transparent appearance            |
+| Current page                                   | Fill `components/button/primary/default`; label in the Button primary label colour                   | None                                                                           | Button primary, fill appearance                     |
+| Page count and viewed count                    | `text/base/muted`                                                                                    | None                                                                           | Plain text                                          |
+| Progress track                                 | Neutral alpha 400 primitive                                                                          | None                                                                           | A primitive, as in code                             |
+| Progress fill                                  | Primary 600 primitive                                                                                | None                                                                           | A primitive, as in code                             |
+| Load more                                      | Fill `components/button/secondary/subtle/default`; label `text/base/strong`                          | Fill `components/button/disabled`; label `text/disabled`                       | Button md; the loading state keeps the default fill |
+| Focus ring                                     | `border/focus`                                                                                       | None                                                                           | From Button                                         |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| What moves                     | Duration  | Easing    |
+| :----------------------------- | :-------- | :-------- |
+| Load more progress width       | Normal    | Ease out  |
+| Button press scale and colours | As Button | As Button |
+
+With reduced motion turned on, the progress transition and the button press scaling are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -169,3 +588,54 @@ Required when `variant="loadmore"` (`PaginationLoadMoreProps`).
 | `totalCount`  | `number`     | Required | Known total number of available items.                         |
 | `onLoadMore`  | `() => void` | Required | Requests the next batch; does not change counts automatically. |
 | `isLoading`   | `boolean`    | `false`  | Pending request state that prevents repeat activation.         |
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How pagination works with keyboards and screen readers, and what you still need to do.
+
+## Keyboard
+
+| Key                        | Action                                               |
+| :------------------------- | :--------------------------------------------------- |
+| Tab                        | Moves focus to the next enabled control              |
+| Shift + Tab                | Moves focus to the previous enabled control          |
+| Enter or Space             | Activates the focused control                        |
+| Enter, Space or Down arrow | Opens the hidden pages menu from the ellipsis button |
+| Up and Down arrows         | Move through the hidden pages in the menu            |
+| Escape                     | Closes the menu                                      |
+
+Disabled controls at the ends are skipped.
+
+## Screen readers
+
+- Variants button and explicit render a navigation landmark named Pagination. Variant loadmore renders a group named Load more, not a landmark.
+- When a page has two paginations, give each a different aria-label. Name the load more group after its list.
+- Icon-only controls and the ellipsis menu have built-in names in English and Dhivehi.
+- In variant explicit, the current page is marked with aria-current="page".
+- The page count in variant button announces its updates politely.
+- In variant loadmore, the viewed count is a status message and the progress bar is labelled by it.
+- Announce fetch errors in your application, and write your own result count as a status message that stands alone: Showing 21 to 40 of 120 applications.
+
+## Focus
+
+Controls show the Button focus ring on keyboard focus and fall back to a Highlight outline in forced colours mode. After a page change, move focus to the results heading; after Load more, to the first new item.
+
+## Current page
+
+Screen readers hear the current page through aria-current="page". On screen, the current page differs from the other pages only by its primary fill. A fill is a change of colour, so on its own it does not meet the rule that a current state needs a cue besides colour, such as a border, a shape or a weight change. See "Missing or unverified".
+
+## Target size
+
+Page controls are 36px tall, above the 24px minimum but under the 44px recommended for touch. Prefer variant button or loadmore on touch-first pages.
+
+## Reduced motion
+
+When people prefer reduced motion, the progress transition and the press scaling are turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). Labels, control order and carets follow it, and numbers stay left to right. Write your own result count in Dhivehi with Latin digits.
+
+</DocsTab>

@@ -1,6 +1,6 @@
 ---
 title: Search
-description: Accessible search field with a leading icon, localized defaults, and a clear button.
+description: 'A field for search terms, with a leading search icon and a clear button once it holds a value.'
 ---
 
 import {
@@ -12,9 +12,409 @@ import {
   SearchEventsDemo,
 } from '../../components/SearchExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Search
 
-Use Search to enter a query. It wraps React Aria’s `SearchField` and a native search input with a leading magnifying glass. A clear button appears when an editable field contains text; clearing returns focus to the input. Search supports standalone filtering and use within Veli forms; the application owns querying and result rendering.
+<DocsTab id="overview">
+
+Search lets people find something by typing a word or phrase, such as a service, a record or a person. Use it above a list or page that is too long to scan. The field has a leading search icon and shows a clear button once it holds a value. Your service owns the querying and shows the results.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/search.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-search--docs"
+/>
+
+## When to use
+
+### Use search when
+
+- People enter a query that filters or searches content, such as an item in a long list, table or page.
+- The list narrows as people type, or updates when they press Enter.
+- A menu or select holds more options than people can scan.
+- The query needs a one-action clear control once it holds a value.
+
+### Don't use search when
+
+- The field collects text that is not a search, such as a form answer. Use [Input](/docs/input/).
+- People choose from a short list. Use [Select](/docs/select/).
+- People must search a fixed list of options and select a value. Use [Combobox](/docs/combobox/).
+
+<DocsFigure
+  src="/images/docs/search/search-intro-1.webp"
+  darkSrc="/images/docs/search/search-intro-1-dark.webp"
+  alt='A card titled Services with the line "Find a government service by name." A Search field holds the value passport, with the search icon at the start and a cross clear button at the end. Below it, three results: Renew a passport, "Apply to renew your passport."; Replace a lost passport, "Report the loss and apply for a new one."; and Passport for a child, "Apply for a passport for someone under 18."'
+  width="2400"
+  height="1332"
+  caption="Search above a list of services, filtered by the query passport."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/search/search-anatomy-1.svg"
+  darkSrc="/images/docs/search/search-anatomy-1-dark.svg"
+  alt="A Search field at size lg in the default appearance holding the value passport, with five numbered markers: 1 on the field, 2 on the search icon, 3 on the text, 4 on the cross clear button and 5 on the bottom line."
+  width="576"
+  height="360"
+  caption="The parts of a search field, shown in the default appearance at lg with a value. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Field**
+
+   the typing area, 36, 44 or 52 high by size. The default appearance has a bottom line; outline has a border all round.
+
+2. **Search icon**
+
+   a 16 icon (20 at lg) before the text. Decorative, so screen readers skip it.
+
+3. **Text**
+
+   the placeholder in `text/base/inactive` until people type, then the value. Body sm regular (body md at lg). In code it is placeholder and value.
+
+4. **Clear button**
+
+   a 16 cross icon (20 at lg). It shows when there is a value and the field is not read only or disabled. Screen readers call it Clear search. Code shows it automatically; in Figma it is showClear.
+
+5. **Line**
+
+   the bottom line of the default appearance, 1.5 at rest and 2 when active. The outline appearance uses a border instead.
+
+</DocsAnatomy>
+
+In code you can also pass a label above the field and a description below it. The error message replaces the description while the field is invalid. Without a visible label, give the field an aria-label or aria-labelledby that names the search.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/search/search-do-1.webp" darkSrc="/images/docs/search/search-do-1-dark.webp" alt="A Search field with the placeholder Search services." width="1136" height="280">
+
+Say what is searched in the placeholder: Search services.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/search/search-dont-1.webp" darkSrc="/images/docs/search/search-dont-1-dark.webp" alt="A Search field with the placeholder Type here." width="1136" height="280">
+
+Don't use a placeholder that only says to type. It doesn't tell people what they can find.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/search/search-do-2.webp" darkSrc="/images/docs/search/search-do-2-dark.webp" alt="A wide Search field at size lg with the placeholder Search services." width="1136" height="296">
+
+Use size lg for the main search on a page.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/search/search-dont-2.webp" darkSrc="/images/docs/search/search-dont-2-dark.webp" alt="A small Search field at size sm with the placeholder Search services." width="1136" height="296">
+
+Don't use size sm for a page's main search. It is easy to miss.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/search/search-do-3.webp" darkSrc="/images/docs/search/search-do-3-dark.webp" alt="A Search field holding the value passport, with the cross clear button at the end." width="1136" height="280">
+
+Keep the clear button whenever the field holds a value. Code always shows it.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/search/search-dont-3.webp" darkSrc="/images/docs/search/search-dont-3-dark.webp" alt="A Search field holding the value passport, with no clear button." width="1136" height="280">
+
+Don't turn off the clear button on a field with a value. People then have to delete the text by hand.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Placeholder
+
+Use the placeholder to say what a search covers. Write it in sentence case, with no end punctuation and no ellipsis. Code shows Search as the placeholder when you set none; replace it with placeholder, or pass an empty string to leave it out.
+
+| Do                  | Don't                                                     |
+| :------------------ | :-------------------------------------------------------- |
+| Search services     | Type here (says only to type, not what can be found)      |
+| Search applications | Type to search... (says only to type, and ends with dots) |
+| Filter councils     |                                                           |
+
+### Label
+
+Never let the placeholder be the only name. Pass label, or an aria-label naming the search when a heading already makes its purpose clear.
+
+| Do              | Don't                                          |
+| :-------------- | :--------------------------------------------- |
+| Search services | Search (the default placeholder is not a name) |
+| Find a service  |                                                |
+
+### Value
+
+Show exactly what people typed. Don't change or format it.
+
+### No results
+
+Show the no results message below the field or in the list, not as an error. Repeat the search term exactly as typed, in single curly quotes, and suggest one next step. When filters hide every result, say so and offer one action: No applications match these filters. Clear filters.
+
+| Do                                                                         | Don't                                                 |
+| :------------------------------------------------------------------------- | :---------------------------------------------------- |
+| No results for 'pasport'. Check the spelling or search for something else. | No data (doesn't say what was searched or what to do) |
+
+Write the quotes around the search term as curly single quotes in the product.
+
+### Result count
+
+After a search, announce the number of results in a polite live region. Search doesn't announce results itself.
+
+| Do                | Don't                                      |
+| :---------------- | :----------------------------------------- |
+| 12 services found | Loading... (says nothing about the result) |
+
+### Built-in strings
+
+| String            | English      | Dhivehi       |
+| :---------------- | :----------- | :------------ |
+| Placeholder       | Search       | ހޯދާ          |
+| Clear button name | Clear search | ހޯދުން ފޮހެލާ |
+
+The clear button name has no override prop. Don't rename it per page. Search has no Optional text and no info tooltip.
+
+### Dhivehi copy
+
+Write Dhivehi placeholders natively rather than translating word for word, and keep them as short as the English.
+
+## Related components
+
+| Component                   | When to use it                                  |
+| :-------------------------- | :---------------------------------------------- |
+| [Input](/docs/input/)       | a short typed answer in a form.                 |
+| [Select](/docs/select/)     | choose one option from a list in a menu.        |
+| [Combobox](/docs/combobox/) | choose from a long list by typing to filter it. |
+| [Menu](/docs/menu/)         | actions and options in a popover.               |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for search: appearances, sizes, states and the values behind them. Values come from the Figma specs and were checked in Storybook; differences are listed under Missing or unverified.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/search/search-appearances-1.webp"
+  darkSrc="/images/docs/search/search-appearances-1-dark.webp"
+  alt="Two cards. Appearance default: a Search field with the placeholder Search, a filled background, a 10 corner radius and a bottom line. Appearance outline: the same field, fully rounded with a border all round."
+  width="2400"
+  height="520"
+  caption="Appearance default and appearance outline."
+/>
+
+- Use **default** in forms and page headers. It is a filled field with a bottom line, and the default in code.
+- Use **outline** where a line would be lost, such as on a raised card or in a toolbar. It is fully rounded, with a border all round that doesn't shift the content on hover or focus. A filled outline field uses the hover fill without a border at rest.
+
+## Sizes
+
+Search has three sizes. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/search/search-sizes-1.webp"
+  darkSrc="/images/docs/search/search-sizes-1-dark.webp"
+  alt="Three cards with a Search field with the placeholder Search at sizes sm, md and lg, 36, 44 and 52 high. The lg field has larger text and icons."
+  width="2400"
+  height="536"
+  caption="Sizes sm, md and lg."
+/>
+
+- Use **sm** (36 high) in dense layouts, such as filters in a menu, tables and toolbars.
+- Use **md** (44 high), the default.
+- Use **lg** (52 high, with larger text and icons) for the main search on a page.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/search/search-options-1.webp"
+  darkSrc="/images/docs/search/search-options-1-dark.webp"
+  alt="Two cards. Page search: a large Search field with the placeholder Search services. Filter in a menu: a small Search field with the placeholder Filter councils."
+  width="2400"
+  height="536"
+/>
+
+<DocsFigure
+  src="/images/docs/search/search-options-2.webp"
+  darkSrc="/images/docs/search/search-options-2-dark.webp"
+  alt="Two cards. Toolbar: an outline Search field with the placeholder Search records. Locked query: a read-only Search field showing Male&#x27; City Council with no clear button."
+  width="2400"
+  height="520"
+  caption="Page search, filter in a menu, toolbar and locked query."
+/>
+
+- **Page search**: the main search above a list of services. Use size lg, with a placeholder such as Search services.
+- **Filter in a menu**: narrows a long list inside a menu or select. You can use size sm here.
+- **Toolbar**: on a raised surface or in a toolbar. Use the outline appearance.
+- **Locked query**: a search term people can see but not change here. Set isReadOnly; the clear button hides.
+
+## States
+
+<DocsFigure
+  src="/images/docs/search/search-states-1.webp"
+  darkSrc="/images/docs/search/search-states-1-dark.webp"
+  alt="Three cards with a Search field at size md: default with the placeholder Search; hover with a darker fill and line; active holding passport on a pale green pressed fill, with a thicker line and the clear button."
+  width="2400"
+  height="568"
+/>
+
+<DocsFigure
+  src="/images/docs/search/search-states-2.webp"
+  darkSrc="/images/docs/search/search-states-2-dark.webp"
+  alt="Three cards: focus with the focus ring round the field holding passport and the clear button; filled holding passport with the clear button; read only showing passport with no fill change and no clear button."
+  width="2400"
+  height="520"
+/>
+
+<DocsFigure
+  src="/images/docs/search/search-states-3.webp"
+  darkSrc="/images/docs/search/search-states-3-dark.webp"
+  alt="Two cards: disabled with a faded placeholder Search; skeleton with a grey placeholder bar."
+  width="2400"
+  height="520"
+  caption="States in the default appearance at size md."
+/>
+
+| State     | When                    | Visual change                                                                                  |
+| :-------- | :---------------------- | :--------------------------------------------------------------------------------------------- |
+| Default   | Empty field             | Shows the placeholder                                                                          |
+| Hover     | Pointer over the field  | The fill and line darken                                                                       |
+| Active    | While typing            | Fill turns bg-pressed and the line thickens to 2. The clear button shows once there is a value |
+| Focus     | Keyboard focus          | The focus ring shows around the field                                                          |
+| Filled    | Holds a value, no focus | The clear button stays                                                                         |
+| Invalid   | isInvalid               | A red line, an icon at the end and errorMessage below the field                                |
+| Read only | isReadOnly              | Hover fill. The value can be selected and copied but not changed. No clear button              |
+| Disabled  | isDisabled              | Hover fill. Not editable, skipped by Tab, no clear button                                      |
+
+The Figma page shows a skeleton state; Search has no skeleton mode in code, so compose Skeleton while the page loads. Figma has no invalid state yet. Don't set isInvalid when nothing matches: no results is a normal outcome, not an input error.
+
+## Behaviour
+
+- **Typing**: control the query with value and onChange, or start with defaultValue. onChange also runs with an empty string when the field is cleared or the form is reset.
+- **Enter**: with onSubmit, Enter calls it with the query instead of submitting the parent form. Without onSubmit, Enter follows native form submission. Phones show a search key (enterKeyHint search).
+- **Clear**: the clear button empties the field, runs onClear and returns focus to the text. Clearing doesn't submit the form.
+- **Escape**: empties a field that holds a value and runs onClear. When the field is already empty, Escape passes to the parent, such as a dialog.
+- **Click target**: clicking anywhere in the field moves focus to the text.
+- **Read only**: isReadOnly keeps the field focusable and the value selectable, and hides the clear button. Use it for a query people can see but not change here.
+- **Disabled**: isDisabled blocks typing, hides the clear button and removes the field from the tab order.
+- **Your service owns the rest**: debouncing, fetching, result messages and autocomplete belong to your page. Show no results and network failures in the results area.
+- **Keep the search in the URL**: keep search terms in the URL, and replace the history entry while people type rather than adding one per keystroke.
+- **Autofocus**: autofocus only the main search on a search page on desktop. Avoid autofocus on mobile.
+- **Width**: the field fills its container. Set the width through the surrounding layout.
+- **Text size on phones**: text in a field should be at least 16px on phones, so iOS Safari doesn't zoom the page on focus. Search text is 14px at sm and md and 16px at lg, so use size lg on phones.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/search/search-rtl-1.webp"
+  darkSrc="/images/docs/search/search-rtl-1-dark.webp"
+  alt="Two cards. LTR Search: the search icon at the start, the value passport and the clear button at the end. RTL searchDv: the same field mirrored, with the search icon on the right, a Dhivehi value aligned right and the clear button on the left."
+  width="2400"
+  height="408"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the field mirrors: the search icon sits on the right, the clear button on the left and the text aligns right. The icons keep their shapes.
+- The placeholder and the clear button name switch to Dhivehi, and typed text uses MV Faseyha.
+- The field keeps its height (36, 44 or 52). The taller Dhivehi line overflows, centred.
+- Set dir to auto on a Search in a Dhivehi page, so Latin queries such as a reference number still read left to right. Never set dir to rtl on a search that takes reference numbers. When you echo a query back, such as PR-20418, wrap it in bdi.
+- Accept queries in either language and script, and say which language the results are in when that matters.
+- In code, wrap the page in VeliProvider with language set to dv. In Figma, design Dhivehi screens with searchDv.
+
+Example configuration: size md, no placeholder prop.
+
+| Part                         | English      | Dhivehi       |
+| :--------------------------- | :----------- | :------------ |
+| Placeholder (built in)       | Search       | ހޯދާ          |
+| Clear button name (built in) | Clear search | ހޯދުން ފޮހެލާ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/search/search-spacing-1.svg"
+  darkSrc="/images/docs/search/search-spacing-1-dark.svg"
+  alt="Spacing redlines for a Search field with a value at sizes sm, md and lg: side padding 12, 16 and 16, top and bottom padding 8, 12 and 14, 8 between the icon, the text and the clear button, and heights 36, 44 and 52."
+  width="1200"
+  height="853"
+  caption="All values in pixels at 1x, in the default appearance with a value."
+/>
+
+| Property                      | sm                    | md               | lg               |
+| :---------------------------- | :-------------------- | :--------------- | :--------------- |
+| Field height                  | 36                    | 44               | 52               |
+| Field padding, top and bottom | 8 (`spacing/2`)       | 12 (`spacing/3`) | 14               |
+| Field padding, sides          | 12 (`spacing/3`)      | 16 (`spacing/4`) | 16 (`spacing/4`) |
+| Icon, text and clear button   | 8 apart (`spacing/2`) | 8                | 8                |
+| Search icon                   | 16                    | 16               | 20               |
+| Clear button                  | 16                    | 16               | 20               |
+
+- The line in the default appearance is 1.5 at rest and 2 when active; the outline border is 1, 1.5 on hover and 2 when active. Neither changes the field height.
+- In Dhivehi the field keeps its height and the text line overflows, centred.
+- Set the field width to fill its column. The height comes from the size.
+
+## Corner radius
+
+<DocsFigure
+  src="/images/docs/search/search-radius-1.svg"
+  darkSrc="/images/docs/search/search-radius-1-dark.svg"
+  alt="Search fields at sizes sm, md and lg in two rows. The default appearance is marked with a 10 radius; the outline appearance is marked full."
+  width="1200"
+  height="484"
+  caption="The default appearance uses 10 (`radius/field`) at every size. The outline appearance is fully rounded (46 in Figma, which covers every height)."
+/>
+
+## Typography
+
+Regular styles map to Dhivehi Regular (MV Faseyha).
+
+| Element                | English                              | Dhivehi                                   | Colour token                                   |
+| :--------------------- | :----------------------------------- | :---------------------------------------- | :--------------------------------------------- |
+| Placeholder, sm and md | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/inactive`; disabled `text/disabled` |
+| Placeholder, lg        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                   |
+| Value, sm and md       | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`                             |
+| Value, lg              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/strong`                             |
+
+Dhivehi lines are taller than the field allows. The field keeps its height and the line overflows, centred.
+
+## Tokens
+
+Fill, line and text per state. Names leave out the `components/text-input/` prefix. The search icon and the clear button use `icon/base/muted` in every state but disabled.
+
+| State     | Fill                             | Line                                                                    | Text and icon                             |
+| :-------- | :------------------------------- | :---------------------------------------------------------------------- | :---------------------------------------- |
+| Default   | `bg-default`                     | Line `stroke-default` 1.5; outline border `stroke-default` 1            | Placeholder `text/base/inactive`          |
+| Hover     | `bg-hover`                       | Line `stroke-hover` 1.5; outline border `stroke-hover` 1.5              | As default                                |
+| Active    | `bg-pressed` at 8%               | Line `stroke-pressed` 2; outline border `stroke-pressed` 2              | Value `text/base/strong`                  |
+| Focus     | `bg-pressed` at 8%               | Line `stroke-pressed` 2, plus the focus ring; outline has the ring only | Value `text/base/strong`                  |
+| Filled    | `bg-default`; outline `bg-hover` | Line `stroke-default` 1.5; outline has no border                        | Value `text/base/strong`                  |
+| Read only | `bg-hover`                       | None                                                                    | Value `text/base/strong`; no clear button |
+| Disabled  | `bg-hover`                       | None                                                                    | `text/disabled`, `icon/disabled`          |
+
+## Motion
+
+Background, line and clear button transitions respect reduced motion: with reduced motion turned on, they are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -309,3 +709,76 @@ Replace `variant` with `appearance`; the values and default are unchanged. The o
 // After
 <Search appearance="outline" aria-label="Search services" />
 ```
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How search works with keyboards and screen readers, and what you still need to do. It is built on the React Aria SearchField with a native search input.
+
+## Keyboard
+
+| Key            | Action                                                                      |
+| :------------- | :-------------------------------------------------------------------------- |
+| Tab            | Moves focus to the field, then to the clear button when it shows            |
+| Enter          | In the field, runs onSubmit, or submits the parent form                     |
+| Escape         | Empties a field that holds a value; on an empty field, passes to the parent |
+| Enter or Space | On the clear button, empties the field and returns focus to the text        |
+
+A disabled field is skipped by Tab. A read-only field stays focusable.
+
+## Screen readers
+
+- **Name**: give every Search a name. Pass label, or aria-label or aria-labelledby when there is no visible label. The placeholder is a hint, not a name.
+- **Search icon**: decorative and hidden from screen readers.
+- **Clear button**: named Clear search, in English and Dhivehi.
+- **States**: disabled, read-only and invalid states are exposed to assistive technology.
+- **Description and error**: description and errorMessage are linked to the field.
+- **Results**: Search doesn't announce results. Announce the result count yourself in a polite live region, such as 12 services found.
+
+## Landmark
+
+When a search covers the site or a whole section, wrap it and its button in a search landmark (a form with role search, or the search element). Give each one a distinct name if the page has more than one.
+
+## Focus
+
+Keyboard focus shows a 2px ring in `border/focus` with a 2px offset around the field. It appears for keyboard focus only; a click shows the active state instead, with the pressed fill and a 2px line or border. With the ring, the outline appearance drops its border, so the two never stack. Clicking anywhere in the field, outside the text, moves focus to the text.
+
+<DocsFigure
+  src="/images/docs/search/search-focus-1.webp"
+  darkSrc="/images/docs/search/search-focus-1-dark.webp"
+  alt="Search fields at sizes sm, md and lg in the default appearance, each with the focus ring round the field."
+  width="2400"
+  height="424"
+/>
+
+<DocsFigure
+  src="/images/docs/search/search-focus-2.webp"
+  darkSrc="/images/docs/search/search-focus-2-dark.webp"
+  alt="The same three sizes in the outline appearance, fully rounded, each with the focus ring in place of the border."
+  width="2400"
+  height="424"
+  caption="The focus ring at each size, in both appearances."
+/>
+
+## Target size
+
+The clear button measures 16 x 16 at sm and md and 20 x 20 at lg, below the 24 x 24 minimum target. See "Missing or unverified".
+
+## Contrast
+
+| Element                                           | Light  | Dark   | Minimum |
+| :------------------------------------------------ | :----- | :----- | :------ |
+| Value text, `text/base/strong` on `bg-default`    | 11.8:1 | 10.3:1 | 4.5:1   |
+| Read only value, `text/base/strong` on `bg-hover` | 11.2:1 | 9.3:1  | 4.5:1   |
+| Placeholder, `text/base/inactive` on `bg-default` | 2.7:1  | 2.3:1  | 4.5:1   |
+| Icons, `icon/base/muted` on `bg-default`          | 5.2:1  | 4.6:1  | 3:1     |
+| Line or border, `stroke-default` on `bg-default`  | 3.23:1 | 2.83:1 | 3:1     |
+
+The placeholder is below 4.5:1, so never put information people need only in the placeholder. In dark mode the line or border is 2.83:1 on the field fill, below 3:1. Against the page it is 3.06:1 in Light and 3.23:1 in Dark.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The field and its icons mirror, and the built-in strings switch to Dhivehi. Set dir to auto on the field so Latin queries read left to right.
+
+</DocsTab>

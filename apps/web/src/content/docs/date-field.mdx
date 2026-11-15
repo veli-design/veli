@@ -1,6 +1,6 @@
 ---
 title: DateField
-description: Segment-based date input for typing dates directly.
+description: 'A field for typing a date, and a time when needed, into day, month and year segments, with no calendar.'
 ---
 
 import {
@@ -9,9 +9,419 @@ import {
   DateFieldValidationDemo,
 } from '../../components/DateFieldExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # DateField
 
-Use DateField when users should type a date segment by segment. Prefer [DatePicker](/docs/components/date-picker/) when they also need a calendar popover. For a standalone calendar surface, see [Calendar](/docs/components/calendar/).
+<DocsTab id="overview">
+
+A date field lets people type a date, and a time when needed, into separate day, month and year segments, with no calendar. Use it for dates people know without looking at a calendar, such as a date of birth or a date printed on a document.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/date-field.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-datefield--docs"
+/>
+
+## When to use
+
+### Use a date field when
+
+- People should type a date directly, segment by segment, and the form needs no calendar popover.
+- The date is one people know by heart, such as a date of birth. Prefill it from the National Registry when you can.
+- People copy the date from a document, such as the date of issue on a passport or the expiry date on a work permit.
+- A time is typed freely, such as an arrival time. Add time segments in 24-hour form.
+- The value must reach the service through a form as an ISO string. Give the field a name.
+
+### Don't use a date field when
+
+- People need to browse dates or see which dates are available. Use a date picker or an embedded calendar.
+- The field should open a calendar from a compact trigger. Use a date picker.
+- The form is in Dhivehi. Under language dv the segments read month, day, year, so a person who types 3 for the day and 4 for the month would give 4 March instead of 3 April. Use three Inputs labelled Day, Month and Year, in that order, grouped with FieldSet and FieldLegend.
+- Browser autofill matters. The segments can't take the bday-day, bday-month and bday-year autocomplete tokens, so use three Inputs.
+- You need a date range. Use two date fields labelled Start date and End date.
+- Only some times are open. List them as Radio options instead.
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-intro-1.webp"
+  darkSrc="/images/docs/date-field/date-field-intro-1-dark.webp"
+  alt='A form card titled Renew your passport, with the line "Enter the dates as printed on your current passport." It has two date fields: Date of birth showing 14/03/1994, and Date of issue showing 05/02/2021 with the helper text "As printed on your passport". A Continue button sits below.'
+  width="2400"
+  height="1340"
+  caption="Date fields for two dates people copy or know by heart."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-anatomy-1.svg"
+  darkSrc="/images/docs/date-field/date-field-anatomy-1-dark.svg"
+  alt='A date field at size lg in the error state with seven numbered markers: 1 on the label Service date, 2 on the info icon, 3 on Optional, 4 on the field&#x27;s bottom line, 5 on the segments reading 18/04/2026, 6 on the red error icon at the end of the field and 7 on the error text "Enter the service date".'
+  width="576"
+  height="420"
+  caption="The parts of a date field, shown at size lg in the error state. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   names the date. It also names the field group for screen readers. In code it is label.
+
+2. **Info icon**
+
+   a 16px icon button that opens a tooltip with extra detail. Screen readers announce it as More information. Put where to find the date in the description, not here. In code it is infoTooltip.
+
+3. **Optional**
+
+   Optional after the label, shown with isOptional and hidden while isRequired is on. The required asterisk sits in the same place. Neither is part of the accessible name.
+
+4. **Field**
+
+   the input container, one group named by the label. It is 36, 44 or 52 high and fills its container. In code it is set by appearance and size.
+
+5. **Date segments**
+
+   day, month and year, separated by a slash. Each segment is a spinbutton people type into or step with the arrow keys. Placeholders show dd, mm and yyyy until a value is set. granularity adds time segments.
+
+6. **Error icon**
+
+   a 16px filled info icon, 20px at lg. It shows while isInvalid is on and is hidden from screen readers.
+
+7. **Helper or error text**
+
+   a hint below the field. While isInvalid is on, errorMessage replaces it, so the error itself must say which dates are allowed. In code it is description and errorMessage.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-field/date-field-do-1.webp" darkSrc="/images/docs/date-field/date-field-do-1-dark.webp" alt="A date field labelled Date of birth showing 14/03/1994." width="1136" height="376">
+
+Name the date by what it is for: Date of birth, Date of issue, Arrival time.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-field/date-field-dont-1.webp" darkSrc="/images/docs/date-field/date-field-dont-1-dark.webp" alt="A date field labelled &quot;Date (dd/mm/yyyy)&quot; showing 14/03/1994." width="1136" height="376">
+
+Don't put the format in the label. The segments already show it, and the label must name the value.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-field/date-field-do-2.webp" darkSrc="/images/docs/date-field/date-field-do-2-dark.webp" alt="A date field labelled Date of issue showing 05/02/2021, with the helper text &quot;As printed on your passport&quot;." width="1136" height="376">
+
+Say where to find the date, or which dates are allowed, in the description.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-field/date-field-dont-2.webp" darkSrc="/images/docs/date-field/date-field-dont-2-dark.webp" alt="A date field labelled Date of issue showing 05/02/2021, with the helper text &quot;For example, 27 3 1990&quot;." width="1136" height="376">
+
+Don't add a format example. It belongs to three separate Inputs, not to segments.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-field/date-field-do-3.webp" darkSrc="/images/docs/date-field/date-field-do-3-dark.webp" alt="A date field labelled Date of birth in the error state showing 14/03/2027, with the error &quot;Date of birth must be in the past&quot;." width="1136" height="376">
+
+Say which rule failed, in the words of the label.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-field/date-field-dont-3.webp" darkSrc="/images/docs/date-field/date-field-dont-3-dark.webp" alt="A date field labelled Service date in the error state showing 14/03/2027, with the error &quot;Enter a valid service date.&quot;" width="1136" height="376">
+
+Don't write valid or end the error with a full stop. Say what is wrong and how to fix it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Name what the date or time is for, as a short noun phrase in sentence case. Don't add a format, a colon or an abbreviation.
+
+| Do            | Don't                                             |
+| :------------ | :------------------------------------------------ |
+| Date of birth | DOB (abbreviation)                                |
+| Date of issue | Enter Date: (instruction, title case and a colon) |
+| Arrival time  | Date (dd/mm/yyyy) (bare label with a format)      |
+
+### Helper text
+
+Add helper text only when the label needs context, in one short sentence: where to find the date or which dates are allowed. Don't write the format, because the segments already show it. Helper text wraps below the field; never truncate it.
+
+| Do                          | Don't                                                                                       |
+| :-------------------------- | :------------------------------------------------------------------------------------------ |
+| As printed on your passport | For example, 27 3 1990 (a format example belongs to three separate Inputs, not to segments) |
+
+### Error messages
+
+Say which rule failed, in the words of the label:
+
+- Empty: Enter &#123;date name&#125;.
+- Incomplete: &#123;date name&#125; must include a &#123;day, month or year&#125;.
+- Year the wrong length: Year must include 4 numbers.
+- Impossible date: &#123;date name&#125; must be a real date.
+- Wrong side of today: &#123;date name&#125; must be in the past, must be today or in the past, or must be in the future.
+- Outside a range: &#123;date name&#125; must be after, before or between &#123;date&#125;, with the date written as 21 October 2026.
+- Time: Enter &#123;time name&#125; in 24-hour format, like 14:30.
+
+Show missing and incomplete errors first, then impossible dates, then the rest. Don't use valid, invalid or other generic words, and leave the full stop off a one-sentence error.
+
+| Do                                | Don't                                                                |
+| :-------------------------------- | :------------------------------------------------------------------- |
+| Enter your date of birth          | Enter a valid service date. (valid, and a full stop on one sentence) |
+| Date of birth must include a year |                                                                      |
+| Date of birth must be a real date |                                                                      |
+| Date of birth must be in the past |                                                                      |
+
+### Optional or required
+
+Mark whichever is rarer in the form: Optional with isOptional when most fields are required, or the asterisk with isRequired when most are optional. Never mark one field both ways.
+
+### Service messages
+
+Supply error messages from the service in English and Dhivehi instead of the browser's built-in validation messages.
+
+### Dhivehi copy
+
+Write Dhivehi the way a Dhivehi speaker would say it, rather than translating word for word, and keep it as short as the English, because Dhivehi lines are taller.
+
+## Related components
+
+| Component                                    | When to use it                                                                                                        |
+| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| [Date picker](/docs/components/date-picker/) | when a calendar helps the choice, such as booking an appointment in the next few weeks, or to mark unavailable dates. |
+| [Calendar](/docs/components/calendar/)       | show a month on the page when people browse open dates.                                                               |
+| [Input](/docs/components/input/)             | three Inputs labelled Day, Month and Year when browser autofill matters or in Dhivehi forms.                          |
+| [Field](/docs/components/field/)             | group three date Inputs with FieldSet and FieldLegend so the question names them together.                            |
+| [VeliProvider](/docs/components/provider/)   | wrap the app in VeliProvider so the date field gets its direction and Veli strings.                                   |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the date field: appearances, sizes, states, content options, spacing and the tokens behind them.
+
+## Appearances
+
+Date field has two appearances with the same sizes, states and spacing. In code, appearance defaults to default.
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-appearances-1.webp"
+  darkSrc="/images/docs/date-field/date-field-appearances-1-dark.webp"
+  alt="Two date fields labelled Date of birth showing 14/03/1994. The default appearance is a filled field with a bottom line. The outline appearance has a full border."
+  width="2400"
+  height="616"
+  caption="Appearance default and appearance outline."
+/>
+
+- **default**: a filled field with a bottom line. Use it in most forms.
+- **outline**: a full border around the field.
+
+Use the same appearance as the other fields in the form.
+
+## Sizes
+
+Size sets the field height, the padding and the text styles. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-sizes-1.webp"
+  darkSrc="/images/docs/date-field/date-field-sizes-1-dark.webp"
+  alt="Three date fields labelled Date of birth showing 14/03/1994 at sizes sm, md and lg, 36, 44 and 52 high."
+  width="2400"
+  height="648"
+  caption="Sizes sm, md and lg."
+/>
+
+- Use **sm** (36 high) in dense layouts such as filters and table toolbars.
+- Use **md** (44 high) in most forms.
+- Use **lg** (52 high) on touch-first and kiosk forms.
+
+Match the size of the other fields in the form. On phones, segment text should be at least 16px so iOS Safari doesn't zoom when the field gets focus: lg gives 16.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-options-1.webp"
+  darkSrc="/images/docs/date-field/date-field-options-1-dark.webp"
+  alt='Three date fields. Date of birth showing 14/03/1994 with no helper text. Date of issue showing 05/02/2021 with the helper text "As printed on your passport". Arrival time showing 21/10/2026, 14:30.'
+  width="2400"
+  height="664"
+  caption="A date people know by heart, a date copied from a document, and a date and time."
+/>
+
+- **Date people know by heart**: such as Date of birth. Prefill it from the National Registry when you can. No info icon and no helper text.
+- **Date copied from a document**: such as Date of issue. The description says where to find it: As printed on your passport.
+- **Date and time**: such as Arrival time, typed freely in 24-hour form. Set granularity to minute and hourCycle to 24.
+
+Set granularity only when time segments are needed; it defaults to day. Use placeholderValue to set the segment shape and the calendar or time zone context. Set minValue and maxValue only for real limits, such as a date of birth that must be in the past, and say the limit in the error message. Put where to find the date in the description, not in the info tooltip.
+
+## States
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-states-1.webp"
+  darkSrc="/images/docs/date-field/date-field-states-1-dark.webp"
+  alt='Three date fields labelled Date of issue with the helper text "As printed on your passport", all empty with dd/mm/yyyy placeholders: default, hover with a darker fill, and active with the day segment filled in the primary colour.'
+  width="2400"
+  height="664"
+/>
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-states-2.webp"
+  darkSrc="/images/docs/date-field/date-field-states-2-dark.webp"
+  alt='Three date fields labelled Date of issue: focus with the focus ring and 05/02/2021, filled with 05/02/2021, and error with 05/02/2027 in red and the error "Date of issue must be in the past".'
+  width="2400"
+  height="664"
+/>
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-states-3.webp"
+  darkSrc="/images/docs/date-field/date-field-states-3-dark.webp"
+  alt="Two date fields labelled Date of issue showing 05/02/2021: read only with a flat fill and no bottom line, and disabled with muted text."
+  width="2400"
+  height="664"
+  caption="Date field states on the default appearance at size md."
+/>
+
+| State     | When                                      | Visual change                                                                                 |
+| :-------- | :---------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| Default   | Empty, no interaction                     | Segments show dd, mm and yyyy in `text/base/inactive`                                         |
+| Hover     | Pointer over the field                    | Fill `text-input/bg-hover`                                                                    |
+| Active    | A segment is selected with a click or tap | Fill `text-input/bg-pressed`, 2px line, selected segment filled with `button/primary/default` |
+| Focus     | Keyboard focus on a segment               | Focus ring around the field; selected segment as active                                       |
+| Filled    | A value is set                            | Segments show the date in digits in `text/base/DEFAULT`                                       |
+| Error     | isInvalid                                 | Red line or border, red value, error icon, errorMessage replaces the description              |
+| Read only | isReadOnly                                | Hover fill, no line or border, value in `text/base/strong`                                    |
+| Disabled  | isDisabled                                | Hover fill, no line or border, label and value in `text/disabled`                             |
+
+Use read only, not disabled, for prefilled dates people can't change here. Date field has no skeleton or loading state; compose Skeleton to match the field while a form loads.
+
+## Behaviour
+
+- **Typing**: each segment takes digits and moves to the next one when full. Up and Down change the focused segment, and Backspace clears it.
+- **Checking**: inside a Veli Form, errors show while people type, because the Form uses validationBehavior aria. Set validationBehavior="native" on the Form to check dates when people submit. An error that appears while people are still typing interrupts them.
+- **Keeps answers**: the field keeps the value people typed when it shows an error, so they can correct it rather than start again.
+- **Limits**: minValue, maxValue, isRequired and validate set the rules. A value outside minValue and maxValue is invalid, and the error replaces the description, so the error must say which dates are allowed.
+- **Form value**: control it with value and onChange, or leave it uncontrolled with defaultValue. With name it submits as an ISO string. Convert with isoDateToDateValue and dateValueToIsoDate from @tradenetcorp/veli-ui/form, so the service stores dates such as 1994-03-14.
+- **Time zones**: time zone entry depends on the date value you supply and on hideTimeZone.
+- **Width**: the field fills its container. Set the width on the form column, not on the field.
+- **No calendar**: the field never shows a calendar or which dates are available.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-rtl-1.webp"
+  darkSrc="/images/docs/date-field/date-field-rtl-1-dark.webp"
+  alt='Two date fields. On the left, dateField in English: Service date with an info icon and Optional, the value 18/04/2026 and the helper text "Choose a weekday". On the right, dateFieldDv mirrored right to left, with the label, info icon and Optional on the right, the segments reading 2026/18/4 and Dhivehi helper text below.'
+  width="2400"
+  height="536"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In code, wrap the app in VeliProvider with language set to dv. It gives the field its direction and Veli strings.
+- Under dv the segments read mm, dd, yyyy from the right, with English placeholders. Date picker differs: it forces its segments left to right with lang=en, so they read dd / mm / yyyy from the left. Date fields should read day, month, year in both languages, so use three Inputs for typed dates in Dhivehi forms until this is fixed. The segment names stay in English in both components.
+- The label, Optional (އިޚްތިޔާރީ), description and error read from the right in the Dhivehi text styles. The field keeps its English height, but the label row grows with the taller lines: in Storybook it is 36 high at sm and md and 40 at lg, against 28, 28 and 32 in English (the label line is 28 or 32, plus 8 below). See Missing or unverified.
+- Digits stay Latin. Left and Right arrows are mirrored, so Left always moves to the segment on the left.
+- Segment names, Empty and the placeholders stay in English. The info button name switches to Dhivehi on its own (More information, އިތުރު މަޢުލޫމާތު); override it with infoTooltipAriaLabel.
+- In Figma, design Dhivehi screens with dateFieldDv.
+
+Example configuration: a Dhivehi date field is not recommended for typed dates, so show the English field and, beside it, the three Inputs pattern. No Dhivehi label copy for a date field exists yet; see Missing or unverified.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-spacing-1.svg"
+  darkSrc="/images/docs/date-field/date-field-spacing-1-dark.svg"
+  alt="Spacing redlines for the outline appearance with a value at sizes sm, md and lg: field heights 36, 44 and 52, side padding 12, 16 and 16, top and bottom padding 8, 12 and 14, 8 between the label row parts and 6 between the label row, field and helper text."
+  width="1200"
+  height="1092"
+  caption="All values in pixels at 1x. Pink marks padding, orange marks the gap between parts."
+/>
+
+| Property                       | sm  | md  | lg  |
+| :----------------------------- | :-- | :-- | :-- |
+| Field height                   | 36  | 44  | 52  |
+| Vertical padding               | 8   | 12  | 14  |
+| Side padding                   | 12  | 16  | 16  |
+| Label row to field             | 6   | 6   | 6   |
+| Field to helper text           | 6   | 6   | 6   |
+| Between label row parts        | 8   | 8   | 8   |
+| Segments to error icon         | 4   | 4   | 4   |
+| Selected segment height        | 28  | 28  | 32  |
+| Field corner radius            | 10  | 10  | 10  |
+| Selected segment corner radius | 6   | 6   | 6   |
+
+Each segment has 4 top and bottom and 1 at the sides. Segments sit next to each other with no gap, and the slash separator has no padding.
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-radius-1.svg"
+  darkSrc="/images/docs/date-field/date-field-radius-1-dark.svg"
+  alt="Three date fields at sizes sm, md and lg, each marked with a 10 corner radius."
+  width="1200"
+  height="268"
+  caption="The field uses radius 10 (radius/field) at every size. A selected segment uses 6 (radius/DEFAULT)."
+/>
+
+## Typography
+
+| Element                | English                                               | Dhivehi                                             | Colour token                                                                              |
+| :--------------------- | :---------------------------------------------------- | :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| Label, sm and md       | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28           | `text/base/DEFAULT`                                                                       |
+| Label, lg              | Body md regular, Inter Regular 16/24                  | Dhivehi body md regular, MV Faseyha 17/32           | `text/base/DEFAULT`                                                                       |
+| Optional, sm and md    | Caption regular, Inter Regular 12/16                  | Dhivehi caption regular, MV Faseyha 14/24           | `text/base/subtle`                                                                        |
+| Optional, lg           | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28           | `text/base/subtle`                                                                        |
+| Required asterisk      | Caption regular, Inter Regular 12/16                  | Same style, not translated                          | `text/danger/muted`                                                                       |
+| Segments, sm and md    | Body sm regular, Inter Regular 14/20, tabular figures | Latin digits in MV Faseyha 16/28, same field height | Value `text/base/DEFAULT`, placeholder `text/base/inactive`, separator `text/base/subtle` |
+| Segments, lg           | Body md regular, Inter Regular 16/24, tabular figures | Latin digits in MV Faseyha 17/32, same field height | As above                                                                                  |
+| Helper text, sm and md | Caption regular, Inter Regular 12/16                  | Dhivehi caption regular, MV Faseyha 14/24           | `text/base/muted`                                                                         |
+| Helper text, lg        | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28           | `text/base/muted`                                                                         |
+| Error text             | Same styles as helper text                            | Same styles as helper text                          | `text/danger/muted`                                                                       |
+
+Dhivehi line heights are taller. The label and helper rows grow with them; the field keeps 36, 44 and 52.
+
+## Tokens
+
+Fill and border names are written `text-input/...` and leave out the `components/` prefix.
+
+| State     | Field fill                                                                  | Border                                                                                                    | Text and icon                                                                                                        |
+| :-------- | :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Default   | `text-input/bg-default`                                                     | `text-input/stroke-default`: 1.5px bottom line on default, 1px border on outline                          | Placeholder `text/base/inactive`, separator `text/base/subtle`, label `text/base/DEFAULT`                            |
+| Hover     | `text-input/bg-hover`                                                       | `text-input/stroke-hover`: 1.5px bottom line, 1.5px border on outline                                     | As default                                                                                                           |
+| Active    | `text-input/bg-pressed`                                                     | `text-input/stroke-pressed`, 2px                                                                          | Selected segment `button/primary/default` with `text/primary/inverted`                                               |
+| Focus     | Default appearance `text-input/bg-pressed`, outline `text-input/bg-default` | Default keeps the 2px `text-input/stroke-pressed` line; outline drops its border and shows the focus ring | Value `text/base/DEFAULT`, selected segment as active                                                                |
+| Filled    | `text-input/bg-default`                                                     | `text-input/stroke-default`                                                                               | Value `text/base/DEFAULT`, separator `text/base/subtle`                                                              |
+| Error     | `text-input/bg-default`                                                     | `text-input/stroke-error`: 1.5px bottom line or 1px border                                                | Value, separator and error text `text/danger/muted`, error icon `icon/danger/muted`                                  |
+| Read only | `text-input/bg-hover`                                                       | None                                                                                                      | Value `text/base/strong`, separator `text/base/subtle`                                                               |
+| Disabled  | `text-input/bg-hover`                                                       | None                                                                                                      | Label, Optional, value and separator `text/disabled`, info icon `icon/disabled`; helper text stays `text/base/muted` |
+
+The focus ring is `border/focus`. Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| What moves                | Duration       | Easing   |
+| :------------------------ | :------------- | :------- |
+| Field fill and focus ring | Normal (200ms) | Ease out |
+| Selected segment colour   | Normal (200ms) | Ease out |
+
+With reduced motion turned on, these transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -117,3 +527,68 @@ Not forwarded from React Aria `DateField`:
 ## RTL and Language
 
 Date segment order and formatting follow the locale from `VeliProvider`. Set `language` on the provider rather than passing a separate locale prop. See [VeliProvider](/docs/components/provider/). In RTL, the label row follows `dir`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the date field works with keyboards, screen readers and assistive technology, and what you still need to do. It is built on the React Aria date field.
+
+## Keyboard
+
+| Key                   | Action                                                                                      |
+| :-------------------- | :------------------------------------------------------------------------------------------ |
+| Tab                   | Moves to the next segment, then out of the field                                            |
+| Shift + Tab           | Moves to the previous segment                                                               |
+| Left and Right arrows | Move between segments, mirrored in Dhivehi so Left always moves to the segment on the left  |
+| Up and Down arrows    | Increase or decrease the focused segment. On an empty segment, Up starts from today's value |
+| Page Up and Page Down | Change the focused segment by a larger step                                                 |
+| Home and End          | Set the focused segment to its lowest or highest value                                      |
+| Digits                | Type a value. Focus moves to the next segment when the segment is full                      |
+| Backspace or Delete   | Clear the focused segment                                                                   |
+
+## Screen readers
+
+- The visible label names the field group. Every date field needs one; never hide it.
+- Each segment is a spinbutton named day, month or year with the label, and is read as Empty when blank. On iOS VoiceOver it falls back to a text box, because VoiceOver can't focus spinbuttons there.
+- When a date is set, the field adds a hidden description such as "Selected Date: 18 April 2026".
+- The description, or the error while invalid, is linked to the field and read on focus.
+- isRequired and isInvalid reach screen readers on every segment. Optional and the asterisk sit outside the label, so neither is part of the accessible name.
+- The slash separators and the error icon are hidden from assistive technology.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/date-field/date-field-focus-1.webp"
+  darkSrc="/images/docs/date-field/date-field-focus-1-dark.webp"
+  alt="Three focused date fields labelled Service date, marked Optional, with the value 18/04/2026 and the helper text Choose a weekday: default size sm, outline size md and default size lg. The day segment 18 is filled and the field has a ring around it."
+  width="2400"
+  height="536"
+  caption="The focus ring around the whole field, with the focused segment filled."
+/>
+
+- Keyboard focus shows a 2px gap in `bg/surface/raised`, then a 2px ring in `border/focus`, around the whole field. The focused segment fills with the primary colour.
+- The ring shows for keyboard focus only. A click selects a segment without the ring.
+- The ring sits outside the field, so focus doesn't change its size or move the label or helper text.
+
+## Disabled and read only
+
+A disabled field can't be edited or focused, and is skipped by Tab. A read-only field stays in the tab order and keeps its value readable but can't be changed. Use read only for prefilled dates.
+
+## Errors
+
+An error shows errorMessage in text below the field as well as the red line and icon, so colour is not the only signal. The error replaces the description, so write the rule into the error.
+
+## Target size
+
+The field is at least 36 high. The info icon button is 16 x 16, below the 24 x 24 minimum target size; see Missing or unverified.
+
+## Contrast
+
+Placeholder text uses `text/base/inactive`, which falls below 4.5:1. Never rely on the placeholder: the label and helper text carry the meaning. Helper text in `text/base/muted` measures 4.96:1 in light and 5.23:1 in dark in Storybook, which meets 4.5:1. Optional, in `text/base/subtle`, stays below 4.5:1.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, and mirrors the label row, field and helper text. Segment names, Empty, Selected Date and the placeholders stay in English, because React Aria and the browser have no Dhivehi date data and no prop can change them. Pass Dhivehi labels, descriptions and errors yourself.
+
+</DocsTab>

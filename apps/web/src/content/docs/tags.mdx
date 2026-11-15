@@ -1,6 +1,6 @@
 ---
 title: Tags
-description: Compact labels, selectable filters, and removable collections.
+description: 'A group of short labels that people select as filters, remove, or follow as links.'
 ---
 
 import { TagsRtlDemo, TagsUsageDemo, TagsVariantsDemo } from '../../components/TagsExamples';
@@ -10,9 +10,512 @@ import {
   TagsStandaloneDemo,
 } from '../../components/TagExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Tags
 
-Use Tags for categories, filters, saved topics, and linked metadata. Compose `TagGroup` and `Tag` for a keyboard-navigable collection, or use `TagButton` and `TagDropdown` independently.
+<DocsTab id="overview">
+
+Tags show a group of short labels that people select as filters, remove, or follow as links, such as the departments a search covers or the filters applied to a list. Use Tags for a few short choices and for active filters. Use Badge for a status, and Checkbox or Select when the options are long or many.
+
+In code, compose a TagGroup with Tag children for a collection with arrow-key navigation, selection or removal. Use TagButton for a standalone action or filter, and TagDropdown for a selected filter that has sub-labels.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/tags.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-tags--docs"
+/>
+
+## When to use
+
+### Use tags when
+
+- You need a compact set of categories or metadata, such as the departments a search covers.
+- People select, remove or follow labelled items, such as filters, saved topics or related pages.
+- There are a few short choices. Set selectionMode to single or multiple when the tags act as filters or choices.
+- You show the filters applied to a list. Put them above the results as removable tags in a group labelled Active filters, and add a Clear filters button when more than one is set.
+
+### Don't use tags when
+
+- A label only shows a status and there is nothing to do with it. Use Badge.
+- The choices need long labels or explanations, or there are many to read and compare. Use a Checkbox group, or Select for one choice from many.
+- It is a required question in a form with one answer. Use Radio, not single-selection tags.
+- It is the main navigation of a site or service. Keep that in the header, and use Link for navigation lists.
+
+<DocsFigure
+  src="/images/docs/tags/tags-intro-1.webp"
+  darkSrc="/images/docs/tags/tags-intro-1-dark.webp"
+  alt='A card titled News and announcements with the line "Filter announcements by the department that published them." A group labelled Departments holds Tourism, selected in charcoal with a check, a divider, the count 2 and a separate caret part, then Fisheries, Transport and Education, with the description "Choose one or more departments" below. A group labelled Active filters holds the removable tags Resorts and Guesthouses, each with a cross, and a Clear filters button. The result count reads 24 announcements.'
+  width="2400"
+  height="1204"
+  caption="Department filters and active filters above a list of announcements."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/tags/tags-anatomy-1.svg"
+  darkSrc="/images/docs/tags/tags-anatomy-1-dark.svg"
+  alt="Two selected charcoal tags with eight numbered markers. The first, labelled Tourism, has 1 on the pill container, 2 on the check, 3 on a leading person icon, 4 on the label and 5 on the cross remove button. The second, a tag with a dropdown labelled Tourism, has 6 on the label part, 7 on the divider and the count 2, and 8 on the separate caret part."
+  width="576"
+  height="660"
+  caption="The parts of a tag, then the parts a tag with a dropdown adds. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   the pill, 28 to 44 high by size, with a full radius. Fill has a background; outline has a 1px border and no background at rest. In code it is Tag inside TagGroup, or TagButton on its own.
+
+2. **Check**
+
+   shows before the label on a selected tag, so selection never relies on colour alone. The same size as the icons, 10 to 16. Drawn when the tag is selected.
+
+3. **Leading content**
+
+   an icon, an avatar glyph or a count badge before the label. It is hidden from assistive technology, so the label text must carry its meaning. In code it is leading.
+
+4. **Label**
+
+   one to three words in a medium weight. The label is essential text and must never be cut off, so keep it short. Code truncates it with an ellipsis when the tag reaches its width. In code it is the Tag children, or textValue for complex content.
+
+5. **Remove button**
+
+   a round button with a cross, 14 to 24 by size, named Remove and the tag text, such as Remove Tourism. Shown when TagGroup has onRemove; rename it with removeButtonLabel.
+
+6. **Label part**
+
+   tag with a dropdown only. The selected tag itself. Its outer corners are half the height and its inner corners are 4 (`radius/sm`).
+
+7. **Value**
+
+   a 1px divider and the sub-labels picked. One shows its name; two or more show the count. Regular weight; it truncates.
+
+8. **Caret part**
+
+   opens the menu of this tag's sub-labels. 24 to 40 wide by size, with its own hover, pressed, focus and open states.
+
+</DocsAnatomy>
+
+A TagGroup adds a group label above the tags, such as Departments, and a description or error below them. In code they are label, description and errorMessage on TagGroup.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tags/tags-do-1.webp" darkSrc="/images/docs/tags/tags-do-1-dark.webp" alt="Two link tags in link colour, Passport services and Licensing portal, with no remove buttons." width="1136" height="336">
+
+Make a tag either a link or removable. A link tag names the page it opens.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tags/tags-dont-1.webp" darkSrc="/images/docs/tags/tags-dont-1-dark.webp" alt="The same link tags, Passport services and Licensing portal, each with a cross remove button after the label." width="1136" height="336">
+
+Don't make a link tag removable. People can't tell whether pressing it opens a page or removes the tag.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tags/tags-do-2.webp" darkSrc="/images/docs/tags/tags-do-2-dark.webp" alt="Three filter tags with status words as labels: In review, Approved and Rejected." width="1136" height="336">
+
+Filter by status with the status word as the label, the same word the Badges in the list show.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tags/tags-dont-2.webp" darkSrc="/images/docs/tags/tags-dont-2-dark.webp" alt="A tag labelled Applications with a blue In review status badge in its leading slot." width="1136" height="336">
+
+Don't put a status Badge inside a tag. Show the status as a Badge on the item itself.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tags/tags-do-3.webp" darkSrc="/images/docs/tags/tags-do-3-dark.webp" alt="Three tags with short labels: Tourism, Malé and In review." width="1136" height="336">
+
+Write labels of one to three words: a noun or the value itself, unique in the group.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tags/tags-dont-3.webp" darkSrc="/images/docs/tags/tags-dont-3-dark.webp" alt="Two tags with poor labels: Show tourism results, an action, and TOURISM, in capitals." width="1136" height="336">
+
+Don't write actions or capitals. The label names the value, in sentence case, with no end punctuation.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Group label
+
+Name what the tags are, as a short noun phrase in sentence case.
+
+| Do                | Don't                                                                              |
+| :---------------- | :--------------------------------------------------------------------------------- |
+| Departments       | Select departments: (an instruction with a colon; the description says what to do) |
+| Preferred channel | Tags (names the component, not the content)                                        |
+| Active filters    |                                                                                    |
+
+### Description
+
+Write one sentence, in active words, that says how many tags people can choose. Leave off the full stop.
+
+| Do                             | Don't                                                                                            |
+| :----------------------------- | :----------------------------------------------------------------------------------------------- |
+| Choose one or more departments | Please click the departments you want to see. (Please, Click and a full stop)                    |
+| Choose one channel             | Only one channel can be selected at a time. (passive, uses Select for choosing, and a full stop) |
+
+### Errors
+
+Say what to do, starting with Choose. Check a required group when people submit, and show the error in errorMessage.
+
+| Do                             | Don't                                                                                            |
+| :----------------------------- | :----------------------------------------------------------------------------------------------- |
+| Choose at least one department | Select at least one department. (Select is for naming a button in running text, and a full stop) |
+| Choose at least one department | Invalid selection (doesn't say how to fix it)                                                    |
+
+### Tag labels
+
+Write each label as 1 to 3 words, a noun or the value itself, unique in its group. Keep labels short, parallel and in a logical order.
+
+| Do        | Don't                                                       |
+| :-------- | :---------------------------------------------------------- |
+| Tourism   | Show tourism results (an action; the label names the value) |
+| Malé      | TOURISM (all caps)                                          |
+| In review | Tourism. (end punctuation)                                  |
+
+### Status filters
+
+Label status filter tags with the shared status words, the same words the Badges in the list show, such as In review or Approved. Use one term for each status everywhere.
+
+### Remove names
+
+Keep the built-in remove button name, Remove and the tag text. Pass removeButtonLabel only when the tag text isn't enough, such as a tag with an icon or a count, or to add the object. Write Remove, not Delete, because the item still exists.
+
+| Do                    | Don't                              |
+| :-------------------- | :--------------------------------- |
+| Remove Tourism        | Remove (identical on every tag)    |
+| Remove Tourism filter | X (names the icon, not the action) |
+
+### Empty state
+
+When a group can be empty, pass renderEmptyState with text that says what is empty and what to do, or hide the group, as you do for active filters when none are set. Never leave the built-in No tags available. When filters hide every result, say so and offer Clear filters.
+
+| Do                                            | Don't                                                                                   |
+| :-------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| No saved topics. Topics you save appear here. | No tags available. (generic; talks about tags, not the content, and gives no next step) |
+
+### Link tags
+
+Name the page a link tag opens, so the label makes sense on its own, in a screen reader, a search result or a translated page.
+
+### Dhivehi copy
+
+Write Dhivehi labels natively rather than transliterating, and keep them as short as the English. The built-in empty state and remove names come in Dhivehi from VeliProvider; your labels and custom remove names are yours to translate.
+
+## Related components
+
+| Component                       | When to use it                                                                      |
+| :------------------------------ | :---------------------------------------------------------------------------------- |
+| [Badge](/docs/badge/)           | show a status or a count on an item. Tags are for choosing, removing and following. |
+| [Avatar](/docs/avatar/)         | an avatar glyph can sit in the leading slot of a tag for a person.                  |
+| [Checkbox](/docs/checkbox/)     | use a Checkbox group for longer or several filter lists.                            |
+| [Select](/docs/select/)         | one choice from many options.                                                       |
+| [Radio](/docs/radio/)           | a required single answer in a form.                                                 |
+| [Link](/docs/link/)             | use links in a nav for navigation lists.                                            |
+| [Button](/docs/button/)         | makes the Clear filters action next to the active filters.                          |
+| [Search](/docs/search/)         | the field that filter tags sit under.                                               |
+| [Modal](/docs/modal/)           | holds a long set of filter tags on small screens, opened from a Filters button.     |
+| [Menu](/docs/menu/)             | the sub-label menu a TagDropdown opens.                                             |
+| [VeliProvider](/docs/provider/) | VeliProvider language gives the Dhivehi empty state and remove names.               |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for tags: appearances, sizes, content options, states, spacing and the tokens behind them. Values match the shipped component.
+
+## Appearances
+
+Tags come in two appearances. In code, appearance defaults to fill. Set it once on TagGroup, or on one Tag to override it.
+
+<DocsFigure
+  src="/images/docs/tags/tags-appearances-1.webp"
+  darkSrc="/images/docs/tags/tags-appearances-1-dark.webp"
+  alt="Two cards. Appearance fill: Tourism, selected in charcoal with a check, then Fisheries and Transport on a light neutral fill. Appearance outline: the same tags with a 1px border and no fill; the selected Tourism has a charcoal outline, a light fill and a check."
+  width="2400"
+  height="616"
+  caption="Fill, the default, and outline."
+/>
+
+- **Fill**: a light neutral fill. A selected tag turns charcoal with inverted text and a check.
+- **Outline**: a 1px border and no fill at rest. A selected tag gets a charcoal border, a light fill and a check. It is quieter; use it for long lists of tags or filters inside cards.
+
+Use one appearance within a group.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/tags/tags-sizes-1.webp"
+  darkSrc="/images/docs/tags/tags-sizes-1-dark.webp"
+  alt="Six cards, each with the tags Tourism and Fisheries: size xs, 28 high; sm, the default, 32 high; md, 36 high; lg, 40 high; xl, 44 high; and md with isRemovable, where each tag has a cross remove button."
+  width="2400"
+  height="1344"
+  caption="The five sizes. sm is the default."
+/>
+
+| Size         | Height | Text           | Use it for                                                                                    |
+| :----------- | :----- | :------------- | :-------------------------------------------------------------------------------------------- |
+| xs           | 28     | Caption medium | Dense places such as tables. Leave space around the 14 remove button so its target reaches 24 |
+| sm (default) | 32     | Caption medium | Filters and choices on most pages                                                             |
+| md           | 36     | Body sm medium | The smallest size for removable tags on touch-first pages                                     |
+| lg           | 40     | Body sm medium | Larger filter rows                                                                            |
+| xl           | 44     | Body md medium | Prominent filter rows, such as the top of a news listing                                      |
+
+Set size once on TagGroup to size every tag. Tags of mixed sizes in one group look like different kinds of thing. Use md or larger for removable tags on touch-first pages, so the remove button is easier to hit.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/tags/tags-options-1.webp"
+  darkSrc="/images/docs/tags/tags-options-1-dark.webp"
+  alt="Three cards. isRemovable true: Documents and Payments, each with a cross remove button. leading icon: Aisha Hassan and a selected Mariyam Ali, each with a person icon. leading count Badge: Inbox with the count 12 and a selected Requests with the count 4."
+  width="2400"
+  height="712"
+/>
+
+<DocsFigure
+  src="/images/docs/tags/tags-options-2.webp"
+  darkSrc="/images/docs/tags/tags-options-2-dark.webp"
+  alt='Three cards. isLink true: Passport services and Licensing portal in link colour. TagGroup with label, description and error: Required departments, the tags Tourism, Fisheries and Transport, and the error "Choose at least one department" in red. TagGroup active filters: Active filters, with Resorts and Guesthouses, each with a cross, and Clear filters.'
+  width="2400"
+  height="712"
+  caption="Removable, leading icon, leading count and link tags, a field-like group and active filters."
+/>
+
+- **Leading content**: an icon or an avatar glyph before the label, such as for a person. It scales with the tag size and is hidden from assistive technology. In code it is leading.
+- **Leading count**: a counter Badge for unread or pending items. Because leading content is hidden, also put the count in the tag text, such as visually hidden text after the label, or in textValue.
+- **Removable**: a remove button after the label. In code, onRemove on TagGroup. Removal requests don't update your data: remove the keys from items in onRemove.
+- **Link**: a link tag goes to another page and can't be selected or removed. Name the destination page. In code, href on Tag inside a group, or TagButton as="a" when you need native anchor behaviour, such as copying the link address.
+- **Field-like group**: a label, a description and an error. The error replaces the description. In code, label, description and errorMessage on TagGroup. TagGroup doesn't validate the selection itself; derive the error from your own state.
+- **Active filters**: show the filters applied to a list above the results as removable tags in a group labelled Active filters. Add Clear filters when more than one is set.
+
+Leading content works with selection, removal and links. Don't put a status Badge in the leading slot.
+
+## Dropdown filter
+
+Use TagDropdown when a selected filter has optional sub-labels.
+
+<DocsFigure
+  src="/images/docs/tags/tags-dropdown-1.webp"
+  darkSrc="/images/docs/tags/tags-dropdown-1-dark.webp"
+  alt="Six cards. tag not selected: a plain Tourism tag with no caret. showValue off: Tourism selected with a check and a separate caret part, and no value. Open: the caret turned up. One sub-label: Tourism, a divider and Resorts, then the caret. Two or more: Tourism, a divider and the count 2. True, no sub-labels: a selected Statistics tag with no caret."
+  width="2400"
+  height="1392"
+  caption="A tag with a dropdown, from not selected to two sub-labels picked."
+/>
+
+- Before it is selected, a tag with sub-labels is a plain tag with no caret. A selected tag without sub-labels also stays a plain tag.
+- It exists only on a selected tag that has sub-labels. The caret part, or Arrow Down on the tag, opens a menu of those sub-labels with multiple selection; the menu stays open while people choose.
+- After the label, the value shows the sub-label name when one is picked and the count when two or more are. It shows nothing for an empty selection. In code, renderSelection controls this summary.
+- Pressing the label deselects the filter and clears its sub-labels. Clearing the sub-labels in the menu leaves the parent selected.
+- Dropdown tags have no remove button. Place TagDropdown next to standalone tags, not inside a TagGroup.
+
+## States
+
+<DocsFigure
+  src="/images/docs/tags/tags-states-1.webp"
+  darkSrc="/images/docs/tags/tags-states-1-dark.webp"
+  alt="Six cards, each with a fill tag. Default: Tourism at rest. Hover: Tourism with a slightly darker fill. Pressed: Tourism with a darker fill again. Focus: Tourism with a 2px focus ring 2 away from the tag. Selected: Tourism in charcoal with a check. Disabled: Parking and a selected Laundry, both faded."
+  width="2400"
+  height="1392"
+  caption="Tag states in fill. Outline has the same states."
+/>
+
+| State    | When                                                | Visual change                                                                                                              |
+| :------- | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| Default  | No interaction                                      | Fill: `fill/bg/default`. Outline: `outline/border/default`, no fill                                                        |
+| Hover    | Pointer over the tag                                | The fill darkens one step (`fill/bg/hover`). Outline: the border darkens too, with a light fill                            |
+| Pressed  | While the tag is pressed                            | The fill darkens again, and the tag grows slightly (scale 1.045) with a ripple, as Button does                             |
+| Focus    | Keyboard focus                                      | A 2px ring in `border/focus`, 2 away from the tag                                                                          |
+| Selected | Selected in a group with selectionMode              | Charcoal fill (fill) or charcoal border with a light fill (outline), inverted or strong text, and a check before the label |
+| Disabled | isDisabled on the tag or the group, or disabledKeys | Disabled fill or border and muted text. The tag can't be focused or pressed                                                |
+
+Selection never relies on colour alone: selected tags show a check and still read in forced colours. Avoid disabled tags. Say near the group why a tag is unavailable, or leave it out.
+
+## Behaviour
+
+- **Select**: with selectionMode single or multiple, pressing a tag selects or clears it. Use it when the tags act as filters or choices.
+- **Filter without moving focus**: when people select or remove a filter tag, update the results and the count, keep focus in the group, and announce the new count once. Keep the filters in the URL.
+- **Remove at once**: remove a filter tag without a confirmation, because selecting it again undoes it. Confirm only when removing a tag deletes saved data. For other reversible removals, offer Undo in a Toast.
+- **Focus after removal**: when people remove the focused tag, focus moves to the next tag, or the previous one, or the group when it is empty.
+- **Validate on submit**: check a required group when people submit the form, show the error in errorMessage, and check it again as people change the selection.
+- **Wrapping and truncation**: tags wrap within the available width. Tag labels are essential text and must never be cut off: keep them short, or let the group wrap. Code truncates tag text with an ellipsis at the inline end when a tag reaches its width.
+- **Small screens**: put a long set of filter tags behind a Filters button that opens a Modal, and keep the active filters as removable tags above the results.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/tags/tags-rtl-1.webp"
+  darkSrc="/images/docs/tags/tags-rtl-1-dark.webp"
+  alt="Two cards. LTR tag: a selected Tourism tag with the check on the left and a cross remove button on the right, then Fisheries. RTL tagDv: the same tags mirrored in Dhivehi, ފަތުރުވެރިކަން selected with the check on the right and the cross on the left, then މަސްވެރިކަން."
+  width="2400"
+  height="568"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the layout mirrors. Tags run right to left; the check and leading content sit on the right of the label, and the remove button and the caret part on the left. The remove button is shared, because it holds no text. The ellipsis sits at the inline end, which is the left side.
+- Labels use the Dhivehi Medium styles and dropdown values the Dhivehi Regular styles. Every tag keeps its English height.
+- Arrow keys follow the screen: Left Arrow always moves to the tag on the left.
+- In code, wrap the app in VeliProvider with language set to dv. It sets the direction and gives the Dhivehi empty state and remove names.
+- In Figma, design Dhivehi screens with tagDv and tagDropdownDv.
+
+Built-in strings:
+
+| String                   | English                               | Dhivehi                                             |
+| :----------------------- | :------------------------------------ | :-------------------------------------------------- |
+| Empty state              | No tags available.                    | އެއްވެސް ޓެގެއް ލިބޭކަށް ނެތް.                      |
+| Remove name              | Remove &#123;tag&#125;                | &#123;tag&#125; އުނިކުރޭ                            |
+| Remove name without text | Remove tag                            | ޓެގް އުނިކުރޭ                                       |
+| Sub-label menu name      | Choose sub-labels for &#123;tag&#125; | &#123;tag&#125; ގެ އިތުރު ލޭބަލްތައް ޚިޔާރުކުރައްވާ |
+| Remove hint              | Press Delete to remove tag.           | Stays English                                       |
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <TagsRtlDemo client:visible />
+</div>
+
+Example configuration: TagGroup, selectionMode multiple, Tourism selected, onRemove set.
+
+| id          | English                        | Dhivehi                                                              |
+| :---------- | :----------------------------- | :------------------------------------------------------------------- |
+| label       | Departments                    | ޑިޕާޓްމަންޓްތައް                                                     |
+| description | Choose one or more departments | އެއް ޑިޕާޓްމަންޓް ނުވަތަ އެއަށްވުރެ ގިނަ ޑިޕާޓްމަންޓް ޚިޔާރުކުރައްވާ |
+| tourism     | Tourism                        | ފަތުރުވެރިކަން                                                       |
+| fisheries   | Fisheries                      | މަސްވެރިކަން                                                         |
+| transport   | Transport                      | ޓްރާންސްޕޯޓް                                                         |
+| education   | Education                      | ތަޢުލީމު                                                             |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/tags/tags-spacing-1.svg"
+  darkSrc="/images/docs/tags/tags-spacing-1-dark.svg"
+  alt="Spacing redlines at size sm. A selected tag labelled Tourism with a check, a leading icon and a remove button: 12 padding at the start, 4 gaps between the parts, 6 padding at the end, 32 high, and a 16 remove button. A tag with a dropdown labelled Tourism with the count 2: 12 padding, 4 gaps, a 1 divider, a 28 wide caret part and 32 high."
+  width="1200"
+  height="632"
+  caption="All values in pixels at 1x, shown at the default size sm. The table lists every size."
+/>
+
+| Property                          | xs   | sm   | md   | lg   | xl   |
+| :-------------------------------- | :--- | :--- | :--- | :--- | :--- |
+| Height                            | 28   | 32   | 36   | 40   | 44   |
+| Side padding                      | 10   | 12   | 14   | 16   | 20   |
+| End padding with a remove button  | 6    | 6    | 8    | 10   | 12   |
+| Gap between parts                 | 4    | 4    | 6    | 8    | 10   |
+| Check and leading icon            | 10   | 12   | 14   | 16   | 16   |
+| Remove button                     | 14   | 16   | 20   | 20   | 24   |
+| Cross icon                        | 8    | 10   | 12   | 12   | 14   |
+| Remove button hit area (minimum)  | 24   | 24   | 24   | 24   | 24   |
+| Gap between tags                  | 8    | 8    | 8    | 8    | 8    |
+| Group label, tags and description | 6    | 6    | 6    | 6    | 6    |
+| Corner radius                     | Full | Full | Full | Full | Full |
+
+Heights use `spacing/7` to `spacing/11`; side padding `spacing/2,5` to `spacing/5`; gaps `spacing/1` to `spacing/2,5`. Tags in a TagGroup sit 8 apart (`spacing/2`) and wrap to the next line. The group label, the tags and the description sit 6 apart (`spacing/1,5`).
+
+A tag with a dropdown adds a caret part 24, 28, 32, 36 and 40 wide by size. It sits 1 from the label part in fill and 2 (`spacing/0,5`) in outline. The divider before the value is 1 wide and 8, 8, 10, 12 and 12 high, and the value sits one gap after it. The label part has the same padding and gaps as a tag of the same size, and no remove button.
+
+## Corner radius
+
+Tags use `radius/full` at every size. The two parts of a tag with a dropdown have outer corners of half the height (14, 16, 18, 20 and 22 by size; 16 is `radius/2xl`) and inner corners of 4 (`radius/sm`), because a full radius on one corner squashes the small inner corners. The remove button is a circle.
+
+<DocsFigure
+  src="/images/docs/tags/tags-radius-1.svg"
+  darkSrc="/images/docs/tags/tags-radius-1-dark.svg"
+  alt="Three examples at size sm or md. A tag labelled Tourism marked full. A tag with a dropdown marked 16 on its outer corners and 4 on its inner corners. A remove button on hover marked full."
+  width="1200"
+  height="268"
+  caption="Tags are pills; a tag with a dropdown splits into two parts."
+/>
+
+## Typography
+
+Medium styles map to Dhivehi Medium (MV A Waheed) and Regular styles to Dhivehi Regular (MV Faseyha), at the same size step. Colour names leave out the `components/tag/` prefix.
+
+| Element                        | English                              | Dhivehi                                   | Colour token                                                                                                                                 |
+| :----------------------------- | :----------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| Label, xs and sm               | Caption medium, Inter Medium 12/16   | Dhivehi caption medium, MV A Waheed 15/24 | `fill/foreground`, `fill/selected/foreground`, `outline/foreground`, `outline/selected/foreground`, `link/foreground`, `disabled/foreground` |
+| Label, md and lg               | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28 | As xs and sm                                                                                                                                 |
+| Label, xl                      | Body md medium, Inter Medium 16/24   | Dhivehi body md medium, MV A Waheed 19/32 | As xs and sm                                                                                                                                 |
+| Dropdown value, xs and sm      | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `fill/selected/value`, `outline/selected/value`                                                                                              |
+| Dropdown value, md and lg      | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | As xs and sm                                                                                                                                 |
+| Dropdown value, xl             | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As xs and sm                                                                                                                                 |
+| TagGroup label                 | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`; disabled `text/disabled`                                                                                                |
+| TagGroup description and error | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | Description `text/base/subtle`; error `text/danger/muted`                                                                                    |
+
+Dhivehi lines are taller, but every tag keeps its English height: the label is centred in the fixed height, so a row of mixed tags stays level.
+
+## Tokens
+
+Every tag colour is a `components/tag/` variable that aliases a Veli token, so tags can change without touching Button. Names leave out the `components/tag/` prefix. Hover and pressed apply to the whole tag; on a tag with a dropdown they apply to the caret part. Override these tokens, not raw colours, when theming.
+
+| Token                          | Light                     | Dark                      | Used for                                                                     |
+| :----------------------------- | :------------------------ | :------------------------ | :--------------------------------------------------------------------------- |
+| `fill/bg/default`              | `brand/neutral/alpha/200` | `brand/neutral/alpha/400` | Fill tag background, not selected                                            |
+| `fill/bg/hover`                | `brand/neutral/alpha/300` | `brand/neutral/alpha/500` | Fill tag background on hover, not selected                                   |
+| `fill/bg/pressed`              | `brand/neutral/alpha/400` | `brand/neutral/alpha/600` | Fill tag background when pressed, not selected                               |
+| `fill/foreground`              | `text/base/strong`        | `text/base/emphasis`      | Label and icons on a fill tag, not selected                                  |
+| `fill/selected/bg/default`     | `brand/neutral/1100`      | `brand/neutral/1200`      | Selected fill tag background (charcoal in Light)                             |
+| `fill/selected/bg/hover`       | `brand/neutral/1200`      | `brand/neutral/1100`      | Selected fill tag background on hover                                        |
+| `fill/selected/bg/pressed`     | `brand/neutral/1000`      | Same                      | Selected fill tag background when pressed                                    |
+| `fill/selected/foreground`     | `text/base/inverted`      | Same                      | Label, check and icons on a selected fill tag                                |
+| `fill/selected/value`          | `brand/neutral/500`       | Same                      | Value text on a selected fill tag with a dropdown                            |
+| `fill/selected/divider`        | `brand/neutral/700`       | Same                      | Divider before the value on a selected fill tag with a dropdown              |
+| `fill/selected/remove/hover`   | `brand/neutral/1000`      | Same                      | Remove button background on hover, on a selected fill tag                    |
+| `fill/selected/remove/pressed` | `brand/neutral/900`       | Same                      | Remove button background when pressed, on a selected fill tag                |
+| `outline/bg/hover`             | `brand/neutral/alpha/200` | `brand/neutral/alpha/400` | Outline tag background on hover, not selected                                |
+| `outline/bg/pressed`           | `brand/neutral/alpha/300` | `brand/neutral/alpha/500` | Outline tag background when pressed, not selected                            |
+| `outline/border/default`       | `border/base/strong`      | Same                      | Outline tag border, not selected                                             |
+| `outline/border/hover`         | `border/base/emphasis`    | Same                      | Outline tag border on hover and when pressed, not selected                   |
+| `outline/foreground`           | `text/base/strong`        | `text/base/emphasis`      | Label and icons on an outline tag, not selected                              |
+| `outline/selected/bg/default`  | `brand/neutral/alpha/200` | `brand/neutral/alpha/400` | Selected outline tag background                                              |
+| `outline/selected/bg/hover`    | `brand/neutral/alpha/300` | `brand/neutral/alpha/500` | Selected outline tag background on hover                                     |
+| `outline/selected/bg/pressed`  | `brand/neutral/alpha/400` | `brand/neutral/alpha/600` | Selected outline tag background when pressed                                 |
+| `outline/selected/border`      | `brand/neutral/1100`      | `brand/neutral/1200`      | Selected outline tag border (charcoal in Light)                              |
+| `outline/selected/foreground`  | `text/base/emphasis`      | Same                      | Label, check and icons on a selected outline tag                             |
+| `outline/selected/value`       | `text/base/muted`         | `text/base/DEFAULT`       | Value text on a selected outline tag with a dropdown                         |
+| `outline/selected/divider`     | `border/base/strong`      | Same                      | Divider before the value on a selected outline tag with a dropdown           |
+| `remove/hover`                 | `brand/neutral/alpha/300` | `brand/neutral/alpha/500` | Remove button background on hover (every tag except a selected fill tag)     |
+| `remove/pressed`               | `brand/neutral/alpha/400` | `brand/neutral/alpha/600` | Remove button background when pressed (every tag except a selected fill tag) |
+| `disabled/bg`                  | `brand/neutral/300`       | `brand/neutral/400`       | Disabled fill tag background                                                 |
+| `disabled/border`              | `border/base/muted`       | Same                      | Disabled outline tag border                                                  |
+| `disabled/foreground`          | `text/disabled`           | Same                      | Label and icons on a disabled tag                                            |
+| `link/foreground/default`      | `brand/primary/900`       | Same                      | Label and icons on a link tag                                                |
+| `link/foreground/hover`        | `brand/primary/1000`      | `brand/primary/1100`      | Link tag label on hover and when pressed                                     |
+| `focus`                        | `border/focus`            | Same                      | Focus ring on tags, the remove button and the dropdown caret                 |
+
+## Motion
+
+| What moves                                 | Duration                                    | Easing        |
+| :----------------------------------------- | :------------------------------------------ | :------------ |
+| Background, text and border colour         | Normal (200ms)                              | Ease out      |
+| Press growth (scale 1.045)                 | Fast (80ms)                                 | Ease out quad |
+| Dropdown caret reshaping and value summary | Normal (200ms)                              | Ease out      |
+| Tags added or removed                      | Fade and scale, other tags slide into place |               |
+
+With reduced motion turned on, these effects are turned off, including the press growth, and colour changes are immediate.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -466,3 +969,97 @@ function DhivehiTags() {
 Tag color changes, caret reshaping and summary transitions use `duration-normal` (200ms). Pressing a button or either dropdown segment grows the whole control over `duration-fast` (80ms), without a ripple. Collection additions/removals fade and scale while remaining rows slide into place; a summary slides in when it appears and fades when its text changes.
 
 Keep stable item IDs and the dropdown mounted for continuous transitions. TagGroup owns motion within its collection; a surrounding layout owns transitions between standalone controls and the exit of any standalone control it unmounts. Reduced motion disables these decorative effects, including press growth.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How tags work with keyboards, screen readers and assistive technology, and what you still need to do. TagGroup follows the grid pattern from React Aria, with one row per tag.
+
+## Keyboard
+
+A TagGroup is one stop in the tab order. Arrow keys move between tags.
+
+| Key                     | Action                                                                                     |
+| :---------------------- | :----------------------------------------------------------------------------------------- |
+| Tab                     | Moves focus into the group, to the last focused tag, and then out of it                    |
+| Left Arrow, Right Arrow | Move to the previous or next tag. Mirrored in Dhivehi, so Left Arrow always moves left     |
+| Home, End               | Move to the first or last tag                                                              |
+| Space or Enter          | Selects or clears the focused tag, when selection is on. Follows a link tag                |
+| Delete or Backspace     | Removes the selected tags, or the focused tag when it isn't selected, when onRemove is set |
+| Escape                  | Clears the selection                                                                       |
+
+Standalone TagButton filters are native buttons in the tab order. In a selected TagDropdown, Tab reaches the label and the caret separately, Enter or Space activates the focused part, and Down Arrow on either part opens the menu.
+
+## Screen readers
+
+- TagGroup renders a grid labelled by its label, with one row per tag. Give every group a visible label, or aria-label or aria-labelledby.
+- Selected tags carry aria-selected. Disabled tags carry aria-disabled.
+- The description and the error are linked to the group with aria-describedby.
+- Plain text gives each tag its name. Give icon-only or complex tags textValue, and a useful removeButtonLabel.
+- Leading icons and badges are hidden from assistive technology. Put any meaning, such as a count, in the label text or in textValue.
+- Link tags in a group announce their destination through an accessible description, Link: and the address.
+- Standalone filters (TagButton with isSelected) expose aria-pressed.
+- When a filter changes the results, announce the new count once through a live region.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/tags/tags-focus-1.webp"
+  darkSrc="/images/docs/tags/tags-focus-1-dark.webp"
+  alt="Three focused examples in fill: a Tourism tag with the ring 2 away, a tag with a dropdown with the ring round the caret part only, and a remove button with its own ring."
+  width="2400"
+  height="536"
+/>
+
+<DocsFigure
+  src="/images/docs/tags/tags-focus-2.webp"
+  darkSrc="/images/docs/tags/tags-focus-2-dark.webp"
+  alt="Three focused examples in outline: a Tourism tag, a tag with a dropdown with the ring round the caret part, and a selected Tourism tag that keeps its selected look under the ring."
+  width="2400"
+  height="536"
+  caption="The focus ring on tags, the caret part and the remove button."
+/>
+
+- Keyboard focus shows a 2px ring in `border/focus`, 2 away from the tag. It shows on keyboard focus only; a click or a tap shows the pressed state instead.
+- On a tag with a dropdown the ring goes round the caret part only: 1 away in fill and 2 in outline, so it never merges with the outline.
+- The remove button takes its own 2px ring with no gap.
+- A selected tag keeps its look under the ring, so focus and selection read separately.
+- Focus stays visible in forced colours mode.
+- Selection shows with a check as well as colour.
+
+## Disabled
+
+Disabled tags can't be focused, selected or removed, and their remove button is inert. A selected disabled tag keeps aria-selected. Say near the group why a tag is unavailable, or leave it out.
+
+## Target size
+
+The remove button is 14 to 24 wide, but its hit area is extended to at least 24 x 24 at every size. At xs and sm, leave space around it so neighbouring targets don't overlap. Use md or larger for removable tags on touch-first pages.
+
+## Read-only tags
+
+If the tags only show labels, with no selection, removal or links, check that the group adds no Tab stop that does nothing. If it does, show the labels as a plain list.
+
+## Contrast
+
+Measured on `bg/surface/base` and `bg/surface/raised`:
+
+| Element                                 | Light          | Dark           | Minimum |
+| :-------------------------------------- | :------------- | :------------- | :------ |
+| Label on a fill tag, default to pressed | 8.6 to 11.2:1  | 6.9 to 15.4:1  | 4.5:1   |
+| Label on a selected fill tag            | 11.8 to 15.4:1 | 11.8 to 18.4:1 | 4.5:1   |
+| Label on an outline tag                 | 9.6 to 12.2:1  | 9.8 to 18.4:1  | 4.5:1   |
+| Label on a selected outline tag         | 13.5 to 17.5:1 | 6.9 to 15.4:1  | 4.5:1   |
+| Link tag label                          | 6.8 to 10.5:1  | 5.8 to 8.9:1   | 4.5:1   |
+| Dropdown value, fill                    | 8.2:1          | 9.8:1          | 4.5:1   |
+| Dropdown value, outline                 | 4.6 to 5.0:1   | 6.1 to 6.5:1   | 4.5:1   |
+| Outline border on hover and pressed     | 3.3 to 3.4:1   | 3.0:1          | 3:1     |
+| Focus ring                              | 3.1 to 3.4:1   | 7.2 to 7.7:1   | 3:1     |
+
+The outline border at rest is 1.9:1 in Light and 1.7:1 in Dark, and the fill background differs little from the page, so the label and the check carry the tag and its selection. Disabled tags are exempt.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, mirrors the arrow keys and gives the Dhivehi empty state and remove names. The remove hint Press Delete to remove tag. stays in English.
+
+</DocsTab>

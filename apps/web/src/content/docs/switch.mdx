@@ -1,6 +1,6 @@
 ---
 title: Switch
-description: Accessible on/off setting with default and subtle appearances.
+description: 'Turns a setting on or off, with the change taking effect straight away.'
 ---
 
 import {
@@ -11,9 +11,400 @@ import {
   SwitchUsageDemo,
 } from '../../components/SwitchExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Switch
 
-Use Switch for a setting that takes effect when toggled, such as notifications. Use [Checkbox](/docs/components/checkbox/) for consent, required agreement, or selections submitted together.
+<DocsTab id="overview">
+
+A switch turns a setting on or off, and the change takes effect straight away. Use it for preferences such as notifications. Use a checkbox for choices that are submitted with a form.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/switch.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-switch--docs"
+/>
+
+## When to use
+
+### Use a switch when
+
+- A setting has two mutually exclusive states, on and off.
+- Changing the setting can take effect immediately, without a save step.
+- The current state should be visible at a glance.
+
+### Don't use a switch when
+
+- The value is submitted as part of a form, or stands for agreement or consent. Use a [checkbox](/docs/components/checkbox/).
+- People must turn something on before they can continue. Use a [checkbox](/docs/components/checkbox/) with isRequired: a switch has no required or invalid state.
+- People must choose one value from more than two named options. Use a [radio](/docs/components/radio/) group or a [select](/docs/components/select/).
+- The control runs an action or the change needs confirming. Use a [button](/docs/components/button/).
+
+<DocsFigure
+  src="/images/docs/switch/switch-intro-1.webp"
+  darkSrc="/images/docs/switch/switch-intro-1-dark.webp"
+  alt='A settings card titled Notifications with the line "Choose how we contact you about your applications." Below it are three switches at size md: Email updates and SMS reminders are on, with green tracks and checks, and Newsletter is off.'
+  width="2400"
+  height="1048"
+  caption="Switches turn notification settings on and off straight away."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/switch/switch-anatomy-1.svg"
+  darkSrc="/images/docs/switch/switch-anatomy-1-dark.svg"
+  alt="One switch at size lg, appearance default, on, labelled Notifications, with four numbered markers: 1 on the green track, 2 on the white handle at the end of the track, 3 on the check at the start of the track and 4 on the label."
+  width="576"
+  height="360"
+  caption="The parts of a switch, on, at size lg. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Track**
+
+   the pill-shaped body, 32 x 16, 40 x 20 or 48 x 24, fully rounded. In the default appearance it has a border when off and fills green when on. The subtle appearance has a filled track.
+
+2. **Handle**
+
+   the round thumb. It sits at the start when off and moves to the end when on, growing by 2: 10, 14 or 18 off and 12, 16 or 20 on.
+
+3. **Check**
+
+   shows at the start of the track when on, in the default appearance only.
+
+4. **Label**
+
+   names the setting, 8 after the track. It is part of the control, so clicking it toggles the switch. In code it is the Switch children.
+
+</DocsAnatomy>
+
+A switch has no description or error message. Put any help text below it yourself.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/switch/switch-do-1.webp" darkSrc="/images/docs/switch/switch-do-1-dark.webp" alt="A switch, on, labelled Email updates." width="1136" height="232">
+
+Name the setting: Email updates.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/switch/switch-dont-1.webp" darkSrc="/images/docs/switch/switch-dont-1-dark.webp" alt="A switch, on, labelled &quot;Do you want email updates?&quot;." width="1136" height="232">
+
+Don't write the label as a question or an instruction. The label names the setting; the track shows its state.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/switch/switch-do-2.webp" darkSrc="/images/docs/switch/switch-do-2-dark.webp" alt="Two switches both labelled Dark theme, one off and one on." width="1136" height="304">
+
+Keep the label the same when the state changes. The track shows on or off.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/switch/switch-dont-2.webp" darkSrc="/images/docs/switch/switch-dont-2-dark.webp" alt="Two switches, one off labelled &quot;Dark theme off&quot; and one on labelled &quot;Dark theme on&quot;." width="1136" height="304">
+
+Don't add On or Off to the label. The track already shows the state.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/switch/switch-do-3.webp" darkSrc="/images/docs/switch/switch-do-3-dark.webp" alt="A list of two switches at the same size and appearance: Email updates, on, and SMS reminders, off." width="1136" height="312">
+
+Use one size and one appearance in a list.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/switch/switch-dont-3.webp" darkSrc="/images/docs/switch/switch-dont-3-dark.webp" alt="A list of two switches that do not match: Email updates, on, is larger with a green track and check, and SMS reminders, off, is smaller with a filled grey track." width="1136" height="312">
+
+Don't mix sizes or appearances in one list. Mixed switches make the list harder to scan.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+Name the setting in a few words, in sentence case. Word it positively, so on means yes. Don't ask a question, give an instruction or add punctuation, and keep the label the same when the state changes.
+
+| Do                           | Don't                                   |
+| :--------------------------- | :-------------------------------------- |
+| Email updates                | Do you want email updates? (a question) |
+| SMS reminders                | Turn on email updates (an instruction)  |
+| Appointment reminders by SMS | Disable emails (negative)               |
+|                              | Email updates: (colon)                  |
+|                              | Notifications. (full stop)              |
+|                              | Email updates: On (state in the label)  |
+
+### Help text
+
+Switch has no description. When a setting needs context, put one short line of help below it in body sm regular, `text/base/muted`, and link it to the switch with aria-describedby in code. Leave off the full stop.
+
+| Do                                              |
+| :---------------------------------------------- |
+| We send reminders 1 day before your appointment |
+
+### Failed saves
+
+A switch has no invalid state. If a change fails to save, switch it back and say why nearby. A switch left on after a failed save tells people the setting changed when it did not.
+
+| Do                                               | Don't                                  |
+| :----------------------------------------------- | :------------------------------------- |
+| Email updates could not be turned on. Try again. | Error (says nothing about what failed) |
+
+### No success messages
+
+Don't show a success message when a switch turns on or off. People can already see the change.
+
+### Dhivehi copy
+
+Switch has no built-in text. Pass the label, any aria-label and the help text in English and Dhivehi. Write Dhivehi natively rather than translating word for word, and keep it as short as the English.
+
+## Related components
+
+| Component                              | When to use it                                                    |
+| :------------------------------------- | :---------------------------------------------------------------- |
+| [Checkbox](/docs/components/checkbox/) | choose options that are submitted with a form, including consent. |
+| [Radio](/docs/components/radio/)       | choose one option from a short list.                              |
+| [Button](/docs/components/button/)     | run an action, such as saving.                                    |
+| [Select](/docs/components/select/)     | choose one value from a list.                                     |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the switch: appearances, sizes, states, spacing and the tokens behind them. Values come from the shipped component and the guidelines.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/switch/switch-appearances-1.webp"
+  darkSrc="/images/docs/switch/switch-appearances-1-dark.webp"
+  alt="Appearance default: two switches at size md, Off with a bordered, empty track and a grey handle at the start, and On with a green track, a check and a white handle at the end."
+  width="1168"
+  height="544"
+/>
+
+<DocsFigure
+  src="/images/docs/switch/switch-appearances-2.webp"
+  darkSrc="/images/docs/switch/switch-appearances-2-dark.webp"
+  alt="Appearance subtle: two switches at size md, Off with a filled light grey track and a white handle at the start, and On with the same green track as default but no check."
+  width="1168"
+  height="592"
+  caption="Appearance default and appearance subtle, off and on."
+/>
+
+- Use **default** on most surfaces: a border when off and a check when on. It is the default.
+- Use **subtle** only where a border would add noise, such as a dense list of settings, and only where people don't have to recognise the off state. Its off track is below 3:1 contrast.
+- Both appearances use the same green track when on, so the state reads the same either way.
+
+## Sizes
+
+The track, handle and label grow together. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/switch/switch-sizes-1.webp"
+  darkSrc="/images/docs/switch/switch-sizes-1-dark.webp"
+  alt="Three switches, on, appearance default, labelled Email updates at size sm, md and lg. The track grows from 32 x 16 to 40 x 20 to 48 x 24, and the label is larger at lg."
+  width="2400"
+  height="528"
+  caption="Sizes sm, md, the default, and lg."
+/>
+
+- Use **sm** (track 32 x 16, body sm medium label) for dense lists, tables and panel settings. Use the default appearance at this size, because the subtle off track is below 3:1.
+- Use **md** (track 40 x 20, body sm medium label) by default.
+- Use **lg** (track 48 x 24, body md medium label) for settings pages with few options.
+
+## Settings lists
+
+For a list of related settings, stack the switches 20 apart, each with its label. Use the same size and appearance throughout the list.
+
+<DocsFigure
+  src="/images/docs/switch/switch-options-1.webp"
+  darkSrc="/images/docs/switch/switch-options-1-dark.webp"
+  alt="Three uses of a switch. Settings list: Email updates and SMS reminders on and Newsletter off, stacked. No visible label: a single switch track, off, with no text. Dense list: two smaller switches at size sm, Show archived on and Compact rows off."
+  width="2400"
+  height="680"
+  caption="A settings list, a switch with no visible label and a dense list at size sm."
+/>
+
+A switch with no visible label is fine only beside a heading that names it. In code, point aria-labelledby at the heading, or give it an aria-label.
+
+In a dense list, such as table or panel settings, use size sm in the default appearance. The subtle off track is below 3:1, so the off state would be hard to see.
+
+## States
+
+<DocsFigure
+  src="/images/docs/switch/switch-states-1.webp"
+  darkSrc="/images/docs/switch/switch-states-1-dark.webp"
+  alt="Six switches at size md, appearance default, labelled Email updates. Top row, off: default with a bordered track, hover with a darker border, and disabled with a faded track and label. Bottom row, on: default with a green track and check, hover with a darker green track, and disabled with a grey track that keeps the check."
+  width="2400"
+  height="1168"
+  caption="States at size md, appearance default. Pressed, focus and read only come from code and are not drawn."
+/>
+
+| State         | When                                 | Visual change                                                |
+| :------------ | :----------------------------------- | :----------------------------------------------------------- |
+| Off           | Default                              | A border and the handle at the start                         |
+| On            | isSelected                           | A green track, the check and the handle at the end           |
+| Hover, off    | Pointer over the switch or its label | The border darkens. Subtle: the track darkens                |
+| Hover, on     | Pointer over the switch              | The track darkens                                            |
+| Pressed       | While pressing                       | The track scales to 1.04 and the handle to 0.96              |
+| Focus         | Keyboard focus                       | Focus ring around the track: 2px in `border/focus`, offset 2 |
+| Disabled, off | isDisabled                           | Muted track and label; skipped by Tab                        |
+| Disabled, on  | isDisabled                           | The check stays; the track turns grey                        |
+| Read only     | isReadOnly                           | Looks the same as default but can't be toggled               |
+
+Switch has no required, invalid, indeterminate or loading state.
+
+## Behaviour
+
+- **Apply at once**: apply a switch change straight away. Your app owns saving and the message if a save fails.
+- **Controlled or uncontrolled**: pass isSelected with onChange to control it, or defaultSelected for an uncontrolled switch. Control it when content around it must react to the setting.
+- **No surprises**: turning a switch on or off only changes the setting, never the page, the form or the focus.
+- **Read only, not disabled**: use isReadOnly for a switch whose value people need to see but can't change here. A disabled switch is skipped by Tab and left out of form data, so screen reader users never learn its value.
+- **Form data**: only selected, enabled switches submit their name and value.
+- **Whole row**: the label is part of the control, so clicking it toggles the switch.
+- **Wrapping**: long labels wrap without shrinking the track. Place several switches in a vertical stack or a responsive grid.
+- **Styling**: Switch takes no style overrides. Its className only sets the outer layout.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/switch/switch-rtl-1.webp"
+  darkSrc="/images/docs/switch/switch-rtl-1-dark.webp"
+  alt="Two examples side by side. On the left, LTR Switch: Email updates, on, and Newsletter, off, with the track before the label. On the right, RTL SwitchDv: two switches labelled ނޯޓިފިކޭޝަންސް, one on and one off, with the label to the left of the track and the check on the right side of the on track."
+  width="2400"
+  height="432"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the switch mirrors. The label sits to the left of the track, and the handle starts on the right and moves left when on.
+- The check moves to the other side of the track, but the check glyph itself keeps its orientation.
+- The label uses Dhivehi body sm medium at sm and md and Dhivehi body md medium at lg (MV A Waheed).
+- In code, wrap the app in VeliProvider with language set to dv.
+- In Figma, design Dhivehi screens with SwitchDv.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <SwitchRtlDemo client:visible />
+</div>
+
+Example configuration: size md, appearance default, off.
+
+| Part  | English       | Dhivehi        |
+| :---- | :------------ | :------------- |
+| Label | Notifications | ނޯޓިފިކޭޝަންސް |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/switch/switch-spacing-1.svg"
+  darkSrc="/images/docs/switch/switch-spacing-1-dark.svg"
+  alt="Spacing redlines for an off switch labelled Notifications at size sm: 3 from the track edge to the handle, a track 32 wide and 16 high, and 8 between the track and the label."
+  width="424"
+  height="281"
+/>
+
+<DocsFigure
+  src="/images/docs/switch/switch-spacing-2.svg"
+  darkSrc="/images/docs/switch/switch-spacing-2-dark.svg"
+  alt="The same spacing redlines at size md: 3 to the handle, a track 40 wide and 20 high, and 8 to the label."
+  width="428"
+  height="281"
+/>
+
+<DocsFigure
+  src="/images/docs/switch/switch-spacing-3.svg"
+  darkSrc="/images/docs/switch/switch-spacing-3-dark.svg"
+  alt="The same spacing redlines at size lg: 3 to the handle, a track 48 wide and 24 high, and 8 to the label."
+  width="438"
+  height="281"
+  caption="Spacing at sizes sm, md and lg, off, with the label. All values in pixels at 1x."
+/>
+
+| Property                               | sm      | md      | lg      |
+| :------------------------------------- | :------ | :------ | :------ |
+| Track                                  | 32 x 16 | 40 x 20 | 48 x 24 |
+| Track border                           | 1       | 1       | 1       |
+| Handle, off                            | 10      | 14      | 18      |
+| Handle, on                             | 12      | 16      | 20      |
+| Handle inset, off, from the start edge | 3       | 3       | 3       |
+| Handle inset, on, from the end edge    | 2       | 2       | 2       |
+| Track to label                         | 8       | 8       | 8       |
+| Minimum row height in code             | 24      | 24      | 24      |
+| Between switches in a settings list    | 20      | 20      | 20      |
+
+- The handle inset counts the 1 border: 2 inside it when off and 1 inside it when on.
+- The check sits in the space the handle leaves at the start, centred in a slot 12 high.
+- Long labels wrap without shrinking the track.
+
+### Corner radius
+
+<DocsFigure
+  src="/images/docs/switch/switch-radius-1.svg"
+  darkSrc="/images/docs/switch/switch-radius-1-dark.svg"
+  alt="Three off switches at sizes sm, md and lg, each with a label marking the track corner radius as full."
+  width="1200"
+  height="184"
+  caption="The track and the handle are fully rounded at every size."
+/>
+
+## Typography
+
+| Element                 | English                            | Dhivehi                                   | Colour token                                  |
+| :---------------------- | :--------------------------------- | :---------------------------------------- | :-------------------------------------------- |
+| Label, sm and md        | Body sm medium, Inter Medium 14/20 | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/DEFAULT`; disabled `text/disabled` |
+| Label, lg               | Body md medium, Inter Medium 16/24 | Dhivehi body md medium, MV A Waheed 19/32 | `text/base/DEFAULT`; disabled `text/disabled` |
+| Help text below (yours) | Body sm regular                    | Dhivehi body sm regular                   | `text/base/muted`                             |
+
+Dhivehi lines are taller. The row grows with the label, and the track stays centred.
+
+## Tokens
+
+Names leave out the `components/switch/` and `semantics/` prefixes.
+
+| Part              | Default appearance                                                    | Subtle appearance              |
+| :---------------- | :-------------------------------------------------------------------- | :----------------------------- |
+| Track, off        | Border `track-off-border`, no fill                                    | Fill `track-off-bg`, no border |
+| Track, off, hover | Border `track-off-border-hover`                                       | Fill `track-off-bg-hover`      |
+| Track, on         | Fill `track-on-bg`                                                    | Fill `track-on-bg`             |
+| Track, on, hover  | Fill `track-on-bg-hover`                                              | Fill `track-on-bg-hover`       |
+| Track, disabled   | Off: border `track-off-bg-disabled`; on: fill `track-off-bg-disabled` | Fill `track-off-bg-disabled`   |
+| Handle, off       | `handle-off-bg`                                                       | `handle-on-bg`                 |
+| Handle, on        | `handle-on-bg`                                                        | `handle-on-bg`                 |
+| Handle, disabled  | Off: `handle-disabled-bg`; on: `handle-on-bg`                         | `handle-on-bg`                 |
+| Check             | `handle-on-bg`                                                        | None                           |
+| Focus ring        | `border/focus`                                                        | `border/focus`                 |
+
+Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                           | Duration       | Easing                                    |
+| :----------------------------------- | :------------- | :---------------------------------------- |
+| Handle position and size             | Normal (200ms) | Spring, cubic-bezier(0.34, 1.56, 0.64, 1) |
+| Track and handle scale while pressed | Normal         | Spring                                    |
+| Hover colour changes                 | Instant        | None                                      |
+
+With reduced motion turned on, the handle switches without animating and the press scaling is removed.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -192,3 +583,68 @@ export default function SwitchLanguageDemo() {
   );
 }
 ```
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the switch works with keyboards, screen readers and contrast themes, and what you still need to do. Switch is a native checkbox input with the switch role, built on React Aria.
+
+## Keyboard
+
+| Key         | Action                              |
+| :---------- | :---------------------------------- |
+| Tab         | Moves focus to the switch           |
+| Shift + Tab | Moves focus to the previous element |
+| Space       | Toggles the switch                  |
+
+Enter does not toggle a switch. Disabled switches are skipped by Tab; read-only switches can be focused but not toggled.
+
+## Screen readers
+
+- The switch is announced as a switch that is on or off.
+- The visible label is part of the control and is its accessible name. Without visible text, use aria-label, or aria-labelledby pointing at a heading that names the setting. Any accessible name must contain the visible label.
+- Help text below the switch is not linked automatically. Link it with aria-describedby, using a unique id for each setting.
+- The track, handle and check are hidden from assistive technology.
+
+## Focus
+
+- Keyboard focus shows a 2px ring in `border/focus` around the track, offset 2 on `bg/surface/raised`. It appears for keyboard focus only.
+- State is never shown by colour alone: the handle position, and the check in the default appearance, show it as well as the green track.
+
+## Disabled
+
+Disabled switches can't be focused or changed, and are left out of form data. Use isReadOnly instead when people need to find and hear the value.
+
+## Target size
+
+The label is part of the target, and the row is at least 24 high at every size, so the whole row toggles the switch.
+
+## Contrast
+
+Contrast against `bg/surface/raised`, in the light and dark themes:
+
+| Element                         | Light | Dark   | Minimum |
+| :------------------------------ | :---- | :----- | :------ |
+| Label text                      | 8.0:1 | 7.3:1  | 4.5:1   |
+| Off border, default appearance  | 3.4:1 | 3.0:1  | 3:1     |
+| On track                        | 3.3:1 | 4.8:1  | 3:1     |
+| Handle on the on track          | 3.2:1 | 3.6:1  | 3:1     |
+| Off track, subtle               | 1.9:1 | 1.2:1  | 3:1     |
+| Handle on the off track, subtle | 1.9:1 | 14.5:1 | 3:1     |
+
+Use appearance default wherever people must recognise the off state, including dense lists at size sm. The subtle off track is below 3:1. Don't override the switch tokens with custom colours.
+
+## Forced colours
+
+In Windows contrast themes the switch uses system colours, so the track, handle and focus ring stay visible.
+
+## Reduced motion
+
+When the user prefers reduced motion, the handle moves without animation and the press scaling is turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, mirrors the label order and handle travel, and applies the Dhivehi label style. Pass Dhivehi labels and help text yourself: Switch has no built-in text.
+
+</DocsTab>

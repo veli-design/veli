@@ -1,6 +1,6 @@
 ---
 title: TextArea
-description: Multi-line text field with a character counter and vertical resize.
+description: 'A multiline text field with a label, helper text, validation, an optional character counter and vertical resizing.'
 ---
 
 import {
@@ -9,9 +9,441 @@ import {
   TextAreaValidationDemo,
 } from '../../components/TextAreaExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # TextArea
 
-Use TextArea for longer copy — comments, descriptions, messages. It follows the same label, helper, and validation pattern as [Input](/docs/components/input/), and adds a character counter plus vertical resize.
+<DocsTab id="overview">
+
+A text area lets people write longer answers over several lines, such as a message or a description. Use it when the answer may run past one line. For short answers, use Input. Like Input, it has a visible label, helper text and a validation message, and it adds an optional character counter and vertical resizing.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/textarea.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-textarea--docs"
+/>
+
+## When to use
+
+### Use a text area when
+
+- A form needs free-form text that may span several lines, such as a message, a reason or a description.
+- People write in their own words rather than pick from options.
+- People benefit from a maximum-length counter or bounded vertical resizing.
+
+### Don't use a text area when
+
+- The answer is a short single line. Use [Input](/docs/components/input/).
+- People choose from a fixed list. Use [Select](/docs/components/select/).
+- The value is a date or a number. Use [Date picker](/docs/components/date-picker/) for a date, or [Input](/docs/components/input/) with inputMode numeric for a number. Veli has no number input.
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-intro-1.webp"
+  darkSrc="/images/docs/textarea/textarea-intro-1-dark.webp"
+  alt='A card titled Contact us with the subtitle "Ask a question about your application." A required text area labelled Message, with a red asterisk and the counter 86/500 with its ring at the end of the label row, holds the text "I applied for a passport renewal last week. Can I still change the collection office?" The helper text below reads "Do not include card or bank details". Cancel and Send buttons sit at the bottom.'
+  width="2400"
+  height="1300"
+  caption="A text area for a message in a contact form."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-anatomy-1.svg"
+  darkSrc="/images/docs/textarea/textarea-anatomy-1-dark.svg"
+  alt='A filled text area at size lg with nine numbered markers: 1 on the label Message, 2 on the info icon, 3 on the word Optional, 4 on the red asterisk, 5 on the counter 50/100 with its ring, 6 on the field, 7 on the text "I need to update the address on my passport.", 8 on the resize handle in the bottom end corner and 9 on the helper text below the field.'
+  width="576"
+  height="423"
+  caption="The parts of a text area, shown at size lg. Numbers match the list below. Optional and the required marker are shown together only to name the parts. A field never shows both."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   names the field. In code it is label.
+
+2. **Info icon**
+
+   a 16 button that opens a tooltip with extra help. In code it is infoTooltip.
+
+3. **Optional**
+
+   the localised word Optional after the label, in `text/base/subtle`. In code it is isOptional.
+
+4. **Required indicator**
+
+   an asterisk in `text/danger/muted`. In code it is isRequired. In code, Optional is hidden when the field is required.
+
+5. **Character counter**
+
+   the count and limit, such as 50/100, with a 14 progress ring that fills as people type. It sits at the end of the label row and shows when you set maxLength. In code it is showCharacterCounter.
+
+6. **Field**
+
+   the typing area, at least 120, 146 or 173 high, with a 10 corner radius. The default appearance has an underline; outline has a border. In code it is appearance.
+
+7. **Text**
+
+   starts at the top of the field. The placeholder in `text/base/inactive` until people type, then the value in `text/base/strong`. In code it is placeholder and value.
+
+8. **Resize handle**
+
+   16, placed 4 from the bottom and end corner. Drag it to make the field taller. It is hidden when the field is disabled, read only or not resizable. In code it is isResizable.
+
+9. **Helper text**
+
+   one sentence below the field. The error message replaces it while the field is invalid. In code it is description.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/textarea/textarea-do-1.webp" darkSrc="/images/docs/textarea/textarea-do-1-dark.webp" alt="A required text area with the visible label Message and an asterisk above the field, the counter 0/100 at the end of the label row and the placeholder &quot;Tell us how we can help&quot; inside the empty field." width="1136" height="540">
+
+Keep a visible label above the field. The placeholder only gives a hint.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/textarea/textarea-dont-1.webp" darkSrc="/images/docs/textarea/textarea-dont-1-dark.webp" alt="A text area with no label above it, showing only the placeholder Message inside the empty field." width="1136" height="540">
+
+Don't use the placeholder as the label. It disappears as soon as people type.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/textarea/textarea-do-2.webp" darkSrc="/images/docs/textarea/textarea-do-2-dark.webp" alt="A required text area labelled Message holding the text Help, with the counter 4/100, a red underline and the error message &quot;Write at least 20 characters so we can help&quot; below." width="1136" height="580">
+
+Say what to fix in the error message. For length errors, give the limit.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/textarea/textarea-dont-2.webp" darkSrc="/images/docs/textarea/textarea-dont-2-dark.webp" alt="The same text area holding the text Help, with a red underline and the error message &quot;Invalid input.&quot; below." width="1136" height="580">
+
+Don't write vague errors. Invalid input does not say what to change.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/textarea/textarea-do-3.webp" darkSrc="/images/docs/textarea/textarea-do-3-dark.webp" alt="Two text areas labelled Message stacked in one form, both in the default appearance at the same size. The first holds &quot;I need to update the address on my passport.&quot;; the second shows the placeholder &quot;Tell us how we can help&quot;." width="1136" height="982">
+
+Use one appearance and one size for every field in a form.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/textarea/textarea-dont-3.webp" darkSrc="/images/docs/textarea/textarea-dont-3-dark.webp" alt="Two text areas labelled Message stacked in one form. The first is in the default appearance at a small size; the second is larger, with a bigger label, in the outline appearance with a border on all sides." width="1136" height="982">
+
+Don't mix appearances or sizes in one form. The fields stop reading as a set.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+Name the value, not the action, in sentence case with no colon.
+
+| Do                    | Don't                                                                                 |
+| :-------------------- | :------------------------------------------------------------------------------------ |
+| Message               | Please write your message here: (says please, names the action and ends with a colon) |
+| Reason for the change |                                                                                       |
+
+### Placeholder
+
+Use a placeholder, if at all, for a short prompt, in sentence case with no end punctuation. Never put instructions people need in the placeholder; put them in the description.
+
+| Do                      | Don't                                                                                                                      |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| Tell us how we can help | Include your passport number, the date you applied and the office (instructions people need, which disappear as they type) |
+
+### Helper text
+
+Say what to include in the answer, in one sentence with no full stop. Don't put links in helper text.
+
+| Do                                                   | Don't                                                                                                        |
+| :--------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| Include your application reference, such as PR-20418 | Please enter a detailed description of your issue. (says please, adds a full stop and says nothing specific) |
+| Do not include card or bank details                  |                                                                                                              |
+
+### Character limits
+
+Set maxLength only when the service needs a limit. When there is one, say it in the helper text before people type, and pair it with the counter.
+
+| Do                                 | Don't                                                  |
+| :--------------------------------- | :----------------------------------------------------- |
+| You can enter up to 500 characters | Max 500 (abbreviated, and doesn't say what is limited) |
+
+### Error messages
+
+Say what is wrong and how to fix it, with no full stop on a one-sentence message. For length errors, give the limit.
+
+| Do                                          | Don't                                                                                  |
+| :------------------------------------------ | :------------------------------------------------------------------------------------- |
+| Write at least 20 characters so we can help | Invalid input (doesn't say what to change)                                             |
+| Message must be 500 characters or less      | Write at least 20 characters so we can help. (a one-sentence error takes no full stop) |
+
+### Built-in strings
+
+| String                        | English          | Dhivehi           |
+| :---------------------------- | :--------------- | :---------------- |
+| Optional, shown by isOptional | Optional         | އިޚްތިޔާރީ        |
+| Info button name              | More information | އިތުރު މަޢުލޫމާތު |
+| Counter                       | 86/500           | 86/500            |
+
+Optional can't be reworded. Override the info button name with infoTooltipAriaLabel so it names the topic. The counter shows numbers only, left to right in both languages, with no words to translate.
+
+### Dhivehi copy
+
+Write Dhivehi labels, helper text and errors natively rather than translating word for word, and keep them as short as the English.
+
+## Related components
+
+| Component                                    | When to use it                      |
+| :------------------------------------------- | :---------------------------------- |
+| [Input](/docs/components/input/)             | collect a short answer on one line. |
+| [Select](/docs/components/select/)           | choose one option from a list.      |
+| [Date picker](/docs/components/date-picker/) | enter or pick a date.               |
+| [Search](/docs/components/search/)           | search a list or a page.            |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the text area: appearances, sizes, states and the values behind them. Values come from the Figma specs and were checked in Storybook; differences are listed under Missing or unverified.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-appearances-1.webp"
+  darkSrc="/images/docs/textarea/textarea-appearances-1-dark.webp"
+  alt='Two text areas side by side, each labelled Message with an info icon, Optional, the counter 50/100, the placeholder "Tell us how we can help" and Helper text. On the left, appearance default, the filled field has an underline. On the right, appearance outline, the filled field has a border on all sides.'
+  width="2400"
+  height="820"
+  caption="Appearance default and appearance outline."
+/>
+
+- Use **default**, a filled field with an underline, in most forms. It is the default.
+- Use **outline**, a filled field with a border on all sides, where an underline would be lost, such as on a raised card.
+
+## Sizes
+
+In code, size defaults to md. Size sets the minimum height, padding and text styles.
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-sizes-1.webp"
+  darkSrc="/images/docs/textarea/textarea-sizes-1-dark.webp"
+  alt='Three text areas labelled Message at sizes sm, md and lg, each with the placeholder "Tell us how we can help" and Helper text. The field gets taller and the text larger from sm to lg. Captions read: at least 120 high, for short notes in dense layouts; at least 146 high, the default for forms; at least 173 high, with larger text, for forms where the message is the main task.'
+  width="2400"
+  height="890"
+  caption="Sizes sm, md and lg."
+/>
+
+- Use **sm** (at least 120 high) for short notes in dense layouts.
+- Use **md** (at least 146 high), the default, for forms.
+- Use **lg** (at least 173 high, with larger text) for forms where the message is the main task.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-options-1.webp"
+  darkSrc="/images/docs/textarea/textarea-options-1-dark.webp"
+  alt='Two examples. With help: a required text area labelled "Reason for the change" with an info icon, the placeholder "Tell us why you need to change it" and the helper text "This helps us process your request faster". Character limit: a text area labelled Message with the counter 61/280 and the text "I applied last week. Can I still change the collection office?"'
+  width="2400"
+  height="820"
+/>
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-options-2.webp"
+  darkSrc="/images/docs/textarea/textarea-options-2-dark.webp"
+  alt='Two examples. Read only: a field labelled "Officer notes" with the text "Documents checked at the counter on 3 March." and the helper text "Added by the passport office". Not resizable: a text area labelled Comments, marked Optional, with the placeholder "Add a comment" and no resize handle.'
+  width="2400"
+  height="820"
+  caption="Content options: with help, character limit, read only and not resizable."
+/>
+
+- **With help**: a required field with a description and an info tooltip. Use isRequired, description and infoTooltip.
+- **Character limit**: setting maxLength turns the counter on. It updates as people type. Set showCharacterCounter to false to hide it.
+- **Read only**: show text people need to see but can't edit here with isReadOnly, and a description that says why, such as where a prefilled value came from.
+- **Not resizable**: turn isResizable off for layouts that must not grow. Set minHeight or maxHeight only when the surrounding flow needs bounds.
+
+## States
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-states-1.webp"
+  darkSrc="/images/docs/textarea/textarea-states-1-dark.webp"
+  alt='Three text areas labelled Message in the states default, hover and active. Default shows the placeholder "Tell us how we can help". Hover has a slightly darker fill and underline. Active holds "I need to update the address on my passport." on a pale green pressed fill with a thicker underline.'
+  width="2400"
+  height="820"
+/>
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-states-2.webp"
+  darkSrc="/images/docs/textarea/textarea-states-2-dark.webp"
+  alt='Three text areas labelled Message in the states focus, filled and error. Focus shows the focus ring around the field on the pale green fill. Filled shows the text with no focus. Error has a red underline and the message "This field needs attention." in place of the helper text.'
+  width="2400"
+  height="820"
+/>
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-states-3.webp"
+  darkSrc="/images/docs/textarea/textarea-states-3-dark.webp"
+  alt='Three text areas in the states read only, disabled and skeleton. Read only shows the text "I need to update the address on my passport." with no fill. Disabled shows a faded label, placeholder and helper text. Both still show the resize handle. Skeleton shows grey placeholder bars for the label, field and helper text.'
+  width="2400"
+  height="916"
+  caption="States in the default appearance."
+/>
+
+| State     | When                    | Visual change                                                                                                        |
+| :-------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Default   | Empty field             | Shows the placeholder                                                                                                |
+| Hover     | Pointer over the field  | The fill and underline darken                                                                                        |
+| Active    | While typing            | Fill turns bg-pressed and the underline thickens to 2px                                                              |
+| Focus     | Keyboard focus          | The focus ring shows around the field                                                                                |
+| Filled    | Holds a value, no focus | Shows the text                                                                                                       |
+| Error     | isInvalid               | Red underline and errorMessage below. No icon in the field                                                           |
+| Read only | isReadOnly              | People can select and copy the text but not change it. The resize handle is hidden. In outline the border is removed |
+| Disabled  | isDisabled              | Not editable and skipped by Tab. The resize handle is hidden. In outline the border is removed                       |
+
+The Figma page shows a skeleton state. Text area has no skeleton mode in code. While form data loads, compose Skeleton pieces in its place.
+
+## Behaviour
+
+- **Typing**: control the value with value and onChange, or start with defaultValue.
+- **Enter**: Enter adds a new line. Let Ctrl or Command with Enter submit the form.
+- **Counter**: with maxLength, the counter shows the count and fills its ring. Code stops typing at the limit, although the guidelines say never to silently block keystrokes. The counter is the only live feedback before submit; errors wait until people submit.
+- **Resize**: people drag the handle to resize the field vertically, within minHeight and maxHeight when you set them. Resizing is vertical only and works by pointer only.
+- **Click target**: clicking anywhere in the field moves focus to the text.
+- **Paste**: never block pasting, and never silently block or strip keystrokes.
+- **Width**: the field fills its container and can grow vertically. Constrain the width in the surrounding layout.
+- **Text size on phones**: field text should be at least 16px on phones so iOS Safari doesn't zoom the page on focus. Sizes sm and md use 14px text, so use lg on phones.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-rtl-1.webp"
+  darkSrc="/images/docs/textarea/textarea-rtl-1-dark.webp"
+  alt='Two text areas side by side. On the left, labelled LTR TextArea, an English text area with the label Message, an info icon, Optional, the counter 50/100, the placeholder "Tell us how we can help" and Helper text. On the right, labelled RTL TextAreaDv, the same text area mirrored in Dhivehi: the label, info icon and Optional read from the right, the counter 50/100 sits on the left, the placeholder starts at the right and the resize handle is in the bottom left corner.'
+  width="2400"
+  height="810"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the layout mirrors: the label row reads from the right and the resize handle moves to the bottom left corner.
+- Typed text uses MV Faseyha. The counter stays left to right in both languages, so the count doesn't reverse.
+- Set dir to auto on a text area where people may write in English or Dhivehi. Labels stay in the page direction.
+- Optional and the info button name switch to Dhivehi.
+- In code, wrap the form in VeliProvider with language set to dv. In Figma, design Dhivehi forms with TextAreaDv.
+
+The Figma RTL example uses the placeholder strings ލޭބަލް for the label, ލިޔުއްވާ for the placeholder and އެހީތެރިވެދޭ ލިޔުން for the helper text, with އިޚްތިޔާރީ for Optional.
+
+Example configuration: size md, isOptional, maxLength 100.
+
+| Part                 | English     | Dhivehi             |
+| :------------------- | :---------- | :------------------ |
+| Label, default state | Default     | އާދައިގެ            |
+| Placeholder          | Text        | ލިޔުއްވާ            |
+| Helper text          | Helper text | އެހީތެރިވެދޭ ލިޔުން |
+| Optional (built in)  | Optional    | އިޚްތިޔާރީ          |
+| Counter              | 0/100       | 0/100               |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-spacing-1.svg"
+  darkSrc="/images/docs/textarea/textarea-spacing-1-dark.svg"
+  alt="Spacing redlines for a text area at sizes sm, md and lg. Each shows 8 between the label row and the field, 4 between the field and the helper text, the side padding (12 at sm, 16 at md and lg), the top padding (8 at sm, 12 at md, 14 at lg) and the minimum heights 120, 146 and 173."
+  width="1200"
+  height="1263"
+  caption="Spacing at sizes sm, md and lg."
+/>
+
+| Property                      | sm                         | md                         | lg                         |
+| :---------------------------- | :------------------------- | :------------------------- | :------------------------- |
+| Minimum height                | 120                        | 146                        | 173                        |
+| Field padding, top and bottom | 8 (`spacing/2`)            | 12 (`spacing/3`)           | 14                         |
+| Field padding, sides          | 12 (`spacing/3`)           | 16 (`spacing/4`)           | 16 (`spacing/4`)           |
+| Label row to field            | 8                          | 8                          | 8                          |
+| Field to helper text          | 4 (`spacing/1`)            | 4 (`spacing/1`)            | 4 (`spacing/1`)            |
+| Between label row parts       | 8                          | 8                          | 8                          |
+| Counter text to ring          | 6                          | 6                          | 6                          |
+| Resize handle                 | 16 x 16, 4 from the corner | 16 x 16, 4 from the corner | 16 x 16, 4 from the corner |
+
+- Text starts at the top of the field. The field grows when people drag the resize handle, between minHeight and maxHeight.
+- In Dhivehi the field keeps its height; the label row and message row grow with the taller lines.
+- Set the field width to fill its column.
+
+## Corner radius
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-radius-1.svg"
+  darkSrc="/images/docs/textarea/textarea-radius-1-dark.svg"
+  alt="Text areas at sizes sm, md and lg, each with a marker showing a 10 corner radius on the field."
+  width="1200"
+  height="389"
+  caption="The field uses radius 10 (`radius/field`) at every size and in both appearances. The underline of the default appearance follows the bottom corners."
+/>
+
+## Typography
+
+Regular styles map to Dhivehi Regular in MV Faseyha.
+
+| Element                | English                                               | Dhivehi                                   | Colour token                                                                         |
+| :--------------------- | :---------------------------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------- |
+| Label, sm and md       | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`; disabled `text/base/muted`                                      |
+| Label, lg              | Body md regular, Inter Regular 16/24                  | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/DEFAULT`; disabled `text/base/muted`                                      |
+| Optional, sm and md    | Caption regular, Inter Regular 12/16                  | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/subtle`                                                                   |
+| Optional, lg           | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/subtle`                                                                   |
+| Required asterisk      | Caption regular, Inter Regular 12/16                  | As English                                | `text/danger/muted`                                                                  |
+| Text, sm and md        | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28 | Value `text/base/strong`; placeholder `text/base/inactive`; disabled `text/disabled` |
+| Text, lg               | Body md regular, Inter Regular 16/24                  | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                                                         |
+| Helper text, sm and md | Caption regular, Inter Regular 12/16                  | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/muted`; disabled `text/disabled`                                          |
+| Helper text, lg        | Body sm regular, Inter Regular 14/20                  | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`; disabled `text/disabled`                                          |
+| Error message          | As helper text at each size                           | As helper text at each size               | `text/danger/muted`                                                                  |
+| Counter                | Body sm regular, Inter Regular 14/20, tabular numbers | As English; the count stays left to right | `text/base/subtle`; disabled `text/disabled`                                         |
+
+Dhivehi lines are taller. The label row is 36 high at sm and md and 40 at lg (28 and 32 in English); the field keeps its height. On phones, field text should be at least 16, so the page doesn't zoom when the field gets focus.
+
+## Tokens
+
+Fill, line and text per state. Line is the underline in the default appearance and the border in outline. Names omit the `components/text-input/` prefix.
+
+| State     | Fill                             | Line                                                                         | Text and icon                                         |
+| :-------- | :------------------------------- | :--------------------------------------------------------------------------- | :---------------------------------------------------- |
+| Default   | `bg-default`                     | Underline `stroke-default` 1.5; outline border `stroke-default` 1            | Placeholder `text/base/inactive`                      |
+| Hover     | `bg-hover`                       | Underline `stroke-hover` 1.5; outline border `stroke-hover` 1.5              | As default                                            |
+| Active    | `bg-pressed`                     | Underline `stroke-pressed` 2; outline border `stroke-pressed` 2              | Value `text/base/strong`                              |
+| Focus     | `bg-pressed`                     | Underline `stroke-pressed` 2, plus the focus ring; outline has the ring only | Value `text/base/strong`                              |
+| Filled    | `bg-default`; outline `bg-hover` | Underline `stroke-default` 1.5; outline border `stroke-default` 1            | Value `text/base/strong`                              |
+| Error     | `bg-default`                     | Underline `stroke-error` 1.5; outline border `stroke-error` 1                | Value `text/base/strong`; message `text/danger/muted` |
+| Read only | `bg-hover`                       | Underline `stroke-hover` 1.5; outline has no border                          | Value `text/base/strong`                              |
+| Disabled  | `bg-hover`                       | Underline `stroke-hover` 1.5; outline has no border                          | `text/disabled`; label `text/base/muted`              |
+
+| Part                      | Tokens                                                                                                         |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| Label row and helper text | Label `text/base/DEFAULT`, Optional `text/base/subtle`, asterisk `text/danger/muted`, helper `text/base/muted` |
+| Counter                   | Text `text/base/subtle`; ring track `border/base/muted` at 13%, progress `border/success-emphasis`             |
+| Resize handle             | `icon/base/default`                                                                                            |
+
+## Motion
+
+Field fill and focus ring transitions follow [Input](/docs/components/input/) and turn off with reduced motion.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -147,3 +579,58 @@ The native `<textarea>` that React Aria wraps. These attributes are applied to t
 ## RTL and Language
 
 On `lang="dv"` pages, entered text uses `MV_Faseyha`, same as Input. In RTL, the label row and resize handle follow `dir`. The character counter stays left-to-right so the count does not reverse.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the text area works with keyboards and screen readers, and what you still need to do. It is built on the React Aria TextField with a native textarea.
+
+## Keyboard
+
+| Key         | Action                                               |
+| :---------- | :--------------------------------------------------- |
+| Tab         | Moves focus into the field, then to the next control |
+| Shift + Tab | Moves focus back                                     |
+| Enter       | Adds a new line                                      |
+
+The info button is a separate Tab stop. The resize handle is not in the tab order. A disabled field is skipped by Tab.
+
+## Screen readers
+
+- **Label**: give every field a visible label. Set aria-label only when there is no visible label.
+- **Description and error**: description and errorMessage are linked to the field, so people hear the help and the error.
+- **States**: required, disabled, read-only and invalid states are exposed to assistive technology.
+- **Optional and required**: Optional and the asterisk sit outside the label element, so neither is part of the accessible name. isRequired still tells screen readers the field is required.
+- **Counter**: the counter is not announced and is not linked to the field. Say the limit in the description, and announce the characters left in a polite live region near the limit, such as 20 characters left, not on every keystroke.
+
+## Resizing
+
+The resize handle is decorative: it has no accessible name and works by pointer drag only. Keyboard and screen reader users can still scroll inside the field, so set a size or minHeight that shows enough lines for the expected answer.
+
+## Focus
+
+Keyboard focus shows a 2px ring in `border/focus`, offset 2, around the field. It appears for keyboard focus only (focus-visible). A click shows the active state instead: the pressed fill and a 2px underline or border. With the ring, the outline appearance drops its border, so the two never stack.
+
+<DocsFigure
+  src="/images/docs/textarea/textarea-focus-1.webp"
+  darkSrc="/images/docs/textarea/textarea-focus-1-dark.webp"
+  alt='Six focused text areas holding "I need to update the address on my passport.": sizes sm, md and lg in the default appearance in the top row and in the outline appearance in the bottom row. Each shows the focus ring around the field on a pale green fill.'
+  width="2400"
+  height="1900"
+  caption="The focus ring at each size, in both appearances."
+/>
+
+## Errors
+
+Errors show a message as well as the red line, so they never rely on colour alone.
+
+## Contrast
+
+Placeholder text uses `text/base/inactive`, about 2.1:1 to 2.7:1, below the 4.5:1 text minimum. Never put information people need in the placeholder.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The layout and resize handle mirror; the counter stays left to right. Set dir to auto on free-text fields and pass Dhivehi labels, helper text and errors yourself.
+
+</DocsTab>

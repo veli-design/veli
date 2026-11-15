@@ -164,3 +164,32 @@ test('resource links remain readable and the automatic animation precedes them',
   assert.equal(overview[1].name, 'DocsComponentAnimation');
   assert.equal(overview[2].name, 'DocsResources');
 });
+
+test('introductory images cannot push the automatic animation below the overview', () => {
+  const tree = {
+    type: 'root',
+    children: [tab('overview', [p('Introduction'), jsx('DocsFigure'), h('When to use')])],
+  };
+  const f = file();
+  remarkDocsTabs()(tree, f);
+  remarkComponentTabs()(tree, f);
+  assert.deepEqual(
+    tree.children[0].children.map((node) => node.name ?? node.type),
+    ['paragraph', 'DocsComponentAnimation', 'DocsFigure', 'heading'],
+  );
+});
+
+test('text-only guidance and source-only resources export without invented images or links', () => {
+  const tree = {
+    type: 'root',
+    children: [
+      jsx('DocsGuideline', { kind: 'do' }, [p('Use one provider at the root.')]),
+      jsx('DocsResources', { source: 'https://github.com/example/provider.ts' }),
+    ],
+  };
+  const md = createCanonicalMarkdown(tree, file());
+  assert.match(md, /\*\*Do\*\*/);
+  assert.match(md, /Use one provider at the root/);
+  assert.match(md, /\[GitHub\]/);
+  assert.doesNotMatch(md, /Storybook|!\[/);
+});

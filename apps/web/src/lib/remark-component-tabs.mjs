@@ -132,7 +132,12 @@ export function partitionDocsTabNodes(
 
   const overview = panels.overview;
   const firstSectionIndex = overview.findIndex(
-    (node) => (node.type === 'heading' && node.depth === 2) || node.name === 'DocsResources',
+    (node) =>
+      (node.type === 'heading' && node.depth === 2) ||
+      node.name === 'DocsResources' ||
+      node.name === 'DocsFigure' ||
+      node.type === 'image' ||
+      (node.type === 'paragraph' && node.children?.some((child) => child.type === 'image')),
   );
   overview.splice(
     firstSectionIndex < 0 ? overview.length : firstSectionIndex,

@@ -1,13 +1,289 @@
 ---
 title: LoadingText
-description: Settling pending label with decorative grains for indeterminate actions.
+description: 'A short pending label with three animated grains that says what is happening while people wait.'
 ---
 
 import { LoadingUsageDemo } from '../../components/LoadingExamples';
 
+import { LoadingTextLanguageDemo } from '../../components/EditorialLanguageExamples';
+
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # LoadingText
 
-Use `LoadingText` when a short label can explain a pending action. Pair it with [Spinner](/docs/components/spinner/) for indeterminate loading indicators. Settling text follows the current text direction and respects reduced motion.
+<DocsTab id="overview">
+
+Loading text shows a short label that says what is pending, such as Checking your details, followed by three small animated grains. Use it when words help people understand a wait. Use Spinner for a small wait that needs no words, Skeleton when the shape of the content is known, and Button isPending for the action a Button started.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/loading-text.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-loading-text--docs"
+/>
+
+## When to use
+
+### Use Loading text when
+
+- Words help people understand a wait, such as Checking your details.
+- A short label should say what is pending. Name the activity and its object: Processing payment, Preparing your receipt.
+- An indicator and a label both help. Put a Spinner with aria-hidden before it.
+- The work has real steps people should know about. Change the label at each step.
+
+### Don't use Loading text when
+
+- Only an indeterminate icon is needed, with no words. Use Spinner.
+- The shape of the content is known and should be reserved. Use Skeleton.
+- A Button started the action. Use Button isPending. The Button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows.
+- The wait is over. Show the result, such as Saved or Payment received, as a status message, an Alert, a Toast or the next page.
+
+<DocsFigure
+  src="/images/docs/loading-text/loading-text-intro-1.webp"
+  darkSrc="/images/docs/loading-text/loading-text-intro-1-dark.webp"
+  alt='A white card titled Apply for a business licence with the line "Fee MVR 250, paid by card." Below it, Loading text reads Processing payment with three grains, and under it a muted line reads "This can take up to 1 minute."'
+  width="2400"
+  height="864"
+  caption="Loading text says what is pending while a payment is processed, with the expected wait below it."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/loading-text/loading-text-anatomy-1.svg"
+  darkSrc="/images/docs/loading-text/loading-text-anatomy-1-dark.svg"
+  alt="Loading text reading Checking your details with three numbered markers: 1 on the label, 2 on the light band passing over the word your, and 3 on the three grains after the label."
+  width="576"
+  height="360"
+  caption="The parts of Loading text, shown with the light band in the middle of the label. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   the pending activity, in the surrounding type. It rests in `text/base/muted` and takes a plain string. A typed ellipsis at the end is hidden on screen. In code it is the children.
+
+2. **Light band**
+
+   a band of `text/primary/strong` that drifts across the label every 1.6 seconds, in the reading direction. It is removed under reduced motion.
+
+3. **Grains**
+
+   three dots in `text/primary/strong`, 0.2 em each, after the label on its baseline. They settle in turn and are hidden from assistive technology.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/loading-text/loading-text-do-1.webp" darkSrc="/images/docs/loading-text/loading-text-do-1-dark.webp" alt="Loading text reading Checking your details, with the three grains after it." width="1136" height="232">
+
+Name the activity and its object: Checking your details.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/loading-text/loading-text-dont-1.webp" darkSrc="/images/docs/loading-text/loading-text-dont-1-dark.webp" alt="Loading text reading Please wait, with the three grains after it." width="1136" height="232">
+
+Don't write Please wait. It says nothing about the activity, and it uses please.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/loading-text/loading-text-do-2.webp" darkSrc="/images/docs/loading-text/loading-text-do-2-dark.webp" alt="Loading text reading Processing payment, with the three grains after it." width="1136" height="232">
+
+Pass the complete label with no ellipsis. The grains already show the wait.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/loading-text/loading-text-dont-2.webp" darkSrc="/images/docs/loading-text/loading-text-dont-2-dark.webp" alt="Loading text reading &quot;Processing payment...&quot; with a typed ellipsis followed by the three grains. The picture shows the typed ellipsis to make the mistake visible." width="1136" height="232">
+
+Don't type an ellipsis. The picture shows it to make the mistake visible: on screen code hides it, but the accessible name keeps it, so screen readers read it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/loading-text/loading-text-do-3.webp" darkSrc="/images/docs/loading-text/loading-text-do-3-dark.webp" alt="A primary Button in its pending state, at its full width, showing only its spinner while the label Pay MVR 250 is hidden." width="1136" height="280">
+
+Set isPending on the Button, such as Pay MVR 250, while the payment runs. The Button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/loading-text/loading-text-dont-3.webp" darkSrc="/images/docs/loading-text/loading-text-dont-3-dark.webp" alt="A primary Button whose label has been changed to Processing payment." width="1136" height="280">
+
+Don't change the Button label to Processing payment. Use isPending instead: the Button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Keep the label to 2 to 4 words: a present participle and its object. The label is the whole message and the accessible name, so it has to say what is happening on its own.
+
+| Do                        | Don't                                                                 |
+| :------------------------ | :-------------------------------------------------------------------- |
+| Checking your details     | Checking your details... (typed ellipsis; the grains already show it) |
+| Processing payment        | Please wait (says nothing about the activity, and uses please)        |
+| Loading your applications | Validating request (system word, not what people see happening)       |
+
+### No ellipsis
+
+Pass a complete label with no trailing ellipsis: Loading applications. The grains take the place of a typed ellipsis.
+
+### Plain words
+
+Say what people see happening, not what the system does. Never show technical names.
+
+| Do                    | Don't              |
+| :-------------------- | :----------------- |
+| Checking your details | Validating payload |
+| Checking your details | Calling MDX        |
+
+### Steps
+
+Keep the label true for the whole wait. When the work has steps people should know about, change the label at each step, such as Checking your details, then Preparing your application, and not more often than every few seconds. A label that changes constantly can't be read or heard, and each change may be announced.
+
+### Long waits
+
+When a wait may last more than about 5 seconds, put a sentence below the label that says what is happening and that answers are safe. Beyond about 10 seconds, also say roughly how long it may take, such as "This can take up to 1 minute.", and what to do, with progress and a way to cancel where the task allows.
+
+### Dhivehi copy
+
+Loading text has no built-in strings. Pass every label in English and Dhivehi, write the Dhivehi natively and keep it as short as the English.
+
+## Related components
+
+| Component                                  | When to use it                                                                                                                                                    |
+| :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Spinner](/docs/components/spinner/)       | for a small wait that needs no words. Put it before Loading text, with aria-hidden, when an indicator and a label both help.                                      |
+| [Skeleton](/docs/components/skeleton/)     | when the shape of the content is known, with a status message such as Loading your applications beside it.                                                        |
+| [Button](/docs/components/button/)         | use isPending for an action a Button started. The Button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows. |
+| [Alert](/docs/components/alert/)           | in the danger intent with a Try again action, in place of Loading text when part of a page fails to load.                                                         |
+| [VeliProvider](/docs/components/provider/) | its language sets the direction the light band moves. The label comes from your app, not from the provider.                                                       |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for Loading text: content options, behaviour, direction, spacing, typography, tokens and motion. Values match the shipped component.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/loading-text/loading-text-options-1.webp"
+  darkSrc="/images/docs/loading-text/loading-text-options-1-dark.webp"
+  alt='Three examples side by side. On its own: Loading text reading Checking your details. With Spinner: a small spinner followed by Loading your applications. Long wait: Processing payment with "This can take up to 1 minute." below it.'
+  width="2400"
+  height="568"
+  caption="On its own, with a Spinner, and with a long-wait sentence."
+/>
+
+- **On its own**: a short label in the region that is waiting.
+- **With Spinner**: Spinner first, with aria-hidden, then Loading text. Loading text carries the name, so the wait is announced once.
+- **Long wait**: put the sentence about how long the wait may take below the label.
+
+Loading text has no sizes, variants or interactive states. It takes its size from the surrounding type.
+
+## Behaviour
+
+- **Animates until removed**: the light band and the grains loop every 1.6 seconds for as long as Loading text is on screen. It never stops by itself.
+- **Remove it on arrival**: remove Loading text as soon as the content or an error arrives.
+- **When loading fails**: replace it with an Alert in the danger intent with a Try again action.
+- **Timing**: wait about 150 to 300 ms before showing it, then keep it for about 300 to 500 ms, so fast responses never flash a loader.
+- **Placement**: place it in the region that is waiting, close to what started the wait. Never cover the whole page for an action that changes one part.
+- **Controls**: Loading text doesn't disable the controls around it. Disable or set pending on any control that must wait.
+- **Typed ellipsis**: a trailing ellipsis (… or three full stops) is removed from the visible label only. The accessible name keeps the label exactly as passed.
+- **Label must be a string**: children must be a plain string.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/loading-text/loading-text-rtl-1.webp"
+  darkSrc="/images/docs/loading-text/loading-text-rtl-1-dark.webp"
+  alt="Two examples side by side. Left to right: Loading text reading Marking all as read with the grains after it. Right to left: the Dhivehi label ކިޔާލެވިފައި ކަމަށް ބަދަލުކުރަނީ with the grains on its left."
+  width="2400"
+  height="432"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the layout mirrors: the grains sit on the left and the light band moves from right to left, following the text direction.
+- The label uses the Dhivehi small body style (MV Faseyha 16/28) when it sits in an element with lang dv and a type utility.
+- Loading text takes a plain string, so put FSI and PDI around a Latin file name or reference, such as passport-copy.pdf.
+- In code, wrap the app in VeliProvider with language set to dv. The provider sets the direction; the label comes from your app.
+- In Figma, design Dhivehi screens with LoadingTextDv.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <LoadingTextLanguageDemo client:visible />
+</div>
+
+Example configuration:
+
+| Language | children                         |
+| :------- | :------------------------------- |
+| English  | Marking all as read              |
+| Dhivehi  | ކިޔާލެވިފައި ކަމަށް ބަދަލުކުރަނީ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/loading-text/loading-text-spacing-1.svg"
+  darkSrc="/images/docs/loading-text/loading-text-spacing-1-dark.svg"
+  alt="Spacing redlines for Loading text in English and Dhivehi. English: Checking your details with a 2.8 gap to the grains, 2.24 between grains and a 20 line height. Dhivehi: the label with a 3.2 gap, 2.56 between grains and a 28 line height."
+  width="1200"
+  height="281"
+  caption="All values in pixels at 1x. Bands are gaps between parts and lines with end ticks are sizes."
+/>
+
+| Element                           | English, 14px type | Dhivehi, 16px type | In code                   |
+| :-------------------------------- | :----------------- | :----------------- | :------------------------ |
+| Label to grains                   | 2.8                | 3.2                | 0.2 em                    |
+| Grain size                        | 2.8 x 2.8          | 3.2 x 3.2          | 0.2 em                    |
+| Between grains                    | 2.24               | 2.56               | 0.16 em                   |
+| Grain rise at the top of a settle | 2.5                | 2.9                | 0.18 em                   |
+| Line height                       | 20                 | 28                 | From the surrounding type |
+
+Spacing is set in em, so it scales with the surrounding font size. No spacing token applies. The grains sit on the label's baseline. Long or translated labels wrap: never fix the height or cut the label, so it stays readable at 200 percent text size.
+
+## Typography
+
+Loading text has no type style of its own and follows the surrounding type utilities. For a Dhivehi label to use the Dhivehi font and taller line height, place it inside an element with lang dv and a type utility, or pass a type class in className.
+
+| Element | English                              | Dhivehi                                   | Colour token                                              |
+| :------ | :----------------------------------- | :---------------------------------------- | :-------------------------------------------------------- |
+| Label   | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`, with the band in `text/primary/strong` |
+
+## Tokens
+
+| Part          | Token                 | Reduced motion | Notes                                       |
+| :------------ | :-------------------- | :------------- | :------------------------------------------ |
+| Label at rest | `text/base/muted`     | Same           | Text, so it needs 4.5:1 against the surface |
+| Light band    | `text/primary/strong` | Removed        | Passes through the label                    |
+| Grains        | `text/primary/strong` | Same, pulsing  | Decorative                                  |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| Part       | What it does                                                                                         | Timing                                    | Reduced motion                                                              |
+| :--------- | :--------------------------------------------------------------------------------------------------- | :---------------------------------------- | :-------------------------------------------------------------------------- |
+| Light band | Drifts across the label from the start edge to the end edge. In Dhivehi it moves from right to left. | 1.6s loop, linear, never stops            | Removed. The label shows in `text/base/muted`.                              |
+| Grains     | Each grain rises 0.18 em, brightens and settles back, 0.1s after the one before.                     | 1.6s loop, cubic-bezier(0.2, 0.8, 0.2, 1) | The grains stay still and pulse gently between full and 40 percent opacity. |
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -43,3 +319,38 @@ With reduced motion enabled, settling text stops the moving light band and grain
 | `className` | `string` | —       | Typography and layout overrides.   |
 
 Supports standard HTML `span` attributes and a `ref` to the root span.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How Loading text works with screen readers, focus, reduced motion and contrast. It is a status message, not a control.
+
+## Screen readers
+
+- Loading text has role status and uses the full label as its accessible name. The grains and the visible label copy are hidden from assistive technology, so the label is read once.
+- Hide Loading text with aria-hidden when a parent already announces the status. With aria-hidden, it drops its role and name.
+- When a Spinner and Loading text show together, put the Spinner first with aria-hidden and let Loading text carry the name, so the wait is announced once.
+- Don't rely on a newly added Loading text alone to announce a wait people must know about. Keep one role status region on the page from load, change its text when the wait starts and ends, and test it with NVDA, VoiceOver and TalkBack.
+
+## Focus
+
+Loading text is not focusable and has no keyboard interaction. Focus stays on the control that started the wait. Don't move focus when the content arrives.
+
+## Reduced motion
+
+When the user prefers reduced motion, the light band and the grain movement stop and the label shows in `text/base/muted`. The grains keep a gentle opacity pulse. Nothing extra is needed from you.
+
+## Contrast
+
+The label rests in `text/base/muted` and needs 4.5:1 against its background. Check it on tinted or coloured surfaces, in Light and Dark separately.
+
+## Text resize
+
+Let the label wrap. Don't give it a fixed height or cut it, so it stays readable at 200 percent text size.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, and the light band follows it. Pass the Dhivehi label yourself: Loading text has no built-in text. Isolate Latin file names and references inside the Dhivehi label with FSI and PDI.
+
+</DocsTab>

@@ -1,6 +1,6 @@
 ---
 title: Avatar
-description: Compact representation of a person, agency, or service with an image, initials, or icon.
+description: 'Shows who a person, agency or service is at a glance, as a photo, initials or an icon.'
 ---
 
 import {
@@ -10,9 +10,367 @@ import {
   AvatarSizesDemo,
 } from '../../components/AvatarExamples';
 
+import { AvatarLanguageDemo } from '../../components/EditorialLanguageExamples';
+
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Avatar
 
-The Avatar component represents a person, agency, or service with an image, initials, or icon.
+<DocsTab id="overview">
+
+An avatar shows who a person, agency or service is at a glance, as a photo, initials or an icon. Use it next to a name in lists, comments and account menus, so people can recognise who did what. An avatar only shows identity: it takes no action and never replaces the name.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/avatar.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-avatar--docs"
+/>
+
+## When to use
+
+### Use an avatar when
+
+- A person, agency or service needs a compact visual identity next to its name.
+- You need to show who owns, submitted or acted on an item.
+- People recognise others faster by photo or initials than by name alone.
+
+### Don't use an avatar when
+
+- The identity must be conveyed in text. Show the full name or label next to the avatar; never rely on the avatar alone.
+- You want to show status, role or priority. Use Badge, and never encode status in the avatar colour.
+- You need a product image, logo or illustration. Use an image.
+- People need to select or remove a person in a group. Use Tags.
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-intro-1.webp"
+  darkSrc="/images/docs/avatar/avatar-intro-1-dark.webp"
+  alt="A white card titled Application activity, Business licence BL-3051, with three rows: a blue initials avatar AM for Aishath Mariyam, Submitted the application; a green agency avatar with a buildings icon for Ministry of Economic Development, Asked for a signed lease agreement; and a photo avatar for Hassan Ibrahim, Uploaded the lease agreement."
+  width="2400"
+  height="1092"
+  caption="Avatars next to names show who acted on an application."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-anatomy-1.svg"
+  darkSrc="/images/docs/avatar/avatar-anatomy-1-dark.svg"
+  alt="Three 60 avatars on a grey stage, labelled Type initials, icon and image, with five numbered markers: 1 on the circular container of the blue initials avatar MJ, 2 on the initials MJ, 3 on the person icon, 4 on the photo and 5 on the thin border around the photo."
+  width="656"
+  height="307"
+  caption="The parts of an avatar. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   a circle filled with the appearance colour (`components/avatar/<appearance>`). Its diameter is the size: 60, 52, 44, 36, 28, 20 or 16. In code it is Avatar.
+
+2. **Initials**
+
+   one or two glyphs from the name, centred. Sizes 20 and 16 show one glyph. In code it is initials.
+
+3. **Icon**
+
+   a person icon for a person or a buildings icon for an agency, filled and centred. The icon box scales with the size, from 32 at size 60 down to 12 at size 28 and below. It is decorative and hidden from assistive technology. In code it is type icon or agencyIcon.
+
+4. **Image**
+
+   a photo cropped to the circle. Appearance has no effect on image avatars. In code it is src and alt.
+
+5. **Image border**
+
+   a 1px border (`components/avatar/img-border`) that keeps light photo edges visible on light backgrounds. Image avatars only.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/avatar/avatar-do-1.webp" darkSrc="/images/docs/avatar/avatar-do-1-dark.webp" alt="A list of three people, each with an initials avatar followed by the name: AM Aishath Mariyam, HI Hassan Ibrahim and MS Mariyam Shifa." width="1136" height="472">
+
+Show the name next to the avatar in lists.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/avatar/avatar-dont-1.webp" darkSrc="/images/docs/avatar/avatar-dont-1-dark.webp" alt="Three initials avatars AM, HI and MS in a row, with no names." width="1136" height="472">
+
+Don't rely on avatars alone to identify people. They are hard to tell apart, and people who can't see them get no name at all.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/avatar/avatar-do-2.webp" darkSrc="/images/docs/avatar/avatar-do-2-dark.webp" alt="An agency icon avatar with a buildings icon next to Ministry of Economic Development." width="1136" height="264">
+
+Use agencyIcon for agencies and services.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/avatar/avatar-dont-2.webp" darkSrc="/images/docs/avatar/avatar-dont-2-dark.webp" alt="A person icon avatar next to Ministry of Economic Development." width="1136" height="264">
+
+Don't use the person icon or initials for an agency. It makes an agency look like a named officer.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/avatar/avatar-do-3.webp" darkSrc="/images/docs/avatar/avatar-do-3-dark.webp" alt="The list AM Aishath Mariyam, HI Hassan Ibrahim and MS Mariyam Shifa, with every avatar the same size." width="1136" height="472">
+
+Use one size for every avatar in a list.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/avatar/avatar-dont-3.webp" darkSrc="/images/docs/avatar/avatar-dont-3-dark.webp" alt="The same list with avatars of three different sizes: a large AM, a small HI and a medium MS." width="1136" height="472">
+
+Don't mix sizes in the same list.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Initials
+
+Pass the full name to initials; code derives the glyphs. It takes the first letters of the first two words, or the first two letters of a one-word name: Aishath Mariyam becomes AM, and Aishath Shiuna Ibrahim becomes AS.
+
+| Do                         | Don't                                                        |
+| :------------------------- | :----------------------------------------------------------- |
+| initials="Aishath Mariyam" | initials="A.M." (full stops render as glyphs; pass the name) |
+
+In Figma, initials aren't derived. Type them yourself: two capital letters, or one at sizes 20 and 16.
+
+### Alternative text
+
+Set alt to the person's or agency's full name. Never use words like avatar, profile picture or photo.
+
+| Do                     | Don't                                                         |
+| :--------------------- | :------------------------------------------------------------ |
+| Aishath Mariyam        | Avatar (names the image, not the person)                      |
+| Maldives Immigration   | Profile picture of Aishath (role words and a partial name)    |
+| Aishath Shiuna Ibrahim | Profile picture of user (describes the image, not the person) |
+
+When the name is shown next to the avatar, hide the avatar from assistive technology with aria-hidden="true", so the name isn't read twice.
+
+### Alternative text in Dhivehi
+
+Always pass alt, in Dhivehi too. Without it, icon and image avatars fall back to the English word User and agency icon avatars to Agency, even under VeliProvider language dv. Initials avatars use the initials string. Pass the Dhivehi spelling of the name under language dv, such as ޝިހާމް ހުސައިން.
+
+| Do                                                        | Don't                                                                     |
+| :-------------------------------------------------------- | :------------------------------------------------------------------------ |
+| alt="Hassan Ibrahim", in Dhivehi script under language dv | No alt in a Dhivehi interface (screen readers hear the English word User) |
+
+### Photos
+
+Use a square photo with the face centred. The image is cropped to a circle, so keep the subject inside the safe centre.
+
+### Presence
+
+When you show whether a person is available, show the presence word as text, or as the aria-label of a status dot, never through the avatar colour. Use Online with the positive intent, Away with cautious, Busy with danger and Offline with neutral.
+
+## Related components
+
+| Component                       | When to use it                                                                                                                                                                    |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Badge](/docs/badge/)           | show status or role next to an avatar, or the xs status dot on its corner. Don't encode status in the avatar colour.                                                              |
+| [Tooltip](/docs/tooltip/)       | show the full name on hover or focus when it isn't visible next to the avatar. Attach the Tooltip to a Button or Link that wraps the avatar, because the avatar can't take focus. |
+| [Button](/docs/button/)         | wrap an avatar in a Button when it opens an account menu or profile.                                                                                                              |
+| [Link](/docs/link/)             | wrap an avatar in a Link when it goes to a profile page.                                                                                                                          |
+| [Tags](/docs/tags/)             | when people need to select or remove a person in a group. An avatar glyph can sit in a tag's leading slot.                                                                        |
+| [VeliProvider](/docs/provider/) | sets the language that maps Latin initials to Thaana glyphs under language dv.                                                                                                    |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the avatar: types, appearances, sizes and the type and tokens behind them. Values match the shipped component.
+
+## Types
+
+Choose the type by what the avatar represents and what data you have.
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-types-1.webp"
+  darkSrc="/images/docs/avatar/avatar-types-1-dark.webp"
+  alt="Four examples labelled type image, initials, icon and agencyIcon: a photo of a person, a blue initials avatar MJ, a neutral person icon avatar and a green agency avatar with a buildings icon."
+  width="2400"
+  height="552"
+  caption="Image, initials, icon and agency icon."
+/>
+
+| Type           | Use it for                                                                                                              |
+| :------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| image          | A photo of the person, when a reliable photo exists, such as the signed-in user's profile                               |
+| initials       | A person with a known name but no photo. Pass the full name                                                             |
+| icon (default) | A person whose name isn't available, such as an anonymous or unknown user                                               |
+| agencyIcon     | An agency, such as Ministry of Economic Development. A person icon or initials make an agency look like a named officer |
+
+Content resolves in this order: a loadable src shows the image; otherwise initials show when they are set, even if type is icon; otherwise the icon or agency icon shows.
+
+## Appearances
+
+Appearance sets the background and glyph colour of initials and icon avatars. Image avatars ignore it. In code, appearance defaults to blue.
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-appearances-1.webp"
+  darkSrc="/images/docs/avatar/avatar-appearances-1-dark.webp"
+  alt="Ten initials avatars MJ, one per appearance, each labelled: blue, neutral, emerald, yellow, orange, magenta, indigo, teal, green and lime."
+  width="2400"
+  height="720"
+  caption="The ten appearances. Blue is the default."
+/>
+
+- Use **neutral** for unknown users and system entities.
+- Give a person or agency the same appearance everywhere, for example by deriving it from a stable id.
+- Appearance is decorative. It carries no status, role or priority.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-sizes-1.webp"
+  darkSrc="/images/docs/avatar/avatar-sizes-1-dark.webp"
+  alt="Seven blue initials avatars from largest to smallest, labelled size 60 Profile headers, 52 Profile cards, 44 Default, lists and cards, 36 Compact lists, 28 Tables and dense lists, 20 Inline with text and 16 Inline with small text. Sizes 60 to 28 show MJ; 20 and 16 show only M."
+  width="2400"
+  height="416"
+  caption="The seven sizes. 44 is the default."
+/>
+
+| Size         | Use it for             | Initials | Icon |
+| :----------- | :--------------------- | :------- | :--- |
+| 60           | Profile headers        | 2 glyphs | 32   |
+| 52           | Profile cards          | 2 glyphs | 24   |
+| 44 (default) | Lists and cards        | 2 glyphs | 20   |
+| 36           | Compact lists          | 2 glyphs | 16   |
+| 28           | Tables and dense lists | 2 glyphs | 12   |
+| 20           | Inline with text       | 1 glyph  | 12   |
+| 16           | Inline with small text | 1 glyph  | 12   |
+
+The size is the diameter in pixels and is fixed. Use one size in a list and in each context.
+
+## Behaviour
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-fallback-1.webp"
+  darkSrc="/images/docs/avatar/avatar-fallback-1-dark.webp"
+  alt="Three steps. Step 1, src loads: a photo avatar. Step 2, src fails, initials set: a blue initials avatar MJ. Step 3, no src or initials: a person icon avatar and an agency icon avatar."
+  width="2400"
+  height="456"
+  caption="What the avatar shows when the image or initials are missing."
+/>
+
+- **Fallback**: a loadable src shows the image. When it fails to load, the avatar falls back to initials when they are supplied, otherwise to the icon for the type. Design every screen that shows a photo avatar so it also looks right with initials or the icon, and pass the name through initials with every image avatar.
+- **Not interactive**: an avatar is a div with no built-in action. To make it do something, wrap it in a button or a link and give that control an accessible name.
+- **Status dot**: to show presence, place an xs Badge dot 2px inside the bottom end corner of the avatar with a 2px ring in the surface colour.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-rtl-1.webp"
+  darkSrc="/images/docs/avatar/avatar-rtl-1-dark.webp"
+  alt="Two examples labelled LTR Avatar, English and RTL AvatarDv, Dhivehi. On the left, blue initials avatars MJ at four sizes, the smallest showing only M. On the right, the same sizes with the Thaana initials މޖ, the smallest showing only މ."
+  width="2400"
+  height="440"
+  caption="Initials in English, and in Thaana with AvatarDv."
+/>
+
+- Under VeliProvider language dv, Latin initials map to Thaana glyphs automatically, including digraphs such as SH to ޝ. Shiham Hussain becomes ޝހ.
+- Thaana initials use MV A Waheed, one step larger than English, such as 21 instead of 18 at size 44.
+- Wrap a name from user data shown next to an avatar in bdi or an element with dir="auto".
+- In Figma, use AvatarDv for Dhivehi initials. Image, icon and agency icon avatars use Avatar in both directions.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <AvatarLanguageDemo client:visible />
+</div>
+
+Example configuration: type initials, size 44, appearance blue.
+
+| Prop         | English        | Dhivehi         |
+| :----------- | :------------- | :-------------- |
+| initials     | Shiham Hussain | Shiham Hussain  |
+| alt          | Shiham Hussain | ޝިހާމް ހުސައިން |
+| Shown glyphs | SH             | ޝހ              |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-spacing-1.svg"
+  darkSrc="/images/docs/avatar/avatar-spacing-1-dark.svg"
+  alt="Two size 60 avatars with redlines. Icon type: a 32 x 32 icon box with 14 padding above and below, in a 60 circle. Initials type: MJ in a 32 text box in a 60 circle."
+  width="1200"
+  height="331"
+/>
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-spacing-2.svg"
+  darkSrc="/images/docs/avatar/avatar-spacing-2-dark.svg"
+  alt="Icon avatars at every size, labelled 60, 52, 44, 36, 28, 20 and 16."
+  width="1200"
+  height="252"
+  caption="The icon and initials scale with the size. Values in pixels at 1x."
+/>
+
+| Size | Icon box | Icon padding | Initials   |
+| :--- | :------- | :----------- | :--------- |
+| 60   | 32 x 32  | 14           | Two glyphs |
+| 52   | 24 x 24  | 14           | Two glyphs |
+| 44   | 20 x 20  | 12           | Two glyphs |
+| 36   | 16 x 16  | 10           | Two glyphs |
+| 28   | 12 x 12  | 8            | Two glyphs |
+| 20   | 12 x 12  | 4            | One glyph  |
+| 16   | 12 x 12  | 2            | One glyph  |
+
+<DocsFigure
+  src="/images/docs/avatar/avatar-radius-1.svg"
+  darkSrc="/images/docs/avatar/avatar-radius-1-dark.svg"
+  alt="A size 60 icon avatar with its circular edge marked Full, raw value 72."
+  width="1200"
+  height="248"
+  caption="Avatars are always fully round. Code uses rounded-full."
+/>
+
+## Typography
+
+| Size | English initials                    | Dhivehi initials                                                            |
+| :--- | :---------------------------------- | :-------------------------------------------------------------------------- |
+| 60   | Title 2 medium, Inter Medium 24/32  | Dhivehi title 2 medium, MV A Waheed 27/40                                   |
+| 52   | Subtitle medium, Inter Medium 20/28 | Dhivehi subtitle medium, MV A Waheed 24/32                                  |
+| 44   | Body lg medium, Inter Medium 18/28  | Dhivehi body lg medium, MV A Waheed 21/36                                   |
+| 36   | Body md medium, Inter Medium 16/24  | Dhivehi body md medium, MV A Waheed 19/32                                   |
+| 28   | Caption medium, Inter Medium 12/16  | Dhivehi caption medium, MV A Waheed 15/24                                   |
+| 20   | Caption medium, Inter Medium 12/16  | Dhivehi caption medium, MV A Waheed 15/24                                   |
+| 16   | Inter Medium 10, no text style      | Dhivehi caption medium, MV A Waheed 15/24 in Figma; Inter Medium 10 in code |
+
+## Tokens
+
+| Appearance   | Background          | Initials                  | Icon                      |
+| :----------- | :------------------ | :------------------------ | :------------------------ |
+| blue         | `avatar/blue`       | `text/primary/default`    | `icon/primary/default`    |
+| neutral      | `avatar/neutral`    | `text/base/DEFAULT`       | `icon/base/default`       |
+| emerald      | `avatar/emerald`    | `text/success/default`    | `icon/success/default`    |
+| yellow       | `avatar/yellow`     | `text/caution/default`    | `icon/caution/default`    |
+| orange       | `avatar/orange`     | `text/warning/default`    | `icon/warning/default`    |
+| magenta      | `avatar/magenta`    | `status/magenta-emphasis` | `status/magenta-emphasis` |
+| indigo       | `avatar/indigo`     | `status/indigo-emphasis`  | `status/indigo-emphasis`  |
+| teal         | `avatar/teal`       | `status/teal-emphasis`    | `status/teal-emphasis`    |
+| green        | `avatar/green`      | `status/green-emphasis`   | `status/green-emphasis`   |
+| lime         | `avatar/lime`       | `status/lime-emphasis`    | `status/lime-emphasis`    |
+| Image border | `avatar/img-border` |                           |                           |
+
+Token names come from the shipped classes, written in full. Override these tokens, not raw colours, when theming. Avatar has no motion and is fully rounded at every size.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -100,3 +458,29 @@ All other `div` attributes are supported.
 ## RTL and Language
 
 With `VeliProvider` set to Dhivehi (`language="dv"`), Latin `initials` sources map to Thaana glyphs, including digraphs such as `SH` → `ޝ`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the avatar works with screen readers and what you still need to do. An avatar is a static image of an identity, so the work is in its name.
+
+## Screen readers
+
+- Every avatar renders an image with alt text, including initials and icon avatars, where the image is visually hidden. The glyphs and icons themselves are hidden from assistive technology.
+- Pass alt as the full name of the person or agency. Without alt, initials avatars use the initials string, agency icons use Agency and the rest use User.
+- When the name is shown next to the avatar, add aria-hidden="true" to the avatar so the name isn't read twice.
+
+## Focus
+
+An avatar isn't focusable and has no keyboard behaviour. To make it act, wrap it in a Button or a Link with an accessible name. Attach any Tooltip to that wrapper, not to the avatar.
+
+## Contrast
+
+Initials are text, so each appearance needs 4.5:1 against its background. Measured in Storybook at size 44 on the base surface, every appearance gives about 5.8:1 to 6.2:1 in light and dark themes. Appearance colour carries no meaning, so nothing is lost for people who can't tell the colours apart.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). Latin initials then map to Thaana glyphs. Pass alt in Dhivehi yourself: the fallback names User and Agency stay English.
+
+</DocsTab>

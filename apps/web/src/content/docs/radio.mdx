@@ -1,6 +1,6 @@
 ---
 title: Radio
-description: Accessible single selection with medium, large, and extra-large sizes, group validation, and composable field messages.
+description: 'Lets people choose exactly one option from a short list where every option stays visible.'
 ---
 
 import {
@@ -12,9 +12,400 @@ import {
   RadioRtlDemo,
 } from '../../components/RadioExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Radio
 
-Use `RadioGroup` when exactly one option may be selected. Selection, keyboard navigation, form values, and validation belong to the group. Use [Checkbox](/docs/components/checkbox/) for independent choices.
+<DocsTab id="overview">
+
+A radio lets people choose one option from a short list, where every option stays visible. Use radios in a group of two or more, inside a RadioGroup that holds the selected value. Once people choose, one radio in the group is always on: they can choose another, but not turn it off again.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/radio.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-radio--docs"
+/>
+
+## When to use
+
+### Use a radio when
+
+- People must compare a small set of visible options and choose exactly one.
+- There are 2 to 6 options.
+- People must answer a yes or no question. Use two radios, Yes then No, so a skipped answer is clearly different from No.
+- The value belongs to one group. Always put the radios inside a RadioGroup.
+
+### Don't use a radio when
+
+- People can choose more than one option. Use a [checkbox](/docs/components/checkbox/).
+- The list is long and people would rather search or type into it. Use a [combobox](/docs/components/combobox/).
+- The choice is a single on or off setting. Use a [switch](/docs/components/switch/) or a [checkbox](/docs/components/checkbox/).
+- People switch between views of the same content. Use [tabs](/docs/components/tabs/).
+
+<DocsFigure
+  src="/images/docs/radio/radio-intro-1.webp"
+  darkSrc="/images/docs/radio/radio-intro-1-dark.webp"
+  alt='A form card asking "Where will you collect your passport?" with the description "Choose one office." Three radios follow: Male&#x27; service centre, selected, with "Collect it in person."; Hulhumale&#x27; service centre with "Collect it in person."; and By post with "Sent to your registered address."'
+  width="1024"
+  height="465"
+  caption="A radio group asks people where to collect their passport."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/radio/radio-anatomy-1.svg"
+  darkSrc="/images/docs/radio/radio-anatomy-1-dark.svg"
+  alt='A selected, invalid radio at size lg with five numbered markers: 1 on the circle, 2 on the dot inside it, 3 on the label "Label text", 4 on the description "Description text" and 5 on the red error message "Error text".'
+  width="576"
+  height="268"
+  caption="The parts of a radio, shown selected and invalid at size lg. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Control**
+
+   the circle, 16 at size md and 24 at lg and xl. Off shows the border only. In code it is Radio.
+
+2. **Indicator**
+
+   the dot when selected, 8 at md and 14 at lg and xl. It shrinks while pressed. It is decorative; the state comes from the input. In code it shows when the RadioGroup value matches the radio's value.
+
+3. **Label**
+
+   names the option. Clicking it selects the radio. In code it is the Radio children.
+
+4. **Description**
+
+   optional help below the label. In code it is description.
+
+5. **Error message**
+
+   shown only while invalid. For a missing answer, put the error under the RadioGroup, not on one radio. In code it is errorMessage.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/radio/radio-do-1.webp" darkSrc="/images/docs/radio/radio-do-1-dark.webp" alt="Two radios labelled Standard and Urgent." width="568" height="148">
+
+Write short, distinct options that don't overlap.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/radio/radio-dont-1.webp" darkSrc="/images/docs/radio/radio-dont-1-dark.webp" alt="Two radios labelled Fast and Quick." width="568" height="148">
+
+Don't use options that mean the same thing. People can't tell which one to pick.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/radio/radio-do-2.webp" darkSrc="/images/docs/radio/radio-do-2-dark.webp" alt="Three radios, Male&#x27;, Hulhumale&#x27; and By post, stacked in a column." width="568" height="180">
+
+Stack options in a column, 12 apart, so the circles line up and the labels are easy to scan.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/radio/radio-dont-2.webp" darkSrc="/images/docs/radio/radio-dont-2-dark.webp" alt="Three radios, Male&#x27;, Hulhumale&#x27; and By post, laid out side by side in one row." width="568" height="180">
+
+Don't run options along a row. They are harder to scan.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/radio/radio-do-3.webp" darkSrc="/images/docs/radio/radio-do-3-dark.webp" alt="Two radios, Standard and Urgent, both the same size." width="568" height="156">
+
+Use one size in a group.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/radio/radio-dont-3.webp" darkSrc="/images/docs/radio/radio-dont-3-dark.webp" alt="Two radios, Standard and Urgent, in different sizes, so their circles and labels don&#x27;t line up." width="568" height="156">
+
+Don't mix sizes in one group. The circles and labels stop lining up.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Group label
+
+Every group needs a label that asks the question, in sentence case, ending with a question mark. On a page that asks one question, the question is the page heading and the group label at once.
+
+| Do                                    | Don't                                            |
+| :------------------------------------ | :----------------------------------------------- |
+| Where will you collect your passport? | Collection office: (not a question, and a colon) |
+| Do you have a previous passport?      |                                                  |
+
+### Options
+
+Write short, parallel phrases that don't overlap, in sentence case and without a full stop. Use a logical order, such as alphabetical, by size or by frequency, and put the most common option first. Add None of these or I do not know when it is a valid answer.
+
+| Do                                          | Don't                                                                           |
+| :------------------------------------------ | :------------------------------------------------------------------------------ |
+| Under 1 year, 1 to 4 years, 5 years or more | In person and At the counter (two options that mean the same thing)             |
+| Collect it in person, By post               | I would like to collect it in person. (long, and a full stop)                   |
+| None of these, I do not know                | Other (please specify) (please, and brackets; ask a follow-up question instead) |
+
+### Description
+
+Add one short line only when people need it to choose. Leave off the full stop, and don't put links in labels, descriptions or errors.
+
+| Do                              |
+| :------------------------------ |
+| Sent to your registered address |
+
+### Error message
+
+Say what to do, in the words of the question, starting with Choose. Use one sentence with no full stop and no please, and never show only Required.
+
+| Do                                         | Don't                                                     |
+| :----------------------------------------- | :-------------------------------------------------------- |
+| Choose where to collect your passport      | Please select an option. (please, select and a full stop) |
+| Choose yes if you have a previous passport | Required (does not say what to do)                        |
+
+### Yes or no questions
+
+Ask a yes or no question that people must answer with two radios, Yes then No, such as Do you have a previous passport? Use a checkbox only for a single statement people opt into.
+
+### No default when none fits
+
+If no option should be chosen by default, leave every radio off and say so in the question. A preselected answer is easy to submit without reading, and hides whether people really chose it.
+
+### Gender
+
+When a service needs gender, use the gender field pattern, built as a RadioGroup, and keep the labels and help gender neutral.
+
+### Dhivehi copy
+
+Radio and RadioGroup have no built-in text apart from Optional on FieldLabel. Pass every label, description and error in English and Dhivehi, and write your own errors instead of the browser's. Write Dhivehi natively rather than transliterating, and keep it as short as the English, because Dhivehi lines are taller.
+
+## Related components
+
+| Component                              | When to use it                                                                                        |
+| :------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| [Checkbox](/docs/components/checkbox/) | choose any number of options, or one yes or no.                                                       |
+| [Switch](/docs/components/switch/)     | turn a setting on or off straight away.                                                               |
+| [Select](/docs/components/select/)     | choose one option from a list too long to show as radios.                                             |
+| [Combobox](/docs/components/combobox/) | choose from a long list by typing to filter it.                                                       |
+| [Field](/docs/components/field/)       | FieldLabel, FieldDescription and FieldError inside a RadioGroup give it its question, help and error. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the radio: selection, sizes, states, content options, spacing and the tokens behind them. Values match the shipped component unless noted under Missing or unverified.
+
+## Selection
+
+<DocsFigure
+  src="/images/docs/radio/radio-selection-1.webp"
+  darkSrc="/images/docs/radio/radio-selection-1-dark.webp"
+  alt='Two radios labelled "Collect it in person". Off has an empty circle; on has a circle with a filled dot.'
+  width="1024"
+  height="181"
+  caption="Off and on."
+/>
+
+| Value | When         | In code                                                 |
+| :---- | :----------- | :------------------------------------------------------ |
+| Off   | Not selected | Its value is not the RadioGroup value                   |
+| On    | Selected     | The RadioGroup value, or defaultValue when uncontrolled |
+
+In a RadioGroup, choosing one radio turns the others off.
+
+## Sizes
+
+Radio has three sizes, md, lg and xl, in Figma and in code. In code, size defaults to md. xl keeps the lg circle and uses larger text.
+
+<DocsFigure
+  src="/images/docs/radio/radio-sizes-1.webp"
+  darkSrc="/images/docs/radio/radio-sizes-1-dark.webp"
+  alt='Three radios labelled "Collect it in person" with the description "At a service centre." at size md with a 16 circle, lg with a 24 circle and xl with a 24 circle and larger text.'
+  width="1024"
+  height="212"
+  caption="Sizes md, the default, lg and xl."
+/>
+
+- Use **md** (circle 16, body sm label) next to md fields.
+- Use **lg** (circle 24, body md label) next to lg fields.
+- Use **xl** (circle 24, body lg label) when the options need larger text, such as the only question on a page.
+- Use one size within a group.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/radio/radio-options-1.webp"
+  darkSrc="/images/docs/radio/radio-options-1-dark.webp"
+  alt='Three examples. Short options: Yes and No. With descriptions: Standard, "Processed in the usual order.", and Urgent, "Processed first, for an extra fee." Invalid group: Standard and Urgent with the error "Choose a service type." below the group.'
+  width="1024"
+  height="270"
+  caption="Short options, options with descriptions, and an invalid group."
+/>
+
+- **Short options**: for two or three short answers, give each radio a label only.
+- **With descriptions**: add a description when an option needs a line of detail.
+- **Invalid group**: when nothing is chosen on submit, show the errorMessage under the RadioGroup, not on a single radio.
+- Put the group in a RadioGroup with a FieldLabel that asks the question.
+
+## States
+
+<DocsFigure
+  src="/images/docs/radio/radio-states-1.webp"
+  darkSrc="/images/docs/radio/radio-states-1-dark.webp"
+  alt='Three radios at size md labelled "Collect it in person" with "At a service centre." in the default, hover and pressed states. Hover darkens the border and pressed thickens it.'
+  width="1024"
+  height="222"
+/>
+
+<DocsFigure
+  src="/images/docs/radio/radio-states-2.webp"
+  darkSrc="/images/docs/radio/radio-states-2-dark.webp"
+  alt='Three more states of the same radio. Focus shows a ring around the circle. Invalid shows the error "Choose where to collect your passport." below. Disabled shows a muted circle and grey text.'
+  width="1024"
+  height="239"
+  caption="States at size md, off. On follows the same rules."
+/>
+
+| State    | When                                 | Visual change                                                 |
+| :------- | :----------------------------------- | :------------------------------------------------------------ |
+| Default  | No interaction                       | The border shows; the dot shows when on                       |
+| Hover    | Pointer over the circle or the label | The border darkens                                            |
+| Pressed  | While pressing                       | The border thickens by 1; when on, the dot shrinks            |
+| Focus    | Keyboard focus                       | Focus ring around the circle: 2px in `border/focus`, offset 2 |
+| Invalid  | isInvalid                            | The error message shows below; the circle does not change     |
+| Disabled | isDisabled                           | Muted circle and text; skipped by the arrow keys              |
+
+A read-only RadioGroup (isReadOnly) can be focused and its answer heard, but not changed. Use it, not isDisabled, for answers that can't be changed here, such as gender prefilled from the National Registry. It looks the same as default.
+
+## Behaviour
+
+- **Choosing**: clicking the circle or the label selects the radio and turns the others off.
+- **Arrow keys select**: arrow keys select each radio they pass, so never navigate or submit when the value changes.
+- **Controlled or uncontrolled**: pass value with onChange to RadioGroup, or defaultValue to start with one chosen.
+- **Groups**: RadioGroup holds one value and stacks radios 12 apart, in a column by default. Its orientation prop only changes what screen readers announce; a row of very short options, or a responsive grid, needs layout classes on the root.
+- **Validation**: check a required group when people submit. Outside a Veli Form, validationBehavior native blocks submission with the browser's message; inside one it is aria and doesn't block. Either way, set isInvalid with your own errorMessage.
+- **Error summary**: after a submit with errors, show the error summary, There is a problem, with a link for each error in page order. The link for a radio group goes to its first radio. While the summary shows, add Error: to the start of the page title.
+- **Field parts or props, not both**: RadioGroup has no label prop, so put FieldLabel inside it. You can also use FieldDescription and FieldError inside the group, but then don't pass description or errorMessage on the group as well, or the help and error show twice.
+- **Group only**: a radio is not a standalone toggle. It only works as one option of a RadioGroup.
+- **Styling**: Radio takes no style overrides. Its className only sets the outer layout.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/radio/radio-rtl-1.webp"
+  darkSrc="/images/docs/radio/radio-rtl-1-dark.webp"
+  alt='Two radio groups side by side. On the left, the English Radio: "Collect it in person", selected, with "At a service centre.", and "By post". On the right, RadioDv mirrored right to left, with the circles on the right of Dhivehi placeholder text.'
+  width="1024"
+  height="222"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the circle sits on the right and the text aligns right.
+- Text uses the Dhivehi regular body styles (MV Faseyha). Rows grow with the taller lines and the circle stays centred on the first line.
+- In code, wrap the app in VeliProvider with language set to dv. The same Radio mirrors, and the arrow keys follow the direction.
+- When a group sits in a part of the page in the other language, wrap that part in React Aria I18nProvider with its locale, so Left and Right arrows follow its direction.
+- In Figma, design Dhivehi screens with RadioDv. It has the same 36 variants as Radio, mirrored.
+
+Example configuration: not yet possible. Storybook has no native Dhivehi copy for a real radio question; see Missing or unverified.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/radio/radio-spacing-1.webp"
+  darkSrc="/images/docs/radio/radio-spacing-1-dark.webp"
+  alt="Spacing redlines for a selected, invalid radio at sizes md, lg and xl: circle 16 at md and 24 at lg and xl, row heights 20 and 28, an 8 gap from circle to label and 4 between label, description and error."
+  width="1024"
+  height="246"
+  caption="All values in pixels at 1x. Bands are gaps between parts and lines with end ticks are sizes."
+/>
+
+| Property                  | md  | lg  | xl  |
+| :------------------------ | :-- | :-- | :-- |
+| Circle                    | 16  | 24  | 24  |
+| Circle border             | 2   | 3   | 3   |
+| Circle border, pressed    | 3   | 4   | 4   |
+| Dot                       | 8   | 14  | 14  |
+| Dot, pressed              | 6   | 10  | 10  |
+| Row the circle centres in | 20  | 28  | 28  |
+| Circle to label           | 8   | 8   | 8   |
+| Label to description      | 4   | 4   | 4   |
+| Description to error      | 4   | 4   | 4   |
+| Between radios in a group | 12  | 12  | 12  |
+
+<DocsFigure
+  src="/images/docs/radio/radio-radius-1.webp"
+  darkSrc="/images/docs/radio/radio-radius-1-dark.webp"
+  alt="Three radios at sizes md, lg and xl with the circle marked as fully rounded."
+  width="1024"
+  height="161"
+  caption="The circle and the dot are fully rounded at every size."
+/>
+
+## Typography
+
+| Element                | English                              | Dhivehi                                   | Colour token                                 |
+| :--------------------- | :----------------------------------- | :---------------------------------------- | :------------------------------------------- |
+| Label, md              | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`; disabled `text/disabled` |
+| Label, lg              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/strong`; disabled `text/disabled` |
+| Label, xl              | Body lg regular, Inter Regular 18/28 | Dhivehi body lg regular, MV Faseyha 19/36 | `text/base/strong`; disabled `text/disabled` |
+| Description, md and lg | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`; disabled `text/disabled`  |
+| Description, xl        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/muted`; disabled `text/disabled`  |
+| Error, md              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/danger/muted`                          |
+| Error, lg              | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/danger/muted`                          |
+| Error, xl              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/danger/muted`                          |
+
+## Tokens
+
+Names leave out the `components/radio/` and `semantics/` prefixes.
+
+| State                 | Circle border                                        | Dot                                                 | Text                              |
+| :-------------------- | :--------------------------------------------------- | :-------------------------------------------------- | :-------------------------------- |
+| Off, default          | `container-off-border`                               | None                                                | Label `text/base/strong`          |
+| Off, hover or pressed | `container-off-border-hover`; 1 thicker when pressed | None                                                | Label `text/base/strong`          |
+| On, default           | `container-selected-border`                          | `indicator-selected-bg`                             | Label `text/base/strong`          |
+| On, hover or pressed  | `container-selected-border-hover`                    | `indicator-selected-bg-hover`; smaller when pressed | Label `text/base/strong`          |
+| Disabled              | `indicator-disabled-border`                          | `indicator-disabled-bg` when on                     | `text/disabled`                   |
+| Invalid               | As off or on                                         | As off or on                                        | Error message `text/danger/muted` |
+| Focus                 | As default, plus the focus ring in `border/focus`    | As default                                          | As default                        |
+
+The circle fill is `container-bg`. Override these tokens, not raw colours, when theming.
+
+<DocsFigure
+  src="/images/docs/radio/radio-focus-1.webp"
+  darkSrc="/images/docs/radio/radio-focus-1-dark.webp"
+  alt="Three radios in the focus state: md off, lg on and xl on, each with the focus ring around the circle."
+  width="1024"
+  height="185"
+  caption="The focus ring sits outside the circle, so focusing doesn&#x27;t move the label."
+/>
+
+## Motion
+
+| What moves                               | Duration                          | Easing                                    |
+| :--------------------------------------- | :-------------------------------- | :---------------------------------------- |
+| Hover colours                            | None, they change at once in code |                                           |
+| Circle border width on press and release | Fast (80ms)                       | Spring while pressed, ease out on release |
+| Dot size on press and release            | Fast (80ms)                       | Spring while pressed, ease out on release |
+
+With reduced motion turned on, these transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -193,3 +584,60 @@ Use the same locale and direction as the surrounding UI. Dhivehi typography foll
 <div className="preview mb-4 rounded-lg border p-4">
   <RadioRtlDemo client:load />
 </div>
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How radios work with keyboards, screen readers and touch, and what you still need to do. Radio and RadioGroup use React Aria radio semantics around native radio inputs.
+
+## Keyboard
+
+| Key         | Action                                                                                                                  |
+| :---------- | :---------------------------------------------------------------------------------------------------------------------- |
+| Tab         | Moves into the group on the selected radio, or the first radio when none is selected. Tab again leaves the group        |
+| Shift + Tab | Moves to the previous focusable element, leaving the group                                                              |
+| Arrow keys  | Move to the next or previous radio and select it, skipping disabled radios. Left and Right follow the reading direction |
+| Space       | Selects the focused radio                                                                                               |
+
+The group is a single tab stop: only one radio in it can be reached with Tab.
+
+## Screen readers
+
+- A native radio input sits inside the label, so the label text is the radio's accessible name. Give every option visible label text, or aria-label when there is none.
+- The group is a radio group named by the FieldLabel inside it. Every group needs a label.
+- Each radio is read as selected or not selected, with its position in the group.
+- Descriptions and errors describe the input without becoming part of its name. The group's error message is announced with the group.
+- The circle and dot are decorative and hidden from assistive technology.
+
+## Focus
+
+- The focus ring shows on keyboard focus only, outside the circle, so nothing shifts.
+- Arrow keys move focus and selection together inside a RadioGroup.
+- State is never shown by colour alone: the dot and the border show it.
+
+## Disabled
+
+isDisabled on a radio or the whole group mutes it, skips it with the arrow keys and leaves it out of form submission. For answers people need to hear but can't change here, use isReadOnly on the group instead.
+
+## Target size
+
+The label is part of the control, so the whole row selects the radio. Keep radios at least 12 apart, as RadioGroup does, or use size lg on touch screens.
+
+## Contrast
+
+Use the radio's border, dot and text tokens as they are. Don't override them with custom colours.
+
+## Forced colours
+
+In Windows contrast themes the circle, dot and focus ring switch to system colours, so selection stays visible.
+
+## Reduced motion
+
+When the user prefers reduced motion, the border and dot change without a transition. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, mirrors the layout and makes the arrow keys follow the direction. Pass Dhivehi labels, descriptions and errors yourself.
+
+</DocsTab>

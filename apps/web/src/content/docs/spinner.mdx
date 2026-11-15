@@ -1,13 +1,291 @@
 ---
 title: Spinner
-description: Indeterminate loading indicator for pending actions and content.
+description: 'A ring of animated dots that shows something is loading when the wait is short and the shape of what is coming is not known.'
 ---
 
 import { LoadingUsageDemo } from '../../components/LoadingExamples';
 
+import { SpinnerLanguageDemo } from '../../components/EditorialLanguageExamples';
+
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Spinner
 
-Use `Spinner` for indeterminate loading. Pair it with [LoadingText](/docs/components/loading-text/) when a short label should explain the pending action. Spinners follow Veli themes and respect reduced motion.
+<DocsTab id="overview">
+
+Spinner is a ring of animated dots that shows something is loading when the wait is short and the shape of what is coming is not known, such as search results in a panel or the details in a Modal. It is announced as Loading unless you give it a more specific name. Pair it with Loading text when words help, use Skeleton when the content shape is known, and use Button isPending for an action a Button started.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/spinner.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-spinner--docs"
+/>
+
+## When to use
+
+### Use a Spinner when
+
+- Content or an action is pending and the layout needs an indeterminate indicator.
+- A small region is waiting for content with no predictable shape, such as a Popover fetching help text or a Modal body loading an application's details.
+- A busy control needs a compact indicator in its text colour. Use variant button.
+- Nobody knows how long the wait will be or what shape the result has.
+
+### Don't use a Spinner when
+
+- The shape of the content is known. Compose Skeleton placeholders instead.
+- A short label should explain the wait. Use Loading text, alone or beside the Spinner.
+- A Button started the action. Set isLoading or isPending on the Button.
+- Progress is known, such as an upload percentage or Checking documents, 2 of 5. Show progress as text, with a progress bar when the share of work is known. Drop zone shows upload progress for each file.
+- Several parts of a view load together, such as every Card on a dashboard. Show one Spinner for the region, or Skeleton shapes for each part with one status message.
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-intro-1.webp"
+  darkSrc="/images/docs/spinner/spinner-intro-1-dark.webp"
+  alt='A white card titled Apply for a work permit, with the line "WP-2026-04817, submitted 27 September 2026." Below the heading, a small ring of dots is centred in the empty details area, which keeps its height while the details load.'
+  width="2400"
+  height="1096"
+  caption="A Spinner holds the place of an application&#x27;s details while they load."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-anatomy-1.svg"
+  darkSrc="/images/docs/spinner/spinner-anatomy-1-dark.svg"
+  alt="A Spinner at size lg with two numbered markers: 1 on the ring of dots and 2 on the dashed square box around it."
+  width="576"
+  height="360"
+  caption="The parts of a Spinner, shown at size lg in the default variant. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Dots**
+
+   12 dots in the default variant and 8 in the button variant. In turn they grow, brighten and fade around the ring. The drawing is decorative and hidden from assistive technology.
+
+2. **Box**
+
+   a square of 20, 24 or 32 at sizes sm, md and lg that holds the ring. It carries the status role and the name Loading unless you pass aria-label. In code it is Spinner.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/spinner/spinner-do-1.webp" darkSrc="/images/docs/spinner/spinner-do-1-dark.webp" alt="A white card titled Payments with a Spinner centred in its body. The card stays fully visible while it loads." width="1136" height="512">
+
+Show the Spinner inside the region that is loading, with the rest of the page usable.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/spinner/spinner-dont-1.webp" darkSrc="/images/docs/spinner/spinner-dont-1-dark.webp" alt="The same Payments card dimmed under a grey overlay that covers the whole area, with a larger Spinner in the middle." width="1136" height="512">
+
+Don't cover the whole page with a loader for an action that changes one part of it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/spinner/spinner-do-2.webp" darkSrc="/images/docs/spinner/spinner-do-2-dark.webp" alt="A primary Button in its pending state, at the same width, with its label hidden while its own compact spinner shows." width="1136" height="280">
+
+Set isPending on the Button while its action runs. The Button keeps its label as its accessible name and keeps its width.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/spinner/spinner-dont-2.webp" darkSrc="/images/docs/spinner/spinner-dont-2-dark.webp" alt="A primary Button labelled Submit application with a separate Spinner placed to its right." width="1136" height="280">
+
+Don't add a Spinner beside or inside a Button. isLoading and isPending already show the compact Spinner.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/spinner/spinner-do-3.webp" darkSrc="/images/docs/spinner/spinner-do-3-dark.webp" alt="A white card titled Your dashboard with one Spinner centred in its body." width="1136" height="512">
+
+Show one Spinner for a region that loads together, or Skeleton shapes for each part with one status message.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/spinner/spinner-dont-3.webp" darkSrc="/images/docs/spinner/spinner-dont-3-dark.webp" alt="Three Cards side by side, titled Applications, Payments and Messages, each with its own Spinner." width="1136" height="512">
+
+Don't show a separate Spinner in every Card. Several Spinners each named Loading are announced one after another and look like a broken page.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Default name
+
+Spinner has 1 built-in string, its accessible name: Loading, in Dhivehi ލޯޑުވަނީ, chosen by the VeliProvider language. Keep it when Loading is clear enough.
+
+### Specific names
+
+Override the name with aria-label when several parts of a page load or Loading is unclear. Name what is loading, not the component.
+
+| Do                      | Don't                                                             |
+| :---------------------- | :---------------------------------------------------------------- |
+| Loading notifications   | Loading... (typed ellipsis)                                       |
+| Loading payment history | Spinner (names the Spinner, not the wait)                         |
+|                         | Please wait (says nothing about what is loading, and uses please) |
+
+### Both languages
+
+An override is not translated by Veli. Pass the English and the Dhivehi text yourself under language dv.
+
+### No ellipsis
+
+Write Loading payment history, not Loading followed by an ellipsis. The name is read aloud.
+
+### Visible words
+
+Spinner takes no children. Put visible words in a Loading text beside it.
+
+## Related components
+
+| Component                                      | When to use it                                                                                                                                                                     |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Loading text](/docs/components/loading-text/) | when a short label should say what is pending. Put the Spinner beside it with aria-hidden.                                                                                         |
+| [Skeleton](/docs/components/skeleton/)         | when the shape of the loading content is known, such as a Table, a list or a Card.                                                                                                 |
+| [Button](/docs/components/button/)             | with isLoading or isPending the Button keeps its label as its accessible name and keeps its width; the label is hidden while the compact Spinner shows. Don't add another Spinner. |
+| [Drop zone](/docs/components/dropzone/)        | shows upload progress for each file with a percentage and a bar, in place of a Spinner.                                                                                            |
+| [VeliProvider](/docs/components/provider/)     | its language chooses the default name, Loading or ލޯޑުވަނީ.                                                                                                                        |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the Spinner: variants, sizes, content options, behaviour, direction, tokens and motion. Values match the shipped component.
+
+## Variants
+
+Spinner has two variants with the same sizes. In code, variant defaults to default.
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-variants-1.webp"
+  darkSrc="/images/docs/spinner/spinner-variants-1-dark.webp"
+  alt="Two examples side by side. Variant default: a ring of dots in the primary icon colour. Variant button: a ring of dots in the surrounding text colour."
+  width="2400"
+  height="480"
+  caption="Variant default and variant button."
+/>
+
+- Use **default** for a region that is waiting, such as a panel, a Popover or a Modal body. The dots use `icon/primary/default`.
+- Use **button** for a compact busy state inside a control. It inherits the text colour of its parent. Button isPending already uses it.
+
+## Sizes
+
+Spinner has three sizes. In code, size defaults to md. Match the Spinner to the text and controls around it, so dense rows stay tidy and large regions stay clear.
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-sizes-1.webp"
+  darkSrc="/images/docs/spinner/spinner-sizes-1-dark.webp"
+  alt="Three examples side by side, labelled size sm, size md and size lg, each a Spinner centred on a grey panel. Captions read 20 x 20. For dense rows and inside controls; 24 x 24. The default; 32 x 32. For larger regions, such as a panel or a Modal body."
+  width="2400"
+  height="496"
+  caption="Sizes sm, md, the default, and lg."
+/>
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-sizes-2.svg"
+  darkSrc="/images/docs/spinner/spinner-sizes-2-dark.svg"
+  alt="Size spec for sizes sm, md and lg: each Spinner box with orange width and height measures of 20, 24 and 32."
+  width="1200"
+  height="281"
+  caption="Box sizes at 1x, shown in the reduced motion frame. Orange lines with end ticks are sizes."
+/>
+
+| Size | Box     | In code         | Use                                                                    |
+| :--- | :------ | :-------------- | :--------------------------------------------------------------------- |
+| sm   | 20 x 20 | size sm, size-5 | Dense rows and inside a busy control. Button isPending uses this size. |
+| md   | 24 x 24 | size md, size-6 | The default.                                                           |
+| lg   | 32 x 32 | size lg, size-8 | Larger regions, such as a panel or a Modal body.                       |
+
+The same sizes apply at every breakpoint. The dots and the ring scale with the box, so pick the size by density, not by screen.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-options-1.webp"
+  darkSrc="/images/docs/spinner/spinner-options-1-dark.webp"
+  alt="Three examples side by side. Region loading: a white panel titled Search results with a Spinner centred below the title. With Loading text: a Spinner followed by Loading text reading Loading notifications. Specific name: the heading Payment history with a Spinner beside it."
+  width="2400"
+  height="800"
+  caption="A region loading, a Spinner with Loading text, and a Spinner with a specific name."
+/>
+
+- **Region loading**: centre the Spinner in the region that is waiting and keep the region's height, so the content doesn't push the page when it arrives.
+- **With Loading text**: put the Spinner first, with aria-hidden, and let Loading text carry the name, so the wait is announced once.
+- **Specific name**: when several parts of a page load, or Loading is unclear, override the name: aria-label Loading payment history.
+
+## Behaviour
+
+- **Animates until removed**: the dots loop every 1.6 seconds, or 1.92 seconds for variant button, for as long as the Spinner is on screen. Remove it as soon as content or an error arrives.
+- **Timing**: wait about 150 to 300 ms before showing a Spinner and keep it for about 300 to 500 ms once shown, so fast responses never flash one.
+- **When loading fails**: replace the Spinner with what went wrong and a Try again action.
+- **Controls**: a Spinner alone doesn't disable the controls around it. Disable or set pending on anything that must wait.
+- **Hold the space**: keep the region's height while the Spinner shows. A region that collapses to 24 and then grows moves everything below it.
+- **Before hydration**: Spinner shows the static ring on the server and before the page is interactive, then animates unless reduced motion is on.
+- **No children**: Spinner doesn't accept children. className can override its colour and size.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/spinner/spinner-rtl-1.webp"
+  darkSrc="/images/docs/spinner/spinner-rtl-1-dark.webp"
+  alt="Two examples side by side. LTR, Spinner and LoadingText: a Spinner followed by Loading text reading Marking all as read. RTL, Spinner and LoadingTextDv: a Spinner on the right followed, to its left, by the Dhivehi Loading text ކިޔާލެވިފައި ކަމަށް ބަދަލުކުރަނީ."
+  width="2400"
+  height="432"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- Spinner doesn't mirror and has no Dhivehi set. The ring is symmetric and animates the same way in both directions.
+- Its default name follows the VeliProvider language: Loading in English and ލޯޑުވަނީ in Dhivehi.
+- An aria-label override is not translated. Pass the Dhivehi text yourself under language dv.
+- Beside a Dhivehi Loading text, the Spinner still comes first in reading order, so it sits on the right.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <SpinnerLanguageDemo client:visible />
+</div>
+
+Example configuration: Spinner with aria-hidden, then Loading text.
+
+| Language | Spinner name       | Loading text children            |
+| :------- | :----------------- | :------------------------------- |
+| English  | Loading (default)  | Marking all as read              |
+| Dhivehi  | ލޯޑުވަނީ (default) | ކިޔާލެވިފައި ކަމަށް ބަދަލުކުރަނީ |
+
+## Tokens
+
+| Variant | Token                                  | Reduced motion              | Notes                                                                            |
+| :------ | :------------------------------------- | :-------------------------- | :------------------------------------------------------------------------------- |
+| default | `icon/primary/default`                 | Same, at 65 percent opacity |                                                                                  |
+| button  | Inherits the text colour of its parent | Same, at 65 percent opacity | Figma uses `text/base/DEFAULT`. Override it with the text colour of the control. |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| Variant | What it does                                                                                                                                               | Timing                                        | Reduced motion                                 |
+| :------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :--------------------------------------------- |
+| default | 12 dots appear in turn around the ring. Each slides in from outside, holds, then shrinks towards the centre and fades, so a tail of dots circles the ring. | 1.6s loop, a new dot every 0.13s, never stops | A static ring of 12 dots at 65 percent opacity |
+| button  | 8 dots light up in turn until the ring is full, then fade back to 15 percent in the same order.                                                            | 1.92s loop, never stops                       | A static ring of 8 dots at 65 percent opacity  |
+
+Spinner follows changes to the reduced motion setting while it is on screen.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -58,3 +336,36 @@ With reduced motion enabled, the spinner shows a static dotted ring.
 | `className` | `string`                | —           | Override colour, dimensions or layout.                         |
 
 Supports standard HTML `span` attributes and a `ref` to the root span. `Spinner` does not accept children.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the Spinner works with screen readers, focus, reduced motion and contrast. It is a status indicator, not a control.
+
+## Screen readers
+
+- Spinner has role status, not progressbar, and the name Loading by default (ލޯޑުވަނީ under language dv). Give it a translated aria-label when Loading is not enough.
+- The dots are hidden from assistive technology.
+- Pass aria-hidden when a parent live region already announces the progress, or when Loading text beside it carries the name. With aria-hidden, the Spinner drops its role and name.
+- Don't rely on a newly added Spinner alone. Keep one role status region on the page from load, change its text when the wait starts and ends, and test it with NVDA, VoiceOver and TalkBack.
+- Several Spinners each named Loading are announced one after another. Use one for the region.
+- Inside a pending Button, Veli wraps a button-variant Spinner, hidden with aria-hidden, in a progressbar named Loading (ލޯޑުވަނީ in Dhivehi).
+
+## Focus
+
+Spinner is not focusable and has no keyboard interaction. Focus stays on the control that started the wait.
+
+## Reduced motion
+
+When the user prefers reduced motion, the Spinner shows a static dotted ring at 65 percent opacity. It switches if the setting changes while it is on screen. Nothing extra is needed from you.
+
+## Contrast
+
+The dots are a control part and need 3:1 against the surface, in Light and Dark separately. Check them on tinted or dark surfaces; the reduced motion ring draws them at 65 percent opacity.
+
+## Right to left
+
+Set the language with VeliProvider (language dv) and the default name becomes ލޯޑުވަނީ. The Spinner doesn't mirror. Pass a Dhivehi aria-label yourself when you override the name.
+
+</DocsTab>

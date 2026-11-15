@@ -1,16 +1,268 @@
 ---
 title: Skeleton
-description: Generic loading placeholder primitive for composing field, list, and content skeleton layouts.
+description: 'Plain placeholder shapes with a soft shimmer, composed in the shape of the layout while its content loads.'
 ---
 
 import { SkeletonUsageDemo } from '../../components/SkeletonExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Skeleton
 
-`Skeleton` is a lightweight placeholder primitive for loading states. Compose it with layout classes to match the shape and size of the content it replaces.
+<DocsTab id="overview">
 
-The highlight sweeps for 1500ms, then rests without shimmer for 500ms before repeating.
-It follows the text direction and uses a static placeholder when reduced motion is preferred.
+Skeleton is a plain placeholder shape with a soft shimmer, shown where content will appear while it is fetched. Compose several Skeletons in the shape of the final layout, such as Table rows, a Card or a form, so nothing moves when the content arrives. Skeleton is hidden from screen readers, so announce the loading state separately with a status message.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/skeleton.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-skeleton--docs"
+/>
+
+## When to use
+
+### Use Skeleton when
+
+- The shape of the content is known and takes up real space, such as a list of applications, a Table of payments, a Card or a form loading saved answers, and the load may take longer than about 300 ms.
+- A page, or a part of it such as a form or a list, needs a loading state. Compose several Skeleton pieces together.
+- You need a loading state for a component that has no skeleton mode, such as Accordion, Input, Avatar or Button. Compose Skeleton pieces in its shape.
+
+### Don't use Skeleton when
+
+- Only an indeterminate indicator or a pending label is needed. Use Spinner or Loading text.
+- Content loads in under about 300 ms. Show nothing.
+- Content is already on screen and only refreshing.
+- A Button started the action. Use Button isLoading or isPending. The Button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows.
+- Loading failed or there is nothing to show. Show what could not load with a Try again action, or the empty state, where the Skeletons were.
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-intro-1.webp"
+  darkSrc="/images/docs/skeleton/skeleton-intro-1-dark.webp"
+  alt="A white card titled Your applications, with the line Applications you sent in the last 12 months. Below it, three list rows drawn as Skeletons: a circle for the Avatar, two bars of different lengths and a status shape on the right."
+  width="2400"
+  height="1112"
+  caption="Skeleton rows keep the shape of the list while the applications load."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-anatomy-1.svg"
+  darkSrc="/images/docs/skeleton/skeleton-anatomy-1-dark.svg"
+  alt="One Skeleton block, 240 x 24 with the default radius, caught mid-shimmer, with two numbered markers: 1 on the block and 2 on the white shimmer highlight crossing it."
+  width="576"
+  height="360"
+  caption="The parts of a Skeleton, sized 240 x 24 with the default radius, at frame 2 of the shimmer. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Block**
+
+   a block in `bg/skeleton` with the md corner radius, 6. className sets its size and shape and can change the radius, such as rounded-full for an Avatar. In code it is Skeleton.
+
+2. **Shimmer**
+
+   a white highlight, 65 percent in Light and 8 percent in Dark, that sweeps across the block. It is removed under reduced motion. In code it is a private part of Skeleton.
+
+</DocsAnatomy>
+
+Compose several Skeletons in the shape of the part they replace. A form field, for example, is a label line, a block the height of the field and a help line.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/skeleton/skeleton-do-1.webp" darkSrc="/images/docs/skeleton/skeleton-do-1-dark.webp" alt="A Table with the real header row Application, Sent and Status, and three Skeleton rows below it, each with two bars and a pill under Status." width="1136" height="580">
+
+Show Skeleton rows with the Table header row already in place.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/skeleton/skeleton-dont-1.webp" darkSrc="/images/docs/skeleton/skeleton-dont-1-dark.png" alt="The same Table area replaced by one large grey Skeleton block." width="1136" height="580">
+
+Don't show one large grey block for a Table. It hides the layout people are waiting for.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/skeleton/skeleton-do-2.webp" darkSrc="/images/docs/skeleton/skeleton-do-2-dark.png" alt="A card with the real heading Your applications and a real Filter button, above two list rows drawn as Skeletons: an Avatar circle, two lines and a status shape." width="1136" height="600">
+
+Keep the page heading, navigation, filters and working controls real while the list shows Skeletons.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/skeleton/skeleton-dont-2.webp" darkSrc="/images/docs/skeleton/skeleton-dont-2-dark.webp" alt="The same card where the heading and the Filter button are also drawn as Skeleton blocks." width="1136" height="600">
+
+Don't turn the heading and the controls into Skeletons. People lose where they are and what they can do.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/skeleton/skeleton-do-3.webp" darkSrc="/images/docs/skeleton/skeleton-do-3-dark.webp" alt="Three Skeleton text lines in a card, the last one shorter." width="1136" height="460">
+
+Show text as bars of different lengths, with the last line shorter.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/skeleton/skeleton-dont-3.webp" darkSrc="/images/docs/skeleton/skeleton-dont-3-dark.webp" alt="Six identical full-width Skeleton text lines in a card." width="1136" height="460">
+
+Don't show more lines than the content usually has, all the same length.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Status message
+
+Skeleton has no text or built-in strings. The words come from the status message beside it. Name the activity and its object, and don't add an ellipsis.
+
+| Do                        | Don't                                                   |
+| :------------------------ | :------------------------------------------------------ |
+| Loading your applications | Loading... (typed ellipsis and no object)               |
+| Loading payment history   | Loading content (too general when the content is known) |
+
+### When the content arrives
+
+Announce the result in a status message that makes sense on its own, such as 12 applications.
+
+### Both languages
+
+Write the status message in English and Dhivehi. Keep every string in your language files.
+
+## Related components
+
+| Component                           | When to use it                                                                                                                                                                             |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Spinner](/docs/spinner/)           | when the shape of the loading content is not known.                                                                                                                                        |
+| [Loading text](/docs/loading-text/) | when a short label should say what is pending. With Skeletons, put the words in the status message.                                                                                        |
+| [Table](/docs/table/)               | show Skeleton rows inside the Table area with the header in place. Use the Table empty state slot, not Skeletons, when there are no rows.                                                  |
+| [Button](/docs/button/)             | has no skeleton mode in code. Compose a Skeleton the size of the Button while the page loads, and use isPending for an action in flight. The Button skeleton state in Figma is Figma only. |
+| [Input](/docs/input/)               | has no skeleton prop, like the other fields. Build a field Skeleton from a label line and a block of the field height, with the field radius.                                              |
+| [Accordion](/docs/accordion/)       | has no skeleton mode in code. Compose Skeleton bars outside the Accordion in the shape of its item titles.                                                                                 |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for Skeleton: shapes, compositions, behaviour, direction, tokens and motion. Skeleton has no sizes or variants; className sets its size and shape.
+
+## Shapes
+
+Match each Skeleton to the size and corner radius of the part it stands for, so the page stays still when content arrives and the shapes read as the parts they replace.
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-shapes-1.svg"
+  darkSrc="/images/docs/skeleton/skeleton-shapes-1-dark.svg"
+  alt="Three size specs. Recipe Field: a label line 76 wide, a gap of 8, a block 44 high with radius 10, a gap of 4 and a help line. Recipe Avatar: a 44 x 44 circle. Recipe Text lines: lines 10 high with 8 between them, the last one 192 wide."
+  width="1212"
+  height="281"
+  caption="The docsite recipes at 1x. Orange bands are gaps between parts and orange lines with end ticks are sizes."
+/>
+
+| Part                 | Size                          | Radius     | Classes                              |
+| :------------------- | :---------------------------- | :--------- | :----------------------------------- |
+| Label line           | 76 x 8                        | xs (2)     | `h-2 w-[76px] rounded-xs`            |
+| Input field, md      | 44 high, full width           | field (10) | `h-11 w-full rounded-field`          |
+| Text area, md        | at least 146 high, full width | field (10) | `min-h-[146px] w-full rounded-field` |
+| Pill search field    | 44 high, full width           | full       | `h-11 w-full rounded-full`           |
+| Avatar, default size | 44 x 44                       | full       | `size-11 rounded-full`               |
+
+A field Skeleton is a label line, a gap of 8, a block the height of the field, a gap of 4, then a help line. Text lines are 10 high with 8 between them, and the last line is shorter. Storybook and the Figma specs give the same values.
+
+Size Skeleton pieces with layout classes rather than inventing one-off loading components, so they stay on the same spacing and radius tokens as the real components.
+
+## Corner radius
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-radius-1.svg"
+  darkSrc="/images/docs/skeleton/skeleton-radius-1-dark.svg"
+  alt="Four Skeleton blocks of 160 x 32, labelled radius md, xs, lg and full, with the corner radius marked as 6, 2 and 8 on the first three; the full block has fully rounded ends."
+  width="1200"
+  height="184"
+  caption="Four of the corner radii a Skeleton uses. Field blocks use the field radius, 10, shown in the Shapes section."
+/>
+
+| Radius | Token            | Value           | Use                                                                   |
+| :----- | :--------------- | :-------------- | :-------------------------------------------------------------------- |
+| md     | `radius/DEFAULT` | 6               | The default. For blocks that stand in for Buttons and other md shapes |
+| field  | `radius/field`   | 10              | For blocks that stand in for fields, such as Input and Text area      |
+| xs     | `radius/xs`      | 2               | For text lines                                                        |
+| lg     | `radius/lg`      | 8               | For larger blocks, such as an image or a chart                        |
+| full   | `radius/full`    | Half the height | For Avatars, pills and pill Search                                    |
+
+## Compositions
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-compositions-1.webp"
+  darkSrc="/images/docs/skeleton/skeleton-compositions-1-dark.png"
+  alt="Four compositions in two rows. Text content: a heading bar and four lines, the last one shorter. List items: three rows of an Avatar circle, two lines and a status shape. Field: a label line, a block the height of the field and a help line. Table rows: the header row Application, Sent and Status with three Skeleton rows below it."
+  width="2400"
+  height="1690"
+  caption="Skeleton pieces composed into text, list items, a field and Table rows."
+/>
+
+- **Text content**: bars of different lengths with the last line shorter, and only as many lines as the text usually has. Text lines are 10 high.
+- **List items**: one row per item, with an Avatar circle, two lines and a status shape. Show as many rows as the list usually has.
+- **Field**: a label line, a block the height of the field and a help line. Input, Select and Date picker have no skeleton prop.
+- **Table rows**: Skeleton rows inside the Table area with the header row already in place, 3 to 5 rows.
+- Keep the page heading, navigation, filters and working controls real while the list or Table area shows Skeletons.
+
+## Behaviour
+
+- **Shimmer loops until removed**: a light highlight sweeps across each Skeleton for 1500 ms, then rests for 500 ms, and repeats for as long as the Skeleton is on screen. Skeleton never stops by itself.
+- **Timing**: wait about 150 to 300 ms before showing Skeletons, then keep them for about 300 to 500 ms once shown, so fast responses never flash a loader.
+- **Swap in one step**: replace the Skeletons in the same place with the content, the empty state or what could not load, all at once.
+- **When loading fails**: show what could not load with a Try again action where the Skeletons were.
+- **Fill the slot**: a Skeleton fills its intended slot. Constrain its width and height in the surrounding layout.
+- **Reflow like the real layout**: build Skeleton layouts with the same responsive classes as the real layout, so they reflow with it from 320 px. A Table that becomes stacked cards on phones gets stacked card Skeletons.
+- **Nothing real inside**: never put text, links, buttons or other content inside a Skeleton. Place Skeletons beside real content and controls.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/skeleton/skeleton-rtl-1.webp"
+  darkSrc="/images/docs/skeleton/skeleton-rtl-1-dark.webp"
+  alt="The same Skeleton bar twice, labelled dir ltr, at 0.375 s and dir rtl, at 0.375 s. In the ltr one the highlight has moved in from the left; in the rtl one it has moved in from the right."
+  width="2400"
+  height="420"
+  caption="The shimmer at the same moment, left to right and right to left."
+/>
+
+- Skeleton shapes are direction-neutral. Use logical utilities, such as ms-auto for end-aligned cells, so the composition mirrors.
+- The shimmer follows the text direction: it sweeps from left to right in English and from right to left under dir rtl.
+- Under language dv, size text lines and their gaps to the Dhivehi line height, which is taller: Body md is 17px on a 186 percent line height in Dhivehi against 16px on 150 percent in English. Skeletons sized for English lines make a Dhivehi page grow when the text arrives.
+
+## Tokens
+
+| Part              | Token                                                                | Reduced motion | Notes                                     |
+| :---------------- | :------------------------------------------------------------------- | :------------- | :---------------------------------------- |
+| Fill              | `bg/skeleton`                                                        | Same           | Neutral 300 in Light, neutral 400 in Dark |
+| Shimmer highlight | White, 65 percent in Light and 8 percent in Dark, faded at the edges | Removed        | No token. Figma draws the Light value.    |
+| Corner radius     | `radius/DEFAULT` (6) unless className changes it                     | Same           |                                           |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| What moves        | Duration                                      | Easing | Reduced motion                      |
+| :---------------- | :-------------------------------------------- | :----- | :---------------------------------- |
+| Shimmer highlight | 2s loop: sweeps for 1500 ms, rests for 500 ms | Linear | Removed; only the static fill stays |
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -84,3 +336,34 @@ function InputFieldSkeleton() {
 | `className` | `string` | -       | Size, shape, and layout overrides merged onto the base. |
 
 All standard HTML `div` attributes are supported.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How Skeleton works with screen readers, focus and reduced motion. Skeleton is decorative; the loading state is announced by a status message.
+
+## Screen readers
+
+- Every Skeleton renders with aria-hidden, so assistive technology skips the placeholders. Skeleton announces nothing by itself.
+- When Skeletons stand in for content, also set a status message or aria-busy on the real container, such as Loading your applications. Put the status message in a role status region present from load.
+- Remove aria-busy with the Skeletons, and announce when the content has loaded or failed.
+- Anything inside a Skeleton is hidden too. Hidden focusable content can be reached with the keyboard but has no name or role, and hidden text is never read.
+
+## Focus
+
+Skeleton is not focusable and has no keyboard interaction. Focus stays where it was when content replaces the Skeletons.
+
+## Reduced motion
+
+When the user prefers reduced motion, the shimmer highlight and its animation are removed and only the `bg/skeleton` fill stays. Nothing extra is needed from you.
+
+## Text resize
+
+Build Skeleton layouts with the same responsive classes as the real layout, so they reflow with it at 400 percent zoom and narrow widths.
+
+## Right to left
+
+The shimmer follows the direction set by VeliProvider (language dv). Use logical utilities so the composition mirrors, and size text lines to the Dhivehi line height.
+
+</DocsTab>

@@ -1,13 +1,443 @@
 ---
 title: Tabs
-description: Underlined tab navigation with sizes, slots, and an optional overflow menu.
+description: 'An underlined row of tabs that switches between related sections of one page, or between peer pages.'
 ---
 
 import { TabsOverflowDemo, TabsUsageDemo } from '../../components/TabsExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Tabs
 
-Use Tabs for switching between related panels in a page section. Pass an `items` array with at least two tabs. Collapse extras with `overflowItems`, or pass `href` on an item for route-driven navigation.
+<DocsTab id="overview">
+
+Tabs split one page into sections that people switch between without leaving it. Use them when the sections are related and people only need one at a time. Each tab either shows a panel on the same page or, as a link tab, opens a peer page.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/tabs.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-tabs--docs"
+/>
+
+## When to use
+
+### Use tabs when
+
+- People switch between related content sections in the same context, such as Overview, Documents and History.
+- Each tab shows a panel, or opens a peer page through href.
+- There are 2 to 7 sections, each with a short label. Put any extra tabs in More.
+
+### Don't use tabs when
+
+- People must go through steps in order. Show one step at a time instead, as a question page.
+- People need to compare sections side by side. Show the sections on the page together.
+- The options perform actions rather than show content or navigate. Use buttons or a menu.
+- Sections are long and people read down the page. Use an accordion.
+- A section would need tabs of its own. Use headings inside the panel, an accordion, or separate pages.
+- They would be the main navigation of a site or service. Use the site's header navigation.
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-intro-1.webp"
+  darkSrc="/images/docs/tabs/tabs-intro-1-dark.webp"
+  alt='A service card titled Passport renewal, from the Department of Immigration and Emigration. Below the title, tabs Overview, Requirements and Fees, with Overview selected and the indicator under it. The panel below reads "Renew your passport online. Have your National ID card and your old passport ready before you start."'
+  width="2400"
+  height="1016"
+  caption="Tabs switch between the sections of one service page."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-anatomy-1.svg"
+  darkSrc="/images/docs/tabs/tabs-anatomy-1-dark.svg"
+  alt="Tabs at size md: Overview, selected, with a leading icon and a red badge counter showing 2, then Services, Pricing and a More tab with a caret. A teal indicator sits under Overview and a grey line runs under the whole list. Seven numbered markers: 1 on the leading icon, 2 on the label Overview, 3 on the badge, 4 on the Services tab, 5 on More, 6 on the indicator and 7 on the line under the list."
+  width="576"
+  height="320"
+  caption="The parts of tabs. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Leading**
+
+   optional 16px icon before the label, on every tab or on none. In code it is item.leading.
+
+2. **Label**
+
+   one or two words that name the section. The selected tab uses the medium weight in `text/base/strong`. In code it is item.label.
+
+3. **Trailing**
+
+   optional content after the label, such as a badge counter for new or waiting items. In code it is item.trailing.
+
+4. **Tab**
+
+   one section, 36, 44 or 48 high with radius 8. Hover and pressed add a fill. In code, each item in items.
+
+5. **More**
+
+   an optional tab after the last visible tab that opens a menu of the tabs you put in overflowItems. Turn it on with showMore; its label is moreLabel, More by default.
+
+6. **Indicator**
+
+   a 2px line in `tabs/border-active` under the selected tab. It slides to the tab people select.
+
+7. **Border**
+
+   a 2px line in `tabs/border-inactive` under the whole list. It hugs the tab group; pass tabListClassName w-full for a full-width line. When the tabs are wider than their container, the row scrolls sideways.
+
+</DocsAnatomy>
+
+The selected panel sits 16 below the list. Only the selected panel shows.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tabs/tabs-do-1.webp" darkSrc="/images/docs/tabs/tabs-do-1-dark.webp" alt="Tabs labelled Overview, Services and Pricing, with Overview selected." width="1136" height="272">
+
+Keep labels to one or two words.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tabs/tabs-dont-1.webp" darkSrc="/images/docs/tabs/tabs-dont-1-dark.webp" alt="Tabs labelled About this service, What we offer and How much it costs, with About this service selected." width="1136" height="272">
+
+Don't write long labels. They widen the row, which then scrolls sideways on narrow screens.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tabs/tabs-do-2.webp" darkSrc="/images/docs/tabs/tabs-do-2-dark.webp" alt="Tabs labelled Overview, Documents and History, with Overview selected." width="1136" height="272">
+
+Use tabs for sections people move between freely.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tabs/tabs-dont-2.webp" darkSrc="/images/docs/tabs/tabs-dont-2-dark.webp" alt="Tabs labelled Step 1, Step 2 and Step 3, with Step 1 selected." width="1136" height="272">
+
+Don't use tabs for steps people must take in order. Tabs let people skip ahead.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tabs/tabs-do-3.webp" darkSrc="/images/docs/tabs/tabs-do-3-dark.webp" alt="Tabs Home, Dashboard and Settings, each with a leading icon, with Home selected." width="1136" height="272">
+
+Give every tab an icon, or none.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tabs/tabs-dont-3.webp" darkSrc="/images/docs/tabs/tabs-dont-3-dark.webp" alt="Tabs Home, Dashboard and Settings where Home and Settings have icons and Dashboard has none." width="1136" height="272">
+
+Don't put icons on only some tabs. The row looks uneven and is harder to scan.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+Name each section with a short noun of 1 or 2 words, not an instruction. Use sentence case and no full stop.
+
+| Do        | Don't                                               |
+| :-------- | :-------------------------------------------------- |
+| Overview  | View your documents (an action, not a section name) |
+| Documents | FEES (all caps)                                     |
+| Fees      | Fees. (full stop on a label)                        |
+| Pricing   | About this service (three words where one will do)  |
+| Services  | How much it costs (a sentence, not a label)         |
+
+### Order
+
+Put the most used section first and keep the order of tabs the same everywhere. People find tabs by position as well as by label.
+
+### Number of tabs
+
+Show 2 to 7 tabs. Code needs at least 2; put the rest in More.
+
+### Link tab labels
+
+For link tabs, make each label match the heading of the page it opens. People check they arrived where the tab said.
+
+| Do        | Don't                                          |
+| :-------- | :--------------------------------------------- |
+| Documents | Files (opens a page headed Uploaded documents) |
+
+### Panel headings
+
+Start each panel with a heading that matches the tab label, at the level below the page section heading, so screen reader users can find it.
+
+| Do        | Don't                                                   |
+| :-------- | :------------------------------------------------------ |
+| Documents | Uploaded files (does not match the tab label Documents) |
+
+### Counts
+
+Use a badge count in the trailing slot only for new or waiting items, such as unread messages. Cap it at 99+ and give it an accessible name that says what it counts.
+
+| Do                 | Don't                                          |
+| :----------------- | :--------------------------------------------- |
+| Messages, 3 unread | Messages 3 (read without saying what 3 counts) |
+
+### Tab list name
+
+Always pass listAriaLabel: a short noun phrase that says what the tabs switch between, without the word tabs.
+
+| Do                  | Don't                                                       |
+| :------------------ | :---------------------------------------------------------- |
+| Service sections    | Tabs (the English default; names the role, not the content) |
+| Application details | Navigation tabs (role word in the name)                     |
+
+### Dhivehi copy
+
+Tabs has three built-in strings. The More label is translated by VeliProvider (އިތުރު in Dhivehi); keep it. The tab list name defaults to Tabs in both languages, so always pass listAriaLabel in the active language. The More menu name, More tabs, has no prop and stays English under language dv. Pass Dhivehi labels and panels yourself.
+
+## Related components
+
+| Component                         | When to use it                                                                                      |
+| :-------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| [Accordion](/docs/accordion/)     | show and hide sections down a long page.                                                            |
+| [Menu](/docs/menu/)               | actions and options in a popover. The More menu uses Menu.                                          |
+| [Link](/docs/link/)               | go to another page from text.                                                                       |
+| [Breadcrumbs](/docs/breadcrumbs/) | show where a page sits and go back up.                                                              |
+| [Badge](/docs/badge/)             | a counter in a tab's trailing slot for new or waiting items.                                        |
+| [VeliProvider](/docs/provider/)   | sets the language and direction for tabs and the More menu, and its navigate prop routes link tabs. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for tabs: sizes, section and link tabs, More, slots, states and the tokens behind them.
+
+## Sizes
+
+Size sets the tab padding and the label style. In code, size defaults to sm. Use one size for all tabs on a page.
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-sizes-1.webp"
+  darkSrc="/images/docs/tabs/tabs-sizes-1-dark.webp"
+  alt='Size sm: tabs Overview, Services and Pricing with Overview selected, captioned "36 high, Body/sm label. The default. For panels, cards and dense pages."'
+  width="2400"
+  height="464"
+/>
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-sizes-2.webp"
+  darkSrc="/images/docs/tabs/tabs-sizes-2-dark.webp"
+  alt='Size md: the same tabs, slightly larger, captioned "44 high, Body/md label. For the main sections of a page."'
+  width="2400"
+  height="480"
+/>
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-sizes-3.webp"
+  darkSrc="/images/docs/tabs/tabs-sizes-3-dark.webp"
+  alt='Size lg: the same tabs, largest, captioned "48 high, Body/lg label. For the main sections of a record or service page."'
+  width="2400"
+  height="488"
+  caption="Sizes sm, md and lg."
+/>
+
+| Size         | Height | Label   | Use                                           |
+| :----------- | :----- | :------ | :-------------------------------------------- |
+| sm (default) | 36     | Body sm | Panels, cards and dense pages                 |
+| md           | 44     | Body md | The main sections of a page                   |
+| lg           | 48     | Body lg | The main sections of a record or service page |
+
+On pages used mostly on phones, use md or lg so each tab is at least 44 high. Size sm passes the 24px minimum but is a small target for a thumb.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-options-1.webp"
+  darkSrc="/images/docs/tabs/tabs-options-1-dark.webp"
+  alt="Four examples. Icons: tabs Home, Dashboard and Settings, each with a leading icon. Badge: tabs Profile, Messages with a red counter showing 2, and Settings. Section tabs: Overview, Members and Settings. Link tabs: Overview, Services and Pricing."
+  width="2400"
+  height="1088"
+  caption="Icons, a badge, section tabs and link tabs."
+/>
+
+- **Section tabs** (items with panel) switch panels on one page. The panels sit 16 below the list.
+- **Link tabs** (items with href) make each tab its own page. Selection follows the current page: drive selectedKey from the route and leave page content outside the tabs. Wire VeliProvider navigate, or a per-item render prop for framework link components.
+
+Keep the selected tab in the URL. Link tabs do this through href; for section tabs, use a query parameter. Back, refresh and shared links then return to the same tab.
+
+## More
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-more-1.webp"
+  darkSrc="/images/docs/tabs/tabs-more-1-dark.webp"
+  alt="Two examples. showMore true: tabs Overview, Services, Pricing and Billing followed by a More tab with a caret. moreLabel Audit log: the More tab shows the label Audit log with a caret."
+  width="2400"
+  height="560"
+  caption="Extra tabs collapse into More. When a tab from the menu is selected, More shows its label."
+/>
+
+- Pass extra tabs as overflowItems. They show in a menu behind a More tab after the last visible tab.
+- Overflow is not automatic: you choose which tabs go in More. Use it to keep the visible row within narrow widths.
+- When a tab from the More menu is selected, the More tab shows its label in the selected style, with the indicator under it. In Figma there is no selected More variant: set moreLabel.
+- The menu items use the same leading and trailing content as the tabs.
+
+## Leading and trailing
+
+Use leading for an icon, on every tab or on none. The label already names the tab, so the icon is decorative and hidden from screen readers. Use trailing for a badge counter, only for new or waiting items such as unread messages. Icons in tabs are 16px.
+
+## States
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-states-1.webp"
+  darkSrc="/images/docs/tabs/tabs-states-1-dark.webp"
+  alt="A single tab, Services, in three states: default with no fill, hover with a light fill and pressed with a slightly darker fill."
+  width="2400"
+  height="472"
+/>
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-states-2.webp"
+  darkSrc="/images/docs/tabs/tabs-states-2-dark.webp"
+  alt="The tab Overview selected with no fill, Overview selected hover with a light fill, and a More tab in the open state with its menu listing Overflow tab 1 to Overflow tab 4."
+  width="2400"
+  height="900"
+  caption="Tab states at size md. Focus and disabled come from code; Figma has no variant for them."
+/>
+
+| State          | When                                   | Visual change                                      |
+| :------------- | :------------------------------------- | :------------------------------------------------- |
+| Default        | Not selected                           | Text `text/base/DEFAULT`, no fill                  |
+| Hover          | Pointer over a tab                     | Fill `tabs/hover` at 5%                            |
+| Pressed        | While pressing                         | Fill `tabs/pressed` at 9%                          |
+| Selected       | The open section                       | Medium weight, `text/base/strong`, indicator below |
+| Selected hover | Pointer over the selected tab          | Selected style with the `tabs/hover` fill          |
+| Open           | More menu open                         | More tab with the `tabs/pressed` fill              |
+| Focus          | Keyboard focus                         | 2px `border/focus` ring                            |
+| Disabled       | isDisabled on an item, or disabledKeys | Disabled text and icon colours; arrow keys skip it |
+
+The selected label keeps its width when it turns medium, so the row doesn't shift.
+
+## Behaviour
+
+- **One panel at a time**: only the selected panel shows.
+- **Activation**: by default, moving focus with the arrow keys also selects the tab (automatic activation). Link tabs default to manual activation.
+- **Slow panels**: set keyboardActivation manual on tabs whose panels load data or take time to show, so arrow keys only move focus and Enter or Space selects.
+- **Link tabs never navigate on focus**: don't set keyboardActivation automatic when items have href, or moving focus would open a new page.
+- **Selection**: controlled with selectedKey and onSelectionChange, or uncontrolled with defaultSelectedKey. The first enabled tab is selected by default.
+- **Narrow widths**: the tab bar scrolls sideways inside its own row, and the underline hugs the tab group.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-rtl-1.webp"
+  darkSrc="/images/docs/tabs/tabs-rtl-1-dark.webp"
+  alt="Left, the English tabs Overview, Services and Pricing, with Overview selected. Right, TabsDv mirrored right to left: ޚުލާޞާ selected and rightmost, then ޚިދުމަތްތައް and އަގުތައް."
+  width="2400"
+  height="416"
+  caption="Tabs and TabsDv. The first tab is rightmost in Dhivehi."
+/>
+
+- In Dhivehi the tabs start on the right: the first tab is rightmost and More is last on the left. The indicator sits under the selected tab.
+- Each tab mirrors: the icon is on the right and the trailing content on the left.
+- Labels use the Dhivehi regular styles, and Dhivehi medium (MV A Waheed) when selected. Dhivehi tabs are taller: 44, 52 and 56 high at sm, md and lg.
+- The arrow keys follow the reading direction.
+- The More menu mirrors and uses Dhivehi menu items under VeliProvider language dv.
+- In Figma, design Dhivehi screens with TabsDv.
+
+Example configuration: size sm, first tab selected, listAriaLabel in Dhivehi.
+
+| id              | Label        |
+| :-------------- | :----------- |
+| overview        | ޚުލާޞާ       |
+| services        | ޚިދުމަތްތައް |
+| pricing         | އަގުތައް     |
+| More (built in) | އިތުރު       |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-spacing-1.svg"
+  darkSrc="/images/docs/tabs/tabs-spacing-1-dark.svg"
+  alt="Spacing redlines for the tab Overview with an icon and a badge 2 at three sizes. Size sm: padding 10 at the start and 8 at the bottom, gaps of 8 between icon, label and badge, 36 high. Size md: padding 10, gaps of 10, 44 high. Size lg: padding 10, gaps of 10, 48 high."
+  width="1313"
+  height="257"
+  caption="All values in pixels at 1x. Pink bands are padding, orange bands are gaps."
+/>
+
+| Property                                 | sm                     | md                     | lg                     |
+| :--------------------------------------- | :--------------------- | :--------------------- | :--------------------- |
+| Tab height, English                      | 36                     | 44                     | 48                     |
+| Tab height, Dhivehi                      | 44                     | 52                     | 56                     |
+| Padding, top and bottom                  | 8                      | 10                     | 10                     |
+| Padding, sides                           | 8, plus a 2 slot inset | 8, plus a 2 slot inset | 8, plus a 2 slot inset |
+| Gap, icon to label and label to trailing | 8                      | 10                     | 10                     |
+| Icon                                     | 16                     | 16                     | 16                     |
+| Indicator and border                     | 2                      | 2                      | 2                      |
+| Gap between tabs                         | 0                      | 0                      | 0                      |
+| Panel top gap                            | 16                     | 16                     | 16                     |
+
+The tabs sit 2 above the 2 border. The indicator is 2 high and the width of the selected tab. Code pads each tab 14 (sm) or 16 (md, lg) at the sides with an 8 gap between parts; Figma gets close to that with slot and label padding. The selected label is medium, and code reserves the medium width so tabs don't shift when the selection changes.
+
+## Corner radius
+
+Each tab uses a radius of 8 (rounded-lg in code), visible when the hover or pressed fill shows. The indicator has no radius in Figma; code rounds it slightly (rounded-sm).
+
+<DocsFigure
+  src="/images/docs/tabs/tabs-radius-1.svg"
+  darkSrc="/images/docs/tabs/tabs-radius-1-dark.svg"
+  alt="Three tabs, Overview, at sizes sm, md and lg, each in the hover state with a fill and marked with a corner radius of 8."
+  width="1200"
+  height="208"
+  caption="Each tab has a corner radius of 8."
+/>
+
+## Typography
+
+| Element        | English                                             | Dhivehi                                              | Colour token        |
+| :------------- | :-------------------------------------------------- | :--------------------------------------------------- | :------------------ |
+| Label, sm      | Body sm regular, Inter 14/20                        | Dhivehi body sm regular, MV Faseyha 16/28            | `text/base/DEFAULT` |
+| Label, md      | Body md regular, Inter 16/24                        | Dhivehi body md regular, MV Faseyha 17/32            | `text/base/DEFAULT` |
+| Label, lg      | Body lg regular, Inter 18/28                        | Dhivehi body lg regular, MV Faseyha 19/36            | `text/base/DEFAULT` |
+| Selected label | Body sm, md or lg medium, Inter 14/20, 16/24, 18/28 | Dhivehi body medium, MV A Waheed 17/28, 19/32, 21/36 | `text/base/strong`  |
+| Panel          | Body md regular, Inter 16/24                        | Dhivehi body md regular, MV Faseyha 17/32            | `text/base/DEFAULT` |
+
+Dhivehi lines are taller, so Dhivehi tabs grow to about 44, 52 and 56 high. The padding stays the same.
+
+## Tokens
+
+| Part                                 | Token                        |
+| :----------------------------------- | :--------------------------- |
+| Label                                | `text/base/DEFAULT`          |
+| Selected label                       | `text/base/strong`           |
+| Icon                                 | `icon/base/default`          |
+| Selected icon                        | `icon/base/strong`           |
+| Hover fill, also on the selected tab | `tabs/hover` at 5%           |
+| Pressed and open fill                | `tabs/pressed` at 9%         |
+| Indicator                            | `tabs/border-active`         |
+| Border under the list                | `tabs/border-inactive` at 9% |
+| Focus ring                           | `border/focus`               |
+
+Token names leave out the `components/` and `semantics/` prefixes. Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                   | Duration       | Easing      |
+| :--------------------------- | :------------- | :---------- |
+| Indicator position and width | Normal (200ms) | Ease in out |
+| Hover and pressed fill       | Normal (200ms) | Ease in out |
+
+With reduced motion turned on, these transitions are turned off: the indicator jumps to the selected tab.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -138,3 +568,67 @@ Link DOM props (`target`, `rel`, `hrefLang`, `download`, `ping`, `referrerPolicy
 ## RTL and Language
 
 Tabs inherit direction and language from `VeliProvider`. On `lang="dv"`, the overflow trigger label becomes `އިތުރު` and labels use the Dhivehi baseline adjustment. In RTL, the tab row, indicator, and More caret follow `dir`. Pass localized `label` and `panel` content on each item.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How tabs work with keyboards, screen readers and reduced motion, and what you still need to do. Tabs follow the React Aria tabs pattern: each tab is linked to its panel.
+
+## Keyboard
+
+Tab moves into the list on the selected tab. The More tab is a separate stop after the list.
+
+| Key                 | Action                                                                                 |
+| :------------------ | :------------------------------------------------------------------------------------- |
+| Tab                 | Moves into the list on the selected tab, then on to the More tab and the panel         |
+| Left or Right arrow | Moves to the previous or next tab, wrapping at the ends. Follows the reading direction |
+| Home or End         | Moves to the first or last enabled tab                                                 |
+| Enter or Space      | Selects the focused tab, with manual activation, or opens the More menu                |
+
+With automatic activation, moving focus also selects the tab. Disabled tabs are skipped.
+
+## Screen readers
+
+- The list has role tablist and each tab role tab, with aria-selected and aria-controls pointing to its panel. Each panel has role tabpanel and is labelled by its tab.
+- Always pass listAriaLabel. The default name is Tabs in both languages and only names the role.
+- The More tab is a button that opens a menu named More tabs; its items are radio menu items.
+- Start each panel with a heading that matches the tab label, so screen reader users can navigate by heading once the panel opens.
+- Link tabs still render a visually hidden panel, so aria-controls resolves.
+
+## Focus
+
+- Keyboard focus shows a 2px ring in `border/focus` around the tab. It appears for keyboard focus only, not on click.
+- From the selected tab, Tab moves into the panel. The panel takes focus itself only when it has no focusable content; otherwise Tab goes to its first control.
+- The selected tab is not shown by colour alone: it is also medium weight and has the indicator.
+
+## Disabled
+
+A disabled tab can't be selected and the arrow keys skip it. Prefer isDisabled on each item.
+
+## Target size
+
+Size sm is 36 high, md 44 and lg 48. Use md or lg on pages used mostly on phones.
+
+## Contrast
+
+The Figma page gives these contrast ratios on `bg/surface/base` and `bg/surface/raised`, showing the lower of the two. Use the tabs text, fill and indicator tokens as they are. Don't override them with custom colours.
+
+| Element                            | Light  | Dark   | Minimum |
+| :--------------------------------- | :----- | :----- | :------ |
+| Label, `text/base/DEFAULT`         | 7.4:1  | 7.3:1  | 4.5:1   |
+| Label on the pressed fill          | 6.3:1  | 6.1:1  | 4.5:1   |
+| Selected label, `text/base/strong` | 11.2:1 | 11.1:1 | 4.5:1   |
+| Indicator, `tabs/border-active`    | 3.1:1  | 7.2:1  | 3:1     |
+
+The pressed fill is measured at its token alpha, as code renders it.
+
+## Reduced motion
+
+When the user prefers reduced motion, the indicator and fill transitions are turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The tab row, indicator and More caret follow the direction, the arrow keys follow the reading direction, and the More label becomes އިތުރު. Pass Dhivehi labels, panels and listAriaLabel yourself.
+
+</DocsTab>

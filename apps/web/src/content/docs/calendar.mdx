@@ -1,6 +1,6 @@
 ---
 title: Calendar
-description: Accessible standalone single-date and date-range selection.
+description: 'A month grid on the page for choosing one date, or a start and an end date.'
 ---
 
 import {
@@ -12,9 +12,434 @@ import {
   CalendarRtlDemo,
 } from '../../components/CalendarExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Calendar
 
-`Calendar` selects one date. `RangeCalendar` selects a start and end date. Both are standalone surfaces; use `DatePicker` when date entry should open a calendar in a popover.
+<DocsTab id="overview">
+
+Calendar shows one month as a grid of days on the page, with no field, for picking one date. RangeCalendar picks a start and an end date. Use a calendar where people browse dates, such as checking which appointment days are open.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/calendar.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-calendar--docs"
+/>
+
+## When to use
+
+### Use a calendar when
+
+- You embed date selection directly in a scheduling, booking, filter or availability surface.
+- People need to see constrained or unavailable dates in the context of the month.
+- The selected or focused date must stay in sync with other controls on the page. Use a controlled calendar.
+- People choose a start and an end date. Use RangeCalendar.
+
+### Don't use a calendar when
+
+- Date selection should stay compact until people open it. Use a date picker.
+- People only need to type a date. Use a date field.
+- The date is one people know by heart, such as a date of birth. Prefill it from the National Registry through eFaas. Otherwise use a date field in English. In Dhivehi, use three Inputs with bday autocomplete: under dv the Date field segments read month, day, year from the right (mm / dd / yyyy), which differs from the guidelines, and the segment names stay in English.
+- It would be the only way to enter a date in a form, because people can't type the date. Use a date picker, which has typed segments as well as the calendar.
+- Only a few dates are open, such as three appointment days. List them as Radio options written in full, such as Thursday 22 October 2026.
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-intro-1.webp"
+  darkSrc="/images/docs/calendar/calendar-intro-1-dark.webp"
+  alt='A white card titled Choose your appointment day, with the line "Passport office, Malé. Open Sunday to Thursday, except public holidays." Below it a calendar for October 2026: days before 12 October are greyed out, Fridays and Saturdays are in red, 12 October has a dot under it and Thursday 15 October is filled teal. Under the calendar: "Your appointment: Thursday 15 October 2026" and a teal Continue button.'
+  width="2400"
+  height="1668"
+  caption="A calendar on a booking page, with closed days marked and the choice shown as text."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-anatomy-1.svg"
+  darkSrc="/images/docs/calendar/calendar-anatomy-1-dark.svg"
+  alt='A calendar for October 2026 with the Today button and an error message turned on, and 15 October selected in red. Eleven numbered markers: 1 on the container, 2 on the previous month button, 3 on the month, 4 on the next month button, 5 on the year picker, 6 on the weekday headers, 7 on a day, 8 on the today marker under 12, 9 on the selected day, 10 on the Today button and 11 on the error message "Choose a date from Sunday to Thursday".'
+  width="576"
+  height="640"
+  caption="The parts of a calendar, shown with the Today button and an error message turned on. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   holds one month, with a 1 border, radius 12, a medium shadow and padding 4. The date grid is a fixed 308 wide. In code it is Calendar, or RangeCalendar for a range.
+
+2. **Previous month**
+
+   a 36 icon-only ghost button. Its icon points the other way in Dhivehi.
+
+3. **Month**
+
+   the visible month name. Under Dhivehi it comes from Veli's own table of month names.
+
+4. **Next month**
+
+   the same button as previous month, named Next month.
+
+5. **Year picker**
+
+   the year and a 36 caret button. It opens a list of 10 years either side of the visible year. Screen readers hear year.
+
+6. **Weekday headers**
+
+   seven day names, starting on Sunday. Short names in English, full names in Dhivehi; change them with weekdayStyle.
+
+7. **Day**
+
+   a 44 x 44 cell with the date number. Days of the previous and next month show in a lighter text colour. In code it is CalendarCell.
+
+8. **Today marker**
+
+   a 4 x 4 dot under today's number. Screen readers hear Today before the date, so today never relies on colour alone.
+
+9. **Selected day**
+
+   filled with `calendar/day-selected`, or with `button/danger/default` while the calendar is invalid. In RangeCalendar the start and end are rounded and the days between are tinted.
+
+10. **Today button**
+
+optional and off by default. A full-width primary ghost button under a divider that focuses and selects today. In code it is showTodayButton and todayButtonLabel. 11. **Error message**
+
+shows below the grid while the calendar is invalid, with a 16 warning icon and the message in `text/danger/muted`. In code it is isInvalid and errorMessage.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/calendar/calendar-do-1.webp" darkSrc="/images/docs/calendar/calendar-do-1-dark.webp" alt="A calendar for October 2026 with Thursday 15 October selected, and the line &quot;Your appointment: Thursday 15 October 2026&quot; below it." width="1136" height="860">
+
+Show the chosen date as text next to the calendar, written in full: Thursday 15 October 2026.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/calendar/calendar-dont-1.webp" darkSrc="/images/docs/calendar/calendar-dont-1-dark.webp" alt="The same calendar with 15 October selected and no text near it." width="1136" height="860">
+
+Don't leave the highlighted day as the only sign of what was chosen. People need to read the date to check it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/calendar/calendar-do-2.webp" darkSrc="/images/docs/calendar/calendar-do-2-dark.webp" alt="An invalid calendar with 15 October filled red and the error &quot;Choose a date between 23 October and 21 December 2026&quot; below the grid." width="1136" height="892">
+
+Write the error as the rule people must follow, with the dates.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/calendar/calendar-dont-2.webp" darkSrc="/images/docs/calendar/calendar-dont-2-dark.webp" alt="The same invalid calendar with the error &quot;Pick a date within the allowed window.&quot;" width="1136" height="892">
+
+Don't write a vague error. This one names no dates, uses Pick and ends with a full stop.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/calendar/calendar-do-3.webp" darkSrc="/images/docs/calendar/calendar-do-3-dark.webp" alt="A calendar for October 2026 under the line &quot;Open Sunday to Thursday, except public holidays&quot;. Days before 12 October are greyed out, Fridays and Saturdays are in red, and 15 October is selected." width="1136" height="900">
+
+Mark the days the service is closed with isDateUnavailable, and say why in text near the calendar.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/calendar/calendar-dont-3.webp" darkSrc="/images/docs/calendar/calendar-dont-3-dark.webp" alt="A calendar for October 2026 where nearly every day from 12 October is in red and only 15, 20 and 22 October are open." width="1136" height="900">
+
+Don't use a calendar when only a few dates are open. Use a Radio group with each date written in full.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Accessible name
+
+Name a calendar with what the date is for, in sentence case. Pass a Dhivehi name under language dv. Leave the role word out of the name.
+
+| Do               | Don't                                          |
+| :--------------- | :--------------------------------------------- |
+| Appointment date | Calendar (says what it is, not what it is for) |
+| Leave dates      | No name at all                                 |
+
+### Show the choice as text
+
+Write the chosen date or range in full next to the calendar.
+
+| Do                       | Don't                                                   |
+| :----------------------- | :------------------------------------------------------ |
+| Thursday 22 October 2026 | The highlighted day as the only sign of what was chosen |
+| 1 to 5 March 2026        |                                                         |
+
+Add the weekday before the date, with no comma, when people need to plan around it: appointments, deadlines and service closures.
+
+### Closed days
+
+Say in text when the service is closed: Open Sunday to Thursday, except public holidays.
+
+### Error messages
+
+Write a calendar error as the rule people must follow, with the dates, and leave the full stop off a one-sentence error.
+
+| Do                                                        | Don't                                                                          |
+| :-------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| Choose a date between 23 October and 21 December 2026     | Pick a date within the allowed window. (Pick, no dates named, and a full stop) |
+| Choose a date from Sunday to Thursday in the next 60 days |                                                                                |
+
+### Today button
+
+Keep the label as Today (މިއަދު in Dhivehi). If you override todayButtonLabel, pass the text in both languages.
+
+### Built-in strings
+
+Calendar has these built-in strings: Today (todayButtonLabel), the Dhivehi month and weekday names from Veli's own table, and the month and year button names. Day cell names, the grid name and the React Aria announcements, such as Selected Date and Today, stay in English. Only the Today label and the calendar's name can be overridden.
+
+## Related components
+
+| Component                         | When to use it                                                                 |
+| :-------------------------------- | :----------------------------------------------------------------------------- |
+| [Date picker](/docs/date-picker/) | a date field that opens this calendar in a popover and can also be typed.      |
+| [Date field](/docs/date-field/)   | when people type a date they know, such as a date of birth.                    |
+| [Radio](/docs/radio/)             | when only a few dates are open, each written in full.                          |
+| [VeliProvider](/docs/provider/)   | wrap the app in VeliProvider so the calendar gets Dhivehi names and direction. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the calendar: types, weekday headers, content options, states, layout, spacing, tokens and motion.
+
+## Single date and range
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-types-1.webp"
+  darkSrc="/images/docs/calendar/calendar-types-1-dark.webp"
+  alt="Two calendars for October 2026. Type single: 15 October filled teal. Type range: 13 to 20 October, with 13 and 20 filled teal and rounded on their outer side and the days between in a light teal band. Each has its note below it."
+  width="2400"
+  height="1020"
+  caption="Calendar and RangeCalendar."
+/>
+
+- **Calendar** selects one date.
+- **RangeCalendar** selects a start and an end date. The ends are rounded at the start and end of the range, and the days between form a continuous band. A one-day range is a circle. The rounding uses logical corners, so it mirrors in Dhivehi.
+- A range can't cross unavailable dates unless allowsNonContiguousRanges is on.
+
+## Weekday headers
+
+weekdayStyle sets the weekday headers to narrow, short or long. The default is short in English (Sun) and long in Dhivehi (އާދީއްތަ). Every Dhivehi header carries the full day name for screen readers.
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-weekdays-1.png"
+  darkSrc="/images/docs/calendar/calendar-weekdays-1-dark.webp"
+  alt="Three calendars for October 2026 with different weekday headers. Narrow: S, M, T, W, T, F, S. Short: Sun to Sat. Long: Sunday to Saturday, with the longer names cut short to fit the 44 column. Each has its note below it."
+  width="2400"
+  height="972"
+  caption="Weekday styles narrow, short and long."
+/>
+
+Keep the default firstDayOfWeek of Sunday; the Maldives working week runs Sunday to Thursday.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-options-1.webp"
+  darkSrc="/images/docs/calendar/calendar-options-1-dark.webp"
+  alt='Three calendars for October 2026. showTodayButton on: a full-width Today button under a divider at the foot. showErrorMessage on: 15 October filled red and the error "Choose a date in the next 60 days" below the grid. showSixthWeek on: a sixth row of days. Each has its note below it.'
+  width="2400"
+  height="1158"
+  caption="The Today button, the error message and the sixth week."
+/>
+
+- **Today button**: turn it on with showTodayButton when people often need today. It is off by default. In single date mode it focuses and selects today; in a range it sets a one-day range; in read-only mode it only moves focus. It is disabled when today is outside minValue and maxValue, unavailable or invalid.
+- **Error message**: pair isInvalid with a short errorMessage that says what to do.
+- **Sixth week**: months that need it get a sixth row, so the height changes from month to month. Code adds it on its own; in Figma, set the days for the month you show.
+
+## States
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-states-1.webp"
+  darkSrc="/images/docs/calendar/calendar-states-1-dark.webp"
+  alt='Three calendars for October 2026. Default: 15 October selected and a dot under 12. Invalid: 15 October filled red with the error "Choose a date from Sunday to Thursday" below the grid. Disabled: the whole grid muted. Each has its note below it.'
+  width="2400"
+  height="1036"
+/>
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-states-2.png"
+  darkSrc="/images/docs/calendar/calendar-states-2-dark.webp"
+  alt="Three calendars for October 2026. Unavailable: Fridays, Saturdays and some other days in red. Outside the range: days before 12 October and after 28 October greyed out. Read only: looks like default, with 15 October selected. Each has its note below it."
+  width="2400"
+  height="1020"
+  caption="Calendar states in the first row, and day states in the second."
+/>
+
+| State             | When                              | Visual change                                             |
+| :---------------- | :-------------------------------- | :-------------------------------------------------------- |
+| Default           | An available day                  | Number on the surface                                     |
+| Hover             | Pointer over a day                | The day is tinted                                         |
+| Focus             | Keyboard focus on a day           | Focus ring around the day                                 |
+| Today             | Today's date                      | A dot under the number                                    |
+| Selected          | value or a chosen day             | The day is filled                                         |
+| Range             | RangeCalendar value               | Start and end filled and rounded, days between tinted     |
+| Unavailable       | isDateUnavailable                 | A red line through the number; focusable, can't be chosen |
+| Outside the range | Before minValue or after maxValue | Greyed out and can't be chosen                            |
+| Invalid           | isInvalid with errorMessage       | The error message shows below the grid                    |
+| Disabled          | isDisabled                        | The whole grid is muted                                   |
+| Read only         | isReadOnly                        | Readable and focusable, but selection can't change        |
+
+Disabled and unavailable dates look different from each other and from available dates.
+
+## Behaviour
+
+- **Where focus starts**: when the calendar gets focus, the selected date is focused, or today when nothing is selected. focusedValue sets the visible month.
+- **Month and year**: the header has previous and next month buttons, the month name and a year picker with 10 years either side of the visible year.
+- **Choosing a range**: in RangeCalendar the first Enter, Space, tap or click sets the start and the second sets the end. Moving or hovering previews the range, and Escape cancels a range in progress. On touch, people can also drag across dates.
+- **Controlled**: use value and onChange to own the selected date, and focusedValue with onFocusChange to keep externally changed dates in view.
+- **Six-week months**: a sixth row of weeks is added for months that need it, so the height changes from month to month.
+- **One month at a time**: the calendar has no multi-month layout.
+- **Closed days**: use isDateUnavailable for days the service is closed, such as Fridays, Saturdays and public holidays, and say so in text near the calendar. Set the bookable window with minValue and maxValue.
+- **No motion**: don't animate moving between days or months. People repeat it many times in a row.
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-behaviour-1.png"
+  darkSrc="/images/docs/calendar/calendar-behaviour-1-dark.webp"
+  alt="A calendar for October 2026 with the year list open below the year picker, listing 2023 to 2029 with 2026 highlighted."
+  width="2400"
+  height="1020"
+  caption="The year list opens 4 below the year picker, as wide as it, and scrolls through 20 years. The visible year is highlighted."
+/>
+
+## Layout
+
+- The surface is 318 wide with 44 x 44 day cells. It shrinks within narrower containers while keeping seven columns and 44 high rows. Weekday text may abbreviate at narrow widths.
+- Give flex and grid parents min-w-0, and don't force a minimum width on the calendar.
+- Reserve enough horizontal space for the grid, and place several calendars in one column on narrow layouts.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-rtl-1.png"
+  darkSrc="/images/docs/calendar/calendar-rtl-1-dark.webp"
+  alt="Two range calendars for October 2026 side by side, each with 13 to 20 October selected. LTR, Calendar: English, with the weekday headers Sun to Sat. RTL, CalendarDv: mirrored, with the month name އޮކްޓޯބަރު, the year picker on the left, full Dhivehi weekday names from އާދީއްތަ on the right to ހޮނިހިރު on the left, Latin day numbers and the range ends rounded on their outer side."
+  width="2400"
+  height="940"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- Set language dv on VeliProvider. It sets Dhivehi typography and right to left direction.
+- The calendar shows Dhivehi month names and full Dhivehi weekday names from Veli's own table, with Latin digits for days and years. Weeks start on Sunday.
+- The grid mirrors, the month arrows swap and range ends round on the logical side.
+- Under dv the month buttons are named ކުރީ މަސް and ދެން އޮތް މަސް, the year button އަހަރު and the Today button މިއަދު.
+- In Figma, use CalendarDv, which has the same type and state variants as Calendar.
+- CalendarDv keeps the English heights except the weekday row, which measures 40 high, where the English row is 32, for the taller Dhivehi line. This differs from the rule that a Dv component keeps the English heights; see Missing or unverified.
+- Format dates shown in text with en-GB for English, giving 21 October 2026. For Dhivehi, take month names from the language files.
+
+The Dhivehi example in the Figma page uses the month name އޮކްޓޯބަރު (October) and these weekday headers:
+
+| English   | Dhivehi    |
+| :-------- | :--------- |
+| Sunday    | އާދީއްތަ   |
+| Monday    | ހޯމަ       |
+| Tuesday   | އަންގާރަ   |
+| Wednesday | ބުދަ       |
+| Thursday  | ބުރާސްފަތި |
+| Friday    | ހުކުރު     |
+| Saturday  | ހޮނިހިރު   |
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <CalendarRtlDemo client:visible />
+</div>
+
+Example configuration: RangeCalendar, showTodayButton, defaultValue from 2026-10-13 to 2026-10-20.
+
+| Prop       | English    | Dhivehi                |
+| :--------- | :--------- | :--------------------- |
+| aria-label | Trip dates | ދަތުރު ކުރާ ތާރީޚުތައް |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-spacing-1.svg"
+  darkSrc="/images/docs/calendar/calendar-spacing-1-dark.svg"
+  alt='Spacing redlines for the calendar in two parts. Container and header: the 318 wide container with 4 padding, the 40 high header, the month picker and year picker with 2 padding and 36 x 36 buttons. Grid, footer and error message: the 308 wide grid, the weekday row with 8 above and below, 44 x 44 days, the Today button under a divider with 4 above and below, and the error message "Choose a date from Sunday to Thursday" with 8 padding.'
+  width="1200"
+  height="1332"
+  caption="All values in pixels at 1x. Pink marks padding, orange marks a gap between parts, and the orange line marks a size."
+/>
+
+| Part                   | Size                                                                                               | Padding                                                                                                | Gaps                                                  |
+| :--------------------- | :------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| Container              | 318 wide in both languages; the grid inside is a fixed 308. Height follows the month: 5 or 6 weeks | 4 (`spacing/1`) on every side, inside a 1 border                                                       | None                                                  |
+| Header                 | 40 high                                                                                            | Month picker 2 (`spacing/0,5`) on every side. Year picker 2 top, bottom and end, 8 (`spacing/2`) start | Month picker to year picker 2. Year to caret button 8 |
+| Month and year buttons | 36 x 36, icon 16                                                                                   | 8 (`spacing/2`)                                                                                        | None                                                  |
+| Weekday row            | 32 high, 40 measured in Dhivehi; 7 columns of 44                                                   | 8 (`spacing/2`) top and bottom                                                                         | None                                                  |
+| Day                    | 44 x 44. Today dot 4 x 4, 2 below the number                                                       | None                                                                                                   | None                                                  |
+| Today footer           | Button 36 high, full width, under a 1 divider                                                      | 4 (`spacing/1`) above and below the divider                                                            | None                                                  |
+| Error message          | 32 high for one line                                                                               | 8 (`spacing/2`)                                                                                        | Icon to message 6 (`spacing/1,5`)                     |
+| Year list              | As wide as the year picker, up to 240 high. Years 36 high                                          | 4 (`spacing/1`). Each year 8 (`spacing/2`)                                                             | Opens 4 below the year picker                         |
+
+A month that needs a sixth week adds a row of 44, so the height changes from month to month.
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-radius-1.svg"
+  darkSrc="/images/docs/calendar/calendar-radius-1-dark.svg"
+  alt="Three calendars for October 2026, each marking a radius: the container at 12, the month and year pickers at 8, and a selected day and range ends as fully round."
+  width="1200"
+  height="432"
+  caption="The container uses 12 (`radius/xl`), the month and year pickers 8 (`radius/lg`), and days are fully round. Range ends round only on their outer side, so they mirror in Dhivehi."
+/>
+
+## Typography
+
+| Element         | English                              | Dhivehi                                    | Colour token                                                                 |
+| :-------------- | :----------------------------------- | :----------------------------------------- | :--------------------------------------------------------------------------- |
+| Month           | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28  | `text/base/strong`                                                           |
+| Year            | Body sm medium, Inter Medium 14/20   | The same style, Latin digits               | `text/base/strong`                                                           |
+| Weekday headers | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24  | `text/base/DEFAULT`                                                          |
+| Day number      | Body sm regular, Inter Regular 14/20 | The same style, Latin digits kept in Inter | `text/base/emphasis`; days of the next and previous month `text/base/subtle` |
+| Today button    | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28  | `text/primary/default`                                                       |
+| Error message   | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24  | `text/danger/muted`                                                          |
+| Year list       | Body sm regular, Inter Regular 14/20 | The same style, Latin digits               | `text/base/strong`                                                           |
+
+## Tokens
+
+Token names leave out the `components/` and `semantics/` prefixes.
+
+| Part or state                     | Fill                                                     | Text and icon                                 | Notes                                                                 |
+| :-------------------------------- | :------------------------------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------- |
+| Container                         | `calendar/bg`, border `border/base/subtle`               | `text/base/DEFAULT`                           | Medium shadow                                                         |
+| Month and year pickers            | `calendar/bg-month-year`                                 | `text/base/strong`, icons `icon/base/strong`  | Secondary ghost buttons; hover `calendar/day-hover`                   |
+| Day                               | None                                                     | `text/base/emphasis`                          | Hover `calendar/day-hover`                                            |
+| Day of the next or previous month | None                                                     | `text/base/subtle`                            | Fills the first and last week                                         |
+| Selected                          | `calendar/day-selected`                                  | White                                         | Code uses `text/primary/inverted`                                     |
+| Selected, invalid                 | `button/danger/default`                                  | White                                         | Code uses `text/danger/inverted`                                      |
+| Range, days between               | `calendar/day-range`                                     | `text/base/emphasis`                          | Hover `calendar/day-range-hover`                                      |
+| Today marker                      | `calendar/day-selected`                                  | None                                          | White on a selected day                                               |
+| Disabled day                      | None                                                     | `text/disabled`                               | Before minValue, after maxValue, or the whole calendar while disabled |
+| Unavailable day                   | None                                                     | `text/danger/default` with a line through     | Can take focus but can't be chosen                                    |
+| Focus                             | Focus ring                                               | None                                          | Ring around the focused day                                           |
+| Today button                      | Primary ghost button                                     | `text/primary/default`                        | Divider `border/base/subtle`                                          |
+| Error message                     | None                                                     | `text/danger/muted`, icon `icon/danger/muted` | 16 warning icon                                                       |
+| Year list                         | `menu/bg`, selected year `button/primary/subtle/default` | `text/base/strong`                            | Border `border/base/subtle`, large shadow                             |
+
+## Motion
+
+The date grid has no entrance or month slide animation, in line with the rule to skip motion on actions people repeat many times in a row. Header buttons keep Veli's reduced motion behaviour, and year list options turn their transitions off when reduced motion is on. Focus rings stay visible with reduced motion.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -185,3 +610,60 @@ export default function CalendarLanguageDemo() {
 ```
 
 The date grid has no entrance or month-slide animation. Header Buttons retain Veli's reduced-motion behavior, and year-menu options disable transitions when reduced motion is requested.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the calendar works with keyboards and screen readers, and what you still need to do. It is built on the React Aria calendar.
+
+## Keyboard
+
+The grid is one Tab stop, next to the month buttons and the year picker.
+
+| Key                                   | Action                                                                          |
+| :------------------------------------ | :------------------------------------------------------------------------------ |
+| Tab                                   | Moves between the month buttons, the year picker, the grid and the Today button |
+| Left and Right arrows                 | Move one day, mirrored in Dhivehi so Left always moves to the day on the left   |
+| Up and Down arrows                    | Move one week                                                                   |
+| Page Up and Page Down                 | Move one month                                                                  |
+| Shift + Page Up and Shift + Page Down | Move one year                                                                   |
+| Home and End                          | Move to the first and last day of the month                                     |
+| Enter or Space                        | Select the focused day, or set a range start or end                             |
+| Escape                                | Cancel a range in progress, or close the year list                              |
+
+Home and End go to the first and last day of the month, as React Aria does, where the APG date picker goes to the start and end of the week. Veli keeps this on purpose.
+
+## Screen readers
+
+- Give the calendar an accessible name with aria-label or aria-labelledby. The grid is named with that label and the visible month, such as "Appointment date, October 2026".
+- Each day cell is named with the full date. Today is announced as Today before the date.
+- The calendar announces the new month when people move to it, and the date when they select it. These announcements are in English under Dhivehi.
+- Selected, unavailable, disabled and invalid dates expose their state.
+
+## Focus
+
+Keyboard focus shows a visible focus ring around the day. It shows only for keyboard focus, never on click or tap, and sits outside the day, so focus doesn't move the grid. It stays visible with reduced motion.
+
+<DocsFigure
+  src="/images/docs/calendar/calendar-focus-1.png"
+  darkSrc="/images/docs/calendar/calendar-focus-1-dark.webp"
+  alt="Two calendars for October 2026 with keyboard focus on a day, shown by a ring around it: one in English and one in CalendarDv, mirrored with Dhivehi month and weekday names."
+  width="2400"
+  height="864"
+  caption="The focus ring on a day, in English and in Dhivehi."
+/>
+
+## Colour alone
+
+Today has a dot as well as colour, unavailable days have a line through the number, and an invalid calendar shows error text. Show the chosen date as text too.
+
+## Target size
+
+Day cells are 44px square, above the 24px minimum target size. The month and year buttons are 36px square.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). Pass a Dhivehi accessible name and any Dhivehi error message yourself. Day cell names, the grid name and announcements stay in English; show the chosen date as Dhivehi text next to the calendar so people can confirm it.
+
+</DocsTab>

@@ -1,6 +1,6 @@
 ---
 title: Dropzone
-description: File upload field with drag and drop, browsing, validation, and upload progress.
+description: "A field for attaching files by dragging them in or browsing, with each file's upload status."
 ---
 
 import {
@@ -9,9 +9,587 @@ import {
   DropzoneValidationDemo,
 } from '../../components/DropzoneExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Dropzone
 
-Use Dropzone when people attach files to a form, by dropping them or with **Browse files**. It lists each file with its upload status.
+<DocsTab id="overview">
+
+A drop zone lets people attach files to a form, by dragging them in or browsing, and shows each file's upload status. It checks each file against the limits you set and lists accepted files with their progress and a remove button. Use it when a service needs documents from the applicant, such as a passport copy or a signed contract.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/dropzone.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-dropzone--docs"
+/>
+
+## When to use
+
+### Use a drop zone when
+
+- People need to attach one or more files by dropping or browsing.
+- The form must show accepted files, rejection feedback, upload progress, previews or remove buttons.
+- People may have the file open on their desktop and want to drag it in.
+
+### Don't use a drop zone when
+
+- The question doesn't take a file. Use the control that matches the value, such as Input for a reference number or Text area for an explanation.
+- The file is optional and rarely needed.
+- A problem affects the whole form. Use Alert, not the drop zone's message.
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-intro-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-intro-1-dark.webp"
+  alt='A white card titled Work permit application, "Step 3 of 4: Supporting documents". A drop zone labelled Supporting documents with a red asterisk: an upload icon, "Drag and drop files here", the hint "Your passport copy and employment contract", "Up to 10 MB" and a Browse files button. Below the area, three file rows: passport-copy.pdf, 1.2 MB, 19% with a short progress bar and a cross button; employment-contract.pdf, 1.2 MB, Uploaded with a full green bar and a red trash button; police-clearance.pdf, 1.2 MB, Uploaded. The description reads "PDF or JPG, up to 10 MB each, up to 5 files". Back and Continue buttons sit at the foot.'
+  width="2400"
+  height="1936"
+  caption="A drop zone in multiple mode, collecting supporting documents for an application."
+/>
+
+## Anatomy
+
+A drop zone field holds a drop area, and each chosen file shows as a file row.
+
+### Field
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-anatomy-1.svg"
+  darkSrc="/images/docs/dropzone/dropzone-anatomy-1-dark.svg"
+  alt='A drop zone field labelled Attachment with an info icon, Optional and a red asterisk, the drop area with the built-in title (Drag and drop files here, written with an ampersand), "Or click to browse", "Up to 10 MB" and Browse files, and the description "PDF, PNG or JPG, up to 10 MB each". Six numbered markers: 1 on the label, 2 on the info icon, 3 on Optional, 4 on the required indicator, 5 on the drop area and 6 on the description.'
+  width="1200"
+  height="384"
+  caption="The parts of a drop zone field. Numbers match the list below. Optional and the required marker are shown together only to name the parts. A field never shows both."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   names what to upload. Body md regular at labelSize md, body sm regular at sm, in `text/base/DEFAULT`. In code it is label.
+
+2. **Info icon**
+
+   a 16px icon that opens a tooltip with more help. Never put the limits only here. In code it is infoTooltip.
+
+3. **Optional**
+
+   the localised word Optional after the label. Code hides it when isRequired is set. In code it is isOptional.
+
+4. **Required indicator**
+
+   an asterisk in `text/danger/muted`. Turn it off with showRequiredIndicator. In code it is isRequired.
+
+5. **Drop area**
+
+   the drop target. In single mode it becomes a file row once a file is chosen; in multiple mode the list sits below it. In code it is DropzoneArea.
+
+6. **Description**
+
+   helper text below the field, caption regular in `text/base/subtle`. The error message replaces it while invalid. In code it is description.
+
+</DocsAnatomy>
+
+### Drop area
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-anatomy-2.svg"
+  darkSrc="/images/docs/dropzone/dropzone-anatomy-2-dark.svg"
+  alt='The drop area with an upload icon, the built-in title (Drag and drop files here, written with an ampersand), "Or click to browse", a short divider, "Up to 10 MB" and a Browse files button. Five numbered markers: 1 on the icon, 2 on the title, 3 on the hint, 4 on the secondary text and 5 on the Browse files button.'
+  width="1200"
+  height="330"
+  caption="The parts of the drop area. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Icon**
+
+   a decorative 24px upload icon in a 40 box, in `icon/base/muted`.
+
+2. **Title**
+
+   what to do, body sm medium. It defaults to Drag and drop files here written with an ampersand; set it to Drag and drop files here, written out. In code it is title.
+
+3. **Hint**
+
+   caption regular in `text/base/subtle`. It defaults to Or click to browse; set it to what to upload, such as Front and back of your ID card. In code it is hint.
+
+4. **Secondary text**
+
+   optional, after a short divider: limits such as Up to 10 MB. Caption regular in `text/base/muted`. In code it is secondaryText.
+
+5. **Trigger**
+
+   the Browse files button, a secondary, transparent, sm Veli Button. Turn it off with showTrigger, but keep it for people who can't drag. In code it is DropzoneTrigger.
+
+</DocsAnatomy>
+
+### File row
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-anatomy-3.svg"
+  darkSrc="/images/docs/dropzone/dropzone-anatomy-3-dark.svg"
+  alt="A file row for design-system.pdf, 1.2 MB, 19%, with a file icon, a cross button and a progress bar along the bottom. Six numbered markers: 1 on the preview, 2 on the file name, 3 on the size, 4 on the status, 5 on the remove button and 6 on the progress bar."
+  width="1200"
+  height="328"
+  caption="The parts of a file row. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Preview**
+
+   a 40 box with radius 6, showing an image thumbnail with imagePreview, or a file type icon. In code it is DropzoneItemPreview.
+
+2. **File name**
+
+   body sm medium, shortened to one line. In code it comes from the File.
+
+3. **File size**
+
+   caption regular in `text/base/subtle`, formatted from the File, such as 1.2 MB.
+
+4. **Status**
+
+   the percentage while uploading, Uploaded on success, or the reason on error. In code it is DropzoneItemMetadata.
+
+5. **Remove button**
+
+   an sm icon button, named Remove with the file name. A cross while uploading, on error and idle; a danger trash icon once uploaded. In code it is DropzoneItemDelete.
+
+6. **Progress bar**
+
+   a 4 high bar along the bottom while uploading and after success, hidden on error. In code it is DropzoneItemProgress.
+
+</DocsAnatomy>
+
+Rows sit in DropzoneList, a list under the area in multiple mode. It can run vertically or wrap horizontally; choose the direction for the space available. It is a building block, not a separate component to place.
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/dropzone/dropzone-do-1.webp" darkSrc="/images/docs/dropzone/dropzone-do-1-dark.webp" alt="A drop zone labelled Passport copy with &quot;Drag and drop files here&quot;, the hint &quot;The page with your photo&quot;, &quot;Up to 5 MB&quot; and the description &quot;PDF or JPG, up to 5 MB&quot;." width="1136" height="464">
+
+Say which file types and sizes are accepted in the description.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/dropzone/dropzone-dont-1.webp" darkSrc="/images/docs/dropzone/dropzone-dont-1-dark.webp" alt="The same drop zone with no description. Only Up to 10 MB shows in the area, so the accepted file types are not given." width="1136" height="464">
+
+Don't leave the file types and sizes out of the description. People find out only when the upload fails.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/dropzone/dropzone-do-2.webp" darkSrc="/images/docs/dropzone/dropzone-do-2-dark.webp" alt="The drop zone labelled Passport copy with a red dashed border and the error &quot;The selected file must be a PDF, PNG or JPG&quot;." width="1136" height="464">
+
+Say what went wrong and how to fix it: The selected file must be a PDF, PNG or JPG.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/dropzone/dropzone-dont-2.webp" darkSrc="/images/docs/dropzone/dropzone-dont-2-dark.webp" alt="The same drop zone with a red dashed border and the error &quot;Invalid file.&quot;" width="1136" height="464">
+
+Don't write vague errors. Invalid file doesn't say what to change.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/dropzone/dropzone-do-3.webp" darkSrc="/images/docs/dropzone/dropzone-do-3-dark.webp" alt="One drop zone labelled Supporting documents, with the hint &quot;Pay slips for the last 3 months&quot; and the description &quot;PDF, PNG or JPG, up to 10 MB each&quot;." width="1136" height="696">
+
+Use one multiple field for files of the same kind, and cap the count with maxFiles.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/dropzone/dropzone-dont-3.webp" darkSrc="/images/docs/dropzone/dropzone-dont-3-dark.webp" alt="Two stacked drop zones labelled Document 1 and Document 2, each with the hint &quot;Pay slips for the last 3 months&quot;." width="1136" height="696">
+
+Don't stack numbered single fields for one kind of file. People have to guess where each file goes.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Name the document, in sentence case, without a full stop.
+
+| Do                  | Don't                                    |
+| :------------------ | :--------------------------------------- |
+| Passport copy       | Upload file (names the action)           |
+| Employment contract | Attachment (does not say which document) |
+
+### Title and hint
+
+Replace the built-in title and hint. Set the title to Drag and drop files here, and the hint to what to upload, in English and Dhivehi. The built-in title uses an ampersand and the built-in hint says click.
+
+| Do                             | Don't                                         |
+| :----------------------------- | :-------------------------------------------- |
+| Drag and drop files here       | The built-in title, written with an ampersand |
+| Front and back of your ID card | Or click to browse (says click)               |
+
+### Limits
+
+Write the description as what is accepted, in this order: file types, size per file, then the count when there is a limit. Put the limits in secondaryText and the description, never only in the info tooltip.
+
+| Do                                         | Don't                                                                                     |
+| :----------------------------------------- | :---------------------------------------------------------------------------------------- |
+| PDF, PNG or JPG, up to 10 MB each          | PDF, PNG or JPG with a middle dot before "up to 10 MB each" (a middle dot as a separator) |
+| PDF or JPG, up to 5 MB each, up to 5 files | pdf/png/jpg &lt;10MB (symbols, no spaces, lower case types)                               |
+
+### Rejection messages
+
+Replace the built-in rejection reasons (File type not accepted, File too large, Only one file allowed, Maximum &#123;count&#125; files allowed) with messages that say what to do. Pass them from onFileValidate or onFileReject in English and Dhivehi.
+
+For single-file fields write:
+
+- Choose &#123;file&#125;, when none is chosen.
+- The selected file must be a &#123;types&#125;.
+- The selected file must be smaller than &#123;size&#125;.
+- The selected file is empty.
+- The selected file contains a virus.
+- The selected file is password protected.
+
+In file rows, where the file name already shows, use the short form: File type not supported. Upload a PDF, PNG or JPG.
+
+| Do                                                        | Don't                                      |
+| :-------------------------------------------------------- | :----------------------------------------- |
+| The selected file must be a PDF, PNG or JPG               | File too large (no limit and no fix)       |
+| The selected file must be smaller than 10 MB              | Invalid file. (says nothing about the fix) |
+| You can upload up to 5 files. Remove 2 files to continue. |                                            |
+| Choose a passport copy                                    |                                            |
+
+### Upload failures and duplicates
+
+When an upload fails for reasons outside the file, write The selected file could not be uploaded. Try again. and offer a Try again action. Keep files that did upload. When a file is added twice, write This file has already been added.
+
+### Percentages
+
+Write percentages as a numeral and the sign with no space: 19%.
+
+### Built-in strings
+
+The drop zone has 20 built-in strings, all with Dhivehi values. You can override the title (title), hint (hint), Browse files (DropzoneTrigger children), Clear all (DropzoneClear children), More information (infoTooltipAriaLabel), the fallback area name File upload (label or aria-label) and the rejection reasons. The row statuses (Ready to upload, Uploading with the percentage, Uploaded, Upload complete, Upload failed, Error with the message), the progress bar name, the remove button name and Optional have no override. Keep them.
+
+### Dhivehi copy
+
+Pass a Dhivehi value for every prop you override, such as title, hint and your rejection messages. Write Dhivehi natively and keep it as short as the English.
+
+## Related components
+
+| Component                    | When to use it                                                                      |
+| :--------------------------- | :---------------------------------------------------------------------------------- |
+| [Button](/docs/button/)      | Browse files and the remove buttons are Veli Buttons.                               |
+| [Input](/docs/input/)        | collect a short typed answer, such as a reference number.                           |
+| [Text area](/docs/textarea/) | collect a longer typed explanation.                                                 |
+| [Alert](/docs/alert/)        | explain a problem that affects the whole form, not one file.                        |
+| [Toast](/docs/toast/)        | confirm an action that finished elsewhere on the page, not an upload in a file row. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the drop zone: modes, label size, states, layout and the area's look.
+
+## Single and multiple
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-modes-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-modes-1-dark.webp"
+  alt='Two drop zones labelled Passport copy with "Drag and drop files here", the hint "The page with your photo" and the description "PDF, PNG or JPG, up to 10 MB each". Mode single: the area is one row with the icon at the start and Browse files at the end. Mode multiple: a taller area with the icon, text and Browse files stacked in the centre. Each has its note below it.'
+  width="2400"
+  height="904"
+  caption="Single mode and multiple mode."
+/>
+
+- **Single mode** (multiple off, the default) takes one file. Once a file is chosen, its row replaces the area. Use it for one document the service needs.
+- **Multiple mode** (multiple on) takes several files. The area stays and the files list below it. Limit the count with maxFiles.
+
+## Label size
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-labelsize-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-labelsize-1-dark.webp"
+  alt="Two drop zones labelled Passport copy, the label at labelSize sm and at labelSize md. The areas are the same. Each has its note below it."
+  width="2400"
+  height="656"
+  caption="Label sizes sm and md."
+/>
+
+- **md** (the default): the label is Body md regular. Use it in most forms.
+- **sm**: the label is Body sm regular. Use it in dense forms next to sm fields.
+
+Only the label changes; the area and file rows stay the same.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-options-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-options-1-dark.webp"
+  alt='Two drop zones. One document: Passport copy in single mode, with the row design-system.pdf, 1.2 MB, Uploaded in place of the area and the description "PDF or JPG, up to 5 MB". Several documents: Supporting documents in multiple mode, with the hint "Pay slips for the last 3 months", three uploaded rows and the description "PDF, PNG or JPG, up to 10 MB each". Each has its note below it.'
+  width="2400"
+  height="1468"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-options-2.webp"
+  darkSrc="/images/docs/dropzone/dropzone-options-2-dark.webp"
+  alt='Two drop zones. Custom area: the title "Upload your ID card", the hint "Front and back, one file each" and a Choose files button, with no secondary text. Required document: Police clearance certificate with a red asterisk, the hint "The certificate from Maldives Police Service" and the description "PDF, up to 10 MB". Each has its note below it.'
+  width="2400"
+  height="796"
+  caption="One document, several documents, a custom area and a required document."
+/>
+
+- **One document**: single mode, with isRequired when the form can't go without it.
+- **Several documents**: one drop zone in multiple mode with maxFiles, labelled for the group, such as Supporting documents.
+- **Custom area text**: set your own title, hint and trigger label, and leave secondaryText out.
+- **Required document**: isRequired on and isOptional off, for a file the form can't go without, such as Police clearance certificate.
+
+## States
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-1-dark.webp"
+  alt="Two drop zones labelled Passport copy. Default: the empty area and the description. Uploading: the row design-system.pdf, 1.2 MB, 19% with a short progress bar and a cross button. Each has its note below it."
+  width="2400"
+  height="656"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-2.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-2-dark.webp"
+  alt='Uploaded: the row design-system.pdf, 1.2 MB, Uploaded with a full green bar and a red trash button. Error: a red dashed area and the error "The selected file must be a PDF, PNG or JPG". Each has its note below it.'
+  width="2400"
+  height="704"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-3.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-3-dark.webp"
+  alt='Disabled: a faded area with a faded Browse files button. Error, multiple: a red dashed area above three rows, the first with a red border and "File type not supported", the other two Uploaded, and the field error "File type not supported. Upload a PDF, PNG or JPG." Each has its note below it.'
+  width="2400"
+  height="1464"
+  caption="Field states."
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-4.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-4-dark.webp"
+  alt='Two drop areas with "Drag and drop files here" and the hint "The page with your photo". Hover: a darker 2px dashed border. Drop target: a tinted fill and a 2px teal dashed border. Each has its note below it.'
+  width="2400"
+  height="548"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-5.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-5-dark.webp"
+  alt="Two more drop areas. Focused: a teal focus ring around the area. Invalid: a 2px red dashed border. Each has its note below it."
+  width="2400"
+  height="548"
+  caption="Drop area states: hover, drop target, focused and invalid."
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-6.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-6-dark.webp"
+  alt="File rows for design-system.pdf. Idle: no visible status. Uploading: 19% with a short progress bar. Each has its note below it."
+  width="2400"
+  height="592"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-states-7.webp"
+  darkSrc="/images/docs/dropzone/dropzone-states-7-dark.webp"
+  alt='Success: Uploaded with a green dot, a full green bar and a red trash button. Error: a red border, "File type not supported" with a red dot, no bar and a cross button. Each has its note below it.'
+  width="2400"
+  height="592"
+  caption="File row statuses: idle, uploading, success and error."
+/>
+
+| State       | When                            | Visual change                                                                    |
+| :---------- | :------------------------------ | :------------------------------------------------------------------------------- |
+| Default     | Nothing chosen yet              | Dashed 1px border; the description says what to upload                           |
+| Hover       | Pointer over the area           | Border turns `area/border-hover`, 2 wide                                         |
+| Drop target | Files dragged over the area     | Tinted fill and a 2px `area/border-focus` border                                 |
+| Focus       | Keyboard focus on the area      | Focus ring around the area                                                       |
+| Uploading   | A file is uploading             | The row shows the percentage and a bar                                           |
+| Uploaded    | The upload is complete          | The row says Uploaded and offers a remove button                                 |
+| Error       | isInvalid with errorMessage     | Border turns `area/border-invalid`, 2 wide; the message replaces the description |
+| Row error   | A file failed, in multiple mode | The row shows its reason; the field shows errorMessage                           |
+| Disabled    | isDisabled                      | No dropping, browsing or removing                                                |
+
+## Behaviour
+
+- **Adding files**: people drag files onto the area, press the area or Browse files to open the system picker, or paste files into the focused area. Pasted files go through the same checks as dropped ones.
+- **Checks**: files are checked by type, size, count or a custom rule (acceptedFileTypes, maxSize, maxFiles, onFileValidate) after the drop. Files that fail are not added, and the other files stay.
+- **Upload**: the drop zone doesn't upload files itself. Supply the transport through onUpload and report progress, success and error for each file.
+- **Rejected files**: show rejection messages outside the drop target, next to the file, when people need the detail to stay.
+- **Dragging**: while people drag, turn off text selection and mark the dragged item inert.
+- **Removing**: people remove a file at once with its remove button, without a confirmation, because they can add it again. Offer Clear all (DropzoneClear) only when many files are listed.
+- **Focus after changes**: in single mode, focus moves to the remove button when a file is chosen, and back to Browse files when it is removed. In multiple mode, after a removal, move focus to the next remove button, or to Browse files when none is left.
+- **Keep uploads**: keep uploaded files when other fields on the page have errors, and when people come back to the page.
+- **Phone photos**: accept the formats phones produce, and resize or compress large images on the device where possible rather than rejecting them.
+- **Files**: control the files with value and onValueChange, or leave them uncontrolled with defaultValue. With name, a hidden native file input submits the files.
+- **Long names**: when a file name is shortened, keep the end visible so the extension shows, such as passport-co….pdf. Truncation sits at the inline end, which is the left in Dhivehi.
+
+## Composition
+
+Use DropzoneField for a labelled drop zone. For a custom layout, compose Dropzone with DropzoneArea and, optionally, DropzoneList, the item parts (DropzoneItemPreview, DropzoneItemMetadata, DropzoneItemDelete, DropzoneItemProgress) and DropzoneClear. Keep the parts inside Dropzone, and the item parts inside DropzoneItem.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-rtl-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-rtl-1-dark.webp"
+  alt='Two drop zones in single mode with an uploaded file, side by side. LTR, dropzoneField: Passport copy with an info icon and Optional, the row design-system.pdf, 1.2 MB, Uploaded with a red trash button on the right, and the description "PDF, PNG or JPG, up to 10 MB each". RTL, dropzoneFieldDv: mirrored, with the label އެޓޭޗްމަންޓް, the info icon and އިޚްތިޔާރީ on the right, the file icon on the right, design-system.pdf, 1.2 MB and އަޕްލޯޑްކުރެވިއްޖެ, the trash button on the left and the green bar filling from the right.'
+  width="2400"
+  height="636"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- Set language dv on VeliProvider. Built-in strings, such as Browse files and Uploaded, switch to Dhivehi.
+- The layout mirrors: the label sits on the right, the area icon leads from the right, and the progress bar fills from the right.
+- File names keep their own direction, while sizes and percentages stay left to right.
+- Dhivehi lines are taller, so the area is 98 high in single mode and 198 in multiple mode, and a file row is 86 to 96 high, by status. See Missing or unverified.
+- In Figma, use dropzoneFieldDv, which nests dropzoneDv, dropzoneItemDv and dropzoneListDv.
+
+The Dhivehi example in the Figma page uses the label އެޓޭޗްމަންޓް (Attachment), Optional as އިޚްތިޔާރީ and the status Uploaded as އަޕްލޯޑްކުރެވިއްޖެ.
+
+Example configuration: single mode, acceptedFileTypes PDF, PNG and JPG, maxSize 10 MB. The title and hint below are the built-in Dhivehi strings; replace them with your own copy in both languages.
+
+| Part             | English                                            | Dhivehi                                                                                |
+| :--------------- | :------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| Title            | Drag and drop files here                           | ފައިލްތައް މިތަނަށް ޑްރެގްކޮށް ދޫކޮށްލާ                                                |
+| Browse button    | Browse files                                       | ފައިލްތައް ހޯދާ                                                                        |
+| Row status, idle | Ready to upload                                    | އަޕްލޯޑްކުރަން ތައްޔާރު                                                                |
+| Row error        | File type not supported. Upload a PDF, PNG or JPG. | މި ބާވަތުގެ ފައިލެއް ބަލައެއް ނުގަނެވޭ. PDF، PNG ނުވަތަ JPG ފައިލެއް އަޕްލޯޑްކުރައްވާ. |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-spacing-1.svg"
+  darkSrc="/images/docs/dropzone/dropzone-spacing-1-dark.svg"
+  alt="Spacing redlines for a drop zone field at labelSize sm: a 28 high header with 8 below it, and 6 above the description."
+  width="1200"
+  height="336"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-spacing-2.svg"
+  darkSrc="/images/docs/dropzone/dropzone-spacing-2-dark.svg"
+  alt="Spacing redlines for a drop zone field at labelSize md: a 32 high header with 8 below it, and 6 above the description."
+  width="1200"
+  height="340"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-spacing-3.svg"
+  darkSrc="/images/docs/dropzone/dropzone-spacing-3-dark.svg"
+  alt="Spacing redlines for the drop area in single mode: 82 high, 20 top and bottom, 16 sides, and 12 between the icon box, text and Browse files."
+  width="1200"
+  height="330"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-spacing-4.svg"
+  darkSrc="/images/docs/dropzone/dropzone-spacing-4-dark.svg"
+  alt="Spacing redlines for the drop area in multiple mode: 182 high, 20 top and bottom, 16 sides, and the icon box, text and Browse files stacked 12 apart."
+  width="1200"
+  height="342"
+/>
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-spacing-5.svg"
+  darkSrc="/images/docs/dropzone/dropzone-spacing-5-dark.svg"
+  alt="Spacing redlines for an uploading file row for design-system.pdf at 19%: 80 high, 18 top, 16 sides and bottom, and 12 between the preview, text and remove button."
+  width="1200"
+  height="284"
+  caption="All values in pixels at 1x. Pink bands are padding, orange bands are gaps between parts, and orange lines with end ticks are sizes."
+/>
+
+| Part             | Padding                                                 | Gaps                                                                                                                          | Sizes                            |
+| :--------------- | :------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| Field header, sm | Bottom 8 (`spacing/2`)                                  | Label, icon, Optional and asterisk 8 apart (`spacing/2`)                                                                      | 28 high, label body sm regular   |
+| Field header, md | Bottom 8 (`spacing/2`)                                  | As sm                                                                                                                         | 32 high, label body md regular   |
+| Field footer     | Top 6 (`spacing/1,5`)                                   | None                                                                                                                          | Description or error, 16 high    |
+| Area, single     | 20 top and bottom (`spacing/5`), 16 sides (`spacing/4`) | Icon box, text and trigger 12 apart (`spacing/3`); title to hint 6 (`spacing/1,5`); hint to secondary text 10 (`spacing/2,5`) | 82 high, icon box 40, trigger 36 |
+| Area, multiple   | 20 top and bottom, 16 sides                             | Icon box, text and trigger stack 12 apart (`spacing/3`)                                                                       | 182 high                         |
+| File row         | 18 top, 16 sides and bottom, then the 4 high bar        | Preview, text and remove 12 apart (`spacing/3`); name to meta 6; size to status 10                                            | 80 high, preview 40              |
+| List             | None                                                    | Rows 19 apart in Figma, 4 in code                                                                                             | None                             |
+
+In code the border counts toward the padding: 15 and 19 plus a 1px border make 16 and 20. Hover, drop target and invalid use a 2px border with 14 and 18, so the content doesn't move. In Dhivehi the parts grow with the taller lines: the area is 98 high in single mode and 198 in multiple, and a file row is 86 to 96 high, by status.
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-radius-1.svg"
+  darkSrc="/images/docs/dropzone/dropzone-radius-1-dark.svg"
+  alt="Drop zone fields at labelSize sm and md with the area marked 16, a file row marked 16 with its preview marked 6, and a multiple mode area marked 16."
+  width="1200"
+  height="670"
+  caption="The area and file rows use 16 (`radius/2xl`). The file preview uses 6 (`radius/DEFAULT`). The field adds no radius of its own."
+/>
+
+Nest radii concentrically: an inner radius equals the outer radius minus the padding between them.
+
+## Typography
+
+| Element           | English                              | Dhivehi                                                                                      | Colour token                                                                          |
+| :---------------- | :----------------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| Label, sm         | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28                                                    | `text/base/DEFAULT`                                                                   |
+| Label, md         | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32                                                    | `text/base/DEFAULT`                                                                   |
+| Optional          | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28                                                    | `text/base/subtle`                                                                    |
+| Required asterisk | Caption regular, Inter Regular 12/16 | As English                                                                                   | `text/danger/muted`                                                                   |
+| Description       | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24                                                    | `text/base/subtle`                                                                    |
+| Error message     | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24                                                    | `text/danger/muted`                                                                   |
+| Area title        | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28                                                    | `text/base/DEFAULT`; drop target `text/base/strong`; disabled `text/base/inactive`    |
+| Hint              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24                                                    | `text/base/subtle`; disabled `text/base/inactive`                                     |
+| Secondary text    | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24                                                    | `text/base/muted`; disabled `text/base/inactive`                                      |
+| File name         | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28; names keep their own direction                    | `text/base/DEFAULT`                                                                   |
+| File size         | Caption regular, Inter Regular 12/16 | As English, left to right                                                                    | `text/base/subtle`                                                                    |
+| Status            | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24; percentages keep the English style, left to right | Uploading `text/base/muted`, success `text/success/subtle`, error `text/danger/muted` |
+
+The Browse files label uses the Dhivehi Button styles.
+
+## Tokens
+
+Token names leave out the `components/dropzone/` and `semantics/` prefixes.
+
+| Part and state    | Fill                  | Border                          | Text and icon                                                                                                                  |
+| :---------------- | :-------------------- | :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- |
+| Area, default     | `area/bg-default`     | `area/border-default`, 1 dashed | Title `text/base/DEFAULT`, icon `icon/base/muted`                                                                              |
+| Area, hover       | As default            | `area/border-hover`, 2 dashed   | As default                                                                                                                     |
+| Area, drop target | `area/bg-drop-target` | `area/border-focus`, 2 dashed   | Title `text/base/strong`                                                                                                       |
+| Area, focused     | As default            | As default, plus the focus ring | As default                                                                                                                     |
+| Area, invalid     | As default            | `area/border-invalid`, 2 dashed | As default                                                                                                                     |
+| Area, disabled    | As default            | As default                      | Text `text/base/inactive`, icon `icon/base/inactive`                                                                           |
+| Item, idle        | `item/bg-default`     | None                            | Name `text/base/DEFAULT`, size `text/base/subtle`                                                                              |
+| Item, uploading   | `area/bg-default`     | `area/border-default`, 1 dashed | Percentage `text/base/muted`; bar `progress/bar` on `progress/track`                                                           |
+| Item, success     | `item/bg-default`     | None                            | Uploaded `text/success/subtle`, icon `icon/success/subtle`; full bar                                                           |
+| Item, error       | `item/bg-default`     | `area/border-invalid`, 1 solid  | Reason `text/danger/muted`, icon `icon/danger/muted`; no bar                                                                   |
+| Preview           | `item/preview-bg`     | None                            | File icon `icon/base/muted`                                                                                                    |
+| Field             | None                  | None                            | Label `text/base/DEFAULT`, Optional `text/base/subtle`, asterisk and error `text/danger/muted`, description `text/base/subtle` |
+
+## Motion
+
+| What moves                       | Duration       | Easing       |
+| :------------------------------- | :------------- | :----------- |
+| Area fill, border and focus ring | Normal (200ms) | Ease out     |
+| Progress bar                     | Not measured   | Not measured |
+
+With reduced motion turned on, the border and progress transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -204,3 +782,67 @@ function Items() {
 ## RTL and Language
 
 On `lang="dv"` pages, built-in strings — title, hint, Browse files, Optional, Uploaded, and rejection reasons — are Dhivehi. In RTL the single-file row mirrors and progress fills from the inline start. File sizes and percentages stay left-to-right, and file names keep their own direction.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the drop zone works with keyboards and screen readers, and what you still need to do. It is built on the React Aria drop zone, button and progress bar, with a hidden native file input.
+
+## Keyboard
+
+The area, Browse files and each remove button are separate focus stops.
+
+| Key                                        | Action                                                        |
+| :----------------------------------------- | :------------------------------------------------------------ |
+| Tab                                        | Moves to the drop area, Browse files, then each remove button |
+| Enter or Space on the area                 | Opens the system file picker                                  |
+| Enter or Space on Browse files             | Opens the system file picker                                  |
+| Paste, Ctrl + V or Command + V on the area | Adds the pasted files                                         |
+| Enter or Space on a remove button          | Removes that file                                             |
+
+Dragging is never the only way to add a file: keep the Browse files button and don't turn it off with showTrigger false. If your service lets people reorder files by dragging, offer a keyboard way too, with named buttons such as Move passport-copy.pdf up.
+
+## Screen readers
+
+- Give the field a visible label, or aria-label when there is none. The area is named from the label and the title.
+- The file list is a list. Each row announces the file name, size and status.
+- Each progress bar is named Upload progress for and the file name, with the percentage as its value.
+- Each remove button is named Remove with the file name.
+- Announce upload start, completion and failure through a polite live region, not every percentage step.
+- Optional and the asterisk sit outside the label, so neither is part of the accessible name. The required state is still exposed.
+
+## Focus
+
+The area shows a 2px ring in `border/focus`, offset 2, on keyboard focus only, never on hover or click. The label size doesn't change it. In forced colours mode the browser draws its own outline.
+
+<DocsFigure
+  src="/images/docs/dropzone/dropzone-focus-1.webp"
+  darkSrc="/images/docs/dropzone/dropzone-focus-1-dark.webp"
+  alt="Two drop zone fields labelled Attachment at labelSize sm and md, each with a teal focus ring around the drop area."
+  width="2400"
+  height="592"
+  caption="The focus ring on the drop area."
+/>
+
+## Errors
+
+An error shows the message in text as well as the red border, so colour is not the only signal. Rejected files say which file and why, next to that file.
+
+## Target size
+
+Browse files is 36 high and each remove button is 36 x 36, above the 24 x 24 minimum. The info icon button is 16 x 16, below it; see Missing or unverified.
+
+## Contrast
+
+The description and hint use `text/base/subtle`: 3.06:1 in light and 3.23:1 in dark in Storybook, below the 4.5:1 text minimum. Other field descriptions use `text/base/muted`, which meets it. See Missing or unverified.
+
+## Reduced motion
+
+Border and progress transitions honour reduced motion.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The root applies the language and direction, and built-in strings switch to Dhivehi. Pass Dhivehi for every string you override.
+
+</DocsTab>

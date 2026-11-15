@@ -163,7 +163,7 @@ function cloneSupportedNode(node, context) {
       return [
         ...(getStaticAttribute(node, 'figma') ? [['Figma', 'figma']] : []),
         ['GitHub', 'source'],
-        ['Storybook', 'storybook'],
+        ...(getStaticAttribute(node, 'storybook') ? [['Storybook', 'storybook']] : []),
       ].map(([label, prop]) => ({
         type: 'paragraph',
         children: [
@@ -177,16 +177,19 @@ function cloneSupportedNode(node, context) {
       return [paragraph(value ? `${label} (${value})` : label), ...children()];
     }
     if (node.name === 'DocsFigure' || node.name === 'DocsGuideline') {
-      const figure = {
-        type: 'paragraph',
-        children: [{ type: 'image', url: required('src'), alt: required('alt') }],
-      };
+      const figure =
+        node.name === 'DocsGuideline' && !getStaticAttribute(node, 'src')
+          ? undefined
+          : {
+              type: 'paragraph',
+              children: [{ type: 'image', url: required('src'), alt: required('alt') }],
+            };
       if (node.name === 'DocsGuideline') {
         const kind = required('kind');
         if (!['do', 'dont'].includes(kind))
           throw markdownError(context.file, 'DocsGuideline kind must be do or dont', node);
         return [
-          figure,
+          ...(figure ? [figure] : []),
           {
             type: 'paragraph',
             children: [

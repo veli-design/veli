@@ -7,7 +7,7 @@
 }
 .docs-component-resources {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-top: 32px;
 }
@@ -81,8 +81,12 @@
 [data-docs-editorial] table tr {
   grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
 }
-[data-docs-editorial] table tr:has(> :nth-child(3)) {
-  grid-template-columns: minmax(0, 220px) minmax(0, 1fr) minmax(0, 1fr);
+.docs-prose .docs-tab-panel[data-docs-editorial] table tr:has(> :nth-child(3)) {
+  grid-template-columns: none;
+  grid-auto-columns: minmax(0, 1fr);
+}
+.docs-prose [data-docs-editorial] .docs-table-scroll > table:has(th:nth-child(5)) {
+  min-width: 960px;
 }
 .docs-prose [data-docs-editorial] table td:not(:last-child) {
   font-family: inherit;
@@ -205,6 +209,19 @@ html[data-theme='dark'] .docs-figure .docs-figure__dark {
   border: 1px solid var(--veli-color-border-base-subtle);
   border-radius: 24px;
   background: var(--veli-color-bg-surface-raised);
+}
+
+/* Options use the same 2px surface frame as the interactive Figma harness.
+   The 8px inset belongs to static comparison frames, not dropdown previews. */
+.docs-prose [data-docs-editorial] > .preview:has([data-docs-preview='options']) {
+  --docs-preview-radius: calc(var(--veli-radius-3xl) - var(--veli-spacing-0-5));
+  min-width: 0;
+  min-height: 0;
+  margin-top: var(--veli-spacing-6);
+  padding: var(--veli-spacing-0-5);
+  border: 0;
+  border-radius: var(--veli-radius-3xl);
+  background: var(--veli-color-bg-surface-base);
 }
 .docs-comparison {
   display: grid;

@@ -1,6 +1,6 @@
 ---
 title: Card
-description: Raised surface for grouping related content with optional header, body, and footer slots.
+description: 'A contained surface that groups a short summary of one thing, with a title, an optional description, content and up to two actions.'
 ---
 
 import {
@@ -10,9 +10,451 @@ import {
   CardFormDemo,
 } from '../../components/CardExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Card
 
-Use Card to group related content on a raised surface: summaries, application status, or short forms. Compose with `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, and `Card.Footer`. Prefer [Alert](/docs/components/alert/) for page-level status banners and [Modal](/docs/components/modal/) for focused dialogs.
+<DocsTab id="overview">
+
+A card groups a short summary of one thing, such as an application, a service or a payment, on a contained surface with a title, an optional description, content and up to two actions. Use cards to show several such things side by side or in a list. Use a table to compare many records, and a divider when content only needs separating.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/card.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/permit-application--docs"
+/>
+
+## When to use
+
+### Use a card when
+
+- Related content needs a surface of its own, with an optional header or footer.
+- A unit of content repeats and needs the same parts and spacing each time.
+- You summarise one record that leads to its detail page, such as an application with its reference, status and last update: Work permit WP-2026-04817, In review, updated 21 October 2026.
+- You offer a small set of service shortcuts on a home or account page, each titled with the task and opening one page: Renew a passport, Apply for a business licence.
+
+### Don't use a card when
+
+- Content only needs separating. Use a divider.
+- People compare many records by the same attributes, such as payments by date, amount and status. Use a table, which gives column headers, sorting and a row per record.
+- The message is about the state of the page or service, such as planned work or a failed payment. Use an alert.
+- People must finish a task or decision before they go on. Use a modal.
+- The content already sits in a card. Use headings, a divider or spacing inside it instead of a second card.
+- You want the whole surface to act as a button or link through the interactive option. It adds no button or link semantics. Use a stretched title link instead (see Linked cards under Behaviour).
+
+<DocsFigure
+  src="/images/docs/card/card-intro-1.webp"
+  darkSrc="/images/docs/card/card-intro-1-dark.webp"
+  alt='A section titled Your applications, with the line "Licences and permits you applied for in the last 12 months." Below it two cards sit side by side. The first, Work permit WP-2026-04817, reads "Submitted on 21 October 2026. We will reply within 5 working days.", shows an In review badge and has the actions Download receipt and View application. The second, Business licence BL-3051, reads "Expires on 2 November 2026. Renew it to keep trading.", shows an Action needed badge and has the action Renew licence.'
+  width="2400"
+  height="1128"
+  caption="A set of record summary cards under a heading that names the set."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/card/card-anatomy-1.svg"
+  darkSrc="/images/docs/card/card-anatomy-1-dark.svg"
+  alt='A card titled Permit application with eight numbered markers: 1 on the container, 2 on the header, 3 on the title, 4 on the description "Reference APP-4821, submitted 12 March", 5 on the header action at the end of the title row, 6 on the content text, 7 on the footer with the View details and Continue buttons, and 8 on the dividers.'
+  width="1440"
+  height="440"
+  caption="The parts of a card, shown with the header action on. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   the surface, with a `bg/surface/raised` fill, a 1px `border/base/subtle` border, radius 16 and the elevation shadow. It fills the width of its container and hugs its content height. In code it is Card.
+
+2. **Header**
+
+   optional. Holds the title, the description and one header action, 4 apart. In code it is Card.Header.
+
+3. **Title**
+
+   always a level 3 heading. A short noun phrase that names the thing, or the task for a service shortcut. In code it is Card.Title.
+
+4. **Description**
+
+   optional. One or two short sentences that add what the title does not say. When it is left out, the divider under it goes too. In code it is Card.Description.
+
+5. **Header action**
+
+   optional, for one control at the inline end of the title row, such as a secondary transparent sm icon-only button that opens a menu. In code it is the action prop of Card.Header.
+
+6. **Content**
+
+   the main body: text, record details, a badge, form fields or an alert. It grows to fill the card, so the footers in a row of cards line up. In code it is Card.Content.
+
+7. **Footer**
+
+   optional. A divider, then the actions at the inline end: one main action and at most one lighter action. In code it is Card.Footer.
+
+8. **Dividers**
+
+   1px lines in `border/base/subtle` under the description and above the actions. The card draws them; you don't add them.
+
+</DocsAnatomy>
+
+## Do and don't
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/card/card-do-1.webp" darkSrc="/images/docs/card/card-do-1-dark.webp" alt="A card titled Work permit WP-2026-04817 with the description &quot;Submitted on 21 October 2026. We will reply within 5 working days.&quot; and two footer actions, Download receipt and View application." width="1232" height="592">
+
+Keep to one main action per card, with one lighter action at most.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/card/card-dont-1.webp" darkSrc="/images/docs/card/card-dont-1-dark.webp" alt="The same Work permit WP-2026-04817 card with three footer actions: Download receipt, Withdraw and View application." width="1232" height="592">
+
+Don't put three or more buttons in the footer. Repeated across a set of cards, extra actions multiply the Tab stops and compete with the title.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/card/card-do-2.webp" darkSrc="/images/docs/card/card-do-2-dark.webp" alt="A card titled Payment for PR-20418 with the description &quot;MVR 250, paid on 21 October 2026.&quot; Below it, dividers separate the lines Business licence renewal and Reference PR-20418, all on one surface." width="1232" height="626">
+
+Use headings, a divider or spacing to separate content inside one card.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/card/card-dont-2.webp" darkSrc="/images/docs/card/card-dont-2-dark.webp" alt="A card titled Payment for PR-20418 with the description &quot;MVR 250, paid on 21 October 2026.&quot; Inside it, a second bordered card holds Business licence renewal and Reference PR-20418." width="1232" height="626">
+
+Don't put a card inside a card. Nested surfaces stack borders and shadows and hide the structure.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/card/card-do-3.webp" darkSrc="/images/docs/card/card-do-3-dark.webp" alt="A card titled Renew a passport with the description &quot;Fee MVR 250. Collect from Malé or your island council.&quot; and no other links or actions." width="1232" height="590">
+
+Make the title the link, so it names the destination: Renew a passport.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/card/card-dont-3.webp" darkSrc="/images/docs/card/card-dont-3-dark.webp" alt="The same Renew a passport card with an extra Read more button in a footer." width="1232" height="590">
+
+Don't add a Read more or View link to a linked card. It doesn't name the destination and doubles the Tab stops.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Title
+
+Write the title as a short noun phrase that names the thing, or as the task for a service shortcut, so every card in a set has its own title. Use sentence case and no full stop, and keep it short, under 65 characters.
+
+| Do                       | Don't                                                                                                                 |
+| :----------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| Renew a passport         | Passport Renewal (title case, and a noun where the task works better)                                                 |
+| Business licence BL-3051 | Details (generic; every card would have the same heading)                                                             |
+| Payment for PR-20418     | Your passport renewal application is now being reviewed. (a sentence with a full stop; the status belongs in a badge) |
+
+### Description
+
+Write one or two short sentences that add what the title doesn't say, such as when something happened or what happens next. End each sentence with a full stop.
+
+| Do                                                                 | Don't                                                                              |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| Submitted on 21 October 2026. We will reply within 5 working days. | This card shows your work permit application. (describes the card, not the record) |
+| Fee MVR 250. Collect from Malé or your island council.             | Submitted 21/10/26 (ambiguous date format)                                         |
+
+### Action labels
+
+Start every action with a verb. When a label repeats on every card, add the record to its accessible name: Download receipt for PR-20418.
+
+| Do               | Don't                                      |
+| :--------------- | :----------------------------------------- |
+| Renew licence    | Click here (says nothing about the result) |
+| Pay MVR 250      | More (vague, and identical on every card)  |
+| Download receipt |                                            |
+
+### Link text
+
+In a linked card the title is the link text, so it names the destination. Don't add a separate Read more or View link to the same card.
+
+| Do               | Don't                                                                            |
+| :--------------- | :------------------------------------------------------------------------------- |
+| Renew a passport | Read more (does not name the destination)                                        |
+|                  | Learn more about renewing your passport here (long, and the key words come last) |
+
+### Status
+
+Show the status of a record as a badge next to the title, with the shared status words.
+
+| Do            | Don't                                                          |
+| :------------ | :------------------------------------------------------------- |
+| In review     | Processing... (not a shared status word, and a typed ellipsis) |
+| Action needed |                                                                |
+
+### Record details
+
+Give each detail a short label before the value, with no colon. Show references exactly as issued and write amounts as MVR 250.
+
+| Do                      | Don't                                                                              |
+| :---------------------- | :--------------------------------------------------------------------------------- |
+| Reference WP-2026-04817 | Ref no.: wp2026-4817 (abbreviated label, a colon, and the reference not as issued) |
+| Fee MVR 250             | Fee: MVR 0 (write Free or No fee)                                                  |
+
+### Empty state
+
+When a set has no cards, show the empty state in place of the list. Say why it is empty and what to do next, with at most one action.
+
+| Do                                                                        | Don't                                               |
+| :------------------------------------------------------------------------ | :-------------------------------------------------- |
+| No applications yet. Applications you start appear here. Renew a passport | No data (says nothing about why or what to do next) |
+
+### Dhivehi copy
+
+Card has no built-in text. Every title, description and action comes from your content, so pass them in the active language. Write Dhivehi natively rather than transliterating, and leave room for longer lines. Keep references, phone numbers and dates in Latin digits and left to right: WP-2026-04817.
+
+## Related components
+
+| Component                              | When to use it                                                            |
+| :------------------------------------- | :------------------------------------------------------------------------ |
+| [Divider](/docs/components/divider/)   | use instead when content only needs separating, not a surface of its own. |
+| [Link](/docs/components/link/)         | goes inside the title to make the one link of a linked card.              |
+| [Button](/docs/components/button/)     | makes the header action and the footer actions.                           |
+| [Badge](/docs/components/badge/)       | shows the status of the record next to the title.                         |
+| [Table](/docs/components/table/)       | use instead when people compare many records by the same attributes.      |
+| [Alert](/docs/components/alert/)       | use instead for messages about the page or service.                       |
+| [Modal](/docs/components/modal/)       | use instead for a task people must finish before going on.                |
+| [Skeleton](/docs/components/skeleton/) | holds the shape of cards while they load.                                 |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the card: elevation, spacing, states, content options, sizing and the tokens behind them. Values match the shipped component.
+
+## Elevation
+
+Elevation sets the shadow. In code, elevation defaults to xs.
+
+<DocsFigure
+  src="/images/docs/card/card-elevation-1.webp"
+  darkSrc="/images/docs/card/card-elevation-1-dark.webp"
+  alt='Five cards titled Renew a passport, each with the description "Fee MVR 250. Collect from Malé or your island council.", at elevation none, xs (default), sm, md and lg. The shadow grows from none to a deep, soft shadow.'
+  width="2592"
+  height="1496"
+  caption="The five elevation values. Keep cards on the page at xs or none."
+/>
+
+| Elevation    | Effect style | Shadow                                                              | Use                                           |
+| :----------- | :----------- | :------------------------------------------------------------------ | :-------------------------------------------- |
+| none         | None         | No shadow, border only                                              | Content that sits flat on the page            |
+| xs (default) | Shadow/xs    | x 0, y 0, blur 3, black 5%. x 0, y 2, blur 3, black 6%              | Cards on the page                             |
+| sm           | Shadow/sm    | x 0, y 0, blur 2, black 5%. x 0, y 4, blur 6, black 6%              | Raised cards                                  |
+| md           | Shadow/md    | x 0, y 0, blur 3, black 5%. x 0, y 6, blur 12, black 8%             | Menus and popovers. Not for cards on the page |
+| lg           | Shadow/lg    | x 0, y 0, blur 3, black 5%. x 0, y 8, blur 20, spread -3, black 15% | Dialogs. Not for cards on the page            |
+
+Shadow tells people how high a layer is, and a strong shadow on a page card reads as something floating above the page. Leave md and lg to menus, popovers and dialogs. Shadows barely show in dark mode, so the border and the raised surface carry the edge there. The border also draws the edge in forced colours mode.
+
+## Spacing options
+
+Spacing sets the padding and the gap between header, content and footer. In code, spacing defaults to md.
+
+<DocsFigure
+  src="/images/docs/card/card-spacing-1.webp"
+  darkSrc="/images/docs/card/card-spacing-1-dark.webp"
+  alt="Four cards at spacing sm, md (default), lg and xl. Payment for PR-20418 at sm has padding 16 and gaps 12. Work permit WP-2026-04817 at md has padding 20 and gaps 16. Business licence BL-3051 at lg has padding 24 and gaps 20. Renew a passport at xl has padding 32 and gaps 28."
+  width="2592"
+  height="1856"
+  caption="Spacing sm, md, lg and xl. Choose by density."
+/>
+
+- Use **sm** for dense lists, such as a list of payments: padding 16, gaps 12.
+- Use **md** for most cards: padding 20, gaps 16.
+- Use **lg** or **xl** for a single feature card that needs more room, such as the main service on a page.
+
+Use the same spacing on every card in a set. Mixed padding makes cards in one set look unrelated.
+
+## Content options
+
+Compose only the parts each card needs: Card.Header, Card.Title, Card.Description, Card.Content and Card.Footer. Header and footer are optional.
+
+<DocsFigure
+  src="/images/docs/card/card-options-1.webp"
+  darkSrc="/images/docs/card/card-options-1-dark.webp"
+  alt='Four example cards. Record summary: Work permit WP-2026-04817 with an In review badge and the actions Download receipt and View application. Service shortcut: Renew a passport with "Fee MVR 250. Collect from Malé or your island council." and no footer. Header action: Payment for PR-20418 with a round more button at the end of the title row and a Download receipt action. With an alert: Required documents, "Upload before your review appointment.", a yellow warning alert "Two documents outstanding" reading "Identity card and proof of address are still needed.", and the actions View details and Upload files.'
+  width="2592"
+  height="1980"
+  caption="Record summary, service shortcut, header action and a card with an alert."
+/>
+
+- **Record summary**: one record that leads to its detail page. The reference is in the title, the status is a badge next to the title, with one main action and one lighter action.
+- **Service shortcut**: a shortcut that opens one page. Interactive is on, with no footer. The title holds the only link, stretched over the card.
+- **Header action**: one control at the end of the title row, such as a menu. Name it with the record: More actions for PR-20418.
+- **With an alert**: an alert in the content for a message about this record only. Messages about the whole page or service go in an alert outside the card.
+- **Form fields**: a card can group the inputs of a short form, such as contact details, with a Save action in the footer.
+
+## States
+
+Interactive adds hover and pressed feedback and a pointer cursor to the surface, nothing else. Turn it on only when the card has a stretched title link, so the feedback matches what a click does. Hover feedback on a card that does nothing when clicked is a dead end for pointer users.
+
+<DocsFigure
+  src="/images/docs/card/card-states-1.webp"
+  darkSrc="/images/docs/card/card-states-1-dark.webp"
+  alt="Five cards titled Renew a passport. Interactive false and interactive true look the same at rest. Hover adds a light grey overlay over the surface, pressed a slightly darker overlay, and keyboard focus shows a teal focus ring around the whole card."
+  width="2592"
+  height="1592"
+  caption="Interactive off and on, then hover, pressed and keyboard focus."
+/>
+
+| State   | When                                       | Visual change                                                  |
+| :------ | :----------------------------------------- | :------------------------------------------------------------- |
+| Default | No interaction, or interactive off         | No overlay                                                     |
+| Hover   | Pointer over an interactive card           | Overlay `primitives/ash/alpha/100` over the surface, radius 16 |
+| Pressed | While an interactive card is pressed       | Overlay `primitives/ash/alpha/200` over the surface, radius 16 |
+| Focus   | Keyboard focus on the stretched title link | Focus ring around the whole card                               |
+
+Card has no disabled state.
+
+## Behaviour
+
+- **Size**: a card fills its container, so set its width in the layout around it. Never fix its height. To line up the footers of a row of cards, stretch the cards to the row and let the content fill.
+- **Linked cards**: when the whole card opens one page, put a link inside Card.Title as the only link and stretch its click area over the card. Position the card relative and give the link an ::after overlay, so the padding and the description open the link too. Never wrap the card in a link, and never give the card a role, tabIndex or click handler.
+- **Cards with actions**: a card with a stretched title link holds no other links or buttons. Controls under the overlay can't be clicked. When a card needs actions, drop the stretched link and put a title link and the actions in the footer.
+- **Header action and footer**: put one header action in the action prop of Card.Header, and action buttons in Card.Footer. People look for the next step at the end of the card.
+- **Sets of cards**: put a set of cards in a list (ul with one li per card) under a heading that names the set, and give every card the same parts in the same order. Lay them in a grid that drops to one column at narrow widths.
+- **Loading and empty**: while cards load, show Skeleton shapes the size of a card and set aria-busy on the list. When there are none, show the empty state in place of the list.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/card/card-rtl-1.webp"
+  darkSrc="/images/docs/card/card-rtl-1-dark.webp"
+  alt='Two cards side by side. On the left, the English card Permit application with a more button at the end of the title row, the description "Reference APP-4821, submitted 12 March", content text and the actions View details and Continue on the right. On the right, the Dhivehi card mirrored right to left, titled ހުއްދައަށް އެދޭ އެޕްލިކޭޝަން, with the more button and the two actions on the left.'
+  width="2592"
+  height="872"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the card mirrors: the header action and the footer actions sit on the left, and text is right aligned. Padding and gaps stay the same.
+- The title uses the Dhivehi subtitle medium style (MV A Waheed) and the description and text use the Dhivehi body md regular style (MV Faseyha). Buttons use their Dhivehi styles.
+- Dhivehi lines are taller, so the card grows with its copy. Never fix its height.
+- Keep references, phone numbers, email addresses and dates in Latin digits and left to right inside Dhivehi text: WP-2026-04817.
+- Mirror any arrow or caret you add, such as on a title link.
+- In code, wrap the card in VeliProvider with language set to dv. In Figma, design Dhivehi screens with cardDv.
+
+Example configuration: elevation xs, spacing md.
+
+| Part           | Dhivehi                                                                                                       |
+| :------------- | :------------------------------------------------------------------------------------------------------------ |
+| Title          | ހުއްދައަށް އެދޭ އެޕްލިކޭޝަން                                                                                  |
+| Description    | ރެފަރެންސް APP-4821، 12 މާރޗް ހުށަހެޅިފައި                                                                    |
+| Content        | ދެން ކުރެވޭނީ ލިޔެކިޔުން ބެލުމެވެ. ހުރިހާ ލިޔެކިޔުމެއް ލިބުމަށްފަހު އާންމުކޮށް ބަންދު ނޫން 5 ދުވަސް ނަގައެވެ. |
+| Main action    | ކުރިއަށްގެންދަވާ                                                                                              |
+| Lighter action | ތަފްސީލު ބައްލަވާ                                                                                             |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/card/card-spacing-2.svg"
+  darkSrc="/images/docs/card/card-spacing-2-dark.svg"
+  alt="Spacing redlines for a card at spacing sm: 16 side and bottom padding, 12 top padding, 12 between header, content and footer, 4 between title and description, 12 from description to divider and 8 between the actions."
+  width="1440"
+  height="476"
+/>
+
+<DocsFigure
+  src="/images/docs/card/card-spacing-3.svg"
+  darkSrc="/images/docs/card/card-spacing-3-dark.svg"
+  alt="Spacing redlines for a card at spacing md: 20 side and bottom padding, 16 top padding and 16 between parts."
+  width="1440"
+  height="492"
+/>
+
+<DocsFigure
+  src="/images/docs/card/card-spacing-4.svg"
+  darkSrc="/images/docs/card/card-spacing-4-dark.svg"
+  alt="Spacing redlines for a card at spacing lg: 24 side and bottom padding, 20 top padding and 20 between parts."
+  width="1440"
+  height="508"
+/>
+
+<DocsFigure
+  src="/images/docs/card/card-spacing-5.svg"
+  darkSrc="/images/docs/card/card-spacing-5-dark.svg"
+  alt="Spacing redlines for a card at spacing xl: 32 side and bottom padding, 28 top padding and 28 between parts."
+  width="1440"
+  height="540"
+  caption="All values in pixels at 1x, measured on a 420 wide card with the header action on."
+/>
+
+| Part                       | Padding                     | Gaps                                                                                                       | Size                                            |
+| :------------------------- | :-------------------------- | :--------------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| Card, spacing sm           | 16 sides and bottom, 12 top | Header, content and footer 12 apart                                                                        | 224 high with the example copy                  |
+| Card, spacing md (default) | 20 sides and bottom, 16 top | 16 apart                                                                                                   | 240 high with the example copy                  |
+| Card, spacing lg           | 24 sides and bottom, 20 top | 20 apart                                                                                                   | 256 high with the example copy                  |
+| Card, spacing xl           | 32 sides and bottom, 28 top | 28 apart                                                                                                   | 288 high with the example copy                  |
+| Header                     | None                        | Title row to description 4. Description to divider 12 (4, then 8 above the line). Title to header action 8 | Title row 28 high, or 40 with the header action |
+| Content                    | None                        | Set by what you put in it                                                                                  | Hugs its content                                |
+| Footer                     | None                        | Divider to actions 16 (8, then 8 top padding). Actions 8 apart                                             | 53 high: divider 1, actions 36                  |
+
+- The top padding is 4 less than the sides because the title is pulled up by half of its extra line height.
+- The 1px border is part of the size, as in CSS border-box.
+- Dhivehi lines are taller (title 32, text 32), so a Dhivehi card with the same copy is taller than the English one.
+
+<DocsFigure
+  src="/images/docs/card/card-radius-1.svg"
+  darkSrc="/images/docs/card/card-radius-1-dark.svg"
+  alt="A card titled Permit application marked with a 16 corner radius."
+  width="1440"
+  height="440"
+  caption="The card uses radius 16 (radius/2xl) at every spacing value. The hover and pressed overlay uses the same radius."
+/>
+
+## Typography
+
+| Element       | English                              | Dhivehi                                    | Colour token                         |
+| :------------ | :----------------------------------- | :----------------------------------------- | :----------------------------------- |
+| Title         | Subtitle medium, Inter Medium 20/28  | Dhivehi subtitle medium, MV A Waheed 24/32 | `text/base/strong`                   |
+| Description   | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32  | `text/base/strong`                   |
+| Content text  | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32  | `text/base/DEFAULT`                  |
+| Action labels | As Button sm                         | As Button sm in Dhivehi                    | As Button, per intent and appearance |
+
+The card sets the text style for plain text in the content. Components placed in the content keep their own styles.
+
+## Tokens
+
+| Part                      | Fill                                                   | Border and effect                                              | Text and icon                      |
+| :------------------------ | :----------------------------------------------------- | :------------------------------------------------------------- | :--------------------------------- |
+| Container                 | `bg/surface/raised`                                    | `border/base/subtle`, 1px. Shadow/xs by default, per elevation | None                               |
+| Title                     | None                                                   | None                                                           | `text/base/strong`                 |
+| Description               | None                                                   | None                                                           | `text/base/strong`                 |
+| Content                   | None                                                   | None                                                           | `text/base/DEFAULT` for plain text |
+| Dividers                  | None                                                   | `border/base/subtle`                                           | None                               |
+| Hover overlay             | `primitives/ash/alpha/100` over the surface, radius 16 | None                                                           | None                               |
+| Pressed overlay           | `primitives/ash/alpha/200` over the surface, radius 16 | None                                                           | None                               |
+| Header action and actions | As Button                                              | As Button                                                      | As Button                          |
+
+Token names leave out the `semantics/` prefix. Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                                   | Duration | Easing   |
+| :------------------------------------------- | :------- | :------- |
+| Hover and pressed overlay (interactive only) | Normal   | Ease out |
+
+With reduced motion turned on, the overlay transition is turned off and the overlay appears at once.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -161,3 +603,59 @@ Native `div` attributes pass through to the root.
 ## RTL and Language
 
 On `lang="dv"` pages, title and body text use the Dhivehi typefaces from the design tokens. In RTL, the header action and footer button row follow `dir`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the card works with keyboards and screen readers, and what you still need to do. A card is a plain container, so most of its accessibility comes from the heading, links and buttons you put in it.
+
+## Keyboard
+
+The card itself is not focusable and has no keyboard behaviour. Only the links and buttons inside it join the tab order, in DOM order.
+
+| Key         | Action                                                        |
+| :---------- | :------------------------------------------------------------ |
+| Tab         | Moves focus to the next link or button in the card            |
+| Shift + Tab | Moves focus to the previous link or button                    |
+| Enter       | Follows the focused title link, or presses the focused button |
+| Space       | Presses the focused button                                    |
+
+## Screen readers
+
+- A card renders a plain div with no role and no accessible name. Screen reader users find it by the level 3 heading in Card.Title.
+- Interactive only changes visual feedback and the cursor. It adds no button or link semantics, so supply a real link or button. Never attach a click handler to the card.
+- For a card that opens one page, use one link in the title stretched over the card. The link name stays the title rather than every word in the card, and people get keyboard, screen reader and open in new tab support.
+- Put a set of cards in a list (ul with one li per card) under a heading that names the set. Screen readers announce the list and its length, and people can skip between cards by heading.
+- Give an image in a card an empty alt when the title already says what the card is.
+
+## Focus
+
+- When the stretched title link has keyboard focus, show the focus ring around the whole card, for example with :focus-within on the card, so people see which card will open. A ring around a short title alone is easy to miss on a large card.
+- Header and footer buttons show their own focus ring.
+
+## Heading level
+
+Card.Title is always a level 3 heading and has no level prop. Place cards under a level 2 heading that names the set, such as Your applications. When a card sits directly under the page title or inside a level 3 section, put your own heading at the right level in Card.Header instead of Card.Title. A skipped or reversed level breaks the outline that screen reader users navigate by.
+
+## Reading order
+
+Keep the parts in the DOM in the order title, description, content, footer, even when a design shows a status or image first, so reading order and focus order match what people see.
+
+## Target size
+
+Header and footer actions are at least 24 x 24, the minimum target size. On touch screens, use at least size md (44 high), the recommended size for touch; the sm buttons in the footer are 36 high. The visible label is part of the accessible name; add the record when the label repeats: Download receipt for PR-20418.
+
+## Contrast
+
+Show status as text in a badge, never by colour alone. Use the card's text, border and surface tokens as they are. Don't override them with custom colours.
+
+## Reduced motion
+
+When the user prefers reduced motion, the hover and pressed overlay appears without a transition. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). Card text switches to the Dhivehi type styles and the header action and footer move to the mirrored side. Pass Dhivehi titles, descriptions and actions yourself: the card has no built-in text.
+
+</DocsTab>
