@@ -484,7 +484,7 @@
   object-fit: contain;
   transition: transform 220ms;
 }
-.marketing-explore-grid a:hover img {
+.marketing-explore-grid a:hover .marketing-explore-icon img {
   transform: translateY(-6px);
 }
 .marketing-explore h3 {

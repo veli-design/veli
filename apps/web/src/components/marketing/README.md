@@ -10,8 +10,9 @@ references; the HTML supplies the animation sequences, SVG layers, and timing.
   the logo's alpha mask, including the spaces and counters between glyphs.
 - `src/scripts/home-experience.js` coordinates the opening outline/fill sequence,
   scroll reveals, card stipple, foundation scenes, and card playback.
-- `src/assets/marketing/home-*.svg` preserves the prototype's hero, government
-  wordmark, and layered Explore artwork. The inline layers are needed for motion.
+- `src/assets/marketing/home-*.svg` preserves the prototype's hero and government
+  wordmark. Explore uses the desktop and mobile Figma exports in
+  `public/images/marketing/explore/` with a CSS pulse on the complete icon.
 - `public/animations/marketing/` contains the three supplied Lottie animations
   in both themes. These are decoded from the prototype's light JSON and dark
   patches, without changing their layers, frame rates, or markers. Preserve

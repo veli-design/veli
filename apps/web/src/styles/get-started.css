@@ -137,16 +137,16 @@
   pointer-events: none;
 }
 .docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(1)::after {
-  background-image: url('/images/get-started/c04be.svg');
+  background-image: url('/images/get-started/foundations.svg');
 }
 .docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(2)::after {
-  background-image: url('/images/get-started/ced3e.svg');
+  background-image: url('/images/get-started/components.svg');
 }
 .docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(3)::after {
-  background-image: url('/images/get-started/e7f7a.svg');
+  background-image: url('/images/get-started/patterns.svg');
 }
 .docs-main--get-started .get-started-content > ul:first-of-type > li:nth-child(4)::after {
-  background-image: url('/images/get-started/dbc38.svg');
+  background-image: url('/images/get-started/blocks.svg');
 }
 .docs-main--get-started .get-started-content > ul:first-of-type > li > p + p {
   margin-top: 32px;
@@ -212,11 +212,6 @@
   outline: 2px solid var(--veli-color-border-focus);
   outline-offset: 4px;
 }
-[data-theme='dark']
-  .docs-main--get-started
-  .get-started-content
-  > ul:first-of-type
-  > li:not(:first-child)::after,
 [data-theme='dark'] .docs-main--get-started .get-started-resource img {
   filter: invert(1);
 }
