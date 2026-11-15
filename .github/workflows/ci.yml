@@ -163,7 +163,8 @@ jobs:
     name: Installed blocks / browser regression
     needs: [changes, candidate]
     if: needs.changes.outputs.blocks == 'true'
-    runs-on: ubuntu-latest
+    # Pinned Playwright 1.58 does not support Ubuntu 26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read
@@ -187,7 +188,8 @@ jobs:
       PUBLIC_SITE_URL: https://veli-preview.invalid
     needs: [changes, candidate]
     if: needs.changes.outputs.sites == 'true'
-    runs-on: ubuntu-latest
+    # Pinned Playwright 1.58 does not support Ubuntu 26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read
@@ -218,7 +220,8 @@ jobs:
       PUBLIC_SITE_URL: https://veli-preview.invalid
     needs: changes
     if: needs.changes.outputs.cold == 'true'
-    runs-on: ubuntu-latest
+    # Pinned Playwright 1.58 does not support Ubuntu 26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:

@@ -304,3 +304,13 @@ test('site preview infrastructure selects both source and installed-package gate
       candidate: true,
     });
 });
+
+test('pinned Playwright browser jobs use a supported Ubuntu runner', async () => {
+  const { parse } = await import('yaml');
+  const workflow = parse(
+    readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8'),
+  );
+  for (const job of ['block-browser', 'packaged-sites', 'cold-reload']) {
+    assert.equal(workflow.jobs[job]['runs-on'], 'ubuntu-24.04', job);
+  }
+});
