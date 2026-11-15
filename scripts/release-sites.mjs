@@ -5,9 +5,12 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSyncCorepack } from './corepack.mjs';
+import { localGitEnv } from './git-env.mjs';
 import { candidateInventory } from './prepare-consumer-candidate.mjs';
 import { getBlocks } from '../packages/blocks/scripts/catalog.mjs';
 import { assertBlockCoreCompatibility } from './npm-migration-dependencies.mjs';
+const git = (args, options = {}) =>
+  execFileSync('git', args, { ...options, env: localGitEnv(options.env) });
 const root = fileURLToPath(new URL('../', import.meta.url));
 const packageDirectories = {
   '@veli-design/react': 'react',
@@ -45,7 +48,7 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
   validateManifest(manifest);
   if (resolve(target) === resolve(root) || resolve(target).startsWith(resolve(root) + '/'))
     throw new Error('Consumer must be outside the repository');
-  const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], {
+  const files = git(['ls-files', '--cached', '--others', '--exclude-standard'], {
     cwd: root,
     encoding: 'utf8',
   })
@@ -64,16 +67,10 @@ export async function stageConsumer(target, manifest, tarballs = {}) {
     await cp(resolve(root, filename), destination);
   }
   if (!existsSync(resolve(target, '.git'))) {
-    execFileSync('git', ['clone', '--bare', '--shared', '--quiet', root, resolve(target, '.git')]);
-    execFileSync('git', ['--git-dir', resolve(target, '.git'), 'config', 'core.bare', 'false']);
-    execFileSync('git', [
-      '--git-dir',
-      resolve(target, '.git'),
-      'config',
-      'core.worktree',
-      resolve(target),
-    ]);
-    execFileSync('git', ['--git-dir', resolve(target, '.git'), 'read-tree', manifest.sourceCommit]);
+    git(['clone', '--bare', '--shared', '--quiet', root, resolve(target, '.git')]);
+    git(['--git-dir', resolve(target, '.git'), 'config', 'core.bare', 'false']);
+    git(['--git-dir', resolve(target, '.git'), 'config', 'core.worktree', resolve(target)]);
+    git(['--git-dir', resolve(target, '.git'), 'read-tree', manifest.sourceCommit]);
   }
   await cp(resolve(root, 'pnpm-lock.yaml'), resolve(target, 'pnpm-lock.yaml'));
   const workspace = parseYAML(await readFile(resolve(root, 'pnpm-workspace.yaml'), 'utf8'));
@@ -125,14 +122,14 @@ function run(args, cwd) {
   const result = spawnSyncCorepack(['pnpm', ...args], {
     cwd,
     stdio: 'inherit',
-    env: process.env,
+    env: localGitEnv(),
   });
   if (result.status !== 0) throw new Error(`Consumer command failed: ${args.join(' ')}`);
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [command, target, manifestPath] = process.argv.slice(2);
   if (command === 'manifest') {
-    const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+    const sha = git(['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
     await mkdir(dirname(resolve(target)), { recursive: true });
     const manifest = await createManifest(sha);
     if (process.env.VELI_TARBALLS) {

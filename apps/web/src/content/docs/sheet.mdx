@@ -12,7 +12,7 @@ import {
 
 # Sheet
 
-Use Sheet to review related information or complete a short task without leaving the current page. Bottom sheets suit mobile filters and summaries; side drawers keep a task beside its context. Use [Modal](/docs/modal/) for a centered dialog, or a full page for a long, multi-step workflow.
+Use Sheet to review related information or complete a short task without leaving the current page. Bottom sheets suit mobile filters and summaries; side drawers keep a task beside its context. Use [Modal](/docs/components/modal/) for a centered dialog, or a full page for a long, multi-step workflow.
 
 ## Import
 
@@ -22,7 +22,7 @@ import { Button } from '@veli-design/react/button';
 import { Divider } from '@veli-design/react/divider';
 ```
 
-Sheet requires React Aria Components 1.22 or later and the Veli UI Tailwind stylesheet. Render within [VeliProvider](/docs/provider/) for language, direction and theme.
+Sheet requires React Aria Components 1.22 or later and the Veli UI Tailwind stylesheet. Render within [VeliProvider](/docs/components/provider/) for language, direction and theme.
 
 ## Usage
 
@@ -297,7 +297,7 @@ Render the content parts inside Sheet. Header, footer, handle and close controls
 
 ### Sheet.Close
 
-Inherits the action-mode [Button props](/docs/button/#api-reference), except `as`, `slot` and `iconOnly`. It renders an icon-only button with the close slot. These defaults apply when the props are omitted:
+Inherits the action-mode [Button props](/docs/components/button/#api-reference), except `as`, `slot` and `iconOnly`. It renders an icon-only button with the close slot. These defaults apply when the props are omitted:
 
 | Prop         | Type                          | Default              | Description                                                     |
 | :----------- | :---------------------------- | :------------------- | :-------------------------------------------------------------- |
@@ -332,4 +332,4 @@ Sheet does not expose snap points, physical left/right placement, independent Es
 
 ## RTL and Language
 
-Sheet reads language, direction and color scheme from [VeliProvider](/docs/provider/), including in its portal. In Dhivehi, `start` opens from the right and `end` from the left. Header and footer alignment follows direction. Translate consumer content and isolate mixed-script references with `<bdi>` where appropriate.
+Sheet reads language, direction and color scheme from [VeliProvider](/docs/components/provider/), including in its portal. In Dhivehi, `start` opens from the right and `end` from the left. Header and footer alignment follows direction. Translate consumer content and isolate mixed-script references with `<bdi>` where appropriate.

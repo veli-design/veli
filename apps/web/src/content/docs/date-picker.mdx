@@ -12,7 +12,7 @@ import {
 
 # DatePicker
 
-Use DatePicker when people need to type a date or choose one from a calendar. Its date segments and calendar share one value. Use [DateField](/docs/date-field/) when a calendar is unnecessary, or [Calendar](/docs/calendar/) for an embedded date selector.
+Use DatePicker when people need to type a date or choose one from a calendar. Its date segments and calendar share one value. Use [DateField](/docs/components/date-field/) when a calendar is unnecessary, or [Calendar](/docs/components/calendar/) for an embedded date selector.
 
 ## Import
 
@@ -66,7 +66,7 @@ When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `m
 
 Give the field a `name` to submit its completed value as an ISO string. Use `value` and `onChange` for a controlled value, or `defaultValue` for an initial value. `granularity` adds editable time segments for date-time values.
 
-When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@veli-design/react/form`. You can also hold `DateValue` objects in form state. See [Forms](/patterns/forms/) for form-library integration.
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@veli-design/react/form`. You can also hold `DateValue` objects in form state. See [Forms](/docs/patterns/forms/) for form-library integration.
 
 ## API Reference
 

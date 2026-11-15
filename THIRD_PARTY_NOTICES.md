@@ -36,6 +36,14 @@ licensing metadata and any accompanying copyright, licence and notice informatio
 required for redistribution. Font binaries are not included in these npm packages.
 See `ASSET_LICENSES.md` for the category-level asset policy.
 
+## Website animation player
+
+The homepage card previews bundle the SVG light player from `lottie-web` 5.12.2
+under MIT, copyright (c) 2015 Bodymovin. Its complete upstream licence ships with
+the website at `apps/web/public/third-party/LOTTIE-LICENSE.txt`. This player is not
+included in the published Veli npm packages. The animation artwork retains its
+separate original-project or asset terms.
+
 ## Self-hosted web fonts
 
 The following unchanged font binaries in `apps/web/public/fonts/` use the

@@ -23,6 +23,8 @@ export function classify(paths) {
     else if (/^apps\/storybook\//.test(path)) include(['blocks', 'sites', 'cold']);
     else if (/^apps\/web\//.test(path)) include(['sites', 'cold']);
     else if (path === 'scripts/check-ui-consumer.mjs') include(['next']);
+    else if (/^scripts\/(?:check-site-previews|local-site-previews|git-env)\.mjs$/.test(path))
+      include(['sites', 'cold']);
     else if (path === 'scripts/release-sites.mjs') include(['sites']);
     else if (/^scripts\/(check|verify)-playground\.mjs$/.test(path)) include(['cold']);
     // Unknown paths, shared tooling, metadata, lockfiles and build configs fail open.

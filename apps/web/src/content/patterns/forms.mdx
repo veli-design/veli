@@ -23,7 +23,7 @@ import {
 
 `Controller`'s `field` object (`name`, `value`, `onChange`, `onBlur`, `ref`) spreads directly onto `Input`, `TextArea`, `Search`, `Select`, `ComboBox`, `RadioGroup`, and `CheckboxGroup`. For `Select` and `DatePicker`, pass `ref` as `triggerRef` so focus-on-error reaches the trigger button.
 
-Search supports the same field validation props and optional label as Input. For validated query submission, handle submission on the parent `Form`; Search's own `onSubmit` is an Enter-triggered query callback that replaces native form submission for that key. See [Search](/docs/search/) for standalone and form examples.
+Search supports the same field validation props and optional label as Input. For validated query submission, handle submission on the parent `Form`; Search's own `onSubmit` is an Enter-triggered query callback that replaces native form submission for that key. See [Search](/docs/components/search/) for standalone and form examples.
 
 `Select` and `ComboBox` infer their key type from `value` / `onChange`. A `string | null` field therefore type-checks with no conversion. Date components use `DateValue` objects; when the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` so you do not need a direct `@internationalized/date` dependency.
 
@@ -213,7 +213,7 @@ Both accept strings, `{ message }` objects (React Hook Form's `fieldState.error`
 
 ## Checkbox groups
 
-`CheckboxGroup` holds a `string[]` value, so it takes a form field directly in both libraries. Give each `Checkbox` a `value`. For a visible group label, compose [Field](/docs/field/) children inside the group, or keep `aria-label` with the group's `description` / `errorMessage` props — not both styles at once.
+`CheckboxGroup` holds a `string[]` value, so it takes a form field directly in both libraries. Give each `Checkbox` a `value`. For a visible group label, compose [Field](/docs/components/field/) children inside the group, or keep `aria-label` with the group's `description` / `errorMessage` props — not both styles at once.
 
 ```tsx
 import { FieldLabel } from '@veli-design/react/field';
@@ -341,4 +341,4 @@ For booleans stored as strings, read with `value === 'true'` and write `"true"` 
 
 ## Related components
 
-Individual field APIs remain on their component pages: [Field](/docs/field/), [Input](/docs/input/), [Select](/docs/select/), [Checkbox](/docs/checkbox/), [DatePicker](/docs/date-picker/), and the rest of the Forms group under Components.
+Individual field APIs remain on their component pages: [Field](/docs/components/field/), [Input](/docs/components/input/), [Select](/docs/components/select/), [Checkbox](/docs/components/checkbox/), [DatePicker](/docs/components/date-picker/), and the rest of the Forms group under Components.

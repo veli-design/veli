@@ -1,0 +1,24 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Icon">
+<g id="Vector">
+<use xlink:href="#stroke0_0_122" fill="black"/>
+<use xlink:href="#stroke0_0_122" fill="url(#paint0_radial_0_122)"/>
+<use xlink:href="#stroke1_0_122" fill="black"/>
+<use xlink:href="#stroke1_0_122" fill="url(#paint1_radial_0_122)"/>
+</g>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_122" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(30 58.6059) rotate(-90) scale(56.6059 65.4453)">
+<stop offset="0.0673077" stop-color="#C5FFCE"/>
+<stop offset="0.408196" stop-color="#3ADCBE"/>
+<stop offset="1"/>
+</radialGradient>
+<radialGradient id="paint1_radial_0_122" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(30 58.6059) rotate(-90) scale(56.6059 65.4453)">
+<stop offset="0.0673077" stop-color="#C5FFCE"/>
+<stop offset="0.408196" stop-color="#3ADCBE"/>
+<stop offset="1"/>
+</radialGradient>
+<path id="stroke0_0_122" d="M41.5535 2H18.4534C12.402 2 7.44905 6.95258 7.44905 12.9965V47.6024C7.44905 53.6533 12.402 58.6059 18.4534 58.6059H41.5535C47.6049 58.6059 52.5509 53.6533 52.5509 47.6024V12.9965C52.5509 6.95258 47.6049 2 41.5535 2ZM49.5736 35.4248C49.5736 42.5739 43.7226 48.4244 36.5729 48.4244H23.434C16.2843 48.4244 10.4333 42.5739 10.4333 35.4248V19.9868C10.4333 12.8377 16.2843 6.98712 23.434 6.98712H36.5729C43.7226 6.98712 49.5736 12.8377 49.5736 19.9868V35.4248Z"/>
+<path id="stroke1_0_122" d="M33.858 16.7679H26.1488C22.0524 16.7679 18.7297 20.0903 18.7297 24.1864V31.9019C18.7297 35.998 22.0524 39.3135 26.1488 39.3135H33.858C37.9544 39.3135 41.2771 35.998 41.2771 31.9019V24.1864C41.2771 20.0903 37.9544 16.7679 33.858 16.7679ZM36.6903 30.3271L32.283 34.7271C30.9498 36.0602 28.7876 36.0602 27.4475 34.7271L23.3165 30.5964C21.9833 29.2633 21.9833 27.0944 23.3165 25.7613L27.7238 21.3544C29.057 20.0213 31.2192 20.0213 32.5524 21.3544L36.6903 25.4919C38.0235 26.825 38.0235 28.987 36.6903 30.3271Z"/>
+</defs>
+</svg>
