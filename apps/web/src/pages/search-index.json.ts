@@ -1,5 +1,5 @@
 import { blockPages } from '../lib/blocks';
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import {
   buildCollectionSearchItems,
   createOverviewSearchItem,
@@ -14,6 +14,7 @@ export async function GET() {
   const getStarted = await getEntry('guides', 'get-started');
   if (!getStarted) throw new Error('Get Started guide is missing');
   const getStartedItems = await buildCollectionSearchItems({
+    renderEntry: (entry) => render(entry),
     category: 'Overview',
     basePath: '/docs/',
     entries: [getStarted],
@@ -63,6 +64,7 @@ export async function GET() {
   });
   const [foundationItems, docsItems, patternItems] = await Promise.all([
     buildCollectionSearchItems({
+      renderEntry: (entry) => render(entry),
       category: 'Foundations',
       basePath: '/docs/foundations/',
       entries: foundationEntries,
@@ -70,6 +72,7 @@ export async function GET() {
       orderOffset: 10_100,
     }),
     buildCollectionSearchItems({
+      renderEntry: (entry) => render(entry),
       category: 'Components',
       basePath: '/docs/components/',
       entries: docsEntries,
@@ -77,6 +80,7 @@ export async function GET() {
       orderOffset: 100,
     }),
     buildCollectionSearchItems({
+      renderEntry: (entry) => render(entry),
       category: 'Patterns',
       basePath: '/docs/patterns/',
       entries: patternEntries,

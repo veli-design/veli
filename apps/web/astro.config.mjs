@@ -3,6 +3,7 @@ import process from 'node:process';
 import { legacyRedirects } from './scripts/site-routes.mjs';
 import { redirectsIntegration } from './scripts/redirects-integration.mjs';
 
+import { unified } from '@astrojs/markdown-remark';
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
@@ -26,6 +27,7 @@ export default defineConfig({
       .filter(([from]) => from.endsWith('/') || from.includes('.'))
       .map(([from, to]) => [from, { destination: to, status: 301 }]),
   ),
+  compressHTML: true,
   markdown: {
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },
@@ -38,11 +40,16 @@ export default defineConfig({
         },
       ],
     },
-    remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
-    rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks, rehypeDocTables],
+    processor: unified({
+      remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
+      rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks, rehypeDocTables],
+    }),
   },
   vite: {
-    ssr: { external: ['@tradenetcorp/veli-blocks/catalog'] },
+    environments: {
+      ssr: { resolve: { external: ['@tradenetcorp/veli-blocks/catalog'] } },
+      prerender: { resolve: { external: ['@tradenetcorp/veli-blocks/catalog'] } },
+    },
     plugins: [tokenPlayground(), tailwindcss()],
   },
   output: 'static',

@@ -17,25 +17,23 @@ const usesSharedLottie = !lottieDark;
 >
   {/* Native dotted plate — always present; doubles as load / reduced-motion fallback. */}
   <span class="docs-page-header__art-bg"></span>
-  {
-    usesSharedLottie ? (
+  {usesSharedLottie ? (
+    <canvas
+      class="docs-page-header__art-lottie docs-page-header__art-lottie--shared"
+      data-foundation-lottie="shared"
+    />
+  ) : (
+    <>
       <canvas
-        class="docs-page-header__art-lottie docs-page-header__art-lottie--shared"
-        data-foundation-lottie="shared"
+        class="docs-page-header__art-lottie docs-page-header__art-lottie--light"
+        data-foundation-lottie="light"
       />
-    ) : (
-      <>
-        <canvas
-          class="docs-page-header__art-lottie docs-page-header__art-lottie--light"
-          data-foundation-lottie="light"
-        />
-        <canvas
-          class="docs-page-header__art-lottie docs-page-header__art-lottie--dark"
-          data-foundation-lottie="dark"
-        />
-      </>
-    )
-  }
+      <canvas
+        class="docs-page-header__art-lottie docs-page-header__art-lottie--dark"
+        data-foundation-lottie="dark"
+      />
+    </>
+  )}
 </span>
 
 <script>

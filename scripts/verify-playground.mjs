@@ -19,7 +19,7 @@ const motion = await readFile(motionURL, 'utf8');
 const button = await readFile(buttonURL, 'utf8');
 const canonical = await readFile(canonicalURL, 'utf8');
 try {
-  await docs.goto(process.env.VELI_DOCS_URL ?? 'http://127.0.0.1:4321/docs/button/');
+  await docs.goto(process.env.VELI_DOCS_URL ?? 'http://127.0.0.1:4321/docs/components/button/');
   await story.goto(
     process.env.VELI_STORYBOOK_URL ??
       'http://127.0.0.1:6006/iframe.html?id=components-button--playground&viewMode=story',

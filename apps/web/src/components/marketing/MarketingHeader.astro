@@ -22,69 +22,74 @@ const github = 'https://github.com/veli-design/veli';
   />
   <span>An official website of the Maldives Government</span>
   <details>
-    <summary
-      >Here’s how you know {
-        design ? (
-          <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
-        ) : (
-          <span aria-hidden="true">⌄</span>
-        )
-      }</summary
-    >
+    <summary>
+      Here’s how you know{' '}
+      {design ? (
+        <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
+      ) : (
+        <span aria-hidden="true">⌄</span>
+      )}
+    </summary>
     <p>
-      Veli is the design system for Maldives government services. Check that you are visiting <strong
-        >veli.design</strong
-      > and that your browser shows a secure HTTPS connection.
+      Veli is the design system for Maldives government services. Check that you are visiting{' '}
+      <strong>veli.design</strong> and that your browser shows a secure HTTPS connection.
     </p>
   </details>
 </div>
 <header class="marketing-header" data-nav-after={path === '/' ? '.marketing-hero-logo' : undefined}>
-  <a href="/" aria-label="Veli Design home"
-    ><img
+  <a href="/" aria-label="Veli Design home">
+    <img
       class="marketing-logo"
       src={design ? '/images/marketing/1c862.svg' : '/images/marketing/veli-design-nav.svg'}
       width="180"
       height="29"
       alt="Veli Design"
-    /></a
-  >
+    />
+  </a>
   <nav class="marketing-desktop-nav" aria-label="Main navigation">
-    <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>Design</a>
+    <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>
+      Design
+    </a>
     <a href="/docs/">Documentation</a>
     <a href="https://github.com/veli-design/veli/releases">What’s new</a>
     <span class="marketing-resource-links">
       <a
         href="https://www.figma.com/design/tW1kYAZ4r80k2EUadpotTa/Design-System-Doc-Site"
         aria-label="Veli in Figma"
-        ><img
+      >
+        <img
           src={design ? '/images/marketing/7321c.svg' : '/images/marketing/figma-icon.svg'}
           width="24"
           height="24"
           alt=""
-        /></a
-      >
-      <a href={github} aria-label="Veli on GitHub"
-        ><img
+        />
+      </a>
+      <a href={github} aria-label="Veli on GitHub">
+        <img
           src={design ? '/images/marketing/0e2f0.svg' : '/images/marketing/github-icon.svg'}
           width="24"
           height="24"
           alt=""
-        /></a
-      >
-      <a href="https://www.npmjs.com/package/@veli-design/react" aria-label="Veli React on npm"
-        ><img
+        />
+      </a>
+      <a href="https://www.npmjs.com/package/@veli-design/react" aria-label="Veli React on npm">
+        <img
           src={design ? '/images/marketing/0b970.svg' : '/images/marketing/package-icon.svg'}
           width="24"
           height="24"
           alt=""
-        /></a
-      >
+        />
+      </a>
     </span>
   </nav>
   <details class="marketing-mobile-menu">
-    <summary aria-label="Main navigation"><span aria-hidden="true">☰</span></summary>
+    <summary aria-label="Main navigation">
+      <span aria-hidden="true">☰</span>
+    </summary>
     <nav aria-label="Mobile main navigation">
-      <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>Design</a>
+      <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>
+        Design
+      </a>
       <a href="/docs/">Documentation</a>
       <a href="https://github.com/veli-design/veli/releases">What’s new</a>
       <a href={github}>GitHub</a>

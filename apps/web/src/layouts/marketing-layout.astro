@@ -13,7 +13,9 @@ const { title, description, variant = 'home' } = Astro.props;
 
 <Layout {title} {description} pageClass={`marketing-page marketing-page--${variant}`}>
   <MarketingHeader {variant} />
-  <main id="main"><slot /></main>
+  <main id="main">
+    <slot />
+  </main>
   <MarketingFooter />
 </Layout>
 <script>

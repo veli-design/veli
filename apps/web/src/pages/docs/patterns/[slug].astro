@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import DocsPageActions from '../../../components/DocsPageActions.astro';
 import DocsLayout from '../../../layouts/docs-layout.astro';
@@ -11,21 +11,21 @@ type Props = {
 export async function getStaticPaths() {
   const patterns = await getCollection('patterns');
   return patterns.map((pattern) => ({
-    params: { slug: pattern.slug },
+    params: { slug: pattern.id },
     props: { pattern },
   }));
 }
 
 const { pattern } = Astro.props as Props;
-const { Content, headings } = await pattern.render();
+const { Content, headings } = await render(pattern);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
-const markdownPath = `/docs/patterns/${pattern.slug}/index.md`;
+const markdownPath = `/docs/patterns/${pattern.id}/index.md`;
 ---
 
 <DocsLayout
   title={`${pattern.data.title} | Veli Design System`}
   description={pattern.data.description}
-  activePath={`/docs/patterns/${pattern.slug}/`}
+  activePath={`/docs/patterns/${pattern.id}/`}
   {markdownPath}
   headings={tocHeadings}
   contentLayout="article"

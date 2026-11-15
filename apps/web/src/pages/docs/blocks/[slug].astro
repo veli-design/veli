@@ -40,10 +40,9 @@ const slug = Astro.params.slug;
   contentLayout="article"
 >
   <header class="docs-page-header docs-page-header--article">
-    <h1>{page.title}</h1><p>{page.description}</p><DocsPageActions
-      {markdownPath}
-      placement="inline"
-    />
+    <h1>{page.title}</h1>
+    <p>{page.description}</p>
+    <DocsPageActions {markdownPath} placement="inline" />
   </header>
   {slug === 'site-footer' && <SiteFooterDemo client:visible />}
   {slug === 'site-header' && <SiteHeaderDemo client:visible />}

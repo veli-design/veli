@@ -183,6 +183,8 @@ jobs:
 
   packaged-sites:
     name: Installed packages / docs and Storybook
+    env:
+      PUBLIC_SITE_URL: https://veli-preview.invalid
     needs: [changes, candidate]
     if: needs.changes.outputs.sites == 'true'
     runs-on: ubuntu-latest
@@ -199,9 +201,21 @@ jobs:
           node scripts/release-sites.mjs manifest "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs stage "$RUNNER_TEMP/veli-sites" "$RUNNER_TEMP/release-manifest.json"
           node scripts/release-sites.mjs build "$RUNNER_TEMP/veli-sites"
+      - name: Install isolated site browser runtime
+        run: node scripts/prepare-playground-browser.mjs "$RUNNER_TEMP/site-browser"
+      - name: Verify packaged sites through local Cloudflare assets
+        run: node scripts/check-site-previews.mjs "$RUNNER_TEMP/site-browser" "$RUNNER_TEMP/veli-sites" "$RUNNER_TEMP/site-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: packaged-site-preview-evidence
+          path: ${{ runner.temp }}/site-evidence
+          retention-days: 3
 
   cold-reload:
     name: Cold source playground / hot reload
+    env:
+      PUBLIC_SITE_URL: https://veli-preview.invalid
     needs: changes
     if: needs.changes.outputs.cold == 'true'
     runs-on: ubuntu-latest
@@ -214,6 +228,16 @@ jobs:
         run: node scripts/prepare-playground-browser.mjs "$RUNNER_TEMP/playground-browser"
       - name: Verify cold local playground hot reload
         run: node scripts/check-playground.mjs "$RUNNER_TEMP/playground-browser"
+      - name: Build source documentation sites
+        run: corepack pnpm exec turbo run build --filter=@tradenetcorp/veli-web --filter=@tradenetcorp/veli-storybook
+      - name: Verify source sites through local Cloudflare assets
+        run: node scripts/check-site-previews.mjs "$RUNNER_TEMP/playground-browser" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/source-site-evidence" source
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-site-preview-evidence
+          path: ${{ runner.temp }}/source-site-evidence
+          retention-days: 3
 
   blocks-consumer:
     name: Published-package block consumer

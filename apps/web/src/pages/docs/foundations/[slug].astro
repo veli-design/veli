@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import DocsPageActions from '../../../components/DocsPageActions.astro';
 import FoundationHeaderArt from '../../../components/FoundationHeaderArt.astro';
@@ -12,15 +12,15 @@ type Props = {
 export async function getStaticPaths() {
   const foundations = await getCollection('foundations');
   return foundations.map((foundation) => ({
-    params: { slug: foundation.slug },
+    params: { slug: foundation.id },
     props: { foundation },
   }));
 }
 
 const { foundation } = Astro.props as Props;
-const { Content, headings } = await foundation.render();
+const { Content, headings } = await render(foundation);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
-const markdownPath = `/docs/foundations/${foundation.slug}/index.md`;
+const markdownPath = `/docs/foundations/${foundation.id}/index.md`;
 const headerArt = {
   principles: {
     lottie: '/images/foundation-headers/principles.lottie',
@@ -47,13 +47,13 @@ const headerArt = {
     lottie: '/images/foundation-headers/language-direction.lottie',
   },
 } as const;
-const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt];
+const foundationHeaderArt = headerArt[foundation.id as keyof typeof headerArt];
 ---
 
 <DocsLayout
   title={`${foundation.data.title} | Veli Design System`}
   description={foundation.data.description}
-  activePath={`/docs/foundations/${foundation.slug}/`}
+  activePath={`/docs/foundations/${foundation.id}/`}
   {markdownPath}
   headings={tocHeadings}
   contentLayout="foundation-article"
@@ -70,16 +70,14 @@ const foundationHeaderArt = headerArt[foundation.slug as keyof typeof headerArt]
       {foundation.data.description && <p>{foundation.data.description}</p>}
       <DocsPageActions {markdownPath} placement="inline" />
     </div>
-    {
-      foundationHeaderArt && (
-        <FoundationHeaderArt
-          lottie={foundationHeaderArt.lottie}
-          lottieDark={
-            'lottieDark' in foundationHeaderArt ? foundationHeaderArt.lottieDark : undefined
-          }
-        />
-      )
-    }
+    {foundationHeaderArt && (
+      <FoundationHeaderArt
+        lottie={foundationHeaderArt.lottie}
+        lottieDark={
+          'lottieDark' in foundationHeaderArt ? foundationHeaderArt.lottieDark : undefined
+        }
+      />
+    )}
   </header>
 
   <article class="docs-prose foundation-prose">

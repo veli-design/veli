@@ -1,11 +1,11 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import DocsLayout from '../../layouts/docs-layout.astro';
 import '../../styles/get-started.css';
 
 const guide = await getEntry('guides', 'get-started');
 if (!guide) throw new Error('Get Started guide is missing');
-const { Content, headings } = await guide.render();
+const { Content, headings } = await render(guide);
 ---
 
 <DocsLayout
@@ -21,5 +21,7 @@ const { Content, headings } = await guide.render();
     <h1>{guide.data.title}</h1>
     <p>{guide.data.description}</p>
   </header>
-  <article class="docs-prose get-started-content"><Content /></article>
+  <article class="docs-prose get-started-content">
+    <Content />
+  </article>
 </DocsLayout>
