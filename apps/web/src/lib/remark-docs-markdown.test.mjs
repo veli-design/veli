@@ -103,7 +103,7 @@ test('creates clean GFM Markdown without changing the render tree', () => {
   assert.match(markdown, /^# Button\n\nAccessible button component\./);
   assert.match(
     markdown,
-    /\[View the interactive example in the rendered page\.\]\(\/docs\/button\/\)/,
+    /\[View the interactive example in the rendered page\.\]\(\/docs\/components\/button\/\)/,
   );
   assert.match(markdown, /```tsx\nimport \{ Button \} from '@veli\/ui';/);
   assert.match(markdown, /\| Prop/);
@@ -123,6 +123,21 @@ test('exports eagerly hydrated previews without changing their hydration directi
   assert.match(markdown, /View the interactive example in the rendered page/);
   assert.deepEqual(tree, originalTree);
 });
+
+for (const [source, url] of [
+  ['foundations/color.mdx', '/docs/foundations/color/'],
+  ['patterns/forms.mdx', '/docs/patterns/forms/'],
+]) {
+  test(`interactive examples in ${source} link to the canonical route`, () => {
+    const tree = { type: 'root', children: [importNode(), previewNode()] };
+    const markdown = createCanonicalMarkdown(
+      tree,
+      createFile(`/workspace/apps/web/src/content/${source}`),
+    );
+
+    assert.ok(markdown.includes(`[View the interactive example in the rendered page.](${url})`));
+  });
+}
 
 test('supports pages without an authored H1 and explicit visual-only omissions', () => {
   const tree = {
@@ -195,4 +210,28 @@ test('fails instead of silently removing executable MDX ESM', () => {
     () => createCanonicalMarkdown(tree, createFile()),
     /only top-level imports may be omitted from Markdown/,
   );
+});
+
+test('Get Started exports link interactive previews to the docs landing page', () => {
+  const file = createFile('/workspace/apps/web/src/content/guides/get-started.mdx', {
+    title: 'Get Started',
+    description: 'Start building with Veli.',
+  });
+  const tree = {
+    type: 'root',
+    children: [
+      importNode('ButtonUsageDemo'),
+      previewNode('ButtonUsageDemo'),
+      {
+        type: 'code',
+        lang: 'bash',
+        value: 'pnpm add @veli-design/react @veli-design/tokens react-aria-components',
+      },
+    ],
+  };
+  const markdown = createCanonicalMarkdown(tree, file);
+  assert.match(markdown, /^# Get Started\n/);
+  assert.match(markdown, /\[View the interactive example in the rendered page\.\]\(\/docs\/\)/);
+  assert.match(markdown, /pnpm add @veli-design\/react @veli-design\/tokens react-aria-components/);
+  assert.doesNotMatch(markdown, /client:|ButtonUsageDemo/);
 });

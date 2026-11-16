@@ -101,13 +101,16 @@ function isInteractivePreview(node, importedNames, file) {
 
 function getDocumentPath(file) {
   const path = documentName(file).replaceAll('\\', '/');
+  if (path.endsWith('/src/content/guides/get-started.mdx')) return '/docs/';
   const match = path.match(/(?:^|\/)src\/content\/(docs|foundations|patterns)\/(.+)\.mdx?$/);
 
   if (!match) {
     throw markdownError(file, 'could not derive the rendered documentation URL');
   }
 
-  return `/${match[1]}/${match[2]}/`;
+  const [, collection, slug] = match;
+  const section = collection === 'docs' ? 'components' : collection;
+  return `/docs/${section}/${slug}/`;
 }
 
 function interactivePreviewLink(url) {

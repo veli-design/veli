@@ -1,4 +1,4 @@
-import { createShikiHighlighter } from '@astrojs/markdown-remark';
+import { createShikiHighlighter } from '@astrojs/markdown-remark/shiki';
 import { previewCodeGroups } from './docs-preview-examples.mjs';
 
 let highlighter;

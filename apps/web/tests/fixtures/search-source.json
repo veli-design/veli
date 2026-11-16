@@ -1,0 +1,62 @@
+{
+  "tree": {
+    "type": "root",
+    "children": [
+      { "type": "mdxjsEsm", "value": "import { Demo } from './Demo';" },
+      {
+        "type": "paragraph",
+        "children": [{ "type": "text", "value": "Accessible ކުރިއަށް controls." }]
+      },
+      { "type": "heading", "depth": 2, "children": [{ "type": "text", "value": "Usage" }] },
+      {
+        "type": "paragraph",
+        "children": [
+          { "type": "text", "value": "Use " },
+          { "type": "inlineCode", "value": "Button" },
+          { "type": "text", "value": " safely." }
+        ]
+      },
+      { "type": "heading", "depth": 3, "children": [{ "type": "text", "value": "Usage" }] },
+      { "type": "code", "lang": "tsx", "value": "<Button>ކުރިއަށް</Button>" }
+    ]
+  },
+  "headings": [
+    { "depth": 2, "slug": "usage", "text": "Usage" },
+    { "depth": 3, "slug": "usage-1", "text": "Usage" }
+  ],
+  "expected": [
+    {
+      "id": "components:button",
+      "href": "/docs/button/",
+      "category": "Components",
+      "kind": "page",
+      "pageTitle": "Button",
+      "title": "Button",
+      "description": "About Button",
+      "content": "Accessible ކުރިއަށް controls.",
+      "order": 100
+    },
+    {
+      "id": "components:button:usage",
+      "href": "/docs/button/#usage",
+      "category": "Components",
+      "kind": "section",
+      "pageTitle": "Button",
+      "title": "Usage",
+      "description": "Use Button safely.",
+      "content": "Use Button safely.",
+      "order": 101
+    },
+    {
+      "id": "components:button:usage-1",
+      "href": "/docs/button/#usage-1",
+      "category": "Components",
+      "kind": "section",
+      "pageTitle": "Button",
+      "title": "Usage",
+      "description": "<Button>ކުރިއަށް</Button>",
+      "content": "<Button>ކުރިއަށް</Button>",
+      "order": 102
+    }
+  ]
+}

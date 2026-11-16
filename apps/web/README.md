@@ -2,7 +2,16 @@
 
 The public website uses Astro, MDX, and React. Component documentation lives in
 `src/content/docs/`; foundation documentation lives in `src/content/foundations/`.
-Reusable interactive examples live in `src/components/`.
+Reusable interactive examples live in focused `src/components/*Examples.tsx`
+modules, so importing one component demo does not load an all-components barrel.
+
+Astro 7 collections are configured in `src/content.config.ts` with Content Layer
+`glob` loaders for components (`docs`), foundations, patterns, and guides. Use
+entry `id` and `render(entry)` from `astro:content`, not legacy `slug` or
+`entry.render()`. Keep the current `/docs/` route structure and `/design/`
+marketing page when adding content. The HTML, Markdown exports, and search index
+must remain synchronized; `scripts/check-docs-content-freshness.mjs` verifies this
+against a task-owned local development server, restoring its temporary edit.
 
 ## Package references
 
@@ -68,7 +77,7 @@ Import a React demo into MDX, place it inside a `div` with `className="preview"`
 and put its source fence immediately after the wrapper:
 
 ````mdx
-import { ButtonUsageDemo } from '../../components/DocsExamples';
+import { ButtonUsageDemo } from '../../components/ButtonExamples';
 
 <div className="preview">
   <ButtonUsageDemo client:visible />

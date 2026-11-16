@@ -15,47 +15,41 @@ const architecture = [
 const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
 ---
 
-{
-  kind === 'architecture' && (
-    <ol class="architecture" aria-label="Color token reference chain">
-      {architecture.map((tier) => (
-        <li>
-          <span>{tier.eyebrow}</span>
-          <strong>{tier.name}</strong>
-        </li>
-      ))}
-    </ol>
-  )
-}
+{kind === 'architecture' && (
+  <ol class="architecture" aria-label="Color token reference chain">
+    {architecture.map((tier) => (
+      <li>
+        <span>{tier.eyebrow}</span>
+        <strong>{tier.name}</strong>
+      </li>
+    ))}
+  </ol>
+)}
 
-{
-  kind === 'scale' && (
-    <div class="scale" aria-label="Teal 12-step scale">
-      {steps.map((step) => (
-        <div>
-          <span style={`background: var(--veli-color-teal-${step})`} aria-hidden="true" />
-          <small>{step}</small>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-{
-  kind === 'contrast' && (
-    <figure class="contrast">
-      <div class="contrast__sample">
-        <strong>One unified experience for the Government of Maldives</strong>
-        <span>Every citizen can use this service, on any island, on any device.</span>
+{kind === 'scale' && (
+  <div class="scale" aria-label="Teal 12-step scale">
+    {steps.map((step) => (
+      <div>
+        <span style={`background: var(--veli-color-teal-${step})`} aria-hidden="true" />
+        <small>{step}</small>
       </div>
-      <figcaption>
-        <span>Reference pairing</span>
-        <strong>800 on 200</strong>
-        <small>WCAG AA body text</small>
-      </figcaption>
-    </figure>
-  )
-}
+    ))}
+  </div>
+)}
+
+{kind === 'contrast' && (
+  <figure class="contrast">
+    <div class="contrast__sample">
+      <strong>One unified experience for the Government of Maldives</strong>
+      <span>Every citizen can use this service, on any island, on any device.</span>
+    </div>
+    <figcaption>
+      <span>Reference pairing</span>
+      <strong>800 on 200</strong>
+      <small>WCAG AA body text</small>
+    </figcaption>
+  </figure>
+)}
 
 <style>
   .architecture {

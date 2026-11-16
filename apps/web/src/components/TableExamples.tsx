@@ -1,5 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Table, type Selection, type SortDescriptor } from '@veli-design/react/table';
+import {
+  Table,
+  type Selection,
+  type SortDescriptor,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@veli-design/react/table';
 import { VeliProvider, useVeliLanguage } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
 
@@ -153,5 +162,92 @@ export function TableRtlDemo() {
         <TableSelectionDemo />
       </VeliProvider>
     </DocsPreview>
+  );
+}
+
+type TableDocsRow = {
+  id: string;
+  name: string;
+  department: string;
+  status: string;
+};
+
+type TableDocsText = {
+  ariaLabel: string;
+  columns: {
+    name: string;
+    department: string;
+    status: string;
+  };
+  rows: TableDocsRow[];
+};
+
+const tableDocsText = {
+  en: {
+    ariaLabel: 'Permit applications',
+    columns: {
+      name: 'Name',
+      department: 'Department',
+      status: 'Status',
+    },
+    rows: [
+      { id: '1', name: 'Tourism licence', department: 'Tourism', status: 'Approved' },
+      { id: '2', name: 'Fishing permit', department: 'Fisheries', status: 'Pending' },
+      { id: '3', name: 'Business registration', department: 'Commerce', status: 'Rejected' },
+    ],
+  },
+  dv: {
+    ariaLabel: 'ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް',
+    columns: {
+      name: 'ނަން',
+      department: 'ޑިޕާޓްމަންޓް',
+      status: 'ޙާލަތު',
+    },
+    rows: [
+      {
+        id: '1',
+        name: 'ފަތުރުވެރިކަމުގެ ލައިސަންސް',
+        department: 'ފަތުރުވެރިކަން',
+        status: 'ފާސްކުރެވިފައި',
+      },
+      {
+        id: '2',
+        name: 'މަސްވެރިކަން ކުރުމުގެ ހުއްދަ',
+        department: 'މަސްވެރިކަން',
+        status: 'ޕެންޑިންގ',
+      },
+      {
+        id: '3',
+        name: 'ވިޔަފާރި ރަޖިސްޓްރީކުރުން',
+        department: 'ވިޔަފާރި',
+        status: 'ރިޖެކްޓްކުރެވިފައި',
+      },
+    ],
+  },
+} satisfies Record<'en' | 'dv', TableDocsText>;
+
+export function TableUsageDemo() {
+  const { direction } = useVeliLanguage();
+  const text = tableDocsText[direction === 'rtl' ? 'dv' : 'en'];
+
+  return (
+    <div className="max-w-2xl">
+      <Table aria-label={text.ariaLabel}>
+        <TableHeader>
+          <TableColumn isRowHeader>{text.columns.name}</TableColumn>
+          <TableColumn>{text.columns.department}</TableColumn>
+          <TableColumn>{text.columns.status}</TableColumn>
+        </TableHeader>
+        <TableBody items={text.rows}>
+          {(item) => (
+            <TableRow id={item.id}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.department}</TableCell>
+              <TableCell>{item.status}</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
