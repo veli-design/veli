@@ -1,6 +1,6 @@
 import type { DocsSearchSource } from './remark-docs-search';
 
-export type DocsSearchCategory = 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
+export type DocsSearchCategory = 'Overview' | 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
 
 export type DocsSearchItem = {
   id: string;
@@ -21,25 +21,26 @@ type SearchHeading = {
 };
 
 type SearchableContentEntry = {
-  slug: string;
+  id: string;
   data: {
     title: string;
     description?: string;
   };
-  render: () => Promise<{
-    headings: SearchHeading[];
-    remarkPluginFrontmatter: Record<string, unknown> & {
-      __docsSearch?: DocsSearchSource;
-    };
-  }>;
 };
 
-type BuildCollectionSearchItemsOptions = {
+type SearchRenderResult = {
+  headings: SearchHeading[];
+  remarkPluginFrontmatter: Record<string, unknown> & { __docsSearch?: DocsSearchSource };
+};
+
+type BuildCollectionSearchItemsOptions<T extends SearchableContentEntry> = {
   category: DocsSearchCategory;
   basePath: string;
-  entries: SearchableContentEntry[];
+  entries: T[];
+  renderEntry: (entry: T) => Promise<SearchRenderResult>;
   orderedSlugs: readonly string[];
   orderOffset?: number;
+  hrefForSlug?: (slug: string) => string;
 };
 
 type ParsedSection = {
@@ -99,38 +100,40 @@ function getDocsSearchContent(
   };
 }
 
-export async function buildCollectionSearchItems({
+export async function buildCollectionSearchItems<T extends SearchableContentEntry>({
   category,
   basePath,
   entries,
+  renderEntry,
   orderedSlugs,
   orderOffset = 0,
-}: BuildCollectionSearchItemsOptions): Promise<DocsSearchItem[]> {
-  const entryBySlug = new Map(entries.map((entry) => [entry.slug, entry]));
+  hrefForSlug,
+}: BuildCollectionSearchItemsOptions<T>): Promise<DocsSearchItem[]> {
+  const entryBySlug = new Map(entries.map((entry) => [entry.id, entry]));
   const orderedEntries = [
     ...orderedSlugs.flatMap((slug) => {
       const entry = entryBySlug.get(slug);
       return entry ? [entry] : [];
     }),
     ...entries
-      .filter((entry) => !orderedSlugs.includes(entry.slug))
+      .filter((entry) => !orderedSlugs.includes(entry.id))
       .sort((first, second) => first.data.title.localeCompare(second.data.title)),
   ];
   const records: DocsSearchItem[] = [];
 
   for (const [pageIndex, entry] of orderedEntries.entries()) {
-    const { headings, remarkPluginFrontmatter } = await entry.render();
+    const { headings, remarkPluginFrontmatter } = await renderEntry(entry);
     const { preamble, sections } = getDocsSearchContent(
-      entry.slug,
+      entry.id,
       remarkPluginFrontmatter,
       headings,
     );
-    const href = `${basePath}${entry.slug}/`;
+    const href = hrefForSlug?.(entry.id) ?? `${basePath}${entry.id}/`;
     const pageOrder = orderOffset + pageIndex * 100;
     const description = entry.data.description ?? makeExcerpt(preamble);
 
     records.push({
-      id: `${category.toLowerCase()}:${entry.slug}`,
+      id: `${category.toLowerCase()}:${entry.id}`,
       href,
       category,
       kind: 'page',
@@ -143,7 +146,7 @@ export async function buildCollectionSearchItems({
 
     for (const [sectionIndex, section] of sections.entries()) {
       records.push({
-        id: `${category.toLowerCase()}:${entry.slug}:${section.heading.slug}`,
+        id: `${category.toLowerCase()}:${entry.id}:${section.heading.slug}`,
         href: `${href}#${section.heading.slug}`,
         category,
         kind: 'section',

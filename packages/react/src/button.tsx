@@ -761,11 +761,11 @@ function NavigationButton({ ref: forwardedRef, ...inputProps }: NavigationButton
   const hasName = hasAccessibleName(props);
   invariantDev(
     !isIconOnly || hasName,
-    'Coral UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with iconOnly requires a non-empty aria-label or aria-labelledby.',
   );
   invariantDev(
     !pending || hasChildren || hasName,
-    'Coral UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
+    'Veli UI: Button with isLoading or isPending and no children requires a non-empty aria-label or aria-labelledby.',
   );
   const { buttonEventHandlers } = useButtonRipple<HTMLAnchorElement>({
     ref,

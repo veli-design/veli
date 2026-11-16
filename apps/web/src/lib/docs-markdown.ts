@@ -1,5 +1,5 @@
 import { blockPages } from './blocks';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import {
   componentGroups,
   docsOverview,
@@ -11,16 +11,17 @@ import {
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
+export type DocsSection = 'Overview' | 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
 
 type EntrySource =
   | { kind: 'entry'; entry: CollectionEntry<'docs'> }
   | { kind: 'entry'; entry: CollectionEntry<'foundations'> }
-  | { kind: 'entry'; entry: CollectionEntry<'patterns'> };
+  | { kind: 'entry'; entry: CollectionEntry<'patterns'> }
+  | { kind: 'entry'; entry: CollectionEntry<'guides'> };
 
 type OverviewSource = {
   kind: 'overview';
-  overview: 'docs' | 'foundations';
+  overview: 'documentation' | 'docs' | 'foundations' | 'patterns';
 };
 
 export type DocsCatalogPage = {
@@ -58,7 +59,7 @@ export function toMarkdownPath(htmlPath: string) {
 function requireDescription(entry: CollectionEntry<'docs' | 'foundations' | 'patterns'>) {
   const description = entry.data.description?.trim();
   if (!description) {
-    throw new Error(`[docs-markdown] ${entry.collection}/${entry.slug} is missing a description`);
+    throw new Error(`[docs-markdown] ${entry.collection}/${entry.id} is missing a description`);
   }
 
   return description;
@@ -69,9 +70,9 @@ function orderCollectionEntries<T extends 'docs' | 'foundations' | 'patterns'>(
   entries: CollectionEntry<T>[],
   navigationItems: readonly NavigationItem[],
 ) {
-  const entryBySlug = new Map(entries.map((entry) => [entry.slug, entry]));
+  const entryBySlug = new Map(entries.map((entry) => [entry.id, entry]));
   const navigationSlugs = new Set(navigationItems.map((item) => item.slug));
-  const unexpectedEntries = entries.filter((entry) => !navigationSlugs.has(entry.slug));
+  const unexpectedEntries = entries.filter((entry) => !navigationSlugs.has(entry.id));
   const missingEntries = navigationItems.filter((item) => !entryBySlug.has(item.slug));
 
   if (missingEntries.length > 0 || unexpectedEntries.length > 0) {
@@ -80,7 +81,7 @@ function orderCollectionEntries<T extends 'docs' | 'foundations' | 'patterns'>(
         ? `missing: ${missingEntries.map((item) => item.slug).join(', ')}`
         : '',
       unexpectedEntries.length > 0
-        ? `unlisted: ${unexpectedEntries.map((entry) => entry.slug).join(', ')}`
+        ? `unlisted: ${unexpectedEntries.map((entry) => entry.id).join(', ')}`
         : '',
     ]
       .filter(Boolean)
@@ -116,6 +117,8 @@ function validateCatalog(pages: readonly DocsCatalogPage[]) {
 }
 
 export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted) throw new Error('[docs-markdown] Get Started guide is missing');
   const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
     getCollection('docs'),
     getCollection('foundations'),
@@ -132,6 +135,16 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
   );
   const pages: DocsCatalogPage[] = [
     {
+      id: 'documentation',
+      section: 'Overview',
+      label: getStarted.data.title,
+      title: getStarted.data.title,
+      description: getStarted.data.description!,
+      htmlPath: '/docs/',
+      markdownPath: '/docs/index.md',
+      source: { kind: 'entry', entry: getStarted },
+    },
+    {
       id: 'foundations',
       section: 'Foundations',
       label: foundationsOverview.label,
@@ -143,13 +156,13 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
     },
     ...orderedFoundations.map(
       (entry): DocsCatalogPage => ({
-        id: `foundations/${entry.slug}`,
+        id: `foundations/${entry.id}`,
         section: 'Foundations',
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/foundations/${entry.slug}/`,
-        markdownPath: `/foundations/${entry.slug}/index.md`,
+        htmlPath: `/docs/foundations/${entry.id}/`,
+        markdownPath: `/docs/foundations/${entry.id}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
@@ -165,26 +178,36 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
     },
     ...orderedComponents.map(
       (entry): DocsCatalogPage => ({
-        id: `docs/${entry.slug}`,
+        id: `docs/${entry.id}`,
         section: 'Components',
-        group: componentGroupBySlug.get(entry.slug),
+        group: componentGroupBySlug.get(entry.id),
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/docs/${entry.slug}/`,
-        markdownPath: `/docs/${entry.slug}/index.md`,
+        htmlPath: `/docs/components/${entry.id}/`,
+        markdownPath: `/docs/components/${entry.id}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
+    {
+      id: 'patterns',
+      section: 'Patterns',
+      label: 'Patterns overview',
+      title: 'Veli Patterns',
+      description: 'Reusable approaches for recurring service interactions and content flows.',
+      htmlPath: '/docs/patterns/',
+      markdownPath: '/docs/patterns/index.md',
+      source: { kind: 'overview', overview: 'patterns' },
+    },
     ...orderedPatterns.map(
       (entry): DocsCatalogPage => ({
-        id: `patterns/${entry.slug}`,
+        id: `patterns/${entry.id}`,
         section: 'Patterns',
         label: entry.data.title,
         title: entry.data.title,
         description: requireDescription(entry),
-        htmlPath: `/patterns/${entry.slug}/`,
-        markdownPath: `/patterns/${entry.slug}/index.md`,
+        htmlPath: `/docs/patterns/${entry.id}/`,
+        markdownPath: `/docs/patterns/${entry.id}/index.md`,
         source: { kind: 'entry', entry },
       }),
     ),
@@ -196,8 +219,8 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
         ...page,
         section: 'Blocks',
         label: page.title,
-        htmlPath: `/${page.id}/`,
-        markdownPath: `/${page.id}/index.md`,
+        htmlPath: `/docs/${page.id}/`,
+        markdownPath: `/docs/${page.id}/index.md`,
         source: { kind: 'block', markdown: page.markdown },
       }),
     ),
@@ -223,7 +246,30 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     throw new Error(`[docs-markdown] ${page.id} is not an overview page`);
   }
 
-  if (page.source.overview === 'foundations') {
+  if (page.source.overview === 'documentation') {
+    lines.push(
+      '## Explore the system',
+      '',
+      markdownListItem('Foundations', '/docs/foundations/', foundationsOverview.description),
+      markdownListItem('Components', '/docs/components/', docsOverview.description),
+      markdownListItem(
+        'Patterns',
+        '/docs/patterns/',
+        'Recurring service interactions and content flows.',
+      ),
+      markdownListItem(
+        'Blocks',
+        '/docs/blocks/',
+        'Editable compositions built from Veli primitives.',
+      ),
+    );
+  } else if (page.source.overview === 'patterns') {
+    lines.push(
+      '## Patterns',
+      '',
+      ...patterns.map((item) => markdownListItem(item.title, item.href, item.description)),
+    );
+  } else if (page.source.overview === 'foundations') {
     lines.push(
       '## Foundations',
       '',
@@ -246,7 +292,7 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
         `## ${group.title}`,
         '',
         ...group.items.map((item) =>
-          markdownListItem(item.title, `/docs/${item.slug}/`, item.description),
+          markdownListItem(item.title, `/docs/components/${item.slug}/`, item.description),
         ),
         '',
       );
@@ -264,7 +310,7 @@ async function renderDocsPage(page: DocsCatalogPage): Promise<RenderedDocsPage> 
   } else if (page.source.kind === 'overview') {
     markdown = buildOverviewMarkdown(page);
   } else {
-    const rendered = await page.source.entry.render();
+    const rendered = await render(page.source.entry);
     const generated = rendered.remarkPluginFrontmatter[docsMarkdownFrontmatterKey];
     if (typeof generated !== 'string' || generated.length === 0) {
       throw new Error(`[docs-markdown] no canonical Markdown was generated for ${page.id}`);
@@ -311,6 +357,11 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
     '',
     '## Start here',
     '',
+    ...pages
+      .filter((page) => ['documentation', 'patterns'].includes(page.id))
+      .map((page) =>
+        markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
+      ),
     markdownListItem(
       docsOverviewPage.label,
       artifactUrl(docsOverviewPage.markdownPath, origin),

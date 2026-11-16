@@ -7,6 +7,7 @@ import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stageConsumer, validateManifest, packages } from './release-sites.mjs';
 import { spawnSyncCorepack } from './corepack.mjs';
+import { localGitEnv } from './git-env.mjs';
 import { validatePublishedSnapshot, versionManifest } from './published-packages.mjs';
 
 export const repository = fileURLToPath(new URL('../', import.meta.url));
@@ -15,7 +16,12 @@ const sha = /^[a-f0-9]{40}$/;
 const hash = /^[a-f0-9]{64}$/;
 const json = (value) => JSON.stringify(value, null, 2) + '\n';
 const git = (root, ...args) =>
-  execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  execFileSync('git', args, {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: localGitEnv(),
+  });
 
 export function siteOrigin(value) {
   const url = new URL(value);
@@ -289,7 +295,7 @@ export async function captureSiteBundle(plan, consumer, output, root = repositor
     ['corepack', ['--version']],
     ['pnpm', ['pnpm', '--version']],
   ]) {
-    const result = spawnSyncCorepack(args, { cwd: consumer, encoding: 'utf8' });
+    const result = spawnSyncCorepack(args, { cwd: consumer, encoding: 'utf8', env: localGitEnv() });
     assert.equal(result.status, 0, `Cannot record actual ${name} version`);
     tools[name] = result.stdout.trim();
   }

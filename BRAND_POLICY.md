@@ -9,10 +9,14 @@ relicenses excluded brand/government assets or third-party material.
 The following materials are excluded from both original-work grants:
 
 - Veli Design names, logos and brand artwork, including `apps/web/public/favicon*.svg`,
-  `apps/web/public/images/veli-mark.svg`, `home-veli-logo-*.svg`,
-  `home-shader-mask-*.svg` and `veli-home-background.png` in that images directory.
+  `apps/web/public/images/veli-mark.svg` and `veli-design-*.svg` in
+  `apps/web/public/images/marketing/`, and `home-hero.svg` in
+  `apps/web/src/assets/marketing/`.
 - Government and organisation identifiers: `govmv-logo*.svg`, `maldives-flag.svg`
-  and `example-organization-emblem.svg` in both apps' `public/blocks/` directories.
+  and `example-organization-emblem.svg` in both apps' `public/blocks/` directories;
+  `govmv-wordmark.svg`, `government-emblem*.svg`, and `mindco-wordmark.svg`
+  in `apps/web/public/images/marketing/`; `adoption-emblem.png` in that directory;
+  and `home-govmv.svg` in `apps/web/src/assets/marketing/`.
 - Font binaries in `apps/web/public/fonts/` and `apps/storybook/public/fonts/`.
   These require their own upstream licences and notices; font-family names in
   the tokens do not distribute or license fonts.

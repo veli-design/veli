@@ -1,0 +1,12 @@
+---
+interface Props {
+  kind: 'foundations' | 'components' | 'patterns' | 'blocks';
+}
+const { kind } = Astro.props;
+const path = `/images/marketing/explore/${kind}`;
+---
+
+<picture class="xi">
+  <source media="(max-width: 600px)" srcset={`${path}-mobile.svg`} />
+  <img class="xi-p" src={`${path}.svg`} alt="" loading="lazy" decoding="async" />
+</picture>

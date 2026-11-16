@@ -3,18 +3,31 @@ import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 
 interface Props {
   slug: string;
+  resource?: boolean;
 }
 
-const { slug } = Astro.props;
+const { slug, resource = false } = Astro.props;
 const configuredBaseUrl = import.meta.env.PUBLIC_STORYBOOK_URL?.trim().replace(/\/$/, '');
 const storybookBaseUrl = configuredBaseUrl || 'http://localhost:6006';
 const href = `${storybookBaseUrl}/?path=/docs/components-${slug}--docs`;
 ---
 
-<a class="docs-storybook-link" href={href} target="_blank" rel="noopener noreferrer">
-  <span>Explore in Storybook</span>
+<a
+  class:list={['docs-storybook-link', resource && 'get-started-resource']}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  {resource && <img src="/images/get-started/c16dd.svg" width="20" height="20" alt="" />}
+  <span>{resource ? 'Storybook' : 'Explore in Storybook'}</span>
   <span class="docs-storybook-link__icon" aria-hidden="true">
-    <ArrowSquareOutIcon size={12} />
+    {
+      resource ? (
+        <img src="/images/get-started/0e6a1.svg" width="16" height="16" alt="" />
+      ) : (
+        <ArrowSquareOutIcon size={12} />
+      )
+    }
   </span>
   <span class="sr-only"> (opens in a new tab)</span>
 </a>

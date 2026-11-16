@@ -1,5 +1,5 @@
 {
-  "sharedForbidSnippets": ["allowsBrowse", "Coral UI"],
+  "sharedForbidSnippets": ["allowsBrowse"],
   "signalTasks": [
     "15-form-setting",
     "16-undo-toast",
