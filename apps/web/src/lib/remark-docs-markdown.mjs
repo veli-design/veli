@@ -101,7 +101,9 @@ function isInteractivePreview(node, importedNames, file) {
 }
 
 function getDocumentPath(file) {
-  const href = documentHref(documentName(file));
+  const path = documentName(file).replaceAll('\\', '/');
+  if (path.endsWith('/src/content/guides/get-started.mdx')) return '/docs/';
+  const href = documentHref(path);
   if (!href) {
     throw markdownError(file, 'could not derive the rendered documentation URL');
   }

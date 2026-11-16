@@ -1,7 +1,7 @@
 {
   "id": "service-detail",
   "title": "Service detail",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "status": "experimental",
   "description": "Service summary, application options and accessible guideline sheet with host-owned content and actions.",
   "files": [
@@ -26,8 +26,8 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.0",
-    "@veli-design/tokens": "0.11.0",
+    "@veli-design/react": "0.20.1",
+    "@veli-design/tokens": "0.11.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.22.0",

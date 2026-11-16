@@ -1,3 +1,9 @@
+## 0.5.1
+
+### Fixed
+
+- Refresh the exact tested dependency baseline to tokens 0.11.1 for the repository-transfer metadata release. Copied source and supported dependency ranges are unchanged; previous block archives retain their existing baselines.
+
 ## 0.5.0
 
 ### Changed

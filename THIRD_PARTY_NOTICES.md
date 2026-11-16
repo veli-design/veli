@@ -36,6 +36,14 @@ licensing metadata and any accompanying copyright, licence and notice informatio
 required for redistribution. Font binaries are not included in these npm packages.
 See `ASSET_LICENSES.md` for the category-level asset policy.
 
+## Website animation player
+
+The homepage card previews bundle the SVG light player from `lottie-web` 5.12.2
+under MIT, copyright (c) 2015 Bodymovin. Its complete upstream licence ships with
+the website at `apps/web/public/third-party/LOTTIE-LICENSE.txt`. This player is not
+included in the published Veli npm packages. The animation artwork retains its
+separate original-project or asset terms.
+
 ## Self-hosted web fonts
 
 The following unchanged font binaries in `apps/web/public/fonts/` use the
@@ -53,9 +61,9 @@ IBM Plex Mono's notice is preserved from [IBM Plex](https://github.com/IBM/plex/
 Keep the accompanying notices, embedded metadata and applicable reserved-font-name
 conditions when redistributing or modifying these fonts. These notices cover only
 the listed open-source fonts; they do not grant rights to the Dhivehi font files.
-See [the asset policy](ASSET_LICENSES.md#outstanding-asset-permissions) for those
-unresolved permissions. Storybook's externally loaded Google Fonts stylesheet
-is separate from these self-hosted web binaries.
+See [the Dhivehi font notice](ASSET_LICENSES.md#dhivehi-fonts) for their credits,
+Veli Design's author approval and separate conditions. Storybook's externally
+loaded Google Fonts stylesheet is separate from these self-hosted web binaries.
 
 ## Notice scope and obligations
 

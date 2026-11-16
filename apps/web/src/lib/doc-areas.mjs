@@ -60,8 +60,8 @@ export function defineDocAreas(areas) {
     bands.add(area.searchBand);
 
     if (area.membership === 'inventory') {
-      if (typeof area.collection !== 'string' || area.collection !== area.segment) {
-        throw new Error(`[doc-areas] ${area.id} collection must equal its segment`);
+      if (typeof area.collection !== 'string' || !/^[a-z0-9-]+$/.test(area.collection)) {
+        throw new Error(`[doc-areas] ${area.id} needs a content collection`);
       }
       if (collections.has(area.collection)) {
         throw new Error(`[doc-areas] duplicate collection "${area.collection}"`);
@@ -106,7 +106,8 @@ const areas = /** @type {const} */ ([
   {
     id: 'components',
     title: 'Components',
-    segment: 'docs',
+    // Content stays in src/content/docs. The public route is /docs/components.
+    segment: 'components',
     collection: 'docs',
     membership: 'inventory',
     catalogOverview: true,
@@ -130,7 +131,7 @@ const areas = /** @type {const} */ ([
     searchBand: 3,
     assetRules: [
       {
-        pattern: '/blocks/*/source.tar.gz',
+        pattern: '/docs/blocks/*/source.tar.gz',
         headers: {
           'Content-Type': 'application/gzip',
           'Content-Disposition': 'attachment',
@@ -161,35 +162,37 @@ export function areaNavTitle(area) {
 }
 
 /**
+ * Public URL. Every section lives under /docs.
  * @param {(typeof docAreas)[number]} area
  * @param {string | null} [slug]
- * @returns {`/${string}/`}
+ * @returns {`/docs/${string}/`}
  */
 export function pageHref(area, slug = null) {
   if (!area || typeof area.segment !== 'string' || area.segment.length === 0) {
     throw new Error('[doc-areas] pageHref requires an area');
   }
-  if (slug === null) return `/${area.segment}/`;
+  if (slug === null) return `/docs/${area.segment}/`;
   if (typeof slug !== 'string' || slug.length === 0 || slug.includes('/')) {
     throw new Error(`[doc-areas] invalid slug "${slug}"`);
   }
-  return `/${area.segment}/${slug}/`;
+  return `/docs/${area.segment}/${slug}/`;
 }
 
 /**
- * Overview ids use the URL segment, so Components is `docs`, not `components`.
+ * Overview ids use the content collection, so Components is `docs`, not `components`.
  * @param {(typeof docAreas)[number]} area
  * @param {string | null} [slug]
  */
 export function pageId(area, slug = null) {
-  if (!area || typeof area.segment !== 'string') {
+  const key = area && 'collection' in area && area.collection ? area.collection : area?.segment;
+  if (typeof key !== 'string' || key.length === 0) {
     throw new Error('[doc-areas] pageId requires an area');
   }
-  if (slug === null) return area.segment;
+  if (slug === null) return key;
   if (typeof slug !== 'string' || slug.length === 0 || slug.includes('/')) {
     throw new Error(`[doc-areas] invalid slug "${slug}"`);
   }
-  return `${area.segment}/${slug}`;
+  return `${key}/${slug}`;
 }
 
 /**
@@ -243,7 +246,7 @@ export function renderHeaders(source = docAreas) {
   const blocks = [];
 
   for (const area of source) {
-    blocks.push(`/${area.segment}/*.md\n  Content-Type: ${markdownContentType}`);
+    blocks.push(`/docs/${area.segment}/*.md\n  Content-Type: ${markdownContentType}`);
   }
 
   for (const area of source) {

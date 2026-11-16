@@ -289,3 +289,28 @@ test('workflow syntax, dependency graph, conditions and unchanged coverage wirin
   assert.match(candidate.with.name, /github.run_attempt/);
   assert.ok(setup.runs.steps.some((step) => step.run?.includes('consumer-ci.mjs verify')));
 });
+
+test('site preview infrastructure selects both source and installed-package gates', () => {
+  for (const path of [
+    'scripts/check-site-previews.mjs',
+    'scripts/local-site-previews.mjs',
+    'scripts/git-env.mjs',
+  ])
+    assert.deepEqual(classify([path]), {
+      next: false,
+      blocks: false,
+      sites: true,
+      cold: true,
+      candidate: true,
+    });
+});
+
+test('pinned Playwright browser jobs use a supported Ubuntu runner', async () => {
+  const { parse } = await import('yaml');
+  const workflow = parse(
+    readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8'),
+  );
+  for (const job of ['block-browser', 'packaged-sites', 'cold-reload']) {
+    assert.equal(workflow.jobs[job]['runs-on'], 'ubuntu-24.04', job);
+  }
+});

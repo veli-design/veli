@@ -7,7 +7,7 @@ export async function getStaticPaths() {
   const pages = await getRenderedDocsCatalog();
 
   return pages.map((page) => ({
-    params: { path: page.id },
+    params: { path: page.markdownPath.slice(1).replace(/\/index\.md$/, '') },
     props: { page },
   }));
 }

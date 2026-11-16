@@ -33,7 +33,7 @@ try {
     }
   }
   for (const [name, args] of [
-    ['veli-web', ['--host', '127.0.0.1', '--port', '4322']],
+    ['veli-web', ['--host', '127.0.0.1', '--port', '4322', '--ignore-lock']],
     ['veli-storybook', ['--host', '127.0.0.1', '--port', '6007', '--ci']],
   ])
     servers.push(
@@ -44,7 +44,7 @@ try {
       }),
     );
   await Promise.all([
-    ready('http://127.0.0.1:4322/docs/button/'),
+    ready('http://127.0.0.1:4322/docs/components/button/'),
     ready('http://127.0.0.1:6007/index.json'),
   ]);
   const probe = spawn(process.execPath, ['scripts/verify-playground.mjs', process.argv[2]], {
@@ -52,7 +52,7 @@ try {
     stdio: 'inherit',
     env: {
       ...process.env,
-      VELI_DOCS_URL: 'http://127.0.0.1:4322/docs/button/',
+      VELI_DOCS_URL: 'http://127.0.0.1:4322/docs/components/button/',
       VELI_STORYBOOK_URL:
         'http://127.0.0.1:6007/iframe.html?id=components-button--playground&viewMode=story',
     },
