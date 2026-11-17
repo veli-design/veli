@@ -48,16 +48,14 @@ const columns = [
       <span>Maldives Government Design System</span>
     </a>
     <nav class="marketing-footer-columns" aria-label="Footer navigation">
-      {
-        columns.map((column) => (
-          <div>
-            <h2>{column.title}</h2>
-            {column.links.map(([label, href]) => (
-              <a href={href}>{label}</a>
-            ))}
-          </div>
-        ))
-      }
+      {columns.map((column) => (
+        <div>
+          <h2>{column.title}</h2>
+          {column.links.map(([label, href]) => (
+            <a href={href}>{label}</a>
+          ))}
+        </div>
+      ))}
     </nav>
   </div>
   <div class="marketing-footer-bottom">
@@ -71,9 +69,15 @@ const columns = [
     </a>
     <div class="marketing-preferences">
       <div class="marketing-theme" role="group" aria-label="Colour scheme">
-        <button type="button" data-theme-choice="system" aria-pressed="true"> System </button>
-        <button type="button" data-theme-choice="light" aria-pressed="false"> Light </button>
-        <button type="button" data-theme-choice="dark" aria-pressed="false"> Dark </button>
+        <button type="button" data-theme-choice="system" aria-pressed="true">
+          System
+        </button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">
+          Light
+        </button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">
+          Dark
+        </button>
       </div>
       <button
         class="marketing-motion"

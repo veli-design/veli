@@ -54,24 +54,22 @@ const markdownPath = docsOverview.markdownPath;
     </section>
 
     <div class="docs-overview-directory">
-      {
-        componentGroups.map((group) => {
-          const id = getComponentGroupSlug(group.title);
-          return (
-            <section class="docs-list-section" id={id}>
-              <h2>{group.title}</h2>
-              <div class="docs-link-list">
-                {group.items.map((item) => (
-                  <a href={`/docs/components/${item.slug}/`}>
-                    <span>{item.title}</span>
-                    <p>{item.description}</p>
-                  </a>
-                ))}
-              </div>
-            </section>
-          );
-        })
-      }
+      {componentGroups.map((group) => {
+        const id = getComponentGroupSlug(group.title);
+        return (
+          <section class="docs-list-section" id={id}>
+            <h2>{group.title}</h2>
+            <div class="docs-link-list">
+              {group.items.map((item) => (
+                <a href={`/docs/components/${item.slug}/`}>
+                  <span>{item.title}</span>
+                  <p>{item.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   </div>
 </DocsLayout>

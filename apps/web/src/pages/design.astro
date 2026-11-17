@@ -83,29 +83,27 @@ const forces = [
           </p>
         </div>
         <div class="design-force-grid">
-          {
-            forces.map((force) => (
-              <article
-                class="design-force-card"
-                data-design-field={force.name}
-                data-design-preview-host
-              >
-                <>
-                  <canvas aria-hidden="true" />
-                  <div
-                    class="design-preview-animation design-preview-force"
-                    data-design-animation={force.name}
-                    aria-hidden="true"
-                  />
-                  <div class="design-force-icon">
-                    <img src={`${a}${force.icon}`} width="100" height="100" alt="" />
-                  </div>
-                  <h3>{force.title}</h3>
-                  <p>{force.description}</p>
-                </>
-              </article>
-            ))
-          }
+          {forces.map((force) => (
+            <article
+              class="design-force-card"
+              data-design-field={force.name}
+              data-design-preview-host
+            >
+              <>
+                <canvas aria-hidden="true" />
+                <div
+                  class="design-preview-animation design-preview-force"
+                  data-design-animation={force.name}
+                  aria-hidden="true"
+                />
+                <div class="design-force-icon">
+                  <img src={`${a}${force.icon}`} width="100" height="100" alt="" />
+                </div>
+                <h3>{force.title}</h3>
+                <p>{force.description}</p>
+              </>
+            </article>
+          ))}
         </div>
         <div class="design-responds">
           <p>A design system responds to</p>
@@ -139,8 +137,11 @@ const forces = [
             Veli foundations grow into coral components, reef patterns, island blocks, and atolls of
             services.
           </figcaption>
-          <div class="design-preview-animation" data-design-animation="atoll" aria-hidden="true">
-          </div>
+          <div
+            class="design-preview-animation"
+            data-design-animation="atoll"
+            aria-hidden="true"
+          ></div>
         </figure>
         <p class="design-atoll-key" aria-hidden="true">
           Foundations → Components → Patterns → Blocks → Services
@@ -165,8 +166,11 @@ const forces = [
               height="301"
               alt="Light: soft blue, teal, and white illumination"
             />
-            <div class="design-preview-animation" data-design-animation="light" aria-hidden="true">
-            </div>
+            <div
+              class="design-preview-animation"
+              data-design-animation="light"
+              aria-hidden="true"
+            ></div>
           </div>
           <div data-design-scene="texture" data-design-preview-host>
             <img
@@ -179,8 +183,7 @@ const forces = [
               class="design-preview-animation"
               data-design-animation="texture"
               aria-hidden="true"
-            >
-            </div>
+            ></div>
           </div>
           <div data-design-scene="curve" data-design-preview-host>
             <img
@@ -189,8 +192,11 @@ const forces = [
               height="404"
               alt="Motion: a smooth curve with measured control points"
             />
-            <div class="design-preview-animation" data-design-animation="curve" aria-hidden="true">
-            </div>
+            <div
+              class="design-preview-animation"
+              data-design-animation="curve"
+              aria-hidden="true"
+            ></div>
           </div>
         </div>
       </section>
@@ -221,7 +227,9 @@ const forces = [
               alt=""
             />
             <div class="design-guide" aria-hidden="true" data-design-preview-host>
-              {[0, 1, 2, 3].map((i) => <span style={{ '--i': i }} />)}
+              {[0, 1, 2, 3].map((i) => (
+                <span style={{ '--i': i }} />
+              ))}
               <div class="design-preview-animation" data-design-animation="guide"></div>
             </div>
             <div class="design-connect" aria-hidden="true" data-design-preview-host>
@@ -304,7 +312,9 @@ const forces = [
             <p>
               Thaana
               <br />
-              <span lang="dv" dir="rtl"> ތާނަ </span>
+              <span lang="dv" dir="rtl">
+                ތާނަ
+              </span>
             </p>
           </div>
         </div>

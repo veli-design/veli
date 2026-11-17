@@ -17,44 +17,42 @@ const themeChoices = [
 
 <div class="docs-footer-controls">
   <nav class="docs-resources" aria-label="Veli resources">
-    {
-      externalResources.map((item) => {
-        const icon = resourceIcons[item.icon];
-        const tooltip = item.status === 'coming-soon' ? 'Coming soon' : item.label;
+    {externalResources.map((item) => {
+      const icon = resourceIcons[item.icon];
+      const tooltip = item.status === 'coming-soon' ? 'Coming soon' : item.label;
 
-        if (!item.href) {
-          return (
-            <span
-              class="docs-footer-control docs-resource is-disabled"
-              role="link"
-              aria-label={`${item.label}: ${tooltip}`}
-              aria-disabled="true"
-              tabindex="0"
-            >
-              <DocsPhosphorIcon name={icon} />
-              <span class="docs-control-tooltip" aria-hidden="true">
-                {tooltip}
-              </span>
-            </span>
-          );
-        }
-
+      if (!item.href) {
         return (
-          <a
-            class="docs-footer-control docs-resource"
-            href={item.href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={item.label}
+          <span
+            class="docs-footer-control docs-resource is-disabled"
+            role="link"
+            aria-label={`${item.label}: ${tooltip}`}
+            aria-disabled="true"
+            tabindex="0"
           >
             <DocsPhosphorIcon name={icon} />
             <span class="docs-control-tooltip" aria-hidden="true">
               {tooltip}
             </span>
-          </a>
+          </span>
         );
-      })
-    }
+      }
+
+      return (
+        <a
+          class="docs-footer-control docs-resource"
+          href={item.href}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={item.label}
+        >
+          <DocsPhosphorIcon name={icon} />
+          <span class="docs-control-tooltip" aria-hidden="true">
+            {tooltip}
+          </span>
+        </a>
+      );
+    })}
   </nav>
 
   <span class="docs-footer-controls__divider" aria-hidden="true"></span>
@@ -65,11 +63,9 @@ const themeChoices = [
     aria-label="Use system theme"
     data-theme-cycle
   >
-    {
-      themeChoices.map((choice) => {
-        return <DocsPhosphorIcon name={choice.icon} data-theme-icon={choice.id} />;
-      })
-    }
+    {themeChoices.map((choice) => {
+      return <DocsPhosphorIcon name={choice.icon} data-theme-icon={choice.id} />;
+    })}
     <span class="docs-control-tooltip" aria-hidden="true" data-theme-label>
       {' '}
       Use system theme{' '}

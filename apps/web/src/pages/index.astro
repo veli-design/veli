@@ -106,68 +106,68 @@ const foundations = [
           and easier to use.
         </p>
         <div data-intro data-solid="rect" data-group="text">
-          <Button as="a" href="/docs/" intent="accent" size="xl"> Get Started </Button>
+          <Button as="a" href="/docs/" intent="accent" size="xl">
+            Get Started
+          </Button>
         </div>
       </section>
       <section class="marketing-feature-grid cards-v2" aria-label="Principles" data-reveal>
-        {
-          features.map((feature, index) => (
-            <article
-              class:list={[
-                'marketing-feature',
-                'pcard',
-                index === 2 && 'marketing-feature-wide',
-                index === 2 && 'wide',
-              ]}
-              data-card={index + 1}
-              data-reveal-item
-              data-solid="rect"
-              data-group="cards"
+        {features.map((feature, index) => (
+          <article
+            class:list={[
+              'marketing-feature',
+              'pcard',
+              index === 2 && 'marketing-feature-wide',
+              index === 2 && 'wide',
+            ]}
+            data-card={index + 1}
+            data-reveal-item
+            data-solid="rect"
+            data-group="cards"
+          >
+            <div
+              class="marketing-feature-art anim"
+              aria-hidden="true"
+              data-lottie={feature.name}
+              data-lottie-solids={feature.solids}
+              data-lottie-align={index === 2 ? 'xMidYMin' : undefined}
+              data-stipple
+              data-stipple-key={`stPattern${index + 1}`}
+              data-stipple-color-key={`cardHover${index + 1}`}
             >
-              <div
-                class="marketing-feature-art anim"
-                aria-hidden="true"
-                data-lottie={feature.name}
-                data-lottie-solids={feature.solids}
-                data-lottie-align={index === 2 ? 'xMidYMin' : undefined}
-                data-stipple
-                data-stipple-key={`stPattern${index + 1}`}
-                data-stipple-color-key={`cardHover${index + 1}`}
-              >
-                <img
-                  class="marketing-animation-fallback"
-                  src={`${a}${feature.image}`}
-                  width={feature.width}
-                  height={feature.height}
-                  loading="lazy"
-                  alt=""
+              <img
+                class="marketing-animation-fallback"
+                src={`${a}${feature.image}`}
+                width={feature.width}
+                height={feature.height}
+                loading="lazy"
+                alt=""
+              />
+              <div class="lottie-box" />
+            </div>
+            <button
+              class="lt-replay"
+              type="button"
+              aria-label={`Replay the ${feature.title} animation`}
+              hidden
+            >
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+                <path
+                  d="M16.7 10a6.7 6.7 0 1 1-1.9-4.7M15 2v4h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
                 />
-                <div class="lottie-box" />
-              </div>
-              <button
-                class="lt-replay"
-                type="button"
-                aria-label={`Replay the ${feature.title} animation`}
-                hidden
-              >
-                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
-                  <path
-                    d="M16.7 10a6.7 6.7 0 1 1-1.9-4.7M15 2v4h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
-              <div class="marketing-feature-copy head">
-                <h3 data-cf-avoid>{feature.title}</h3>
-                <p data-cf-avoid>{feature.description}</p>
-              </div>
-            </article>
-          ))
-        }
+              </svg>
+            </button>
+            <div class="marketing-feature-copy head">
+              <h3 data-cf-avoid>{feature.title}</h3>
+              <p data-cf-avoid>{feature.description}</p>
+            </div>
+          </article>
+        ))}
       </section>
       <section class="marketing-foundations foundation" aria-labelledby="foundation-title">
         <div class="marketing-statement" data-reveal>
@@ -181,26 +181,26 @@ const foundations = [
             purposeful motion inspired by the Maldives islands and its formation.
           </p>
           <div data-reveal-item>
-            <Button as="a" href="/docs/foundations/" intent="accent" size="xl"> Foundation </Button>
+            <Button as="a" href="/docs/foundations/" intent="accent" size="xl">
+              Foundation
+            </Button>
           </div>
         </div>
         <div class="marketing-foundation-grid fd-grid">
-          {
-            foundations.map(([kind, slug, label]) => (
-              <article class="fcard">
-                <div
-                  class="fd-panel"
-                  data-fd={kind}
-                  role="button"
-                  tabindex="0"
-                  aria-label={`${label} preview; replay animation`}
-                />
-                <a class="home-foundation-fallback" href={`/docs/foundations/${slug}/`}>
-                  {label}
-                </a>
-              </article>
-            ))
-          }
+          {foundations.map(([kind, slug, label]) => (
+            <article class="fcard">
+              <div
+                class="fd-panel"
+                data-fd={kind}
+                role="button"
+                tabindex="0"
+                aria-label={`${label} preview; replay animation`}
+              />
+              <a class="home-foundation-fallback" href={`/docs/foundations/${slug}/`}>
+                {label}
+              </a>
+            </article>
+          ))}
         </div>
       </section>
       <section class="marketing-adoption logos" aria-label="Government adoption">
@@ -213,21 +213,19 @@ const foundations = [
             <li class="lg-item">
               <Fragment set:html={govmv} />
             </li>
-            {
-              Array.from({ length: 5 }, (_, index) => (
-                <li class="lg-item" aria-hidden={index > 0 ? 'true' : undefined}>
-                  <img
-                    class="lg-emblem"
-                    src={`${a}adoption-emblem.png`}
-                    width="35"
-                    height="40"
-                    alt=""
-                    loading="lazy"
-                  />
-                  <span>Minister of Homeland Security, Labour and Technology</span>
-                </li>
-              ))
-            }
+            {Array.from({ length: 5 }, (_, index) => (
+              <li class="lg-item" aria-hidden={index > 0 ? 'true' : undefined}>
+                <img
+                  class="lg-emblem"
+                  src={`${a}adoption-emblem.png`}
+                  width="35"
+                  height="40"
+                  alt=""
+                  loading="lazy"
+                />
+                <span>Minister of Homeland Security, Labour and Technology</span>
+              </li>
+            ))}
           </ul>
         </div>
       </section>
@@ -240,31 +238,29 @@ const foundations = [
           </h2>
         </div>
         <div class="marketing-explore-grid explore">
-          {
-            explore.map((item) => (
-              <a class="xcol" href={`/docs/${item.slug}/`} data-reveal-item>
-                <span class="xi-box">
-                  <HomeExploreIcon kind={item.slug} />
-                </span>
-                <span class="head">
-                  <h3>
-                    {item.title}
-                    <svg class="xc" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-                      <path
-                        d="m7.5 5 5 5-5 5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </h3>
-                  <p>{item.description}</p>
-                </span>
-              </a>
-            ))
-          }
+          {explore.map((item) => (
+            <a class="xcol" href={`/docs/${item.slug}/`} data-reveal-item>
+              <span class="xi-box">
+                <HomeExploreIcon kind={item.slug} />
+              </span>
+              <span class="head">
+                <h3>
+                  {item.title}
+                  <svg class="xc" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+                    <path
+                      d="m7.5 5 5 5-5 5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </h3>
+                <p>{item.description}</p>
+              </span>
+            </a>
+          ))}
         </div>
       </section>
       <section class="marketing-contribute" aria-labelledby="contribute-title" data-cta="light">
@@ -280,8 +276,8 @@ const foundations = [
           <p>
             Whether you’re a designer, developer, or government team,
             <br class="marketing-desktop-break" />
-            your contributions can help make public services clearer, more consistent, and accessible
-            to everyone.
+            your contributions can help make public services clearer, more consistent, and
+            accessible to everyone.
           </p>
           <div data-cta-item>
             <Button

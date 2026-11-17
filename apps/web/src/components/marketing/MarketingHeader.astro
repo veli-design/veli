@@ -24,13 +24,11 @@ const github = 'https://github.com/veli-design/veli';
   <details>
     <summary>
       Here’s how you know{' '}
-      {
-        design ? (
-          <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
-        ) : (
-          <span aria-hidden="true">⌄</span>
-        )
-      }
+      {design ? (
+        <img src="/images/marketing/6b820.svg" width="14" height="14" alt="" />
+      ) : (
+        <span aria-hidden="true">⌄</span>
+      )}
     </summary>
     <p>
       Veli is the design system for Maldives government services. Check that you are visiting{' '}
@@ -49,7 +47,9 @@ const github = 'https://github.com/veli-design/veli';
     />
   </a>
   <nav class="marketing-desktop-nav" aria-label="Main navigation">
-    <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}> Design </a>
+    <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>
+      Design
+    </a>
     <a href="/docs/">Documentation</a>
     <a href="https://github.com/veli-design/veli/releases">What’s new</a>
     <span class="marketing-resource-links">
@@ -87,7 +87,9 @@ const github = 'https://github.com/veli-design/veli';
       <span aria-hidden="true">☰</span>
     </summary>
     <nav aria-label="Mobile main navigation">
-      <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}> Design </a>
+      <a href="/design/" aria-current={path === '/design/' ? 'page' : undefined}>
+        Design
+      </a>
       <a href="/docs/">Documentation</a>
       <a href="https://github.com/veli-design/veli/releases">What’s new</a>
       <a href={github}>GitHub</a>
