@@ -8,6 +8,8 @@ import {
   foundations,
   foundationsOverview,
   inventoryItems,
+  patterns,
+  patternsOverview,
 } from './site';
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
@@ -131,12 +133,23 @@ async function orderedInventoryEntries(area: InventoryArea) {
   }
 }
 
-function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview: true }>) {
-  if (area.id !== 'foundations' && area.id !== 'components') {
-    const unexpected: never = area;
-    throw new Error(`[docs-markdown] no overview copy for ${String(unexpected)}`);
+function overviewCopy(areaId: OverviewAreaId) {
+  switch (areaId) {
+    case 'foundations':
+      return foundationsOverview;
+    case 'components':
+      return docsOverview;
+    case 'patterns':
+      return patternsOverview;
+    default: {
+      const unexpected: never = areaId;
+      throw new Error(`[docs-markdown] no overview copy for ${String(unexpected)}`);
+    }
   }
-  const copy = area.id === 'foundations' ? foundationsOverview : docsOverview;
+}
+
+function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview: true }>) {
+  const copy = overviewCopy(area.id);
   const page: DocsCatalogPage = {
     id: pageId(area),
     section: area.id,
@@ -226,6 +239,12 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
       `## ${docArea('foundations').title}`,
       '',
       ...foundations.map((item) => markdownListItem(item.title, item.href, item.description)),
+    );
+  } else if (page.source.areaId === 'patterns') {
+    lines.push(
+      `## ${docArea('patterns').title}`,
+      '',
+      ...patterns.map((item) => markdownListItem(item.title, item.href, item.description)),
     );
   } else {
     const components = docArea('components');

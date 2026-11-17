@@ -119,7 +119,7 @@ const areas = /** @type {const} */ ([
     segment: 'patterns',
     collection: 'patterns',
     membership: 'inventory',
-    catalogOverview: false,
+    catalogOverview: true,
     searchBand: 2,
   },
   {

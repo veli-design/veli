@@ -40,6 +40,16 @@ export const foundationsOverview = {
   markdownPath: pageMarkdownPath(foundationsArea),
 } as const;
 
+export const patternsOverview = {
+  label: 'Patterns overview',
+  title: 'Veli Patterns',
+  description: 'Reusable approaches for recurring service interactions and content flows.',
+  documentTitle: 'Patterns | Veli Design System',
+  documentDescription: 'Reusable interaction and content patterns for Veli services.',
+  htmlPath: pageHref(patternsArea),
+  markdownPath: pageMarkdownPath(patternsArea),
+} as const;
+
 export type DocsNavigationItem = {
   title: string;
   href: string;

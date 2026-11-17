@@ -76,6 +76,7 @@ test('markdown header rules cover nested paths and the patterns section', () => 
     '/docs/foundations/index.md',
     '/docs/foundations/color/index.md',
     '/docs/components/button/index.md',
+    '/docs/patterns/index.md',
     '/docs/patterns/forms/index.md',
     '/docs/blocks/index.md',
     '/docs/blocks/notification-tray/index.md',

@@ -189,6 +189,7 @@ export function createOverviewSectionSearchItem(
 const overviewSearchDescription = {
   foundations: 'Principles, color, typography, spacing, motion, accessibility, and language.',
   components: 'Accessible Veli components for building consistent public services.',
+  patterns: 'Reusable approaches for recurring service interactions and content flows.',
 } as const;
 
 type SearchCollection = 'docs' | 'foundations' | 'patterns';
@@ -241,7 +242,7 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
 
     if (area.catalogOverview) {
       const description =
-        area.id === 'foundations' || area.id === 'components'
+        area.id === 'foundations' || area.id === 'components' || area.id === 'patterns'
           ? overviewSearchDescription[area.id]
           : undefined;
       if (!description) {
@@ -276,22 +277,6 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
           }),
         );
       }
-    }
-
-    if (area.id === 'patterns') {
-      items.push(
-        createOverviewSearchItem({
-          id: 'patterns:overview',
-          href: pageHref(area),
-          category: area.title,
-          title: area.title,
-          description: 'Reusable approaches for recurring service interactions and content flows.',
-          content: inventoryItems(area.id)
-            .map((item) => `${item.title} ${item.description}`)
-            .join(' '),
-          order: band - 1,
-        }),
-      );
     }
 
     const entries = await loadSearchEntries(area.collection, getCollection);
