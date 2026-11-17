@@ -71,98 +71,90 @@ const rhythm = [
 ];
 ---
 
-{
-  kind === 'families' && (
-    <div class="families">
-      {families.map((family) => (
-        <article>
-          <div>
-            <h3>{family.name}</h3>
-            <p>{family.detail}</p>
-          </div>
-          <p
-            class="families__sample"
-            lang={family.lang}
-            dir={family.lang === 'dv' ? 'rtl' : 'ltr'}
-            style={`font-family: ${family.family}`}
-          >
-            {family.sample}
-          </p>
-        </article>
-      ))}
-    </div>
-  )
-}
-
-{
-  kind === 'scale' && (
-    <div class="type-scale">
-      <div class="type-scale__header" aria-hidden="true">
-        <span>Role</span>
-        <span>English</span>
-        <span>Dhivehi</span>
-      </div>
-      {roles.map((role) => (
-        <article>
-          <header>
-            <strong>{role.name}</strong>
-            <span>
-              {role.latin[0]}px / {role.latin[1]}% · {role.dhivehi[0]}px / {role.dhivehi[1]}%
-            </span>
-          </header>
-          <p
-            class="type-scale__latin"
-            lang="en"
-            style={`font-size: ${role.latin[0]}px; line-height: ${role.latin[1]}%`}
-          >
-            The quick brown fox
-          </p>
-          <p
-            class="type-scale__dhivehi"
-            lang="dv"
-            dir="rtl"
-            style={`font-family: var(--veli-font-dhivehi-${role.family}); font-size: ${role.dhivehi[0]}px; line-height: ${role.dhivehi[1]}%`}
-          >
-            ބޮޑު ބާޒާރުގައި ހުންނަ މޮޅު އެއްޗެއް
-          </p>
-        </article>
-      ))}
-    </div>
-  )
-}
-
-{
-  kind === 'weights' && (
-    <div class="weights" aria-label="Inter font weights">
-      {weights.map((weight) => (
+{kind === 'families' && (
+  <div class="families">
+    {families.map((family) => (
+      <article>
         <div>
-          <p style={`font-weight: ${weight.value}`}>Aa Bb 123</p>
+          <h3>{family.name}</h3>
+          <p>{family.detail}</p>
+        </div>
+        <p
+          class="families__sample"
+          lang={family.lang}
+          dir={family.lang === 'dv' ? 'rtl' : 'ltr'}
+          style={`font-family: ${family.family}`}
+        >
+          {family.sample}
+        </p>
+      </article>
+    ))}
+  </div>
+)}
+
+{kind === 'scale' && (
+  <div class="type-scale">
+    <div class="type-scale__header" aria-hidden="true">
+      <span>Role</span>
+      <span>English</span>
+      <span>Dhivehi</span>
+    </div>
+    {roles.map((role) => (
+      <article>
+        <header>
+          <strong>{role.name}</strong>
           <span>
-            {weight.name} · {weight.value}
+            {role.latin[0]}px / {role.latin[1]}% · {role.dhivehi[0]}px / {role.dhivehi[1]}%
           </span>
-        </div>
-      ))}
-    </div>
-  )
-}
+        </header>
+        <p
+          class="type-scale__latin"
+          lang="en"
+          style={`font-size: ${role.latin[0]}px; line-height: ${role.latin[1]}%`}
+        >
+          The quick brown fox
+        </p>
+        <p
+          class="type-scale__dhivehi"
+          lang="dv"
+          dir="rtl"
+          style={`font-family: var(--veli-font-dhivehi-${role.family}); font-size: ${role.dhivehi[0]}px; line-height: ${role.dhivehi[1]}%`}
+        >
+          ބޮޑު ބާޒާރުގައި ހުންނަ މޮޅު އެއްޗެއް
+        </p>
+      </article>
+    ))}
+  </div>
+)}
 
-{
-  kind === 'rhythm' && (
-    <dl class="rhythm">
-      {rhythm.map((token) => (
-        <div>
-          <dt>
-            <span>{token.group}</span>
-            <code>
-              --{token.group.toLowerCase()}-{token.name}
-            </code>
-          </dt>
-          <dd>{token.value}</dd>
-        </div>
-      ))}
-    </dl>
-  )
-}
+{kind === 'weights' && (
+  <div class="weights" aria-label="Inter font weights">
+    {weights.map((weight) => (
+      <div>
+        <p style={`font-weight: ${weight.value}`}>Aa Bb 123</p>
+        <span>
+          {weight.name} · {weight.value}
+        </span>
+      </div>
+    ))}
+  </div>
+)}
+
+{kind === 'rhythm' && (
+  <dl class="rhythm">
+    {rhythm.map((token) => (
+      <div>
+        <dt>
+          <span>{token.group}</span>
+          <code>
+            --{token.group.toLowerCase()}-{token.name}
+          </code>
+        </dt>
+        <dd>{token.value}</dd>
+      </div>
+    ))}
+  </dl>
+)}
 
 <style>
   .families,

@@ -72,43 +72,37 @@ function isSectionActive(section: (typeof docsSections)[number]) {
             >
               Get Started
             </a>
-            {
-              docsSections.map((section) => {
-                const sectionActive = isSectionActive(section);
-                return (
-                  <details
-                    class="docs-nav-group"
-                    data-doc-group
-                    data-default-open={sectionActive ? 'true' : undefined}
-                    open={sectionActive}
-                  >
-                    <summary>
-                      <span>{section.title}</span>
-                      <CaretDownIcon
-                        className="docs-nav-group__caret"
-                        size={16}
-                        aria-hidden="true"
-                      />
-                    </summary>
-                    <div class="docs-nav-group__links">
-                      {section.items.map((item) => {
-                        const itemActive = isActive(item.href);
-                        return (
-                          <a
-                            class:list={['docs-nav-link', itemActive && 'is-active']}
-                            href={item.href}
-                            aria-current={itemActive ? 'page' : undefined}
-                            data-doc-link
-                          >
-                            {item.title}
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </details>
-                );
-              })
-            }
+            {docsSections.map((section) => {
+              const sectionActive = isSectionActive(section);
+              return (
+                <details
+                  class="docs-nav-group"
+                  data-doc-group
+                  data-default-open={sectionActive ? 'true' : undefined}
+                  open={sectionActive}
+                >
+                  <summary>
+                    <span>{section.title}</span>
+                    <CaretDownIcon className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                  </summary>
+                  <div class="docs-nav-group__links">
+                    {section.items.map((item) => {
+                      const itemActive = isActive(item.href);
+                      return (
+                        <a
+                          class:list={['docs-nav-link', itemActive && 'is-active']}
+                          href={item.href}
+                          aria-current={itemActive ? 'page' : undefined}
+                          data-doc-link
+                        >
+                          {item.title}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </details>
+              );
+            })}
           </nav>
         </div>
       </div>
@@ -138,43 +132,37 @@ function isSectionActive(section: (typeof docsSections)[number]) {
             >
               Get Started
             </a>
-            {
-              docsSections.map((section) => {
-                const sectionActive = isSectionActive(section);
-                return (
-                  <details
-                    class="docs-nav-group"
-                    data-doc-group
-                    data-default-open={sectionActive ? 'true' : undefined}
-                    open={sectionActive}
-                  >
-                    <summary>
-                      <span>{section.title}</span>
-                      <CaretDownIcon
-                        className="docs-nav-group__caret"
-                        size={16}
-                        aria-hidden="true"
-                      />
-                    </summary>
-                    <div class="docs-nav-group__links">
-                      {section.items.map((item) => {
-                        const itemActive = isActive(item.href);
-                        return (
-                          <a
-                            class:list={['docs-nav-link', itemActive && 'is-active']}
-                            href={item.href}
-                            aria-current={itemActive ? 'page' : undefined}
-                            data-doc-link
-                          >
-                            {item.title}
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </details>
-                );
-              })
-            }
+            {docsSections.map((section) => {
+              const sectionActive = isSectionActive(section);
+              return (
+                <details
+                  class="docs-nav-group"
+                  data-doc-group
+                  data-default-open={sectionActive ? 'true' : undefined}
+                  open={sectionActive}
+                >
+                  <summary>
+                    <span>{section.title}</span>
+                    <CaretDownIcon className="docs-nav-group__caret" size={16} aria-hidden="true" />
+                  </summary>
+                  <div class="docs-nav-group__links">
+                    {section.items.map((item) => {
+                      const itemActive = isActive(item.href);
+                      return (
+                        <a
+                          class:list={['docs-nav-link', itemActive && 'is-active']}
+                          href={item.href}
+                          aria-current={itemActive ? 'page' : undefined}
+                          data-doc-link
+                        >
+                          {item.title}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </details>
+              );
+            })}
           </nav>
 
           <div class="docs-mobile-menu__footer">
@@ -197,24 +185,20 @@ function isSectionActive(section: (typeof docsSections)[number]) {
 
         <aside class="docs-utilities" aria-label="Page utilities">
           <div class="docs-utilities__sticky">
-            {
-              markdownPath && showPageActions && (
-                <DocsPageActions {markdownPath} placement="utility" />
-              )
-            }
+            {markdownPath && showPageActions && (
+              <DocsPageActions {markdownPath} placement="utility" />
+            )}
             <nav class="docs-contents" aria-label="On this page">
               <h2>On this page</h2>
-              {
-                headings.length > 0 ? (
-                  headings.map((heading) => (
-                    <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
-                      {heading.text}
-                    </a>
-                  ))
-                ) : (
-                  <a href="#main">Overview</a>
-                )
-              }
+              {headings.length > 0 ? (
+                headings.map((heading) => (
+                  <a class:list={[heading.depth === 3 && 'is-nested']} href={`#${heading.slug}`}>
+                    {heading.text}
+                  </a>
+                ))
+              ) : (
+                <a href="#main">Overview</a>
+              )}
             </nav>
           </div>
         </aside>

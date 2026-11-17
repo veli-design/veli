@@ -1,7 +1,7 @@
 import type { DocsSearchSource } from './remark-docs-search';
 import { docAreas, pageHref } from './doc-areas.mjs';
 
-export type DocsSearchCategory = (typeof docAreas)[number]['title'];
+export type DocsSearchCategory = (typeof docAreas)[number]['title'] | 'Overview';
 
 export type DocsSearchItem = {
   id: string;
@@ -34,9 +34,11 @@ type SearchRenderResult = {
   remarkPluginFrontmatter: Record<string, unknown> & { __docsSearch?: DocsSearchSource };
 };
 
+type SearchIdPrefix = (typeof docAreas)[number]['id'] | 'overview';
+
 type BuildCollectionSearchItemsOptions<T extends SearchableContentEntry> = {
   category: DocsSearchCategory;
-  idPrefix: (typeof docAreas)[number]['id'];
+  idPrefix: SearchIdPrefix;
   basePath: string;
   entries: T[];
   renderEntry: (entry: T) => Promise<SearchRenderResult>;
@@ -189,12 +191,32 @@ const overviewSearchDescription = {
   components: 'Accessible Veli components for building consistent public services.',
 } as const;
 
+type SearchCollection = 'docs' | 'foundations' | 'patterns';
+type SearchCollectionEntry = import('astro:content').CollectionEntry<SearchCollection>;
+
 export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
-  const { getCollection } = await import('astro:content');
+  const { getCollection, getEntry, render } = await import('astro:content');
   const { blockPages } = await import('./blocks');
   const { componentGroups, getComponentGroupSlug, inventoryItems } = await import('./site');
   const items: DocsSearchItem[] = [];
   const areas = [...docAreas].sort((first, second) => first.searchBand - second.searchBand);
+
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted) throw new Error('[docs-search] Get Started guide is missing');
+  items.push(
+    ...(
+      await buildCollectionSearchItems({
+        renderEntry: (entry) => render(entry),
+        category: 'Overview',
+        idPrefix: 'overview',
+        basePath: '/docs/',
+        entries: [getStarted],
+        orderedSlugs: ['get-started'],
+        orderOffset: -100,
+        hrefForSlug: () => '/docs/',
+      })
+    ).map((item) => (item.kind === 'page' ? { ...item, id: 'documentation:overview' } : item)),
+  );
 
   for (const area of areas) {
     const band = area.searchBand * 10_000;
@@ -256,6 +278,22 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
       }
     }
 
+    if (area.id === 'patterns') {
+      items.push(
+        createOverviewSearchItem({
+          id: 'patterns:overview',
+          href: pageHref(area),
+          category: area.title,
+          title: area.title,
+          description: 'Reusable approaches for recurring service interactions and content flows.',
+          content: inventoryItems(area.id)
+            .map((item) => `${item.title} ${item.description}`)
+            .join(' '),
+          order: band - 1,
+        }),
+      );
+    }
+
     const entries = await loadSearchEntries(area.collection, getCollection);
     items.push(
       ...(await buildCollectionSearchItems({
@@ -263,6 +301,7 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
         idPrefix: area.id,
         basePath: pageHref(area),
         entries,
+        renderEntry: (entry) => render(entry),
         orderedSlugs: inventoryItems(area.id).map((item) => item.slug),
         orderOffset: area.catalogOverview ? band + 100 : band,
       })),
@@ -272,10 +311,10 @@ export async function buildDocsSearchIndex(): Promise<DocsSearchItem[]> {
   return items;
 }
 
-function loadSearchEntries(
-  collection: 'docs' | 'foundations' | 'patterns',
+async function loadSearchEntries(
+  collection: SearchCollection,
   getCollection: typeof import('astro:content').getCollection,
-) {
+): Promise<SearchCollectionEntry[]> {
   switch (collection) {
     case 'docs':
       return getCollection('docs');

@@ -37,14 +37,12 @@ const headings = [{ depth: 2, slug: 'overview', text: 'Overview' }];
     <div class="docs-overview-directory">
       <section class="docs-list-section">
         <div class="docs-link-list">
-          {
-            patterns.map((item) => (
-              <a href={item.href}>
-                <span>{item.title}</span>
-                <p>{item.description}</p>
-              </a>
-            ))
-          }
+          {patterns.map((item) => (
+            <a href={item.href}>
+              <span>{item.title}</span>
+              <p>{item.description}</p>
+            </a>
+          ))}
         </div>
       </section>
     </div>

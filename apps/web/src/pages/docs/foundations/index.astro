@@ -60,39 +60,37 @@ const markdownPath = foundationsOverview.markdownPath;
     </section>
 
     <div class="foundation-directory docs-overview-directory">
-      {
-        foundations.map((foundation) => (
-          <section id={foundation.slug}>
-            <a href={foundation.href}>
-              <div class="foundation-directory__icon" aria-hidden="true">
-                <img
-                  class="foundation-directory__icon-light"
-                  src={foundation.icon}
-                  alt=""
-                  width={foundation.iconWidth}
-                  height={foundation.iconHeight}
-                  loading="lazy"
-                />
-                <img
-                  class="foundation-directory__icon-dark"
-                  src={foundation.iconDark}
-                  alt=""
-                  width={foundation.iconWidth}
-                  height={foundation.iconHeight}
-                  loading="lazy"
-                />
-              </div>
-              <div class="foundation-directory__content">
-                <h2>{foundation.title === 'Color' ? 'Colors' : foundation.title}</h2>
-                <p>{foundation.description}</p>
-              </div>
-              <span class="foundation-directory__arrow" aria-hidden="true">
-                →
-              </span>
-            </a>
-          </section>
-        ))
-      }
+      {foundations.map((foundation) => (
+        <section id={foundation.slug}>
+          <a href={foundation.href}>
+            <div class="foundation-directory__icon" aria-hidden="true">
+              <img
+                class="foundation-directory__icon-light"
+                src={foundation.icon}
+                alt=""
+                width={foundation.iconWidth}
+                height={foundation.iconHeight}
+                loading="lazy"
+              />
+              <img
+                class="foundation-directory__icon-dark"
+                src={foundation.iconDark}
+                alt=""
+                width={foundation.iconWidth}
+                height={foundation.iconHeight}
+                loading="lazy"
+              />
+            </div>
+            <div class="foundation-directory__content">
+              <h2>{foundation.title === 'Color' ? 'Colors' : foundation.title}</h2>
+              <p>{foundation.description}</p>
+            </div>
+            <span class="foundation-directory__arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        </section>
+      ))}
     </div>
   </div>
 </DocsLayout>

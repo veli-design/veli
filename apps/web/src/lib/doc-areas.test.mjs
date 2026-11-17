@@ -53,9 +53,18 @@ test('content paths resolve for every prose collection, including Windows separa
 
 test('markdown header rules cover nested paths and the patterns section', () => {
   const headers = renderHeaders();
-  assert.match(headers, /\/docs\/patterns\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
-  assert.match(headers, /\/docs\/components\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
-  assert.match(headers, /\/docs\/foundations\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
+  assert.match(
+    headers,
+    /\/docs\/patterns\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
+  );
+  assert.match(
+    headers,
+    /\/docs\/components\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
+  );
+  assert.match(
+    headers,
+    /\/docs\/foundations\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
+  );
   assert.match(headers, /\/docs\/blocks\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(
     headers,
@@ -72,7 +81,10 @@ test('markdown header rules cover nested paths and the patterns section', () => 
     '/docs/blocks/notification-tray/index.md',
   ];
   assert.doesNotThrow(() => assertHeadersCover(headers, paths));
-  assert.equal(headerRuleMatches('/docs/components/*.md', '/docs/components/button/index.md'), true);
+  assert.equal(
+    headerRuleMatches('/docs/components/*.md', '/docs/components/button/index.md'),
+    true,
+  );
   assert.throws(
     () => assertHeadersCover(headers, ['/getting-started/installation/index.md']),
     /getting-started\/installation\/index\.md/,

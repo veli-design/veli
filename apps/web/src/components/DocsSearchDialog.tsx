@@ -104,6 +104,10 @@ function isDocAreaTitle(value: unknown): value is (typeof docAreas)[number]['tit
   return docAreaTitles.some((title) => title === value);
 }
 
+function isDocsSearchCategory(value: unknown): value is DocsSearchItem['category'] {
+  return value === 'Overview' || isDocAreaTitle(value);
+}
+
 function isDocsSearchItem(value: unknown): value is DocsSearchItem {
   if (!value || typeof value !== 'object') return false;
 
@@ -111,7 +115,7 @@ function isDocsSearchItem(value: unknown): value is DocsSearchItem {
   return (
     typeof item.id === 'string' &&
     typeof item.href === 'string' &&
-    isDocAreaTitle(item.category) &&
+    isDocsSearchCategory(item.category) &&
     (item.kind === 'page' || item.kind === 'section') &&
     typeof item.pageTitle === 'string' &&
     typeof item.title === 'string' &&
