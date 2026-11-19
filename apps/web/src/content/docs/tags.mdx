@@ -69,41 +69,41 @@ In code, compose a TagGroup with Tag children for a collection with arrow-key na
 
 1. **Container**
 
-   the pill, 28 to 44 high by size, with a full radius. Fill has a background; outline has a 1px border and no background at rest. In code it is Tag inside TagGroup, or TagButton on its own.
+   The pill, 28 to 44 high by size, with a full radius. Fill has a background; outline has a 1px border and no background at rest. In code it is Tag inside TagGroup, or TagButton on its own.
 
 2. **Check**
 
-   shows before the label on a selected tag, so selection never relies on colour alone. The same size as the icons, 10 to 16. Drawn when the tag is selected.
+   Shows before the label on a selected tag, so selection never relies on colour alone. The same size as the icons, 10 to 16. Drawn when the tag is selected.
 
 3. **Leading content**
 
-   an icon, an avatar glyph or a count badge before the label. It is hidden from assistive technology, so the label text must carry its meaning. In code it is leading.
+   An icon, an avatar glyph or a count badge before the label. It is hidden from assistive technology, so the label text must carry its meaning. In code it is leading.
 
 4. **Label**
 
-   one to three words in a medium weight. The label is essential text and must never be cut off, so keep it short. Code truncates it with an ellipsis when the tag reaches its width. In code it is the Tag children, or textValue for complex content.
+   One to three words in a medium weight. The label is essential text and must never be cut off, so keep it short. Code truncates it with an ellipsis when the tag reaches its width. In code it is the Tag children, or textValue for complex content.
 
 5. **Remove button**
 
-   a round button with a cross, 14 to 24 by size, named Remove and the tag text, such as Remove Tourism. Shown when TagGroup has onRemove; rename it with removeButtonLabel.
+   A round button with a cross, 14 to 24 by size, named Remove and the tag text, such as Remove Tourism. Shown when TagGroup has onRemove; rename it with removeButtonLabel.
 
 6. **Label part**
 
-   tag with a dropdown only. The selected tag itself. Its outer corners are half the height and its inner corners are 4 (`radius/sm`).
+   Tag with a dropdown only. The selected tag itself. Its outer corners are half the height and its inner corners are 4 (`radius/sm`).
 
 7. **Value**
 
-   a 1px divider and the sub-labels picked. One shows its name; two or more show the count. Regular weight; it truncates.
+   A 1px divider and the sub-labels picked. One shows its name; two or more show the count. Regular weight; it truncates.
 
 8. **Caret part**
 
-   opens the menu of this tag's sub-labels. 24 to 40 wide by size, with its own hover, pressed, focus and open states.
+   Opens the menu of this tag's sub-labels. 24 to 40 wide by size, with its own hover, pressed, focus and open states.
 
 </DocsAnatomy>
 
 A TagGroup adds a group label above the tags, such as Departments, and a description or error below them. In code they are label, description and errorMessage on TagGroup.
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 

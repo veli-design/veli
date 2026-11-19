@@ -71,41 +71,41 @@ A toast gives brief feedback about something people just did, or about a backgro
 
 1. **Container**
 
-   the toast surface, with a tinted or solid background, a 1px border on subtle toasts, 24 radius, 16 padding and a medium shadow, because a toast sits above the page. It is at most 384 wide. In code it is Toast.
+   The toast surface, with a tinted or solid background, a 1px border on subtle toasts, 24 radius, 16 padding and a medium shadow, because a toast sits above the page. It is at most 384 wide. In code it is Toast.
 
 2. **Leading icon**
 
-   a 20px icon in the Fill weight. Each intent has its own shape, so the intent never depends on colour alone. You can turn it off or swap it. It is decorative, so screen readers skip it. In code it is leadingIcon and showLeadingIcon.
+   A 20px icon in the Fill weight. Each intent has its own shape, so the intent never depends on colour alone. You can turn it off or swap it. It is decorative, so screen readers skip it. In code it is leadingIcon and showLeadingIcon.
 
 3. **Title**
 
-   required. It says what happened in up to 6 words, with no full stop, and names the toast for screen readers. In code it is title.
+   Required. It says what happened in up to 6 words, with no full stop, and names the toast for screen readers. In code it is title.
 
 4. **Description**
 
-   optional. One or two sentences that add to the title and say what to do. In code it is description.
+   Optional. One or two sentences that add to the title and say what to do. In code it is description.
 
 5. **Main action**
 
-   optional. A secondary fill button, size xs, with a verb-first label. In code it is the first item in actions.
+   Optional. A secondary fill button, size xs, with a verb-first label. In code it is the first item in actions.
 
 6. **Second action**
 
-   optional lighter action, a secondary ghost button, size xs. Two actions at most. In code it is the second item in actions.
+   Optional lighter action, a secondary ghost button, size xs. Two actions at most. In code it is the second item in actions.
 
 7. **Close button**
 
-   an icon-only ghost button that closes the toast. Screen readers announce it as Close notification. Keep it on every toast. In code it is showCloseButton.
+   An icon-only ghost button that closes the toast. Screen readers announce it as Close notification. Keep it on every toast. In code it is showCloseButton.
 
 8. **Timeout progress**
 
-   an optional bar that counts down a timed toast and follows the bottom corners. It is decorative, so it is hidden from screen readers, and it is hidden with reduced motion. In code it is showProgress.
+   An optional bar that counts down a timed toast and follows the bottom corners. It is decorative, so it is hidden from screen readers, and it is hidden with reduced motion. In code it is showProgress.
 
 </DocsAnatomy>
 
 On emphasis toasts, the action buttons and the close button use the high contrast treatment.
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 

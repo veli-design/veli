@@ -62,31 +62,31 @@ A menu shows a short list of actions or choices when people open it from a butto
 
 1. **Selection check**
 
-   a 16px check in `icon/primary/default` on a selected item, when the menu allows selection. Turn it on with isSelected; showSelectionSlot keeps its space when the item is not selected. In code: selectionMode and selectedKeys on Menu.
+   A 16px check in `icon/primary/default` on a selected item, when the menu allows selection. Turn it on with isSelected; showSelectionSlot keeps its space when the item is not selected. In code: selectionMode and selectedKeys on Menu.
 
 2. **Start icon**
 
-   a 16px icon before the label, 20 at lg, in `icon/base/default` (`icon/danger/muted` on danger items). In code: startIcon.
+   A 16px icon before the label, 20 at lg, in `icon/base/default` (`icon/danger/muted` on danger items). In code: startIcon.
 
 3. **Label**
 
-   what the item does, in `text/base/strong`. In code: the MenuItem children.
+   What the item does, in `text/base/strong`. In code: the MenuItem children.
 
 4. **Shortcut**
 
-   a display-only hint of a keyboard shortcut, built from Kbd. In code: shortcut.
+   A display-only hint of a keyboard shortcut, built from Kbd. In code: shortcut.
 
 5. **End icon**
 
-   a 16px icon at the end, 20 at lg. In code: endIcon.
+   A 16px icon at the end, 20 at lg. In code: endIcon.
 
 6. **Submenu caret**
 
-   shows that the item opens a nested menu. It points to the side the submenu opens on. In code: MenuSubmenuTrigger draws it.
+   Shows that the item opens a nested menu. It points to the side the submenu opens on. In code: MenuSubmenuTrigger draws it.
 
 7. **Description**
 
-   an optional second line in `text/base/muted`. In code: description.
+   An optional second line in `text/base/muted`. In code: description.
 
 </DocsAnatomy>
 
@@ -103,25 +103,25 @@ A menu shows a short list of actions or choices when people open it from a butto
 
 1. **Popover**
 
-   holds the menu, with radius 12, `menu/bg`, a border, a medium shadow and 4 padding. It is at least 224 wide and opens 8 from the trigger. In code: MenuPopover.
+   Holds the menu, with radius 12, `menu/bg`, a border, a medium shadow and 4 padding. It is at least 224 wide and opens 8 from the trigger. In code: MenuPopover.
 
 2. **Section title**
 
-   a noun that names a group of items, in body sm medium and `text/base/emphasis`. Optional. In code: MenuSection title.
+   A noun that names a group of items, in body sm medium and `text/base/emphasis`. Optional. In code: MenuSection title.
 
 3. **Item**
 
-   one action or choice. Items fill the popover width. In code: MenuItem.
+   One action or choice. Items fill the popover width. In code: MenuItem.
 
 4. **Separator**
 
-   a 1px line between groups, 12 in from each side. In code: MenuSeparator.
+   A 1px line between groups, 12 in from each side. In code: MenuSeparator.
 
 </DocsAnatomy>
 
 In code, a menu is MenuTrigger (the button that opens it), MenuPopover, Menu and its items. Figma has no menu popover component; build it from the frame on the Menu page.
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 

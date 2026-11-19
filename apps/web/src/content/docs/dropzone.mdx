@@ -68,27 +68,27 @@ A drop zone field holds a drop area, and each chosen file shows as a file row.
 
 1. **Label**
 
-   names what to upload. Body md regular at labelSize md, body sm regular at sm, in `text/base/DEFAULT`. In code it is label.
+   Names what to upload. Body md regular at labelSize md, body sm regular at sm, in `text/base/DEFAULT`. In code it is label.
 
 2. **Info icon**
 
-   a 16px icon that opens a tooltip with more help. Never put the limits only here. In code it is infoTooltip.
+   A 16px icon that opens a tooltip with more help. Never put the limits only here. In code it is infoTooltip.
 
 3. **Optional**
 
-   the localised word Optional after the label. Code hides it when isRequired is set. In code it is isOptional.
+   The localised word Optional after the label. Code hides it when isRequired is set. In code it is isOptional.
 
 4. **Required indicator**
 
-   an asterisk in `text/danger/muted`. Turn it off with showRequiredIndicator. In code it is isRequired.
+   An asterisk in `text/danger/muted`. Turn it off with showRequiredIndicator. In code it is isRequired.
 
 5. **Drop area**
 
-   the drop target. In single mode it becomes a file row once a file is chosen; in multiple mode the list sits below it. In code it is DropzoneArea.
+   The drop target. In single mode it becomes a file row once a file is chosen; in multiple mode the list sits below it. In code it is DropzoneArea.
 
 6. **Description**
 
-   helper text below the field, caption regular in `text/base/subtle`. The error message replaces it while invalid. In code it is description.
+   Helper text below the field, caption regular in `text/base/subtle`. The error message replaces it while invalid. In code it is description.
 
 </DocsAnatomy>
 
@@ -107,23 +107,23 @@ A drop zone field holds a drop area, and each chosen file shows as a file row.
 
 1. **Icon**
 
-   a decorative 24px upload icon in a 40 box, in `icon/base/muted`.
+   A decorative 24px upload icon in a 40 box, in `icon/base/muted`.
 
 2. **Title**
 
-   what to do, body sm medium. It defaults to Drag and drop files here written with an ampersand; set it to Drag and drop files here, written out. In code it is title.
+   What to do, body sm medium. It defaults to Drag and drop files here written with an ampersand; set it to Drag and drop files here, written out. In code it is title.
 
 3. **Hint**
 
-   caption regular in `text/base/subtle`. It defaults to Or click to browse; set it to what to upload, such as Front and back of your ID card. In code it is hint.
+   Caption regular in `text/base/subtle`. It defaults to Or click to browse; set it to what to upload, such as Front and back of your ID card. In code it is hint.
 
 4. **Secondary text**
 
-   optional, after a short divider: limits such as Up to 10 MB. Caption regular in `text/base/muted`. In code it is secondaryText.
+   Optional, after a short divider: limits such as Up to 10 MB. Caption regular in `text/base/muted`. In code it is secondaryText.
 
 5. **Trigger**
 
-   the Browse files button, a secondary, transparent, sm Veli Button. Turn it off with showTrigger, but keep it for people who can't drag. In code it is DropzoneTrigger.
+   The Browse files button, a secondary, transparent, sm Veli Button. Turn it off with showTrigger, but keep it for people who can't drag. In code it is DropzoneTrigger.
 
 </DocsAnatomy>
 
@@ -142,33 +142,33 @@ A drop zone field holds a drop area, and each chosen file shows as a file row.
 
 1. **Preview**
 
-   a 40 box with radius 6, showing an image thumbnail with imagePreview, or a file type icon. In code it is DropzoneItemPreview.
+   A 40 box with radius 6, showing an image thumbnail with imagePreview, or a file type icon. In code it is DropzoneItemPreview.
 
 2. **File name**
 
-   body sm medium, shortened to one line. In code it comes from the File.
+   Body sm medium, shortened to one line. In code it comes from the File.
 
 3. **File size**
 
-   caption regular in `text/base/subtle`, formatted from the File, such as 1.2 MB.
+   Caption regular in `text/base/subtle`, formatted from the File, such as 1.2 MB.
 
 4. **Status**
 
-   the percentage while uploading, Uploaded on success, or the reason on error. In code it is DropzoneItemMetadata.
+   The percentage while uploading, Uploaded on success, or the reason on error. In code it is DropzoneItemMetadata.
 
 5. **Remove button**
 
-   an sm icon button, named Remove with the file name. A cross while uploading, on error and idle; a danger trash icon once uploaded. In code it is DropzoneItemDelete.
+   An sm icon button, named Remove with the file name. A cross while uploading, on error and idle; a danger trash icon once uploaded. In code it is DropzoneItemDelete.
 
 6. **Progress bar**
 
-   a 4 high bar along the bottom while uploading and after success, hidden on error. In code it is DropzoneItemProgress.
+   A 4 high bar along the bottom while uploading and after success, hidden on error. In code it is DropzoneItemProgress.
 
 </DocsAnatomy>
 
 Rows sit in DropzoneList, a list under the area in multiple mode. It can run vertically or wrap horizontally; choose the direction for the space available. It is a building block, not a separate component to place.
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 

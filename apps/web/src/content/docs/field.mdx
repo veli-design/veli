@@ -66,33 +66,33 @@ Field is the set of parts that give a form control its label, help text and erro
 
 1. **Label**
 
-   names the group or control. For a radio or checkbox group, write the question being asked. Put it inside the group so it names the group. In code it is FieldLabel.
+   Names the group or control. For a radio or checkbox group, write the question being asked. Put it inside the group so it names the group. In code it is FieldLabel.
 
 2. **Info icon**
 
-   a 16 x 16 icon button that opens a tooltip with a short hint. Input, Select and Text area add it after the label with infoTooltip. FieldLabel has none, so a group uses a popover next to the label for longer help.
+   A 16 x 16 icon button that opens a tooltip with a short hint. Input, Select and Text area add it after the label with infoTooltip. FieldLabel has none, so a group uses a popover next to the label for longer help.
 
 3. **Optional**
 
-   built-in text after the label, in `text/base/subtle`. It switches to Dhivehi with the language and hides when the field is required. In code it is isOptional.
+   Built-in text after the label, in `text/base/subtle`. It switches to Dhivehi with the language and hides when the field is required. In code it is isOptional.
 
 4. **Description**
 
-   one line of help under the label. In code it is FieldDescription.
+   One line of help under the label. In code it is FieldDescription.
 
 5. **Required indicator**
 
-   the asterisk after the label, in `text/danger/muted`. It is hidden from screen readers; the group is announced as required instead. In code it is isRequired, and showRequiredIndicator hides it.
+   The asterisk after the label, in `text/danger/muted`. It is hidden from screen readers; the group is announced as required instead. In code it is isRequired, and showRequiredIndicator hides it.
 
 6. **Error message**
 
-   says what is wrong and how to fix it, at the end of the group. Several errors show as a list. In code it is FieldError, with children or errors.
+   Says what is wrong and how to fix it, at the end of the group. Several errors show as a list. In code it is FieldError, with children or errors.
 
 </DocsAnatomy>
 
 For custom layouts, Field also has layout parts: Field, FieldSet, FieldLegend, FieldGroup, FieldContent, FieldTitle, FieldSeparator and FieldControl.
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 

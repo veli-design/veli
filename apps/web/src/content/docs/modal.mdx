@@ -68,39 +68,39 @@ A modal is a dialog that sits above the page and blocks it until people act or c
 
 1. **Overlay**
 
-   black at 60% with a 6px background blur, the same in Light and Dark mode. It blocks the page. Clicking it closes the modal unless isDismissable is false. In code it is ModalOverlay.
+   Black at 60% with a 6px background blur, the same in Light and Dark mode. It blocks the page. Clicking it closes the modal unless isDismissable is false. In code it is ModalOverlay.
 
 2. **Panel**
 
-   the dialog surface, with the `components/modal/bg-solid` fill, radius 32 and a small shadow. The size sets the maximum width; the height grows with the content up to 90% of the viewport, then the panel scrolls. In code it is Modal.
+   The dialog surface, with the `components/modal/bg-solid` fill, radius 32 and a small shadow. The size sets the maximum width; the height grows with the content up to 90% of the viewport, then the panel scrolls. In code it is Modal.
 
 3. **Title**
 
-   names the dialog for screen readers, so every modal needs one, or a label set with aria-label. In code it is Modal.Title.
+   Names the dialog for screen readers, so every modal needs one, or a label set with aria-label. In code it is Modal.Title.
 
 4. **Close button**
 
-   an icon-only secondary ghost button with a cross icon that closes the modal. Its accessible name is Close dialog, localised in Dhivehi. In code it is Modal.CloseButton.
+   An icon-only secondary ghost button with a cross icon that closes the modal. Its accessible name is Close dialog, localised in Dhivehi. In code it is Modal.CloseButton.
 
 5. **Description**
 
-   an optional line under the title. When it is present, a divider closes the header. In code it is Modal.Description.
+   An optional line under the title. When it is present, a divider closes the header. In code it is Modal.Description.
 
 6. **Header divider**
 
-   a subtle divider under the header. It shows only when there is a description.
+   A subtle divider under the header. It shows only when there is a description.
 
 7. **Content**
 
-   the body, such as text, a short form or a list, with 16 padding top and bottom. In code it is Modal.Content.
+   The body, such as text, a short form or a list, with 16 padding top and bottom. In code it is Modal.Content.
 
 8. **Footer divider**
 
-   a subtle divider above the actions. It is always shown in the footer.
+   A subtle divider above the actions. It is always shown in the footer.
 
 9. **Start actions**
 
-   an optional group on the start edge for a secondary route, such as Back. Leave it off at xs and sm. In code it is the first button group in Modal.Footer.
+   An optional group on the start edge for a secondary route, such as Back. Leave it off at xs and sm. In code it is the first button group in Modal.Footer.
 
 10. **End actions**
 
@@ -108,7 +108,7 @@ the main action and its alternative, on the end edge. The main action is the fil
 
 </DocsAnatomy>
 
-## Do and don't
+## Do's and don'ts
 
 <DocsGrid>
 
