@@ -57,11 +57,18 @@
   margin-top: 8px;
 }
 .docs-prose [data-docs-editorial] > h3 {
-  margin-top: 20px;
+  margin-top: 40px;
   color: var(--veli-color-text-base-emphasis);
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
+}
+/* Sub-headings sit closer to their own content than to the block before. */
+.docs-prose [data-docs-editorial] > h2 + h3 {
+  margin-top: 20px;
+}
+.docs-prose [data-docs-editorial] > h3 + :is(p, ul, ol) {
+  margin-top: 8px;
 }
 .docs-prose [data-docs-editorial] > :is(ul, ol) > li + li {
   margin-top: 0;
