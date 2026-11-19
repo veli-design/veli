@@ -47,7 +47,7 @@ const titleParts = doc.data.title.split(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][
     </h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
     <div class="docs-page-header__mobile-actions">
-      <DocsPageActions {markdownPath} placement="inline" />
+      <DocsPageActions {markdownPath} placement="inline" media="(max-width: 960px)" />
     </div>
   </header>
 
