@@ -213,6 +213,66 @@ export const Playground: Story = {
   },
 };
 
+export const EllipsisOverflow: Story = {
+  args: { value: 23, maxValue: 54 },
+  parameters: { layout: 'fullscreen' },
+  render: (args) => (
+    <div className="flex min-h-dvh items-end justify-center px-4 pb-16">
+      <Pagination
+        variant="explicit"
+        maxValue={args.maxValue ?? 54}
+        defaultValue={args.value}
+        onChange={args.onChange}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const document = canvasElement.ownerDocument;
+    const canvas = within(canvasElement);
+    const portal = within(document.body);
+    const pagination = canvas.getByRole('navigation');
+    const triggers = pagination.querySelectorAll<HTMLButtonElement>(
+      'button:is([aria-haspopup="true"], [aria-haspopup="menu"])',
+    );
+    const trigger = triggers[1];
+    if (!trigger) throw new Error('The trailing pagination ellipsis did not render.');
+    const currentPage = () => pagination.querySelector('[aria-current="page"]');
+    const rect = trigger.getBoundingClientRect();
+    const coords = { clientX: rect.x + rect.width / 2, clientY: rect.y + rect.height / 2 };
+
+    await userEvent.click(trigger);
+    const menu = await portal.findByRole('menu');
+    // The open menu must not cover the original click point with an actionable page.
+    const releaseTarget = document.elementFromPoint(coords.clientX, coords.clientY);
+    expect(releaseTarget?.closest('[role=menuitem]')).toBeNull();
+    expect(currentPage()).toHaveTextContent('23');
+
+    const options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(29);
+    expect(menu.scrollHeight).toBeGreaterThan(menu.clientHeight);
+    const menuRect = menu.getBoundingClientRect();
+    expect(menuRect.top).toBeGreaterThanOrEqual(0);
+    expect(menuRect.bottom).toBeLessThanOrEqual(rect.top);
+    expect(menuRect.height).toBeLessThanOrEqual(280);
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(trigger).toHaveFocus();
+      expect(portal.queryByRole('menu')).not.toBeInTheDocument();
+    });
+
+    await userEvent.keyboard('{Enter}{End}');
+    const reopened = await portal.findByRole('menu');
+    const pages = within(reopened).getAllByRole('menuitem');
+    const last = pages[pages.length - 1];
+    expect(last).toHaveFocus();
+    await waitFor(() => expect(reopened.scrollTop).toBeGreaterThan(0));
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(currentPage()).toHaveTextContent('53'));
+    expect(currentPage()).toHaveFocus();
+  },
+};
+
 function PaginationVariantsPreview() {
   return (
     <div className="flex max-w-full flex-col items-center gap-8">
