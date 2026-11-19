@@ -136,9 +136,10 @@ for (const language of ['en', 'dv']) {
     await page.evaluate(() => {
       const channel = (
         window as Window & {
-          __STORYBOOK_ADDONS_CHANNEL__: { emit: (event: string, payload: unknown) => void };
+          __STORYBOOK_ADDONS_CHANNEL__?: { emit: (event: string, payload: unknown) => void };
         }
       ).__STORYBOOK_ADDONS_CHANNEL__;
+      if (!channel) throw new Error('Storybook preview channel was not available');
       channel.emit('updateStoryArgs', {
         storyId: 'blocks-page-navigation-footer--default',
         updatedArgs: {
