@@ -1,9 +1,6 @@
-/* Opt in only migrated editorial tabs. Code and legacy pages keep their styles. */
+/* Opt in only migrated editorial tabs. Legacy pages keep their styles. */
 .docs-prose:has([data-docs-editorial]) {
   max-width: none;
-}
-.docs-prose:has([data-docs-editorial]) > [data-doc-tab-panel='code'] {
-  max-width: 760px;
 }
 .docs-component-resources {
   display: grid;
@@ -249,6 +246,8 @@ html[data-theme='dark'] .docs-figure .docs-figure__dark {
 }
 .docs-prose .docs-comparison__example.preview {
   display: block;
+  /* Reset the base preview's centring; block layout honours justify-items. */
+  place-items: normal;
   min-height: 0;
   margin: 0;
   padding: 0;
