@@ -27,6 +27,8 @@ const component = getComponentMeta(doc.id);
 const pageDescription = doc.data.description ?? component?.description;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const markdownPath = `/docs/components/${doc.id}/index.md`;
+// Let long component names such as PasswordInput wrap between words on phones.
+const titleParts = doc.data.title.split(/(?=[A-Z])/);
 ---
 
 <DocsLayout
@@ -39,7 +41,9 @@ const markdownPath = `/docs/components/${doc.id}/index.md`;
   contentLayout="component"
 >
   <header class="docs-page-header docs-page-header--article">
-    <h1 class="type-display-2-medium">{doc.data.title}</h1>
+    <h1 class="type-display-2-medium">
+      {titleParts.map((part, index) => (index ? [<wbr />, part] : part))}
+    </h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
     <div class="docs-page-header__mobile-actions">
       <DocsPageActions {markdownPath} placement="inline" />
