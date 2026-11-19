@@ -529,13 +529,26 @@
   letter-spacing: -0.36px;
   color: var(--marketing-muted);
 }
-.marketing-page--design .design-closing > canvas {
+.marketing-page--design .design-closing-art {
   display: block;
   width: 100%;
   height: 537px;
   align-self: center;
   border-radius: 48px;
   background: #0f2528;
+  position: relative;
+  overflow: hidden;
+  container-type: size;
+}
+.marketing-page--design .design-closing-art > img {
+  /* Figma 2382:107037: an 814.335 × 520.951 vector centered in a 613 × 537 clip. */
+  position: absolute;
+  left: 50%;
+  top: 8.558%;
+  width: max(132.844%, 151.645cqh);
+  max-width: none;
+  height: auto;
+  translate: -50% 0;
 }
 :root[data-theme='dark'] .design-responds > p {
   color: #9af366;
@@ -599,7 +612,7 @@
     height: auto;
     min-height: 480px;
   }
-  .marketing-page--design .design-closing > canvas {
+  .marketing-page--design .design-closing-art {
     height: 100%;
     min-height: 452px;
   }
@@ -923,7 +936,7 @@
     font-size: 28px;
     line-height: 40px;
   }
-  .marketing-page--design .design-closing > canvas {
+  .marketing-page--design .design-closing-art {
     height: auto;
     min-height: 0;
     aspect-ratio: 613/537;

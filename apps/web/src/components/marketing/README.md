@@ -38,10 +38,10 @@ Both marketing pages reuse `MarketingFooter.astro`, including its navigation
 and theme/motion preferences. The composed atoll and Thaana plates
 keep their native layer coordinates and scale together inside their clips.
 `src/lib/design-fields.json` records the visible particle centres and dot sizes
-relative to the five frame clips; each field draws the original exported SVG dot
+relative to the four frame clips; each field draws the original exported SVG dot
 from `public/images/marketing/`. The resting composition matches Figma, while
-`src/scripts/design-motion.ts` supplies those resting fields and ambient hero/closing
-artwork. The deferred preview module below owns the interactive card motion.
+`src/scripts/design-motion.ts` supplies those resting fields and ambient hero artwork. The closing CTA uses the
+original static stipple vector from frame `2382:107037`. The deferred preview module below owns the interactive card motion.
 Reduced motion keeps the exact resting composition.
 The designer has not provided mobile frames for this page; its smaller layouts
 adapt the same content and artwork without changing the desktop reference.
