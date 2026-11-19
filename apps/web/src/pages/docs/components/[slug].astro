@@ -5,6 +5,7 @@ import DocsComponentAnimation from '../../../components/DocsComponentAnimation.a
 import DocsComponentTabs from '../../../components/DocsComponentTabs.astro';
 import DocsStorybookLink from '../../../components/DocsStorybookLink.astro';
 import DocsLayout from '../../../layouts/docs-layout.astro';
+import DocsPageActions from '../../../components/DocsPageActions.astro';
 import { getComponentMeta } from '../../../lib/site';
 import '../../../styles/docs-editorial.css';
 
@@ -40,6 +41,9 @@ const markdownPath = `/docs/components/${doc.id}/index.md`;
   <header class="docs-page-header docs-page-header--article">
     <h1 class="type-display-2-medium">{doc.data.title}</h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
+    <div class="docs-page-header__mobile-actions">
+      <DocsPageActions {markdownPath} placement="inline" />
+    </div>
   </header>
 
   <DocsComponentTabs {markdownPath} />

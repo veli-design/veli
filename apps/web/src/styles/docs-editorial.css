@@ -302,6 +302,38 @@ html[data-theme='dark'] .docs-figure .docs-figure__dark {
   }
 }
 
+/* Below 960px the tab row is too narrow for the tabs and the page actions,
+   so the actions move to the header, as on foundation pages. */
+.docs-page-header__mobile-actions {
+  display: none;
+}
+@media (max-width: 960px) {
+  .docs-page-header__mobile-actions {
+    display: block;
+    margin-top: var(--veli-spacing-6);
+  }
+  .docs-page-tabs .docs-page-tabs__row > .docs-page-actions--tabbar {
+    display: none;
+  }
+}
+/* Phones: tighter tabs share the full row so all four stay visible. */
+@media (max-width: 760px) {
+  .docs-page-tabs .docs-page-tabs__list {
+    flex: 1;
+  }
+  .docs-page-tabs .docs-page-tabs__tab {
+    flex: 1 0 auto;
+    padding: var(--veli-spacing-2) var(--veli-spacing-2-5);
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+@media (max-width: 359px) {
+  .docs-page-tabs .docs-page-tabs__tab {
+    padding-inline: var(--veli-spacing-1-5);
+  }
+}
+
 .docs-component-resources a > span:not(.sr-only) {
   flex: 1;
 }
