@@ -1,19 +1,10 @@
-import { useState, useSyncExternalStore, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Avatar } from '@veli-design/react/avatar';
 import { LoadingText } from '@veli-design/react/loading-text';
 import { VeliProvider } from '@veli-design/react/provider';
 import { Spinner } from '@veli-design/react/spinner';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
-
-function subscribeToTheme(onChange: () => void) {
-  window.addEventListener('veli:color-scheme-change', onChange);
-  return () => window.removeEventListener('veli:color-scheme-change', onChange);
-}
-
-function getColorScheme() {
-  const colorScheme = document.documentElement.dataset.colorScheme;
-  return colorScheme === 'light' || colorScheme === 'dark' ? colorScheme : 'system';
-}
+import { useDocsColorScheme } from './useDocsColorScheme';
 
 function LanguagePreview({
   name,
@@ -24,11 +15,7 @@ function LanguagePreview({
 }) {
   const [language, setLanguage] = useState('Dhivehi');
   const isDhivehi = language === 'Dhivehi';
-  const colorScheme = useSyncExternalStore(
-    subscribeToTheme,
-    getColorScheme,
-    () => 'system' as const,
-  );
+  const colorScheme = useDocsColorScheme();
 
   return (
     <DocsPreview
