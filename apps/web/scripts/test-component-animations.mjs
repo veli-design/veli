@@ -30,7 +30,7 @@ async function state(page, value) {
   checks++;
 }
 async function open(page, slug) {
-  const response = await page.goto(`${base}/docs/${slug}/`);
+  const response = await page.goto(`${base}/docs/components/${slug}/`);
   assert.equal(response.status(), 200);
   assert.match(await page.title(), /Veli Design System/);
   assert.ok(await page.locator('h1').first().textContent());
@@ -318,7 +318,7 @@ for (const name of (process.env.ANIMATION_BROWSERS ?? 'chromium,firefox,webkit')
         }
         for (const slug of missingComponentAnimations) {
           const page = await audit.newPage();
-          await page.goto(`${base}/docs/${slug}/`);
+          await page.goto(`${base}/docs/components/${slug}/`);
           assert.equal(await page.locator('.docs-component-animation').count(), 0, slug);
           await page.close();
         }
