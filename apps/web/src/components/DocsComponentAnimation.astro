@@ -14,66 +14,64 @@ const light = animation?.sources.en.light;
 const dark = animation?.sources.en.dark;
 ---
 
-{
-  light && dark && (
-    <div class="docs-component-animation" data-docs-markdown="omit">
-      <div
-        class="docs-component-animation__viewport"
-        data-component-animation={slug}
-        data-src-light={light.src}
-        data-src-dark={dark.src}
-        tabindex="-1"
-        data-state="poster"
+{light && dark && (
+  <div class="docs-component-animation" data-docs-markdown="omit">
+    <div
+      class="docs-component-animation__viewport"
+      data-component-animation={slug}
+      data-src-light={light.src}
+      data-src-dark={dark.src}
+      tabindex="-1"
+      data-state="poster"
+    >
+      <img
+        class="docs-component-animation__poster docs-component-animation__poster--light"
+        src={light.poster}
+        width={805}
+        height={476}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      <img
+        class="docs-component-animation__poster docs-component-animation__poster--dark"
+        src={dark.poster}
+        width={805}
+        height={476}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      <canvas class="docs-component-animation__canvas" aria-hidden="true" />
+      <button
+        class="docs-component-animation__replay"
+        type="button"
+        data-animation-play
+        aria-label={`Play ${title} animation`}
+        title="Play animation"
+        hidden
       >
-        <img
-          class="docs-component-animation__poster docs-component-animation__poster--light"
-          src={light.poster}
-          width={805}
-          height={476}
-          alt=""
-          loading="lazy"
-          decoding="async"
+        <PlayIcon size={20} weight="regular" aria-hidden="true" focusable="false" />
+      </button>
+      <button
+        class="docs-component-animation__replay"
+        type="button"
+        data-animation-replay
+        aria-label={`Replay ${title} animation`}
+        title="Replay animation"
+        hidden
+      >
+        <ArrowCounterClockwiseIcon
+          size={20}
+          weight="regular"
+          aria-hidden="true"
+          focusable="false"
         />
-        <img
-          class="docs-component-animation__poster docs-component-animation__poster--dark"
-          src={dark.poster}
-          width={805}
-          height={476}
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
-        <canvas class="docs-component-animation__canvas" aria-hidden="true" />
-        <button
-          class="docs-component-animation__replay"
-          type="button"
-          data-animation-play
-          aria-label={`Play ${title} animation`}
-          title="Play animation"
-          hidden
-        >
-          <PlayIcon size={20} weight="regular" aria-hidden="true" focusable="false" />
-        </button>
-        <button
-          class="docs-component-animation__replay"
-          type="button"
-          data-animation-replay
-          aria-label={`Replay ${title} animation`}
-          title="Replay animation"
-          hidden
-        >
-          <ArrowCounterClockwiseIcon
-            size={20}
-            weight="regular"
-            aria-hidden="true"
-            focusable="false"
-          />
-        </button>
-        <span class="docs-component-animation__status" role="status" aria-live="polite" />
-      </div>
+      </button>
+      <span class="docs-component-animation__status" role="status" aria-live="polite" />
     </div>
-  )
-}
+  </div>
+)}
 
 <script>
   import { initComponentAnimations } from '../lib/component-animation-player';

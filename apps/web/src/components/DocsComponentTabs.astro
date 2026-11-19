@@ -17,27 +17,25 @@ const tabs = [
 <div class="docs-page-tabs" data-doc-tabs>
   <div class="docs-page-tabs__row">
     <div class="docs-page-tabs__list" role="tablist" aria-label="Component documentation">
-      {
-        tabs.map((tab, index) => (
-          <button
-            class="docs-page-tabs__tab"
-            id={`tab-${tab.id}`}
-            type="button"
-            role="tab"
-            aria-controls={`tabpanel-${tab.id}`}
-            aria-selected={index === 0 ? 'true' : 'false'}
-            tabindex={index === 0 ? 0 : -1}
-            data-doc-tab={tab.id}
-          >
-            <span class="docs-page-tabs__label">
-              <span class="docs-page-tabs__label-reserve" aria-hidden="true">
-                {tab.label}
-              </span>
-              <span class="docs-page-tabs__label-visible">{tab.label}</span>
+      {tabs.map((tab, index) => (
+        <button
+          class="docs-page-tabs__tab"
+          id={`tab-${tab.id}`}
+          type="button"
+          role="tab"
+          aria-controls={`tabpanel-${tab.id}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-doc-tab={tab.id}
+        >
+          <span class="docs-page-tabs__label">
+            <span class="docs-page-tabs__label-reserve" aria-hidden="true">
+              {tab.label}
             </span>
-          </button>
-        ))
-      }
+            <span class="docs-page-tabs__label-visible">{tab.label}</span>
+          </span>
+        </button>
+      ))}
     </div>
     <DocsPageActions {markdownPath} placement="tabbar" />
   </div>

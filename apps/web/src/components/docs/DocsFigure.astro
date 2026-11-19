@@ -20,18 +20,16 @@ const { src, darkSrc, alt, width, height, caption } = Astro.props;
     loading="lazy"
     decoding="async"
   />
-  {
-    darkSrc && (
-      <img
-        class="docs-figure__dark"
-        src={darkSrc}
-        {alt}
-        {width}
-        {height}
-        loading="lazy"
-        decoding="async"
-      />
-    )
-  }
+  {darkSrc && (
+    <img
+      class="docs-figure__dark"
+      src={darkSrc}
+      {alt}
+      {width}
+      {height}
+      loading="lazy"
+      decoding="async"
+    />
+  )}
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

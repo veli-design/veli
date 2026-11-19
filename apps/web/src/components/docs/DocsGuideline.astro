@@ -12,17 +12,17 @@ const { kind, ...figure } = Astro.props;
 ---
 
 <div class="docs-guideline" data-kind={kind}>
-  {
-    figure.src && figure.alt && figure.width && figure.height && (
-      <DocsFigure
-        src={figure.src}
-        alt={figure.alt}
-        width={figure.width}
-        height={figure.height}
-        darkSrc={figure.darkSrc}
-      />
-    )
-  }
+  {figure.src && figure.alt && figure.width && figure.height && (
+    <DocsFigure
+      src={figure.src}
+      alt={figure.alt}
+      width={figure.width}
+      height={figure.height}
+      darkSrc={figure.darkSrc}
+    />
+  )}
   <p class="docs-guideline__label">{kind === 'do' ? 'Do' : 'Don’t'}</p>
-  <div class="docs-guideline__copy"><slot /></div>
+  <div class="docs-guideline__copy">
+    <slot />
+  </div>
 </div>
