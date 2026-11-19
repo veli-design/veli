@@ -546,7 +546,7 @@ export async function initDesignPreviews(initialSeed = 7) {
     const hA = { els: [$('sand:lineA'), $('sand:hdlA')], c: P3 },
       hB = { els: [$('sand:lineB'), $('sand:hdlB')], c: P0 };
 
-    add(svg.querySelector('.design-crystalline'), (time) => {
+    add(svg.querySelector('[data-design-scene="light"]'), (time) => {
       const t = time % T,
         p = t / T;
       const ph = TAU * p * SAND.breaths;
@@ -559,6 +559,9 @@ export async function initDesignPreviews(initialSeed = 7) {
         }
         g.el.setAttribute('transform', tr);
       });
+    });
+    add(svg.querySelector('[data-design-scene="texture"]'), (time) => {
+      const p = (time % T) / T;
       const wp = TAU * p * SAND.waves;
       for (const g of grains) {
         const w = Math.sin(wp - (TAU * g.x) / SAND.waveLen + g.lag);
@@ -570,6 +573,9 @@ export async function initDesignPreviews(initialSeed = 7) {
         );
         g.el.setAttribute('opacity', (1 - (SAND.waveLift * (1 - w)) / 2).toFixed(3));
       }
+    });
+    add(svg.querySelector('[data-design-scene="curve"]'), (time) => {
+      const t = time % T;
       const k = bendAt(t),
         lin = 1 - k;
       const pts = centreLine.map((c) => `${c.x.toFixed(2)} ${(c.y + c.off * lin).toFixed(2)}`);
@@ -763,29 +769,50 @@ export async function initDesignPreviews(initialSeed = 7) {
     pushReach: 260, // pt
     ease: 10, // response rate (1/s): higher = snappier
   };
-  (function () {
-    const I = INFO.thaana;
-    const card = svg.querySelector('.design-thaana');
-    const labels = svg.querySelector('[data-t="labels"]');
-    const glyphs = I.glyphs.map((g, i) => {
-      const el = svg.querySelector(`[data-t="g${i}"]`);
-      return {
-        el,
-        c: centre(g.bbox),
-        s: 1,
-        b: 0,
-        pinned: false,
-        fill: el.getAttribute('fill') || '#10100F',
-        top: false,
-      };
-    });
-    const blobs = I.blobs.map((b, i) => ({
-      el: svg.querySelector(`[data-t="b${i}"]`),
-      c: centre(b.bbox),
-      x: 0,
-      y: 0,
-      s: 1,
+  // The two arrangements share the lens, pin and keyboard interactions. Only
+  // the visible SVG intersects; its own viewBox handles touch and resizing.
+  const landscape = svg.querySelector('[data-design-svg="thaana"]');
+  const portrait = svg.querySelector('[data-design-svg="thaana-portrait"]');
+  const desktopLetters = [
+    ...svg.querySelectorAll('.design-thaana-native [data-node-id="2382:110952"] > p'),
+  ];
+  const portraitNodes = (selector) =>
+    [...portrait.querySelectorAll(selector)].map((el) => ({
+      el,
+      c: el.dataset.center.split(' ').map(Number),
+      letter: el.dataset.letter,
     }));
+  wireThaana(
+    landscape,
+    landscape.querySelector('[data-t="labels"]'),
+    INFO.thaana.glyphs.map((g, i) => ({
+      el: landscape.querySelector(`[data-t="g${i}"]`),
+      c: centre(g.bbox),
+      letter: desktopLetters[i].textContent.trim(),
+    })),
+    INFO.thaana.blobs.map((b, i) => ({
+      el: landscape.querySelector(`[data-t="b${i}"]`),
+      c: centre(b.bbox),
+    })),
+    1,
+  );
+  wireThaana(
+    portrait,
+    portrait.querySelector('[data-front]'),
+    portraitNodes('[data-letter]'),
+    portraitNodes('[data-paint]'),
+    0.55,
+  );
+  function wireThaana(card, labels, letters, paintings, spacing) {
+    const glyphs = letters.map((g) => ({
+      ...g,
+      s: 1,
+      b: 0,
+      pinned: false,
+      fill: g.el.getAttribute('fill') || '#10100F',
+      top: false,
+    }));
+    const blobs = paintings.map((b) => ({ ...b, x: 0, y: 0, s: 1 }));
     const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const mix = (a, b, p) =>
       '#' +
@@ -798,17 +825,19 @@ export async function initDesignPreviews(initialSeed = 7) {
         .join('');
     let ptr = null,
       hot = null;
-    const glyphArt = card.querySelector('[data-design-svg="thaana"]');
+
     const toSvg = (event) => {
       if (!motionEnabled()) return null;
-      const point = svgPoint(glyphArt, event);
+      const point = svgPoint(card, event);
       return point ? [point.x, point.y] : null;
     };
-    const inCard = ([x, y]) =>
-      x >= I.card[0] && x <= I.card[0] + I.card[2] && y >= I.card[1] && y <= I.card[1] + I.card[3];
+    const inCard = ([x, y]) => {
+      const box = card.viewBox.baseVal;
+      return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height;
+    };
     const pick = (pt) => {
       let best = null,
-        bd = THAANA.catch;
+        bd = THAANA.catch * spacing;
       for (const g of glyphs) {
         const d = Math.hypot(g.c[0] - pt[0], g.c[1] - pt[1]);
         if (d < bd) {
@@ -863,7 +892,7 @@ export async function initDesignPreviews(initialSeed = 7) {
         let ts = 1;
         if (ptr) {
           const d = Math.hypot(g.c[0] - ptr[0], g.c[1] - ptr[1]);
-          const f = Math.max(0, 1 - d / THAANA.lens);
+          const f = Math.max(0, 1 - d / (THAANA.lens * spacing));
           ts = 1 + THAANA.swell * f * f * (3 - 2 * f);
         }
         const tb = g === hot || g.pinned ? 1 : 0;
@@ -880,7 +909,7 @@ export async function initDesignPreviews(initialSeed = 7) {
         g.el.setAttribute('transform', scaleAbout(g.c[0], g.c[1], s));
         g.el.setAttribute('fill', mix(g.fill, THAANA.green, Math.min(1, g.b * 1.4)));
         // a blooming letter is lifted above the others (and above the painted ones)
-        if (g.b > 0.05 && !g.top) {
+        if (g.b > 0.05 && !g.top && g.el !== document.activeElement) {
           labels.parentNode.insertBefore(g.el, labels);
           g.top = true;
         }
@@ -893,10 +922,16 @@ export async function initDesignPreviews(initialSeed = 7) {
           const dx = b.c[0] - ptr[0],
             dy = b.c[1] - ptr[1],
             d = Math.hypot(dx, dy) || 1,
-            f = Math.max(0, 1 - d / THAANA.pushReach);
-          tx = (dx / d) * THAANA.push * f;
-          ty = (dy / d) * THAANA.push * f;
+            f = Math.max(0, 1 - d / (THAANA.pushReach * spacing));
+          tx = (dx / d) * THAANA.push * spacing * f;
+          ty = (dy / d) * THAANA.push * spacing * f;
           ts = 1 + 0.05 * f;
+        }
+        if (!ptr && Math.abs(b.x) + Math.abs(b.y) + Math.abs(b.s - 1) < 0.002) {
+          b.x = b.y = 0;
+          b.s = 1;
+          if (b.el.hasAttribute('transform')) b.el.removeAttribute('transform');
+          continue;
         }
         b.x += (tx - b.x) * k;
         b.y += (ty - b.y) * k;
@@ -907,7 +942,7 @@ export async function initDesignPreviews(initialSeed = 7) {
         );
       }
     });
-  })();
+  }
 
   const visible = new Set();
   let raf = 0;
@@ -943,6 +978,25 @@ export async function initDesignPreviews(initialSeed = 7) {
   function syncMotionPreference() {
     const interactive = motionEnabled();
     thaanaArt.setAttribute('aria-hidden', String(!interactive));
+    portrait.setAttribute('aria-hidden', String(!interactive));
+    // The portrait SVG is also the reduced-motion still. Keep its controls
+    // out of the tab order when it is decorative.
+    portrait.toggleAttribute('inert', !interactive);
+    for (const letter of portrait.querySelectorAll('[tabindex]')) {
+      if (!interactive && letter.getAttribute('tabindex') === '0') {
+        letter.dataset.restoreFocus = 'true';
+        letter.setAttribute('tabindex', '-1');
+      } else if (interactive && letter.dataset.restoreFocus) {
+        delete letter.dataset.restoreFocus;
+        letter.setAttribute('tabindex', '0');
+      }
+      if (!interactive) {
+        letter.removeAttribute('transform');
+        letter.setAttribute('fill', '#10100f');
+      }
+    }
+    if (!interactive)
+      portrait.querySelectorAll('[data-paint]').forEach((p) => p.removeAttribute('transform'));
     thaanaInstructions.hidden = !interactive;
     wake();
   }
@@ -962,13 +1016,7 @@ export async function initDesignPreviews(initialSeed = 7) {
   syncMotionPreference();
 }
 
-function setupThaanaKeyboard(card, glyphs, activate) {
-  const letters = [
-    ...card.querySelectorAll('.design-thaana-native [data-node-id="2382:110952"] > p'),
-  ]
-    .slice(0, glyphs.length)
-    .map((p) => p.textContent.trim());
-  const art = card.querySelector('[data-design-svg="thaana"]');
+function setupThaanaKeyboard(art, glyphs, activate) {
   art.setAttribute('role', 'group');
   art.setAttribute('aria-label', 'Interactive Thaana letters');
   art.setAttribute('aria-describedby', 'thaana-preview-instructions');
@@ -976,7 +1024,7 @@ function setupThaanaKeyboard(card, glyphs, activate) {
     const el = g.el;
     el.setAttribute('role', 'button');
     el.setAttribute('tabindex', i === 0 ? '0' : '-1');
-    el.setAttribute('aria-label', `Pin letter ${letters[i]}`);
+    el.setAttribute('aria-label', `Pin letter ${g.letter}`);
     el.setAttribute('aria-pressed', 'false');
     el.addEventListener('focus', () => activate(g));
     el.addEventListener('blur', () => activate(null));

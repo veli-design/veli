@@ -721,61 +721,144 @@
   .marketing-page--design .design-responds li + li::before {
     content: none;
   }
+  /* Keep phone art at a readable scale on larger portrait tablets. */
+  .marketing-page--design
+    :is(.design-atoll, .design-crystalline, .design-motion-demo, .design-thaana) {
+    max-width: 480px;
+    margin-inline: auto;
+  }
+  /* 390 × 1100 portrait: rotate the orbital plane only; badges and names
+     stay upright. Both still and live art use the original 105-unit badges. */
   .marketing-page--design .design-atoll {
+    aspect-ratio: 390 / 1100;
     border-radius: 32px;
+    container-type: inline-size;
+  }
+  .marketing-page--design .design-atoll-canvas,
+  .marketing-page--design .design-atoll > .design-preview-animation {
+    position: absolute;
+    inset: auto;
+    top: -40.15cqw;
+    width: 345.9cqw; /* 1349 source units / 390 */
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+  }
+  .marketing-page--design .design-atoll-canvas {
+    left: 168.54cqw;
+    height: 236.92cqw; /* 924-unit still */
+  }
+  .marketing-page--design .design-atoll > .design-preview-animation {
+    left: 142.64cqw;
+    height: 184.62cqw; /* 720-unit cropped motion plate */
+  }
+  .design-atoll-canvas [data-node-id='2382:106815'] > div,
+  .design-atoll [data-a^='atoll:node'] {
+    transform-box: fill-box;
+    transform-origin: center;
+    rotate: -90deg;
+  }
+  .design-atoll [data-a='atoll:labels'],
+  .design-atoll-canvas [data-node-id='2382:106802'] > div:has(> p) {
+    display: none;
+  }
+  .marketing-page--design .design-atoll-labels {
+    position: absolute;
+    inset: 16.09% 0 auto;
+    display: grid;
+    grid-auto-rows: 53.64cqw;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+    pointer-events: none;
+  }
+  .design-atoll-labels strong,
+  .design-atoll-labels span {
+    display: block;
+    line-height: 1;
+  }
+  .design-atoll-labels strong {
+    color: #0f2528;
+    font-size: max(16px, 4.615cqw);
+    font-weight: 600;
+  }
+  .design-atoll-labels span {
+    margin-top: 2.05cqw;
+    color: #50686b;
+    font-size: max(12px, 3.08cqw);
   }
   .marketing-page--design .design-crystalline {
-    margin-left: 0;
     border-radius: 32px;
-    padding: 40px 20px 20px;
+    padding: 32px 24px 24px;
   }
   .marketing-page--design .design-crystalline h2 {
-    font-size: 36px;
-    line-height: 48px;
+    font-size: 34px;
+    line-height: 42px;
+    letter-spacing: -1.02px;
   }
   .marketing-page--design .design-crystalline > p {
-    margin: 24px auto 32px;
+    margin: 20px auto 32px;
     height: auto;
+    font-size: 16px;
+    line-height: 25px;
   }
   .marketing-page--design .design-crystalline-grid {
     grid-template-columns: 1fr;
     width: 100%;
-    gap: 20px;
+    gap: 16px;
   }
   .marketing-page--design .design-crystalline-grid > div {
     border-radius: 32px;
   }
   .marketing-page--design .design-motion-demo {
     border-radius: 32px;
-    height: 540px;
-    aspect-ratio: auto;
+    aspect-ratio: 390 / 680;
   }
   .marketing-page--design .design-motion-native {
-    width: 382px;
-    height: 540px;
-    left: 50%;
-    transform: translateX(-50%) scale(var(--mobile-motion-scale, 1));
-    transform-origin: top center;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    container-type: inline-size;
   }
   .marketing-page--design .design-motion-backdrop {
-    height: 684px;
-    width: 1665px;
+    width: 426.92%;
+    height: 100.59%;
+    left: -12.56%;
+    top: -1.62%;
   }
   .marketing-page--design .design-guide {
-    left: 0;
-    top: 0;
-    height: 180px;
+    left: 17.885%;
+    top: 3.897%;
+    width: 73.462%;
+    height: 28.676%;
   }
   .marketing-page--design .design-guide span {
-    top: 60px;
+    top: 37.69%;
+    left: calc(var(--i) * 12.565%);
+    width: 49.74%;
+    height: 24.615%;
+    border-radius: 100cqw;
   }
-  .marketing-page--design .design-connect {
-    left: 39px;
-    top: 210px;
+  .marketing-page--design .design-motion-native .design-connect {
+    left: 26.73%;
+    top: 39.43%;
+    width: 46.154%;
+    height: 5.882%;
+    gap: 16.667%;
+  }
+  .marketing-page--design .design-connect img {
+    width: 22.222%;
+    height: 100%;
   }
   .marketing-page--design .design-ripple {
-    left: 0;
-    top: 300px;
+    left: 23.45%;
+    top: 57.06%;
+    width: 78.36%;
+    height: 30.59%;
+  }
+  .marketing-page--design .design-ripple img {
+    width: 100%;
+    height: 100%;
   }
   .marketing-page--design .design-motion-captions {
     grid-template-columns: 1fr;
@@ -788,24 +871,41 @@
   }
   .marketing-page--design .design-thaana {
     margin-top: 0;
+    padding: 32px 24px 6px;
     border-radius: 32px;
+  }
+  .marketing-page--design .design-thaana-art {
+    display: none;
+  }
+  .marketing-page--design .design-thaana-portrait {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
   }
   .marketing-page--design .design-thaana-meta {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 20px 24px;
-    gap: 20px 10px;
-    font-size: 10px;
-    line-height: 18px;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 58px auto;
+    gap: 20px 8px;
+    margin-top: 32px;
+    min-height: 168px;
+    font-size: 13px;
+    line-height: 20px;
     color: #50514d;
   }
-  .marketing-page--design .design-thaana-native [data-node-id='2382:111019'] {
-    visibility: hidden;
+  .design-thaana-meta p:first-child {
+    grid-column: 1 / -1;
+  }
+  .design-thaana-meta strong,
+  .design-thaana-meta [lang='dv'] {
+    color: #10100f;
   }
   .marketing-page--design .design-thaana-meta [lang='dv'] {
-    font-family: 'MV Faseyha', sans-serif;
-    font-size: 32px;
-    line-height: 1.5;
+    font-family: 'MV Aaamu FK', sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1.2;
   }
   .marketing-page--design .design-closing {
     grid-template-columns: 1fr;
@@ -862,7 +962,13 @@
   width: calc(100% + 2px);
   height: calc(100% + 2px);
 }
-.marketing-page--design .design-atoll-key {
+.design-atoll-sheet {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.design-atoll-labels,
+.design-thaana-portrait {
   display: none;
 }
 @media (max-width: 760px) {
@@ -873,16 +979,6 @@
     height: auto;
     min-height: 0;
     padding: 24px 0 40px;
-  }
-  .marketing-page--design .design-atoll-key {
-    display: block;
-    margin-top: 16px !important;
-    font-size: 14px;
-    line-height: 22px;
-    color: var(--marketing-muted);
-  }
-  .marketing-page--design .design-thaana-meta {
-    font-size: 12px;
   }
 }
 @media (min-width: 761px) and (max-width: 1100px) {

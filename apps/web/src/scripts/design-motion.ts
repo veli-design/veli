@@ -154,12 +154,6 @@ export function initDesignMotion() {
     if (!element) continue;
     new ResizeObserver(() => {
       element.style.setProperty(property, String(element.clientWidth / width));
-      if (selector === '.design-motion-demo') {
-        element.style.setProperty(
-          '--mobile-motion-scale',
-          String(Math.min(1, element.clientWidth / 382)),
-        );
-      }
     }).observe(element);
   }
   document.addEventListener('visibilitychange', wake);
@@ -178,17 +172,25 @@ export function initDesignMotion() {
     '.design-forces, .design-atoll, .design-crystalline, .design-motion-demo, .design-thaana',
   );
   if (previews.length) {
+    let near = false;
+    const tryLoad = () => {
+      if (!near || reduced()) return;
+      preload.disconnect();
+      window.removeEventListener('veli:motion-change', tryLoad);
+      void import('./design-previews.js').then(({ initDesignPreviews }) =>
+        initDesignPreviews(heroSeed),
+      );
+    };
     const preload = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          preload.disconnect();
-          void import('./design-previews.js').then(({ initDesignPreviews }) =>
-            initDesignPreviews(heroSeed),
-          );
-        }
+        // One trigger is enough. If motion is disabled, retain the stills and
+        // defer all interactive SVGs and particle data until the user opts in.
+        near ||= entries.some((entry) => entry.isIntersecting);
+        tryLoad();
       },
       { rootMargin: '600px' },
     );
+    window.addEventListener('veli:motion-change', tryLoad);
     previews.forEach((preview) => preload.observe(preview));
   }
   wake();
