@@ -27,8 +27,9 @@ const component = getComponentMeta(doc.id);
 const pageDescription = doc.data.description ?? component?.description;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const markdownPath = `/docs/components/${doc.id}/index.md`;
-// Let long component names such as PasswordInput wrap between words on phones.
-const titleParts = doc.data.title.split(/(?=[A-Z])/);
+// Let long component names wrap between words on phones (Password|Input,
+// OTP|Input) without breaking acronyms apart.
+const titleParts = doc.data.title.split(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/);
 ---
 
 <DocsLayout
