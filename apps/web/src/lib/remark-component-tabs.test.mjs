@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { URL } from 'node:url';
 import {
   docsTabIds,
   getDocsTabForHeading,
@@ -125,35 +123,28 @@ test('adds one Storybook action after the final API Reference table', () => {
   assert.equal(codePanel.children.filter((node) => node.name === 'DocsStorybookLink').length, 1);
 });
 
-test('renders configured animation metadata and leaves non-doc collections unchanged', () => {
+test('adds exactly one shared animation to Overview and leaves other collections unchanged', () => {
   const nodes = [heading(1, 'Menu'), paragraph('Menu introduction.')];
-  const result = partitionDocsTabNodes(nodes, {
-    title: 'Menu',
-    animation: { src: '/animations/menu-showcase/', label: 'Menu anatomy animation' },
-  });
+  const result = partitionDocsTabNodes(nodes, { title: 'Menu' }, { slug: 'menu' });
   const overview = result.find((node) => node.name === 'section');
-  const animation = overview.children.find(
-    (node) =>
-      node.name === 'div' &&
-      node.attributes?.some((item) => item.value === 'docs-component-animation'),
-  );
-  const iframe = animation.children.find((node) => node.name === 'iframe');
-
-  assert.equal(
-    iframe.attributes.find((item) => item.name === 'src').value,
-    '/animations/menu-showcase/',
-  );
-  assert.equal(
-    iframe.attributes.find((item) => item.name === 'title').value,
-    'Menu anatomy animation',
-  );
-
-  const tree = { type: 'root', children: nodes };
-  remarkComponentTabs()(tree, {
-    path: '/workspace/apps/web/src/content/foundations/color.mdx',
-    data: { astro: { frontmatter: { title: 'Color' } } },
-  });
-  assert.equal(tree.children, nodes);
+  const animations = overview.children.filter((node) => node.name === 'DocsComponentAnimation');
+  assert.equal(animations.length, 1);
+  assert.equal(animations[0].attributes.find((item) => item.name === 'slug').value, 'menu');
+  assert.equal(animations[0].attributes.find((item) => item.name === 'title').value, 'Menu');
+  for (const panel of result.filter((node) => node.name === 'section').slice(1)) {
+    assert.equal(
+      panel.children.some((node) => node.name === 'DocsComponentAnimation'),
+      false,
+    );
+  }
+  for (const collection of ['foundations', 'patterns']) {
+    const tree = { type: 'root', children: nodes };
+    remarkComponentTabs()(tree, {
+      path: `/workspace/apps/web/src/content/${collection}/color.mdx`,
+      data: { astro: { frontmatter: { title: 'Color' } } },
+    });
+    assert.equal(tree.children, nodes);
+  }
 });
 
 test('preserves Markdown and search artifacts produced before the visual reorganization', () => {
@@ -186,27 +177,4 @@ test('preserves Markdown and search artifacts produced before the visual reorgan
 
   assert.equal(file.data.astro.frontmatter[docsMarkdownFrontmatterKey], markdown);
   assert.deepEqual(file.data.astro.frontmatter[docsSearchFrontmatterKey], search);
-});
-
-test('menu showcase consumes resolved Veli theme tokens instead of fixed presentation colors', () => {
-  const showcase = readFileSync(
-    new URL('../../public/animations/menu-showcase/index.html', import.meta.url),
-    'utf8',
-  );
-
-  for (const token of [
-    '--veli-color-bg-surface-base',
-    '--veli-color-menu-bg',
-    '--veli-color-menu-hover',
-    '--veli-color-border-base-subtle',
-    '--veli-color-text-base-strong',
-    '--veli-color-icon-base-muted',
-    '--veli-color-text-danger-muted',
-  ]) {
-    assert.match(showcase, new RegExp(token));
-  }
-
-  assert.match(showcase, /veli:animation-theme/);
-  assert.doesNotMatch(showcase, /background:\s*#efefef/);
-  assert.doesNotMatch(showcase, /fill:\s*['"]#f4f6f3/);
 });

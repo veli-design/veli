@@ -54,64 +54,6 @@ const tabs = [
       const tabList = root.querySelector('.docs-page-tabs__list');
       const panels = Array.from(document.querySelectorAll('[data-doc-tab-panel]'));
       const contentsLinks = Array.from(document.querySelectorAll('.docs-contents a[href^="#"]'));
-      const animationFrames = Array.from(
-        document.querySelectorAll('.docs-component-animation__frame'),
-      );
-      const animationTokenNames = [
-        '--veli-color-bg-surface-base',
-        '--veli-color-bg-surface-raised',
-        '--veli-color-menu-bg',
-        '--veli-color-menu-hover',
-        '--veli-color-menu-pressed',
-        '--veli-color-border-base-subtle',
-        '--veli-color-border-focus',
-        '--veli-color-text-base-strong',
-        '--veli-color-text-base-inverted',
-        '--veli-color-icon-base-muted',
-        '--veli-color-text-danger-muted',
-        '--veli-color-status-info-emphasis',
-        '--veli-color-status-indigo-emphasis',
-        '--veli-color-effects-shadow-depth-100',
-        '--veli-color-effects-shadow-frame',
-      ];
-
-      const sendAnimationTheme = (frame) => {
-        if (!(frame instanceof HTMLIFrameElement)) return;
-        const tokenProbe = document.createElement('span');
-        tokenProbe.hidden = true;
-        document.body.append(tokenProbe);
-        const tokens = Object.fromEntries(
-          animationTokenNames.map((name) => {
-            tokenProbe.style.color = `var(${name})`;
-            return [name, getComputedStyle(tokenProbe).color];
-          }),
-        );
-        tokenProbe.remove();
-        frame.contentWindow?.postMessage(
-          {
-            type: 'veli:animation-theme',
-            theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
-            tokens,
-          },
-          '*',
-        );
-      };
-
-      const syncAnimationTheme = () => {
-        for (const frame of animationFrames) sendAnimationTheme(frame);
-      };
-
-      for (const frame of animationFrames) {
-        frame.addEventListener('load', () => sendAnimationTheme(frame));
-      }
-      window.addEventListener('message', (event) => {
-        if (event.data?.type !== 'veli:animation-ready') return;
-        const frame = animationFrames.find((item) => item.contentWindow === event.source);
-        if (frame) sendAnimationTheme(frame);
-      });
-      window.addEventListener('veli:color-scheme-change', syncAnimationTheme);
-      syncAnimationTheme();
-
       const tabForHash = (hash) => {
         const id = decodeURIComponent(hash.replace(/^#/, ''));
         if (id.startsWith('tab-')) return id.slice(4);

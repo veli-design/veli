@@ -3,7 +3,7 @@ import { LinkSimpleIcon } from '@phosphor-icons/react';
 
 export function InputUsageDemo() {
   return (
-    <div className="w-[320px]">
+    <div className="w-full max-w-[320px]">
       <Input
         label="Email"
         type="email"
@@ -26,7 +26,7 @@ export function InputAppearancesDemo() {
 
 export function InputValidationDemo() {
   return (
-    <div className="w-[320px]">
+    <div className="w-full max-w-[320px]">
       <Input
         label="Email"
         type="email"

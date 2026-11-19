@@ -1,6 +1,6 @@
 ---
 title: Input
-description: Single-line text field with label, helper text, validation, and accessory slots.
+description: 'A single-line text field with a label, helper text, validation and optional accessories.'
 ---
 
 import {
@@ -9,9 +9,474 @@ import {
   InputValidationDemo,
 } from '../../components/InputExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Input
 
-Use Input for short, single-line values such as names, email addresses, and reference numbers. For longer copy, use [TextArea](/docs/components/textarea/). For passwords, use [PasswordInput](/docs/components/password-input/).
+<DocsTab id="overview">
+
+An input lets people type a short answer on one line, such as a name, an email address or a phone number. Use it whenever a form needs a short value that people type rather than pick. Each input comes with a visible label, and can add helper text, a validation message and small accessories at the start or end of the field.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/input.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-input--docs"
+/>
+
+## When to use
+
+### Use an input when
+
+- The answer is short and fits on one line, such as a name or an ID card number.
+- People type the value rather than pick it.
+- The value is text, an email address, a URL, a phone number or a similar single-line value.
+- The field needs a visible label, helper text, a validation message, or leading and trailing content.
+
+### Don't use an input when
+
+- The answer may run to several lines. Use [Text area](/docs/components/textarea/), with its resize and character count.
+- People choose from a fixed list. Use [Select](/docs/components/select/).
+- The answer is a date. Use [Date picker](/docs/components/date-picker/), or [Date field](/docs/components/date-field/) for a date people know by heart, such as a date of birth.
+- The field is for a password or a search. Use [Password input](/docs/components/password-input/) or [Search](/docs/components/search/), which have built-in show and clear behaviour.
+- The form is still loading. Input has no skeleton mode, so compose [Skeleton](/docs/components/skeleton/) pieces instead.
+
+<DocsFigure
+  src="/images/docs/input/input-intro-1.webp"
+  darkSrc="/images/docs/input/input-intro-1-dark.webp"
+  alt='A form card titled Passport renewal, Step 2 of 4: Contact details. It has three inputs: Full name, required, filled with Aishath Mariyam; Email address, required, filled with a.mariyam@example.mv, with the helper text "We send your appointment confirmation here"; and Phone number, marked Optional, showing the placeholder 7XX XXXX and the helper text "For reminders by SMS". Back and Continue buttons sit below.'
+  width="2400"
+  height="1520"
+  caption="Inputs collect contact details in one step of a service form."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/input/input-anatomy-1.svg"
+  darkSrc="/images/docs/input/input-anatomy-1-dark.svg"
+  alt='An input at size lg with eight numbered markers: 1 on the label "Label", 2 on the info icon after it, 3 on the word Optional, 4 on the red asterisk, 5 on the field and its underline, 6 on the placeholder "Placeholder", 7 on a link icon at the end of the field and 8 on the helper text "Helper text".'
+  width="576"
+  height="360"
+  caption="The parts of an input, shown at size lg. Numbers match the list below. Optional and the required marker are shown together only to name the parts. A field never shows both."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   Names the field. In code it is label.
+
+2. **Info icon**
+
+   A 16px button that opens a tooltip with extra help. In code it is infoTooltip.
+
+3. **Optional**
+
+   The word Optional after the label. It switches to Dhivehi with the page language. In code it is isOptional. It is hidden when the field is required.
+
+4. **Required indicator**
+
+   An asterisk after the label. In code it shows with isRequired; set showRequiredIndicator to false to hide it.
+
+5. **Field**
+
+   The typing area, 36, 44 or 52 high with a 10 corner radius. The default appearance has an underline; the outline appearance has a border. In code it is appearance.
+
+6. **Text**
+
+   The placeholder until people type, then the value. In code it is placeholder and value.
+
+7. **End content**
+
+   An optional 20px icon at the end of the field. While the field is invalid, a warning icon shows here instead. In code it is endContent.
+
+8. **Helper text**
+
+   One sentence below the field. The error message replaces it while the field is invalid. In code it is description.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/input/input-do-1.webp" darkSrc="/images/docs/input/input-do-1-dark.webp" alt="An input labelled Email address, marked required, with the placeholder name@example.mv." width="1136" height="336">
+
+Keep a visible label above the field. The placeholder only shows an example.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/input/input-dont-1.webp" darkSrc="/images/docs/input/input-dont-1-dark.webp" alt="An input with no label above it, showing only the placeholder Email address." width="1136" height="336">
+
+Don't use the placeholder as the label. It disappears as soon as people type.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/input/input-do-2.webp" darkSrc="/images/docs/input/input-do-2-dark.webp" alt="An Email address input in the error state with the value a.mariyam@example and the error message &quot;Enter an email address like name@example.mv&quot;." width="1136" height="376">
+
+Say what to fix in the error message, with an example.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/input/input-dont-2.webp" darkSrc="/images/docs/input/input-dont-2-dark.webp" alt="An Email address input in the error state with the value a.mariyam@example and the error message &quot;Invalid input.&quot;" width="1136" height="376">
+
+Don't write vague errors. "Invalid input" doesn't say what to change.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/input/input-do-3.webp" darkSrc="/images/docs/input/input-do-3-dark.webp" alt="Two inputs in the same size and default appearance: Full name filled with Aishath Mariyam, and Phone number with the placeholder 7XX XXXX." width="1136" height="536">
+
+Use one appearance and one size for every field in a form.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/input/input-dont-3.webp" darkSrc="/images/docs/input/input-dont-3-dark.webp" alt="Two inputs that don&#x27;t match: Full name is a small field in the default appearance with an underline, and Phone number is a larger field in the outline appearance with a border." width="1136" height="536">
+
+Don't mix appearances or sizes in one form. The fields stop reading as a set.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+Name the value, not the action. Write labels as a short noun phrase in sentence case, with no colon at the end. On a one-question page the label may be the question.
+
+| Do             | Don't                                                      |
+| :------------- | :--------------------------------------------------------- |
+| Email address  | Enter your email: (names the action and ends with a colon) |
+| ID card number | NIC                                                        |
+
+### Placeholders
+
+Use a placeholder, if at all, for one of three things: a format example, such as 7XX XXXX or name@example.mv; what a search covers, such as Search services; or a short prompt on an empty choice, such as Choose an atoll. Write it in sentence case with no end punctuation. Never put the label or instructions in the placeholder: it disappears when people type and its text is low contrast.
+
+| Do                                              | Don't                                                       |
+| :---------------------------------------------- | :---------------------------------------------------------- |
+| 7XX XXXX                                        | Enter your phone number (an instruction in the placeholder) |
+| A visible label, Email address, above the field | Email address as the placeholder with no label              |
+
+### Helper text
+
+Add helper text only when the label needs context: where to find the value, what format it takes or why it is needed. Keep it to one sentence with no full stop. When a value has a format people may not know, show an example that starts with "For example": For example, A900101. If the field has a length limit, say it before people type: You can enter up to 50 characters. Don't put links in helper text, and use infoTooltip only for extra detail.
+
+| Do                                      | Don't                                                                                        |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------- |
+| The number on the front of your ID card | Please enter your ID card number here. (repeats the label, says please and adds a full stop) |
+
+### Error messages
+
+Say what is wrong and how to fix it, in one specific sentence with no full stop, using the words of the label. When the answer is missing, write Enter followed by the thing. When the format is wrong, show the right one. Set errorMessage for every check the input runs, in English and Dhivehi, instead of showing the browser's own messages.
+
+| Do                                          | Don't                                   |
+| :------------------------------------------ | :-------------------------------------- |
+| Enter an email address like name@example.mv | Invalid input (doesn't say what to fix) |
+| Enter your ID card number                   | Required                                |
+
+Use these templates for other errors:
+
+- **Length**: Full name must be 100 characters or less.
+- **Range**: Amount must be between MVR 10 and MVR 5,000.
+- **Duplicate**: say what already exists and what to do: You have already applied for this permit. Your reference is WP-2026-04817.
+- **Mismatch**: say what must match and how to fix it.
+- **Not found**: say what was searched and how to check it: We could not find an application with the reference WP-2026-04871. Check the reference and try again.
+- **Codes**: Enter the code we sent you. Never repeat a password, code or other sensitive value in a message.
+
+### Optional and required
+
+Mark whichever is rarer in the form. When most fields are required, label the optional ones with isOptional. When most are optional, mark the required ones with isRequired and say once above the form: Fields marked with \* are required. Never mark one field both ways. The input hides Optional when a field is required. In a form that marks optional fields, set showRequiredIndicator to false, because the asterisk shows on every required field by default.
+
+### Units and amounts
+
+Show units and prefixes, such as MVR or kg, outside the value in startAddon or endAddon, so people type the number only, and still name the value in the label. In amount inputs, accept MVR, Rf, the rufiyaa sign, commas and spaces as typed. Write amount errors in MVR.
+
+| Do                                                  | Don't                                                                                 |
+| :-------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| Label "Amount paid", MVR in startAddon, value 1,250 | Value typed as MVR 250 (people must type the currency and validation has to strip it) |
+| Amount must be MVR 10 or more                       | Enter amount in MVR without commas (makes people format the value)                    |
+|                                                     | Amount must be numeric (technical, with no range)                                     |
+
+### IDs, phone numbers and addresses
+
+- Label the national ID number "ID card number" and show it exactly as issued: A900101.
+- In phone fields, accept spaces, hyphens and a leading +960, 960 or 00960. Don't use input masks or reformat the number while people type.
+- Ask for an address in Maldivian order: house or building name, road, island or city, then postcode.
+- Write email addresses in full and in lower case. Use name@example.mv in visible format hints.
+
+### Built-in strings
+
+Input has two built-in strings, and both switch to Dhivehi with the page language:
+
+| String                        | English          | Dhivehi           |
+| :---------------------------- | :--------------- | :---------------- |
+| Optional, shown by isOptional | Optional         | އިޚްތިޔާރީ        |
+| Info button name              | More information | އިތުރު މަޢުލޫމާތު |
+
+Optional can't be reworded. Override the info button name with infoTooltipAriaLabel so it says what the help is about: More information about ID card number.
+
+### Dhivehi copy
+
+Write Dhivehi labels, helper text and errors natively rather than translating word for word, and keep them as short as the English, because Dhivehi lines are taller and phrases often longer.
+
+## Related components
+
+| Component                                          | When to use it                                   |
+| :------------------------------------------------- | :----------------------------------------------- |
+| [Text area](/docs/components/textarea/)            | collect a longer answer over several lines.      |
+| [Select](/docs/components/select/)                 | choose one option from a list.                   |
+| [Date picker](/docs/components/date-picker/)       | enter or pick a date.                            |
+| [Search](/docs/components/search/)                 | search a list or a page.                         |
+| [Password input](/docs/components/password-input/) | collect a password with a show and hide control. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the input: appearances, sizes, states, spacing and the tokens behind them. Values match the shipped component unless a difference is listed under "Missing or unverified".
+
+## Appearances
+
+Input has two appearances with the same sizes and states. In code, appearance defaults to default.
+
+<DocsFigure
+  src="/images/docs/input/input-appearances-1.webp"
+  darkSrc="/images/docs/input/input-appearances-1-dark.webp"
+  alt='Two inputs side by side, each with Label, Optional, the placeholder "Placeholder" and "Helper text". Appearance default is a filled field with an underline. Appearance outline is a filled field with a border on all sides.'
+  width="2400"
+  height="616"
+  caption="Appearance default and appearance outline."
+/>
+
+- Use **default**, a filled field with an underline, in most forms.
+- Use **outline**, a filled field with a border on all sides, where an underline would be lost, such as on a raised card.
+
+## Sizes
+
+Input has three sizes. Size sets the field height, padding and text styles. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/input/input-sizes-1.webp"
+  darkSrc="/images/docs/input/input-sizes-1-dark.webp"
+  alt="Three inputs side by side at sizes sm, md and lg. Each shows Label, Optional, the placeholder and helper text. Size lg has larger text."
+  width="2400"
+  height="648"
+  caption="Sizes sm, md and lg."
+/>
+
+- Use **sm** (36 high) in dense layouts, such as filters, tables and toolbars.
+- Use **md** (44 high), the default, for forms.
+- Use **lg** (52 high, with larger text) for short forms that need to stand out, such as sign-in, and for kiosks.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/input/input-options-1.webp"
+  darkSrc="/images/docs/input/input-options-1-dark.webp"
+  alt='Two inputs. With help: ID card number, required, with an info icon, the value A123456 and the helper text "The number on the front of your ID card". Email: Email address, required, with the value a.mariyam@example.mv and no helper text.'
+  width="2400"
+  height="616"
+/>
+
+<DocsFigure
+  src="/images/docs/input/input-options-2.webp"
+  darkSrc="/images/docs/input/input-options-2-dark.webp"
+  alt='Two inputs. Read only: Application number with the value APP-2026-01482 and the helper text "Set by the service. You cannot change it." End content: Island, marked Optional, with the placeholder "Search islands" and a search glass icon at the end.'
+  width="2400"
+  height="616"
+  caption="Real uses, with the properties each one needs."
+/>
+
+- **With help**: a required field with a description and an info tooltip. Use isRequired, description and infoTooltip.
+- **Email**: set type to email, which keeps the value left to right in Dhivehi. Show the label only, with no description.
+- **Read only**: show a value people need to see but can't edit here with isReadOnly, and a description that says why, such as where a prefilled value came from.
+- **End content**: add an icon at the end, such as a search glass, with endContent. Keep accessories to concise icons or supporting actions. startContent, startAddon and endAddon add content at the start, or in an inset container at either end.
+- **Header action**: action adds trailing content to the label row, such as an inline link. Make it a real Button or Link.
+
+## States
+
+<DocsFigure
+  src="/images/docs/input/input-states-1.webp"
+  darkSrc="/images/docs/input/input-states-1-dark.webp"
+  alt="Three inputs at size md in the default, hover and active states. Default shows the placeholder; hover has a darker fill and underline; active shows the value Aishath Mariyam with a darker fill and a thicker underline."
+  width="2400"
+  height="616"
+/>
+
+<DocsFigure
+  src="/images/docs/input/input-states-2.webp"
+  darkSrc="/images/docs/input/input-states-2-dark.webp"
+  alt='Three inputs at size md in the focus, filled and error states. Focus shows the focus ring around the field; filled shows Aishath Mariyam; error shows a red underline, a warning icon at the end and the message "This field needs attention."'
+  width="2400"
+  height="616"
+/>
+
+<DocsFigure
+  src="/images/docs/input/input-states-3.webp"
+  darkSrc="/images/docs/input/input-states-3-dark.webp"
+  alt="Three inputs at size md in the read only, disabled and skeleton states. Read only shows Aishath Mariyam on a darker fill; disabled shows faded text; skeleton shows grey loading blocks in place of the label, field and helper text."
+  width="2400"
+  height="664"
+  caption="States in the default appearance at size md. The skeleton state is Figma only."
+/>
+
+| State     | When                        | Visual change                                                                        |
+| :-------- | :-------------------------- | :----------------------------------------------------------------------------------- |
+| Default   | Empty field, no interaction | Fill `text-input/bg-default`, placeholder in `text/base/inactive`                    |
+| Hover     | Pointer over the field      | The fill and underline darken                                                        |
+| Active    | While typing                | Fill `text-input/bg-pressed`, underline thickens to 2px                              |
+| Focus     | Keyboard focus              | The focus ring shows around the field                                                |
+| Filled    | Holds a value, no focus     | Value in `text/base/strong`                                                          |
+| Error     | isInvalid or a failed check | Red underline or border, a warning icon at the end and the error message below       |
+| Read only | isReadOnly                  | Darker fill and no underline. People can select and copy the value but not change it |
+| Disabled  | isDisabled                  | Darker fill, faded text. Not editable and skipped by Tab                             |
+
+Input has no skeleton mode. While form data loads, compose Skeleton pieces in its place.
+
+## Behaviour
+
+- **Typing**: the value updates as people type. Control it with value and onChange, or start with defaultValue.
+- **Click target**: clicking anywhere in the field, outside the text, moves focus to the text.
+- **Read only**: isReadOnly keeps the field focusable and selectable but blocks changes. Use it, not isDisabled, for a prefilled value that can't be edited here.
+- **Disabled**: isDisabled blocks typing and removes the field from the tab order.
+- **Validation**: check the value when people submit, then again as they edit so the error clears once fixed. isInvalid or a failed check shows errorMessage below the field and a warning icon at the end. Never silently block or strip keystrokes, such as refusing letters in a phone field, and keep every answer when people go back, refresh or hit an error.
+- **Input types**: type email, password, tel and url keep the value left to right in Dhivehi, and phones show a matching keyboard.
+- **Autocomplete and keyboards**: set autoComplete on fields for people's own details, such as type email with autoComplete email, and type tel with autoComplete tel. Use inputMode numeric for an ID card number or a code, never type number. Turn spellCheck and autoCapitalize off for codes, reference numbers, email addresses and ID card numbers.
+- **Accept common formats**: trim spaces, ignore spaces and dashes in phone and ID card numbers, and accept upper or lower case in ID card numbers, such as a123456.
+- **Paste, Enter and password managers**: never block pasting. Enter submits the form from a single-line field. Keep password managers off fields that aren't for signing in, with a specific autocomplete token or autocomplete off.
+- **Autofocus**: autofocus only the single main input of a page on desktop, such as Search on a search page. Avoid autofocus on mobile.
+- **One-time codes**: use one input with autoComplete one-time-code and inputMode numeric, so a pasted code fills it. Say where the code went, showing only the last 4 digits of the phone number, and how long it lasts. Offer Send a new code after a short wait, such as 30 seconds.
+- **Width**: the input fills the width it is given. Constrain the parent, not the field, and lay forms out in one column with fields sized to the expected answer.
+- **Text size on phones**: field text is at least 16px on mobile so iOS Safari doesn't zoom the page on focus. Sizes sm and md use 14px text, so use size lg or set 16px text on phones.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/input/input-rtl-1.webp"
+  darkSrc="/images/docs/input/input-rtl-1-dark.webp"
+  alt="Two inputs side by side on grey cards. On the left, labelled LTR input, an English input with the label Label, an info icon and Optional, the placeholder Placeholder, a link icon at the end and the helper text Helper text. On the right, labelled RTL inputDv, the same input mirrored right to left in Dhivehi, with the label, info icon and Optional reading from the right, the link icon on the left and the helper text below."
+  width="2400"
+  height="568"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the layout mirrors. The label, Optional and asterisk read from the right, and the end icon moves to the left.
+- The field keeps its height (36, 44 or 52). The taller Dhivehi line overflows, centred. The label row, with its 8 below, grows to 36 at sm and md and 40 at lg, against 28, 28 and 32 in English (Storybook). See Missing or unverified.
+- Email, password, phone and URL values stay left to right. Set dir to ltr on other fixed formats, such as an ID card number or a reference like WP-2026-04817, and to auto on free text. Labels stay in the page direction.
+- Optional and the info button name switch to Dhivehi.
+- In code, wrap the form in VeliProvider with language set to dv.
+- In Figma, design Dhivehi forms with inputDv. It has the same variants as input, mirrored, with the Dhivehi text styles and strings.
+
+Example configuration: size md, isOptional, infoTooltip.
+
+| Part                        | English          | Dhivehi             |
+| :-------------------------- | :--------------- | :------------------ |
+| Label                       | Label            | ލޭބަލް              |
+| Placeholder                 | Placeholder      | ޕްލޭސްހޯލްޑަރ       |
+| Helper text                 | Helper text      | އެހީތެރިވެދޭ ލިޔުން |
+| Optional (built in)         | Optional         | އިޚްތިޔާރީ          |
+| Info button name (built in) | More information | އިތުރު މަޢުލޫމާތު   |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/input/input-spacing-1.svg"
+  darkSrc="/images/docs/input/input-spacing-1-dark.svg"
+  alt="Spacing redlines for an input at sizes sm, md and lg. Each shows the label row 8 above the field, 8 between header parts, field padding of 8 and 12 at sm, 12 and 16 at md and 14 and 16 at lg, 8 between the text and the end icon, helper text 4 below the field, and field heights 36, 44 and 52."
+  width="1200"
+  height="1124"
+  caption="All values in pixels at 1x. Bands are padding and gaps; lines with end ticks are sizes."
+/>
+
+| Property                      | sm  | md  | lg  |
+| :---------------------------- | :-- | :-- | :-- |
+| Field height                  | 36  | 44  | 52  |
+| Field padding, top and bottom | 8   | 12  | 14  |
+| Field padding, sides          | 12  | 16  | 16  |
+| Gap between header parts      | 8   | 8   | 8   |
+| Label row to field            | 8   | 8   | 8   |
+| Text to end icon              | 8   | 8   | 8   |
+| Field to helper text          | 4   | 4   | 4   |
+| End icon                      | 20  | 20  | 20  |
+| Warning icon                  | 16  | 16  | 20  |
+| Corner radius                 | 10  | 10  | 10  |
+
+The underline in the default appearance is 1.5 at rest and 2 when active or focused. The outline border is 1 at rest, 1.5 on hover and 2 when active, and the focus ring replaces it on focus. Neither changes the field height.
+
+<DocsFigure
+  src="/images/docs/input/input-radius-1.svg"
+  darkSrc="/images/docs/input/input-radius-1-dark.svg"
+  alt="Three inputs at sizes sm, md and lg, each with its field marked with a 10 corner radius."
+  width="1200"
+  height="268"
+  caption="The field uses radius 10 (`radius/field`) at every size and in both appearances. The underline follows the bottom corners."
+/>
+
+## Typography
+
+| Element                | English                              | Dhivehi                                   | Colour token                                                                         |
+| :--------------------- | :----------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------- |
+| Label, sm and md       | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`; disabled `text/base/muted`                                      |
+| Label, lg              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/DEFAULT`; disabled `text/base/muted`                                      |
+| Optional, sm and md    | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/subtle`                                                                   |
+| Optional, lg           | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/subtle`                                                                   |
+| Required asterisk      | Caption regular, Inter Regular 12/16 | As English                                | `text/danger/muted`                                                                  |
+| Text, sm and md        | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | Value `text/base/strong`; placeholder `text/base/inactive`; disabled `text/disabled` |
+| Text, lg               | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                                                         |
+| Helper text, sm and md | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/muted`; disabled `text/disabled`                                          |
+| Helper text, lg        | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`; disabled `text/disabled`                                          |
+| Error message          | As helper text at each size          | As helper text at each size               | `text/danger/muted`                                                                  |
+
+Email, password, phone and URL values stay left to right in the Latin font.
+
+## Tokens
+
+Fill, line and text per state. Line is the underline in the default appearance and the border in outline. Fill and line names are written `text-input/...` and leave out the `components/` prefix.
+
+| State     | Fill                                                   | Line                                                                                    | Text and icon                                                  |
+| :-------- | :----------------------------------------------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| Default   | `text-input/bg-default`                                | Underline `text-input/stroke-default` 1.5; outline border `text-input/stroke-default` 1 | Placeholder `text/base/inactive`                               |
+| Hover     | `text-input/bg-hover`                                  | Underline `text-input/stroke-hover` 1.5; outline border `text-input/stroke-hover` 1.5   | As default                                                     |
+| Active    | `text-input/bg-pressed`                                | Underline `text-input/stroke-pressed` 2; outline border `text-input/stroke-pressed` 2   | Value `text/base/strong`                                       |
+| Focus     | `text-input/bg-pressed`                                | Underline `text-input/stroke-pressed` 2 plus the focus ring; outline has the ring only  | Value `text/base/strong`                                       |
+| Filled    | `text-input/bg-default`; outline `text-input/bg-hover` | Underline `text-input/stroke-default` 1.5; outline border `text-input/stroke-default` 1 | Value `text/base/strong`                                       |
+| Error     | `text-input/bg-default`                                | Underline `text-input/stroke-error` 1.5; outline border `text-input/stroke-error` 1     | Value `text/base/strong`; message and icon `text/danger/muted` |
+| Read only | `text-input/bg-hover`                                  | None                                                                                    | Value `text/base/strong`                                       |
+| Disabled  | `text-input/bg-hover`                                  | None                                                                                    | `text/disabled`; label `text/base/muted`                       |
+
+| Part              | Token               |
+| :---------------- | :------------------ |
+| Label             | `text/base/DEFAULT` |
+| Optional          | `text/base/subtle`  |
+| Required asterisk | `text/danger/muted` |
+| Helper text       | `text/base/muted`   |
+| Focus ring        | `border/focus`      |
+
+Token names leave out the `semantics/` prefix. Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                | Duration       | Easing   |
+| :------------------------ | :------------- | :------- |
+| Field fill and focus ring | Normal (200ms) | Ease out |
+
+With reduced motion turned on, the transition is turned off and the field changes state at once.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -148,3 +613,70 @@ The native `<input>` that React Aria wraps. These attributes are applied to that
 ## RTL and Language
 
 On `lang="dv"` pages, entered text uses `MV_Faseyha`. In RTL, the label row, slots, and error icon follow `dir`. Values for `type="email"`, `"url"`, `"tel"`, and `"password"` stay left-to-right in the Latin font so addresses and numbers keep their order. Their Dhivehi placeholders stay right-aligned.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the input works with keyboards and screen readers, and what you still need to do. Input is built on the React Aria TextField, which wraps a native input element, so it follows the standard text field pattern.
+
+## Keyboard
+
+| Key         | Action                                                                                           |
+| :---------- | :----------------------------------------------------------------------------------------------- |
+| Tab         | Moves focus to the field, then to the info button and any slot buttons, which are separate stops |
+| Shift + Tab | Moves focus back                                                                                 |
+| Enter       | Submits the form from a single-line field                                                        |
+
+A disabled input is skipped by Tab. A read-only input stays in the tab order so people can select and copy its value.
+
+## Screen readers
+
+- **Label**: give every field a visible label. It is linked to the field, so it is read as the field's name. Never replace it with aria-label or the placeholder.
+- **Description and error**: description and errorMessage are linked to the field, so people hear the help and the error with it. errorMessage replaces the description while the field is invalid.
+- **States**: required, disabled, read-only and invalid states are exposed to assistive technology.
+- **Required**: isRequired tells screen readers the field is required. The asterisk is visual only.
+- **Optional**: Optional is visible text outside the label, so screen readers don't announce it when people move to the field, only when they read the page.
+- **Icons**: the warning icon is decorative and hidden from assistive technology, because the message says the same. Icons you pass to the slots are decorative too: hide them yourself, and put any meaning they carry in the label, description or errorMessage.
+- **Header action**: if action is interactive, render a real Button or Link so it has its own accessible name. Never use styled text.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/input/input-focus-1.webp"
+  darkSrc="/images/docs/input/input-focus-1-dark.webp"
+  alt="Three inputs in the default appearance at sizes sm, md and lg, each with the value Aishath Mariyam and the focus ring around the field."
+  width="2400"
+  height="536"
+/>
+
+<DocsFigure
+  src="/images/docs/input/input-focus-2.webp"
+  darkSrc="/images/docs/input/input-focus-2-dark.webp"
+  alt="Three inputs in the outline appearance at sizes sm, md and lg, each with the value Aishath Mariyam and the focus ring in place of the border."
+  width="2400"
+  height="536"
+  caption="The focus ring in the default and outline appearances."
+/>
+
+- Keyboard focus shows a 2px gap in `bg/surface/raised`, then a 2px ring in `border/focus`, around the field. It appears for keyboard focus only. A click shows the active state instead.
+- In the outline appearance the ring replaces the border, so the two never stack.
+- Never remove the ring or replace it with a colour change.
+
+## Errors
+
+Errors show a message and a warning icon as well as the red line, so they never rely on colour alone. Show the same words in the error summary at the top of the form.
+
+## Target size
+
+The minimum target size is 24 x 24, and 44 is recommended for touch. The md field is 44px tall and the lg field 52px, so both reach the touch size. Size sm is 36px, which passes the minimum; keep it to dense layouts on larger screens. Use lg on kiosks. The info button is 16 x 16, below the 24 x 24 minimum; see Missing or unverified.
+
+## Contrast
+
+The value, label, helper text and error text meet the 4.5:1 text minimum: helper text in `text/base/muted` measures 4.96:1 in light and 5.23:1 in dark. The field line measures 3.06:1 in light and 3.23:1 in dark against the page, and 3.23:1 in light but 2.83:1 in dark against the field fill, below 3:1; see Missing or unverified. The placeholder (2.1:1 to 2.7:1) and Optional (3.0:1 to 3.4:1) fall below 4.5:1, so never put information people need in either. Put it in the label or the helper text.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, and switches Optional and the info button name to Dhivehi. Email, URL, telephone and password values stay left to right. Set dir to ltr on other fixed-format fields, such as an ID card number, and dir to auto on free text. Pass Dhivehi labels, helper text and errors yourself.
+
+</DocsTab>

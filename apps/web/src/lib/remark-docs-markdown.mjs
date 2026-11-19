@@ -7,6 +7,7 @@ const supportedNodeTypes = new Set([
   'code',
   'emphasis',
   'heading',
+  'image',
   'inlineCode',
   'link',
   'list',
@@ -128,6 +129,82 @@ function interactivePreviewLink(url) {
 
 function cloneSupportedNode(node, context) {
   if (node.type === 'mdxJsxFlowElement') {
+    if (
+      [
+        'DocsGrid',
+        'DocsAnatomy',
+        'DocsExampleFrame',
+        'DocsResources',
+        'DocsComparison',
+        'DocsFigure',
+        'DocsGuideline',
+      ].includes(node.name) &&
+      node.attributes?.some(
+        (attribute) => attribute.type !== 'mdxJsxAttribute' || typeof attribute.value !== 'string',
+      )
+    ) {
+      throw markdownError(
+        context.file,
+        `${node.name} attributes must be static strings so exports retain their content`,
+        node,
+      );
+    }
+    const children = () =>
+      (node.children ?? []).flatMap((child) => cloneSupportedNode(child, context) ?? []);
+    const paragraph = (value) => ({ type: 'paragraph', children: [{ type: 'text', value }] });
+    const required = (name) => {
+      const value = getStaticAttribute(node, name);
+      if (!value?.trim())
+        throw markdownError(context.file, `${node.name} requires a static ${name}`, node);
+      return value;
+    };
+    if (['DocsGrid', 'DocsAnatomy', 'DocsExampleFrame'].includes(node.name)) return children();
+    if (node.name === 'DocsResources') {
+      return [
+        ...(getStaticAttribute(node, 'figma') ? [['Figma', 'figma']] : []),
+        ['GitHub', 'source'],
+        ...(getStaticAttribute(node, 'storybook') ? [['Storybook', 'storybook']] : []),
+      ].map(([label, prop]) => ({
+        type: 'paragraph',
+        children: [
+          { type: 'link', url: required(prop), children: [{ type: 'text', value: label }] },
+        ],
+      }));
+    }
+    if (node.name === 'DocsComparison') {
+      const label = required('label');
+      const value = getStaticAttribute(node, 'value');
+      return [paragraph(value ? `${label} (${value})` : label), ...children()];
+    }
+    if (node.name === 'DocsFigure' || node.name === 'DocsGuideline') {
+      const figure =
+        node.name === 'DocsGuideline' && !getStaticAttribute(node, 'src')
+          ? undefined
+          : {
+              type: 'paragraph',
+              children: [{ type: 'image', url: required('src'), alt: required('alt') }],
+            };
+      if (node.name === 'DocsGuideline') {
+        const kind = required('kind');
+        if (!['do', 'dont'].includes(kind))
+          throw markdownError(context.file, 'DocsGuideline kind must be do or dont', node);
+        return [
+          ...(figure ? [figure] : []),
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'strong',
+                children: [{ type: 'text', value: kind === 'do' ? 'Do' : 'Don’t' }],
+              },
+            ],
+          },
+          ...children(),
+        ];
+      }
+      const caption = getStaticAttribute(node, 'caption');
+      return [figure, ...(caption ? [paragraph(caption)] : [])];
+    }
     const markdownBehavior = getStaticAttribute(node, 'data-docs-markdown');
 
     if (markdownBehavior === 'omit') return undefined;
@@ -160,7 +237,7 @@ function cloneSupportedNode(node, context) {
   if (Array.isArray(node.children)) {
     clone.children = node.children.flatMap((child) => {
       const sanitized = cloneSupportedNode(child, context);
-      return sanitized ? [sanitized] : [];
+      return sanitized ?? [];
     });
   }
 
@@ -214,7 +291,7 @@ export function createCanonicalMarkdown(tree, file) {
     }
 
     const sanitized = cloneSupportedNode(node, context);
-    if (sanitized) content.push(sanitized);
+    if (sanitized) content.push(...(Array.isArray(sanitized) ? sanitized : [sanitized]));
   }
 
   const canonicalTree = {

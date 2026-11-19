@@ -5,12 +5,6 @@ import { z } from 'astro/zod';
 const pageSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
-  animation: z
-    .object({
-      src: z.string(),
-      label: z.string(),
-    })
-    .optional(),
 });
 
 const docsCollection = defineCollection({

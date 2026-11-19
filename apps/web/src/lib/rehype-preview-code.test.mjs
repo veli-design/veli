@@ -119,7 +119,10 @@ test('all default Markdown examples agree with the dynamically displayed source'
             ? 'calendar'
             : name.replace('RtlDemo', '').toLowerCase();
     const mdx = readFileSync(new URL(`../content/docs/${page}.mdx`, import.meta.url), 'utf8');
-    const following = mdx.slice(mdx.indexOf(`<${name}`));
+    // Editorial previews may reuse a demo without a code block. Check the
+    // developer example that actually owns the dynamically displayed source.
+    const codeTab = mdx.match(/<DocsTab id="code">([\s\S]*?)<\/DocsTab>/)?.[1] ?? mdx;
+    const following = codeTab.slice(codeTab.indexOf(`<${name}`));
     const source = following.match(/```tsx\n([\s\S]*?)\n```/)[1];
     const normalize = (value) =>
       format(value, { parser: 'typescript', singleQuote: true, printWidth: 100 });

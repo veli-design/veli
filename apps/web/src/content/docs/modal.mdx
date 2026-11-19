@@ -1,6 +1,6 @@
 ---
 title: Modal
-description: Accessible dialog that blocks the page for confirmations, short forms, and focused tasks.
+description: 'A dialog above the page that blocks it until people finish a confirmation, a short form or a focused task.'
 ---
 
 import {
@@ -10,9 +10,447 @@ import {
   ModalUsageDemo,
 } from '../../components/ModalExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Modal
 
-Use Modal for focused work that should block the rest of the page: confirmations, short forms, and destructive choices.
+<DocsTab id="overview">
+
+A modal is a dialog that sits above the page and blocks it until people act or close it. Use it for a confirmation, a short form or a focused task that must be finished before people carry on, such as cancelling an appointment.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/modal.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-modal--docs"
+/>
+
+## When to use
+
+### Use a modal when
+
+- People must confirm a decision before it happens, such as deleting or submitting.
+- A short task belongs to the current page, such as changing one detail.
+- People must read something and acknowledge it before going on.
+- The task can be finished without leaving the page.
+
+### Don't use a modal when
+
+- The message is feedback after an action. Use Toast.
+- The message is about the page and needs no answer. Use Alert.
+- The content is long or has several steps. Use a full page.
+- People only need a hint next to a control. Use Tooltip or Popover.
+- The action is routine and can be reversed, such as saving or moving between steps. Don't ask for confirmation.
+
+<DocsFigure
+  src="/images/docs/modal/modal-intro-1.png"
+  darkSrc="/images/docs/modal/modal-intro-1-dark.png"
+  alt='A My appointments page, blurred and dimmed by a dark overlay, lists Passport renewal, Driving licence renewal and National ID card collection, each with a Cancel button. Above it a size xs modal titled "Cancel this appointment?" reads "Your passport renewal appointment on 21 October 2026 at 10:00 will be released. You can book a new time at any point." with a close button and the actions Keep appointment and Cancel appointment, the second in red.'
+  width="2400"
+  height="1680"
+  caption="A confirmation modal before an appointment is cancelled."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/modal/modal-anatomy-1.svg"
+  darkSrc="/images/docs/modal/modal-anatomy-1-dark.svg"
+  alt="A size md modal on a dark overlay with ten numbered markers: 1 on the overlay, 2 on the panel edge, 3 on the title Modal Title, 4 on the close button, 5 on the description, 6 on the header divider, 7 on the empty content area, 8 on the footer divider, 9 on the start actions Third and Fourth, and 10 on the end actions Second Action and Action."
+  width="1440"
+  height="685"
+  caption="The parts of a modal. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Overlay**
+
+   Black at 60% with a 6px background blur, the same in Light and Dark mode. It blocks the page. Clicking it closes the modal unless isDismissable is false. In code it is ModalOverlay.
+
+2. **Panel**
+
+   The dialog surface, with the `components/modal/bg-solid` fill, radius 32 and a small shadow. The size sets the maximum width; the height grows with the content up to 90% of the viewport, then the panel scrolls. In code it is Modal.
+
+3. **Title**
+
+   Names the dialog for screen readers, so every modal needs one, or a label set with aria-label. In code it is Modal.Title.
+
+4. **Close button**
+
+   An icon-only secondary ghost button with a cross icon that closes the modal. Its accessible name is Close dialog, localised in Dhivehi. In code it is Modal.CloseButton.
+
+5. **Description**
+
+   An optional line under the title. When it is present, a divider closes the header. In code it is Modal.Description.
+
+6. **Header divider**
+
+   A subtle divider under the header. It shows only when there is a description.
+
+7. **Content**
+
+   The body, such as text, a short form or a list, with 16 padding top and bottom. In code it is Modal.Content.
+
+8. **Footer divider**
+
+   A subtle divider above the actions. It is always shown in the footer.
+
+9. **Start actions**
+
+   An optional group on the start edge for a secondary route, such as Back. Leave it off at xs and sm. In code it is the first button group in Modal.Footer.
+
+10. **End actions**
+
+the main action and its alternative, on the end edge. The main action is the filled button. In code it is the second button group in Modal.Footer.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/modal/modal-do-1.webp" darkSrc="/images/docs/modal/modal-do-1-dark.webp" alt="A size xs modal titled &quot;Delete this draft application?&quot; with the body &quot;Your answers for the business licence application will be removed. This can&#x27;t be undone.&quot; and the actions Keep draft and Delete draft, the second in red." width="1232" height="640">
+
+Name the action in the button: Delete draft, Keep draft.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/modal/modal-dont-1.webp" darkSrc="/images/docs/modal/modal-dont-1-dark.webp" alt="The same Delete this draft application? modal with the actions No and Yes." width="1232" height="640">
+
+Don't use Yes and No. People should know what happens without reading the body again.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/modal/modal-do-2.webp" darkSrc="/images/docs/modal/modal-do-2-dark.webp" alt="A size xs modal titled &quot;Cancel this appointment?&quot; with the body &quot;Your passport renewal appointment on 21 October 2026 at 10:00 will be released.&quot; and the actions Keep appointment and Cancel appointment." width="1232" height="640">
+
+Write the title as the question or task people are answering.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/modal/modal-dont-2.webp" darkSrc="/images/docs/modal/modal-dont-2-dark.webp" alt="The same appointment modal titled &quot;Are you sure?&quot;." width="1232" height="640">
+
+Don't write a vague title. The title names the dialog for screen readers, so it must say what is being decided.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/modal/modal-do-3.webp" darkSrc="/images/docs/modal/modal-do-3-dark.webp" alt="A size xs modal titled &quot;Remove this file?&quot; with the body &quot;passport-copy.pdf will be removed from your application.&quot; and the actions Keep file and Remove file, with Remove file in red." width="1232" height="640">
+
+Use danger for the main action when it removes something or can't be undone.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/modal/modal-dont-3.webp" darkSrc="/images/docs/modal/modal-dont-3-dark.webp" alt="A size xs modal titled &quot;Save your changes?&quot; with the body &quot;Your new contact details will be used for future notices.&quot; and the actions Cancel and Save changes, with Save changes in red." width="1232" height="640">
+
+Don't use danger for safe actions. Red tells people something will be lost.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Title
+
+Say what is being decided or done, as a question or a task, on one line. End it with a question mark only when it asks something. People often read only the title and the buttons before they choose.
+
+| Do                                  | Don't                                             |
+| :---------------------------------- | :------------------------------------------------ |
+| Cancel this appointment?            | Are you sure? (doesn't say what is being decided) |
+| Withdraw application WP-2026-04817? | Confirm (doesn't say what is being decided)       |
+| Change phone number                 | Warning (names a tone, not the task)              |
+| Change phone number                 | Change Phone Number. (title case and a full stop) |
+
+### Description
+
+The description is optional. Add one sentence of context the title can't hold, and leave it out of xs confirmations.
+
+| Do                                            | Don't                                                                           |
+| :-------------------------------------------- | :------------------------------------------------------------------------------ |
+| We send a code to the new number to check it. | Please fill in the form below. (says nothing the form doesn't, and uses please) |
+
+### Body
+
+Say what will happen and whether it can be undone, in 1 or 2 sentences, in people's own words.
+
+| Do                                                                              | Don't                                                                   |
+| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| Your passport renewal appointment on 21 October 2026 at 10:00 will be released. | This action is irreversible. (legal tone, and doesn't say what is lost) |
+
+### Action labels
+
+Name the action with a verb and an object, using the same verb and object as the title: Delete this draft application?, Delete draft. Never use Yes, No, OK or Submit on its own.
+
+| Do           | Don't                                |
+| :----------- | :----------------------------------- |
+| Delete draft | Yes (needs the body to make sense)   |
+| Keep draft   | No (needs the body to make sense)    |
+| Send code    | OK (says nothing about what happens) |
+| Remove file  | Submit (no object)                   |
+
+### Cancel, close and keep
+
+Cancel stops the task and discards what was entered. Close hides a modal with no unsaved input. Back returns with answers kept. When the task itself is a cancellation, label the safe choice Keep.
+
+| Do                                         | Don't                            |
+| :----------------------------------------- | :------------------------------- |
+| Keep appointment beside Cancel appointment | Cancel beside Cancel appointment |
+
+### Forms
+
+For a modal that holds a form, set isDismissable=&#123;false&#125; so a click outside can't discard answers, and ask before closing with unsaved changes. Use the title Leave without saving?, the body "You have changes that have not been saved." and the actions Leave without saving and Keep editing.
+
+| Do                    | Don't                                                  |
+| :-------------------- | :----------------------------------------------------- |
+| Leave without saving? | Unsaved changes! (no question and an exclamation mark) |
+
+### Opening button
+
+Add an ellipsis to the label of a button that opens a modal needing more input, using the single character …. A confirmation needs none.
+
+| Do                  | Don't                                                                    |
+| :------------------ | :----------------------------------------------------------------------- |
+| Change appointment… | Delete draft... (three full stops, and a confirmation needs no ellipsis) |
+
+### Close button name
+
+Keep the built-in name Close dialog. Override it with aria-label only to add context, in both languages.
+
+| Do           | Don't                                              |
+| :----------- | :------------------------------------------------- |
+| Close dialog | X (not a name)                                     |
+|              | Close modal window (names the role and the widget) |
+
+### Dhivehi copy
+
+Write Dhivehi copy natively rather than transliterating, and keep it as short as the English, because Thaana lines are taller.
+
+## Related components
+
+| Component                                  | When to use it                                                                           |
+| :----------------------------------------- | :--------------------------------------------------------------------------------------- |
+| [Button](/docs/components/button/)         | opens a modal and holds its actions. Use slot="close" for actions that close it.         |
+| [Alert](/docs/components/alert/)           | a message about the page that needs no answer.                                           |
+| [Toast](/docs/components/toast/)           | short feedback after an action, without blocking the page.                               |
+| [Popover](/docs/components/popover/)       | extra content next to a control, without blocking the page.                              |
+| [Input](/docs/components/input/)           | collects a short typed answer inside a short form modal.                                 |
+| [Tooltip](/docs/components/tooltip/)       | a short hint next to a control, instead of a modal.                                      |
+| [Divider](/docs/components/divider/)       | separates groups inside the content. The modal draws its own header and footer dividers. |
+| [VeliProvider](/docs/components/provider/) | sets the language and direction of the modal and the Dhivehi close label.                |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the modal: sizes, content options, overlay, spacing and the tokens behind them. Values match the shipped component unless a difference is listed under Missing or unverified.
+
+## Sizes
+
+Modal has six widths. The header, content and footer are the same at every size; pick the width the content needs. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/modal/modal-sizes-1.webp"
+  darkSrc="/images/docs/modal/modal-sizes-1-dark.webp"
+  alt="Size xs: a short modal titled Modal Title with a confirmation message and the actions Second Action and Action. Size sm: a taller modal with a description, an empty content area and the same actions."
+  width="2592"
+  height="1546"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-sizes-2.webp"
+  darkSrc="/images/docs/modal/modal-sizes-2-dark.webp"
+  alt="Size md, the default in code: a wider modal with a description, an empty content area, start actions Third and Fourth, and end actions Second Action and Action."
+  width="2592"
+  height="1498"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-sizes-3.webp"
+  darkSrc="/images/docs/modal/modal-sizes-3-dark.webp"
+  alt="Size lg: the same modal at 776 wide."
+  width="2592"
+  height="1498"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-sizes-4.webp"
+  darkSrc="/images/docs/modal/modal-sizes-4-dark.webp"
+  alt="Size xl: the same modal at 1024 wide."
+  width="2592"
+  height="1498"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-sizes-5.webp"
+  darkSrc="/images/docs/modal/modal-sizes-5-dark.webp"
+  alt="Size full: the same modal at 1200 wide."
+  width="2592"
+  height="1498"
+  caption="Sizes xs, sm, md, lg, xl and full. The images use placeholder copy."
+/>
+
+| Size | Maximum width | Use for                                                                                                                    |
+| :--- | :------------ | :------------------------------------------------------------------------------------------------------------------------- |
+| xs   | 440           | Confirmations: one short message and two actions, such as deleting a draft. Turn the description and the start actions off |
+| sm   | 440           | Short tasks: a title, one line of description and a small form, such as changing a phone number                            |
+| md   | 576           | The default. Most forms and summaries, such as editing contact details                                                     |
+| lg   | 776           | Longer forms, or content in two columns, such as reviewing an application before submitting it                             |
+| xl   | 1024          | Wide content, such as a table of payments or a document preview                                                            |
+| full | 1200          | Dense content that still keeps the page behind it, such as comparing service plans                                         |
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/modal/modal-options-1.webp"
+  darkSrc="/images/docs/modal/modal-options-1-dark.webp"
+  alt='Use Confirmation: a size xs modal "Delete this draft application?" with Keep draft and Delete draft in red. Use Short form: a size sm modal "Change phone number" with a required New phone number field, placeholder 7XX XXXX, the helper text "We&#x27;ll send a code to this number.", and Cancel and Send code.'
+  width="2592"
+  height="968"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-options-2.webp"
+  darkSrc="/images/docs/modal/modal-options-2-dark.webp"
+  alt='Use Locked decision: "Submit your application?", "After you submit, you can&#x27;t change your answers. We&#x27;ll email you when the review starts.", with Go back and Submit application and no close button. Use Information: "What counts as proof of address", "A utility bill, a tenancy agreement or a letter from your island council, dated in the last 3 months. It must show your name and address.", with only the close button.'
+  width="2592"
+  height="880"
+  caption="Confirmation, short form, locked decision and information."
+/>
+
+| Use             | Size and parts                                                                                               | Example                         |
+| :-------------- | :----------------------------------------------------------------------------------------------------------- | :------------------------------ |
+| Confirmation    | xs, no description, no start actions. The main action uses intent danger because it can't be undone          | Delete this draft application?  |
+| Short form      | sm, no description and no header divider. An Input sits in the content, and Send code is the main action     | Change phone number             |
+| Locked decision | No close button. isDismissable=&#123;false&#125; and isKeyboardDismissDisabled, so only the actions close it | Submit your application?        |
+| Information     | No footer. The close button is the only action, so people read and return                                    | What counts as proof of address |
+
+## Behaviour
+
+- **Opening**: Modal.Trigger wraps the opener and the modal and owns the open state. Pass any open-state controls to the trigger, not to Modal. For routing, asynchronous checks or several triggers, control it with isOpen and onOpenChange.
+- **Closing**: the close button, Escape and a click on the overlay close the modal. isDismissable=&#123;false&#125; stops outside clicks; isKeyboardDismissDisabled stops Escape. Turn these off only when the modal has a visible closing action.
+- **Actions**: buttons with slot="close" close the modal when pressed. Run the action first if it can fail, then close, so an error has somewhere to show.
+- **Action order**: put the main action and its alternative in the end group of the footer, with the main action last, at the end edge, as the filled button. Use the start group only for a secondary route, such as Back, and leave it off at xs and sm.
+- **Focus return**: when the modal closes, focus goes back to the control that opened it.
+- **Scrolling**: the panel grows with its content up to 90% of the viewport height, then scrolls inside. The page behind does not scroll.
+- **No stacking**: don't open a modal from inside another, or stack modals. Show the next step in the same modal, close the first before opening the second, or use a full page.
+- **Narrow screens**: the modal reflows at 320 wide. It fills the width inside the 16 viewport padding and scrolls inside its 90% height cap. Let a table inside it scroll in its own frame.
+
+## Overlay
+
+<DocsFigure
+  src="/images/docs/modal/modal-overlay-1.webp"
+  darkSrc="/images/docs/modal/modal-overlay-1-dark.webp"
+  alt="A size xs modal centred on a dark grey overlay that covers the whole stage."
+  width="2880"
+  height="1136"
+  caption="The overlay with a size xs modal."
+/>
+
+- The overlay is black at 60% with a 6px background blur, in Light and Dark mode. It has no token.
+- It fills the viewport and keeps 16 padding around the panel, so the panel never touches the screen edge.
+- The panel is centred and has a small shadow (`effects/shadow/frame` and `effects/shadow/depth-50`).
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/modal/modal-rtl-1.webp"
+  darkSrc="/images/docs/modal/modal-rtl-1-dark.webp"
+  alt="Left, an English size xs modal: Modal Title, a confirmation message, and the actions Second Action and Action at the end. Right, ModalDv mirrored right to left: the Dhivehi title on the right, the close button on the left, and the Dhivehi actions on the left."
+  width="2592"
+  height="872"
+  caption="Modal and ModalDv at size xs. The images use placeholder copy."
+/>
+
+- The layout mirrors: the title sits on the right, the close button and the end actions on the left. Directional icons swap.
+- The title uses Dhivehi subtitle medium (MV A Waheed) and the description and body use Dhivehi body md regular (MV Faseyha).
+- Spacing and button heights stay the same. Only the title row grows, from 36 to 40 high, to fit the taller line.
+- The close button is named ލައްޕާ in Dhivehi.
+- In code, wrap the modal in VeliProvider with language set to dv, which sets the direction and the Dhivehi close label.
+- In Figma, design Dhivehi screens with ModalDv. It nests the Dv header and footer and uses buttonDv actions.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/modal/modal-spacing-1.svg"
+  darkSrc="/images/docs/modal/modal-spacing-1-dark.svg"
+  alt="Spacing redlines for a size xs modal, 440 wide: 16 top padding, 24 side and bottom padding, 8 between the title and the close button, 16 above and below the content, 8 above the actions and 8 between the buttons."
+  width="1440"
+  height="569"
+/>
+
+<DocsFigure
+  src="/images/docs/modal/modal-spacing-2.svg"
+  darkSrc="/images/docs/modal/modal-spacing-2-dark.svg"
+  alt="Spacing redlines for a size md modal with a description, content and start and end actions, using the same values."
+  width="1440"
+  height="878"
+  caption="All values in pixels at 1x."
+/>
+
+| Part    | Padding                     | Gaps                                                                | Sizes                                      |
+| :------ | :-------------------------- | :------------------------------------------------------------------ | :----------------------------------------- |
+| Panel   | 16 top, 24 sides and bottom | Header, content and footer stack with no gap                        | Width from the size                        |
+| Header  | Title 8 top                 | Title to close button 8; title row, description and divider 8 apart | Title row 36 high, close button 36         |
+| Content | 16 top and bottom           | Children 8 apart                                                    | Fills the height between header and footer |
+| Footer  | 8 above the actions in code | Buttons in a group 8 apart; groups pushed to the edges              | Actions 44 high (Button md)                |
+| Overlay | 16 around the panel         |                                                                     | Fills the viewport                         |
+
+In Dhivehi the spacing and the button height stay the same; only the title row grows to 40.
+
+<DocsFigure
+  src="/images/docs/modal/modal-radius-1.svg"
+  darkSrc="/images/docs/modal/modal-radius-1-dark.svg"
+  alt="Size xs and sm modals, each marked with a corner radius of 32."
+  width="1440"
+  height="717"
+  caption="The panel has a corner radius of 32 (`radius/4xl`) at every size. Buttons inside keep their own full radius."
+/>
+
+## Typography
+
+| Element             | English                              | Dhivehi                                    | Colour token         |
+| :------------------ | :----------------------------------- | :----------------------------------------- | :------------------- |
+| Title               | Subtitle medium, Inter Medium 20/28  | Dhivehi subtitle medium, MV A Waheed 24/32 | `text/base/strong`   |
+| Description         | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32  | `text/base/strong`   |
+| Link in description | Body md medium, Inter Medium 16/24   | Dhivehi body md medium, MV A Waheed 19/32  | `text/links/default` |
+| Content             | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32  | `text/base/DEFAULT`  |
+| Action labels       | As Button md, Inter Medium 16/24     | As buttonDv md, MV A Waheed 19/32          | As Button            |
+
+## Tokens
+
+| Part         | Fill                                      | Border and effect                                               | Text and icon                                  |
+| :----------- | :---------------------------------------- | :-------------------------------------------------------------- | :--------------------------------------------- |
+| Overlay      | Black at 60%, background blur 6. No token | None                                                            |                                                |
+| Panel        | `components/modal/bg-solid`               | Small shadow: `effects/shadow/frame`, `effects/shadow/depth-50` | Content: `text/base/DEFAULT`                   |
+| Title        | None                                      |                                                                 | `text/base/strong`                             |
+| Description  | None                                      |                                                                 | `text/base/strong`, links `text/links/default` |
+| Close button | As Button, secondary ghost                | None                                                            | As Button, secondary ghost                     |
+| Dividers     | None                                      | `border/base/subtle`                                            |                                                |
+| Actions      | As Button, per intent and appearance      | None                                                            | As Button                                      |
+
+## Motion
+
+| What moves                 | Change                         | Duration       | Easing   |
+| :------------------------- | :----------------------------- | :------------- | :------- |
+| Overlay, opening           | Fades in                       | Normal (200ms) | Ease out |
+| Panel, opening             | Fades in and scales from 0.98  | Normal (200ms) | Spring   |
+| Overlay and panel, closing | Fade out, panel scales to 0.98 | Fast           | Ease in  |
+
+With reduced motion turned on, the overlay and panel appear and disappear without transition.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -182,3 +620,55 @@ The backdrop uses hard black at 60% opacity with uniform 6px blur in both light 
 ## RTL and Language
 
 The overlay inherits `lang` and `dir` from `VeliProvider`. Title, body, and footer alignment follow `dir`. On `lang="dv"`, `Modal.CloseButton` defaults to `ލައްޕާ`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the modal works with keyboards, screen readers and focus, and what you still need to do.
+
+## Keyboard
+
+| Key            | Action                                                    |
+| :------------- | :-------------------------------------------------------- |
+| Tab            | Moves to the next control inside the modal only           |
+| Shift + Tab    | Moves to the previous control inside the modal only       |
+| Escape         | Closes the modal, unless isKeyboardDismissDisabled is set |
+| Enter or Space | Activates the focused button                              |
+
+Turn off Escape and outside clicks only when the modal has a visible closing action, so focus can always leave.
+
+## Screen readers
+
+- The panel is a dialog, so screen readers announce it as a dialog with its title. Modal.Title renders a level 2 heading.
+- Every modal needs a name: Modal.Title, aria-label or aria-labelledby.
+- While the modal is open, content outside it is hidden from assistive technology.
+- On phones, React Aria adds visually hidden Dismiss buttons at the start and end of the modal, so screen reader users can close it without Escape.
+
+## Focus
+
+- Focus moves into the modal when it opens and is trapped there. It returns to the opener on close.
+- When a destructive confirmation opens, put focus on the safe action, the first field or the dialog itself, never on the destructive button. By default, focus goes to the dialog itself.
+- Buttons inside show the Veli focus ring when focused from the keyboard.
+
+## Close button name
+
+The icon-only close button is named Close dialog, and ލައްޕާ in Dhivehi. Override it with aria-label only to add context, in both languages.
+
+## Target size
+
+The close button is 36 and the footer buttons are 44 high, above the 24px minimum target size.
+
+## Contrast
+
+A danger action says what it does in its label, so the meaning does not rely on red. Use the modal and button tokens as they are.
+
+## Reduced motion
+
+With reduced motion, the overlay and panel appear without transition. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction of the overlay, panel and dialog, and the Dhivehi close label. Pass Dhivehi titles, content and action labels yourself.
+
+</DocsTab>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  label: string;
+  value?: string;
+}
+const { label, value } = Astro.props;
+---
+
+<div class="docs-comparison">
+  <div>
+    <span class="docs-comparison__label">
+      {label}
+      {value && <code>{value}</code>}
+    </span>
+  </div>
+  <div class="docs-comparison__example preview">
+    <slot />
+  </div>
+</div>
