@@ -1,4 +1,4 @@
-/* global process, URL, document, innerWidth, console */
+/* global process, URL, document, innerWidth, console, getComputedStyle, MutationObserver, setTimeout, clearTimeout */
 
 // Compare the real production /design page with the four PD-1417 portrait frames.
 // node apps/web/scripts/check-design-portraits.mjs <base URL> <Playwright fixture directory>
@@ -23,6 +23,7 @@ try {
       viewport: { width, height: 844 },
       reducedMotion: motion,
       hasTouch: width < 761,
+      isMobile: width < 761,
     });
     const errors = [],
       requests = [];
@@ -81,14 +82,44 @@ try {
         previous,
       );
       if (width < 761) {
-        const letter = portrait.locator('[data-letter]').first();
+        await portrait.scrollIntoViewIfNeeded();
+        if (width === 430) await checkAmbientCycle(portrait);
+        const letter = portrait.locator('[data-letter][data-center="199.5 351"]');
         await letter.tap();
         assert.equal(await letter.getAttribute('aria-pressed'), 'true');
+        assert.equal(
+          await letter.evaluate((el) => getComputedStyle(el).outlineStyle),
+          'none',
+          'no magnified pointer focus ring',
+        );
+        assert.equal(await portrait.locator('[data-paint][transform]').count(), 0);
         await letter.focus();
         await page.keyboard.press('Space');
         assert.equal(await letter.getAttribute('aria-pressed'), 'false');
         await page.keyboard.press('ArrowLeft');
         assert.equal(await portrait.locator('[data-letter]:focus').count(), 1);
+        const ring = portrait.locator('.design-thaana-focus');
+        assert.equal(await ring.isVisible(), true);
+        assert.deepEqual(
+          await ring.evaluate((el) => [
+            getComputedStyle(el).strokeWidth,
+            getComputedStyle(el).vectorEffect,
+            el.getAttribute('transform'),
+          ]),
+          ['2px', 'non-scaling-stroke', null],
+        );
+      } else {
+        const desktop = page.locator('[data-design-svg="thaana"]');
+        await desktop.scrollIntoViewIfNeeded();
+        const idle = await desktop.evaluate(async (el) => {
+          const records = [];
+          const obs = new MutationObserver((batch) => records.push(...batch));
+          obs.observe(el, { subtree: true, attributes: true, attributeFilter: ['transform'] });
+          await new Promise((done) => setTimeout(done, 1600));
+          obs.disconnect();
+          return records.length;
+        });
+        assert.equal(idle, 0, 'desktop only blooms in response to interaction');
       }
     }
     assert.deepEqual(errors, []);
@@ -97,4 +128,44 @@ try {
   }
 } finally {
   await browser.close();
+}
+
+// Observe completed animation frames, not wall-clock timestamps. At a lower
+// device frame rate the same sequence can take longer, without failing parity.
+async function checkAmbientCycle(portrait) {
+  const result = await portrait.evaluate(
+    (el) =>
+      new Promise((resolve, reject) => {
+        const letters = [...el.querySelectorAll('[data-letter]')];
+        const paint = [...el.querySelectorAll('[data-paint]')];
+        let first,
+          rested = false,
+          finished = false;
+        const observe = new MutationObserver(() => {
+          const active = letters.filter((glyph) => glyph.hasAttribute('transform'));
+          const movedPaint = paint.some((glyph) => glyph.hasAttribute('transform'));
+          if (active.length > 1 || movedPaint) return finish(false);
+          if (!active.length) {
+            if (first) rested = true;
+          } else if (!first) first = active[0];
+          else if (rested) finish(active[0] !== first);
+        });
+        const timeout = setTimeout(() => finish(false), 15000);
+        function finish(ok) {
+          if (finished) return;
+          finished = true;
+          observe.disconnect();
+          clearTimeout(timeout);
+          if (ok) resolve(true);
+          else
+            reject(
+              new Error(
+                'Expected one small letter, full rest, then a different small letter; painted letters must stay still.',
+              ),
+            );
+        }
+        observe.observe(el, { subtree: true, attributes: true, attributeFilter: ['transform'] });
+      }),
+  );
+  assert.equal(result, true);
 }

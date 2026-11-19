@@ -295,10 +295,6 @@
   transform: translateY(-50%) scale(var(--art-scale, 1));
   transform-origin: left center;
 }
-.marketing-page--design .design-atoll-canvas > div {
-  width: 1349px;
-  height: 924px;
-}
 .marketing-page--design .design-crystalline {
   margin-top: 93.31px;
   margin-left: 3.98px;
@@ -1105,9 +1101,27 @@
   cursor: pointer;
   pointer-events: bounding-box;
 }
-.marketing-page--design .design-thaana [data-design-svg] [role='button']:focus-visible {
-  outline: 2px solid #19767e;
-  outline-offset: 8px;
+.marketing-page--design
+  .design-thaana
+  [data-design-svg]:has(> .design-thaana-focus)
+  [role='button']:focus {
+  outline: none;
+}
+.design-thaana-focus {
+  display: none;
+  fill: none;
+  stroke: #19767e;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.design-thaana [data-design-svg]:has([role='button']:focus-visible) > .design-thaana-focus {
+  display: block;
+}
+@media (forced-colors: active) {
+  .design-thaana-focus {
+    stroke: Highlight;
+  }
 }
 .marketing-page--design .design-force-card,
 .marketing-page--design .design-thaana [data-design-svg] {

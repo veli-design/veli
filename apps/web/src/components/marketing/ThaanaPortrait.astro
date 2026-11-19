@@ -49,15 +49,7 @@ const paint = [
     }),
   )}
   {paint.map(([letter, x, y, font]) => (
-    <text
-      x={x}
-      y={y + 31}
-      font-family={font}
-      font-size="150"
-      fill="#9af366"
-      data-paint
-      data-center={`${x} ${y}`}
-    >
+    <text x={x} y={y + 31} font-family={font} font-size="150" fill="#9af366" data-paint>
       {letter}
     </text>
   ))}
