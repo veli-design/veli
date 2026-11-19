@@ -266,6 +266,9 @@ export function initComponentAnimations() {
     for (const instance of instances.values()) instance.destroy();
     instances.clear();
   });
+  // Hot reloads replace DOM without Astro page events. Production navigation
+  // is covered above, so only development pays for watching the whole body.
+  if (!import.meta.env.DEV) return;
   new MutationObserver((mutations) => {
     if (
       mutations.some((mutation) =>

@@ -227,7 +227,7 @@ for (const name of (process.env.ANIMATION_BROWSERS ?? 'chromium,firefox,webkit')
       assert.ok(await fallback.locator('.docs-component-animation__poster--light').isVisible());
       assert.equal(await fallback.locator('[data-animation-play]').isVisible(), false);
       assert.match(
-        await fallback.locator('.docs-component-animation__status').textContent(),
+        await fallback.locator('[data-component-animation] [role="status"]').textContent(),
         /still image/,
       );
       await failed.close();
@@ -261,7 +261,7 @@ for (const name of (process.env.ANIMATION_BROWSERS ?? 'chromium,firefox,webkit')
 
     const noJS = await browser.newContext({ javaScriptEnabled: false });
     const staticPage = await noJS.newPage();
-    await staticPage.goto(`${base}/docs/menu/`);
+    await staticPage.goto(`${base}/docs/components/menu/`);
     assert.ok(await staticPage.locator('.docs-component-animation__poster--light').isVisible());
     assert.equal(await staticPage.locator('[data-animation-play]').isVisible(), false);
     assert.equal(await staticPage.locator('[data-animation-replay]').isVisible(), false);

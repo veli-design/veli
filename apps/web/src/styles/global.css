@@ -2290,15 +2290,6 @@ html[data-theme='dark'] .docs-prose .docs-component-animation__poster--dark {
   outline-offset: 2px;
 }
 
-.docs-component-animation__status {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 .docs-example {
   /* The paired code block is inset by 2px but its Shiki pre keeps a smaller
      corner radius. Clip it to this 24px frame so it cannot show through at
