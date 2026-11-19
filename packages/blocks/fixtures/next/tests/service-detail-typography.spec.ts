@@ -53,7 +53,7 @@ test('guideline typography survives the real Tailwind reset without leaking in E
         indent: token.getPropertyValue('--veli-spacing-6').trim(),
         headingToken: token
           .getPropertyValue(
-            node.lang === 'dv'
+            node.getAttribute('lang') === 'dv'
               ? '--veli-typography-dv-title-2-medium-font-weight'
               : '--veli-typography-en-title-2-semibold-font-weight',
           )
