@@ -1,5 +1,5 @@
 import { blockPages } from './blocks';
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import { docArea, docAreas, pageHref, pageId, pageMarkdownPath } from './doc-areas.mjs';
 import {
   componentGroups,
@@ -14,7 +14,7 @@ import {
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = (typeof docAreas)[number]['id'];
+export type DocsSection = (typeof docAreas)[number]['id'] | 'overview';
 
 type ProseEntry =
   | CollectionEntry<'docs'>
@@ -23,7 +23,7 @@ type ProseEntry =
 
 type EntrySource = {
   kind: 'entry';
-  entry: ProseEntry;
+  entry: ProseEntry | CollectionEntry<'guides'>;
 };
 
 type OverviewAreaId = Extract<(typeof docAreas)[number], { catalogOverview: true }>['id'];
@@ -164,12 +164,28 @@ function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview
 }
 
 export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
+  const getStarted = await getEntry('guides', 'get-started');
+  if (!getStarted?.data.description?.trim()) {
+    throw new Error('[docs-markdown] Get Started guide is missing');
+  }
+
   const componentGroupBySlug = new Map(
     componentGroups.flatMap((group) =>
       group.items.map((item) => [item.slug, group.title] as const),
     ),
   );
-  const pages: DocsCatalogPage[] = [];
+  const pages: DocsCatalogPage[] = [
+    {
+      id: 'documentation',
+      section: 'overview',
+      label: getStarted.data.title,
+      title: getStarted.data.title,
+      description: getStarted.data.description.trim(),
+      htmlPath: '/docs/',
+      markdownPath: '/docs/index.md',
+      source: { kind: 'entry', entry: getStarted },
+    },
+  ];
 
   for (const area of docAreas) {
     if (area.membership === 'inventory') {

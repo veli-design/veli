@@ -37,6 +37,16 @@ for (const path of ['/docs/', '/blocks/govmv-logo.svg', '/api/blocks/v1/catalog.
   const response = await globalThis.fetch(new URL(path, base), { redirect: 'manual' });
   assert.equal(response.status, 200, `${path} must not be shadowed by a legacy redirect`);
 }
+
+const getStartedMarkdown = await globalThis.fetch(new URL('/docs/index.md', base));
+assert.equal(getStartedMarkdown.status, 200, '/docs/index.md must resolve');
+assert.match(getStartedMarkdown.headers.get('content-type'), /^text\/markdown/);
+assert.match(await getStartedMarkdown.text(), /^# Get Started\n/);
+
+const llms = await globalThis.fetch(new URL('/llms.txt', base));
+assert.equal(llms.status, 200, '/llms.txt must resolve');
+assert.match(await llms.text(), /## Start here[\s\S]*?\[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/);
+
 console.log(
-  `Verified ${entries.length} HTTP 301 redirects, destination MIME types, downloads, and current routes.`,
+  `Verified ${entries.length} HTTP 301 redirects, destination MIME types, downloads, current routes, and Get Started Markdown.`,
 );

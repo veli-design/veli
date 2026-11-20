@@ -55,6 +55,10 @@ test('markdown header rules cover nested paths and the patterns section', () => 
   const headers = renderHeaders();
   assert.match(
     headers,
+    /\/docs\/index\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
+  );
+  assert.match(
+    headers,
     /\/docs\/patterns\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
   );
   assert.match(
@@ -73,6 +77,7 @@ test('markdown header rules cover nested paths and the patterns section', () => 
   assert.match(headers, /\/llms\.txt\n {2}Content-Type: text\/plain; charset=utf-8\n$/);
 
   const paths = [
+    '/docs/index.md',
     '/docs/foundations/index.md',
     '/docs/foundations/color/index.md',
     '/docs/components/button/index.md',

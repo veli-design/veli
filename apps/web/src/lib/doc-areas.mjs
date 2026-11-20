@@ -243,7 +243,10 @@ const markdownContentType = 'text/markdown; charset=utf-8';
  * @param {readonly typeof docAreas[number][]} [source]
  */
 export function renderHeaders(source = docAreas) {
-  const blocks = [];
+  const blocks = [
+    // Get Started lives at /docs/ and is outside the per-section segment globs.
+    `/docs/index.md\n  Content-Type: ${markdownContentType}`,
+  ];
 
   for (const area of source) {
     blocks.push(`/docs/${area.segment}/*.md\n  Content-Type: ${markdownContentType}`);
