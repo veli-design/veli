@@ -392,6 +392,25 @@ export const patterns = patternRecords.map((item) => ({
   href: pageHref(patternsArea, item.slug),
 }));
 
+// The locale is pinned to `en` so the sidebar order does not depend on the machine that builds the site.
+const componentTitleCollator = new Intl.Collator('en', {
+  usage: 'sort',
+  sensitivity: 'base',
+});
+
+function compareComponentTitles(left: ComponentItem, right: ComponentItem) {
+  return componentTitleCollator.compare(left.title, right.title);
+}
+
+/** Sidebar links only. Overview is prepended in `docsSections`. */
+function componentsSectionItems(components: readonly ComponentItem[]): DocsNavigationItem[] {
+  return [...components].sort(compareComponentTitles).map((item) => ({
+    title: item.title,
+    href: pageHref(componentsArea, item.slug),
+    description: item.description,
+  }));
+}
+
 export function getComponentGroupSlug(title: string) {
   return title.toLowerCase().replaceAll(' ', '-').replace('&', 'and');
 }
@@ -429,13 +448,14 @@ export function inventoryItems(
 function sectionItems(area: (typeof docAreas)[number]): readonly DocsNavigationItem[] {
   switch (area.id) {
     case 'foundations':
-    case 'components':
     case 'patterns':
       return inventoryItems(area.id).map((item) => ({
         title: item.navTitle ?? item.title,
         href: item.href,
         description: item.description,
       }));
+    case 'components':
+      return componentsSectionItems(allComponents);
     case 'blocks':
       return blocks.map(({ manifest }) => ({
         title: manifest.title,
