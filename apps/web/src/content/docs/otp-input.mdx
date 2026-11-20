@@ -132,31 +132,31 @@ OTPInput is a Veli field on React Aria [`TextField`](https://react-spectrum.adob
 
 ### OTPInput
 
-| Prop                    | Type                                                 | Default           | Description                                                         |
-| :---------------------- | :--------------------------------------------------- | :---------------- | :------------------------------------------------------------------ |
-| `length`                | `number`                                             | `6`               | Slot count in one group. Not with `groups`.                         |
-| `groups`                | `[number, ...number[]]`                              | -                 | Group sizes. The slot count is the sum. Not with `length`.          |
-| `alphabet`              | `'digits' \| 'alphanumeric' \| 'alphanumeric-upper'` | `'digits'`        | Accepted characters and keyboard hints.                             |
-| `value`                 | `string`                                             | -                 | Controlled value. Sanitized before display.                         |
-| `defaultValue`          | `string`                                             | -                 | Uncontrolled initial value.                                         |
-| `onChange`              | `(value: string) => void`                            | -                 | Called with the sanitized string when it changes.                   |
-| `onComplete`            | `(code: string) => void`                             | -                 | Called once per user edit that fills the code.                      |
-| `renderSlot`            | `(slot: OTPSlotView) => ReactNode`                   | -                 | Renders one cell. Return `OTPInputSlot`.                            |
-| `separator`             | `ReactNode`                                          | hyphen            | Glyph between groups. `null` hides it and keeps the gap.            |
-| `appearance`            | `'default' \| 'outline'`                             | `'default'`       | Underline or inset stroke on each box.                              |
-| `size`                  | `'sm' \| 'md' \| 'lg'`                               | `'md'`            | Field size.                                                         |
-| `label`                 | `ReactNode`                                          | -                 | Visible label.                                                      |
-| `infoTooltip`           | `ReactNode`                                          | -                 | Info tooltip beside the label.                                      |
-| `infoTooltipAriaLabel`  | `string`                                             | localized         | Accessible name of the tooltip trigger.                             |
-| `isOptional`            | `boolean`                                            | `false`           | Shows a localized Optional caption. Hidden when `isRequired`.       |
-| `action`                | `ReactNode`                                          | -                 | Right-aligned header content, such as Resend.                       |
-| `description`           | `ReactNode`                                          | -                 | Helper text beneath the field.                                      |
-| `errorMessage`          | `ReactNode`                                          | -                 | Error text. Replaces Form and `validate` errors when set.           |
-| `showRequiredIndicator` | `boolean`                                            | `true`            | Shows the required asterisk when `isRequired`.                      |
-| `autoComplete`          | `string`                                             | `'one-time-code'` | Browser autocomplete token. Override to keep password managers out. |
-| `enterKeyHint`          | `string`                                             | `'done'`          | Virtual-keyboard enter-key label.                                   |
-| `className`             | `string`                                             | -                 | Width class on the complete field.                                  |
-| `ref`                   | `Ref<HTMLInputElement>`                              | -                 | Forwarded to the native input.                                      |
+| Prop                    | Type                                                 | Default           | Description                                                       |
+| :---------------------- | :--------------------------------------------------- | :---------------- | :---------------------------------------------------------------- |
+| `length`                | `number`                                             | `6`               | Slot count in one group. Not with `groups`.                       |
+| `groups`                | `[number, ...number[]]`                              | -                 | Group sizes. The slot count is the sum. Not with `length`.        |
+| `alphabet`              | `'digits' \| 'alphanumeric' \| 'alphanumeric-upper'` | `'digits'`        | Accepted characters and keyboard hints.                           |
+| `value`                 | `string`                                             | -                 | Controlled value. Sanitized before display.                       |
+| `defaultValue`          | `string`                                             | -                 | Uncontrolled initial value.                                       |
+| `onChange`              | `(value: string) => void`                            | -                 | Called with the sanitized string when it changes.                 |
+| `onComplete`            | `(code: string) => void`                             | -                 | Called once per user edit that fills the code.                    |
+| `renderSlot`            | `(slot: OTPSlotView) => ReactNode`                   | -                 | Renders one cell. Return `OTPInputSlot`.                          |
+| `separator`             | `ReactNode`                                          | hyphen            | Glyph between groups. `null` hides it and keeps the gap.          |
+| `appearance`            | `'default' \| 'outline'`                             | `'default'`       | Underline or inset stroke on each box.                            |
+| `size`                  | `'sm' \| 'md' \| 'lg'`                               | `'md'`            | Field size.                                                       |
+| `label`                 | `ReactNode`                                          | -                 | Visible label.                                                    |
+| `infoTooltip`           | `ReactNode`                                          | -                 | Info tooltip beside the label.                                    |
+| `infoTooltipAriaLabel`  | `string`                                             | localized         | Accessible name of the tooltip trigger.                           |
+| `isOptional`            | `boolean`                                            | `false`           | Shows a localized Optional caption. Hidden when `isRequired`.     |
+| `action`                | `ReactNode`                                          | -                 | Right-aligned header content, such as Resend.                     |
+| `description`           | `ReactNode`                                          | -                 | Helper text beneath the field.                                    |
+| `errorMessage`          | `ReactNode`                                          | -                 | Error text. Replaces Form and `validate` errors when set.         |
+| `showRequiredIndicator` | `boolean`                                            | `true`            | Shows the required asterisk when `isRequired`.                    |
+| `autoComplete`          | `string`                                             | `'one-time-code'` | Suppresses password-manager UI by default. Keeps `one-time-code`. |
+| `enterKeyHint`          | `string`                                             | `'done'`          | Virtual-keyboard enter-key label.                                 |
+| `className`             | `string`                                             | -                 | Width class on the complete field.                                |
+| `ref`                   | `Ref<HTMLInputElement>`                              | -                 | Forwarded to the native input.                                    |
 
 `isDisabled`, `isReadOnly`, `isRequired`, `isInvalid`, `name`, `validate`, and `autoFocus` pass through to `TextField`. The alphabet owns `type`, `inputMode`, `pattern`, `autoCapitalize`, `autoCorrect`, and `spellCheck`, so those are not props.
 
