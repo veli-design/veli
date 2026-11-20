@@ -1,4 +1,5 @@
 import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
+import { assertHeadersCover, renderHeaders } from '../src/lib/doc-areas.mjs';
 import console from 'node:console';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -86,9 +87,23 @@ function validateMarkdown(filePath) {
 if (!existsSync(distRoot)) fail('dist does not exist; run the Astro build first');
 validateFontNotices();
 
-const markdownFiles = [...collectFiles(resolve(distRoot, 'docs'), '.md')].sort();
-
 const catalogPaths = JSON.parse(readFileSync(resolve(distRoot, 'docs-catalog.json'), 'utf8'));
+const markdownDirectories = [
+  ...new Set(
+    catalogPaths.map((markdownPath) => {
+      const directory = markdownPath.split('/')[1];
+      if (!directory) fail(`catalog path "${markdownPath}" has no section directory`);
+      return directory;
+    }),
+  ),
+];
+const markdownFiles = markdownDirectories
+  .flatMap((directory) => {
+    const directoryPath = resolve(distRoot, directory);
+    if (!existsSync(directoryPath)) fail(`dist/${directory} does not exist`);
+    return collectFiles(directoryPath, '.md');
+  })
+  .sort();
 const actualPaths = markdownFiles.map(
   (file) => `/${relative(distRoot, file).split('\\').join('/')}`,
 );
@@ -130,12 +145,8 @@ for (const markdownPath of expectedLinks) {
 }
 
 const headers = readFileSync(resolve(distRoot, '_headers'), 'utf8');
-if (
-  !headers.includes('Content-Type: text/plain; charset=utf-8') ||
-  !headers.includes('Content-Type: text/markdown; charset=utf-8')
-) {
-  fail('_headers does not declare the expected Markdown MIME types');
-}
+if (headers !== renderHeaders()) fail('dist/_headers does not match the section registry');
+assertHeadersCover(headers, catalogPaths);
 
 console.log(`Validated ${markdownFiles.length} Markdown pages and llms.txt.`);
 
@@ -161,12 +172,25 @@ for (const path of [
   '/',
   '/design/',
   '/docs/',
+  '/docs/index.md',
   '/docs/foundations/',
   '/docs/components/',
   '/docs/patterns/',
   '/docs/blocks/',
 ])
   requireBuiltPath(path);
+
+// Get Started must stay in the Markdown catalog and the Start here index.
+const getStartedMarkdown = readFileSync(resolve(distRoot, 'docs/index.md'), 'utf8');
+if (!getStartedMarkdown.startsWith('# Get Started\n')) {
+  fail('Get Started Markdown must export the existing guide H1');
+}
+if (!catalogPaths.includes('/docs/index.md')) {
+  fail('docs catalog must include /docs/index.md');
+}
+if (!/## Start here\n\n(?:- \[.*?\]\(.*?\)\n)*?- \[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/.test(llms)) {
+  fail('llms.txt Start here must link Get Started at /docs/index.md');
+}
 const redirects = readFileSync(resolve(distRoot, '_redirects'), 'utf8');
 for (const [from, to] of Object.entries(legacyRedirects)) {
   requireBuiltPath(to);

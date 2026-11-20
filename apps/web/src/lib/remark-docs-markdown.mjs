@@ -1,3 +1,4 @@
+import { documentHref } from './doc-areas.mjs';
 import { gfmTableToMarkdown } from 'mdast-util-gfm-table';
 import { toMarkdown } from 'mdast-util-to-markdown';
 
@@ -102,15 +103,11 @@ function isInteractivePreview(node, importedNames, file) {
 function getDocumentPath(file) {
   const path = documentName(file).replaceAll('\\', '/');
   if (path.endsWith('/src/content/guides/get-started.mdx')) return '/docs/';
-  const match = path.match(/(?:^|\/)src\/content\/(docs|foundations|patterns)\/(.+)\.mdx?$/);
-
-  if (!match) {
+  const href = documentHref(path);
+  if (!href) {
     throw markdownError(file, 'could not derive the rendered documentation URL');
   }
-
-  const [, collection, slug] = match;
-  const section = collection === 'docs' ? 'components' : collection;
-  return `/docs/${section}/${slug}/`;
+  return href;
 }
 
 function interactivePreviewLink(url) {
