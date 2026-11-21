@@ -53,10 +53,7 @@ test('content paths resolve for every prose collection, including Windows separa
 
 test('markdown header rules cover nested paths and the patterns section', () => {
   const headers = renderHeaders();
-  assert.match(
-    headers,
-    /\/docs\/index\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,
-  );
+  assert.match(headers, /\/docs\/index\.md\n {2}Content-Type: text\/markdown; charset=utf-8/);
   assert.match(
     headers,
     /\/docs\/patterns\/\*\.md\n {2}Content-Type: text\/markdown; charset=utf-8/,

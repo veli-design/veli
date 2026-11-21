@@ -45,7 +45,10 @@ assert.match(await getStartedMarkdown.text(), /^# Get Started\n/);
 
 const llms = await globalThis.fetch(new URL('/llms.txt', base));
 assert.equal(llms.status, 200, '/llms.txt must resolve');
-assert.match(await llms.text(), /## Start here[\s\S]*?\[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/);
+assert.match(
+  await llms.text(),
+  /## Start here[\s\S]*?\[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/,
+);
 
 console.log(
   `Verified ${entries.length} HTTP 301 redirects, destination MIME types, downloads, current routes, and Get Started Markdown.`,

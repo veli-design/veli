@@ -188,7 +188,11 @@ if (!getStartedMarkdown.startsWith('# Get Started\n')) {
 if (!catalogPaths.includes('/docs/index.md')) {
   fail('docs catalog must include /docs/index.md');
 }
-if (!/## Start here\n\n(?:- \[.*?\]\(.*?\)\n)*?- \[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/.test(llms)) {
+if (
+  !/## Start here\n\n(?:- \[.*?\]\(.*?\)\n)*?- \[Get Started\]\((?:https?:\/\/[^)]+)?\/docs\/index\.md\)/.test(
+    llms,
+  )
+) {
   fail('llms.txt Start here must link Get Started at /docs/index.md');
 }
 const redirects = readFileSync(resolve(distRoot, '_redirects'), 'utf8');
