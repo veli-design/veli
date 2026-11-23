@@ -1,6 +1,6 @@
 ---
 title: DatePicker
-description: Editable date segments with a calendar popover for date selection.
+description: 'A field for one date, typed into segments or chosen from a calendar popover.'
 ---
 
 import {
@@ -10,9 +10,468 @@ import {
   DatePickerRtlDemo,
 } from '../../components/DateExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # DatePicker
 
-Use DatePicker when people need to type a date or choose one from a calendar. Its date segments and calendar share one value. Use [DateField](/docs/components/date-field/) when a calendar is unnecessary, or [Calendar](/docs/components/calendar/) for an embedded date selector.
+<DocsTab id="overview">
+
+A date picker lets people enter a date by typing it or by choosing it from a calendar. It combines editable day, month and year segments with a calendar button that opens a popover. Use it when people must give one specific date, such as an appointment or a document's expiry date, and seeing the month helps.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/date-picker.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-datepicker--docs"
+/>
+
+## When to use
+
+### Use a date picker when
+
+- People must give one specific date, such as an appointment or a date of issue.
+- Seeing the month helps, such as booking within the next few weeks.
+- The calendar must show minimum, maximum or unavailable dates.
+- People may type the date into its segments or pick it from the calendar.
+- A form needs compact date selection with a calendar available on demand.
+
+### Don't use a date picker when
+
+- The date is one people know by heart, such as a date of birth. Prefill it, or use a date field. A date picker is acceptable for a date of birth only in English forms, because its calendar opens near today and its year list shows only 10 years either side.
+- The calendar must stay visible for scheduling or browsing availability. Use a calendar on the page.
+- People need segment-by-segment typing without a popover. Use a date field.
+- You need a date range. Use two date pickers labelled Start date and End date.
+- Only the month and year matter, such as a card expiry. Use Select or Input.
+- People pick from a few fixed dates, such as three open appointment days. Use a Radio group with each date written in full, such as Thursday 22 October 2026.
+- The date is shown, not edited. Show it as text, written as 21 October 2026.
+- Browser autofill matters for a date of birth. Use three Inputs with bday-day, bday-month and bday-year autocomplete.
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-intro-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-intro-1-dark.webp"
+  alt='A white card titled Book your passport appointment, with the line "Choose a day from Sunday to Thursday for your photo and fingerprints at the passport office." Below it a date picker labelled Appointment date with a red asterisk, showing 18/11/2026 with a calendar icon at the end of the field, the helper text "Sunday to Thursday, within the next 60 days" and a teal Continue button.'
+  width="2400"
+  height="1208"
+  caption="A date picker for booking an appointment."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-anatomy-1.svg"
+  darkSrc="/images/docs/date-picker/date-picker-anatomy-1-dark.svg"
+  alt="A date picker at size lg labelled Visit date, with an info icon, Optional and a red asterisk, showing 18/11/2026 and a calendar icon, the helper text Weekdays only, and the calendar popover open below it on September 2026 with a Today button at the foot. Nine numbered markers: 1 on the label, 2 on the info icon, 3 on Optional, 4 on the asterisk, 5 on the field, 6 on the date segments, 7 on the calendar button, 8 on the helper text and 9 on the popover."
+  width="576"
+  height="624"
+  caption="The parts of a date picker, shown at size lg with its calendar popover open. Numbers match the list below. Optional and the required marker are shown together only to name the parts. A field never shows both."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   Names the date people give, and the whole date group for screen readers. Body sm regular at sizes sm and md, body md regular at lg. In code it is label.
+
+2. **Info icon**
+
+   A 16px icon button that opens a tooltip with extra help. Screen readers announce it as More information unless infoTooltipAriaLabel is set. In code it is infoTooltip.
+
+3. **Optional**
+
+   Optional after the label, shown with isOptional. It hides while isRequired is on, so it never shows with the asterisk.
+
+4. **Required indicator**
+
+   An asterisk in `text/danger/muted`. It shows while isRequired and showRequiredIndicator are both on.
+
+5. **Field**
+
+   The input container, which screen readers treat as one group. It is 36, 44 or 52 high by size. The default appearance has a bottom border, outline a full border.
+
+6. **Date segments**
+
+   Day, month and year, separate parts people type into or change with the arrow keys. The separators use `text/base/subtle`. In code it is DateSegment.
+
+7. **Calendar button**
+
+   A 20px calendar icon button at the end of the field that opens the popover. Screen readers announce it as Open calendar unless calendarButtonLabel is set.
+
+8. **Helper text**
+
+   A hint below the field. While isInvalid is on, errorMessage replaces it. In code it is description.
+
+9. **Calendar popover**
+
+   Opens 4 below the field, aligned to its start, with month navigation, the month grid and a Today button unless showTodayButton is off. In code it is Calendar.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-picker/date-picker-do-1.webp" darkSrc="/images/docs/date-picker/date-picker-do-1-dark.webp" alt="A date picker labelled Appointment date with a red asterisk, showing 18/04/2026, with the helper text &quot;Sunday to Thursday, within the next 60 days&quot;." width="1136" height="376">
+
+Name the date by what it is for: Appointment date, not Date.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-picker/date-picker-dont-1.webp" darkSrc="/images/docs/date-picker/date-picker-dont-1-dark.webp" alt="The same date picker labelled only Date." width="1136" height="376">
+
+Don't use a bare Date label. People can't tell which date you need.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-picker/date-picker-do-2.webp" darkSrc="/images/docs/date-picker/date-picker-do-2-dark.webp" alt="A date picker labelled Appointment date showing 18/04/2026 in the error state, with the error &quot;Appointment date must be between 23 October and 21 December 2026&quot;." width="1136" height="376">
+
+Say what is wrong and how to fix it in the error message.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-picker/date-picker-dont-2.webp" darkSrc="/images/docs/date-picker/date-picker-dont-2-dark.webp" alt="The same date picker in the error state with the error &quot;Invalid date&quot;." width="1136" height="376">
+
+Don't write vague errors such as Invalid date. People can't tell how to fix it.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/date-picker/date-picker-do-3.webp" darkSrc="/images/docs/date-picker/date-picker-do-3-dark.webp" alt="Two date pickers in the default appearance, both with a filled field and a bottom line: Date of issue showing 03/02/2021 and Date of expiry showing the placeholder Select a date, each with the helper text &quot;As printed on your passport&quot;." width="1136" height="608">
+
+Use one appearance and size for every field in a form.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/date-picker/date-picker-dont-3.webp" darkSrc="/images/docs/date-picker/date-picker-dont-3-dark.webp" alt="The same two date pickers, Date of issue in the default appearance and Date of expiry in the outline appearance with a full border." width="1136" height="608">
+
+Don't mix appearances or sizes in one form. The fields look unrelated.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Name the date as a short noun phrase in sentence case, without a colon or a full stop. The label also names the whole date group for screen readers.
+
+| Do                   | Don't                                                  |
+| :------------------- | :----------------------------------------------------- |
+| Appointment date     | Date (does not say which date)                         |
+| Date of issue        | Date: (bare and ends with a colon)                     |
+| Passport expiry date | Select Appointment Date (an instruction in title case) |
+
+When the picker shows a date and time, name both parts: Appointment date and time.
+
+### Helper text
+
+Add helper text only when the label needs context, in one sentence with no full stop. Don't write the format, because the segments already show it; give the rule instead.
+
+| Do                                          | Don't                                                                                                                     |
+| :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| Sunday to Thursday, within the next 60 days | Weekdays only. (weekdays is unclear where the weekend is Friday and Saturday, and a one-sentence hint takes no full stop) |
+| As printed on your passport                 | DD/MM/YYYY (the segments already show the format)                                                                         |
+
+### Error messages
+
+The error replaces the helper text, so the error must carry the rule. Say which rule failed, in the words of the label:
+
+- Empty: Enter &#123;date name&#125;.
+- Incomplete: &#123;date name&#125; must include a &#123;day, month or year&#125;.
+- Year the wrong length: Year must include 4 numbers.
+- Impossible date: &#123;date name&#125; must be a real date.
+- Wrong side of today: &#123;date name&#125; must be in the past, must be today or in the past, or must be in the future.
+- Outside a range: &#123;date name&#125; must be after, before or between &#123;date&#125;, with the date written as 21 October 2026.
+- Time: Enter &#123;time name&#125; in 24-hour format, like 14:30.
+
+| Do                                                               | Don't                                                                                                                                  |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| Enter your appointment date                                      | Invalid date (gives no fix)                                                                                                            |
+| Appointment date must be a real date                             | Pick an appointment date within the allowed window. (Pick instead of Choose, the window is not named, and a full stop on one sentence) |
+| Appointment date must be between 23 October and 21 December 2026 | Choose a date from Sunday to Thursday in the next 60 days. (full stop on a one-sentence error, and weekday is unclear in the Maldives) |
+
+### Times
+
+Show times in 24-hour form: set granularity to hour or minute and hourCycle to 24, so times read 09:00 and 13:30.
+
+| Do                               | Don't                    |
+| :------------------------------- | :----------------------- |
+| Appointment date and time, 13:30 | 10:00 AM (12-hour clock) |
+
+### Dates in text
+
+Add the weekday before the date, with no comma, when people need to plan around it: Wednesday 21 October 2026.
+
+### Optional or required
+
+Mark whichever is rarer in the form: Optional with isOptional when most fields are required, or the asterisk with isRequired when most are optional. Code never shows Optional and the asterisk on one field.
+
+### Built-in strings
+
+The date picker has these built-in strings: Optional, More information (infoTooltipAriaLabel), Open calendar (calendarButtonLabel), Today (todayButtonLabel) and a hidden dismiss button. When a form has more than one date picker, override calendarButtonLabel so each button names its date, such as Open calendar for appointment date, and pass the Dhivehi text yourself under language dv. Two buttons both named Open calendar sound the same to a screen reader user. Optional and the dismiss button can't be changed.
+
+### Dhivehi copy
+
+Veli does not translate the description and errorMessage, so write both languages. Write Dhivehi the way a Dhivehi speaker would say it and keep it as short as the English.
+
+## Related components
+
+| Component                                  | When to use it                                                                                                                                                                                              |
+| :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Date field](/docs/components/date-field/) | type a date without a calendar, such as a date of birth.                                                                                                                                                    |
+| [Calendar](/docs/components/calendar/)     | show a month on the page, without a field.                                                                                                                                                                  |
+| [Input](/docs/components/input/)           | enter free text, such as a name or reference number, or three Inputs for a date of birth with autofill. Number input is planned, so use Input with inputmode numeric for a number such as a year meanwhile. |
+| [Select](/docs/components/select/)         | choose one option from a list, such as a month on its own.                                                                                                                                                  |
+| [Radio](/docs/components/radio/)           | choose from a few fixed dates, each written in full.                                                                                                                                                        |
+| [VeliProvider](/docs/components/provider/) | wrap the app in VeliProvider so the date picker gets the Dhivehi strings, direction and calendar names.                                                                                                     |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the date picker: appearances, sizes, states, content options, spacing and the calendar popover.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-appearances-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-appearances-1-dark.webp"
+  alt='Two date pickers labelled Appointment date with a red asterisk, the placeholder Select a date and the helper text "Sunday to Thursday, within the next 60 days". Appearance default: a filled field with a bottom border. Appearance outline: a full border. Each has its note below it.'
+  width="2400"
+  height="616"
+  caption="Appearance default and appearance outline."
+/>
+
+- **default**: a filled field with a bottom line. Use it in most forms. It is the default in code.
+- **outline**: a full border. Use it where fields need a clear edge, such as on a filled surface.
+
+Both appearances share sizes, states, spacing and the calendar popover.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-sizes-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-sizes-1-dark.webp"
+  alt="Three date pickers labelled Appointment date with the placeholder Select a date, at sizes sm, md and lg, 36, 44 and 52 high. Each has its note below it."
+  width="2400"
+  height="648"
+  caption="Sizes sm, md and lg."
+/>
+
+- Use **sm** (36 high) in dense layouts, such as filters, tables and toolbars.
+- Use **md** (44 high) in most forms. It is the default in code.
+- Use **lg** (52 high) for touch-first forms and pages that ask one question.
+
+The calendar popover is the same at every size. The field keeps its height in Dhivehi; the label row grows (see Language and direction). Match the size of the other fields in the form.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-options-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-options-1-dark.webp"
+  alt='Three date pickers. Appointment: Appointment date, required, with an info icon, 18/11/2026 and the helper text "Sunday to Thursday, within the next 60 days". Document date: Date of issue, required, 03/02/2021, with the helper text "As printed on your passport". Optional date: Preferred start date with Optional, the placeholder Select a date and no helper text. Each has its note below it.'
+  width="2400"
+  height="712"
+/>
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-options-2.webp"
+  darkSrc="/images/docs/date-picker/date-picker-options-2-dark.webp"
+  alt="A date picker labelled Date of birth, required, showing 27/03/1990, with the note on prefilling it from the National Registry, or using a date field or three Inputs."
+  width="2400"
+  height="952"
+  caption="An appointment date, a document date, an optional date and a date of birth."
+/>
+
+- **Appointment date**: required, picked from the calendar, with infoTooltip for extra detail about the booking rules. Keep the rule people must follow in the helper text.
+- **Document date**: required, typed from a document, with helper text that says where to find it.
+- **Optional date**: isOptional on and isRequired off, such as Preferred start date. Leave out the helper text when the label says enough.
+- **Date of birth**: prefill it from the National Registry when you can; otherwise use a date field. A date picker works for a date of birth in English forms, because people can type the date. Three Inputs are the way to get browser autofill, which a date picker can't take.
+
+Use placeholderValue to set the date the calendar focuses when the field is empty.
+
+## States
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-states-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-states-1-dark.webp"
+  alt="Three date pickers labelled Appointment date at size md. Default: the placeholder Select a date. Hover: the fill and border one step darker. Focus: 18/04/2026 with a teal focus ring around the field. Each has its note below it."
+  width="2400"
+  height="616"
+/>
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-states-2.webp"
+  darkSrc="/images/docs/date-picker/date-picker-states-2-dark.webp"
+  alt='Active: the field in its pressed fill with the calendar popover open on September 2026, with a Today button at the foot. Filled: 18/04/2026 with the helper text "Sunday to Thursday, within the next 60 days". Each has its note below it.'
+  width="2400"
+  height="1208"
+/>
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-states-3.webp"
+  darkSrc="/images/docs/date-picker/date-picker-states-3-dark.webp"
+  alt='Error: 18/04/2026 with the error "Appointment date must be between 23 October and 21 December 2026" in red. Read only: 18/04/2026 in a flat field with a muted calendar icon. Disabled: the label, value and helper text faded. Each has its note below it.'
+  width="2400"
+  height="712"
+  caption="Date picker states."
+/>
+
+| State     | When                                               | Visual change                                                                                               |
+| :-------- | :------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| Default   | No value                                           | Placeholder segments dd / mm / yyyy. The Figma images show Select a date instead; see Missing or unverified |
+| Hover     | Pointer over the field                             | Fill and line darken one step                                                                               |
+| Focus     | Keyboard focus on a segment or the calendar button | Focus ring                                                                                                  |
+| Active    | Calendar open                                      | The field keeps the pressed fill until a date is picked or the popover closes                               |
+| Filled    | A date is set                                      | Segments show the date in digits                                                                            |
+| Error     | isInvalid, or a date outside minValue and maxValue | Error colours, errorMessage replaces the helper text                                                        |
+| Read only | isReadOnly                                         | The date can be read but not changed; the calendar button is disabled                                       |
+| Disabled  | isDisabled                                         | Muted, skipped by Tab, and the calendar can't open                                                          |
+
+Use read only, not disabled, for prefilled dates people can't change here. Code has no skeleton state.
+
+## Calendar popover
+
+- The calendar button opens the popover with focus on the selected date, or on today when there is no value. Picking a date closes it; set shouldCloseOnSelect to false to keep it open.
+- The popover holds the single-date calendar, not a range calendar.
+- The header has previous and next month buttons and a year button. The year list shows 10 years either side of the current view.
+- A Today button sits at the foot and jumps to today. It shows by default; set showTodayButton to false to hide it. It is disabled when today is unavailable.
+- Weeks start on Sunday.
+- The popover is 316 wide, opens 4 below the field and clamps to the viewport on narrow phones. Make sure narrow viewports have room for it.
+
+## Behaviour
+
+- **Typing**: each segment takes digits and moves on when full. Up and Down change the value of the focused segment.
+- **Limits**: minValue and maxValue set the allowed range. Dates outside it are disabled in the calendar and invalid when typed.
+- **Unavailable dates**: isDateUnavailable marks single dates, such as public holidays, as unavailable. In the calendar they stay focusable, show a red line through the number and can't be chosen.
+- **Validation**: validationBehavior is native by default, so the field takes part in form validation. errorMessage shows while isInvalid is on.
+- **Inside a Form**: the Form's default validationBehavior aria shows an error while people type. Set validationBehavior="native" on the Form to check dates when people submit.
+- **Form value**: control it with value and onChange, or leave it uncontrolled with defaultValue. Give it a name so the form submits an ISO date string, such as 2026-10-22. Convert with isoDateToDateValue and dateValueToIsoDate.
+- **Width**: the field fills its container. Constrain the parent, not the field.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-rtl-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-rtl-1-dark.webp"
+  alt='Two date pickers side by side. LTR, Datepicker: Appointment date with a red asterisk, 18/04/2026 with the calendar icon at the right end, and the helper text "Sunday to Thursday, within the next 60 days". RTL, DatepickerDv: mirrored, with the label ބައްދަލުވުމުގެ ތާރީޚު and the asterisk on the right, 18/04/2026 aligned to the right, the calendar icon at the left end and the helper text އެހީތެރިވެދޭ ލިޔުން below.'
+  width="2400"
+  height="536"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- Set language dv on VeliProvider. The label row, helper text and calendar mirror. The calendar icon moves to the left and the month arrows swap.
+- The segments keep Latin digits. Under dv the date picker forces its segments left to right with lang=en, so they read dd / mm / yyyy from the left. Date field does not: under dv its segments read mm, dd, yyyy from the right. The two components differ, and both differ from the guidelines; see Missing or unverified. The segment names stay in English in both.
+- The label, Optional and helper use the Dhivehi body and caption regular styles. The field keeps its English height, but the label row grows: in Storybook it is 36 high at sm and md and 40 at lg, against 28, 28 and 32 in English (the label line is 28 or 32, plus 8 below). See Missing or unverified.
+- The calendar shows Dhivehi month and weekday names, such as ނޮވެމްބަރު and އާދީއްތަ.
+- Under dv the calendar button is named ކަލަންޑަރު ހުޅުވާ, the info button އިތުރު މަޢުލޫމާތު, the Today button މިއަދު, the month buttons ކުރީ މަސް and ދެން އޮތް މަސް, and the year button އަހަރު.
+- In Figma, use DatepickerDv for Dhivehi mock-ups. It has the same 54 variants as Datepicker.
+- Format dates shown around the field with en-GB and the Indian/Maldives time zone, so they read 21 October 2026 with 24-hour time. Take Dhivehi month names from the language files.
+
+The Dhivehi example in the Figma page uses the label ބައްދަލުވުމުގެ ތާރީޚު (Appointment date), a draft native term awaiting review, and the helper text އެހީތެރިވެދޭ ލިޔުން, which is placeholder copy for Helper text.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <DatePickerRtlDemo client:visible />
+</div>
+
+Example configuration: size md, isOptional, defaultValue 2026-10-15.
+
+| Prop        | English                                      | Dhivehi                                             |
+| :---------- | :------------------------------------------- | :-------------------------------------------------- |
+| label       | Appointment date                             | ބައްދަލުވުމުގެ ތާރީޚު                               |
+| infoTooltip | Type a date or choose one from the calendar. | ތާރީޚު ލިޔުއްވާ ނުވަތަ ކަލަންޑަރުން ޚިޔާރުކުރައްވާ. |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-spacing-1.svg"
+  darkSrc="/images/docs/date-picker/date-picker-spacing-1-dark.svg"
+  alt="Spacing redlines for a date picker in the outline appearance at sizes sm, md and lg, labelled Label with Optional, showing 5 Apr 2026 and the helper text Helper Text. Field heights 36, 44 and 52; padding 8 and 12 at sm, 12 and 16 at md, 14 and 16 at lg; 8 between the label row and the field and 4 between the field and the helper text."
+  width="1200"
+  height="1196"
+  caption="All values in pixels at 1x. Pink marks padding, orange marks the gap between parts, and the dimension line marks the field height."
+/>
+
+| Property                      | sm      | md      | lg      |
+| :---------------------------- | :------ | :------ | :------ |
+| Field height                  | 36      | 44      | 52      |
+| Field padding, top and bottom | 8       | 12      | 14      |
+| Field padding, sides          | 12      | 16      | 16      |
+| Label row to field            | 8       | 8       | 8       |
+| Between label row parts       | 8       | 8       | 8       |
+| Value to calendar icon        | 8       | 8       | 8       |
+| Field to helper text          | 4       | 4       | 4       |
+| Calendar icon                 | 20      | 20      | 20      |
+| Info icon                     | 16      | 16      | 16      |
+| Popover width                 | 316     | 316     | 316     |
+| Field to popover              | 4       | 4       | 4       |
+| Day cell                      | 44 x 44 | 44 x 44 | 44 x 44 |
+
+The width follows the container. Dhivehi keeps the same field heights.
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-radius-1.svg"
+  darkSrc="/images/docs/date-picker/date-picker-radius-1-dark.svg"
+  alt="Three date pickers in the outline appearance at sizes sm, md and lg, each with the placeholder Select a date and its field marked with a 10 corner radius."
+  width="1200"
+  height="268"
+  caption="The field uses radius 10 (`radius/field`) at every size, like every input-type field. The calendar popover uses rounded-xl in code."
+/>
+
+## Typography
+
+| Element                          | English                              | Dhivehi                                        | Colour token                                               |
+| :------------------------------- | :----------------------------------- | :--------------------------------------------- | :--------------------------------------------------------- |
+| Label, sm and md                 | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28      | `text/base/DEFAULT`                                        |
+| Label, lg                        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32      | `text/base/DEFAULT`                                        |
+| Optional, sm and md              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24      | `text/base/subtle`                                         |
+| Optional, lg                     | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28      | `text/base/subtle`                                         |
+| Required indicator               | Caption regular, Inter Regular 12/16 | The same style; the asterisk is not translated | `text/danger/muted`                                        |
+| Value and placeholder, sm and md | Body sm regular, Inter Regular 14/20 | Latin digits                                   | Value `text/base/strong`, placeholder `text/base/inactive` |
+| Value and placeholder, lg        | Body md regular, Inter Regular 16/24 | Latin digits                                   | Value `text/base/strong`, placeholder `text/base/inactive` |
+| Helper text, sm and md           | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24      | `text/base/muted`                                          |
+| Helper text, lg                  | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28      | `text/base/muted`                                          |
+| Error text                       | The same styles as the helper text   | The same styles as the helper text             | `text/danger/muted`                                        |
+| Calendar month and Today         | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28      | `text/base/strong`                                         |
+| Calendar weekdays                | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24      | `text/base/DEFAULT`                                        |
+
+Dhivehi line heights are taller. The label and helper rows grow with them (the label row is 36, 36 and 40 high); the field keeps 36, 44 and 52 high.
+
+## Tokens
+
+Field tokens are written `text-input/...` and leave out the `components/` prefix.
+
+| State                  | Field fill                                                     | Border                                                                                       | Text and icon                                                                              |
+| :--------------------- | :------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| Default                | `text-input/bg-default`                                        | `text-input/stroke-default`: a 1.5px bottom bar on default, a 1px border on outline          | Placeholder `text/base/inactive`, label `text/base/DEFAULT`, icon `icon/base/default`      |
+| Hover                  | `text-input/bg-hover`                                          | `text-input/stroke-hover`                                                                    | As default                                                                                 |
+| Focus                  | `text-input/bg-pressed`                                        | Default keeps `text-input/stroke-pressed`; outline drops its border and shows the focus ring | Value `text/base/strong`                                                                   |
+| Active (calendar open) | `text-input/bg-pressed`                                        | `text-input/stroke-pressed`                                                                  | Value `text/base/strong`; popover `calendar/bg` with the md shadow                         |
+| Filled                 | Default `text-input/bg-default`, outline `text-input/bg-hover` | Default `text-input/stroke-default` bottom bar; outline none                                 | Value `text/base/strong`                                                                   |
+| Error                  | `text-input/bg-default`                                        | `text-input/stroke-error`                                                                    | Value `text/base/strong`, error text `text/danger/muted`                                   |
+| Read only              | `text-input/bg-hover`                                          | None                                                                                         | Value `text/base/strong`, icon `icon/base/inactive`                                        |
+| Disabled               | `text-input/bg-hover`                                          | None                                                                                         | Value, Optional and helper `text/disabled`, label `text/base/muted`, icons `icon/disabled` |
+
+## Motion
+
+| What moves                | Duration       | Easing   |
+| :------------------------ | :------------- | :------- |
+| Field fill and focus ring | Normal (200ms) | Ease out |
+
+The popover opens and closes without an animation. With reduced motion turned on, the field transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -66,7 +525,7 @@ When `isInvalid` is set, `errorMessage` replaces the helper text. `minValue`, `m
 
 Give the field a `name` to submit its completed value as an ISO string. Use `value` and `onChange` for a controlled value, or `defaultValue` for an initial value. `granularity` adds editable time segments for date-time values.
 
-When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@veli-design/react/form`. You can also hold `DateValue` objects in form state. See [Forms](/docs/patterns/forms/) for form-library integration.
+When the form stores ISO `yyyy-MM-dd` strings, convert with `isoDateToDateValue` / `dateValueToIsoDate` from `@veli-design/react/form`. You can also hold `DateValue` objects in form state. See [Forms](/patterns/forms/) for form-library integration.
 
 ## API Reference
 
@@ -160,3 +619,81 @@ export default function DatePickerLanguageDemo() {
   );
 }
 ```
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the date picker works with keyboards, screen readers and zoom, and what you still need to do. It is built on the React Aria date picker.
+
+## Keyboard
+
+In the field:
+
+| Key                                   | Action                                                  |
+| :------------------------------------ | :------------------------------------------------------ |
+| Tab                                   | Moves through the segments, then to the calendar button |
+| Left and Right arrows                 | Move between segments, mirrored in Dhivehi              |
+| Up and Down arrows                    | Change the value of the focused segment                 |
+| Digits                                | Type a value; focus moves on when the segment is full   |
+| Enter or Space on the calendar button | Opens the calendar popover                              |
+
+In the calendar popover:
+
+| Key                                   | Action                                                      |
+| :------------------------------------ | :---------------------------------------------------------- |
+| Arrow keys                            | Move between days                                           |
+| Enter or Space                        | Picks the focused day                                       |
+| Page Up and Page Down                 | Previous or next month                                      |
+| Shift + Page Up and Shift + Page Down | Previous or next year                                       |
+| Home and End                          | First or last day of the month                              |
+| Escape                                | Closes the popover and returns focus to the calendar button |
+
+Home and End move to the first and last day of the month, as React Aria does, where the APG date picker moves to the start and end of the week. Veli keeps this on purpose.
+
+## Screen readers
+
+- The visible label names the date group. Every date picker needs one; never hide it.
+- Each segment is a spinbutton named day, month or year with the label.
+- The calendar button is named Open calendar, and reports that it opens a dialog. The icon is hidden.
+- The popover is a dialog labelled by the field's label. Each day cell is named with the full date, such as Thursday, 12 November 2026, and today is announced as Today.
+- Helper and error text are linked to the picker.
+
+## Focus
+
+Keyboard focus on a date segment or the calendar button shows a 2px gap, then a 2px ring in `border/focus`, around the field only. The ring sits outside the field, so focusing doesn't change its size or move the label or helper text. A pointer click shows the active state without the ring. While the ring shows, outline drops its border and default keeps its bottom border. When the popover opens, focus moves to the selected date, or to today.
+
+<DocsFigure
+  src="/images/docs/date-picker/date-picker-focus-1.webp"
+  darkSrc="/images/docs/date-picker/date-picker-focus-1-dark.webp"
+  alt="Three focused date pickers labelled Label with Optional, showing 5 Apr 2026 and the helper text Helper Text: appearance default at size sm, outline at size md and default at size lg. A teal ring sits outside each field."
+  width="2400"
+  height="536"
+  caption="The focus ring on the default and outline appearances."
+/>
+
+## Disabled and read only
+
+A disabled date picker is muted, skipped by Tab, and its calendar can't open. A read-only date picker keeps its value readable, but the calendar button is disabled. Both keep the React Aria semantics for their state.
+
+## Errors
+
+The error text shows as well as the red border, so colour is not the only signal.
+
+## Target size
+
+Calendar day cells are 44px square, above the 24px minimum target size. The calendar button is 20 x 20 and the info button 16 x 16, below the 24px minimum; see Missing or unverified.
+
+## Contrast
+
+Against the resting field fill, the Figma page gives the value 11.8:1 in light and 10.3:1 in dark. Helper text in `text/base/muted` measures 4.96:1 in light and 5.23:1 in dark in Storybook, which meets 4.5:1. The placeholder uses `text/base/inactive`, about 2.7:1 in light and 2.3:1 in dark, so it doesn't meet 4.5:1. Never let the placeholder be the label or carry instructions.
+
+## Zoom and narrow screens
+
+The popover clamps to the viewport width on narrow phones. Keep it inside the viewport at high zoom.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It gives the popover the active language and direction. Day cell names, the grid label and segment names stay in English under language dv; see Missing or unverified.
+
+</DocsTab>

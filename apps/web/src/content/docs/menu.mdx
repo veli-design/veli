@@ -1,16 +1,492 @@
 ---
 title: Menu
-description: Trigger-driven action and selection menus with sections, shortcuts, and submenus.
-animation:
-  src: /animations/menu-showcase/index.html
-  label: Menu component anatomy animation
+description: 'A short list of actions or choices that opens from a button.'
 ---
 
 import { MenuUsageDemo, MenuItemsDemo } from '../../components/MenuExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Menu
 
-Use Menu for a popover list of actions or choices from a trigger. Compose `MenuTrigger`, a trigger such as [Button](/docs/components/button/), `MenuPopover`, `Menu`, and `MenuItem`. Add `MenuSection`, `MenuSeparator`, and `MenuSubmenuTrigger` when you need groups or nested menus. Prefer [Select](/docs/components/select/) for a form field that always shows its value.
+<DocsTab id="overview">
+
+A menu shows a short list of actions or choices when people open it from a button. Use it to keep secondary actions out of the way, such as editing, downloading or deleting a record. A menu can group items into sections, keep a selection, show descriptions and shortcut hints, and open nested submenus.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/menu.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-menu--docs"
+/>
+
+## When to use
+
+### Use a menu when
+
+- A button opens a compact list of secondary actions, such as edit, download or delete.
+- People choose one or more options from a popover, such as a view or a sort order.
+- The actions need sections, separators, descriptions, shortcut hints or nested submenus.
+
+### Don't use a menu when
+
+- One main action can be shown directly. Use a Button instead of hiding it in a menu.
+- People fill in a form value from a list. Use Select.
+- The options take people to other pages. Use Link or Tabs.
+- People switch between persistent content panels. Use Tabs.
+- The panel holds fields or other controls. Use Popover.
+
+<DocsFigure
+  src="/images/docs/menu/menu-intro-1.webp"
+  darkSrc="/images/docs/menu/menu-intro-1-dark.webp"
+  alt='A secondary button labelled Actions with its menu open below it: Edit details, Download copy with the hover fill, Share externally with the description "Requires admin permissions.", then a separator and Delete record in red.'
+  width="2400"
+  height="1098"
+  caption="A menu holds the secondary actions for a record."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/menu/menu-anatomy-1.svg"
+  darkSrc="/images/docs/menu/menu-anatomy-1-dark.svg"
+  alt='A menu item at size md with seven numbered markers: 1 on the check, 2 on the start icon, 3 on the label Edit details, 4 on the shortcut keys, 5 on the end icon, 6 on the submenu caret and 7 on the description "Update labels, metadata, and visibility."'
+  width="1200"
+  height="382"
+  caption="The parts of a menu item. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Selection check**
+
+   A 16px check in `icon/primary/default` on a selected item, when the menu allows selection. Turn it on with isSelected; showSelectionSlot keeps its space when the item is not selected. In code: selectionMode and selectedKeys on Menu.
+
+2. **Start icon**
+
+   A 16px icon before the label, 20 at lg, in `icon/base/default` (`icon/danger/muted` on danger items). In code: startIcon.
+
+3. **Label**
+
+   What the item does, in `text/base/strong`. In code: the MenuItem children.
+
+4. **Shortcut**
+
+   A display-only hint of a keyboard shortcut, built from Kbd. In code: shortcut.
+
+5. **End icon**
+
+   A 16px icon at the end, 20 at lg. In code: endIcon.
+
+6. **Submenu caret**
+
+   Shows that the item opens a nested menu. It points to the side the submenu opens on. In code: MenuSubmenuTrigger draws it.
+
+7. **Description**
+
+   An optional second line in `text/base/muted`. In code: description.
+
+</DocsAnatomy>
+
+<DocsFigure
+  src="/images/docs/menu/menu-anatomy-2.svg"
+  darkSrc="/images/docs/menu/menu-anatomy-2-dark.svg"
+  alt="A menu with four numbered markers: 1 on the popover, 2 on the section title Settings, 3 on an item (Rename, Download copy) and 4 on the separator above Delete record, shown in red."
+  width="1200"
+  height="397"
+  caption="The parts of a menu. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Popover**
+
+   Holds the menu, with radius 12, `menu/bg`, a border, a medium shadow and 4 padding. It is at least 224 wide and opens 8 from the trigger. In code: MenuPopover.
+
+2. **Section title**
+
+   A noun that names a group of items, in body sm medium and `text/base/emphasis`. Optional. In code: MenuSection title.
+
+3. **Item**
+
+   One action or choice. Items fill the popover width. In code: MenuItem.
+
+4. **Separator**
+
+   A 1px line between groups, 12 in from each side. In code: MenuSeparator.
+
+</DocsAnatomy>
+
+In code, a menu is MenuTrigger (the button that opens it), MenuPopover, Menu and its items. Figma has no menu popover component; build it from the frame on the Menu page.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/menu/menu-do-1.png" darkSrc="/images/docs/menu/menu-do-1-dark.webp" alt="A menu with Edit details, Download copy, then a separator and Delete record in red, last." width="1136" height="426">
+
+Put destructive actions last, after a separator.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/menu/menu-dont-1.png" darkSrc="/images/docs/menu/menu-dont-1-dark.webp" alt="A menu with Edit details, Delete record in red, then Download copy, with no separator." width="1136" height="426">
+
+Don't mix a destructive action in with the others. People may hit it by mistake.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/menu/menu-do-2.png" darkSrc="/images/docs/menu/menu-do-2-dark.webp" alt="A menu with two short items: Rename and Download copy." width="1136" height="354">
+
+Start each item with a verb and keep it short.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/menu/menu-dont-2.png" darkSrc="/images/docs/menu/menu-dont-2-dark.webp" alt="A menu with the items &quot;Click here to rename this file&quot; and &quot;Copy download&quot;." width="1136" height="354">
+
+Don't write long or vague labels. Menus are scanned, not read.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/menu/menu-do-3.png" darkSrc="/images/docs/menu/menu-do-3-dark.webp" alt="A menu where both items have a leading icon that matches the action: a pencil on Edit details and a download arrow on Download copy." width="1136" height="354">
+
+Give every item an icon, or none.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/menu/menu-dont-3.png" darkSrc="/images/docs/menu/menu-dont-3-dark.webp" alt="A menu where only Edit details has a leading icon, so the label Download copy does not line up with it." width="1136" height="354">
+
+Don't give icons to only some items. The labels stop lining up.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Item labels
+
+Start with a verb and keep labels to 1 to 3 words, in sentence case, with no full stop. Put any detail in the description, not the label: menus are scanned, not read.
+
+| Do            | Don't                                                        |
+| :------------ | :----------------------------------------------------------- |
+| Rename        | Record deletion (a noun, not an action)                      |
+| Download copy | Click here to rename this file (long, and names the gesture) |
+| Delete record | Copy download (vague)                                        |
+| Edit details  | Edit Details (title case)                                    |
+
+Never label an item OK, Yes, No, Submit or Dismiss on its own. Use the standard verbs: Edit or Change, Delete or Remove, Download or Upload, Sign out.
+
+### Destructive items
+
+Name the verb and the thing that will be lost: Delete record, not Delete. Use the danger intent, and don't rely on colour alone to show the risk. A danger item opens a confirmation Modal, or acts at once and offers Undo in a Toast. Never delete anything from a single press with no confirmation or undo.
+
+| Do            | Don't  |
+| :------------ | :----- |
+| Delete record | Delete |
+
+### Follow-up actions
+
+Add an ellipsis only when the item opens a further step that needs more input, such as a dialog. Use the single ellipsis character, never three full stops.
+
+| Do                  | Don't                         |
+| :------------------ | :---------------------------- |
+| Rename…             | Download copy… (acts at once) |
+| Change appointment… | Rename... (three full stops)  |
+
+### Descriptions
+
+Write a description as one short sentence with no full stop, such as the reason an item is disabled.
+
+| Do                                     | Don't                                                                                                                 |
+| :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| Requires admin permissions             | This option is not available to you at this time because you do not have the right permissions. (too long for a menu) |
+| Update labels, metadata and visibility |                                                                                                                       |
+
+### Section titles
+
+Use a noun for the group.
+
+| Do      | Don't                                                     |
+| :------ | :-------------------------------------------------------- |
+| View    | Change how you view things (a sentence, not a group name) |
+| Account |                                                           |
+
+### Icon-only triggers
+
+Give an icon-only trigger an accessible name that starts with a verb and names the object when several exist. Add context when the trigger repeats on every row, and use the same text in its Tooltip.
+
+| Do                                    | Don't                                      |
+| :------------------------------------ | :----------------------------------------- |
+| Show actions for record WP-2026-04817 | More (repeats on every row with no object) |
+|                                       | Three dots (names the icon)                |
+
+### Shortcuts
+
+Write shortcuts with the key names as printed and a plus sign between them: Ctrl + K, Shift + Tab. Shortcut hints only show the keys; they don't register the shortcut.
+
+### Dhivehi copy
+
+Menu has no built-in visible text. Pass every label, description, section title and accessible name in English and Dhivehi. Write Dhivehi natively and keep it as short as the English.
+
+## Related components
+
+| Component                                    | When to use it                                                                                                                   |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| [Button](/docs/components/button/)           | start the main action directly, or open the menu.                                                                                |
+| [Select](/docs/components/select/)           | choose a form value from a list.                                                                                                 |
+| [Link](/docs/components/link/)               | go to another page.                                                                                                              |
+| [Tabs](/docs/components/tabs/)               | switch between views of the same content. Tabs also uses a menu for its overflow of hidden tabs, with the menu name set on Tabs. |
+| [Popover](/docs/components/popover/)         | a small panel that holds fields or other controls. MenuPopover is a Popover.                                                     |
+| [Kbd](/docs/components/kbd/)                 | draws the shortcut hints in menu items.                                                                                          |
+| [Breadcrumbs](/docs/components/breadcrumbs/) | uses a menu for its hidden pages. Its menu name is set on Breadcrumbs.                                                           |
+| [Pagination](/docs/components/pagination/)   | uses a menu for its hidden pages. Its menu name is set on Pagination.                                                            |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the menu: item sizes, intents, content options, states, spacing and tokens.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/menu/menu-sizes-1.webp"
+  darkSrc="/images/docs/menu/menu-sizes-1-dark.webp"
+  alt="Three menu items labelled Rename with an icon, at sizes sm, md and lg. The captions read: padding 8, for dense tools and tables; padding 12, the default; padding 14, body md text and 20 icons, for touch and roomy layouts."
+  width="2400"
+  height="536"
+  caption="Item sizes sm, md and lg."
+/>
+
+| Size | Item height | Height with a description | Padding | Text              | Use for                 |
+| :--- | :---------- | :------------------------ | :------ | :---------------- | :---------------------- |
+| sm   | 36          | 62                        | 8       | Body sm           | Dense tools and tables  |
+| md   | 44          | 70                        | 12      | Body sm           | Most menus. The default |
+| lg   | 52          | 82                        | 14      | Body md, 20 icons | Touch and roomy layouts |
+
+Set size on each MenuItem and the same size on MenuSection, and use one size for the whole menu.
+
+## Intents
+
+<DocsFigure
+  src="/images/docs/menu/menu-intents-1.webp"
+  darkSrc="/images/docs/menu/menu-intents-1-dark.webp"
+  alt="Two menu items: Download copy with an icon in the default intent, and Delete record in the danger intent, with red text and a red bin icon."
+  width="2400"
+  height="472"
+  caption="Default and danger intents."
+/>
+
+- **default**: for most actions, such as editing or downloading. It is the default.
+- **danger**: for destructive actions. Put danger items last, after a separator.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/menu/menu-options-1.webp"
+  darkSrc="/images/docs/menu/menu-options-1-dark.webp"
+  alt='Two menus. Icons and shortcut: Edit details with an icon and a shortcut hint, and Download copy with an icon. Description: Share externally with the description "Requires admin permissions." and Download copy with "Create a local copy for offline work."'
+  width="2400"
+  height="698"
+/>
+
+<DocsFigure
+  src="/images/docs/menu/menu-options-2.webp"
+  darkSrc="/images/docs/menu/menu-options-2-dark.webp"
+  alt="Two menus. Selection: List with a check, then Grid and Board. Sections and submenu: the section title View, Sort by with a caret pointing right, Show hidden items, a separator and Delete record in red."
+  width="2400"
+  height="778"
+  caption="Sections, rich items and a submenu."
+/>
+
+- **Sections and separators**: group related actions with MenuSection and MenuSeparator.
+- **Descriptions, icons and shortcuts**: give an item more context with description, startIcon, endIcon and shortcut. Shortcut takes a string, an array of keys or a KbdGroup.
+- **Selection**: for a choice that stays selected, such as a view or a sort order, set selectionMode single on Menu with selectedKeys. The chosen item shows a check, and the other items keep its space. Use selectionMode multiple for several choices.
+- **Submenus**: nest a MenuItem and a MenuPopover in MenuSubmenuTrigger. The caret is drawn for you.
+- **Links**: an item with href renders as a link. Prefer Link when the options take people to other pages.
+
+## States
+
+<DocsFigure
+  src="/images/docs/menu/menu-states-1.webp"
+  darkSrc="/images/docs/menu/menu-states-1-dark.webp"
+  alt="Two menu items labelled Rename at size md: default with no fill, and hover with a light grey fill."
+  width="2400"
+  height="472"
+/>
+
+<DocsFigure
+  src="/images/docs/menu/menu-states-2.webp"
+  darkSrc="/images/docs/menu/menu-states-2-dark.webp"
+  alt='Two menu items labelled Rename at size md: pressed with a darker grey fill, and disabled with muted text and icon and the description "Requires admin permissions."'
+  width="2400"
+  height="572"
+  caption="Menu item states."
+/>
+
+| State    | When                                     | Visual change                                     |
+| :------- | :--------------------------------------- | :------------------------------------------------ |
+| Default  | At rest                                  | No fill                                           |
+| Hover    | Pointer over the item, or keyboard focus | `menu/hover` fill                                 |
+| Pressed  | While pressing                           | `menu/pressed` fill                               |
+| Open     | The item's submenu is open               | `menu/hover` fill                                 |
+| Selected | The item is chosen in a selection menu   | Check mark                                        |
+| Disabled | isDisabled                               | Muted text and icon. The arrow keys skip the item |
+
+Avoid disabled items. If you must disable one, say why in its description, and also outside the menu when people need to know.
+
+## Behaviour
+
+- **Opening**: the menu opens from its trigger, 8 below it by default, and closes when people choose an item, press Escape or click outside.
+- **Choosing**: an item runs its action and closes the menu. To keep the menu open after choosing, such as in a selection menu, set closeOnSelect to false on the item.
+- **Width**: items fill the popover width. The popover is at least 224 wide and grows with the longest item. Cap the popover width with className when descriptions are long.
+- **Submenus**: submenus stay open while the pointer moves diagonally toward them.
+- **Overscroll**: keep scrolling inside the menu so it does not move the page behind.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/menu/menu-rtl-1.png"
+  darkSrc="/images/docs/menu/menu-rtl-1-dark.webp"
+  alt="Two menus side by side. On the left, LTR menu-item: Edit details and Download copy, each with an icon on the left, and a caret pointing right on Download copy. On the right, RTL menu-itemDv, mirrored: two items labelled ތަފްސީލު އެޑިޓްކުރޭ with icons on the right and a caret pointing left on the second item."
+  width="2400"
+  height="514"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi, icons and the check sit on the right; the shortcut and end icons move to the left.
+- The submenu caret is drawn by MenuSubmenuTrigger. In Dhivehi it points left and nested menus open to the left. Don't pass or mirror a caret yourself.
+- Shortcut hints passed as strings render in a left-to-right group in English, so key names keep their order in Dhivehi.
+- Labels use the Dhivehi regular style and section titles the Dhivehi medium style (MV A Waheed 17/28 at sm and md). Items grow taller while the padding stays the same. Section titles are 36 high in English and 44 in Dhivehi.
+- In code, wrap the app in VeliProvider with language set to dv so the popover opens on the correct side. In Figma, design Dhivehi menus with menu-itemDv.
+
+Example configuration: trigger Actions, items with descriptions, a separator and a danger item.
+
+| Part            | English                      | Dhivehi                             |
+| :-------------- | :--------------------------- | :---------------------------------- |
+| Trigger         | Actions                      | އެކްޝަންތައް                        |
+| Item            | Edit details                 | ތަފްސީލު އެޑިޓްކުރޭ                 |
+| Description     | Update labels and visibility | ލޭބަލް އަދި ފެންނަގޮތް އަޕްޑޭޓްކުރޭ |
+| Item            | Download                     | ޑައުންލޯޑް                          |
+| Submenu trigger | Export as                    | ގޮތަކަށް އެކްސްޕޯޓްކުރޭ             |
+| Danger item     | Remove file                  | ފައިލް ފުހެލާ                       |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/menu/menu-spacing-1.svg"
+  darkSrc="/images/docs/menu/menu-spacing-1-dark.svg"
+  alt='Spacing redlines for a menu item at size sm with the check, an icon, the label Edit details, the description "Update labels, metadata, and visibility." and a caret: 8 top and bottom padding, 12 side padding and 8 between the icon and the label.'
+  width="1200"
+  height="272"
+/>
+
+<DocsFigure
+  src="/images/docs/menu/menu-spacing-2.svg"
+  darkSrc="/images/docs/menu/menu-spacing-2-dark.svg"
+  alt="The same redlines at size md: 12 padding on every side and 8 between the icon and the label."
+  width="1200"
+  height="278"
+/>
+
+<DocsFigure
+  src="/images/docs/menu/menu-spacing-3.svg"
+  darkSrc="/images/docs/menu/menu-spacing-3-dark.svg"
+  alt="The same redlines at size lg: 14 top and bottom padding, 12 side padding and 8 between the icon and the label, with 20 icons."
+  width="1200"
+  height="289"
+  caption="All values in pixels at 1x."
+/>
+
+| Property                                  | sm                             | md       | lg       |
+| :---------------------------------------- | :----------------------------- | :------- | :------- |
+| Item height                               | 36                             | 44       | 52       |
+| Item padding, top and bottom              | 8                              | 12       | 14       |
+| Item padding, sides                       | 12                             | 12       | 12       |
+| Gap between icon and label                | 8                              | 8        | 8        |
+| Gap between label and description         | 6                              | 6        | 6        |
+| Gap between items                         | 0                              | 0        | 0        |
+| Popover padding                           | 4                              | 4        | 4        |
+| Popover minimum width                     | 224                            | 224      | 224      |
+| Popover offset from the trigger           | 8                              | 8        | 8        |
+| Separator, side inset and vertical margin | 12 and 4 (margin in code only) | 12 and 4 | 12 and 4 |
+| Popover corner radius                     | 12                             | 12       | 12       |
+| Item corner radius                        | 8                              | 8        | 8        |
+
+In Figma the 8 between icon and label is 4 inside each slot plus 4 beside the label; code uses a gap of 8. In Dhivehi the padding stays the same and the lines grow: about 78 high at sm with a description in Figma, 74 in code.
+
+## Corner radius
+
+<DocsFigure
+  src="/images/docs/menu/menu-radius-1.svg"
+  darkSrc="/images/docs/menu/menu-radius-1-dark.svg"
+  alt="Menu items labelled Edit details at sizes sm, md and lg, each marked with an 8 corner radius on the hover fill, and a popover with Rename and Download copy marked with a 12 corner radius."
+  width="1200"
+  height="949"
+  caption="Items use 8 (`radius/lg`), seen on hover and pressed. The popover uses 12 (`radius/xl`)."
+/>
+
+## Typography
+
+| Element                  | English                      | Dhivehi                                   | Colour token                                                             |
+| :----------------------- | :--------------------------- | :---------------------------------------- | :----------------------------------------------------------------------- |
+| Label, sm and md         | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`; danger `text/danger/muted`; disabled `text/disabled` |
+| Label, lg                | Body md regular, Inter 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                                             |
+| Description, sm and md   | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`; disabled `text/disabled`                              |
+| Description, lg          | Body md regular, Inter 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                                             |
+| Section title, sm and md | Body sm medium, Inter 14/20  | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/emphasis`                                                     |
+| Section title, lg        | Body md medium, Inter 16/24  | Dhivehi body md medium, MV A Waheed 19/32 | `text/base/emphasis`                                                     |
+| Shortcut                 | Kbd                          | See [Kbd](/docs/components/kbd/)          | See Kbd                                                                  |
+
+Code sets the description in caption regular. Dhivehi lines are taller, so Dhivehi items grow.
+
+## Tokens
+
+| Part                                        | Token                                 |
+| :------------------------------------------ | :------------------------------------ |
+| Popover background                          | `menu/bg`                             |
+| Popover border                              | `border/base/muted`, 0.5              |
+| Popover shadow                              | Shadow md, with a small backdrop blur |
+| Item hover, keyboard focus and open submenu | `menu/hover`                          |
+| Item pressed                                | `menu/pressed`                        |
+| Danger item hover and keyboard focus        | `menu/hover-danger`                   |
+| Danger item pressed                         | `menu/pressed-danger`                 |
+| Label                                       | `text/base/strong`                    |
+| Danger label                                | `text/danger/muted`                   |
+| Description                                 | `text/base/muted`                     |
+| Icons                                       | `icon/base/default`                   |
+| Danger start icon                           | `icon/danger/muted`                   |
+| Selection check                             | `icon/primary/default`                |
+| Section title                               | `text/base/emphasis`                  |
+| Separator                                   | `border/base/muted`                   |
+| Disabled text                               | `text/disabled`                       |
+| Disabled icon                               | `icon/disabled`                       |
+
+Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                                                                                           | Duration | Easing   |
+| :--------------------------------------------------------------------------------------------------- | :------- | :------- |
+| Popover entering: fades in, scales up from 97 percent and moves 4 toward its place, from the trigger | Normal   | Ease out |
+| Popover leaving                                                                                      | Fast     | Ease in  |
+| Item fill                                                                                            | Normal   | Ease out |
+
+Moving through items with the arrow keys is not animated. With reduced motion turned on, these transitions are turned off: the popover appears and disappears at once.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -150,3 +626,73 @@ Also accepts React Aria [`MenuSection`](https://react-spectrum.adobe.com/react-a
 ## RTL and Language
 
 `MenuPopover` inherits `lang` and `dir` from `VeliProvider`, so item alignment and the submenu caret follow reading direction. Shortcut keys keep `lang="en"` so modifier glyphs stay stable in Dhivehi.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the menu works with keyboards, screen readers and assistive settings. Menu is built on React Aria Menu and follows the menu button pattern, with one difference for disabled items.
+
+## Keyboard
+
+| Key                        | Action                                                      |
+| :------------------------- | :---------------------------------------------------------- |
+| Enter, Space or Down arrow | On the trigger, opens the menu with focus on the first item |
+| Up arrow                   | On the trigger, opens the menu with focus on the last item  |
+| Down arrow and Up arrow    | Move between items                                          |
+| Home and End               | Jump to the first and last item                             |
+| Letters                    | Jump to the next item that starts with them                 |
+| Enter or Space             | Activates the focused item                                  |
+| Right arrow                | Opens a submenu. Left arrow in Dhivehi                      |
+| Left arrow                 | Closes a submenu. Right arrow in Dhivehi                    |
+| Escape                     | Closes the menu and returns focus to the trigger            |
+| Tab                        | Closes the menu and moves on                                |
+
+## Screen readers
+
+- The trigger reports that it opens a menu and whether it is open. The menu is labelled by its trigger.
+- Items are menu items. In a single selection menu they are radio items, and in a multiple selection menu checkbox items, each reporting whether it is checked.
+- Disabled items report that they are disabled, but the arrow keys skip them, so keyboard and screen reader users may not hear them or their descriptions. The menu button pattern keeps disabled items focusable. Don't hide the only explanation of a disabled action inside the menu.
+- Give the menu an aria-label when the trigger does not name the choices clearly, and give a MenuSection with no title an aria-label so the group is announced.
+- Give an item whose content is not plain text, such as one with an icon or description, a textValue or aria-label.
+- Leading icons are decorative when the label says the same thing.
+- On phones, visually hidden Dismiss buttons at the start and end of the popover let screen reader users close it without Escape. They read Dismiss in English on Dhivehi pages.
+
+## Focus
+
+When the menu opens from the keyboard, focus moves into it and the arrow keys move between items. The focused item takes the `menu/hover` fill, not a ring. Focus returns to the trigger when the menu closes. The trigger button keeps its own focus ring while the menu is closed.
+
+<DocsFigure
+  src="/images/docs/menu/menu-focus-1.webp"
+  darkSrc="/images/docs/menu/menu-focus-1-dark.webp"
+  alt="Three menus with Rename, Download copy and Share externally at sizes sm, md and lg. In each, Download copy has keyboard focus, shown with the hover fill rather than a ring."
+  width="2400"
+  height="2214"
+  caption="Keyboard focus uses the hover fill. There is no separate focus variant in Figma."
+/>
+
+## Controls inside items
+
+Don't put buttons, links, fields or other controls inside a menu item. Make each action its own item, or use a Popover for a small panel of controls.
+
+## Target size
+
+Every size is above the 24 x 24 minimum target. Size md is 44 high, which already meets the 44 recommended for touch. Size lg is 52 high and gives touch and roomy layouts more space. Size sm is 36 high, for dense tools on desktop.
+
+## Contrast
+
+Default labels meet contrast on every fill in Light and Dark. In Dark, default descriptions fall below 4.5:1 on hover and pressed, and danger labels fall just below on the pressed fill. Don't put information people need in descriptions: put it in the label or on the page. Never show risk with colour alone.
+
+## Selected state
+
+The selected item shows a check mark, a shape that survives forced colours, not colour alone.
+
+## Zoom
+
+Keep the menu inside the viewport at high zoom, and cap its width when descriptions are long.
+
+## Right to left
+
+VeliProvider sets the language and direction of the menu popover. It flips the submenu caret and the Left and Right arrow keys in Dhivehi. Pass every label in Dhivehi yourself.
+
+</DocsTab>

@@ -81,7 +81,7 @@ export function AccordionRtlDemo() {
     >
       <I18nProvider locale={isDhivehi ? 'dv-MV' : 'en-GB'}>
         <div
-          className="w-full max-w-[420px] min-w-0"
+          className="w-full max-w-[560px] min-w-0"
           lang={isDhivehi ? 'dv' : 'en'}
           dir={isDhivehi ? 'rtl' : 'ltr'}
         >

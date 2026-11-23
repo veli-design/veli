@@ -4,9 +4,16 @@ import { DocsPageActionButtons } from './DocsPageActionButtons';
 interface Props {
   markdownPath: string;
   placement?: 'inline' | 'utility' | 'tabbar';
+  /** Hydrate only while this media query matches, for copies CSS hides elsewhere. */
+  media?: string;
 }
 
-const { markdownPath, placement = 'inline' } = Astro.props;
+const { markdownPath, placement = 'inline', media } = Astro.props;
+const buttonProps = {
+  markdownPath,
+  compact: placement === 'tabbar',
+  fullWidth: placement === 'utility',
+};
 ---
 
 <div
@@ -14,12 +21,11 @@ const { markdownPath, placement = 'inline' } = Astro.props;
   data-docs-page-actions
   data-markdown-path={markdownPath}
 >
-  <DocsPageActionButtons
-    client:load
-    {markdownPath}
-    compact={placement === 'tabbar'}
-    fullWidth={placement === 'utility'}
-  />
+  {media ? (
+    <DocsPageActionButtons client:media={media} {...buttonProps} />
+  ) : (
+    <DocsPageActionButtons client:load {...buttonProps} />
+  )}
 </div>
 
 <style>

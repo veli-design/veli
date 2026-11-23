@@ -1,0 +1,57 @@
+---
+// Figma 2466:9376: three passes through the alphabet, right to left.
+// Spaces are intentional: the six painted letters overlap these openings.
+const rows = [
+  'ހ ނރބޅ',
+  'ކއވމފދ',
+  'ތ ގޏސޑ',
+  '  ޔޕޖޗ',
+  'ހށނރބޅ',
+  '  ވމފ ',
+  'ތލގ ސޑ',
+  'ޒޓޔޕޖޗ',
+  ' ށނރބޅ',
+  'ކއ  ފދ',
+  ' ލގޏސޑ',
+  'ޒޓޔޕޖޗ',
+];
+// Painted letter centres within the 342 × 648pt grid.
+const paint = [
+  ['ދ', 256, 134, 'MV Aaamu FK'],
+  ['ވ', 294, 297, 'MV Aaamu FK'],
+  ['ހ', 48, 297, 'MV Aaamu FK'],
+  ['ރ', 142, 352, 'MV A Waheed'],
+  ['އ', 142, 514, 'MV A Waheed'],
+  ['ޖ', 294, 460, 'MV A Waheed'],
+] as const;
+---
+
+<svg
+  class="design-thaana-portrait"
+  data-design-svg="thaana-portrait"
+  viewBox="0 0 342 648"
+  lang="dv"
+  aria-hidden="true"
+  font-family="MV A Waheed"
+  font-weight="700"
+  text-anchor="middle"
+  fill="#10100f"
+>
+  {rows.flatMap((letters, row) =>
+    Array.from(letters, (letter, col) => {
+      const x = (5.5 - col) * 57;
+      const y = (row + 0.5) * 54;
+      return letter === ' ' ? null : (
+        <text x={x} y={y + 9} font-size="30" data-letter={letter} data-center={`${x} ${y}`}>
+          {letter}
+        </text>
+      );
+    }),
+  )}
+  {paint.map(([letter, x, y, font]) => (
+    <text x={x} y={y + 31} font-family={font} font-size="150" fill="#9af366" data-paint>
+      {letter}
+    </text>
+  ))}
+  <g data-front />
+</svg>

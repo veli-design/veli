@@ -7,6 +7,8 @@ export type DocsSearchSource = {
 
 type MdastNode = {
   type: string;
+  name?: string;
+  attributes?: Array<{ name?: string; value?: unknown }>;
   depth?: number;
   value?: unknown;
   alt?: unknown;
@@ -49,6 +51,25 @@ function collapseWhitespace(value: string) {
 
 function nodeText(node: MdastNode): string {
   if (ignoredNodeTypes.has(node.type)) return '';
+
+  if (node.type === 'mdxJsxFlowElement') {
+    const attribute = (name: string) => {
+      const value = node.attributes?.find((item) => item.name === name)?.value;
+      return typeof value === 'string' ? value : '';
+    };
+    if (attribute('data-docs-markdown') === 'omit') return '';
+    if (node.name === 'DocsFigure') return [attribute('alt'), attribute('caption')].join(' ');
+    if (node.name === 'DocsGuideline')
+      return [
+        attribute('kind') === 'do' ? 'Do' : 'Don’t',
+        attribute('alt'),
+        ...(node.children ?? []).map(nodeText),
+      ].join(' ');
+    if (node.name === 'DocsComparison')
+      return [attribute('label'), attribute('value'), ...(node.children ?? []).map(nodeText)].join(
+        ' ',
+      );
+  }
 
   if (node.type === 'image') return typeof node.alt === 'string' ? node.alt : '';
   if (

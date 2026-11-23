@@ -1,6 +1,6 @@
 ---
 title: Tooltip
-description: Brief help on hover or keyboard focus, with small and large surfaces and directional motion.
+description: 'A short, non-interactive hint that appears when people hover over or focus a control.'
 ---
 
 import {
@@ -11,9 +11,354 @@ import {
   TooltipRtlDemo,
 } from '../../components/TooltipExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Tooltip
 
-Show brief, non-interactive help beside a focusable control. Compose a trigger and `Tooltip` inside `TooltipTrigger`. Use [Popover](/docs/components/popover/) for links, buttons, or other interactive content. Keep essential instructions visible; touch users cannot rely on hover tooltips.
+<DocsTab id="overview">
+
+A tooltip shows a short, non-interactive hint when people hover over or focus a control. Use it to name icon buttons or add a line of help that people can do without. Tooltips never show on touch screens, so never put anything people need in one.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/tooltip.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-tooltip--docs"
+/>
+
+## When to use
+
+### Use a tooltip when
+
+- An icon-only button needs a visible name on hover or focus.
+- A control has a keyboard shortcut people may not know.
+- A short hint helps, but people can do the task without it.
+- A field needs a sentence of help, such as where to find an ID card number. Use size lg.
+
+### Don't use a tooltip when
+
+- The content has links, buttons or fields. Use Popover.
+- People need the information to finish the task, such as requirements, fees, deadlines or warnings. Show it on the page, for example as helper text.
+- The message reports a result or an error. Use Alert or Toast.
+- The help explains a disabled control. A native disabled control may not show its tooltip, so show the reason on the page as helper text.
+- It would be the only way to read text that is cut off. Show the full text; a tooltip may only repeat it.
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-intro-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-intro-1-dark.webp"
+  alt="A card titled Birth certificate, Issued 12 March 2024, with a round icon-only print button. A small white tooltip reading Print sits just above the button."
+  width="2400"
+  height="926"
+  caption="A small tooltip names an icon-only print button."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-anatomy-1.svg"
+  darkSrc="/images/docs/tooltip/tooltip-anatomy-1-dark.svg"
+  alt='A small tooltip reading Copy followed by the keys command and A, and a large teal tooltip reading "Your ID number is on the front of your ID card." with an arrow on its bottom edge. Five numbered markers: 1 on the small surface, 2 on the text Copy, 3 on the shortcut keys, 4 on the large surface and 5 on the arrow.'
+  width="576"
+  height="412"
+  caption="The parts of a small and a large tooltip. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Surface**
+
+   At size sm, radius 8, a 0.5 border and a medium shadow, with no arrow. At size lg, radius 12 and at most 221 wide, with an arrow. In code it is Tooltip, set by size.
+
+2. **Text**
+
+   One short line at sm, up to a few lines at lg. In code it is the Tooltip children.
+
+3. **Shortcut**
+
+   Optional keys after the text at sm, 8 apart. In code, compose a KbdGroup after the text.
+
+4. **Large surface**
+
+   The fill and text colour come from tone, primary or secondary. In code it is tone.
+
+5. **Arrow**
+
+   22 x 12, in the surface fill, on the edge facing the trigger, kept at least 20 from a corner. Only size lg has an arrow. In code it is set by arrowBoundaryOffset.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tooltip/tooltip-do-1.webp" darkSrc="/images/docs/tooltip/tooltip-do-1-dark.webp" alt="A small tooltip reading Print." width="1136" height="360">
+
+Keep it to a few words.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tooltip/tooltip-dont-1.webp" darkSrc="/images/docs/tooltip/tooltip-dont-1-dark.webp" alt="A large tooltip reading &quot;Click this button to print a copy of your birth certificate on any printer.&quot;" width="1136" height="360">
+
+Don't explain what the control obviously does.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tooltip/tooltip-do-2.webp" darkSrc="/images/docs/tooltip/tooltip-do-2-dark.webp" alt="A large tooltip reading &quot;Your ID number is on the front of your ID card.&quot;" width="1136" height="360">
+
+Give help that people can do without.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tooltip/tooltip-dont-2.webp" darkSrc="/images/docs/tooltip/tooltip-dont-2-dark.webp" alt="A large tooltip reading &quot;Read the terms and conditions before you continue.&quot;" width="1136" height="360">
+
+Don't hide something people must read or do.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/tooltip/tooltip-do-3.png" darkSrc="/images/docs/tooltip/tooltip-do-3-dark.webp" alt="A small tooltip reading Print document, in sentence case with no full stop." width="1136" height="240">
+
+Use sentence case, with no full stop for a label.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/tooltip/tooltip-dont-3.png" darkSrc="/images/docs/tooltip/tooltip-dont-3-dark.webp" alt="A small tooltip reading &quot;PRINT DOCUMENT.&quot; in capitals with a full stop." width="1136" height="240">
+
+Don't use capitals or end a label with a full stop.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Length
+
+Write a few words at size sm, and one or two short sentences at size lg. Don't explain what the label already makes obvious.
+
+| Do                                                            | Don't                                                                                                          |
+| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| Print                                                         | Click this button to print a copy of your birth certificate on any printer. (says the obvious, and uses click) |
+| Download receipt                                              | Use this button to download a PDF copy of your payment receipt for MVR 250 (a sentence in a small tooltip)     |
+| Your ID card number is on the front of your National ID card. | A long paragraph about eligibility (too long for a tooltip)                                                    |
+
+### Icon buttons
+
+Start with a verb, and name the object when there are several. Use the same words as the button's aria-label, with no role word such as button.
+
+| Do                    | Don't                                   |
+| :-------------------- | :-------------------------------------- |
+| Download receipt      | Receipt (not an action)                 |
+| Copy reference number | Download button (role word in the name) |
+
+### Case and punctuation
+
+Write in sentence case. No full stop after a short label; end sentences with a full stop.
+
+| Do    | Don't                                      |
+| :---- | :----------------------------------------- |
+| Print | PRINT DOCUMENT. (all caps and a full stop) |
+
+### Shortcuts
+
+Write the action first, then each key as a Kbd, with the keys of the platform: Ctrl on Windows, ⌘ on macOS. Never mix platforms with a slash. Build shortcuts on a modifier key, test them with the Dhivehi keyboard, and never make a shortcut the only way to do something.
+
+| Do              | Don't                                           |
+| :-------------- | :---------------------------------------------- |
+| Search Ctrl + K | Ctrl/Cmd + K (two platforms mixed with a slash) |
+
+### No interaction
+
+A tooltip is text only. No links, buttons or fields: people can't reach them. Use Popover instead.
+
+| Do                                                     | Don't                                                       |
+| :----------------------------------------------------- | :---------------------------------------------------------- |
+| A Popover with More information and a link to guidance | A tooltip containing a Read the guidance link (unreachable) |
+
+### Dhivehi copy
+
+Tooltip has no built-in strings: pass every text in English and Dhivehi. Write Dhivehi natively rather than transliterating, and keep it as short as the English, because Thaana lines are taller.
+
+## Related components
+
+| Component                                  | When to use it                                                                                                                                                                                  |
+| :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Popover](/docs/components/popover/)       | help with links, buttons or fields.                                                                                                                                                             |
+| [Kbd](/docs/components/kbd/)               | keyboard keys inside a small tooltip.                                                                                                                                                           |
+| [Button](/docs/components/button/)         | icon-only buttons that tooltips name. The button keeps its own aria-label.                                                                                                                      |
+| [Input](/docs/components/input/)           | fields can show an info tooltip next to the label. Its trigger is named More information by default. The info button is 16 x 16, below the 24 x 24 minimum target size, and is a known failure. |
+| [VeliProvider](/docs/components/provider/) | VeliProvider sets the language and direction that the tooltip takes on.                                                                                                                         |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the tooltip: sizes, tones, placement, spacing, motion and the tokens behind them. Values match the shipped component.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-sizes-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-sizes-1-dark.webp"
+  alt='Two examples side by side. Size sm: a small white tooltip reading Copy, with no arrow. Size lg: a teal tooltip reading "Your ID number is on the front of your ID card." wrapping onto two lines, with an arrow on its bottom edge.'
+  width="2400"
+  height="512"
+  caption="Size sm, the default, and size lg."
+/>
+
+| Size | Use for                                                | Shape                                   |
+| :--- | :----------------------------------------------------- | :-------------------------------------- |
+| sm   | Short hints and the names of icon buttons. The default | A short label, 24 high, with no arrow   |
+| lg   | A sentence or two of help                              | Up to 221 wide, wrapping, with an arrow |
+
+Use sm by default. Use lg only when the help needs more than a few words.
+
+## Tones
+
+Tone changes only the large tooltip; the small one keeps one neutral look in both tones. In code, tone is available only with size lg and defaults to primary.
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-tones-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-tones-1-dark.webp"
+  alt='Two large tooltips reading "Your ID number is on the front of your ID card." Tone primary has a teal brand fill with light text. Tone secondary has a near-black neutral fill with light text.'
+  width="2400"
+  height="560"
+  caption="Tone primary, the default, and tone secondary, in light mode."
+/>
+
+- **Primary**: the default. A brand fill with light text.
+- **Secondary**: a neutral fill, dark with light text in light mode and light with dark text in dark mode. Use it where the brand colour would clash.
+- Use one tone across a product.
+
+## Placement
+
+The tooltip opens above the trigger by default (placement top). The arrow sits on the edge facing the trigger.
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-placement-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-placement-1-dark.webp"
+  alt='Three large tooltips reading "Your ID number is on the front of your ID card." Placement top has the arrow centred on the bottom edge. Placement bottom left has the arrow near the start of the top edge. Placement right has the arrow centred on the left edge.'
+  width="2400"
+  height="512"
+  caption="Placement top, the default, bottom aligned to the start, and right. The arrow points at the trigger."
+/>
+
+- Code flips the tooltip to the other side when there is no room, and keeps it at least 12 from the container edge.
+- Use start and end, not left and right, so the placement mirrors in Dhivehi. Aligned forms such as top start follow the reading direction.
+- The tooltip sits 8 from the trigger at sm and 12 at lg. offset and crossOffset change that.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-options-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-options-1-dark.webp"
+  alt='Three examples. Icon button label: a small tooltip reading Print. Shortcut: a small tooltip reading Copy followed by the keys command and A. Longer help: a large teal tooltip reading "Use the number on your National ID card, not your passport."'
+  width="2400"
+  height="840"
+  caption="An icon button label, a shortcut and longer help."
+/>
+
+| Use               | Size | Notes                                                                |
+| :---------------- | :--- | :------------------------------------------------------------------- |
+| Icon button label | sm   | Names an icon-only button. The button still needs its own aria-label |
+| Shortcut          | sm   | The action, then each key as a Kbd, 8 apart                          |
+| Longer help       | lg   | A sentence of help next to a field                                   |
+
+## Behaviour
+
+- **Opening**: hover opens the tooltip after delay (1500ms by default). Keyboard focus opens it at once. A mouse click that focuses the trigger doesn't open it.
+- **Closing**: moving away closes it after closeDelay (500ms by default). Escape and pressing the trigger close it straight away. It never closes on a timer while people hover or focus it.
+- **Next tooltip**: while one tooltip is open, moving to another trigger opens the next one at once.
+- **Position**: code keeps the tooltip on screen and flips it when there is no room.
+- **Disabled**: set isDisabled on TooltipTrigger to stop the tooltip; the trigger still works.
+- **Controlled**: wrap one focusable trigger and the tooltip in TooltipTrigger. Use isOpen with onOpenChange, or defaultOpen, and delay and closeDelay for timing. Set trigger to focus to open it for keyboard focus only.
+- **Touch**: tooltips never show on touch screens; a tap activates the trigger instead. Design kiosks the same way.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-rtl-1.webp"
+  darkSrc="/images/docs/tooltip/tooltip-rtl-1-dark.webp"
+  alt='Two pairs of tooltips. Left to right: a small tooltip reading Copy with the keys command and A, above a large teal tooltip reading "Your ID number is on the front of your ID card." Right to left: Tooltip-smallDv with Dhivehi text and the keys on its left, above Tooltip-lgDv with four right-aligned lines of Dhivehi text.'
+  width="2400"
+  height="704"
+  caption="English, left to right, and Dhivehi, right to left. The Dhivehi text is generic, not service copy."
+/>
+
+- Text is right-aligned and uses Dhivehi body sm regular (MV Faseyha). Tooltips grow with the taller Dhivehi lines.
+- In a small Dhivehi tooltip, the shortcut sits on the left of the text.
+- Physical placements such as top stay the same; start and end follow the reading direction.
+- Keep shortcut keys left to right: Kbd keeps lang="en", and dir="ltr" on the KbdGroup keeps the modifier first.
+- In code, wrap the tooltip in VeliProvider with language set to dv. The tooltip takes on the provider's language and direction.
+- In Figma, design Dhivehi screens with Tooltip-smallDv and Tooltip-lgDv.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-spacing-1.svg"
+  darkSrc="/images/docs/tooltip/tooltip-spacing-1-dark.svg"
+  alt='Spacing redlines. Size sm: a tooltip reading Copy with the keys command and A, marked 24 high, 12 side padding, 2 top and bottom padding and 8 between the text and the keys. Size lg: a tooltip reading "Your ID number is on the front of your ID card.", marked 221 wide, 16 side padding and 12 top and bottom padding.'
+  width="1200"
+  height="268"
+  caption="All values in pixels at 1x. Bands are padding and lines with end ticks are sizes."
+/>
+
+| Size | Surface                                               | Gaps                                                          | Text            |
+| :--- | :---------------------------------------------------- | :------------------------------------------------------------ | :-------------- |
+| sm   | 24 high, padding 2 top and bottom, 12 sides           | Text to shortcut 8; 8 from the trigger                        | Body sm regular |
+| lg   | At most 221 wide, padding 12 top and bottom, 16 sides | Arrow 22 x 12, at least 20 from a corner; 12 from the trigger | Body sm regular |
+
+The large tooltip wraps its text inside 221. Code also caps the width at the screen width minus 24.
+
+<DocsFigure
+  src="/images/docs/tooltip/tooltip-radius-1.svg"
+  darkSrc="/images/docs/tooltip/tooltip-radius-1-dark.svg"
+  alt='A small tooltip reading Copy marked with an 8 corner radius, and a large tooltip reading "Your ID number is on the front of your ID card." marked with a 12 corner radius.'
+  width="1200"
+  height="224"
+  caption="Size sm uses radius 8 and size lg uses radius 12."
+/>
+
+## Typography
+
+| Element  | English                              | Dhivehi                                   | Colour token                                                                   |
+| :------- | :----------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------- |
+| Text, sm | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/emphasis`                                                           |
+| Text, lg | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `components/tooltip/text-on-primary` or `components/tooltip/text-on-secondary` |
+
+## Tokens
+
+| Tooltip       | Fill                                                    | Border and shadow                        | Text                                   |
+| :------------ | :------------------------------------------------------ | :--------------------------------------- | :------------------------------------- |
+| sm            | `components/tooltip/bg-small`                           | `border/base/subtle`, 0.5; medium shadow | `text/base/emphasis`                   |
+| lg, primary   | `components/tooltip/bg-large-primary`, arrow the same   | Large shadow in code                     | `components/tooltip/text-on-primary`   |
+| lg, secondary | `components/tooltip/bg-large-secondary`, arrow the same | Large shadow in code                     | `components/tooltip/text-on-secondary` |
+
+## Motion
+
+| Phase       | What changes                                                                                                 | Timing                       | Easing   |
+| :---------- | :----------------------------------------------------------------------------------------------------------- | :--------------------------- | :------- |
+| Hover delay | Waits before opening on hover. Keyboard focus skips it                                                       | delay, 1500ms by default     | None     |
+| Open        | Opacity 0 to 100%, scale 95% to 100% and a 4 slide away from the trigger, from the point nearest the trigger | Normal, 200ms                | Ease out |
+| Close delay | Waits before closing once the pointer leaves                                                                 | closeDelay, 500ms by default | None     |
+| Close       | Opacity 100% to 0, scale 100% to 95% and a 4 slide back toward the trigger                                   | Fast, 80ms                   | Ease in  |
+
+The slide follows the placement: a tooltip above the trigger rises 4 as it opens, one below drops 4, and one to the side moves 4 sideways. The same timing applies to both sizes and both tones.
+
+With reduced motion turned on, there is no transition: the tooltip appears and disappears at once, without fading or moving.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -179,3 +524,46 @@ The native `<div>` that React Aria renders. These attributes are applied to that
 ## Release guidance
 
 Explicit offsets now take effect, small surfaces use one neutral appearance, and motion respects reduced-motion preferences. Inline text keeps its normal flow; use the row classes shown above for shortcut composition. Large tone names and caret geometry remain compatible. TypeScript now requires `size="lg"` when passing `tone`; remove `tone` from small or default-size tooltips. Legacy JavaScript small-tone inputs are ignored and remain neutral. `TooltipProps` is now a size-discriminated type alias; compose it with an intersection rather than extending it in an interface.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the tooltip works with keyboards, screen readers and touch, and what you still need to do.
+
+## Keyboard
+
+Attach every tooltip to a focusable trigger, such as a Button or Link, so keyboard users can reveal it. The tooltip itself never takes focus, so it has no focus ring.
+
+| Key    | Action                                                   |
+| :----- | :------------------------------------------------------- |
+| Tab    | Moves focus to the trigger and opens its tooltip at once |
+| Escape | Closes the tooltip and leaves focus on the trigger       |
+
+## Screen readers
+
+- The tooltip has role tooltip, and the trigger points to it with aria-describedby, so its text is read as a description.
+- A tooltip describes; it does not name. Give every icon-only control its own aria-label, and let the tooltip repeat the same words.
+- Keep tooltip content short and non-interactive.
+
+## Touch
+
+Tooltips never show on touch screens: a tap activates the trigger instead. Never rely on a tooltip for essential information.
+
+## Target size
+
+Tooltip triggers must be at least 24 x 24. For small info icons next to field labels, grow the hit area with padding, not the icon. The field info button is 16 x 16 today, below the minimum.
+
+## Contrast
+
+Use the tooltip tokens as they are. In forced colours mode, code keeps the text, the edge and the arrow readable.
+
+## Reduced motion
+
+With reduced motion, the tooltip appears and disappears without transitions. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The tooltip takes on the provider's language and direction. Pass Dhivehi tooltip text yourself; Tooltip has no built-in strings.
+
+</DocsTab>

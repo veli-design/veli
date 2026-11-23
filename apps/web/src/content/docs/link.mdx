@@ -1,6 +1,6 @@
 ---
 title: Link
-description: Accessible navigation links with inherited or standalone typography and optional icons.
+description: 'Navigation to another page, a document or another part of the same page, in a sentence or on its own.'
 ---
 
 import {
@@ -12,9 +12,417 @@ import {
   LinkVariantsDemo,
 } from '../../components/LinkExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Link
 
-Use Link to navigate to another page, a resource, or a section of the current page. Omit `size` to match the surrounding text, or choose a size for a standalone medium-weight label. It supports icons, two intents, and three underline options. Use [Button](/docs/components/button/) for actions such as saving or submitting.
+<DocsTab id="overview">
+
+A link takes people to another page, a document, or another part of the same page. Use it for navigation, in a sentence or on its own. Without a size it takes on the typography of the text around it; with a size it uses a medium body style. Use Button for actions such as saving or submitting.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/link.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-link--docs"
+/>
+
+## When to use
+
+### Use a link when
+
+- People go to another page, a document or another part of the same page.
+- You point to more information from inside a sentence.
+- Navigation text pairs with a leading or trailing arrow, such as a back link or a go-to link.
+- A card or list needs a quiet way to see more.
+- People go back one step in a flow.
+
+### Don't use a link when
+
+- The control performs an action, such as submit, save or pay. Use Button.
+- People move through a page hierarchy. Use Breadcrumbs instead of a row of links.
+- People switch between views of the same content. Use Tabs.
+- The choice opens a list of actions. Use Menu.
+
+<DocsFigure
+  src="/images/docs/link/link-intro-1.webp"
+  darkSrc="/images/docs/link/link-intro-1-dark.webp"
+  alt="A white card on a grey surface. At the top a small back link, Back to applications, with a left arrow. Below it the heading Work permit application and the text Reference WP-2026-04817. Under review since 2 October. Then the sentence Read the application guidance before uploading, with application guidance linked and underlined, and a go-to link View all requirements with a right arrow."
+  width="2400"
+  height="1064"
+  caption="A back link, a link in running text and a go-to link on an application status card."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/link/link-anatomy-1.svg"
+  darkSrc="/images/docs/link/link-anatomy-1-dark.svg"
+  alt="A link Continue with a plus icon before it and a right arrow after it, with three numbered markers: 1 on the plus icon, 2 on the label and 3 on the arrow."
+  width="576"
+  height="360"
+  caption="The parts of a link. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Leading icon**
+
+   Optional. A decorative icon before the label, such as the arrow on a back link. It is 16px at sizes sm and md and 20px at lg, with an 8 gap to the label. Screen readers skip it. In Figma, turn it on with leadingIcon and swap it with leadingIconSwap. In code it is an icon in children, before the text.
+
+2. **Label**
+
+   The link text and the accessible name. It says where the link goes. It is medium weight at a set size, or takes the surrounding text style when size is left out in code. In code it is the children.
+
+3. **Trailing icon**
+
+   Optional. A decorative icon after the label, often an arrow for a go-to link. In Figma, turn it on with trailingIcon and swap it with trailingIconSwap. In code it is an icon in children, after the text.
+
+</DocsAnatomy>
+
+The underline, when shown, sits under the label.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/link/link-do-1.webp" darkSrc="/images/docs/link/link-do-1-dark.webp" alt="A link reading Check your application status." width="1136" height="240">
+
+Say where the link goes, so it makes sense on its own. Use the title of the page it leads to.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/link/link-dont-1.webp" darkSrc="/images/docs/link/link-dont-1-dark.webp" alt="A link reading Click here." width="1136" height="240">
+
+Don't write Click here or Read more. Screen reader users often move from link to link, and these words mean nothing out of context.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/link/link-do-2.webp" darkSrc="/images/docs/link/link-do-2-dark.webp" alt="The sentence Read the guidance before continuing, with guidance linked and underlined." width="1136" height="240">
+
+Underline links in a sentence, so they don't rely on colour.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/link/link-dont-2.webp" darkSrc="/images/docs/link/link-dont-2-dark.webp" alt="The same sentence with guidance in the link colour but no underline." width="1136" height="240">
+
+Don't leave links in prose without an underline. Some people cannot tell them apart by colour: link colour is only 1.5:1 against body text.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/link/link-do-3.webp" darkSrc="/images/docs/link/link-do-3-dark.webp" alt="A link reading Read the fee schedule." width="1136" height="240">
+
+Use a link to go somewhere. Use Button to submit, save or pay.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/link/link-dont-3.webp" darkSrc="/images/docs/link/link-dont-3-dark.webp" alt="Submit application shown as a link." width="1136" height="240">
+
+Don't use a link for an action that changes data. Use Button.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Say where it goes
+
+Write link text that makes sense out of context, so the same link works in a screen reader's list of links, a search result and a translated page. Use the destination page's title, or words close to it.
+
+| Do                            | Don't                                         |
+| :---------------------------- | :-------------------------------------------- |
+| Check your application status | Click here (means nothing in a list of links) |
+| Renew a passport              | Read more (says nothing about where it goes)  |
+| Renew a passport              | Passport services page                        |
+
+### Link only the destination words
+
+Put the distinctive words at the start, link only the words that describe the destination, and leave the final full stop outside the link.
+
+| Do                                                                                      | Don't                                                                                                                |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Read the application guidance before uploading, with only "application guidance" linked | Read the application guidance before uploading, with the whole sentence and its full stop linked                     |
+| You can check your application status online.                                           | Click on this link if you want to check the status of your application (whole sentence linked, key words at the end) |
+
+### Short and in sentence case
+
+Keep link text to a few words, in sentence case, with no full stop.
+
+### Files
+
+For links to files, add the file type and size in brackets after the name. Start with Download when the link downloads straight away. Name the file by its content, not its file name.
+
+| Do                         | Don't                                                        |
+| :------------------------- | :----------------------------------------------------------- |
+| Fee schedule (PDF, 200 KB) | fee_schedule_2026_v3.pdf (a file name, with no type or size) |
+
+### New tabs
+
+Open links in the same tab by default. Open a new tab only when leaving would lose people's work, such as guidance linked from inside a form, and then add (opens in new tab) to the link text.
+
+| Do                              | Don't                                         |
+| :------------------------------ | :-------------------------------------------- |
+| Fee schedule (opens in new tab) | A link that opens a new tab without saying so |
+
+### Links that leave gov.mv
+
+Make it clear when a link goes to another site or service by naming the site. Link online services first, then other ways to get help.
+
+| Do                           | Don't      |
+| :--------------------------- | :--------- |
+| Pay on BandeyriPay           | Pay online |
+| Maldives Immigration website |            |
+
+### Links to the other language
+
+When a link leads to content in the other language, name the language in its own script and mark it with lang and hrefLang: ދިވެހި on an English page, English on a Dhivehi page. Label each language switch option the same way.
+
+### Phone numbers and email addresses
+
+Make every phone number people may call a tel link with the full international number and no spaces (tel:+9607771234), and write the visible number in the grouped form. Give opening hours next to it. Write email addresses in full and in lower case, and make the address itself the link text.
+
+### Not in hints, labels or buttons
+
+Don't put links inside helper text, field labels, buttons or field error messages. Put the link in the page text near the field, or in a Popover opened by a labelled button. The error summary's links to fields are the exception.
+
+### Standard verbs
+
+When link text starts with a verb, use the standard verbs: Back to return to the previous step, Apply for something new, Renew to extend something, Download for files. Write eFaas with a lower case e.
+
+### Built-in text and Dhivehi
+
+Link has no built-in text. The link text, any aria-label and added words such as (opens in new tab) or the file type and size come from you, in English and Dhivehi. Write Dhivehi natively and keep it as short as the English, because Thaana renders wider.
+
+## Related components
+
+| Component                                    | When to use it                                                                                                                        |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| [Button](/docs/components/button/)           | start an action, such as submit, save or pay.                                                                                         |
+| [Breadcrumbs](/docs/components/breadcrumbs/) | show where a page sits and go up a level.                                                                                             |
+| [Tabs](/docs/components/tabs/)               | switch between views of the same content.                                                                                             |
+| [Menu](/docs/components/menu/)               | offer a list of actions from a trigger. Overflow menus in Breadcrumbs, Pagination and Tabs are the only menus that list destinations. |
+| [VeliProvider](/docs/components/provider/)   | connects Link to a client-side router, and sets the Dhivehi text styles with language.                                                |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the link: intents, sizes, underlines, icons, states, spacing and tokens. Values match the shipped component.
+
+## Intents
+
+<DocsFigure
+  src="/images/docs/link/link-intents-1.webp"
+  darkSrc="/images/docs/link/link-intents-1-dark.webp"
+  alt="Two examples labelled intent default and intent secondary: View application in the teal link colour, and Privacy notice in the dark body text colour."
+  width="2400"
+  height="432"
+  caption="Intent default and intent secondary."
+/>
+
+- **Default**: the link colour. Use it for most links, so people can spot them.
+- **Secondary**: the normal text colour. Use it where many links sit together, such as a footer.
+
+In code, intent defaults to default.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/link/link-sizes-1.webp"
+  darkSrc="/images/docs/link/link-sizes-1-dark.webp"
+  alt="Three links Continue, each with a plus icon before and a right arrow after, labelled size sm, md and lg, getting larger from left to right. The captions read Body/sm Medium, 16 icons; Body/md Medium, 16 icons; and Body/lg Medium, 20 icons."
+  width="2400"
+  height="488"
+  caption="Sizes sm, md and lg."
+/>
+
+| Size | Text style                    | Height           | Icon                          | Use for                            |
+| :--- | :---------------------------- | :--------------- | :---------------------------- | :--------------------------------- |
+| None | Inherits from the parent text | Follows the text | Not set; match it to the text | Links inside a sentence or heading |
+| sm   | Body sm medium                | 20               | 16px                          | Dense layouts and secondary links  |
+| md   | Body md medium                | 24               | 16px                          | The usual standalone link          |
+| lg   | Body lg medium                | 28               | 20px                          | A link that leads a section        |
+
+Leave size out to inherit the font family, size, weight, line height and letter spacing of the surrounding text, so a link stays regular in a regular paragraph and bold in a bold heading. Setting a size applies the medium body style and the matching icon size. There is no separate weight prop.
+
+<DocsFigure
+  src="/images/docs/link/link-inherit-1.webp"
+  darkSrc="/images/docs/link/link-inherit-1-dark.webp"
+  alt="Three examples labelled inherit sm, md and lg, each the sentence Read the guidance before continuing in a larger text size, with guidance linked, underlined and matching the size of the text around it."
+  width="2400"
+  height="488"
+  caption="A link with no size takes the style of the surrounding text."
+/>
+
+## Underline
+
+<DocsFigure
+  src="/images/docs/link/link-underline-1.webp"
+  darkSrc="/images/docs/link/link-underline-1-dark.webp"
+  alt="Three links View application labelled underline none, hover and always. None has no underline; hover and always are underlined."
+  width="2400"
+  height="480"
+  caption="Underline none, hover and always."
+/>
+
+- **None**, the default: no underline. Suits navigation where position and context show that the text is a link.
+- **Hover**: the underline appears while the pointer is over the link.
+- **Always**: a persistent underline. Use it for every link in paragraphs and other running text, for both intents, so the link does not rely on colour.
+
+In Figma, underline has no property. Underlined examples use a text override.
+
+## Icons
+
+<DocsFigure
+  src="/images/docs/link/link-icons-1.webp"
+  darkSrc="/images/docs/link/link-icons-1-dark.webp"
+  alt="Two examples labelled icon leading and icon trailing: Back to applications with a left arrow before it, and View all requirements with a right arrow after it."
+  width="2400"
+  height="480"
+  caption="A back link with a leading arrow and a go-to link with a trailing arrow."
+/>
+
+- Use a leading arrow for a back link and a trailing arrow for a go-to link. In Figma, turn on leadingIcon and choose the arrow with leadingIconSwap, or turn on trailingIcon. In code, pass the icon before or after the text in children.
+- Icons are 16px, or 20px at size lg, with an 8 gap to the text. Link sizes them for you, so pass them without their own size.
+- Icons are decorative. Hide them from screen readers with aria-hidden.
+- An icon-only link needs an aria-label that says where it goes.
+
+## States
+
+<DocsFigure
+  src="/images/docs/link/link-states-1.webp"
+  darkSrc="/images/docs/link/link-states-1-dark.webp"
+  alt="Four links Continue with a plus icon and right arrow, labelled state default, hover, focus and disabled. Hover is darker, focus has a rounded ring around the whole link, and disabled is light grey. A note below says pressed and underline are code only."
+  width="2400"
+  height="596"
+  caption="Link states, shown with intent default at size md. Pressed is code only."
+/>
+
+| State    | When                     | Visual change                                                                                                      |
+| :------- | :----------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| Default  | No interaction           | `text/links/default`, or `text/base/DEFAULT` for secondary                                                         |
+| Hover    | Pointer over the link    | The colour darkens: `text/links/hover`, or `text/base/muted` for secondary. Underline appears with underline hover |
+| Pressed  | While pressed, code only | Same colours as hover                                                                                              |
+| Focus    | Keyboard focus           | 2px focus ring in `border/focus` inside the edge, radius 6                                                         |
+| Disabled | isDisabled               | `text/disabled`, icons `icon/disabled`. Not clickable or focusable                                                 |
+
+aria-current="page" adds no visual style. Show the current page another way as well.
+
+## Behaviour
+
+- **With href**: a link renders a native anchor and follows it, including open in new tab and other native link behaviour.
+- **Without href or disabled**: a link renders a span with role link. It loses native link behaviour, so give every link an href and use Button for actions.
+- **Client routing**: connect a client-side router with VeliProvider navigate and useHref. Pass router options with routerOptions, or compose a router link through render.
+- **Disabled**: isDisabled removes the link from the tab order and blocks clicks.
+- **Wrapping**: a link lays out inline and follows the typography and space of its parent. Text-only links wrap within sentences. Links with icons keep the icons aligned while the text wraps. Link adds no outer padding.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/link/link-rtl-1.webp"
+  darkSrc="/images/docs/link/link-rtl-1-dark.webp"
+  alt="Two examples labelled LTR link and RTL linkDv. On the left, Continue with a plus icon before it and a right arrow after it. On the right, the Dhivehi ކުރިއަށް right to left, with the plus icon on the right and a left arrow on the left."
+  width="2400"
+  height="392"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- Link takes its language and direction from the surrounding content. Leading and trailing icons follow the direction.
+- Icons you pass to a link are not mirrored. Pass the mirrored arrow in right to left layouts. Keep non-directional icons such as plus unchanged.
+- With a size, Dhivehi links use the Dhivehi medium styles in MV A Waheed, so rows are 28, 32 and 36 high for sm, md and lg. See Missing or unverified.
+- Keep left to right values, such as PDF, 200 KB or WP-2026-04817, in a left to right span inside Dhivehi text.
+- In code, wrap the page in VeliProvider with language set to dv.
+- In Figma, design Dhivehi screens with linkDv. It has the same 24 variants as link, mirrored.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <LinkRtlDemo client:visible />
+</div>
+
+Example content:
+
+| Example              | Props                                                       | English                                                                                                   | Dhivehi                                                                                                |
+| :------------------- | :---------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| Standalone link      | size md, trailing arrow (right in English, left in Dhivehi) | Continue                                                                                                  | ކުރިއަށް                                                                                               |
+| Link in running text | no size, underline always                                   | Read the guidance for completing your application and providing supporting information before continuing. | ކުރިއަށް ދިއުމުގެ ކުރިން އެދުން ފުރިހަމަކުރުމާއި ބޭނުންވާ މަޢުލޫމާތު ހުށަހެޅުމުގެ އިރުޝާދު ކިޔާލައްވާ. |
+
+In running text, only the guidance words are linked: "guidance for completing your application and providing supporting information" in English and "އެދުން ފުރިހަމަކުރުމާއި ބޭނުންވާ މަޢުލޫމާތު ހުށަހެޅުމުގެ އިރުޝާދު" in Dhivehi.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/link/link-spacing-1.svg"
+  darkSrc="/images/docs/link/link-spacing-1-dark.svg"
+  alt="Spacing redlines for the link Continue with a plus icon and a right arrow at sizes sm, md and lg: an 8 gap between each icon and the label, and heights of 20, 24 and 28."
+  width="1200"
+  height="232"
+  caption="Spacing at sizes sm, md and lg."
+/>
+
+| Property                   | sm              | md              | lg              |
+| :------------------------- | :-------------- | :-------------- | :-------------- |
+| Height (English)           | 20              | 24              | 28              |
+| Height (Dhivehi)           | 28              | 32              | 36              |
+| Icon                       | 16              | 16              | 20              |
+| Gap between icon and label | 8 (`spacing/2`) | 8 (`spacing/2`) | 8 (`spacing/2`) |
+| Outer padding              | 0               | 0               | 0               |
+| Focus ring corner radius   | 6               | 6               | 6               |
+
+The link has a 6 corner radius, which shows only on the focus ring.
+
+<DocsFigure
+  src="/images/docs/link/link-radius-1.svg"
+  darkSrc="/images/docs/link/link-radius-1-dark.svg"
+  alt="The focus ring around the link Continue at sizes sm, md and lg, each marked with a corner radius of 6."
+  width="1200"
+  height="188"
+  caption="Corner radius 6 on the focus ring, at every size."
+/>
+
+## Typography
+
+| Element                    | English                            | Dhivehi                                   | Colour token                                |
+| :------------------------- | :--------------------------------- | :---------------------------------------- | :------------------------------------------ |
+| Label, no size (code only) | The surrounding text style         | The surrounding Dhivehi style             | `text/links/default` or `text/base/DEFAULT` |
+| Label, sm                  | Body sm medium, Inter Medium 14/20 | Dhivehi body sm medium, MV A Waheed 17/28 | `text/links/default` or `text/base/DEFAULT` |
+| Label, md                  | Body md medium, Inter Medium 16/24 | Dhivehi body md medium, MV A Waheed 19/32 | `text/links/default` or `text/base/DEFAULT` |
+| Label, lg                  | Body lg medium, Inter Medium 18/28 | Dhivehi body lg medium, MV A Waheed 21/36 | `text/links/default` or `text/base/DEFAULT` |
+
+Dhivehi lines are taller, so linkDv rows are 28, 32 and 36 high.
+
+## Tokens
+
+| Part                    | Default and focus                       | Hover and pressed  | Disabled        |
+| :---------------------- | :-------------------------------------- | :----------------- | :-------------- |
+| Text, intent default    | `text/links/default`                    | `text/links/hover` | `text/disabled` |
+| Icons, intent default   | `icon/links/default`                    | `icon/links/hover` | `icon/disabled` |
+| Text, intent secondary  | `text/base/DEFAULT`                     | `text/base/muted`  | `text/disabled` |
+| Icons, intent secondary | `icon/base/default`                     | `icon/base/muted`  | `icon/disabled` |
+| Focus ring              | `border/focus`, 2 inside, on focus only | None               | None            |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| What moves           | Duration | Easing   |
+| :------------------- | :------- | :------- |
+| Text and icon colour | Normal   | Ease out |
+
+With reduced motion turned on, the colour transition is turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -330,7 +738,7 @@ The native `<a>` that React Aria wraps. Navigation attributes take effect on ena
 
 ## RTL and Language
 
-Link inherits `lang` and direction from its surrounding content. With an explicit `size`, its typography preset selects Inter for English and MV A Waheed for `lang="dv"`. Without `size`, typography inherits from the surrounding content. Load the fonts as described in [Typography](/docs/foundations/typography/).
+Link inherits `lang` and direction from its surrounding content. With an explicit `size`, its typography preset selects Inter for English and MV A Waheed for `lang="dv"`. Without `size`, typography inherits from the surrounding content. Load the fonts as described in [Typography](/foundations/typography/).
 
 In RTL, leading and trailing icon positions follow direction. Choose the appropriate arrow for the direction, as in the example above. Keep nondirectional icons such as Plus unchanged.
 
@@ -356,3 +764,63 @@ export default function LinkLanguageDemo() {
   );
 }
 ```
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the link works with keyboards, screen readers and touch, and what you still need to do. An enabled link with an href is a native anchor.
+
+## Keyboard
+
+| Key         | Action                                   |
+| :---------- | :--------------------------------------- |
+| Tab         | Moves focus to the next enabled link     |
+| Shift + Tab | Moves focus to the previous enabled link |
+| Enter       | Follows the focused link                 |
+
+Disabled links are skipped.
+
+## Screen readers
+
+- The link text is the accessible name. Make it describe the destination on its own.
+- Icons are decorative: hide them with aria-hidden. An icon-only link needs an aria-label that says where it goes: Back to applications, not Arrow.
+- Set aria-current="page" on a link to the page people are on. It is announced but adds no visual style.
+- Say in the text when a link opens a new tab or downloads a file.
+- Mark a link to content in the other language with lang and hrefLang.
+- A disabled link keeps its link role and is announced as disabled (aria-disabled).
+
+## Focus
+
+Keyboard focus shows a 2px ring in `border/focus` inside the link's rounded edge. It shows on keyboard focus only. In forced colours mode it becomes a 2px Highlight outline. Visual overrides can't hide keyboard focus.
+
+<DocsFigure
+  src="/images/docs/link/link-focus-1.webp"
+  darkSrc="/images/docs/link/link-focus-1-dark.webp"
+  alt="The link Continue with its focus ring at sizes sm, md and lg, in intent default and intent secondary. Notes below say the ring shows on keyboard focus only, the ring is inset so it never overlaps the text around an inline link, and in forced colours mode code draws a 2px Highlight outline, offset 2."
+  width="2400"
+  height="1096"
+  caption="The focus ring at each size and intent."
+/>
+
+## Running text
+
+Links in paragraphs and other running text must have a persistent underline (underline always), for both intents. Link colour is only 1.5:1 against body text, so colour alone fails people who can't tell the two apart.
+
+## Target size
+
+A standalone link at size sm is 20 high, under the 24px minimum target. Leave space around it so no other target is within 24px, or use size md or lg. Links inside a sentence are exempt.
+
+## Contrast
+
+Measured on the link tokens in both modes, on `bg/surface/base` and `bg/surface/raised`: link text 4.8:1 or more, secondary text 7.2:1 or more, secondary hover 4.9:1 or more and the focus ring 3:1 or more. Link hover is 11.2:1 or more in Light but 2.5:1 in Dark, below the 4.5:1 that WCAG needs for text.
+
+## Reduced motion
+
+When people prefer reduced motion, the colour transition is turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv) so the direction and the Dhivehi voice are right. Pass Dhivehi link text yourself, and pass a left arrow for a go-to link.
+
+</DocsTab>

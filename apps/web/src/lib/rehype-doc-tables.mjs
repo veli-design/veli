@@ -1,3 +1,5 @@
+import { matchContentPath } from './doc-areas.mjs';
+
 function textContent(node) {
   return node.type === 'text' ? node.value : (node.children ?? []).map(textContent).join('');
 }
@@ -6,8 +8,8 @@ function textContent(node) {
 // automatically focus scroll containers (including WebKit).
 export default function rehypeDocTables() {
   return (tree, file) => {
-    const path = String(file.path ?? file.history?.at(-1) ?? '').replaceAll('\\', '/');
-    if (!/\/src\/content\/(docs|foundations)\//.test(path)) return;
+    const path = String(file.path ?? file.history?.at(-1) ?? '');
+    if (!matchContentPath(path)) return;
 
     function visit(parent, heading = 'API reference') {
       for (const [index, node] of (parent.children ?? []).entries()) {
@@ -18,7 +20,7 @@ export default function rehypeDocTables() {
           const head = node.children.find((child) => child.tagName === 'thead');
           const row = head?.children.find((child) => child.tagName === 'tr');
           const columns = row?.children.filter((child) => child.tagName === 'th').length;
-          if (columns === 3 || columns === 4) {
+          if (columns >= 3) {
             parent.children[index] = {
               type: 'element',
               tagName: 'div',

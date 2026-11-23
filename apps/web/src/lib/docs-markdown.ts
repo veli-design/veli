@@ -1,27 +1,36 @@
 import { blockPages } from './blocks';
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import { docArea, docAreas, pageHref, pageId, pageMarkdownPath } from './doc-areas.mjs';
 import {
   componentGroups,
   docsOverview,
   externalResources,
   foundations,
   foundationsOverview,
+  inventoryItems,
   patterns,
+  patternsOverview,
 } from './site';
 
 const docsMarkdownFrontmatterKey = '__docsMarkdown';
 
-export type DocsSection = 'Overview' | 'Foundations' | 'Components' | 'Patterns' | 'Blocks';
+export type DocsSection = (typeof docAreas)[number]['id'] | 'overview';
 
-type EntrySource =
-  | { kind: 'entry'; entry: CollectionEntry<'docs'> }
-  | { kind: 'entry'; entry: CollectionEntry<'foundations'> }
-  | { kind: 'entry'; entry: CollectionEntry<'patterns'> }
-  | { kind: 'entry'; entry: CollectionEntry<'guides'> };
+type ProseEntry =
+  | CollectionEntry<'docs'>
+  | CollectionEntry<'foundations'>
+  | CollectionEntry<'patterns'>;
+
+type EntrySource = {
+  kind: 'entry';
+  entry: ProseEntry | CollectionEntry<'guides'>;
+};
+
+type OverviewAreaId = Extract<(typeof docAreas)[number], { catalogOverview: true }>['id'];
 
 type OverviewSource = {
   kind: 'overview';
-  overview: 'documentation' | 'docs' | 'foundations' | 'patterns';
+  areaId: OverviewAreaId;
 };
 
 export type DocsCatalogPage = {
@@ -46,17 +55,7 @@ type NavigationItem = {
   description: string;
 };
 
-export function toMarkdownPath(htmlPath: string) {
-  if (!htmlPath.startsWith('/') || !htmlPath.endsWith('/')) {
-    throw new Error(
-      `[docs-markdown] expected a root-relative directory URL, received "${htmlPath}"`,
-    );
-  }
-
-  return `${htmlPath}index.md`;
-}
-
-function requireDescription(entry: CollectionEntry<'docs' | 'foundations' | 'patterns'>) {
+function requireDescription(entry: ProseEntry) {
   const description = entry.data.description?.trim();
   if (!description) {
     throw new Error(`[docs-markdown] ${entry.collection}/${entry.id} is missing a description`);
@@ -116,18 +115,60 @@ function validateCatalog(pages: readonly DocsCatalogPage[]) {
   }
 }
 
+type InventoryArea = Extract<(typeof docAreas)[number], { membership: 'inventory' }>;
+
+async function orderedInventoryEntries(area: InventoryArea) {
+  const items = inventoryItems(area.id);
+  switch (area.collection) {
+    case 'foundations':
+      return orderCollectionEntries('foundations', await getCollection('foundations'), items);
+    case 'docs':
+      return orderCollectionEntries('docs', await getCollection('docs'), items);
+    case 'patterns':
+      return orderCollectionEntries('patterns', await getCollection('patterns'), items);
+    default: {
+      const unexpected: never = area;
+      throw new Error(`[docs-markdown] no collection for ${String(unexpected)}`);
+    }
+  }
+}
+
+function overviewCopy(areaId: OverviewAreaId) {
+  switch (areaId) {
+    case 'foundations':
+      return foundationsOverview;
+    case 'components':
+      return docsOverview;
+    case 'patterns':
+      return patternsOverview;
+    default: {
+      const unexpected: never = areaId;
+      throw new Error(`[docs-markdown] no overview copy for ${String(unexpected)}`);
+    }
+  }
+}
+
+function overviewPage(area: Extract<(typeof docAreas)[number], { catalogOverview: true }>) {
+  const copy = overviewCopy(area.id);
+  const page: DocsCatalogPage = {
+    id: pageId(area),
+    section: area.id,
+    label: copy.label,
+    title: copy.title,
+    description: copy.description,
+    htmlPath: pageHref(area),
+    markdownPath: pageMarkdownPath(area),
+    source: { kind: 'overview', areaId: area.id },
+  };
+  return page;
+}
+
 export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
   const getStarted = await getEntry('guides', 'get-started');
-  if (!getStarted) throw new Error('[docs-markdown] Get Started guide is missing');
-  const [docsEntries, foundationEntries, patternEntries] = await Promise.all([
-    getCollection('docs'),
-    getCollection('foundations'),
-    getCollection('patterns'),
-  ]);
-  const componentItems = componentGroups.flatMap((group) => group.items);
-  const orderedFoundations = orderCollectionEntries('foundations', foundationEntries, foundations);
-  const orderedComponents = orderCollectionEntries('docs', docsEntries, componentItems);
-  const orderedPatterns = orderCollectionEntries('patterns', patternEntries, patterns);
+  if (!getStarted?.data.description?.trim()) {
+    throw new Error('[docs-markdown] Get Started guide is missing');
+  }
+
   const componentGroupBySlug = new Map(
     componentGroups.flatMap((group) =>
       group.items.map((item) => [item.slug, group.title] as const),
@@ -136,95 +177,58 @@ export async function getDocsCatalog(): Promise<DocsCatalogPage[]> {
   const pages: DocsCatalogPage[] = [
     {
       id: 'documentation',
-      section: 'Overview',
+      section: 'overview',
       label: getStarted.data.title,
       title: getStarted.data.title,
-      description: getStarted.data.description!,
+      description: getStarted.data.description.trim(),
       htmlPath: '/docs/',
       markdownPath: '/docs/index.md',
       source: { kind: 'entry', entry: getStarted },
     },
-    {
-      id: 'foundations',
-      section: 'Foundations',
-      label: foundationsOverview.label,
-      title: foundationsOverview.title,
-      description: foundationsOverview.description,
-      htmlPath: foundationsOverview.htmlPath,
-      markdownPath: foundationsOverview.markdownPath,
-      source: { kind: 'overview', overview: 'foundations' },
-    },
-    ...orderedFoundations.map(
-      (entry): DocsCatalogPage => ({
-        id: `foundations/${entry.id}`,
-        section: 'Foundations',
-        label: entry.data.title,
-        title: entry.data.title,
-        description: requireDescription(entry),
-        htmlPath: `/docs/foundations/${entry.id}/`,
-        markdownPath: `/docs/foundations/${entry.id}/index.md`,
-        source: { kind: 'entry', entry },
-      }),
-    ),
-    {
-      id: 'docs',
-      section: 'Components',
-      label: docsOverview.label,
-      title: docsOverview.title,
-      description: docsOverview.description,
-      htmlPath: docsOverview.htmlPath,
-      markdownPath: docsOverview.markdownPath,
-      source: { kind: 'overview', overview: 'docs' },
-    },
-    ...orderedComponents.map(
-      (entry): DocsCatalogPage => ({
-        id: `docs/${entry.id}`,
-        section: 'Components',
-        group: componentGroupBySlug.get(entry.id),
-        label: entry.data.title,
-        title: entry.data.title,
-        description: requireDescription(entry),
-        htmlPath: `/docs/components/${entry.id}/`,
-        markdownPath: `/docs/components/${entry.id}/index.md`,
-        source: { kind: 'entry', entry },
-      }),
-    ),
-    {
-      id: 'patterns',
-      section: 'Patterns',
-      label: 'Patterns overview',
-      title: 'Veli Patterns',
-      description: 'Reusable approaches for recurring service interactions and content flows.',
-      htmlPath: '/docs/patterns/',
-      markdownPath: '/docs/patterns/index.md',
-      source: { kind: 'overview', overview: 'patterns' },
-    },
-    ...orderedPatterns.map(
-      (entry): DocsCatalogPage => ({
-        id: `patterns/${entry.id}`,
-        section: 'Patterns',
-        label: entry.data.title,
-        title: entry.data.title,
-        description: requireDescription(entry),
-        htmlPath: `/docs/patterns/${entry.id}/`,
-        markdownPath: `/docs/patterns/${entry.id}/index.md`,
-        source: { kind: 'entry', entry },
-      }),
-    ),
   ];
 
-  pages.push(
-    ...blockPages.map(
-      (page): DocsCatalogPage => ({
-        ...page,
-        section: 'Blocks',
-        label: page.title,
-        htmlPath: `/docs/${page.id}/`,
-        markdownPath: `/docs/${page.id}/index.md`,
-        source: { kind: 'block', markdown: page.markdown },
-      }),
-    ),
-  );
+  for (const area of docAreas) {
+    if (area.membership === 'inventory') {
+      const ordered = await orderedInventoryEntries(area);
+      if (area.catalogOverview) pages.push(overviewPage(area));
+      for (const entry of ordered) {
+        const group = area.id === 'components' ? componentGroupBySlug.get(entry.id) : undefined;
+        pages.push({
+          id: pageId(area, entry.id),
+          section: area.id,
+          ...(group ? { group } : {}),
+          label: entry.data.title,
+          title: entry.data.title,
+          description: requireDescription(entry),
+          htmlPath: pageHref(area, entry.id),
+          markdownPath: pageMarkdownPath(area, entry.id),
+          source: { kind: 'entry', entry },
+        });
+      }
+      continue;
+    }
+
+    if (area.membership === 'blocks') {
+      for (const blockPage of blockPages) {
+        const slug =
+          blockPage.id === area.segment ? null : blockPage.id.slice(area.segment.length + 1);
+        pages.push({
+          id: blockPage.id,
+          section: area.id,
+          label: blockPage.title,
+          title: blockPage.title,
+          description: blockPage.description,
+          htmlPath: pageHref(area, slug),
+          markdownPath: pageMarkdownPath(area, slug),
+          source: { kind: 'block', markdown: blockPage.markdown },
+        });
+      }
+      continue;
+    }
+
+    const unexpected: never = area;
+    throw new Error(`[docs-markdown] unsupported area ${String(unexpected)}`);
+  }
 
   validateCatalog(pages);
   return pages;
@@ -246,36 +250,20 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
     throw new Error(`[docs-markdown] ${page.id} is not an overview page`);
   }
 
-  if (page.source.overview === 'documentation') {
+  if (page.source.areaId === 'foundations') {
     lines.push(
-      '## Explore the system',
-      '',
-      markdownListItem('Foundations', '/docs/foundations/', foundationsOverview.description),
-      markdownListItem('Components', '/docs/components/', docsOverview.description),
-      markdownListItem(
-        'Patterns',
-        '/docs/patterns/',
-        'Recurring service interactions and content flows.',
-      ),
-      markdownListItem(
-        'Blocks',
-        '/docs/blocks/',
-        'Editable compositions built from Veli primitives.',
-      ),
-    );
-  } else if (page.source.overview === 'patterns') {
-    lines.push(
-      '## Patterns',
-      '',
-      ...patterns.map((item) => markdownListItem(item.title, item.href, item.description)),
-    );
-  } else if (page.source.overview === 'foundations') {
-    lines.push(
-      '## Foundations',
+      `## ${docArea('foundations').title}`,
       '',
       ...foundations.map((item) => markdownListItem(item.title, item.href, item.description)),
     );
+  } else if (page.source.areaId === 'patterns') {
+    lines.push(
+      `## ${docArea('patterns').title}`,
+      '',
+      ...patterns.map((item) => markdownListItem(item.title, item.href, item.description)),
+    );
   } else {
+    const components = docArea('components');
     lines.push(
       docsOverview.packageGuidance,
       '',
@@ -292,7 +280,7 @@ function buildOverviewMarkdown(page: DocsCatalogPage) {
         `## ${group.title}`,
         '',
         ...group.items.map((item) =>
-          markdownListItem(item.title, `/docs/components/${item.slug}/`, item.description),
+          markdownListItem(item.title, pageHref(components, item.slug), item.description),
         ),
         '',
       );
@@ -332,17 +320,16 @@ function artifactUrl(path: string, origin?: URL) {
 }
 
 export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
+  const foundationsArea = docArea('foundations');
+  const componentsArea = docArea('components');
   const foundationPages = pages.filter(
-    (page) => page.section === 'Foundations' && page.source.kind === 'entry',
+    (page) => page.section === foundationsArea.id && page.source.kind === 'entry',
   );
   const componentPages = pages.filter(
-    (page) => page.section === 'Components' && page.source.kind === 'entry',
+    (page) => page.section === componentsArea.id && page.source.kind === 'entry',
   );
-  const patternPages = pages.filter(
-    (page) => page.section === 'Patterns' && page.source.kind === 'entry',
-  );
-  const foundationOverviewPage = pages.find((page) => page.id === 'foundations');
-  const docsOverviewPage = pages.find((page) => page.id === 'docs');
+  const foundationOverviewPage = pages.find((page) => page.id === pageId(foundationsArea));
+  const docsOverviewPage = pages.find((page) => page.id === pageId(componentsArea));
 
   if (!foundationOverviewPage || !docsOverviewPage) {
     throw new Error('[docs-markdown] the llms.txt index requires both overview pages');
@@ -373,7 +360,7 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
       foundationOverviewPage.description,
     ),
     '',
-    '## Foundations',
+    `## ${foundationsArea.title}`,
     '',
     ...foundationPages.map((page) =>
       markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
@@ -397,23 +384,22 @@ export function buildLlmsTxt(pages: readonly DocsCatalogPage[], origin?: URL) {
     );
   }
 
-  const patternList = patternPages.map((page) =>
-    markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
-  );
-  if (patternList.length > 0) {
-    lines.push('## Patterns', '', ...patternList, '');
-  }
-
-  lines.push(
-    '## Blocks',
-    '',
-    ...pages
-      .filter((page) => page.section === 'Blocks')
-      .map((page) =>
+  for (const area of docAreas) {
+    if (area.id === foundationsArea.id || area.id === componentsArea.id) continue;
+    const areaPages = pages.filter((page) => {
+      if (page.section !== area.id) return false;
+      return area.membership === 'blocks' || page.source.kind === 'entry';
+    });
+    if (areaPages.length === 0) continue;
+    lines.push(
+      `## ${area.title}`,
+      '',
+      ...areaPages.map((page) =>
         markdownListItem(page.label, artifactUrl(page.markdownPath, origin), page.description),
       ),
-    '',
-  );
+      '',
+    );
+  }
 
   const optionalDescriptions = {
     Figma: 'Design source for Veli components and foundations.',

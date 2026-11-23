@@ -1,10 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import DocsComponentAnimation from '../../../components/DocsComponentAnimation.astro';
 import DocsComponentTabs from '../../../components/DocsComponentTabs.astro';
 import DocsStorybookLink from '../../../components/DocsStorybookLink.astro';
 import DocsLayout from '../../../layouts/docs-layout.astro';
+import DocsPageActions from '../../../components/DocsPageActions.astro';
 import { getComponentMeta } from '../../../lib/site';
+import '../../../styles/docs-editorial.css';
 
 type Props = {
   doc: CollectionEntry<'docs'>;
@@ -24,6 +27,9 @@ const component = getComponentMeta(doc.id);
 const pageDescription = doc.data.description ?? component?.description;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const markdownPath = `/docs/components/${doc.id}/index.md`;
+// Let long component names wrap between words on phones (Password|Input,
+// OTP|Input) without breaking acronyms apart.
+const titleParts = doc.data.title.split(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/);
 ---
 
 <DocsLayout
@@ -36,13 +42,18 @@ const markdownPath = `/docs/components/${doc.id}/index.md`;
   contentLayout="component"
 >
   <header class="docs-page-header docs-page-header--article">
-    <h1 class="type-display-2-medium">{doc.data.title}</h1>
+    <h1 class="type-display-2-medium">
+      {titleParts.map((part, index) => (index ? [<wbr />, part] : part))}
+    </h1>
     {pageDescription && <p class="docs-page-description">{pageDescription}</p>}
+    <div class="docs-page-header__mobile-actions">
+      <DocsPageActions {markdownPath} placement="inline" media="(max-width: 960px)" />
+    </div>
   </header>
 
   <DocsComponentTabs {markdownPath} />
 
   <article class="docs-prose">
-    <Content components={{ DocsStorybookLink }} />
+    <Content components={{ DocsStorybookLink, DocsComponentAnimation }} />
   </article>
 </DocsLayout>

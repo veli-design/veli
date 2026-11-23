@@ -546,7 +546,7 @@ export async function initDesignPreviews(initialSeed = 7) {
     const hA = { els: [$('sand:lineA'), $('sand:hdlA')], c: P3 },
       hB = { els: [$('sand:lineB'), $('sand:hdlB')], c: P0 };
 
-    add(svg.querySelector('.design-crystalline'), (time) => {
+    add(svg.querySelector('[data-design-scene="light"]'), (time) => {
       const t = time % T,
         p = t / T;
       const ph = TAU * p * SAND.breaths;
@@ -559,6 +559,9 @@ export async function initDesignPreviews(initialSeed = 7) {
         }
         g.el.setAttribute('transform', tr);
       });
+    });
+    add(svg.querySelector('[data-design-scene="texture"]'), (time) => {
+      const p = (time % T) / T;
       const wp = TAU * p * SAND.waves;
       for (const g of grains) {
         const w = Math.sin(wp - (TAU * g.x) / SAND.waveLen + g.lag);
@@ -570,6 +573,9 @@ export async function initDesignPreviews(initialSeed = 7) {
         );
         g.el.setAttribute('opacity', (1 - (SAND.waveLift * (1 - w)) / 2).toFixed(3));
       }
+    });
+    add(svg.querySelector('[data-design-scene="curve"]'), (time) => {
+      const t = time % T;
       const k = bendAt(t),
         lin = 1 - k;
       const pts = centreLine.map((c) => `${c.x.toFixed(2)} ${(c.y + c.off * lin).toFixed(2)}`);
@@ -750,8 +756,8 @@ export async function initDesignPreviews(initialSeed = 7) {
 
   // =============================================================================================
   // Rooted in Thaana · interactive. The pointer is a lens over the letters: nearby letters swell,
-  // the letter under it blooms into a large green letter like the painted ones, and the painted
-  // letters ease away from the pointer. Click a letter to pin its bloom; click again to release.
+  // the letter under it blooms into a large green letter. Click to pin; click again to release.
+  // The six large letters are fixed artwork, never animation targets.
   // =============================================================================================
   const THAANA = {
     lens: 150, // pt, radius of the lens
@@ -759,33 +765,91 @@ export async function initDesignPreviews(initialSeed = 7) {
     bloom: 4.2, // a bloomed letter's scale
     catch: 48, // pt, the pointer catches the nearest letter within this distance
     green: '#9AF366', // the painted letters' colour
-    push: 14, // pt, how far painted letters ease away from the pointer
-    pushReach: 260, // pt
     ease: 10, // response rate (1/s): higher = snappier
   };
-  (function () {
-    const I = INFO.thaana;
-    const card = svg.querySelector('.design-thaana');
-    const labels = svg.querySelector('[data-t="labels"]');
-    const glyphs = I.glyphs.map((g, i) => {
-      const el = svg.querySelector(`[data-t="g${i}"]`);
-      return {
-        el,
-        c: centre(g.bbox),
-        s: 1,
-        b: 0,
-        pinned: false,
-        fill: el.getAttribute('fill') || '#10100F',
-        top: false,
-      };
-    });
-    const blobs = I.blobs.map((b, i) => ({
-      el: svg.querySelector(`[data-t="b${i}"]`),
-      c: centre(b.bbox),
-      x: 0,
-      y: 0,
+  // The two arrangements share the lens, pin and keyboard interactions. Only
+  // the visible SVG intersects; its own viewBox handles touch and resizing.
+  const landscape = svg.querySelector('[data-design-svg="thaana"]');
+  const portrait = svg.querySelector('[data-design-svg="thaana-portrait"]');
+  const desktopLetters = [
+    ...svg.querySelectorAll('.design-thaana-native [data-node-id="2382:110952"] > p'),
+  ];
+  const portraitLetters = [...portrait.querySelectorAll('[data-letter]')].map((el) => ({
+    el,
+    c: el.dataset.center.split(' ').map(Number),
+    letter: el.dataset.letter,
+  }));
+  wireThaana(
+    landscape,
+    landscape.querySelector('[data-t="labels"]'),
+    INFO.thaana.glyphs.map((g, i) => ({
+      el: landscape.querySelector(`[data-t="g${i}"]`),
+      c: centre(g.bbox),
+      letter: desktopLetters[i].textContent.trim(),
+    })),
+    1,
+  );
+  wireThaana(portrait, portrait.querySelector('[data-front]'), portraitLetters, 0.55);
+  function wireThaana(card, labels, letters, spacing) {
+    const glyphs = letters.map((g) => ({
+      ...g,
       s: 1,
+      b: 0,
+      pinned: false,
+      fill: g.el.getAttribute('fill') || '#10100F',
+      top: false,
     }));
+    const noHover = matchMedia('(hover: none)');
+    let pressed = false;
+    let idleAfter = 0;
+    // Only time spent visibly idle advances the sequence. The site-wide
+    // Reduce motion control stops the loop and restores the complete still.
+    let ambient = null,
+      previous = null,
+      elapsed = -0.7;
+    function ambientProgress(dt, now) {
+      if (
+        !noHover.matches ||
+        ptr ||
+        hot ||
+        pressed ||
+        now < idleAfter ||
+        glyphs.some((g) => g.pinned)
+      ) {
+        ambient = null;
+        elapsed = -0.85;
+        return 0;
+      }
+      elapsed += dt;
+      if (elapsed < 0) return 0;
+      if (!ambient) {
+        const matrix = card.getScreenCTM();
+        if (!matrix) return 0;
+        // On a short phone the grid can extend below the viewport. Choose
+        // an on-screen small letter, not a hidden one or the previous one.
+        const candidates = glyphs.filter((g) => {
+          if (g === previous) return false;
+          const pt = new DOMPoint(...g.c).matrixTransform(matrix);
+          return pt.y >= 24 && pt.y <= innerHeight - 24;
+        });
+        if (!candidates.length) {
+          elapsed = -0.25;
+          return 0;
+        }
+        ambient = previous = candidates[Math.floor(Math.random() * candidates.length)];
+        elapsed = 0;
+      }
+      const rise = 0.72,
+        hold = 0.42,
+        fall = 0.86;
+      const t = elapsed < rise ? elapsed / rise : 1 - Math.max(0, elapsed - rise - hold) / fall;
+      if (t <= 0 && elapsed >= rise) {
+        ambient = null;
+        elapsed = -(0.8 + Math.random() * 0.65);
+        return 0;
+      }
+      return t * t * (3 - 2 * t);
+    }
     const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const mix = (a, b, p) =>
       '#' +
@@ -798,17 +862,19 @@ export async function initDesignPreviews(initialSeed = 7) {
         .join('');
     let ptr = null,
       hot = null;
-    const glyphArt = card.querySelector('[data-design-svg="thaana"]');
+
     const toSvg = (event) => {
       if (!motionEnabled()) return null;
-      const point = svgPoint(glyphArt, event);
+      const point = svgPoint(card, event);
       return point ? [point.x, point.y] : null;
     };
-    const inCard = ([x, y]) =>
-      x >= I.card[0] && x <= I.card[0] + I.card[2] && y >= I.card[1] && y <= I.card[1] + I.card[3];
+    const inCard = ([x, y]) => {
+      const box = card.viewBox.baseVal;
+      return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height;
+    };
     const pick = (pt) => {
       let best = null,
-        bd = THAANA.catch;
+        bd = THAANA.catch * spacing;
       for (const g of glyphs) {
         const d = Math.hypot(g.c[0] - pt[0], g.c[1] - pt[1]);
         if (d < bd) {
@@ -818,6 +884,10 @@ export async function initDesignPreviews(initialSeed = 7) {
       }
       return best;
     };
+    card.addEventListener('pointerdown', () => {
+      pressed = true;
+      wake();
+    });
     card.addEventListener('pointermove', (e) => {
       const p = toSvg(e);
       if (!p) return;
@@ -841,14 +911,17 @@ export async function initDesignPreviews(initialSeed = 7) {
       }
     });
     const releaseThaanaPointer = () => {
+      pressed = false;
+      idleAfter = performance.now() / 1000 + 1.2;
       ptr = hot = null;
       wake();
     };
     card.addEventListener('pointercancel', releaseThaanaPointer);
     card.addEventListener('pointerup', (event) => {
+      pressed = false;
       if (event.pointerType !== 'mouse') releaseThaanaPointer();
     });
-    setupThaanaKeyboard(card, glyphs, (g) => {
+    setupThaanaKeyboard(card, glyphs, spacing, (g) => {
       ptr = g?.c ?? null;
       hot = g;
       wake();
@@ -859,17 +932,19 @@ export async function initDesignPreviews(initialSeed = 7) {
         dt = Math.min(0.05, now - last);
       last = now;
       const k = 1 - Math.exp(-THAANA.ease * dt);
+      const auto = ambientProgress(dt, now);
       for (const g of glyphs) {
         let ts = 1;
         if (ptr) {
           const d = Math.hypot(g.c[0] - ptr[0], g.c[1] - ptr[1]);
-          const f = Math.max(0, 1 - d / THAANA.lens);
+          const f = Math.max(0, 1 - d / (THAANA.lens * spacing));
           ts = 1 + THAANA.swell * f * f * (3 - 2 * f);
         }
         const tb = g === hot || g.pinned ? 1 : 0;
         g.b += (tb - g.b) * k;
         g.s += (ts - g.s) * k;
-        const s = g.s * (1 + (THAANA.bloom - 1) * C.settle(g.b));
+        const bloom = Math.max(C.settle(g.b), g === ambient ? auto : 0);
+        const s = g.s * (1 + (THAANA.bloom - 1) * bloom);
         if (Math.abs(s - 1) < 0.002 && g.b < 0.002) {
           if (g.el.hasAttribute('transform')) {
             g.el.removeAttribute('transform');
@@ -878,36 +953,18 @@ export async function initDesignPreviews(initialSeed = 7) {
           continue;
         }
         g.el.setAttribute('transform', scaleAbout(g.c[0], g.c[1], s));
-        g.el.setAttribute('fill', mix(g.fill, THAANA.green, Math.min(1, g.b * 1.4)));
+        g.el.setAttribute(
+          'fill',
+          mix(g.fill, THAANA.green, Math.max(Math.min(1, g.b * 1.4), g === ambient ? auto : 0)),
+        );
         // a blooming letter is lifted above the others (and above the painted ones)
-        if (g.b > 0.05 && !g.top) {
+        if (g.b > 0.05 && !g.top && g.el !== document.activeElement) {
           labels.parentNode.insertBefore(g.el, labels);
           g.top = true;
         }
       }
-      for (const b of blobs) {
-        let tx = 0,
-          ty = 0,
-          ts = 1;
-        if (ptr) {
-          const dx = b.c[0] - ptr[0],
-            dy = b.c[1] - ptr[1],
-            d = Math.hypot(dx, dy) || 1,
-            f = Math.max(0, 1 - d / THAANA.pushReach);
-          tx = (dx / d) * THAANA.push * f;
-          ty = (dy / d) * THAANA.push * f;
-          ts = 1 + 0.05 * f;
-        }
-        b.x += (tx - b.x) * k;
-        b.y += (ty - b.y) * k;
-        b.s += (ts - b.s) * k;
-        b.el.setAttribute(
-          'transform',
-          `translate(${b.x.toFixed(2)} ${b.y.toFixed(2)}) ` + scaleAbout(b.c[0], b.c[1], b.s),
-        );
-      }
     });
-  })();
+  }
 
   const visible = new Set();
   let raf = 0;
@@ -943,6 +1000,23 @@ export async function initDesignPreviews(initialSeed = 7) {
   function syncMotionPreference() {
     const interactive = motionEnabled();
     thaanaArt.setAttribute('aria-hidden', String(!interactive));
+    portrait.setAttribute('aria-hidden', String(!interactive));
+    // The portrait SVG is also the reduced-motion still. Keep its controls
+    // out of the tab order when it is decorative.
+    portrait.toggleAttribute('inert', !interactive);
+    for (const letter of portrait.querySelectorAll('[tabindex]')) {
+      if (!interactive && letter.getAttribute('tabindex') === '0') {
+        letter.dataset.restoreFocus = 'true';
+        letter.setAttribute('tabindex', '-1');
+      } else if (interactive && letter.dataset.restoreFocus) {
+        delete letter.dataset.restoreFocus;
+        letter.setAttribute('tabindex', '0');
+      }
+      if (!interactive) {
+        letter.removeAttribute('transform');
+        letter.setAttribute('fill', '#10100f');
+      }
+    }
     thaanaInstructions.hidden = !interactive;
     wake();
   }
@@ -962,13 +1036,17 @@ export async function initDesignPreviews(initialSeed = 7) {
   syncMotionPreference();
 }
 
-function setupThaanaKeyboard(card, glyphs, activate) {
-  const letters = [
-    ...card.querySelectorAll('.design-thaana-native [data-node-id="2382:110952"] > p'),
-  ]
-    .slice(0, glyphs.length)
-    .map((p) => p.textContent.trim());
-  const art = card.querySelector('[data-design-svg="thaana"]');
+function setupThaanaKeyboard(art, glyphs, spacing, activate) {
+  // The ink scales up to sixfold. Keep keyboard focus on its original cell,
+  // on a separate noninteractive layer rather than an outline on the ink.
+  const ring = document.createElementNS(art.namespaceURI, 'rect');
+  const side = 68 * spacing;
+  ring.setAttribute('class', 'design-thaana-focus');
+  ring.setAttribute('width', side);
+  ring.setAttribute('height', side);
+  ring.setAttribute('rx', 6 * spacing);
+  ring.setAttribute('aria-hidden', 'true');
+  art.append(ring);
   art.setAttribute('role', 'group');
   art.setAttribute('aria-label', 'Interactive Thaana letters');
   art.setAttribute('aria-describedby', 'thaana-preview-instructions');
@@ -976,9 +1054,13 @@ function setupThaanaKeyboard(card, glyphs, activate) {
     const el = g.el;
     el.setAttribute('role', 'button');
     el.setAttribute('tabindex', i === 0 ? '0' : '-1');
-    el.setAttribute('aria-label', `Pin letter ${letters[i]}`);
+    el.setAttribute('aria-label', `Pin letter ${g.letter}`);
     el.setAttribute('aria-pressed', 'false');
-    el.addEventListener('focus', () => activate(g));
+    el.addEventListener('focus', () => {
+      ring.setAttribute('x', g.c[0] - side / 2);
+      ring.setAttribute('y', g.c[1] - side / 2);
+      if (el.matches(':focus-visible')) activate(g);
+    });
     el.addEventListener('blur', () => activate(null));
     el.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {

@@ -1,0 +1,28 @@
+---
+import DocsFigure from './DocsFigure.astro';
+interface Props {
+  kind: 'do' | 'dont';
+  src?: string;
+  darkSrc?: string;
+  alt?: string;
+  width?: string;
+  height?: string;
+}
+const { kind, ...figure } = Astro.props;
+---
+
+<div class="docs-guideline" data-kind={kind}>
+  {figure.src && figure.alt && figure.width && figure.height && (
+    <DocsFigure
+      src={figure.src}
+      alt={figure.alt}
+      width={figure.width}
+      height={figure.height}
+      darkSrc={figure.darkSrc}
+    />
+  )}
+  <p class="docs-guideline__label">{kind === 'do' ? 'Do' : 'Don’t'}</p>
+  <div class="docs-guideline__copy">
+    <slot />
+  </div>
+</div>

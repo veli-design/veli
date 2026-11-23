@@ -1,5 +1,7 @@
 // @ts-check
 import process from 'node:process';
+import { writeFileSync } from 'node:fs';
+import { URL } from 'node:url';
 import { legacyRedirects } from './scripts/site-routes.mjs';
 import { redirectsIntegration } from './scripts/redirects-integration.mjs';
 
@@ -9,19 +11,33 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import tokenPlayground from '../../packages/tokens/lib/playground.mjs';
+import { renderHeaders } from './src/lib/doc-areas.mjs';
 import { remarkDocsSearch } from './src/lib/remark-docs-search';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
 import rehypeDocTables from './src/lib/rehype-doc-tables.mjs';
 import rehypePreviewCode from './src/lib/rehype-preview-code.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
 import { remarkComponentTabs } from './src/lib/remark-component-tabs.mjs';
+import { remarkDocsTabs } from './src/lib/remark-docs-tabs.mjs';
 
 const site = process.env.PUBLIC_SITE_URL?.trim();
+
+/** @returns {import('astro').AstroIntegration} */
+function writeHeadersIntegration() {
+  return {
+    name: 'veli-headers',
+    hooks: {
+      'astro:build:done': ({ dir }) => {
+        writeFileSync(new URL('./_headers', dir), renderHeaders());
+      },
+    },
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
   ...(site ? { site } : {}),
-  integrations: [mdx(), react(), redirectsIntegration()],
+  integrations: [mdx(), react(), writeHeadersIntegration(), redirectsIntegration()],
   redirects: Object.fromEntries(
     Object.entries(legacyRedirects)
       .filter(([from]) => from.endsWith('/') || from.includes('.'))
@@ -41,7 +57,7 @@ export default defineConfig({
       ],
     },
     processor: unified({
-      remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
+      remarkPlugins: [remarkDocsTabs, remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
       rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks, rehypeDocTables],
     }),
   },

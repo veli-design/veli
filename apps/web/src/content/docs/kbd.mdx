@@ -1,13 +1,326 @@
 ---
 title: Kbd
-description: Keyboard key and shortcut display, with a group wrapper for multi-key combinations and a default or inverted treatment.
+description: 'Shows a keyboard key, or a shortcut made of several keys, next to the action it runs.'
 ---
 
 import { KbdUsageDemo, KbdVariantsDemo } from '../../components/KbdExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Kbd
 
-The `Kbd` component renders a single keyboard key, and `KbdGroup` composes several keys into a shortcut. Use them in menus, tooltips, and documentation to show keyboard affordances. These components display shortcuts; they do not register keyboard handlers.
+<DocsTab id="overview">
+
+Kbd shows the name of a keyboard key, and KbdGroup shows a shortcut made of several keys, such as Ctrl K. Use them beside menu items, in tooltips, in help panels and in instructions that name a key. Kbd only displays keys; your app handles the shortcut.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/kbd.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-kbd--docs"
+/>
+
+## When to use
+
+### Use Kbd when
+
+- You document a keyboard key or shortcut, such as in a help panel.
+- You show a shortcut beside a menu item or in a help hint.
+- An instruction names a key people press, such as Press Enter to search.
+- You show one key, such as Enter or Esc. For a combination, use KbdGroup with one Kbd per key.
+
+### Don't use Kbd when
+
+- The element must capture keyboard input. Kbd only displays keys; handle the keys in the app.
+- The value is something people type or copy, such as a reference number, a code or a password. Show it as plain text, kept left to right, such as PR-20418.
+- The layout is used only with touch, such as a phone view. Keep the action on its visible control, and show shortcuts in desktop layouts.
+- The shortcut would be the only way to do something. Give the action a visible control, and list the shortcut in a menu or help panel.
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-intro-1.webp"
+  darkSrc="/images/docs/kbd/kbd-intro-1-dark.webp"
+  alt="A white panel on a grey surface titled Keyboard shortcuts, with the line Work faster on the application review screen. Three rows list an action and its keys: Search applications with Ctrl K, Submit the review with Ctrl Enter, and Close this panel with Esc."
+  width="2400"
+  height="1068"
+  caption="Shortcuts listed next to the actions they run."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-anatomy-1.svg"
+  darkSrc="/images/docs/kbd/kbd-anatomy-1-dark.svg"
+  alt="A group of three keys, Command shown as a symbol icon, Shift shown as an up arrow icon, and K, with four numbered markers: 1 on the K key, 2 on its label K, 3 on the Command icon and 4 on the group."
+  width="576"
+  height="400"
+  caption="The parts of a key and a key group, shown on Command Shift K. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Key**
+
+   20 high and at least 20 wide, with radius 4 and a translucent fill. Display only, so it never takes focus. In code it is Kbd, the native kbd element.
+
+2. **Label**
+
+   The key name as printed on the key, such as K, Enter or Shift, in Caption regular 12/16 on one line. In code it is the Kbd children.
+
+3. **Icon**
+
+   An optional 12 x 12 icon for a key printed as a symbol, such as Command. It is decorative, so hide it from screen readers with aria-hidden and name the key instead.
+
+4. **Group**
+
+   Holds the keys of one shortcut, 2 apart, modifiers first and the main key last. In code it is KbdGroup, with role group and an aria-label.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/kbd/kbd-do-1.webp" darkSrc="/images/docs/kbd/kbd-do-1-dark.webp" alt="A group of three keys: Ctrl, Shift and F." width="1136" height="400">
+
+Show one key per Kbd in a KbdGroup, modifiers first and the main key last: Ctrl, Shift, F.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/kbd/kbd-dont-1.webp" darkSrc="/images/docs/kbd/kbd-dont-1-dark.webp" alt="A single key containing Ctrl+Shift+F." width="1136" height="400">
+
+Don't put a whole shortcut in one key. Ctrl+Shift+F in one key reads as a single key with a long name.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/kbd/kbd-do-2.webp" darkSrc="/images/docs/kbd/kbd-do-2-dark.webp" alt="Two rows: macOS with the keys ⌘ and K, and Windows and Linux with the keys Ctrl and K." width="1136" height="400">
+
+Show the keys for each platform: ⌘ K on macOS, Ctrl K on Windows and Linux. Detect the platform, or show both, each with its platform named.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/kbd/kbd-dont-2.webp" darkSrc="/images/docs/kbd/kbd-dont-2-dark.webp" alt="A group of two keys: Ctrl/⌘ and K." width="1136" height="400">
+
+Don't put two platforms in one label. Ctrl/⌘ K makes people work out which key is theirs.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/kbd/kbd-do-3.webp" darkSrc="/images/docs/kbd/kbd-do-3-dark.webp" alt="The word Search followed by the keys Ctrl and K." width="1136" height="400">
+
+Name the action next to its keys: Search, Ctrl K.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/kbd/kbd-dont-3.webp" darkSrc="/images/docs/kbd/kbd-dont-3-dark.webp" alt="The keys Ctrl and K on their own, with no action named." width="1136" height="400">
+
+Don't show keys on their own. People learn a shortcut by linking it to what it does.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Key names as printed
+
+Write the name printed on the key, and use the same name everywhere.
+
+| Do    | Don't                                                          |
+| :---- | :------------------------------------------------------------- |
+| Ctrl  | control (not how the key is printed)                           |
+| Enter | Return key (a role word, and the macOS name on a Windows hint) |
+| K     |                                                                |
+
+### Key order
+
+Modifiers first and the main key last: Ctrl, Shift, F. Keep the same order in every hint.
+
+| Do                         | Don't                                |
+| :------------------------- | :----------------------------------- |
+| Ctrl Shift F, one key each | Ctrl+Shift+F (three keys in one Kbd) |
+
+### Running text
+
+In a sentence, write the keys with a plus sign and non-breaking spaces: Ctrl + K, Shift + Tab. In UI, show them with Kbd and KbdGroup.
+
+### Platform keys
+
+Use ⌘ and ⌥ on macOS, and Ctrl and Alt on Windows and Linux. Don't use a slash to show both.
+
+| Do     | Don't                                 |
+| :----- | :------------------------------------ |
+| ⌘ K    | Ctrl/⌘ K (two platforms in one label) |
+| Ctrl K |                                       |
+
+### Group names
+
+Write a KbdGroup aria-label as the key names in words. Screen readers may skip or misread symbols such as ⌘.
+
+| Do              | Don't                    |
+| :-------------- | :----------------------- |
+| Command K       | ⌘K (a symbol, not words) |
+| Control Shift F |                          |
+
+### Strings and Dhivehi
+
+Kbd has no built-in text. Key labels come from its children and group names from aria-label; keep both in the language files with the rest of the screen. On Dhivehi screens keep the key names in English, with lang="en", because the keys are printed in Latin.
+
+## Related components
+
+| Component                            | When to use it                                                                                        |
+| :----------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| [Menu](/docs/components/menu/)       | menu items can show a shortcut hint with Kbd. The hint is display only; Menu doesn't handle the keys. |
+| [Tooltip](/docs/components/tooltip/) | a small Tooltip can show an action and its keys, with a KbdGroup after the text.                      |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for keys and key groups: variants, content options, spacing and tokens. Values match the shipped component.
+
+## Variants
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-variants-1.webp"
+  darkSrc="/images/docs/kbd/kbd-variants-1-dark.webp"
+  alt="Two examples labelled variant default and variant inverted, each the keys Ctrl and K. Default sits on a light surface with light keys and dark text; inverted sits on a dark teal brand fill with subtle keys and muted text."
+  width="2400"
+  height="624"
+  caption="Default, for page surfaces, and inverted, for dark or brand surfaces."
+/>
+
+| Variant  | Use it on                                                   | Look                                      |
+| :------- | :---------------------------------------------------------- | :---------------------------------------- |
+| default  | Page surfaces, menus and light cards                        | A light translucent key with default text |
+| inverted | Dark or brand surfaces, such as a Tooltip with tone primary | A subtle key with inactive text           |
+
+In code, variant defaults to default. Set variant on KbdGroup to apply it to every key that has no variant of its own; it reaches direct Kbd children only. Choose the treatment the surrounding component asks for.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-options-1.webp"
+  darkSrc="/images/docs/kbd/kbd-options-1-dark.webp"
+  alt="Three examples labelled Letter or number, Key name and Symbol or icon: a key with K, a key with Enter and a key with the Command symbol."
+  width="2400"
+  height="624"
+/>
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-options-2.webp"
+  darkSrc="/images/docs/kbd/kbd-options-2-dark.webp"
+  alt="Three examples labelled Combination, In a menu and In a tooltip: the keys Ctrl, Shift and F; a menu item Edit details with the keys Ctrl and E at the end; and a small tooltip reading Search with the keys Ctrl and K after the text."
+  width="2400"
+  height="624"
+  caption="A letter, a key name, a symbol key, a combination, a menu shortcut and a tooltip shortcut."
+/>
+
+- **Letter or number**: such as K or 1.
+- **Key name**: as printed on the key, such as Shift, Enter or Esc. Longer names such as Page Down widen the key without wrapping.
+- **Symbol or icon**: a key printed as a symbol, such as ⌘, ⌥ or ⇧, or an arrow shown as a 12px icon. Hide the icon and name the key.
+- **Combination**: one key each in a KbdGroup, modifiers first and the main key last.
+- **In a menu**: a shortcut beside a menu item, display only.
+- **In a tooltip**: an action and its keys in a small Tooltip, with the KbdGroup after the text and an 8 gap.
+
+## Behaviour
+
+- **Display only**: Kbd and KbdGroup don't register or handle shortcuts; the app wires them up. Shortcut hints in menus are display only too.
+- **Modifier keys**: build shortcuts on a modifier key, such as Ctrl, ⌘ or Alt, rather than single letters.
+- **Single keys**: a shortcut of one letter, number or symbol must work only while its component has focus, or people must be able to turn it off or change it.
+- **Reserved keys**: never take over browser or screen reader keys, such as Ctrl + F, Ctrl + L, Tab or F6. Choose unused combinations and let people turn custom shortcuts off.
+- **Dhivehi keyboards**: test shortcuts with the Dhivehi phonetic keyboard. Match the physical key with KeyboardEvent.code, or accept both characters: with that keyboard on, the K key types ކ.
+- **Discoverable**: list shortcuts in menus or a help panel, and never make a shortcut the only way to do something.
+- **No wrapping**: a KbdGroup stays on one line. Let the surrounding row wrap between groups on narrow screens.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-rtl-1.webp"
+  darkSrc="/images/docs/kbd/kbd-rtl-1-dark.webp"
+  alt="Two examples labelled LTR menu-item and RTL menu-itemDv. On the left, the menu item Edit with the keys Ctrl and E at the end. On the right, the Dhivehi menu item އެޑިޓް on the right, with the keys Ctrl and E on the left, still in Latin and in left to right order."
+  width="2400"
+  height="568"
+  caption="A Dhivehi menu item with a Latin shortcut."
+/>
+
+- Keys keep their Latin typography, Inter caption 12/16, on Dhivehi screens. Dhivehi key labels are not supported.
+- Kbd sets lang="en" on every key by default, so screen readers read the key names in English. Keep that default under VeliProvider language dv.
+- Set dir="ltr" on a KbdGroup on Dhivehi pages so the modifier stays first, as in Ctrl E. The surrounding menu stays right to left. Menu's shortcut prop already renders its keys left to right.
+- There is no Dhivehi version of Kbd in Figma; key names and symbols stay Latin.
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-spacing-1.svg"
+  darkSrc="/images/docs/kbd/kbd-spacing-1-dark.svg"
+  alt="Spacing redlines: a key K, 20 high, with 2 padding top and bottom and 4 at the sides; an icon key with a 12 x 12 icon in a 20 x 20 key; and a group Ctrl K with a 2 gap between keys."
+  width="1200"
+  height="272"
+  caption="All values in pixels at 1x."
+/>
+
+| Property                          | Value   |
+| :-------------------------------- | :------ |
+| Key height                        | 20      |
+| Minimum key width                 | 20      |
+| Vertical padding                  | 2       |
+| Side padding                      | 4       |
+| Corner radius                     | 4       |
+| Icon                              | 12 x 12 |
+| Gap between keys in a group       | 2       |
+| Gap between tooltip text and keys | 8       |
+
+A single letter fills the minimum width and shows as a square key. Longer names grow the key: in Storybook Enter is about 39 wide, Esc 29 and Page Down 74. Key names stay on one line, and keys keep these sizes on Dhivehi screens.
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-minwidth-1.svg"
+  darkSrc="/images/docs/kbd/kbd-minwidth-1-dark.svg"
+  alt="Three keys with their widths: K is 20 wide, Esc 29 and Page Down 74."
+  width="1200"
+  height="268"
+  caption="A key is at least 20 wide; longer names make it wider."
+/>
+
+<DocsFigure
+  src="/images/docs/kbd/kbd-radius-1.svg"
+  darkSrc="/images/docs/kbd/kbd-radius-1-dark.svg"
+  alt="A key Enter marked with a corner radius of 4."
+  width="1200"
+  height="268"
+  caption="Every key uses radius 4 (`radius/sm`) on all corners, whatever its width."
+/>
+
+## Typography
+
+| Element             | Style                                | Colour token         |
+| :------------------ | :----------------------------------- | :------------------- |
+| Key label, default  | Caption regular, Inter Regular 12/16 | `text/base/DEFAULT`  |
+| Key label, inverted | Caption regular, Inter Regular 12/16 | `text/base/inactive` |
+
+Key names never take a Dhivehi style.
+
+## Tokens
+
+| Part     | Default                       | Inverted                                     |
+| :------- | :---------------------------- | :------------------------------------------- |
+| Key fill | `components/menu/shortcut-bg` | `components/button/secondary/subtle/default` |
+| Label    | `text/base/DEFAULT`           | `text/base/inactive`                         |
+| Icon     | `icon/base/default`           | `icon/base/inactive`                         |
+
+Kbd has no motion.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -136,3 +449,31 @@ Menu's string and array `shortcut` props already render Latin keys in an LTR gro
 `Kbd` uses the native `<kbd>` element and is not focusable by default. Give a shortcut group an accessible name when its glyphs need explanation, and hide decorative SVG icons with `aria-hidden="true"`. For an icon-only standalone key, provide `aria-label` on the key.
 
 Neither component handles key presses, adds motion, or changes the tab order. Implement any shortcut behavior on the application action separately, and use `aria-keyshortcuts` on that action when appropriate. Menu and Tooltip retain their own focus, dismissal, and reduced-motion behavior.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How keys and shortcuts work with screen readers and keyboards, and what you still need to do. Kbd is static text inside the native kbd element.
+
+## Keyboard
+
+Kbd and KbdGroup are not focusable and don't change the tab order. A shortcut is a faster way, not the only way: every action must still work from its visible control with the keyboard alone.
+
+## Screen readers
+
+- Kbd uses the native kbd element and KbdGroup has role group.
+- Give a KbdGroup an aria-label when its keys alone don't explain the shortcut, such as icon keys: Command Shift K.
+- Hide an icon inside a key with aria-hidden, and name the key instead, such as aria-label="Command key".
+- Put aria-keyshortcuts on the control the shortcut runs, such as aria-keyshortcuts="Control+K" on the search button, so screen readers announce it there.
+
+## Contrast
+
+- Default keys: measured in Storybook in light mode on the base surface, the label is about 6.7:1. The key fill against the surface is only about 1.1:1, so the key shape is faint; the label carries the meaning.
+- Inverted keys: the label is below 4.5:1. Measured in Storybook on the base surface it is about 2.2:1, and the Figma build measured about 3.0:1 on the primary Tooltip fill in light mode and 1.35:1 in dark mode. Don't rely on the inverted variant for important text until its tokens are reviewed.
+
+## Right to left
+
+Keys keep lang="en" on Dhivehi pages, so screen readers read the key names in English. Set dir="ltr" on each KbdGroup so the key order stays modifier first.
+
+</DocsTab>

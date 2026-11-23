@@ -1,13 +1,402 @@
 ---
 title: Popover
-description: Anchored dialog for interactive content, with header, content, and footer parts, three intents, and a directional arrow.
+description: 'A floating panel that shows extra help or a few controls next to the button that opened it.'
 ---
 
 import { PopoverIntentsDemo, PopoverUsageDemo } from '../../components/PopoverExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Popover
 
-Show interactive content beside the control that opened it — filters, quick settings, or onboarding steps. Compose a pressable trigger and `Popover` inside `PopoverTrigger`, then put a `PopoverDialog` inside the popover. Use [Tooltip](/docs/components/tooltip/) for brief, non-interactive help, [Menu](/docs/components/menu/) for a list of actions, and [Modal](/docs/components/modal/) for blocking tasks that are not tied to a trigger.
+<DocsTab id="overview">
+
+A popover shows extra help or a few controls next to the button that opened it, without leaving the page. Use it for short, optional content that people open on purpose, such as help on a field or a small set of filters. A popover is a small dialog anchored to its trigger: it can have a header with a title, a body and a footer with up to 2 actions.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/popover.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/header-title--docs"
+/>
+
+## When to use
+
+### Use a popover when
+
+- The floating content holds interactive controls, such as a small filter panel.
+- Contextual help, filters, onboarding tips or actions need a panel anchored to a control.
+- Optional help is longer than 2 sentences, or has a link, and people open it on purpose with a labelled button such as More information.
+
+### Don't use a popover when
+
+- The content is a short label that shows on hover or focus and is not interactive. Use Tooltip.
+- The task needs a blocking dialog, such as a confirmation. Use Modal.
+- The content is long or has several steps. Put it on a full page and link to it.
+- People choose from a list of actions. Use Menu.
+- The content must always be visible. Put it on the page.
+
+<DocsFigure
+  src="/images/docs/popover/popover-intro-1.webp"
+  darkSrc="/images/docs/popover/popover-intro-1-dark.webp"
+  alt='A Passport renewal form card with a required National ID number field holding A123456 and an info icon after the label. A tertiary popover is open below the field, with an icon, the title National ID number, a close button, the body "Your ID number is on the front of your ID card, below your photo." and a Got it button in the footer.'
+  width="2400"
+  height="1224"
+  caption="A popover gives help on a field next to the button that opened it."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/popover/popover-anatomy-1.svg"
+  darkSrc="/images/docs/popover/popover-anatomy-1-dark.svg"
+  alt='A tertiary popover with seven numbered markers: 1 on the arrow at the top edge, 2 on the header icon, 3 on the title National ID number, 4 on the close button, 5 on the body "Your ID number is on the front of your ID card.", 6 on the footer label 1 of 3 and 7 on the footer actions Previous and Next.'
+  width="576"
+  height="468"
+  caption="The parts of a popover, shown in the tertiary intent. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Arrow**
+
+   A 22 x 12 point in the popover fill that points at the trigger. It follows the trigger along the edge, staying 20 from a corner. On by default. In code: showArrow.
+
+2. **Icon**
+
+   An optional 16px decorative icon before the title. In code: PopoverHeader icon.
+
+3. **Title**
+
+   Says what the popover is about, in body sm medium. It is a heading, level 2 by default, and names the dialog. In code: PopoverHeader title.
+
+4. **Close button**
+
+   An xs ghost icon button named Close popover. It shows only when you pass onClose. In code: onClose.
+
+5. **Body**
+
+   Any content, such as text, fields or a list. In code: PopoverContent.
+
+6. **Footer label**
+
+   Optional text for progress or context, such as 1 of 3, in caption regular. In code: PopoverFooter label.
+
+7. **Actions**
+
+   Up to 2 xs buttons at the end of the footer, 8 apart, the main one last. In code: buttons as PopoverFooter children.
+
+</DocsAnatomy>
+
+The trigger is the pressable first child of PopoverTrigger, usually a Button. The surface is Popover, with PopoverDialog inside it. Dividers sit below the header and above the footer.
+
+Header and footer are optional. A popover for contextual help can have a body only.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/popover/popover-do-1.png" darkSrc="/images/docs/popover/popover-do-1-dark.webp" alt="A body-only popover with the text &quot;Your reference number is in the email we sent when you applied.&quot;" width="1136" height="768">
+
+Keep a popover to a few lines or a few fields.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/popover/popover-dont-1.png" darkSrc="/images/docs/popover/popover-dont-1-dark.webp" alt="A popover titled Before you apply with a long paragraph of 5 sentences of steps, and Previous and Next in the footer." width="1136" height="768">
+
+Don't put long content in a popover. A paragraph of steps belongs on a full page; link to it from the popover.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/popover/popover-do-2.png" darkSrc="/images/docs/popover/popover-do-2-dark.webp" alt="A popover titled Processing time with the body &quot;Most applications are processed within 5 working days.&quot;" width="1136" height="424">
+
+Write a title that says what the popover is about.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/popover/popover-dont-2.png" darkSrc="/images/docs/popover/popover-dont-2-dark.webp" alt="The same popover titled Info." width="1136" height="424">
+
+Don't use vague titles such as Info or Note. They don't say what the popover is about.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/popover/popover-do-3.png" darkSrc="/images/docs/popover/popover-do-3-dark.webp" alt="A popover titled Filters with the body &quot;Show applications that are overdue.&quot; and Clear and Apply in the footer, Apply last." width="1136" height="488">
+
+Label actions with verbs that say what happens.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/popover/popover-dont-3.png" darkSrc="/images/docs/popover/popover-dont-3-dark.webp" alt="The same Filters popover with Cancel and OK in the footer." width="1136" height="488">
+
+Don't label an action OK. It doesn't say what happens.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Title
+
+Name the title in a few words, in sentence case, with no full stop. Leave the title out for a single line of help.
+
+| Do              | Don't                                                                                         |
+| :-------------- | :-------------------------------------------------------------------------------------------- |
+| Processing time | Information about processing times for applications. (too long, and a title has no full stop) |
+| Filters         | Info (vague)                                                                                  |
+|                 | Note (vague)                                                                                  |
+
+### Body
+
+Keep the body short: one idea in 2 or 3 short sentences, or a few fields. End every sentence with a full stop. Link to a full page for more. Long content and multi-step forms belong on a full page.
+
+| Do                                                              | Don't                                                                              |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| Most applications are processed within 5 working days.          | A popover with 5 paragraphs of eligibility rules (belongs on the page)             |
+| Your reference number is in the email we sent when you applied. | Before you apply, followed by 5 sentences of steps (too long; link to a full page) |
+
+### Footer actions
+
+Use at most 2 actions, each starting with a verb, with the main action last at the end of the footer. Use Close for a popover that holds no unsaved input, and Done to finish a task with nothing left to save.
+
+| Do                  | Don't                                         |
+| :------------------ | :-------------------------------------------- |
+| Clear, then Apply   | Apply, then Clear (the main action goes last) |
+| Previous, then Next | OK (does not say what happens)                |
+
+### Footer label
+
+Use the footer label for progress or context, written with numerals. Leave it empty otherwise.
+
+| Do     | Don't                                             |
+| :----- | :------------------------------------------------ |
+| 1 of 3 | Step one out of three (write numbers as numerals) |
+
+### Trigger label
+
+Label the trigger with what the popover holds, using the same words as its title when it has one.
+
+| Do               | Don't                                             |
+| :--------------- | :------------------------------------------------ |
+| Filters          | Click for more (says the gesture, not what opens) |
+| More information | Info icon with no name (unnamed trigger)          |
+
+### Built-in strings and Dhivehi
+
+Popover has two built-in strings. The header close button is named Close popover (ޕޮޕްއޯވަރ ބަންދުކުރައްވާ in Dhivehi). If you change it with closeButtonLabel, give a useful name in both languages, such as Close filters. The visually hidden Dismiss buttons have no prop and stay in English on Dhivehi pages.
+
+Write Dhivehi titles and body text natively, keep them as short as the English, and check that Dhivehi titles still fit the header. Wrap long text rather than cutting it.
+
+## Related components
+
+| Component                                  | When to use it                                                                                                       |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| [Tooltip](/docs/components/tooltip/)       | a short text label that shows on hover or focus.                                                                     |
+| [Modal](/docs/components/modal/)           | a short task that needs a blocking dialog, such as a confirmation. Long content goes on a full page, not in a modal. |
+| [Menu](/docs/components/menu/)             | a list of actions or options from a trigger. MenuPopover is a Popover.                                               |
+| [Button](/docs/components/button/)         | the usual trigger, and the actions in the footer.                                                                    |
+| [VeliProvider](/docs/components/provider/) | sets the language and direction of the popover and the Dhivehi close name.                                           |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the popover: intents, placement, arrow, content options, spacing, typography and tokens.
+
+## Intents
+
+<DocsFigure
+  src="/images/docs/popover/popover-intents-1.png"
+  darkSrc="/images/docs/popover/popover-intents-1-dark.webp"
+  alt='Three popovers titled National ID number with the body "Your ID number is on the front of your ID card.", the footer label 1 of 3 and Previous and Next. Primary has a teal brand fill and dark footer buttons. Secondary has a dark fill and teal footer buttons. Tertiary has a light surface fill with a shadow and teal footer buttons.'
+  width="2400"
+  height="768"
+  caption="Intents primary, secondary and tertiary."
+/>
+
+| Intent    | Look                       | Use for                                                               |
+| :-------- | :------------------------- | :-------------------------------------------------------------------- |
+| primary   | Brand fill                 | Drawing the most attention, such as onboarding tips and announcements |
+| secondary | Dark fill                  | Standing apart from light content without the brand colour            |
+| tertiary  | Surface fill with a shadow | Help, filters and short forms. The default                            |
+
+Header, footer, close button and arrow follow the intent. In the footer, use secondary buttons on primary popovers, and primary buttons on secondary and tertiary popovers, so the actions keep their contrast on the fill. Use one intent per flow, so popovers in the same product look alike.
+
+## Placement
+
+<DocsFigure
+  src="/images/docs/popover/popover-placements-1.png"
+  darkSrc="/images/docs/popover/popover-placements-1-dark.webp"
+  alt="Three tertiary popovers titled National ID number. Placement bottom: the default, opening below the trigger, centred, with the arrow on the top edge. Placement top left: opening above, aligned to the left of the trigger, with the arrow near the left of the bottom edge. Placement right: opening to the right, centred, with the arrow on the left edge."
+  width="2400"
+  height="768"
+  caption="Placements bottom, top left and right. Use start and end in code when the alignment should mirror in Dhivehi."
+/>
+
+- A popover has 12 placements: top, bottom, left and right, each centred or aligned to one end. Bottom, centred, is the default.
+- When the alignment should mirror in Dhivehi, use the start and end placements, which follow the reading direction, rather than left and right.
+- The popover flips or moves when space is short, and stays 12 from the edge of the screen.
+- Place it so it does not cover its trigger or the field it explains.
+
+## Arrow
+
+Keep the arrow on, the default, whenever the trigger is small or sits among other controls: it ties the popover to its trigger. Turn showArrow off when the popover lines up with a wide trigger, such as a filter bar. With the arrow the popover sits 12 from the trigger; without it, 8.
+
+<DocsFigure
+  src="/images/docs/popover/popover-arrow-1.png"
+  darkSrc="/images/docs/popover/popover-arrow-1-dark.webp"
+  alt="Two tertiary popovers titled National ID number. showArrow true: the arrow on the top edge points at the trigger. showArrow false: no arrow; the popover sits 8 from the trigger."
+  width="2400"
+  height="768"
+  caption="The arrow on, the default, and off."
+/>
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/popover/popover-options-1.png"
+  darkSrc="/images/docs/popover/popover-options-1-dark.webp"
+  alt='Two popovers. Contextual help: a body only, "Your reference number is in the email we sent when you applied." Header and body: the title Processing time with a close button and the body "Most applications are processed within 5 working days."'
+  width="2400"
+  height="664"
+/>
+
+<DocsFigure
+  src="/images/docs/popover/popover-options-2.png"
+  darkSrc="/images/docs/popover/popover-options-2-dark.webp"
+  alt='Two popovers. Filter panel: the title Filters, the checkboxes Active only, Assigned to me and Overdue, and Clear and Apply in the footer. Onboarding tip, in the primary intent: the title Analytics is here, the body "See how your services are used, updated every day.", the footer label 1 of 3 and Previous and Next.'
+  width="2400"
+  height="856"
+  caption="Contextual help, header and body, a filter panel and an onboarding tip."
+/>
+
+- **Body only**: for contextual help on a field or a term. Name the dialog with aria-label on PopoverDialog, such as Help with National ID number.
+- **Header and body**: the title names the popover. The close button shows only when you pass onClose.
+- **Footer**: add a footer label and up to 2 actions. Footer actions close the popover only when your code closes it; use the close function that PopoverDialog passes to its children.
+- **Dividers**: hide the header or footer divider with showDivider.
+- **Width**: set the panel width with className. The surface is 274 wide in the design file.
+- **Size**: keep the body to a few lines or a few fields. If it needs scrolling or more than 2 actions, move the content to a full page.
+
+## Behaviour
+
+- **Opening**: a popover opens on press, never on hover. PopoverTrigger needs a pressable child such as Button.
+- **Closing**: it closes on Escape, on its close button or on a press outside. Focus returns to the trigger.
+- **Modal layer**: by default, while a popover is open, content outside it is hidden from screen readers and a press outside closes it. Set isNonModal for a panel that must stay open while people use the page.
+- **Controlled**: control the open state with isOpen and onOpenChange on PopoverTrigger, or start open with defaultOpen.
+- **Scrolling**: the body scrolls when the content is taller than the space. Keep scrolling inside the popover so it does not move the page behind.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/popover/popover-rtl-1.png"
+  darkSrc="/images/docs/popover/popover-rtl-1-dark.webp"
+  alt="Two popovers side by side. On the left, LTR Popover: the title National ID number with the icon and title on the left and the close button on the right, placeholder body text, the footer label 1 of 3 and Previous and Next on the right. On the right, RTL PopoverDv, mirrored: the icon and the title ހެޑަރ ޓައިޓަލް on the right, the close button on the left, Dhivehi body text aligned right, the footer label ލޭބަލް on the right and the actions ފަހަތަށް and ކުރިއަށް on the left."
+  width="2400"
+  height="880"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the popover mirrors: title on the right, close button and actions on the left. Start and end placements and the arrow side follow the direction.
+- Titles use the Dhivehi medium style (MV A Waheed) and the body and footer label the Dhivehi regular styles (MV Faseyha). The header and footer keep their English heights, 44 and 52.
+- Fill the body with right-aligned Dhivehi text or Dv components.
+- The popover takes its language and direction from VeliProvider. In Figma, design Dhivehi screens with PopoverDv.
+
+Example configuration: the filter panel story, tertiary intent, placement bottom.
+
+| Part                    | English                              | Dhivehi                                                                  |
+| :---------------------- | :----------------------------------- | :----------------------------------------------------------------------- |
+| Trigger                 | Filters                              | ފިލްޓަރސް                                                                |
+| Trigger accessible name | Open filters                         | ފިލްޓަރުތައް ހުޅުވާ                                                      |
+| Title                   | Filters                              | ފިލްޓަރސް                                                                |
+| Options                 | Active only, Assigned to me, Overdue | ހަމައެކަނި އެކްޓިވް، އަޅުގަނޑާ ހަވާލުކުރެވިފައިވާ، މުއްދަތު ހަމަވެފައިވާ |
+| Actions                 | Clear, Apply                         | ކްލިއަރ، އެޕްލައި                                                        |
+| Close button            | Close popover                        | ޕޮޕްއޯވަރ ބަންދުކުރައްވާ                                                 |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/popover/popover-spacing-1.svg"
+  darkSrc="/images/docs/popover/popover-spacing-1-dark.svg"
+  alt="Spacing redlines for a tertiary popover 274 wide, titled National ID number, with 16 side padding and the header, body and footer bands marked."
+  width="1200"
+  height="383"
+  caption="All values in pixels at 1x."
+/>
+
+| Property                                        | Value                   |
+| :---------------------------------------------- | :---------------------- |
+| Width in the design file                        | 274                     |
+| Side padding                                    | 16                      |
+| Header height                                   | 44                      |
+| Header padding, top and bottom                  | 8                       |
+| Gap between header icon, title and close button | 8                       |
+| Close button                                    | 28 x 28                 |
+| Body padding, top and bottom                    | 12 in code, 16 in Figma |
+| Gap between body items                          | 8                       |
+| Footer height                                   | 52                      |
+| Footer padding, top and bottom                  | 12                      |
+| Gap between footer actions                      | 8                       |
+| Offset from the trigger, with the arrow         | 12                      |
+| Offset from the trigger, without the arrow      | 8                       |
+| Arrow                                           | 22 x 12                 |
+| Arrow inset from a corner                       | 20                      |
+| Distance from the screen edge                   | 12                      |
+| Corner radius                                   | 12                      |
+
+Spacing is the same in every intent. In Dhivehi the header and footer keep the same heights, 44 and 52, and the same padding.
+
+## Corner radius
+
+<DocsFigure
+  src="/images/docs/popover/popover-radius-1.svg"
+  darkSrc="/images/docs/popover/popover-radius-1-dark.svg"
+  alt="Three popovers titled National ID number in the primary, secondary and tertiary intents, each marked with a 12 corner radius."
+  width="1200"
+  height="328"
+  caption="Popovers use 12 (`radius/xl`) in every intent. The arrow has no radius."
+/>
+
+## Typography
+
+| Element      | English                      | Dhivehi                                   | Colour token                                                                                             |
+| :----------- | :--------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Title        | Body sm medium, Inter 14/20  | Dhivehi body sm medium, MV A Waheed 17/28 | Primary and secondary `popover/fg-on-primary` and `popover/fg-on-secondary`; tertiary `text/base/strong` |
+| Body text    | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | Inherits the popover text colour                                                                         |
+| Footer label | Caption regular, Inter 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | Primary and secondary as the title; tertiary `text/base/DEFAULT`                                         |
+| Buttons      | Button xs                    | Dhivehi button xs                         | See [Button](/docs/components/button/)                                                                   |
+
+## Tokens
+
+| Intent    | Fill and arrow         | Text and icon                                                                | Dividers                      |
+| :-------- | :--------------------- | :--------------------------------------------------------------------------- | :---------------------------- |
+| primary   | `popover/bg-primary`   | `popover/fg-on-primary`                                                      | `popover/border-on-primary`   |
+| secondary | `popover/bg-secondary` | `popover/fg-on-secondary`                                                    | `popover/border-on-secondary` |
+| tertiary  | `popover/bg-tertiary`  | Title `text/base/strong`, icon `icon/base/strong`, label `text/base/DEFAULT` | `border/base/muted`           |
+
+A popover is a middle layer: give it a shadow stronger than a raised card and lighter than a dialog, and a subtle border as well. In dark mode the lighter raised surface and the border carry the elevation, because shadows barely show on dark backgrounds. Buttons inside keep their own focus ring in `border/focus`. On the primary and secondary fills, content you add must use the treatment for coloured surfaces: text reaches 4.5:1 and parts reach 3:1 against the fill, focus rings included. The `border/focus` ring on these fills was not checked; see "Missing or unverified".
+
+## Motion
+
+| What moves                                                                       | Duration | Easing                                                              |
+| :------------------------------------------------------------------------------- | :------- | :------------------------------------------------------------------ |
+| Entering: fades in, scales up from 96 percent and slides 8 from the trigger side | Normal   | Ease out                                                            |
+| Leaving                                                                          | Fast     | Ease in in the Figma page and the guidelines; ease out in Storybook |
+
+The popover scales from the point on its trigger. With reduced motion turned on, only the fade remains.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -172,3 +561,58 @@ Native `<div>` attributes are forwarded.
 ## RTL and Language
 
 The overlay inherits `lang` and `dir` from `VeliProvider`. Logical placements, the arrow side, and header and footer alignment follow `dir`. On `lang="dv"`, the default close button label is `ޕޮޕްއޯވަރ ބަންދުކުރައްވާ`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the popover works with keyboards, screen readers and assistive settings. The popover is a dialog anchored to its trigger, built on React Aria DialogTrigger, Popover and Dialog.
+
+## Keyboard
+
+| Key                 | Action                                              |
+| :------------------ | :-------------------------------------------------- |
+| Enter or Space      | On the trigger, opens the popover                   |
+| Tab and Shift + Tab | Move between controls inside the popover            |
+| Escape              | Closes the popover and returns focus to the trigger |
+
+Don't set isKeyboardDismissDisabled. Keep Escape and the close button working, so keyboard users can always leave the popover.
+
+## Screen readers
+
+- Wrap the content in PopoverDialog to get dialog behaviour and focus management.
+- Give every popover one name: the PopoverHeader title, which is a heading that names the dialog, or aria-label on PopoverDialog when there is no header.
+- The trigger reports whether the popover is open and which dialog it controls.
+- While a popover is open, content outside it is hidden from screen readers, unless isNonModal is set.
+- The header icon and the dividers are decorative.
+- On phones, visually hidden Dismiss buttons at the start and end of the popover let screen reader users close it without Escape. They read Dismiss in English on Dhivehi pages.
+
+## Focus
+
+Focus moves into the popover when it opens and returns to the trigger when it closes. The close button and footer buttons show the Veli focus ring on keyboard focus.
+
+## Trigger name
+
+Give an icon-only trigger an accessible name that says what opens, such as More information. Don't name it after the picture, such as Info icon.
+
+## Open on press
+
+Open a popover on press, never on hover. For text that shows on hover or focus, use Tooltip.
+
+## Target size
+
+The header close button is 28 x 28, above the 24 x 24 minimum target but under the 44 x 44 recommended for touch. Footer buttons follow the Button sizes you choose.
+
+## Contrast
+
+Title, body text, footer label and header icon have a contrast of 6:1 or more in every intent in both colour modes. Keep footer buttons readable on the fill by pairing them with the intent as described under Intents.
+
+## Zoom
+
+Keep the popover inside the viewport at high zoom. Set a suitable width and let it flip when space is short rather than overlap its trigger.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The popover overlay takes the language and direction, the close button gets its Dhivehi name, and logical placements, the arrow side and the header and footer alignment follow the direction. Pass Dhivehi titles, body text and actions yourself.
+
+</DocsTab>
