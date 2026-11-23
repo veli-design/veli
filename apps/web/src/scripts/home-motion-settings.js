@@ -1,10 +1,15 @@
-// Basim's final veli-home-v2.html overrides. Future designer tuning belongs here,
+// Designer overrides from PD-1417 hero-settings.json; existing card tuning is retained.
+// Future designer tuning belongs here,
 // rather than in a production control panel or persisted browser settings.
 export const homeMotionSettings = {
   introSpeed: 0.701,
   bgSpeed: 0.76,
   scrollLag: 0.031,
-  coverage: 0.24,
+  dotSize: 2.3,
+  flowScale: 493,
+  colorA: '#50cf00',
+  colorB: '#50cf00',
+  coverage: 0.19,
   heroHeight: 1060,
   falloff: 170,
   tail: 0.06,

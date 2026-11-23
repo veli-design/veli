@@ -1,6 +1,7 @@
 ---
 import MarketingLayout from '../layouts/marketing-layout.astro';
 import AtollIllustration from '../components/marketing/AtollIllustration.astro';
+import ThaanaPortrait from '../components/marketing/ThaanaPortrait.astro';
 import ThaanaIllustration from '../components/marketing/ThaanaIllustration.astro';
 import { Button } from '@veli-design/react/button';
 import '../styles/design.css';
@@ -131,7 +132,11 @@ const forces = [
         </div>
         <figure class="design-atoll" data-design-preview-host>
           <div class="design-atoll-canvas">
-            <AtollIllustration />
+            <svg class="design-atoll-sheet" viewBox="0 0 1349 924" aria-hidden="true">
+              <foreignObject width="1349" height="924">
+                <AtollIllustration />
+              </foreignObject>
+            </svg>
           </div>
           <figcaption class="sr-only">
             Veli foundations grow into coral components, reef patterns, island blocks, and atolls of
@@ -142,10 +147,21 @@ const forces = [
             data-design-animation="atoll"
             aria-hidden="true"
           ></div>
+          <ol class="design-atoll-labels" aria-hidden="true">
+            {[
+              ['Veli', 'Foundations'],
+              ['Coral', 'Components'],
+              ['Reef', 'Patterns'],
+              ['Islands', 'Blocks'],
+              ['Atolls', 'Services'],
+            ].map(([name, layer]) => (
+              <li>
+                <strong>{name}</strong>
+                <span>{layer}</span>
+              </li>
+            ))}
+          </ol>
         </figure>
-        <p class="design-atoll-key" aria-hidden="true">
-          Foundations → Components → Patterns → Blocks → Services
-        </p>
       </section>
       <section class="design-crystalline" aria-labelledby="crystalline">
         <img class="design-section-dots" src={`${a}5f051.svg`} width="46" height="5" alt="" />
@@ -289,13 +305,12 @@ const forces = [
               <div class="design-preview-animation" data-design-animation="thaana"></div>
             </div>
           </div>
+          <ThaanaPortrait />
           <div class="design-thaana-meta">
             <p>
-              Dhivehi typefaces
+              <strong>Dhivehi typefaces</strong>
               <br />
               Veli Design System
-              <br />
-              Script No. 001
             </p>
             <p>
               Regular — MV Faseyha
@@ -305,13 +320,6 @@ const forces = [
               Bold — MV Aaamu FK
             </p>
             <p>
-              Thaana · written right to left
-              <br />
-              24 letters · 11 fili
-            </p>
-            <p>
-              Thaana
-              <br />
               <span lang="dv" dir="rtl">
                 ތާނަ
               </span>
@@ -334,7 +342,16 @@ const forces = [
             Explore in Figma
           </Button>
         </div>
-        <canvas data-design-field="closing" aria-hidden="true"></canvas>
+        <figure class="design-closing-art" aria-hidden="true">
+          <img
+            src={`${a}design-closing-stipples.svg`}
+            width="814.335"
+            height="520.951"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
       </section>
     </div>
   </div>

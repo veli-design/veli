@@ -38,13 +38,13 @@ Both marketing pages reuse `MarketingFooter.astro`, including its navigation
 and theme/motion preferences. The composed atoll and Thaana plates
 keep their native layer coordinates and scale together inside their clips.
 `src/lib/design-fields.json` records the visible particle centres and dot sizes
-relative to the five frame clips; each field draws the original exported SVG dot
+relative to the four frame clips; each field draws the original exported SVG dot
 from `public/images/marketing/`. The resting composition matches Figma, while
-`src/scripts/design-motion.ts` supplies those resting fields and ambient hero/closing
-artwork. The deferred preview module below owns the interactive card motion.
+`src/scripts/design-motion.ts` supplies those resting fields and ambient hero artwork. The closing CTA uses the
+original static stipple vector from frame `2382:107037`. The deferred preview module below owns the interactive card motion.
 Reduced motion keeps the exact resting composition.
-The designer has not provided mobile frames for this page; its smaller layouts
-adapt the same content and artwork without changing the desktop reference.
+The portrait atoll, Crystalline Sand, movement, and Thaana cards follow the mobile
+frames 2463:9376 through 2466:9376. The desktop artwork retains its own layout.
 
 The One system card intentionally replaces the reference PNG with live text and
 two CSS radial gradients. Its slow tide animation moves only the glow, pauses
@@ -74,7 +74,11 @@ The preview code and layers load when the first cards approach the viewport.
 Frames stop outside the viewport and while the page is hidden. Reduced motion
 shows the stills, including the HTML letters in the Thaana card. With motion
 enabled, Thaana adds one tab stop with arrow-key navigation and Enter/Space to
-pin or release the same letters available through pointer and touch.
+pin or release the same letters available through pointer and touch. Focus is drawn
+around the original letter cell, not on the enlarged ink. On no-hover devices,
+one small letter at a time blooms, returns fully to rest, and pauses before a
+different on-screen letter blooms. This sequence pauses during manual interaction.
+The six large painted letters never animate.
 
 The curve's particle collision simulation is baked ahead of time to avoid
 blocking interaction on the browser main thread. After changing its geometry or
