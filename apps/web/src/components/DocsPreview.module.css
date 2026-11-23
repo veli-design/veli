@@ -1,10 +1,12 @@
 .preview {
   width: 100%;
-  border-radius: calc(var(--veli-radius-3xl) - var(--veli-spacing-0-5));
+  min-width: 0;
+  border-radius: var(--docs-preview-radius, calc(var(--veli-radius-3xl) - var(--veli-spacing-0-5)));
 }
 
 .canvas {
   display: flex;
+  min-width: 0;
   min-height: 288px;
   flex-direction: column;
   gap: var(--veli-spacing-4);
@@ -20,13 +22,17 @@
   align-self: flex-end;
   justify-content: flex-end;
   gap: var(--veli-spacing-2);
+  /* Preview controls stay in the documentation language; only the example mirrors. */
+  direction: ltr;
 }
 
 .content {
   display: flex;
   width: 100%;
   min-width: 0;
-  flex: 1;
+  /* 16px inset + 32px controls + 16px gap gives Figma's 64px content start.
+     Keep controls in flow so wrapped options reserve their own space. */
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   padding-inline: var(--veli-spacing-4);
@@ -79,4 +85,14 @@
     0 6px 6px var(--veli-color-effects-shadow-depth-100),
     0 0 1.5px var(--veli-color-effects-shadow-frame);
   outline: none;
+}
+
+@media (max-width: 767px) {
+  .canvas {
+    padding-bottom: var(--veli-spacing-8);
+  }
+
+  .content {
+    padding-inline: 0;
+  }
 }

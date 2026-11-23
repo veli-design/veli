@@ -1,6 +1,6 @@
 ---
 title: Select
-description: Single-choice picker with a listbox popover, sections, and option descriptions.
+description: 'A field that lets people choose one value from a short, known list.'
 ---
 
 import {
@@ -10,9 +10,481 @@ import {
   SelectValidationDemo,
 } from '../../components/SelectExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Select
 
-Use Select to choose one value from a short, known list. For long or searchable lists, use [ComboBox](/docs/components/combobox/). For actions instead of values, use [Menu](/docs/components/menu/).
+<DocsTab id="overview">
+
+A select lets people choose one value from a short, known list, such as an atoll or a document type. Use it when the options are fixed and people should not type their own. The chosen value shows in a trigger button, and the options open in a list below it.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/select.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-select--docs"
+/>
+
+## When to use
+
+### Use a select when
+
+- People must choose one value from a known set of options, such as an atoll or a document type.
+- The options are fixed and people should not type their own.
+- There are too many options to show as radio buttons.
+- The options benefit from descriptions, leading or trailing content, or grouped sections.
+
+### Don't use a select when
+
+- The list is long and people would rather search or type into it. Use Combobox.
+- A small set of choices should stay visible for comparison. Use Radio button.
+- People can choose more than one option. Use Checkbox.
+- The list runs actions rather than setting a value. Use Menu.
+
+<DocsFigure
+  src="/images/docs/select/select-intro-1.webp"
+  darkSrc="/images/docs/select/select-intro-1-dark.webp"
+  alt='A Change of address form card, step 1 of 3: New address. It has an Address input holding H. Seaview, Majeedhee Magu, an Atoll select showing Kaafu Atoll, an Island select showing Hulhumale&#x27;, and an optional Type of home select showing the placeholder Choose an option with the helper text "For example, a flat or a house." Back and Continue buttons sit below.'
+  width="2400"
+  height="1672"
+  caption="Selects for atoll, island and type of home in a change of address form."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/select/select-anatomy-1.svg"
+  darkSrc="/images/docs/select/select-anatomy-1-dark.svg"
+  alt="An open select at size md with nine numbered markers: 1 on the label Label, 2 on the info icon, 3 on Optional, 4 on the trigger showing Singapore, 5 on the caret pointing up, 6 on the open list, 7 on the section title Popular, 8 on the option Malaysia and 9 on the check mark next to Singapore."
+  width="576"
+  height="488"
+  caption="The parts of a select, shown open at size md. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   Names the field. In code: label.
+
+2. **Info icon**
+
+   A 16 x 16 button that opens a tooltip with more help. Optional. In code: infoTooltip.
+
+3. **Optional**
+
+   The localised word Optional after the label, shown with isOptional. When the field is required, an asterisk shows instead.
+
+4. **Trigger**
+
+   The button that opens the list. It is 36, 44 or 52 high and shows the placeholder or the selected value. In code: appearance and size.
+
+5. **Caret**
+
+   A 20 x 20 caret at every size. It turns up while the list is open. You can replace it with indicator.
+
+6. **List**
+
+   Opens 4 below the trigger and is as wide as it. It scrolls past 280.
+
+7. **Section title**
+
+   Groups options. Only in grouped lists. In code: SelectSection title.
+
+8. **Option**
+
+   One choice, at least 36 high, with an optional line of description. In code: SelectItem.
+
+9. **Check**
+
+   Marks the selected option, at the end of the row.
+
+</DocsAnatomy>
+
+Helper text, or the error message when the field is invalid, sits below the trigger.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/select/select-do-1.webp" darkSrc="/images/docs/select/select-do-1-dark.webp" alt="An Atoll select with a required asterisk and the placeholder Choose an atoll, with the label Atoll above the field." width="1136" height="336">
+
+Keep a visible label above the field. The placeholder only says what to do.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/select/select-dont-1.webp" darkSrc="/images/docs/select/select-dont-1-dark.webp" alt="A select with no label above it, showing only the word Atoll inside the trigger." width="1136" height="336">
+
+Don't use the placeholder as the label. It disappears once people choose.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/select/select-do-2.webp" darkSrc="/images/docs/select/select-do-2-dark.webp" alt="A required Atoll select in the error state, with the placeholder Choose an atoll in the trigger and the message &quot;Choose the atoll you live in&quot; below the field." width="1136" height="376">
+
+Say what to choose in the error message.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/select/select-dont-2.webp" darkSrc="/images/docs/select/select-dont-2-dark.webp" alt="A required Atoll select in the error state, with the message &quot;Invalid selection.&quot; below the field." width="1136" height="376">
+
+Don't write vague errors. Invalid selection does not say what to do.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/select/select-do-3.webp" darkSrc="/images/docs/select/select-do-3-dark.webp" alt="Two selects in the default appearance at the same size: Atoll showing Kaafu Atoll and Island showing the placeholder Choose an island." width="1136" height="536">
+
+Use one appearance and one size for every field in a form.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/select/select-dont-3.webp" darkSrc="/images/docs/select/select-dont-3-dark.webp" alt="Two selects that do not match: Atoll in the default appearance at a small size, and Island in the outline appearance at a larger size." width="1136" height="536">
+
+Don't mix appearances or sizes in one form. The fields stop reading as a set.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Label
+
+Name the value, not the action. Use sentence case and no colon.
+
+| Do            | Don't                                                       |
+| :------------ | :---------------------------------------------------------- |
+| Atoll         | Choose your atoll: (names the action and ends with a colon) |
+| Type of home  |                                                             |
+| Document type |                                                             |
+
+### Placeholder
+
+Use a short prompt on the empty choice, and keep the label above it: the placeholder goes once people choose. Always pass a placeholder, in both languages. Without one, the trigger shows the default text Select an item, which says Select rather than Choose and stays in English on Dhivehi pages.
+
+| Do                     | Don't                                                         |
+| :--------------------- | :------------------------------------------------------------ |
+| Choose an atoll        | Select an item (the default text, in English even in Dhivehi) |
+| Choose a document type |                                                               |
+
+### Options
+
+Write options as short, parallel phrases that do not overlap, in sentence case. Order them alphabetically, by size or by how often people choose them. Add None or I do not know when it is a valid answer.
+
+| Do                                  | Don't                                                           |
+| :---------------------------------- | :-------------------------------------------------------------- |
+| Flat, House, Room in a shared house | I live in a FLAT (not parallel, and uses capitals for emphasis) |
+
+### Helper text
+
+Say what the list holds or how to choose, in one sentence with no full stop. Don't put links in helper text, labels or error messages.
+
+| Do                                            | Don't                                                                  |
+| :-------------------------------------------- | :--------------------------------------------------------------------- |
+| The atoll where you live now                  | The atoll where you live now. (a one-sentence hint takes no full stop) |
+| The document you will upload in the next step | Choose an option from the list (repeats what the select does)          |
+
+### Error message
+
+Say what to choose, in one sentence with no full stop. Start with Choose when an answer is missing.
+
+| Do                           | Don't                                                                   |
+| :--------------------------- | :---------------------------------------------------------------------- |
+| Choose the atoll you live in | Invalid selection (does not say what to do)                             |
+| Choose a type of home        | Choose the atoll you live in. (a one-sentence error takes no full stop) |
+
+### Optional and required
+
+Mark whichever is rarer in the form: Optional on optional fields when most are required, or the asterisk on required fields when most are optional. Never mark one field both ways. Optional is hidden when the field is required.
+
+### Long text
+
+Truncate only non-essential text in repeated items, when the full text shows elsewhere. The ellipsis sits at the inline end, which is the left in Dhivehi.
+
+### Built-in strings and Dhivehi
+
+Select has two built-in strings in English and Dhivehi: Optional, which you cannot reword, and the info button name More information (އިތުރު މަޢުލޫމާތު). Set infoTooltipAriaLabel so the info button names its topic. Two strings stay in English on Dhivehi pages: the default placeholder Select an item, which you replace with placeholder, and the hidden Dismiss buttons in the open list, which have no prop.
+
+Write Dhivehi labels, placeholders, options, helper text and errors natively rather than translating word for word, and keep them as short as the English.
+
+## Related components
+
+| Component                              | When to use it                                         |
+| :------------------------------------- | :----------------------------------------------------- |
+| [Combobox](/docs/components/combobox/) | choose from a long list by typing to filter it.        |
+| [Radio](/docs/components/radio/)       | choose one of a few options, all visible at once.      |
+| [Menu](/docs/components/menu/)         | run an action from a list.                             |
+| [Input](/docs/components/input/)       | type a short answer, or show a locked value read only. |
+| [Checkbox](/docs/components/checkbox/) | when people can choose more than one option.           |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the select: appearances, sizes, states, spacing and the tokens behind them.
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/select/select-appearances-1.webp"
+  darkSrc="/images/docs/select/select-appearances-1-dark.webp"
+  alt="Two Atoll selects with the placeholder Choose an atoll. Appearance default has a filled trigger with an underline. Appearance outline has a filled trigger with a border on all sides."
+  width="2400"
+  height="616"
+  caption="Appearance default and appearance outline."
+/>
+
+- Use **default**, a filled trigger with an underline, in most forms. It is the default.
+- Use **outline**, a filled trigger with a border on all sides, where an underline would be lost, such as on a raised card.
+
+Both appearances have the same sizes and states.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/select/select-sizes-1.webp"
+  darkSrc="/images/docs/select/select-sizes-1-dark.webp"
+  alt="Three Atoll selects with the placeholder Choose an atoll at sizes sm, md and lg. The lg select has larger label and value text."
+  width="2400"
+  height="648"
+  caption="Sizes sm, md and lg."
+/>
+
+| Size | Trigger height       | Use for                                               |
+| :--- | :------------------- | :---------------------------------------------------- |
+| sm   | 36                   | Dense layouts such as filters and tables              |
+| md   | 44                   | Forms. The default                                    |
+| lg   | 52, with larger text | Short forms that need to stand out, phones and kiosks |
+
+The field fills the width of its container. Set the width on the parent layout, not on the select. The list matches the trigger width.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/select/select-options-1.webp"
+  darkSrc="/images/docs/select/select-options-1-dark.webp"
+  alt='Two selects. With help: a required Island select with the placeholder Choose an island, the helper text "Where you live now." and an info icon. Sections: an open Country select showing Singapore, with the options grouped under the section titles Popular (Malaysia, Singapore) and Other (Thailand), separated by a divider.'
+  width="2400"
+  height="960"
+/>
+
+<DocsFigure
+  src="/images/docs/select/select-options-2.webp"
+  darkSrc="/images/docs/select/select-options-2-dark.webp"
+  alt='Two selects. Option descriptions: an open Account select showing Margin, with Cash (Immediate settlement), Margin (Includes financing) and a disabled Trust account (Unavailable for this profile). Optional: a Type of home select marked Optional, with the placeholder Choose an option and the helper text "For example, a flat or a house."'
+  width="2400"
+  height="972"
+  caption="With help, sections, option descriptions and an optional field."
+/>
+
+- **With help**: add a description below the field and an info tooltip after the label. In code: description and infoTooltip.
+- **Sections**: group options under section titles with SelectSection. A divider separates the sections.
+- **Option descriptions**: give an option a line of detail with the SelectItem description. A disabled option stays visible but cannot be chosen.
+- **Optional**: isOptional shows Optional after the label. It is hidden when the field is required.
+- **Leading content**: startContent adds leading content, such as an icon, inside the trigger or an option. endContent adds trailing content before the caret or the check.
+
+## States
+
+<DocsFigure
+  src="/images/docs/select/select-states-1.webp"
+  darkSrc="/images/docs/select/select-states-1-dark.webp"
+  alt="Three Atoll selects in the states default, hover and active. Default and hover show the placeholder Choose an atoll; hover has a darker fill and underline. Active shows Kaafu Atoll with the caret turned up and the list open below, with the section Popular and the options Male&#x27; City, Kaafu Atoll (checked) and Addu City."
+  width="2400"
+  height="936"
+/>
+
+<DocsFigure
+  src="/images/docs/select/select-states-2.webp"
+  darkSrc="/images/docs/select/select-states-2-dark.webp"
+  alt='Three Atoll selects in the states focus, filled and error. Focus shows the focus ring around Kaafu Atoll. Filled shows Kaafu Atoll closed. Error shows a red underline and the message "This field needs attention."'
+  width="2400"
+  height="616"
+/>
+
+<DocsFigure
+  src="/images/docs/select/select-states-3.webp"
+  darkSrc="/images/docs/select/select-states-3-dark.webp"
+  alt="Two Atoll selects: a locked value shown with a read-only Input holding Kaafu Atoll, and a disabled select with the placeholder Choose an atoll in muted colours. A third card shows a grey skeleton placeholder."
+  width="2400"
+  height="616"
+  caption="Select states in the default appearance at size md."
+/>
+
+| State    | When                                     | Visual change                                                                                                        |
+| :------- | :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Default  | Empty                                    | Shows the placeholder in `text/base/inactive`                                                                        |
+| Hover    | Pointer over the field                   | Fill and underline darken                                                                                            |
+| Active   | The list is open                         | List shows below, the caret turns up, the trigger uses the pressed fill and a 2px underline                          |
+| Focus    | Keyboard focus on the trigger            | Focus ring around the field, with the pressed fill and a 2px underline                                               |
+| Filled   | A value is chosen and the list is closed | Shows the value in `text/base/strong`                                                                                |
+| Error    | isInvalid                                | Red underline, or red border in outline, with errorMessage below in place of the description. No icon in the trigger |
+| Disabled | isDisabled                               | Muted fill and text, no underline. The list cannot open and Tab skips the field                                      |
+
+Select has no read-only state in code. When a chosen value must stay visible but locked, show the option label in a read-only Input and submit the option id separately. Don't use a disabled select instead: it reads as unavailable and is left out of form submission.
+
+Select has no skeleton state in code. Compose Skeleton while the form data loads.
+
+## Behaviour
+
+- **Opening**: pressing the trigger opens the list 4 below it, as wide as the trigger.
+- **Choosing**: choosing an option closes the list and shows the option in the trigger. It only sets the value: let people continue with a separate button, and never navigate or submit on change. Control the value with value and onChange, or set a starting value with defaultValue.
+- **Typing on the closed trigger**: typing letters while the trigger has focus changes the value to a matching option without opening the list, like a native select.
+- **Long lists**: the list scrolls past 280. For long or searchable lists, use Combobox.
+- **Disabled**: set isDisabled to stop the list opening and remove the field from the tab order. Use disabledKeys to disable single options.
+- **Validation**: set isInvalid to show errorMessage below in place of the description. Use isRequired and validate to check the value on submit.
+- **Forms**: with React Hook Form, pass ref as triggerRef so the trigger can take focus on an error.
+- **Fixed structure**: select is not editable or filterable. It takes no style or child layout overrides; className is for outer layout only.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/select/select-rtl-1.webp"
+  darkSrc="/images/docs/select/select-rtl-1-dark.webp"
+  alt="Two selects side by side. On the left, the English select with the label Label, Optional, the placeholder Choose an option and Helper text. On the right, the Dhivehi select mirrored right to left, with the label ލޭބަލް, އިޚްތިޔާރީ, the placeholder އޮޕްޝަނެއް ޚިޔާރުކުރައްވާ and the helper text އެހީތެރިވެދޭ ލިޔުން, and the caret on the left."
+  width="2400"
+  height="568"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the select mirrors: label on the right, caret on the left, text aligned right. The list opens aligned to the start edge, and the check sits on the left.
+- Text uses the Dhivehi regular styles (MV Faseyha). The trigger stays 36, 44 or 52 high and the taller line overflows, centred. The label row grows from 28 to 36 at sm and md, and from 32 to 40 at lg.
+- In code, wrap the app in VeliProvider with language set to dv. The trigger, list, option text and section titles follow the language and direction.
+- In Figma, design Dhivehi screens with SelectDv. It has the same variants and properties as Select.
+
+Example configuration: size md, isOptional, with an info tooltip.
+
+| Part                 | English                       | Dhivehi                          |
+| :------------------- | :---------------------------- | :------------------------------- |
+| label                | Label                         | ލޭބަލް                           |
+| placeholder          | Choose an option              | އޮޕްޝަނެއް ޚިޔާރުކުރައްވާ        |
+| description          | Helper text                   | އެހީތެރިވެދޭ ލިޔުން              |
+| infoTooltipAriaLabel | More information              | އިތުރު މަޢުލޫމާތު                |
+| Options              | Malaysia, Singapore, Thailand | މެލޭޝިއާ، ސިންގަޕޫރު، ތައިލެންޑް |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/select/select-spacing-1.svg"
+  darkSrc="/images/docs/select/select-spacing-1-dark.svg"
+  alt="Spacing redlines for a select at size sm: a 36 high trigger with 8 top and bottom padding and 12 side padding, 8 between the label row and the field, 8 between the text and the caret, and 4 above the helper text."
+  width="1200"
+  height="332"
+/>
+
+<DocsFigure
+  src="/images/docs/select/select-spacing-2.svg"
+  darkSrc="/images/docs/select/select-spacing-2-dark.svg"
+  alt="Spacing redlines for a select at size md: a 44 high trigger with 12 top and bottom padding and 16 side padding."
+  width="1200"
+  height="340"
+/>
+
+<DocsFigure
+  src="/images/docs/select/select-spacing-3.svg"
+  darkSrc="/images/docs/select/select-spacing-3-dark.svg"
+  alt="Spacing redlines for a select at size lg: a 52 high trigger with 14 top and bottom padding and 16 side padding."
+  width="1200"
+  height="356"
+  caption="All values in pixels at 1x. Bands are padding and gaps; lines with end ticks are sizes."
+/>
+
+| Property                             | sm      | md      | lg      |
+| :----------------------------------- | :------ | :------ | :------ |
+| Trigger height                       | 36      | 44      | 52      |
+| Trigger padding, top and bottom      | 8       | 12      | 14      |
+| Trigger padding, sides               | 12      | 16      | 16      |
+| Text to caret                        | 8       | 8       | 8       |
+| Caret                                | 20 x 20 | 20 x 20 | 20 x 20 |
+| Label row to field                   | 8       | 8       | 8       |
+| Field to helper text                 | 4       | 4       | 4       |
+| List offset below the trigger        | 4       | 4       | 4       |
+| List padding                         | 4       | 4       | 4       |
+| Option minimum height                | 36      | 36      | 36      |
+| Option padding, top and bottom       | 8       | 8       | 8       |
+| Section title height                 | 36      | 36      | 36      |
+| List maximum height before scrolling | 280     | 280     | 280     |
+
+The underline in the default appearance is 1.5 at rest and 2 while open or focused. The outline border is 1 at rest, 1.5 on hover and 2 while open. Neither changes the field height.
+
+<DocsFigure
+  src="/images/docs/select/select-radius-1.svg"
+  darkSrc="/images/docs/select/select-radius-1-dark.svg"
+  alt="Three selects at sizes sm, md and lg, each with its trigger marked with a 10 corner radius."
+  width="1200"
+  height="268"
+  caption="The trigger uses radius 10 (`radius/field`) at every size and in both appearances. The list uses 12 and each option 8."
+/>
+
+## Typography
+
+| Element                          | English                              | Dhivehi                                   | Colour token                                               |
+| :------------------------------- | :----------------------------------- | :---------------------------------------- | :--------------------------------------------------------- |
+| Label, sm and md                 | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`                                        |
+| Label, lg                        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/DEFAULT`                                        |
+| Optional, sm and md              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/subtle`                                         |
+| Optional, lg                     | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/subtle`                                         |
+| Required asterisk                | Caption regular, Inter Regular 12/16 | As English                                | `text/danger/muted`                                        |
+| Value and placeholder, sm and md | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | Value `text/base/strong`, placeholder `text/base/inactive` |
+| Value and placeholder, lg        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | As sm and md                                               |
+| Helper text, sm and md           | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/muted`                                          |
+| Helper text, lg                  | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`                                          |
+| Error message                    | As helper text at each size          | As helper text                            | `text/danger/muted`                                        |
+| Option                           | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`, description `text/base/muted`          |
+| Section title                    | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/emphasis`                                       |
+
+When disabled, the label uses `text/base/muted` and the value, placeholder and helper text use `text/disabled`.
+
+## Tokens
+
+Field tokens leave out the `components/text-input/` prefix.
+
+| State    | Fill                             | Line                                                                         | Text and caret                                              |
+| :------- | :------------------------------- | :--------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Default  | `bg-default`                     | Underline `stroke-default` 1.5; outline border `stroke-default` 1            | Placeholder `text/base/inactive`; caret `icon/base/default` |
+| Hover    | `bg-hover`                       | Underline `stroke-hover` 1.5; outline border `stroke-hover` 1.5              | As default                                                  |
+| Active   | `bg-pressed`                     | Underline `stroke-pressed` 2; outline border `stroke-pressed` 2              | Value `text/base/strong`; caret turned up                   |
+| Focus    | `bg-pressed`                     | Underline `stroke-pressed` 2, plus the focus ring; outline has the ring only | Value `text/base/strong`                                    |
+| Filled   | `bg-default`; outline `bg-hover` | Underline `stroke-default` 1.5; outline has no border                        | Value `text/base/strong`                                    |
+| Error    | `bg-default`                     | Underline `stroke-error` 1.5; outline border `stroke-error` 1                | Value `text/base/strong`; message `text/danger/muted`       |
+| Disabled | `bg-hover`                       | None                                                                         | `text/disabled`; caret `icon/disabled`                      |
+
+| List part                       | Token                    |
+| :------------------------------ | :----------------------- |
+| List background                 | `menu/bg`                |
+| List border                     | `border/base/muted`, 0.5 |
+| List shadow                     | Shadow md                |
+| Option hover and keyboard focus | `menu/hover`             |
+| Option pressed                  | `menu/pressed`           |
+| Option text                     | `text/base/strong`       |
+| Option description              | `text/base/muted`        |
+| Check                           | `icon/base/default`      |
+| Section title                   | `text/base/emphasis`     |
+| Focus ring                      | `border/focus`           |
+
+Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                 | Duration | Easing      |
+| :------------------------- | :------- | :---------- |
+| Trigger fill and underline | Normal   | Ease out    |
+| Caret turn                 | Normal   | Ease in out |
+| Option highlight           | Normal   | Ease out    |
+
+Moving through options with the arrow keys is not animated. With reduced motion turned on, these transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -34,7 +506,7 @@ import { Select, SelectItem, SelectSection } from '@veli-design/react/select';
 </Select>
 ```
 
-Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/docs/patterns/forms/) for recipes.
+Control the selection with `value` and `onChange`. With React Hook Form, pass `ref` as `triggerRef`. See [Forms](/patterns/forms/) for recipes.
 
 ## Locked value
 
@@ -200,3 +672,80 @@ Other React Aria [`ListBoxItem`](https://react-spectrum.adobe.com/react-aria/Lis
 ## RTL and Language
 
 On `lang="dv"` pages, the trigger value, options, and section headers use `MV_Faseyha` in both the field and the popover. In RTL, the trigger content, caret, option content, and selected check follow `dir`.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the select works with keyboards, screen readers and assistive settings. The trigger is a button that opens a listbox, built on React Aria Select.
+
+## Keyboard
+
+| Key                                  | Action                                                               |
+| :----------------------------------- | :------------------------------------------------------------------- |
+| Tab                                  | Moves focus to the trigger, and on to the next control               |
+| Enter, Space, Up arrow or Down arrow | Opens the list on the trigger                                        |
+| Up arrow and Down arrow              | Move between options in the open list, including across sections     |
+| Enter                                | Chooses the focused option and closes the list                       |
+| Escape                               | Closes the list without changing the value                           |
+| Letters                              | Jump to a matching option, in the open list or on the closed trigger |
+
+## Screen readers
+
+- The trigger is a button that announces the label and the chosen value, and reports that it opens a listbox and whether it is open. This differs from the select-only combobox pattern on purpose.
+- The open list is a listbox labelled by the field label. Each option is an option that reports whether it is selected.
+- The description and the error message are announced with the field, so people hear the help and the error.
+- Optional and the required asterisk sit outside the label, so neither is part of the accessible name. isRequired still tells screen readers the field is required.
+- Give options with rich content, such as an icon or a description, a textValue or aria-label so typeahead, the selected value and screen readers have plain text.
+- A hidden native select carries the value for autofill and form submission. Automated checkers can flag it as an aria-hidden element with focusable content; this is a known false positive.
+
+## Labels
+
+Give every select a visible label. Use aria-label or aria-labelledby only when the design has no visible label. The label names the trigger. A tooltip must not be the only source of the name.
+
+## Focus
+
+- Keyboard focus shows a 2px ring in `border/focus` with a 2px offset around the field. It appears for keyboard focus only. A click opens the list and shows the active state instead.
+- With the ring, the outline appearance drops its border, so the two never stack.
+- In the open list, the focused option shows the `menu/hover` background. Options have no ring of their own.
+
+<DocsFigure
+  src="/images/docs/select/select-focus-1.webp"
+  darkSrc="/images/docs/select/select-focus-1-dark.webp"
+  alt="Three selects at sizes sm, md and lg, each showing Singapore with the focus ring around the trigger."
+  width="2400"
+  height="536"
+  caption="The focus ring at each size."
+/>
+
+## Selected state
+
+The selected option shows a check mark, a shape that survives forced colours, not colour alone.
+
+## List roles
+
+Select options look like menu items but keep the listbox and option roles. Never rebuild a select list from Menu or MenuItem. Don't put buttons, links or checkboxes inside an option: an option holds text, with an optional description, icon and end content that is not interactive.
+
+## Disabled
+
+A disabled select cannot open and is removed from the tab order. Disabled options stay visible but cannot be chosen. Disabled text is exempt from contrast minimums, so don't put information people need only in a disabled field.
+
+## Target size
+
+Every trigger size (36, 44 and 52 high) meets the 24 x 24 minimum target size, and options are at least 36 high. 44 is the recommended size for touch: md and lg reach it, so use sm only in dense layouts. The info button is 16 x 16, below the 24 x 24 minimum, and is a known failure.
+
+## Contrast
+
+Errors show a message as well as the red line. Placeholder text uses `text/base/inactive`, which does not meet 4.5:1, and Optional is about 3.0:1, so keep key information out of the placeholder and Optional.
+
+## Zoom and phones
+
+- Keep the open list inside the viewport at high zoom.
+- Text in a field should be at least 16 on phones so iOS Safari does not zoom the page. Select text is 14 at sm and md and 16 at lg, so use lg on phones.
+- Use the lg select on kiosk screens; it also meets the 44 kiosk target.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, so screen readers can switch to a Dhivehi voice. The trigger content, caret, options and check mirror. Pass Dhivehi labels, placeholders and options yourself. The hidden Dismiss buttons in the open list stay in English.
+
+</DocsTab>

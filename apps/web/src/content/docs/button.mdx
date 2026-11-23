@@ -1,6 +1,6 @@
 ---
 title: Button
-description: Accessible action and link button with semantic intents, sizes, icons, and loading states.
+description: 'Starts an action on the current view, with intents that set its emphasis and meaning.'
 ---
 
 import {
@@ -14,9 +14,542 @@ import {
   ButtonVariantsDemo,
 } from '../../components/ButtonExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Button
 
-Use Button to perform an action, submit a form, or open a dialog. For navigation with button styling, use `as="a"` and `href`. Use [Link](/docs/components/link/) for inline navigation links.
+<DocsTab id="overview">
+
+A button starts an action: it submits a form, saves changes, confirms a step or opens a modal. Use it when people need to do something on the current view. Four intents set its emphasis and meaning, and it covers destructive, icon-only, disabled and loading actions. To go to another page, use Link.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/button.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-button--docs"
+/>
+
+## When to use
+
+### Use a button when
+
+- People trigger an immediate action on the current view: submit, save, confirm or open a modal.
+- The action must work the same with keyboard, touch and screen readers.
+- The action can become disabled or busy while it runs.
+- You need a compact icon-only action that has an accessible name, such as close or edit in a toolbar.
+
+### Don't use a button when
+
+- The action navigates to another page. Use Link, or a button rendered as a link (as="a" with href) when it must look like a button.
+- You switch between views of equal weight. Use Tabs.
+- More than one primary action would compete on the same view. Keep one primary and give the other buttons the secondary intent or a lower appearance.
+- The control stays on or off. Use Switch or Checkbox.
+
+<DocsFigure
+  src="/images/docs/button/button-intro-1.webp"
+  darkSrc="/images/docs/button/button-intro-1-dark.webp"
+  alt='A card titled Renew your business licence, for Business licence BL-3051. The text reads "Your licence expires on 30 November 2026. The renewal fee is MVR 250, paid online." Below it sit two buttons: Save draft in a light grey secondary style and Pay and renew in teal primary fill with a trailing arrow.'
+  width="2400"
+  height="1024"
+  caption="A primary button carries the main action of the card, with a secondary button beside it."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/button/button-anatomy-1.svg"
+  darkSrc="/images/docs/button/button-anatomy-1-dark.svg"
+  alt="A teal primary fill button labelled Continue, with a plus icon before the label and a right arrow after it. Four numbered markers: 1 on the container edge, 2 on the plus icon, 3 on the label and 4 on the arrow."
+  width="576"
+  height="320"
+  caption="The parts of a button. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   The button root. It is pill shaped, takes its padding from the size, and shows the hover, pressed, focus and disabled styling. In code it is Button.
+
+2. **Leading icon**
+
+   Optional. A 12 to 20px icon before the label, inside a fixed icon box. It is decorative, so screen readers skip it. In code it is an icon in children, before the label.
+
+3. **Label**
+
+   The action text and the accessible name. Verb first, on one line. In code it is the children.
+
+4. **Trailing icon**
+
+   Optional. An icon after the label, usually a direction arrow. Pass the mirrored arrow in Dhivehi. In code it is an icon in children, after the label.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/button/button-do-1.webp" darkSrc="/images/docs/button/button-do-1-dark.webp" alt="Two buttons side by side: Save changes in teal primary fill and Cancel in a light grey secondary style." width="1136" height="240">
+
+Use one primary action per view and keep the supporting action lower in emphasis.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/button/button-dont-1.webp" darkSrc="/images/docs/button/button-dont-1-dark.webp" alt="Two buttons side by side, Save changes and Cancel, both in teal primary fill." width="1136" height="240">
+
+Don't give every action the primary fill. Competing primaries hide the main one, and neither reads as the main action.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/button/button-do-2.webp" darkSrc="/images/docs/button/button-do-2-dark.webp" alt="A single teal primary fill button labelled Save changes." width="1136" height="240">
+
+Start labels with a verb that says what happens: Save, Delete, Continue.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/button/button-dont-2.webp" darkSrc="/images/docs/button/button-dont-2-dark.webp" alt="A single teal primary fill button labelled OK." width="1136" height="240">
+
+Don't use vague labels such as OK, Yes or Submit that only make sense with the surrounding text.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/button/button-do-3.webp" darkSrc="/images/docs/button/button-do-3-dark.webp" alt="A red danger fill button labelled Delete file next to a light grey secondary button labelled Cancel." width="1136" height="288">
+
+Use danger for destructive actions, name what is lost, and always pair it with a way out.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/button/button-dont-3.webp" darkSrc="/images/docs/button/button-dont-3-dark.webp" alt="A single red danger fill button labelled Continue." width="1136" height="288">
+
+Don't use danger for emphasis. Red means something will be removed or lost.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Verb first
+
+Start every label with a verb that says what happens when it is pressed. Describe exactly what the action does, no more and no less.
+
+| Do            | Don't                                                                    |
+| :------------ | :----------------------------------------------------------------------- |
+| Save changes  | OK (says nothing about the result)                                       |
+| Pay and renew | Licence renewal (reads as a heading, not an action)                      |
+| Delete file   | Click here to book your appointment now (too long and starts with Click) |
+
+Never label an action OK, Yes, No, Submit, Dismiss, Click here or Here on its own.
+
+### Sentence case
+
+Capitalise the first word and proper nouns only. No all caps and no title case.
+
+| Do         | Don't                   |
+| :--------- | :---------------------- |
+| Save draft | Save Draft (title case) |
+
+### Keep it short
+
+Use 1 to 3 words. If a label wraps, shorten it or let the button group wrap instead. Clarity wins over the limit: Sign in with eFaas is 4 words and approved.
+
+| Do               | Don't                                   |
+| :--------------- | :-------------------------------------- |
+| Book appointment | Click here to book your appointment now |
+
+### Punctuation
+
+No full stops and no exclamation marks. Add an ellipsis, the single … character, only when the action opens a further step that needs more input, such as Rename… opening a dialog. Never add one to a loading label.
+
+| Do      | Don't                                                              |
+| :------ | :----------------------------------------------------------------- |
+| Rename… | Submit application! (exclamation mark)                             |
+|         | Saving... (ellipsis on a loading label, typed as three full stops) |
+
+### While the action runs
+
+Keep the label while the action runs and set isPending. Don't relabel it Loading, Please wait or Paying…, and don't add a Spinner beside it. Say what is happening and the outcome in a separate status message.
+
+| Do                           | Don't                                                              |
+| :--------------------------- | :----------------------------------------------------------------- |
+| Pay and renew, shown pending | Paying… (changes the name and adds an ellipsis to a loading label) |
+
+### Standard labels
+
+Name the same action the same way across a journey and across services.
+
+| Do                 | Don't                                    |
+| :----------------- | :--------------------------------------- |
+| Continue           | Proceed (use Continue for the next step) |
+| Sign in with eFaas | Login (use Sign in)                      |
+| Pay MVR 250        |                                          |
+| Save and continue  |                                          |
+
+- **Continue, Back, Next**: Continue moves to the next step of a form or journey. Back returns to the previous step without losing answers. Next and Previous are only for paging through content, never for form steps.
+- **Save**: Save stores changes and stays on the page. Save and continue only when the button both saves and moves on. Save draft when people can leave and come back later.
+- **Submit**: only with what is being submitted, on the final step: Submit application. Never Submit on its own.
+- **Send**: for messages, feedback, codes and documents: Send code again.
+- **Pay**: for the action that takes money, with the amount when it is known: Pay MVR 250.
+- **Apply and Renew**: Apply for something new, Renew to extend something people already have.
+- **Delete and Remove**: Delete when something is destroyed and can't be got back: Delete draft. Remove when it leaves a list but still exists: Remove file. Destructive actions use the danger intent.
+- **Edit and Change**: Edit opens something for editing: Edit address. Change sits next to each answer on a check your answers page, named Change phone number.
+- **Download and Upload**: Download a file with its type and size when known: Download receipt (PDF, 120 KB). Upload sends a file from the device: Upload passport photo.
+- **Cancel, Close and Back**: Cancel stops a task and discards what was entered. Close hides something with no unsaved input. When the task itself is a cancellation, label the safe choice Keep: Keep appointment beside Cancel appointment.
+- **Done and Confirm**: Done finishes a task with nothing left to save. Confirm only with an object: Confirm payment. A confirmation button repeats the title's verb and object: title Delete this draft application?, button Delete draft.
+- **Search, Clear and Try again**: Search runs a search. Clear says what it clears: Clear filters. After a failure, Try again repeats the action; never Retry.
+- **eFaas**: write eFaas with a lower case e. The sign-in button reads Sign in with eFaas. In Dhivehi the name is written އީފާސް.
+
+### Destructive actions
+
+Label a destructive action with the verb and the thing that will be lost: Delete draft application, Withdraw application, Remove passport-copy.pdf. Use the danger intent only on the button that performs the destructive action, with a clear Cancel next to it.
+
+| Do          | Don't                       |
+| :---------- | :-------------------------- |
+| Delete file | Continue with intent danger |
+
+### Repeated buttons
+
+The accessible name contains the visible label, ideally starting with it. When the same label repeats, add the object after it.
+
+| Do                                                            | Don't                          |
+| :------------------------------------------------------------ | :----------------------------- |
+| Visible Edit beside the home address, named Edit home address | Several buttons all named Edit |
+
+Name a Copy button with its object, Copy reference number, and confirm with a short status message: Reference number copied.
+
+### No links in buttons
+
+Don't put links inside a button label.
+
+### Built-in text
+
+Button has one built-in string: Loading (ލޯޑުވަނީ in Dhivehi), the name of the progressbar shown while it loads. There is no prop to change it, so write icon-only names that still read well followed by Loading, such as Delete file.
+
+### Dhivehi labels
+
+Write Dhivehi labels natively rather than translating word for word or spelling English words in Thaana. Keep them as short as the English, because Dhivehi lines are taller and phrases are often longer.
+
+## Related components
+
+| Component                              | When to use it                                                                            |
+| :------------------------------------- | :---------------------------------------------------------------------------------------- |
+| [Link](/docs/components/link/)         | navigation to another page or view. A link looks like text, never like a button.          |
+| [Menu](/docs/components/menu/)         | a button that opens a list of actions, when several related actions would crowd the view. |
+| [Tabs](/docs/components/tabs/)         | switching between views of equal importance.                                              |
+| [Modal](/docs/components/modal/)       | confirm destructive or irreversible actions before they run.                              |
+| [Switch](/docs/components/switch/)     | a setting that stays on or off.                                                           |
+| [Checkbox](/docs/components/checkbox/) | a choice that stays selected.                                                             |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the button: intents, appearances, sizes, icon-only buttons, high contrast, states, spacing and the tokens behind them. Values match the shipped component.
+
+## Intents
+
+Four intents set the emphasis and meaning of a button. Choose by what the action does, not by colour. In code, intent defaults to primary.
+
+<DocsFigure
+  src="/images/docs/button/button-intents-1.webp"
+  darkSrc="/images/docs/button/button-intents-1-dark.webp"
+  alt="A teal primary fill button labelled Continue, with a plus icon before the label and a right arrow after it."
+  width="552"
+  height="280"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-intents-2.webp"
+  darkSrc="/images/docs/button/button-intents-2-dark.webp"
+  alt="A near-black secondary fill button labelled Continue with white text, a plus icon and a right arrow."
+  width="552"
+  height="280"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-intents-3.webp"
+  darkSrc="/images/docs/button/button-intents-3-dark.webp"
+  alt="A red danger fill button labelled Continue, with a plus icon and a right arrow."
+  width="552"
+  height="280"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-intents-4.webp"
+  darkSrc="/images/docs/button/button-intents-4-dark.webp"
+  alt="A light green accent fill button labelled Continue with dark text, a plus icon and a right arrow."
+  width="552"
+  height="280"
+  caption="Intents primary, secondary, danger and accent, all in the fill appearance."
+/>
+
+- **Primary**: the main action on a view. Use one per view. In a form, make the submit button primary: Enter in a field submits through the button with type="submit", whatever its intent.
+- **Secondary**: supporting actions beside a primary, such as Cancel or Back. Secondary uses neutral colours so it never competes.
+- **Danger**: destructive or irreversible actions. Name what is lost and use danger only on the button that does it, with Cancel beside it.
+- **Accent**: highlighted or promotional actions, such as a featured service. Accent is fill only. Use it at most once per page.
+
+## Appearances
+
+Three surface treatments apply to primary, secondary and danger. Accent always renders as fill; in code any other appearance on accent is normalised to fill. In code, appearance defaults to fill.
+
+<DocsFigure
+  src="/images/docs/button/button-appearances-1.webp"
+  darkSrc="/images/docs/button/button-appearances-1-dark.webp"
+  alt="A teal primary fill button labelled Continue with a solid background."
+  width="758"
+  height="344"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-appearances-2.webp"
+  darkSrc="/images/docs/button/button-appearances-2-dark.webp"
+  alt="A primary transparent button labelled Continue, with a pale teal tinted background and teal text."
+  width="758"
+  height="344"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-appearances-3.webp"
+  darkSrc="/images/docs/button/button-appearances-3-dark.webp"
+  alt="A primary ghost button labelled Continue, teal text with no background."
+  width="758"
+  height="344"
+  caption="Appearances fill, transparent and ghost, on the primary intent."
+/>
+
+- **Fill**: a solid background. Highest emphasis, for the single most important action in a group.
+- **Transparent**: a tinted background with no border. Medium emphasis, for secondary actions that still need a surface.
+- **Ghost**: no background until hover. Lowest emphasis, for inline and toolbar actions.
+
+Rank buttons in a group by appearance, fill then transparent then ghost, within one intent. Don't mix intents to rank buttons. Ghost and transparent buttons keep the full height of their size, so rows of mixed appearances stay aligned.
+
+## Sizes
+
+Button has five sizes. Height and icon size change with the size and padding scales with them. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/button/button-sizes-1.webp"
+  darkSrc="/images/docs/button/button-sizes-1-dark.webp"
+  alt="Five primary fill buttons labelled Continue, from size xl down to xs: 60 high with a 20px icon, 52 high with a 20px icon, 44 high with a 16px icon (the default), 36 high with a 16px icon and 28 high with a 12px icon."
+  width="2400"
+  height="504"
+  caption="Sizes xl, lg, md (default), sm and xs."
+/>
+
+| Size | Height | Icon | Use for                                   |
+| :--- | :----- | :--- | :---------------------------------------- |
+| xl   | 60     | 20px | Hero, full-width mobile and kiosk actions |
+| lg   | 52     | 20px | Hero, full-width mobile and kiosk actions |
+| md   | 44     | 16px | Most page actions, and touch              |
+| sm   | 36     | 16px | Dense desktop toolbars and table rows     |
+| xs   | 28     | 12px | Dense desktop toolbars and table rows     |
+
+Keep one size and one appearance within an action group, and let the intent carry any difference. Kiosk screens use lg or xl.
+
+## Icon only
+
+An icon-only button is a square button with a single icon, fully rounded. In code, set iconOnly and give the button an aria-label. In Figma, turn showLabel off.
+
+<DocsFigure
+  src="/images/docs/button/button-icononly-1.webp"
+  darkSrc="/images/docs/button/button-icononly-1-dark.webp"
+  alt="Five square primary fill buttons with a plus icon and no label, labelled by size: xl 60 x 60, lg 52 x 52, md 44 x 44 (default), sm 36 x 36 and xs 28 x 28."
+  width="2400"
+  height="504"
+  caption="Icon-only buttons at every size."
+/>
+
+- The icon is the same size as in a text button of that size: 20, 20, 16, 16 and 12px from xl to xs. Button sizes an icon placed directly in its children, so pass it without its own size.
+- The accessible name comes from aria-label, written verb first, as a visible label would be.
+- Prefer a text label when space allows. Use icon-only for a compact, well-known action such as close or edit in a toolbar, never for an action such as Renew licence.
+
+## Icons
+
+Place icons before or after the label as children. An icon beside a visible label is decorative, so hide it from assistive technology. Prefer a visible label when space allows.
+
+| Do                                    | Don't                                 |
+| :------------------------------------ | :------------------------------------ |
+| Download receipt with a download icon | An icon-only button for Renew licence |
+| Close as an icon-only button          |                                       |
+
+## High contrast
+
+Secondary buttons have a high-contrast version for coloured surfaces at step 800 or darker, such as the Alert high-contrast colours or a brand surface. It is off by default. In code, set highContrast on each secondary button; in Figma, turn on onHighContrast.
+
+- Only secondary fill, transparent and ghost have a high-contrast version. Don't put primary, danger or accent buttons on a high-contrast surface. Use secondary fill with high contrast as the main action.
+- Don't use high contrast on mid tones, from 500 to 700. Light text fails there; use a light surface and the normal buttons.
+- Don't use high contrast on light surfaces, such as gov.mv accent or a 100 to 300 tint. Use the normal secondary buttons.
+- On a brand surface at step 800 or darker, both high-contrast secondary buttons and an accent fill button work. Accent fill keeps the main action on brand; high contrast keeps the actions neutral.
+- In Dark mode the teal brand surface stays at step 700. A high-contrast secondary fill button still works there (3.3:1 against the surface, label 18:1), but transparent and ghost labels drop to 3.3:1, so use secondary fill on teal brand.
+- A high-contrast Alert uses a secondary fill main action and secondary ghost for the second action and the close button, all with high contrast on. On mobile the actions stack and fill the width.
+- High contrast changes only the colours, focus ring and disabled look. Size, state, label and icons stay the same. Let the setting set the colours; don't recolour buttons by hand, because overrides break in Dark mode and drift from code.
+- In code, the high-contrast colours need the Veli tokens package 0.10.0 or later.
+
+## States
+
+<DocsFigure
+  src="/images/docs/button/button-states-1.webp"
+  darkSrc="/images/docs/button/button-states-1-dark.webp"
+  alt="Three primary fill buttons labelled Continue with a plus and an arrow icon: default, hover with a darker teal background, and pressed with a ripple from the pointer position."
+  width="2400"
+  height="568"
+/>
+
+<DocsFigure
+  src="/images/docs/button/button-states-2.webp"
+  darkSrc="/images/docs/button/button-states-2-dark.webp"
+  alt="Three primary fill buttons labelled Continue: focus with the focus ring outside the pill, disabled in pale grey, and loading with a spinner in place of the content."
+  width="2400"
+  height="568"
+  caption="Button states on primary fill. Every intent and appearance has the same set."
+/>
+
+| State    | When                    | Visual change                                                                                                                                       |
+| :------- | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default  | No interaction          | Resting background for the intent and appearance                                                                                                    |
+| Hover    | Pointer over the button | Background changes to the hover token, such as `components/button/primary/hover`                                                                    |
+| Pressed  | While pressed           | Background changes to the pressed token, such as `components/button/primary/pressed`, with a ripple from the pointer position and a slight scale up |
+| Focus    | Keyboard focus          | Focus ring outside the button                                                                                                                       |
+| Disabled | isDisabled              | Background `components/button/disabled` (ghost has none), text and icon use the disabled tokens                                                     |
+| Loading  | isLoading or isPending  | The label is hidden while the Spinner shows; the button keeps its label as its accessible name, keeps its width and ignores repeat presses          |
+
+A high-contrast disabled button keeps its colours at 50 percent opacity. A loading high-contrast button shows its spinner in the foreground colour of its appearance.
+
+## Behaviour
+
+- **Press feedback**: pressing shows the pressed background and a ripple that grows from the pointer position, tinted per intent and appearance. The pressed background stays while the ripple plays. The whole button responds, including padding and icons.
+- **Loading**: isLoading and isPending are the same. Both ignore repeat presses. The button keeps its label as its accessible name and keeps its width; the label is hidden while the Spinner shows. A pending submit button also stops native form submission, including Enter from a field. Keep the visible content mounted while loading so the width and accessible name stay.
+- **Width and wrapping**: text buttons hug their label. Long labels wrap and the button grows; icon-only buttons stay square. Use a w-\* class for a fixed or full width.
+- **Submit buttons**: set type="submit" on the button that submits a form. Button defaults to type="button", so Enter in a single-line field submits only through a submit button. Keep it enabled until pressed, then show it pending with its label until the request finishes.
+- **Disabled**: avoid disabled buttons. Keep the action enabled and say what is missing when it is pressed, or show the reason as text beside it: Upload your ID card to continue. Don't disable submit before the form is valid, and don't explain the reason in a Tooltip.
+- **Link mode**: when navigation must look like a button, render it as a link with as="a" and href. A disabled or loading link button keeps its anchor and label but drops href. Never navigate from a plain button.
+- **Destructive actions**: never delete or cancel from a single tap with no way back. Give every destructive action a confirmation step, such as a Modal, or an Undo.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/button/button-rtl-1.webp"
+  darkSrc="/images/docs/button/button-rtl-1-dark.webp"
+  alt="Two buttons side by side. On the left, the English button Continue with a plus icon before the label and a right arrow after it. On the right, the Dhivehi button ކުރިއަށް mirrored right to left, with the plus on the right and a left arrow on the left."
+  width="2400"
+  height="408"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the layout mirrors: the leading icon sits on the right of the label and the trailing icon on the left.
+- Labels use the Dhivehi medium style of each size, MV A Waheed, from Dhivehi subtitle medium at xl to Dhivehi caption medium at xs.
+- Icons you pass to a button are not mirrored for you. A forward arrow becomes a left arrow in Dhivehi. Plus, check marks, the search icon and logos stay unchanged.
+- In code, wrap the button in VeliProvider with language set to dv. Direction, fonts and icon order follow the language.
+- In Figma, design Dhivehi screens with buttonDv. It has the same intents, appearances, sizes, states and high-contrast property as button, and keeps the English heights.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <ButtonRtlDemo client:visible />
+</div>
+
+Example content:
+
+| Button         | Props                                                         | Label or accessible name |
+| :------------- | :------------------------------------------------------------ | :----------------------- |
+| Forward action | intent primary, trailing left arrow                           | ކުރިއަށް                 |
+| Add            | intent secondary, appearance transparent, iconOnly, plus icon | aria-label އިތުރުކުރޭ    |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/button/button-spacing-1.svg"
+  darkSrc="/images/docs/button/button-spacing-1-dark.svg"
+  alt="Spacing redlines for sizes xl, md and xs, each a Continue button with icons. Size xl: 16 top and bottom padding, 18 sides, 6 label inset and a 24 x 28 icon box. Size md: 10 top and bottom, 12 sides, 6 label inset and a 20 x 24 icon box. Size xs: 6 padding all round and a 16 x 16 icon box."
+  width="1200"
+  height="356"
+  caption="All values in pixels at 1x. Pink bands are padding, orange bands are gaps between parts and orange lines with end ticks are sizes."
+/>
+
+| Size | Height | Vertical padding | Side padding | Icon box | Icon |
+| :--- | :----- | :--------------- | :----------- | :------- | :--- |
+| xl   | 60     | 16               | 18           | 24 x 28  | 20   |
+| lg   | 52     | 12               | 14           | 24 x 28  | 20   |
+| md   | 44     | 10               | 12           | 20 x 24  | 16   |
+| sm   | 36     | 8                | 8            | 20 x 20  | 16   |
+| xs   | 28     | 6                | 6            | 16 x 16  | 12   |
+
+- There is no gap token between icon and label. The label carries 6 of inline padding on each side, and the icon box adds 2 of its own.
+- Icon-only buttons drop the label and keep the size padding, which makes them square.
+- Loading keeps the text button width. A spinner-only button uses a standalone width, capped to fit its container.
+
+<DocsFigure
+  src="/images/docs/button/button-radius-1.svg"
+  darkSrc="/images/docs/button/button-radius-1-dark.svg"
+  alt="Two Continue buttons at size md and size xs, each marked with a full corner radius."
+  width="1200"
+  height="232"
+  caption="Every size is fully rounded, so the button always renders as a pill."
+/>
+
+## Typography
+
+| Element   | English                             | Dhivehi                                    | Colour token             |
+| :-------- | :---------------------------------- | :----------------------------------------- | :----------------------- |
+| Label, xl | Subtitle medium, Inter Medium 20/28 | Dhivehi subtitle medium, MV A Waheed 24/32 | By intent and appearance |
+| Label, lg | Body lg medium, Inter Medium 18/28  | Dhivehi body lg medium, MV A Waheed 21/36  | By intent and appearance |
+| Label, md | Body md medium, Inter Medium 16/24  | Dhivehi body md medium, MV A Waheed 19/32  | By intent and appearance |
+| Label, sm | Body sm medium, Inter Medium 14/20  | Dhivehi body sm medium, MV A Waheed 17/28  | By intent and appearance |
+| Label, xs | Caption medium, Inter Medium 12/16  | Dhivehi caption medium, MV A Waheed 15/24  | By intent and appearance |
+
+## Tokens
+
+| Intent and appearance | Background                                   | Hover and pressed                                  | Text and icon                                  |
+| :-------------------- | :------------------------------------------- | :------------------------------------------------- | :--------------------------------------------- |
+| Primary fill          | `components/button/primary/default`          | `hover`, `pressed`                                 | White token                                    |
+| Primary transparent   | `components/button/primary/subtle/default`   | `subtle/hover`, `subtle/pressed`                   | `text/primary/default`, `icon/primary/default` |
+| Primary ghost         | None until hover                             | `subtle/default` on hover, `subtle/hover` on press | `text/primary/default`, `icon/primary/default` |
+| Secondary fill        | `components/button/secondary/default`        | `hover`, `pressed`                                 | `text/base/inverted`, `icon/base/inverted`     |
+| Secondary transparent | `components/button/secondary/subtle/default` | `subtle/hover`, `subtle/pressed`                   | `text/base/strong`, `icon/base/strong`         |
+| Secondary ghost       | None until hover                             | `subtle/default` on hover, `subtle/hover` on press | `text/base/strong`, `icon/base/strong`         |
+| Danger fill           | `components/button/danger/default`           | `hover`, `pressed`                                 | White token                                    |
+| Danger transparent    | `components/button/danger/subtle/default`    | `subtle/hover`, `subtle/pressed`                   | `text/danger/default`, `icon/danger/default`   |
+| Danger ghost          | None until hover                             | `subtle/default` on hover, `subtle/hover` on press | `text/danger/default`, `icon/danger/default`   |
+| Accent fill           | `components/button/accent/default`           | `hover`, `pressed`                                 | `text/primary/on-light`                        |
+| Disabled, all         | `components/button/disabled` (ghost: none)   | No hover or press                                  | `text/disabled`, `icon/disabled`               |
+| Focus, all            | Unchanged                                    |                                                    | Focus ring in `border/focus`                   |
+
+Token names leave out the `semantics/` prefix. Override these tokens, not raw colours, when theming.
+
+Ripple colours:
+
+| Intent and appearance           | Light           | Dark            |
+| :------------------------------ | :-------------- | :-------------- |
+| Primary fill                    | #00AFAC at 75%  | #00AFAC at 75%  |
+| Primary transparent and ghost   | White at 61%    | #00AFAC at 40%  |
+| Secondary fill                  | White at 40%    | White at 98%    |
+| Secondary transparent and ghost | White at 61%    | White at 15%    |
+| Danger fill                     | #FF0200 at 90%  | #FF0200 at 95%  |
+| Danger transparent and ghost    | White at 61%    | #FF0200 at 61%  |
+| Accent fill                     | #9AF366 at 100% | #9AF366 at 100% |
+
+## Motion
+
+| What moves                                   | Duration                        | Easing   |
+| :------------------------------------------- | :------------------------------ | :------- |
+| Hover and pressed background and text colour | Normal (200ms)                  | Ease out |
+| Press scale                                  | Fast (80ms)                     | Ease out |
+| Ripple                                       | Grows from the pointer position | Ease out |
+| Loading spinner                              | Continuous rotation             | Linear   |
+
+With reduced motion turned on, the press scale and the ripple are removed and the loading spinner stops rotating.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -428,7 +961,7 @@ The callback receives these observed states. They are not props for forcing visu
 
 ## RTL and Language
 
-Use `VeliProvider language="dv"` to set Dhivehi language and RTL direction. Button typography follows the language, and the icon/label order follows `dir`. Load the fonts described in [Typography](/docs/foundations/typography/).
+Use `VeliProvider language="dv"` to set Dhivehi language and RTL direction. Button typography follows the language, and the icon/label order follows `dir`. Load the fonts described in [Typography](/foundations/typography/).
 
 Button does not translate labels or mirror arbitrary children. Localize the label and accessible name, and use a left-facing forward arrow in RTL. Direction-neutral icons, such as Plus, stay unchanged.
 
@@ -457,3 +990,69 @@ export default function ButtonLanguageDemo() {
   );
 }
 ```
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the button works with keyboards, screen readers and touch, and what you still need to do. Button renders a native button, or a native link in link mode.
+
+## Keyboard
+
+| Key            | Action                                                                             |
+| :------------- | :--------------------------------------------------------------------------------- |
+| Tab            | Moves focus to the next enabled button                                             |
+| Shift + Tab    | Moves focus to the previous enabled button                                         |
+| Enter or Space | Activates the focused button                                                       |
+| Enter          | Follows a button in link mode (as="a"). Space doesn't activate it, as for any link |
+
+Disabled buttons are skipped. Loading buttons stay in the tab order.
+
+## Screen readers
+
+- The visible label is the accessible name. Write it verb first so it makes sense on its own.
+- Icon-only buttons need aria-label or aria-labelledby with verb-first text: Delete file, not Trash icon. In code the types require it and development builds warn when it is missing.
+- A Tooltip is never the only name of an icon-only button. Use the same text in its Tooltip.
+- An icon beside a visible label is decorative: hide it with aria-hidden. On an icon-only button the icon carries the meaning, so the button needs a name.
+- While loading, the button sets aria-busy and aria-disabled, so assistive technology announces the wait while focus stays on the button. Its progressbar is named Loading (ލޯޑުވަނީ in Dhivehi). On an icon-only button that name joins the accessible name, so write names that read well followed by Loading.
+- A loading button with no visible content still needs aria-label.
+- Announce the result of the action in a status or error message.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/button/button-focus-1.webp"
+  darkSrc="/images/docs/button/button-focus-1-dark.webp"
+  alt="Two focused Continue buttons with a plus icon before the label and an arrow after it: a primary fill button and a secondary transparent button, each with a gap and a ring following the pill shape."
+  width="2400"
+  height="424"
+  caption="The focus ring on a primary fill and a secondary transparent button."
+/>
+
+- Keyboard focus shows the Veli focus ring: a 2px gap in `bg/surface/base`, then a 2px ring in `border/focus`, following the pill shape. It sits outside the button, so focusing doesn't change its size or move neighbours.
+- The ring appears on keyboard focus only, not on a pointer press.
+- In forced colours mode the ring becomes a 2px outline.
+- On high-contrast surfaces the ring keeps a transparent gap so the surface shows, and stays visible.
+- Never remove the ring or replace it with a colour change alone.
+
+## Disabled
+
+isDisabled blocks every interaction and removes the button from the tab order, so people using a keyboard or screen reader may not find it or learn why it is unavailable. Prefer an enabled button that explains what is missing when pressed, or show the reason as text next to it. Don't use a Tooltip to say why a control is disabled.
+
+## Target size
+
+Every size is at least 24px tall, which meets the 24 x 24 minimum target size. Size md is 44px tall, the recommended size for primary actions on touch screens. Use sm and xs only in dense desktop toolbars and table rows.
+
+## Contrast
+
+Use the intent and appearance tokens as they are, and the high-contrast treatment on strong colours. Don't override them with custom colours. The button label carries the meaning; don't rely on the colour of the button or the surface alone. On a high-contrast surface at step 800 in Light mode, high-contrast secondary buttons measure at least 16:1 for fill text and icons, 6.3:1 for transparent, 5.2:1 for ghost and 5.2:1 for the focus ring.
+
+## Reduced motion
+
+When people prefer reduced motion, the press scale and the ripple are removed and the loading spinner stops rotating. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, so screen readers can switch to a Dhivehi voice and the built-in Loading name is read in Dhivehi. Pass Dhivehi labels and accessible names yourself, and pass a left arrow for a forward action.
+
+</DocsTab>

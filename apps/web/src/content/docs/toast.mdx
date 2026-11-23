@@ -1,6 +1,6 @@
 ---
 title: Toast
-description: Temporary notifications with actions, dismissal, and timeout progress.
+description: 'Brief feedback at the edge of the screen about something people just did, announced without moving focus.'
 ---
 
 import {
@@ -11,9 +11,519 @@ import {
   ToastRtlDemo,
 } from '../../components/ToastExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Toast
 
-Use Toast for brief feedback about an action or event. Mount one `ToastRegion` inside `VeliProvider` and share its queue across the app. For persistent information in the page, use [Alert](/docs/components/alert/).
+<DocsTab id="overview">
+
+A toast gives brief feedback about something people just did, or about a background task that finished or failed: a short message at the edge of the screen. Screen readers announce it without moving focus, and it closes on its own or when people close it. Every toast goes through one shared queue and appears in one toast region.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/toast.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/application-saved--docs"
+/>
+
+## When to use
+
+### Use a toast when
+
+- People need a brief confirmation of their own action that needs no reply and is not tied to a place on the page.
+- A small in-page action is done and its result is not on screen, such as Draft saved or Reference number copied.
+- A background task finished or failed while people were doing something else, such as a file upload.
+- App events need to reach people one after another. Send them through the shared toast queue.
+
+### Don't use a toast when
+
+- The message belongs with page content or must stay visible. Use Alert.
+- People must decide before they continue. Use Modal with clear actions.
+- A form has validation errors. Use the error summary and field error messages.
+- People must keep the information, such as a reference number, deadline or amount due. Show it on the page or in an Alert, and use the toast only to confirm the action.
+- The change is already visible, such as a switch turning on. Let the change confirm itself.
+- The message is a tip, reminder or announcement unrelated to what people just did. Put news in an Alert on the relevant page.
+- The message ends a transaction, such as an application or payment. Use a confirmation page with a clear heading.
+
+<DocsFigure
+  src="/images/docs/toast/toast-intro-1.webp"
+  darkSrc="/images/docs/toast/toast-intro-1-dark.webp"
+  alt="A Work permit application card, submitted on 21 October 2026, shows the reference number WP-2026-04817 and a Copy reference number button. In the bottom end corner of the screen, a neutral toast reads Reference number copied, with an info icon and a close button."
+  width="2400"
+  height="896"
+  caption="A toast confirms that the reference number was copied."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/toast/toast-anatomy-1.svg"
+  darkSrc="/images/docs/toast/toast-anatomy-1-dark.svg"
+  alt='A danger toast with eight numbered markers: 1 on the container, 2 on the leading icon, 3 on the title "Upload failed", 4 on the description "The file could not be processed.", 5 on the Try again button, 6 on the View details button, 7 on the close button and 8 on the timeout progress bar along the bottom edge.'
+  width="1200"
+  height="388"
+  caption="The parts of a toast. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   The toast surface, with a tinted or solid background, a 1px border on subtle toasts, 24 radius, 16 padding and a medium shadow, because a toast sits above the page. It is at most 384 wide. In code it is Toast.
+
+2. **Leading icon**
+
+   A 20px icon in the Fill weight. Each intent has its own shape, so the intent never depends on colour alone. You can turn it off or swap it. It is decorative, so screen readers skip it. In code it is leadingIcon and showLeadingIcon.
+
+3. **Title**
+
+   Required. It says what happened in up to 6 words, with no full stop, and names the toast for screen readers. In code it is title.
+
+4. **Description**
+
+   Optional. One or two sentences that add to the title and say what to do. In code it is description.
+
+5. **Main action**
+
+   Optional. A secondary fill button, size xs, with a verb-first label. In code it is the first item in actions.
+
+6. **Second action**
+
+   Optional lighter action, a secondary ghost button, size xs. Two actions at most. In code it is the second item in actions.
+
+7. **Close button**
+
+   An icon-only ghost button that closes the toast. Screen readers announce it as Close notification. Keep it on every toast. In code it is showCloseButton.
+
+8. **Timeout progress**
+
+   An optional bar that counts down a timed toast and follows the bottom corners. It is decorative, so it is hidden from screen readers, and it is hidden with reduced motion. In code it is showProgress.
+
+</DocsAnatomy>
+
+On emphasis toasts, the action buttons and the close button use the high contrast treatment.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/toast/toast-do-1.webp" darkSrc="/images/docs/toast/toast-do-1-dark.webp" alt="A positive subtle toast with a check circle icon, titled Payment received, with the description &quot;Paid MVR 250 on 21 October 2026.&quot; and a close button." width="1136" height="448">
+
+Choose the intent from what happened: positive for an outcome that matters, such as a payment.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/toast/toast-dont-1.webp" darkSrc="/images/docs/toast/toast-dont-1-dark.webp" alt="A warning subtle toast with a warning triangle icon, titled Draft saved, with no description." width="1136" height="448">
+
+Don't use warning or danger for a routine confirmation. Alarming intents for routine news make real problems easy to miss.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/toast/toast-do-2.webp" darkSrc="/images/docs/toast/toast-do-2-dark.webp" alt="A neutral subtle toast with an info icon, titled Reference number copied, and a close button." width="1136" height="344">
+
+Write a short title that says what happened, with no full stop.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/toast/toast-dont-2.webp" darkSrc="/images/docs/toast/toast-dont-2-dark.webp" alt="A positive subtle toast titled &quot;Success!&quot; with the description &quot;Your application draft has now been saved.&quot;" width="1136" height="344">
+
+Don't write vague or exclamatory titles. Success! says nothing about what happened.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/toast/toast-do-3.webp" darkSrc="/images/docs/toast/toast-do-3-dark.webp" alt="A danger subtle toast titled Upload failed, with the description &quot;The file could not be processed.&quot; and one action, Try again." width="1136" height="432">
+
+Start action labels with a verb, such as Try again, and let the close button close the toast.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/toast/toast-dont-3.webp" darkSrc="/images/docs/toast/toast-dont-3-dark.webp" alt="The same Upload failed toast with two actions, Retry and Dismiss." width="1136" height="432">
+
+Don't use Retry or Dismiss. Use Try again, and leave closing to the close button.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+Toasts are read aloud once, so every word counts.
+
+### Title
+
+Write up to 6 words that say what happened, in the past tense, with no full stop. Put the key words first. No exclamation marks and no praise.
+
+| Do                      | Don't                                                                         |
+| :---------------------- | :---------------------------------------------------------------------------- |
+| Draft saved             | Success! (says nothing about what happened)                                   |
+| Payment not taken       | Your application draft has now been saved. (a long sentence with a full stop) |
+| Reference number copied | Done (means nothing without the screen)                                       |
+
+### Description
+
+Write 1 or 2 sentences that add to the title and say what to do, each ending with a full stop. Don't repeat the title, and never show an error code on its own.
+
+| Do                                                | Don't                                                       |
+| :------------------------------------------------ | :---------------------------------------------------------- |
+| Draft saved. You can come back to it for 30 days. | Draft saved. Your draft has been saved. (repeats the title) |
+
+### Action labels
+
+Give a toast at most 2 actions, each a verb in 1 to 3 words, with the main action first. Never use OK, Dismiss or Retry: the close button closes the toast, and Try again repeats a failed action. Offer Undo for reversible actions, such as Draft deleted.
+
+| Do               | Don't                                 |
+| :--------------- | :------------------------------------ |
+| Undo             | Retry (use Try again)                 |
+| Try again        | Dismiss (duplicates the close button) |
+| View application | OK                                    |
+
+### Wording by intent
+
+Match the words to the intent. Keep sorry for failures the service caused.
+
+| Intent   | Pattern                       | Example                                                  |
+| :------- | :---------------------------- | :------------------------------------------------------- |
+| Positive | The thing and what happened   | Draft saved                                              |
+| Info     | The subject and the date      | Service hours change on 1 November 2026                  |
+| Warning  | The consequence and the date  | Permit expires on 21 October 2027                        |
+| Danger   | What failed and what it means | Payment not taken. Your card was not charged. Try again. |
+
+| Do                                                       | Don't                                                        |
+| :------------------------------------------------------- | :----------------------------------------------------------- |
+| Payment not taken. Your card was not charged. Try again. | Oops! Something went wrong (vague, playful and no next step) |
+
+### Numbers and dates
+
+Use exact dates and 24-hour times, such as 21 October 2026, 14:30. Write amounts as MVR 250. Show references exactly as issued and on one line. A relative date such as Today always comes with the exact date.
+
+| Do                          | Don't                                                            |
+| :-------------------------- | :--------------------------------------------------------------- |
+| Refund of MVR 250 requested | Appointment moved to tomorrow (relative date with no exact date) |
+
+### Status words
+
+When a toast reports a status, use the standard word and its intent everywhere: Approved and Paid are positive, Pending is cautious and Rejected is danger.
+
+### Dhivehi copy
+
+Write Dhivehi copy natively rather than word for word, and keep it as short as the English, because Thaana lines are taller. Keep the built-in close button name. Under Dhivehi, pass a Dhivehi aria-label to ToastRegion so the region name is Dhivehi too.
+
+## Related components
+
+| Component                                      | When to use it                                                                           |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| [Alert](/docs/components/alert/)               | for messages that belong with page content or must stay visible.                         |
+| [Modal](/docs/components/modal/)               | when people must decide before they can continue.                                        |
+| [Button](/docs/components/button/)             | toast actions use Button intents and appearances. Keep a single primary action at most.  |
+| [Field](/docs/components/field/)               | field error messages and the form error summary handle validation errors, never a toast. |
+| [Loading text](/docs/components/loading-text/) | while an action runs. Use a toast only for the result when it is not visible.            |
+| [Spinner](/docs/components/spinner/)           | while a short action runs, then a toast only for a result people cannot see.             |
+| [VeliProvider](/docs/components/provider/)     | VeliProvider sets the close button name and the direction of the region and every toast. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the toast: intents, appearances, region placements, content options, spacing and the tokens behind them. Toast shares its surfaces and colour pairs with Alert.
+
+## Intents
+
+Choose the intent from what happened, not from the colour you want. In code, intent defaults to neutral.
+
+<DocsFigure
+  src="/images/docs/toast/toast-intents-1.png"
+  darkSrc="/images/docs/toast/toast-intents-1-dark.webp"
+  alt="Two subtle toasts, labelled intent neutral and intent info. Neutral: Reference number copied, with an info icon on a grey surface. Info: Service hours change on 1 November 2026, with a blue info icon on a light blue surface."
+  width="2400"
+  height="520"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-intents-2.png"
+  darkSrc="/images/docs/toast/toast-intents-2-dark.webp"
+  alt="Two subtle toasts, labelled intent positive and intent cautious. Positive: Payment received, with a check circle icon on a light green surface. Cautious: Payment pending, with an exclamation circle icon on a light yellow surface."
+  width="2400"
+  height="520"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-intents-3.png"
+  darkSrc="/images/docs/toast/toast-intents-3-dark.webp"
+  alt='Two subtle toasts, labelled intent warning and intent danger. Warning: Your permit expires on 21 October 2027, with a warning triangle icon on a light orange surface. Danger: Payment not taken, with the description "Your card was not charged. Try again." and a red exclamation icon on a light red surface.'
+  width="2400"
+  height="472"
+  caption="The six intents, each with its default icon, in the subtle appearance."
+/>
+
+| Intent   | Use for                                                                                      | Example                                 |
+| :------- | :------------------------------------------------------------------------------------------- | :-------------------------------------- |
+| neutral  | Routine confirmations of a small action                                                      | Reference number copied                 |
+| info     | News that affects people, with the subject and the date                                      | Service hours change on 1 November 2026 |
+| positive | An outcome that matters, such as a payment or an approval                                    | Payment received                        |
+| cautious | Something is waiting and may need attention, such as a payment that has not gone through yet | Payment pending                         |
+| warning  | A consequence with a date. Say what will happen and when                                     | Your permit expires on 21 October 2027  |
+| danger   | A failure. Say what failed and what it means for the person                                  | Payment not taken                       |
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/toast/toast-appearances-1.png"
+  darkSrc="/images/docs/toast/toast-appearances-1-dark.webp"
+  alt='A subtle info toast titled Draft saved, with the description "You can come back to it for 30 days.", on a light blue tinted background with a subtle border.'
+  width="1168"
+  height="556"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-appearances-2.png"
+  darkSrc="/images/docs/toast/toast-appearances-2-dark.webp"
+  alt='An emphasis danger toast titled Payment not taken, with the description "Your card was not charged. Try again." and a white Try again button, on a solid red background with light text.'
+  width="1168"
+  height="556"
+  caption="Subtle, the default, and emphasis."
+/>
+
+- Use **subtle**, the default, for most toasts. It has a tinted background with a subtle border and neutral text, the same surface as a light Alert.
+- Use **emphasis** for high-salience feedback that people must not miss, such as a failed payment. It has a solid background with light text, the same surface as a high contrast Alert. If every toast is emphasised, none stands out.
+- Use one appearance for toasts that appear together.
+
+## Placements
+
+<DocsFigure
+  src="/images/docs/toast/toast-placements-1.webp"
+  darkSrc="/images/docs/toast/toast-placements-1-dark.webp"
+  alt='Two screen frames labelled placement bottom-end and placement bottom-start, each with a neutral toast titled Application saved, "Your draft has been stored securely.", at the bottom end and the bottom start of the screen.'
+  width="2400"
+  height="920"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-placements-2.webp"
+  darkSrc="/images/docs/toast/toast-placements-2-dark.webp"
+  alt="Two screen frames labelled placement bottom and placement top-end, with the same Application saved toast centred at the bottom and at the top end."
+  width="2400"
+  height="968"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-placements-3.webp"
+  darkSrc="/images/docs/toast/toast-placements-3-dark.webp"
+  alt="Two screen frames labelled placement top-start and placement top, with the same Application saved toast at the top start and centred at the top."
+  width="2400"
+  height="920"
+  caption="The six ToastRegion placements, shown left to right."
+/>
+
+| Placement    | Position                             | Use when                                           |
+| :----------- | :----------------------------------- | :------------------------------------------------- |
+| bottom-end   | Bottom, at the end edge. The default | The page has no sticky footer or bottom navigation |
+| bottom-start | Bottom, at the start edge            |                                                    |
+| bottom       | Centred at the bottom                |                                                    |
+| top-end      | Top, at the end edge                 | The bottom of the screen holds sticky actions      |
+| top-start    | Top, at the start edge               |                                                    |
+| top          | Centred at the top                   | On phones with bottom navigation                   |
+
+- Mount one region near the root of the app and keep it in the same place on every page.
+- Keep toasts clear of the focused field, the main action, bottom navigation, sticky action bars and the on-screen keyboard. On phones, move the region to the top if toasts would cover them.
+- Start and end follow the reading direction, so in Dhivehi bottom-end is bottom left. Use start and end, never left and right.
+
+## Content options
+
+Keep the title in every case and turn other parts on or off as the message needs.
+
+<DocsFigure
+  src="/images/docs/toast/toast-options-1.png"
+  darkSrc="/images/docs/toast/toast-options-1-dark.webp"
+  alt='Two neutral toasts labelled case title only and case title and description: Draft saved, and Draft saved with "You can come back to it for 30 days."'
+  width="2400"
+  height="608"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-options-2.png"
+  darkSrc="/images/docs/toast/toast-options-2-dark.webp"
+  alt='Two toasts labelled case one action and case two actions: a neutral Draft deleted toast with an Undo button, and a danger Upload failed toast, "The file could not be processed.", with Try again and View details.'
+  width="2400"
+  height="608"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-options-3.png"
+  darkSrc="/images/docs/toast/toast-options-3-dark.webp"
+  alt="Two toasts labelled case with progress and case without close button: a positive Photo uploaded toast with a green progress bar along the bottom edge, and a neutral Draft deleted toast with Undo and no close button."
+  width="2400"
+  height="608"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-options-4.png"
+  darkSrc="/images/docs/toast/toast-options-4-dark.webp"
+  alt='Two toasts labelled case without icon and case emphasis: a neutral Reference number copied toast with no icon, and an emphasis danger Payment not taken toast, "Your card was not charged. Try again.", with Try again.'
+  width="2400"
+  height="608"
+  caption="Eight content cases, each with a note on when to use it."
+/>
+
+| Case                  | When                                                                                              | Parts               |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :------------------ |
+| Title only            | A routine confirmation that needs no detail                                                       | No description      |
+| Title and description | The description adds something the title does not, such as how long a draft is kept               | Description         |
+| One action            | Undo for a reversible action. The toast has no timeout and stays until people close it or move on | One action          |
+| Two actions           | Main action first, lighter action second. Never Dismiss or OK                                     | Two actions         |
+| With progress         | Only when the time left matters to people. It shows only on a timed toast                         | showProgress        |
+| Without close button  | Only when the toast has an action or a timeout, so it can still go away                           | showCloseButton off |
+| Without icon          | A routine confirmation. Keep the icon on status intents                                           | showLeadingIcon off |
+| Emphasis              | One failure people must not miss                                                                  | appearance emphasis |
+
+## Behaviour
+
+- **Timing**: give a toast with no action a timeout of 5000 ms or more, and longer for longer text. Toasts with an action, errors and warnings have no timeout and stay until people close them. In code, omit timeout or set it to 0 to keep a toast open.
+- **Pause on hover and focus**: the timer pauses while people hover over or focus the toast region, so they have time to read and act.
+- **Actions**: an action closes the toast after it runs, unless dismissOnPress is false. Give actions stable ids when their labels can change.
+- **One queue**: create one toast queue and share it across the app. Set maxVisibleToasts, such as 3; the rest wait in the queue. The default shows every toast. For a bulk action, show one summary toast, such as 5 files removed.
+- **Repeated events**: when the same event happens again while its toast is showing, close the earlier toast before adding the new one, so people see one toast per event.
+- **Width**: toasts are at most 384 wide and the region stays inside the screen insets. Text wraps and the toast grows in height.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/toast/toast-rtl-1.webp"
+  darkSrc="/images/docs/toast/toast-rtl-1-dark.webp"
+  alt='Two stacks of toasts. Left, labelled LTR Toast: a positive toast Application saved, "Your draft has been stored securely.", and a neutral toast File deleted, "The file can still be restored.", with Undo. Right, labelled RTL ToastDv: the same toasts in Dhivehi, mirrored, with the icons on the right, the close buttons on the left and the Dhivehi Undo button at the right.'
+  width="2400"
+  height="764"
+  caption="Toast and ToastDv. Everything mirrors in Dhivehi."
+/>
+
+- In Dhivehi everything mirrors: the icon sits at the right, the close button at the left and the main action on the right. The progress bar empties towards the right.
+- The title uses Dhivehi body sm medium (MV A Waheed) and the description Dhivehi body sm regular (MV Faseyha), 28 high. The icon and close button sit in a 28px row.
+- Placements use start and end, so bottom-end is bottom left in Dhivehi.
+- Keep reference numbers, dates and amounts left to right inside Dhivehi text, and isolate text from people or systems. In code, wrap them in bdi.
+- The close button name is Dhivehi under Dhivehi: ނޮޓިފިކޭޝަން ބަންދުކުރޭ. The region name stays English unless you pass a Dhivehi aria-label to ToastRegion.
+- In code, wrap the app in VeliProvider with language set to dv. It sets the direction of the region and every toast.
+- In Figma, design Dhivehi screens with ToastDv. It has the same appearances, intents and properties as Toast.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <ToastRtlDemo client:visible />
+</div>
+
+Example configuration: two subtle toasts in the region at bottom-end.
+
+| English                              | Dhivehi                                          |
+| :----------------------------------- | :----------------------------------------------- |
+| Application saved                    | އެޕްލިކޭޝަން ސޭވްކުރެވިއްޖެ                      |
+| Your draft has been stored securely. | ތިޔަ ޑްރާފްޓް ރައްކާތެރިކަމާއެކު ސޭވްކުރެވިއްޖެ. |
+| File deleted                         | ފައިލް ފޮހެލެވިއްޖެ                              |
+| The file can still be restored.      | ފައިލް އަނބުރާ ލިބިގެންދާނެ.                     |
+| Undo                                 | އަންޑޫ                                           |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/toast/toast-spacing-1.svg"
+  darkSrc="/images/docs/toast/toast-spacing-1-dark.svg"
+  alt='Spacing redlines for a toast titled Draft deleted, with the description "You can restore it for 30 days." and the actions Undo and View details: 16 padding all round, 12 from icon to text, 4 from title to description, 16 above the actions, 8 between the actions and 12 from the text to the close button.'
+  width="1200"
+  height="412"
+  caption="All values in pixels at 1x. Pink bands are padding and orange bands are gaps between parts."
+/>
+
+| Part        | Padding                  | Gaps                                                                                           | Width                                                                     |
+| :---------- | :----------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| Toast       | 16 all round             | Icon to text 12, title to description 4, above actions 16, between actions 8, text to close 12 | At most 384. Actions wrap to a new row when they don't fit                |
+| ToastDv     | 16 all round             | As Toast. The icon and close sit in 28 rows                                                    | At most 384, mirrored                                                     |
+| ToastRegion | 16 from the screen edges | 8 between stacked toasts                                                                       | Toast width plus padding. The top and bottom placements centre the toasts |
+
+- The close button is a 36px ghost button inside a 20px slot. It lines up with the title, and its hover area reaches into the padding.
+- The timeout progress bar is 4 high on the bottom edge and follows the 24 radius.
+- On a phone, toasts fill the width.
+
+<DocsFigure
+  src="/images/docs/toast/toast-region-1.svg"
+  darkSrc="/images/docs/toast/toast-region-1-dark.svg"
+  alt='Two screen frames. Left, labelled placement bottom-end: three stacked toasts, Photo uploaded, Draft saved and Reference number copied, marked 8 apart and 16 from the screen edges. Right, labelled placement top: a positive Payment received toast, "Paid MVR 250 on 21 October 2026.", at the top of the screen.'
+  width="1200"
+  height="508"
+  caption="The region stacks toasts 8 apart, 16 from the screen edges."
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-radius-1.svg"
+  darkSrc="/images/docs/toast/toast-radius-1-dark.svg"
+  alt='Two toasts labelled appearance subtle and appearance emphasis: a subtle info Draft saved toast, "You can come back to it for 30 days.", and an emphasis danger Payment not taken toast, "Your card was not charged. Try again.", each with its corner marked 24.'
+  width="1200"
+  height="338"
+  caption="Both appearances use a 24 corner radius (radius/3xl), the same as Alert."
+/>
+
+## Colour modes
+
+Toasts follow the Light and Dark mode of the page. Subtle toasts become a dark tint. Emphasis toasts move from the 800 step to the 1000 step in Dark mode, which is bright there, so the text turns dark and the high contrast buttons flip with it.
+
+<DocsFigure
+  src="/images/docs/toast/toast-modes-1.png"
+  alt="Light mode: a subtle info Draft saved toast on light blue, an emphasis info toast Service hours change on 1 November 2026 on solid blue, and an emphasis danger Payment not taken toast on solid red with a white Try again button."
+  width="1152"
+  height="660"
+/>
+
+<DocsFigure
+  src="/images/docs/toast/toast-modes-1-dark.webp"
+  alt="Dark mode: the same three toasts. Draft saved on a dark blue tint, Service hours change on 1 November 2026 on light blue with dark text, and Payment not taken on light red with dark text and a dark Try again button."
+  width="1152"
+  height="660"
+  caption="The same toasts in Light mode and in Dark mode."
+/>
+
+## Typography
+
+| Element       | English                                 | Dhivehi                                   | Colour token                                                               |
+| :------------ | :-------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------- |
+| Title         | Body sm semibold, Inter Semi Bold 14/20 | Dhivehi body sm medium, MV A Waheed 17/28 | Subtle: `text/base/emphasis`. Emphasis: `highContrast/{intent}/foreground` |
+| Description   | Body sm regular, Inter Regular 14/20    | Dhivehi body sm regular, MV Faseyha 16/28 | Subtle: `text/base/strong`. Emphasis: `highContrast/{intent}/description`  |
+| Action labels | Caption medium (button xs)              | Dhivehi caption medium (buttonDv xs)      | From the button. Emphasis: the onHighContrast foreground tokens            |
+
+## Tokens
+
+Toast uses the Alert component tokens for each intent and appearance. Names leave out the `components/alert/` prefix.
+
+| Intent   | Subtle: background, icon                                               | Emphasis: background                                                    | Emphasis: foreground, description |
+| :------- | :--------------------------------------------------------------------- | :---------------------------------------------------------------------- | :-------------------------------- |
+| neutral  | `light/neutral/bg` (sage/300), `light/neutral/icon` (sage/800)         | `highContrast/neutral/bg` (sage/1100 in Light, sage/1200 in Dark)       | sage/100, sage/200                |
+| info     | `light/info/bg` (blue/300), `light/info/icon` (blue/800)               | `highContrast/info/bg` (blue/800 in Light, blue/1000 in Dark)           | blue/100, blue/200                |
+| positive | `light/positive/bg` (emerald/300), `light/positive/icon` (emerald/800) | `highContrast/positive/bg` (emerald/800 in Light, emerald/1000 in Dark) | emerald/100, emerald/200          |
+| cautious | `light/cautious/bg` (yellow/300), `light/cautious/icon` (yellow/800)   | `highContrast/cautious/bg` (yellow/800 in Light, yellow/1000 in Dark)   | yellow/100, yellow/200            |
+| warning  | `light/warning/bg` (orange/300), `light/warning/icon` (orange/800)     | `highContrast/warning/bg` (orange/800 in Light, orange/1000 in Dark)    | orange/100, orange/200            |
+| danger   | `light/danger/bg` (red/300), `light/danger/icon` (red/800)             | `highContrast/danger/bg` (red/800 in Light, red/1000 in Dark)           | red/100, red/200                  |
+
+| Part           | Subtle                                   | Emphasis                                                                       |
+| :------------- | :--------------------------------------- | :----------------------------------------------------------------------------- |
+| Border         | `border/base/subtle`                     | None                                                                           |
+| Title          | `text/base/emphasis`                     | `highContrast/{intent}/foreground`                                             |
+| Description    | `text/base/strong`                       | `highContrast/{intent}/description`                                            |
+| Progress track | `components/toast/progress/track/subtle` | `components/toast/progress/track/emphasis`                                     |
+| Actions        | Secondary fill and ghost buttons         | Secondary fill and ghost buttons with `button/onHighContrast/secondary` tokens |
+| Shadow         | Medium                                   | Medium                                                                         |
+
+## Motion
+
+A toast enters from the edge it is placed on: from the end edge for end placements, the start edge for start placements, and from the top or bottom for centred placements. The timeout progress bar shrinks as the timer runs.
+
+With reduced motion turned on, toasts appear and leave without entry and exit transitions, and the progress bar is hidden.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -236,3 +746,54 @@ Options for `queue.add(content, options)`:
 <div className="preview mb-4 rounded-lg border p-4">
   <ToastRtlDemo client:load />
 </div>
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the toast works with screen readers, keyboards and timing, and what you still need to do.
+
+## Screen readers
+
+- Each toast is a non-modal alert dialog named by its title and described by its description. Its content is announced when it appears, and focus stays where it was.
+- Keep the title and description short and put the key words first. The message is read once and not repeated.
+- The toast region is a landmark named with the number of notifications, such as 1 notification., so people can find it in the landmark list.
+- The leading icon and the timeout progress bar are decorative and hidden from screen readers.
+- Never put information people need to complete or understand a task only in a toast.
+
+## Keyboard
+
+| Key            | Action                                                           |
+| :------------- | :--------------------------------------------------------------- |
+| F6             | Moves focus to the toast region from anywhere in the app         |
+| Shift + F6     | Moves focus to the toast region, going backwards through regions |
+| Tab            | Moves through each toast's actions and close button              |
+| Enter or Space | Activates the focused action or close button                     |
+
+## Focus
+
+- A toast never takes focus when it appears.
+- A toast must never cover the focused element. Place the region clear of the main action, sticky bars and the keyboard.
+- A focused toast and the focused region show the Veli focus ring. Buttons inside show their own focus ring.
+
+## Timing
+
+Keep an auto-dismissing toast on screen for at least 5 seconds, and longer for longer text. Toasts with actions, errors or warnings have no timeout. The timer pauses while people hover over or focus the region, so they have time to read and act.
+
+## Target size
+
+The close button is 36 and the actions are 28 high, so both have hit areas of at least 24 x 24.
+
+## Contrast
+
+The title states the outcome, so the intent never depends on colour. Each status intent also has its own icon shape. Use the toast tokens as they are, and use the high contrast button treatment on emphasis toasts.
+
+## Reduced motion
+
+With reduced motion, toasts appear and leave without transitions and the progress bar is hidden. Nothing extra is needed from you unless you pass a custom wrapUpdate to the queue: it then controls its own motion and must respect the same preference.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, the Dhivehi fonts and the Dhivehi close button name. Pass a Dhivehi aria-label to ToastRegion so the region name is Dhivehi too, and pass Dhivehi titles, descriptions and action labels yourself.
+
+</DocsTab>

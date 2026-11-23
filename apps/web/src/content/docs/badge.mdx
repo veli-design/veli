@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: Compact status, category, and count labels with semantic intents and three appearances.
+description: 'A short status, category or count label that people read at a glance.'
 ---
 
 import {
@@ -11,9 +11,453 @@ import {
   BadgeStatusDotsDemo,
 } from '../../components/BadgeExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Badge
 
-Use Badge for compact status, category, and count labels. For page-level banners, use [Alert](/docs/components/alert/). For temporary notifications, use [Toast](/docs/components/toast/).
+<DocsTab id="overview">
+
+A badge shows a short status, a category or a count at a glance. Use it next to the item it describes, in tables, cards, lists and headings, so people can see where things stand without reading a sentence. Badges are labels only: people can't click, select or remove them.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/badge.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-badge--docs"
+/>
+
+## When to use
+
+### Use a badge when
+
+- A short status needs to be seen at a glance, such as Approved, Pending or Rejected.
+- Items in a list, table or card need a category or type.
+- A count of new or unread items belongs next to a control or a heading. Use the counter.
+- A person or service needs a presence indicator, such as the status dot on an avatar.
+
+### Don't use a badge when
+
+- People can select or remove the label. Use Tags.
+- People should act on it, such as opening or filtering something. Use a button or a link.
+- The message needs a sentence or explains what to do. Use Alert, which has a title and a description.
+- The message is short-lived feedback after an action. Use Toast.
+
+<DocsFigure
+  src="/images/docs/badge/badge-intro-1.webp"
+  darkSrc="/images/docs/badge/badge-intro-1-dark.webp"
+  alt="A card titled My applications for Aishath Mariyam. It lists four applications, each with a subtle badge at the end of the row: Business licence, BL-3051, submitted 12 October, Approved in green; Building permit, BP-2207, submitted 3 October, In review in blue; Trade fair stall fee, MVR 1,500, due 30 October, Pending in yellow; Vehicle registration renewal, VR-8812, submitted 28 September, Rejected in red."
+  width="2400"
+  height="1208"
+  caption="Badges show the status of each application in a list."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/badge/badge-anatomy-1.svg"
+  darkSrc="/images/docs/badge/badge-anatomy-1-dark.svg"
+  alt="A label badge with a leading icon and the text Label, and a red counter showing 12. Four numbered markers: 1 on the edge of the badge container, 2 on the leading icon, 3 on the label text and 4 on the number in the counter."
+  width="576"
+  height="320"
+  caption="The parts of a label badge and a counter. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   The outer shape. It sets the height, padding, corner radius and the appearance colours. It is not interactive. In code it is Badge, rendered as a span.
+
+2. **Leading icon**
+
+   An optional 16px icon before the label, 12px at size sm. It is decorative, so screen readers skip it. Counters and dots never show it. In code it is leadingIcon.
+
+3. **Label**
+
+   The status or category text, on one line. It truncates with an ellipsis when the badge runs out of room. In code it is the Badge children.
+
+4. **Count**
+
+   In counter mode a number replaces the label. Values above max show as max+, such as 99+. In code it is count and max. Counters only.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/badge/badge-do-1.webp" darkSrc="/images/docs/badge/badge-do-1-dark.webp" alt="Two subtle badges side by side: Approved in green and Rejected in red." width="1136" height="240">
+
+Choose the intent by meaning: positive for Approved, danger for Rejected.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/badge/badge-dont-1.webp" darkSrc="/images/docs/badge/badge-dont-1-dark.webp" alt="A single subtle red badge that says New." width="1136" height="240">
+
+Don't pick an intent for its colour. Red reads as an error even when nothing is wrong.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/badge/badge-do-2.webp" darkSrc="/images/docs/badge/badge-do-2-dark.webp" alt="A single outline badge that says In review." width="1136" height="240">
+
+Keep the label to one or two words so it reads at a glance.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/badge/badge-dont-2.webp" darkSrc="/images/docs/badge/badge-dont-2-dark.webp" alt="A long outline badge that says Your application is waiting for review by an officer." width="1136" height="240">
+
+Don't write a sentence in a badge. Long labels crowd the layout and truncate.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/badge/badge-do-3.webp" darkSrc="/images/docs/badge/badge-do-3-dark.webp" alt="An outline counter pill showing 99+." width="1136" height="288">
+
+Cap large counts with max. With the default max of 99, a count of 128 shows as 99+.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/badge/badge-dont-3.webp" darkSrc="/images/docs/badge/badge-dont-3-dark.webp" alt="A wide outline counter pill showing 12840." width="1136" height="288">
+
+Don't raise max to show every digit. A wide counter crowds the control it labels.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### One or two words
+
+Name the state or the category in 1 or 2 words, so the badge reads at a glance. The row or card around it already names the item.
+
+| Do        | Don't                                                                            |
+| :-------- | :------------------------------------------------------------------------------- |
+| Approved  | Application approved by officer (4 words; the row already names the application) |
+| In review | Your application is waiting for review by an officer (a sentence)                |
+
+### Sentence case
+
+Capitalise the first word only. Don't use all caps or title case.
+
+| Do        | Don't                |
+| :-------- | :------------------- |
+| In review | IN REVIEW (all caps) |
+
+### No punctuation
+
+Don't add full stops, colons or exclamation marks, and don't put a field label inside the badge.
+
+| Do   | Don't                                             |
+| :--- | :------------------------------------------------ |
+| Paid | Paid! (exclamation mark)                          |
+| Paid | Status: Paid (colon and a label inside the badge) |
+
+### Status, not action
+
+A badge says what something is, not what to do. Actions belong in a button.
+
+| Do            | Don't                                                            |
+| :------------ | :--------------------------------------------------------------- |
+| Action needed | Upload documents (an instruction in a label people can't act on) |
+
+### Status words and intents
+
+Use the shared status words, and give each word the same intent everywhere. Never recolour a status for one service.
+
+| Status        | Intent   | Use it when                                                                                                       |
+| :------------ | :------- | :---------------------------------------------------------------------------------------------------------------- |
+| Draft         | neutral  | An application is started but not submitted                                                                       |
+| Submitted     | info     | The agency has received it but not started checking                                                               |
+| In review     | info     | The agency is checking it                                                                                         |
+| Action needed | warning  | The person must do something before it can continue                                                               |
+| Approved      | positive | The agency has said yes                                                                                           |
+| Rejected      | danger   | The agency has said no                                                                                            |
+| Cancelled     | neutral  | It was stopped before a decision                                                                                  |
+| Expired       | warning  | A licence, permit, document, payment link or draft is no longer valid                                             |
+| Paid          | positive | The full amount has been received                                                                                 |
+| Unpaid        | cautious | A payment is due but its deadline has not passed                                                                  |
+| Overdue       | danger   | A payment or task has passed its deadline                                                                         |
+| Pending       | cautious | The service can't yet say whether an application is submitted or in review, or a payment is waiting to go through |
+
+Pair the badge with the detail people need next to it, such as the date and reference number for Submitted, the reason for Rejected, or the amount and deadline for Unpaid.
+
+| Do                                 | Don't                                                                                |
+| :--------------------------------- | :----------------------------------------------------------------------------------- |
+| In review                          | Processing (not a shared status word; use In review)                                 |
+| Approved, with the positive intent | Approved, with the green intent (green is a category colour with no success meaning) |
+
+### Presence words
+
+Keep Online, Away, Busy and Offline for whether a person or a service is available, never for an application, payment or document. Show Online with positive, Away with cautious, Busy with danger and Offline with neutral.
+
+### Numbers in counters
+
+Show counters in digits only and cap them at 99+. Put the subject next to the counter or in its accessible name, such as 5 notifications, and give the exact count in the accessible name or a detail view.
+
+| Do  | Don't                                                              |
+| :-- | :----------------------------------------------------------------- |
+| 5   | five (a word)                                                      |
+| 99+ | 5 new (words belong in the accessible name or next to the counter) |
+| 99+ | 12840 (a wide counter)                                             |
+
+Hide the counter when the count is zero, unless zero means something to people.
+
+### Fees
+
+Write Free when a service never charges, and No fee when a fee usually applies but not to this person.
+
+| Do     | Don't                       |
+| :----- | :-------------------------- |
+| Free   | MVR 0 (looks like an error) |
+| No fee | N/A (says nothing)          |
+
+### Dhivehi labels
+
+Badge has no built-in text: labels, counts and status dot names all come from your content. Write Dhivehi labels natively rather than translating word for word, and keep them as short as the English. Pass Dhivehi aria-label values for dots and counters too, such as އޮންލައިން for Online.
+
+## Related components
+
+| Component                          | When to use it                                                                                         |
+| :--------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| [Tags](/docs/components/tags/)     | labels people can select or remove. Tags hold Badge and the counter inside them for status and counts. |
+| [Alert](/docs/components/alert/)   | a page or section message that needs a sentence or an action.                                          |
+| [Toast](/docs/components/toast/)   | short-lived feedback after an action.                                                                  |
+| [Avatar](/docs/components/avatar/) | carries the xs status dot to show presence, such as Online or Away.                                    |
+| [Button](/docs/components/button/) | when the label should do something, or to hold an icon that carries a counter.                         |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the badge: intents, appearances, sizes, the counter and the status dot, with the spacing, type and tokens behind them. Values match the shipped component.
+
+## Intents
+
+Badge has eleven intents. The first six carry a status meaning. The other five are category colours with no status meaning. Choose by meaning, not by colour. In code, intent defaults to neutral.
+
+<DocsFigure
+  src="/images/docs/badge/badge-intents-1.webp"
+  darkSrc="/images/docs/badge/badge-intents-1-dark.webp"
+  alt="Eleven groups of three badges, one group per intent, each shown in outline, subtle and emphasis: Neutral, Info, Positive, Cautious, Warning, Danger, Magenta, Indigo, Brand, Green and Lime. A short description sits under each group."
+  width="2400"
+  height="1984"
+  caption="The eleven intents, each in outline, subtle and emphasis."
+/>
+
+| Intent   | Meaning                                                                     | Examples                  |
+| :------- | :-------------------------------------------------------------------------- | :------------------------ |
+| neutral  | The default. States and metadata with no judgement                          | Draft, Offline            |
+| info     | Worth noticing, no action needed                                            | New, In review            |
+| positive | Success and completed states                                                | Approved, Paid, Online    |
+| cautious | Waiting, where nothing is wrong yet                                         | Pending, Away             |
+| warning  | Needs attention before it becomes a problem                                 | Expiring soon, Incomplete |
+| danger   | Errors, failures and blocked states                                         | Rejected, Failed, Busy    |
+| magenta  | Category colour, no status meaning                                          |                           |
+| indigo   | Category colour, no status meaning                                          |                           |
+| brand    | Category colour in the Veli brand teal, for labels about the product itself |                           |
+| green    | Category colour, no status meaning. Not the same as positive                |                           |
+| lime     | Category colour, no status meaning                                          |                           |
+
+- Use category colours to tell groups apart. Keep category colours and status intents apart within one set of badges.
+- Colour only adds to the word. The label always says the status in text.
+
+## Appearances
+
+Every intent comes in three appearances. In code, appearance defaults to outline. From most to least emphasis: emphasis, subtle, outline.
+
+<DocsFigure
+  src="/images/docs/badge/badge-appearances-1.webp"
+  darkSrc="/images/docs/badge/badge-appearances-1-dark.webp"
+  alt="Three info badges with a leading icon and the text Label: outline with a blue border and no fill, subtle with a light blue background, and emphasis with a solid blue background and white text."
+  width="2400"
+  height="536"
+  caption="Outline, the default, subtle and emphasis."
+/>
+
+- Use **outline**, a border with no fill, for metadata and long lists of badges.
+- Use **subtle**, a tinted background, for statuses that should stand out in a row.
+- Use **emphasis**, a solid background with inverted text, for the one status that matters most on a view.
+
+Use one appearance and one size for badges that sit together, such as a column in a table, and let the intent carry the difference. All three appearances keep a 1px border (transparent on subtle and emphasis), so they are the same size.
+
+## Sizes
+
+<DocsFigure
+  src="/images/docs/badge/badge-sizes-1.webp"
+  darkSrc="/images/docs/badge/badge-sizes-1-dark.webp"
+  alt="Three examples: a size md badge with an icon and the label Label, a smaller size sm badge, and a size xs status dot, a small green circle with no label."
+  width="2400"
+  height="440"
+  caption="Size md, the default, size sm and the xs status dot."
+/>
+
+| Size         | Height    | Icon | Use it for                                                                 |
+| :----------- | :-------- | :--- | :------------------------------------------------------------------------- |
+| md (default) | 28        | 16   | Most layouts: cards, page headers and table rows with comfortable spacing  |
+| sm           | 20        | 12   | Dense tables, inside other components such as Tags, and next to small text |
+| xs           | 8 x 8 dot | None | Next to an avatar or a name where a label would crowd the layout           |
+
+The xs dot has no label or icon and ignores children. Give it an aria-label. Keep one size within a group of badges.
+
+## Counter
+
+The counter is a numeric pill for unread items, notifications and results. In code, pass counter or count; passing count turns counter mode on. In Figma, use BadgeCounter.
+
+<DocsFigure
+  src="/images/docs/badge/badge-counter-1.webp"
+  darkSrc="/images/docs/badge/badge-counter-1-dark.webp"
+  alt="Five counter examples: 5 in an outline danger md circle, 42 in an outline info sm pill, 99+ in an outline neutral md pill for a count of 128, 7 in an emphasis danger sm circle, and a red 5 counter sitting on the top end corner of a round bell icon button."
+  width="2400"
+  height="520"
+  caption="Counters at md and sm, a capped count and a counter on an icon button."
+/>
+
+- A counter shows a number only. Put the subject next to it or in the accessible name.
+- Values above max show as max+. The default max is 99, so 128 shows as 99+. Keep max at 99 unless the layout needs fewer digits.
+- One digit fills the minimum width and shows as a circle. More digits grow the pill.
+- Counters never show a leading icon.
+- When a counter sits on an icon, put the icon in a button or another padded control. A bare icon leaves too little room and the counter covers the glyph.
+
+## Leading icon
+
+An optional leading icon before the label reinforces the status. The label must still make sense without it. Use a 16px icon at md and a 12px icon at sm. Vary status icons by shape for each intent, not only by colour. Labels, not icons, carry the meaning, so the icon is hidden from screen readers.
+
+<DocsFigure
+  src="/images/docs/badge/badge-icon-1.webp"
+  darkSrc="/images/docs/badge/badge-icon-1-dark.webp"
+  alt="Three badges with leading icons: subtle positive Approved with a check in a circle, emphasis danger Rejected with a cross in a circle, and outline warning Pending with a clock."
+  width="2400"
+  height="440"
+  caption="Badges with a leading icon."
+/>
+
+## Behaviour
+
+- **Not interactive**: a badge is a span. It takes no focus and has no hover or pressed state. Wrap it in a button or a link when it should act.
+- **Width and truncation**: a badge hugs its label and stays on one line. It never grows wider than its container; the label truncates with an ellipsis.
+- **Counter cap**: a count above max shows as max+. The minimum width keeps one digit a circle; more digits grow the pill.
+- **Counter on an icon button**: place the counter 2px outside the top end corner of the icon button (-top-0.5 -end-0.5) and hide it from screen readers with aria-hidden. Put the count in the button's aria-label. In Dhivehi the counter moves to the top left.
+- **Status dot on an avatar**: place the dot 2px inside the bottom end corner of the avatar (bottom-0.5 end-0.5) with a 2px ring in the surface colour (ring-2 ring-bg-surface-base), so it stays visible on any photo. Add the ring in the layout; the component has none.
+- **Empty values**: never render an empty badge. Show a defined value or hide the badge.
+
+Illustration needed: a 44 image avatar for Aishath Mariyam with a green emphasis xs dot in its bottom end corner, ringed in the surface colour, next to the name Aishath Mariyam and the text Online.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/badge/badge-rtl-1.webp"
+  darkSrc="/images/docs/badge/badge-rtl-1-dark.webp"
+  alt="Two rows of badges. The English row, left to right: a subtle green badge, an emphasis red badge and an outline orange badge, each with an icon and the text Label, then a red counter showing 5. The Dhivehi row mirrors it right to left with the Dhivehi placeholder label ލޭބަލް, the icons on the right of each label and the counter on the far left."
+  width="2400"
+  height="376"
+  caption="Badge, left to right, and BadgeDv, right to left."
+/>
+
+- In Dhivehi the layout mirrors. The leading icon sits on the right of the label, and badges in a row run right to left.
+- Labels use Dhivehi body sm medium at md and Dhivehi caption medium at sm. Both are MV A Waheed.
+- Heights stay 28 and 20. The Dhivehi line height is taller than the text area, so the label is centred.
+- The counter and the status dot are shared by both languages. Under language dv the digits use MV A Waheed at the same height and minimum width.
+- In code, wrap the app in VeliProvider with language set to dv. Pass Dhivehi labels and Dhivehi aria-label values for dots and counters.
+- In Figma, design Dhivehi screens with BadgeDv. It has the same appearances, intents and sizes as Badge. Counters and dots use BadgeCounter in both languages.
+
+Example configuration:
+
+| Badge                     | Props                                                                                | English                 | Dhivehi                |
+| :------------------------ | :----------------------------------------------------------------------------------- | :---------------------- | :--------------------- |
+| Label                     | appearance subtle, intent positive, check in a circle icon                           | Approved                | ފާސްކޮށްފައި           |
+| Label                     | appearance emphasis, intent danger, cross in a circle icon                           | Rejected                | ބާތިލްކޮށްފައި         |
+| Label                     | appearance outline, intent cautious, clock icon                                      | Pending                 | މަޑުކުރެވިފައި         |
+| Dot                       | size xs, appearance emphasis, intent positive, aria-label                            | Online                  | އޮންލައިން             |
+| Dot                       | size xs, appearance emphasis, intent cautious, aria-label                            | Away                    | އެވޭ                   |
+| Dot                       | size xs, appearance emphasis, intent danger, aria-label                              | Busy                    | ބިޒީ                   |
+| Dot                       | size xs, appearance emphasis, intent neutral, aria-label                             | Offline                 | އޮފްލައިން             |
+| Counter on an icon button | count 5, appearance emphasis, intent danger, size sm, aria-hidden; button aria-label | Notifications, 5 unread | އެންގުންތައް، 5 ނުކިޔާ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/badge/badge-spacing-1.svg"
+  darkSrc="/images/docs/badge/badge-spacing-1-dark.svg"
+  alt="Spacing redlines for three badges. Badge md: padding 4 top and bottom and 8 at the sides, a 16 x 20 icon box, a 4 gap and 2 inline padding on the label. Badge sm: padding 2 top and bottom and 4 at the sides, a 12 x 16 icon box, a 4 gap and 2 on the label. Counter md: 8 side padding and a minimum width of 28."
+  width="1200"
+  height="324"
+/>
+
+<DocsFigure
+  src="/images/docs/badge/badge-minwidth-1.svg"
+  darkSrc="/images/docs/badge/badge-minwidth-1-dark.svg"
+  alt="Two rows of counters with their widths. Counter md: 5 at the minimum 28, 42 at 34 and 99+ at 44. Counter sm: 7 at the minimum 20, 42 at 24 and 99+ at 32."
+  width="1200"
+  height="220"
+  caption="All values in pixels at 1x. Bands are padding and gaps, and lines with end ticks are sizes."
+/>
+
+| Property                   | Badge md | Badge sm | Counter md | Counter sm | Dot xs      |
+| :------------------------- | :------- | :------- | :--------- | :--------- | :---------- |
+| Height                     | 28       | 20       | 28         | 20         | 8           |
+| Vertical padding           | 4        | 2        |            |            | 0           |
+| Side padding               | 8        | 4        | 8          | 4          | 0           |
+| Icon box                   | 16 x 20  | 12 x 16  | None       | None       | None        |
+| Icon                       | 16       | 12       | None       | None       | None        |
+| Gap between icon and label | 4        | 4        |            |            |             |
+| Label inline padding       | 2        | 2        |            |            |             |
+| Minimum width              | None     | None     | 28         | 20         | 8 x 8 fixed |
+
+The label carries 2px of inline padding on each side, so the icon to text distance reads as 6. Counters centre the number; past the minimum width, the side padding sets the width.
+
+<DocsFigure
+  src="/images/docs/badge/badge-radius-1.svg"
+  darkSrc="/images/docs/badge/badge-radius-1-dark.svg"
+  alt="A label badge at size md marked with a 6 corner radius, and a counter at size md marked as fully rounded."
+  width="1200"
+  height="188"
+  caption="Label badges use radius 6 (rounded-md in code). Counters and dots are fully rounded, so they render as a circle or a pill."
+/>
+
+## Typography
+
+| Element   | English                                             | Dhivehi                                   | Colour token             |
+| :-------- | :-------------------------------------------------- | :---------------------------------------- | :----------------------- |
+| Label, md | Body sm medium, Inter Medium 14/20                  | Dhivehi body sm medium, MV A Waheed 17/28 | By appearance and intent |
+| Label, sm | Caption medium, Inter Medium 12/16                  | Dhivehi caption medium, MV A Waheed 15/24 | By appearance and intent |
+| Count, md | Body sm medium, Inter Medium 14/20, tabular figures | MV A Waheed 17, same 28 height            | By appearance and intent |
+| Count, sm | Caption medium, Inter Medium 12/16, tabular figures | MV A Waheed 15, same 20 height            | By appearance and intent |
+
+Counter numbers use tabular figures, so a count that updates keeps the same width per digit.
+
+## Tokens
+
+Status tokens leave out the `components/status/` prefix. Text and icon use the same token where only one is listed.
+
+| Intent   | Outline: border, text, icon                                      | Subtle: background, text, icon                                 | Emphasis: background, text, icon                                     |
+| :------- | :--------------------------------------------------------------- | :------------------------------------------------------------- | :------------------------------------------------------------------- |
+| neutral  | `neutral-stroke`, `text/base/DEFAULT`, `icon/base/default`       | `neutral-subtle`, `text/base/strong`, `icon/base/strong`       | `neutral-emphasis`, `text/base/inverted`, `icon/base/inverted`       |
+| info     | `info-stroke`, `blue/900`                                        | `info-subtle`, `blue/1000`                                     | `info-emphasis`, `blue/100`                                          |
+| positive | `success-stroke`, `text/success/default`, `icon/success/default` | `success-subtle`, `text/success/strong`, `icon/success/strong` | `success-emphasis`, `text/success/inverted`, `icon/success/inverted` |
+| cautious | `caution-stroke`, `text/caution/default`, `icon/caution/default` | `caution-subtle`, `text/caution/strong`, `icon/caution/strong` | `caution-emphasis`, `text/caution/inverted`, `icon/caution/inverted` |
+| warning  | `warning-stroke`, `text/warning/default`, `icon/warning/default` | `warning-subtle`, `text/warning/strong`, `icon/warning/strong` | `warning-emphasis`, `text/warning/inverted`, `icon/warning/inverted` |
+| danger   | `danger-stroke`, `text/danger/default`, `icon/danger/default`    | `danger-subtle`, `text/danger/strong`, `icon/danger/strong`    | `danger-emphasis`, `text/danger/inverted`, `icon/danger/inverted`    |
+| magenta  | `magenta-stroke`, `magenta/900`                                  | `magenta-subtle`, `magenta/1000`                               | `magenta-emphasis`, `magenta/100`                                    |
+| indigo   | `indigo-stroke`, `indigo/900`                                    | `indigo-subtle`, `indigo/1000`                                 | `indigo-emphasis`, `indigo/100`                                      |
+| brand    | `teal-stroke`, `text/primary/default`, `icon/primary/default`    | `teal-subtle`, `text/primary/strong`, `icon/primary/strong`    | `teal-emphasis`, `text/primary/inverted`, `icon/primary/inverted`    |
+| green    | `green-stroke`, `green/900`                                      | `green-subtle`, `green/1000`                                   | `green-emphasis`, `green/100`                                        |
+| lime     | `lime-stroke`, `lime/900`                                        | `lime-subtle`, `lime/1000`                                     | `lime-emphasis`, `lime/100`                                          |
+
+Status dots (xs) use the same colours as their appearance: an outline dot has the border and no fill, subtle and emphasis dots have the background. Override these tokens, not raw colours, when theming.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -131,3 +575,42 @@ All other `span` attributes are supported.
 ## RTL and Language
 
 In RTL, the leading icon and label follow `dir`. Localized label copy is fine; status dots still need an `aria-label` in the active language.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the badge works with screen readers and colour, and what you still need to do. A badge is static text, so most of the work is in the label and the accessible names you pass.
+
+## Screen readers
+
+- Assistive technology reads the label text, so it must make sense on its own. Write status words that stand alone, such as In review, not a colour or a code.
+- The leading icon is hidden from assistive technology.
+- A status dot (xs) is hidden from assistive technology unless it has an aria-label. Give every dot that carries meaning an aria-label in the active language, such as Online or އޮންލައިން.
+- Add an aria-label to a counter when the number alone is unclear, such as 5 notifications.
+- When a counter sits on an icon button, put the count in the button's aria-label, such as Notifications, 5 unread, and mark the badge aria-hidden, so the count is announced once. Don't name only the icon, such as Bell.
+
+## Count changes
+
+When a count updates while the page is open, announce the change through a polite live region elsewhere on the page. Don't make the badge itself a live region.
+
+## Focus
+
+Badges are not in the tab order and have no focus ring. Don't add tabindex to a badge. If a badge should open or filter something, use a button or a link instead.
+
+## Contrast
+
+- Label and count text meets 4.5:1 in every intent and appearance. Measured in Storybook on the base surface, it is 7.3:1 or more in light and dark themes.
+- Intent colour supports the label but never replaces it. A status dot needs visible text nearby or an aria-label.
+- A status dot is a graphic that carries meaning, so it needs 3:1 against what is behind it. Only emphasis dots reach this (7.3:1 or more on the base surface). Outline and subtle dots measure below 2:1, so use the emphasis appearance for dots, as the Storybook examples do.
+- On a photo, keep the 2px ring in the surface colour around the dot.
+
+## Target size
+
+A badge is not a target. A counter on an icon needs the icon inside a padded control, such as an icon button, so the counter doesn't cover the glyph or the hit area.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, so the icon, the order of badges and the counter position mirror automatically. Pass Dhivehi labels and Dhivehi aria-label values yourself: the badge has no built-in text.
+
+</DocsTab>

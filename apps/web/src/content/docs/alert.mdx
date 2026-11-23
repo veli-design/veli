@@ -1,6 +1,6 @@
 ---
 title: Alert
-description: Persistent inline messages with six intents, two appearances, three layouts, and optional actions.
+description: 'An inline message about the page or task in front of people, which stays until they close it or the issue is solved.'
 ---
 
 import {
@@ -11,9 +11,545 @@ import {
   AlertVariantsDemo,
 } from '../../components/AlertExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Alert
 
-Use Alert for important information about the current page or section. Alerts persist until dismissed or resolved; use [Toast](/docs/components/toast/) for temporary notifications.
+<DocsTab id="overview">
+
+An alert shows a message about the page or task in front of people, such as a status, a deadline or a problem to fix. It stays on the page until people close it or the issue is solved, and it never times out. Use it for messages people need to notice and often act on.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/alert.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/permit-review-in-progress--docs"
+/>
+
+## When to use
+
+### Use an alert when
+
+- A message about the page or a task needs to stay visible, such as a status, a deadline or an outage.
+- Something went wrong and people can fix it, such as a failed submission.
+- People can act on the message right away, with one or two actions.
+- A short confirmation should stay in context after a save or a payment.
+- A message is inserted after an action and must be announced, such as a failed save.
+
+### Don't use an alert when
+
+- The message is short-lived feedback after an action. Use Toast.
+- People must decide before they can continue. Use Modal.
+- The message is about one field. Use the field error message.
+- You only need a status label in a table or a card. Use Badge.
+- You would need more than two actions. Use a page or a Modal instead.
+
+<DocsFigure
+  src="/images/docs/alert/alert-intro-1.webp"
+  darkSrc="/images/docs/alert/alert-intro-1-dark.webp"
+  alt='A service page card titled Passport renewal, Application PR-20418. Below the heading, an orange warning alert reads "Upload a new photo to continue" with the description "Your renewal is on hold until we receive a photo that meets the requirements. Upload it by 30 November." It has an Upload photo button, a View photo rules button and a close button.'
+  width="2400"
+  height="1076"
+  caption="A warning alert holds the next step on a passport renewal page."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/alert/alert-anatomy-1.svg"
+  darkSrc="/images/docs/alert/alert-anatomy-1-dark.svg"
+  alt='A light info alert with seven numbered markers: 1 on the container, 2 on the info icon, 3 on the title "Permit review in progress", 4 on the description "You will receive an email when your application has been processed.", 5 on the Track application button, 6 on the Remind me later button and 7 on the close button.'
+  width="1200"
+  height="364"
+  caption="The parts of an alert. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Container**
+
+   The alert surface, with the background, a border on light alerts, 24 radius and 16 padding. Screen readers treat it as a status message by default, or as an urgent alert when live is set to alert. In code it is Alert.
+
+2. **Leading icon**
+
+   A 20px icon in the Fill weight. Each intent has its own default icon; you can turn it off or swap it. It is decorative, so screen readers skip it. In code it is leadingIcon.
+
+3. **Title**
+
+   A short summary of what happened. In code it is Alert.Title.
+
+4. **Description**
+
+   Optional detail and the next step. In code it is Alert.Description.
+
+5. **Primary action**
+
+   An optional main action, a secondary fill button at size sm. In code it goes in Alert.Actions.
+
+6. **Secondary action**
+
+   An optional lighter action, such as Remind me later, a secondary ghost button at size sm. In code it goes in Alert.Actions.
+
+7. **Close button**
+
+   An optional icon-only ghost button that dismisses the alert. Screen readers announce it as Dismiss alert. In code it is Alert.CloseButton.
+
+</DocsAnatomy>
+
+On high contrast alerts, the action buttons and the close button use the onHighContrast treatment.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/alert/alert-do-1.webp" darkSrc="/images/docs/alert/alert-do-1-dark.webp" alt="A danger alert titled Submission failed, with the description &quot;Check the required fields and try again.&quot; and a Review fields button." width="1136" height="452">
+
+Choose the intent by meaning: danger for something that went wrong.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/alert/alert-dont-1.webp" darkSrc="/images/docs/alert/alert-dont-1-dark.webp" alt="A red danger alert titled New office hours, with the description &quot;From 1 November, service centres open from 08:00 to 14:00.&quot;" width="1136" height="448">
+
+Don't use danger for emphasis. Red tells people something failed.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/alert/alert-do-2.webp" darkSrc="/images/docs/alert/alert-do-2-dark.webp" alt="One high contrast warning alert titled Online payments are unavailable, above a light info alert titled Permit review in progress." width="1136" height="380">
+
+Keep high contrast for the one message that must not be missed.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/alert/alert-dont-2.webp" darkSrc="/images/docs/alert/alert-dont-2-dark.webp" alt="Two high contrast alerts stacked: a warning alert titled Online payments are unavailable and an info alert titled Permit review in progress." width="1136" height="376">
+
+Don't stack several high contrast alerts. They compete and none stands out.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/alert/alert-do-3.webp" darkSrc="/images/docs/alert/alert-do-3-dark.webp" alt="An alert titled Documents expiring soon, with the description &quot;Renew your licence by 30 November 2026.&quot; and two actions, Renew licence and Remind me later." width="1136" height="452">
+
+Start action labels with a verb that says what happens.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/alert/alert-dont-3.webp" darkSrc="/images/docs/alert/alert-dont-3-dark.webp" alt="The same Documents expiring soon alert with two actions labelled OK and Dismiss." width="1136" height="452">
+
+Don't use OK or Dismiss as actions. The close button already dismisses the alert.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Title
+
+Write up to 6 words that state the subject or outcome. Write success titles in the past tense. Put the most important words first and keep the fix for the description. Don't end the title with a full stop.
+
+| Do                        | Don't                                          |
+| :------------------------ | :--------------------------------------------- |
+| Payment received          | Attention (says nothing about what happened)   |
+| Permit review in progress | Error 502 (a code, not a message)              |
+| Payment received          | Payment Received. (title case and a full stop) |
+
+### Description
+
+Write 1 or 2 sentences that add to the title and say what to do, each ending with a full stop. Don't repeat the title. Leave the description off when the title says it all.
+
+| Do                                                                        | Don't                                                                                              |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------- |
+| Upload a new photo by 30 November 2026 to continue your passport renewal. | Your application could not be processed due to a validation issue. (says nothing about what to do) |
+
+### Action labels
+
+Start with a verb that says what happens, in 1 to 3 words. Give an alert at most 2 actions, with the main action first and the lighter action second. Never use OK, Yes, No, Submit, Dismiss or Click here: the close button closes the alert.
+
+| Do                                  | Don't                                                  |
+| :---------------------------------- | :----------------------------------------------------- |
+| Renew licence                       | Click here (no verb for the result)                    |
+| Track application                   | OK (says nothing about what happens)                   |
+| Renew licence, then Remind me later | Renew licence, then Dismiss (repeats the close button) |
+
+### Wording by intent
+
+Match the words to the intent. Don't use a danger or warning intent for routine information.
+
+| Intent   | Pattern                                   | Example                                                                      |
+| :------- | :---------------------------------------- | :--------------------------------------------------------------------------- |
+| Positive | The thing and what happened               | Draft saved                                                                  |
+| Info     | The subject and the date                  | Service hours change on 1 November 2026                                      |
+| Warning  | The consequence and the date              | Your permit expires on 21 October 2027                                       |
+| Danger   | What failed, what it means and what to do | Payment not taken. Your card was not charged. Try again or use another card. |
+
+| Do                                                                           | Don't                                                          |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| Payment not taken. Your card was not charged. Try again or use another card. | Something went wrong (says neither what failed nor what to do) |
+
+### Plain language
+
+Say what people can do, not what the system did. Avoid codes and jargon. If support needs a code, add it at the end as a reference people can quote.
+
+| Do                                                               | Don't                                                   |
+| :--------------------------------------------------------------- | :------------------------------------------------------ |
+| We cannot take online payments right now. Try again after 14:00. | Gateway timeout (504) (a system code with no next step) |
+
+### Dates and references
+
+Give exact dates for deadlines. For planned downtime, give the start and end with weekday, date and 24-hour time, and say what will not work. Show reference numbers exactly as issued and keep them on one line.
+
+| Do                                                                                                         | Don't                                                                    |
+| :--------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| Upload it by 30 November 2026.                                                                             | Upload it soon. (no date to act on)                                      |
+| Online payments are unavailable from 22:00 on Friday 30 October 2026 to 06:00 on Saturday 31 October 2026. | Payments are down tonight for maintenance. (no times and a vague reason) |
+| Application PR-20418                                                                                       |                                                                          |
+
+### Status words
+
+Use the shared status words, each with its own intent everywhere: Approved and Paid are positive; Pending and Unpaid are cautious; Action needed and Expired are warning; Rejected, Overdue and a failed payment are danger. Never recolour a status for one service.
+
+| Do                                 | Don't                                                         |
+| :--------------------------------- | :------------------------------------------------------------ |
+| Application WP-2026-04817 approved | Application WP-2026-04817 accepted (not a shared status word) |
+
+### Outages
+
+During an unplanned outage, show a warning alert with appearance highContrast at the top of every page. Title it Some services are unavailable, and say what does not work, that saved answers are safe and when the next update will be posted, with a link to the status page. Update the time each time the status changes.
+
+### Dhivehi copy
+
+Write Dhivehi copy natively rather than translating word for word, and keep it as short as the English, because Thaana lines are taller.
+
+## Related components
+
+| Component                                  | When to use it                                                                 |
+| :----------------------------------------- | :----------------------------------------------------------------------------- |
+| [Toast](/docs/components/toast/)           | short-lived feedback after an action, such as Saved. It disappears on its own. |
+| [Modal](/docs/components/modal/)           | a decision people must make before continuing.                                 |
+| [Badge](/docs/components/badge/)           | a compact status label in a table, card or list.                               |
+| [Input](/docs/components/input/)           | field error messages for problems with a single field.                         |
+| [VeliProvider](/docs/components/provider/) | sets the language that localises the dismiss label and the reading direction.  |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the alert: intents, appearances, layouts, content options, spacing and the tokens behind them. Values match the shipped component.
+
+## Intents
+
+Choose the intent by what the message means, not by colour. Neutral and info are informative; the other four carry a status. In code, intent defaults to neutral.
+
+<DocsFigure
+  src="/images/docs/alert/alert-intents-1.webp"
+  darkSrc="/images/docs/alert/alert-intents-1-dark.webp"
+  alt="Three light alerts: neutral, titled System maintenance tonight, with an info icon; info, titled Permit review in progress, with an info icon; positive, titled Payment received, with a check circle icon."
+  width="2400"
+  height="452"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-intents-2.webp"
+  darkSrc="/images/docs/alert/alert-intents-2-dark.webp"
+  alt="Three light alerts: cautious, titled Documents expiring soon, with a warning circle icon; warning, titled Address not verified, with a warning triangle icon; danger, titled Submission failed, with a warning octagon icon."
+  width="2400"
+  height="452"
+  caption="The six intents, each with its default icon."
+/>
+
+| Intent   | Use for                                                                               | Default icon     |
+| :------- | :------------------------------------------------------------------------------------ | :--------------- |
+| neutral  | General information with no judgement, such as planned maintenance or a policy update | Info             |
+| info     | Something people should know, such as a status or a tip                               | Info             |
+| positive | Success and completed tasks                                                           | Check circle     |
+| cautious | Something needs attention soon, but nothing is wrong yet                              | Warning circle   |
+| warning  | A problem that may stop something working if people don't act                         | Warning triangle |
+| danger   | Errors and failures that block people. Say how to fix it                              | Warning octagon  |
+
+## Appearances
+
+<DocsFigure
+  src="/images/docs/alert/alert-appearances-1.webp"
+  darkSrc="/images/docs/alert/alert-appearances-1-dark.webp"
+  alt="A light info alert titled Permit review in progress, with a pale blue tinted background, a subtle border, dark text, a filled Track application button and a Remind me later button."
+  width="1168"
+  height="556"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-appearances-2.webp"
+  darkSrc="/images/docs/alert/alert-appearances-2-dark.webp"
+  alt="The same alert in the high contrast appearance, with a solid dark blue background, light text and light buttons."
+  width="1168"
+  height="556"
+  caption="Appearance light, the default, and appearance highContrast."
+/>
+
+- Use **light** for most messages, inline with the page content. It has a tinted background with a subtle border and neutral text.
+- Use **highContrast** sparingly, for an urgent message about the whole page that must not be missed, placed at the top of the page. It has a solid background with light text.
+- Show at most one high contrast alert in a view. Use the light appearance for the other alerts in the view.
+- On high contrast alerts, actions are secondary buttons with the high contrast treatment. Never put a primary button on the coloured surface.
+- highContrast is visual emphasis only. It does not respond to the operating system contrast settings and does not replace forced colours support.
+
+## Layouts
+
+<DocsFigure
+  src="/images/docs/alert/alert-layouts-1.webp"
+  darkSrc="/images/docs/alert/alert-layouts-1-dark.webp"
+  alt="A layout default alert, 560 wide: the info icon, the title Permit review in progress, the description and two actions, Track application and Remind me later, in a row, with the close button at the end."
+  width="2400"
+  height="516"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-layouts-2.webp"
+  darkSrc="/images/docs/alert/alert-layouts-2-dark.webp"
+  alt="A layout stacked alert, 343 wide: the same content with the two actions full width, one under the other."
+  width="2400"
+  height="644"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-layouts-3.webp"
+  darkSrc="/images/docs/alert/alert-layouts-3-dark.webp"
+  alt='A layout compact alert on one line: an info icon, the title "Services unavailable tonight from 22:00", a View schedule button and the close button.'
+  width="2400"
+  height="372"
+  caption="Layout default, stacked and compact."
+/>
+
+| Layout  | Content and actions                                         | Use for                                |
+| :------ | :---------------------------------------------------------- | :------------------------------------- |
+| default | Title, optional description and up to two actions in a row  | Desktop and tablet                     |
+| stacked | The same content, with full width actions stacked           | Mobile and narrow columns              |
+| compact | One line: icon, title, one action and close. No description | Short messages in dashboards and lists |
+
+Pick the layout for the space, not the message: the same alert can be default on desktop and stacked on mobile. Actions in the default layout don't wrap, so switch to stacked when both actions don't fit on one row. In compact, the title must fit on one line; if the message needs more words, use default. In code, layout defaults to default.
+
+## Content options
+
+Turn parts on or off and keep only what the message needs.
+
+<DocsFigure
+  src="/images/docs/alert/alert-options-1.webp"
+  darkSrc="/images/docs/alert/alert-options-1-dark.webp"
+  alt='A title-only light alert: "Your changes have been saved".'
+  width="2400"
+  height="364"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-options-2.webp"
+  darkSrc="/images/docs/alert/alert-options-2-dark.webp"
+  alt='An alert with two actions, titled Address not verified, with the description "Some services may be delayed until your address is verified." and the actions Verify address and Remind me later.'
+  width="2400"
+  height="516"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-options-3.webp"
+  darkSrc="/images/docs/alert/alert-options-3-dark.webp"
+  alt='A danger alert with no close button, titled Submission failed, with the description "Check the required fields and try again." and a Review fields button.'
+  width="2400"
+  height="516"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-options-4.webp"
+  darkSrc="/images/docs/alert/alert-options-4-dark.webp"
+  alt='A page level high contrast warning alert titled Online payments are unavailable, with the description "We are working to restore the service. Try again later." and a View service status button.'
+  width="2400"
+  height="512"
+  caption="Title only, two actions, not dismissible and a high contrast warning at page level."
+/>
+
+| Case                      | When                                                                          | Parts                                            |
+| :------------------------ | :---------------------------------------------------------------------------- | :----------------------------------------------- |
+| Title only                | A short confirmation that needs no detail                                     | No description, no actions                       |
+| Title and description     | Information with one sentence of detail and nothing to do                     | No actions                                       |
+| One action                | One clear next step                                                           | No secondary action                              |
+| Two actions               | A main action and a lighter one, such as Remind me later                      | Both actions                                     |
+| Not dismissible           | People must fix something first, so the alert stays until the problem is gone | No close button                                  |
+| Without icon              | Neutral news where an icon adds nothing                                       | No leading icon. Keep the icon on status intents |
+| High contrast, page level | One urgent message for the whole page, at the top                             | appearance highContrast                          |
+
+Keep the close button unless the message must stay until it is resolved.
+
+## Leading icon
+
+<DocsFigure
+  src="/images/docs/alert/alert-icon-1.webp"
+  darkSrc="/images/docs/alert/alert-icon-1-dark.webp"
+  alt="Three compact alerts. Payment received with the default check circle icon; Waiting for approval with a clock icon swapped in; New office hours with no icon."
+  width="2400"
+  height="516"
+  caption="The default icon, a swapped icon and no icon."
+/>
+
+- Keep the default icon for the intent. Each intent has its own icon shape, so the status reads without colour.
+- Swap it only when another icon says the same thing more clearly, such as a clock for a waiting state.
+- Use icons in the Fill weight at 20px. In code, pass the icon element to leadingIcon.
+- The five alert icons (info, check circle, warning circle, warning triangle and warning octagon) are the preferred swaps.
+
+## Behaviour
+
+- **Placement**: put the alert at the top of the page or section it is about, close to the content it refers to.
+- **Persistence**: alerts stay until people close them or the problem is solved. They never time out; use Toast for timed messages.
+- **Dismiss**: the close button calls onDismiss. Without isVisible, the alert hides itself, and changing defaultVisible after mount does not show it again. To show it again, control it with isVisible and onDismiss.
+- **Actions**: buttons in Alert.Actions never dismiss the alert on their own. When an action resolves the message, hide the alert with isVisible or remove it from the page.
+- **Several alerts**: stack them 16 apart with the most severe first. Show one high contrast alert at most.
+- **Width**: the alert fills its container. Set the width on the container. Text wraps and the alert grows in height; it never truncates the title or description.
+- **Error summary**: the form error summary is a danger alert in the light appearance, titled There is a problem, and not dismissible. Pass role="group" so it is not a live region; moving focus to it does the announcing. Never stack another banner above it.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/alert/alert-rtl-1.webp"
+  darkSrc="/images/docs/alert/alert-rtl-1-dark.webp"
+  alt="Two pairs of alerts. On the left, in English, a light info alert titled Permit review in progress with Track application and Remind me later, and a positive compact alert. On the right, the same alerts in Dhivehi, mirrored right to left: the icon on the right, the close button on the left, the title ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ and the actions ޝެޑިއުލް ބައްލަވާ and ކުރިއަށް."
+  width="2400"
+  height="764"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi everything mirrors: the icon sits on the right, the close button on the left, and the primary action sits to the right of the secondary action.
+- The title uses Dhivehi body sm medium (MV A Waheed) and the description Dhivehi body sm regular (MV Faseyha).
+- Dhivehi lines are 28 high, so the icon and close button sit in a 28px row to stay aligned with the title.
+- The close button's accessible name is Dhivehi under Dhivehi: އެލާޓް ލައްޕާ.
+- In a Dhivehi alert, isolate names and reference numbers such as PR-20418 so they stay left to right.
+- In code, wrap the alert in VeliProvider with language set to dv. Direction and fonts follow automatically.
+- In Figma, design Dhivehi screens with AlertDv, with buttonDv actions. It has the same appearances, intents, layouts and properties as Alert.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <AlertRtlDemo client:visible />
+</div>
+
+Example configuration: intent info, appearance light, layout stacked, info icon.
+
+| Part             | Dhivehi                                            |
+| :--------------- | :------------------------------------------------- |
+| Title            | ޕާމިޓް ރިވިއު ކުރިއަށްދަނީ                         |
+| Description      | އެޕްލިކޭޝަން ޕްރޮސެސްކުރުމުން އީމެއިލް ލިބޭނެއެވެ. |
+| Primary action   | ޝެޑިއުލް ބައްލަވާ                                  |
+| Secondary action | ކުރިއަށް                                           |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/alert/alert-spacing-1.svg"
+  darkSrc="/images/docs/alert/alert-spacing-1-dark.svg"
+  alt="Spacing redlines for a layout default alert: 16 padding all round, 12 from icon to text, 4 from title to description, 12 above the actions, 8 between the actions and 12 from the text to the close button."
+  width="1200"
+  height="418"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-spacing-2.svg"
+  darkSrc="/images/docs/alert/alert-spacing-2-dark.svg"
+  alt="Spacing redlines for a layout stacked alert: 16 padding all round, the same gaps as default and 8 between the stacked, full width actions."
+  width="1200"
+  height="482"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-spacing-3.svg"
+  darkSrc="/images/docs/alert/alert-spacing-3-dark.svg"
+  alt="Spacing redlines for a layout compact alert: 10 padding top and bottom, 16 at the sides and 12 between the icon, title, action and close button."
+  width="1200"
+  height="346"
+  caption="All values in pixels at 1x. Pink bands are padding and orange bands are gaps between parts."
+/>
+
+| Property             | default                      | stacked                                 | compact                      |
+| :------------------- | :--------------------------- | :-------------------------------------- | :--------------------------- |
+| Padding              | 16 all round                 | 16 all round                            | 10 top and bottom, 16 sides  |
+| Icon to text         | 12                           | 12                                      | 12                           |
+| Title to description | 4                            | 4                                       | No description               |
+| Above actions        | 12                           | 12                                      | Inline, 12                   |
+| Between actions      | 8                            | 8, stacked                              | One action                   |
+| Text to close button | 12                           | 12                                      | 12                           |
+| Width                | Fills the container          | Fills the container, actions full width | Fills the container          |
+| Icon                 | 20                           | 20                                      | 20                           |
+| Action buttons       | Size sm, 36 high             | Size sm, 36 high                        | Size sm, 36 high             |
+| Close button         | 36 ghost button in a 20 slot | 36 ghost button in a 20 slot            | 36 ghost button in a 20 slot |
+
+The close button lines up with the title, and its hover area reaches into the padding. Dhivehi uses the same spacing.
+
+<DocsFigure
+  src="/images/docs/alert/alert-radius-1.svg"
+  darkSrc="/images/docs/alert/alert-radius-1-dark.svg"
+  alt="Two alerts, layout default and layout compact, each marked with a 24 corner radius."
+  width="1200"
+  height="338"
+  caption="Every layout uses radius 24 (radius/3xl). Compact alerts are short, so their corners read almost round."
+/>
+
+## Colour modes
+
+Alerts follow the Light and Dark mode of the page; no extra work is needed. Appearance is independent of the page theme. Light alerts become a dark tint. High contrast alerts move from the 800 step to the 1000 step in Dark mode, which is bright there, so the text turns dark and the high contrast buttons flip with it.
+
+<DocsFigure
+  src="/images/docs/alert/alert-modes-1.webp"
+  alt="Light mode: three alerts titled Permit review in progress, each with a Track application button, in the light and high contrast appearances."
+  width="1152"
+  height="660"
+/>
+
+<DocsFigure
+  src="/images/docs/alert/alert-modes-1-dark.webp"
+  alt="Dark mode: the same three alerts. Light alerts become a dark tint, and high contrast alerts become a bright fill with dark text."
+  width="1152"
+  height="660"
+  caption="The same alerts in Light and Dark mode."
+/>
+
+## Typography
+
+| Element       | English                                 | Dhivehi                                   | Colour token                                                                   |
+| :------------ | :-------------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------- |
+| Title         | Body sm semibold, Inter Semi Bold 14/20 | Dhivehi body sm medium, MV A Waheed 17/28 | Light: `text/base/emphasis`. High contrast: `highContrast/{intent}/foreground` |
+| Description   | Body sm regular, Inter Regular 14/20    | Dhivehi body sm regular, MV Faseyha 16/28 | Light: `text/base/strong`. High contrast: `highContrast/{intent}/description`  |
+| Action labels | Body sm medium (button sm)              | Dhivehi body sm medium (buttonDv sm)      | From the button. High contrast: the onHighContrast foreground tokens           |
+
+## Tokens
+
+Component token names leave out the `components/alert/` prefix.
+
+| Intent   | Light: background, icon                                                | High contrast: background                                               | High contrast: foreground, description |
+| :------- | :--------------------------------------------------------------------- | :---------------------------------------------------------------------- | :------------------------------------- |
+| neutral  | `light/neutral/bg` (sage/300), `light/neutral/icon` (sage/800)         | `highContrast/neutral/bg` (sage/1100 in Light, sage/1200 in Dark)       | sage/100, sage/200                     |
+| info     | `light/info/bg` (blue/300), `light/info/icon` (blue/800)               | `highContrast/info/bg` (blue/800 in Light, blue/1000 in Dark)           | blue/100, blue/200                     |
+| positive | `light/positive/bg` (emerald/300), `light/positive/icon` (emerald/800) | `highContrast/positive/bg` (emerald/800 in Light, emerald/1000 in Dark) | emerald/100, emerald/200               |
+| cautious | `light/cautious/bg` (yellow/300), `light/cautious/icon` (yellow/800)   | `highContrast/cautious/bg` (yellow/800 in Light, yellow/1000 in Dark)   | yellow/100, yellow/200                 |
+| warning  | `light/warning/bg` (orange/300), `light/warning/icon` (orange/800)     | `highContrast/warning/bg` (orange/800 in Light, orange/1000 in Dark)    | orange/100, orange/200                 |
+| danger   | `light/danger/bg` (red/300), `light/danger/icon` (red/800)             | `highContrast/danger/bg` (red/800 in Light, red/1000 in Dark)           | red/100, red/200                       |
+
+| Part        | Light                            | High contrast                                                                  |
+| :---------- | :------------------------------- | :----------------------------------------------------------------------------- |
+| Border      | `border/base/subtle`             | None                                                                           |
+| Title       | `text/base/emphasis`             | `highContrast/{intent}/foreground`                                             |
+| Description | `text/base/strong`               | `highContrast/{intent}/description`                                            |
+| Icon        | `light/{intent}/icon`            | `highContrast/{intent}/foreground`                                             |
+| Actions     | Secondary fill and ghost buttons | Secondary fill and ghost buttons with `button/onHighContrast/secondary` tokens |
+
+Map on-colour surfaces to these tokens, never to fixed white or black, and don't override them with raw colours.
+
+## Motion
+
+Alert has no enter or exit animation, so it appears and disappears at once. The buttons inside keep their own press feedback, which respects reduced motion.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Usage
 
@@ -296,3 +832,51 @@ Dhivehi titles use MV A Waheed at 17px and descriptions use MV Faseyha at 16px, 
 ## Migration
 
 The revised appearances replace `subtle`, `outline`, and `emphasis`. Change `subtle` to `light` and `emphasis` to `highContrast`. `outline` has no direct equivalent; choose the new treatment appropriate to the message. On high-contrast Alerts, use secondary `fill` and `ghost` Buttons with `highContrast` instead of transparent or colour overrides, and select `stacked` where the previous wrapping row was relied upon.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the alert works with screen readers, keyboards and colour, and what you still need to do.
+
+## Screen readers
+
+- An alert is a polite status message by default (role status, live="status"), which suits banners that are always visible.
+- Use live="alert" only when the alert is inserted or updated after an action and must be announced at once. Never use it on an alert that is on the page when it loads.
+- The role prop overrides live, so an alert with a role set is not a live region. Use role="group" for the error summary.
+- Put the most important words first in an inserted alert. It is read once and not repeated.
+- The leading icon is decorative and hidden from screen readers. The title must carry the meaning on its own.
+
+## Keyboard
+
+The alert itself is not focusable and never moves focus. Its actions and close button are buttons in the normal tab order.
+
+| Key            | Action                                             |
+| :------------- | :------------------------------------------------- |
+| Tab            | Moves focus to the next action or the close button |
+| Shift + Tab    | Moves focus to the previous action or close button |
+| Enter or Space | Activates the focused action or close button       |
+
+## Focus
+
+- Don't move focus to an alert when it appears.
+- Buttons inside show the Veli focus ring when focused from the keyboard.
+- When the close button removes an alert that had focus, move focus to a logical place, such as the heading of the section the alert was in. Veli leaves the focus destination to the app; without one, keyboard users lose their place.
+
+## Close button name
+
+The close button is labelled Dismiss alert in English and އެލާޓް ލައްޕާ in Dhivehi. When several dismissible alerts share a page, name each close button with aria-label, such as Dismiss permit review alert. Never name it X or Close button.
+
+## Target size
+
+The close button is a 36px ghost button and the action buttons are 36 high, larger than the 24px minimum target size.
+
+## Contrast
+
+Colour supports the message but never replaces it: each intent has its own icon shape and the title states the message. Use the alert tokens as they are. On high contrast alerts, use the high contrast button treatment so text and the focus ring stay readable on the coloured surface.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, the Dhivehi fonts and the Dhivehi dismiss label. Pass Dhivehi titles, descriptions and action labels yourself, and wrap names and reference numbers in bdi or an element with dir="auto".
+
+</DocsTab>
