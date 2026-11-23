@@ -22,8 +22,7 @@ const labels: SiteHeaderLabels = {
   apps: 'Apps',
   sites: 'Sites',
   youAreHere: 'You are here',
-  viewMore: 'View more',
-  viewLess: 'View less',
+  scrollToViewMore: 'Scroll to view more',
   searchAppsAndSites: 'Search apps and sites',
   search: 'Search',
   filter: 'Filter',
@@ -148,6 +147,7 @@ export function ApplicationHeader({
   actions,
   /** Banner flag image URL owned by the application. */
   flagSrc,
+  title,
 }: {
   colorScheme?: SiteHeaderColorScheme;
   onColorSchemeChange?: (scheme: SiteHeaderColorScheme) => void;
@@ -155,6 +155,7 @@ export function ApplicationHeader({
   onLanguageChange?: (id: string) => void;
   actions?: ReactNode;
   flagSrc: string;
+  title?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -181,6 +182,7 @@ export function ApplicationHeader({
           Gov.mv
         </span>
       }
+      title={title}
       pathname={pathname}
       desktopNavItems={desktopNavItems}
       mobileNavItems={desktopNavItems}

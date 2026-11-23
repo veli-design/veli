@@ -1,3 +1,18 @@
+## 0.13.0
+
+### Added
+
+- Add `scrollToViewMore`. The app switcher shows that control at the bottom of the card while the list is at the top and more tiles sit below. Choosing it scrolls the card by 60% of the visible height.
+
+### Changed
+
+- Show every app and site in one scrolling grid. Apps only and Sites only keep that grid and a result line such as "Showing all Sites: 17 results". Tiles stay 165px wide from 600px up and use two columns below that. Names wrap instead of truncating.
+- Fade the top and bottom edges of the scrolling card. The bottom fade is 96px behind the scroll control and 32px at 60% opacity after that control hides.
+
+### Removed
+
+- Remove View more, View less, and the list layout for filtered apps and sites. Pass `scrollToViewMore` instead of `viewMore` and `viewLess`.
+
 ## 0.12.2
 
 ### Fixed
