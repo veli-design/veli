@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## 0.20.2
+
+_Released 2026-11-23._
+
+### Fixed
+
+- Keep the Pagination ellipsis menu within the available space and scroll longer page lists without covering the trigger.
+- Hide password-manager icons on `OTPInput` and keep SMS one-time-code autofill.
+
 ## 0.20.1
 
 _Released 2026-11-09._
