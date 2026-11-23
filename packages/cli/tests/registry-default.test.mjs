@@ -3,7 +3,7 @@ import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
 import { DEFAULT_WEB_URL, readConfig, resolveWebUrl, writeConfig } from '../dist/config.js';
@@ -44,14 +44,18 @@ globalThis.fetch = async (url) => {
 };\n`,
   );
   const cli = (args, env = {}) =>
-    exec(process.execPath, ['--import', mock, executable, '--cwd', cwd, '--json', ...args], {
-      env: {
-        PATH: process.env.PATH,
-        HOME: cwd,
-        EXPECTED_CATALOG: 'https://veli.design/api/blocks/v1/catalog.json',
-        ...env,
+    exec(
+      process.execPath,
+      ['--import', pathToFileURL(mock).href, executable, '--cwd', cwd, '--json', ...args],
+      {
+        env: {
+          PATH: process.env.PATH,
+          HOME: cwd,
+          EXPECTED_CATALOG: 'https://veli.design/api/blocks/v1/catalog.json',
+          ...env,
+        },
       },
-    });
+    );
   try {
     await run({ cwd, cli });
   } finally {
